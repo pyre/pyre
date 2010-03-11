@@ -4,19 +4,21 @@
 # california institute of technology
 # (c) 1998-2010 all rights reserved
 #
+#
 
 
 PROJECT = pyre
 
 RECURSE_DIRS = \
-    python \
-    pyre
 
 #--------------------------------------------------------------------------
 #
 
 all:
 	BLD_ACTION="all" $(MM) recurse
+
+test::
+	BLD_ACTION="test" $(MM) recurse
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse

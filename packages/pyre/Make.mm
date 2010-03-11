@@ -7,16 +7,16 @@
 
 
 PROJECT = pyre
+PACKAGE = pyre
+PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
 
 RECURSE_DIRS = \
-    python \
-    pyre
+
 
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: export
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -27,5 +27,15 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+
+#--------------------------------------------------------------------------
+# export
+
+EXPORT_PYTHON_MODULES = \
+    __init__.py
+
+
+export:: export-python-modules
+	BLD_ACTION="export" $(MM) recurse
 
 # end of file 
