@@ -9,26 +9,15 @@
 
 PROJECT = pyre
 
-RECURSE_DIRS = \
-    patterns \
-    calc \
-
 #--------------------------------------------------------------------------
 #
 
 all: test
 
-test::
-	BLD_ACTION="test" $(MM) recurse
+test: sanity
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
-
-clean::
-	BLD_ACTION="clean" $(MM) recurse
-
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
+sanity:
+	${PYTHON} ./sanity.py
 
 
 # end of file 
