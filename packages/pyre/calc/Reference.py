@@ -1,0 +1,26 @@
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2010 all rights reserved
+#
+
+
+from .Unary import Unary
+
+
+class Reference(Unary):
+    """
+    Refer to another node
+    """
+
+
+    # interface
+    def compute(self):
+        """
+        Compute and return my value
+        """
+        return self._op.value
+
+
+# end of file 
