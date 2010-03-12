@@ -14,10 +14,18 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity utils patterns
 
 sanity:
 	${PYTHON} ./sanity.py
+
+utils:
+	${PYTHON} ./powerset.py
+
+patterns:
+	${PYTHON} ./extent.py
+	${PYTHON} ./named.py
+	${PYTHON} ./observable.py
 
 
 # end of file 

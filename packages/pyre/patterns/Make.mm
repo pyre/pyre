@@ -20,6 +20,9 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    ExtentAware.py \
+    Observable.py \
+    Named.py \
     __init__.py
 
 

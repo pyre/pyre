@@ -20,6 +20,32 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    AbstractModel.py \
+    Addition.py \
+    Aggregator.py \
+    Average.py \
+    Binary.py \
+    Count.py \
+    Division.py \
+    ErrorNode.py \
+    Evaluator.py \
+    Expression.py \
+    Function.py \
+    Maximum.py \
+    Minimum.py \
+    Model.py \
+    Multiplication.py \
+    Node.py \
+    Polyadic.py \
+    Probe.py \
+    Product.py \
+    Reductor.py \
+    Reference.py \
+    Scaling.py \
+    Subtraction.py \
+    Sum.py \
+    Unary.py \
+    UnresolvedNode.py \
     __init__.py
 
 

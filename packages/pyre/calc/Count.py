@@ -1,0 +1,25 @@
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2010 all rights reserved
+#
+
+
+from .Polyadic import Polyadic
+
+
+class Count(Polyadic):
+    """
+    Compute the number of nodes in my domain
+    """
+
+
+    def compute(self):
+        """
+        Compute and return my value
+        """
+        return len(self._domain)
+
+
+# end of file 
