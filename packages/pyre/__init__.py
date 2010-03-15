@@ -12,7 +12,15 @@ For more details, see http://pyre.caltech.edu.
 For terms of use, see pyre.license()
 """
 
+# conveninece functions
 
+# factories for the various top level framework objects
+def executive(**kwds):
+    from . import framework
+    return framework.executive(**kwds)
+
+
+# administrative
 def copyright():
     """
     Return the pyre copyright note
@@ -22,7 +30,7 @@ def copyright():
 
 def license():
     """
-    Return the pyre license
+    Print the pyre license
     """
     print(_pyre_license)
     return
