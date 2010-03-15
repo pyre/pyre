@@ -26,6 +26,7 @@ patterns:
 	${PYTHON} ./extent.py
 	${PYTHON} ./named.py
 	${PYTHON} ./observable.py
+	${PYTHON} ./singleton.py
 
 
 # end of file 

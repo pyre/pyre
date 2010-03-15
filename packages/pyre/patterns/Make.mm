@@ -20,9 +20,11 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    AbstractMetaclass.py \
     ExtentAware.py \
     Observable.py \
     Named.py \
+    Singleton.py \
     __init__.py
 
 
