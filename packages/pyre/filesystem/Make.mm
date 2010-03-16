@@ -20,6 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Node.py \
     __init__.py
 
 

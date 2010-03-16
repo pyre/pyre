@@ -6,4 +6,7 @@
 #
 
 
+# debugging support
+_metaclass_Node = type
+
 # end of file 

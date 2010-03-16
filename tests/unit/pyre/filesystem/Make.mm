@@ -13,10 +13,13 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity nodes
 
 sanity:
 	${PYTHON} ./sanity.py
+
+nodes:
+	${PYTHON} ./node.py
 
 
 # end of file 
