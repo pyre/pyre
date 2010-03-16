@@ -12,6 +12,7 @@ PROJECT = pyre
 RECURSE_DIRS = \
     patterns \
     calc \
+    filesystem \
     framework \
 
 #--------------------------------------------------------------------------

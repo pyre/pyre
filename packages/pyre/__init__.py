@@ -12,6 +12,11 @@ For more details, see http://pyre.caltech.edu.
 For terms of use, see pyre.license()
 """
 
+
+# imported symbols
+import os
+
+
 # conveninece functions
 
 # factories for the various top level framework objects
@@ -19,6 +24,22 @@ def executive(**kwds):
     from . import framework
     return framework.executive(**kwds)
 
+
+# geography
+def home():
+    """
+    Return the directory of the pyre package
+    """
+    path, filename = os.path.split(__file__)
+    return path
+
+
+def prefix():
+    """
+    Compute the pathname of the pyre installation
+    """
+    return os.path.abspath(os.path.join(home(), os.path.pardir, os.path.pardir))
+    
 
 # administrative
 def copyright():

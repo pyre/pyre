@@ -11,6 +11,7 @@ PROJECT = pyre
 RECURSE_DIRS = \
     lib \
     packages \
+    depository \
     tests \
     doc \
     examples \
@@ -29,5 +30,12 @@ clean::
 
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
+
+
+PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
+
+zip:
+	zip -r ${PYRE_ZIP} packages depository -x \*Make.mm 
+
 
 # end of file 

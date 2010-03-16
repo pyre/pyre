@@ -6,10 +6,10 @@
 #
 
 
-from ..patterns.Singleton import Singleton
+import pyre.framework
 
 
-class Executive:
+class Executive(object):
 
     """
     The top level framework object.
@@ -19,6 +19,21 @@ class Executive:
 
         NYI:
     """
+
+
+    def boot(self):
+        """
+        Perform all the default initialization steps
+        """
+
+
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+
+        # my virtual filesystem
+        self.nameserver = pyre.framework.newNameServer()
+
+        return
 
 
 # end of file 

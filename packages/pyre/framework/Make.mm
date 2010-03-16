@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Executive.py \
+    NameServer.py \
     Pyre.py \
     __init__.py
 

@@ -7,10 +7,17 @@
 
 
 """
-This packages contains the various top level framework managers
+This packages contains the various top level framework managers.
+
+This is the home of the pyre executive, a singleton that provides access to all pyre framework
+services. Use pyre.executive() to gain access to this object. The remainder of the classes that
+are defined here are not meant to be instantiated directly, unless you are trying to extend the
+framework. Be aware that the framework bootstrapping process is fairly sensitive to the
+instantiation and initialization order of these objects, so caveat emptor.
 """
 
 
+# the framework singleton
 def executive(**kwds):
     """
     Factory for the framework executive.
@@ -20,6 +27,11 @@ def executive(**kwds):
     """
     from .Pyre import Pyre
     return Pyre(**kwds)
+
+
+# factories for other managers
+def newNameServer(**kwds):
+    return
 
 
 # end of file 
