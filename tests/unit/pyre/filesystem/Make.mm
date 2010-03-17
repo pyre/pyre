@@ -20,6 +20,10 @@ sanity:
 
 nodes:
 	${PYTHON} ./node.py
+	${PYTHON} ./folder.py
+	${PYTHON} ./folder_insert.py
+	${PYTHON} ./folder_insert_badNode.py
+	${PYTHON} ./folder_find.py
 
 
 # end of file 

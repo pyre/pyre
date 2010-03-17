@@ -8,22 +8,23 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Check that nodes can be instantiated and that their limited interface works as advertised
 """
 
 
 def test():
+    # get hold of the constructor
     from pyre.filesystem.Node import Node
 
     # fake a filesystem
     class filesystem: pass
 
-    # build a naked one
-    node = Node(filesystem())
+    # build a node
+    node = Node(filesystem=filesystem())
 
     # count its children to verify the interface
     children = 0
-    for child in node.children:
+    for child in node.contents:
         children += 1
     assert children == 0
 

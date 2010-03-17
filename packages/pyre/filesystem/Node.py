@@ -18,7 +18,7 @@ class Node(object, metaclass=_metaclass_Node):
 
     
     # public data
-    children = () # i don't have any, but some of my descendants do
+    contents = {} # i don't have any, but some of my descendants do
 
 
     # interface
@@ -33,7 +33,7 @@ class Node(object, metaclass=_metaclass_Node):
     # meta methods
     def __init__(self, filesystem, **kwds):
         super().__init__(**kwds)
-        self._filesystem = weakref.proxy(filesystem)
+        self._filesystem = weakref.ref(filesystem)
         return
 
 
