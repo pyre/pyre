@@ -17,33 +17,32 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
     """
 
 
-    def createFolder(self, path):
-        """
-        Create a node and insert it at the location pointed to by {path}
-        """
-        # create the node
-        node = Folder(filesystem=self)
-        # add it to my contents
-        self[path] = node
-        # and return it
-        return node
+    # public data
+    mountpoint = "/"
 
 
-    def createNode(self, path):
-        """
-        Create a node and insert it at the location pointed to by {path}
-        """
-        # create the node
-        node = Node(filesystem=self)
-        # add it to my contents
-        self[path] = node
-        # and return it
-        return node
-
-
+    # meta methods
     def __init__(self, **kwds):
         super().__init__(filesystem=self, **kwds)
         return
 
+
+    # debugging support
+    def _dump(self):
+        """
+        Print out my contents using a tree explorer
+        """
+        # build the explorer
+        from . import newTreeExplorer
+        explorer = newTreeExplorer()
+        # get the representation of my contents
+        printout = explorer.explore(self)
+        # dump it out
+        if interactive:
+            for line in printout:
+                print(line)
+        # and return the explorer to the caller
+        return explorer
+        
 
 # end of file 

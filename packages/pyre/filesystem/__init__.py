@@ -6,6 +6,22 @@
 #
 
 
+# factories
+def newSimpleExplorer(**kwds):
+    from .SimpleExplorer import SimpleExplorer
+    return SimpleExplorer(**kwds)
+
+
+def newTreeExplorer(**kwds):
+    from .TreeExplorer import TreeExplorer
+    return TreeExplorer(**kwds)
+
+
+def newVirtualFilesystem(**kwds):
+    from .Filesystem import Filesystem
+    return Filesystem(**kwds)
+
+
 # errors
 class FilesystemError(Exception):
     """

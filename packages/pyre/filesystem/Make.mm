@@ -20,9 +20,12 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Explorer.py \
     Folder.py \
     Filesystem.py \
     Node.py \
+    SimpleExplorer.py \
+    TreeExplorer.py \
     __init__.py
 
 

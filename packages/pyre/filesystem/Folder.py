@@ -81,6 +81,7 @@ class Folder(Node):
         return node
 
 
+    # populating filesystems
     def mount(self, name, filesystem):
         """
         Make the root of {filesystem} available as {name} through my contents
@@ -93,6 +94,38 @@ class Folder(Node):
         self.contents[name] = filesystem
         # and return it
         return self
+
+
+    def createFolder(self, path):
+        """
+        Create a node and insert it at the location pointed to by {path}
+        """
+        # create the node
+        node = Folder(filesystem=self._filesystem())
+        # add it to my contents
+        self[path] = node
+        # and return it
+        return node
+
+
+    def createNode(self, path):
+        """
+        Create a node and insert it at the location pointed to by {path}
+        """
+        # create the node
+        node = Node(filesystem=self._filesystem())
+        # add it to my contents
+        self[path] = node
+        # and return it
+        return node
+
+
+    # explorer support
+    def identify(self, explorer, **kwds):
+        """
+        Tell {explorer} that it is visiting a folder
+        """
+        return explorer.onFolder(self, **kwds)
 
 
     # meta methods

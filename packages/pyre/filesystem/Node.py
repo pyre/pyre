@@ -14,6 +14,8 @@ class Node(object, metaclass=_metaclass_Node):
     """
     The base class for all filesystem entries
     
+    Node and Folder are leaf and container nodes for the Composite that enables the
+    representation of the hierarchical structure of filesystems
     """
 
     
@@ -28,6 +30,14 @@ class Node(object, metaclass=_metaclass_Node):
         """
         # delegate the action to the containing filesystem
         return self._filesystem.open(self, **kwds)
+
+
+    # explorer support
+    def identify(self, explorer, **kwds):
+        """
+        Tell {explorer} that it is visiting a node
+        """
+        return explorer.onNode(self, **kwds)
 
 
     # meta methods

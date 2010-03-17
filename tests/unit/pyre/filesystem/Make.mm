@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity nodes filesystem
+test: sanity nodes filesystem explorers
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -30,6 +30,10 @@ nodes:
 filesystem:
 	${PYTHON} ./filesystem.py
 	${PYTHON} ./filesystem_access.py
+
+explorers:
+	${PYTHON} ./simple_explorer.py
+	${PYTHON} ./tree_explorer.py
 
 
 
