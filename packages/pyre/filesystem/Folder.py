@@ -90,7 +90,7 @@ class Folder(Node):
             {filesystem}: the filesystem object whose root is being made available
         """
         # add the root node to my contents under the given name
-        self.contents[name] = filesystem.root
+        self.contents[name] = filesystem
         # and return it
         return self
 
@@ -100,6 +100,21 @@ class Folder(Node):
         super().__init__(**kwds)
         self.contents = dict()
         return
+
+
+    # access through subscripts
+    def __getitem__(self, path):
+        """
+        Enable the sytax folder[{path}]
+        """
+        return self.find(path)
+
+
+    def __setitem__(self, path, node):
+        """
+        Enable the syntax folder[{path}] = node
+        """
+        return self.insert(path=path, node=node)
 
 
     # constants

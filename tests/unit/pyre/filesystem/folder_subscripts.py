@@ -8,7 +8,7 @@
 
 
 """
-Verify searching through folders for named nodes
+Verify node access in folders using the subscript notation
 """
 
 
@@ -27,13 +27,24 @@ def test():
     mga = Node(fs)
 
     # add it to the folder
-    root.insert(path="home/users/mga", node=mga)
+    root["/home/users/mga"] = mga
 
-    # now retrieve it
-    target = root.find("/home/users/mga")
-   
-    # make sure it is the same node
-    assert mga == target
+    # check that it was done correctly
+    assert len(root.contents) == 1
+    assert "home" in root.contents
+
+    home = root["home"] 
+    assert len(home.contents) == 1
+    assert "users" in home.contents
+
+    users = home["users"] 
+    assert len(users.contents) == 1
+    assert "mga" in users.contents
+
+    assert users["mga"] == mga
+
+    # now look for it and make sure we got the same node
+    assert root["/home/users/mga"] == mga
 
     # all done
     return
