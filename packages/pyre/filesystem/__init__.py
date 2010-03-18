@@ -7,6 +7,11 @@
 
 
 # factories
+def newLocalFilesystem(**kwds):
+    from .LocalFilesystem import LocalFilesystem
+    return LocalFilesystem(**kwds)
+
+
 def newSimpleExplorer(**kwds):
     from .SimpleExplorer import SimpleExplorer
     return SimpleExplorer(**kwds)

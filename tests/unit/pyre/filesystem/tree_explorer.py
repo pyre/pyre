@@ -15,14 +15,17 @@ Exercise the simple filesystem explorer
 def test():
     import pyre.filesystem
 
+    # make a filesystem
     fs = pyre.filesystem.newVirtualFilesystem()
-    tools = fs.createFolder("/home/users/mga/dv/tools")
-    tools.createFolder("bin").createNode("hello")
-    tools.createFolder("lib").createNode("libhello.a")
+    # create a couple of nodes and insert them into the filesystem
+    fs.insert(node=fs.newNode(), path="/home/users/mga/dv/tools/bin/hello")
+    fs.insert(node=fs.newNode(), path="/home/users/mga/dv/tools/lib/libhello.a")
 
+    # explore
     explorer = pyre.filesystem.newTreeExplorer()
     contents = explorer.explore(fs)
 
+    # check
     assert contents == [
         " / (d)",
         " `- home (d)",

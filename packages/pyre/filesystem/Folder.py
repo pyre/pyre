@@ -37,9 +37,9 @@ class Folder(Node):
         return node
 
 
-    def insert(self, path, node):
+    def insert(self, node, path):
         """
-        Insert {vnode} at the location pointed to by {path}, creating all necessary
+        Insert {node} at the location pointed to by {path}, creating all necessary
         intermediate directories
         """
         # extract the list of path names
@@ -72,7 +72,7 @@ class Folder(Node):
             try:
                 current = current.contents[name]
             except KeyError:
-                folder = Folder(filesystem=self._filesystem())
+                folder = current.newFolder()
                 current.contents[name] = folder
                 current = folder
         # add the node to the last directory
@@ -96,28 +96,20 @@ class Folder(Node):
         return self
 
 
-    def createFolder(self, path):
+    def newFolder(self):
         """
-        Create a node and insert it at the location pointed to by {path}
-        """
-        # create the node
-        node = Folder(filesystem=self._filesystem())
-        # add it to my contents
-        self[path] = node
-        # and return it
-        return node
-
-
-    def createNode(self, path):
-        """
-        Create a node and insert it at the location pointed to by {path}
+        Create a new folder
         """
         # create the node
-        node = Node(filesystem=self._filesystem())
-        # add it to my contents
-        self[path] = node
-        # and return it
-        return node
+        return Folder(filesystem=self._filesystem())
+
+
+    def newNode(self):
+        """
+        Create a new node
+        """
+        # create the node
+        return Node(filesystem=self._filesystem())
 
 
     # explorer support

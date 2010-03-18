@@ -6,7 +6,6 @@
 #
 
 
-from .Node import Node
 from .Folder import Folder
 from . import _metaclass_Filesystem
 

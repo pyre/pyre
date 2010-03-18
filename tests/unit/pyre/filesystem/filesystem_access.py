@@ -20,13 +20,15 @@ def test():
 
     # create a folder a few levels down from the root
     mpath = "/home/users/mga"
-    mga = fs.createFolder(mpath)
+    mga = fs.newFolder()
+    fs.insert(node=mga, path=mpath)
     # check that we can retrieve it
     assert mga == fs[mpath]
 
     # now add a subfolder
     tpath = '/dv/tools'
-    tools = fs.createFolder(mpath + tpath)
+    tools = fs.newFolder()
+    fs.insert(node=tools, path=mpath + tpath)
 
     # and retrieve it
     assert fs[mpath+tpath] == mga[tpath]
@@ -53,7 +55,6 @@ if __name__ == "__main__":
     from pyre.filesystem.Node import Node
     # print("VNode extent:", len(VNode._pyre_extent))
     assert len(Node._pyre_extent) == 0
-
 
 
 # end of file 
