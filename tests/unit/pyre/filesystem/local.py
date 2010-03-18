@@ -23,7 +23,22 @@ def test():
 
 # main
 if __name__ == "__main__":
+    import pyre.filesystem
+    # adjust the package metaclasses
+    from pyre.patterns.ExtentAware import ExtentAware
+    pyre.filesystem._metaclass_Node = ExtentAware
+    pyre.filesystem._metaclass_Filesystem = ExtentAware
+
     test()
 
+    # check that the filesystem was destroyed
+    from pyre.filesystem.Filesystem import Filesystem
+    # print("Filesystem extent:", len(Filesystem._pyre_extent))
+    assert len(Filesystem._pyre_extent) == 0
+
+    # now check that the nodes were all destroyed
+    from pyre.filesystem.Node import Node
+    # print("Node extent:", len(Node._pyre_extent))
+    assert len(Node._pyre_extent) == 0
 
 # end of file 

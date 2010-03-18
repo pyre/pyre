@@ -25,13 +25,19 @@ def test():
     # check that we can retrieve it
     assert mga == fs[mpath]
 
-    # now add a subfolder
+    # add a subfolder
     tpath = '/dv/tools'
     tools = fs.newFolder()
     fs.insert(node=tools, path=mpath + tpath)
-
     # and retrieve it
     assert fs[mpath+tpath] == mga[tpath]
+
+    # add a node
+    hello = fs.newNode()
+    tools.insert(node=hello, path="hello.py")
+
+    # dump the contents
+    fs._dump(interactive=False) # switch to True to see the dump
     
     return fs
 
@@ -53,7 +59,7 @@ if __name__ == "__main__":
 
     # now check that the nodes were all destroyed
     from pyre.filesystem.Node import Node
-    # print("VNode extent:", len(VNode._pyre_extent))
+    # print("Node extent:", len(Node._pyre_extent))
     assert len(Node._pyre_extent) == 0
 
 

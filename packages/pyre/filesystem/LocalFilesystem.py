@@ -8,6 +8,7 @@
 
 import os
 import time
+import weakref
 from .Filesystem import Filesystem
 
 
@@ -93,9 +94,9 @@ class LocalFilesystem(Filesystem):
         self.recognizer = recognizer
 
         # storage for information about my nodes
-        # if descendants provide a custom container, use it; otherwise use a dictionary
+        # if descendants provide a custom container, use it; otherwise use a weak dictionary
         # descendants must remember to override self.attach to match the custom container
-        self.vnodes = vnodes or dict()
+        self.vnodes = vnodes or weakref.WeakKeyDictionary()
 
         # insert myself to the vnode table
         self.attach(node=self, info=nodeInfo)
