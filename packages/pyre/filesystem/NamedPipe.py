@@ -15,6 +15,7 @@ class NamedPipe(File):
     """
 
 
+    # interface
     def identify(self, explorer, **kwds):
         """
         Tell {explorer} that it is visiting a named pipe
@@ -22,4 +23,8 @@ class NamedPipe(File):
         return explorer.onNamedPipe(self, **kwds)
 
 
+    # constant
+    marker = 'p'
+
+    
 # end of file 

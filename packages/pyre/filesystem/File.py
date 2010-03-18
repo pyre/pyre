@@ -72,4 +72,8 @@ class File(object):
         return
 
 
+    # constant
+    marker = 'f'
+
+    
 # end of file 

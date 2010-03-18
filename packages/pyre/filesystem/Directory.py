@@ -30,4 +30,8 @@ class Directory(File):
         return explorer.onDirectory(self, **kwds)
 
 
+    # constant
+    marker = 'd'
+
+    
 # end of file 

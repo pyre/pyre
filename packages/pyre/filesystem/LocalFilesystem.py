@@ -49,7 +49,6 @@ class LocalFilesystem(Filesystem):
         for folder in todo:
             # compute the actual location of this directory
             location = self.vnodes[folder].uri
-            print("location:", location)
             # walk through the contents
             for entry in walker.walk(location):
                 # build the absolute path of the entry

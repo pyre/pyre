@@ -15,11 +15,8 @@ Verify that attempts to create local filesystems with nonexistent roots fails as
 def test():
     import pyre.filesystem
 
-    dot = pyre.filesystem.newLocalFilesystem(root="..")
-
-    explorer = pyre.filesystem.newTreeExplorer()
-    for line in explorer.explore(dot):
-        print(line)
+    home = pyre.filesystem.newLocalFilesystem(root="../../../..")
+    home._dump(interactive=False) # change to True to see the dump
 
     return
 

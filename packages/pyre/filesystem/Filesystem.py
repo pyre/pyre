@@ -27,7 +27,7 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
 
 
     # debugging support
-    def _dump(self):
+    def _dump(self, interactive=True):
         """
         Print out my contents using a tree explorer
         """

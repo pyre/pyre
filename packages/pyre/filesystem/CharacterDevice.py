@@ -15,6 +15,7 @@ class CharacterDevice(File):
     """
 
 
+    # interface
     def identify(self, explorer, **kwds):
         """
         Tell {explorer} that it is visiting a character device
@@ -22,4 +23,8 @@ class CharacterDevice(File):
         return explorer.onCharacterDevice(self, **kwds)
 
 
+    # constant
+    marker = 'c'
+
+    
 # end of file 

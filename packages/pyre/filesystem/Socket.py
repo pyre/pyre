@@ -15,6 +15,7 @@ class Socket(File):
     """
 
 
+    # interface
     def identify(self, explorer, **kwds):
         """
         Tell {explorer} that it is visiting a socket
@@ -22,4 +23,8 @@ class Socket(File):
         return explorer.onSocket(self, **kwds)
 
 
+    # constant
+    marker = 's'
+
+    
 # end of file 
