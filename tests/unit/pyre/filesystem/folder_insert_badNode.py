@@ -13,7 +13,7 @@ Verify that node insertion fails when an intermediate path component is not a fo
 
 
 def test():
-    from pyre.filesystem import FolderError
+    from pyre.filesystem import FolderInsertionError
     from pyre.filesystem.Node import Node
     from pyre.filesystem.Folder import Folder
 
@@ -34,7 +34,7 @@ def test():
     try:
         root.insert(path="/home/users/mga/tmp", node=tmp)
         assert False
-    except FolderError as error:
+    except FolderInsertionError as error:
         assert (
             error.message == "error while inserting '/home/users/mga/tmp': 'mga' is not a folder")
 

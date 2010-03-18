@@ -61,8 +61,8 @@ class Folder(Node):
                 break
             # raise an exception if the current node is not a folder
             if not isinstance(current, Folder):
-                from . import FolderError
-                raise FolderError(self._filesystem, self, path, name)
+                raise self.FolderInsertionError(
+                    filesystem=self._filesystem, node=self, path=path, target=name)
 
         # if we get this far, all existing named nodes were folders
         # re-initialize the lookup chain
@@ -144,6 +144,10 @@ class Folder(Node):
 
     # constants
     from . import PATH_SEPARATOR
+
+
+    # exceptions
+    from . import FolderInsertionError
 
 
 # end of file 

@@ -13,14 +13,16 @@ PROJECT = pyre
 
 all: test
 
-test: sanity nodes filesystem explorers
+test: sanity folders filesystem explorers
 
 sanity:
 	${PYTHON} ./sanity.py
-
-nodes:
 	${PYTHON} ./node.py
 	${PYTHON} ./folder.py
+	${PYTHON} ./directory_walker.py
+	${PYTHON} ./stat_recognizer.py
+
+folders:
 	${PYTHON} ./folder_insert.py
 	${PYTHON} ./folder_insert_multiple.py
 	${PYTHON} ./folder_insert_badNode.py
