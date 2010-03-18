@@ -15,6 +15,14 @@ class Directory(File):
     """
 
 
+    # interface
+    def isDirectory(self):
+        """
+        Quick check of whether this node represents a folder or not
+        """
+        return True
+
+
     def identify(self, explorer, **kwds):
         """
         Tell {explorer} that it is visiting a directory

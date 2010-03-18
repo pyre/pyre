@@ -6,17 +6,59 @@
 #
 
 
-# factories
-def newLocalFilesystem(walker=None, **kwds):
-    from .LocalFilesystem import LocalFilesystem
+import os
 
-    # build a walker, if necessary
+
+# factories for filesystems
+def newLocalFilesystem(root, walker=None, recognizer=None, **kwds):
+    """
+    Factory for a local filesystem, i.e. one that encapsulates the contents of a filesystem
+    that is mounted on the machine that hosts the caller's process
+    
+    parameters:
+        {root}: the directory to use as the root of the new filesystem
+        {walker}: the mechanism that lists the contents of directories
+        {recognizer}: the mechanism that identifies the types of files
+    """
+
+    # build a walker and a recognizer, if necessary
     walker = walker or newDirectoryWalker()
+    recognizer = recognizer or newStatRecognizer()
+
+    # ensure that {root} is an absolute path so that we can protect the filesystem
+    # representation in case the application manipulates the current working directory of the
+    # process
+    root = os.path.abspath(root)
+    # check that it is an existing path
+    try:
+        directory = recognizer.recognize(root)
+    except OSError:
+        raise MountPointError(path=root, error="mount point not found")
+    # verify it is a directory
+    from .Directory import Directory
+    if not isinstance(directory, Directory):
+        raise MountPointError(path=root, error="mount point is not a directory")
+
+    # NYI:
+    # check that we have read/execute permissions so we can get the directory listing
+    # let it be for now, so i can figure out what exceptions get generated
+
+    # build the filesystem
+    from .LocalFilesystem import LocalFilesystem
+    fs = LocalFilesystem(nodeInfo=directory, walker=walker, recognizer=recognizer, **kwds)
+    # populate it
+    fs.sync()
+    # and return it to the caller
+    return fs
 
 
-    return LocalFilesystem(**kwds)
+def newVirtualFilesystem(**kwds):
+    from .Filesystem import Filesystem
+    return Filesystem(**kwds)
 
 
+
+# other factories
 def newSimpleExplorer(**kwds):
     from .SimpleExplorer import SimpleExplorer
     return SimpleExplorer(**kwds)
@@ -25,11 +67,6 @@ def newSimpleExplorer(**kwds):
 def newTreeExplorer(**kwds):
     from .TreeExplorer import TreeExplorer
     return TreeExplorer(**kwds)
-
-
-def newVirtualFilesystem(**kwds):
-    from .Filesystem import Filesystem
-    return Filesystem(**kwds)
 
 
 def newDirectoryWalker(**kwds):
@@ -67,6 +104,18 @@ class DirectoryListingError(GenericError):
     def __init__(self, path, error, **kwds):
         msg = "error while accessing {0!r}: {1}".format(path, error)
         super().__init__(message=msg, **kwds)
+        self.path = path
+        return
+
+
+class MountPointError(GenericError):
+    """
+    Exception generated when the root of a filesystem is invalid
+    """
+
+    def __init__(self, path, error):
+        msg = "error while mounting {0!r}: {1}".format(path, error)
+        super().__init__(message=msg)
         self.path = path
         return
 

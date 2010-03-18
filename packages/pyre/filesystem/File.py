@@ -6,6 +6,9 @@
 #
 
 
+import stat
+
+
 class File(object):
     """
     The base class for local filesystem entries
@@ -26,6 +29,13 @@ class File(object):
 
 
     # interface
+    def isDirectory(self):
+        """
+        Quick check of whether this node represents a folder or not
+        """
+        return False
+
+
     def identify(self, explorer, **kwds):
         """
         Tell {explorer} that it is visiting a file
@@ -33,7 +43,6 @@ class File(object):
         return explorer.onFile(self, **kwds)
 
 
-    # interface
     def decorate(self, info):
         """
         Extract useful file metadata from a stat-compatible data structure
@@ -52,9 +61,11 @@ class File(object):
 
 
     # meta methods
-    def __init__(self, info=None, **kwds):
-        super.__init__(**kwds)
+    def __init__(self, uri, info=None, **kwds):
+        super().__init__(**kwds)
 
+        # attach my uri
+        self.uri = uri
         # extract the file metadata from info
         info and self.decorate(info)
 

@@ -42,22 +42,21 @@ class StatRecognizer(Recognizer):
 
         # walk through the cases
         if stat.S_ISREG(mode):
-            return File, meta
+            return File(uri=entry, info=meta)
         elif stat.S_ISDIR(mode):
-            return Directory, meta
+            return Directory(uri=entry, info=meta)
         elif stat.S_ISSOCK(mode):
-            return Socket, meta
-        elif stat.S_ISFIFO(mode):
-            return NamedPipe, meta
-        elif stat.S_ISCHR(mode):
-            return CharacterDevice, meta
+            return Socket(uri=entry, info=meta)
         elif stat.S_ISBLK(mode):
-            return BlockDevice, meta
+            return BlockDevice(uri=entry, info=meta)
+        elif stat.S_ISCHR(mode):
+            return CharacterDevice(uri=entry, info=meta)
+        elif stat.S_ISFIFO(mode):
+            return NamedPipe(uri=entry, info=meta)
 
         import journal
         msg = "unknown file type: mode={0}".format(mode)
         return journal.firewall("pyre.filesystem").log(msg)
-
 
 
 # end of file 

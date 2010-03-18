@@ -32,6 +32,9 @@ folders:
 filesystem:
 	${PYTHON} ./filesystem.py
 	${PYTHON} ./filesystem_access.py
+	${PYTHON} ./local.py
+	${PYTHON} ./local_rootNonexistent.py
+	${PYTHON} ./local_rootNotDirectory.py
 
 explorers:
 	${PYTHON} ./simple_explorer.py

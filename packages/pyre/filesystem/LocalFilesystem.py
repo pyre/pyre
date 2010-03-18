@@ -49,13 +49,23 @@ class LocalFilesystem(Filesystem):
         for folder in todo:
             # compute the actual location of this directory
             location = self.vnodes[folder].uri
+            print("location:", location)
             # walk through the contents
             for entry in walker.walk(location):
                 # build the absolute path of the entry
                 address = os.path.join(location, entry)
-                # recognize the file
-                factory, metadata = recognizer.recognize(address)
-            
+                # recognize the file and timestap it
+                nodeInfo = recognizer.recognize(address)
+                nodeInfo.syncTime = timestamp
+                # decide what kind of node to build
+                if nodeInfo.isDirectory():
+                    node = self.newFolder()
+                    todo.append(node)
+                else:
+                    node = self.newNode()
+                # insert the node in my contents and attach the file info in my vnodes table
+                folder.contents[entry] = node
+                self.attach(node=node, info=nodeInfo)
 
         return
 
@@ -76,7 +86,7 @@ class LocalFilesystem(Filesystem):
 
 
     # meta methods
-    def __init__(self, info, recognizer, walker, vnodes=None, **kwds):
+    def __init__(self, nodeInfo, recognizer, walker, vnodes=None, **kwds):
         super().__init__(**kwds)
 
         # register the discovery mechanisms
@@ -89,7 +99,7 @@ class LocalFilesystem(Filesystem):
         self.vnodes = vnodes or dict()
 
         # insert myself to the vnode table
-        self.attach(node=self, info=info)
+        self.attach(node=self, info=nodeInfo)
 
         return
 
