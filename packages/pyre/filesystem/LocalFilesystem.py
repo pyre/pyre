@@ -6,6 +6,8 @@
 #
 
 
+import os
+import time
 from .Filesystem import Filesystem
 
 
@@ -19,13 +21,42 @@ class LocalFilesystem(Filesystem):
 
 
     # public data
+    walker = None # the directory listing mechanism
+    recognizer = None # the file type recognizer
+
     @property
     def mountpoint(self):
+        """
+        The location of my root
+        """
         return self.vnodes[self].uri
 
 
     # interface
-    def sync(self):
+    def sync(self, walker=None, recognizer=None):
+        """
+        Traverse my directory structure and refresh my contents so that they match the
+        underlying filesystem
+        """
+        # create a timestamp
+        timestamp = time.gmtime()
+        # use the explicitly supplied traversal support, if available
+        walker = walker or self.walker
+        recognizer = recognizer or self.recognizer
+        # initialize the traversal at my root
+        todo = [ self ]
+        # and start walking and recognizing
+        for folder in todo:
+            # compute the actual location of this directory
+            location = self.vnodes[folder].uri
+            # walk through the contents
+            for entry in walker.walk(location):
+                # build the absolute path of the entry
+                address = os.path.join(location, entry)
+                # recognize the file
+                factory, metadata = recognizer.recognize(address)
+            
+
         return
 
 
@@ -45,8 +76,12 @@ class LocalFilesystem(Filesystem):
 
 
     # meta methods
-    def __init__(self, root, info, recognizer, walker, vnodes=None, **kwds):
+    def __init__(self, info, recognizer, walker, vnodes=None, **kwds):
         super().__init__(**kwds)
+
+        # register the discovery mechanisms
+        self.walker = walker
+        self.recognizer = recognizer
 
         # storage for information about my nodes
         # if descendants provide a custom container, use it; otherwise use a dictionary
