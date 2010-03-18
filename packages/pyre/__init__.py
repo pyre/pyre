@@ -65,7 +65,7 @@ def version():
 
 
 # license
-_pyre_version = "1.0"
+_pyre_version = (1, 0, 0)
 
 _pyre_copyright = "pyre: Copyright (c) 1998-2010 Michael A.G. Aïvázis"
 

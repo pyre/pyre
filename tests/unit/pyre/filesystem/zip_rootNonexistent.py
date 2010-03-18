@@ -15,15 +15,11 @@ Verify that attempts to create local filesystems with nonexistent roots fails as
 def test():
     import pyre.filesystem
 
-    dummy = "./local_rootNotDirectory.py"
     try:
-        fs = pyre.filesystem.newLocalFilesystem(root=dummy)
+        pyre.filesystem.newZipFilesystem(root="/@")
         assert False
     except pyre.filesystem.MountPointError as error:
-        import os
-        target = os.path.abspath(dummy)
-        assert str(error) == (
-            "error while mounting {0!r}: mount point is not a directory".format(target))
+        assert str(error) == "error while mounting '/@': mount point is not a zipfile"
 
     return
 

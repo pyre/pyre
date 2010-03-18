@@ -20,6 +20,14 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
     mountpoint = "/"
 
 
+    # interface
+    def sync(self):
+        """
+        Populate the filesystem by reading the external source it represents
+        """
+        return self
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(filesystem=self, **kwds)

@@ -5,6 +5,17 @@
 # (c) 1998-2010 all rights reserved
 #
 
+"""
+Support and implementation for a variety of filesystem objects
+
+Explain typical creation/use workflow
+
+Explain virtual, local, remote filesystems
+
+Explain logical structure vs. physical resources
+
+Explain explorers
+"""
 
 import os
 
@@ -53,28 +64,74 @@ def newLocalFilesystem(root, walker=None, recognizer=None, **kwds):
 
 
 def newVirtualFilesystem(**kwds):
+    """
+    Factory for a virtual filesystem, i.e. one whose contents are not necessarily physical
+    resources
+
+    Virtual filesystems are useful as abstract namespaces that decouple the physical location
+    of resources from the identifiers that application use to refer to them
+    """
     from .Filesystem import Filesystem
     return Filesystem(**kwds)
 
 
+def newZipFilesystem(root, recognizer=None, **kwds):
+    """
+    Factory for a filesystem object that serves the contents of a zipfile
+
+    parameters:
+        {root}: the path to the zipfile
+    """
+
+    # ensure that root is absolute, just in case the app changes the current working directory
+    root = os.path.abspath(root)
+    # check that it is a zipfile
+    import zipfile
+    if not zipfile.is_zipfile(root):
+        raise MountPointError(path=root, error="mount point is not a zipfile")
+    # get the recognizer to build an info object for the archive
+    recognizer = recognizer or newStatRecognizer()
+    info = recognizer.recognize(root)
+
+    # build the file system
+    from .ZipFilesystem import ZipFilesystem
+    fs = ZipFilesystem(info=info)
+    # populate it
+    fs.sync()
+    # and retur it
+    return fs
+
 
 # other factories
+
 def newSimpleExplorer(**kwds):
+    """
+    Create a filesystem explorer that creates a simple report of the filesystem contents
+    """
     from .SimpleExplorer import SimpleExplorer
     return SimpleExplorer(**kwds)
 
 
 def newTreeExplorer(**kwds):
+    """
+    Create a filesystem explorer that creates a tree-like report of the filesystem contents
+    """
     from .TreeExplorer import TreeExplorer
     return TreeExplorer(**kwds)
 
 
 def newDirectoryWalker(**kwds):
+    """
+    Mechanism for listing the contents of local directories
+    """
     from .DirectoryWalker import DirectoryWalker
     return DirectoryWalker(**kwds)
 
 
 def newStatRecognizer(**kwds):
+    """
+    Mechanism for extracting information about local files
+    """
     from .StatRecognizer import StatRecognizer
     return StatRecognizer(**kwds)
 

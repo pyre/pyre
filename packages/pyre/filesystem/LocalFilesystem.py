@@ -67,7 +67,7 @@ class LocalFilesystem(Filesystem):
                 folder.contents[entry] = node
                 self.attach(node=node, info=nodeInfo)
 
-        return
+        return self
 
 
     # implementation details

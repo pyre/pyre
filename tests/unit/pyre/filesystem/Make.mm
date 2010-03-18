@@ -35,6 +35,9 @@ filesystem:
 	${PYTHON} ./local.py
 	${PYTHON} ./local_rootNonexistent.py
 	${PYTHON} ./local_rootNotDirectory.py
+	${PYTHON} ./zip.py
+	${PYTHON} ./zip_rootNonexistent.py
+	${PYTHON} ./zip_rootNotZipfile.py
 
 explorers:
 	${PYTHON} ./simple_explorer.py

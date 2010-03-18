@@ -36,6 +36,7 @@ EXPORT_PYTHON_MODULES = \
     Socket.py \
     StatRecognizer.py \
     TreeExplorer.py \
+    ZipFilesystem.py \
     __init__.py
 
 

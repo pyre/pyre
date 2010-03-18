@@ -8,14 +8,15 @@
 
 
 """
-Create and dump a local filesystem
+Verify creation of filesystems based on zipfiles
 """
 
 
 def test():
     import pyre.filesystem
 
-    home = pyre.filesystem.newLocalFilesystem(root="../../../..")
+    # NYI: replace this with (a dunamically generated) pyre-1.0.zip
+    home = pyre.filesystem.newZipFilesystem(root="/Users/mga/tmp/pyre-1.0.zip")
     home._dump(interactive=False) # change to True to see the dump
 
     return
