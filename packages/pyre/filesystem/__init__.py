@@ -18,6 +18,45 @@ Explain explorers
 """
 
 import os
+import re
+
+# NYI:
+# it looks like the filesystem creation logic is complicated enough that there should be
+# a filesystem factory object, perhaps a singleton, so that there is a chance to simplify
+
+# NYI:
+# teach explorers to ask the filesystem for the file type marker
+
+# top level factory
+def newFilesystem(uri=None, **kwds):
+    """
+    Create a new filesystem object whose type is appropriate for the given uri
+
+    parameters: 
+        {uri}: a specification of the root of the filesystem that may include information about
+        the type of filesystem required
+    """
+
+    # a missing uri implies a virtual filesystem
+    if uri is None:
+        return newVirtualFilesystem(**kwds)
+    # attempt to parse {uri}
+    spec = uriRecognizer.match(uri)
+    if spec is None:
+        raise MountPointError(path=uri, error="unrecognizable URI specification")
+    # extract the method
+    method = spec.group("method")
+    if method is None:
+        method = "file"
+    else:
+        method = method.strip().lower()
+    # lookup the method handler and invoke it
+    try:
+        return registry[method](root=spec.group("address"), **kwds)
+    except KeyError:
+        pass
+    # otherwise
+    raise MountPointError(path=uri, message="unrecognizable URI specification")
 
 
 # factories for filesystems
@@ -31,6 +70,9 @@ def newLocalFilesystem(root, walker=None, recognizer=None, **kwds):
         {walker}: the mechanism that lists the contents of directories
         {recognizer}: the mechanism that identifies the types of files
     """
+    # NYI:
+    # check that we have read/execute permissions so we can get the directory listing
+    # let it be for now, so i can figure out what exceptions get generated
 
     # build a walker and a recognizer, if necessary
     walker = walker or newDirectoryWalker()
@@ -42,28 +84,35 @@ def newLocalFilesystem(root, walker=None, recognizer=None, **kwds):
     root = os.path.abspath(root)
     # check that it is an existing path
     try:
-        directory = recognizer.recognize(root)
+        node = recognizer.recognize(root)
     except OSError:
         raise MountPointError(path=root, error="mount point not found")
     # verify it is a directory
+    from .File import File
     from .Directory import Directory
-    if not isinstance(directory, Directory):
-        raise MountPointError(path=root, error="mount point is not a directory")
+    if isinstance(node, Directory):
+        # build the filesystem
+        from .LocalFilesystem import LocalFilesystem
+        fs = LocalFilesystem(nodeInfo=node, walker=walker, recognizer=recognizer, **kwds)
+        # populate it
+        fs.sync()
+        # and return it to the caller
+        return fs
+    elif isinstance(node, File):
+        import zipfile
+        if zipfile.is_zipfile(root):
+            # build the file system
+            from .ZipFilesystem import ZipFilesystem
+            fs = ZipFilesystem(info=info)
+            # populate it
+            fs.sync()
+            # and return it
+            return fs
+    # otherwise
+    raise MountPointError(path=root, error="invalid mount point")
 
-    # NYI:
-    # check that we have read/execute permissions so we can get the directory listing
-    # let it be for now, so i can figure out what exceptions get generated
 
-    # build the filesystem
-    from .LocalFilesystem import LocalFilesystem
-    fs = LocalFilesystem(nodeInfo=directory, walker=walker, recognizer=recognizer, **kwds)
-    # populate it
-    fs.sync()
-    # and return it to the caller
-    return fs
-
-
-def newVirtualFilesystem(**kwds):
+def newVirtualFilesystem(root='/', **kwds):
     """
     Factory for a virtual filesystem, i.e. one whose contents are not necessarily physical
     resources
@@ -98,7 +147,7 @@ def newZipFilesystem(root, recognizer=None, **kwds):
     fs = ZipFilesystem(info=info)
     # populate it
     fs.sync()
-    # and retur it
+    # and return it
     return fs
 
 
@@ -192,6 +241,10 @@ class FilesystemError(GenericError):
 
 
 class FolderInsertionError(FilesystemError):
+    """
+    Exception raised when attempting to insert a node in a filsystem and the target node is not
+    a folder
+    """
 
     def __init__(self, path, target, **kwds):
         msg = "error while inserting {0!r}: {1!r} is not a folder".format(path, target)
@@ -201,12 +254,37 @@ class FolderInsertionError(FilesystemError):
         return
 
 
+class URISpecificationError(GenericError):
+    """
+    Exception raised when the supplied uri cannot be decoded
+    """
+
+    def __init__(self, uri, **kwds):
+        super().__init__(**kwds)
+        self.uri = uri
+        return
+
+
 # package constants
 PATH_SEPARATOR = '/'
 
 
-# debugging support
+# other implementation details
+uriRecognizer = re.compile(r"((?P<method>[^:]+)://)?(?P<address>.*)")
+
+registry = {
+    None: newLocalFilesystem,
+    "vfs": newVirtualFilesystem,
+    "file": newLocalFilesystem,
+    "zip": newZipFilesystem,
+    }
+
+
+# debugging support: 
+#     import the package and set to something else, e.g. pyre.patterns.ExtentAware
+#     to change the runtime behavior of these objects
 _metaclass_Node = type
 _metaclass_Filesystem = type
+
 
 # end of file 
