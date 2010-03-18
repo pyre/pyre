@@ -87,7 +87,7 @@ def newLocalFilesystem(root, walker=None, recognizer=None, **kwds):
         node = recognizer.recognize(root)
     except OSError:
         raise MountPointError(path=root, error="mount point not found")
-    # verify it is a directory
+    # verify it is a directory; i really don't like code like this...
     from .File import File
     from .Directory import Directory
     if isinstance(node, Directory):
@@ -204,7 +204,7 @@ class GenericError(Exception):
 
 class DirectoryListingError(GenericError):
     """
-    Exception raised when something goes wrong with listing the contents of a local dierctory
+    Exception raised when something goes wrong with listing the contents of a local directory
     """
 
     def __init__(self, path, error, **kwds):
