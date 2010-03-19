@@ -58,15 +58,18 @@ class FileServer(Filesystem):
         try:
             # so invoke it to build the filesystem for us
             self.systemfs = pyre.filesystem.newFilesystem(pyre.prefix())
-            # hunt down the depository subdirectory
         except pyre.filesystem.GenericError:
+            # if this failed, just create a new empty folder
             system = self.newFolder()
         else:
             try:
+                # hunt down the depository subdirectory
                 system = self.systemfs.find("depository")
             except KeyError:
+                # hmm... why is this dierctory missing from the distribution?
+                # moving on...
                 system = self.newFolder()
-       # mount this directory as /system
+       # mount the system directory
         self.insert(node=system, path="pyre/system")
 
         # now, mount the user's home directory
