@@ -39,7 +39,7 @@ def test():
         "              (f) libhello.a",
         ]
 
-    return
+    return fs, explorer
 
 
 # main

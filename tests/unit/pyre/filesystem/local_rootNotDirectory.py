@@ -17,13 +17,13 @@ def test():
 
     dummy = "./local_rootNotDirectory.py"
     try:
-        fs = pyre.filesystem.newLocalFilesystem(root=dummy)
+        pyre.filesystem.newLocalFilesystem(root=dummy)
         assert False
     except pyre.filesystem.MountPointError as error:
         import os
         target = os.path.abspath(dummy)
         assert str(error) == (
-            "error while mounting {0!r}: mount point is not a directory".format(target))
+            "error while mounting {0!r}: invalid mount point".format(target))
 
     return
 

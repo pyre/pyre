@@ -19,7 +19,7 @@ def test():
     home = pyre.filesystem.newZipFilesystem(root="/Users/mga/tmp/pyre-1.0.zip")
     home._dump(interactive=False) # change to True to see the dump
 
-    return
+    return home
 
 
 # main

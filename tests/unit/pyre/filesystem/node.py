@@ -29,7 +29,7 @@ def test():
     assert children == 0
 
     # all done
-    return
+    return node
 
 
 # main

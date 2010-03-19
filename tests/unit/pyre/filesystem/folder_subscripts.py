@@ -47,7 +47,7 @@ def test():
     assert root["/home/users/mga"] == mga
 
     # all done
-    return
+    return root
 
 
 # main

@@ -44,7 +44,7 @@ def test():
     assert users.contents["mga"] == mga
 
     # all done
-    return
+    return root
 
 
 # main

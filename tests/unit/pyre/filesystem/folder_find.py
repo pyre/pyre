@@ -36,7 +36,7 @@ def test():
     assert mga == target
 
     # all done
-    return
+    return root
 
 
 # main

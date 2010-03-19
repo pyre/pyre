@@ -44,7 +44,7 @@ def test():
     assert home == folder.contents["home"]
 
     # all done
-    return
+    return folder
 
 
 # main

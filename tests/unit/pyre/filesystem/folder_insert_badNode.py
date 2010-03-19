@@ -39,7 +39,7 @@ def test():
             error.message == "error while inserting '/home/users/mga/tmp': 'mga' is not a folder")
 
     # all done
-    return
+    return root
 
 
 # main

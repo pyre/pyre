@@ -33,6 +33,7 @@ filesystem:
 	${PYTHON} ./filesystem.py
 	${PYTHON} ./filesystem_access.py
 	${PYTHON} ./local.py
+	${PYTHON} ./local_find.py
 	${PYTHON} ./local_rootNonexistent.py
 	${PYTHON} ./local_rootNotDirectory.py
 	${PYTHON} ./zip.py
