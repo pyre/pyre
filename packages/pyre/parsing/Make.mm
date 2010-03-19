@@ -5,18 +5,9 @@
 # (c) 1998-2010 all rights reserved
 #
 
-
 PROJECT = pyre
-PACKAGE = pyre
-PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
-
-RECURSE_DIRS = \
-    calc \
-    filesystem \
-    framework \
-    parsing \
-    patterns \
-    tracking \
+PACKAGE = parsing
+PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------
@@ -24,24 +15,15 @@ RECURSE_DIRS = \
 
 all: export
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
-
-clean::
-	BLD_ACTION="clean" $(MM) recurse
-
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
-
-
 #--------------------------------------------------------------------------
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Parser.py \
+    Scanner.py \
     __init__.py
 
 
-export:: export-python-modules
-	BLD_ACTION="export" $(MM) recurse
+export:: export-package-python-modules
 
 # end of file 
