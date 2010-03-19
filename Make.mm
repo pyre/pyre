@@ -34,7 +34,7 @@ distclean::
 
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
 
-zip:
+zip: tidy
 	zip -r ${PYRE_ZIP} packages depository -x \*Make.mm 
 
 

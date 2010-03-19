@@ -6,7 +6,10 @@
 #
 
 
-class NameServer(object):
+from pyre.filesystem.Filesystem import Filesystem
+
+
+class NameServer(Filesystem):
 
     """
     The manager of the virtual filesystem
@@ -35,6 +38,39 @@ class NameServer(object):
     developer can refer to resources through their standardized logical names, whereas the user
     is free to provide the mapping that reflects their physical location at runtime.
     """
+
+
+    # meta methods
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+
+        # access the symbols we need
+        import pyre
+        import pyre.filesystem
+
+        # first, mount the system directory
+        # there are two possibilities
+        #  - it is an actual location on the disk
+        #  - it is inside a zip file
+        # the way to tell is by checking whether pyre.prefix() points to an actual directory
+        # both are handled correctly by the pyre.filesystem.newFilesystem factory
+        try:
+            # so invoke it to build the filesystem for us
+            self.prefixfs = pyre.filesystem.newFilesystem(pyre.prefix())
+            # hunt down the depository subdirectory
+        except pyre.filesystem.GenericError:
+            system = self.newFolder()
+        else:
+            try:
+                system = self.prefixfs.find("depository")
+            except KeyError:
+                system = self.newFolder()
+       # mount this directory as /system
+        self.insert(node=system, path="system")
+
+        # now, mount the user's home directory
+
+        return
 
 
 # end of file 

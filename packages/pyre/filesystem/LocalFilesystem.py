@@ -86,7 +86,7 @@ class LocalFilesystem(Filesystem):
 
 
     # meta methods
-    def __init__(self, nodeInfo, recognizer, walker, vnodes=None, **kwds):
+    def __init__(self, info, recognizer, walker, vnodes=None, **kwds):
         super().__init__(**kwds)
 
         # register the discovery mechanisms
@@ -99,7 +99,7 @@ class LocalFilesystem(Filesystem):
         self.vnodes = vnodes or weakref.WeakKeyDictionary()
 
         # insert myself to the vnode table
-        self.attach(node=self, info=nodeInfo)
+        self.attach(node=self, info=info)
 
         return
 

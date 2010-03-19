@@ -7,11 +7,21 @@
 
 
 PROJECT = pyre
+PACKAGE = depository
 
 #--------------------------------------------------------------------------
 #
 
-all: tidy
+all: export
+
+#--------------------------------------------------------------------------
+#
+
+EXPORT_ETCDIR = $(EXPORT_ROOT)
+EXPORT_ETC = \
+    pyre.pcs
+
+export:: export-etc
 
 
 # end of file 
