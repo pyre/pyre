@@ -67,7 +67,7 @@ class FileServer(Filesystem):
             except KeyError:
                 system = self.newFolder()
        # mount this directory as /system
-        self.insert(node=system, path="system")
+        self.insert(node=system, path="pyre/system")
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
@@ -77,7 +77,7 @@ class FileServer(Filesystem):
         except pyre.filesystem.GenericError:
             self.userfs = self.newFolder()
        # mount this directory as /user
-        self.insert(node=self.userfs, path="user")
+        self.insert(node=self.userfs, path="pyre/user")
 
         return
 
