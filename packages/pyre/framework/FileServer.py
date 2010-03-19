@@ -10,16 +10,16 @@ import os
 from pyre.filesystem.Filesystem import Filesystem
 
 
-class NameServer(Filesystem):
+class FileServer(Filesystem):
 
     """
     The manager of the virtual filesystem
 
-    Intances of NameServer manage hierarchical namespaces implemented as a virtual
+    Intances of FileServer manage hierarchical namespaces implemented as a virtual
     filesystem. The contents of these namespaces are retrieved using URIs, and can be arbitrary
     objects, although they are typically either local or remote files.
 
-    The framework uses a NameServer instance to decouple the logical names of resources from
+    The framework uses a FileServer instance to decouple the logical names of resources from
     their physical locations at runtime. For example, as part of the bootstrapping process, the
     frameworks discovers the pyre installation directory; the persistent store for the default
     component configurations is a subdirectory of that location and it is mounted as '/system'

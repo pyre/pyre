@@ -20,7 +20,7 @@ sanity:
 
 framework:
 	${PYTHON} ./executive.py
-	${PYTHON} ./executive_nameserver.py
+	${PYTHON} ./executive_fileserver.py
 
 
 # end of file 

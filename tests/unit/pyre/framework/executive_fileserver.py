@@ -8,7 +8,7 @@
 
 
 """
-Execrices the nameserver
+Execrices the fileserver
 """
 
 
@@ -17,8 +17,8 @@ def test():
     # build the executive
     executive = pyre.framework.executive()
 
-    # access the nameserver
-    ns = executive.nameserver
+    # access the fileserver
+    ns = executive.fileserver
     assert ns is not None
 
     # get hold of the system node

@@ -31,7 +31,7 @@ class Executive(object):
         super().__init__(**kwds)
 
         # my virtual filesystem
-        self.nameserver = pyre.framework.newNameServer()
+        self.fileserver = pyre.framework.newFileServer()
 
         return
 

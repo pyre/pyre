@@ -30,9 +30,9 @@ def executive(**kwds):
 
 
 # factories for other managers
-def newNameServer(**kwds):
-    from .NameServer import NameServer
-    return NameServer(**kwds)
+def newFileServer(**kwds):
+    from .FileServer import FileServer
+    return FileServer(**kwds)
 
 
 # end of file 
