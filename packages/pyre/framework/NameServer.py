@@ -6,6 +6,7 @@
 #
 
 
+import os
 from pyre.filesystem.Filesystem import Filesystem
 
 
@@ -56,21 +57,33 @@ class NameServer(Filesystem):
         # both are handled correctly by the pyre.filesystem.newFilesystem factory
         try:
             # so invoke it to build the filesystem for us
-            self.prefixfs = pyre.filesystem.newFilesystem(pyre.prefix())
+            self.systemfs = pyre.filesystem.newFilesystem(pyre.prefix())
             # hunt down the depository subdirectory
         except pyre.filesystem.GenericError:
             system = self.newFolder()
         else:
             try:
-                system = self.prefixfs.find("depository")
+                system = self.systemfs.find("depository")
             except KeyError:
                 system = self.newFolder()
        # mount this directory as /system
         self.insert(node=system, path="system")
 
         # now, mount the user's home directory
+        # the default location of user preferences is in ~/.pyre
+        try:
+            # make filesystem out of the preference directory
+            self.userfs = pyre.filesystem.newFilesystem(os.path.expanduser(self.DOT_PYRE))
+        except pyre.filesystem.GenericError:
+            self.userfs = self.newFolder()
+       # mount this directory as /user
+        self.insert(node=self.userfs, path="user")
 
         return
+
+
+    # constants
+    DOT_PYRE = "~/.pyre"
 
 
 # end of file 

@@ -25,6 +25,13 @@ def test():
     system = ns["/system"]
     assert system is not None
 
+    # get hold of the user node
+    user = ns["/user"]
+    assert user is not None
+
+    # dump the filesystem
+    ns._dump(True) # swicth to True to see the dump
+
     # all done
     return executive
 
