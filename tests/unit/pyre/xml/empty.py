@@ -22,6 +22,9 @@ class Filesystem(Node):
     def notify(self, parent, locator):
         """do nothing"""
 
+    def __init__(self, parent, attributes):
+        """do nothing"""
+
 
 class FSD(Document):
     """Document class"""

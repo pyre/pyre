@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     AbstractMetaclass.py \
+    AttributeClassifier.py \
     ExtentAware.py \
     Observable.py \
     Named.py \

@@ -13,6 +13,8 @@ class Node(object):
 
 
     # public data
+    tag = None
+    elements = ()
 
 
     # interface
@@ -53,6 +55,7 @@ class Node(object):
 
 
     # private data
+    _nodeIndex = None
 
 
 # end of file 

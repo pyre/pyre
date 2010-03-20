@@ -23,6 +23,7 @@ sanity:
 documents:
 	${PYTHON} ./blank.py
 	${PYTHON} ./empty.py
+	${PYTHON} ./fs.py
 
 
 # end of file 
