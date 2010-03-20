@@ -5,9 +5,8 @@
 # (c) 1998-2010 all rights reserved
 #
 
-
 PROJECT = pyre
-PACKAGE = patterns
+PACKAGE = parsing
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
@@ -20,12 +19,8 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    AbstractMetaclass.py \
-    AttributeClassifier.py \
-    ExtentAware.py \
-    Observable.py \
-    Named.py \
-    Singleton.py \
+    Parser.py \
+    Scanner.py \
     __init__.py
 
 

@@ -14,8 +14,10 @@ RECURSE_DIRS = \
     calc \
     filesystem \
     framework \
+    parsing \
     patterns \
     tracking \
+    xml \
 
 
 #--------------------------------------------------------------------------

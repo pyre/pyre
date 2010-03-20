@@ -11,6 +11,8 @@ PROJECT = pyre
 RECURSE_DIRS = \
     patterns \
     tracking \
+    parsing \
+    xml \
     calc \
     filesystem \
     framework \
