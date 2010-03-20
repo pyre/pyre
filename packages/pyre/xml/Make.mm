@@ -19,6 +19,11 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    DTD.py \
+    Document.py \
+    ElementDescriptor.py \
+    Node.py \
+    Reader.py \
     __init__.py
 
 

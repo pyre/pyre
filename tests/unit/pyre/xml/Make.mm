@@ -13,10 +13,16 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity documents
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./reader.py
+	${PYTHON} ./document.py
+
+documents:
+	${PYTHON} ./blank.py
+	${PYTHON} ./empty.py
 
 
 # end of file 

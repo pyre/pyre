@@ -6,4 +6,141 @@
 #
 
 
+"""
+This package contains the machinery to build parsers of XML documents
+
+The goal of this package is to enable context-specific processing of the information content of
+the XML file. It is designed to provide support for aplications that use XML files as an
+information exchange mechanism and consider parsing the XML file as another means for
+decorating their data structures.
+
+There are two styles of processing the contents of XML files in common use that go by the names
+DOM and SAX. DOM processing is generally considered to be the simplest way. It constructs a
+representation of the entire file with a single function call to the parser and returns a data
+structure that has a very faithful representation of the layout of the file, along with a rich
+interface for navigating through the representation and discovering its content. In contrast,
+SAX parsing is event driven. The parser scans through the document and generates events for
+each significant encounter with the document contents, such the opening or closing of an XML
+tag, or encountering data in the body of a tag. The client interacts with the parser by
+registering handlers for each type of event that are responsible for absorbing the information
+collected by te parser. This trades some complexity in the handling of the document for the
+savings of not needing to buld and subsequently navigate through an intermediate data
+structure.
+
+Overall, SAX style document parsing should be faster and more space efficient for most uses. It
+also opens up the possiblity that an application can implement its event handlers in a way that
+directly decorate its own internal data structures. The purpose of this package is to help
+minimize the code complexity required to craft event handlers and register them with the
+parser.
+
+As a prototypical example, consider an address book application that maintains contact
+information for friends and clients. Such an application is likely to have a rather extensive
+set of classes that handle the various type of contacts and their associated information. The
+addressbook is likely some type of container of such classes. Support for retrieving contact
+information from XML files ideally should be just another way to construct the application
+specific data structures and adding them to the addressbook container. The application
+developer should be shielded as much as possible from the mechanics of parsing XML files and
+the intermediate data structures necessary to store the file contents.
+
+The application in the examples directory is a trivial implementation of an addressbook but
+highlights all the important steps for creating handlers/decorators for converting XML files
+into live data structures.
+"""
+
+
+# factories
+def newReader(**kwds):
+    """
+    Create a new reader
+    """
+    from .Reader import Reader
+    return Reader(**kwds)
+
+
+# tag descriptors
+def element(**kwds):
+    """
+    Declare a descriptor that corresponds to a valid tag in the XML document.
+
+    Descriptors provide the connection between the name of the tag and the Node descendant that
+    knows how to handle the contained information
+    """
+    from .ElementDescriptor import ElementDescriptor
+    return ElementDescriptor(**kwds)
+
+
+# exceptions
+class ParsingError(Exception):
+    """
+    Base class for parsing errors
+    """
+
+    def __init__(self, parser, document, description, locator=None, **kwds):
+        super().__init__(**kwds)
+        self.parser = parser
+        self.document = document
+        self.description = description
+
+        if locator:
+            import pyre.tracking
+            self.locator = pyre.tracking.newFileLocator(
+                source=locator.getSystemId(), 
+                line=locator.getLineNumber(),
+                column=locator.getColumnNumber())
+        else:
+            self.locator = None
+
+        return
+
+    def __str__(self):
+        if self.locator:
+            return "{0}: {1}".format(str(self.locator), self.description)
+
+        return self.description
+
+
+class UnsupportedFeatureError(ParsingError):
+    """
+    Exception raised when one of the requested features is not supported by the parser
+    """
+
+    def __init__(self, parser, document, features, **kwds):
+        msg = "unsupported features: {0!r}".format(", ".join(features))
+        super().__init__(parser=parser, document=document, description=msg)
+        self.features = features
+        return
+
+
+class DTDError(ParsingError):
+    """
+    Errors relating to the structure of the document
+    """
+
+
+class ProcessingError(ParsingError):
+    """
+    Errors relating to the handling of the document
+    """
+
+
+# package constants
+# attribute types
+CDATA = "CDATA"
+ID = "ID"
+IDREFS = "IDREFS"
+NMTOKEN = "NMTOKEN"
+NMTOKENS = "NMTOKENS"
+ENTITY = "ENTITY"
+ENTITIES = "ENTITIES"
+NOTATION = "NOTATION"
+XML = "xml:"
+
+# default value types
+REQUIRED = "#REQUIRED"
+IMPLIED = "#IMPLIED"
+FIXED = "#FIXED"
+
+
+
+
 # end of file 
