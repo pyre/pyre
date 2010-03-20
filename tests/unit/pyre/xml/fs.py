@@ -38,7 +38,6 @@ class Folder(Node):
     def notify(self, parent, locator):
         return parent.addEntry(self)
 
-
     def addEntry(self, entry):
         """Add a file to my contents"""
         self.fsnode[entry.name] = entry.fsnode
@@ -46,7 +45,6 @@ class Folder(Node):
     def __init__(self, parent, attributes):
         self.name = attributes['name']
         self.fsnode = parent.fsnode.newFolder()
-
 
 
 class Filesystem(Folder):
