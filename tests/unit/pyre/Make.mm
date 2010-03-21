@@ -13,6 +13,7 @@ RECURSE_DIRS = \
     tracking \
     parsing \
     xml \
+    constraints \
     calc \
     filesystem \
     framework \
