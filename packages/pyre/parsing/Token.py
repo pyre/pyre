@@ -12,8 +12,13 @@ class Token(object):
     """
 
 
+    # constants
+    pattern = None
+    recognizer = None
+
+
     # meta methods
-    def __init__(self, lexeme, **kwds):
+    def __init__(self, lexeme="", **kwds):
         super().__init__(**kwds)
         self.lexeme = lexeme
         return
@@ -24,11 +29,15 @@ class Token(object):
 
 
     def __str__(self):
-        return "\{token: {0.lexeme!r}\}".format(self)
+        # if there is a lexeme, print it
+        if self.lexeme:
+            return "{{{0.__class__.__name__}: {0.lexeme!r}}}".format(self)
+        # otherwise, just note the token class
+        return "{{{0.__class__.__name__}}}".format(self)
 
 
-    # narrow the footprint down a bit
-    __slots__ == ("lexeme",)
+    # narrow down the footprint a bit
+    __slots__ = ("lexeme",)
 
 
 # end of file 

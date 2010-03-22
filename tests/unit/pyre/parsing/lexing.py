@@ -11,31 +11,49 @@
 Build and test a simple tokenizer
 """
 
-from pyre.parsing.Scanner import Scanner as BaseScanner
+from pyre.parsing.Scanner import Scanner
 
 
-class Scanner(BaseScanner):
+class Simple(Scanner):
     """a simple scanner"""
 
-    import pyre.parsing
-
-    comment = pyre.parsing.token(r"#")
-    separator = pyre.parsing.token(r":")
-    delimiter = pyre.parsing.token(r",")
-    terminator = pyre.parsing.token(r";")
+    # tokens
+    comment = Scanner.token(r"#.*$")
+    separator = Scanner.token(r":")
+    delimiter = Scanner.token(r",")
+    terminator = Scanner.token(r";")
     
-    identifier = pyre.parsing.token(r"[_\w][_\wd]*")
+    identifier = Scanner.token(r"[_\w]+")
+
+    # constants
+    ignoreWhitespace = True
 
 
 def test():
 
     # open the input stream
     stream = open("sample.inp")
+    # create a scanner
+    scanner = Simple()
+
+    # tokenize
+    actual = list(scanner.tokenize(stream))
 
     # check
-    actual = ()
-    expected = ()
-    assert expected == actual
+    expected = (
+        Simple.start,
+        Simple.comment, Simple.comment, Simple.comment, Simple.comment, Simple.comment,
+        Simple.identifier, Simple.separator, 
+        Simple.identifier, Simple.delimiter,
+        Simple.identifier, Simple.delimiter,
+        Simple.identifier,
+        Simple.terminator,
+        Simple.comment,
+        Simple.finish,
+        )
+
+    for token, klass in zip(actual, expected):
+        assert isinstance(token, klass)
 
     return
 

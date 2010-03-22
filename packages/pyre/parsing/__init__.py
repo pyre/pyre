@@ -12,7 +12,7 @@ This package provides support for writing simple parsers
 
 
 # factories
-def token(regexp):
+def token(regexp=None):
     """
     Build a TokenDescriptor instance to hold the regeular expression until the Lexer has had a
     chance to process it and convert it into a class derived from Token

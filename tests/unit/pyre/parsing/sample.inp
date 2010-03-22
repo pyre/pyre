@@ -4,6 +4,6 @@
 # (c) 1998-2010 all rights reserved
 #
 
-document: header, body, footer;
+    document: header, body, footer;
 
 # end of file 

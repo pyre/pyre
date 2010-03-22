@@ -15,7 +15,7 @@ class TokenDescriptor(object):
 
     # public data
     name = None
-    regexp = None
+    pattern = None
 
 
     # meta data
@@ -23,9 +23,9 @@ class TokenDescriptor(object):
 
 
     # meta methods
-    def __init__(self, regexp, **kwds):
+    def __init__(self, pattern, **kwds):
         super().__init__(**kwds)
-        self.regexp = regexp
+        self.pattern = pattern
         return
 
 

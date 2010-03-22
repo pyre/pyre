@@ -19,6 +19,7 @@ sanity:
 	${PYTHON} ./sanity.py
 
 lexing:
+	${PYTHON} ./scanner.py
 	${PYTHON} ./lexing.py
 
 # end of file 

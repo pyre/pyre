@@ -6,6 +6,8 @@
 #
 
 
+import re
+from .Token import Token
 from ..patterns.AttributeClassifier import AttributeClassifier
 
 
@@ -17,7 +19,7 @@ class Lexer(AttributeClassifier):
 
 
     # constants
-    _pyre_INDEX = "tokens"
+    _pyre_INDEX = "_pyre_Tokens"
     _pyre_CLASSIFIER_NAME = "_pyre_category"
 
 
@@ -34,7 +36,45 @@ class Lexer(AttributeClassifier):
         """
         Build the document class record
         """
-        return super().__new__(cls, name, bases, attributes, index=cls._pyre_INDEX, **kwds)
+        # let type build the class record
+        record = super().__new__(cls, name, bases, attributes, index=cls._pyre_INDEX, **kwds)
+        # initialize the list of tokens
+        tokens = []
+        # initialize the list of recognizers harvested from the token declarations
+        recognizers = []
+        # get the token index
+        tokenDescriptors = getattr(record, cls._pyre_INDEX)
+        # visit each one of them
+        for descriptor in tokenDescriptors:
+            # the name of the token class
+            tag = descriptor.name
+            # the pattern
+            pattern = descriptor.pattern
+            # the recognizer
+            recognizer = re.compile(pattern) if pattern else None
+            # build the default attribute list
+            fields = {
+                "pattern": pattern,
+                "recognizer": recognizer,
+                "__slots__": (),
+                }
+            # build a class that derives from Token out of the information in the TokenDescriptor
+            tokenClass = type(tag, (Token,), fields)
+            # attach it to the scanner
+            setattr(record, tag, tokenClass)
+            # and save it in the list of tokens
+            tokens.append(tokenClass)
+            # if this descriptor has a recognizer
+            if descriptor.pattern:
+                # add it to the pile
+                recognizers.append(r"(?P<{0}>{1})".format(tag, pattern))
+
+        # replace the token index
+        setattr(record, cls._pyre_INDEX, tokens)
+        # assemble and attach the regular expression
+        setattr(record, "recognizer", re.compile("|".join(recognizers)))
+        # return the new class record
+        return record
 
 
     @classmethod
@@ -49,11 +89,7 @@ class Lexer(AttributeClassifier):
         """
         # extract the element descriptors from the attribute categories
         descriptors = attributes.categories["tokens"]
-        # print them out
-        for descriptor in descriptors:
-            print(descriptor.name)
-        
-        # return it so it can be bound to whatever name _pyre_DTD specifies
+        # return them so it can be bound to whatever name _pyre_INDEX specifies
         return descriptors
 
 
