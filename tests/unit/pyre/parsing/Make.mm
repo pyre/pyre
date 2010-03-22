@@ -13,10 +13,12 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity lexing
 
 sanity:
 	${PYTHON} ./sanity.py
 
+lexing:
+	${PYTHON} ./lexing.py
 
 # end of file 

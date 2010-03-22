@@ -6,7 +6,10 @@
 #
 
 
-class Scanner(object):
+from .Lexer import Lexer
+
+
+class Scanner(object, metaclass=Lexer):
     """
     The input stream tokenizer
     """
