@@ -18,15 +18,15 @@ class TokenDescriptor(object):
     pattern = None
 
 
-    # meta data
-    _pyre_category = "tokens" # for the AttributeClassifier
-
-
     # meta methods
     def __init__(self, pattern, **kwds):
         super().__init__(**kwds)
         self.pattern = pattern
         return
+
+
+    # meta data
+    _pyre_category = "tokens" # for the AttributeClassifier
 
 
 # end of file 

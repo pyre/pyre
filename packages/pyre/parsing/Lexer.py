@@ -8,6 +8,7 @@
 
 import re
 from .Token import Token
+from .TokenDescriptor import TokenDescriptor
 from ..patterns.AttributeClassifier import AttributeClassifier
 
 
@@ -46,25 +47,36 @@ class Lexer(AttributeClassifier):
         tokenDescriptors = getattr(record, cls._pyre_INDEX)
         # visit each one of them
         for descriptor in tokenDescriptors:
-            # the name of the token class
+            # extract descriptor info: the name of the class and the pattern
             tag = descriptor.name
-            # the pattern
             pattern = descriptor.pattern
-            # the recognizer
+            # build the recognizer
             recognizer = re.compile(pattern) if pattern else None
-            # build the default attribute list
-            fields = {
-                "pattern": pattern,
-                "recognizer": recognizer,
-                "__slots__": (),
-                }
-            # build a class that derives from Token out of the information in the TokenDescriptor
-            tokenClass = type(tag, (Token,), fields)
-            # attach it to the scanner
-            setattr(record, tag, tokenClass)
-            # and save it in the list of tokens
+            # handle TokenDescriptor instances
+            if isinstance(descriptor, TokenDescriptor):
+                # build the default attribute list
+                fields = {
+                    "pattern": pattern,
+                    "recognizer": recognizer,
+                    "__slots__": (),
+                    }
+                # build a class that derives from Token out of the information in the
+                # TokenDescriptor
+                tokenClass = type(tag, (Token,), fields)
+                # attach it to the scanner
+                setattr(record, tag, tokenClass)
+            # handle Token descendants
+            elif issubclass(descriptor, Token):
+                tokenClass = descriptor
+                tokenClass.recognizer = recognizer
+            # otherwise, a hit a firewall
+            else:
+                import journal
+                journal.firewall("pyre.parsing").log("unknown token descriptor type")
+
+            # save the token class record in the list of tokens
             tokens.append(tokenClass)
-            # if this descriptor has a recognizer
+            # if this token has a recognizer
             if descriptor.pattern:
                 # add it to the pile
                 recognizers.append(r"(?P<{0}>{1})".format(tag, pattern))

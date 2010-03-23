@@ -11,6 +11,8 @@ class Token(object):
     Base class for tokens, the atomic units of recognizable text in a stream
     """
 
+    # public data
+    name = None
 
     # constants
     pattern = None
@@ -39,6 +41,10 @@ class Token(object):
 
     # narrow down the footprint a bit
     __slots__ = ("lexeme", "locator")
+
+
+    # meta data
+    _pyre_category = "tokens" # for the AttributeClassifier
 
 
 # end of file 
