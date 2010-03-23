@@ -13,11 +13,25 @@ Verify creation of filesystems based on zipfiles
 
 
 def test():
+    import os
+    import zipfile
     import pyre.filesystem
 
-    # NYI: replace this with (a dunamically generated) pyre-1.0.zip
-    home = pyre.filesystem.newZipFilesystem(root="/Users/mga/tmp/pyre-1.0.zip")
+    # the name of the zipfile
+    archive = "./pyre-1.0.zip"
+    # hunt down the pyre sources
+    srcdir = os.path.abspath("../../../../packages/pyre")
+    # build the archive
+    target = zipfile.PyZipFile(file=archive, mode="w")
+    target.writepy(srcdir)
+    target.close()
+    
+    # open it as a filesystem
+    home = pyre.filesystem.newZipFilesystem(root=archive)
     home._dump(interactive=False) # change to True to see the dump
+
+    # remove the zipfile
+    os.unlink(archive)
 
     return home
 
