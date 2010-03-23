@@ -18,9 +18,10 @@ class Token(object):
 
 
     # meta methods
-    def __init__(self, lexeme="", **kwds):
+    def __init__(self, *, lexeme="", locator=None, **kwds):
         super().__init__(**kwds)
         self.lexeme = lexeme
+        self.locator = locator
         return
 
 
@@ -37,7 +38,7 @@ class Token(object):
 
 
     # narrow down the footprint a bit
-    __slots__ = ("lexeme",)
+    __slots__ = ("lexeme", "locator")
 
 
 # end of file 
