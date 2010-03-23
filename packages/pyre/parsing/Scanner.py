@@ -63,7 +63,8 @@ class Scanner(object, metaclass=Lexer):
             # when that's done, return the current token
             yield token
         # indicate the end of the tokenization stream
-        yield self.finish()
+        self.column = 0
+        yield self.finish(locator=self.locator)
         # and terminate the iteration
         return
 

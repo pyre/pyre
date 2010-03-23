@@ -33,9 +33,9 @@ class File(object):
         text = [
             "file={0.source!r}".format(self)
             ]
-        if self.line:
+        if self.line is not None:
             text.append("line={0.line!r}".format(self))
-        if self.column:
+        if self.column is not None:
             text.append("column={0.column!r}".format(self))
 
         return ", ".join(text)
