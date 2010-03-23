@@ -17,7 +17,7 @@ from pyre.xml.Document import Document
 
 
 class Filesystem(Node):
-    """The top level documemt element"""
+    """The top level document element"""
 
     def notify(self, parent, locator):
         """do nothing"""
@@ -41,7 +41,7 @@ def test():
     # build a parser
     reader = pyre.xml.newReader()
     # parse the sample document
-    reader.read(stream=open("empty.xml"), document=document)
+    reader.read(stream=open("sample-empty.xml"), document=document)
 
     return
 

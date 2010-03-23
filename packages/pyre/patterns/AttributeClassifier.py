@@ -80,7 +80,7 @@ class AttributeClassifier(AbstractMetaclass):
         # build a new dict for attributes so the Filter instance doesn't hang around
         record = super().__new__(cls, name, bases, dict(attributes))
 
-        # if i was told where to deposit the category index
+        # if i were told where to deposit the category index
         if index is not None:
             # build it
             categoryIndex = cls._pyre_buildCategoryIndex(record, index, attributes)

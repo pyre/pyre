@@ -38,7 +38,6 @@ class Folder(Node):
     def notify(self, parent, locator):
         return parent.addEntry(self)
 
-
     def addEntry(self, entry):
         """Add a file to my contents"""
         self.fsnode[entry.name] = entry.fsnode
@@ -48,9 +47,8 @@ class Folder(Node):
         self.fsnode = parent.fsnode.newFolder()
 
 
-
 class Filesystem(Folder):
-    """The top level documemt element"""
+    """The top level document element"""
 
     def notify(self, parent, locator):
         parent.dom = self.fsnode
@@ -78,7 +76,7 @@ def test():
     reader.ignoreWhitespace = True
 
     # parse the sample document
-    fs = reader.read(stream=open("fs.xml"), document=FSD())
+    fs = reader.read(stream=open("sample-fs.xml"), document=FSD())
 
     # dump the contents
     fs._dump(False) # switch to True to see the contents
