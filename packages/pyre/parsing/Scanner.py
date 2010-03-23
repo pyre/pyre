@@ -101,7 +101,7 @@ class Scanner(object, metaclass=Lexer):
                 # attempt to recognize the contents of the line
                 match = self.recognizer.match(line, self.column)
                 if not match:
-                    raise Exception
+                    raise self.TokenizationError(locator=self.locator, text=line[self.column:])
                 # we got one
                 matches = match.groupdict()
                 # figure out what it was by looking for a non-empty group that matches the
@@ -118,6 +118,10 @@ class Scanner(object, metaclass=Lexer):
             
         # done with the file
         return
+
+
+    # exceptions
+    from . import TokenizationError
 
 
 # end of file 

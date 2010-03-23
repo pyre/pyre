@@ -21,5 +21,6 @@ sanity:
 lexing:
 	${PYTHON} ./scanner.py
 	${PYTHON} ./lexing.py
+	${PYTHON} ./lexing-tokenizationError.py
 
 # end of file 
