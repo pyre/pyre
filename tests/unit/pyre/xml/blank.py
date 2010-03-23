@@ -24,10 +24,10 @@ def test():
     reader = pyre.xml.newReader()
     # parse the sample document
     try:
-        reader.read(stream=open("blank.xml"), document=document)
+        reader.read(stream=open("sample-blank.xml"), document=document)
         assert False
     except reader.ParsingError as error:
-        assert str(error) == "file='blank.xml', line=11: no element found"
+        assert str(error) == "file='sample-blank.xml', line=11, column=0: no element found"
 
     return
 
