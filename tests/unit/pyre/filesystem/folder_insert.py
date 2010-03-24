@@ -27,7 +27,7 @@ def test():
     mga = Node(fs)
 
     # add it to the folder
-    root.insert(path="/home/users/mga", node=mga)
+    root._insert(path="/home/users/mga", node=mga)
 
     # check that it was done correctly
     assert len(root.contents) == 1

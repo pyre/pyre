@@ -32,8 +32,8 @@ def test():
     users = Folder(filesystem=fs)
 
     # add them to the folder
-    root.insert(node=users, path="/home/users")
-    root.insert(node=mga, path="/home/users/mga")
+    root._insert(node=users, path="/home/users")
+    root._insert(node=mga, path="/home/users/mga")
 
     # check that it was done correctly
     assert len(root.contents) == 1

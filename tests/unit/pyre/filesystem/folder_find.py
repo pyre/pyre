@@ -27,10 +27,10 @@ def test():
     mga = Node(fs)
 
     # add it to the folder
-    root.insert(path="home/users/mga", node=mga)
+    root._insert(path="home/users/mga", node=mga)
 
     # now retrieve it
-    target = root.find("/home/users/mga")
+    target = root._find("/home/users/mga")
    
     # make sure it is the same node
     assert mga == target

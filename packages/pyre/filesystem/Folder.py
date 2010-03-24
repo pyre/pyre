@@ -19,68 +19,6 @@ class Folder(Node):
 
 
     # interface
-    def find(self, path):
-        """
-        Locate the entry with address {path}
-
-        parameters:
-            {path}: a PATH_SEPARATOR delimited chain of node names
-        """
-        # extract the list of path names
-        names = filter(None, path.split(self.PATH_SEPARATOR))
-        # initialize the lookup chain
-        node = self
-        # find the target node
-        for name in names:
-            node = node.contents[name]
-        # and return it
-        return node
-
-
-    def insert(self, node, path):
-        """
-        Insert {node} at the location pointed to by {path}, creating all necessary
-        intermediate directories
-        """
-        # extract the list of path names
-        names = tuple(filter(None, path.split(self.PATH_SEPARATOR)))
-
-        # we need to be careful here because one of the components of path may exist but not be
-        # a folder, so we need to traverse the path once before we make any changes to the
-        # folder layout
-
-        # start out using myself as the target
-        current = self
-        # visit all folders in {path} and verify that the insertion will succeed
-        for name in names[:-1]:
-            # attempt to get the node pointed to by name
-            try:
-                current = current.contents[name]
-            except KeyError:
-                # it's ok for this to fail; we just have some nodes to make
-                break
-            # raise an exception if the current node is not a folder
-            if not isinstance(current, Folder):
-                raise self.FolderInsertionError(
-                    filesystem=self._filesystem, node=self, path=path, target=name)
-
-        # if we get this far, all existing named nodes were folders
-        # re-initialize the lookup chain
-        current = self
-        # find the  target node
-        for name in names[:-1]:
-            try:
-                current = current.contents[name]
-            except KeyError:
-                folder = current.newFolder()
-                current.contents[name] = folder
-                current = folder
-        # add the node to the last directory
-        current.contents[names[-1]] = node
-        # and return it
-        return node
-
-
     # populating filesystems
     def mount(self, name, filesystem):
         """
@@ -128,19 +66,85 @@ class Folder(Node):
         return
 
 
+    # implementation details
+    def _insert(self, node, path):
+        """
+        Insert {node} at the location pointed to by {path}, creating all necessary
+        intermediate directories
+        """
+        # extract the list of path names
+        names = tuple(filter(None, path.split(self.PATH_SEPARATOR)))
+
+        # we need to be careful here because one of the components of path may exist but not be
+        # a folder, so we need to traverse the path once before we make any changes to the
+        # folder layout
+
+        # start out using myself as the target
+        current = self
+        # visit all folders in {path} and verify that the insertion will succeed
+        for name in names[:-1]:
+            # attempt to get the node pointed to by name
+            try:
+                current = current.contents[name]
+            except KeyError:
+                # it's ok for this to fail; we just have some nodes to make
+                break
+            # raise an exception if the current node is not a folder
+            if not isinstance(current, Folder):
+                raise self.FolderInsertionError(
+                    filesystem=self._filesystem, node=self, path=path, target=name)
+
+        # if we get this far, all existing named nodes were folders
+        # re-initialize the lookup chain
+        current = self
+        # find the  target node
+        for name in names[:-1]:
+            try:
+                current = current.contents[name]
+            except KeyError:
+                folder = current.newFolder()
+                current.contents[name] = folder
+                current = folder
+        # add the node to the last directory
+        current.contents[names[-1]] = node
+        # and return it
+        return node
+
+
+    def _find(self, path):
+        """
+        Locate the entry with address {path}
+
+        parameters:
+            {path}: a PATH_SEPARATOR delimited chain of node names
+
+        Note: this method is the workhorse behind subscripted access to the folder contents and
+        should probably not be used directly
+        """
+        # extract the list of path names
+        names = filter(None, path.split(self.PATH_SEPARATOR))
+        # initialize the lookup chain
+        node = self
+        # find the target node
+        for name in names:
+            node = node.contents[name]
+        # and return it
+        return node
+
+
     # access through subscripts
     def __getitem__(self, path):
         """
         Enable the sytax folder[{path}]
         """
-        return self.find(path)
+        return self._find(path)
 
 
     def __setitem__(self, path, node):
         """
         Enable the syntax folder[{path}] = node
         """
-        return self.insert(path=path, node=node)
+        return self._insert(path=path, node=node)
 
 
     # constants

@@ -18,8 +18,8 @@ def test():
     # make a filesystem
     fs = pyre.filesystem.newVirtualFilesystem()
     # create a couple of nodes and insert them into the filesystem
-    fs.insert(node=fs.newNode(), path="/home/users/mga/dv/tools/bin/hello")
-    fs.insert(node=fs.newNode(), path="/home/users/mga/dv/tools/lib/libhello.a")
+    fs["/home/users/mga/dv/tools/bin/hello"] = fs.newNode()
+    fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.newNode()
 
     # explore
     explorer = pyre.filesystem.newSimpleExplorer()

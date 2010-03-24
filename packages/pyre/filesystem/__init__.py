@@ -240,6 +240,18 @@ class FilesystemError(GenericError):
         return
 
 
+class NotFoundError(FilesystemError):
+    """
+    Exception raised when attempting to find a node and the supplied URI does not exist
+    """
+
+    def __init__(self, path, **kwds):
+        msg = "while looking for {0!r}: {1!r} not found"
+        super().__init__(message=msg, **kwds)
+        self.path = path
+        return
+
+
 class FolderInsertionError(FilesystemError):
     """
     Exception raised when attempting to insert a node in a filsystem and the target node is not

@@ -36,7 +36,7 @@ class ZipFilesystem(Filesystem):
             else:
                 node = self.newNode()
             # insert the node
-            self.insert(node=node, path=name)
+            self._insert(node=node, path=name)
             # and attach it to my vnode table
             self.attach(node, info)
 

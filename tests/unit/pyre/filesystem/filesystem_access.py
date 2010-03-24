@@ -21,20 +21,21 @@ def test():
     # create a folder a few levels down from the root
     mpath = "/home/users/mga"
     mga = fs.newFolder()
-    fs.insert(node=mga, path=mpath)
+    fs[mpath] = mga
     # check that we can retrieve it
     assert mga == fs[mpath]
 
     # add a subfolder
     tpath = '/dv/tools'
     tools = fs.newFolder()
-    fs.insert(node=tools, path=mpath + tpath)
+    fs[mpath + tpath] = tools
+
     # and retrieve it
     assert fs[mpath+tpath] == mga[tpath]
 
     # add a node
     hello = fs.newNode()
-    tools.insert(node=hello, path="hello.py")
+    tools["hello.py"] = hello
 
     # dump the contents
     fs._dump(interactive=False) # switch to True to see the dump

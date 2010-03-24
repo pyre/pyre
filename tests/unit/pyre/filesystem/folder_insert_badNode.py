@@ -27,12 +27,12 @@ def test():
     # and a node
     mga = Node(fs)
     # add it to the folder
-    root.insert(path="/home/users/mga", node=mga)
+    root._insert(path="/home/users/mga", node=mga)
     # now create another node
     tmp = Node(fs)
     # and attempt to add it to mga
     try:
-        root.insert(path="/home/users/mga/tmp", node=tmp)
+        root._insert(path="/home/users/mga/tmp", node=tmp)
         assert False
     except FolderInsertionError as error:
         assert (

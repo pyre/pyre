@@ -17,7 +17,7 @@ def test():
     # build a filesystem
     home = pyre.filesystem.newLocalFilesystem(root="..")
     # look for this file
-    this = home.find("filesystem/local_find.py")
+    this = home["filesystem/local_find.py"]
     # make sure we got it
     assert this is not None
     # all done
