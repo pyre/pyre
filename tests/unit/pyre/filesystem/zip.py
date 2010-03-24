@@ -17,13 +17,13 @@ def test():
     import zipfile
     import pyre.filesystem
 
+
     # the name of the zipfile
-    archive = "./pyre-1.0.zip"
-    # hunt down the pyre sources
-    srcdir = os.path.abspath("../../../../packages/pyre")
+    archive = "/tmp/sample.zip"
     # build the archive
-    target = zipfile.PyZipFile(file=archive, mode="w")
-    target.writepy(srcdir)
+    target = zipfile.ZipFile(file=archive, mode="w")
+    for filename in os.listdir('.'):
+        target.write(filename)
     target.close()
     
     # open it as a filesystem
