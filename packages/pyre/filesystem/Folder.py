@@ -96,6 +96,7 @@ class Folder(Node):
         return self
 
 
+    # content factories
     def newFolder(self):
         """
         Create a new folder
