@@ -11,7 +11,7 @@ from .Explorer import Explorer
 
 class SimpleExplorer(Explorer):
     """
-    A visitor that creates an indented list of the name and node type of the contenst of a
+    A visitor that creates an indented list of the name and node type of the contents of a
     filesystem
     """
 
