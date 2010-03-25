@@ -16,6 +16,7 @@ all: test
 
 test:
 	${PYTHON} ./moditer.py
+	${PYTHON} ./files.py
 	${PYTHON} ./slots.py
 	${PYTHON} ./decorators.py
 	${PYTHON} ./descriptors.py
