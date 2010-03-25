@@ -42,6 +42,7 @@ filesystem:
 
 explorers:
 	${PYTHON} ./finder.py
+	${PYTHON} ./finder_pattern.py
 	${PYTHON} ./simple_explorer.py
 	${PYTHON} ./tree_explorer.py
 

@@ -64,13 +64,13 @@ class FileServer(Filesystem):
         else:
             try:
                 # hunt down the depository subdirectory
-                system = self.systemfs.find("depository")
+                system = self.systemfs["depository"]
             except KeyError:
                 # hmm... why is this dierctory missing from the distribution?
                 # moving on...
                 system = self.newFolder()
        # mount the system directory
-        self.insert(node=system, path="pyre/system")
+        self["pyre/system"] = system
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
@@ -80,7 +80,7 @@ class FileServer(Filesystem):
         except pyre.filesystem.GenericError:
             self.userfs = self.newFolder()
        # mount this directory as /user
-        self.insert(node=self.userfs, path="pyre/user")
+        self["pyre/user"] = self.userfs
 
         return
 

@@ -24,21 +24,18 @@ def test():
     # explore
     finder = pyre.filesystem.newFinder()
     contents = list(finder.explore(fs))
-    for path in contents:
-        print(path)
     
     # check
-    contents == [
-        "(d) /",
-        "  (d) home",
-        "    (d) users",
-        "      (d) mga",
-        "        (d) dv",
-        "          (d) tools",
-        "            (d) bin",
-        "              (f) hello",
-        "            (d) lib",
-        "              (f) libhello.a",
+    assert contents == [
+        "home",
+        "home/users",
+        "home/users/mga",
+        "home/users/mga/dv",
+        "home/users/mga/dv/tools",
+        "home/users/mga/dv/tools/bin",
+        "home/users/mga/dv/tools/bin/hello",
+        "home/users/mga/dv/tools/lib",
+        "home/users/mga/dv/tools/lib/libhello.a",
         ]
 
     return fs, finder
