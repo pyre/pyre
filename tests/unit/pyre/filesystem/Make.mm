@@ -41,6 +41,7 @@ filesystem:
 	${PYTHON} ./zip_rootNotZipfile.py
 
 explorers:
+	${PYTHON} ./finder.py
 	${PYTHON} ./simple_explorer.py
 	${PYTHON} ./tree_explorer.py
 

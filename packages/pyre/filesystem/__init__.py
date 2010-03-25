@@ -152,6 +152,13 @@ def newZipFilesystem(root, recognizer=None, **kwds):
 
 
 # other factories
+def newFinder(**kwds):
+    """
+    Create a filesystem explorer that returns the contents of a filesystem
+    """
+    from .Finder import Finder
+    return Finder(**kwds)
+
 
 def newSimpleExplorer(**kwds):
     """

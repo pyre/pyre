@@ -28,6 +28,7 @@ EXPORT_PYTHON_MODULES = \
     Folder.py \
     File.py \
     Filesystem.py \
+    Finder.py \
     LocalFilesystem.py \
     NamedPipe.py \
     Node.py \

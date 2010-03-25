@@ -19,6 +19,16 @@ class Folder(Node):
 
 
     # interface
+    def find(self, **kwds):
+        """
+        Generate the list of name that match the given {pattern}
+
+        By default, find will create a generator that visits the entire contents of the tree
+        rooted at this folder. Use the optional arguments to restrict the set of matching
+        names. For details about supported filters, see pyre.filesystem.Finder.
+       """
+
+
     # populating filesystems
     def mount(self, name, filesystem):
         """
