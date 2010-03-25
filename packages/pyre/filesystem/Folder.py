@@ -26,8 +26,17 @@ class Folder(Node):
         By default, find will create a generator that visits the entire contents of the tree
         rooted at this folder. Use the optional arguments to restrict the set of matching
         names. For details about supported filters, see pyre.filesystem.Finder.
-       """
-
+        """
+        # get the finder factory
+        from . import newFinder
+        # build one 
+        finder = newFinder()
+        # get it to find what the user wants
+        for (node, path) in finder.explore(folder=self, **kwds):
+            yield (node, path)
+        # all done
+        return
+        
 
     # populating filesystems
     def mount(self, name, filesystem):

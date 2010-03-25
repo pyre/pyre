@@ -26,13 +26,13 @@ class Finder(Explorer):
             pattern = re.compile(pattern)
 
         # now traverse the contents and build the pathnames
-        for trace in self._explore(node=folder, path=[]):
+        for node, trace in self._explore(node=folder, path=[]):
             # build the path out of the trace
             path = self.PATH_SEPARATOR.join(trace)
             # if there's no regular expression, or it matches if it's there
             if not pattern or pattern.match(path):
                 # return the path
-                yield path
+                yield node, path
 
         # all done
         return
@@ -48,10 +48,10 @@ class Finder(Explorer):
             # add the name of this child to the path trace
             path.append(name)
             # build the string
-            yield path
+            yield (node, path)
             # recurse into its children
-            for path in self._explore(node=child, path=path):
-                yield path
+            for node, path in self._explore(node=child, path=path):
+                yield (node, path)
             # remove it from the trace
             path.pop()
 

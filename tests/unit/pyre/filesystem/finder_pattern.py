@@ -19,23 +19,20 @@ def test():
     fs = pyre.filesystem.newVirtualFilesystem()
     # create a couple of nodes and insert them into the filesystem
     fs["/home/users/mga/dv/tools/bin/hello"] = fs.newNode()
+    fs["/home/users/mga/dv/tools/src/hello.c"] = fs.newNode()
+    fs["/home/users/mga/dv/tools/src/hello.h"] = fs.newNode()
     fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.newNode()
+    
+    # dump the contents
+    fs._dump(False) # switch to True to see the dump
 
     # explore
     finder = pyre.filesystem.newFinder()
-    contents = [ path for node,path in finder.explore(fs) ]
+    contents = [ path for node, path in finder.explore(folder=fs, pattern=r".*\.h")]
     
     # check
     assert contents == [
-        "home",
-        "home/users",
-        "home/users/mga",
-        "home/users/mga/dv",
-        "home/users/mga/dv/tools",
-        "home/users/mga/dv/tools/bin",
-        "home/users/mga/dv/tools/bin/hello",
-        "home/users/mga/dv/tools/lib",
-        "home/users/mga/dv/tools/lib/libhello.a",
+        "home/users/mga/dv/tools/src/hello.h",
         ]
 
     return fs, finder
