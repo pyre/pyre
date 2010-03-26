@@ -15,6 +15,7 @@ class Node(object):
     # public data
     tag = None
     elements = ()
+    namespace = ""
 
 
     # interface
@@ -32,16 +33,32 @@ class Node(object):
         """
         The handler invoked when the opening tag for one of my children is encountered.
 
-        The default implementation looks up the tag in my local dtd, retrieves the assoociate
+        The default implementation looks up the tag in my local dtd, retrieves the associated
         node factory, and invokes it to set up the context for handlingits content
 
-        In typical use, there is no need to override this; but if you do you should make sure
-        to return a Node descendant properly set up to handle the contents of the named tag
+        In typical use, there is no need to override this; but if you do, you should make sure
+        to return a Node descendant that is properly set up to handle the contents of the named
+        tag
         """
         # get the handler factory
-        factory = self._nodeIndex[name]
+        factory = self._pyre_nodeIndex[name]
+        # invoke it to get a new node for the parsing context
+        node = factory(parent=self, attributes=attributes, locator=locator)
+        # and return it
+        return node
+
+
+    def newQNode(self, *, name, namespace, attributes, locator):
+        """
+        The handler invoked when the opening tag for one of my namespace qualified children is
+        encountered.
+
+        See Node.newNode for details
+        """
+        # get the handler factory
+        factory = self._pyre_nodeQIndex[(name, namespace)]
         # invoke it to get a new node for the parsingcontext
-        node = factory(parent=self, attributes=attributes)
+        node = factory(parent=self, attributes=attributes, locator=locator)
         # and return it
         return node
 
@@ -55,7 +72,8 @@ class Node(object):
 
 
     # private data
-    _nodeIndex = None
+    _pyre_nodeIndex = None
+    _pyre_nodeQIndex = None
 
 
 # end of file 

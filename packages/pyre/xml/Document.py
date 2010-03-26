@@ -28,6 +28,7 @@ class Document(Node, metaclass=DTD):
     # public data
     # inherited
     tag = "document" # mark this as the top-level document object
+    root = None # descendants must provide the name of the root element here
     elements = () # replace with a container with the tag for the top level document element
     # new
     dtd = None
@@ -51,6 +52,6 @@ class Document(Node, metaclass=DTD):
 
     # private data
     # inherited from Node
-    _nodeIndex = None
+    _pyre_nodeIndex = None
 
 # end of file 

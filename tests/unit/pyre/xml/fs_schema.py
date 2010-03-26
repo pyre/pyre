@@ -14,12 +14,19 @@ Build a document handler and read a simple file
 
 import pyre.xml
 import pyre.filesystem
-from pyre.xml.Node import Node
+from pyre.xml.Node import Node as BaseNode
 from pyre.xml.Document import Document
+
+
+class Node(BaseNode):
+    """Base class for my nodes"""
+    namespace = "http://pyre.caltech.edu/releases/1.0/schema/fs.html"
 
 
 class File(Node):
     """Handle the file tag"""
+    # storage for my attributes
+    name = ""
 
     def notify(self, parent, locator):
         return parent.addEntry(self)
@@ -31,7 +38,6 @@ class File(Node):
     
 class Folder(Node):
     """Handle the folder tag"""
-
     elements = ("file", "folder")
 
     def notify(self, parent, locator):
@@ -59,14 +65,13 @@ class Filesystem(Folder):
 class FSD(Document):
     """Document class"""
 
-    # the top-level element tag name
+    # the top-level element
     root = "filesystem"
 
     # the element descriptors
     file = pyre.xml.element(tag="file", handler=File)
     folder = pyre.xml.element(tag="folder", handler=Folder)
     filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
-
 
 
 def test():
@@ -76,7 +81,7 @@ def test():
     reader.ignoreWhitespace = True
 
     # parse the sample document
-    fs = reader.read(stream=open("sample-fs.xml"), document=FSD())
+    fs = reader.read(stream=open("sample-fs-schema.xml"), document=FSD())
 
     # dump the contents
     fs._dump(False) # switch to True to see the contents
@@ -89,7 +94,7 @@ def test():
     assert fs["/tmp/images"] is not None
     assert fs["/tmp/images/logo.png"] is not None
 
-    return
+    return fs
 
 
 # main

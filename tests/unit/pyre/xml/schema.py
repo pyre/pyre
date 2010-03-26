@@ -16,7 +16,7 @@ from pyre.xml.Node import Node
 from pyre.xml.Document import Document
 
 
-class Filesystem(Node):
+class Inventory(Node):
     """The top level document element"""
 
     def notify(self, parent, locator):
@@ -26,24 +26,24 @@ class Filesystem(Node):
         """do nothing"""
 
 
-class FSD(Document):
+class IDoc(Document):
     """Document class"""
     # the top-level
-    root = "filesystem"
+    root = "inventory"
     # declare the handler
-    filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
+    inventory = pyre.xml.element(tag="inventory", handler=Inventory)
 
 
 def test():
     # build the trivial document
-    document = FSD()
+    document = IDoc()
 
     # build a parser
     reader = pyre.xml.newReader()
     # parse the sample document
-    reader.read(stream=open("sample-empty.xml"), document=document)
+    reader.read(stream=open("sample-schema.xml"), document=document)
 
-    return document
+    return
 
 
 # main

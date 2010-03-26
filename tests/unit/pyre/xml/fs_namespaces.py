@@ -12,10 +12,16 @@ Build a document handler and read a simple file
 """
 
 
+import xml
 import pyre.xml
 import pyre.filesystem
-from pyre.xml.Node import Node
+from pyre.xml.Node import Node as BaseNode
 from pyre.xml.Document import Document
+
+
+class Node(BaseNode):
+    """Base class for my nodes"""
+    namespace = "http://pyre.caltech.edu/releases/1.0/schema/fs.html"
 
 
 class File(Node):
@@ -31,7 +37,6 @@ class File(Node):
     
 class Folder(Node):
     """Handle the folder tag"""
-
     elements = ("file", "folder")
 
     def notify(self, parent, locator):
@@ -59,14 +64,13 @@ class Filesystem(Folder):
 class FSD(Document):
     """Document class"""
 
-    # the top-level element tag name
+    # the top-level
     root = "filesystem"
 
     # the element descriptors
     file = pyre.xml.element(tag="file", handler=File)
     folder = pyre.xml.element(tag="folder", handler=Folder)
     filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
-
 
 
 def test():
@@ -76,7 +80,11 @@ def test():
     reader.ignoreWhitespace = True
 
     # parse the sample document
-    fs = reader.read(stream=open("sample-fs.xml"), document=FSD())
+    fs = reader.read(
+        stream=open("sample-fs-namespaces.xml"),
+        document=FSD(),
+        features=[(reader.feature_namespaces, True)]
+        )
 
     # dump the contents
     fs._dump(False) # switch to True to see the contents

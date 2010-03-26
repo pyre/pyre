@@ -11,12 +11,19 @@ Read an empty document
 """
 
 
+import xml
 import pyre.xml
-from pyre.xml.Node import Node
+from pyre.xml.Node import Node as BaseNode
 from pyre.xml.Document import Document
 
 
-class Filesystem(Node):
+class Node(BaseNode):
+    """Base class for node handlers of this document"""
+
+    namespace = "http://pyre.caltech.edu/releases/1.0/schema/inventory.html"
+
+
+class Inventory(Node):
     """The top level document element"""
 
     def notify(self, parent, locator):
@@ -26,22 +33,26 @@ class Filesystem(Node):
         """do nothing"""
 
 
-class FSD(Document):
+class IDoc(Document):
     """Document class"""
     # the top-level
-    root = "filesystem"
+    root = "inventory"
     # declare the handler
-    filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
+    inventory = pyre.xml.element(tag="inventory", handler=Inventory)
 
 
 def test():
     # build the trivial document
-    document = FSD()
+    document = IDoc()
 
     # build a parser
     reader = pyre.xml.newReader()
     # parse the sample document
-    reader.read(stream=open("sample-empty.xml"), document=document)
+    reader.read(
+        stream=open("sample-namespaces.xml"), 
+        document=document,
+        features=[(reader.feature_namespaces, True)]
+        )
 
     return document
 

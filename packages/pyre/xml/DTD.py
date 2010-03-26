@@ -49,15 +49,47 @@ class DTD(AttributeClassifier):
         """
         # extract the element descriptors from the attribute categories
         descriptors = tuple(attributes.categories["elements"])
-        # build a (tag -> handler) map
+
+        # namespaces introduce a bit of complexity. unless it turns out to be inconsistent with
+        # the rules, here is the strategy: if a nested element is in the same namespace as its
+        # direct parent, it goes into the _pyre_nodeIndex. otherwise it goes into the
+        # _pyre_nodeQIndex of namespace qualified tags
+        
+        # in the Reader, {start|end}Element look up tags directly in the _pyre_nodeIndex, which
+        # is the only possible implementation since there is no additional information
+        # available beyond the tag name. this is equivalent to assuming that the nested tag
+        # belongs to the same namespace. the namespace qualified hooks {start|end}ElementNS
+        # need a slightly modified approach: if the namespace given matches the namespace of
+        # the parent tag, look in _pyre_nodeIndex; if not look it up in _pyre_nodeQIndex
+
+        # build a (descriptor name -> handler) map
         index = { descriptor.name: descriptor for descriptor in descriptors }
-        # now, build the dtd for each handler
+
+        # now, build the dtd for each handler 
         for element in descriptors:
-            element.handler._nodeIndex = {
-                tag: index[tag].handler for tag in element.handler.elements }
-        # and the one for the document class
-        record._nodeIndex = { tag: index[tag].handler for tag in record.elements }
-        # return it so it can be bound to whatever name _pyre_DTD specifies
+            # get the class that handles this element
+            handler = element.handler
+            # initialize the class attributes
+            handler.tag = element.name
+            handler._pyre_nodeIndex = {}
+            handler._pyre_nodeQIndex = {}
+            # build the nested element indices
+            for tag in handler.elements:
+                # get the nestling handler
+                nestling = index[tag].handler
+                # figure out which into which index this nestling should be placed
+                if handler.namespace == nestling.namespace:
+                    handler._pyre_nodeIndex[tag] = nestling
+                else:
+                    handler._pyre_nodeQIndex[(nestling.namespace, tag)] = nestling
+
+        # and now adjust the actual document class
+        if record.root is not None:
+            root = index[record.root].handler
+            record.namespace = root.namespace
+            record._pyre_nodeIndex = { record.root: root }
+
+        # return the list of descriptors so it can be attached to whatever name _pyre_DTD specifies
         return descriptors
 
 
