@@ -14,6 +14,7 @@ RECURSE_DIRS = \
     depository \
     tests \
     doc \
+    schema \
     examples \
 
 #--------------------------------------------------------------------------
