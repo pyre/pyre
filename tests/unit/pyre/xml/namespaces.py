@@ -13,8 +13,14 @@ Read an empty document
 
 import xml
 import pyre.xml
-from pyre.xml.Node import Node
+from pyre.xml.Node import Node as BaseNode
 from pyre.xml.Document import Document
+
+
+class Node(BaseNode):
+    """Base class for node handlers of this document"""
+
+    namespace = "http://pyre.caltech.edu/releases/1.0/schema/inventory.html"
 
 
 class Inventory(Node):
@@ -23,14 +29,14 @@ class Inventory(Node):
     def notify(self, parent, locator):
         """do nothing"""
 
-    def __init__(self, parent, attributes):
+    def __init__(self, parent, attributes, locator):
         """do nothing"""
 
 
 class IDoc(Document):
     """Document class"""
     # the top-level
-    elements = ["inventory"]
+    root = "inventory"
     # declare the handler
     inventory = pyre.xml.element(tag="inventory", handler=Inventory)
 
@@ -48,7 +54,7 @@ def test():
         features=[(reader.feature_namespaces, True)]
         )
 
-    return
+    return document
 
 
 # main

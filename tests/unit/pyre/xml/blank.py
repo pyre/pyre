@@ -29,7 +29,7 @@ def test():
     except reader.ParsingError as error:
         assert str(error) == "file='sample-blank.xml', line=11, column=0: no element found"
 
-    return
+    return document
 
 
 # main

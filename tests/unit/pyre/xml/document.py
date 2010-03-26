@@ -39,7 +39,7 @@ class FSD(Document):
     """Document class"""
 
     # the top level element
-    elements = ["filesystem"]
+    root = "filesystem"
     
     # the element descriptors
     owner = pyre.xml.element(tag="owner", handler=Owner)
@@ -55,12 +55,12 @@ def test():
     assert FSD.dtd == ( FSD.owner, FSD.permissions, FSD.file, FSD.folder , FSD.filesystem )
 
     # verify that each Node has the right (tag, handler constructor) map
-    assert Owner._nodeIndex == {}
-    assert Permissions._nodeIndex == {}
-    assert File._nodeIndex == { "owner": Owner, "permissions": Permissions }
-    assert Folder._nodeIndex == {
+    assert Owner._pyre_nodeIndex == {}
+    assert Permissions._pyre_nodeIndex == {}
+    assert File._pyre_nodeIndex == { "owner": Owner, "permissions": Permissions }
+    assert Folder._pyre_nodeIndex == {
         "owner": Owner, "permissions": Permissions, "file": File, "folder": Folder }
-    assert Filesystem._nodeIndex == {
+    assert Filesystem._pyre_nodeIndex == {
         "owner": Owner, "permissions": Permissions, "file": File, "folder": Folder }
 
     return FSD

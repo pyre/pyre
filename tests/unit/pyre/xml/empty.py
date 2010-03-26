@@ -22,14 +22,14 @@ class Filesystem(Node):
     def notify(self, parent, locator):
         """do nothing"""
 
-    def __init__(self, parent, attributes):
+    def __init__(self, parent, attributes, locator):
         """do nothing"""
 
 
 class FSD(Document):
     """Document class"""
     # the top-level
-    elements = ["filesystem"]
+    root = "filesystem"
     # declare the handler
     filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
 
@@ -43,7 +43,7 @@ def test():
     # parse the sample document
     reader.read(stream=open("sample-empty.xml"), document=document)
 
-    return
+    return document
 
 
 # main

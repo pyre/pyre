@@ -20,19 +20,18 @@ from pyre.xml.Document import Document
 
 class File(Node):
     """Handle the file tag"""
-    # storage for my attributes
-    name = ""
 
     def notify(self, parent, locator):
         return parent.addEntry(self)
 
-    def __init__(self, parent, attributes):
+    def __init__(self, parent, attributes, locator):
         self.name = attributes['name']
         self.fsnode = parent.fsnode.newNode()
 
     
 class Folder(Node):
     """Handle the folder tag"""
+
     elements = ("file", "folder")
 
     def notify(self, parent, locator):
@@ -42,7 +41,7 @@ class Folder(Node):
         """Add a file to my contents"""
         self.fsnode[entry.name] = entry.fsnode
 
-    def __init__(self, parent, attributes):
+    def __init__(self, parent, attributes, locator):
         self.name = attributes['name']
         self.fsnode = parent.fsnode.newFolder()
 
@@ -53,20 +52,21 @@ class Filesystem(Folder):
     def notify(self, parent, locator):
         parent.dom = self.fsnode
 
-    def __init__(self, parent, attributes):
+    def __init__(self, parent, attributes, locator):
         self.fsnode = pyre.filesystem.newVirtualFilesystem()
 
 
 class FSD(Document):
     """Document class"""
 
+    # the top-level element tag name
+    root = "filesystem"
+
     # the element descriptors
     file = pyre.xml.element(tag="file", handler=File)
     folder = pyre.xml.element(tag="folder", handler=Folder)
     filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
 
-    # the top-level
-    elements = ["filesystem"]
 
 
 def test():

@@ -14,8 +14,13 @@ Build a document handler and read a simple file
 
 import pyre.xml
 import pyre.filesystem
-from pyre.xml.Node import Node
+from pyre.xml.Node import Node as BaseNode
 from pyre.xml.Document import Document
+
+
+class Node(BaseNode):
+    """Base class for my nodes"""
+    namespace = "http://pyre.caltech.edu/releases/1.0/schema/fs.html"
 
 
 class File(Node):
@@ -26,7 +31,7 @@ class File(Node):
     def notify(self, parent, locator):
         return parent.addEntry(self)
 
-    def __init__(self, parent, attributes):
+    def __init__(self, parent, attributes, locator):
         self.name = attributes['name']
         self.fsnode = parent.fsnode.newNode()
 
@@ -42,7 +47,7 @@ class Folder(Node):
         """Add a file to my contents"""
         self.fsnode[entry.name] = entry.fsnode
 
-    def __init__(self, parent, attributes):
+    def __init__(self, parent, attributes, locator):
         self.name = attributes['name']
         self.fsnode = parent.fsnode.newFolder()
 
@@ -53,20 +58,20 @@ class Filesystem(Folder):
     def notify(self, parent, locator):
         parent.dom = self.fsnode
 
-    def __init__(self, parent, attributes):
+    def __init__(self, parent, attributes, locator):
         self.fsnode = pyre.filesystem.newVirtualFilesystem()
 
 
 class FSD(Document):
     """Document class"""
 
+    # the top-level element
+    root = "filesystem"
+
     # the element descriptors
     file = pyre.xml.element(tag="file", handler=File)
     folder = pyre.xml.element(tag="folder", handler=Folder)
     filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
-
-    # the top-level
-    elements = ["filesystem"]
 
 
 def test():
@@ -89,7 +94,7 @@ def test():
     assert fs["/tmp/images"] is not None
     assert fs["/tmp/images/logo.png"] is not None
 
-    return
+    return fs
 
 
 # main

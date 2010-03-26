@@ -22,14 +22,14 @@ class Inventory(Node):
     def notify(self, parent, locator):
         """do nothing"""
 
-    def __init__(self, parent, attributes):
+    def __init__(self, parent, attributes, locator):
         """do nothing"""
 
 
 class IDoc(Document):
     """Document class"""
     # the top-level
-    elements = ["inventory"]
+    root = "inventory"
     # declare the handler
     inventory = pyre.xml.element(tag="inventory", handler=Inventory)
 

@@ -131,11 +131,66 @@ class Reader(xml.sax.ContentHandler):
 
 
     def startElementNS(self, name, qname, attributes):
-        print("----------------------------------")
-        print(name)
-        print(qname)
-        print(attributes.getQNames())
-        print("..................................")
+        """
+        Handler for the beginning of an element when feature_namespaces is turned on and the
+        element encountered has a namespace qualification, either explicitly given with the
+        tag, or because the document specifies a default namespace
+        """
+
+        # NYI:
+        #     qnames seem to alway be None, so I am ignoring them
+        #     will address later, after further explorations
+
+        # unpack the qualified name
+        namespace, tag = name
+        # normalize the attributes
+        # NYI:
+        #     currently, we only supportthe case where the attribute names belong to the same
+        #     namespace as the element itself
+        # print(" *** attributes:", attributes)
+        # print(" ***      names:", attributes.getNames())
+        # print(" ***     qnames:", attributes.getQNames())
+        # print(" ***   contents:", attributes.items())
+        normalized = {}
+        for ((namespace, name), value) in attributes.items():
+            normalized[name] = value
+
+        # use the correct factory to build a new Node instance
+        try:
+            # print(" startElementNS:")
+            # print("            current tag:", self._currentNode.tag)
+            # print("      current namespace:", self._currentNode.namespace)
+            # print("          requested tag:", tag)
+            # print("    requested namespace:", namespace)
+
+            # namespace is set to None if the element has namespace decoration, in the same
+            # namespace as its parent and there is no default namespace declared by the
+            # document
+            if namespace is None or namespace == self._currentNode.namespace:
+                node = self._currentNode.newNode(
+                    name=tag, attributes=normalized, locator=self._locator)
+            else:
+                node = self._currentNode.newQNode(
+                    name=name, namespace=namespace, attributes=normalized, locator=self._locator)
+        # either bad document or a bad handler constructor
+        except TypeError as error:
+            msg = "could not instantiate handler for node {0!r}; extra attributes?".format(name)
+            raise self.DTDError(
+                    parser=self, document=self._document,
+                    description=msg, locator=self._locator) from error
+        # the current node doesn't permit this particular child node
+        except KeyError as error:
+            msg = "could not locate handler for node {0!r} in {1!r}".format(
+                name, self._currentNode.__class__)
+            raise self.DTDError(
+                    parser=self, document=self._document,
+                    description=msg, locator=self._locator) from error
+
+        # push the current node on the stack
+        self._nodeStack.append(self._currentNode)
+        # and make the new node the focus of attention
+        self._currentNode = node
+
         return
 
 
@@ -156,7 +211,9 @@ class Reader(xml.sax.ContentHandler):
                 self._currentNode.content(text=content, locator=self._locator)
             except AttributeError as error:
                 # raise an error if it doesn't have one
-                msg = "element {0._currentNode.tag!r} does not accept character data".format(self)
+                msg = (
+                    "element {0._currentNode._pyre_tag!r} does not accept character data"
+                    .format(self))
                 raise self.DTDError(
                     parser=self, document=self._document,
                     description=msg, locator=self._locator) from error
@@ -186,6 +243,17 @@ class Reader(xml.sax.ContentHandler):
                 description=msg, locator=self._locator) from error
             
         return
+
+
+    def endElementNS(self, name, qname):
+        """
+        Handler for the end of a namespace qualified element
+
+        Currently there is no known reason to process this differently from normal elements,
+        since the reader already knows how to get hold of the responsible handler for this
+        event
+        """
+        return self.endElement(name)
 
 
     def endDocument(self):
