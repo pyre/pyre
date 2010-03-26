@@ -19,6 +19,13 @@ class Reader(xml.sax.ContentHandler):
     ignoreWhitespace = False
 
 
+    # features
+    from xml.sax.handler import (
+        feature_namespaces, feature_namespace_prefixes, feature_string_interning,
+        feature_validation, feature_external_ges, feature_external_pes
+        )
+
+
     # interface
     def read(self, *, stream, document, features=(), saxparser=None):
         """
@@ -123,6 +130,15 @@ class Reader(xml.sax.ContentHandler):
         return
 
 
+    def startElementNS(self, name, qname, attributes):
+        print("----------------------------------")
+        print(name)
+        print(qname)
+        print(attributes.getQNames())
+        print("..................................")
+        return
+
+
     def characters(self, content):
         """
         Handler for the content of a tag
@@ -187,8 +203,6 @@ class Reader(xml.sax.ContentHandler):
         self._currentNode = None
 
         return
-
-
 
 
     # exceptions

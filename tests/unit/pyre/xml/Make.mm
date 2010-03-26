@@ -23,7 +23,11 @@ sanity:
 documents:
 	${PYTHON} ./blank.py
 	${PYTHON} ./empty.py
+	${PYTHON} ./namespaces.py
+	${PYTHON} ./schema.py
 	${PYTHON} ./fs.py
+	${PYTHON} ./fs_namespaces.py
+	${PYTHON} ./fs_schema.py
 
 
 # end of file 

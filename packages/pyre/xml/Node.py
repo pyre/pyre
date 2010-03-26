@@ -15,6 +15,7 @@ class Node(object):
     # public data
     tag = None
     elements = ()
+    namespace = ""
 
 
     # interface
@@ -56,6 +57,7 @@ class Node(object):
 
     # private data
     _nodeIndex = None
+    _nodeQIndex = None
 
 
 # end of file 

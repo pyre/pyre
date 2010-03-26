@@ -55,7 +55,7 @@ class DTD(AttributeClassifier):
         for element in descriptors:
             element.handler._nodeIndex = {
                 tag: index[tag].handler for tag in element.handler.elements }
-        # and the one for the document class
+        # and the one for the actual document class
         record._nodeIndex = { tag: index[tag].handler for tag in record.elements }
         # return it so it can be bound to whatever name _pyre_DTD specifies
         return descriptors
