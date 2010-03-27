@@ -18,6 +18,7 @@ test: sanity
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./manager.py
 
 
 # end of file 

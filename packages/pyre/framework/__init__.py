@@ -35,4 +35,13 @@ def newFileServer(**kwds):
     return FileServer(**kwds)
 
 
+# exceptions
+class FrameworkError(Exception):
+    """
+    Base class for all pyre exceptions
+
+    Useful when you are trying to catch any and all pyre framework errors
+    """
+
+
 # end of file 
