@@ -66,7 +66,7 @@ class FileServer(Filesystem):
                 # hunt down the depository subdirectory
                 system = self.systemfs["depository"]
             except KeyError:
-                # hmm... why is this dierctory missing from the distribution?
+                # hmm... why is this directory missing from the distribution?
                 # moving on...
                 system = self.newFolder()
        # mount the system directory
