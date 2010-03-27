@@ -6,7 +6,10 @@
 #
 
 
-class Importer(object):
+from ..Codec import Codec
+
+
+class Importer(Codec):
     """
     This package contains the implementation of the native importer
     """

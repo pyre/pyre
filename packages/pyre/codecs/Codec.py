@@ -26,7 +26,7 @@ class Codec(object):
         binding a facility to an instance of the user-specified component
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__} must override 'resolve'".format(self))
+            "class {0.__class__.__name__!r} must override 'resolve'".format(self))
 
 
     def encode(self, item, stream):
@@ -34,15 +34,15 @@ class Codec(object):
         Build a representation of {item} in the current encoding and inject it into {stream}
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__} must override 'encode'".format(self))
+            "class {0.__class__.__name__!r} must override 'encode'".format(self))
     
 
-    def decode(self, item, stream):
+    def decode(self, stream):
         """
         Injest {stream} and return the decoded contents
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__} must override 'decode'".format(self))
+            "class {0.__class__.__name__!r} must override 'decode'".format(self))
     
 
     # exceptions

@@ -30,6 +30,9 @@ class Executive(object):
     def __init__(self, **kwds):
         super().__init__(**kwds)
 
+
+        # my codec manager
+        self.codecs = pyre.framework.newCodecManager()
         # my virtual filesystem
         self.fileserver = pyre.framework.newFileServer()
 

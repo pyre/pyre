@@ -33,6 +33,7 @@ distclean::
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Codec.py \
     CodecManager.py \
     __init__.py
 

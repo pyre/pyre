@@ -30,6 +30,11 @@ def executive(**kwds):
 
 
 # factories for other managers
+def newCodecManager(**kwds):
+    from ..codecs import newManager
+    return newManager(**kwds)
+
+
 def newFileServer(**kwds):
     from .FileServer import FileServer
     return FileServer(**kwds)

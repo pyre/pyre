@@ -14,11 +14,13 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity formats
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./manager.py
 
+formats:
+	${PYTHON} ./pml.py
 
 # end of file 

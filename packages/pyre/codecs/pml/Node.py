@@ -6,17 +6,17 @@
 #
 
 
-from ..Codec import Codec
+from pyre.xml.Node import Node as Base
 
 
-class PCS(Codec):
+class Node(Base):
     """
-    This package contains the implementation of the pcs reader and writer
+    Base class for the handlers of the pml reader
     """
 
 
     # constants
-    encoding = "pcs"
+    namespace = "http://pyre.caltech.edu/releases/1.0/schema/fs.html"
 
 
 # end of file

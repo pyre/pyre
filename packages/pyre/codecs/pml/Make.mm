@@ -20,6 +20,11 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Document.py \
+    Inventory.py \
+    Node.py \
+    Package.py \
+    Property.py \
     PML.py \
     __init__.py
 

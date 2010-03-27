@@ -21,6 +21,7 @@ sanity:
 framework:
 	${PYTHON} ./executive.py
 	${PYTHON} ./executive_fileserver.py
+	${PYTHON} ./executive_codecs.py
 
 
 # end of file 
