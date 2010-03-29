@@ -11,11 +11,11 @@ from .Node import Node
 
 class Inventory(Node):
     """
-    Handler for the top level tag in pml documents
+    Handler for the inventory tag in pml documents
     """
 
     # constants
-    elements = ("package",)
+    elements = ("inventory", "property",)
 
 
     # interface
@@ -26,7 +26,13 @@ class Inventory(Node):
         return parent.onInventory(self)
 
 
-    def onPackage(self, package):
+    def onInventory(self, inventory):
+        """
+        """
+        return
+
+
+    def onProperty(self, property):
         """
         """
         return

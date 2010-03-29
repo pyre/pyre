@@ -15,23 +15,23 @@ class Document(Base):
     """
 
     # constants
-    root = "inventory" # the op level element tag
+    root = "config" # the top level element tag
 
     # get access to the element descriptor factory
     import pyre.xml
     # and the handlers
+    from .Configuration import Configuration
     from .Inventory import Inventory
-    from .Package import Package
     from .Property import Property
 
     # the element descriptors
+    config = pyre.xml.element(tag="config", handler=Configuration)
     inventory = pyre.xml.element(tag="inventory", handler=Inventory)
-    package = pyre.xml.element(tag="package", handler=Package)
     property = pyre.xml.element(tag="property", handler=Property)
 
 
     # interface
-    def onInventory(self, inventory):
+    def onConfiguration(self, configuration):
         """
         """
         return
