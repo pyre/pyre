@@ -20,20 +20,26 @@ class Document(Base):
     # get access to the element descriptor factory
     import pyre.xml
     # and the handlers
+    from .Bind import Bind
     from .Configuration import Configuration
     from .Inventory import Inventory
-    from .Property import Property
 
     # the element descriptors
+    bind = pyre.xml.element(tag="bind", handler=Bind)
     config = pyre.xml.element(tag="config", handler=Configuration)
     inventory = pyre.xml.element(tag="inventory", handler=Inventory)
-    property = pyre.xml.element(tag="property", handler=Property)
 
 
     # interface
     def onConfiguration(self, configuration):
         """
+        Handle the top level tag
         """
+        for key, value in configuration.assignments:
+            print("{{{}}}: {{{}}}".format(key, value))
+
+        self.dom = configuration
+
         return
 
 

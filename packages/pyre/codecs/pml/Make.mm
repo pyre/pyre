@@ -20,11 +20,11 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Bind.py \
     Configuration.py \
     Document.py \
     Inventory.py \
     Node.py \
-    Property.py \
     PML.py \
     __init__.py
 

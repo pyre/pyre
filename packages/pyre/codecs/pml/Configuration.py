@@ -9,9 +9,9 @@
 from .Node import Node
 
 
-class Inventory(Node):
+class Configuration(Node):
     """
-    Handler for the inventory tag in pml documents
+    Handler for the top level tag in pml documents
     """
 
     # constants
@@ -21,31 +21,29 @@ class Inventory(Node):
     # interface
     def notify(self, parent, locator):
         """
-        Let {parent} now that processing this inventory tag is complete
+        Let {parent} now that processing this configuration tag is complete
         """
-        return parent.onInventory(self.assignments)
+        return parent.onConfiguration(self)
 
 
     def onBind(self, key, value):
         """
         Process a binding of a property to a value
         """
-        self.assignments.append(("{}.{}".format(self.name, key), value))
+        self.assignments.append((key, value))
         return
 
 
     def onInventory(self, assignments):
         """
-        Process a nested inventory tag
+        Handle nested inventory tags
         """
-        for key, value in assignments:
-            self.assignments.append( ("{}.{}".format(self.name, key), value) )
+        self.assignments += assignments
         return
 
 
     # meta methods
     def __init__(self, parent, attributes, locator):
-        self.name = attributes['name']
         self.assignments = []
         return
     

@@ -15,17 +15,18 @@
 
   <inventory name="pyre">
     <!-- some global settings -->
-    <bind property="home">pyre.home()</property>
-    <property name="prefix">pyre.prefix()</property>
+    <bind property="home">pyre.home()</bind>
+    <bind property="prefix">pyre.prefix()</bind>
 
     <!-- and some per user settings -->
     <inventory name="user">
-      <property name="name">michael a.g. aïvázis</property>
-      <property name="email">aivazis@caltech.edu</property>
-      <property name="affiliation">california institute of technology</property>
+      <bind property="name">michael a.g. aïvázis</bind>
+      <bind property="email">aivazis@caltech.edu</bind>
     </inventory>
 
   </inventory>
+
+  <bind property="pyre.user.affiliation">california institute of technology</bind>
 
 </config>
 

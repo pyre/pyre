@@ -20,7 +20,10 @@ sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./manager.py
 
-formats:
+formats: pml
+
+pml:
+	${PYTHON} ./pml_empty.py
 	${PYTHON} ./pml.py
 
 # end of file 

@@ -20,10 +20,10 @@ def test():
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
     # open a stream
-    sample = open("sample.pml")
+    sample = open("sample-empty.pml")
     # read the contents
     configuration = reader.decode(sample)
-    # check that we got a non-triviual instance
+    # check that we got a real instance back
     assert configuration is not None
     # check that it is an instance of the right type
     from pyre.codecs.pml.Configuration import Configuration

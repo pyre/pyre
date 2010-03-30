@@ -54,4 +54,5 @@ class Document(Node, metaclass=DTD):
     # inherited from Node
     _pyre_nodeIndex = None
 
+
 # end of file 
