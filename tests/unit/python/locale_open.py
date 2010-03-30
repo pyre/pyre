@@ -16,7 +16,9 @@ environment. Necessary because python gets this wrong by default
 def test():
     import locale
 
-    # findout what the default preferred encoding is
+    # find out what the default locale is
+    print("default locale:", locale.getdefaultlocale())
+    # find out what the default preferred encoding is
     print("preferred encoding:", locale.getpreferredencoding())
 
     locale.setlocale(locale.LC_ALL, '')
