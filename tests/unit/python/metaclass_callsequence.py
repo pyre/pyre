@@ -23,13 +23,15 @@ class meta(type):
         order.append("running:  meta.__prepare__")
         return super().__prepare__(name, bases)
 
-
-
     order.append("declaration: metaclass __new__")
     def __new__(metacls, name, bases, attributes, **kwds):
         order.append("running: meta.__new__")
         return super().__new__(metacls, name, bases, attributes)
 
+    order.append("declaration: metaclass __call__")
+    def __call__(metacls, **kwds):
+        order.append("running: meta.__call__")
+        return super().__call__(**kwds)
 
     order.append("declaration: metaclass __init__")
     def __init__(self, name, bases, attributes, **kwds):
@@ -66,6 +68,7 @@ def test():
         'declaration: metaclass',
         'declaration: metaclass __prepare__',
         'declaration: metaclass __new__',
+        'declaration: metaclass __call__',
         'declaration: metaclass __init__',
         'declaration: base',
         'running:  meta.__prepare__',
@@ -77,9 +80,11 @@ def test():
         'declaration: test',
         'running: test',
         'running: instantiating one',
+        'running: meta.__call__',
         'running:  base.__new__',
         'running:  base.__init__',
         'running: instantiating another', 
+        'running: meta.__call__',
         'running:  base.__new__',
         'running:  base.__init__']
 
