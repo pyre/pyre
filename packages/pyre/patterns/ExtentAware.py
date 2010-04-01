@@ -17,12 +17,12 @@ class ExtentAware(type):
 
     implementation details:
 
-      __new__ gets the name of the class being built, its list of bases and an instance of the
-      special attribute dictionary in order to build the class record. It replaces the
-      constructor of the class with one that chains to the original and adds the instance to
-      extent of the class. The extent is stored as a WeakSet so that it doesn't interfere with
-      the normal reference counting. When the instance is destoryed, it is also automatically
-      removed from the extent by the WeakSet implementation.
+        __new__: intercept the creation of the client class record and add the reference
+        counting weak set as a class attribute
+
+        __call__: capture the creation of an instance, since it is this method that triggers
+        the call to the client class' constructor. we let super().__call__ build the instance
+        and then add a weak reference to it in _pyre_extent
     """
 
 
@@ -32,29 +32,25 @@ class ExtentAware(type):
         Intercept the class record creation and install a replacement constructor that record
         the number of instances of this class
         """
-
         # build the class record
         record = super().__new__(cls, name, bases, attributes)
-
         # add the weakset attribute
         record._pyre_extent = weakref.WeakSet()
-
-        # grab the constructor; it is guaranteed to exist since object has one
-        # and all classes derive from object
-        constructor = record.__init__
-
-        # build the replacement
-        def constructor_wrapper(self, **kwds):
-            # chain to the original constructor
-            constructor(self, **kwds)
-            # add a weak reference to myself in my class' extent
-            record._pyre_extent.add(self)
-            return
-
-        # attach the replacement
-        record.__init__ = constructor_wrapper
-
+        # and return it
         return record
+
+
+    def __call__(cls, **kwds):
+        """
+        Intercept the call to the client constructor, build the instance and keep a weak
+        reference to it
+        """
+        # build the instance
+        instance = super().__call__(**kwds)
+        # add it to the class extent
+        instance.__class__._pyre_extent.add(instance)
+        # and return it
+        return instance
         
 
 # end of file 
