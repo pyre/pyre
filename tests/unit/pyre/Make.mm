@@ -17,6 +17,7 @@ RECURSE_DIRS = \
     constraints \
     calc \
     filesystem \
+    config \
     framework \
 
 #--------------------------------------------------------------------------
