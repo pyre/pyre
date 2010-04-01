@@ -36,7 +36,6 @@ def create_instances():
     # print({ref for ref in base._pyre_extent})
     # print({ref for ref in derived._pyre_extent})
     assert set(base._pyre_extent) == { b1, b2, d1, d2 }
-    assert set(derived._pyre_extent) == { d1, d2 }
 
     return
 
@@ -49,7 +48,6 @@ def test():
     # print(set(base._pyre_extent))
     # print(set(derived._pyre_extent))
     assert set(base._pyre_extent) == set()
-    assert set(derived._pyre_extent) == set()
 
     return base, derived
 

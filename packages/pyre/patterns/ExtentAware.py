@@ -29,13 +29,23 @@ class ExtentAware(type):
     # class methods
     def __new__(cls, name, bases, attributes):
         """
-        Intercept the class record creation and install a replacement constructor that record
+        Intercept the class record creation and install a replacement constructor that records
         the number of instances of this class
         """
+        # the old implementation replaced the client constructor with one that added a weak
+        # reference to the new instance in _pyre_extent. as a side effect, each class in a
+        # hierarchy maintained an extent for itself and its descendants, assuming that __init__
+        # was chaining upwards correctly. the current implementation with __new__/__call__
+        # behaves somewhat differently: the extent is stored with the first class that mentions
+        # ExtentAware as a metaclass, and all descendants are counted by that class
+
         # build the class record
         record = super().__new__(cls, name, bases, attributes)
-        # add the weakset attribute
-        record._pyre_extent = weakref.WeakSet()
+        # add the weakset attribute that maintains the extent, if it is not already there
+        # this has the effect of storing the class extent at the root class in a hierarchy
+        # which makes it easy to check that descendants have been garbage collected as well
+        if not hasattr(record, "_pyre_extent"): 
+            record._pyre_extent = weakref.WeakSet()
         # and return it
         return record
 
