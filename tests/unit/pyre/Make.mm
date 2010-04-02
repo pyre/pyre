@@ -13,11 +13,11 @@ RECURSE_DIRS = \
     tracking \
     parsing \
     xml \
-    codecs \
     constraints \
     calc \
     filesystem \
     config \
+    codecs \
     framework \
 
 #--------------------------------------------------------------------------

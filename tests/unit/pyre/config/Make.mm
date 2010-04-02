@@ -14,11 +14,16 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity configurator evaluator
 
 sanity:
 	${PYTHON} ./sanity.py
+
+configurator:
 	${PYTHON} ./configurator.py
+	${PYTHON} ./configurator_assignments.py
+
+evaluator:
 	${PYTHON} ./evaluator.py
 
 

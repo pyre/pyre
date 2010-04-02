@@ -35,11 +35,7 @@ class Document(Base):
         """
         Handle the top level tag
         """
-        for key, value in configuration.assignments:
-            print("{{{}}}: {{{}}}".format(key, value))
-
         self.dom = configuration
-
         return
 
 

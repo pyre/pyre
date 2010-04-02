@@ -19,8 +19,17 @@ def test():
     m = pyre.codecs.newManager()
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
-    # and return the manager and the reader
-    return m, reader
+    # open a stream
+    sample = open("sample.pml")
+    # read the contents
+    configuration = reader.decode(sample)
+    # check that we got a non-trivial instance
+    assert configuration is not None
+    # check that it is an instance of the right type
+    from pyre.codecs.pml.Configuration import Configuration
+    assert isinstance(configuration, Configuration)
+
+    return m, reader, configuration
 
 
 # main

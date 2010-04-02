@@ -6,13 +6,35 @@
 #
 
 
+import collections
+
+
 class Configurator(object):
     """
     """
 
 
+    # public data
+    events = ()
+
+
+    # interface
+    def createAssignment(self, key, value):
+        """
+        Create an event that corresponds to an assignment of {value} to {key}, and insert it
+        into the event queue
+        """
+        from .Assignment import Assignment
+        assignment = Assignment(key=key, value=value)
+        self.events.append(assignment)
+        return assignment
+
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
+        # event storage: an unbounded, double-ended queue
+        self.events = collections.deque()
+
         return
 
 

@@ -23,7 +23,8 @@ sanity:
 formats: pml
 
 pml:
-	${PYTHON} ./pml_empty.py
 	${PYTHON} ./pml.py
+	${PYTHON} ./pml_empty.py
+	${PYTHON} ./pml_sample.py
 
 # end of file 
