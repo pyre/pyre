@@ -25,6 +25,7 @@ configurator:
 
 evaluator:
 	${PYTHON} ./evaluator.py
+	${PYTHON} ./evaluator_assignments.py
 
 
 # end of file 

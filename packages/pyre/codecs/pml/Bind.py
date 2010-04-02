@@ -33,7 +33,8 @@ class Bind(Node):
         """
         Let {parent} now that processing this bind tag is complete
         """
-        return parent.onBind(key=self.key, value="\n".join(self.text))
+        parent.createAssignment(key=[self.key], value="\n".join(self.text))
+        return
 
 
     # meta methods

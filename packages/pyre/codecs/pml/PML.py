@@ -21,7 +21,7 @@ class PML(Codec):
 
 
     # interface
-    def decode(self, stream):
+    def decode(self, configurator, stream):
         """
         Parse {stream} and return its contents
         """
@@ -32,9 +32,13 @@ class PML(Codec):
         # make a reader
         reader = pyre.xml.newReader()
         # parse the contents
-        item = reader.read(stream=stream, document=Document())
-        # and return it
-        return item
+        configuration = reader.read(stream=stream, document=Document())
+        # record the harvested events
+        # the assignments
+        for key,value in configuration.bindings:
+            configurator.createAssignment(key, value)
+        # and return the configuration
+        return configuration
 
 
 # end of file

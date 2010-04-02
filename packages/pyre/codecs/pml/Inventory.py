@@ -21,32 +21,29 @@ class Inventory(Node):
     # interface
     def notify(self, parent, locator):
         """
-        Let {parent} now that processing this inventory tag is complete
+        Transfer all the key,value bindings to my parent
         """
-        return parent.onInventory(self.assignments)
-
-
-    def onBind(self, key, value):
-        """
-        Process a binding of a property to a value
-        """
-        self.assignments.append(("{}.{}".format(self.name, key), value))
+        for key, value in self.bindings:
+            parent.createAssignment(key=key, value=value)
         return
 
 
-    def onInventory(self, assignments):
+    # assignment handler
+    def createAssignment(self, key, value):
         """
-        Process a nested inventory tag
+        Process a binding of a property to a value
         """
-        for key, value in assignments:
-            self.assignments.append( ("{}.{}".format(self.name, key), value) )
+        # add my namespace to the key
+        key.append(self.name)
+        # store it with my other bindings
+        self.bindings.append((key, value))
         return
 
 
     # meta methods
     def __init__(self, parent, attributes, locator):
         self.name = attributes['name']
-        self.assignments = []
+        self.bindings = []
         return
     
 

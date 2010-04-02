@@ -26,25 +26,20 @@ class Configuration(Node):
         return parent.onConfiguration(self)
 
 
-    def onBind(self, key, value):
+    # assignment handler
+    def createAssignment(self, key, value):
         """
         Process a binding of a property to a value
         """
-        self.assignments.append((key, value))
-        return
-
-
-    def onInventory(self, assignments):
-        """
-        Handle nested inventory tags
-        """
-        self.assignments += assignments
+        # the namespace markers on the key are in stored reverse order
+        # so reverse before joining with dots
+        self.bindings.append((".".join(reversed(key)), value))
         return
 
 
     # meta methods
     def __init__(self, parent, attributes, locator):
-        self.assignments = []
+        self.bindings = []
         return
     
 
