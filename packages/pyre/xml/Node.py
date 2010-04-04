@@ -69,9 +69,22 @@ class Node(object):
         See Node.newNode for details
         """
         # get the handler factory
-        factory = self._pyre_nodeQIndex[(name, namespace)]
+        try:
+            factory = self._pyre_nodeQIndex[(name, namespace)]
+        except KeyError as error:
+           msg = "unknown tag {0!r}".format(name)
+           raise self.DTDError(description=msg) from error
+ 
         # invoke it to get a new node for the parsingcontext
-        node = factory(parent=self, attributes=attributes, locator=locator)
+        try:
+            node = factory(parent=self, attributes=attributes, locator=locator)
+        except TypeError as error:
+            msg = "could not instantiate handler for node {0!r}; extra attributes?".format(name)
+            raise self.DTDError(description=msg) from error
+        except KeyError as error:
+            msg = "node {0!r}: unknown attribute {1!r}".format(name, error.args[0])
+            raise self.DTDError(description=msg) from error
+
         # and return it
         return node
 
