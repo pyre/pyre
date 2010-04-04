@@ -23,8 +23,9 @@ EXPORT_PYTHON_MODULES = \
     AbstractMetaclass.py \
     AttributeClassifier.py \
     ExtentAware.py \
-    Observable.py \
     Named.py \
+    Observable.py \
+    PathHash.py \
     Singleton.py \
     __init__.py
 

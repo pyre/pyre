@@ -24,4 +24,13 @@ def powerset(iterable):
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
 
 
+# factories
+def newPathhash(**kwds):
+    """
+    Build a hashing functor for name hierarchies
+    """
+    from .PathHash import PathHash
+    return PathHash(**kwds)
+
+
 # end of file 

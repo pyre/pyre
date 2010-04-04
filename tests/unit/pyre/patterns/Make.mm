@@ -4,7 +4,6 @@
 # california institute of technology
 # (c) 1998-2010 all rights reserved
 #
-#
 
 
 PROJECT = pyre
@@ -23,9 +22,11 @@ utils:
 	${PYTHON} ./powerset.py
 
 patterns:
+	${PYTHON} ./classifier.py
 	${PYTHON} ./extent.py
 	${PYTHON} ./named.py
 	${PYTHON} ./observable.py
+	${PYTHON} ./pathhash.py
 	${PYTHON} ./singleton.py
 
 
