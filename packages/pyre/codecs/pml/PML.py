@@ -43,8 +43,8 @@ class PML(Codec):
 
         # record the harvested events
         # the assignments
-        for key,value in configuration.bindings:
-            configurator.createAssignment(key, value)
+        for key,value,locator in configuration.bindings:
+            configurator.createAssignment(key, value, locator)
         # and return the configuration
         return configuration
 

@@ -84,6 +84,11 @@ class Node(object):
             "class {0.__class__.__name__!r} must override 'notify'".format(self))
 
 
+    # pull in the locator converter
+    from . import newLocator
+    newLocator = staticmethod(newLocator)
+
+
     # exceptions
     from . import DTDError
 

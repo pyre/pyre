@@ -23,20 +23,20 @@ class Inventory(Node):
         """
         Transfer all the key,value bindings to my parent
         """
-        for key, value in self.bindings:
-            parent.createAssignment(key=key, value=value)
+        for key, value, locator in self.bindings:
+            parent.createAssignment(key=key, value=value, locator=locator)
         return
 
 
     # assignment handler
-    def createAssignment(self, key, value):
+    def createAssignment(self, key, value, locator):
         """
         Process a binding of a property to a value
         """
         # add my namespace to the key
         key.append(self.name)
         # store it with my other bindings
-        self.bindings.append((key, value))
+        self.bindings.append((key, value, locator))
         return
 
 

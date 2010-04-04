@@ -25,10 +25,10 @@ formats: pml
 pml:
 	${PYTHON} ./pml.py
 	${PYTHON} ./pml_empty.py
-	${PYTHON} ./pml_sample.py
 	${PYTHON} ./pml_badRoot.py
 	${PYTHON} ./pml_unknownNode.py
 	${PYTHON} ./pml_badNode.py
 	${PYTHON} ./pml_badAttribute.py
+	${PYTHON} ./pml_sample.py
 
 # end of file 

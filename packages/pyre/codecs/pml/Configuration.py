@@ -27,13 +27,13 @@ class Configuration(Node):
 
 
     # assignment handler
-    def createAssignment(self, key, value):
+    def createAssignment(self, key, value, locator):
         """
         Process a binding of a property to a value
         """
         # the namespace markers on the key are in stored reverse order
         # so reverse before joining with dots
-        self.bindings.append((".".join(reversed(key)), value))
+        self.bindings.append((".".join(reversed(key)), value, locator))
         return
 
 

@@ -17,9 +17,12 @@ def test():
     # build a new configurator
     configurator = pyre.config.newConfigurator()
     # create some assignments
-    configurator.createAssignment(key="pyre.user.name", value="michael aïvázis")
-    configurator.createAssignment(key="pyre.user.email", value="michael.aivazis@orthologue.com")
-    configurator.createAssignment(key="pyre.user.affiliation", value="caltech")
+    configurator.createAssignment(
+        key="pyre.user.name", value="michael aïvázis", locator=None)
+    configurator.createAssignment(
+        key="pyre.user.email", value="michael.aivazis@orthologue.com", locator=None)
+    configurator.createAssignment(
+        key="pyre.user.affiliation", value="caltech", locator=None)
 
     # build a new evaluator
     evaluator = pyre.config.newEvaluator()

@@ -19,13 +19,13 @@ class Configurator(object):
 
 
     # interface
-    def createAssignment(self, key, value):
+    def createAssignment(self, key, value, locator):
         """
         Create an event that corresponds to an assignment of {value} to {key}, and insert it
         into the event queue
         """
         from .Assignment import Assignment
-        assignment = Assignment(key=key, value=value)
+        assignment = Assignment(key=key, value=value, locator=locator)
         self.events.append(assignment)
         return assignment
 
