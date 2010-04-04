@@ -7,11 +7,7 @@
 !
 -->
 
-<config 
-   xmlns="http://pyre.caltech.edu/releases/1.0/schema/config.html"
-   xmlns:pyre="http://pyre.caltech.edu/releases/1.0/schema/config.html"
-   xsi:schemaLocation="http://pyre.caltech.edu/releases/1.0/schema/config.html
-                       http://pyre.caltech.edu/releases/1.0/schema/config.xsd">
+<config>
 
   <inventory name="pyre">
     <!-- some global settings -->
