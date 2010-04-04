@@ -28,12 +28,16 @@ class CodecError(FrameworkError):
     Base class for codec errors
     """
 
-    def __init__(self, codec, uri, locator, **kwds):
+    def __init__(self, codec, uri, locator, description, **kwds):
         super().__init__(**kwds)
         self.codec = codec
         self.uri = uri
         self.locator = locator
+        self.description = description
         return
+
+    def __str__(self):
+        return self.description
 
 
 class DecodingError(CodecError):
@@ -41,17 +45,11 @@ class DecodingError(CodecError):
     Exception raised by codecs when they encounter errors in their input streams
     """
 
-    def __str__(self):
-        return "decoding error"
-
     
 class EncodingError(CodecError):
     """
     Exception raised by codecs when they fail to inject an iterm in a stream
     """
-
-    def __str__(self):
-        return "encoding error"
 
 
 # end of file

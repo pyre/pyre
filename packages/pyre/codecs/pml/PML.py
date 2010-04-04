@@ -32,7 +32,15 @@ class PML(Codec):
         # make a reader
         reader = pyre.xml.newReader()
         # parse the contents
-        configuration = reader.read(stream=stream, document=Document())
+        try:
+            configuration = reader.read(stream=stream, document=Document())
+        except reader.ParsingError as error:
+            locator = error.locator
+            source = locator.source
+            msg = "decoding error in {}: {}".format(locator, error.description)
+            raise self.DecodingError(
+                codec=self, uri=source, locator=locator, description=msg) from error
+
         # record the harvested events
         # the assignments
         for key,value in configuration.bindings:

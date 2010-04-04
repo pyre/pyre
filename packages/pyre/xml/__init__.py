@@ -57,6 +57,16 @@ def newReader(**kwds):
     return Reader(**kwds)
 
 
+def newLocator(saxlocator):
+    """
+    Convert a locator from the SAX parser to a pyre.tracking.FileLocator 
+    """
+    import pyre.tracking
+    return pyre.tracking.newFileLocator(
+        source=saxlocator.getSystemId(), 
+        line=saxlocator.getLineNumber(), column=saxlocator.getColumnNumber())
+
+
 # tag descriptors
 def element(**kwds):
     """
@@ -75,20 +85,12 @@ class ParsingError(Exception):
     Base class for parsing errors
     """
 
-    def __init__(self, parser, document, description, locator=None, **kwds):
+    def __init__(self, parser=None, document=None, description="", locator=None, **kwds):
         super().__init__(**kwds)
         self.parser = parser
         self.document = document
         self.description = description
-
-        if locator:
-            import pyre.tracking
-            self.locator = pyre.tracking.newFileLocator(
-                source=locator.getSystemId(), 
-                line=locator.getLineNumber(),
-                column=locator.getColumnNumber())
-        else:
-            self.locator = None
+        self.locator = newLocator(locator) if locator else None
 
         return
 

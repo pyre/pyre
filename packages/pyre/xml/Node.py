@@ -41,9 +41,22 @@ class Node(object):
         tag
         """
         # get the handler factory
-        factory = self._pyre_nodeIndex[name]
+        try:
+            factory = self._pyre_nodeIndex[name]
+        except KeyError as error:
+           msg = "unknown tag {0!r}".format(name)
+           raise self.DTDError(description=msg) from error
+ 
         # invoke it to get a new node for the parsing context
-        node = factory(parent=self, attributes=attributes, locator=locator)
+        try:
+            node = factory(parent=self, attributes=attributes, locator=locator)
+        except TypeError as error:
+            msg = "could not instantiate handler for node {0!r}; extra attributes?".format(name)
+            raise self.DTDError(description=msg) from error
+        except KeyError as error:
+            msg = "node {0!r}: unknown attribute {1!r}".format(name, error.args[0])
+            raise self.DTDError(description=msg) from error
+
         # and return it
         return node
 
@@ -69,6 +82,10 @@ class Node(object):
         """
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must override 'notify'".format(self))
+
+
+    # exceptions
+    from . import DTDError
 
 
     # private data

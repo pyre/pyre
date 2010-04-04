@@ -7,6 +7,7 @@
 
 
 import xml.sax
+from . import newLocator
 
 
 class Reader(xml.sax.ContentHandler):
@@ -108,19 +109,12 @@ class Reader(xml.sax.ContentHandler):
         try:
             node = self._currentNode.newNode(
                 name=name, attributes=attributes, locator=self._locator)
-        # either bad document or a bad handler constructor
-        except TypeError as error:
-            msg = "could not instantiate handler for node {0!r}; extra attributes?".format(name)
-            raise self.DTDError(
-                    parser=self, document=self._document,
-                    description=msg, locator=self._locator) from error
-        # the current node doesn't permit this particular child node
-        except KeyError as error:
-            msg = "could not locate handler for node {0!r} in {1!r}".format(
-                name, self._currentNode.__class__)
-            raise self.DTDError(
-                    parser=self, document=self._document,
-                    description=msg, locator=self._locator) from error
+        # catch DTDErrors and decorate them
+        except self.DTDError as error:
+            error.parser = self
+            error.document = self._document
+            error.locator = newLocator(self._locator)
+            raise
 
         # push the current node on the stack
         self._nodeStack.append(self._currentNode)
@@ -172,19 +166,12 @@ class Reader(xml.sax.ContentHandler):
             else:
                 node = self._currentNode.newQNode(
                     name=name, namespace=namespace, attributes=normalized, locator=self._locator)
-        # either bad document or a bad handler constructor
-        except TypeError as error:
-            msg = "could not instantiate handler for node {0!r}; extra attributes?".format(name)
-            raise self.DTDError(
-                    parser=self, document=self._document,
-                    description=msg, locator=self._locator) from error
-        # the current node doesn't permit this particular child node
-        except KeyError as error:
-            msg = "could not locate handler for node {0!r} in {1!r}".format(
-                name, self._currentNode.__class__)
-            raise self.DTDError(
-                    parser=self, document=self._document,
-                    description=msg, locator=self._locator) from error
+        # catch DTDErrors and decorate them
+        except self.DTDError as error:
+            error.parser = self
+            error.document = self._document
+            error.locator = newLocator(self._locator)
+            raise
 
         # push the current node on the stack
         self._nodeStack.append(self._currentNode)
