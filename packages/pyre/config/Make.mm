@@ -21,9 +21,10 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Assignment.py \
+    Calculator.py \
     Configurator.py \
-    Evaluator.py \
     Event.py \
+    Variable.py \
     __init__.py
 
 

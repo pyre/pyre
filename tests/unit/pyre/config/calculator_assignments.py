@@ -16,20 +16,28 @@ def test():
     import pyre.config
     # build a new configurator
     configurator = pyre.config.newConfigurator()
+    # build a new calculator
+    calculator = pyre.config.newCalculator()
+
     # create some assignments
+    configurator.createAssignment(
+        key="pyre.user.name", value="Michael Aïvázis", locator=None)
     configurator.createAssignment(
         key="pyre.user.name", value="michael aïvázis", locator=None)
     configurator.createAssignment(
         key="pyre.user.email", value="michael.aivazis@orthologue.com", locator=None)
     configurator.createAssignment(
         key="pyre.user.affiliation", value="caltech", locator=None)
+    configurator.createAssignment(
+        key="pyre.user.alias", value="{pyre.user.name}", locator=None)
 
-    # build a new evaluator
-    evaluator = pyre.config.newEvaluator()
     # build the model
-    print(" *** NYI!")
+    configurator.populate(calculator)
+
+    # dump the model
+    calculator._dump()
     # and return the managers
-    return evaluator, configurator
+    return calculator, configurator
 
 
 # main

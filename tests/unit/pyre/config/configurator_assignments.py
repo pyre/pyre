@@ -24,7 +24,7 @@ def test():
     configurator.createAssignment(
         key="pyre.user.affiliation", value="caltech", locator=None)
     # check that they were created and inserted correctly
-    assert list(map(str, configurator.events)) == [
+    assert list(map(str, configurator.bindings)) == [
         "{None: pyre.user.name <- michael aïvázis}",
         "{None: pyre.user.email <- michael.aivazis@orthologue.com}",
         "{None: pyre.user.affiliation <- caltech}",

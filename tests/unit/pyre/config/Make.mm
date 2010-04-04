@@ -14,7 +14,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity configurator evaluator
+test: sanity configurator calculator
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -23,9 +23,9 @@ configurator:
 	${PYTHON} ./configurator.py
 	${PYTHON} ./configurator_assignments.py
 
-evaluator:
-	${PYTHON} ./evaluator.py
-	${PYTHON} ./evaluator_assignments.py
+calculator:
+	${PYTHON} ./calculator.py
+	${PYTHON} ./calculator_assignments.py
 
 
 # end of file 

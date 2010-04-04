@@ -12,9 +12,9 @@ def newConfigurator(**kwds):
     return Configurator(**kwds)
 
 
-def newEvaluator(**kwds):
-    from .Evaluator import Evaluator
-    return Evaluator(**kwds)
+def newCalculator(**kwds):
+    from .Calculator import Calculator
+    return Calculator(**kwds)
 
 
 # end of file 

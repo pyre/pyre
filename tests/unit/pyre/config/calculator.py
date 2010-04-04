@@ -14,7 +14,7 @@ Sanity check: verify that the package is accessible
 
 def test():
     import pyre.config
-    return pyre.config.newEvaluator()
+    return pyre.config.newCalculator()
 
 
 # main

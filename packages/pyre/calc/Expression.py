@@ -58,7 +58,7 @@ class Expression(Polyadic):
 
     def _identifierHandler(self, match):
         """
-        Callback for re.sub that extracts node references, add them to my symbol table and
+        Callback for re.sub that extracts node references, adds them to my symbol table and
         converts them into legal python identifiers
         """
         # extract the name from the match
@@ -81,7 +81,7 @@ class Expression(Polyadic):
         Patch my domain by replacing {old} with {new}.
 
         This is used by the model during node resolution. Please don't use directly unless you
-        have thought the many and painful implications through
+        have thought through the many and painful implications
         """
         # replace the node in the node table 
         # don't forget that the node name has been converted into a local sysmbol, so we need
@@ -100,7 +100,6 @@ class Expression(Polyadic):
     _open = re.escape('{')
     _close = re.escape('}')
     _scanner = re.compile(r"{0}(?P<identifier>[^{1}]+){1}".format(_open, _close))
-    
     
 
 # end of file 

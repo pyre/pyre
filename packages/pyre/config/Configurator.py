@@ -7,15 +7,16 @@
 
 
 import collections
+from ..patterns.Named import Named
 
 
-class Configurator(object):
+class Configurator(Named):
     """
     """
 
 
     # public data
-    events = ()
+    bindings = ()
 
 
     # interface
@@ -26,14 +27,26 @@ class Configurator(object):
         """
         from .Assignment import Assignment
         assignment = Assignment(key=key, value=value, locator=locator)
-        self.events.append(assignment)
+        self.bindings.append(assignment)
         return assignment
 
 
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-        # event storage: an unbounded, double-ended queue
-        self.events = collections.deque()
+    def populate(self, calculator):
+        """
+        Convert assignment events into bound variables
+        """
+        # loop over the binding and create the associated variable assignments
+        for event in self.bindings:
+            calculator.bind(name=event.key, value=event.value, locator=event.locator)
+        # all done
+        return
+
+
+    def __init__(self, name=None, **kwds):
+        name = name if name is not None else "pyre.configurator"
+        super().__init__(name=name, **kwds)
+        # variable assignment storage: an unbounded, double-ended queue
+        self.bindings = collections.deque()
 
         return
 
