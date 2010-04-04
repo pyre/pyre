@@ -45,25 +45,6 @@ class AbstractModel(Named):
         return
 
 
-    def addNode(self, name, node):
-        """
-        Implementation details of the mechanism for node insertion in the model.
-
-        If you are looking to insert a node in the model, please use 'registerNode',
-        which is a lot smarter and takes care of patching unresolved names.
-        """
-        raise NotImplementedError(
-            "class {0.__class__.__name__!r} must implement 'addNode'".format(self))
-
-
-    def findNode(self, name):
-        """
-        Locate the node in the model that matches {name}.
-        """
-        raise NotImplementedError(
-            "class {0.__class__.__name__!r} must implement 'findNode'".format(self))
-        
-
     def registerNode(self, *, name, node):
         """
         Add {node} into the model and make it accessible through {name}
@@ -135,6 +116,26 @@ class AbstractModel(Named):
         # and return it
         return unresolved
 
+
+    # abstract methods that must be overriden by descendants
+    def addNode(self, name, node):
+        """
+        Implementation details of the mechanism for node insertion in the model.
+
+        If you are looking to insert a node in the model, please use 'registerNode',
+        which is a lot smarter and takes care of patching unresolved names.
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must implement 'addNode'".format(self))
+
+
+    def findNode(self, name):
+        """
+        Locate the node in the model that matches {name}.
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must implement 'findNode'".format(self))
+        
 
     def getNodes(self):
         """
