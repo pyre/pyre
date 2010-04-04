@@ -28,7 +28,12 @@ class Calculator(AbstractModel):
     # interface
     def bind(self, name, value, locator):
         """
-        Create a variable to hold the {value} and make it through the model as {name}
+        Bind the variable {name} to {value}.
+
+        If there is no existing variable by this name, build one and register it with the
+        model. Otherwise, just update the existing node. The contents of {value} can refer to
+        other variables in the model by following the rules in pyre.calc.Expression, and may
+        make certain calls to the python runtime. The exact details are being worked out...
         """
         # build an evaluator
         # figure out if this value contains references to other nodes

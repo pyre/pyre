@@ -25,9 +25,10 @@ def test():
     configurator.createAssignment(
         key="pyre.user.name", value="michael aïvázis", locator=None)
     configurator.createAssignment(
-        key="pyre.user.email", value="michael.aivazis@orthologue.com", locator=None)
+        key="pyre.user.email", value="michael.aivazis@caltech.edu", locator=None)
     configurator.createAssignment(
-        key="pyre.user.affiliation", value="caltech", locator=None)
+        key="pyre.user.affiliation",
+        value="california institute of technology", locator=None)
     configurator.createAssignment(
         key="pyre.user.alias", value="{pyre.user.name}", locator=None)
 
