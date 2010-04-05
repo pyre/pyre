@@ -35,8 +35,12 @@ def test():
     # build the model
     configurator.populate(calculator)
 
-    # dump the model
-    calculator._dump()
+    # check the variable bindings
+    assert calculator["pyre.user.name"] == "michael aïvázis"
+    assert calculator["pyre.user.email"] == "michael.aivazis@caltech.edu"
+    assert calculator["pyre.user.affiliation"] == "california institute of technology"
+    assert calculator["pyre.user.alias"] == calculator["pyre.user.name"]
+
     # and return the managers
     return calculator, configurator
 

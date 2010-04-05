@@ -7,6 +7,7 @@
 
 
 import pyre.patterns
+import pyre.tracking
 from ..calc.AbstractModel import AbstractModel
 
 from .Variable import Variable
@@ -57,6 +58,9 @@ class Calculator(AbstractModel):
         else:
             node.value = value
 
+        # log the event
+        self._tracker.track(key=node, value=(value, locator))
+
         # return the node
         return node
 
@@ -96,7 +100,7 @@ class Calculator(AbstractModel):
         """
         # for each of my registered nodes
         for key, node in self._nodes.items():
-            # look up the assiciated name and yield the required value
+            # look up the associated name and yield the required value
             yield self._names[key], node
         # all done
         return
@@ -111,6 +115,9 @@ class Calculator(AbstractModel):
         self._names = {}
         self._nodes = {}
         self._hash = pyre.patterns.newPathhash()
+
+        # history tracking
+        self._tracker = pyre.tracking.newTracker()
 
         return
 
