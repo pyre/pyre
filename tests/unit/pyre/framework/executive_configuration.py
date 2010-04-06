@@ -16,10 +16,11 @@ def test():
     import pyre.framework
     # build the executive
     executive = pyre.framework.executive()
-
-    # access the codec manager
-    codecs = executive.codecs
-    assert codecs is not None
+    # verify the right parts were built
+    assert executive.codecs is not None
+    assert executive.fileserver is not None
+    assert executive.configurator is not None
+    assert executive.calculator is not None
 
     # all done
     return executive

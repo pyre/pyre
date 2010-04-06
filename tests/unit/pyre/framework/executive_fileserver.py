@@ -8,7 +8,7 @@
 
 
 """
-Execrices the fileserver
+Exercises the fileserver
 """
 
 
