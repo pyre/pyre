@@ -10,7 +10,7 @@
 This package contains the machinery to build parsers of XML documents
 
 The goal of this package is to enable context-specific processing of the information content of
-the XML file. It is designed to provide support for aplications that use XML files as an
+the XML file. It is designed to provide support for applications that use XML files as an
 information exchange mechanism and consider parsing the XML file as another means for
 decorating their data structures.
 
@@ -24,11 +24,11 @@ each significant encounter with the document contents, such the opening or closi
 tag, or encountering data in the body of a tag. The client interacts with the parser by
 registering handlers for each type of event that are responsible for absorbing the information
 collected by te parser. This trades some complexity in the handling of the document for the
-savings of not needing to buld and subsequently navigate through an intermediate data
+savings of not needing to build and subsequently navigate through an intermediate data
 structure.
 
 Overall, SAX style document parsing should be faster and more space efficient for most uses. It
-also opens up the possiblity that an application can implement its event handlers in a way that
+also opens up the possibility that an application can implement its event handlers in a way that
 directly decorate its own internal data structures. The purpose of this package is to help
 minimize the code complexity required to craft event handlers and register them with the
 parser.
