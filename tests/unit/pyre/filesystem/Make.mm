@@ -34,9 +34,11 @@ filesystem:
 	${PYTHON} ./filesystem_access.py
 	${PYTHON} ./local.py
 	${PYTHON} ./local_find.py
+	${PYTHON} ./local_open.py
 	${PYTHON} ./local_rootNonexistent.py
 	${PYTHON} ./local_rootNotDirectory.py
 	${PYTHON} ./zip.py
+	${PYTHON} ./zip_open.py
 	${PYTHON} ./zip_rootNonexistent.py
 	${PYTHON} ./zip_rootNotZipfile.py
 

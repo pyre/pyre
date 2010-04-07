@@ -21,6 +21,14 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
 
 
     # interface
+    def open(self, node, **kwds):
+        """
+        Open the file
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must override 'open'".format(self))
+
+
     def sync(self):
         """
         Populate the filesystem by reading the external source it represents

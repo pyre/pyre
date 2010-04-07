@@ -34,6 +34,18 @@ class LocalFilesystem(Filesystem):
 
 
     # interface
+    def open(self, node, **kwds):
+        """
+        Open the file
+        """
+        # get the info record associated with the node
+        info = self.vnodes[node]
+        # extract the actual filename
+        uri = info.uri
+        # and call the system open
+        return open(uri, **kwds)
+
+
     def sync(self, walker=None, recognizer=None):
         """
         Traverse my directory structure and refresh my contents so that they match the
@@ -75,9 +87,7 @@ class LocalFilesystem(Filesystem):
         """
         Added the given {node} and associated information {info} to my vnode table
 
-        This is a low level routine and should not be used directly. It is meant to be
-        overriden by descendants of LocalFilesystem to support alternative vnode storage
-        behavior
+        This is a low level routine and should not be used directly.
         """
         # add the node to my vnode table
         self.vnodes[node] = info

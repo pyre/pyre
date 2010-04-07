@@ -21,6 +21,17 @@ class ZipFilesystem(Filesystem):
 
 
     # interface
+    def open(self, node, **kwds):
+        """
+        Open the file
+        """
+        # get the info record associated with the node
+        info = self.vnodes[node]
+        # and call the zipfile open method
+        # note that it accepts ZipInfo instances, as well as archive data members
+        return self.zipfile.open(info, **kwds)
+
+
     def sync(self):
         """
         Populate the filesystem with the contents of the zipfile
@@ -48,9 +59,7 @@ class ZipFilesystem(Filesystem):
         """
         Added the given {node} and associated information {info} to my vnode table
 
-        This is a low level routine and should not be used directly. It is meant to be
-        overriden by descendants of LocalFilesystem to support alternative vnode storage
-        behavior
+        This is a low level routine and should not be used directly.
         """
         # add the node to my vnode table
         self.vnodes[node] = info

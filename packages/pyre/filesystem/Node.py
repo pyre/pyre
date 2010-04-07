@@ -29,7 +29,7 @@ class Node(object, metaclass=_metaclass_Node):
         Access the contents of the physical resource that i point to.
         """
         # delegate the action to the containing filesystem
-        return self._filesystem.open(self, **kwds)
+        return self._filesystem().open(self, **kwds)
 
 
     # explorer support
