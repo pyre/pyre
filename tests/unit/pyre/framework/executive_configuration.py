@@ -22,6 +22,9 @@ def test():
     assert executive.configurator is not None
     assert executive.calculator is not None
 
+    # get the executive to process the known configuration sources
+    executive.configure()
+
     # all done
     return executive
 
