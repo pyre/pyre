@@ -30,8 +30,7 @@ def home():
     """
     Return the directory of the pyre package
     """
-    path, filename = os.path.split(__file__)
-    return path
+    return os.path.dirname(__file__)
 
 
 def prefix():
