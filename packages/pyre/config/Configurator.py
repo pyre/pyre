@@ -16,6 +16,7 @@ class Configurator(Named):
 
 
     # public data
+    sources = ()
     bindings = ()
 
 
@@ -47,6 +48,10 @@ class Configurator(Named):
         super().__init__(name=name, **kwds)
         # variable assignment storage: an unbounded, double-ended queue
         self.bindings = collections.deque()
+        # configuration sources
+        self.sources = collections.deque(
+            ["pml://pyre/system/pyre.pml", "pml://pyre/user/pyre.pml"]
+            )
 
         return
 
