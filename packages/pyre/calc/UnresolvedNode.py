@@ -15,6 +15,11 @@ class UnresolvedNode(ErrorNode):
     """
 
 
+    # public data
+    name = None
+    clients = ()
+
+
     # interface
     def raiseException(self):
         """

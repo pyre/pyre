@@ -30,7 +30,7 @@ class Function(Evaluator):
 
     def getDomain(self):
         """
-        Shut down
+        Return an iterable over the nodes in my domain
         """
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must override 'getDomain'".format(self))
