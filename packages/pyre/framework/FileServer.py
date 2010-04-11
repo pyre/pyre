@@ -22,16 +22,16 @@ class FileServer(Filesystem):
     The framework uses a FileServer instance to decouple the logical names of resources from
     their physical locations at runtime. For example, as part of the bootstrapping process, the
     frameworks discovers the pyre installation directory; the persistent store for the default
-    component configurations is a subdirectory of that location and it is mounted as '/system'
-    in the virtual filesystem. This has the following benefits:
+    component configurations is a subdirectory of that location and it is mounted as
+    '/pyre/system' in the virtual filesystem. This has the following benefits:
     
-    * applications can navigate through the contents of '/system' as if it were an actual
+    * applications can navigate through the contents of '/pyre/system' as if it were an actual
       filesystem
 
-    * configuration settings that require references to entries in '/system' can now be
+    * configuration settings that require references to entries in '/pyre/system' can now be
       expressed portably, since there is no need to hardwire actual paths
 
-    Similarly, user preferences are retrieved from '/user', which typically refers to the
+    Similarly, user preferences are retrieved from '/pyre/user', which typically refers to the
     subdirectory '.pyre' of the user's home directory, but may be populated from other sources,
     depending on the operating system.
 
@@ -79,7 +79,7 @@ class FileServer(Filesystem):
             self.userfs = pyre.filesystem.newFilesystem(os.path.expanduser(self.DOT_PYRE))
         except pyre.filesystem.GenericError:
             self.userfs = self.newFolder()
-       # mount this directory as /user
+       # mount this directory as /pyre/user
         self["pyre/user"] = self.userfs
 
         return
