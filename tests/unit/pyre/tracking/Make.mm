@@ -20,6 +20,7 @@ sanity:
 
 tracking:
 	${PYTHON} ./simple.py
+	${PYTHON} ./command.py
 	${PYTHON} ./file.py
 	${PYTHON} ./fileregion.py
 	${PYTHON} ./script.py

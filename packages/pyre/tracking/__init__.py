@@ -7,18 +7,34 @@
 
 
 def newTracker():
+    """
+    Build a new history tracker, an object that maintains a log of all the values a given key
+    has ever assumed, along with locators that describe the location of these assignments
+    """
     from .Tracker import Tracker
     return Tracker()
 
 
 def chain(*, this, next):
+    """
+    Build a locator that ties together two others in order to express that something in {next}
+    caused {this} to be recorded
+    """
     from .Chain import Chain
     return Chain(this, next)
 
 
+def newCommandLocator(*, arg):
+    """
+    Build a locator that records the position of a command line argument
+    """
+    from .Command import Command
+    return Command(arg)
+
+
 def newFileLocator(*, source, line=None, column=None):
     """
-    Build a new File locator
+    Build a locator that records a position within a file
     """
 
     from .File import File
@@ -27,7 +43,7 @@ def newFileLocator(*, source, line=None, column=None):
 
 def newFileRegionLocator(*, start, end=None):
     """
-    Build a new File locator
+    Build a locator that identifies a region in a file
     """
 
     from .FileRegion import FileRegion
@@ -36,7 +52,7 @@ def newFileRegionLocator(*, start, end=None):
 
 def newScriptLocator(*, source, line=None, function=None):
     """
-    Build a new Script locator
+    Build a locator that records information extracted from a python stack trace
     """
 
     from .Script import Script
@@ -45,7 +61,7 @@ def newScriptLocator(*, source, line=None, function=None):
 
 def newSimpleLocator(*, source):
     """
-    Build a new Simple locator
+    Build a simple locator that just names the given {source}
     """
 
     from .Simple import Simple

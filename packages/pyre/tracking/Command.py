@@ -6,25 +6,25 @@
 #
 
 
-class Simple(object):
+class Command(object):
     """
-    Locator that records a simple named source with no further details
+    Locator that records the position of a command line argument
     """
 
 
     # public data
-    source = None
+    source = 'command line, arg {}'
 
 
     # meta methods
-    def __init__(self, source, **kwds):
+    def __init__(self, arg, **kwds):
         super().__init__(**kwds)
-        self.source = source
+        self.arg = arg
         return
 
 
     def __str__(self):
-        return self.source
+        return self.source.format(self.arg)
 
 
 # end of file 

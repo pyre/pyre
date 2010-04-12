@@ -20,6 +20,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Chain.py \
+    Command.py \
     File.py \
     FileRegion.py \
     Script.py \
