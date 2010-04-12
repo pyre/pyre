@@ -14,7 +14,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity configurator calculator
+test: sanity configurator calculator commandline
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -26,6 +26,11 @@ configurator:
 calculator:
 	${PYTHON} ./calculator.py
 	${PYTHON} ./calculator_assignments.py
+
+
+commandline:
+	${PYTHON} ./command.py
+	${PYTHON} ./command_argv.py
 
 
 # end of file 

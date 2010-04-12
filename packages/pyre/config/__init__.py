@@ -17,4 +17,9 @@ def newCalculator(**kwds):
     return Calculator(**kwds)
 
 
+def newCommandLineParser(**kwds):
+    from .CommandLine import CommandLine
+    return CommandLine(**kwds)
+
+
 # end of file 
