@@ -6,6 +6,7 @@
 #
 
 
+import itertools
 import pyre.tracking
 
 
@@ -130,6 +131,23 @@ class CommandLine(object):
 
         Look for the supported shorthands and unfold them into canonical forms.
         """
+        # split the key on the field separator identify the various fields
+        fields = []
+        for field in key.split(self.fieldSeparator):
+            # check for field distribution
+            if field[0] == self.groupStart and field[-1] == self.groupEnd:
+                # got one; split on the group separator
+                fields.append(field[1:-1].split(self.groupSeparator))
+            else:
+                # otherwise, just store the field name
+                fields.append([field])
+        # now, form all the specified addresses by computing the cartesian product
+        for spec in itertools.product(*fields):
+            # create a new assignment
+            configurator.createAssignment(
+                key=self.fieldSeparator.join(spec), value=value, locator=locator)
+        # all done
+        return
 
 
     def _processArguments(self, configurator, *args):

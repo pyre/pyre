@@ -17,7 +17,7 @@ class Configurator(Named):
 
     # public data
     sources = ()
-    bindings = ()
+    events = ()
 
 
     # interface
@@ -28,7 +28,7 @@ class Configurator(Named):
         """
         from .Assignment import Assignment
         assignment = Assignment(key=key, value=value, locator=locator)
-        self.bindings.append(assignment)
+        self.events.append(assignment)
         return assignment
 
 
@@ -37,7 +37,7 @@ class Configurator(Named):
         Convert assignment events into bound variables
         """
         # loop over the binding and create the associated variable assignments
-        for event in self.bindings:
+        for event in self.events:
             calculator.bind(name=event.key, value=event.value, locator=event.locator)
         # all done
         return
@@ -47,7 +47,7 @@ class Configurator(Named):
         name = name if name is not None else "pyre.configurator"
         super().__init__(name=name, **kwds)
         # variable assignment storage: an unbounded, double-ended queue
-        self.bindings = collections.deque()
+        self.events = collections.deque()
         # configuration sources
         self.sources = collections.deque(
             ["pml://pyre/system/pyre.pml", "pml://pyre/user/pyre.pml"]

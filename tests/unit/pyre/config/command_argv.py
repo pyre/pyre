@@ -27,7 +27,7 @@ def test():
         '--help',
         '--vtf.nodes=1024',
         '--vtf.(solid,fluid)=solvers',
-        '--vtf.(solid,fluid,other).nodes={vtf.nodes}/3',
+        '--vtf.(solid,fluid,other).nodes={vtf.nodes}',
         '--journal.device=file',
         '--journal.debug.main=on',
         '--',
@@ -37,12 +37,18 @@ def test():
 
     # get the parser to populate the configurator
     parser.decode(configurator, commandline)
-
     # and transfer the events to the calculator
     configurator.populate(calculator)
-
     # now, check that the assignments took place
-    assert False
+    assert calculator["help"] == None
+    assert calculator["vtf.nodes"] == "1024"
+    assert calculator["vtf.solid"] == "solvers"
+    assert calculator["vtf.fluid"] == "solvers"
+    assert calculator["vtf.solid.nodes"] == "1024"
+    assert calculator["vtf.fluid.nodes"] == "1024"
+    assert calculator["journal.device"] == "file"
+    assert calculator["journal.debug.main"] == "on"
+
     # and return the managers
     return calculator, configurator, parser
 

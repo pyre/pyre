@@ -38,7 +38,7 @@ class Calculator(AbstractModel):
         """
         # build an evaluator
         # figure out if this value contains references to other nodes
-        if Expression._scanner.match(value):
+        if value and Expression._scanner.match(value):
             evaluator = Expression(expression=value, model=self)
             value = None
         else:
