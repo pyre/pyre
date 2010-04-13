@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Verify that we can process an empty pml file
 """
 
 

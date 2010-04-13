@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Check catching of decoding errors when the input file has a tag with a bad attribute
 """
 
 

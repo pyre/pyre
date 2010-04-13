@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Verify processing of a correct pml input file
 """
 
 
@@ -20,7 +20,7 @@ def test():
     m = pyre.codecs.newManager()
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
-    # build a configurator to store the harvested venets
+    # build a configurator to store the harvested events
     c = pyre.config.newConfigurator()
     # open a stream
     sample = open("sample.pml")
