@@ -129,7 +129,10 @@ def sum(*args):
 
 
 # exceptions
-class NodeError(Exception):
+from ..framework import FrameworkError
+
+
+class NodeError(FrameworkError):
     """
     Base class for pyre.calc errors. Useful as a catch-all
     """

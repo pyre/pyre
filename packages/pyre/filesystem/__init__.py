@@ -193,7 +193,10 @@ def newStatRecognizer(**kwds):
 
 
 # errors
-class GenericError(Exception):
+from ..framework import FrameworkError
+
+
+class GenericError(FrameworkError):
     """
     Base class for all errors in this package
 

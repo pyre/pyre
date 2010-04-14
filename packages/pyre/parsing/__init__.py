@@ -22,7 +22,10 @@ def token(regexp=None):
 
 
 # exceptions
-class ParsingError(Exception):
+from ..framework import FrameworkError
+
+
+class ParsingError(FrameworkError):
     """
     Base class for parsing exceptions
 

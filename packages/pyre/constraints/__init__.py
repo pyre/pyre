@@ -150,7 +150,10 @@ def isSubset(*, choices):
 
 # violation notification
 # constraints throw exceptions rather than return True|False
-class ConstraintViolationError(Exception):
+from ..framework import FrameworkError
+
+
+class ConstraintViolationError(FrameworkError):
     """
     Exception used to indicate that a constraint is violated
 

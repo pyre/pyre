@@ -80,7 +80,10 @@ def element(**kwds):
 
 
 # exceptions
-class ParsingError(Exception):
+from ..framework import FrameworkError
+
+
+class ParsingError(FrameworkError):
     """
     Base class for parsing errors
     """
