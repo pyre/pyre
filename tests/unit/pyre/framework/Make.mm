@@ -13,10 +13,16 @@ PROJECT = pyre
 
 all: test
 
-test: sanity framework
+test: sanity managers framework
 
 sanity:
 	${PYTHON} ./sanity.py
+
+managers: curator
+
+curator:
+	${PYTHON} ./curator.py
+	${PYTHON} ./curator_uri.py
 
 framework:
 	${PYTHON} ./executive.py

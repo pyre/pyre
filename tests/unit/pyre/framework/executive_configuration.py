@@ -21,9 +21,14 @@ def test():
     assert executive.fileserver is not None
     assert executive.configurator is not None
     assert executive.calculator is not None
-
-    # get the executive to process the known configuration sources
-    executive.configure()
+    # load a configuration file
+    executive.loadConfiguration("sample.pml")
+    # check that all is as expected
+    assert executive.calculator["pyre.home"] == "pyre.home()"
+    assert executive.calculator["pyre.prefix"] == "pyre.prefix()"
+    assert executive.calculator["pyre.user.name"] == "michael a.g. aïvázis"
+    assert executive.calculator["pyre.user.email"] == "aivazis@caltech.edu"
+    assert executive.calculator["pyre.user.affiliation"] == "california institute of technology"
 
     # all done
     return executive

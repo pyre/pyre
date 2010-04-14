@@ -45,6 +45,11 @@ def newConfigurator(**kwds):
     return newConfigurator(**kwds)
 
 
+def newCurator(**kwds):
+    from .Curator import Curator
+    return Curator(**kwds)
+
+
 def newFileServer(**kwds):
     from .FileServer import FileServer
     return FileServer(**kwds)
@@ -57,6 +62,23 @@ class FrameworkError(Exception):
 
     Useful when you are trying to catch any and all pyre framework errors
     """
+
+
+class BadResourceLocator(FrameworkError):
+    """
+    Exception raised when a URI is not formed properly
+    """
+
+
+    def __init__(self, uri, reason, **kwds):
+        super().__init__(**kwds)
+        self.uri = uri
+        self.reason = reason
+        return
+
+
+    def __str__(self):
+        return "{0.uri}: {0.reason}".format(self)
 
 
 # end of file 

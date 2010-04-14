@@ -6,6 +6,7 @@
 #
 
 
+import os
 import pyre.framework
 
 
@@ -22,10 +23,31 @@ class Executive(object):
 
 
     # public data
-    codecs = None # my codec manager
-    fileserver = None # my virtual filesystem
-    configurator = None # my configuration manager
     calculator = None # the manager of configuration nodes
+    codecs = None # my codec manager
+    configurator = None # my configuration manager
+    curator = None # the manager of configuration sources
+    fileserver = None # my virtual filesystem
+
+
+    # interface
+    def loadConfiguration(self, uri):
+        """
+        Load configuration settings from {uri}.
+        """
+        # ask the curator to decode the uri
+        scheme, address, fragment = self.curator.parseURI(uri)
+        # ask the fileserver to produce the input stream
+        source = self.fileserver.open(scheme=scheme, address=address)
+        # lookup the codec based on the file extension
+        path, extension = os.path.splitext(address)
+        reader = self.codecs.newCodec(encoding=extension[1:])
+        # decode the configuration stream
+        reader.decode(stream=source, configurator=self.configurator)
+        # get the configurator to update the evaluation model
+        self.configurator.populate(self.calculator)
+        # all done
+        return
 
 
     # start up interface
@@ -43,6 +65,9 @@ class Executive(object):
         self.codecs = pyre.framework.newCodecManager()
         # my virtual filesystem
         self.fileserver = pyre.framework.newFileServer()
+
+        # the manager of configuration sources
+        self.curator = pyre.framework.newCurator()
         # my configuration manager
         self.configurator = pyre.framework.newConfigurator()
         # the manager of configuration nodes

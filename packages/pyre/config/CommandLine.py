@@ -38,7 +38,7 @@ class CommandLine(object):
         '(' and ')': the start and end of a key group
         ',': the separator for keys in a group
 
-    If you want to change any of this, you can instantiate a command line parse, modify any of
+    If you want to change any of this, you can instantiate a command line parser, modify any of
     its public data, and invoke "buildScanners" to recompute the associated regular expression
     engines
     """

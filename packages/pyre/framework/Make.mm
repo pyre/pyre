@@ -20,6 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Curator.py \
     Executive.py \
     FileServer.py \
     Pyre.py \

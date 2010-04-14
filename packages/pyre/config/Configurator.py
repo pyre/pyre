@@ -7,10 +7,9 @@
 
 
 import collections
-from ..patterns.Named import Named
 
 
-class Configurator(Named):
+class Configurator(object):
     """
     """
 
@@ -43,9 +42,9 @@ class Configurator(Named):
         return
 
 
-    def __init__(self, name=None, **kwds):
-        name = name if name is not None else "pyre.configurator"
-        super().__init__(name=name, **kwds)
+    # meta methods
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
         # variable assignment storage: an unbounded, double-ended queue
         self.events = collections.deque()
         # configuration sources

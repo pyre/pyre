@@ -41,6 +41,14 @@ class FileServer(Filesystem):
     """
 
 
+    # interface
+    def open(self, address, scheme=None, **kwds):
+        """
+        """
+        # NYI: assume it is a local file for now
+        return open(address, **kwds)
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
