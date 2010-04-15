@@ -13,6 +13,7 @@ PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
 RECURSE_DIRS = \
     calc \
     codecs \
+    components \
     config \
     constraints \
     filesystem \
