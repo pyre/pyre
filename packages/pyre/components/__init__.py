@@ -48,4 +48,15 @@ Components go through the following life cycle stages
 """
 
 
+# exceptions
+from ..framework import FrameworkError
+
+
+class InterfaceError(FrameworkError):
+    """
+    Exception raised when a component does not implement correctly the interfaces in its
+    implementation specification
+    """
+
+
 # end of file 

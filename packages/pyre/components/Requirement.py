@@ -53,13 +53,13 @@ class Requirement(AttributeClassifier):
             {attributes}: a _pyre_AttributeFilter instance with the {cls} attributes
         """
         # build the class record
-        record = super().__new__(cls, name, bases, attributes, **kwds)
+        requirement = super().__new__(cls, name, bases, attributes, **kwds)
         # construct and attach the Inventory class
-        cls._pyre_buildInventoryClass(record, attributes)
+        cls._pyre_buildInventoryClass(requirement, attributes)
         # compute the ancestors that are Requirement instances
-        record._pyre_ancestors = tuple(record.pyre_ancestors())
+        requirement._pyre_ancestors = tuple(requirement.pyre_ancestors())
         # and return the class record
-        return record
+        return requirement
 
 
     def __init__(self, name, bases, attributes, family=None, **kwds):

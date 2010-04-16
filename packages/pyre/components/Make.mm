@@ -20,9 +20,13 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Actor.py \
+    Component.py \
     Configurable.py \
     Inventory.py \
+    Interface.py \
     Requirement.py \
+    Role.py \
     Trait.py \
     __init__.py
 

@@ -13,13 +13,21 @@ PROJECT = pyre
 
 all: test
 
-test: sanity metaclasses
+test: sanity metaclasses interfaces components
 
 sanity:
 	${PYTHON} ./sanity.py
 
 metaclasses:
 	${PYTHON} ./requirement.py
+	${PYTHON} ./role.py
+	${PYTHON} ./actor.py
+
+interfaces:
+
+components:
+	${PYTHON} ./component_sanity.py
+
 
 
 # end of file 
