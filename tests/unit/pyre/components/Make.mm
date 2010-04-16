@@ -13,10 +13,13 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity metaclasses
 
 sanity:
 	${PYTHON} ./sanity.py
+
+metaclasses:
+	${PYTHON} ./requirement.py
 
 
 # end of file 

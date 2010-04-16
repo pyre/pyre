@@ -20,6 +20,10 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Configurable.py \
+    Inventory.py \
+    Requirement.py \
+    Trait.py \
     __init__.py
 
 
