@@ -61,7 +61,41 @@ class Trait(Named):
         return
 
 
-    # implementation details
+    # meta methods
+    def __init__(self, name=None, **kwds):
+        super().__init__(name=name, **kwds)
+        # initialize my aliases
+        self.aliases = set()
+        # and return
+        return
+
+
+    # the descriptor interface
+    def __set__(self, instance, value):
+        """
+        Set the trait of {instance} to {value}
+        """
+        # update the value of the node in the instance inventory
+        getattr(instance._pyre_inventory, self.name).value = value
+        # all done
+        return
+
+
+    def __get__(self, instance, cls=None):
+        """
+        Get the value of this trait
+        """
+        try:
+            # attempt to access the instance inventory
+            inventory = instance._pyre_inventory
+        except AttributeError:
+            # access through a class variable; interpret as a request for the descriptor itself
+            if cls and not instances:
+                return self
+            # otherwise, re-raise the error
+            raise
+        # at this point, we have inventory, so look up the attribute using my name an return it
+        return getattr(inventory, self.name).value
 
 
     # private data

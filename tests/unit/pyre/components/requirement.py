@@ -19,7 +19,7 @@ def test():
     from pyre.components.Trait import Trait
 
     # declare a class
-    class base(object, metaclass=Requirement, family="generic"):
+    class base(Configurable, metaclass=Requirement, family="generic"):
         """test class"""
         
     return
