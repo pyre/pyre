@@ -19,6 +19,8 @@ class Trait(Named):
     aliases = None # the set of alternative names by which I am accessible
     default = None # my default value
     optional = False # am i allowed to be uninitialized?
+    converters = () # the chain of functions that are required to produce my native type
+    constraints = () # the chain of functions that validate my values
     tip = None # a short description of my purpose and constraints; see doc below
 
     # wire doc to __doc__ so help can decorate properly without disturbing the trait declaration
@@ -71,6 +73,9 @@ class Trait(Named):
 
 
     # the descriptor interface
+    # NYI: 
+    #    these appear too raw to me
+    #    where do casting and validation occur???
     def __set__(self, instance, value):
         """
         Set the trait of {instance} to {value}
@@ -90,7 +95,7 @@ class Trait(Named):
             inventory = instance._pyre_inventory
         except AttributeError:
             # access through a class variable; interpret as a request for the descriptor itself
-            if cls and not instances:
+            if cls and not instance:
                 return self
             # otherwise, re-raise the error
             raise
@@ -100,6 +105,7 @@ class Trait(Named):
 
     # private data
     pyre_configurable = None
+    _pyre_category = "traits"
 
 
 # end of file 

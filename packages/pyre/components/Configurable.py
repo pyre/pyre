@@ -41,4 +41,20 @@ class Configurable(object):
         return itertools.takewhile(lambda x: x is not Configurable, cls.__mro__[start:])
 
 
+    @classmethod
+    def pyre_normalizeName(cls, name):
+        """
+        Convert the given trait name or alias to the canonical one
+        """
+        # iterate over my ancestors
+        for ancestor in cls._pyre_ancestors:
+            # look up the name in the namemap
+            try:
+                return ancestor._pyre_Inventory._pyre_namemap[name]
+            except KeyError:
+                continue
+
+        raise cls.TraitNotFoundError(cls, name)
+
+
 # end of file 
