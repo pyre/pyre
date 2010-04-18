@@ -123,6 +123,7 @@ class AttributeClassifier(AbstractMetaclass):
         def __init__(self, classifier):
             super().__init__()
             self.classifier = classifier
+            self.descriptors = []
             self.categories = collections.defaultdict(list)
             return
 
@@ -132,22 +133,20 @@ class AttributeClassifier(AbstractMetaclass):
             Insert (name, descriptor) in the dictionary. Look for the classifier attribute in
             every incoming descriptor and bin accordingly if it exists.
             """
-
             # store the descriptor
             super().__setitem__(name, descriptor)
-
             # recognize its category and handle appropriately
             try:
                 category = getattr(descriptor, self.classifier)
             except AttributeError:
                 return
-
-            # add the descriptor to the appropriate pile
-            self.categories[category].append(descriptor)
-
             # allow descendants to further decorate the attribute descriptor
             self.decorateDescriptor(name, descriptor, category)
-
+            # add it to the general pile
+            self.descriptors.append(descriptor)
+            # and categorize it
+            self.categories[category].append(descriptor)
+            # all done
             return
 
     

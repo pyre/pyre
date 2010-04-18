@@ -8,17 +8,17 @@
 
 
 """
-Sanity check: declare a trivial component
+Sanity check: declare a trivial interface
 """
 
 
 def test():
-    from pyre.components.Component import Component
-
-    class component(Component, family="trivial"):
-        """a trivial component"""
-     
-    return component
+    # make one
+    from pyre.components.Interface import Interface
+    class interface(Interface):
+        """a trivial interface"""
+    # and return it
+    return interface
 
 
 # main

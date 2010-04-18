@@ -21,10 +21,13 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Actor.py \
+    Behavior.py \
+    CompatibilityReport.py \
     Component.py \
     Configurable.py \
     Inventory.py \
     Interface.py \
+    Property.py \
     Requirement.py \
     Role.py \
     Trait.py \

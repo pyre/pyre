@@ -14,29 +14,22 @@ Verify that the Actor metaclass decorates class records properly
 
 def test():
     # access
-    from pyre.components.Configurable import Configurable
     from pyre.components.Actor import Actor
-    from pyre.components.Trait import Trait
+    from pyre.components.Configurable import Configurable
+    from pyre.components.Inventory import Inventory
 
     # declare a class
-    class base(Configurable, metaclass=Actor, family="generic"):
+    class base(Configurable, metaclass=Actor):
         """test class"""
 
-        # declare some traits
-        trait1 = Trait()
-        trait2 = Trait()
-
-    # now verify that attribute classification worked as expected
-    assert base._pyre_family == "generic"
-    assert base._pyre_category == None
+    # did my ancestor list get built properly
+    assert base._pyre_configurables == (base,)
     # did the _pyre_Inventory embedded class get built?
     assert hasattr(base, "_pyre_Inventory")
-    # get the trait categories
-    categories = base._pyre_Inventory._pyre_categories
-    # chec the traits are there
-    assert categories["traits"] == ( base.trait1, base.trait2 )
+    # is it properly subclassed?
+    assert issubclass(base._pyre_Inventory, Inventory)
         
-    return
+    return base
 
 
 # main

@@ -15,27 +15,21 @@ Verify that the Requirement metaclass decorates class records properly
 def test():
     # access
     from pyre.components.Configurable import Configurable
+    from pyre.components.Inventory import Inventory
     from pyre.components.Role import Role
-    from pyre.components.Trait import Trait
 
     # declare a class
-    class configurable(Configurable, metaclass=Role):
+    class base(Configurable, metaclass=Role):
         """test class"""
 
-        # declare some traits
-        trait1 = Trait()
-        trait2 = Trait()
-
-    # now verify that attribute classification worked as expected
-    assert configurable._pyre_category == None
+    # did my ancestor list get built properly
+    assert base._pyre_configurables == (base,)
     # did the _pyre_Inventory embedded class get built?
-    assert hasattr(configurable, "_pyre_Inventory")
-    # get the trait categories
-    categories = configurable._pyre_Inventory._pyre_categories
-    # chec the traits are there
-    assert categories["traits"] == ( configurable.trait1, configurable.trait2 )
+    assert hasattr(base, "_pyre_Inventory")
+    # is it properly subclassed?
+    assert issubclass(base._pyre_Inventory, Inventory)
         
-    return
+    return base
 
 
 # main

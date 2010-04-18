@@ -18,7 +18,13 @@ class Requirement(AttributeClassifier):
 
     # constants
     _pyre_CLASSIFIER_NAME = "_pyre_category"
-    _pyre_INVENTORY_CLASS_NAME = "_pyre_Inventory"
+
+    # framework data
+    # access to the base Inventory class
+    # embryonic case for an invariant to simplify the metaclass implementations: all classes in
+    # the mro of components and interfaces define a _pyre_Inventory so it is safe to derive one
+    # for the current class from the ones in its immediate ancestors
+    from .Inventory import Inventory as _pyre_Inventory
 
 
     # meta methods
@@ -43,8 +49,8 @@ class Requirement(AttributeClassifier):
         Build and decorate the class record
 
         The actual building of the class record is done by type; the decoration performed here
-        consist of creating a nested class to hold the inevntory items, and recording the tuple
-        of ancestors of {cls} that are themselves requirements.
+        consists of creating a nested class to hold the inevntory items, and recording the
+        tuple of ancestors of {cls} that are themselves instances of Requirement.
 
         parameters:
             {cls}: the metaclass invoked; guaranteed to be a Requirement descendant
@@ -53,69 +59,59 @@ class Requirement(AttributeClassifier):
             {attributes}: a _pyre_AttributeFilter instance with the {cls} attributes
         """
         # build the class record
-        requirement = super().__new__(cls, name, bases, attributes, **kwds)
-        # construct and attach the Inventory class
-        cls._pyre_buildInventoryClass(requirement, attributes)
+        configurable = super().__new__(cls, name, bases, attributes, **kwds)
+        # record the class name so that _pyre_name always exists
+        configurable._pyre_name = name
+        # record the traits harvested from this declaration
+        configurable._pyre_traits = attributes.descriptors
         # compute the ancestors that are Requirement instances
-        requirement._pyre_ancestors = tuple(requirement.pyre_ancestors())
-        # and return the class record
-        return requirement
-
-
-    def __init__(self, name, bases, attributes, family=None, **kwds):
-        """
-        Initialize the class record
-
-        parameters:
-            {self}: an instance of the metaclass invoked; guaranteed to be a Requirement descendant
-            {name}: the name of the class being built
-            {bases}: a tuple of the base classes from which {cls} derives
-            {attributes}: a _pyre_AttributeFilter instance with the {cls} attributes
-            {family}: the public name of this class
-        """
-        # initialize the record
-        super().__init__(name, bases, attributes, **kwds)
-        # record the family name
-        self._pyre_family = family
-        # NYI:
-        #     what does family mean for components and interfaces?
-        #     what to do when family names are not unique?
-
-        #     what to do when a component derives from another, adds new traits and doesn't
-        #     reset the family name? this is a problem because the extra traits are meaningless
-        #     for the ancestor class, and so configuration files that provide values for them
-        #     only work for the decendant class
-
-        # so for now: leave family blank if it were not specified (rather than inheriting a
-        # value from the closest ancestor); this signals the ComponentRegistrar to not build
-        # configuration nodes for this class
-        return
+        configurable._pyre_configurables = cls._pyre_getRequirements(configurable)
+        # construct the Inventory class
+        inventory = cls._pyre_buildInventoryClass(configurable, bases)
+        # attach it
+        configurable._pyre_Inventory = inventory
+        # and connect it with its traits
+        cls._pyre_decorateInventoryClass(configurable, inventory, attributes)
+        # all done; return the class record
+        return configurable
 
 
     # implementation details
     @classmethod
-    def _pyre_buildInventoryClass(cls, record, attributes):
+    def _pyre_getRequirements(cls, configurable):
         """
-        Attach the category index to the class record
+        Scan the mro looking for base classes that are instances of mine
+        """
+        return tuple(ancestor for ancestor in configurable.__mro__ if isinstance(ancestor, cls))
+
+
+    @classmethod
+    def _pyre_buildInventoryClass(cls, configurable, bases):
+        """
+        Build the _pyre_Inventory class that is to be embedded in {configurable}
 
         parameters:
             {cls}: the metaclass invoked; guaranteed to be a Requirement descendant
-            {record}: the class being built
-            {record}: the class being built
-            {attributes}: attribute storage with the category index
+            {configurable}: the class being built
+            {bases}: the tuple of direct ancestors of {configurable}
         """
-        # initialize the name of the embedded inventory class
-        name = cls._pyre_INVENTORY_CLASS_NAME
-        # find all direct bases that have a _pyre_Inventory attribute 
+        # make a tuple of all the _pyre_Inventory classes embedded in the direct ancestors
         # this must be done every time we encounter a new record because multiple inheritance
-        # changes the mro, so we can't rely on the information we recorded on any of the
-        # ancestors
-        bases = tuple(getattr(base, name) for base in record.__bases__ if hasattr(base, name))
+        # changes the mro, so we can't rely on the information we have recorded previously
+        inventories = tuple(base._pyre_Inventory for base in bases if isinstance(base, cls))
+        # if we couldn't find any, derive from mine
+        if not inventories:
+            return cls._pyre_Inventory
         # now that we have a proper list of bases, build a class that derives from all of them
         # this class gets used to build the per-instance storage for trait values
-        inventory = type(name, bases, dict())
-        # attach it
-        setattr(record, name, inventory)
+        return type("_pyre_Inventory", inventories, dict())
+
+
+    @classmethod
+    def _pyre_decorateInventoryClass(cls, configurable, inventory, attributes):
+        """
+        Build the inventory namemap
+        """
         # initialize the name map
         inventory._pyre_namemap = dict()
         # build the category index for the inventory class record
@@ -126,7 +122,7 @@ class Requirement(AttributeClassifier):
             categories[category] = tuple(traits)
             # and notify all trait descriptors that they have been atatched to a configurable
             for trait in traits:
-                trait.pyre_attach(configurable=record)
+                trait.pyre_attach(configurable)
         # all done; return the inventory class record to the caller
         return inventory
 
@@ -136,7 +132,6 @@ class Requirement(AttributeClassifier):
         """
         Storage and categorization of the declared attributes
         """
-
 
         def decorateDescriptor(self, name, descriptor, category):
             """

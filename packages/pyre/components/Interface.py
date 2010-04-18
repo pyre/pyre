@@ -22,10 +22,10 @@ class Interface(Configurable, metaclass=Role):
         raise firewall.log("interfaces can not be instantiated")
 
 
-    # private data
-    _pyre_family = None # my family name
-    _pyre_category = "interfaces" # my classification as an attribute
-    _pyre_ancestors = None # the tuple of my ancestors
+    # framework data
+    _pyre_name = None # my name; for interfaces, this derived form the class __name__
+    _pyre_configurables = None # a tuple of all my ancestors that derive from Configurable
+    _pyre_traits = None # a list of all the traits in my declaration
 
 
 # end of file 
