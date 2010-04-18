@@ -107,12 +107,33 @@ class ImplementationSpecificationError(ComponentError):
     errors, e.g. classes that don't derive from Interface
     """
 
+    def __init__(self, name, component, errors, **kwds):
+        reason = "component {0!r} has a poorly formed implementation specification".format(name)
+        super().__init__(reason, **kwds)
+
+        self.component = component
+        self.errors = errors
+
+        return
+
 
 class InterfaceError(ComponentError):
     """
     Exception raised when a component does not implement correctly the interfaces in its
     implementation specification
     """
+
+    def __init__(self, component, interface, report, **kwds):
+        reason = (
+            "component {0._pyre_family!r} does not implement "
+            "interface {1._pyre_name!r} correctly".format(component, interface))
+        super().__init__(reason, **kwds)
+        
+        self.component = component
+        self.interface = interface
+        self.report = report
+        
+        return
 
 
 class TraitNotFoundError(ComponentError):

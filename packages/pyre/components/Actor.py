@@ -41,10 +41,12 @@ class Actor(Requirement):
         # get my ancestor to build the class record
         component = super().__new__(cls, name, bases, attributes, **kwds)
         # build my implementation specification
-        interface = cls._pyre_buildImplementationSpecification(component, bases, implements)
+        interface = cls._pyre_buildImplementationSpecification(name, component, bases, implements)
         # check whether this component implements its requirements correctly
-        if interface and not component.pyre_isCompatible(interface):
-            raise cls.InterfaceError(component, interface)
+        if interface:
+            check = component.pyre_isCompatible(interface)
+            if not check:
+                raise cls.InterfaceError(component, interface, check)
 
         return component
 
@@ -81,7 +83,7 @@ class Actor(Requirement):
 
     # implementation details
     @classmethod
-    def _pyre_buildImplementationSpecification(cls, component, bases, implements):
+    def _pyre_buildImplementationSpecification(cls, name, component, bases, implements):
         """
         Build a class that describes the implementation requirements for this component
 
@@ -102,8 +104,8 @@ class Actor(Requirement):
             # accumulator for bad interfaces
             errors = []
             # if implements is a single interface, add it to the pile
-            # MGA: this used to check for the presence of the metaclass as well; why?
-            if issubclass(implements, Interface):
+            # check that implements is a class before feeding it issubclass
+            if isinstance(implements, type) and issubclass(implements, Interface):
                 interfaces.add(implements)
             else:
                 # the only legal alternative is an iterable of Interface descendants
@@ -117,7 +119,7 @@ class Actor(Requirement):
                     errors.append(implements)
             # report the error we encountered
             if errors:
-                raise cls.ImplementationSpecificationError(component, errors)
+                raise cls.ImplementationSpecificationError(name, component, errors)
         # now, extract commitments made by my ancestors that are components
         interfaces |= {
             base._pyre_implements for base in bases

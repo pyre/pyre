@@ -34,7 +34,13 @@ interfaces:
 
 components:
 	${PYTHON} ./component_sanity.py
-
+	${PYTHON} ./component_declaration.py
+	${PYTHON} ./component_inheritance.py
+	${PYTHON} ./component_inheritance_multi.py
+	${PYTHON} ./component_compatibility.py
+	${PYTHON} ./component_compatibility_report.py
+	${PYTHON} ./component_implements.py
+	${PYTHON} ./component_bad_implementations.py
 
 
 # end of file 
