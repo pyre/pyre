@@ -29,6 +29,7 @@ interfaces:
 	${PYTHON} ./interface_inheritance.py
 	${PYTHON} ./interface_shadow.py
 	${PYTHON} ./interface_inheritance_multi.py
+	${PYTHON} ./interface_traits.py
 	${PYTHON} ./interface_compatibility.py
 	${PYTHON} ./interface_compatibility_report.py
 
@@ -36,7 +37,9 @@ components:
 	${PYTHON} ./component_sanity.py
 	${PYTHON} ./component_declaration.py
 	${PYTHON} ./component_inheritance.py
+	${PYTHON} ./component_shadow.py
 	${PYTHON} ./component_inheritance_multi.py
+	${PYTHON} ./component_traits.py
 	${PYTHON} ./component_compatibility.py
 	${PYTHON} ./component_compatibility_report.py
 	${PYTHON} ./component_implements.py
