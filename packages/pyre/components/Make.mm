@@ -28,6 +28,7 @@ EXPORT_PYTHON_MODULES = \
     Inventory.py \
     Interface.py \
     Property.py \
+    Registrar.py \
     Requirement.py \
     Role.py \
     Trait.py \

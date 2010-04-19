@@ -6,6 +6,7 @@
 #
 
 
+from .Registrar import Registrar
 from .Requirement import Requirement
 
 
@@ -21,6 +22,10 @@ class Actor(Requirement):
     enables the trait classification. See pyre.components.Requirement and
     pyre.patterns.AttributeClassifier for the details of how this is accomplished.
     """
+
+
+    # framework data
+    _pyre_registrar = Registrar() # the component registrar; shared by  all Component subclasses
 
 
     # meta methods
