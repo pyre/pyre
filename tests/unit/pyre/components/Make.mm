@@ -41,6 +41,7 @@ components:
 	${PYTHON} ./component_shadow.py
 	${PYTHON} ./component_inheritance_multi.py
 	${PYTHON} ./component_traits.py
+	${PYTHON} ./component_defaults.py
 	${PYTHON} ./component_compatibility.py
 	${PYTHON} ./component_compatibility_report.py
 	${PYTHON} ./component_implements.py

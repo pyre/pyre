@@ -15,6 +15,7 @@ class Role(Requirement):
     """
 
 
+    # meta methods
     def __init__(self, name, bases, attributes, **kwds):
         """
         Initialize a new interface class record

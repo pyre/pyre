@@ -13,15 +13,18 @@ from ..patterns.Singleton import Singleton
 
 class Registrar(object, metaclass=Singleton):
     """
-    The manager of component classes and their instances
+    The manager of interfaces, component classes and their instances
 
     All Component subclasses and their instances are registered here as they encountered by the
-    framework.
+    framework. Interfaces are registered if they are non-trivial, i.e. if their name is not
+    'Interface' or '_pyre_Interface', to avoid registering the base class and the
+    auto-generated interfaces from component implementation specifications.
     """
 
 
     # public data
-    extent = None # a map of component classes to their instances
+    components = None # a map of component classes to their instances
+    interfaces = None # the set of all registered interfaces
     implementors = None # a map of interfaces to components that implement them
 
 
@@ -35,7 +38,7 @@ class Registrar(object, metaclass=Singleton):
         implementations of a given interface.
         """
         # prime the component extent
-        self.instances[cls] = weakref.WeakSet()
+        self.components[cls] = weakref.WeakSet()
         # register the interface implementations
         # initialize component traits
         # all done
@@ -49,7 +52,16 @@ class Registrar(object, metaclass=Singleton):
 
     def registerInterfaceClass(self, interface):
         """
+        Register {interface}
         """
+        # avoid registering the base Interface class and the automatically generated
+        # implementation specifications for components
+        if interface._pyre_name in ["Interface", "_pyre_Interface"]:
+            return interface
+        # this should be a good one, so register it
+        self.interfaces.add(interface)
+        # and hand it back to the caller
+        return interface
 
 
     # meta methods
@@ -57,7 +69,8 @@ class Registrar(object, metaclass=Singleton):
         super().__init__(**kwds)
 
         # the component registries
-        self.instances = {}
+        self.components = {}
+        self.interfaces = set()
         self.implementors = collections.defaultdict(set)
         return
 

@@ -46,7 +46,11 @@ class Executive(object):
 
     def registerInterfaceClass(self, interface):
         """
+        Register the given interface class record
         """
+        # not much to do with interfaces
+        # just forward teh request to the component registar
+        return self.registrar.registerInterfaceClass(interface)
 
 
     # configuration
