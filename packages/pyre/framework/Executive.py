@@ -28,9 +28,28 @@ class Executive(object):
     configurator = None # my configuration manager
     curator = None # the manager of configuration sources
     fileserver = None # my virtual filesystem
+    registrar = None # the component class and instance registrar
 
 
     # interface
+    # registration
+    def registerComponentClass(self, component):
+        """
+        Register the {component} class record
+        """
+
+
+    def registerComponentInstance(self, component):
+        """
+        """
+
+
+    def registerInterfaceClass(self, interface):
+        """
+        """
+
+
+    # configuration
     def loadConfiguration(self, uri):
         """
         Load configuration settings from {uri}.
@@ -60,7 +79,6 @@ class Executive(object):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-
         # my codec manager
         self.codecs = pyre.framework.newCodecManager()
         # my virtual filesystem
@@ -72,7 +90,13 @@ class Executive(object):
         self.configurator = pyre.framework.newConfigurator()
         # the manager of configuration nodes
         self.calculator = pyre.framework.newCalculator()
+        # the component registrar
+        self.registrar = pyre.framework.newComponentRegistrar()
 
+        # initialize
+        self.boot()
+
+        # all done
         return
 
 

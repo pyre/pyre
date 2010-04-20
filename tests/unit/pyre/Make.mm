@@ -14,12 +14,12 @@ RECURSE_DIRS = \
     parsing \
     xml \
     constraints \
-    components \
     calc \
     filesystem \
     config \
     codecs \
     framework \
+    components \
 
 #--------------------------------------------------------------------------
 #

@@ -29,18 +29,17 @@ def test():
         def behavior(self):
             """a method required of all compatible implementations"""
 
-    # check that everything is as expected
-    assert interface._pyre_configurables == (interface, Interface)
-    # look through the namemap
-    namemap = interface._pyre_Inventory._pyre_namemap
-    assert namemap["a"] == "a"
-    assert namemap["b"] == "b"
-    # access the trait categories
-    categories = interface._pyre_Inventory._pyre_categories
-    assert len(categories) == 2
-    # assert categories["behaviors"] == (interface.behavior,)
-    assert categories["properties"] == (interface.a, interface.b)
-
+    # try to instantiate one and catch the exception
+    # NYI: 
+    #     this should be a journal.firewall eventually
+    #     catch the ImportError for now, until journal gets implemented, at which point this
+    #     test will start to fail and it will need fixing
+    try:
+        interface()
+        assert False
+    except ImportError:
+        pass
+     
     return interface
 
 

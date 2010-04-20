@@ -21,23 +21,29 @@ class meta(type):
     @classmethod
     def __prepare__(metacls, name, bases, **kwds):
         order.append("running:  meta.__prepare__")
+        print(metacls)
         return super().__prepare__(name, bases)
 
     order.append("declaration: metaclass __new__")
     def __new__(metacls, name, bases, attributes, **kwds):
         order.append("running: meta.__new__")
+        print(metacls)
         return super().__new__(metacls, name, bases, attributes)
-
-    order.append("declaration: metaclass __call__")
-    def __call__(metacls, **kwds):
-        order.append("running: meta.__call__")
-        return super().__call__(**kwds)
 
     order.append("declaration: metaclass __init__")
     def __init__(self, name, bases, attributes, **kwds):
         order.append("running:  meta.__init__")
+        print(self)
         super().__init__(name, bases, attributes)
         return
+
+    order.append("declaration: metaclass __call__")
+    def __call__(self, **kwds):
+        order.append("running: meta.__call__")
+        print("__call__: self =", self)
+        instance = super().__call__(**kwds)
+        print("__call__: instance =", instance)
+        return instance
 
 
 order.append("declaration: base")
@@ -46,12 +52,12 @@ class base(object, metaclass=meta):
 
     order.append("declaration: base.__new__")
     def __new__(cls):
-        order.append("running:  base.__new__")
+        order.append("running:   base.__new__")
         return super().__new__(cls)
 
     order.append("declaration: base.__init__")
     def __init__(self, **kwds):
-        order.append("running:  base.__init__")
+        order.append("running:   base.__init__")
         return
     order.append("declaration: end of base")
 
@@ -68,8 +74,8 @@ def test():
         'declaration: metaclass',
         'declaration: metaclass __prepare__',
         'declaration: metaclass __new__',
-        'declaration: metaclass __call__',
         'declaration: metaclass __init__',
+        'declaration: metaclass __call__',
         'declaration: base',
         'running:  meta.__prepare__',
         'declaration: base.__new__',
@@ -81,12 +87,12 @@ def test():
         'running: test',
         'running: instantiating one',
         'running: meta.__call__',
-        'running:  base.__new__',
-        'running:  base.__init__',
+        'running:   base.__new__',
+        'running:   base.__init__',
         'running: instantiating another', 
         'running: meta.__call__',
-        'running:  base.__new__',
-        'running:  base.__init__']
+        'running:   base.__new__',
+        'running:   base.__init__']
 
     return
 

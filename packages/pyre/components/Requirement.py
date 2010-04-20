@@ -6,6 +6,7 @@
 #
 
 
+import pyre
 import collections
 from ..patterns.AttributeClassifier import AttributeClassifier
 
@@ -20,6 +21,9 @@ class Requirement(AttributeClassifier):
     _pyre_CLASSIFIER_NAME = "_pyre_category"
 
     # framework data
+    # the component registrar; shared by  all Component and Interface subclasses
+    _pyre_registrar = pyre.executive()
+
     # access to the base Inventory class
     # embryonic case for an invariant to simplify the metaclass implementations: all classes in
     # the mro of components and interfaces define a _pyre_Inventory so it is safe to derive one

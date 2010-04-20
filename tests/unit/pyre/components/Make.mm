@@ -32,6 +32,7 @@ interfaces:
 	${PYTHON} ./interface_traits.py
 	${PYTHON} ./interface_compatibility.py
 	${PYTHON} ./interface_compatibility_report.py
+	${PYTHON} ./interface_instantiation.py
 
 components:
 	${PYTHON} ./component_sanity.py

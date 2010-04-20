@@ -17,12 +17,20 @@ class Role(Requirement):
 
     def __init__(self, name, bases, attributes, **kwds):
         """
-        Initialize a new class record
-
-        Build the trait category index using the filtered attributes and register this
-        interface with the registrar
+        Initialize a new interface class record
         """
+        super().__init__(name, bases, attributes, **kwds)
+        # register this interface class
+        self._pyre_registrar.registerInterfaceClass(self)
+        # all done
         return
+
+
+    # disable instatiation of interfaces
+    def __call__(self, **kwds):
+        import journal
+        firewall = journal.firewall("pyre.components")
+        raise firewall.log("interfaces can not be instantiated")
 
 
 # end of file 

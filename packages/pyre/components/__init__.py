@@ -64,6 +64,12 @@ def provides(func):
     return export(func)
 
 
+# factories
+def newRegistrar(**kwds):
+    from .Registrar import Registrar
+    return Registrar(**kwds)
+
+
 # exceptions
 from ..framework import FrameworkError
 

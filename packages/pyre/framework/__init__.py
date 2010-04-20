@@ -55,6 +55,11 @@ def newFileServer(**kwds):
     return FileServer(**kwds)
 
 
+def newComponentRegistrar(**kwds):
+    from ..components import newRegistrar
+    return newRegistrar(**kwds)
+
+
 # exceptions
 class FrameworkError(Exception):
     """

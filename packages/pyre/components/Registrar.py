@@ -8,9 +8,10 @@
 
 import weakref
 import collections
+from ..patterns.Singleton import Singleton
 
 
-class Registrar(object):
+class Registrar(object, metaclass=Singleton):
     """
     The manager of component classes and their instances
 

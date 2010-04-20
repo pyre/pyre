@@ -6,7 +6,6 @@
 #
 
 
-from .Registrar import Registrar
 from .Requirement import Requirement
 
 
@@ -24,12 +23,8 @@ class Actor(Requirement):
     """
 
 
-    # framework data
-    _pyre_registrar = Registrar() # the component registrar; shared by  all Component subclasses
-
-
     # meta methods
-    def __new__(cls, name, bases, attributes, implements=None, core=None, **kwds):
+    def __new__(cls, name, bases, attributes, family=None, implements=None, core=None, **kwds):
         """
         Build the class record
 
@@ -45,6 +40,8 @@ class Actor(Requirement):
         """
         # get my ancestor to build the class record
         component = super().__new__(cls, name, bases, attributes, **kwds)
+        # record the family name
+        component._pyre_family = family
         # build my implementation specification
         interface = cls._pyre_buildImplementationSpecification(name, component, bases, implements)
         # check whether this component implements its requirements correctly
@@ -56,34 +53,27 @@ class Actor(Requirement):
         return component
 
 
-    def __init__(self, name, bases, attributes, family=None, **kwds):
+    def __init__(self, name, bases, attributes, **kwds):
         """
-        Initialize the component record
-
-        parameters:
-            {self}: an instance of the metaclass invoked; guaranteed to be an Actor descendant
-            {name}: the name of the class being built
-            {bases}: a tuple of the base classes from which {cls} derives
-            {attributes}: a _pyre_AttributeFilter instance with the {cls} attributes
-            {family}: the public name of this class
+        Initialize a new component record
         """
         # initialize the record
         super().__init__(name, bases, attributes, **kwds)
-        # record the family name
-        self._pyre_family = family
-        # NYI:
-        #     what does family mean for components and interfaces?
-        #     what to do when family names are not unique?
-
-        #     what to do when a component derives from another, adds new traits and doesn't
-        #     reset the family name? this is a problem because the extra traits are meaningless
-        #     for the ancestor class, and so configuration files that provide values for them
-        #     only work for the decendant class
-
-        # so for now: leave family blank if it were not specified (rather than inheriting a
-        # value from the closest ancestor); this signals the ComponentRegistrar to not build
-        # configuration nodes for this class
+        # register this component class record
+        self._pyre_registrar.registerComponentClass(self)
         return
+
+
+    def __call__(self, **kwds):
+        """
+        Initialize a new component instance
+        """
+        # build the instance
+        instance = super().__call__(**kwds)
+        # register this instance
+        self._pyre_registrar.registerComponentInstance(instance)
+        # all done
+        return instance
 
 
     # implementation details

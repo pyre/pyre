@@ -38,6 +38,7 @@ def test():
      
     # instantiate
     sentry = Sentry(name="naïve")
+    return
 
     # check the class variables
     assert sentry._pyre_name == "naïve"

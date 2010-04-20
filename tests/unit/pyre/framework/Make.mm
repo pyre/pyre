@@ -27,6 +27,7 @@ curator:
 framework:
 	${PYTHON} ./executive.py
 	${PYTHON} ./executive_fileserver.py
+	${PYTHON} ./executive_registrar.py
 	${PYTHON} ./executive_codecs.py
 	${PYTHON} ./executive_configuration.py
 
