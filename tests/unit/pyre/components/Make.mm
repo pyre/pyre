@@ -47,6 +47,7 @@ components:
 	${PYTHON} ./component_implements.py
 	${PYTHON} ./component_bad_implementations.py
 	${PYTHON} ./component_instantiation.py
+	${PYTHON} ./component_registration.py
 
 
 # end of file 

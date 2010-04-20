@@ -37,17 +37,31 @@ class Registrar(object, metaclass=Singleton):
         interfaces. This enables the framework to answer questions about the possible
         implementations of a given interface.
         """
+        # avoid registering the base Component class
+        if component._pyre_name is "Component":
+            return component
         # prime the component extent
-        self.components[cls] = weakref.WeakSet()
+        self.components[component] = weakref.WeakSet()
         # register the interface implementations
-        # initialize component traits
+        self._recordInterfaceImplementations(component)
+        # NYI: initialize component traits
+        print(" *** NYI!")
         # all done
-        return cls
+        return component
 
 
     def registerComponentInstance(self, component):
         """
+        Register the {component} instance
         """
+        # add {component} to the set of registered instances of its class
+        # Actor, the Component metaclass, guarantees that component classes get registered
+        # before any of their instances, so the look up for the class should never fail
+        self.components[component.__class__].add(component)
+        # NYI: initialize component traits
+        print(" *** NYI!")
+        # and hand it back
+        return component
 
 
     def registerInterfaceClass(self, interface):
@@ -56,7 +70,7 @@ class Registrar(object, metaclass=Singleton):
         """
         # avoid registering the base Interface class and the automatically generated
         # implementation specifications for components
-        if interface._pyre_name in ["Interface", "_pyre_Interface"]:
+        if interface._pyre_name in self._IGNORABLES:
             return interface
         # this should be a good one, so register it
         self.interfaces.add(interface)
@@ -73,6 +87,33 @@ class Registrar(object, metaclass=Singleton):
         self.interfaces = set()
         self.implementors = collections.defaultdict(set)
         return
+
+
+    # implementation details
+    def _recordInterfaceImplementations(self, component):
+        """
+        Add the {component} class record to the set of implementors of all its interfaces
+        """
+        # access the interface implementation specification
+        implements = component._pyre_implements
+        # bail out if no specification was provided by the author of the component
+        if not implements:
+            return component
+        # get access to the interface metaclass
+        from .Role import Role
+        # otherwise, look through its
+        for interface in implements.__mro__:
+            # ignore the trivial interfaces
+            if not isinstance(interface, Role) or interface._pyre_name in self._IGNORABLES:
+                continue
+            # otherwise, update the set of implementors of this interface
+            self.implementors[interface].add(component)
+        # all done
+        return
+
+
+    # constants
+    _IGNORABLES = {"_pyre_Interface", "Interface"}
 
 
 # end of file 

@@ -37,11 +37,20 @@ class Executive(object):
         """
         Register the {component} class record
         """
+        # get the component class registered
+        self.registrar.registerComponentClass(component)
+        # and hand back the class record
+        return component
 
 
     def registerComponentInstance(self, component):
         """
+        Register the {component} instance
         """
+        # get the instance registered
+        self.registrar.registerComponentInstance(component)
+        # and hand it back
+        return component
 
 
     def registerInterfaceClass(self, interface):
@@ -49,7 +58,7 @@ class Executive(object):
         Register the given interface class record
         """
         # not much to do with interfaces
-        # just forward teh request to the component registar
+        # just forward the request to the component registar
         return self.registrar.registerInterfaceClass(interface)
 
 

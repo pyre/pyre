@@ -64,6 +64,8 @@ def test():
     # check base
     inventory = base._pyre_Inventory
     assert inventory.common == "base"
+    assert inventory.a1 == "base"
+    assert inventory.a2 == "base"
 
     return base, a1, a2, derived
      

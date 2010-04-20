@@ -21,6 +21,7 @@ def test():
     # declare a class
     class base(Configurable, metaclass=Actor):
         """test class"""
+        _pyre_implements = None # initialize this so we can go through component registration
 
     # did my ancestor list get built properly
     assert base._pyre_configurables == (base,)

@@ -42,14 +42,16 @@ class Actor(Requirement):
         component = super().__new__(cls, name, bases, attributes, **kwds)
         # record the family name
         component._pyre_family = family
-        # build my implementation specification
+        # build the implementation specification
         interface = cls._pyre_buildImplementationSpecification(name, component, bases, implements)
-        # check whether this component implements its requirements correctly
         if interface:
+            # check whether the requirements were implemented correctly
             check = component.pyre_isCompatible(interface)
             if not check:
                 raise cls.InterfaceError(component, interface, check)
-
+            # and record the implementation specification
+            component._pyre_implements = interface
+        # pass it on
         return component
 
 
