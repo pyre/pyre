@@ -14,6 +14,7 @@ class Event(object):
 
     # public data
     handled = False
+    locator = None
 
 
 # end of file 

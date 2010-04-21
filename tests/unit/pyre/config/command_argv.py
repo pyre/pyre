@@ -38,9 +38,9 @@ def test():
         ]
 
     # get the parser to populate the configurator
-    parser.decode(executive, commandline)
+    parser.decode(configurator, commandline)
     # and transfer the events to the calculator
-    configurator.populate(calculator)
+    configurator.configure(executive)
     # now, check that the assignments took place
     assert calculator["help"] == None
     assert calculator["vtf.nodes"] == "1024"

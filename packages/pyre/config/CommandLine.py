@@ -57,7 +57,7 @@ class CommandLine(object):
 
 
     # interface
-    def decode(self, executive, argv):
+    def decode(self, configurator, argv):
         """
         Harvest the configuration events in {argv} and store them in {configurator}
 
@@ -65,8 +65,6 @@ class CommandLine(object):
             {argv}: a container of strings of the form "--key=value"
             {configurator}: a pyre.config.Configurator compatible instance
         """
-        # get the configuration manager
-        configurator = executive.configurator
         # run through the command line
         for index,arg in enumerate(argv):
             # look for an assignment
@@ -77,7 +75,8 @@ class CommandLine(object):
                 key = match.group("key")
                 value = match.group("value")
                 if key == 'config':
-                    executive.loadConfiguration(value)
+                    configurator.recordConfigurationSource(
+                        source=value, locator=self.locator(arg=index))
                 elif key:
                     # if a key were specified
                     self._processAssignments(configurator, key,value, self.locator(arg=index))
@@ -149,7 +148,7 @@ class CommandLine(object):
         # now, form all the specified addresses by computing the cartesian product
         for spec in itertools.product(*fields):
             # create a new assignment
-            configurator.createAssignment(
+            configurator.recordAssignment(
                 key=self.fieldSeparator.join(spec), value=value, locator=locator)
         # all done
         return

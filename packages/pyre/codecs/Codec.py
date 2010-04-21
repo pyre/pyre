@@ -37,7 +37,7 @@ class Codec(object):
             "class {0.__class__.__name__!r} must override 'encode'".format(self))
     
 
-    def decode(self, configurator, stream):
+    def decode(self, configurator, stream, locator=None):
         """
         Injest {stream} and return the decoded contents
         """

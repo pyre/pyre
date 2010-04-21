@@ -34,8 +34,8 @@ class Pyre(Executive, metaclass=Singleton):
         parser = newCommandLineParser()
         parser.decode(self, sys.argv[1:])
 
-        # get the configurator to update the evaluation model
-        self.configurator.populate(self.calculator)
+        # get the configurator to update my configuration
+        self.configurator.configure(self)
 
         # ready to go
         return

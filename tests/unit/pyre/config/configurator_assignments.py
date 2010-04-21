@@ -17,11 +17,11 @@ def test():
     # build a new configurator
     configurator = pyre.config.newConfigurator()
     # create some assignments
-    configurator.createAssignment(
+    configurator.recordAssignment(
         key="pyre.user.name", value="michael aïvázis", locator=None)
-    configurator.createAssignment(
+    configurator.recordAssignment(
         key="pyre.user.email", value="michael.aivazis@orthologue.com", locator=None)
-    configurator.createAssignment(
+    configurator.recordAssignment(
         key="pyre.user.affiliation", value="caltech", locator=None)
     # check that they were created and inserted correctly
     assert list(map(str, configurator.events)) == [

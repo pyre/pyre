@@ -30,12 +30,12 @@ def test():
         ]
 
     # get the parser to populate the configurator
-    parser.decode(executive, commandline)
+    parser.decode(configurator, commandline)
     # and transfer the events to the calculator
-    configurator.populate(calculator)
+    configurator.configure(executive)
     # now, check that the assignments took place
-    assert executive.calculator["sample.user.name"] == "michael a.g. aïvázis"
-    assert executive.calculator["sample.user.email"] == "aivazis@caltech.edu"
+    assert calculator["sample.user.name"] == "michael a.g. aïvázis"
+    assert calculator["sample.user.email"] == "aivazis@caltech.edu"
     # and return the managers
     return executive, parser
 

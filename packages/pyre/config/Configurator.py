@@ -19,7 +19,37 @@ class Configurator(object):
 
 
     # interface
-    def createAssignment(self, key, value, locator):
+    def configure(self, executive):
+        """
+        Iterate through the event queue and carry out the 0
+        """
+        # access the calculator
+        calculator = executive.calculator
+        # loop over the binding and create the associated variable assignments
+        while self.events:
+            event = self.events.popleft()
+            event.identify(inspector=self, executive=executive)
+        # all done
+        return
+
+ 
+    # event processing
+    def bind(self, executive, key, value, locator):
+        """
+        Record a new variable binding with the {executive}
+        """
+        return executive.calculator.bind(name=key, value=value, locator=locator)
+
+
+    def load(self, executive, source, locator):
+        """
+        Ask the {executive} to load the configuration settings in {source}
+        """
+        return executive.loadConfiguration(uri=source, locator=locator)
+
+
+    # interface for harvesting events from configuration files
+    def recordAssignment(self, key, value, locator):
         """
         Create an event that corresponds to an assignment of {value} to {key}, and insert it
         into the event queue
@@ -30,16 +60,14 @@ class Configurator(object):
         return assignment
 
 
-    def populate(self, calculator):
+    def recordConfigurationSource(self, source, locator):
         """
-        Convert assignment events into bound variables
+        Create an event that corresponds to a request to load a configuration file
         """
-        # loop over the binding and create the associated variable assignments
-        while self.events:
-            event = self.events.popleft()
-            calculator.bind(name=event.key, value=event.value, locator=event.locator)
-        # all done
-        return
+        from .ConfigurationSource import ConfigurationSource
+        event = ConfigurationSource(source, locator)
+        self.events.append(event)
+        return event
 
 
     # meta methods

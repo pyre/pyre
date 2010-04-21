@@ -69,7 +69,7 @@ class Executive(object):
 
 
     # configuration
-    def loadConfiguration(self, uri):
+    def loadConfiguration(self, uri, locator=None):
         """
         Load configuration settings from {uri}.
         """
@@ -81,9 +81,9 @@ class Executive(object):
         path, extension = os.path.splitext(address)
         reader = self.codecs.newCodec(encoding=extension[1:])
         # decode the configuration stream
-        reader.decode(stream=source, configurator=self.configurator)
+        reader.decode(configurator=self.configurator, stream=source, locator=locator)
         # get the configurator to update the evaluation model
-        self.configurator.populate(self.calculator)
+        self.configurator.configure(self)
         # all done
         return
 

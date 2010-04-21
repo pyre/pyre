@@ -13,27 +13,29 @@ Sanity check: verify that the package is accessible
 
 
 def test():
-    import pyre.config
+    import pyre
+    # build an executive
+    executive = pyre.executive()
     # build a new configurator
-    configurator = pyre.config.newConfigurator()
+    configurator = executive.configurator
     # build a new calculator
-    calculator = pyre.config.newCalculator()
+    calculator = executive.calculator
 
     # create some assignments
-    configurator.createAssignment(
+    configurator.recordAssignment(
         key="pyre.user.name", value="Michael Aïvázis", locator=None)
-    configurator.createAssignment(
+    configurator.recordAssignment(
         key="pyre.user.name", value="michael aïvázis", locator=None)
-    configurator.createAssignment(
+    configurator.recordAssignment(
         key="pyre.user.email", value="michael.aivazis@caltech.edu", locator=None)
-    configurator.createAssignment(
+    configurator.recordAssignment(
         key="pyre.user.affiliation",
         value="california institute of technology", locator=None)
-    configurator.createAssignment(
+    configurator.recordAssignment(
         key="pyre.user.alias", value="{pyre.user.name}", locator=None)
 
     # build the model
-    configurator.populate(calculator)
+    configurator.configure(executive)
 
     # check the variable bindings
     assert calculator["pyre.user.name"] == "michael aïvázis"

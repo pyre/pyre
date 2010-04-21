@@ -23,6 +23,7 @@ EXPORT_PYTHON_MODULES = \
     Assignment.py \
     Calculator.py \
     CommandLine.py \
+    ConfigurationSource.py \
     Configurator.py \
     Event.py \
     Variable.py \

@@ -21,7 +21,7 @@ class PML(Codec):
 
 
     # interface
-    def decode(self, configurator, stream):
+    def decode(self, configurator, stream, locator=None):
         """
         Parse {stream} and return its contents
         """
@@ -35,16 +35,23 @@ class PML(Codec):
         try:
             configuration = reader.read(stream=stream, document=Document())
         except reader.ParsingError as error:
-            locator = error.locator
-            source = locator.source
-            msg = "decoding error in {}: {}".format(locator, error.description)
+            if locator:
+                loc = pyre.tracking.chain(this=error.locator, next=locator)
+            else:
+                loc = error.locator
+            source = error.locator.source
+            msg = "decoding error in {}: {}".format(loc, error.description)
             raise self.DecodingError(
-                codec=self, uri=source, locator=locator, description=msg) from error
+                codec=self, uri=source, locator=loc, description=msg) from error
 
         # record the harvested events
         # the assignments
-        for key,value,locator in configuration.bindings:
-            configurator.createAssignment(key, value, locator)
+        for key,value,loc in configuration.bindings:
+            # chain to the external locator, if available
+            if locator:
+                loc = pyre.tracking.chain(this=loc, next=locator)
+            # record the event
+            configurator.recordAssignment(key, value, loc)
         # and return the configuration
         return configuration
 
