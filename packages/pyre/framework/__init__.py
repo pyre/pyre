@@ -66,7 +66,10 @@ def newComponentRegistrar(**kwds):
 
 
 # exceptions
-class FrameworkError(Exception):
+from .. import PyreError
+
+
+class FrameworkError(PyreError):
     """
     Base class for all pyre exceptions
 

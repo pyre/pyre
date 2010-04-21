@@ -27,7 +27,12 @@ class Pyre(Executive, metaclass=Singleton):
         # read and apply settings from the default configuration files
         for folder in self.configpath:
             source = self.fileserver.PATH_SEPARATOR.join([folder, self.bootup])
-            self.loadConfiguration(source)
+            try:
+                self.loadConfiguration(source)
+            except self.FrameworkError as error:
+                # something bad happened
+                # NYI: log an informational with journal and move on
+                pass
 
         # process the command line
         import sys
@@ -52,6 +57,10 @@ class Pyre(Executive, metaclass=Singleton):
         self.boot()
 
         return
+
+
+    # exceptions
+    from . import FrameworkError
 
 
     # constants

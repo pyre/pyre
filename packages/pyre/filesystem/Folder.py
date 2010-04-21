@@ -111,7 +111,7 @@ class Folder(Node):
             # raise an exception if the current node is not a folder
             if not isinstance(current, Folder):
                 raise self.FolderInsertionError(
-                    filesystem=self._filesystem, node=self, path=path, target=name)
+                    filesystem=self._filesystem(), node=self, path=path, target=name)
 
         # if we get this far, all existing named nodes were folders
         # re-initialize the lookup chain
@@ -146,7 +146,11 @@ class Folder(Node):
         node = self
         # find the target node
         for name in names:
-            node = node.contents[name]
+            try:
+                node = node.contents[name]
+            except KeyError:
+                raise self.NotFoundError(
+                    filesystem=self._filesystem(), node=self, path=path, fragment=name)
         # and return it
         return node
 
@@ -171,7 +175,7 @@ class Folder(Node):
 
 
     # exceptions
-    from . import FolderInsertionError
+    from . import FolderInsertionError, NotFoundError
 
 
 # end of file 

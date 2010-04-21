@@ -255,10 +255,11 @@ class NotFoundError(FilesystemError):
     Exception raised when attempting to find a node and the supplied URI does not exist
     """
 
-    def __init__(self, path, **kwds):
-        msg = "while looking for {0!r}: {1!r} not found"
+    def __init__(self, path, fragment, **kwds):
+        msg = "while looking for {0!r}: {1!r} not found".format(path, fragment)
         super().__init__(message=msg, **kwds)
         self.path = path
+        self.fragment = fragment
         return
 
 
