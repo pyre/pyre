@@ -43,18 +43,25 @@ class FileServer(Filesystem):
 
 
     # interface
-    def open(self, address, scheme=None, **kwds):
+    def open(self, uri, **kwds):
         """
         """
+        # decode the uri
+        scheme, address, fragment = self.parseURI(uri)
+        # get the extension 
+        path, extension = os.path.splitext(address)
+        # deduce the encoding based on the file extension
+        encoding = extension[1:]
+
         # if {scheme} is missing, assume it is a file from the local filesystem
-        if scheme is None or scheme == "file":
-            return open(address, **kwds)
+        if scheme is None or scheme == self.defaultScheme:
+            return encoding, open(address, **kwds)
 
         # if {scheme} is 'vts', assume {address} is from our virtual filesystem
         if scheme == "vfs":
-            return self[address].open()
+            return encoding, self[address].open()
 
-        raise self.Bad
+        raise self.BadResourceLocator(uri=uri, reason="unsupported scheme")
 
 
     # lower level interface
@@ -68,7 +75,7 @@ class FileServer(Filesystem):
         if match is None:
             raise self.BadResourceLocator(uri=uri, reason="unrecognizable")
         # extract the scheme
-        scheme = match.group("scheme") or self.defaultMethod
+        scheme = match.group("scheme") or self.defaultScheme
         scheme = scheme.strip().lower()
         # extract the addres
         address = match.group("address")
@@ -131,7 +138,7 @@ class FileServer(Filesystem):
 
     # constants
     DOT_PYRE = "~/.pyre"
-    defaultMethod = "file"
+    defaultScheme = "file"
 
 
     # private data

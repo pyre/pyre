@@ -73,13 +73,10 @@ class Executive(object):
         """
         Load configuration settings from {uri}.
         """
-        # ask the fileserver to decode the uri
-        scheme, address, fragment = self.fileserver.parseURI(uri)
-        # ask the fileserver to produce the input stream
-        source = self.fileserver.open(scheme=scheme, address=address)
-        # lookup the codec based on the file extension
-        path, extension = os.path.splitext(address)
-        reader = self.codecs.newCodec(encoding=extension[1:])
+        # get the fileserver to deduce the encoding and produce the input stream
+        encoding, source = self.fileserver.open(uri)
+        # instantiate the requested reader
+        reader = self.codecs.newCodec(encoding)
         # decode the configuration stream
         reader.decode(configurator=self.configurator, stream=source, locator=locator)
         # get the configurator to update the evaluation model
