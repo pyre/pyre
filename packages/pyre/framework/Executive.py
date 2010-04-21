@@ -26,7 +26,6 @@ class Executive(object):
     calculator = None # the manager of configuration nodes
     codecs = None # my codec manager
     configurator = None # my configuration manager
-    curator = None # the manager of configuration sources
     fileserver = None # my virtual filesystem
     registrar = None # the component class and instance registrar
 
@@ -74,7 +73,7 @@ class Executive(object):
         """
         Load configuration settings from {uri}.
         """
-        # ask the curator to decode the uri
+        # ask the fileserver to decode the uri
         scheme, address, fragment = self.fileserver.parseURI(uri)
         # ask the fileserver to produce the input stream
         source = self.fileserver.open(scheme=scheme, address=address)
@@ -89,16 +88,6 @@ class Executive(object):
         return
 
 
-    # startup
-    def boot(self):
-        """
-        Perform all default initialization steps
-        """
-        # the base class does nothing special by default
-        # the actual framework startup code is in pyre.framework.Pyre.boot
-        return
-
-
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -107,17 +96,12 @@ class Executive(object):
         # my virtual filesystem
         self.fileserver = pyre.framework.newFileServer()
 
-        # the manager of configuration sources
-        self.curator = pyre.framework.newCurator()
         # my configuration manager
         self.configurator = pyre.framework.newConfigurator()
         # the manager of configuration nodes
         self.calculator = pyre.framework.newCalculator()
         # the component registrar
         self.registrar = pyre.framework.newComponentRegistrar()
-
-        # initialize
-        self.boot()
 
         # all done
         return

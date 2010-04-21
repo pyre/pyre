@@ -8,7 +8,7 @@
 
 import os
 import re
-from pyre.filesystem.Filesystem import Filesystem
+from ..filesystem.Filesystem import Filesystem
 
 
 class FileServer(Filesystem):

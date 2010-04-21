@@ -11,18 +11,4 @@ class Curator(object):
     """
 
 
-    # public data
-    sources = ()
-
-
-    # meta methods
-    def __init__(self):
-        self.sources = []
-        return
-
-
-    # constants
-    defaultSources = ("vfs://pyre/system/pyre.pml", "vfs://pyre/user/pyre.pml")
-
-
 # end of file 
