@@ -44,8 +44,6 @@ class Registrar(object, metaclass=Singleton):
         self.components[component] = weakref.WeakSet()
         # register the interface implementations
         self._recordInterfaceImplementations(component)
-        # NYI: initialize component traits
-        print(" *** NYI!")
         # all done
         return component
 
@@ -58,8 +56,6 @@ class Registrar(object, metaclass=Singleton):
         # Actor, the Component metaclass, guarantees that component classes get registered
         # before any of their instances, so the look up for the class should never fail
         self.components[component.__class__].add(component)
-        # NYI: initialize component traits
-        print(" *** NYI!")
         # and hand it back
         return component
 

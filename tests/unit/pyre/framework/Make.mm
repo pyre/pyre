@@ -18,15 +18,17 @@ test: sanity managers framework
 sanity:
 	${PYTHON} ./sanity.py
 
-managers: curator
+managers: curator fileserver
 
 curator:
 	${PYTHON} ./curator.py
-	${PYTHON} ./curator_uri.py
+
+fileserver:
+	${PYTHON} ./fileserver.py
+	${PYTHON} ./fileserver_uri.py
 
 framework:
 	${PYTHON} ./executive.py
-	${PYTHON} ./executive_fileserver.py
 	${PYTHON} ./executive_registrar.py
 	${PYTHON} ./executive_codecs.py
 	${PYTHON} ./executive_configuration.py

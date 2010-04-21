@@ -39,6 +39,11 @@ class Executive(object):
         """
         # get the component class registered
         self.registrar.registerComponentClass(component)
+        # configure
+        print(" *** NYI!")
+        # self.configurator.configureComponentClass(component)
+        # initialize the class traits
+
         # and hand back the class record
         return component
 
@@ -47,6 +52,8 @@ class Executive(object):
         """
         Register the {component} instance
         """
+        # NYI: initialize component traits
+        print(" *** NYI!")
         # get the instance registered
         self.registrar.registerComponentInstance(component)
         # and hand it back
@@ -68,7 +75,7 @@ class Executive(object):
         Load configuration settings from {uri}.
         """
         # ask the curator to decode the uri
-        scheme, address, fragment = self.curator.parseURI(uri)
+        scheme, address, fragment = self.fileserver.parseURI(uri)
         # ask the fileserver to produce the input stream
         source = self.fileserver.open(scheme=scheme, address=address)
         # lookup the codec based on the file extension
@@ -82,11 +89,14 @@ class Executive(object):
         return
 
 
-    # start up interface
+    # startup
     def boot(self):
         """
-        Perform all the default initialization steps
+        Perform all default initialization steps
         """
+        # the base class does nothing special by default
+        # the actual framework startup code is in pyre.framework.Pyre.boot
+        return
 
 
     # meta methods

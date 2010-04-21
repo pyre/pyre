@@ -57,7 +57,7 @@ class CommandLine(object):
 
 
     # interface
-    def decode(self, configurator, argv):
+    def decode(self, executive, argv):
         """
         Harvest the configuration events in {argv} and store them in {configurator}
 
@@ -65,6 +65,9 @@ class CommandLine(object):
             {argv}: a container of strings of the form "--key=value"
             {configurator}: a pyre.config.Configurator compatible instance
         """
+        # get the configuration manager
+        configurator = executive.configurator
+        # run through the command line
         for index,arg in enumerate(argv):
             # look for an assignment
             match = self.assignmentScanner.match(arg)

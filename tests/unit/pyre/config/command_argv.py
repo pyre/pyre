@@ -15,10 +15,12 @@ Sanity check: verify that the command line parser can be instantiated
 def test():
     import pyre.config
 
-    # build a new configurator
-    configurator = pyre.config.newConfigurator()
-    # a new calculator
-    calculator = pyre.config.newCalculator()
+    # get a raw executive instance
+    from pyre.framework.Executive import Executive
+    executive = Executive()
+    # pul the configutor and calculator
+    calculator = executive.calculator
+    configurator = executive.configurator
     # and a command line parser
     parser = pyre.config.newCommandLineParser()
 
@@ -36,7 +38,7 @@ def test():
         ]
 
     # get the parser to populate the configurator
-    parser.decode(configurator, commandline)
+    parser.decode(executive, commandline)
     # and transfer the events to the calculator
     configurator.populate(calculator)
     # now, check that the assignments took place
@@ -50,7 +52,7 @@ def test():
     assert calculator["journal.debug.main"] == "on"
 
     # and return the managers
-    return calculator, configurator, parser
+    return executive, parser
 
 # main
 if __name__ == "__main__":

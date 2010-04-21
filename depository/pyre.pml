@@ -7,18 +7,15 @@
 !
 -->
 
-<inventory 
-   xmlns="http://pyre.caltech.edu/releases/1.0/schema/inventory.html"
-   xmlns:pyre="http://pyre.caltech.edu/releases/1.0/schema/inventory.html"
-   xsi:schemaLocation="http://pyre.caltech.edu/releases/1.0/schema/inventory.html
-                       http://pyre.caltech.edu/releases/1.0/schema/inventory.xsd">
+<config>
 
-  <package name="pyre">
-    <property name="home">pyre.home()</property>
-    <property name="prefix">pyre.prefix()</property>
-  </package>
+  <inventory name="pyre">
+    <!-- global settings -->
+    <bind property="home">pyre.home()</bind>
+    <bind property="prefix">pyre.prefix()</bind>
+  </inventory>
 
-</inventory>
+</config>
 
 
 <!-- end of file -->

@@ -7,6 +7,7 @@
 
 
 import os
+import re
 from pyre.filesystem.Filesystem import Filesystem
 
 
@@ -45,8 +46,39 @@ class FileServer(Filesystem):
     def open(self, address, scheme=None, **kwds):
         """
         """
-        # NYI: assume it is a local file for now
-        return open(address, **kwds)
+        # if {scheme} is missing, assume it is a file from the local filesystem
+        if scheme is None or scheme == "file":
+            return open(address, **kwds)
+
+        # if {scheme} is 'vts', assume {address} is from our virtual filesystem
+        if scheme == "vfs":
+            return self[address].open()
+
+        raise self.Bad
+
+
+    # lower level interface
+    def parseURI(self, uri):
+        """
+        Extract the scheme, address and fragment from {uri}.
+        """
+        # run uri through the recognizer
+        match = self._uriRecognizer.match(uri)
+        # if it fails to match, it must be malformed (or my regex is bad...)
+        if match is None:
+            raise self.BadResourceLocator(uri=uri, reason="unrecognizable")
+        # extract the scheme
+        scheme = match.group("scheme") or self.defaultMethod
+        scheme = scheme.strip().lower()
+        # extract the addres
+        address = match.group("address")
+        # check that it's not blank
+        if not address:
+            raise self.BadResourceLocator(uri=uri, reason="missing address")
+        # extract the fragment
+        fragment = match.group("fragment")
+        # and return the triplet
+        return scheme, address, fragment
 
 
     # meta methods
@@ -93,8 +125,28 @@ class FileServer(Filesystem):
         return
 
 
+    # exceptions
+    from . import BadResourceLocator
+
+
     # constants
     DOT_PYRE = "~/.pyre"
+    defaultMethod = "file"
+
+
+    # private data
+    _uriRecognizer = re.compile(
+        r"((?P<scheme>[^:]+)://)?(?P<address>[^#]*)(#(?P<fragment>.*))?"
+        )
+
+    # from http://regexlib.com/Search.aspx?k=URL
+    r"""
+    ^(?=[^&])
+    (?:(?<scheme>[^:/?#]+):)?
+    (?://(?<authority>[^/?#]*))?
+    (?<path>[^?#]*)(?:\?(?<query>[^#]*))?
+    (?:#(?<fragment>.*))?
+    """
 
 
 # end of file 

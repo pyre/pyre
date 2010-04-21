@@ -40,6 +40,11 @@ def newCodecManager(**kwds):
     return newManager(**kwds)
 
 
+def newCommandLineParser(**kwds):
+    from ..config import newCommandLineParser
+    return newCommandLineParser(**kwds)
+
+
 def newConfigurator(**kwds):
     from ..config import newConfigurator
     return newConfigurator(**kwds)

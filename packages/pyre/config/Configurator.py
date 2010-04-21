@@ -15,7 +15,6 @@ class Configurator(object):
 
 
     # public data
-    sources = ()
     events = ()
 
 
@@ -36,7 +35,8 @@ class Configurator(object):
         Convert assignment events into bound variables
         """
         # loop over the binding and create the associated variable assignments
-        for event in self.events:
+        while self.events:
+            event = self.events.popleft()
             calculator.bind(name=event.key, value=event.value, locator=event.locator)
         # all done
         return
@@ -47,10 +47,6 @@ class Configurator(object):
         super().__init__(**kwds)
         # variable assignment storage: an unbounded, double-ended queue
         self.events = collections.deque()
-        # configuration sources
-        self.sources = collections.deque(
-            ["pml://pyre/system/pyre.pml", "pml://pyre/user/pyre.pml"]
-            )
 
         return
 
