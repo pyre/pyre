@@ -21,28 +21,23 @@ class meta(type):
     @classmethod
     def __prepare__(metacls, name, bases, **kwds):
         order.append("running:  meta.__prepare__")
-        print(metacls)
         return super().__prepare__(name, bases)
 
     order.append("declaration: metaclass __new__")
     def __new__(metacls, name, bases, attributes, **kwds):
         order.append("running: meta.__new__")
-        print(metacls)
         return super().__new__(metacls, name, bases, attributes)
 
     order.append("declaration: metaclass __init__")
     def __init__(self, name, bases, attributes, **kwds):
         order.append("running:  meta.__init__")
-        print(self)
         super().__init__(name, bases, attributes)
         return
 
     order.append("declaration: metaclass __call__")
     def __call__(self, **kwds):
         order.append("running: meta.__call__")
-        print("__call__: self =", self)
         instance = super().__call__(**kwds)
-        print("__call__: instance =", instance)
         return instance
 
 
