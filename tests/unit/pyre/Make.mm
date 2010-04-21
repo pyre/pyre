@@ -16,8 +16,8 @@ RECURSE_DIRS = \
     constraints \
     calc \
     filesystem \
-    config \
     codecs \
+    config \
     framework \
     components \
 

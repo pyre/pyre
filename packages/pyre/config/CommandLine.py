@@ -76,7 +76,9 @@ class CommandLine(object):
                 # get the tokens from the scanner
                 key = match.group("key")
                 value = match.group("value")
-                if key:
+                if key == 'config':
+                    executive.loadConfiguration(value)
+                elif key:
                     # if a key were specified
                     self._processAssignments(configurator, key,value, self.locator(arg=index))
                 else:

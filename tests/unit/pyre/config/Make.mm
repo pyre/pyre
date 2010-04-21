@@ -31,6 +31,7 @@ calculator:
 commandline:
 	${PYTHON} ./command.py
 	${PYTHON} ./command_argv.py
+	${PYTHON} ./command_config.py
 
 
 # end of file 
