@@ -64,6 +64,16 @@ class FileServer(Filesystem):
         raise self.BadResourceLocator(uri=uri, reason="unsupported scheme")
 
 
+    def join(self, path, address, extension=None):
+        """
+        Join {path}, {address} and {extension} to form a valid pathname
+        """
+        # adjust the extension
+        extension = '.' + extension if extension else ""
+        # piece the parts together
+        return "{}{}{}{}".format(path, self.PATH_SEPARATOR, address, extension) 
+
+
     # lower level interface
     def parseURI(self, uri):
         """

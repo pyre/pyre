@@ -7,6 +7,7 @@
 
 
 import os
+import itertools
 import pyre.framework
 
 
@@ -39,9 +40,9 @@ class Executive(object):
         # get the component class registered
         self.registrar.registerComponentClass(component)
         # configure
-        print(" *** NYI!")
-        # self.configurator.configureComponentClass(component)
+        self.configureComponentClass(component)
         # initialize the class traits
+        print("NYI: component class trait initialization")
 
         # and hand back the class record
         return component
@@ -52,7 +53,7 @@ class Executive(object):
         Register the {component} instance
         """
         # NYI: initialize component traits
-        print(" *** NYI!")
+        print("NYI: component instance registration and configuration")
         # get the instance registered
         self.registrar.registerComponentInstance(component)
         # and hand it back
@@ -85,6 +86,33 @@ class Executive(object):
         return
 
 
+    def configureComponentClass(self, component):
+        """
+        Locate and load the configuration files for the {component} class record.
+
+        This is a specialized behavior that attempt to load configuration files derived from
+        the component's _pyre_family and initialize the class wide properties by overriding the
+        defaults supplied by the component's author
+        """
+        print("NYI: sort out configuration override")
+        # get the package that this component belongs to
+        package = component.pyre_getPackageName()
+        # if none were provided, there is no file-based configuration
+        if not package: return
+        # form all possible filenames for the configuration files
+        for path, filename, extension in itertools.product(
+            self.configpath, [package], self.codecs.getEncodings()):
+            # build the filename
+            source = self.fileserver.join(path, filename, extension)
+            # try to load the configuration
+            try:
+                self.loadConfiguration(source)
+            except self.FrameworkError as error:
+                pass
+        # all done
+        return component
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -100,8 +128,19 @@ class Executive(object):
         # the component registrar
         self.registrar = pyre.framework.newComponentRegistrar()
 
+        # prime the configuration folder list
+        self.configpath = list(self.path)
+
         # all done
         return
+
+
+    # constants
+    path = ("vfs:///pyre/system", "vfs:///pyre/user")
+
+
+    # exceptions
+    from . import FrameworkError
 
 
 # end of file 

@@ -6,6 +6,9 @@
 #
 
 
+import collections
+
+
 class CodecManager(object):
     """
     The manager of the known reader/writers of the various configuration file formats.
@@ -35,6 +38,13 @@ class CodecManager(object):
         return self
 
 
+    def getEncodings(self):
+        """
+        Return the registered encodings
+        """
+        return self.codecs.keys()
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -47,7 +57,7 @@ class CodecManager(object):
         """
         Initialize the codec index with the default file handlers
         """
-        index = {}
+        index = collections.OrderedDict()
 
         # the pml file handler
         from .pml.PML import PML

@@ -26,6 +26,7 @@ curator:
 fileserver:
 	${PYTHON} ./fileserver.py
 	${PYTHON} ./fileserver_uri.py
+	${PYTHON} ./fileserver_mount.py
 
 framework:
 	${PYTHON} ./executive.py

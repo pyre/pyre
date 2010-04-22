@@ -145,12 +145,12 @@ class Folder(Node):
         # initialize the lookup chain
         node = self
         # find the target node
-        for name in names:
-            try:
+        try:
+            for name in names:
                 node = node.contents[name]
-            except KeyError:
-                raise self.NotFoundError(
-                    filesystem=self._filesystem(), node=self, path=path, fragment=name)
+        except KeyError:
+            raise self.NotFoundError(
+                filesystem=self._filesystem(), node=self, path=path, fragment=name)
         # and return it
         return node
 

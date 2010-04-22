@@ -14,21 +14,18 @@ Exercises the fileserver
 
 def test():
     import pyre.framework
+    import pyre.filesystem
     # build the executive
     executive = pyre.framework.executive()
-
     # access the fileserver
     fs = executive.fileserver
-    assert fs is not None
 
-    # get hold of the system node
-    system = fs["/pyre/system"]
-    assert system is not None
-
-    # get hold of the user node
-    user = fs["/pyre/user"]
-    assert user is not None
-
+    # build a file system for the current directory
+    local = pyre.filesystem.newLocalFilesystem('.')
+    # and mount it
+    fs['local'] = local
+    # check that this file is there
+    assert fs['local/fileserver_mount.py']
     # dump the filesystem
     fs._dump(False) # switch to True to see the dump
 

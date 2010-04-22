@@ -30,7 +30,6 @@ def test():
         def do(self):
             """behave"""
         
-
     # declare a component
     class component(Component, family="test", implements=interface):
         """a component"""

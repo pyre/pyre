@@ -37,6 +37,8 @@ interfaces:
 components:
 	${PYTHON} ./component_sanity.py
 	${PYTHON} ./component_declaration.py
+	${PYTHON} ./component_registration.py
+	${PYTHON} ./component_configuration.py
 	${PYTHON} ./component_inheritance.py
 	${PYTHON} ./component_shadow.py
 	${PYTHON} ./component_inheritance_multi.py
@@ -47,7 +49,6 @@ components:
 	${PYTHON} ./component_implements.py
 	${PYTHON} ./component_bad_implementations.py
 	${PYTHON} ./component_instantiation.py
-	${PYTHON} ./component_registration.py
 
 
 # end of file 

@@ -32,6 +32,7 @@ class Pyre(Executive, metaclass=Singleton):
             except self.FrameworkError as error:
                 # something bad happened
                 # NYI: log an informational with journal and move on
+                # print(error)
                 pass
 
         # process the command line
@@ -49,23 +50,13 @@ class Pyre(Executive, metaclass=Singleton):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-
-        # prime the configuration folder list
-        self.configpath = list(self.path)
-
         # initialize
         self.boot()
-
         return
-
-
-    # exceptions
-    from . import FrameworkError
 
 
     # constants
     bootup = "pyre.pml"
-    path = ("vfs:///pyre/system", "vfs:///pyre/user")
 
 
 # end of file 

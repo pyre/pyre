@@ -45,6 +45,9 @@ def test():
     assert sentry._pyre_configurables == (Sentry, Component)
     assert sentry._pyre_implements == None
 
+    # verify that the instance was recorded in the extent
+    assert set(sentry._pyre_registrar.components[component]) == {sentry}
+
     # check the properties
     assert sentry.username == 'mga'
     assert sentry.password == None

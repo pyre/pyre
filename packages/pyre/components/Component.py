@@ -26,6 +26,20 @@ class Component(Configurable, metaclass=Actor):
     _pyre_inventory = None # per-instance storage for trait values; built by Actor
 
 
+    # class interface
+    @classmethod
+    def pyre_getPackageName(cls):
+        """
+        Extract the name of the package that this component is a part of by splitting the
+        family name apart based on the _pyre_FAMILY_SEPARATOR and returning the leading
+        fragment
+        """
+        # bail out if there is not family name
+        if not cls._pyre_family: return None
+        # otherwise, split the family name na dreturn the first fragment
+        return cls._pyre_family.split(cls._pyre_FAMILY_SEPARATOR)[0]
+
+
     # meta methods
     def __init__(self, name, **kwds):
         super().__init__(**kwds)
@@ -36,6 +50,10 @@ class Component(Configurable, metaclass=Actor):
         # compile time
         self._pyre_inventory = self._pyre_Inventory()
         # register me with the component registrar
+
+
+    # constants
+    _pyre_FAMILY_SEPARATOR = '.'
 
 
 # end of file 
