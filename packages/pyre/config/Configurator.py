@@ -19,7 +19,7 @@ class Configurator(object):
 
 
     # interface
-    def configure(self, executive):
+    def configure(self, executive, replace=True):
         """
         Iterate through the event queue and carry out the 0
         """
@@ -28,20 +28,20 @@ class Configurator(object):
         # loop over the binding and create the associated variable assignments
         while self.events:
             event = self.events.popleft()
-            event.identify(inspector=self, executive=executive)
+            event.identify(inspector=self, executive=executive, replace=replace)
         # all done
         return
 
  
     # event processing
-    def bind(self, executive, key, value, locator):
+    def bind(self, executive, key, value, locator, replace, **kwds):
         """
         Record a new variable binding with the {executive}
         """
-        return executive.calculator.bind(name=key, value=value, locator=locator)
+        return executive.calculator.bind(name=key, value=value, locator=locator, replace=replace)
 
 
-    def load(self, executive, source, locator):
+    def load(self, executive, source, locator, **kwds):
         """
         Ask the {executive} to load the configuration settings in {source}
         """

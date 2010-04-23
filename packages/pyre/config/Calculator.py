@@ -27,7 +27,7 @@ class Calculator(AbstractModel):
 
 
     # interface
-    def bind(self, name, value, locator):
+    def bind(self, name, value, locator, replace):
         """
         Bind the variable {name} to {value}.
 
@@ -36,6 +36,18 @@ class Calculator(AbstractModel):
         other variables in the model by following the rules in pyre.calc.Expression, and may
         make certain calls to the python runtime. The exact details are being worked out...
         """
+        # check whether we have seen this variable before
+        try:
+            node = self.findNode(name)
+        except KeyError:
+            # if not, build one and register it
+            node = Variable(value=None, evaluator=None)
+            self.registerNode(name=name, node=node)
+        else:
+            # bail out if we have seen this node before and we are not performing replacement
+            # binding
+            if not replace: return
+
         # build an evaluator
         # figure out if this value contains references to other nodes
         if value and Expression._scanner.match(value):
@@ -44,15 +56,7 @@ class Calculator(AbstractModel):
         else:
             evaluator = None
 
-        # check whether we have seen this variable before
-        try:
-            node = self.findNode(name)
-        except KeyError:
-            # if not, build one and register it
-            node = Variable(value=None, evaluator=None)
-            self.registerNode(name=name, node=node)
-
-        # figure where to attach the 
+        # figure where to attach the evaluator
         if evaluator:
             node.evaluator = evaluator
         else:

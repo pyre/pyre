@@ -49,7 +49,6 @@ def test():
     import pyre
     registrar = pyre.executive().registrar
 
-    print("implements:", component._pyre_implements)
     # check that the interface is corectly registered
     assert registrar.interfaces == {interface}
     # check that the component is correctly registered

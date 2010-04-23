@@ -39,11 +39,14 @@ class Executive(object):
         """
         # get the component class registered
         self.registrar.registerComponentClass(component)
+        # check whether a family ere specified
+        if not component._pyre_family:
+            # if not specified, we're done
+            return
         # configure
         self.configureComponentClass(component)
         # initialize the class traits
-        print("NYI: component class trait initialization")
-
+        self.initializeComponentClass(component)
         # and hand back the class record
         return component
 
@@ -70,7 +73,7 @@ class Executive(object):
 
 
     # configuration
-    def loadConfiguration(self, uri, locator=None):
+    def loadConfiguration(self, uri, replace=True, locator=None):
         """
         Load configuration settings from {uri}.
         """
@@ -81,11 +84,12 @@ class Executive(object):
         # decode the configuration stream
         reader.decode(configurator=self.configurator, stream=source, locator=locator)
         # get the configurator to update the evaluation model
-        self.configurator.configure(self)
+        self.configurator.configure(executive=self, replace=replace)
         # all done
         return
 
 
+    # configuration and initialization of component classes
     def configureComponentClass(self, component):
         """
         Locate and load the configuration files for the {component} class record.
@@ -106,9 +110,45 @@ class Executive(object):
             source = self.fileserver.join(path, filename, extension)
             # try to load the configuration
             try:
-                self.loadConfiguration(source)
+                self.loadConfiguration(source, replace=False)
             except self.FrameworkError as error:
                 pass
+        # all done
+        return component
+
+
+    def initializeComponentClass(self, component):
+        """
+        Initialize the component class inventory by making the descriptors point to the
+        evaluation nodes
+        """
+        # access the locator factories
+        import pyre.tracking
+        # build a locator for values that come from trait defaults
+        locator = pyre.tracking.newSimpleLocator(source="<defaults>")
+
+        # get evaluation context
+        calculator = self.calculator
+        # get the class inventory
+        inventory = component._pyre_Inventory
+        # loop over the component properties
+        for trait in component.pyre_traits(inherited=False, categories={"properties"}):
+            print("{}: initializing {}".format(component._pyre_family, trait.name))
+            # form the key name
+            key = "{}.{}".format(component._pyre_family, trait.name)
+            print("    loking for {}".format(key))
+            try:
+                node = calculator[key]
+            except KeyError:
+                print("    key {} not found".format(key))
+                node = calculator.bind(trait.name, trait.default, locator, replace=True)
+            else:
+                print("    found key {}".format(key))
+            # now, attach the node to an attribute named after the trait
+            setattr(inventory, trait.name, node)
+        print(dir(inventory))
+        # no handle inherited traits
+        print("NYI: inherited component trait initialization")
         # all done
         return component
 
