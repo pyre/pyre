@@ -57,7 +57,7 @@ class FileServer(Filesystem):
         if scheme is None or scheme == self.defaultScheme:
             return encoding, open(address, **kwds)
 
-        # if {scheme} is 'vts', assume {address} is from our virtual filesystem
+        # if {scheme} is 'vfs', assume {address} is from our virtual filesystem
         if scheme == "vfs":
             return encoding, self[address].open()
 
