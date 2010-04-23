@@ -39,10 +39,6 @@ class Executive(object):
         """
         # get the component class registered
         self.registrar.registerComponentClass(component)
-        # check whether a family ere specified
-        if not component._pyre_family:
-            # if not specified, we're done
-            return
         # configure
         self.configureComponentClass(component)
         # initialize the class traits
@@ -99,6 +95,7 @@ class Executive(object):
         defaults supplied by the component's author
         """
         print("NYI: sort out configuration override")
+        print("NYI: make sure the package does not get configured twice")
         # get the package that this component belongs to
         package = component.pyre_getPackageName()
         # if none were provided, there is no file-based configuration
@@ -133,21 +130,28 @@ class Executive(object):
         inventory = component._pyre_Inventory
         # loop over the component properties
         for trait in component.pyre_traits(inherited=False, categories={"properties"}):
-            print("{}: initializing {}".format(component._pyre_family, trait.name))
-            # form the key name
-            key = "{}.{}".format(component._pyre_family, trait.name)
-            print("    loking for {}".format(key))
-            try:
-                node = calculator[key]
-            except KeyError:
-                print("    key {} not found".format(key))
-                node = calculator.bind(trait.name, trait.default, locator, replace=True)
+
+            # get the component family
+            family = component._pyre_family
+            # if one was not specified
+            if not family:
+                # just make the node point to the defualt value
+                node = trait.default
             else:
-                print("    found key {}".format(key))
+                print("{}: initializing {}".format(component._pyre_family, trait.name))
+                # form the key name
+                key = "{}.{}".format(family, trait.name)
+                print("    loking for {}".format(key))
+                try:
+                    node = calculator[key]
+                except KeyError:
+                    print("    key {} not found".format(key))
+                    node = calculator.bind(trait.name, trait.default, locator, replace=True)
+                else:
+                    print("    found key {}".format(key))
             # now, attach the node to an attribute named after the trait
             setattr(inventory, trait.name, node)
-        print(dir(inventory))
-        # no handle inherited traits
+        # now handle inherited traits
         print("NYI: inherited component trait initialization")
         # all done
         return component
