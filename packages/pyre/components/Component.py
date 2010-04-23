@@ -40,6 +40,14 @@ class Component(Configurable, metaclass=Actor):
         return cls._pyre_family.split(cls._pyre_FAMILY_SEPARATOR)[0]
 
 
+    @classmethod
+    def pyre_getExtent(cls):
+        """
+        Return the extent of {cls}, i.e. the set of all its current instances
+        """
+        return cls._pyre_registrar.registrar.components[cls]
+
+
     # meta methods
     def __init__(self, name, **kwds):
         super().__init__(**kwds)

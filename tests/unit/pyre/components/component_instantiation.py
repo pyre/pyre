@@ -46,7 +46,7 @@ def test():
     assert sentry._pyre_implements == None
 
     # verify that the instance was recorded in the extent
-    assert set(sentry._pyre_registrar.components[component]) == {sentry}
+    assert set(Sentry.pyre_getExtent()) == {sentry}
 
     # check the properties
     assert sentry.username == 'mga'
@@ -59,6 +59,7 @@ def test():
     assert sentry.password == 'deadbeef'
     # and make sure we didn't mess up the defaults
     another = Sentry(name="another")
+    print("another: username={}, password={}".format(another.username, another.password))
     assert another.username == 'mga'
     assert another.password == None
 
