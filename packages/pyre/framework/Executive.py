@@ -59,6 +59,8 @@ class Executive(object):
         print("NYI: component instance registration and configuration")
         # get the instance registered
         self.registrar.registerComponentInstance(component)
+        # initialize the instance traits
+        self.calculator.initializeComponentInstance(component)
         # and hand it back
         return component
 

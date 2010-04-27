@@ -75,6 +75,13 @@ class Calculator(AbstractModel):
         return component
 
 
+    def initializeComponentInstance(self, component):
+        """
+        Initialize the component instance inventory by making the descriptors point to the
+        evaluation nodes
+        """
+
+
     def bind(self, name, value, locator, override):
         """
         Bind the variable {name} to {value}.
