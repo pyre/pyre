@@ -27,7 +27,55 @@ class Calculator(AbstractModel):
 
 
     # interface
-    def bind(self, name, value, locator, replace):
+    def initializeComponentClass(self, component):
+        """
+        Initialize the component class inventory by making the descriptors point to the
+        evaluation nodes
+        """
+        # access the locator factories
+        import pyre.tracking
+        # build a locator for values that come from trait defaults
+        locator = pyre.tracking.newSimpleLocator(source="<defaults>")
+        # get the class inventory
+        inventory = component._pyre_Inventory
+        # get the component family
+        family = component._pyre_family
+
+        # set up the properties declared in {component}
+        for trait,source in component.pyre_traits(inherited=False, categories={"properties"}):
+            # if the component declared a family, build the node key out of the component
+            # family and the trait name
+            key = self.SEPARATOR.join([family, trait.name]) if family else ''
+            # check whether a configuration node is available
+            try:
+                node = self[key]
+            except KeyError:
+                # not there; build one
+                node = self.bind(key, trait.default, locator, override=True)
+            # now, attach the node to as an inventory attribute named after the trait
+            setattr(inventory, trait.name, node)
+
+        # now handle inherited traits
+        for trait,ancestor in component.pyre_traits(mine=False, categories={"properties"}):
+            # get the configuration node that corresponds to this inherited trait
+            # this can't fail since the ancestor has been through this process already
+            node = getattr(ancestor._pyre_Inventory, trait.name)
+            # build a reference to it
+            ref = node.newReference()
+            # and attach it to the inventory class record
+            setattr(inventory, trait.name, ref)
+            # if the component declared a family
+            if family:
+                # build the node key out of the component # family and the trait name
+                key = self.SEPARATOR.join([family, trait.name])
+                # register the reference
+                self.registerNode(name=key, node=ref)
+
+        # all done
+        return component
+
+
+    def bind(self, name, value, locator, override):
         """
         Bind the variable {name} to {value}.
 
@@ -40,17 +88,19 @@ class Calculator(AbstractModel):
         try:
             node = self.findNode(name)
         except KeyError:
-            # if not, build one and register it
+            # if not, build one
             node = Variable(value=None, evaluator=None)
-            self.registerNode(name=name, node=node)
+            # and register it if a name was given
+            if name:
+                self.registerNode(name=name, node=node)
         else:
             # bail out if we have seen this node before and we are not performing replacement
             # binding
-            if not replace: return
+            if not override: return
 
         # build an evaluator
         # figure out if this value contains references to other nodes
-        if value and Expression._scanner.match(value):
+        if value and isinstance(value, str) and Expression._scanner.match(value):
             evaluator = Expression(expression=value, model=self)
             value = None
         else:

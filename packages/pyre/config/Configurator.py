@@ -19,7 +19,7 @@ class Configurator(object):
 
 
     # interface
-    def configure(self, executive, replace=True):
+    def configure(self, executive, override=True):
         """
         Iterate through the event queue and carry out the 0
         """
@@ -28,17 +28,17 @@ class Configurator(object):
         # loop over the binding and create the associated variable assignments
         while self.events:
             event = self.events.popleft()
-            event.identify(inspector=self, executive=executive, replace=replace)
+            event.identify(inspector=self, executive=executive, override=override)
         # all done
         return
 
  
     # event processing
-    def bind(self, executive, key, value, locator, replace, **kwds):
+    def bind(self, executive, key, value, locator, override, **kwds):
         """
         Record a new variable binding with the {executive}
         """
-        return executive.calculator.bind(name=key, value=value, locator=locator, replace=replace)
+        return executive.calculator.bind(name=key, value=value, locator=locator, override=override)
 
 
     def load(self, executive, source, locator, **kwds):

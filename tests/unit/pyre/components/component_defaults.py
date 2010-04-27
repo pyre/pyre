@@ -63,10 +63,36 @@ def test():
 
     # check base
     inventory = base._pyre_Inventory
-    assert inventory.common == "base"
-    assert inventory.a1 == "base"
-    assert inventory.a2 == "base"
+    assert inventory.common.value == "base"
+    assert inventory.a1.value == "base"
+    assert inventory.a2.value == "base"
 
+    # check a1
+    inventory = a1._pyre_Inventory
+    assert inventory.common.value == "base"
+    assert inventory.a1.value == "a1"
+    assert inventory.a2.value == "base"
+
+    # check a2
+    inventory = a2._pyre_Inventory
+    assert inventory.common.value == "base"
+    assert inventory.a1.value == "base"
+    assert inventory.a2.value == "a2"
+
+    # check derived
+    inventory = derived._pyre_Inventory
+    assert inventory.common.value == "derived"
+    assert inventory.a1.value == "a1"
+    assert inventory.a2.value == "a2"
+    assert inventory.extra.value == "derived"
+
+    # now set the derived default of a1
+    derived._pyre_Inventory.a1.value = "derived"
+    # check that the assignmenttook place
+    assert derived._pyre_Inventory.a1.value == "derived"
+    # and check that a1 is unaltered
+    assert a1._pyre_Inventory.a1.value == "a1"
+    
     return base, a1, a2, derived
      
 

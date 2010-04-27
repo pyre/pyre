@@ -58,54 +58,54 @@ def test():
 
 
     # check base
-    traits = list(base.pyre_traits())
+    traits = [trait for trait,cls in base.pyre_traits()]
     assert traits == [base.common, base.a1, base.a2, base.do]
-    traits = list(base.pyre_traits(categories=['behaviors']))
+    traits = [trait for trait,cls in base.pyre_traits(categories=['behaviors'])]
     assert traits == [base.do]
-    traits = list(base.pyre_traits(categories=['properties']))
+    traits = [trait for trait,cls in base.pyre_traits(categories=['properties'])]
     assert traits == [base.common, base.a1, base.a2]
-    traits = list(base.pyre_traits(mine=True, inherited=False))
+    traits = [trait for trait,cls in base.pyre_traits(mine=True, inherited=False)]
     assert traits == [base.common, base.a1, base.a2, base.do]
-    traits = list(base.pyre_traits(mine=False, inherited=True))
+    traits = [trait for trait,cls in base.pyre_traits(mine=False, inherited=True)]
     assert traits == []
         
     # check a1
-    # note that a1 is shadowed, so it need special treatment
-    traits = list(a1.pyre_traits())
+    # note that a1 is shadowed, so it needs special treatment
+    traits = [trait for trait,cls in a1.pyre_traits()]
     assert traits == [a1.a1, a1.common, a1.a2, a1.do]
-    traits = list(a1.pyre_traits(categories=['behaviors']))
+    traits = [trait for trait,cls in a1.pyre_traits(categories=['behaviors'])]
     assert traits == [a1.do]
-    traits = list(a1.pyre_traits(categories=['properties']))
+    traits = [trait for trait,cls in a1.pyre_traits(categories=['properties'])]
     assert traits == [a1.a1, a1.common, a1.a2]
-    traits = list(a1.pyre_traits(mine=True, inherited=False))
+    traits = [trait for trait,cls in a1.pyre_traits(mine=True, inherited=False)]
     assert traits == [a1.a1]
-    traits = list(a1.pyre_traits(mine=False, inherited=True))
-    assert traits == [a1.common, base.a1, a1.a2, a1.do]
+    traits = [trait for trait,cls in a1.pyre_traits(mine=False, inherited=True)]
+    assert traits == [a1.common, a1.a2, a1.do]
 
     # check a2
-    # note that a2 is shadowed, so it need special treatment
-    traits = list(a2.pyre_traits())
+    # note that a2 is shadowed, so it needs special treatment
+    traits = [trait for trait,cls in a2.pyre_traits()]
     assert traits == [a2.a2, a2.common, a2.a1, a2.do]
-    traits = list(a2.pyre_traits(categories=['behaviors']))
+    traits = [trait for trait,cls in a2.pyre_traits(categories=['behaviors'])]
     assert traits == [a2.do]
-    traits = list(a2.pyre_traits(categories=['properties']))
+    traits = [trait for trait,cls in a2.pyre_traits(categories=['properties'])]
     assert traits == [a2.a2, a2.common, a2.a1]
-    traits = list(a2.pyre_traits(mine=True, inherited=False))
+    traits = [trait for trait,cls in a2.pyre_traits(mine=True, inherited=False)]
     assert traits == [a2.a2]
-    traits = list(a2.pyre_traits(mine=False, inherited=True))
-    assert traits == [a2.common, a2.a1, base.a2, a2.do]
+    traits = [trait for trait,cls in a2.pyre_traits(mine=False, inherited=True)]
+    assert traits == [a2.common, a2.a1, a2.do]
 
     # check derived: note extra traits and shadowing of the inherited ones
-    traits = list(derived.pyre_traits())
+    traits = [trait for trait,cls in derived.pyre_traits()]
     assert traits == [derived.common, derived.extra, derived.do, derived.a1, derived.a2]
-    traits = list(derived.pyre_traits(categories=['behaviors']))
+    traits = [trait for trait,cls in derived.pyre_traits(categories=['behaviors'])]
     assert traits == [derived.do]
-    traits = list(derived.pyre_traits(categories=['properties']))
+    traits = [trait for trait,cls in derived.pyre_traits(categories=['properties'])]
     assert traits == [derived.common, derived.extra, derived.a1, derived.a2]
-    traits = list(derived.pyre_traits(mine=True, inherited=False))
+    traits = [trait for trait,cls in derived.pyre_traits(mine=True, inherited=False)]
     assert traits == [derived.common, derived.extra, derived.do]
-    traits = list(derived.pyre_traits(mine=False, inherited=True))
-    assert traits == [ a1.a1, a2.a2, base.common, base.do]
+    traits = [trait for trait,cls in derived.pyre_traits(mine=False, inherited=True)]
+    assert traits == [a1.a1, a2.a2 ]
         
     return base, a1, a2, derived
      

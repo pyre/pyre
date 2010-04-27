@@ -29,22 +29,29 @@ class Configurable(object): #, metaclass=Requirement):
     @classmethod
     def pyre_traits(cls, mine=True, inherited=True, categories=None):
         """
-        Iterate over all my traits that meet the given criteria
+        Iterate over all my traits that meet the given criteria and return a typle containing
+        the trait and the configurable that declares it
         """
         # initialize the categories
         if categories is None:
             categories = { "behaviors", "properties" }
-        # figure out which classes we are iterating over
-        if mine and inherited:
-            scope = cls._pyre_configurables
-        elif inherited:
-            scope = cls._pyre_configurables[1:]
-        else:
-            scope = cls._pyre_configurables[:1]
-        # cache the trait names that have been encountered already so we can shadow properly
+        # initialize the trait name cache
+        # we cache the trait names that have been encountered already so we can shadow properly
+        # the traits declared by ancestors that are redefined by this class
         known = set()
-        # iterate over the classes in scope, collecting traits
-        for ancestor in scope:
+        # start with the traits defined by this class
+        for trait in cls._pyre_traits:
+            # add the name to the cache
+            known.add(trait.name)
+            # see whether we should yield this one
+            if mine and trait._pyre_category in categories:
+                yield trait, cls
+
+        # process the ancestors?
+        if not inherited: return
+
+        # iterate over all ancestors that have traits
+        for ancestor in cls._pyre_configurables[1:]:
             # iterate over all the registered traits
             for trait in ancestor._pyre_traits:
                 # if this name is known skip it
@@ -53,7 +60,8 @@ class Configurable(object): #, metaclass=Requirement):
                 known.add(trait.name)
                 # and send it to the caller
                 if trait._pyre_category in categories:
-                    yield trait
+                    yield trait, ancestor
+
         # all done
         return
 
@@ -80,9 +88,9 @@ class Configurable(object): #, metaclass=Requirement):
         # and build an instance
         report = CompatibilityReport(this, other)
         # collect my traits
-        myTraits = { trait.name: trait for trait in this.pyre_traits() }
+        myTraits = { trait.name: trait for trait,source in this.pyre_traits() }
         # iterate over hers
-        for trait in other.pyre_traits():
+        for trait,origin in other.pyre_traits():
             # check existence
             try:
                 mine = myTraits[trait.name]
@@ -112,7 +120,7 @@ class Configurable(object): #, metaclass=Requirement):
             if trait._pyre_category == "behavior":
                 continue
             # check trait type
-            # NYI
+            print("NYI: Configurable.pyre_isCompatible: check trait type")
 
         # all done
         return report

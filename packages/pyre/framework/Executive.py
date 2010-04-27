@@ -24,11 +24,16 @@ class Executive(object):
 
 
     # public data
+    # paths
+    configpath = ()
+    # managers
     calculator = None # the manager of configuration nodes
     codecs = None # my codec manager
     configurator = None # my configuration manager
     fileserver = None # my virtual filesystem
     registrar = None # the component class and instance registrar
+    # book keeping
+    packages = () # the set of configured packages
 
 
     # interface
@@ -39,10 +44,10 @@ class Executive(object):
         """
         # get the component class registered
         self.registrar.registerComponentClass(component)
-        # configure
-        self.configureComponentClass(component)
+        # configure; do this before component class initialization
+        self.loadPackageConfiguration(component)
         # initialize the class traits
-        self.initializeComponentClass(component)
+        self.calculator.initializeComponentClass(component)
         # and hand back the class record
         return component
 
@@ -51,7 +56,6 @@ class Executive(object):
         """
         Register the {component} instance
         """
-        # NYI: initialize component traits
         print("NYI: component instance registration and configuration")
         # get the instance registered
         self.registrar.registerComponentInstance(component)
@@ -69,7 +73,7 @@ class Executive(object):
 
 
     # configuration
-    def loadConfiguration(self, uri, replace=True, locator=None):
+    def loadConfiguration(self, uri, override=True, locator=None):
         """
         Load configuration settings from {uri}.
         """
@@ -80,79 +84,42 @@ class Executive(object):
         # decode the configuration stream
         reader.decode(configurator=self.configurator, stream=source, locator=locator)
         # get the configurator to update the evaluation model
-        self.configurator.configure(executive=self, replace=replace)
+        self.configurator.configure(executive=self, override=override)
         # all done
         return
 
 
     # configuration and initialization of component classes
-    def configureComponentClass(self, component):
+    def loadPackageConfiguration(self, component):
         """
-        Locate and load the configuration files for the {component} class record.
+        Locate and load the configuration files for the package to which {component} belongs
 
-        This is a specialized behavior that attempt to load configuration files derived from
-        the component's _pyre_family and initialize the class wide properties by overriding the
-        defaults supplied by the component's author
+        If the package to which {component} belongs can be deduced from its family name, this
+        method will locate and load the package configuration files. These files are meant to
+        allow site managers and end users to override the class wide defaults for the traits of
+        the components in the package.
+        
+        This behavior is triggered by the first encountered component from each package, and it
+        is done only once.
         """
-        print("NYI: sort out configuration override")
-        print("NYI: make sure the package does not get configured twice")
         # get the package that this component belongs to
         package = component.pyre_getPackageName()
         # if none were provided, there is no file-based configuration
         if not package: return
+        # also, bail out if this package has been configured previously
+        if package in self.packages: return
+        # we have a package name
         # form all possible filenames for the configuration files
-        for path, filename, extension in itertools.product(
-            self.configpath, [package], self.codecs.getEncodings()):
-            # build the filename
+        scope = itertools.product(reversed(self.configpath), [package], self.codecs.getEncodings())
+        # attempt to load the configuration settings
+        for path, filename, extension in scope:
+            # construct the actual filename
             source = self.fileserver.join(path, filename, extension)
-            # try to load the configuration
+            # and try to load the configuration
             try:
-                self.loadConfiguration(source, replace=False)
+                self.loadConfiguration(source, override=False)
             except self.FrameworkError as error:
                 pass
-        # all done
-        return component
-
-
-    def initializeComponentClass(self, component):
-        """
-        Initialize the component class inventory by making the descriptors point to the
-        evaluation nodes
-        """
-        # access the locator factories
-        import pyre.tracking
-        # build a locator for values that come from trait defaults
-        locator = pyre.tracking.newSimpleLocator(source="<defaults>")
-
-        # get evaluation context
-        calculator = self.calculator
-        # get the class inventory
-        inventory = component._pyre_Inventory
-        # loop over the component properties
-        for trait in component.pyre_traits(inherited=False, categories={"properties"}):
-
-            # get the component family
-            family = component._pyre_family
-            # if one was not specified
-            if not family:
-                # just make the node point to the defualt value
-                node = trait.default
-            else:
-                print("{}: initializing {}".format(component._pyre_family, trait.name))
-                # form the key name
-                key = "{}.{}".format(family, trait.name)
-                print("    loking for {}".format(key))
-                try:
-                    node = calculator[key]
-                except KeyError:
-                    print("    key {} not found".format(key))
-                    node = calculator.bind(trait.name, trait.default, locator, replace=True)
-                else:
-                    print("    found key {}".format(key))
-            # now, attach the node to an attribute named after the trait
-            setattr(inventory, trait.name, node)
-        # now handle inherited traits
-        print("NYI: inherited component trait initialization")
         # all done
         return component
 
@@ -174,6 +141,9 @@ class Executive(object):
 
         # prime the configuration folder list
         self.configpath = list(self.path)
+
+        # the set of known packages
+        self.packages = set()
 
         # all done
         return

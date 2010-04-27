@@ -24,9 +24,9 @@ def test():
     # did my ancestor list get built properly
     assert base._pyre_configurables == (base, Component)
     # did the _pyre_Inventory embedded class get built?
-    assert hasattr(base, "_pyre_Inventory")
+    inventory = base._pyre_Inventory
     # is it properly subclassed?
-    assert issubclass(base._pyre_Inventory, Inventory)
+    assert issubclass(inventory, Inventory)
         
     return base
 

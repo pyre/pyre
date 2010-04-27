@@ -43,7 +43,9 @@ def test():
     assert sentry._pyre_implements == None
 
     # check the trait contents
-    assert tuple(sentry.pyre_traits()) == (sentry.username, sentry.password, sentry.authenticate)
+    
+    traits = [sentry.username, sentry.password, sentry.authenticate]
+    assert traits == [trait for trait,source in sentry.pyre_traits()]
     # check the aliases
     assert sentry.pyre_normalizeName("username") == "username"
     assert sentry.pyre_normalizeName("όνομα") == "username"
