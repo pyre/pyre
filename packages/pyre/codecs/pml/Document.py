@@ -9,6 +9,13 @@
 from pyre.xml.Document import Document as Base
 
 
+# import the handlers
+from .Bind import Bind
+from .Component import Component
+from .Configuration import Configuration
+from .Inventory import Inventory
+
+
 class Document(Base):
     """
     The anchor point for the handlers of the pml document tags
@@ -19,13 +26,9 @@ class Document(Base):
 
     # get access to the element descriptor factory
     import pyre.xml
-    # and the handlers
-    from .Bind import Bind
-    from .Configuration import Configuration
-    from .Inventory import Inventory
-
     # the element descriptors
     bind = pyre.xml.element(tag="bind", handler=Bind)
+    component = pyre.xml.element(tag="component", handler=Component)
     config = pyre.xml.element(tag="config", handler=Configuration)
     inventory = pyre.xml.element(tag="inventory", handler=Inventory)
 

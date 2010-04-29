@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Bind.py \
+    Component.py \
     Configuration.py \
     Document.py \
     Inventory.py \

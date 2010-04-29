@@ -9,21 +9,23 @@
 from .Node import Node
 
 
-class Configuration(Node):
+class Component(Node):
     """
-    Handler for the top level tag in pml documents
+    Handler for the inventory tag in pml documents
     """
 
     # constants
-    elements = ("component", "inventory", "bind")
+    elements = ("bind",)
 
 
     # interface
     def notify(self, parent, locator):
         """
-        Let {parent} now that processing this configuration tag is complete
+        Transfer all the key,value bindings to my parent
         """
-        return parent.onConfiguration(self)
+        for key, value, locator in self.bindings:
+            parent.createAssignment(key=key, value=value, locator=locator)
+        return
 
 
     # assignment handler
@@ -31,14 +33,17 @@ class Configuration(Node):
         """
         Process a binding of a property to a value
         """
-        # the namespace markers on the key are in stored reverse order
-        # so reverse before joining with dots
-        self.bindings.append((".".join(reversed(key)), value, locator))
+        # add my namespace to the key
+        # NYI: conditional bindings
+        key.append(self.family)
+        # store it with my other bindings
+        self.bindings.append((key, value, locator))
         return
 
 
     # meta methods
     def __init__(self, parent, attributes, locator):
+        self.family = attributes['family']
         self.bindings = []
         return
     

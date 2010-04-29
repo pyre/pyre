@@ -9,12 +9,11 @@
 
 <config>
 
-  <inventory name="sample">
+  <component family="sample.configuration">
     <!-- some bindings -->
     <bind property="p1">sample - p1</bind>
     <bind property="p2">sample - p2</bind>
-
-  </inventory>
+  </component>
 
 </config>
 
