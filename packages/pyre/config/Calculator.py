@@ -43,12 +43,13 @@ class Calculator(AbstractModel):
 
         # set up the properties declared in {component}
         for trait,source in component.pyre_traits(inherited=False, categories={"properties"}):
+            print("local: {}.{}".format(component.__name__, trait.name))
             # if the component declared a family, build the node key out of the component
             # family and the trait name
             key = self.SEPARATOR.join([family, trait.name]) if family else ''
             # check whether a configuration node is available
             try:
-                node = self[key]
+                node = self.findNode(key)
             except KeyError:
                 # not there; build one
                 node = self.bind(key, trait.default, locator, override=True)
@@ -57,19 +58,24 @@ class Calculator(AbstractModel):
 
         # now handle inherited traits
         for trait,ancestor in component.pyre_traits(mine=False, categories={"properties"}):
-            # get the configuration node that corresponds to this inherited trait
-            # this can't fail since the ancestor has been through this process already
-            node = getattr(ancestor._pyre_Inventory, trait.name)
-            # build a reference to it
-            ref = node.newReference()
-            # and attach it to the inventory class record
-            setattr(inventory, trait.name, ref)
-            # if the component declared a family
-            if family:
-                # build the node key out of the component # family and the trait name
-                key = self.SEPARATOR.join([family, trait.name])
+            print("inherited from {}: {}.{}".format(ancestor.__name__, component.__name__, trait.name))
+            # if the component declared a family, build the node key out of the component
+            # family and the trait name
+            key = self.SEPARATOR.join([family, trait.name]) if family else ''
+            # check whether a configuration node is available
+            try:
+                node = self.findNode(key)
+            except KeyError:
+                # get the configuration node that corresponds to this inherited trait
+                # this can't fail since the ancestor has been through this process already
+                referent = getattr(ancestor._pyre_Inventory, trait.name)
+                # build a reference to it
+                node = referent.newReference()
                 # register the reference
-                self.registerNode(name=key, node=ref)
+                if key:
+                    self.registerNode(name=key, node=node)
+            # and attach it to the inventory class record
+            setattr(inventory, trait.name, node)
 
         # all done
         return component
@@ -103,7 +109,7 @@ class Calculator(AbstractModel):
         else:
             # bail out if we have seen this node before and we are not performing replacement
             # binding
-            if not override: return
+            if not override: return node
 
         # build an evaluator
         # figure out if this value contains references to other nodes

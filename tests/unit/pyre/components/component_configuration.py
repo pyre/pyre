@@ -17,7 +17,7 @@ def declare():
     from pyre.components.Component import Component
     from pyre.components.Property import Property
 
-    class component(Component, family="sample"):
+    class component(Component, family="sample.configuration"):
         """a test component"""
         # properties
         p1 = Property()
@@ -50,6 +50,9 @@ def test():
     pyx.configpath.append('vfs:///local')
     # now declare the component
     component = declare()
+    # check that the setting were read properly
+    assert component._pyre_Inventory.p1.value == "sample - p1"
+    assert component._pyre_Inventory.p2.value == "sample - p2"
     # and return the executive and the component
     return pyx, component
     
