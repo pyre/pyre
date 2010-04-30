@@ -43,7 +43,6 @@ class Calculator(AbstractModel):
 
         # set up the properties declared in {component}
         for trait,source in component.pyre_traits(inherited=False, categories={"properties"}):
-            print("local: {}.{}".format(component.__name__, trait.name))
             # if the component declared a family, build the node key out of the component
             # family and the trait name
             key = self.SEPARATOR.join([family, trait.name]) if family else ''
@@ -58,7 +57,6 @@ class Calculator(AbstractModel):
 
         # now handle inherited traits
         for trait,ancestor in component.pyre_traits(mine=False, categories={"properties"}):
-            print("inherited from {}: {}.{}".format(ancestor.__name__, component.__name__, trait.name))
             # if the component declared a family, build the node key out of the component
             # family and the trait name
             key = self.SEPARATOR.join([family, trait.name]) if family else ''
