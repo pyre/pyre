@@ -23,7 +23,8 @@ class Calculator(AbstractModel):
 
 
     # constants
-    SEPARATOR = '.'
+    TRAIT_SEPARATOR = '.'
+    FAMILY_SEPARATOR = '#'
 
 
     # interface
@@ -45,7 +46,7 @@ class Calculator(AbstractModel):
         for trait,source in component.pyre_traits(categories={"properties"}):
             # if the component declared a family, build the node key out of the component
             # family and the trait name
-            key = self.SEPARATOR.join([family, trait.name]) if family else ''
+            key = self.TRAIT_SEPARATOR.join([family, trait.name]) if family else ''
             # check whether a configuration node is available
             try:
                 node = self.findNode(key)
@@ -78,13 +79,14 @@ class Calculator(AbstractModel):
         """
         # get the component's name
         # name = component._pyre_name
-        name = '#'.join(tag for tag in [component._pyre_family, component._pyre_name] if tag)
+        name = self.FAMILY_SEPARATOR.join(
+            tag for tag in [component._pyre_family, component._pyre_name] if tag)
         # get the component's inventory
         inventory = component._pyre_inventory
         # iterate over my traits
         for trait, ancestor in component.pyre_traits(categories={"properties"}):
             # create the node key
-            key = self.SEPARATOR.join([name, trait.name])
+            key = self.TRAIT_SEPARATOR.join([name, trait.name])
             # check whether there is an existing configuration node by this name
             try:
                 node = self.findNode(key)
@@ -158,7 +160,7 @@ class Calculator(AbstractModel):
         which is a lot smarter and takes care of patching unresolved names.
         """
         # hash the name
-        key = self._hash.hash(name, separator=self.SEPARATOR)
+        key = self._hash.hash(name, separator=self.TRAIT_SEPARATOR)
         # add the node the node store
         self._nodes[key] = node
         # add the name to the name store
@@ -171,7 +173,7 @@ class Calculator(AbstractModel):
         """
         Locate the node in the model that matches {name}.
         """
-        return self._nodes[self._hash.hash(name, separator=self.SEPARATOR)]
+        return self._nodes[self._hash.hash(name, separator=self.TRAIT_SEPARATOR)]
         
 
     def getNodes(self):
