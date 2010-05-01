@@ -84,6 +84,32 @@ class Calculator(AbstractModel):
         Initialize the component instance inventory by making the descriptors point to the
         evaluation nodes
         """
+        # get the component's name
+        # name = component._pyre_name
+        name = '#'.join(tag for tag in [component._pyre_family, component._pyre_name] if tag)
+        # get the component's inventory
+        inventory = component._pyre_inventory
+        # iterate over my traits
+        for trait, ancestor in component.pyre_traits(categories={"properties"}):
+            # create the node key
+            key = self.SEPARATOR.join([name, trait.name])
+            # check whether there is an existing configuration node by this name
+            try:
+                node = self.findNode(key)
+            except KeyError:
+                # grab the trait node from the class record
+                default = getattr(inventory, trait.name)
+                # create a reference to it
+                node = default.newReference()
+                # and register the new node
+                self.registerNode(name=key, node=node)
+            # and add it to the inventory
+            setattr(inventory, trait.name, node)
+
+        # all done; hand the component back
+        return component
+                  
+            
 
 
     def bind(self, name, value, locator, override):

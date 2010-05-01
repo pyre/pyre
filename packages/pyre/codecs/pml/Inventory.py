@@ -41,7 +41,9 @@ class Inventory(Node):
 
 
     # meta methods
-    def __init__(self, parent, attributes, locator):
+    def __init__(self, parent, attributes, locator, **kwds):
+        super().__init__(**kwds)
+
         self.name = attributes['name']
         self.bindings = []
         return

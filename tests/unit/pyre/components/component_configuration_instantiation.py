@@ -57,18 +57,12 @@ def test():
     # get the declarations
     base, intermediate, derived = declare()
 
-    # check the defaults
-    inventory = base._pyre_Inventory
-    assert inventory.common.value == "base - common"
-        
-    inventory = intermediate._pyre_Inventory
-    assert inventory.common.value == "base - common"
-    assert inventory.middle.value == "intermediate"
-
-    inventory = derived._pyre_Inventory
-    assert inventory.extra.value == "derived - extra"
-    assert inventory.middle.value == "intermediate"
-    assert inventory.common.value == "derived - common"
+    # build an instance
+    d1 = derived(name="d1")
+    # check that the instancw specific settings were read
+    assert d1.common == "d1 - common"
+    assert d1.middle == "d1 - middle"
+    assert d1.extra == "d1 - extra"
 
     # make the components available
     return base, intermediate, derived

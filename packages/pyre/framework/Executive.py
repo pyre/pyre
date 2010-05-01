@@ -56,12 +56,13 @@ class Executive(object):
         """
         Register the {component} instance
         """
-        print("NYI: component instance registration and configuration")
         # get the instance registered
         self.registrar.registerComponentInstance(component)
         # initialize the instance traits
         self.calculator.initializeComponentInstance(component)
-        # and hand it back
+        # todo
+        print("NYI: component instance binding and initialization")
+        # and hand the instance back
         return component
 
 
@@ -121,6 +122,7 @@ class Executive(object):
             try:
                 self.loadConfiguration(source, override=False)
             except self.FrameworkError as error:
+                # print("NYI: deal with configuration errors: {}".format(error))
                 pass
         # all done
         return component

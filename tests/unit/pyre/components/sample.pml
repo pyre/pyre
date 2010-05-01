@@ -28,6 +28,13 @@
     <bind property="common">derived - common</bind>
   </component>
 
+  <component name="d1" family="sample.derived">
+    <!-- some bindings -->
+    <bind property="extra">d1 - extra</bind>
+    <bind property="middle">d1 - middle</bind>
+    <bind property="common">d1 - common</bind>
+  </component>
+
 </config>
 
 

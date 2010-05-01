@@ -72,6 +72,11 @@ class Reader(xml.sax.ContentHandler):
             raise self.ParsingError(
                 parser=self, document=document, description=error.getMessage(),
                 locator=self._locator) from error
+        except self.ParsingError as error:
+            error.parser = self
+            error.document = document
+            raise 
+
         # clean up
         parser.setContentHandler(None)
         # and return the decorated data structure

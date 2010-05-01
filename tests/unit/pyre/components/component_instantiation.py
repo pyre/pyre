@@ -47,23 +47,34 @@ def test():
 
     # verify that the instance was recorded in the extent
     assert set(Sentry.pyre_getExtent()) == {sentry}
-
     # check the properties
     assert sentry.username == 'mga'
     assert sentry.password == None
     # set them to something else
     sentry.username = 'aivazis'
     sentry.password = 'deadbeef'
-    # check again
+    # check
     assert sentry.username == 'aivazis'
     assert sentry.password == 'deadbeef'
+    # check the class defaults
+    assert Sentry._pyre_Inventory.username.value == "mga"
+    assert Sentry._pyre_Inventory.password.value == None
     # and make sure we didn't mess up the defaults
     another = Sentry(name="another")
-    print("another: username={}, password={}".format(another.username, another.password))
+    # verify that the new instance was recorded in the extent
+    assert set(Sentry.pyre_getExtent()) == {sentry, another}
     assert another.username == 'mga'
     assert another.password == None
+    # set them to something else
+    another.username = 'another'
+    another.password = 'feedbabe'
+    # check
+    assert another.username == 'another'
+    assert another.password == 'feedbabe'
+    assert sentry.username == 'aivazis'
+    assert sentry.password == 'deadbeef'
 
-    return sentry
+    return sentry, another
 
 
 # main

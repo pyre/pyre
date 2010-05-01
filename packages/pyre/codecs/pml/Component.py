@@ -33,18 +33,33 @@ class Component(Node):
         """
         Process a binding of a property to a value
         """
+        # buld the configuration target out of the family and instance name
+        # this mechanism enables configuration settings for multiple possible bindings of a
+        # given property to coëxist in the same file
+        marker = '#'.join(tag for tag in [self.family, self.name] if tag)
         # add my namespace to the key
-        # NYI: conditional bindings
-        key.append(self.family)
+        key.append(marker)
         # store it with my other bindings
         self.bindings.append((key, value, locator))
         return
 
 
     # meta methods
-    def __init__(self, parent, attributes, locator):
-        self.family = attributes['family']
+    def __init__(self, parent, attributes, locator, **kwds):
+        super().__init__(**kwds)
+        # storage for my property bindings
         self.bindings = []
+        # extract the attributes
+        self.name = attributes.get('name')
+        self.family = attributes.get('family')
+
+        # make sure that at least one of these attributes were given
+        if not self.name and not self.family:
+            raise self.DTDError(
+                description="neither 'name' not 'family' were specified",
+                locator=locator
+                )
+
         return
     
 
