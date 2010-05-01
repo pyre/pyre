@@ -41,8 +41,8 @@ class Calculator(AbstractModel):
         # get the component family
         family = component._pyre_family
 
-        # set up the properties declared in {component}
-        for trait,source in component.pyre_traits(inherited=False, categories={"properties"}):
+        # iterate over all the properties, both local and inherited
+        for trait,source in component.pyre_traits(categories={"properties"}):
             # if the component declared a family, build the node key out of the component
             # family and the trait name
             key = self.SEPARATOR.join([family, trait.name]) if family else ''
@@ -51,28 +51,20 @@ class Calculator(AbstractModel):
                 node = self.findNode(key)
             except KeyError:
                 # not there; build one
-                node = self.bind(key, trait.default, locator, override=True)
-            # now, attach the node to as an inventory attribute named after the trait
-            setattr(inventory, trait.name, node)
-
-        # now handle inherited traits
-        for trait,ancestor in component.pyre_traits(mine=False, categories={"properties"}):
-            # if the component declared a family, build the node key out of the component
-            # family and the trait name
-            key = self.SEPARATOR.join([family, trait.name]) if family else ''
-            # check whether a configuration node is available
-            try:
-                node = self.findNode(key)
-            except KeyError:
-                # get the configuration node that corresponds to this inherited trait
-                # this can't fail since the ancestor has been through this process already
-                referent = getattr(ancestor._pyre_Inventory, trait.name)
-                # build a reference to it
-                node = referent.newReference()
-                # register the reference
-                if key:
-                    self.registerNode(name=key, node=node)
-            # and attach it to the inventory class record
+                # for locally declared properties, just make a new binding
+                if source == component:
+                    node = self.bind(key, trait.default, locator, override=True)
+                # otherwise, it is an inherited property
+                else:
+                    # get the configuration node that corresponds to this inherited trait
+                    # this can't fail since the ancestor has been through this process already
+                    referent = getattr(source._pyre_Inventory, trait.name)
+                    # build a reference to it
+                    node = referent.newReference()
+                    # register the reference
+                    if key:
+                        self.registerNode(name=key, node=node)
+            # now, attach the node as an inventory attribute named after the trait
             setattr(inventory, trait.name, node)
 
         # all done
