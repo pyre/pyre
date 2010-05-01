@@ -27,7 +27,7 @@ class Calculator(AbstractModel):
 
 
     # interface
-    def initializeComponentClass(self, component):
+    def configureComponentClass(self, component):
         """
         Initialize the component class inventory by making the descriptors point to the
         evaluation nodes
@@ -79,7 +79,7 @@ class Calculator(AbstractModel):
         return component
 
 
-    def initializeComponentInstance(self, component):
+    def configureComponentInstance(self, component):
         """
         Initialize the component instance inventory by making the descriptors point to the
         evaluation nodes
@@ -98,6 +98,8 @@ class Calculator(AbstractModel):
                 node = self.findNode(key)
             except KeyError:
                 # grab the trait node from the class record
+                # this is guaranteed to succeed since the class record has been through this
+                # process already
                 default = getattr(inventory, trait.name)
                 # create a reference to it
                 node = default.newReference()
@@ -108,8 +110,6 @@ class Calculator(AbstractModel):
 
         # all done; hand the component back
         return component
-                  
-            
 
 
     def bind(self, name, value, locator, override):

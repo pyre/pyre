@@ -46,8 +46,8 @@ class Executive(object):
         self.registrar.registerComponentClass(component)
         # configure; do this before component class initialization
         self.loadPackageConfiguration(component)
-        # initialize the class traits
-        self.calculator.initializeComponentClass(component)
+        # transfer the configuration settings to the class properties
+        self.calculator.configureComponentClass(component)
         # and hand back the class record
         return component
 
@@ -58,8 +58,8 @@ class Executive(object):
         """
         # get the instance registered
         self.registrar.registerComponentInstance(component)
-        # initialize the instance traits
-        self.calculator.initializeComponentInstance(component)
+        # transfer the configuration settings to the instance properties
+        self.calculator.configureComponentInstance(component)
         # todo
         print("NYI: component instance binding and initialization")
         # and hand the instance back
