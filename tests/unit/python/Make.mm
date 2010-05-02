@@ -15,6 +15,7 @@ PROJECT = pyre
 all: test
 
 test:
+	${PYTHON} ./format.py
 	${PYTHON} ./moditer.py
 	${PYTHON} ./files.py
 	${PYTHON} ./slots.py
