@@ -52,12 +52,48 @@ class Component(Configurable, metaclass=Actor):
     def __init__(self, name, **kwds):
         super().__init__(**kwds)
 
+        # component instance registration is done by Actor.__call__, the metaclass method that
+        # invokes this constructor
+
         # store my name
         self._pyre_name = name
         # build my inventory instance by calling the constructor that my metaclass attached at
         # compile time
         self._pyre_inventory = self._pyre_Inventory()
-        # register me with the component registrar
+
+        return
+
+
+    def __getattr__(self, name):
+        """
+        Trap attribute lookup errors and attempt to resolve the name in my inventory's namemap
+
+        This makes it possible to get the value of a trait by using any of its aliases.
+        """
+        # attempt to resolve the attribute name by normalizing it
+        try:
+            canonical = self.pyre_normalizeName(name)
+        except self.TraitNotFoundError as error:
+            missing = AttributeError(
+                "{0.__class__.__name__!r} has no attribute {1!r}".format(self, name))
+            raise missing from error
+        # if we got this far, restart the attribute lookup using the canonical name
+        # don't be smart here; let getattr do its job, which involves invoking the trait
+        # descriptors if necessary
+        return getattr(self, canonical)
+
+
+    def __setattr__(self, name, value):
+        """
+        Trap attribute retrieval and attempt to normalize the name before making the assignment
+        """
+        # normalize the name
+        try:
+            name = self.pyre_normalizeName(name)
+        except self.TraitNotFoundError:
+            return super().__setattr__(name, value)
+
+        return super().__setattr__(name, value)
 
 
     # constants
