@@ -20,6 +20,7 @@ RECURSE_DIRS = \
     framework \
     parsing \
     patterns \
+    schema \
     tracking \
     xml \
 
