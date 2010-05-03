@@ -29,10 +29,8 @@ class Pyre(Executive, metaclass=Singleton):
             source = self.fileserver.PATH_SEPARATOR.join([folder, self.bootup])
             try:
                 self.loadConfiguration(source)
-            except self.FrameworkError as error:
-                # something bad happened
-                # NYI: log an informational with journal and move on
-                # print(error)
+            except self.fileserver.NotFoundError as error:
+                # ignore nonexistent files
                 pass
 
         # process the command line

@@ -121,9 +121,9 @@ class Executive(object):
             # and try to load the configuration
             try:
                 self.loadConfiguration(source, override=False)
-            except self.FrameworkError as error:
-                # print("NYI: deal with configuration errors: {}".format(error))
+            except self.fileserver.NotFoundError as error:
                 pass
+
         # all done
         return component
 
