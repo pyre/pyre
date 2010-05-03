@@ -57,9 +57,14 @@ def test():
     assert registrar.implementors[interface] == {component}
 
     # instantiate the component
-    c = component(name="c")
+    c1 = component(name="c1")
     # verify that the instance was recorded in the extent
-    assert set(registrar.components[component]) == {c}
+    assert set(registrar.components[component]) == {c1}
+
+    # instantiate another component
+    c2 = component(name="c2")
+    # verify that the instance was recorded in the extent
+    assert set(registrar.components[component]) == {c1, c2}
 
     return component
      
@@ -67,6 +72,11 @@ def test():
 # main
 if __name__ == "__main__":
     test()
+    # now check that the components were destroyed when they went out of scope
+    import pyre
+    registrar = pyre.executive().registrar
+    for cls, extent in registrar.components.items():
+        assert set(extent) == set()
 
 
 # end of file 
