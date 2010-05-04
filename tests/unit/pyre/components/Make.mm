@@ -50,6 +50,8 @@ components:
 	${PYTHON} ./component_implements.py
 	${PYTHON} ./component_bad_implementations.py
 	${PYTHON} ./component_instantiation.py
+	${PYTHON} ./component_configuration_instantiation.py
+	${PYTHON} ./component_invocation.py
 	${PYTHON} ./component_aliases.py
 
 
