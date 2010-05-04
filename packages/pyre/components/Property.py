@@ -11,6 +11,13 @@ from .Trait import Trait
 
 class Property(Trait):
     """
+    Base class for propery descriptors
+
+    Most properties take simple objects as their values, and therefore do not present any
+    serious challenges from a configuration/initialization point of view. However, properties
+    that represent acquired resources, such as file or network streams, may require complex
+    initialization. The needs of the former are probably taken care of by this class in their
+    entirety, whereas the latter may require more specialized descriptors.
     """
 
 

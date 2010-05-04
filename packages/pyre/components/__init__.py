@@ -48,6 +48,68 @@ Components go through the following life cycle stages
 """
 
 
+# property factories
+def array():
+    """
+    Buld a property descriptor for an array of floats
+    """
+    from .Property import Property
+
+    descriptor = Property()
+    descriptor.default = ()
+
+    return descriptor
+
+
+def facility(*, interface):
+    """
+    Build a facility descriptor
+    """
+    from .Facility import Facility
+    facility = Facility()
+    facility.interface = interface
+
+    return facility
+
+
+def float():
+    """
+    Build a property descriptor for a float
+    """
+    from .Property import Property
+
+    descriptor = Property()
+    descriptor.default = 0.0
+
+    return descriptor
+
+
+def int():
+    """
+    Build a property descriptor of type int
+    """
+
+    from .Property import Property
+
+    descriptor = Property()
+    descriptor.default = 0
+
+    return descriptor
+
+
+def str():
+    """
+    Build a property descriptor of type str
+    """
+
+    from .Property import Property
+
+    descriptor = Property()
+    descriptor.default = ""
+
+    return descriptor
+
+
 # function decorators
 def export(func):
     """
