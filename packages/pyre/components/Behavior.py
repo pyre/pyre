@@ -31,9 +31,9 @@ class Behavior(Trait):
         """
         Dispatch to the encapsulated method
         """
-        # if the caller specified the instance, return the encapsulated method
+        # if the caller specified the instance, bind _method to the instance and return it
         if instance:
-            return self._method
+            return self._method.__get__(instance, cls)
         # otherwise, interpret this as a request for the descriptor
         return self
 
