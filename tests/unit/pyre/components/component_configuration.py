@@ -36,25 +36,12 @@ def declare():
 
 
 def test():
-    import pyre
-    import pyre.filesystem
-    # build a filesystem for this directory
-    local = pyre.filesystem.newLocalFilesystem('.')
-    # get the executive
-    pyx = pyre.executive()
-    # and its fileserver
-    fs = pyx.fileserver
-    # mount the current directory as 'local'
-    fs['local'] = local
-    # add it to the config path
-    pyx.configpath.append('vfs:///local')
-    # now declare the component
     component = declare()
     # check that the setting were read properly
     assert component._pyre_Inventory.p1.value == "sample - p1"
     assert component._pyre_Inventory.p2.value == "sample - p2"
     # and return the executive and the component
-    return pyx, component
+    return component
     
 
 # main

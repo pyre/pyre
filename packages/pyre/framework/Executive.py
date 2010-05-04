@@ -154,7 +154,7 @@ class Executive(object):
 
 
     # constants
-    path = ("vfs:///pyre/system", "vfs:///pyre/user")
+    path = ("vfs:///pyre/system", "vfs:///pyre/user", "vfs:///local")
 
 
     # exceptions

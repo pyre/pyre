@@ -41,19 +41,6 @@ def declare():
 
 
 def test():
-    import pyre
-    import pyre.filesystem
-    # build a filesystem for this directory
-    local = pyre.filesystem.newLocalFilesystem('.')
-    # get the executive
-    pyx = pyre.executive()
-    # and its fileserver
-    fs = pyx.fileserver
-    # mount the current directory as 'local'
-    fs['local'] = local
-    # add it to the config path
-    pyx.configpath.append('vfs:///local')
-
     # get the declarations
     base, intermediate, derived = declare()
 

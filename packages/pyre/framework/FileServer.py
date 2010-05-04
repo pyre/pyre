@@ -139,6 +139,15 @@ class FileServer(Filesystem):
        # mount this directory as /pyre/user
         self["pyre/user"] = self.userfs
 
+        # finally, mount the current working directory
+        try:
+            # make filesystem out of the preference directory
+            self.localfs = pyre.filesystem.newFilesystem(".")
+        except pyre.filesystem.GenericError:
+            self.localfs = self.newFolder()
+       # mount this directory as /local
+        self["local"] = self.localfs
+
         return
 
 
