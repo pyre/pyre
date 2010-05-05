@@ -36,7 +36,7 @@ class Pyre(Executive, metaclass=Singleton):
         # process the command line
         import sys
         parser = newCommandLineParser()
-        parser.decode(self, sys.argv[1:])
+        parser.decode(self.configurator, sys.argv[1:])
 
         # get the configurator to update my configuration
         self.configurator.configure(self)
