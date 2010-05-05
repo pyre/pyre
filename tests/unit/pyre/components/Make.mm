@@ -40,6 +40,7 @@ components:
 	${PYTHON} ./component_registration.py
 	${PYTHON} ./component_configuration.py
 	${PYTHON} ./component_inheritance.py
+	${PYTHON} ./component_defaults.py
 	${PYTHON} ./component_configuration_inheritance.py
 	${PYTHON} ./component_shadow.py
 	${PYTHON} ./component_inheritance_multi.py

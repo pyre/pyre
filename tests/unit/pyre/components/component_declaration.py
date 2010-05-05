@@ -43,8 +43,10 @@ def test():
     assert sentry._pyre_implements == None
 
     # check the trait contents
-    
-    traits = [sentry.username, sentry.password, sentry.authenticate]
+    sentry_username = sentry.pyre_getTraitDescriptor("username")
+    sentry_password = sentry.pyre_getTraitDescriptor("password")
+    sentry_authenticate = sentry.pyre_getTraitDescriptor("authenticate")
+    traits = [sentry_username, sentry_password, sentry_authenticate]
     assert traits == [trait for trait,source in sentry.pyre_traits()]
     # check the aliases
     assert sentry.pyre_normalizeName("username") == "username"
@@ -54,8 +56,8 @@ def test():
 
     # get access to the embedded inventory class
     inventory = sentry._pyre_Inventory
-    assert inventory._pyre_categories["behaviors"] == (sentry.authenticate,)
-    assert inventory._pyre_categories["properties"] == (sentry.username, sentry.password)
+    assert inventory._pyre_categories["behaviors"] == (sentry_authenticate,)
+    assert inventory._pyre_categories["properties"] == (sentry_username, sentry_password)
 
     return sentry
 

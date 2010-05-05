@@ -22,22 +22,18 @@ def test():
     class base(Interface):
         """a base interface"""
         common = Property()
-        common.default = "base"
 
     class derived(base):
         """a derived interface, so automatically compatible"""
         extra = Property()
-        extra.default = "derived"
 
     class ok(Interface):
         """one that doesn't, but provides the correct public interface"""
         common = Property()
-        common.default = "ok"
         
     class notok(Interface):
         """one that doesn't provide the correct public interface"""
         what = Property()
-        what.default = "notok"
 
     class badtype(Interface):
         """one that has the right trait, but of the wrong category"""

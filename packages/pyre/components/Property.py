@@ -83,11 +83,8 @@ class Property(Trait):
             # attempt to access the instance inventory
             inventory = instance._pyre_inventory
         except AttributeError:
-            # access through a class variable; interpret as a request for the descriptor itself
-            if cls and not instance:
-                return self
-            # otherwise, re-raise the error
-            raise
+            # access through a class variable
+            inventory = cls._pyre_Inventory
         # at this point, we have inventory, so look up the attribute using my name an return it
         return getattr(inventory, self.name).value
 

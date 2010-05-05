@@ -20,7 +20,8 @@ class Configurable(object): #, metaclass=Requirement):
 
 
     # framework data
-    _pyre_name = None
+    _pyre_name = None # the instance name
+    _pyre_state = None # track progress through the bootsrapping process
     _pyre_configurables = None # a tuple of all my ancestors that derive from Configurable
     _pyre_traits = None # a list of all the traits in my declaration
 
@@ -78,7 +79,7 @@ class Configurable(object): #, metaclass=Requirement):
             # if the name matches
             if trait.name == name:
                 # success
-                return trait,source
+                return trait
         # otherwise return failure
         return
 

@@ -22,31 +22,21 @@ def test():
     class base(Interface):
         # traits
         common = Property()
-        common.default = "base"
-
         a1 = Property()
-        a1.default = "base"
-
         a2 = Property()
-        a2.default = "base"
 
     class a1(base):
         # traits
         a1 = Property()
-        a1.default = "a1"
 
     class a2(base):
         # traits
         a2 = Property()
-        a2.default = "a2"
 
     class derived(a1, a2):
         """a derived interface"""
         common = Property()
-        common.default = "derived"
-
         extra = Property()
-        extra.default = "derived"
         
     # check that everything is as expected with the hierachy
     assert base._pyre_configurables == (base, Interface)
@@ -80,43 +70,40 @@ def test():
         Interface._pyre_Inventory, object)
 
     # access the traits of base
-    assert base.common._pyre_category == "properties"
-    assert base.common.default == "base"
-    assert base.a1._pyre_category == "properties"
-    assert base.a1.default == "base"
-    assert base.a2._pyre_category == "properties"
-    assert base.a2.default == "base"
+    base_common = base.pyre_getTraitDescriptor("common")
+    base_a1 = base.pyre_getTraitDescriptor("a1")
+    base_a2 = base.pyre_getTraitDescriptor("a2")
     # access the traits of a1
-    assert a1.common._pyre_category == "properties"
-    assert a1.common.default == "base"
-    assert a1.a1._pyre_category == "properties"
-    assert a1.a1.default == "a1"
-    assert a1.a2._pyre_category == "properties"
-    assert a1.a2.default == "base"
+    a1_common = a1.pyre_getTraitDescriptor("common")
+    a1_a1 = a1.pyre_getTraitDescriptor("a1")
+    a1_a2 = a1.pyre_getTraitDescriptor("a2")
     # access the traits of a2
-    assert a2.common._pyre_category == "properties"
-    assert a2.common.default == "base"
-    assert a2.a1._pyre_category == "properties"
-    assert a2.a1.default == "base"
-    assert a2.a2._pyre_category == "properties"
-    assert a2.a2.default == "a2"
+    a2_common = a2.pyre_getTraitDescriptor("common")
+    a2_a1 = a2.pyre_getTraitDescriptor("a1")
+    a2_a2 = a2.pyre_getTraitDescriptor("a2")
     # access the traits of derived
-    assert derived.common._pyre_category == "properties"
-    assert derived.common.default == "derived"
-    assert derived.a1._pyre_category == "properties"
-    assert derived.a1.default == "a1"
-    assert derived.a2._pyre_category == "properties"
-    assert derived.a2.default == "a2"
-    assert derived.extra._pyre_category == "properties"
-    assert derived.extra.default == "derived"
+    derived_common = derived.pyre_getTraitDescriptor("common")
+    derived_a1 = derived.pyre_getTraitDescriptor("a1")
+    derived_a2 = derived.pyre_getTraitDescriptor("a2")
+    derived_extra = derived.pyre_getTraitDescriptor("extra")
 
-    # make sure derivation did not cause any pollution
-    try:
-        base.extra
-        assert False
-    except AttributeError:
-        pass
+    # verify the expected relationships
+    # a1
+    assert a1_common is base_common
+    assert a1_a1 is not base_a1
+    assert a1_a2 is base_a2
+    # a2
+    assert a2_common is base_common
+    assert a2_a1 is base_a1
+    assert a2_a2 is not base_a2
+    # derived
+    assert derived_common is not base_common
+    assert derived_a1 is not base_a1
+    assert derived_a1 is a1_a1
+    assert derived_a2 is not base_a2
+    assert derived_a2 is a2_a2
 
+    # all done
     return base, a1, a2, derived
      
 

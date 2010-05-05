@@ -38,8 +38,9 @@ def test():
     # access the trait categories
     categories = interface._pyre_Inventory._pyre_categories
     assert len(categories) == 2
-    # assert categories["behaviors"] == (interface.behavior,)
-    assert categories["properties"] == (interface.a, interface.b)
+    assert categories["behaviors"] == (interface.pyre_getTraitDescriptor("behavior"),)
+    assert categories["properties"] == tuple(
+        interface.pyre_getTraitDescriptor(name) for name in ["a", "b"])
 
     return interface
 

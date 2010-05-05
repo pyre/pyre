@@ -31,18 +31,14 @@ def test():
         common = Property()
         common.default = "derived"
         
-    # check that everything is as expected with base
-    assert base._pyre_configurables == (base, Component)
-    # access the traits of base
-    assert base.common._pyre_category == "properties"
-    assert base.common.default == "base"
+    # get the trait descriptors
+    base_common = base.pyre_getTraitDescriptor("common")
+    derived_common = derived.pyre_getTraitDescriptor("common")
+    # verify the traits were shadowed properly
+    assert base_common is not derived_common
+    assert base.common == "base"
+    assert derived.common == "derived"
      
-    # check that everything is as expected with derived
-    assert derived._pyre_configurables == (derived, base, Component)
-    # access the traits of derived
-    assert derived.common._pyre_category == "properties"
-    assert derived.common.default == "derived"
-
     return base, derived
 
 

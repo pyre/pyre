@@ -8,93 +8,45 @@
 
 
 """
-Verify trait access through the component class attributes
+Exercise component inheritance
 """
 
 
 def test():
     # access
-    import pyre.components
-    from pyre.components.Component import Component
     from pyre.components.Property import Property
+    from pyre.components.Component import Component
 
-    # declare a component hierarchy
+    # declare an component
     class base(Component):
-        """the base component"""
+        """a base component"""
         # traits
         common = Property()
-        common.default = "base"
+        common.default = "base.common"
 
-        a1 = Property()
-        a1.default = "base"
-
-        a2 = Property()
-        a2.default = "base"
-
-        @pyre.components.export
-        def do(self):
-            """behave"""
-            return "base"
-
-    class a1(base):
-        """an intermediate"""
-        # traits
-        a1 = Property()
-        a1.default = "a1"
-
-    class a2(base):
-        """another intermediate"""
-        # traits
-        a2 = Property()
-        a2.default = "a2"
-
-    class derived(a1, a2):
+    # and derive another from it
+    class derived(base):
         """a derived component"""
-        common = Property()
-        common.default = "derived"
-
+        # traits
         extra = Property()
-        extra.default = "derived"
+        extra.default = "derived.extra"
 
-        @pyre.components.export
-        def do(self):
-            """behave"""
-            return "derived"
+    # check that the defaults are readable
+    assert base.common == "base.common"
+    assert derived.common == "base.common"
+    assert derived.extra == "derived.extra"
+    # check that the defaults are writable
+    base.common = "base:common"
+    derived.common = "base:common"
+    derived.extra = "derived:extra"
+    # check that the defaults were recorded properly
+    assert base.common == "base:common"
+    assert derived.common == "base:common"
+    assert derived.extra == "derived:extra"
 
-    # check base
-    inventory = base._pyre_Inventory
-    assert inventory.common.value == "base"
-    assert inventory.a1.value == "base"
-    assert inventory.a2.value == "base"
+        
+    return base, derived
 
-    # check a1
-    inventory = a1._pyre_Inventory
-    assert inventory.common.value == "base"
-    assert inventory.a1.value == "a1"
-    assert inventory.a2.value == "base"
-
-    # check a2
-    inventory = a2._pyre_Inventory
-    assert inventory.common.value == "base"
-    assert inventory.a1.value == "base"
-    assert inventory.a2.value == "a2"
-
-    # check derived
-    inventory = derived._pyre_Inventory
-    assert inventory.common.value == "derived"
-    assert inventory.a1.value == "a1"
-    assert inventory.a2.value == "a2"
-    assert inventory.extra.value == "derived"
-
-    # now set the derived default of a1
-    derived._pyre_Inventory.a1.value = "derived"
-    # check that the assignmenttook place
-    assert derived._pyre_Inventory.a1.value == "derived"
-    # and check that a1 is unaltered
-    assert a1._pyre_Inventory.a1.value == "a1"
-    
-    return base, a1, a2, derived
-     
 
 # main
 if __name__ == "__main__":

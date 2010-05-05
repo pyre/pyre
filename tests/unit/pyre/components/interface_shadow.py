@@ -22,26 +22,27 @@ def test():
         """a base interface"""
         # traits
         common = Property()
-        common.default = "base"
 
     # and derive another from it
     class derived(base):
         """a derived interface"""
         # traits
         common = Property()
-        common.default = "derived"
         
     # check that everything is as expected with base
     assert base._pyre_configurables == (base, Interface)
     # access the traits of base
-    assert base.common._pyre_category == "properties"
-    assert base.common.default == "base"
+    base_common = base.pyre_getTraitDescriptor("common")
+    assert base_common._pyre_category == "properties"
      
     # check that everything is as expected with derived
     assert derived._pyre_configurables == (derived, base, Interface)
     # access the traits of derived
-    assert derived.common._pyre_category == "properties"
-    assert derived.common.default == "derived"
+    derived_common = derived.pyre_getTraitDescriptor("common")
+    assert derived_common._pyre_category == "properties"
+
+    # make sure that the two descriptors are unrelated
+    assert base_common is not derived_common
 
     return base, derived
 

@@ -51,6 +51,15 @@ def test():
         def common(self):
             """method, not property"""
 
+    # collect the traits
+    base_common = base.pyre_getTraitDescriptor("common")
+    derived_common = derived.pyre_getTraitDescriptor("common")
+    derived_extra = derived.pyre_getTraitDescriptor("extra")
+    ok_common = ok.pyre_getTraitDescriptor("common")
+    notok_what = notok.pyre_getTraitDescriptor("what")
+    badtype_common = badtype.pyre_getTraitDescriptor("common")
+    shadow_common = shadow.pyre_getTraitDescriptor("common")
+
     # compatibility checks
     # these ones should succeed
     assert derived.pyre_isCompatible(base)
@@ -61,67 +70,67 @@ def test():
     report = ok.pyre_isCompatible(derived, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 1
-    error = report.incompatibilities[derived.extra][0]
+    error = report.incompatibilities[derived_extra][0]
     assert isinstance(error, pyre.components.TraitNotFoundError)
 
     report = notok.pyre_isCompatible(base, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 1
-    error = report.incompatibilities[base.common][0]
+    error = report.incompatibilities[base_common][0]
     assert isinstance(error, pyre.components.TraitNotFoundError)
 
     report = notok.pyre_isCompatible(derived, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 2
-    error = report.incompatibilities[derived.common][0]
+    error = report.incompatibilities[derived_common][0]
     assert isinstance(error, pyre.components.TraitNotFoundError)
-    error = report.incompatibilities[derived.extra][0]
+    error = report.incompatibilities[derived_extra][0]
     assert isinstance(error, pyre.components.TraitNotFoundError)
 
     report = notok.pyre_isCompatible(ok, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 1
-    error = report.incompatibilities[ok.common][0]
+    error = report.incompatibilities[ok_common][0]
     assert isinstance(error, pyre.components.TraitNotFoundError)
 
     report = badtype.pyre_isCompatible(base, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 1
-    error = report.incompatibilities[base.common][0]
+    error = report.incompatibilities[base_common][0]
     assert isinstance(error, pyre.components.CategoryMismatchError)
 
     report = badtype.pyre_isCompatible(derived, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 2
-    error = report.incompatibilities[derived.common][0]
+    error = report.incompatibilities[derived_common][0]
     assert isinstance(error, pyre.components.CategoryMismatchError)
-    error = report.incompatibilities[derived.extra][0]
+    error = report.incompatibilities[derived_extra][0]
     assert isinstance(error, pyre.components.TraitNotFoundError)
 
     report = badtype.pyre_isCompatible(ok, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 1
-    error = report.incompatibilities[ok.common][0]
+    error = report.incompatibilities[ok_common][0]
     assert isinstance(error, pyre.components.CategoryMismatchError)
 
     report = shadow.pyre_isCompatible(base, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 1
-    error = report.incompatibilities[base.common][0]
+    error = report.incompatibilities[base_common][0]
     assert isinstance(error, pyre.components.CategoryMismatchError)
 
     report = shadow.pyre_isCompatible(derived, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 2
-    error = report.incompatibilities[derived.common][0]
+    error = report.incompatibilities[derived_common][0]
     assert isinstance(error, pyre.components.CategoryMismatchError)
-    error = report.incompatibilities[derived.extra][0]
+    error = report.incompatibilities[derived_extra][0]
     assert isinstance(error, pyre.components.TraitNotFoundError)
 
     report = shadow.pyre_isCompatible(ok, createReport=True)
     assert not report
     assert len(report.incompatibilities) == 1
-    error = report.incompatibilities[ok.common][0]
+    error = report.incompatibilities[ok_common][0]
     assert isinstance(error, pyre.components.CategoryMismatchError)
         
     return base, derived, ok, notok, badtype, shadow

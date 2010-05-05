@@ -80,6 +80,29 @@ class Requirement(AttributeClassifier):
         return configurable
 
 
+    def __setattr__(self, name, value):
+        """
+        Trap attribute setting in my class record instances to support setting the default
+        value using the natural syntax
+        """
+        # bypass while the class record is being built
+        if self._pyre_state is None:
+            super().__setattr__(name, value)
+            return
+        # if we get here, the pyre.components.Registrar instance of the pyre executive has
+        # marked the class record as registered
+        # check whether the name corresponds to a trait
+        trait = self.pyre_getTraitDescriptor(name)
+        # if it is not a trait, leave it alone
+        if not trait:
+            super().__setattr__(name, value)
+            return
+        # otherwise, store with the inventory class
+        getattr(self._pyre_Inventory, name).value = value
+        # and return
+        return
+
+
     # implementation details
     @classmethod
     def _pyre_getRequirements(cls, configurable):
@@ -124,7 +147,7 @@ class Requirement(AttributeClassifier):
         for category, traits in attributes.categories.items():
             # attach the tuple of traits of each category to the category map
             categories[category] = tuple(traits)
-            # and notify all trait descriptors that they have been atatched to a configurable
+            # and notify all trait descriptors that they have been attached to a configurable
             for trait in traits:
                 trait.pyre_attach(configurable)
         # all done; return the inventory class record to the caller

@@ -80,35 +80,22 @@ def test():
         Component._pyre_Inventory, object)
 
     # access the traits of base
-    assert base.common._pyre_category == "properties"
-    assert base.common.default == "base"
-    assert base.a1._pyre_category == "properties"
-    assert base.a1.default == "base"
-    assert base.a2._pyre_category == "properties"
-    assert base.a2.default == "base"
+    assert base.common == "base"
+    assert base.a1 == "base"
+    assert base.a2 == "base"
     # access the traits of a1
-    assert a1.common._pyre_category == "properties"
-    assert a1.common.default == "base"
-    assert a1.a1._pyre_category == "properties"
-    assert a1.a1.default == "a1"
-    assert a1.a2._pyre_category == "properties"
-    assert a1.a2.default == "base"
+    assert a1.common == "base"
+    assert a1.a1 == "a1"
+    assert a1.a2 == "base"
     # access the traits of a2
-    assert a2.common._pyre_category == "properties"
-    assert a2.common.default == "base"
-    assert a2.a1._pyre_category == "properties"
-    assert a2.a1.default == "base"
-    assert a2.a2._pyre_category == "properties"
-    assert a2.a2.default == "a2"
+    assert a2.common == "base"
+    assert a2.a1 == "base"
+    assert a2.a2 == "a2"
     # access the traits of derived
-    assert derived.common._pyre_category == "properties"
-    assert derived.common.default == "derived"
-    assert derived.a1._pyre_category == "properties"
-    assert derived.a1.default == "a1"
-    assert derived.a2._pyre_category == "properties"
-    assert derived.a2.default == "a2"
-    assert derived.extra._pyre_category == "properties"
-    assert derived.extra.default == "derived"
+    assert derived.common == "derived"
+    assert derived.a1 == "a1"
+    assert derived.a2 == "a2"
+    assert derived.extra == "derived"
 
     # make sure derivation did not cause any pollution
     try:

@@ -38,12 +38,14 @@ class Registrar(object, metaclass=Singleton):
         implementations of a given interface.
         """
         # avoid registering the base Component class
-        if component._pyre_name is "Component":
+        if component._pyre_name in self._IGNORABLES:
             return component
         # prime the component extent
         self.components[component] = weakref.WeakSet()
         # register the interface implementations
         self._recordInterfaceImplementations(component)
+        # adjust the state
+        component._pyre_state = "registered"
         # all done
         return component
 
@@ -70,6 +72,8 @@ class Registrar(object, metaclass=Singleton):
             return interface
         # this should be a good one, so register it
         self.interfaces.add(interface)
+        # adjust the state
+        interface._pyre_state = "registered"
         # and hand it back to the caller
         return interface
 
@@ -109,7 +113,7 @@ class Registrar(object, metaclass=Singleton):
 
 
     # constants
-    _IGNORABLES = {"_pyre_Interface", "Interface"}
+    _IGNORABLES = {"_pyre_Interface", "Interface", "Component"}
 
 
 # end of file 

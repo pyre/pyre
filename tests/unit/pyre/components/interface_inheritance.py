@@ -22,34 +22,25 @@ def test():
         """a base interface"""
         # traits
         common = Property()
-        common.default = True
 
     # and derive another from it
     class derived(base):
         """a derived interface"""
         # traits
         extra = Property()
-        extra.default = True
         
     # check that everything is as expected with base
     assert base._pyre_configurables == (base, Interface)
     # access the traits of base
-    assert base.common._pyre_category == "properties"
-    assert base.common.default == True
+    assert base.pyre_getTraitDescriptor("common")._pyre_category == "properties"
     # make sure derivation did not cause any pollution
-    try:
-        base.extra
-        assert False
-    except AttributeError:
-        pass
+    assert base.pyre_getTraitDescriptor("extra") == None
      
     # check that everything is as expected with derived
     assert derived._pyre_configurables == (derived, base, Interface)
     # access the traits of derived
-    assert derived.common._pyre_category == "properties"
-    assert derived.common.default == True
-    assert derived.extra._pyre_category == "properties"
-    assert derived.extra.default == True
+    assert derived.pyre_getTraitDescriptor("common")._pyre_category == "properties"
+    assert derived.pyre_getTraitDescriptor("extra")._pyre_category == "properties"
 
     return base, derived
 
