@@ -43,7 +43,7 @@ class Configurable(object): #, metaclass=Requirement):
             # see whether we should yield this one
             # move on if we are skipping my local traits
             if not mine: continue
-            # move on if we are checking categories and this one is not in the right group
+            # move on if we are checking categories and this trait is not in the right one
             if categories and trait._pyre_category not in categories: continue
             # otherwise yield it
             yield trait, cls
@@ -68,10 +68,19 @@ class Configurable(object): #, metaclass=Requirement):
         return
 
 
+    @classmethod
     def pyre_getTraitDescriptor(cls, name):
         """
-        Attempt to retrieve the trait descriptor associated with name
+        Attempt to retrieve the trait descriptor associated with {name}
         """
+        # walk through the traits
+        for trait,source in cls.pyre_traits():
+            # if the name matches
+            if trait.name == name:
+                # success
+                return trait,source
+        # otherwise return failure
+        return
 
 
     # compatibility checks
