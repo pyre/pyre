@@ -32,9 +32,6 @@ class Configurable(object): #, metaclass=Requirement):
         Iterate over all my traits that meet the given criteria and return a typle containing
         the trait and the configurable that declares it
         """
-        # initialize the categories
-        if categories is None:
-            categories = { "behaviors", "properties" }
         # initialize the trait name cache
         # we cache the trait names that have been encountered already so we can shadow properly
         # the traits declared by ancestors that are redefined by this class
@@ -44,8 +41,12 @@ class Configurable(object): #, metaclass=Requirement):
             # add the name to the cache
             known.add(trait.name)
             # see whether we should yield this one
-            if mine and trait._pyre_category in categories:
-                yield trait, cls
+            # move on if we are skipping my local traits
+            if not mine: continue
+            # move on if we are checking categories and this one is not in the right group
+            if categories and trait._pyre_category not in categories: continue
+            # otherwise yield it
+            yield trait, cls
 
         # process the ancestors?
         if not inherited: return
@@ -58,12 +59,19 @@ class Configurable(object): #, metaclass=Requirement):
                 if trait.name in known: continue
                 # otherwise add it to the pile
                 known.add(trait.name)
-                # and send it to the caller
-                if trait._pyre_category in categories:
-                    yield trait, ancestor
+                # move on if we are checking categories and this one is not in the right group
+                if categories and trait._pyre_category not in categories: continue
+                # otherwise yield it
+                yield trait, ancestor
 
         # all done
         return
+
+
+    def pyre_getTraitDescriptor(cls, name):
+        """
+        Attempt to retrieve the trait descriptor associated with name
+        """
 
 
     # compatibility checks
