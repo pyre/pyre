@@ -115,6 +115,9 @@ class Calculator(AbstractModel):
         other variables in the model by following the rules in pyre.calc.Expression, and may
         make certain calls to the python runtime. The exact details are being worked out...
         """
+        # make sure not to bail out when {name} is empty; nameless traits still need a Variable
+        # built for them, since subclasses access them
+
         # check whether we have seen this variable before
         try:
             node = self.findNode(name)
@@ -131,6 +134,7 @@ class Calculator(AbstractModel):
 
         # build an evaluator
         # figure out if this value contains references to other nodes
+        # print("NYI: literal/macro/function interpretation of trait value")
         if value and isinstance(value, str) and Expression._scanner.match(value):
             evaluator = Expression(expression=value, model=self)
             value = None

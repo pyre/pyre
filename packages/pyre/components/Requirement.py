@@ -53,7 +53,7 @@ class Requirement(AttributeClassifier):
         Build and decorate the class record
 
         The actual building of the class record is done by type; the decoration performed here
-        consists of creating a nested class to hold the inevntory items, and recording the
+        consists of creating a nested class to hold the inventory items, and recording the
         tuple of ancestors of {cls} that are themselves instances of Requirement.
 
         parameters:

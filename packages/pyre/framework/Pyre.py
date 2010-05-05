@@ -9,8 +9,6 @@
 from .Executive import Executive
 from ..patterns.Singleton import Singleton
 
-from . import newCommandLineParser
-
 
 class Pyre(Executive, metaclass=Singleton):
 
@@ -35,6 +33,8 @@ class Pyre(Executive, metaclass=Singleton):
 
         # process the command line
         import sys
+        from . import newCommandLineParser
+
         parser = newCommandLineParser()
         parser.decode(self.configurator, sys.argv[1:])
 
