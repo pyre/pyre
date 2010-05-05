@@ -18,6 +18,7 @@ test:
 	${PYTHON} ./format.py
 	${PYTHON} ./moditer.py
 	${PYTHON} ./files.py
+	${PYTHON} ./classattr.py
 	${PYTHON} ./slots.py
 	${PYTHON} ./decorators.py
 	${PYTHON} ./descriptors.py
