@@ -212,6 +212,30 @@ class Node(Observable, metaclass=_metaclass_Node):
         return evaluator
 
 
+    def dump(self, tag=None):
+        """
+        Debugging tool that print out the relevant parts
+        """
+        tag = tag + ": " if tag else ''
+
+        print("{}{}".format(tag, self))
+        print("   value: {}".format(self._value))
+        print("   evaluator: {}".format(self._evaluator))
+
+        if self._evaluator:
+            for idx,op in enumerate(self._evaluator.getDomain()):
+                print("       op {}: {}".format(idx, op))
+
+        if self._observers:
+            print("   observers:")
+            for idx,observer in enumerate(self._observers):
+                print("       {}: {}".format(idx, observer))
+                print("           node: {}".format(observer.__self__))
+                print("           func: {}".format(observer.__func__))
+
+        return
+
+
     # private data
     _value = None
     _evaluator = None
