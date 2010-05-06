@@ -31,6 +31,7 @@ EXPORT_PYTHON_MODULES = \
     Evaluator.py \
     Expression.py \
     Function.py \
+    Increment.py \
     Maximum.py \
     Minimum.py \
     Model.py \

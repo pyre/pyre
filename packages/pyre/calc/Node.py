@@ -133,19 +133,31 @@ class Node(Observable, metaclass=_metaclass_Node):
 
     # my algebra
     def __add__(self, other):
-        from .Addition import Addition
-        return Node(value=None, evaluator=Addition(op1=self, op2=other))
+        if isinstance(other, Node):
+            from .Addition import Addition
+            return Node(value=None, evaluator=Addition(op1=self, op2=other))
                     
+        from .Increment import Increment
+        return Node(value=None, evaluator=Increment(node=self, increment=other))
+
         
     def __mul__(self, other):
-        from .Multiplication import Multiplication
-        return Node(value=None, evaluator=Multiplication(op1=self, op2=other))
+        if isinstance(other, Node):
+            from .Multiplication import Multiplication
+            return Node(value=None, evaluator=Multiplication(op1=self, op2=other))
+
+        from .Scaling import Scaling
+        return Node(value=None, evaluator=Scaling(node=self, factor=other))
                     
         
     def __sub__(self, other):
-        from .Subtraction import Subtraction
-        return Node(value=None, evaluator=Subtraction(op1=self, op2=other))
+        if isinstance(other, Node):
+            from .Subtraction import Subtraction
+            return Node(value=None, evaluator=Subtraction(op1=self, op2=other))
                     
+        from .Increment import Increment
+        return Node(value=None, evaluator=Increment(node=self, increment=-other))
+
         
     def __truediv__(self, other):
         if isinstance(other, Node):
@@ -179,8 +191,8 @@ class Node(Observable, metaclass=_metaclass_Node):
         Destructor
         """
         # shutdown my evaluator
+        # print("Node@0x{0:x}.__del__: removing evaluator {1}".format(id(self), self._evaluator))
         self._evaluator = self._prepareEvaluator(None)
-        # print("Node@0x{0:x}.__del__".format(id(self)))
         return
 
 

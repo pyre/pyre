@@ -11,9 +11,12 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-all: test
+all: working #test
 
-test: sanity evaluators faulty
+working:
+	${PYTHON} ./patch.py
+
+test: sanity evaluators faulty evolution
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -35,5 +38,8 @@ faulty:
 	${PYTHON} ./expression_circular.py
 	${PYTHON} ./expression_syntaxerror.py
 	${PYTHON} ./expression_typeerror.py
+
+evolution:
+	${PYTHON} ./patch.py
 
 # end of file 
