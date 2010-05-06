@@ -35,7 +35,7 @@ def test():
         key="pyre.user.alias", value="{pyre.user.name}", locator=None)
 
     # build the model
-    configurator.configure(executive)
+    configurator.configure(executive, priority=executive.USER_CONFIGURATION)
 
     # check the variable bindings
     assert calculator["pyre.user.name"] == "michael aïvázis"

@@ -26,6 +26,12 @@ class Configurable(object): #, metaclass=Requirement):
     _pyre_traits = None # a list of all the traits in my declaration
 
 
+    # constants
+    # update these when new categories are added
+    _pyre_NONCONFIGURABLE_TRAITS = {"behaviors"}
+    _pyre_CONFIGURABLE_TRAITS = {"properties", "faiclities"}
+
+
     # trait access
     @classmethod
     def pyre_traits(cls, mine=True, inherited=True, categories=None):

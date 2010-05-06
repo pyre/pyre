@@ -60,7 +60,7 @@ class PathHash(object):
         return node
 
 
-    def dump(self, graphic):
+    def dump(self, graphic=''):
         """
         Dump out the names of all encountered nodes
         """

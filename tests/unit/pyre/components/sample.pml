@@ -35,6 +35,14 @@
     <bind property="common">d1 - common</bind>
   </component>
 
+  <!-- data for component_aliases -->
+  <component family="sample.functor">
+    <bind property="mean">mean</bind>
+    <bind property="μ">μ</bind>
+    <bind property="spread">spread</bind>
+    <bind property="σ">σ</bind>
+  </component>
+
 </config>
 
 

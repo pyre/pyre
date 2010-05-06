@@ -22,7 +22,7 @@ def test():
     assert executive.configurator is not None
     assert executive.calculator is not None
     # load a configuration file
-    executive.loadConfiguration("sample.pml")
+    executive.loadConfiguration(uri="sample.pml", priority=executive.USER_CONFIGURATION)
     # check that all is as expected
     assert executive.calculator["pyre.home"] == "pyre.home()"
     assert executive.calculator["pyre.prefix"] == "pyre.prefix()"

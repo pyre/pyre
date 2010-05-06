@@ -15,4 +15,15 @@ class Variable(Node):
     """
 
 
+    # public data
+    priority = (-1,-1)
+
+
+    # meta methods
+    def __init__(self, priority=priority, **kwds):
+        super().__init__(**kwds)
+        self.priority = priority
+        return
+
+
 # end of file 

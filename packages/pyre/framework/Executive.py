@@ -36,6 +36,14 @@ class Executive(object):
     packages = () # the set of configured packages
 
 
+    # constants
+    path = ("vfs:///pyre/system", "vfs:///pyre/user", "vfs:///local")
+
+    BOOT_CONFIGURATION = 0
+    PACKAGE_CONFIGURATION = 5
+    USER_CONFIGURATION = 10
+
+
     # interface
     # registration
     def registerComponentClass(self, component):
@@ -47,7 +55,7 @@ class Executive(object):
         # configure; do this before component class initialization
         self.loadPackageConfiguration(component)
         # transfer the configuration settings to the class properties
-        self.calculator.configureComponentClass(component)
+        self.calculator.configureComponentClass(executive=self, component=component)
         # and hand back the class record
         return component
 
@@ -59,7 +67,7 @@ class Executive(object):
         # get the instance registered
         self.registrar.registerComponentInstance(component)
         # transfer the configuration settings to the instance properties
-        self.calculator.configureComponentInstance(component)
+        self.calculator.configureComponentInstance(executive=self, component=component)
         # todo
         print("NYI: component instance binding and initialization")
         # and hand the instance back
@@ -76,7 +84,7 @@ class Executive(object):
 
 
     # configuration
-    def loadConfiguration(self, uri, override=True, locator=None):
+    def loadConfiguration(self, uri, priority, locator=None):
         """
         Load configuration settings from {uri}.
         """
@@ -87,7 +95,7 @@ class Executive(object):
         # decode the configuration stream
         reader.decode(configurator=self.configurator, stream=source, locator=locator)
         # get the configurator to update the evaluation model
-        self.configurator.configure(executive=self, override=override)
+        self.configurator.configure(executive=self, priority=priority)
         # all done
         return
 
@@ -120,7 +128,7 @@ class Executive(object):
             source = self.fileserver.join(path, filename, extension)
             # and try to load the configuration
             try:
-                self.loadConfiguration(source, override=False)
+                self.loadConfiguration(source, priority=self.PACKAGE_CONFIGURATION)
             except self.fileserver.NotFoundError as error:
                 pass
 
@@ -151,10 +159,6 @@ class Executive(object):
 
         # all done
         return
-
-
-    # constants
-    path = ("vfs:///pyre/system", "vfs:///pyre/user", "vfs:///local")
 
 
     # exceptions

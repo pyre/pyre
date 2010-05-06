@@ -26,7 +26,7 @@ class Pyre(Executive, metaclass=Singleton):
         for folder in self.configpath:
             source = self.fileserver.PATH_SEPARATOR.join([folder, self.bootup])
             try:
-                self.loadConfiguration(source)
+                self.loadConfiguration(uri=source, priority=self.BOOT_CONFIGURATION)
             except self.fileserver.NotFoundError as error:
                 # ignore nonexistent files
                 pass
@@ -34,12 +34,11 @@ class Pyre(Executive, metaclass=Singleton):
         # process the command line
         import sys
         from . import newCommandLineParser
-
+        # build a command line parser
         parser = newCommandLineParser()
         parser.decode(self.configurator, sys.argv[1:])
-
         # get the configurator to update my configuration
-        self.configurator.configure(self)
+        self.configurator.configure(executive=self, priority=self.USER_CONFIGURATION)
 
         # ready to go
         return

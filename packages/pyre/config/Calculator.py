@@ -28,7 +28,7 @@ class Calculator(AbstractModel):
 
 
     # interface
-    def configureComponentClass(self, component):
+    def configureComponentClass(self, executive, component):
         """
         Initialize the component class inventory by making the descriptors point to the
         evaluation nodes
@@ -43,7 +43,7 @@ class Calculator(AbstractModel):
         family = component._pyre_family
 
         # iterate over all the properties, both local and inherited
-        for trait,source in component.pyre_traits(categories={"properties"}):
+        for trait,source in component.pyre_traits(categories=component._pyre_CONFIGURABLE_TRAITS):
             # if the component declared a family, build the node key out of the component
             # family and the trait name
             key = self.TRAIT_SEPARATOR.join([family, trait.name]) if family else ''
@@ -54,25 +54,63 @@ class Calculator(AbstractModel):
                 # not there; build one
                 # for locally declared properties, just make a new binding
                 if source == component:
-                    node = self.bind(key, trait.default, locator, override=True)
+                    node = self.bind(
+                        key, trait.default, locator, 
+                        priority=(executive.PACKAGE_CONFIGURATION, -1))
                 # otherwise, it is an inherited property
                 else:
                     # get the configuration node that corresponds to this inherited trait
                     # this can't fail since the ancestor has been through this process already
                     referent = getattr(source._pyre_Inventory, trait.name)
                     # build a reference to it
-                    node = referent.newReference()
+                    node = referent.newReference(priority=(executive.PACKAGE_CONFIGURATION, -1))
                     # register the reference
                     if key:
                         self.registerNode(name=key, node=node)
+
             # now, attach the node as an inventory attribute named after the trait
             setattr(inventory, trait.name, node)
+            # process the trait aliases
+            for alias in trait.aliases:
+                print("{0._pyre_family}.{1.name}: alias {2!r}".format(component, trait, alias))
+                # build the alias key out of the component family and the trait name
+                aliasKey = self.TRAIT_SEPARATOR.join([family, alias]) if family else ''
+                try:
+                    other = self.findNode(aliasKey)
+                except KeyError:
+                    # no previous configuration under an alias
+                    print(" --- alias {!r} not seen previously".format(aliasKey))
+                    if key and aliasKey:
+                        self._hash.alias(
+                            alias=aliasKey, original=key, separator=self.TRAIT_SEPARATOR)
+                    continue
+
+                print(" --- found aliased node")
+                print(" --- canonical.name={0!r}, alias.name={1!r}".format(key, aliasKey))
+                print(" --- canonical.value={0.value!r}, alias.value={1.value!r}".format(node, other))
+                print(" --- canonical.priority={0.priority!r}, alias.priority={1.priority!r}".format(node, other))
+                # check whether we should 
+                if node.priority < other.priority:
+                    print(" --- alias is higher priority")
+                    node.value = other.value
+                    # node.evaluator = other.evaluator
+                    node.priority = other.priority
+
+                node._observers |= other._observers
+                for client in other._observers:
+                    client._replace(old=other, new=node)
+                if key and aliasKey:
+                    hashKey = self._hash.hash(aliasKey, separator=self.TRAIT_SEPARATOR)
+                    del self._nodes[hashKey]
+                    del self._names[hashKey]
+                    self._hash.alias(
+                        alias=aliasKey, original=key, separator=self.TRAIT_SEPARATOR)
 
         # all done
         return component
 
 
-    def configureComponentInstance(self, component):
+    def configureComponentInstance(self, executive, component):
         """
         Initialize the component instance inventory by making the descriptors point to the
         evaluation nodes
@@ -106,7 +144,7 @@ class Calculator(AbstractModel):
         return component
 
 
-    def bind(self, name, value, locator, override):
+    def bind(self, name, value, locator, priority):
         """
         Bind the variable {name} to {value}.
 
@@ -117,24 +155,30 @@ class Calculator(AbstractModel):
         """
         # make sure not to bail out when {name} is empty; nameless traits still need a Variable
         # built for them, since subclasses access them
-
+        print("Calculator.bind: {0!r} <- {1!r} with priority {2}".format(name, value, priority))
         # check whether we have seen this variable before
         try:
             node = self.findNode(name)
         except KeyError:
             # if not, build one
+            print(" --- first time for {!r}; building a new node".format(name))
             node = Variable(value=None, evaluator=None)
             # and register it if a name was given
             if name:
                 self.registerNode(name=name, node=node)
-        else:
-            # bail out if we have seen this node before and we are not performing replacement
-            # binding
-            if not override: return node
+        # if the existing node has higher priority
+               
+        print(" --- checking priority: current={}, binding={}".format(node.priority, priority))
+        if node.priority > priority:
+            # leave it alone
+            print(" --- existing node has higher priority; bailing out")
+            return node
 
+        # set the new node proority
+        node.priority = priority
+        # print("NYI: literal/macro/function interpretation of trait value")
         # build an evaluator
         # figure out if this value contains references to other nodes
-        # print("NYI: literal/macro/function interpretation of trait value")
         if value and isinstance(value, str) and Expression._scanner.match(value):
             evaluator = Expression(expression=value, model=self)
             value = None
