@@ -6,38 +6,36 @@
 #
 
 
-from .ErrorNode import ErrorNode
+from .Error import Error
 
 
-class UnresolvedNode(ErrorNode):
+class UnresolvedNode(Error):
     """
-    Placeholders for nodes that are not yet resolvable by the Model.
+    An evaluator that raises UnresolvedNodeError
     """
 
 
     # public data
-    name = None
-    clients = ()
+    name = None # the unresolved name
 
 
     # interface
-    def raiseException(self):
+    def compute(self):
         """
-        Raise an exception indicating a request for the value of an unresolved node
+        Compute my value
         """
-        raise self.UnresolvedNodeError(name=self.name, node=self)
+        raise self.UnresolvedNodeError(name=self.name, node=self._owner)
+
+
+    # meta methods
+    def __init__(self, name, **kwds):
+        super().__init__(**kwds)
+        self.name = name
+        return
 
 
     # exceptions
     from . import UnresolvedNodeError
 
-
-    # meta methods
-    def __init__(self, name, client, **kwds):
-        super().__init__(**kwds)
-        self.name = name
-        self.clients = set([client])
-        return
-        
 
 # end of file 

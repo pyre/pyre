@@ -32,7 +32,7 @@ class Unary(Function):
 
 
     # implementation details
-    def _replace(self, old, new):
+    def _replace(self, name, old, new):
         """
         Patch my domain by replacing {old} with {new}.
 

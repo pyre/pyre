@@ -76,7 +76,7 @@ class Expression(Polyadic):
             return "(" + symbol + ".value)"
 
 
-    def _replace(self, old, new):
+    def _replace(self, name, old, new):
         """
         Patch my domain by replacing {old} with {new}.
 
@@ -86,9 +86,9 @@ class Expression(Polyadic):
         # replace the node in the node table 
         # don't forget that the node name has been converted into a local sysmbol, so we need
         # an extra look up through the symbol table
-        self._nodeTable[self._symbolTable[old.name]] = new
+        self._nodeTable[self._symbolTable[name]] = new
         # and let my ancestors take care of my domain
-        return super()._replace(old, new)
+        return super()._replace(name, old, new)
 
 
     # private data

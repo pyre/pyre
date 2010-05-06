@@ -22,6 +22,10 @@ class Model(AbstractModel):
 
         If you are looking to insert a node in the model, please use 'registerNode',
         which is a lot smarter and takes care of patching unresolved names.
+
+        Do not be tempted to detect duplicate names here; registerNode takes care of that. Just
+        add the node to whatever storage mechanism you use and return the same node to the
+        caller
         """
         self._nodes[name] = node
         return node

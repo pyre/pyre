@@ -25,22 +25,15 @@ def test():
     price = cost + margin + overhead
     discount = .2
     total = price*(1.0 - discount)
-
-    print("Node@0x{0:x}".format(id(cost)))
-    print("   value: {}".format(cost._value))
-    print("   evaluator: {}".format(cost._evaluator))
-    print("       _op1: {}".format(cost._evaluator._op1))
-    print("       _op2: {}".format(cost._evaluator._op2))
-    print("   observers:")
-    for idx,observer in enumerate(cost._observers):
-        print("       {}: {}".format(idx, observer))
-        print("           node: {}".format(observer.__self__))
-        print("           func: {}".format(observer.__func__))
-
-    poser = pyre.calc.newNode()
-    print("Node@0x{0:x}".format(id(poser)))
-    print("   value: {}".format(poser._value))
-    print("   evaluator: {}".format(poser._evaluator))
+    # the poser
+    poser = pyre.calc.newNode(value=150.)
+    # need a name to patch expressions
+    poser.poseAs(node=cost)
+    # check
+    assert margin.value == .25*poser.value
+    assert overhead.value == .45*poser.value
+    assert price.value  == poser.value + margin.value + overhead.value
+    assert total.value == price.value*(1.0 - discount)
 
     return
 
@@ -56,9 +49,11 @@ if __name__ == "__main__":
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
+    # print(set(Node._pyre_extent))
     assert set(Node._pyre_extent) == set()
     # for evaluators
     from pyre.calc.Evaluator import Evaluator
+    # print(set(Evaluator._pyre_extent))
     assert set(Evaluator._pyre_extent) == set()
 
 

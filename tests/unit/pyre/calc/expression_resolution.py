@@ -22,7 +22,9 @@ def test():
     # the production node
     p = 80.
     production = pyre.calc.newNode(value=p)
+    # production.dump("production")
     price = pyre.calc.newNode(value=pyre.calc.expression(formula="2*{production}", model=model))
+    # price.dump("price")
 
     # ask for the price
     try:

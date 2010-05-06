@@ -127,6 +127,24 @@ class Node(Observable, metaclass=_metaclass_Node):
         return self.__class__(value=None, evaluator=Reference(node=self), **kwds)
 
 
+    def poseAs(self, *, node, name=None):
+        """
+        Remove {node} from its evaluation graph and graft {self} in its place
+        """
+        # flush the old node
+        node.flush()
+        # transfer the old observers
+        self.addObservers(node)
+        # and iterate through them to adjust their domain
+        for observer in node._observers:
+            # extract the client from the method callback
+            client = observer.__self__
+            # patch the domain of the client
+            client._replace(name=name, old=node, new=self)
+        # all done
+        return self
+
+
     # exceptions
     from . import CircularReferenceError, EvaluationError, UnresolvedNodeError
 
@@ -212,6 +230,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         return evaluator
 
 
+    # debugging
     def dump(self, tag=None):
         """
         Debugging tool that print out the relevant parts

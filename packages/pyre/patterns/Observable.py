@@ -58,6 +58,14 @@ class Observable(object):
         return callable
 
 
+    def addObservers(self, observable):
+        """
+        Add the observers of {observable} to my pile
+        """
+        self._observers |= observable._observers
+        return
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)

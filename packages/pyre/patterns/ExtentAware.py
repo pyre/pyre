@@ -50,13 +50,13 @@ class ExtentAware(type):
         return record
 
 
-    def __call__(cls, **kwds):
+    def __call__(cls, *args, **kwds):
         """
         Intercept the call to the client constructor, build the instance and keep a weak
         reference to it
         """
         # build the instance
-        instance = super().__call__(**kwds)
+        instance = super().__call__(*args, **kwds)
         # add it to the class extent
         instance.__class__._pyre_extent.add(instance)
         # and return it

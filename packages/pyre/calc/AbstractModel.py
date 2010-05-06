@@ -49,75 +49,54 @@ class AbstractModel(Named):
         """
         Add {node} into the model and make it accessible through {name}
         """
-        # print("{0.name}: registering {1}".format(self, name))
-        # attempt to find another node by the same name
+        # check whether this name has already been registered
         try:
-            old = self.findNode(name)
-            # print("  {0!r} is already in the model!".format(name))
+            unresolved = self.findNode(name)
         except KeyError:
-            pass
-        else:
-            # signal a name collision
-            raise self.DuplicateNodeError(model=self, name=name, node=old)
-
-        # add the node to the model
-        self.addNode(name=name, node=node)
-        # print("  added {0!r} to the model!".format(name))
-        # check whether this is a registration for a node previously marked as unersolved
-        try:
-            # print("  looking for a matching unresolved node")
-            unresolved = self._unresolvedNodes[name]
-        except KeyError:
-            # no, this is a new node; we are done
-            return node
-
-        # it's patching time...
-        # print("  got it")
-        # transfer the registered observers
-        # print(
-        #     "  adjusting the observers of the new node: {0}".format(len(unresolved._observers)))
-        node._observers |= unresolved._observers
-        # patch its clients
-        # print("  clients that need patching: {0}".format(unresolved.clients))
-        for client in unresolved.clients:
-            # replace the unresolved node in its domain with the new one
-            # print("  fixing the domain of Evaluator@0x{0:x}".format(id(client)))
-            client._replace(old=unresolved, new=node)
-        # and remove it from the unresolved pile
-        del self._unresolvedNodes[name]
-        # and return the new node
-        return node
+            # nope, this is the first time
+            return self.addNode(name=name, node=node)
+        # so, we have seen this name before
+        # if it does not belong to an unresolved node
+        if name not in self._unresolvedNames:
+            # this is a name collision
+            raise self.DuplicateNodeError(model=self, name=name, node=unresolved)
+        # patching time...
+        node.poseAs(node=unresolved, name=name)
+        # remove the name from the unresolved pile
+        self._unresolvedNames.remove(name)
+        # and place the node in the model
+        return self.addNode(name=name, node=node)
 
 
     def resolveNode(self, name, client):
         """
         Find the named node
         """
-        # if {name} maps to an unresolved node
+        # attempt to return the node that is registered under {name}
         try:
-            # grab the node
-            unresolved = self._unresolvedNodes[name]
-        except KeyError:
-            pass
-        else:
-            # add this client to its pile
-            unresolved.clients.add(client)
-            # and return it
-            return unresolved
-
-        # if {name} maps to a node already in the model
-        try:
-            # return it
             return self.findNode(name)
         except KeyError:
             pass
-        # otherwise build an unresolved node rep
+        # otherwise, build an unresolved node
         from .UnresolvedNode import UnresolvedNode
-        unresolved = UnresolvedNode(name=name, client=client)
+        unresolved = self.newErrorNode(evaluator=UnresolvedNode(name))
         # add it to the pile
-        self._unresolvedNodes[name] = unresolved
+        self.addNode(name=name, node=unresolved)
+        # and store the name so we can track these guys down
+        self._unresolvedNames.add(name)
         # and return it
         return unresolved
+
+
+    # methods that subclasses should override
+    def newErrorNode(self, evaluator):
+        """
+        Create a new error node with the given evaluator
+        """
+        # why is this the right node factory?
+        # subclasses should override this to provide their own nodes to host the error evaluator
+        from .Node import Node
+        return Node(value=None, evaluator=evaluator)
 
 
     # abstract methods that must be overriden by descendants
@@ -127,6 +106,10 @@ class AbstractModel(Named):
 
         If you are looking to insert a node in the model, please use 'registerNode',
         which is a lot smarter and takes care of patching unresolved names.
+
+        Do not be tempted to detect duplicate names here; registerNode takes care of that. Just
+        add the node to whatever storage mechanism you use and return the same node to the
+        caller
         """
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must implement 'addNode'".format(self))
@@ -157,7 +140,7 @@ class AbstractModel(Named):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        self._unresolvedNodes = {}
+        self._unresolvedNames = set()
         return
 
 
@@ -184,7 +167,7 @@ class AbstractModel(Named):
     # implementation details
     # private data
     _cleanNodes = None # the set of nodes known to have no cycles
-    _unresolvedNodes = None # the name map of unresolved nodes
+    _unresolvedNames = None # the name map of unresolved nodes
 
 
 # end of file 

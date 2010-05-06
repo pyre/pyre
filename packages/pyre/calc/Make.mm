@@ -27,7 +27,7 @@ EXPORT_PYTHON_MODULES = \
     Binary.py \
     Count.py \
     Division.py \
-    ErrorNode.py \
+    Error.py \
     Evaluator.py \
     Expression.py \
     Function.py \
