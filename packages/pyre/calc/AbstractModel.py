@@ -96,12 +96,14 @@ class AbstractModel(Named):
         try:
             # grab the node
             unresolved = self._unresolvedNodes[name]
+        except KeyError:
+            pass
+        else:
             # add this client to its pile
             unresolved.clients.add(client)
             # and return it
             return unresolved
-        except KeyError:
-            pass
+
         # if {name} maps to a node already in the model
         try:
             # return it

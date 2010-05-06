@@ -8,7 +8,7 @@
 
 
 """
-Verify that expressions work
+Verify that node resolution works
 """
 
 
