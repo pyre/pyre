@@ -124,7 +124,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         Build and return a new reference to me
         """
         from .Reference import Reference
-        return Node(value=None, evaluator=Reference(node=self), **kwds)
+        return self.__class__(value=None, evaluator=Reference(node=self), **kwds)
 
 
     # exceptions
