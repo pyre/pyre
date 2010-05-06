@@ -55,37 +55,38 @@ class AbstractModel(Named):
             old = self.findNode(name)
             # print("  {0!r} is already in the model!".format(name))
         except KeyError:
-            # add the node to the model
-            self.addNode(name=name, node=node)
-            # print("  added {0!r} to the model!".format(name))
-            # check whether this is a registration for a node previously marked as unersolved
-            try:
-                # the old node is a previously unresolved one,
-                # print("  looking for a matching unresolved node")
-                unresolved = self._unresolvedNodes[name]
-            except KeyError:
-                # no, this is a new node; we are done
-                return node
+            pass
+        else:
+            # signal a name collision
+            raise self.DuplicateNodeError(model=self, name=name, node=old)
 
-            # got one
-            # print("  got it")
-            # transfer the registered observers
-            # print(
-            # "  adjusting the observers of the new node: {0}"
-            # .format(len(unresolved._observers)))
-            node._observers |= unresolved._observers
-            # patch its clients
-            # print("  clients that need patching: {0}".format(unresolved.clients))
-            for client in unresolved.clients:
-                # replace the unresolved node in its domain with the new one
-                # print("  fixing the domain of Evaluator@0x{0:x}".format(id(client)))
-                client._replace(old=unresolved, new=node)
-            # and remove it from the unresolved pile
-            del self._unresolvedNodes[name]
-            # and return the new node
+        # add the node to the model
+        self.addNode(name=name, node=node)
+        # print("  added {0!r} to the model!".format(name))
+        # check whether this is a registration for a node previously marked as unersolved
+        try:
+            # print("  looking for a matching unresolved node")
+            unresolved = self._unresolvedNodes[name]
+        except KeyError:
+            # no, this is a new node; we are done
             return node
-        # otherwise it's a real collision
-        raise self.DuplicateNodeError(model=self, name=name, node=old)
+
+        # it's patching time...
+        # print("  got it")
+        # transfer the registered observers
+        # print(
+        #     "  adjusting the observers of the new node: {0}".format(len(unresolved._observers)))
+        node._observers |= unresolved._observers
+        # patch its clients
+        # print("  clients that need patching: {0}".format(unresolved.clients))
+        for client in unresolved.clients:
+            # replace the unresolved node in its domain with the new one
+            # print("  fixing the domain of Evaluator@0x{0:x}".format(id(client)))
+            client._replace(old=unresolved, new=node)
+        # and remove it from the unresolved pile
+        del self._unresolvedNodes[name]
+        # and return the new node
+        return node
 
 
     def resolveNode(self, name, client):
