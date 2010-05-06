@@ -64,7 +64,7 @@ class Evaluator(object, metaclass=_metaclass_Evaluator):
 
 
     # private data
-    _onwer = None
+    _owner = None
 
 
 # end of file 
