@@ -41,23 +41,27 @@ def test():
     assert gaussian.pyre_normalizeName("μ") == "mean"
     assert gaussian.pyre_normalizeName("spread") == "spread"
     assert gaussian.pyre_normalizeName("σ") == "spread"
-
-    # check the defaults
+    # print out the configuration state
     print("gaussian: defaults: mean={0.mean!r}, spread={0.spread!r}".format(gaussian))
     calculator = pyre.executive().calculator
     calculator._dump()
     calculator._hash.dump()
-
-    assert calculator._hash.hash('functor.mean', calculator.TRAIT_SEPARATOR) == calculator._hash.hash('functor.μ', calculator.TRAIT_SEPARATOR)
-    assert calculator._hash.hash('functor.spread', calculator.TRAIT_SEPARATOR) == calculator._hash.hash('functor.σ', calculator.TRAIT_SEPARATOR)
-
+    # check the class defaults; the values come from functor.pml in this directory
     assert gaussian.mean == 'command-line'
     assert gaussian.spread == 'config - σ'
-
-    return gaussian
+    # reset them to something meaningful
+    gaussian.μ = 0.0
+    gaussian.σ = 1.0
+    # verify the change
+    assert gaussian.mean == 0.0
+    assert gaussian.spread == 1.0
+    
 
     # instantiate one
     g = gaussian(name="gaussian")
+    # make sure the defaults were transferred correctly
+    assert g.mean == 0.0
+    assert g.spread == 1.0
     # use the canonical names to reconfigure
     g.mean = 1.0
     g.spread = 2.0
