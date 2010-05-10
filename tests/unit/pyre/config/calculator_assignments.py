@@ -23,16 +23,16 @@ def test():
 
     # create some assignments
     configurator.recordAssignment(
-        key="pyre.user.name", value="Michael Aïvázis", locator=None)
+        key=("pyre", "user", "name"), value="Michael Aïvázis", locator=None)
     configurator.recordAssignment(
-        key="pyre.user.name", value="michael aïvázis", locator=None)
+        key=("pyre", "user", "name"), value="michael aïvázis", locator=None)
     configurator.recordAssignment(
-        key="pyre.user.email", value="michael.aivazis@caltech.edu", locator=None)
+        key=("pyre", "user", "email"), value="michael.aivazis@caltech.edu", locator=None)
     configurator.recordAssignment(
-        key="pyre.user.affiliation",
+        key=("pyre", "user", "affiliation"),
         value="california institute of technology", locator=None)
     configurator.recordAssignment(
-        key="pyre.user.alias", value="{pyre.user.name}", locator=None)
+        key=("pyre", "user", "alias"), value="{pyre.user.name}", locator=None)
 
     # build the model
     configurator.configure(executive, priority=executive.USER_CONFIGURATION)

@@ -56,7 +56,6 @@ def test():
     assert gaussian.mean == 0.0
     assert gaussian.spread == 1.0
     
-
     # instantiate one
     g = gaussian(name="gaussian")
     # make sure the defaults were transferred correctly

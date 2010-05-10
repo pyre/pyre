@@ -32,8 +32,8 @@ class Configuration(Node):
         Process a binding of a property to a value
         """
         # the namespace markers on the key are in stored reverse order
-        # so reverse before joining with dots
-        self.bindings.append((".".join(reversed(key)), value, locator))
+        self.bindings.append((reversed(key), value, locator))
+        # nothing else, for now
         return
 
 

@@ -55,7 +55,8 @@ class Calculator(AbstractModel):
                 # for locally declared properties, just make a new binding
                 if source == component:
                     node = self.bind(
-                        key, trait.default, locator, 
+                        key.split(self.TRAIT_SEPARATOR),
+                        trait.default, locator, 
                         priority=(executive.PACKAGE_CONFIGURATION, -1))
                 # otherwise, it is an inherited property
                 else:
@@ -144,7 +145,7 @@ class Calculator(AbstractModel):
         return component
 
 
-    def bind(self, name, value, locator, priority):
+    def bind(self, key, value, locator, priority):
         """
         Bind the variable {name} to {value}.
 
@@ -155,6 +156,7 @@ class Calculator(AbstractModel):
         """
         # make sure not to bail out when {name} is empty; nameless traits still need a Variable
         # built for them, since subclasses access them
+        name = self.TRAIT_SEPARATOR.join(key)
         print("Calculator.bind: {0!r} <- {1!r} with priority {2}".format(name, value, priority))
         # check whether we have seen this variable before
         try:

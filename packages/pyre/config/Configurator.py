@@ -45,7 +45,7 @@ class Configurator(object):
         """
         Record a new variable binding with the {executive}
         """
-        return executive.calculator.bind(name=key, value=value, locator=locator, priority=priority)
+        return executive.calculator.bind(key=key, value=value, locator=locator, priority=priority)
 
 
     def load(self, executive, source, locator, **kwds):

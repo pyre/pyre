@@ -39,7 +39,7 @@ class Assignment(Event):
 
 
     def __str__(self):
-        return "{{{0.locator}: {0.key} <- {0.value}}}".format(self)
+        return "{{{0}: {1} <- {2}}}".format(self.locator, ".".join(self.key), self.value)
 
 
 # end of file 

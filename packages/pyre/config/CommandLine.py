@@ -148,8 +148,7 @@ class CommandLine(object):
         # now, form all the specified addresses by computing the cartesian product
         for spec in itertools.product(*fields):
             # create a new assignment
-            configurator.recordAssignment(
-                key=self.fieldSeparator.join(spec), value=value, locator=locator)
+            configurator.recordAssignment(key=spec, value=value, locator=locator)
         # all done
         return
 
