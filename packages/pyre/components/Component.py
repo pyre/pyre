@@ -26,6 +26,60 @@ class Component(Configurable, metaclass=Actor):
     _pyre_inventory = None # per-instance storage for trait values; built by Actor
 
 
+    # framework notifications
+    def pyre_prepare(self, executive):
+        """
+        Hook that gets invoked by the framework after the component instance has been
+        registered but before any configuration events
+        """
+        return self
+
+
+    def pyre_configure(self, executive):
+        """
+        Hook that gets invoked by the framework after the component instance has been
+        configured but before the binding of any of its traits
+        """
+        return self
+
+
+    def pyre_bind(self, executive):
+        """
+        Hook that gets invoked by the framework after all the properties of this component
+        instance have been assigned their final values, but before any validation has been
+        performed
+        """
+        return self
+
+
+    def pyre_validate(self, executive):
+        """
+        Hook that gets invoked by the framework after the properties of this component instance
+        have been validated. It is an opportunity to perform checks that involve the values of
+        more than one property at a time, and hence could not have been attached to any one
+        property
+        """
+        return self
+
+
+    def pyre_initialize(self, executive):
+        """
+        Hook that gets invoked by the framework right before the component is put into
+        action. The component is now in a known good state, with all configurable traits fully
+        bound and validated. This is the place where the component should acquire whatever
+        further resources it requires.
+        """
+        return self
+
+
+    def pyre_finalize(self, executive):
+        """
+        Hook that gets invoked by the framework right before the component is decomissioned.
+        The instance should release all acquired resources.
+        """
+        return self
+
+
     # class interface
     @classmethod
     def pyre_getPackageName(cls):

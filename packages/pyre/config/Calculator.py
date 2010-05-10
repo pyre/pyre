@@ -203,7 +203,7 @@ class Calculator(AbstractModel):
             return node
         # print("  existing node has lower priority; assigning new value")
 
-        # set the new node proority
+        # set the new node priority
         node.priority = priority
         # print("NYI: literal/macro/function interpretation of trait value")
         # build an evaluator

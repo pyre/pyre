@@ -29,7 +29,26 @@ class Configurable(object): #, metaclass=Requirement):
     # constants
     # update these when new categories are added
     _pyre_NONCONFIGURABLE_TRAITS = {"behaviors"}
-    _pyre_CONFIGURABLE_TRAITS = {"properties", "faiclities"}
+    _pyre_CONFIGURABLE_TRAITS = {"properties", "facilities"}
+
+
+    # framework notifications
+    @classmethod
+    def pyre_prepareClass(cls, executive):
+        """
+        Hook that gets invoked by the framework after the class record has been registered but
+        before any configuration events
+        """
+        return
+
+
+    @classmethod
+    def pyre_configureClass(cls, executive):
+        """
+        Hook that gets invoked by the framework after the class record has been configured and
+        before any instances have been created
+        """
+        return
 
 
     # trait access

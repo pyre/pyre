@@ -52,10 +52,14 @@ class Executive(object):
         """
         # get the component class registered
         self.registrar.registerComponentClass(component)
+        # invoke the class registration hook
+        component.pyre_prepareClass(executive=self)
         # configure; do this before component class initialization
         self.loadPackageConfiguration(component)
         # transfer the configuration settings to the class properties
         self.calculator.configureComponentClass(executive=self, component=component)
+        # invoke the class configuration hook
+        component.pyre_configureClass(executive=self)
         # and hand back the class record
         return component
 
@@ -66,8 +70,12 @@ class Executive(object):
         """
         # get the instance registered
         self.registrar.registerComponentInstance(component)
+        # invoke the registration hook
+        component.pyre_prepare(executive=self)
         # transfer the configuration settings to the instance properties
         self.calculator.configureComponentInstance(executive=self, component=component)
+        # invoke the configuration hook
+        component.pyre_configure(executive=self)
         # todo
         print("NYI: component instance binding and initialization")
         # and hand the instance back
@@ -80,7 +88,11 @@ class Executive(object):
         """
         # not much to do with interfaces
         # just forward the request to the component registar
-        return self.registrar.registerInterfaceClass(interface)
+        self.registrar.registerInterfaceClass(interface)
+        # invoke the class registration hook
+        interface.pyre_prepareClass(executive=self)
+        # and hand back the interface class
+        return interface
 
 
     # configuration
