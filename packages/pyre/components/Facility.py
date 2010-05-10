@@ -16,7 +16,7 @@ class Facility(Trait):
 
 
     # public data
-    interface = None # the interface specification that compoatible components must satisfy
+    interface = None # the interface specification that compatible components must satisfy
 
 
     # private data

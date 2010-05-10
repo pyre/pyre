@@ -41,7 +41,7 @@ def test():
 
     # check the class variables
     assert sentry._pyre_name == "naïve"
-    assert sentry._pyre_family == "opal.authentication"
+    assert sentry._pyre_family == ["opal", "authentication"]
     assert sentry._pyre_configurables == (Sentry, Component)
     assert sentry._pyre_implements == None
 

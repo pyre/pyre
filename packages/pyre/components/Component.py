@@ -18,7 +18,7 @@ class Component(Configurable, metaclass=Actor):
 
     # framework data
     _pyre_name = None # my public name
-    _pyre_family = None # my public name
+    _pyre_family = () # my public name
     _pyre_implements = None # the list of interfaces implemented by this component
     _pyre_configurables = None # a tuple of all my ancestors that derive from Configurable
 
@@ -37,7 +37,7 @@ class Component(Configurable, metaclass=Actor):
         # bail out if there is not family name
         if not cls._pyre_family: return None
         # otherwise, split the family name na dreturn the first fragment
-        return cls._pyre_family.split(cls._pyre_FAMILY_SEPARATOR)[0]
+        return cls._pyre_family[0]
 
 
     @classmethod
@@ -94,10 +94,6 @@ class Component(Configurable, metaclass=Actor):
             return super().__setattr__(name, value)
 
         return super().__setattr__(name, value)
-
-
-    # constants
-    _pyre_FAMILY_SEPARATOR = '.'
 
 
 # end of file 

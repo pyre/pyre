@@ -23,6 +23,10 @@ class Actor(Requirement):
     """
 
 
+    # constants
+    _pyre_FAMILY_SEPARATOR = '.'
+
+
     # meta methods
     def __new__(cls, name, bases, attributes, family=None, implements=None, core=None, **kwds):
         """
@@ -41,7 +45,7 @@ class Actor(Requirement):
         # get my ancestor to build the class record
         component = super().__new__(cls, name, bases, attributes, **kwds)
         # record the family name
-        component._pyre_family = family
+        component._pyre_family = family.split(cls._pyre_FAMILY_SEPARATOR) if family else ()
         # build the implementation specification
         interface = cls._pyre_buildImplementationSpecification(name, component, bases, implements)
         if interface:

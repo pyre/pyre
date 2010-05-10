@@ -39,73 +39,68 @@ class Calculator(AbstractModel):
         locator = pyre.tracking.newSimpleLocator(source="<defaults>")
         # get the class inventory
         inventory = component._pyre_Inventory
-        # get the component family
+        # get the component family; it has already been split on '.' at construction
         family = component._pyre_family
-
-        # iterate over all the properties, both local and inherited
-        for trait,source in component.pyre_traits(categories=component._pyre_CONFIGURABLE_TRAITS):
-            # if the component declared a family, build the node key out of the component
-            # family and the trait name
-            key = self.TRAIT_SEPARATOR.join([family, trait.name]) if family else ''
-            # check whether a configuration node is available
-            try:
-                node = self.findNode(key)
-            except KeyError:
-                # not there; build one
-                # for locally declared properties, just make a new binding
-                if source == component:
-                    node = self.bind(
-                        key.split(self.TRAIT_SEPARATOR),
-                        trait.default, locator, 
-                        priority=(executive.PACKAGE_CONFIGURATION, -1))
-                # otherwise, it is an inherited property
-                else:
-                    # get the configuration node that corresponds to this inherited trait
-                    # this can't fail since the ancestor has been through this process already
-                    referent = getattr(source._pyre_Inventory, trait.name)
-                    # build a reference to it
-                    node = referent.newReference(priority=(executive.PACKAGE_CONFIGURATION, -1))
-                    # register the reference
-                    if key:
-                        self.registerNode(name=key, node=node)
-
-            # now, attach the node as an inventory attribute named after the trait
+        # checkpoint
+        # print("Calculator.configureComponentClass: configuring {!r}, family={!r}".format(
+                # component.__name__, family))
+        # iterate over all the properties, both own and inherited
+        for trait, source in component.pyre_traits(categories=component._pyre_CONFIGURABLE_TRAITS):
+            # build the authoritative node for this trait
+            # if this is a trait declared by this component
+            if source == component:
+                # print("  trait: {.name!r}, one of mine".format(trait))
+                # establish a default value with the lowest possible priority
+                node = Variable(value=trait.default, evaluator=None)
+            # otherwise, build a reference to the ancestor's node
+            else:
+                # print("  trait: {.name!r}, inherited from {.__name__!r}".format(trait, source))
+                # get the configuration node that corresponds to this inherited trait
+                # this can't fail since the ancestor has been through this process already
+                referent = getattr(source._pyre_Inventory, trait.name)
+                # build a reference to it
+                node = referent.newReference()
+            # attach the node as an inventory attribute named after the trait
             setattr(inventory, trait.name, node)
-            # process the trait aliases
+            # if this component class did not declare a family we are done configuring this trait
+            if not family: continue
+            # build the canonical name of this node
+            canonical = self.TRAIT_SEPARATOR.join(family + [trait.name])
+            # otherwise, look through the model for configurations for this trait
             for alias in trait.aliases:
-                print("{0._pyre_family}.{1.name}: alias {2!r}".format(component, trait, alias))
-                # build the alias key out of the component family and the trait name
-                aliasKey = self.TRAIT_SEPARATOR.join([family, alias]) if family else ''
+                # print("    alias: {!r}".format(alias))
+                # form the name of the potential node
+                key = self.TRAIT_SEPARATOR.join(family + [alias])
+                # look for the node
+                # print("      looking for {!r}".format(key))
                 try:
-                    other = self.findNode(aliasKey)
+                    existing = self.findNode(key)
+                # if not there
                 except KeyError:
-                    # no previous configuration under an alias
-                    print(" --- alias {!r} not seen previously".format(aliasKey))
-                    if key and aliasKey:
-                        self._hash.alias(
-                            alias=aliasKey, original=key, separator=self.TRAIT_SEPARATOR)
+                    # print("        no such configuration node")
+                    # move on to the next alias
                     continue
-
-                print(" --- found aliased node")
-                print(" --- canonical.name={0!r}, alias.name={1!r}".format(key, aliasKey))
-                print(" --- canonical.value={0.value!r}, alias.value={1.value!r}".format(node, other))
-                print(" --- canonical.priority={0.priority!r}, alias.priority={1.priority!r}".format(node, other))
-                # check whether we should 
-                if node.priority < other.priority:
-                    print(" --- alias is higher priority")
-                    node.value = other.value
-                    # node.evaluator = other.evaluator
-                    node.priority = other.priority
-
-                node._observers |= other._observers
-                for client in other._observers:
-                    client._replace(old=other, new=node)
-                if key and aliasKey:
-                    hashKey = self._hash.hash(aliasKey, separator=self.TRAIT_SEPARATOR)
-                    del self._nodes[hashKey]
-                    del self._names[hashKey]
-                    self._hash.alias(
-                        alias=aliasKey, original=key, separator=self.TRAIT_SEPARATOR)
+                # if the node is there
+                else:
+                    # print("      removing the existing configuration node")
+                    # clean up the model
+                    aliasHash = self._hash.hash(key, separator=self.TRAIT_SEPARATOR)
+                    del self._nodes[aliasHash]
+                    del self._names[aliasHash]
+                # either way,  make sure we register this alias with the hash table
+                # must be done after the call to findNode, otherwise aliasing will make the
+                # node incaccessible
+                finally:
+                    # print("      aliasing {!r} to {!r}".format(key, canonical))
+                    self._hash.alias(alias=key, original=canonical, separator=self.TRAIT_SEPARATOR)
+                # print("      processing setting: {!r} <- {!r}".format(alias, existing.value))
+                node.assimilate(other=existing, alias=key)
+            # finally, register the node with the model
+            # this must be done after the potential name clash has been prevented by removing all
+            # nodes that may be aliases of this one
+            self.registerNode(name=canonical, node=node)
+            # and log the event
+            self._tracker.track(key=node, value=(trait.default, locator))
 
         # all done
         return component
@@ -116,38 +111,69 @@ class Calculator(AbstractModel):
         Initialize the component instance inventory by making the descriptors point to the
         evaluation nodes
         """
-        # get the component's name
-        # name = component._pyre_name
-        name = self.FAMILY_SEPARATOR.join(
-            tag for tag in [component._pyre_family, component._pyre_name] if tag)
+        # get the component's family
+        family = self.TRAIT_SEPARATOR.join(component._pyre_family)
+        # build the component's name
+        name = component._pyre_name
+        # build the fully qualified name
+        fqname = self.FAMILY_SEPARATOR.join(tag for tag in [family,name] if tag)
         # get the component's inventory
         inventory = component._pyre_inventory
+        # checkpoint
+        # print("Calculator.configureComponentInstance: configuring {!r}, family={!r}".format(
+                # component._pyre_name, family))
         # iterate over my traits
-        for trait, ancestor in component.pyre_traits(categories={"properties"}):
-            # create the node key
-            key = self.TRAIT_SEPARATOR.join([name, trait.name])
-            # check whether there is an existing configuration node by this name
-            try:
-                node = self.findNode(key)
-            except KeyError:
-                # grab the trait node from the class record
-                # this is guaranteed to succeed since the class record has been through this
-                # process already
-                default = getattr(inventory, trait.name)
-                # create a reference to it
-                node = default.newReference()
-                # and register the new node
-                self.registerNode(name=key, node=node)
-            # and add it to the inventory
+        for trait, source in component.pyre_traits(categories=component._pyre_CONFIGURABLE_TRAITS):
+            # get the node that holds the class default value
+            default = getattr(inventory, trait.name)
+            # build the authoritative node for this trait
+            node = default.newReference()
+            # and its canonical name
+            canonical = self.TRAIT_SEPARATOR.join([name, trait.name])
+            # now look for confingurations for this trait
+            for alias in trait.aliases:
+                # print("    alias: {!r}".format(alias))
+                # form the name of the potential node
+                # first the unqualified name
+                uqKey = self.TRAIT_SEPARATOR.join([name, alias])
+                # and now the fully qualified name
+                fqKey = self.TRAIT_SEPARATOR.join([fqname, alias])
+                # for either of these names
+                for key in [fqKey, uqKey]:
+                    # look for the node
+                    # print("      looking for {!r}".format(key))
+                    try:
+                        existing = self.findNode(key)
+                    # if not there
+                    except KeyError:
+                        # print("      no such configuration node")
+                        continue
+                    # if the node is there
+                    else:
+                        # print("      removing the existing configuration node")
+                        # clean up the model
+                        aliasHash = self._hash.hash(key, separator=self.TRAIT_SEPARATOR)
+                        del self._nodes[aliasHash]
+                        del self._names[aliasHash]
+                    # either way, make sure we register this alias with the has table
+                    finally:
+                        # print("      aliasing {!r} to {!r}".format(key, canonical))
+                        self._hash.alias(
+                            alias=key, original=canonical, separator=self.TRAIT_SEPARATOR)
+                    # print("      processing setting: {!r} <- {!r}".format(alias, existing.value))
+                    node.assimilate(other=existing, alias=key)
+            # finally, attach the node as an inventory attribute named after the trait
             setattr(inventory, trait.name, node)
-
+            # register it with the model
+            self.registerNode(name=canonical, node=node)
         # all done; hand the component back
         return component
 
 
     def bind(self, key, value, locator, priority):
         """
-        Bind the variable {name} to {value}.
+        Construct a node to hold {value} and register it with the model under a name derived
+        from {key}
 
         If there is no existing variable by this name, build one and register it with the
         model. Otherwise, just update the existing node. The contents of {value} can refer to
@@ -157,24 +183,25 @@ class Calculator(AbstractModel):
         # make sure not to bail out when {name} is empty; nameless traits still need a Variable
         # built for them, since subclasses access them
         name = self.TRAIT_SEPARATOR.join(key)
-        print("Calculator.bind: {0!r} <- {1!r} with priority {2}".format(name, value, priority))
+        # print("Calculator.bind: {0!r} <- {1!r} with priority {2}".format(name, value, priority))
         # check whether we have seen this variable before
         try:
             node = self.findNode(name)
         except KeyError:
             # if not, build one
-            print(" --- first time for {!r}; building a new node".format(name))
+            # print("  first time for {!r}; building a new node".format(name))
             node = Variable(value=None, evaluator=None)
             # and register it if a name was given
             if name:
                 self.registerNode(name=name, node=node)
         # if the existing node has higher priority
                
-        print(" --- checking priority: current={}, binding={}".format(node.priority, priority))
+        # print("  checking priority: current={}, binding={}".format(node.priority, priority))
         if node.priority > priority:
             # leave it alone
-            print(" --- existing node has higher priority; bailing out")
+            # print("  existing node has higher priority; skipping")
             return node
+        # print("  existing node has lower priority; assigning new value")
 
         # set the new node proority
         node.priority = priority

@@ -142,8 +142,9 @@ class Requirement(AttributeClassifier):
             Attach any further metadata to the descriptor being declared
             """
             # store the attribute name with the descriptor
-            # this also decorates function declarations, but that's ok
             descriptor.name = name
+            # initialize the descriptor's aliases
+            descriptor.aliases.add(name)
             # and return it
             return descriptor
         

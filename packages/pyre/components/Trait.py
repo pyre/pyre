@@ -28,6 +28,7 @@ class Trait(Named):
 
     # public data
     name = None # my canonical name; set at construction time or binding name
+    aliases = None # the set of alternative names by which I am accessible
     tip = None # a short description of my purpose and constraints; see doc below
 
 
@@ -64,6 +65,7 @@ class Trait(Named):
     # meta methods
     def __init__(self, name=None, **kwds):
         super().__init__(name=name, **kwds)
+        self.aliases = set()
         return
 
 

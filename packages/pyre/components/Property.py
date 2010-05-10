@@ -43,20 +43,9 @@ class Property(Trait):
         """
         # access the namemap
         namemap = configurable._pyre_Inventory._pyre_namemap
-        # map my name to my name
-        namemap[self.name] = self.name
         # map my aliases
         for alias in self.aliases:
             namemap[alias] = self.name
-        # and return
-        return
-
-
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-        # initialize my aliases
-        self.aliases = set()
         # and return
         return
 

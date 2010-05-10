@@ -21,7 +21,7 @@ def test():
      
     # check the basics
     assert component._pyre_name == "component"
-    assert component._pyre_family == "trivial"
+    assert component._pyre_family == ["trivial"]
     assert component._pyre_configurables == (component, Component)
     assert component._pyre_implements == None
     # check the embedded inventory class

@@ -19,6 +19,23 @@ class Variable(Node):
     priority = (-1,-1)
 
 
+    # interface
+    def assimilate(self, other, alias):
+        """
+        Replace references to node {other} under the name {alias}, and steal its value if its
+        priority is higher than mine
+        """
+        # print("      priorities: mine={0.priority!r}, hers={1.priority!r}".format(self, other))
+        # if {other} has higher priority
+        if self.priority < other.priority:
+            # print("      overriding")
+            # assume its value and priority
+            self.value = other.value
+            self.priority = other.priority
+        # either way, she is redundant; so replace her
+        return self.poseAs(node=other, name=alias)
+
+
     # meta methods
     def __init__(self, priority=priority, **kwds):
         super().__init__(**kwds)

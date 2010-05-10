@@ -11,10 +11,7 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-all: working
-
-working:
-	${PYTHON} ./component_aliases.py --functor.μ="command-line"
+all: test
 
 test: sanity metaclasses interfaces components
 
@@ -56,6 +53,7 @@ components:
 	${PYTHON} ./component_instantiation.py
 	${PYTHON} ./component_configuration_instantiation.py
 	${PYTHON} ./component_invocation.py
+	${PYTHON} ./component_aliases.py --functor.μ="cmd" --gaussian.spread="cmd"
 
 
 # end of file 

@@ -16,6 +16,7 @@ class Behavior(Trait):
 
     # public data
     name = None # my canonical name; set at construction time or binding name
+    aliases = None # the set of alternative names by which I am accessible
     tip = None # a short description of my purpose and constraints; see doc below
 
 
