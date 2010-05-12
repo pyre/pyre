@@ -6,10 +6,4 @@
 //
 
 
-pyre {
-    home: pyre.home();
-    prefix: pyre.prefix();
-}
-
-
 // end of file 

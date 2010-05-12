@@ -8,13 +8,6 @@
 -->
 
 <config>
-
-  <inventory name="pyre">
-    <!-- global settings -->
-    <bind property="home">pyre.home()</bind>
-    <bind property="prefix">pyre.prefix()</bind>
-  </inventory>
-
 </config>
 
 

@@ -11,8 +11,8 @@
 
   <inventory name="pyre">
     <!-- some global settings -->
-    <bind property="home">pyre.home()</bind>
-    <bind property="prefix">pyre.prefix()</bind>
+    <bind property="home">home</bind>
+    <bind property="prefix">prefix</bind>
 
     <!-- and some per user settings -->
     <inventory name="user">

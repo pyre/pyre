@@ -22,6 +22,11 @@ class Pyre(Executive, metaclass=Singleton):
         """
         Perform all the default initialization steps
         """
+        # install the default configuration settings
+        import pyre
+        self.calculator["pyre.home"] = pyre.home()
+        self.calculator["pyre.prefix"] = pyre.prefix()
+
         # read and apply settings from the default configuration files
         for folder in self.configpath:
             source = self.fileserver.PATH_SEPARATOR.join([folder, self.bootup])
