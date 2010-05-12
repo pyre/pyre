@@ -25,7 +25,10 @@ class Calculator(AbstractModel):
     # constants
     TRAIT_SEPARATOR = '.'
     FAMILY_SEPARATOR = '#'
+    DEFAULT_PRIORITY = (-1, -1)
 
+    # build a locator for values that come from trait defaults
+    locator = pyre.tracking.newSimpleLocator(source="<defaults>")
 
     # interface
     def configureComponentClass(self, executive, component):
@@ -33,10 +36,6 @@ class Calculator(AbstractModel):
         Initialize the component class inventory by making the descriptors point to the
         evaluation nodes
         """
-        # access the locator factories
-        import pyre.tracking
-        # build a locator for values that come from trait defaults
-        locator = pyre.tracking.newSimpleLocator(source="<defaults>")
         # get the class inventory
         inventory = component._pyre_Inventory
         # get the component family; it has already been split on '.' at construction
@@ -100,7 +99,7 @@ class Calculator(AbstractModel):
             # nodes that may be aliases of this one
             self.registerNode(name=canonical, node=node)
             # and log the event
-            self._tracker.track(key=node, value=(trait.default, locator))
+            self._tracker.track(key=node, value=(trait.default, self.locator))
 
         # all done
         return component
@@ -281,6 +280,11 @@ class Calculator(AbstractModel):
         # history tracking
         self._tracker = pyre.tracking.newTracker()
 
+        return
+
+
+    def __setitem__(self, name, value):
+        self.bind(key=[name], value=value, locator=self.locator, priority=self.DEFAULT_PRIORITY)
         return
 
 
