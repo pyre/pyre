@@ -20,7 +20,12 @@ class Expression(Polyadic):
         """
         Evaluate my program
         """
-        return eval(self._program, self._nodeTable)
+        # if I were given a non-trivial expression
+        if self._program and self._nodeTable:
+            # evaluate it and return the result
+            return eval(self._program, self._nodeTable)
+        # otherwise, just return the original input
+        return self._formula
 
 
     # exceptions
@@ -29,33 +34,37 @@ class Expression(Polyadic):
 
     # meta methods
     def __init__(self, expression, model, **kwds):
-        super().__init__(domain=self._compile(expression, model), **kwds)
+        # save a copy of the input
+        self._formula = expression
+        # initialize the symbol table
+        self._symbolTable = {} # the map: {node name} -> {identifier}
+
+        # convert node references to legal python identifiers
+        expression = self._scanner.sub(self._identifierHandler, expression)
+        # if there were refrences to other nodes
+        if self._symbolTable:
+            try:
+                self._program = compile(expression, filename='expression', mode='eval')
+            except SyntaxError as error:
+                raise self.ExpressionError(self, error, expression) from error
+            # build my evaluation context
+            self._nodeTable = {
+                self._symbolTable[name]: model.resolveNode(client=self, name=name)
+                for name in self._symbolTable }
+            # and compute and return my domain
+            domain = set(self._nodeTable.values())
+        # otherwise
+        else:
+            self._program = None
+            self._nodeTable = {}
+            domain = []
+
+        # invoke the constructor of the ancestor
+        super().__init__(domain=domain, **kwds)
         return
 
 
     # implementation details
-    def _compile(self, formula, model):
-        """
-        Convert {expression} into a form that the python interpreter can evaluate by resolving
-        references to other nodes against {model}
-        """
-        # install the symbol table
-        self._symbolTable = {} # the map: {node name} -> {identifier}
-        # convert node references to legal python identifiers
-        expression = self._scanner.sub(self._identifierHandler, formula)
-        # compile the resulting expression
-        try:
-            self._program = compile(expression, filename='expression', mode='eval')
-        except SyntaxError as error:
-            raise self.ExpressionError(self, error, formula) from error
-        # build my evaluation context
-        self._nodeTable = {
-            self._symbolTable[name]: model.resolveNode(client=self, name=name)
-            for name in self._symbolTable }
-        # and compute and return my domain
-        return set(self._nodeTable.values())
-
-
     def _identifierHandler(self, match):
         """
         Callback for re.sub that extracts node references, adds them to my symbol table and
@@ -97,9 +106,10 @@ class Expression(Polyadic):
     _symbolTable = None # the map: {node name} -> {identifier}
 
     # regex choices
-    _open = re.escape('{')
-    _close = re.escape('}')
-    _scanner = re.compile(r"{0}(?P<identifier>[^{1}]+){1}".format(_open, _close))
+    _scanner = re.compile(
+        r"(?<!{){"
+        r"(?P<identifier>[^}{]+)"
+        r"(?<!})}")
     
 
 # end of file 

@@ -21,9 +21,9 @@ def test():
 
     # the nodes
     p = 80.
-    s = ".25*80"
+    s = .25*80
     production = pyre.calc.newNode(value=p)
-    shipping = pyre.calc.newNode(value=pyre.calc.expression(formula=s, model=model))
+    shipping = pyre.calc.newNode(value=s)
     cost = pyre.calc.newNode(
         value=pyre.calc.expression(formula="{production}+{shipping}", model=model))
     price = pyre.calc.newNode(value=pyre.calc.expression(formula="2*{cost}", model=model))
@@ -35,7 +35,6 @@ def test():
     model.registerNode(name="price", node=price)
 
     # check the values
-    s = eval(s)
     assert production.value == p
     assert shipping.value == s
     assert cost.value == production.value + shipping.value

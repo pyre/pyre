@@ -31,6 +31,7 @@ evaluators:
 	${PYTHON} ./sample.py
 
 faulty:
+	${PYTHON} ./expression_escaped.py
 	${PYTHON} ./expression_circular.py
 	${PYTHON} ./expression_syntaxerror.py
 	${PYTHON} ./expression_typeerror.py
