@@ -46,7 +46,7 @@ def newNode(value=None, **kwds):
 
     parameters: 
         {value}: can be an Evaluator descendant, another Node, or any other python
-        object that will be interpreted as the literal value of the node
+                 object that will be interpreted as the literal value of the node
     """
     # build the node
     from .Node import Node
