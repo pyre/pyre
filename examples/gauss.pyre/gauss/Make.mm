@@ -4,19 +4,24 @@
 # california institute of technology
 # (c) 1998-2010 all rights reserved
 #
-#
 
 
-PROJECT = pyre
+PROJECT = gauss
+PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
 
 RECURSE_DIRS = \
-    gauss.pyre
+    functors \
+    generators \
+    integrators \
+    interfaces \
+    shapes \
+    util \
+
 
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: export
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -27,5 +32,15 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+
+#--------------------------------------------------------------------------
+# export
+
+EXPORT_PYTHON_MODULES = \
+    __init__.py
+
+
+export:: export-python-modules
+	BLD_ACTION="export" $(MM) recurse
 
 # end of file 

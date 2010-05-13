@@ -4,28 +4,25 @@
 # california institute of technology
 # (c) 1998-2010 all rights reserved
 #
-#
 
 
-PROJECT = pyre
-
-RECURSE_DIRS = \
-    gauss.pyre
+PROJECT = gauss.pyre
+PACKAGE = depository
 
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: export
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
+#--------------------------------------------------------------------------
+#
 
-clean::
-	BLD_ACTION="clean" $(MM) recurse
+EXPORT_ETCDIR = $(EXPORT_ROOT)
+EXPORT_ETC = \
+    gauss.pml
 
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
+
+export:: export-etc
 
 
 # end of file 

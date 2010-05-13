@@ -4,13 +4,12 @@
 # california institute of technology
 # (c) 1998-2010 all rights reserved
 #
-#
 
 
-PROJECT = pyre
+PROJECT = gauss.pyre
 
 RECURSE_DIRS = \
-    gauss.pyre
+    unit \
 
 #--------------------------------------------------------------------------
 #

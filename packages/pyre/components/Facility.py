@@ -6,10 +6,10 @@
 #
 
 
-from .Trait import Trait
+from .Property import Property
 
 
-class Facility(Trait):
+class Facility(Property):
     """
     Base class for traits that are supposed to be bound to other components
     """

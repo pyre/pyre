@@ -7,10 +7,12 @@
 #
 
 
-PROJECT = pyre
+PROJECT = gauss.pyre
 
 RECURSE_DIRS = \
-    gauss.pyre
+    gauss \
+    depository \
+    tests
 
 #--------------------------------------------------------------------------
 #
