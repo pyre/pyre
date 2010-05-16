@@ -1,0 +1,65 @@
+% -*- LaTeX -*-
+% -*- coding: utf-8 -*-
+%
+% michael a.g. aïvázis
+% california institute of technology
+% (c) 1998-2010  all rights reserved
+%
+
+\documentclass[titlepage]{article}
+
+% packages, setup, macros, etc.
+\input{meta}
+\input{config}
+\input{macros}
+
+% the document
+\title{Building scientific applications using pyre}
+\author{Michael A.~G.~A\"iv\'azis \\ California Institute of Technology}
+\begin{document}
+
+% front matter
+\maketitle
+\setcounter{page}{1}
+%\pagenumbering{roman}
+\input{abstract}
+\tableofcontents 
+%\newpage
+%\listoffigures 
+%\newpage
+%\listoftables 
+\newpage
+
+%\pagenumbering{arabic}
+%\setcounter{page}{1}
+
+% the body
+\input{sec_introduction}
+
+% a bit of theory
+\input{sec_montecarlo}
+
+% the simple solutions
+\input{sec_simple}
+% going object oriented
+\input{sec_classes}
+% component mining
+\input{sec_components}
+
+% NYI
+\input{sec_pyreapp}
+%\input{sec_web}
+%\input{sec_gui}
+%\input{sec_services}
+
+\input{sec_epilogue}
+
+% references
+\newpage
+\bibliographystyle{unsrtnat}
+\renewcommand\bibsection{\section{\refname}}
+\bibliography{references}
+
+\end{document}
+
+% end of file 

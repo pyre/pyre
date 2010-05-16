@@ -1,17 +1,19 @@
 # -*- Makefile -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2010 all rights reserved
+# (c) 1998-2010  all rights reserved
 #
-#
-
 
 PROJECT = pyre
+PACKAGE = doc/gauss/listings
 
 RECURSE_DIRS = \
-    diagrams \
-    gauss \
+    simple \
+    classes-simple \
+    classes-containers \
+    classes-generators \
 
 #--------------------------------------------------------------------------
 #
@@ -27,6 +29,5 @@ clean::
 
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
-
 
 # end of file 

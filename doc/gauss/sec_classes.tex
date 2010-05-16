@@ -1,0 +1,650 @@
+% -*- LaTeX -*-
+% -*- coding: utf-8 -*-
+%
+% michael a.g. aïvázis
+% california institute of technology
+% (c) 1998-2010  all rights reserved
+%
+
+\section{The hunt for objects}
+\label{sec:classes}
+
+The two implementations in \secref{simple:python} and \secref{simple:c} are excellent examples
+of a very common occurrence in scientific programming. They are simple and to the point, and
+solve the problem as originally stated rather well.  This kind of simplicity has many
+advantages: the code is easy to understand, changing it does not require understanding
+complicated interactions between unfamiliar pieces of code, and it is likely to have very good
+performance characteristics. Unfortunately, even minor attempts at generalization will require
+extensive surgery. That's not to say that the time spent in constructing these prototypes is
+wasted: it takes foresight that comes with extensive experience to be able to see the general
+solution without visiting a few dead ends. As they are, our two implementations will serve as
+benchmarks against which we will judge the next evolutionary steps, and in particular their
+performance, so that we can gauge the flexibility trade-off.
+
+There is a variety of approaches one could take to generalize our na\"ive implementation. One
+particular paradigm, object oriented programming \cite{meyer-97}, has proved effective and is
+currently very popular. Developers raised on procedural programming, i.e.~the kind of
+programming you do in \cc\ or \fortran, typically face a bit of a challenge as they try to shed
+inappropriate habits. Those who have managed to climb the learning curve report an increased
+awareness of the role of process in software engineering, and overall improvement in the
+quality of code they write. However, typical goals such as reuse and flexibility are hard to
+attain regardless of the programming paradigm. On one hand, the problem itself has to
+co\"operate by belonging to the class of problems that are reducible to fairly orthogonal and
+well characterized pieces. On the other, one has to be able to identify these pieces and turn
+them into high quality, maintainable code. Much of the time, these form a string of low
+probability events that require a significant intellectual investment. Fortunately, the example
+at hand is rather well behaved in this regard.
+
+\subsection{Encapsulating the random number generator}
+\label{sec:classes:random}
+
+The first candidate for generalization is the random number generator. We should be able to
+choose among many different ones so that we can compare them. In order to take advantage of the
+object oriented machinery in languages like python and \cpp, let's work towards the
+specification of \class{Random}, an abstract base that will encapsulate random number
+generators. Abstract base classes are typically used to anchor class hierarchies. They define
+the interface to which derived classes should adhere, but they themselves are not instantiated
+directly, so they are not supposed to have any data members and all of their methods should
+generate exceptions. We will use \class{Random} to derive classes that hide the implementation
+particulars and conform to a standard interface that we will specify.  This idea is that when
+we run into another random number generator that we would like to use, the effort necessary to
+incorporate it into our program is {\em isolated} to a small subset of the overall code, so
+that the likelihood of introducing a bug into the code is minimized.  Ideally, we should need
+to do little more than create a new class that derives from \class{Random} and implement the
+standard interface using the new generator.
+
+Having identified such a candidate is half the battle; but now a universe of possibilities
+opens up. What should its interface be, i.e. what is the list of its class methods? What
+arguments should these methods accept? Should there be any data members associated with
+instances of this and its derived classes? A good way to navigate through the possibilities is
+to do as little as possible at every step. Rather than trying to anticipate all the possible
+uses of \class{Random} and its derivatives, we can focus on endowing it with just enough
+interface to solve our problem. We need a sample $X_{N}$ of $N$ random points $x$ that fall inside
+a box $B$, so let's create a method \method{point} that takes a suitable representation of $B$
+and returns such a point:
+%
+\python{
+  firstline=9,lastline=25,
+  label={lst:classes:random},
+  caption={\srcfile{classes-simple/PointCloud.py}: The abstract base class for representing
+    points in the integration region},
+}{listings/classes-simple/PointCloud.py}
+%
+Since \class{Random} is abstract, we can't provide a non-trivial implementation; instead
+\method{point} raises an exception to remind developers of derived classes to provide one.
+
+At this stage of the design, we don't have any non-trivial constraints to satisfy. This is both
+a blessing and a curse. On one hand, we can pretty much dictate what the class hierarchy will
+look like since we are building it from scratch. On the other, there is no structure imposed
+from the outside that will help us steer the design is some particular direction. Figuring out
+which is a blessing and which a curse is left as an exercise. In these situations, experience
+strongly suggests that simplicity and laziness are the right guidelines: defer as many of the
+decisions to derived classes as possible, keep the number of methods to a minimum, and make the
+interface simple and generic. Unanticipated complexities, such as creating an
+actual model of some physical process, or making the code perform at an acceptable level, will
+force us to rethink much of the design.
+
+Performance considerations are particularly difficult to anticipate in object oriented
+applications. The usual maxims about picking algorithms with low computational complexity and
+being careful about the internal structure of loops only capture a fraction of the problem.
+Object oriented programs re-shuffle complexity into the interactions of class instances.
+Developers are notoriously wrong about what to optimize even in the simplest procedural
+routines; it is considerably more difficult to anticipate the performance characteristics of an
+object oriented program. The only way to get a clear understanding of which sections of an
+application would benefit from further optimization efforts is to use a profiler, a tool
+dedicated to analyzing code performance. Despite all the advances in software engineering
+technology, it is still very hard to profile a design without an actual implementation. This
+deals a rather strong blow to the proponents of formal design practices and makes agile
+programming a much more attractive methodology for scientific programming.
+
+One thing is clear: the performance cost of variable accesses and function calls has the
+potential to dominate the execution profile of a code in an insidious way. The program may be
+too slow, yet the profiler does not uncover any obvious candidates for optimization. This is a
+rather unfortunate side effect of object oriented programming and is one of the reasons that
+many scientific programmers stay with the procedural languages or resort to \cpp\ and
+templates. Still, much of the code in modern scientific applications deals with the user and
+the computational environment; it is these parts that stand to benefit the most from the
+complexity management that object oriented techniques bring to the table.
+
+Returning to the problem at hand, we can now derive a class \class{WichmannHill} that
+encapsulates the random number generator from the standard python library that we used in
+\secref{simple:python}. We require that \identifier{box} has enough structure so that we can
+deduce the dimensionality of the requested point, as well as build the set of transformations
+that map from the unit line interval to the corresponding side of the box. The vector diagonal
+of the bounding box fits this bill perfectly: we specify that \identifier{box} is to be a pair
+of $d$-tuples specifying the coordinates of the point of the box closest to the origin and the
+point diagonally across from it. For example, the unit square on the plane might be represented
+by \mbox{\tt [[0,0], [1,1]]}, while the unit box in three dimensions would be given by
+\mbox{\tt [[0,0,0], [1,1,1]]}.  We only use iterators to access \identifier{box}, so any
+iterable container with the structure shown will do.
+%
+\python{
+  firstline=9,lastline=31,
+  label={lst:classes:wh},
+  caption={\srcfile{classes-simple/WichmannHill.py}: Encapsulating the standard python generator},
+}{listings/classes-simple/WichmannHill.py}
+%
+We have unpacked the two corners of the bounding box in the assignment on
+\lstlineref{wh:unpack}.  The \function{zip} on \lstlineref{wh:zip} returns a list of tuples,
+with each tuple containing one element from each of the arguments. The result is a list of the
+intervals along each axis, over which we iterate in the list comprehension on
+\lstlineref{wh:list} in order to extract the arguments to \function{uniform}.
+
+The class \class{Random} and its derivatives should be generally useful to us and are good
+candidates for reuse. The interface should be broadened a bit, by adding a method to seed
+the random number generator with some initial value, something that most generators support.
+Another consideration is that we will be calling this method a large number of times during the
+integration, so perhaps we will have to modify the class interface after we evaluate the
+performance of this implementation in \secref{classes:driver}.
+
+\TODO{
+\item references for object oriented programming (meyer, eiffel)
+\item references for "formal methods" and agile programming
+\item show example of how to encapsulate the GSL random number generator as well
+}
+
+\subsection{Representing the region of integration}
+\label{sec:classes:region}
+
+The next step in the factorization of the simple implementations in \secref{simple} is to build
+a class hierarchy that represents the region of integration. Designing with simplicity in mind
+would suggest a class \class{Shape} with a single method:
+%
+%\begin{python}[%
+  %label={lst:classes:shape},
+  %caption={The base class for the representation of the region of integration},
+%]{}
+%class Shape(object):
+%
+    %def contains(self, point):
+        %raise NotImplementedError("please override 'contains'")
+%\end{python}
+%
+The representation of our region of integration involves two steps: providing an
+implementation for \method{contains} and endowing instances of \class{Circle} with location and
+size. These two attributes will be represented as data members of the class that are provided
+at construction time, and so they become arguments of the constructor of the class.
+%
+%\begin{python}[%
+  %label={lst:classes:circle},
+  %caption={The class \class{Circle}},
+%]{}
+%from Shape import Shape
+%
+%class Circle(Shape):
+%
+    %def contains(self, point):
+        %r2 = self.radius**2
+        %x0, y0 = self.center
+        %x, y = point
+        %dx = x - x0
+        %dy = y - y0
+%
+        %if dx*dx + dy*dy > r2:
+            %return False
+%
+        %return True
+%
+    %def __init__(self, radius=1.0, center=(0.0, 0.0)): #@\label{line:circle:constructor}@
+        %self.radius = radius
+        %self.center = center
+        %return
+%\end{python}
+%
+For convenience, the constructor on \lstlineref{circle:constructor} accepts default values for
+the center location and radius. It is best to keep such practices to a minimum because the
+implicit passing of information between caller and callee makes the code harder to read and
+understand, and they expose users of the class \class{Circle} to the risk that the default
+values of the arguments may change in the future. In this case there is a {\em natural} choice
+for these values, a unit circle centered at the origin, and so the risk is reduced.
+
+Note that we were careful to avoid injecting the context of our exercise into the design of
+\class{Shape} and \class{Circle}. They appear rather generic and their intended use to perform
+Monte Carlo integration is not explicit. It is natural to ask a \class{Shape} whether it
+contains a given point, regardless of the context for the question. It is not always possible
+to avoid this type of pollution, but careful refactoring of the initial design often helps. 
+
+\subsection{Creating the driver}
+\label{sec:classes:driver}
+
+We are now ready to put the object oriented solution together and see how it performs. 
+%
+%\begin{python}[%
+  %label=lst:classes:driver,
+  %caption={The driver for the objected oriented solution},
+%]{}
+%# get access to the class definitions
+%from Circle import Circle
+%from WichmannHill import WichmannHill
+%
+%# initialize the integration
+%N = 10**6
+%box = [(0,0), (1,1)]
+%generator = WichmannHill()
+%circle = Circle(center=(0,0), radius=1)
+%
+%# initialize our counters
+%total = 0
+%interior = 0
+%
+%# integrate
+%while total < N:
+    %point = generator.point(box)
+    %if circle.contains(point):
+        %interior += 1
+    %total += 1
+%
+%print "pi:", 4*float(interior)/total
+%\end{python}
+%
+Before we break open the champagne in celebration of the elegance and simplicity of this
+implementation, we have the unfortunate matter of performance to contend with. A look at the
+third column of \tabref{classes:simple} should convince you rather quickly that we have a lot
+of work still left to do.
+\begin{table}
+\centering
+\[
+\begin{array}{r|d{3}d{3}d{3}d{3}d{3}}
+% headersep
+  & 
+  \multicolumn{1}{c}{\cpp} &
+  \multicolumn{1}{c}{\mbox{\rm python}} &
+  \multicolumn{1}{c}{\mbox{\rm na\"ive OO}} &
+  \multicolumn{1}{c}{\mbox{\rm containers}} &
+  \multicolumn{1}{c}{\mbox{\rm generators}} \\
+% second row
+  \multicolumn{1}{c|}{N} &
+  \multicolumn{1}{c}{t \mbox{(sec)}} &
+  \multicolumn{1}{c}{t \mbox{(sec)}}  &
+  \multicolumn{1}{c}{t \mbox{(sec)}}  &
+  \multicolumn{1}{c}{t \mbox{(sec)}}  &
+  \multicolumn{1}{c}{t \mbox{(sec)}} \\
+  \hline \\ [-1.5ex]
+% body
+  10^{0} &    .002 &    .014 &    .014 &    .014 &    .014 \\
+  10^{1} &    .002 &    .014 &    .014 &    .014 &    .014 \\
+  10^{2} &    .002 &    .014 &    .014 &    .015 &    .014 \\
+  10^{3} &    .002 &    .015 &    .020 &    .019 &    .018 \\
+  10^{4} &    .004 &    .027 &    .078 &    .063 &    .053 \\
+  10^{5} &    .026 &    .144 &    .625 &    .504 &    .401 \\
+  10^{6} &    .230 &   1.265 &   6.242 &   5.925 &   3.780 \\
+  10^{7} &   2.277 &  12.624 &  61.583 & 188.318 &  38.242 \\
+  10^{8} &  22.749 & 130.430 &         &         &         \\
+  10^{9} & 227.735 &         &         &         &         \\
+\end{array}        
+\]
+\caption{Comparison of the cost of the various implementations
+  \label{tab:classes:simple}}
+\end{table}
+%
+The object solution is an order of magnitude slower than our previous python implementation,
+and almost two orders of magnitude slower than the \cpp\ implementation. 
+
+\TODO{
+\item add sentence excusing not going past $10^{8}$
+}
+
+\subsection{Improving performance}
+\label{sec:classes:improved-performane}
+
+The lackluster performance numbers are not very hard to understand. Taking a closer look at
+\lstref{classes:driver} we see that the body of the loop contains two function calls, one to
+\method{generator.random} and another to \method{circle.contains}. Each of these calls is going
+to get executed $N$ times and we will have to pay the cost associated with calling python
+functions every time. Furthermore, if you look at the body of these two functions in
+\lstref{classes:wh} and \lstref{classes:circle}, you will find quite a bit of code associated
+with initializing the local variables. That's another cost that we are paying once for each
+sample point. Looks simple enough, but it quickly adds up.
+
+\subsubsection{Containers: trading memory for speed}
+\label{sec:classes:containers}
+
+Perhaps we can amortize these costs over the sample set. One approach would be to call the
+random number generator once and have it return a container with all the points in the sample
+set. We would then pass this array to the shape, which would return a {\em mask}, i.e. an array
+of \keyword{True}-\keyword{False} values indicating whether the corresponding point was
+interior or not. Keep in mind that it is not acceptable to have \method{contains} just count
+the number of interior points for us, for a couple of reasons. First, this capability pollutes
+the design of \class{Shape} derivatives and specializes them too much for reuse. Second, we
+will eventually need to know which points are interior to the \class{Shape} so we can evaluate
+our integrand $f$ there.
+
+Turning to the implementation, \class{Random} would look like
+%
+%\begin{python}[%
+  %label={lst:classes:random:containers},
+  %caption={An improved base class for random number generators},
+%]{}
+%class Random(object):
+%
+    %def points(self, n, box):
+        %raise NotImplementedError("please override 'points'")
+%\end{python}
+%
+where \identifier{n} is the number of points we want, and \identifier{box} is the bounding box
+representation as before. The new implementation of \class{WichmannHill} is
+%
+%\begin{python}[%
+  %label={lst:classes:wh:containers},
+  %caption={Generating $N$ points at a time},
+%]{}
+%import random
+%from Random import Random
+%
+%class WichmannHill(Random):
+%
+    %def points(self, n, box):
+        %# create the container for the sample
+        %sample = []
+%
+        %# unpack the bounding box
+        %tail, head = box
+        %intervals = zip(tail, head)
+%
+        %# loop over the sample size
+        %while n > 0:
+            %# build the point p by calling random the right number of times
+            %p = [ random.uniform(left, right) for left,right in intervals ]
+            %# store the point
+            %sample.append(p)
+            %# update the counter
+            %n -= 1
+        %
+        %return sample
+%\end{python}
+%
+The trade off, of course, is that now we must pay the cost of managing a container for these
+points.  Since $n$ is potentially a large number we must be very careful inside the
+\keyword{while} loop. In particular it is important to use \order{1} operations while building
+the sample container. Fortunately, \method{append} is very well behaved in this regard: python
+lists are doubly-chained and the interpreter can add elements at the tail in constant time. 
+
+The class \class{Shape} doesn't require any change. We will merely reinterpret the dummy
+argument as a container of points:
+%
+%\begin{python}[%
+  %label={lst:classes:shape:containers},
+  %caption={The base class \class{Shape} requires little change},
+%]{}
+%class Shape(object):
+%
+    %def contains(self, points):
+        %raise NotImplementedError("please override 'contains'")
+%\end{python}
+%
+The implementation of \class{Circle} is a bit more complicated than \lstref{classes:shape}.
+%
+%\begin{python}[%
+  %label={lst:classes:circle:containers},
+  %caption={An implementation of class \class{Circle} with containers},
+%]{}
+%from Shape import Shape
+%
+%class Circle(Shape):
+%
+    %def contains(self, points):
+        %mask = []
+        %r2 = self.radius**2
+        %x0, y0 = self.center
+%
+        %for x,y in points:
+            %dx = x - x0
+            %dy = y - y0
+            %if dx*dx + dy*dy > r2:
+                %mask.append(False)
+            %else:
+                %mask.append(True)
+%
+        %return mask
+%
+    %def __init__(self, radius=1.0, center=(0.0, 0.0)):
+        %self.radius = radius
+        %self.center = center
+        %return
+%\end{python}
+%
+Again, we have to pay for the cost of managing \identifier{mask}, and the same considerations
+apply when we have to manipulate its entries.
+
+The driver for the container based solution is rather easy to put together.
+%
+%\begin{python}[%
+  %label=lst:classes:driver:containers,
+  %caption={The driver for the container based solution},
+%]{}
+%# get access to the class definitions
+%from Circle import Circle
+%from WichmannHill import WichmannHill
+%
+%# initialize the integration
+%total = 10**7
+%box = [(0,0), (1,1)]
+%generator = WichmannHill()
+%circle = Circle(center=(0,0), radius=1)
+%
+%# create a sample
+%sample = generator.points(total, box)
+%# count the interior points
+%interior = len(filter(None, circle.contains(sample)))
+%
+%print "pi:", 4*float(interior)/total
+%\end{python}
+
+A striking difference with \lstref{classes:driver}, and all other implementations of the
+integration driver, is the absence of counters. Instead, we have used \function{filter} that
+accepts a list and returns another with the non-\keyword{True} elements removed, at which
+point counting the interior elements is just a matter of computing the length of the returned list.
+
+\TODO{
+\item compare with the performance in \secref{simple:python} and \secref{classes:driver}
+\item talk about the table, and in particular about the $10^{7}$ explosion
+}
+
+\subsubsection{Generators: the best of both worlds}
+\label{sec:classes:generators}
+
+The container based solution has a certain elegance: the creation of our sample set and its use
+are separated into two distinct phases of the computation, the overhead associated with setting
+up the calls to the random number generator and the shape instance are amortized over the
+sample set, and we can use functions that operate efficiently on lists to perform parts of the
+calculation. The major drawback is having to manage the sample container, whose implications
+include some overhead in storing and retrieving the contents, and the potential that we run out
+of memory for sufficiently large samples.
+
+Fortunately, there is a way to retain the elegance of containers without paying the memory cost
+by using {\em generators}, an extremely powerful programming construct borrowed from the
+language \identifier{Icon}\cite{icon} that is now available in python.\footnote{Generators were
+  first seen in version 2.2 and turned into a core part of the language in version 2.3}
+Hopefully, we will be able to avoid any confusion between random number generators and the
+programming construct.
+
+Generators are functions that behave like iterators without necessarily having to manage actual
+storage for a container. You can think of them as iterator generators, hence the catchy name.
+What you actually get when you call a generator involves elaborate descriptions of some
+implementation details; for the purpose of this discussion, you can think of the result as
+something that can be used just like a normal iterator. Rather than getting lost in an abstract
+description, let's revisit \class{WichmannHill}. The improvements we will discuss in this
+section are focused entirely on implementation details; the interface as specified in our
+abstract classes will remain intact. Hence, we will derive our improved class from
+the version of \class{Random} shown in \lstref{classes:random:containers}. The new
+implementation of \class{WichmannHill} is shown in \lstref{classes:wh:generators}.
+%
+%\begin{python}[%
+  %label={lst:classes:wh:generators},
+  %caption={The generator based implementation},
+%]{}
+%import random
+%from Random import Random
+%
+%class WichmannHill(Random):
+%
+    %def points(self, n, box):
+        %# unpack the bounding box
+        %tail, head = box
+        %intervals = zip(tail, head)
+%
+        %# loop over the sample size
+        %while n > 0:
+            %p = [ random.uniform(left, right) for left,right in intervals ]
+            %yield p #@\label{line:wh:generators:yield}@
+%
+            %n -= 1
+        %
+        %return #@\label{line:wh:generators:return}@
+%\end{python}
+%
+
+Almost everything looks the same as in \lstref{classes:wh:containers}, except for the new
+keyword \keyword{yield} on \lstlineref{wh:generators:yield} and the \keyword{return} without a
+value on \lstlineref{wh:generators:return}. Indeed, we unpack the arguments to \method{point}
+as we did before, and proceed to loop over the desired sample size, generating ramdom points.
+Rather than storing \identifier{p}, we \keyword{yield} it to our caller. This statement
+suspends the execution of \method{points} but saves everything that we have done so far,
+including the values of all the local variables such as the loop counter \identifier{n}. The
+caller doesn't actually get \identifier{p}, but an iterator object that executes this code and
+returns \identifier{p} when asked for its current value, and will resume the evaluation of
+\method{points} when asked to advance via its \method{next} method at whatever statement
+follows the \keyword{yield} statement on \lstlineref{wh:generators:yield} that suspended it. In
+our case it means that the counter will get decremented and the loop will execute another
+iteration until the next time the \keyword{yield} statement is reached. This process continues
+until the loop is exhausted, at which point we run into the \keyword{return} statement on
+\lstlineref{wh:generators:return}. According to generator rules, \keyword{return} causes a
+\class{StopIteration} exception to be raised, signalling to the caller that we are done
+generating values from our virtual container.
+
+If this is making your head hurt, it's all right. It will all make sense pretty soon. Later I
+will make your head {\em explode} when we touch on {\em metaclasses}.
+
+Let's see what happens to \class{Shape}:
+%
+%\begin{python}[%
+  %label={lst:classes:circle:generators},
+  %caption={The class \class{Circle}},
+%]{}
+%from Shape import Shape
+%
+%class Circle(Shape):
+%
+    %def contains(self, points):
+        %r2 = self.radius**2
+        %x0, y0 = self.center
+%
+        %for x, y in points: #@\label{line:circle:generators:loop}@
+            %dx = x - x0
+            %dy = y - y0
+%
+            %%if dx*dx + dy*dy > r2:
+                %yield False #@\label{line:circle:generators:false}@
+            %else:
+                %yield True #@\label{line:circle:generators:true}@
+%
+        %return #@\label{line:circle:generators:return}@
+%
+    %def __init__(self, radius=1.0, center=(0.0, 0.0)):
+        %self.radius = radius
+        %self.center = center
+        %return
+%\end{python}
+%
+The method \method{contains} still accepts some kind of iterable object \identifier{points} and
+goes about the business of deciding whether the contents are interior or not. We set up a loop
+over \identifier{points} on \lstlineref{circle:generators:loop}, but rather than storing the
+result in \identifier{mask} as we did in \lstref{classes:circle:containers}, we either
+\keyword{yield} \keyword{False} on \lstlineref{circle:generators:false}, or \keyword{True} on
+\lstlineref{circle:generators:true}. When our loops exhausts \identifier{points} we reach the
+\keyword{return} statement on \lstlineref{circle:generators:return}, which raises a
+\class{StopIteration} exception and terminates our generator.
+
+All this comes together in driver. It is identical to the container based solution in
+\lstref{classes:driver:containers}, so we won't repeat it here. See if you can follow how
+looping over the virtual contents is driving the generators to produce the associated values
+without paying the computational expense to set up the function or manage a container for the
+intermediate values.
+
+The generator solution performs rather well. We are still a bit off the simple python
+implementation and a whole order of magnitude slower than \cpp, but such is the price for
+flexibility. 
+
+\subsubsection{Alternative containers}
+\label{sec:classes:alternatives}
+
+The container based solution suffers from two drawbacks: the high overhead associated with the
+function calls necessary to manage the container, and the large memory footprint of python
+containers. Generators enabled us to do away with the temporary storage but do little to
+minimize the total number of function calls in the body of the loop. Both of these solutions
+are substantially slower than the essentially inlined implementation of \lstref{simple:python}.
+Is it possible to improve performance by using better containers than python provides?
+
+At first glance, this looks like a viable strategy. We know the size of the point container
+rather early in the program. The points themselves are just pairs of floating point numbers, so
+perhaps we can allocate something like a \cc\ array of the right size and hand that to our
+random number generator. It's going to be hard to take advantage of the python random number
+generator this way, but we can easily access the generators in \package{GSL}, so that's not a big
+problem. Once our \cc\ container comes back filled with random points, we should be able to
+hand that to a \cc\ routine that will count the interior points. The whole thing can be
+orchestrated from python by writing wrappers for the low level routines. We can even recover
+the object oriented structure we have been building by using these python wrapped \cc\ routines
+as the implementations of the relevant methods of our classes. 
+
+At this point you might be very strongly tempted to write your own array class as a thin
+wrapper on top of \cc\ arrays, or even \cpp\ containers. Resist. This thought has occurred to
+many a scientific programmer, and the software landscape is littered with such casually
+discarded dysfunctional software. Writing array classes correctly turns out to be much harder than
+it appears, mostly due to the fact that containers of real numbers have extremely rich algebraic
+structures. You either respect the semantics or you are contributing to the trash heap.
+
+Fortunately, a few of those that didn't get--or didn't pay any attention to--such advice have
+tackled this problem and got it right. The package \identifier{numpy} \cite{numpy} is such an
+example. We leave it as an exercise to build and profile a \identifier{numpy}-based solution
+that takes advantage of the compactness of representation, speed and convenience of the array
+implementation.
+
+How do all these implementations fit together? Do we have to throw away the generators because
+we moved the representation to a \identifier{numpy} container? Have we locked ourselves out of
+using the python built in random number generator because we cannot feed it a \cc\ array?
+Thanks to the fact that interface, rather than type, is what python checks, we can make all
+these solutions inter-operate. The generator \identifier{Circle.contains} in
+\lstref{classes:circle:generators} does not know or care whether the point container it is
+iterating over is real or virtual, a python list or a \identifier{numpy} array. All that
+matters is that \identifier{points} is iterable and that each iteration produces a pair of
+floats. This lets us keep the object oriented structure and explore various strategies that
+trade off between complexity, memory and performance. Better yet, in \secref{components} and
+\secref{pyreapp} I will show you how you can let your users assume final responsibility by
+postponing making these decisions for as long as possible.
+
+\subsection{Reuse: improving and adjusting the interface}
+\label{sec:classes:interface}
+
+%
+%\begin{python}[%
+  %caption={An improved base class for random number generators},
+  %label={lst:classes:random-final}
+%]{}
+%class Random(object):
+%
+    %def seed(self, n):
+        %raise NotImplementedError("please override 'seed'")
+%
+    %def point(self, box):
+        %raise NotImplementedError("please override 'point'")
+%
+    %def points(self, box, n):
+        %raise NotImplementedError("please override 'points'")
+%\end{python}
+%
+
+\TODO{
+\item fitting this solution in an existing design: introduce and explain Adaptors
+}
+
+\subsection{Functors}
+\label{sec:classes:functors}
+
+\TODO{
+\item re-introduce the integrand $f$ to the mix
+\item explain function-as-object
+\item show the complete driver
+}
+
+
+% end of file 

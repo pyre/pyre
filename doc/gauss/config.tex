@@ -1,0 +1,80 @@
+% -*- LaTeX -*-
+% -*- coding: utf-8 -*-
+%
+% michael a.g. aïvázis
+% california institute of technology
+% (c) 1998-2010  all rights reserved
+%
+
+% fonts
+\usepackage{dingbat}
+\usepackage{amsfonts}
+\usepackage[iso-8859-7]{inputenc}
+
+% figures
+\usepackage{graphicx}
+% color
+\usepackage{xcolor}
+
+% references
+\usepackage[numbers]{natbib}
+
+% misc
+\usepackage{dcolumn}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+
+% listings and their configurations
+\usepackage[algoruled,linesnumbered]{algorithm2e}
+
+\usepackage{textcomp}
+\usepackage{listings}
+\definecolor{keywordcolor}{rgb}{.0,.0,1.0}
+\definecolor{commentcolor}{gray}{.3}
+\definecolor{stringcolor}{gray}{.0}
+\definecolor{linenumbercolor}{gray}{.3}
+\definecolor{listingbgcolor}{gray}{.97}
+\lstloadlanguages{C,C++,python,bash}
+
+\lstset{
+  columns=flexible,
+  upquote=true,
+  % 
+  aboveskip=\bigskipamount,
+  belowskip=\bigskipamount,
+  % 
+  numbers=left,
+  numberstyle=\color{linenumbercolor}\tiny,
+  stepnumber=1,
+  numbersep=5pt,
+  numberblanklines=true,
+  % 
+  % basicstyle=\scriptsize,
+  basicstyle=\tt\scriptsize,
+  keywordstyle=\color{keywordcolor},
+  commentstyle=\color{commentcolor}\slshape,
+  stringstyle=\color{stringcolor}\slshape,
+  showstringspaces=false,
+  % 
+  frame=,
+  captionpos=t,
+  backgroundcolor=\color{listingbgcolor},
+  xleftmargin=0em,
+  xrightmargin=0em,
+}
+
+\def\python#1#2{
+  \lstinputlisting[%
+  language=python,
+  morekeywords={self,yield,False,True,None},
+  escapeinside={\#@}{@},#1]
+  {#2}}
+  
+\def\C++#1#2{
+  \lstinputlisting[%
+    language=C++,
+    escapeinside={/*}{*/},#1]
+  {#2}}
+  
+
+
+% end of file 
