@@ -78,9 +78,9 @@ generator. Two minutes of typing produce:
 Note that by making the determination of whether the point is inside the quadrant using the
 square of the distance saves us quite a large number of calls to \function{sqrt}. This type of
 consideration is ubiquitous when trying to get good performance out of Monte Carlo methods.
-Also, note that we did not have to covert our integer counters to floats before the computation
-of the area fraction, since division of integers results in floating point numberes whenever
-necessary, a behavior that is standard since version 3.0 of the python interpreter.
+Also, note that we did not have to convert our integer counters to floats before the
+computation of the area fraction, since division of integers results in floating point numbers
+whenever necessary, a behavior that is standard since version 3.0 of the python interpreter.
 
 There are two obvious questions to answer: how accurate and how fast is this calculation?
 To answer these questions, we can perform some experiments where we vary the total number

@@ -363,29 +363,11 @@ abstract classes will remain intact. Hence, we will derive our improved class fr
 the version of \class{PointCloud} shown in \lstref{classes:pointcloud:containers}. The new
 implementation of \class{MersenneTwister} is shown in \lstref{classes:mt:generators}.
 %
-%\begin{python}[%
-  %label={lst:classes:mt:generators},
-  %caption={The generator based implementation},
-%]{}
-%import random
-%from Random import Random
-%
-%class WichmannHill(Random):
-%
-    %def points(self, n, box):
-        %# unpack the bounding box
-        %tail, head = box
-        %intervals = zip(tail, head)
-%
-        %# loop over the sample size
-        %while n > 0:
-            %p = [ random.uniform(left, right) for left,right in intervals ]
-            %yield p #@\label{line:mt:generators:yield}@
-%
-            %n -= 1
-        %
-        %return #@\label{line:mt:generators:return}@
-%\end{python}
+\python{
+  firstline=9,lastline=30,
+  label={lst:classes:mt:generators},
+  caption={\srcfile{containers/MersenneTwister.py}: The generator based implementation},
+}{listings/generators/MersenneTwister.py}
 %
 
 Almost everything looks the same as in \lstref{classes:mt:containers}, except for the new
@@ -409,36 +391,13 @@ generating values from our virtual container.
 If this is making your head hurt, it's all right. It will all make sense pretty soon. Later I
 will make your head {\em explode} when we touch on {\em metaclasses}.
 
-Let's see what happens to \class{Shape}:
+Let's see what happens to \class{Disk}:
 %
-%\begin{python}[%
-  %label={lst:classes:disk:generators},
-  %caption={The class \class{Circle}},
-%]{}
-%from Shape import Shape
-%
-%class Circle(Shape):
-%
-    %def contains(self, points):
-        %r2 = self.radius**2
-        %x0, y0 = self.center
-%
-        %for x, y in points: #@\label{line:circle:generators:loop}@
-            %dx = x - x0
-            %dy = y - y0
-%
-            %%if dx*dx + dy*dy > r2:
-                %yield False #@\label{line:circle:generators:false}@
-            %else:
-                %yield True #@\label{line:circle:generators:true}@
-%
-        %return #@\label{line:circle:generators:return}@
-%
-    %def __init__(self, radius=1.0, center=(0.0, 0.0)):
-        %self.radius = radius
-        %self.center = center
-        %return
-%\end{python}
+\python{
+  firstline=9,lastline=37,
+  label={lst:classes:disk:generators},
+  caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} with a generator},
+}{listings/generators/Disk.py}
 %
 The method \method{contains} still accepts some kind of iterable object \identifier{points} and
 goes about the business of deciding whether the contents are interior or not. We set up a loop
