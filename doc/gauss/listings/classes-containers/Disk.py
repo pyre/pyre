@@ -8,12 +8,10 @@
 
 from Shape import Shape
 
-
 class Disk(Shape):
     """
     A representation of a circular disk
     """
-
 
     # interface
     def interior(self, points):
@@ -31,7 +29,6 @@ class Disk(Shape):
                 mask.append(1)
 
         return mask
-
 
     # meta methods
     def __init__(self, radius=1.0, center=(0.0, 0.0)):

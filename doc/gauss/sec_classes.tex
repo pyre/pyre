@@ -44,16 +44,19 @@ object oriented machinery in languages like python and \cpp, we must identify an
 base class that encapsulates the role the random number generators plays in our integration
 algorithm. A moment's reflection should convince you that this role is to provide the cloud of
 points that are candidates for evaluating our integrand. The abstract class \class{PointCloud}
-will fit this bill very nicely. Abstract base classes are typically used to anchor class
-hierarchies. They define the interface to which derived classes should adhere, but they
-themselves are not instantiated directly, so they are not supposed to have any data members and
-all of their methods should generate exceptions. We will use \class{PointCloud} to derive
-classes that hide the implementation particulars and conform to a standard interface that we
-will specify.  This idea is that when we run into another random number generator that we would
-like to use, the effort necessary to incorporate it into our program is {\em isolated} to a
-small subset of the overall code, so that the likelihood of introducing a bug into the code is
-minimized.  Ideally, we should need to do little more than create a new class that derives from
-\class{PointCloud} and implement the standard interface using the new generator.
+will fit this bill very nicely, and its specialization \class{WichmannHill} will create point
+clouds using the Wichmann-Hill random number generator we used in \secref{simple:python}. 
+
+Abstract base classes are typically used to anchor class hierarchies. They define the interface
+to which derived classes should adhere, but they themselves are not instantiated directly, so
+they are not supposed to have any data members and all of their methods should generate
+exceptions. We will use \class{PointCloud} to derive classes that hide the implementation
+particulars and conform to a standard interface that we will specify.  This idea is that when
+we run into another random number generator that we would like to use, the effort necessary to
+incorporate it into our program is {\em isolated} to a small subset of the overall code, so
+that the likelihood of introducing a bug into the code is minimized.  Ideally, we should need
+to do little more than create a new class that derives from \class{PointCloud} and implement
+the standard interface using the new generator.
 
 Having identified such a candidate is half the battle; but now a universe of possibilities
 opens up. What should its interface be, i.e. what is the list of its class methods? What
@@ -72,8 +75,9 @@ and returns such a point:
     points in the integration region},
 }{listings/classes-simple/PointCloud.py}
 %
-Since \class{PointCloud} is abstract, we can't provide a non-trivial implementation; instead
-\method{point} raises an exception to remind developers of derived classes to provide one.
+Since \class{PointCloud} is meant to be abstract, we do not attempt to provide a non-trivial
+implementation; instead \method{point} raises an exception to remind developers of derived
+classes to provide one.
 
 At this stage of the design, we don't have any non-trivial constraints to satisfy. This is both
 a blessing and a curse. On one hand, we can pretty much dictate what the class hierarchy will
@@ -82,9 +86,9 @@ from the outside that will help us steer the design is some particular direction
 which is a blessing and which a curse is left as an exercise. In these situations, experience
 strongly suggests that simplicity and laziness are the right guidelines: defer as many of the
 decisions to derived classes as possible, keep the number of methods to a minimum, and make the
-interface simple and generic. Unanticipated complexities, such as creating an
-actual model of some physical process, or making the code perform at an acceptable level, will
-force us to rethink much of the design.
+interface simple and generic. Unanticipated complexities, such as creating an actual model of
+some physical process, or making the code perform at an acceptable level, will force us to
+rethink much of the design.
 
 Performance considerations are particularly difficult to anticipate in object oriented
 applications. The usual maxims about picking algorithms with low computational complexity and
@@ -158,8 +162,8 @@ would suggest an abstract base class \class{Shape} with a single method:
     region of integration},
 }{listings/classes-simple/Shape.py}
 %
-from which we will inherit in a class \class{Disk} that will represent the interior of a
-circle.  This representation integration involves two steps: providing an implementation for
+from which we will derive a class \class{Disk} that will represent the interior of a circle.
+Completing this representation involves two steps: providing an implementation for
 \method{interior} and endowing instances of \class{Disk} with location and size. These two
 attributes will be represented as data members of the class that are provided at construction
 time, and so they become arguments of the constructor of the class.
@@ -188,33 +192,11 @@ to avoid this type of pollution, but careful refactoring of the initial design o
 
 We are now ready to put the object oriented solution together and see how it performs. 
 %
-%\begin{python}[%
-  %label=lst:classes:driver,
-  %caption={The driver for the objected oriented solution},
-%]{}
-%# get access to the class definitions
-%from Circle import Circle
-%from WichmannHill import WichmannHill
-%
-%# initialize the integration
-%N = 10**6
-%box = [(0,0), (1,1)]
-%generator = WichmannHill()
-%circle = Circle(center=(0,0), radius=1)
-%
-%# initialize our counters
-%total = 0
-%interior = 0
-%
-%# integrate
-%while total < N:
-    %point = generator.point(box)
-    %if circle.contains(point):
-        %interior += 1
-    %total += 1
-%
-%print "pi:", 4*float(interior)/total
-%\end{python}
+\python{
+  firstline=9,lastline=32,
+  label=lst:classes:driver,
+  caption={\srcfile{classes-simple/gauss.py}: The driver for the objected oriented solution},
+}{listings/classes-simple/gauss.py}
 %
 Before we break open the champagne in celebration of the elegance and simplicity of this
 implementation, we have the unfortunate matter of performance to contend with. A look at the
@@ -290,47 +272,21 @@ our integrand $f$ there.
 
 Turning to the implementation, \class{PointCloud} would look like
 %
-%\begin{python}[%
-  %label={lst:classes:pointcloud:containers},
-  %caption={An improved base class for random number generators},
-%]{}
-%class Random(object):
-%
-    %def points(self, n, box):
-        %raise NotImplementedError("please override 'points'")
-%\end{python}
+\python{
+  firstline=9,lastline=24,
+  label={lst:classes:pointcloud:containers},
+  caption={\srcfile{classes-containers/PointCloud.py}: An improved class for representing the
+    evaluation points},
+}{listings/classes-containers/PointCloud.py}
 %
 where \identifier{n} is the number of points we want, and \identifier{box} is the bounding box
 representation as before. The new implementation of \class{WichmannHill} is
 %
-%\begin{python}[%
-  %label={lst:classes:wh:containers},
-  %caption={Generating $N$ points at a time},
-%]{}
-%import random
-%from Random import Random
-%
-%class WichmannHill(Random):
-%
-    %def points(self, n, box):
-        %# create the container for the sample
-        %sample = []
-%
-        %# unpack the bounding box
-        %tail, head = box
-        %intervals = zip(tail, head)
-%
-        %# loop over the sample size
-        %while n > 0:
-            %# build the point p by calling random the right number of times
-            %p = [ random.uniform(left, right) for left,right in intervals ]
-            %# store the point
-            %sample.append(p)
-            %# update the counter
-            %n -= 1
-        %
-        %return sample
-%\end{python}
+\python{
+  firstline=9,lastline=32,
+  label={lst:classes:wh:containers},
+  caption={\srcfile{classes-containers/WichmannHill.py}: Filling a container with random points},
+}{listings/classes-containers/WichmannHill.py}
 %
 The trade off, of course, is that now we must pay the cost of managing a container for these
 points.  Since $n$ is potentially a large number we must be very careful inside the
@@ -341,78 +297,37 @@ lists are doubly-chained and the interpreter can add elements at the tail in con
 The class \class{Shape} doesn't require any change. We will merely reinterpret the dummy
 argument as a container of points:
 %
-%\begin{python}[%
-  %label={lst:classes:shape:containers},
-  %caption={The base class \class{Shape} requires little change},
-%]{}
-%class Shape(object):
+\python{
+  firstline=9,lastline=21,
+  label={lst:classes:shape:containers},
+  caption={\srcfile{classes-containers/Shape.py}: The base class \class{Shape} requires little
+    change},
+}{listings/classes-containers/Shape.py}
 %
-    %def contains(self, points):
-        %raise NotImplementedError("please override 'contains'")
-%\end{python}
+The implementation of \class{Disk} is a bit more complicated than \lstref{classes:shape}.
 %
-The implementation of \class{Circle} is a bit more complicated than \lstref{classes:shape}.
-%
-%\begin{python}[%
-  %label={lst:classes:disk:containers},
-  %caption={An implementation of class \class{Circle} with containers},
-%]{}
-%from Shape import Shape
-%
-%class Circle(Shape):
-%
-    %def contains(self, points):
-        %mask = []
-        %r2 = self.radius**2
-        %x0, y0 = self.center
-%
-        %for x,y in points:
-            %dx = x - x0
-            %dy = y - y0
-            %if dx*dx + dy*dy > r2:
-                %mask.append(False)
-            %else:
-                %mask.append(True)
-%
-        %return mask
-%
-    %def __init__(self, radius=1.0, center=(0.0, 0.0)):
-        %self.radius = radius
-        %self.center = center
-        %return
-%\end{python}
+\python{
+  firstline=9,lastline=37,
+  label={lst:classes:disk:containers},
+  caption={\srcfile{classes-containers/Disk.py}: Implementing \class{Disk} as a filter},
+}{listings/classes-containers/Disk.py}
 %
 Again, we have to pay for the cost of managing \identifier{mask}, and the same considerations
 apply when we have to manipulate its entries.
 
 The driver for the container based solution is rather easy to put together.
 %
-%\begin{python}[%
-  %label=lst:classes:driver:containers,
-  %caption={The driver for the container based solution},
-%]{}
-%# get access to the class definitions
-%from Circle import Circle
-%from WichmannHill import WichmannHill
+\python{
+  firstline=9,lastline=28,
+  label=lst:classes:driver:containers,
+  caption={The driver for the container based solution},
+}{listings/classes-containers/gauss.py}
 %
-%# initialize the integration
-%total = 10**7
-%box = [(0,0), (1,1)]
-%generator = WichmannHill()
-%circle = Circle(center=(0,0), radius=1)
-%
-%# create a sample
-%sample = generator.points(total, box)
-%# count the interior points
-%interior = len(filter(None, circle.contains(sample)))
-%
-%print "pi:", 4*float(interior)/total
-%\end{python}
 
 A striking difference with \lstref{classes:driver}, and all other implementations of the
-integration driver, is the absence of counters. Instead, we have used \function{filter} that
-accepts a list and returns another with the non-\keyword{True} elements removed, at which
-point counting the interior elements is just a matter of computing the length of the returned list.
+integration driver, is the absence of counters. Instead, we have used \function{sum} that
+adds up the elements of its input list and converts the filtered points from \class{Disk} into
+a count of the points interior to our region of integration.
 
 \TODO{
 \item compare with the performance in \secref{simple:python} and \secref{classes:driver}

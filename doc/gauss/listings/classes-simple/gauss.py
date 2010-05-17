@@ -29,7 +29,6 @@ def gauss():
 
     # print out the estimate of π
     print("pi: {0:.8f}".format(4*interior/total))
-
     return
 
 
