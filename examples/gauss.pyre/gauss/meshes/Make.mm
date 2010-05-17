@@ -7,7 +7,7 @@
 
 
 PROJECT = gauss
-PACKAGE = generators
+PACKAGE = meshes
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
@@ -20,7 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    WichmannHill.py \
+    MersenneTwister.py \
     __init__.py
 
 

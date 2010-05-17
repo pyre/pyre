@@ -26,7 +26,7 @@ def test():
     disk.radius = 1.0
 
     # instantiate the point cloud generator
-    mesh = gauss.generators.wickmannhill("mesh")
+    mesh = gauss.meshes.mersenne("mesh")
 
     # instantiate the integrator
     mc = gauss.integrators.montecarlo(name="mc")

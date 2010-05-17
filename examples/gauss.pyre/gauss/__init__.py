@@ -24,7 +24,7 @@ def script(name="gauss"):
 
 
 # import the parts
-from . import shapes, functors, generators, integrators, util
+from . import shapes, functors, meshes, integrators, util
 
 
 # misc

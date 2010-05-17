@@ -12,7 +12,7 @@ from pyre.components.Component import Component
 from ..interfaces.PointCloud import PointCloud
 
 
-class WichmannHill(Component, family="gauss.generators.wichmann-hill", implements=PointCloud):
+class MersenneTwister(Component, family="gauss.meshes.mersenne-twister", implements=PointCloud):
     """
     A point generator that uses the random number generator that is part of the python run time
     library to create a point cloud

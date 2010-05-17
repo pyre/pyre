@@ -11,15 +11,15 @@ Package that contains the declarations of the random number generators
 """
 
 # factories
-def wickmannhill(name=None):
-    from .WichmannHill import WichmannHill
+def mersenne(name=None):
+    from .MersenneTwister import MersenneTwister
 
     # if a name was given, instantiate and return
     if name:
-        return WichmannHill(name=name)
+        return MersenneTwister(name=name)
     
     # otherwise, return the class record
-    return WichmannHill
+    return MersenneTwister
 
 
 # end of file 
