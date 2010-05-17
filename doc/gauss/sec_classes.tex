@@ -36,41 +36,43 @@ probability events that require a significant intellectual investment. Fortunate
 at hand is rather well behaved in this regard.
 
 \subsection{Encapsulating the random number generator}
-\label{sec:classes:random}
+\label{sec:classes:pointcloud}
 
 The first candidate for generalization is the random number generator. We should be able to
 choose among many different ones so that we can compare them. In order to take advantage of the
-object oriented machinery in languages like python and \cpp, let's work towards the
-specification of \class{Random}, an abstract base that will encapsulate random number
-generators. Abstract base classes are typically used to anchor class hierarchies. They define
-the interface to which derived classes should adhere, but they themselves are not instantiated
-directly, so they are not supposed to have any data members and all of their methods should
-generate exceptions. We will use \class{Random} to derive classes that hide the implementation
-particulars and conform to a standard interface that we will specify.  This idea is that when
-we run into another random number generator that we would like to use, the effort necessary to
-incorporate it into our program is {\em isolated} to a small subset of the overall code, so
-that the likelihood of introducing a bug into the code is minimized.  Ideally, we should need
-to do little more than create a new class that derives from \class{Random} and implement the
-standard interface using the new generator.
+object oriented machinery in languages like python and \cpp, we must identify an appropriate
+base class that encapsulates the role the random number generators plays in our integration
+algorithm. A moment's reflection should convince you that this role is to provide the cloud of
+points that are candidates for evaluating our integrand. The abstract class \class{PointCloud}
+will fit this bill very nicely. Abstract base classes are typically used to anchor class
+hierarchies. They define the interface to which derived classes should adhere, but they
+themselves are not instantiated directly, so they are not supposed to have any data members and
+all of their methods should generate exceptions. We will use \class{PointCloud} to derive
+classes that hide the implementation particulars and conform to a standard interface that we
+will specify.  This idea is that when we run into another random number generator that we would
+like to use, the effort necessary to incorporate it into our program is {\em isolated} to a
+small subset of the overall code, so that the likelihood of introducing a bug into the code is
+minimized.  Ideally, we should need to do little more than create a new class that derives from
+\class{PointCloud} and implement the standard interface using the new generator.
 
 Having identified such a candidate is half the battle; but now a universe of possibilities
 opens up. What should its interface be, i.e. what is the list of its class methods? What
 arguments should these methods accept? Should there be any data members associated with
 instances of this and its derived classes? A good way to navigate through the possibilities is
 to do as little as possible at every step. Rather than trying to anticipate all the possible
-uses of \class{Random} and its derivatives, we can focus on endowing it with just enough
+uses of \class{PointCloud} and its derivatives, we can focus on endowing it with just enough
 interface to solve our problem. We need a sample $X_{N}$ of $N$ random points $x$ that fall inside
 a box $B$, so let's create a method \method{point} that takes a suitable representation of $B$
 and returns such a point:
 %
 \python{
   firstline=9,lastline=25,
-  label={lst:classes:random},
+  label={lst:classes:pointcloud},
   caption={\srcfile{classes-simple/PointCloud.py}: The abstract base class for representing
     points in the integration region},
 }{listings/classes-simple/PointCloud.py}
 %
-Since \class{Random} is abstract, we can't provide a non-trivial implementation; instead
+Since \class{PointCloud} is abstract, we can't provide a non-trivial implementation; instead
 \method{point} raises an exception to remind developers of derived classes to provide one.
 
 At this stage of the design, we don't have any non-trivial constraints to satisfy. This is both
@@ -130,7 +132,7 @@ with each tuple containing one element from each of the arguments. The result is
 intervals along each axis, over which we iterate in the list comprehension on
 \lstlineref{wh:list} in order to extract the arguments to \function{uniform}.
 
-The class \class{Random} and its derivatives should be generally useful to us and are good
+The class \class{PointCloud} and its derivatives should be generally useful to us and are good
 candidates for reuse. The interface should be broadened a bit, by adding a method to seed
 the random number generator with some initial value, something that most generators support.
 Another consideration is that we will be calling this method a large number of times during the
@@ -138,7 +140,6 @@ integration, so perhaps we will have to modify the class interface after we eval
 performance of this implementation in \secref{classes:driver}.
 
 \TODO{
-\item references for object oriented programming (meyer, eiffel)
 \item references for "formal methods" and agile programming
 \item show example of how to encapsulate the GSL random number generator as well
 }
@@ -148,58 +149,36 @@ performance of this implementation in \secref{classes:driver}.
 
 The next step in the factorization of the simple implementations in \secref{simple} is to build
 a class hierarchy that represents the region of integration. Designing with simplicity in mind
-would suggest a class \class{Shape} with a single method:
+would suggest an abstract base class \class{Shape} with a single method:
 %
-%\begin{python}[%
-  %label={lst:classes:shape},
-  %caption={The base class for the representation of the region of integration},
-%]{}
-%class Shape(object):
+\python{
+  firstline=9,lastline=21,
+  label={lst:classes:shape},
+  caption={\srcfile{classes-simple/Shape.py}: The base class for the representation of the
+    region of integration},
+}{listings/classes-simple/Shape.py}
 %
-    %def contains(self, point):
-        %raise NotImplementedError("please override 'contains'")
-%\end{python}
+from which we will inherit in a class \class{Disk} that will represent the interior of a
+circle.  This representation integration involves two steps: providing an implementation for
+\method{interior} and endowing instances of \class{Disk} with location and size. These two
+attributes will be represented as data members of the class that are provided at construction
+time, and so they become arguments of the constructor of the class.
 %
-The representation of our region of integration involves two steps: providing an
-implementation for \method{contains} and endowing instances of \class{Circle} with location and
-size. These two attributes will be represented as data members of the class that are provided
-at construction time, and so they become arguments of the constructor of the class.
+\python{
+  firstline=9,lastline=36,
+  label={lst:classes:disk},
+  caption={\srcfile{classes-simple/Disk.py}: Representing our region of integration},
+}{listings/classes-simple/Disk.py}
 %
-%\begin{python}[%
-  %label={lst:classes:circle},
-  %caption={The class \class{Circle}},
-%]{}
-%from Shape import Shape
-%
-%class Circle(Shape):
-%
-    %def contains(self, point):
-        %r2 = self.radius**2
-        %x0, y0 = self.center
-        %x, y = point
-        %dx = x - x0
-        %dy = y - y0
-%
-        %if dx*dx + dy*dy > r2:
-            %return False
-%
-        %return True
-%
-    %def __init__(self, radius=1.0, center=(0.0, 0.0)): #@\label{line:circle:constructor}@
-        %self.radius = radius
-        %self.center = center
-        %return
-%\end{python}
-%
-For convenience, the constructor on \lstlineref{circle:constructor} accepts default values for
+For convenience, the constructor on \lstlineref{disk:constructor} accepts default values for
 the center location and radius. It is best to keep such practices to a minimum because the
 implicit passing of information between caller and callee makes the code harder to read and
-understand, and they expose users of the class \class{Circle} to the risk that the default
+understand, and they expose users of the class \class{Disk} to the risk that the default
 values of the arguments may change in the future. In this case there is a {\em natural} choice
 for these values, a unit circle centered at the origin, and so the risk is reduced.
 
 Note that we were careful to avoid injecting the context of our exercise into the design of
-\class{Shape} and \class{Circle}. They appear rather generic and their intended use to perform
+\class{Shape} and \class{Disk}. They appear rather generic and their intended use to perform
 Monte Carlo integration is not explicit. It is natural to ask a \class{Shape} whether it
 contains a given point, regardless of the context for the question. It is not always possible
 to avoid this type of pollution, but careful refactoring of the initial design often helps. 
@@ -292,7 +271,7 @@ The lackluster performance numbers are not very hard to understand. Taking a clo
 \method{generator.random} and another to \method{circle.contains}. Each of these calls is going
 to get executed $N$ times and we will have to pay the cost associated with calling python
 functions every time. Furthermore, if you look at the body of these two functions in
-\lstref{classes:wh} and \lstref{classes:circle}, you will find quite a bit of code associated
+\lstref{classes:wh} and \lstref{classes:disk}, you will find quite a bit of code associated
 with initializing the local variables. That's another cost that we are paying once for each
 sample point. Looks simple enough, but it quickly adds up.
 
@@ -309,10 +288,10 @@ the design of \class{Shape} derivatives and specializes them too much for reuse.
 will eventually need to know which points are interior to the \class{Shape} so we can evaluate
 our integrand $f$ there.
 
-Turning to the implementation, \class{Random} would look like
+Turning to the implementation, \class{PointCloud} would look like
 %
 %\begin{python}[%
-  %label={lst:classes:random:containers},
+  %label={lst:classes:pointcloud:containers},
   %caption={An improved base class for random number generators},
 %]{}
 %class Random(object):
@@ -375,7 +354,7 @@ argument as a container of points:
 The implementation of \class{Circle} is a bit more complicated than \lstref{classes:shape}.
 %
 %\begin{python}[%
-  %label={lst:classes:circle:containers},
+  %label={lst:classes:disk:containers},
   %caption={An implementation of class \class{Circle} with containers},
 %]{}
 %from Shape import Shape
@@ -466,7 +445,7 @@ something that can be used just like a normal iterator. Rather than getting lost
 description, let's revisit \class{WichmannHill}. The improvements we will discuss in this
 section are focused entirely on implementation details; the interface as specified in our
 abstract classes will remain intact. Hence, we will derive our improved class from
-the version of \class{Random} shown in \lstref{classes:random:containers}. The new
+the version of \class{PointCloud} shown in \lstref{classes:pointcloud:containers}. The new
 implementation of \class{WichmannHill} is shown in \lstref{classes:wh:generators}.
 %
 %\begin{python}[%
@@ -518,7 +497,7 @@ will make your head {\em explode} when we touch on {\em metaclasses}.
 Let's see what happens to \class{Shape}:
 %
 %\begin{python}[%
-  %label={lst:classes:circle:generators},
+  %label={lst:classes:disk:generators},
   %caption={The class \class{Circle}},
 %]{}
 %from Shape import Shape
@@ -549,7 +528,7 @@ Let's see what happens to \class{Shape}:
 The method \method{contains} still accepts some kind of iterable object \identifier{points} and
 goes about the business of deciding whether the contents are interior or not. We set up a loop
 over \identifier{points} on \lstlineref{circle:generators:loop}, but rather than storing the
-result in \identifier{mask} as we did in \lstref{classes:circle:containers}, we either
+result in \identifier{mask} as we did in \lstref{classes:disk:containers}, we either
 \keyword{yield} \keyword{False} on \lstlineref{circle:generators:false}, or \keyword{True} on
 \lstlineref{circle:generators:true}. When our loops exhausts \identifier{points} we reach the
 \keyword{return} statement on \lstlineref{circle:generators:return}, which raises a
@@ -604,7 +583,7 @@ we moved the representation to a \identifier{numpy} container? Have we locked ou
 using the python built in random number generator because we cannot feed it a \cc\ array?
 Thanks to the fact that interface, rather than type, is what python checks, we can make all
 these solutions inter-operate. The generator \identifier{Circle.contains} in
-\lstref{classes:circle:generators} does not know or care whether the point container it is
+\lstref{classes:disk:generators} does not know or care whether the point container it is
 iterating over is real or virtual, a python list or a \identifier{numpy} array. All that
 matters is that \identifier{points} is iterable and that each iteration produces a pair of
 floats. This lets us keep the object oriented structure and explore various strategies that
@@ -618,7 +597,7 @@ postponing making these decisions for as long as possible.
 %
 %\begin{python}[%
   %caption={An improved base class for random number generators},
-  %label={lst:classes:random-final}
+  %label={lst:classes:pointcloud-final}
 %]{}
 %class Random(object):
 %

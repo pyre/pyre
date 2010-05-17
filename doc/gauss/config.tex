@@ -30,7 +30,7 @@
 \usepackage{listings}
 \definecolor{keywordcolor}{rgb}{.0,.0,1.0}
 \definecolor{commentcolor}{gray}{.3}
-\definecolor{stringcolor}{gray}{.0}
+\definecolor{stringcolor}{gray}{.5}
 \definecolor{linenumbercolor}{gray}{.3}
 \definecolor{listingbgcolor}{gray}{.97}
 \lstloadlanguages{C,C++,python,bash}
@@ -41,6 +41,8 @@
   % 
   aboveskip=\bigskipamount,
   belowskip=\bigskipamount,
+  abovecaptionskip=\bigskipamount,
+  belowcaptionskip=\bigskipamount,
   % 
   numbers=left,
   numberstyle=\color{linenumbercolor}\tiny,
@@ -55,7 +57,7 @@
   stringstyle=\color{stringcolor}\slshape,
   showstringspaces=false,
   % 
-  frame=,
+  frame=tb,
   captionpos=t,
   backgroundcolor=\color{listingbgcolor},
   xleftmargin=0em,
@@ -74,7 +76,6 @@
     language=C++,
     escapeinside={/*}{*/},#1]
   {#2}}
-  
 
 
 % end of file 
