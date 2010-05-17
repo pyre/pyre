@@ -71,9 +71,9 @@ and returns such a point:
 \python{
   firstline=9,lastline=25,
   label={lst:classes:pointcloud},
-  caption={\srcfile{classes-simple/PointCloud.py}: The abstract base class for representing
+  caption={\srcfile{classes/PointCloud.py}: The abstract base class for representing
     points in the integration region},
-}{listings/classes-simple/PointCloud.py}
+}{listings/classes/PointCloud.py}
 %
 Since \class{PointCloud} is meant to be abstract, we do not attempt to provide a non-trivial
 implementation; instead \method{point} raises an exception to remind developers of derived
@@ -127,8 +127,8 @@ iterable container with the structure shown will do.
 \python{
   firstline=9,lastline=31,
   label={lst:classes:wh},
-  caption={\srcfile{classes-simple/WichmannHill.py}: Encapsulating the standard python generator},
-}{listings/classes-simple/WichmannHill.py}
+  caption={\srcfile{classes/WichmannHill.py}: Encapsulating the standard python generator},
+}{listings/classes/WichmannHill.py}
 %
 We have unpacked the two corners of the bounding box in the assignment on
 \lstlineref{wh:unpack}.  The \function{zip} on \lstlineref{wh:zip} returns a list of tuples,
@@ -158,9 +158,9 @@ would suggest an abstract base class \class{Shape} with a single method:
 \python{
   firstline=9,lastline=21,
   label={lst:classes:shape},
-  caption={\srcfile{classes-simple/Shape.py}: The base class for the representation of the
+  caption={\srcfile{classes/Shape.py}: The base class for the representation of the
     region of integration},
-}{listings/classes-simple/Shape.py}
+}{listings/classes/Shape.py}
 %
 from which we will derive a class \class{Disk} that will represent the interior of a circle.
 Completing this representation involves two steps: providing an implementation for
@@ -171,8 +171,8 @@ time, and so they become arguments of the constructor of the class.
 \python{
   firstline=9,lastline=36,
   label={lst:classes:disk},
-  caption={\srcfile{classes-simple/Disk.py}: Representing our region of integration},
-}{listings/classes-simple/Disk.py}
+  caption={\srcfile{classes/Disk.py}: Representing our region of integration},
+}{listings/classes/Disk.py}
 %
 For convenience, the constructor on \lstlineref{disk:constructor} accepts default values for
 the center location and radius. It is best to keep such practices to a minimum because the
@@ -195,8 +195,8 @@ We are now ready to put the object oriented solution together and see how it per
 \python{
   firstline=9,lastline=32,
   label=lst:classes:driver,
-  caption={\srcfile{classes-simple/gauss.py}: The driver for the objected oriented solution},
-}{listings/classes-simple/gauss.py}
+  caption={\srcfile{classes/gauss.py}: The driver for the objected oriented solution},
+}{listings/classes/gauss.py}
 %
 Before we break open the champagne in celebration of the elegance and simplicity of this
 implementation, we have the unfortunate matter of performance to contend with. A look at the
@@ -275,9 +275,9 @@ Turning to the implementation, \class{PointCloud} would look like
 \python{
   firstline=9,lastline=24,
   label={lst:classes:pointcloud:containers},
-  caption={\srcfile{classes-containers/PointCloud.py}: An improved class for representing the
+  caption={\srcfile{containers/PointCloud.py}: An improved class for representing the
     evaluation points},
-}{listings/classes-containers/PointCloud.py}
+}{listings/containers/PointCloud.py}
 %
 where \identifier{n} is the number of points we want, and \identifier{box} is the bounding box
 representation as before. The new implementation of \class{WichmannHill} is
@@ -285,8 +285,8 @@ representation as before. The new implementation of \class{WichmannHill} is
 \python{
   firstline=9,lastline=32,
   label={lst:classes:wh:containers},
-  caption={\srcfile{classes-containers/WichmannHill.py}: Filling a container with random points},
-}{listings/classes-containers/WichmannHill.py}
+  caption={\srcfile{containers/WichmannHill.py}: Filling a container with random points},
+}{listings/containers/WichmannHill.py}
 %
 The trade off, of course, is that now we must pay the cost of managing a container for these
 points.  Since $n$ is potentially a large number we must be very careful inside the
@@ -300,17 +300,17 @@ argument as a container of points:
 \python{
   firstline=9,lastline=21,
   label={lst:classes:shape:containers},
-  caption={\srcfile{classes-containers/Shape.py}: The base class \class{Shape} requires little
+  caption={\srcfile{containers/Shape.py}: The base class \class{Shape} requires little
     change},
-}{listings/classes-containers/Shape.py}
+}{listings/containers/Shape.py}
 %
 The implementation of \class{Disk} is a bit more complicated than \lstref{classes:shape}.
 %
 \python{
   firstline=9,lastline=37,
   label={lst:classes:disk:containers},
-  caption={\srcfile{classes-containers/Disk.py}: Implementing \class{Disk} as a filter},
-}{listings/classes-containers/Disk.py}
+  caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} as a filter},
+}{listings/containers/Disk.py}
 %
 Again, we have to pay for the cost of managing \identifier{mask}, and the same considerations
 apply when we have to manipulate its entries.
@@ -321,7 +321,7 @@ The driver for the container based solution is rather easy to put together.
   firstline=9,lastline=28,
   label=lst:classes:driver:containers,
   caption={The driver for the container based solution},
-}{listings/classes-containers/gauss.py}
+}{listings/containers/gauss.py}
 %
 
 A striking difference with \lstref{classes:driver}, and all other implementations of the

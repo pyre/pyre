@@ -11,9 +11,9 @@ PACKAGE = doc/gauss/listings
 
 RECURSE_DIRS = \
     simple \
-    classes-simple \
-    classes-containers \
-    classes-generators \
+    classes \
+    containers \
+    generators \
 
 #--------------------------------------------------------------------------
 #

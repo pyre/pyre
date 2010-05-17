@@ -41,21 +41,21 @@ FIGURES = \
 LISTINGS = \
     listings/simple/gauss.py \
     listings/simple/gauss.cc \
-    listings/classes-simple/Disk.py \
-    listings/classes-simple/PointCloud.py \
-    listings/classes-simple/Shape.py \
-    listings/classes-simple/WichmannHill.py \
-    listings/classes-simple/gauss.py \
-    listings/classes-containers/Disk.py \
-    listings/classes-containers/PointCloud.py \
-    listings/classes-containers/Shape.py \
-    listings/classes-containers/WichmannHill.py \
-    listings/classes-containers/gauss.py \
-    listings/classes-containers/Disk.py \
-    listings/classes-containers/PointCloud.py \
-    listings/classes-containers/Shape.py \
-    listings/classes-containers/WichmannHill.py \
-    listings/classes-containers/gauss.py \
+    listings/classes/Disk.py \
+    listings/classes/PointCloud.py \
+    listings/classes/Shape.py \
+    listings/classes/WichmannHill.py \
+    listings/classes/gauss.py \
+    listings/containers/Disk.py \
+    listings/containers/PointCloud.py \
+    listings/containers/Shape.py \
+    listings/containers/WichmannHill.py \
+    listings/containers/gauss.py \
+    listings/generators/Disk.py \
+    listings/generators/PointCloud.py \
+    listings/generators/Shape.py \
+    listings/generators/WichmannHill.py \
+    listings/generators/gauss.py \
 
 #--------------------------------------------------------------------------
 #
