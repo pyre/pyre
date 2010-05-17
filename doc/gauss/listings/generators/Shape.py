@@ -11,7 +11,6 @@ class Shape(object):
     The abstract base class for representations of geometrical regions
     """
 
-
     # interface
     def interior(self, points):
         """

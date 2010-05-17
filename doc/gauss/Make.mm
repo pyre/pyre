@@ -44,17 +44,17 @@ LISTINGS = \
     listings/classes/Disk.py \
     listings/classes/PointCloud.py \
     listings/classes/Shape.py \
-    listings/classes/WichmannHill.py \
+    listings/classes/MersenneTwister.py \
     listings/classes/gauss.py \
     listings/containers/Disk.py \
     listings/containers/PointCloud.py \
     listings/containers/Shape.py \
-    listings/containers/WichmannHill.py \
+    listings/containers/MersenneTwister.py \
     listings/containers/gauss.py \
     listings/generators/Disk.py \
     listings/generators/PointCloud.py \
     listings/generators/Shape.py \
-    listings/generators/WichmannHill.py \
+    listings/generators/MersenneTwister.py \
     listings/generators/gauss.py \
 
 #--------------------------------------------------------------------------

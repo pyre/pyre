@@ -9,13 +9,13 @@
 
 def gauss():
     from Disk import Disk
-    from WichmannHill import WichmannHill
+    from MersenneTwister import MersenneTwister
 
     # inputs
     total = 10**5
     box = [(0,0), (1,1)]
     # the point cloud generator
-    generator = WichmannHill()
+    generator = MersenneTwister()
     # the region of integration
     disk = Disk(center=(0,0), radius=1)
 
@@ -28,9 +28,9 @@ def gauss():
     return
 
 
-def testWH():
-    from WichmannHill import WichmannHill
-    wh = WichmannHill()
+def testMT():
+    from MersenneTwister import MersenneTwister
+    wh = MersenneTwister()
 
     sample = wh.generateSample(2, [(0, 1),(1, 2)])
 

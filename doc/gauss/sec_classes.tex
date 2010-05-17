@@ -44,8 +44,8 @@ object oriented machinery in languages like python and \cpp, we must identify an
 base class that encapsulates the role the random number generators plays in our integration
 algorithm. A moment's reflection should convince you that this role is to provide the cloud of
 points that are candidates for evaluating our integrand. The abstract class \class{PointCloud}
-will fit this bill very nicely, and its specialization \class{WichmannHill} will create point
-clouds using the Wichmann-Hill random number generator we used in \secref{simple:python}. 
+will fit this bill very nicely, and its specialization \class{MersenneTwister} will create point
+clouds using the Mersenne Twister random number generator we used in \secref{simple:python}. 
 
 Abstract base classes are typically used to anchor class hierarchies. They define the interface
 to which derived classes should adhere, but they themselves are not instantiated directly, so
@@ -100,8 +100,8 @@ object oriented program. The only way to get a clear understanding of which sect
 application would benefit from further optimization efforts is to use a profiler, a tool
 dedicated to analyzing code performance. Despite all the advances in software engineering
 technology, it is still very hard to profile a design without an actual implementation. This
-deals a rather strong blow to the proponents of formal design practices and makes agile
-programming a much more attractive methodology for scientific programming.
+deals a rather strong blow to the proponents of formal design practices and makes {\em agile
+programming}\cite{agile} a much more attractive methodology for scientific programming.
 
 One thing is clear: the performance cost of variable accesses and function calls has the
 potential to dominate the execution profile of a code in an insidious way. The program may be
@@ -112,7 +112,7 @@ templates. Still, much of the code in modern scientific applications deals with 
 the computational environment; it is these parts that stand to benefit the most from the
 complexity management that object oriented techniques bring to the table.
 
-Returning to the problem at hand, we can now derive a class \class{WichmannHill} that
+Returning to the problem at hand, we can now derive a class \class{MersenneTwister} that
 encapsulates the random number generator from the standard python library that we used in
 \secref{simple:python}. We require that \identifier{box} has enough structure so that we can
 deduce the dimensionality of the requested point, as well as build the set of transformations
@@ -127,14 +127,14 @@ iterable container with the structure shown will do.
 \python{
   firstline=9,lastline=31,
   label={lst:classes:wh},
-  caption={\srcfile{classes/WichmannHill.py}: Encapsulating the standard python generator},
-}{listings/classes/WichmannHill.py}
+  caption={\srcfile{classes/MersenneTwister.py}: Encapsulating the standard python generator},
+}{listings/classes/MersenneTwister.py}
 %
 We have unpacked the two corners of the bounding box in the assignment on
-\lstlineref{wh:unpack}.  The \function{zip} on \lstlineref{wh:zip} returns a list of tuples,
+\lstlineref{mt:unpack}.  The \function{zip} on \lstlineref{mt:zip} returns a list of tuples,
 with each tuple containing one element from each of the arguments. The result is a list of the
 intervals along each axis, over which we iterate in the list comprehension on
-\lstlineref{wh:list} in order to extract the arguments to \function{uniform}.
+\lstlineref{mt:list} in order to extract the arguments to \function{uniform}.
 
 The class \class{PointCloud} and its derivatives should be generally useful to us and are good
 candidates for reuse. The interface should be broadened a bit, by adding a method to seed
@@ -280,13 +280,13 @@ Turning to the implementation, \class{PointCloud} would look like
 }{listings/containers/PointCloud.py}
 %
 where \identifier{n} is the number of points we want, and \identifier{box} is the bounding box
-representation as before. The new implementation of \class{WichmannHill} is
+representation as before. The new implementation of \class{MersenneTwister} is
 %
 \python{
   firstline=9,lastline=32,
-  label={lst:classes:wh:containers},
-  caption={\srcfile{containers/WichmannHill.py}: Filling a container with random points},
-}{listings/containers/WichmannHill.py}
+  label={lst:classes:mt:containers},
+  caption={\srcfile{containers/MersenneTwister.py}: Filling a container with random points},
+}{listings/containers/MersenneTwister.py}
 %
 The trade off, of course, is that now we must pay the cost of managing a container for these
 points.  Since $n$ is potentially a large number we must be very careful inside the
@@ -347,8 +347,8 @@ of memory for sufficiently large samples.
 
 Fortunately, there is a way to retain the elegance of containers without paying the memory cost
 by using {\em generators}, an extremely powerful programming construct borrowed from the
-language \identifier{Icon}\cite{icon} that is now available in python.\footnote{Generators were
-  first seen in version 2.2 and turned into a core part of the language in version 2.3}
+language \identifier{Icon} \cite{icon} that is now available in python.\footnote{Generators
+  were first seen in version 2.2 and turned into a core part of the language in version 2.3}
 Hopefully, we will be able to avoid any confusion between random number generators and the
 programming construct.
 
@@ -357,14 +357,14 @@ storage for a container. You can think of them as iterator generators, hence the
 What you actually get when you call a generator involves elaborate descriptions of some
 implementation details; for the purpose of this discussion, you can think of the result as
 something that can be used just like a normal iterator. Rather than getting lost in an abstract
-description, let's revisit \class{WichmannHill}. The improvements we will discuss in this
+description, let's revisit \class{MersenneTwister}. The improvements we will discuss in this
 section are focused entirely on implementation details; the interface as specified in our
 abstract classes will remain intact. Hence, we will derive our improved class from
 the version of \class{PointCloud} shown in \lstref{classes:pointcloud:containers}. The new
-implementation of \class{WichmannHill} is shown in \lstref{classes:wh:generators}.
+implementation of \class{MersenneTwister} is shown in \lstref{classes:mt:generators}.
 %
 %\begin{python}[%
-  %label={lst:classes:wh:generators},
+  %label={lst:classes:mt:generators},
   %caption={The generator based implementation},
 %]{}
 %import random
@@ -380,17 +380,17 @@ implementation of \class{WichmannHill} is shown in \lstref{classes:wh:generators
         %# loop over the sample size
         %while n > 0:
             %p = [ random.uniform(left, right) for left,right in intervals ]
-            %yield p #@\label{line:wh:generators:yield}@
+            %yield p #@\label{line:mt:generators:yield}@
 %
             %n -= 1
         %
-        %return #@\label{line:wh:generators:return}@
+        %return #@\label{line:mt:generators:return}@
 %\end{python}
 %
 
-Almost everything looks the same as in \lstref{classes:wh:containers}, except for the new
-keyword \keyword{yield} on \lstlineref{wh:generators:yield} and the \keyword{return} without a
-value on \lstlineref{wh:generators:return}. Indeed, we unpack the arguments to \method{point}
+Almost everything looks the same as in \lstref{classes:mt:containers}, except for the new
+keyword \keyword{yield} on \lstlineref{mt:generators:yield} and the \keyword{return} without a
+value on \lstlineref{mt:generators:return}. Indeed, we unpack the arguments to \method{point}
 as we did before, and proceed to loop over the desired sample size, generating ramdom points.
 Rather than storing \identifier{p}, we \keyword{yield} it to our caller. This statement
 suspends the execution of \method{points} but saves everything that we have done so far,
@@ -398,11 +398,11 @@ including the values of all the local variables such as the loop counter \identi
 caller doesn't actually get \identifier{p}, but an iterator object that executes this code and
 returns \identifier{p} when asked for its current value, and will resume the evaluation of
 \method{points} when asked to advance via its \method{next} method at whatever statement
-follows the \keyword{yield} statement on \lstlineref{wh:generators:yield} that suspended it. In
+follows the \keyword{yield} statement on \lstlineref{mt:generators:yield} that suspended it. In
 our case it means that the counter will get decremented and the loop will execute another
 iteration until the next time the \keyword{yield} statement is reached. This process continues
 until the loop is exhausted, at which point we run into the \keyword{return} statement on
-\lstlineref{wh:generators:return}. According to generator rules, \keyword{return} causes a
+\lstlineref{mt:generators:return}. According to generator rules, \keyword{return} causes a
 \class{StopIteration} exception to be raised, signalling to the caller that we are done
 generating values from our virtual container.
 

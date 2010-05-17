@@ -9,13 +9,11 @@
 import random
 from PointCloud import PointCloud
 
-
-class WichmannHill(PointCloud):
+class MersenneTwister(PointCloud):
     """
-    A point generator that is implemented using the Wichmann-Hill random number generator that
+    A point generator that is implemented using the Mersenne Twister random number generator that
     is available as part of the python standard library
     """
-
 
     def points(self, n, box):
         """
@@ -26,10 +24,10 @@ class WichmannHill(PointCloud):
         # loop over the sample size
         while n > 0:
             p = [ random.uniform(left, right) for left,right in intervals ]
-            yield p
+            yield p #@\label{line:mt:generators:yield}@
             n -= 1
                 
-        return
+        return #@\label{line:mt:generators:return}@
 
 
 # end of file 

@@ -9,9 +9,9 @@
 import random
 from PointCloud import PointCloud
 
-class WichmannHill(PointCloud):
+class MersenneTwister(PointCloud):
     """
-    A point generator that is implemented using the Wichmann-Hill random number generator that
+    A point generator that is implemented using the Mersenne Twister random number generator that
     is available as part of the python standard library
     """
 
