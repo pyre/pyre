@@ -20,6 +20,7 @@ OTHERS = \
 DOCUMENT = gauss
 
 INCLUDES = \
+    titlepage.sty \
     config.tex \
     macros.tex \
     meta.tex \
