@@ -69,15 +69,15 @@ a box $B$, so let's create a method \method{point} that takes a suitable represe
 and returns such a point:
 %
 \python{
-  firstline=9,lastline=25,
+  firstline=9,lastline=24,
   label={lst:classes:pointcloud},
   caption={\srcfile{classes/PointCloud.py}: The abstract base class for representing
     points in the integration region},
 }{listings/classes/PointCloud.py}
 %
 Since \class{PointCloud} is meant to be abstract, we do not attempt to provide a non-trivial
-implementation; instead \method{point} raises an exception to remind developers of derived
-classes to provide one.
+implementation; instead, the method \method{point} raises an exception to remind developers of
+derived classes to provide one.
 
 At this stage of the design, we don't have any non-trivial constraints to satisfy. This is both
 a blessing and a curse. On one hand, we can pretty much dictate what the class hierarchy will
@@ -125,20 +125,22 @@ by \mbox{\tt [[0,0], [1,1]]}, while the unit box in three dimensions would be gi
 iterable container with the structure shown will do.
 %
 \python{
-  firstline=9,lastline=31,
+  firstline=9,lastline=29,
   label={lst:classes:wh},
   caption={\srcfile{classes/MersenneTwister.py}: Encapsulating the standard python generator},
 }{listings/classes/MersenneTwister.py}
 %
 We have unpacked the two corners of the bounding box in the assignment on
-\lstlineref{mt:unpack}.  The \function{zip} on \lstlineref{mt:zip} returns a list of tuples,
-with each tuple containing one element from each of the arguments. The result is a list of the
-intervals along each axis, over which we iterate in the list comprehension on
-\lstlineref{mt:list} in order to extract the arguments to \function{uniform}.
+\lstlineref{mt:unpack}. On \lstlineref{mt:zip}, we have used \function{zip} to build a tuple of
+the co\"ordinate intervals along each axis, over which we iterate in the list comprehension on
+\lstlineref{mt:list} in order to provide the arguments to \function{uniform}. The function
+\function{uniform} performs the necessary transformations to return a random number between
+\identifier{left} and \identifier{right} along each of the axes. The net effect is
+a $d$-dimensional random point from the interior of \identifier{box}.
 
-The class \class{PointCloud} and its derivatives should be generally useful to us and are good
-candidates for reuse. The interface should be broadened a bit, by adding a method to seed
-the random number generator with some initial value, something that most generators support.
+The class \class{PointCloud} and its subclasses should be generally useful to us and are good
+candidates for reuse. The interface should be broadened a bit, by adding a means to seed the
+random number generator with some initial value, something that most generators support.
 Another consideration is that we will be calling this method a large number of times during the
 integration, so perhaps we will have to modify the class interface after we evaluate the
 performance of this implementation in \secref{classes:driver}.
@@ -152,17 +154,18 @@ performance of this implementation in \secref{classes:driver}.
 \label{sec:classes:region}
 
 The next step in the factorization of the simple implementations in \secref{simple} is to build
-a class hierarchy that represents the region of integration. Designing with simplicity in mind
-would suggest an abstract base class \class{Shape} with a single method:
+a class hierarchy that represents the geometrical properties of the region of integration.
+Designing with simplicity in mind would suggest an abstract base class \class{Shape} with a
+single method:
 %
 \python{
-  firstline=9,lastline=21,
+  firstline=9,lastline=20,
   label={lst:classes:shape},
   caption={\srcfile{classes/Shape.py}: The base class for the representation of the
     region of integration},
 }{listings/classes/Shape.py}
 %
-from which we will derive a class \class{Disk} that will represent the interior of a circle.
+from which we derive a class \class{Disk} that represents the interior of a circle.
 Completing this representation involves two steps: providing an implementation for
 \method{interior} and endowing instances of \class{Disk} with location and size. These two
 attributes will be represented as data members of the class that are provided at construction
@@ -175,11 +178,11 @@ time, and so they become arguments of the constructor of the class.
 }{listings/classes/Disk.py}
 %
 For convenience, the constructor on \lstlineref{disk:constructor} accepts default values for
-the center location and radius. It is best to keep such practices to a minimum because the
-implicit passing of information between caller and callee makes the code harder to read and
-understand, and they expose users of the class \class{Disk} to the risk that the default
-values of the arguments may change in the future. In this case there is a {\em natural} choice
-for these values, a unit circle centered at the origin, and so the risk is reduced.
+the radius and the center of the disk. It is best to keep such practices to a minimum because
+the implicit passing of information between caller and callee makes the code harder to read and
+understand, and they expose users of the class \class{Disk} to the risk that the default values
+of the arguments may change in the future. In this case there is a {\em natural} choice for
+these values, a unit circle centered at the origin, and so the risk is reduced.
 
 Note that we were careful to avoid injecting the context of our exercise into the design of
 \class{Shape} and \class{Disk}. They appear rather generic and their intended use to perform
@@ -250,12 +253,13 @@ and almost two orders of magnitude slower than the \cpp\ implementation.
 
 The lackluster performance numbers are not very hard to understand. Taking a closer look at
 \lstref{classes:driver} we see that the body of the loop contains two function calls, one to
-\method{generator.random} and another to \method{circle.contains}. Each of these calls is going
-to get executed $N$ times and we will have to pay the cost associated with calling python
-functions every time. Furthermore, if you look at the body of these two functions in
-\lstref{classes:wh} and \lstref{classes:disk}, you will find quite a bit of code associated
-with initializing the local variables. That's another cost that we are paying once for each
-sample point. Looks simple enough, but it quickly adds up.
+\method{cloud.point} and another to \method{disk.interior}. Each of these calls is going to get
+executed $N$ times and we will have to pay the cost associated with looking up the method name
+and calling the associated python functions every time. Furthermore, if you look at the body of
+these two functions in \lstref{classes:wh} and \lstref{classes:disk}, you will find quite a bit
+of code associated with initializing local variables that have the same value every time these
+methods are invoked. That's another cost that we are paying once for each sample point. It
+may looks simple enough, but it quickly adds up.
 
 \subsubsection{Containers: trading memory for speed}
 \label{sec:classes:containers}
@@ -263,14 +267,17 @@ sample point. Looks simple enough, but it quickly adds up.
 Perhaps we can amortize these costs over the sample set. One approach would be to call the
 random number generator once and have it return a container with all the points in the sample
 set. We would then pass this array to the shape, which would return a {\em mask}, i.e. an array
-of \keyword{True}-\keyword{False} values indicating whether the corresponding point was
-interior or not. Keep in mind that it is not acceptable to have \method{contains} just count
+of \keyword{True} or \keyword{False} values indicating whether the corresponding point was
+interior or not. Keep in mind that it is not acceptable to have \method{interior} just count
 the number of interior points for us, for a couple of reasons. First, this capability pollutes
-the design of \class{Shape} derivatives and specializes them too much for reuse. Second, we
-will eventually need to know which points are interior to the \class{Shape} so we can evaluate
-our integrand $f$ there.
+the design of \class{Shape} subclasses and specializes them too much for reuse. Second, we will
+eventually need to know which points are interior to the \class{Shape} so we can evaluate our
+integrand $f$ there.
 
-Turning to the implementation, \class{PointCloud} would look like
+Turning to the implementation in \lstref{classes:pointcloud:containers}, the class
+\class{PointCloud} gets a method \method{points} that expects two arguments: \identifier{n} is
+the number of points in our sample, and \identifier{box} is the bounding box representation as
+before.
 %
 \python{
   firstline=9,lastline=24,
@@ -279,8 +286,14 @@ Turning to the implementation, \class{PointCloud} would look like
     evaluation points},
 }{listings/containers/PointCloud.py}
 %
-where \identifier{n} is the number of points we want, and \identifier{box} is the bounding box
-representation as before. The new implementation of \class{MersenneTwister} is
+The new implementation of the subclass \class{MersenneTwister} is shown in
+\lstref{classes:mt:containers}. The method \method{points} builds, populates and returns a
+container of \identifier{n} random points. The trade off, of course, is that now we must pay
+the cost of managing this container. Since $n$ is potentially a large number we must be very
+careful inside the \keyword{while} loop. In particular it is important to use \order{1}
+operations while building the sample container. Fortunately, \method{append} is very well
+behaved in this regard: python lists are implemented in such a way that the interpreter can add
+elements at the tail in essentially constant time.
 %
 \python{
   firstline=9,lastline=32,
@@ -288,32 +301,30 @@ representation as before. The new implementation of \class{MersenneTwister} is
   caption={\srcfile{containers/MersenneTwister.py}: Filling a container with random points},
 }{listings/containers/MersenneTwister.py}
 %
-The trade off, of course, is that now we must pay the cost of managing a container for these
-points.  Since $n$ is potentially a large number we must be very careful inside the
-\keyword{while} loop. In particular it is important to use \order{1} operations while building
-the sample container. Fortunately, \method{append} is very well behaved in this regard: python
-lists are doubly-chained and the interpreter can add elements at the tail in constant time. 
 
-The class \class{Shape} doesn't require any change. We will merely reinterpret the dummy
-argument as a container of points:
+The abstract class \class{Shape} doesn't require any significant changes. We merely reinterpret
+the dummy argument as a container of points and adjust its name accordingly.
 %
 \python{
-  firstline=9,lastline=21,
+  firstline=9,lastline=22,
   label={lst:classes:shape:containers},
   caption={\srcfile{containers/Shape.py}: The base class \class{Shape} requires little
     change},
 }{listings/containers/Shape.py}
 %
-The implementation of \class{Disk} is a bit more complicated than \lstref{classes:shape}.
+The implementation of \class{Disk}, shown in \lstref{classes:disk:containers}, is a bit more
+complicated than \lstref{classes:disk}. In \method{interior}, we initialize the container
+\identifier{mask} and populate it with \keyword{True} or \keyword{False} to indicate whether
+each point lies on the interior of the disk.
 %
 \python{
-  firstline=9,lastline=37,
+  firstline=9,lastline=41,
   label={lst:classes:disk:containers},
   caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} as a filter},
 }{listings/containers/Disk.py}
 %
-Again, we have to pay for the cost of managing \identifier{mask}, and the same considerations
-apply when we have to manipulate its entries.
+Again, we have to pay for the cost of managing \identifier{mask}, so we must be very careful
+when we manipulate its entries.
 
 The driver for the container based solution is rather easy to put together.
 %
@@ -324,8 +335,8 @@ The driver for the container based solution is rather easy to put together.
 }{listings/containers/gauss.py}
 %
 
-A striking difference with \lstref{classes:driver}, and all other implementations of the
-integration driver, is the absence of counters. Instead, we have used \function{sum} that
+A striking difference between \lstref{classes:driver} and the other implementations of the
+integration driver is the absence of counters. Instead, we have used \function{sum} that
 adds up the elements of its input list and converts the filtered points from \class{Disk} into
 a count of the points interior to our region of integration.
 

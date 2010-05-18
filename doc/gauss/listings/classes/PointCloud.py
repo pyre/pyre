@@ -11,7 +11,6 @@ class PointCloud(object):
     The abstract base class for point generators
     """
 
-
     # interface
     def point(self, box):
         """

@@ -15,7 +15,8 @@ class Shape(object):
     # interface
     def interior(self, points):
         """
-        Predicate that checks whether {point} falls on my interior
+        Examine each point in {points} and return a list of booleans indicating whether it is
+        interior or not
         """
         raise NotImplementedError(
             "class '%s' should implement 'contains'" % self.__class__.__name__)
