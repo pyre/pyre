@@ -18,16 +18,18 @@ class Disk(Shape):
         """
         Predicate that filters out points that are not in my interior
         """
+        # precompute the frequently used values
         r2 = self.radius**2
         x0, y0 = self.center
-
-        for x,y in points: #@\label{line:circle:generators:loop}@
+        # iterate over the given points and return the interior ones
+        for point in points: #@\label{line:disk:generators:loop}@
+            x, y = point
             dx = x - x0
             dy = y - y0
             if dx*dx + dy*dy <= r2:
-                yield 1 #@\label{line:circle:generators:true}@
-
-        return #@\label{line:circle:generators:return}@
+                yield point #@\label{line:disk:generators:yield}@
+        # all done
+        return #@\label{line:disk:generators:return}@
 
 
     # meta methods

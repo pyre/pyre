@@ -21,12 +21,22 @@ def gauss():
 
     # the integration algorithm
     sample = generator.points(total, box)
-    interior = sum(disk.interior(sample))
+    interior = count(disk.interior(sample))
 
     # print out the estimate of π
     print("pi: {0:.8f}".format(4*interior/total))
 
     return
+
+
+def count(iterable):
+    """
+    Count the entries of iterable
+    """
+    counter = 0
+    for item in iterable:
+        counter += 1
+    return counter
 
 
 def testMT():
@@ -50,7 +60,7 @@ def testDisk():
         (1, 1)
         ]
     
-    print(sum(disk.contains(points)))
+    print(count(disk.contains(points)))
 
     return
 

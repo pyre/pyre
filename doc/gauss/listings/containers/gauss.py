@@ -11,10 +11,8 @@ def gauss():
     from Disk import Disk
     from MersenneTwister import MersenneTwister
 
-    # initialize the counters
-    total = 10**5
-    interior = 0
-    # the bounding box
+    # inputs
+    N = 10**5
     box = [(0,0), (1,1)]
     # the point cloud generator
     generator = MersenneTwister()
@@ -25,20 +23,17 @@ def gauss():
     # build the point sample
     sample = generator.points(total, box)
     # count the interior points
-    for flag in disk.interior(sample):
-        if flag is True:
-            interior += 1
-
-    # print out the estimate of π
+    interior = len(disk.interior(sample))
+    # print out the estimate of #@$\pi$@
     print("pi: {0:.8f}".format(4*interior/total))
     return
 
 
 def testMT():
     from MersenneTwister import MersenneTwister
-    wh = MersenneTwister()
+    mt = MersenneTwister()
 
-    sample = wh.generateSample(2, [(0, 1),(1, 2)])
+    sample = mt.generateSample(2, [(0, 1),(1, 2)])
 
     print(sample)
 

@@ -11,8 +11,8 @@ from PointCloud import PointCloud
 
 class MersenneTwister(PointCloud):
     """
-    A point generator that is implemented using the Mersenne Twister random number generator that
-    is available as part of the python standard library
+    A point generator implemented using the Mersenne Twister random number generator that is
+    available as part of the python standard library
     """
 
     # interface

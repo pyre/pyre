@@ -11,18 +11,19 @@ from PointCloud import PointCloud
 
 class MersenneTwister(PointCloud):
     """
-    A point generator that is implemented using the Mersenne Twister random number generator that
-    is available as part of the python standard library
+    A point generator implemented using the Mersenne Twister random number generator that is
+    available as part of the python standard library
     """
 
+    # interface
     def points(self, n, box):
         """
         Generate {n} random points in the interior of {box}
         """
-        # create the container for the sample
-        sample = []
         # unfold the bounding box
         intervals = tuple(zip(*box))
+        # create the container for the sample
+        sample = []
         # loop over the sample size
         while n > 0:
             p = [ random.uniform(left, right) for left,right in intervals ]

@@ -16,23 +16,22 @@ class Disk(Shape):
     # interface
     def interior(self, points):
         """
-        Examine each point in {points} and return a list of booleans indicating whether it is
-        interior or not
+        Build a container with members of {points} that fall within my disk
         """
-        mask = []
+        # precompute the frequently used values
         r2 = self.radius**2
         x0, y0 = self.center
-
-        for x,y in points:
+        # initialize the container of interior points
+        keep = []
+        # iterate over the given points and save the interior ones
+        for point in points:
+            x, y = point
             dx = x - x0
             dy = y - y0
-            if dx*dx + dy*dy > r2:
-                mask.append(False)
-            else:
-                mask.append(True)
-
-        return mask
-
+            if dx*dx + dy*dy <= r2:
+                keep.append(point)
+        # and return them to the caller
+        return keep
 
     # meta methods
     def __init__(self, radius=1.0, center=(0.0, 0.0)):

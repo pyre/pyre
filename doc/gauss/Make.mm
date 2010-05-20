@@ -85,7 +85,7 @@ xpdf: $(DOCUMENT).pdf
 	xpdf -remote $(DOCUMENT) $(DOCUMENT).pdf
 
 # make the document using the default document class
-$(DOCUMENT).pdf: $(DOCUMENT).tex $(PACKAGES) $(INCLUDES) $(SECTIONS) $(FIGURES) $(LISTINGS)
+$(DOCUMENT).pdf: $(DOCUMENT).tex $(INCLUDES) $(SECTIONS) $(FIGURES) $(LISTINGS)
 
 # housekeeping
 PROJ_CLEAN = $(CLEAN_LATEX) *.snm *.nav *.vrb 

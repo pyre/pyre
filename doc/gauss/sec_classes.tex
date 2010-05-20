@@ -17,7 +17,7 @@ complicated interactions between unfamiliar pieces of code, and it is likely to 
 performance characteristics. Unfortunately, even minor attempts at generalization will require
 extensive surgery. That's not to say that the time spent in constructing these prototypes is
 wasted: it takes foresight that comes with extensive experience to be able to see the general
-solution without visiting a few dead ends. As they are, our two implementations will serve as
+solution without visiting a few dead ends. As they stand, our two implementations will serve as
 benchmarks against which we will judge the next evolutionary steps, and in particular their
 performance, so that we can gauge the flexibility trade-off.
 
@@ -174,7 +174,7 @@ time, and so they become arguments of the constructor of the class.
 \python{
   firstline=9,lastline=36,
   label={lst:classes:disk},
-  caption={\srcfile{classes/Disk.py}: Representing our region of integration},
+  caption={\srcfile{classes/Disk.py}: Representing the interior of a circle},
 }{listings/classes/Disk.py}
 %
 For convenience, the constructor on \lstlineref{disk:constructor} accepts default values for
@@ -264,15 +264,14 @@ may looks simple enough, but it quickly adds up.
 \subsubsection{Containers: trading memory for speed}
 \label{sec:classes:containers}
 
-Perhaps we can amortize these costs over the sample set. One approach would be to call the
-random number generator once and have it return a container with all the points in the sample
-set. We would then pass this array to the shape, which would return a {\em mask}, i.e. an array
-of \keyword{True} or \keyword{False} values indicating whether the corresponding point was
-interior or not. Keep in mind that it is not acceptable to have \method{interior} just count
-the number of interior points for us, for a couple of reasons. First, this capability pollutes
-the design of \class{Shape} subclasses and specializes them too much for reuse. Second, we will
-eventually need to know which points are interior to the \class{Shape} so we can evaluate our
-integrand $f$ there.
+Perhaps we can amortize these costs over the sample set. One approach is to call the random
+number generator once and have it build a container with all the points in the sample set. The
+representation of the region of integration can act as a {\em filter} by building a container
+with the subset of points that fall on its interior. It is important to resist the temptation
+to have \class{Shape} just count the points for us so we can avoid the extra container. This
+would pollute the design by over-specializing \class{Shape} and would hinder reuse. Further, we
+will eventually need to know which points are interior to the \class{Shape} so we can evaluate
+our integrand $f$ there.
 
 Turning to the implementation in \lstref{classes:pointcloud:containers}, the class
 \class{PointCloud} gets a method \method{points} that expects two arguments: \identifier{n} is
@@ -296,7 +295,7 @@ behaved in this regard: python lists are implemented in such a way that the inte
 elements at the tail in essentially constant time.
 %
 \python{
-  firstline=9,lastline=32,
+  firstline=9,lastline=33,
   label={lst:classes:mt:containers},
   caption={\srcfile{containers/MersenneTwister.py}: Filling a container with random points},
 }{listings/containers/MersenneTwister.py}
@@ -312,33 +311,28 @@ the dummy argument as a container of points and adjust its name accordingly.
     change},
 }{listings/containers/Shape.py}
 %
-The implementation of \class{Disk}, shown in \lstref{classes:disk:containers}, is a bit more
-complicated than \lstref{classes:disk}. In \method{interior}, we initialize the container
-\identifier{mask} and populate it with \keyword{True} or \keyword{False} to indicate whether
-each point lies on the interior of the disk.
+The implementation of \class{Disk}, shown in \lstref{classes:disk:containers}, is only slightly
+more complicated than \lstref{classes:disk}. We initialize a container \identifier{keep} and
+populate with the interior points.
 %
 \python{
-  firstline=9,lastline=41,
+  firstline=9,lastline=40,
   label={lst:classes:disk:containers},
   caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} as a filter},
 }{listings/containers/Disk.py}
 %
-Again, we have to pay for the cost of managing \identifier{mask}, so we must be very careful
-when we manipulate its entries.
 
-The driver for the container based solution is rather easy to put together.
+The driver for the container based solution is shown in \lstref{classes:driver:containers}.
 %
 \python{
-  firstline=9,lastline=28,
+  firstline=9,lastline=29,
   label=lst:classes:driver:containers,
-  caption={The driver for the container based solution},
+  caption={\srcfile{containers/gauss.py}: The driver for the container based solution},
 }{listings/containers/gauss.py}
 %
-
-A striking difference between \lstref{classes:driver} and the other implementations of the
-integration driver is the absence of counters. Instead, we have used \function{sum} that
-adds up the elements of its input list and converts the filtered points from \class{Disk} into
-a count of the points interior to our region of integration.
+The striking difference with \lstref{classes:driver} is the absence of explicit loops and
+counter updates. Instead, we just use the function \function{len} to compute the number of
+interior points.
 
 \TODO{
 \item compare with the performance in \secref{simple:python} and \secref{classes:driver}
@@ -358,72 +352,72 @@ of memory for sufficiently large samples.
 
 Fortunately, there is a way to retain the elegance of containers without paying the memory cost
 by using {\em generators}, an extremely powerful programming construct borrowed from the
-language \identifier{Icon} \cite{icon} that is now available in python.\footnote{Generators
-  were first seen in version 2.2 and turned into a core part of the language in version 2.3}
-Hopefully, we will be able to avoid any confusion between random number generators and the
-programming construct.
+language \identifier{Icon} \cite{icon}.\footnote{Generators were first seen in version 2.2 and
+became a core part of the language in version 2.3} Hopefully, we will be able to avoid
+any confusion between random number generators and the programming construct.
 
 Generators are functions that behave like iterators without necessarily having to manage actual
 storage for a container. You can think of them as iterator generators, hence the catchy name.
-What you actually get when you call a generator involves elaborate descriptions of some
-implementation details; for the purpose of this discussion, you can think of the result as
-something that can be used just like a normal iterator. Rather than getting lost in an abstract
-description, let's revisit \class{MersenneTwister}. The improvements we will discuss in this
-section are focused entirely on implementation details; the interface as specified in our
-abstract classes will remain intact. Hence, we will derive our improved class from
-the version of \class{PointCloud} shown in \lstref{classes:pointcloud:containers}. The new
-implementation of \class{MersenneTwister} is shown in \lstref{classes:mt:generators}.
+Explaining what you actually get when you call a generator involves somewhat elaborate
+descriptions of python internals; for the purpose of this discussion, you can think of the
+result as something that can be used just like a normal iterator. Rather than getting lost in
+an abstract description, let's revisit \class{MersenneTwister}. The improvements we will
+discuss in this section are focused entirely on the implementation details; the interface as
+specified in our abstract classes will remain intact. Hence, we will derive our improved class
+from the version of \class{PointCloud} shown in \lstref{classes:pointcloud:containers}. The new
+implementation of \class{MersenneTwister} is shown in \lstref{generators:mt}.
 %
 \python{
-  firstline=9,lastline=30,
-  label={lst:classes:mt:generators},
+  firstline=9,lastline=31,
+  label={lst:generators:mt},
   caption={\srcfile{containers/MersenneTwister.py}: The generator based implementation},
 }{listings/generators/MersenneTwister.py}
 %
-
 Almost everything looks the same as in \lstref{classes:mt:containers}, except for the new
-keyword \keyword{yield} on \lstlineref{mt:generators:yield} and the \keyword{return} without a
+keyword \keyword{yield} on \lstlineref{mt:generators:yield}, and the \keyword{return} without a
 value on \lstlineref{mt:generators:return}. Indeed, we unpack the arguments to \method{point}
 as we did before, and proceed to loop over the desired sample size, generating ramdom points.
 Rather than storing \identifier{p}, we \keyword{yield} it to our caller. This statement
 suspends the execution of \method{points} but saves everything that we have done so far,
-including the values of all the local variables such as the loop counter \identifier{n}. The
+including the values of all the local variables, such as the loop counter \identifier{n}. The
 caller doesn't actually get \identifier{p}, but an iterator object that executes this code and
-returns \identifier{p} when asked for its current value, and will resume the evaluation of
-\method{points} when asked to advance via its \method{next} method at whatever statement
-follows the \keyword{yield} statement on \lstlineref{mt:generators:yield} that suspended it. In
-our case it means that the counter will get decremented and the loop will execute another
-iteration until the next time the \keyword{yield} statement is reached. This process continues
-until the loop is exhausted, at which point we run into the \keyword{return} statement on
+returns \identifier{p} when asked for its current value. The magical part is that when the
+iterator is asked to advance to advance to the its next item, it will resume evaluating the
+method \method{points} at whatever statement follows the \keyword{yield} statement on
+\lstlineref{mt:generators:yield} that suspended it. In our case it means that the counter will
+get decremented and the loop will execute another iteration until the next time the
+\keyword{yield} statement is reached. This process continues until the loop is exhausted, at
+which point we run into the \keyword{return} statement on
 \lstlineref{mt:generators:return}. According to generator rules, \keyword{return} causes a
 \class{StopIteration} exception to be raised, signalling to the caller that we are done
-generating values from our virtual container.
+generating values from our virtual container. The \keyword{for} loop quietly handles this
+exception and completes the iteration.
 
-If this is making your head hurt, it's all right. It will all make sense pretty soon. Later I
-will make your head {\em explode} when we touch on {\em metaclasses}.
+If this is making your head hurt, do not worry. It will all make sense pretty soon. Later I
+will make your head {\em explode} when we touch on {\em metaclasses}. Some of the more advanced
+constructs in python have strange physiological effects\cite{guido}.
 
 Let's see what happens to \class{Disk}:
 %
 \python{
-  firstline=9,lastline=37,
-  label={lst:classes:disk:generators},
+  firstline=9,lastline=39,
+  label={lst:generators:disk},
   caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} with a generator},
 }{listings/generators/Disk.py}
 %
 The method \method{contains} still accepts some kind of iterable object \identifier{points} and
 goes about the business of deciding whether the contents are interior or not. We set up a loop
-over \identifier{points} on \lstlineref{circle:generators:loop}, but rather than storing the
-result in \identifier{mask} as we did in \lstref{classes:disk:containers}, we either
-\keyword{yield} \keyword{False} on \lstlineref{circle:generators:false}, or \keyword{True} on
-\lstlineref{circle:generators:true}. When our loops exhausts \identifier{points} we reach the
-\keyword{return} statement on \lstlineref{circle:generators:return}, which raises a
-\class{StopIteration} exception and terminates our generator.
+over \identifier{points} on \lstlineref{disk:generators:loop}, but rather than storing the
+result in \identifier{keep} as we did in \lstref{classes:disk:containers}, we \keyword{yield}
+the interior point on\lstlineref{disk:generators:yield}.  When our loops exhausts
+\identifier{points} we reach the \keyword{return} statement on
+\lstlineref{disk:generators:return}, which raises a \class{StopIteration} exception and
+terminates our generator.
 
-All this comes together in driver. It is identical to the container based solution in
-\lstref{classes:driver:containers}, so we won't repeat it here. See if you can follow how
-looping over the virtual contents is driving the generators to produce the associated values
-without paying the computational expense to set up the function or manage a container for the
-intermediate values.
+All this comes together in the driver show in \lstref{generators:driver}.  See if you
+can follow how looping over the virtual contents is driving the generators to produce the
+associated values without paying the computational expense to set up the function or manage a
+container for the intermediate values.
 
 The generator solution performs rather well. We are still a bit off the simple python
 implementation and a whole order of magnitude slower than \cpp, but such is the price for
@@ -468,7 +462,7 @@ we moved the representation to a \identifier{numpy} container? Have we locked ou
 using the python built in random number generator because we cannot feed it a \cc\ array?
 Thanks to the fact that interface, rather than type, is what python checks, we can make all
 these solutions inter-operate. The generator \identifier{Circle.contains} in
-\lstref{classes:disk:generators} does not know or care whether the point container it is
+\lstref{generators:disk} does not know or care whether the point container it is
 iterating over is real or virtual, a python list or a \identifier{numpy} array. All that
 matters is that \identifier{points} is iterable and that each iteration produces a pair of
 floats. This lets us keep the object oriented structure and explore various strategies that
