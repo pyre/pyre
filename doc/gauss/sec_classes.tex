@@ -196,7 +196,7 @@ to avoid this type of pollution, but careful refactoring of the initial design o
 We are now ready to put the object oriented solution together and see how it performs. 
 %
 \python{
-  firstline=9,lastline=32,
+  firstline=9,lastline=35,
   label=lst:classes:driver,
   caption={\srcfile{classes/gauss.py}: The driver for the objected oriented solution},
 }{listings/classes/gauss.py}
@@ -323,16 +323,16 @@ populate with the interior points.
 %
 
 The driver for the container based solution is shown in \lstref{classes:driver:containers}.
+The striking difference with \lstref{classes:driver} is the absence of explicit loops and
+counter updates. Instead, we just use the function \function{len} to compute the number of
+interior points.
 %
 \python{
-  firstline=9,lastline=29,
+  firstline=9,lastline=32,
   label=lst:classes:driver:containers,
   caption={\srcfile{containers/gauss.py}: The driver for the container based solution},
 }{listings/containers/gauss.py}
 %
-The striking difference with \lstref{classes:driver} is the absence of explicit loops and
-counter updates. Instead, we just use the function \function{len} to compute the number of
-interior points.
 
 \TODO{
 \item compare with the performance in \secref{simple:python} and \secref{classes:driver}
@@ -414,14 +414,23 @@ the interior point on\lstlineref{disk:generators:yield}.  When our loops exhaust
 \lstlineref{disk:generators:return}, which raises a \class{StopIteration} exception and
 terminates our generator.
 
-All this comes together in the driver show in \lstref{generators:driver}.  See if you
-can follow how looping over the virtual contents is driving the generators to produce the
-associated values without paying the computational expense to set up the function or manage a
-container for the intermediate values.
+All this comes together in the driver shown in \lstref{generators:driver}. The only notable
+feature is that we have avoided using the function \function{len} to compute the number of
+interior points since it requires an actual container before it can compute sizes. Instead we
+use \function{count}, defined in \lstlineref{driver:generators:count}, which updates a counter
+as it is looping over the filtered points. See if you can follow how looping over the virtual
+contents is driving the generators to produce the associated values without paying the
+computational expense to set up the function or manage a container for the intermediate values.
+%
+\python{
+  firstline=10,lastline=43,
+  label={lst:generators:driver},
+  caption={\srcfile{generators/gauss.py}: The driver for the implementation based on generator},
+}{listings/generators/gauss.py}
 
-The generator solution performs rather well. We are still a bit off the simple python
-implementation and a whole order of magnitude slower than \cpp, but such is the price for
-flexibility. 
+A glance at \tabref{classes:simple} shows that the generator solution performs rather well. We
+are still a bit off the simple python implementation and a whole order of magnitude slower than
+\cpp, but such is the price for flexibility.
 
 \subsubsection{Alternative containers}
 \label{sec:classes:alternatives}
@@ -461,7 +470,7 @@ How do all these implementations fit together? Do we have to throw away the gene
 we moved the representation to a \identifier{numpy} container? Have we locked ourselves out of
 using the python built in random number generator because we cannot feed it a \cc\ array?
 Thanks to the fact that interface, rather than type, is what python checks, we can make all
-these solutions inter-operate. The generator \identifier{Circle.contains} in
+these solutions inter-operate. The generator \identifier{Disk.contains} in
 \lstref{generators:disk} does not know or care whether the point container it is
 iterating over is real or virtual, a python list or a \identifier{numpy} array. All that
 matters is that \identifier{points} is iterable and that each iteration produces a pair of

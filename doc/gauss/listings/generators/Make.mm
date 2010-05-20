@@ -7,7 +7,7 @@
 #
 
 PROJECT = pyre
-PACKAGE = doc/gauss/classes-generators
+PACKAGE = doc/gauss/generators
 
 #--------------------------------------------------------------------------
 #

@@ -8,11 +8,14 @@
 
 
 def gauss():
+    """
+    The driver for the generator based implementation
+    """
     from Disk import Disk
     from MersenneTwister import MersenneTwister
 
     # inputs
-    total = 10**5
+    N = 10**5
     box = [(0,0), (1,1)]
     # the point cloud generator
     generator = MersenneTwister()
@@ -20,16 +23,17 @@ def gauss():
     disk = Disk(center=(0,0), radius=1)
 
     # the integration algorithm
-    sample = generator.points(total, box)
+    # build the point sample
+    sample = generator.points(N, box)
+    # count the interior points
     interior = count(disk.interior(sample))
 
-    # print out the estimate of π
-    print("pi: {0:.8f}".format(4*interior/total))
-
+    # print out the estimate of #@$\pi$@
+    print("pi: {0:.8f}".format(4*interior/N))
     return
 
 
-def count(iterable):
+def count(iterable): #@\label{line:driver:generators:count}@
     """
     Count the entries of iterable
     """

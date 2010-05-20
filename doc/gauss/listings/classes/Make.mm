@@ -6,7 +6,7 @@
 #
 
 PROJECT = pyre
-PACKAGE = doc/gauss/classes-simple
+PACKAGE = doc/gauss/classes
 
 #--------------------------------------------------------------------------
 #

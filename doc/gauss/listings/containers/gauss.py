@@ -8,6 +8,9 @@
 
 
 def gauss():
+    """
+    The driver for the container based implementation
+    """
     from Disk import Disk
     from MersenneTwister import MersenneTwister
 
@@ -21,11 +24,11 @@ def gauss():
 
     # the integration algorithm
     # build the point sample
-    sample = generator.points(total, box)
+    sample = generator.points(N, box)
     # count the interior points
     interior = len(disk.interior(sample))
     # print out the estimate of #@$\pi$@
-    print("pi: {0:.8f}".format(4*interior/total))
+    print("pi: {0:.8f}".format(4*interior/N))
     return
 
 

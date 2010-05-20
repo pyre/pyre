@@ -7,6 +7,9 @@
 #
 
 def gauss():
+    """
+    The driver for the object oriented solution
+    """
     from Disk import Disk
     from MersenneTwister import MersenneTwister
 

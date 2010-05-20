@@ -7,7 +7,7 @@
 #
 
 PROJECT = pyre
-PACKAGE = doc/gauss/classes-containers
+PACKAGE = doc/gauss/containers
 
 #--------------------------------------------------------------------------
 #
