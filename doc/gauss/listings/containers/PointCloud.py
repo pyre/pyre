@@ -22,6 +22,6 @@ class PointCloud(object):
                    rectangular region
         """
         raise NotImplementedError(
-            "class '%s' should implement 'points'" % self.__class__.__name__)
+            "class {0.__class__.__name__!r} should implement 'points'".format(self))
 
 # end of file 

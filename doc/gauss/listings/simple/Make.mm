@@ -22,5 +22,8 @@ all: gauss
 gauss: gauss.cc
 	$(CXX) $(CXXFLAGS) -o $@ gauss.cc $(LCXXFLAGS) $(EXTERNAL_LIBS)
 
+test: gauss
+	./gauss
+	$(PYTHON) gauss.py
 
 # end of file

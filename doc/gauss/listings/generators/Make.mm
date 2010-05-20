@@ -14,5 +14,7 @@ PACKAGE = doc/gauss/generators
 
 all: tidy
 
+test:
+	${PYTHON} ./gauss.py
 
 # end of file

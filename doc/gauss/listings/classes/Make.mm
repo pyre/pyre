@@ -13,5 +13,7 @@ PACKAGE = doc/gauss/classes
 
 all: tidy
 
+test:
+	${PYTHON} ./gauss.py
 
 # end of file
