@@ -1,0 +1,24 @@
+
+    pyre 1.0
+    Copyright (c) 1998-2010 Michael A.G. Aïvázis
+    All Rights Reserved
+
+    This work has been funded in part by the Department of Energy, the National Science
+    Foundation, and Orthologue, LLC.
+
+    None of this would have been possible without Dan Meiron, Mike Gurnis, and Brent Fultz, all
+    of whom took a risk by supporting pyre at various stages in its development.
+
+    Much of the current design of pyre is due to ideas and constructive criticism by Leif
+    Strand. 
+
+    Raul Radovitzky, Brad Aagaard and Patrick Hung taught me a lot about the needs of massively
+    parallel applications.
+    
+    Jiao Lin has built a very sophisticated web-based application by stretching pyre beyond its
+    limit and contributing countless use cases that had a significant impact on the current
+    implementation.
+
+    Mike McKerns, Tim Kelly, Brandon Keith were early adopters and made significant
+    improvements to he usability of he package. Most of the existing documentation and user
+    support over the past ten years has been possible thanks to their remarkable efforts.
