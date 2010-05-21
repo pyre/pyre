@@ -20,6 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Constant.py \
     Gaussian.py \
     One.py \
     __init__.py

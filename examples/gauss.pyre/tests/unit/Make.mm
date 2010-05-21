@@ -20,6 +20,7 @@ sanity:
 
 functors:
 	${PYTHON} ./one.py
+	${PYTHON} ./constant.py
 	${PYTHON} ./gaussian.py
 
 meshes:

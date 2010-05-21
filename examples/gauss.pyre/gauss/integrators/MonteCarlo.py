@@ -27,7 +27,7 @@ class MonteCarlo(Component, family="gauss.integrators.montecarlo", implements=In
 
     # public state
     box = pyre.components.array()
-    box.doc = "the bounding box of my clound of points"
+    box.doc = "the bounding box of my cloud of points"
 
     samples = pyre.components.int()
     samples.doc = "the number of evaluations of the integrand"
@@ -40,8 +40,8 @@ class MonteCarlo(Component, family="gauss.integrators.montecarlo", implements=In
     integrand = pyre.components.facility(interface=Functor)
     integrand.doc = "the functor to integrate"
 
-    cloud = pyre.components.facility(interface=PointCloud)
-    cloud.doc = "the generator of random points"
+    mesh = pyre.components.facility(interface=PointCloud)
+    mesh.doc = "the clous of function evaluation points"
 
     
     # interface
@@ -51,7 +51,7 @@ class MonteCarlo(Component, family="gauss.integrators.montecarlo", implements=In
         Compute the integral
         """
         # get the set of points
-        points = self.cloud.points(count=self.samples, box=self.box)
+        points = self.mesh.points(count=self.samples, box=self.box)
         # filter out the ones exterior to the region of integration
         interior = self.region.contains(points)
         # sum up the integrand contributions at those points 
