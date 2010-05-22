@@ -488,7 +488,7 @@ encapsulate functional forms inside appropriate classes, and insert them at the 
 the integration algorithm. To this end, we create an abstract class \class{Functor} that
 specifies the required interface as shown in \lstref{generators:functor}. The only thing
 missing to make \class{Functor} a real functor is to connect \method{eval} to
-\method{\_\_call\_\_} so that python will recognize subclass instances as callable objects
+\method{\_\_call\_\_} so that python can recognize subclass instances as callable objects
 indistinguishable from normal functions. We'll skip this step since we are not interested in
 syntactic sugar at this point of the design; we can always add this later.
 %
@@ -497,6 +497,42 @@ syntactic sugar at this point of the design; we can always add this later.
   label={lst:generators:functor},
   caption={\srcfile{generators/Functor.py}: The abstract base class for functional forms},
 }{listings/generators/Functor.py}
+%
+The method \method{eval} is intended to iterate over the container \identifier{points} and
+yield the value of the function at that point. This sounds very sensible at first; there is no
+other information about the encapsulated functional form available at the level of the
+abstract base class. Then, the part of your brain that has been traumatized by traditional
+programming kicks in and raises the question: what about the ``extra'' arguments that functions
+usually require? Horror stories of \fortran\ routines with dozens of arguments start flashing
+in front of your eyes, and you experience a brief panic attack that this whole object oriented
+edifice we have been constructing in these pages is about to collapse. No worries. This is yet
+another conceptual success of the object model. The functions in the horror stories are poorly
+designed: there are really two kinds of arguments. The first kind is very much the type that
+would be presented to a function through \identifier{points}: the point in the domain of the
+function where the evaluation is supposed to happen. The other kind is {\em meta-data},
+i.e.~information about the functional form itself. Here is a concrete example
+\begin{equation}
+  g(x; \mu,\sigma) = \frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu)^2}{2\sigma^2}}
+\end{equation}
+that represents a normal distribution. Languages that do not support objects force you to mix
+$x$ with $\mu$ and $\sigma$ in the signature of the function. But they are not really supposed
+to be treated on equal footing. Let's suppose that you were asked to plot this expression. It
+is almost certain that you would interpret this assignment as follows: fix $\mu$ and $\sigma$
+to some nice values, and then sample this function at a few hundred different values of $x$ and
+plot the result. You can see that $\mu$ and $\sigma$ do not change as frequently as $x$ does,
+which implies that they are not the same kind of data. The implementation of the normal
+distribution as a functor shown in \lstref{generators:gaussian} is a much better solution.
+%
+\python{
+  firstline=10,lastline=43,
+  label={lst:generators:functor},
+  caption={\srcfile{generators/Gaussian.py}: Implementation of the normal distribution as a
+    functor},
+}{listings/generators/Gaussian.py}
+%
+
+
+
 
 \TODO{
 \item re-introduce the integrand $f$ to the mix

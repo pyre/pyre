@@ -52,7 +52,9 @@ LISTINGS = \
     listings/containers/Shape.py \
     listings/containers/MersenneTwister.py \
     listings/containers/gauss.py \
+    listings/generators/Constant.py \
     listings/generators/Disk.py \
+    listings/generators/Gaussian.py \
     listings/generators/PointCloud.py \
     listings/generators/Shape.py \
     listings/generators/MersenneTwister.py \
