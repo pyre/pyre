@@ -482,7 +482,21 @@ postponing making these decisions for as long as possible.
 \subsection{Functors}
 \label{sec:classes:functors}
 
-
+The last missing piece of the puzzle is the representation of the integrand. We expect the same
+level of flexibility as with every other part of this exercise, so we should be able to
+encapsulate functional forms inside appropriate classes, and insert them at the right point in
+the integration algorithm. To this end, we create an abstract class \class{Functor} that
+specifies the required interface as shown in \lstref{generators:functor}. The only thing
+missing to make \class{Functor} a real functor is to connect \method{eval} to
+\method{\_\_call\_\_} so that python will recognize subclass instances as callable objects
+indistinguishable from normal functions. We'll skip this step since we are not interested in
+syntactic sugar at this point of the design; we can always add this later.
+%
+\python{
+  firstline=10,lastline=20,
+  label={lst:generators:functor},
+  caption={\srcfile{generators/Functor.py}: The abstract base class for functional forms},
+}{listings/generators/Functor.py}
 
 \TODO{
 \item re-introduce the integrand $f$ to the mix
