@@ -24,4 +24,5 @@ class PointCloud(object):
         raise NotImplementedError(
             "class {0.__class__.__name__!r} should implement 'points'".format(self))
 
+
 # end of file 
