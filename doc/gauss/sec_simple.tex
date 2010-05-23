@@ -65,8 +65,8 @@ address this and other ways to generalize this algorithm in \secref{classes}.
 \label{sec:simple:python}
 
 The python implementation is a straightforward translation of the pseudocode of
-\algref{pi}. The python standard library \cite{python-doc} includes the package {\tt random}
-with an implementation of the Mersenne Twister \cite{mersenne-twister} random number
+\algref{pi}. The python standard library\supercite{python-doc} includes the package {\tt random}
+with an implementation of the Mersenne Twister\supercite{mersenne-twister} random number
 generator. Two minutes of typing produce:
 %
 \python{
@@ -128,10 +128,10 @@ much better can we do by switching over to a lower level language, such as \cpp?
 
 The implementation in \cpp\ is also fairly straightforward. One complication is that the random
 number generator in the standard \cc\ library has rather poor properties and it is not well
-suited for stochastic calculations; fortunately, \package{GSL}, the \package{GNU} Scientific library
-\cite{gsl}, has a large number of good generators whose properties and cost are rather well
-documented. Binary distributions of \package{GSL} are available for a variety of platforms,
-and you can always download and compile it from its freely available source code.
+suited for stochastic calculations; fortunately, \package{GSL}, the \package{GNU} Scientific
+Library\supercite{gsl}, has a large number of good generators whose properties and cost are
+rather well documented. Binary distributions of \package{GSL} are available for a variety of
+platforms, and you can always download and compile it from its freely available source code.
 
 Note that we are only using \cpp\ as a better \cc, taking advantage of the strict type
 checking, the ability to declare variables where we need them, and the prettier comment

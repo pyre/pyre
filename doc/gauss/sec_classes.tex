@@ -22,7 +22,7 @@ benchmarks against which we will judge the next evolutionary steps, and in parti
 performance, so that we can gauge the flexibility trade-off.
 
 There is a variety of approaches one could take to generalize our na\"ive implementation. One
-particular paradigm, object oriented programming \cite{meyer-97}, has proved effective and is
+particular paradigm, object oriented programming\supercite{meyer-97}, has proved effective and is
 currently very popular. Developers raised on procedural programming, i.e.~the kind of
 programming you do in \cc\ or \fortran, typically face a bit of a challenge as they try to shed
 inappropriate habits. Those who have managed to climb the learning curve report an increased
@@ -101,7 +101,7 @@ application would benefit from further optimization efforts is to use a profiler
 dedicated to analyzing code performance. Despite all the advances in software engineering
 technology, it is still very hard to profile a design without an actual implementation. This
 deals a rather strong blow to the proponents of formal design practices and makes {\em agile
-programming}\cite{agile} a much more attractive methodology for scientific programming.
+programming}\supercite{agile} a much more attractive methodology for scientific programming.
 
 One thing is clear: the performance cost of variable accesses and function calls has the
 potential to dominate the execution profile of a code in an insidious way. The program may be
@@ -352,9 +352,8 @@ of memory for sufficiently large samples.
 
 Fortunately, there is a way to retain the elegance of containers without paying the memory cost
 by using {\em generators}, an extremely powerful programming construct borrowed from the
-language \identifier{Icon} \cite{icon}.\footnote{Generators were first seen in version 2.2 and
-became a core part of the language in version 2.3} Hopefully, we will be able to avoid
-any confusion between random number generators and the programming construct.
+language \identifier{ICON}\supercite{icon}. Hopefully, we will be able to avoid any confusion
+between random number generators and the programming construct.
 
 Generators are functions that behave like iterators without necessarily having to manage actual
 storage for a container. You can think of them as iterator generators, hence the catchy name.
@@ -395,7 +394,7 @@ exception and completes the iteration.
 
 If this is making your head hurt, do not worry. It will all make sense pretty soon. Later I
 will make your head {\em explode} when we touch on {\em metaclasses}. Some of the more advanced
-constructs in python have strange physiological effects\cite{guido}.
+constructs in python have strange physiological effects\supercite{guido}.
 
 Let's see what happens to \class{Disk}:
 %
@@ -461,7 +460,7 @@ it appears, mostly due to the fact that containers of real numbers have extremel
 structures. You either respect the semantics or you are contributing to the trash heap.
 
 Fortunately, a few of those that didn't get--or didn't pay any attention to--such advice have
-tackled this problem and got it right. The package \identifier{numpy} \cite{numpy} is such an
+tackled this problem and got it right. The package \identifier{numpy}\supercite{numpy} is such an
 example. We leave it as an exercise to build and profile a \identifier{numpy}-based solution
 that takes advantage of the compactness of representation, speed and convenience of the array
 implementation.
@@ -525,7 +524,7 @@ distribution as a functor shown in \lstref{generators:gaussian} is a much better
 %
 \python{
   firstline=10,lastline=43,
-  label={lst:generators:functor},
+  label={lst:generators:gaussian},
   caption={\srcfile{generators/Gaussian.py}: Implementation of the normal distribution as a
     functor},
 }{listings/generators/Gaussian.py}
