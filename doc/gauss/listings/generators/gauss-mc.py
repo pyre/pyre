@@ -17,7 +17,7 @@ def gauss():
 
     # inputs
     N = 10**5
-    box = [(-1,-1), (1,1)]
+    box = [(0,0), (1,1)]
     # the point cloud generator
     generator = MersenneTwister()
     # the region of integration
@@ -34,7 +34,7 @@ def gauss():
     integral = 1/N * sum(gaussian.eval(interior))
 
     # print out the estimate of #@$\pi$@
-    print("integral: {0:.8f}".format(4*integral))
+    print("integral: {0:.8f}".format(integral))
     return
 
 

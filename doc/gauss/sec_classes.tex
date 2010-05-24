@@ -531,6 +531,22 @@ distribution as a functor shown in \lstref{generators:gaussian} is a much better
     functor},
 }{listings/generators/Gaussian.py}
 %
+The two parameters that determine the properties of the distribution become arguments to the
+constructor of the functor and so become attributes of the instance that we will use to
+represent the integrand. Note that the implementation shown works regardless of the
+dimensionality of the domain, thanks to the careful use of functions that operate on
+containers. 
+
+In a similar vein, \lstref{generators:constant} shows the implementation of the functor
+\class{Constant} that represents a constant function. Instantiating \class{Constant} with
+\identifier{constant} set to unity will enable us to compute the $pi$ estimate and reproduce
+the results of the previous sections.
+%
+\python{
+  firstline=10,lastline=31,
+  label={lst:generators:constant},
+  caption={\srcfile{generators/Constant.py}: Implementation of constant functions},
+}{listings/generators/Constant.py}
 
 \TODO{
 \item show the complete driver

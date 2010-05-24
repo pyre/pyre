@@ -8,18 +8,19 @@
 
 from Functor import Functor
 
-
 class Constant(Functor):
     """
-    A representation of the unit function
+    A representation of constant functions
     """
 
     # interface
     def eval(self, points):
         """
-        Compute the value of the function: return 1
+        Compute the value of the function
         """
+        # cache the constant
         constant = self.constant
+        # return the constant regardless of the evaluation point
         for point in points:
             yield constant
         return
