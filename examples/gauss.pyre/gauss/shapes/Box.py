@@ -6,6 +6,9 @@
 #
 
 
+import operator
+import functools
+
 import pyre
 from pyre.components.Component import Component
 from ..interfaces.Shape import Shape
@@ -23,7 +26,15 @@ class Box(Component, family="gauss.shapes.box", implements=Shape):
     diagonal.default = ((0, 0), (1,1)) # default: the unit square
 
 
-    # interface
+    # component interface
+    @pyre.components.export
+    def measure(self):
+        """
+        Compute my volume
+        """
+        return functools.reduce(operator.mul, ((right-left) for left,right in self.intervals()))
+
+
     @pyre.components.export
     def contains(self, points):
         """
@@ -45,6 +56,11 @@ class Box(Component, family="gauss.shapes.box", implements=Shape):
                 yield point
         # all done
         return
+
+
+    # other interface
+    def intervals(self):
+        return zip(*self.diagonal)
 
 
 # end of file 

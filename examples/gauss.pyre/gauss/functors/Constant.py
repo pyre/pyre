@@ -25,7 +25,7 @@ class Constant(Component, family="gauss.functors.constant", implements=Functor):
     @pyre.components.export
     def eval(self, points):
         """
-        Compute the value of the function: return 1
+        Compute the value of the function
         """
         # cache the value
         value = self.value

@@ -13,12 +13,16 @@ Sanity check: verify that the Ball shape behaves as expected
 
 
 def test():
+    from math import pi as π
     import gauss.shapes
 
     # instantiate
     ball = gauss.shapes.ball(name="ball")
     ball.radius = 1.0
     ball.center = [0.0, 0.0]
+
+    # check the volume
+    assert ball.measure() == π
 
     # set up some interior points
     interior = [(0,0), (1,0), (0,1), (-1,0), (0,-1)]

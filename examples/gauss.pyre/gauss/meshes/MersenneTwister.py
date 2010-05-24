@@ -25,7 +25,7 @@ class MersenneTwister(Component, family="gauss.meshes.mersenne-twister", impleme
         Return {count} random points chosen from the interior of {box}
         """
         # unpack the bounding box to form its extent along each of the coördinate axes
-        intervals = tuple(zip(*box))
+        intervals = tuple(box.intervals())
         # our random number generator
         generator = random.uniform
         # loop {count} times

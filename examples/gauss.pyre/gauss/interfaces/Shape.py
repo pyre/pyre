@@ -17,6 +17,12 @@ class Shape(Interface):
 
     # interface
     @pyre.components.provides
+    def measure(self):
+        """
+        Compute my measure
+        """
+
+    @pyre.components.provides
     def contains(self, points):
         """
         Filter out the subset of {points} that is exterior to the shape

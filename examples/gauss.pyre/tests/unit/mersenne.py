@@ -20,13 +20,14 @@ def test():
     # the number of points to generate
     size = 5
     # specify the box
-    box = ((0,0), (1,1))
+    box = gauss.shapes.box("box")
+    box.diagonal = ((0,0), (1,1))
     # make a bunch of random points
     points = tuple(mt.points(box=box, count=size))
     # check the length
     assert len(points) == size
     # verify they all lie inside the box
-    intervals = tuple(zip(*box))
+    intervals = tuple(box.intervals())
     for point in points:
         for p, (left,right) in zip(point,intervals):
             assert p>=left and p<=right

@@ -19,6 +19,9 @@ def test():
     box = gauss.shapes.box(name="box")
     box.diagonal = ((0,0), (1,1))
 
+    # check the volume
+    assert box.measure() == 1.0
+
     # set up some interior points
     interior = [(0,0), (1,0), (1,1), (0,1), (.5, .5)]
     assert len(list(box.contains(interior))) == len(interior)

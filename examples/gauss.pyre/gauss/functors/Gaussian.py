@@ -45,13 +45,15 @@ class Gaussian(Component, family="gauss.functors.gaussian", implements=Functor):
         σ = self.σ
         # precompute the normalization factor
         normalization = 1 / sqrt(2*π) / σ
+        # and the scaling of the exposnential
+        scaling = 2 * σ**2
         # loop over points and yield the computed value
         for x in points:
             # compute |x - μ|^2
             # this works as long as x and μ have the same length
             r2 = sum((x_i - μ_i)**2 for x_i, μ_i in zip(x, μ))
             # yield the value at the xurrent x
-            yield normalization * exp(- r2 / 2 / σ**2)
+            yield normalization * exp(- r2 / scaling)
 
         return
 

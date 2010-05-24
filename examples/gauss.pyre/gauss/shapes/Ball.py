@@ -30,6 +30,30 @@ class Ball(Component, family="gauss.shapes.ball", implements=Shape):
 
     # interface
     @pyre.components.export
+    def measure(self):
+        """
+        Compute my volume
+        """
+        # get functools and operator
+        import operator
+        import functools
+        # get π
+        from math import pi as π
+        # compute the dimension of space
+        d = len(self.center)
+        # branch on even/odd d
+        if d%2 == 0:
+            # for even d
+            normalization = functools.reduce(operator.mul, range(1, d//2+1))
+            # compute the volume
+            return π**(d//2) * self.radius**d / normalization
+            
+        # for odd d
+        normalization = functools.reduce(operator.mul, range(1, d+1, 2))
+        return 2**((d+1)//2) * π**((d-1)//2) / normalization
+
+
+    @pyre.components.export
     def contains(self, points):
         """
         Filter out the members of {points} that are exterior to this ball
@@ -45,7 +69,7 @@ class Ball(Component, family="gauss.shapes.ball", implements=Shape):
             # check whether this point is inside or outside
             if r2 >= d2:
                 yield point
-
+        # all done
         return
 
 

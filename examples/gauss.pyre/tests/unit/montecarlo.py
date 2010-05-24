@@ -20,9 +20,13 @@ def test():
     # instantiate the integrand
     one = gauss.functors.one("one")
 
+    # set up the bounding box for the random number generator
+    box = gauss.shapes.box("box")
+    box.diagonal = ((0,0), (1,1))
+
     # instantiate the region of integration
     disk = gauss.shapes.ball("disk")
-    disk.origin = (0,0)
+    disk.center = (0,0)
     disk.radius = 1.0
 
     # instantiate the point cloud generator
@@ -31,8 +35,8 @@ def test():
     # instantiate the integrator
     mc = gauss.integrators.montecarlo(name="mc")
     mc.samples = 10**5
-    mc.box = ((0,0), (1,1))
-    mc.cloud = mesh
+    mc.box = box
+    mc.mesh = mesh
     mc.region = disk
     mc.integrand = one
 
