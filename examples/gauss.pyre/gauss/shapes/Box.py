@@ -13,7 +13,7 @@ from ..interfaces.Shape import Shape
 
 class Box(Component, family="gauss.shapes.box", implements=Shape):
     """
-    A representation of the interior of a sphere in $d$ dimensions
+    A representation of the interior of a box in $d$ dimensions
     """
 
     # public state
