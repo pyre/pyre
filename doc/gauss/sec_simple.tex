@@ -49,12 +49,14 @@ $t \leftarrow 0$ \;
    }
    $t \leftarrow t + 1$
 }
-$\pi_{N} = 4 i/t \;$ %\frac{i}{t}$ \;
+$\pi_{N} = 4 i/N \;$ %\frac{i}{t}$ \;
 \end{algorithm}
 %
 Integration has been reduced to placing points in two bins. Note that $\Theta(\Omega)$ in
 \eqref{mc} corresponds to the conditional in \alglineref{pi:check}, and the dimensionality of
-the integrand is reflected in the number of calls to the random number generator per iteration.
+the integrand is reflected in the number of calls to the random number generator per
+iteration. Further, our sampling box $B$ has unit area, so there is no need for any extra
+normalization of the result.
 
 It is straightforward to generalize this procedure to compute integrals of non-trivial
 integrands over higher dimensional regions. Perhaps you can already see that computing the
@@ -140,7 +142,7 @@ compilers. For now, here is what a simple translation of the pseudocode of \algr
 like:
 %
 \C++{
-  firstline=9,lastline=36,
+  firstline=9,lastline=35,
   label={lst:simple:cpp},
   caption={\srcfile{simple/gauss.cc}: Estimating $\pi$ in \cpp},
 }{listings/simple/gauss.cc}

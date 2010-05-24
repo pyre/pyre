@@ -25,6 +25,6 @@ while total < N:
     # update the total number points
     total += 1
 # print the result:
-print("pi: {0:.8f}".format(4*interior/total))
+print("pi: {0:.8f}".format(4*interior/N))
 
 # end of file 

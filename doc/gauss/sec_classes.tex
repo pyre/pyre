@@ -330,7 +330,7 @@ counter updates. Instead, we just use the function \function{len} to compute the
 interior points.
 %
 \python{
-  firstline=9,lastline=32,
+  firstline=9,lastline=33,
   label=lst:classes:driver:containers,
   caption={\srcfile{containers/gauss.py}: The driver for the container based solution},
 }{listings/containers/gauss.py}
@@ -426,7 +426,7 @@ computational expense to set up the function or manage a container for the inter
 \python{
   firstline=10,lastline=43,
   label={lst:generators:driver},
-  caption={\srcfile{generators/gauss.py}: The driver for the implementation based on generator},
+  caption={\srcfile{generators/gauss.py}: The driver for the implementation based on generators},
 }{listings/generators/gauss.py}
 
 A glance at \tabref{classes:simple} shows that the generator solution performs rather well. We
@@ -511,7 +511,7 @@ another conceptual success of the object model. The functions in the horror stor
 designed: there are really two kinds of arguments. The first kind is very much the type that
 would be presented to a function through \identifier{points}: the point in the domain of the
 function where the evaluation is supposed to happen. The other kind is {\em meta-data},
-i.e.~information about the functional form itself. Here is a concrete example
+i.e.~information about the functional form itself. For example, consider the expression
 \begin{equation}
   g(x; \mu,\sigma) = \frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu)^2}{2\sigma^2}}
 \end{equation}
@@ -532,12 +532,7 @@ distribution as a functor shown in \lstref{generators:gaussian} is a much better
 }{listings/generators/Gaussian.py}
 %
 
-
-
-
 \TODO{
-\item re-introduce the integrand $f$ to the mix
-\item explain function-as-object
 \item show the complete driver
 }
 

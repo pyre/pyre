@@ -27,6 +27,7 @@ def gauss():
     sample = generator.points(N, box)
     # count the interior points
     interior = len(disk.interior(sample))
+
     # print out the estimate of #@$\pi$@
     print("pi: {0:.8f}".format(4*interior/N))
     return

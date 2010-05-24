@@ -6,15 +6,14 @@
 // (c) 1998-2010 all rights reserved
 //
 
-#include <cmath>
 #include <iostream>
 #include <gsl/gsl_rng.h>
 
 int main(int, char*[]) {
     // the sample size
-    const int N = pow(10, 7);
+    const int N = 1.0e7;
     // initialize the counters */
-    int interiorPoints = 0, totalPoints = 0;
+    int interior = 0, total = 0;
     // create the random number generator
     gsl_rng * generator = gsl_rng_alloc(gsl_rng_ranlxs2);
     // integrate by sampling some number of times
@@ -25,13 +24,13 @@ int main(int, char*[]) {
         // check whether it is inside the unit quarter circle
         if ((x*x + y*y) <= 1.0) { // no need to waste time computing the square root
             // update the interior point counter
-            interiorPoints++;
+            interior++;
         }
         // update the total number of points
-        totalPoints++;
+        total++;
     }
     // print the result
-    std::cout << "pi: " << 4*((double)interiorPoints)/totalPoints << std::endl;
+    std::cout << "pi: " << 4. * interior / N << std::endl;
     return 0;
 }
 
