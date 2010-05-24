@@ -31,7 +31,7 @@ def gauss():
         total += 1
 
     # print out the estimate of #@$\pi$@
-    print("pi: {0:.8f}".format(4*interior/total))
+    print("pi: {0:.8f}".format(4*interior/N))
     return
 
 

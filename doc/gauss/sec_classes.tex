@@ -192,10 +192,12 @@ Monte Carlo integration is not explicit. It is natural to ask a \class{Shape} wh
 contains a given point, regardless of the context for the question. It is not always possible
 to avoid this type of pollution, but careful refactoring of the initial design often helps. 
 
-\subsection{Creating the driver}
+\subsection{The first draft of the object oriented driver}
 \label{sec:classes:driver}
 
-We are now ready to put the object oriented solution together and see how it performs. 
+We are now ready to put the object oriented solution together and see how it performs. Please
+note that we are still assuming that the sampling box is the unit square. Consequently, the
+overall normalization necessary to account for the sampling box volume is not shown explicitly.
 %
 \python{
   firstline=9,lastline=35,
@@ -395,8 +397,9 @@ generating values from our virtual container. The \keyword{for} loop quietly han
 exception and completes the iteration.
 
 If this is making your head hurt, do not worry. It will all make sense pretty soon. Later I
-will make your head {\em explode} when we touch on {\em metaclasses}. Some of the more advanced
-constructs in python have strange physiological effects\supercite{guido}.
+will make your head {\em explode} when we touch on {\em metaclasses}; it seems that some of the
+more advanced constructs in python have strange physiological
+effects\supercite{guido-metaclasses}.
 
 Let's see what happens to \class{Disk}:
 %
@@ -537,10 +540,10 @@ represent the integrand. Note that the implementation shown works regardless of 
 dimensionality of the domain, thanks to the careful use of functions that operate on
 containers. 
 
-In a similar vein, \lstref{generators:constant} shows the implementation of the functor
-\class{Constant} that represents a constant function. Instantiating \class{Constant} with
-\identifier{constant} set to unity will enable us to compute the $pi$ estimate and reproduce
-the results of the previous sections.
+In a similar vein, \lstref{generators:constant} shows the implementation of the somewhat
+simpler functor \class{Constant} that represents a constant function. Instantiating
+\class{Constant} with \identifier{constant} set to unity will enable us to compute the $\pi$
+estimate and reproduce the results of the previous sections.
 %
 \python{
   firstline=10,lastline=31,

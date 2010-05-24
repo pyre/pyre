@@ -7,6 +7,10 @@
 #
 
 
+import operator
+import functools
+
+
 def gauss():
     """
     The driver for the generator based implementation
@@ -18,6 +22,7 @@ def gauss():
     # inputs
     N = 10**5
     box = [(0,0), (1,1)]
+    volume = functools.reduce(operator.mul, ((right-left) for left,right in zip(*box)))
     # the point cloud generator
     generator = MersenneTwister()
     # the region of integration
@@ -31,7 +36,7 @@ def gauss():
     # select the interior points
     interior = disk.interior(sample)
     # compute the integral
-    integral = 1/N * sum(gaussian.eval(interior))
+    integral = volume/N * sum(gaussian.eval(interior))
 
     # print out the estimate of #@$\pi$@
     print("integral: {0:.8f}".format(integral))
