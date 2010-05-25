@@ -33,6 +33,7 @@ test:
 	${PYTHON} ./metaclass.py
 	${PYTHON} ./metaclass_callsequence.py
 	${PYTHON} ./metaclass_dict.py
+	${PYTHON} ./metaclass_prime.py
 	${PYTHON} ./metaclass_kwds.py
 	${PYTHON} ./metaclass_dynamic.py
 	${PYTHON} ./metaclass_inheritance.py
