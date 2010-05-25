@@ -10,8 +10,8 @@ import pyre
 from pyre.components.Interface import Interface
 
 # my requirements
-from .Shape import Shape
-from .Functor import Functor
+from Shape import Shape
+from Functor import Functor
 
 class Integrator(Interface):
 

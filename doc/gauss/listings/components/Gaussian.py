@@ -8,17 +8,12 @@
 
 import pyre
 from pyre.components.Component import Component
-from ..interfaces.Functor import Functor
+from Functor import Functor
 
 
 class Gaussian(Component, family="gauss.functors.gaussian", implements=Functor):
-    r"""
-    Component that implements the normal distribution with mean μ and variance σ^2 
-
-        g(x; μ,σ) = \frac{1}{\sqrt{2π} σ} e^{-\frac{|x-μ|^2}{2σ^2}}
-
-    μ and σ are implemented as component properties so that Gaussian can conform to the
-    Functor interface. See gauss.interfaces.Functor for more details.
+    """
+    An implementation of the normal distribution with mean #@$\mu$@ and variance #@$\sigma^2$@
     """
 
     # public state

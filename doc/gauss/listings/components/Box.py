@@ -11,7 +11,7 @@ import functools
 
 import pyre
 from pyre.components.Component import Component
-from ..interfaces.Shape import Shape
+from Shape import Shape
 
 
 class Box(Component, family="gauss.shapes.box", implements=Shape):

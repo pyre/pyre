@@ -55,11 +55,23 @@ LISTINGS = \
     listings/containers/gauss.py \
     listings/generators/Constant.py \
     listings/generators/Disk.py \
+    listings/generators/Functor.py \
     listings/generators/Gaussian.py \
+    listings/generators/MersenneTwister.py \
     listings/generators/PointCloud.py \
     listings/generators/Shape.py \
-    listings/generators/MersenneTwister.py \
     listings/generators/gauss.py \
+    listings/generators/gauss-mc.py \
+    listings/components/Ball.py \
+    listings/components/Box.py \
+    listings/components/Constant.py \
+    listings/components/Functor.py \
+    listings/components/Gaussian.py \
+    listings/components/Integrator.py \
+    listings/components/MersenneTwister.py \
+    listings/components/MonteCarlo.py \
+    listings/components/PointCloud.py \
+    listings/components/Shape.py \
 
 #--------------------------------------------------------------------------
 #

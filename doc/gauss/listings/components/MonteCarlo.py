@@ -12,12 +12,12 @@ import pyre
 from pyre.components.Component import Component
 
 # the interface i implement
-from ..interfaces.Integrator import Integrator
+from Integrator import Integrator
 
 # my requirements
-from ..interfaces.Shape import Shape
-from ..interfaces.Functor import Functor
-from ..interfaces.PointCloud import PointCloud
+from Shape import Shape
+from Functor import Functor
+from PointCloud import PointCloud
 
 
 class MonteCarlo(Component, family="gauss.integrators.montecarlo", implements=Integrator):

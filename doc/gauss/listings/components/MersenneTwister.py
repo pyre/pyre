@@ -9,7 +9,7 @@
 import pyre
 import random
 from pyre.components.Component import Component
-from ..interfaces.PointCloud import PointCloud
+from PointCloud import PointCloud
 
 
 class MersenneTwister(Component, family="gauss.meshes.mersenne-twister", implements=PointCloud):

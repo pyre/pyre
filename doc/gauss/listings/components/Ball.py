@@ -8,7 +8,7 @@
 
 import pyre
 from pyre.components.Component import Component
-from ..interfaces.Shape import Shape
+from Shape import Shape
 
 
 class Ball(Component, family="gauss.shapes.ball", implements=Shape):

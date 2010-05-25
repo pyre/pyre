@@ -8,7 +8,7 @@
 
 import pyre
 from pyre.components.Component import Component
-from ..interfaces.Functor import Functor
+from Functor import Functor
 
 
 class Constant(Component, family="gauss.functors.constant", implements=Functor):
