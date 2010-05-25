@@ -100,8 +100,9 @@ object oriented program. The only way to get a clear understanding of which sect
 application would benefit from further optimization efforts is to use a profiler, a tool
 dedicated to analyzing code performance. Despite all the advances in software engineering
 technology, it is still very hard to profile a design without an actual implementation. This
-deals a rather strong blow to the proponents of formal design practices and makes {\em agile
-programming}\supercite{agile} a much more attractive methodology for scientific programming.
+deals a rather strong blow to the proponents of formal design practices\supercite{uml} and
+makes {\em agile programming}\supercite{agile} a much more attractive methodology for
+scientific programming.
 
 One thing is clear: the performance cost of variable accesses and function calls has the
 potential to dominate the execution profile of a code in an insidious way. The program may be
@@ -148,7 +149,6 @@ performance of this implementation in \secref{classes:driver:draft}.
 \TODO{
 \item say something about how classes get distributed in files
 \item UML diagrams
-\item references for "formal methods"
 \item show example of how to encapsulate the GSL random number generator as well
 }
 
@@ -491,7 +491,7 @@ level of flexibility as with every other part of this exercise, so we should be 
 encapsulate functional forms inside appropriate classes, and insert them at the right point in
 the integration algorithm. To this end, we create an abstract class \class{Functor} that
 specifies the required interface as shown in \lstref{generators:functor}. The only thing
-missing to make \class{Functor} a real functor is to connect \method{eval} to
+missing to make \class{Functor} a real functor\supercite{c++-idioms} is to connect \method{eval} to
 \method{\_\_call\_\_} so that python can recognize subclass instances as callable objects
 indistinguishable from normal functions. We'll skip this step since we are not interested in
 syntactic sugar at this point of the design; we can always add this later.
