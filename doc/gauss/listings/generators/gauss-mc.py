@@ -20,9 +20,9 @@ def gauss():
     from MersenneTwister import MersenneTwister
 
     # inputs
-    N = 10**5
-    box = [(0,0), (1,1)]
-    volume = functools.reduce(operator.mul, ((right-left) for left,right in zip(*box)))
+    N = 10**7
+    box = [(-1,-1), (1,1)]
+    B = functools.reduce(operator.mul, ((right-left) for left,right in zip(*box)))#@\label{line:mc:volume}@
     # the point cloud generator
     generator = MersenneTwister()
     # the region of integration
@@ -36,9 +36,9 @@ def gauss():
     # select the interior points
     interior = disk.interior(sample)
     # compute the integral
-    integral = volume/N * sum(gaussian.eval(interior))
+    integral = B/N * sum(gaussian.eval(interior))#@\label{line:mc:integral}@
 
-    # print out the estimate of #@$\pi$@
+    # print out the estimate of the integral
     print("integral: {0:.8f}".format(integral))
     return
 

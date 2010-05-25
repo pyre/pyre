@@ -143,7 +143,7 @@ candidates for reuse. The interface should be broadened a bit, by adding a means
 random number generator with some initial value, something that most generators support.
 Another consideration is that we will be calling this method a large number of times during the
 integration, so perhaps we will have to modify the class interface after we evaluate the
-performance of this implementation in \secref{classes:driver}.
+performance of this implementation in \secref{classes:driver:draft}.
 
 \TODO{
 \item say something about how classes get distributed in files
@@ -193,7 +193,7 @@ contains a given point, regardless of the context for the question. It is not al
 to avoid this type of pollution, but careful refactoring of the initial design often helps. 
 
 \subsection{The first draft of the object oriented driver}
-\label{sec:classes:driver}
+\label{sec:classes:driver:draft}
 
 We are now ready to put the object oriented solution together and see how it performs. Please
 note that we are still assuming that the sampling box is the unit square. Consequently, the
@@ -339,7 +339,7 @@ interior points.
 %
 
 \TODO{
-\item compare with the performance in \secref{simple:python} and \secref{classes:driver}
+\item compare with the performance in \secref{simple:python} and \secref{classes:driver:draft}
 \item talk about the table, and in particular about the $10^{7}$ explosion
 }
 
@@ -517,6 +517,7 @@ function where the evaluation is supposed to happen. The other kind is {\em meta
 i.e.~information about the functional form itself. For example, consider the expression
 \begin{equation}
   g(x; \mu,\sigma) = \frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu)^2}{2\sigma^2}}
+\label{eq:gaussian}
 \end{equation}
 that represents a normal distribution. Languages that do not support objects force you to mix
 $x$ with $\mu$ and $\sigma$ in the signature of the function. But they are not really supposed
@@ -542,18 +543,48 @@ containers.
 
 In a similar vein, \lstref{generators:constant} shows the implementation of the somewhat
 simpler functor \class{Constant} that represents a constant function. Instantiating
-\class{Constant} with \identifier{constant} set to unity will enable us to compute the $\pi$
-estimate and reproduce the results of the previous sections.
+\class{Constant} with the parameter \identifier{constant} set to unity will enable us to
+reproduce the results of the previous sections.
 %
 \python{
   firstline=10,lastline=31,
   label={lst:generators:constant},
   caption={\srcfile{generators/Constant.py}: Implementation of constant functions},
 }{listings/generators/Constant.py}
+%
 
-\TODO{
-\item show the complete driver
-}
+\subsection{The Monte Carlo integrator}
+\label{sec:classes:driver:final}
 
+We are now in a position to put together the final version of the Monte Carlo integrator
+script.
+%
+\python{
+  firstline=10,lastline=43,
+  label={lst:generators:montecarlo},
+  caption={\srcfile{generators/gauss-mc.py}: A Monte Carlo integrator},
+}{listings/generators/gauss-mc.py}
+%
+A comparison between \lstref{generators:montecarlo} and \eqref{mc} shows that there is a nice
+correspondence between terms in the equation and objects in the implementation. On
+\lstlineref{mc:volume} we compute the volume of the sampling box and us it on
+\lstlineref{mc:integral} to scale the average value of the integrand on the points interior to
+our region of integration. For this example, we have chosen to perform a non-trivial integral:
+a two dimensional version of \eqref{gaussian} is integrated over the unit circle, as shown in
+\figref{gaussian}.
+%
+\begin{figure}
+\centering
+\includegraphics[scale=0.60]{figures/gaussian.pdf}
+\caption{The normal distribution of two variables\label{fig:gaussian}}
+\end{figure}
+%
+There are two distinct sections in this script. The top part contains mostly configuration
+options while the last few lines are the implementation of the integration algorithm. Computing
+an integral over a different region or of a different integrand should be just a matter of
+instantiating different objects to hand out to the integration algorithm. At this point, this
+involves editing the script and rerunning it; in the next section, I will show you how pyre
+makes it possible to have the end user make these choices without touching the source code to
+our application script.
 
 % end of file 

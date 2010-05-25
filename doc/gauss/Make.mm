@@ -37,6 +37,7 @@ SECTIONS = \
     sec_epilogue.tex \
 
 FIGURES = \
+    figures/gaussian.pdf \
     figures/quadrant.pdf \
 
 LISTINGS = \
