@@ -7,9 +7,7 @@
 #
 
 
-import operator
-import functools
-
+import operator, functools
 
 def gauss():
     """
