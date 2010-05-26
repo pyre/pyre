@@ -18,12 +18,10 @@ class Gaussian(Component, family="gauss.functors.gaussian", implements=Functor):
 
     # public state
     mean = pyre.components.array()
-    mean.aliases.add("μ")
     mean.doc = "the position of the mean of the Gaussian distribution"
     mean.default = [0.0]
 
     spread = pyre.components.float()
-    spread.aliases.add("σ")
     spread.doc = "the variance of the Gaussian distribution"
     spread.default = 1.0
 
@@ -34,19 +32,19 @@ class Gaussian(Component, family="gauss.functors.gaussian", implements=Functor):
         Compute the value of the gaussian
         """
         # access the math symbols
-        from math import exp, sqrt, pi as π
+        from math import exp, sqrt, pi
         # cache the inventory items
-        μ = self.μ
-        σ = self.σ
+        mean = self.mean
+        spread = self.spread
         # precompute the normalization factor
-        normalization = 1 / sqrt(2*π) / σ
+        normalization = 1 / sqrt(2*pi) / spread
         # and the scaling of the exposnential
-        scaling = 2 * σ**2
+        scaling = 2 * spread**2
         # loop over points and yield the computed value
         for x in points:
-            # compute |x - μ|^2
-            # this works as long as x and μ have the same length
-            r2 = sum((x_i - μ_i)**2 for x_i, μ_i in zip(x, μ))
+            # compute |x - mean|^2
+            # this works as long as x and mean have the same length
+            r2 = sum((x_i - mean)**2 for x_i, mean_i in zip(x, mean))
             # yield the value at the xurrent x
             yield normalization * exp(- r2 / scaling)
 

@@ -37,8 +37,8 @@ class Ball(Component, family="gauss.shapes.ball", implements=Shape):
         # get functools and operator
         import operator
         import functools
-        # get π
-        from math import pi as π
+        # get #@$\pi$@
+        from math import pi
         # compute the dimension of space
         d = len(self.center)
         # branch on even/odd d
@@ -46,11 +46,11 @@ class Ball(Component, family="gauss.shapes.ball", implements=Shape):
             # for even d
             normalization = functools.reduce(operator.mul, range(1, d//2+1))
             # compute the volume
-            return π**(d//2) * self.radius**d / normalization
+            return pi**(d//2) * self.radius**d / normalization
             
         # for odd d
         normalization = functools.reduce(operator.mul, range(1, d+1, 2))
-        return 2**((d+1)//2) * π**((d-1)//2) / normalization
+        return 2**((d+1)//2) * pi**((d-1)//2) / normalization
 
 
     @pyre.components.export
