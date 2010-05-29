@@ -22,19 +22,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         """
         Refresh my value, if necessary, and return it
         """
-        # if my cached value is invalid
-        if self._value is None:
-            # get my evaluator to refresh it
-            try:
-                self._value = self._evaluator and self._evaluator.compute()
-            # leave unresolved node errors alone
-            except self.UnresolvedNodeError:
-                raise
-            # dress anything else up as an EvaluationError
-            except Exception as error:
-                raise self.EvaluationError(evaluator=self, error=error) from error
-        # and return it
-        return self._value
+        return self._getValue()
 
 
     @value.setter
@@ -44,14 +32,7 @@ class Node(Observable, metaclass=_metaclass_Node):
 
         This implies that i do not need my evaluator any more, so it is destroyed
         """
-        # refresh my cache
-        self._value = value
-        # clear out my evaluator
-        self._evaluator  = self._prepareEvaluator(None)
-        # invalidate my observers' caches
-        self.notify()
-        # and return
-        return self
+        return self._setValue(value)
 
 
     @property
@@ -67,14 +48,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         """
         Install a new evaluator
         """
-        # invalidate my cache
-        self._value = None
-        # install the new evaluator
-        self._evaluator = self._prepareEvaluator(evaluator)
-        # notify my observers
-        self.notify()
-        # and return
-        return self
+        return self._setEvaluator(evaluator)
 
 
     # interface
@@ -215,6 +189,55 @@ class Node(Observable, metaclass=_metaclass_Node):
 
 
     # implementation details
+    def _getValue(self):
+        """
+        Refresh my value, if necessary, and return it
+        """
+        # if my cached value is invalid
+        if self._value is None:
+            # get my evaluator to refresh it
+            try:
+                self._value = self._evaluator and self._evaluator.compute()
+            # leave unresolved node errors alone
+            except self.UnresolvedNodeError:
+                raise
+            # dress anything else up as an EvaluationError
+            except Exception as error:
+                raise self.EvaluationError(evaluator=self, error=error) from error
+        # and return it
+        return self._value
+
+
+    def _setValue(self, value):
+        """
+        Set my value to the passed literal value and notify my observers
+
+        This implies that i do not need my evaluator any more, so it is destroyed
+        """
+        # refresh my cache
+        self._value = value
+        # clear out my evaluator
+        self._evaluator  = self._prepareEvaluator(None)
+        # invalidate my observers' caches
+        self.notify()
+        # and return
+        return self
+
+
+    def _setEvaluator(self, evaluator):
+        """
+        Install a new evaluator
+        """
+        # invalidate my cache
+        self._value = None
+        # install the new evaluator
+        self._evaluator = self._prepareEvaluator(evaluator)
+        # notify my observers
+        self.notify()
+        # and return
+        return self
+
+
     def _prepareEvaluator(self, evaluator):
         """
         Handle the transition to a new evaluator gracefully
