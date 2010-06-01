@@ -15,6 +15,9 @@ class Node(Observable, metaclass=_metaclass_Node):
     Base class for objects that are involved in evaluation graphs
     """
 
+    
+    from .Reference import Reference
+
 
     # public data
     @property
@@ -97,8 +100,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         """
         Build and return a new reference to me
         """
-        from .Reference import Reference
-        return self.__class__(value=None, evaluator=Reference(node=self), **kwds)
+        return self.__class__(value=None, evaluator=self.Reference(node=self), **kwds)
 
 
     def poseAs(self, *, node, name=None):
