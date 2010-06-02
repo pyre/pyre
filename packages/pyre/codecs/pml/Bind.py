@@ -34,7 +34,7 @@ class Bind(Node):
         Let {parent} now that processing this bind tag is complete
         """
         parent.createAssignment(
-            key=self.key.split("."), value="\n".join(self.text),
+            key=list(reversed(self.key.split("."))), value="\n".join(self.text),
             locator=self.newLocator(locator))
         return
 

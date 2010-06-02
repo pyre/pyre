@@ -9,7 +9,7 @@
 
 <config>
 
-  <inventory name="pyre">
+  <inventory name="package">
     <!-- some global settings -->
     <bind property="home">home</bind>
     <bind property="prefix">prefix</bind>
@@ -22,7 +22,7 @@
 
   </inventory>
 
-  <bind property="pyre.user.affiliation">california institute of technology</bind>
+  <bind property="package.user.affiliation">california institute of technology</bind>
 
 </config>
 

@@ -24,11 +24,11 @@ def test():
     # load a configuration file
     executive.loadConfiguration(uri="sample.pml", priority=executive.USER_CONFIGURATION)
     # check that all is as expected
-    assert executive.calculator["pyre.home"] == "home"
-    assert executive.calculator["pyre.prefix"] == "prefix"
-    assert executive.calculator["pyre.user.name"] == "michael a.g. aïvázis"
-    assert executive.calculator["pyre.user.email"] == "aivazis@caltech.edu"
-    assert executive.calculator["pyre.user.affiliation"] == "california institute of technology"
+    assert executive.calculator["package.home"] == "home"
+    assert executive.calculator["package.prefix"] == "prefix"
+    assert executive.calculator["package.user.name"] == "michael a.g. aïvázis"
+    assert executive.calculator["package.user.email"] == "aivazis@caltech.edu"
+    assert executive.calculator["package.user.affiliation"] == "california institute of technology"
 
     # all done
     return executive
