@@ -28,7 +28,7 @@ def test():
     # the poser
     poser = pyre.calc.newNode(value=150.)
     # need a name to patch expressions
-    poser.poseAs(node=cost)
+    poser.replace(node=cost)
     # check
     assert margin.value == .25*poser.value
     assert overhead.value == .45*poser.value

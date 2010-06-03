@@ -33,7 +33,7 @@ class Variable(Node):
             self.value = other.value
             self.priority = other.priority
         # either way, she is redundant; so replace her
-        return self.poseAs(node=other, name=alias)
+        return self.replace(node=other, name=alias)
 
 
     # meta methods

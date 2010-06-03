@@ -103,7 +103,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         return self.__class__(value=None, evaluator=self.Reference(node=self), **kwds)
 
 
-    def poseAs(self, *, node, name=None):
+    def replace(self, *, node, name=None):
         """
         Remove {node} from its evaluation graph and graft {self} in its place
         """
