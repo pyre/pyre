@@ -61,7 +61,7 @@ class FileServer(Filesystem):
         if scheme == "vfs":
             return encoding, self[address].open()
 
-        raise self.BadResourceLocator(uri=uri, reason="unsupported scheme")
+        raise self.BadResourceLocatorError(uri=uri, reason="unsupported scheme")
 
 
     def join(self, path, address, extension=None):
@@ -83,7 +83,7 @@ class FileServer(Filesystem):
         match = self._uriRecognizer.match(uri)
         # if it fails to match, it must be malformed (or my regex is bad...)
         if match is None:
-            raise self.BadResourceLocator(uri=uri, reason="unrecognizable")
+            raise self.BadResourceLocatorError(uri=uri, reason="unrecognizable")
         # extract the scheme
         scheme = match.group("scheme") or self.defaultScheme
         scheme = scheme.strip().lower()
@@ -91,7 +91,7 @@ class FileServer(Filesystem):
         address = match.group("address")
         # check that it's not blank
         if not address:
-            raise self.BadResourceLocator(uri=uri, reason="missing address")
+            raise self.BadResourceLocatorError(uri=uri, reason="missing address")
         # extract the fragment
         fragment = match.group("fragment")
         # and return the triplet
@@ -115,7 +115,7 @@ class FileServer(Filesystem):
         try:
             # so invoke it to build the filesystem for us
             self.systemfs = pyre.filesystem.newFilesystem(pyre.prefix())
-        except pyre.filesystem.GenericError:
+        except self.GenericError:
             # if this failed, just create a new empty folder
             system = self.newFolder()
         else:
@@ -134,7 +134,7 @@ class FileServer(Filesystem):
         try:
             # make filesystem out of the preference directory
             self.userfs = pyre.filesystem.newFilesystem(os.path.expanduser(self.DOT_PYRE))
-        except pyre.filesystem.GenericError:
+        except self.GenericError:
             self.userfs = self.newFolder()
        # mount this directory as /pyre/user
         self["pyre/user"] = self.userfs
@@ -143,7 +143,7 @@ class FileServer(Filesystem):
         try:
             # make filesystem out of the preference directory
             self.localfs = pyre.filesystem.newFilesystem(".")
-        except pyre.filesystem.GenericError:
+        except self.GenericError:
             self.localfs = self.newFolder()
        # mount this directory as /local
         self["local"] = self.localfs
@@ -152,7 +152,7 @@ class FileServer(Filesystem):
 
 
     # exceptions
-    from . import BadResourceLocator
+    from . import BadResourceLocatorError
 
 
     # constants

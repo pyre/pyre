@@ -38,7 +38,7 @@ def test():
     try:
         fs.parseURI("file://#anchor")
         assert False
-    except fs.BadResourceLocator as error:
+    except fs.BadResourceLocatorError as error:
         assert error.reason == "missing address"
 
     return fs

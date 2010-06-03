@@ -77,7 +77,7 @@ class FrameworkError(PyreError):
     """
 
 
-class BadResourceLocator(FrameworkError):
+class BadResourceLocatorError(FrameworkError):
     """
     Exception raised when a URI is not formed properly
     """

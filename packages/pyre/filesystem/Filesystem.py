@@ -58,6 +58,10 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
                 print(line)
         # and return the explorer to the caller
         return explorer
+
+
+    # exceptions
+    from . import GenericError
         
 
 # end of file 
