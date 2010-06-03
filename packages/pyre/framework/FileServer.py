@@ -122,7 +122,7 @@ class FileServer(Filesystem):
             try:
                 # hunt down the depository subdirectory
                 system = self.systemfs["depository"]
-            except KeyError:
+            except self.NotFoundError:
                 # hmm... why is this directory missing from the distribution?
                 # moving on...
                 system = self.newFolder()
