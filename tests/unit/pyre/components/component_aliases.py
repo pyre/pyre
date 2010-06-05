@@ -43,8 +43,8 @@ def test():
     assert gaussian.pyre_normalizeName("σ") == "spread"
     # print out the configuration state
     # print("gaussian: defaults: mean={0.mean!r}, spread={0.spread!r}".format(gaussian))
-    # calculator = pyre.executive().calculator
-    # calculator._dump()
+    calculator = pyre.executive().calculator
+    # calculator._dump(pattern="(functor|gaussian)")
     # calculator._hash.dump()
 
     # check the class defaults; the values come from functor.pml in this directory
@@ -76,8 +76,8 @@ def test():
     assert g.σ == g.spread
 
     # check the properties
-    # print("g: defaults: mean={0.mean!r}, spread={0.spread!r}".format(g))
-    # calculator._dump()
+    # print("g: mean={0.mean!r}, spread={0.spread!r}".format(g))
+    # calculator._dump(pattern="(functor|gaussian)")
 
     return gaussian
 

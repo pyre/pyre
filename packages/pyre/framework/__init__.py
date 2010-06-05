@@ -50,9 +50,9 @@ def newConfigurator(**kwds):
     return newConfigurator(**kwds)
 
 
-def newCurator(**kwds):
-    from .Curator import Curator
-    return Curator(**kwds)
+def newBinder(**kwds):
+    from .Binder import Binder
+    return Binder(**kwds)
 
 
 def newFileServer(**kwds):

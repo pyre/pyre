@@ -154,13 +154,18 @@ class AbstractModel(Named):
 
 
     # debugging support
-    def _dump(self):
+    def _dump(self, pattern=None):
         """
         List my contents
         """
+        # build the node name recognizer
+        import re
+        regex = re.compile(pattern if pattern else '')
+
         print("model {0!r}:".format(self.name))
         for name, node in self.getNodes():
-            print("    {0!r}: {1!r}".format(name, node.value))
+            if regex.match(name):
+                print("    {0!r}: {1!r}".format(name, node.value))
         return
 
 

@@ -50,6 +50,9 @@ class Property(Trait):
         return
 
 
+    def pyre_cast(self, value):
+
+
     # the descriptor interface
     # NYI: 
     #    these appear too raw to me

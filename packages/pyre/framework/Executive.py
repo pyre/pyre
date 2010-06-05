@@ -27,9 +27,10 @@ class Executive(object):
     # paths
     configpath = ()
     # managers
-    calculator = None # the manager of configuration nodes
-    codecs = None # my codec manager
-    configurator = None # my configuration manager
+    binder = None # responsible for the casting and validation of user input
+    calculator = None # responsible for the framework evaluation model
+    codecs = None # the registrar of configuration file parsers
+    configurator = None # the accumulator of raw input from configuration sources
     fileserver = None # my virtual filesystem
     registrar = None # the component class and instance registrar
     # book keeping
@@ -39,9 +40,11 @@ class Executive(object):
     # constants
     path = ("vfs:///pyre/system", "vfs:///pyre/user", "vfs:///local")
 
-    BOOT_CONFIGURATION = 0
-    PACKAGE_CONFIGURATION = 5
-    USER_CONFIGURATION = 10
+    # priority levels for various configuration sources
+    BOOT_CONFIGURATION = 0 # defaults from the component declarations
+    PACKAGE_CONFIGURATION = 5 # configuration from package files
+    USER_CONFIGURATION = 10 # configurations supplied by the end user
+    EXPLICIT_CONFIGURATION = 15 # programmatic overrides
 
 
     # interface
@@ -76,8 +79,12 @@ class Executive(object):
         self.calculator.configureComponentInstance(executive=self, component=component)
         # invoke the configuration hook
         component.pyre_configure(executive=self)
+        # bind the configuration settings to the component
+        self.binder.bindComponentInstance(executive=self, component=component)
+        # invoke the binding hook
+        component.pyre_bind(executive=self)
         # todo
-        print("NYI: component instance binding and initialization")
+        print("NYI: component instance initialization")
         # and hand the instance back
         return component
 
@@ -162,6 +169,8 @@ class Executive(object):
         self.calculator = pyre.framework.newCalculator()
         # the component registrar
         self.registrar = pyre.framework.newComponentRegistrar()
+        # the trait binder
+        self.binder = pyre.framework.newBinder()
 
         # prime the configuration folder list
         self.configpath = list(self.path)
