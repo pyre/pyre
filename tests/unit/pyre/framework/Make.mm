@@ -18,10 +18,10 @@ test: sanity managers framework
 sanity:
 	${PYTHON} ./sanity.py
 
-managers: curator fileserver
+managers: binder fileserver
 
-curator:
-	${PYTHON} ./curator.py
+binder:
+	${PYTHON} ./binder.py
 
 fileserver:
 	${PYTHON} ./fileserver.py

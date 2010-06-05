@@ -28,7 +28,10 @@ class Binder(object):
         # iterate over the traits
         for trait, source in component.pyre_traits(categories=component._pyre_CONFIGURABLE_TRAITS):
             print("  examining {.name!r}".format(trait))
-            print("    current value: {0.value!r}".format(getattr(inventory, trait.name)))
+            value = getattr(inventory, trait.name).value
+            print("    current value: {0!r}".format(value))
+            cast = trait.pyre_cast(value)
+            print("    converting: {0!r} -> {1!r}".format(value, cast))
 
         return component
 

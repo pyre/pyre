@@ -20,6 +20,10 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Float.py \
+    Integer.py \
+    Object.py \
+    Type.py \
     __init__.py
 
 

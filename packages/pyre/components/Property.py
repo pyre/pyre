@@ -20,9 +20,13 @@ class Property(Trait):
     entirety, whereas the latter may require more specialized descriptors.
     """
 
+    # import the schema
+    import pyre.schema as schema
+
 
     # public data
     name = None # my canonical name; set at construction time or binding name
+    type = schema.object() # my type; most likely one of the pyre.schema type declarators
     aliases = None # the set of alternative names by which I am accessible
     default = None # my default value
     optional = False # am i allowed to be uninitialized?
@@ -51,6 +55,10 @@ class Property(Trait):
 
 
     def pyre_cast(self, value):
+        """
+        Convert {value} to the trait native type
+        """
+        return self.type.cast(value)
 
 
     # the descriptor interface

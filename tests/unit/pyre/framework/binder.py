@@ -14,7 +14,7 @@ Sanity check: verify that the package is accessible
 
 def test():
     import pyre.framework
-    return pyre.framework.newCurator()
+    return pyre.framework.newBinder()
 
 
 # main

@@ -14,10 +14,13 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity types
 
 sanity:
 	${PYTHON} ./sanity.py
+
+types:
+	${PYTHON} ./float.py
 
 
 # end of file 
