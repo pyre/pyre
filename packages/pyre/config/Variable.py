@@ -20,7 +20,7 @@ class Variable(Node):
 
 
     # interface
-    def assimilate(self, other, alias):
+    def replace(self, other, alias):
         """
         Replace references to node {other} under the name {alias}, and steal its value if its
         priority is higher than mine
@@ -33,7 +33,7 @@ class Variable(Node):
             self.value = other.value
             self.priority = other.priority
         # either way, she is redundant; so replace her
-        return self.replace(node=other, name=alias)
+        return super().replace(node=other, name=alias)
 
 
     # meta methods

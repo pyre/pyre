@@ -58,6 +58,7 @@ class Calculator(AbstractModel):
                 # this can't fail since the ancestor has been through this process already
                 referent = getattr(source._pyre_Inventory, trait.name)
                 # build a reference to it
+                # NYI: with what priority? this is correct by accident...
                 node = referent.newReference()
             # attach the node as an inventory attribute named after the trait
             setattr(inventory, trait.name, node)
@@ -93,7 +94,7 @@ class Calculator(AbstractModel):
                     # print("      aliasing {!r} to {!r}".format(key, canonical))
                     self._hash.alias(alias=key, original=canonical, separator=self.TRAIT_SEPARATOR)
                 # print("      processing setting: {!r} <- {!r}".format(alias, existing.value))
-                node.assimilate(other=existing, alias=key)
+                node.replace(other=existing, alias=key)
             # finally, register the node with the model
             # this must be done after the potential name clash has been prevented by removing all
             # nodes that may be aliases of this one
@@ -160,7 +161,7 @@ class Calculator(AbstractModel):
                         self._hash.alias(
                             alias=key, original=canonical, separator=self.TRAIT_SEPARATOR)
                     # print("      processing setting: {!r} <- {!r}".format(alias, existing.value))
-                    node.assimilate(other=existing, alias=key)
+                    node.replace(other=existing, alias=key)
             # finally, attach the node as an inventory attribute named after the trait
             setattr(inventory, trait.name, node)
             # register it with the model
