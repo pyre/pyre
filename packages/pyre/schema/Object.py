@@ -24,8 +24,4 @@ class Object(Type):
         return value
 
 
-    # exception
-    from . import CastingError
-
-
 # end of file 

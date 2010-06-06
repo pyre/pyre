@@ -8,7 +8,7 @@
 
 
 """
-Check that float conversion work as expected
+Check that int conversion work as expected
 """
 
 
@@ -16,18 +16,18 @@ def test():
     import pyre.schema
 
     # create a descriptor
-    descriptor = pyre.schema.float
+    descriptor = pyre.schema.int
 
     # casts
     # successful
-    assert 1.2 == descriptor.cast(1.2)
-    assert 1.2 == descriptor.cast("1.2")
+    assert 1 == descriptor.cast(1)
+    assert 1 == descriptor.cast("1")
     # failures
     try:
         descriptor.cast(test)
         assert False
     except descriptor.CastingError as error:
-        assert str(error) == "float() argument must be a string or a number"
+        assert str(error) == "int() argument must be a string or a number, not 'function'"
         
     return
 

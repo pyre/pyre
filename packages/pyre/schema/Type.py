@@ -22,4 +22,8 @@ class Type(object):
             "class {.__name__!r} must implement 'cast'".format(cls))
     
 
+    # exception
+    from .exceptions import CastingError
+
+
 # end of file 

@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     Integer.py \
     Object.py \
     Type.py \
+    exceptions.py \
     __init__.py
 
 

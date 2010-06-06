@@ -26,7 +26,7 @@ class Property(Trait):
 
     # public data
     name = None # my canonical name; set at construction time or binding name
-    type = schema.object() # my type; most likely one of the pyre.schema type declarators
+    type = schema.object # my type; most likely one of the pyre.schema type declarators
     aliases = None # the set of alternative names by which I am accessible
     default = None # my default value
     optional = False # am i allowed to be uninitialized?

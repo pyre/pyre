@@ -21,6 +21,7 @@ sanity:
 
 types:
 	${PYTHON} ./float.py
+	${PYTHON} ./int.py
 
 
 # end of file 

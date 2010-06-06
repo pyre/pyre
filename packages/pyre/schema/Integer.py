@@ -9,9 +9,9 @@
 from .Type import Type
 
 
-class Float(Type):
+class Integer(Type):
     """
-    A floating point type declarator
+    An integer point type declarator
     """
 
 
@@ -22,7 +22,7 @@ class Float(Type):
         Attempt to convert {value} into a float
         """
         try:
-            return float(value)
+            return int(value)
         except TypeError as error:
             raise cls.CastingError(msg=str(error)) from error
         except ValueError as error:
