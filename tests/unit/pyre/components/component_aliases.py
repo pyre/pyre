@@ -24,11 +24,11 @@ def test():
 
         # properties
         mean = Property()
-        mean.default = 0.0
+        mean.default = "0.01"
         mean.aliases.add("μ")
 
         spread = Property()
-        spread.default = 1.0
+        spread.default = "0.01"
         spread.aliases.add("σ")
        
         # behaviors
@@ -43,13 +43,14 @@ def test():
     assert gaussian.pyre_normalizeName("σ") == "spread"
     # print out the configuration state
     # print("gaussian: defaults: mean={0.mean!r}, spread={0.spread!r}".format(gaussian))
-    calculator = pyre.executive().calculator
+    # calculator = pyre.executive().calculator
     # calculator._dump(pattern="(functor|gaussian)")
     # calculator._hash.dump()
 
-    # check the class defaults; the values come from functor.pml in this directory
-    assert gaussian.mean == 'cmd'
-    assert gaussian.spread == 'config - σ'
+    # check the class defaults
+    # the values come from the defaults, functor.pml in this directory, and the command line
+    assert gaussian.mean == '0.10'
+    assert gaussian.spread == '0.54'
     # reset them to something meaningful
     gaussian.μ = 0.0
     gaussian.σ = 1.0
@@ -60,8 +61,8 @@ def test():
     # instantiate one
     g = gaussian(name="gaussian")
     # make sure the defaults were transferred correctly
-    assert g.mean == "instance - μ"
-    assert g.spread == "cmd"
+    assert g.mean == "0.56"
+    assert g.spread == '0.10'
     # use the canonical names to reconfigure
     g.mean = 1.0
     g.spread = 2.0

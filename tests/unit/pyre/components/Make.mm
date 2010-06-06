@@ -11,7 +11,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-
 all: test
 
 test: sanity metaclasses interfaces components
@@ -54,7 +53,8 @@ components:
 	${PYTHON} ./component_instantiation.py
 	${PYTHON} ./component_configuration_instantiation.py
 	${PYTHON} ./component_invocation.py
-	${PYTHON} ./component_aliases.py --functor.μ="cmd" --gaussian.spread="cmd"
+	${PYTHON} ./component_aliases.py --functor.μ=0.10 --gaussian.spread=0.10
+	${PYTHON} ./component_binding.py
 
 
 # end of file 
