@@ -49,12 +49,10 @@ if __name__ == "__main__":
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
-    # print([node for node in Node._pyre_extent])
-    assert set(Node._pyre_extent) == set()
-    # for evaluators
-    from pyre.calc.Evaluator import Evaluator
-    # print([evaluator for evaluator in Evaluator._pyre_extent])
-    assert set(Evaluator._pyre_extent) == set()
+    # print(tuple(Node._pyre_extent))
+    assert tuple(Node._pyre_extent) == ()
+    # print(tuple(Node.Evaluator._pyre_extent))
+    assert tuple(Node.Evaluator._pyre_extent) == ()
 
 
 # end of file 

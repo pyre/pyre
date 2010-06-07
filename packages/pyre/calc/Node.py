@@ -16,6 +16,7 @@ class Node(Observable, metaclass=_metaclass_Node):
     """
 
     
+    from .Evaluator import Evaluator
     from .Reference import Reference
 
 

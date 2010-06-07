@@ -50,10 +50,9 @@ def newNode(value=None, **kwds):
     """
     # build the node
     from .Node import Node
-    from .Evaluator import Evaluator
     # inspect {value}
     # first, check whether we were passed an evaluator
-    if isinstance(value, Evaluator):
+    if isinstance(value, Node.Evaluator):
         return Node(value=None, evaluator=value, **kwds)
     # perhaps {value} is another node
     if isinstance(value, Node):
