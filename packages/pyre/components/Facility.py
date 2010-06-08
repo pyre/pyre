@@ -15,10 +15,6 @@ class Facility(Property):
     """
 
 
-    # public data
-    interface = None # the interface specification that compatible components must satisfy
-
-
     # private data
     _pyre_category = "facilities"
     

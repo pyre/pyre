@@ -67,7 +67,7 @@ def facility(*, interface):
     """
     from .Facility import Facility
     facility = Facility()
-    facility.interface = interface
+    facility.type = interface
 
     return facility
 
