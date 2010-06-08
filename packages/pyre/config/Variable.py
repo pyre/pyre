@@ -62,9 +62,6 @@ class Variable(Node):
 
     # implementation details
     def _setValue(self, value):
-        # value==None implies the variable is uninitialized
-        if value is None:
-            return super()._setValue(value)
         # if the value is an instance of Evaluator, set the evaluator
         if isinstance(value, self.Evaluator):
             super()._setEvaluator(evaluator=value)
@@ -78,6 +75,7 @@ class Variable(Node):
             calculator.validateNode(node=self)
             return self
         # otherwise, just set the value
+        # value==None implies the variable is uninitialized
         return super()._setValue(value)
 
 
