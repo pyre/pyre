@@ -16,31 +16,47 @@ class Variable(Node):
     """
 
 
-    # public data
-    priority = (-1,-1)
+    # private data
+    _priority = (-1,-1)
 
 
     # interface
+    def reassign(self, value, priority):
+        """
+        Conditional reassignment to {value} based on whether {priority} is higher than mine
+        """
+        # bail out if my priority is higher
+        if self._priority > priority:
+            return self
+        # otherwise assume the new priority
+        self._priority = priority
+        # and process the assignment
+        self.value = value
+        # and return myself
+        return self
+
+
     def replace(self, other, alias):
         """
         Replace references to node {other} under the name {alias}, and steal its value if its
         priority is higher than mine
         """
-        # print("      priorities: mine={0.priority!r}, hers={1.priority!r}".format(self, other))
+        # print("      priorities: mine={0._priority!r}, hers={1._priority!r}".format(self, other))
         # if {other} has higher priority
-        if self.priority < other.priority:
+        if self._priority < other._priority:
             # print("      overriding")
             # assume its value and priority
-            self.value = other.value
-            self.priority = other.priority
+            self._value = other._value
+            self._evaluator = other._evaluator
+            self._priority = other._priority
         # either way, she is redundant; so replace her
         return super().replace(node=other, name=alias)
 
 
     # meta methods
-    def __init__(self, priority=priority, **kwds):
+    def __init__(self, priority=_priority, **kwds):
         super().__init__(**kwds)
-        self.priority = priority
+        self._priority = priority
         return
 
 

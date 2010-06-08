@@ -191,23 +191,15 @@ class Calculator(AbstractModel):
         except KeyError:
             # if not, build one
             # print("  first time for {!r}; building a new node".format(name))
-            node = Variable(value=None, evaluator=None)
+            node = Variable(value=None, evaluator=None, priority=priority)
+            # set the value
+            node.value = value
             # and register it if a name was given
             if name:
                 self.registerNode(name=name, node=node)
-        # if the existing node has higher priority
-               
-        # print("  checking priority: current={}, binding={}".format(node.priority, priority))
-        if node.priority > priority:
-            # leave it alone
-            # print("  existing node has higher priority; skipping")
-            return node
-        # print("  existing node has lower priority; assigning new value")
-
-        # set the new node priority
-        node.priority = priority
-        # and let the variable deal with the value processing
-        node.value = value
+        else:
+            # hand the information to the existing node and let it decide what to do
+            node.reassign(value=value, priority=priority)
 
         # log the event
         # NYI: this is broken and needs fixin'

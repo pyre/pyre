@@ -11,6 +11,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working:
+	${PYTHON} ./component_binding.py
+
 all: test
 
 test: sanity metaclasses interfaces components

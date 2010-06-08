@@ -47,11 +47,28 @@ def test():
     g = gaussian(name="gaussian")
     # check the properties
     # print("g: mean={0.mean!r}, spread={0.spread!r}".format(g))
-    # calculator._dump(pattern="(functor|gaussian)")
+    # calculator = pyre.executive().calculator
+    # calculator._dump(pattern="(gaussian)")
 
     # make sure the defaults were transferred correctly
+    assert type(g.mean) == float
     assert g.mean == .56
+    assert type(g.spread) == float
     assert g.spread == .58
+
+    # make some assignments
+    # from integers
+    # print("assign an integer")
+    g.mean = 1
+    # print("done")
+    assert type(g.mean) == float
+    assert g.mean == 1.0
+    # from strings
+    # print("assign a string")
+    g.mean = "1.0"
+    # print("done")
+    assert type(g.mean) == float
+    assert g.mean == 1.0
 
     return gaussian
 

@@ -61,6 +61,14 @@ class Property(Trait):
         return self.type.cast(value)
 
 
+    def pyre_validate(self, value):
+        """
+        Run the value through my validators
+        """
+        print("NYI: trait validation")
+        return value
+
+
     # the descriptor interface
     # NYI: 
     #    these appear too raw to me
@@ -69,8 +77,18 @@ class Property(Trait):
         """
         Set the trait of {instance} to {value}
         """
+        node = getattr(instance._pyre_inventory, self.name)
         # update the value of the node in the instance inventory
-        getattr(instance._pyre_inventory, self.name).value = value
+        node.value = value
+        # values could be literals, expressions, references, etc.
+        # if this resulted in a literal value being deposited
+        if node._value:
+            # cast it to the proper type
+            value = self.pyre_cast(node._value)
+            # validate it
+            value = self.pyre_validate(value)
+            # and store it back with the variable
+            node._value = value
         # all done
         return
 
@@ -85,8 +103,24 @@ class Property(Trait):
         except AttributeError:
             # access through a class variable
             inventory = cls._pyre_Inventory
-        # at this point, we have inventory, so look up the attribute using my name an return it
-        return getattr(inventory, self.name).value
+        # at this point, we have inventory, so look up the node using my name
+        node = getattr(inventory, self.name)
+        # check whether the node thinks it has a valid value
+        ok = True if node._value else False
+        # force an evaluation to take place
+        value = node.value
+        # if the value was previously cached
+        if ok:
+            # just return it
+            return value
+        # otherwise, cast it
+        value = self.pyre_cast(value)
+        # validate it
+        value = self.pyre_validate(value)
+        # store it back with the variable
+        node._value = value
+        # and return it
+        return value
 
 
     # framework data

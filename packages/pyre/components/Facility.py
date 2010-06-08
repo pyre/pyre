@@ -17,6 +17,16 @@ class Facility(Property):
 
     # private data
     _pyre_category = "facilities"
+
+
+    # interface
+    def pyre_cast(self, value):
+        """
+        Convert {value} to an actual component
+        """
+        print("NYI: facility needs to cast values to components")
+        return value
+
     
 
 # end of file 
