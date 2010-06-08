@@ -30,6 +30,7 @@ class Calculator(AbstractModel):
     # build a locator for values that come from trait defaults
     locator = pyre.tracking.newSimpleLocator(source="<defaults>")
 
+
     # interface
     def configureComponentClass(self, executive, component):
         """
@@ -216,6 +217,21 @@ class Calculator(AbstractModel):
         return node
 
 
+    # convenience
+    def validateNode(self, node):
+        """
+        Verify that {node} contains no circular references
+
+        N.B.: there is also AbstractModel.validate that checks the entire set of nodes
+        """
+        # remove it from the set of known good nodes
+        self._clean.discard(node)
+        # traverse the subgraph rooted at this node
+        node.validate(clean=self._clean)
+        # all is good if no exception was thrown
+        return node
+
+
     # interface obligations from the abstract base class
     def addNode(self, name, node):
         """
@@ -266,6 +282,9 @@ class Calculator(AbstractModel):
         self._names = {}
         self._nodes = {}
         self._hash = pyre.patterns.newPathhash()
+
+        # the nodes known to be in good shape
+        self._clean = set()
 
         # history tracking
         self._tracker = pyre.tracking.newTracker()

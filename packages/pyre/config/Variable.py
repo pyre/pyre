@@ -51,12 +51,16 @@ class Variable(Node):
             return super()._setValue(value)
         # if the value is an instance of Evaluator, set the evaluator
         if isinstance(value, self.Evaluator):
-            return super()._setEvaluator(evaluator=value)
+            super()._setEvaluator(evaluator=value)
+            calculator.validateNode(node=self)
+            return self
         # if the value is a string that contains replacements markers, build an evaluator
         if isinstance(value, str) and self.Expression._scanner.match(value):
             calculator = pyre.executive().calculator
             evaluator=self.Expression(expression=value, model=calculator)
-            return super()._setEvaluator(evaluator)
+            super()._setEvaluator(evaluator)
+            calculator.validateNode(node=self)
+            return self
         # otherwise, just set the value
         return super()._setValue(value)
 
