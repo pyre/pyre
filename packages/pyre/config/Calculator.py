@@ -205,22 +205,11 @@ class Calculator(AbstractModel):
 
         # set the new node priority
         node.priority = priority
-        # print("NYI: literal/macro/function interpretation of trait value")
-        # build an evaluator
-        # figure out if this value contains references to other nodes
-        if value and isinstance(value, str) and Expression._scanner.match(value):
-            evaluator = Expression(expression=value, model=self)
-            value = None
-        else:
-            evaluator = None
-
-        # figure where to attach the evaluator
-        if evaluator:
-            node.evaluator = evaluator
-        else:
-            node.value = value
+        # and let the variable deal with the value processing
+        node.value = value
 
         # log the event
+        # NYI: this is broken and needs fixin'
         self._tracker.track(key=node, value=(value, locator))
 
         # return the node

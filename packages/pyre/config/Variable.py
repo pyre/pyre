@@ -6,6 +6,7 @@
 #
 
 
+import pyre
 from ..calc.Node import Node
 
 
@@ -41,6 +42,27 @@ class Variable(Node):
         super().__init__(**kwds)
         self.priority = priority
         return
+
+
+    # implementation details
+    def _setValue(self, value):
+        # value==None implies the variable is uninitialized
+        if value is None:
+            return super()._setValue(value)
+        # if the value is an instance of Evaluator, set the evaluator
+        if isinstance(value, self.Evaluator):
+            return super()._setEvaluator(evaluator=value)
+        # if the value is a string that contains replacements markers, build an evaluator
+        if isinstance(value, str) and self.Expression._scanner.match(value):
+            calculator = pyre.executive().calculator
+            evaluator=self.Expression(expression=value, model=calculator)
+            return super()._setEvaluator(evaluator)
+        # otherwise, just set the value
+        return super()._setValue(value)
+
+
+    # access to the expression evaluator
+    from ..calc.Expression import Expression
 
 
 # end of file 

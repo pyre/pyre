@@ -15,10 +15,10 @@ Sanity check: verify that the command line parser can be instantiated
 def test():
     import pyre.config
 
-    # get a raw executive instance
-    from pyre.framework.Executive import Executive
-    executive = Executive()
-    # pul the configutor and calculator
+    # get the executive instance
+    import pyre
+    executive = pyre.executive()
+    # pull the configutor and calculator
     calculator = executive.calculator
     configurator = executive.configurator
     # and a command line parser
@@ -41,7 +41,9 @@ def test():
     parser.decode(configurator, commandline)
     # and transfer the events to the calculator
     configurator.configure(executive, executive.USER_CONFIGURATION)
-    # now, check that the assignments took place
+    # dump the state
+    # calculator._dump()
+    # and check that the assignments took place
     assert calculator["help"] == None
     assert calculator["vtf.nodes"] == "1024"
     assert calculator["vtf.solid"] == "solvers"
