@@ -11,8 +11,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working:
-	${PYTHON} ./component_binding.py
 
 all: test
 

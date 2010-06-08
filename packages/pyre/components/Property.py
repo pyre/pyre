@@ -69,6 +69,23 @@ class Property(Trait):
         return value
 
 
+    def pyre_assign(self, node, value=None):
+        """
+        Assign {value} to {node} after making sure that it can be cast to the right type and
+        passes the validation suite
+        """
+        # if the value is None, use the current value cache from {node}
+        value = node._value if value is None else value
+        # cast it
+        value = self.pyre_cast(value)
+        # validate it
+        value = self.pyre_validate(value)
+        # store it back with the variable
+        node._value = value
+        # and return the node
+        return value
+
+
     # the descriptor interface
     # NYI: 
     #    these appear too raw to me
@@ -83,12 +100,8 @@ class Property(Trait):
         # values could be literals, expressions, references, etc.
         # if this resulted in a literal value being deposited
         if node._value:
-            # cast it to the proper type
-            value = self.pyre_cast(node._value)
-            # validate it
-            value = self.pyre_validate(value)
-            # and store it back with the variable
-            node._value = value
+            # walk it through conversion and validation
+            self.pyre_assign(node)
         # all done
         return
 
@@ -113,14 +126,8 @@ class Property(Trait):
         if ok:
             # just return it
             return value
-        # otherwise, cast it
-        value = self.pyre_cast(value)
-        # validate it
-        value = self.pyre_validate(value)
-        # store it back with the variable
-        node._value = value
-        # and return it
-        return value
+        # otherwise, walk it through conversion and validation
+        return self.pyre_assign(node, value)
 
 
     # framework data

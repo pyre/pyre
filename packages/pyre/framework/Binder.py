@@ -22,13 +22,11 @@ class Binder(object):
         that involves resolving the component requests into actual class records, instantiating
         them and binding them to the {component} trait.
         """
-        # return component
         # access the component inventory
         inventory = component._pyre_inventory
         # iterate over the traits
         for trait, source in component.pyre_traits(categories=component._pyre_CONFIGURABLE_TRAITS):
-            node = getattr(inventory, trait.name)
-            node.value = trait.pyre_cast(node.value)
+            trait.pyre_assign(getattr(inventory, trait.name))
         # all done
         return component
 
