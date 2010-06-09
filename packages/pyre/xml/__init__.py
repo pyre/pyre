@@ -79,55 +79,6 @@ def element(**kwds):
     return ElementDescriptor(**kwds)
 
 
-# exceptions
-from ..framework import FrameworkError
-
-
-class ParsingError(FrameworkError):
-    """
-    Base class for parsing errors
-    """
-
-    def __init__(self, parser=None, document=None, description="", locator=None, **kwds):
-        super().__init__(**kwds)
-        self.parser = parser
-        self.document = document
-        self.description = description
-        self.locator = newLocator(locator) if locator else None
-
-        return
-
-    def __str__(self):
-        if self.locator:
-            return "{0}: {1}".format(str(self.locator), self.description)
-
-        return self.description
-
-
-class UnsupportedFeatureError(ParsingError):
-    """
-    Exception raised when one of the requested features is not supported by the parser
-    """
-
-    def __init__(self, parser, document, features, **kwds):
-        msg = "unsupported features: {0!r}".format(", ".join(features))
-        super().__init__(parser=parser, document=document, description=msg)
-        self.features = features
-        return
-
-
-class DTDError(ParsingError):
-    """
-    Errors relating to the structure of the document
-    """
-
-
-class ProcessingError(ParsingError):
-    """
-    Errors relating to the handling of the document
-    """
-
-
 # package constants
 # attribute types
 CDATA = "CDATA"

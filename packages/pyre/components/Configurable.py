@@ -187,7 +187,7 @@ class Configurable(object): #, metaclass=Requirement):
 
 
     # exceptions
-    from . import CategoryMismatchError, TraitNotFoundError
+    from .exceptions import CategoryMismatchError, TraitNotFoundError
 
 
 # end of file 

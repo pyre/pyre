@@ -61,7 +61,7 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
 
 
     # exceptions
-    from . import GenericError
+    from .exceptions import GenericError
         
 
 # end of file 

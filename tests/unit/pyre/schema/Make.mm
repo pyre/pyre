@@ -18,6 +18,7 @@ test: sanity types
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 
 types:
 	${PYTHON} ./float.py

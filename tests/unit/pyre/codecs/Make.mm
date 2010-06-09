@@ -18,6 +18,7 @@ test: sanity formats
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 	${PYTHON} ./manager.py
 
 formats: pml

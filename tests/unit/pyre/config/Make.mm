@@ -18,6 +18,7 @@ test: sanity configurator calculator commandline
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 
 configurator:
 	${PYTHON} ./configurator.py

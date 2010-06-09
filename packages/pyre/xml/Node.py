@@ -103,7 +103,7 @@ class Node(object):
 
 
     # exceptions
-    from . import DTDError
+    from .exceptions import DTDError
 
 
     # private data

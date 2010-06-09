@@ -17,6 +17,7 @@ test: sanity constraints
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 
 constraints:
 	${PYTHON} ./isAll.py

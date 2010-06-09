@@ -38,6 +38,7 @@ EXPORT_PYTHON_MODULES = \
     StatRecognizer.py \
     TreeExplorer.py \
     ZipFilesystem.py \
+    exceptions.py \
     __init__.py
 
 

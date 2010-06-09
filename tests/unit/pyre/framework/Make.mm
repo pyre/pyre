@@ -17,6 +17,7 @@ test: sanity managers framework
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 
 managers: binder fileserver
 

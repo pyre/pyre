@@ -13,6 +13,7 @@ A more elaborate component declaration
 
 # acccess to the parts
 import pyre.components
+import pyre.components.exceptions
 from pyre.components.Component import Component
 from pyre.components.Interface import Interface
 from pyre.components.Property import Property
@@ -85,28 +86,28 @@ def test():
     try:
         badImplementationSpec()
         assert False
-    except pyre.components.ImplementationSpecificationError as error:
+    except pyre.components.exceptions.ImplementationSpecificationError as error:
         pass
 
     # check that we catch missing traits
     try:
         missingProperty()
         assert False
-    except pyre.components.InterfaceError:
+    except pyre.components.exceptions.InterfaceError:
         pass
 
     # check that we catch missing behaviors
     try:
         missingBehavior()
         assert False
-    except pyre.components.InterfaceError:
+    except pyre.components.exceptions.InterfaceError:
         pass
 
     # check that we catch missing exports
     try:
         noExport()
         assert False
-    except pyre.components.InterfaceError:
+    except pyre.components.exceptions.InterfaceError:
         pass
 
     return interface

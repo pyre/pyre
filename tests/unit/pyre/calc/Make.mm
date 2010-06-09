@@ -17,6 +17,7 @@ test: sanity evaluators faulty resolution
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 	${PYTHON} ./node.py
 
 evaluators:

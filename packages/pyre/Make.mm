@@ -44,6 +44,7 @@ distclean::
 # export
 
 EXPORT_PYTHON_MODULES = \
+    exceptions.py \
     __init__.py
 
 

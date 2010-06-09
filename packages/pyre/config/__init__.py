@@ -22,14 +22,4 @@ def newCommandLineParser(**kwds):
     return CommandLine(**kwds)
 
 
-# exceptions
-from ..framework import FrameworkError
-
-
-class ConfigurationError(FrameworkError):
-    """
-    Base class for all configuration errors
-    """
-
-
 # end of file 

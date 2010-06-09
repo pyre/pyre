@@ -25,6 +25,7 @@ EXPORT_PYTHON_MODULES = \
     ElementDescriptor.py \
     Node.py \
     Reader.py \
+    exceptions.py \
     __init__.py
 
 

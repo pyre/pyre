@@ -27,7 +27,7 @@ class DirectoryWalker(object):
 
 
     # exceptions
-    from . import DirectoryListingError
+    from .exceptions import DirectoryListingError
 
 
 # end of file 

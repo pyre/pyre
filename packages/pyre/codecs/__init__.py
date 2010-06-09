@@ -19,37 +19,4 @@ def newManager(**kwds):
     return CodecManager(**kwds)
 
 
-# exceptions
-from ..framework import FrameworkError
-
-
-class CodecError(FrameworkError):
-    """
-    Base class for codec errors
-    """
-
-    def __init__(self, codec, uri, locator, description, **kwds):
-        super().__init__(**kwds)
-        self.codec = codec
-        self.uri = uri
-        self.locator = locator
-        self.description = description
-        return
-
-    def __str__(self):
-        return self.description
-
-
-class DecodingError(CodecError):
-    """
-    Exception raised by codecs when they encounter errors in their input streams
-    """
-
-    
-class EncodingError(CodecError):
-    """
-    Exception raised by codecs when they fail to inject an iterm in a stream
-    """
-
-
 # end of file

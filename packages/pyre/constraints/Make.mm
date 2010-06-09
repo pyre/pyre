@@ -33,6 +33,7 @@ EXPORT_PYTHON_MODULES = \
     Or.py \
     Set.py \
     Subset.py \
+    exceptions.py \
     __init__.py
 
 

@@ -17,6 +17,7 @@ test: sanity documents
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 	${PYTHON} ./reader.py
 	${PYTHON} ./document.py
 

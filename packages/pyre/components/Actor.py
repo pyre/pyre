@@ -162,7 +162,7 @@ class Actor(Requirement):
 
 
     # exceptions
-    from . import ImplementationSpecificationError, InterfaceError
+    from .exceptions import ImplementationSpecificationError, InterfaceError
 
 
 # end of file 

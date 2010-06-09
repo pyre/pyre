@@ -28,10 +28,6 @@ class Expression(Polyadic):
         return self._formula
 
 
-    # exceptions
-    from . import ExpressionError
-
-
     # meta methods
     def __init__(self, expression, model, **kwds):
         # save a copy of the input
@@ -46,7 +42,7 @@ class Expression(Polyadic):
             try:
                 self._program = compile(expression, filename='expression', mode='eval')
             except SyntaxError as error:
-                raise self.ExpressionError(self, error, expression) from error
+                raise self.ExpressionError(evaluator=self, error=error) from error
             # build my evaluation context
             self._nodeTable = {
                 self._symbolTable[name]: model.resolveNode(client=self, name=name)
@@ -98,6 +94,10 @@ class Expression(Polyadic):
         self._nodeTable[self._symbolTable[name]] = new
         # and let my ancestors take care of my domain
         return super()._replace(name, old, new)
+
+
+    # exceptions
+    from .exceptions import ExpressionError
 
 
     # private data

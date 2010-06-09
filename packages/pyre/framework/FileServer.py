@@ -152,7 +152,7 @@ class FileServer(Filesystem):
 
 
     # exceptions
-    from . import BadResourceLocatorError
+    from .exceptions import BadResourceLocatorError
 
 
     # constants

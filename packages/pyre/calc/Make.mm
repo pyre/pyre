@@ -47,6 +47,7 @@ EXPORT_PYTHON_MODULES = \
     Sum.py \
     Unary.py \
     UnresolvedNode.py \
+    exceptions.py \
     __init__.py
 
 

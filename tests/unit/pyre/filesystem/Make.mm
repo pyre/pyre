@@ -17,6 +17,7 @@ test: sanity folders filesystem explorers
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 	${PYTHON} ./node.py
 	${PYTHON} ./folder.py
 	${PYTHON} ./directory_walker.py

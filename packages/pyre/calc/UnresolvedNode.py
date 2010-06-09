@@ -35,7 +35,7 @@ class UnresolvedNode(Error):
 
 
     # exceptions
-    from . import UnresolvedNodeError
+    from .exceptions import UnresolvedNodeError
 
 
 # end of file 

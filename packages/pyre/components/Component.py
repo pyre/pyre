@@ -151,7 +151,7 @@ class Component(Configurable, metaclass=Actor):
 
 
     # exceptions
-    from ..constraints import ConstraintViolationError
+    from ..constraints.exceptions import ConstraintViolationError
 
 
 # end of file 

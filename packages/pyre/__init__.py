@@ -63,13 +63,6 @@ def version():
     return _pyre_version
 
 
-# exceptions
-class PyreError(Exception):
-    """
-    Base class for all pyre related errors
-    """
-
-
 # license
 _pyre_version = (1, 0, 0)
 

@@ -52,7 +52,7 @@ class Constraint(object, metaclass=abc.ABCMeta):
 
 
     # exceptions
-    from . import ConstraintViolationError
+    from .exceptions import ConstraintViolationError
 
 
 # end of file 

@@ -175,7 +175,7 @@ class Folder(Node):
 
 
     # exceptions
-    from . import FolderInsertionError, NotFoundError
+    from .exceptions import FolderInsertionError, NotFoundError
 
 
 # end of file 

@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     Executive.py \
     FileServer.py \
     Pyre.py \
+    exceptions.py \
     __init__.py
 
 

@@ -266,7 +266,7 @@ class Reader(xml.sax.ContentHandler):
 
 
     # exceptions
-    from . import DTDError, ParsingError, ProcessingError, UnsupportedFeatureError
+    from .exceptions import DTDError, ParsingError, ProcessingError, UnsupportedFeatureError
 
 
 # end of file 

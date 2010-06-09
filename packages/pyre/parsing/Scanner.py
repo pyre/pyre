@@ -121,7 +121,7 @@ class Scanner(object, metaclass=Lexer):
 
 
     # exceptions
-    from . import TokenizationError
+    from .exceptions import TokenizationError
 
 
 # end of file 

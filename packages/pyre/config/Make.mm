@@ -27,6 +27,7 @@ EXPORT_PYTHON_MODULES = \
     Configurator.py \
     Event.py \
     Variable.py \
+    exceptions.py \
     __init__.py
 
 

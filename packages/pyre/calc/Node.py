@@ -123,7 +123,7 @@ class Node(Observable, metaclass=_metaclass_Node):
 
 
     # exceptions
-    from . import CircularReferenceError, EvaluationError, UnresolvedNodeError
+    from .exceptions import CircularReferenceError, EvaluationError, UnresolvedNodeError
 
 
     # my algebra

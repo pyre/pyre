@@ -17,6 +17,7 @@ test: sanity lexing
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 
 lexing:
 	${PYTHON} ./scanner.py

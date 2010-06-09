@@ -18,6 +18,7 @@ test: sanity metaclasses interfaces components
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 
 metaclasses:
 	${PYTHON} ./requirement.py

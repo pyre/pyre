@@ -35,6 +35,7 @@ distclean::
 EXPORT_PYTHON_MODULES = \
     Codec.py \
     CodecManager.py \
+    exceptions.py \
     __init__.py
 
 

@@ -7,7 +7,7 @@
 
 
 # exceptions
-from ..framework import FrameworkError
+from ..framework.exceptions import FrameworkError
 
 
 class SchemaError(FrameworkError):

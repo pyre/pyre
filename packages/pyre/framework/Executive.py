@@ -186,7 +186,7 @@ class Executive(object):
 
 
     # exceptions
-    from . import FrameworkError
+    from .exceptions import FrameworkError
 
 
 # end of file 

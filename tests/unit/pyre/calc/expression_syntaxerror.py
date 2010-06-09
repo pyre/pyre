@@ -24,7 +24,7 @@ def test():
         pyre.calc.newNode(
             evaluator=pyre.calc.expression(formula="{production}({shipping}", model=model))
         assert False
-    except pyre.calc.ExpressionError:
+    except model.ExpressionError:
         pass
 
     return

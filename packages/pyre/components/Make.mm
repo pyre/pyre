@@ -33,6 +33,7 @@ EXPORT_PYTHON_MODULES = \
     Requirement.py \
     Role.py \
     Trait.py \
+    exceptions.py \
     __init__.py
 
 

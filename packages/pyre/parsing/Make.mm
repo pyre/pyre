@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     Scanner.py \
     Token.py \
     TokenDescriptor.py \
+    exceptions.py \
     __init__.py
 
 

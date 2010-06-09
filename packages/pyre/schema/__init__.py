@@ -59,8 +59,4 @@ from .Integer import Integer as int
 from .Object import Object as object
 
 
-# exceptions
-from .exceptions import SchemaError
-
-
 # end of file 
