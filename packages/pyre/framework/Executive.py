@@ -80,6 +80,9 @@ class Executive(object):
         # invoke the configuration hook
         component.pyre_configure(executive=self)
         # bind the configuration settings to the component
+        # currently, this is a required step so that component instances can have their
+        # properties propely cast to their native types
+        # NYI: rethink this process
         self.binder.bindComponentInstance(executive=self, component=component)
         # invoke the binding hook
         component.pyre_bind(executive=self)

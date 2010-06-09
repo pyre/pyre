@@ -150,4 +150,8 @@ class Component(Configurable, metaclass=Actor):
         return super().__setattr__(name, value)
 
 
+    # exceptions
+    from ..constraints import ConstraintViolationError
+
+
 # end of file 

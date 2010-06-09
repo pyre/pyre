@@ -56,6 +56,7 @@ components:
 	${PYTHON} ./component_invocation.py
 	${PYTHON} ./component_aliases.py --functor.μ=0.10 --gaussian.spread=0.10
 	${PYTHON} ./component_binding.py
+	${PYTHON} ./component_validation.py
 
 
 # end of file 

@@ -44,6 +44,17 @@ class Registrar(object, metaclass=Singleton):
         self.components[component] = weakref.WeakSet()
         # register the interface implementations
         self._recordInterfaceImplementations(component)
+        # iterate over the descriptors adjusting the validators
+        for trait, source in component.pyre_traits(categories=component._pyre_CONFIGURABLE_TRAITS):
+            # skip this trait if it has no registered validators
+            if not trait.validators: continue
+            # if the validators are in a container, convert it into a tuple
+            if isinstance(trait.validators, collections.Iterable):
+                trait.validators = tuple(trait.validators)
+            # otherwise
+            else:
+                # make a tuple out of the lone validator
+                trait.validators = (trait.validators,)
         # adjust the state
         component._pyre_state = "registered"
         # all done

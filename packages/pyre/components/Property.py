@@ -22,6 +22,7 @@ class Property(Trait):
 
     # import the schema
     import pyre.schema as schema
+    import pyre.constraints as constraints
 
 
     # public data
@@ -31,7 +32,7 @@ class Property(Trait):
     default = None # my default value
     optional = False # am i allowed to be uninitialized?
     converters = () # the chain of functions that are required to produce my native type
-    constraints = () # the chain of functions that validate my values
+    validators = () # the chain of functions that validate my values
     tip = None # a short description of my purpose and constraints; see doc below
 
 
@@ -65,7 +66,11 @@ class Property(Trait):
         """
         Run the value through my validators
         """
-        print("NYI: trait validation")
+        # this is guaranteed to be an iterable; the component registrar makes sure of that
+        for validator in self.validators:
+            # check whether the value passes the test
+            value = validator.validate(value)
+        # and return it
         return value
 
 
@@ -74,8 +79,8 @@ class Property(Trait):
         Assign {value} to {node} after making sure that it can be cast to the right type and
         passes the validation suite
         """
-        # if the value is None, use the current value cache from {node}
-        value = node._value if value is None else value
+        # if the value is None, force the evaluation of {node}
+        value = node.value if value is None else value
         # cast it
         value = self.pyre_cast(value)
         # validate it
