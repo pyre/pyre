@@ -8,7 +8,7 @@
 
 
 """
-Check that int conversion work as expected
+Check that int conversions work as expected
 """
 
 

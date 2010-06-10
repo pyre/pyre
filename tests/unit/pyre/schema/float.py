@@ -8,7 +8,7 @@
 
 
 """
-Check that float conversion work as expected
+Check that float conversions work as expected
 """
 
 
