@@ -30,5 +30,10 @@ class CastingError(SchemaError):
     Exception raised on failed attempts to convert a value to one of the supported types
     """
 
+    def __init__(self, value, **kwds):
+        super().__init__(**kwds)
+        self.value = value
+        return
+
 
 # end of file 

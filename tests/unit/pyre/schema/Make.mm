@@ -21,6 +21,7 @@ sanity:
 	${PYTHON} ./exceptions.py
 
 types:
+	${PYTHON} ./boolean.py
 	${PYTHON} ./float.py
 	${PYTHON} ./int.py
 

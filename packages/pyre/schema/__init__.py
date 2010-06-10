@@ -31,10 +31,7 @@ themes into an ancestor package and simplify the two implementations through ref
 
 The XML primitive built-in datatypes
 string
-boolean
 decimal
-float
-double
 duration
 dateTime
 time
@@ -54,6 +51,7 @@ NOTATION
 
 # simple types
 
+from .Boolean import Boolean as bool
 from .Float import Float as float
 from .Integer import Integer as int
 from .Object import Object as object

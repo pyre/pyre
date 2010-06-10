@@ -23,7 +23,7 @@ def test():
         pass
 
     try:
-        raise CastingError(msg=None)
+        raise CastingError(msg=None, value=None)
     except CastingError as error:
         pass
 
