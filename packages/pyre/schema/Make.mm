@@ -20,6 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Array.py \
     Boolean.py \
     Float.py \
     Integer.py \

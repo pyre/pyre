@@ -51,6 +51,7 @@ NOTATION
 
 # simple types
 
+from .Array import Array as array
 from .Boolean import Boolean as bool
 from .Float import Float as float
 from .Integer import Integer as int
