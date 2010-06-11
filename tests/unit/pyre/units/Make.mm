@@ -14,11 +14,16 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity units
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./exceptions.py
+
+units:
+	${PYTHON} ./one.py
+	${PYTHON} ./algebra.py
+	${PYTHON} ./formatting.py
 
 
 # end of file 
