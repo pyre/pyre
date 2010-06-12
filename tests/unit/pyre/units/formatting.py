@@ -6,6 +6,11 @@
 # (c) 1998-2010 all rights reserved
 #
 
+
+"""
+Verify that the formatting of dimensionals works as expected
+"""
+
 def test():
     from pyre.units.SI import meter, second
 

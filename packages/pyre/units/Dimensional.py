@@ -277,7 +277,7 @@ class Dimensional(object):
         Formatting support
 
         The parameter {code} is a string of the form
-            value={format_spec},scale={scale},label={label}
+            value={format_spec},base={scale},label={label}
         where
             {format_spec}: a format specification appropriate for representing floats
             {scale}: a dimensional quantity to be used as a scale for the value
@@ -287,7 +287,7 @@ class Dimensional(object):
             >>> from pyre.units.SI import m,s
             >>> g = 9.81*m/s
             >>> "{accel:value=.2f,base={scale},label=g}".format(accel=100*m/s**2, scale=g)
-            '10.2*g'
+            '10.2 g'
         """
         # spit out the code
         # establish the formatting defaults
@@ -327,7 +327,7 @@ class Dimensional(object):
         in my derivation.
 
         The unit parser can parse this textual representation and convert it back into a
-       dimensional quantity.
+        dimensional quantity.
         """
         return '*'.join(
             "{}**{}".format(label,exponent) if exponent != 1 else label
