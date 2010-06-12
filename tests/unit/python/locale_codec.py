@@ -17,7 +17,7 @@ def test_el_GR():
     import locale
     try:
         locale.setlocale(locale.LC_ALL, "el_GR.UTF-8")
-    except local.Error:
+    except locale.Error:
         return
 
     # test str -> object conversions
@@ -40,7 +40,7 @@ def test_en_US():
     import locale
     try:
         locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-    except local.Error:
+    except locale.Error:
         return
 
     # test str -> object conversions
@@ -63,7 +63,7 @@ def test_en_GB():
     import locale
     try:
         locale.setlocale(locale.LC_ALL, "en_GB.UTF-8")
-    except local.Error:
+    except locale.Error:
         return
 
     # test str -> object conversions
@@ -86,7 +86,7 @@ def test_fr_FR():
     import locale
     try:
         locale.setlocale(locale.LC_ALL, "fr_FR.UTF-8")
-    except local.Error:
+    except locale.Error:
         return
 
     # test str -> object conversions
