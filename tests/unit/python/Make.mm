@@ -39,6 +39,7 @@ test:
 	${PYTHON} ./metaclass_inheritance.py
 	${PYTHON} ./metaclass_refcount.py
 	${PYTHON} ./expressions.py
+	${PYTHON} ./arithmetic.py
 
 
 
