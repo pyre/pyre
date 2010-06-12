@@ -22,6 +22,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Array.py \
     Boolean.py \
+    Dimensional.py \
     Float.py \
     Integer.py \
     Object.py \

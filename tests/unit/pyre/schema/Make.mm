@@ -23,6 +23,7 @@ sanity:
 types:
 	${PYTHON} ./array.py
 	${PYTHON} ./boolean.py
+	${PYTHON} ./dimensional.py
 	${PYTHON} ./float.py
 	${PYTHON} ./int.py
 

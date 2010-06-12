@@ -53,6 +53,7 @@ NOTATION
 
 from .Array import Array as array
 from .Boolean import Boolean as bool
+from .Dimensional import Dimensional as dimensional
 from .Float import Float as float
 from .Integer import Integer as int
 from .Object import Object as object
