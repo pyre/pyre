@@ -12,9 +12,10 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+
 all: test
 
-test: sanity units
+test: sanity units misc
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -23,6 +24,9 @@ sanity:
 units:
 	${PYTHON} ./one.py
 	${PYTHON} ./algebra.py
+
+misc:
+	${PYTHON} ./parser.py
 	${PYTHON} ./formatting.py
 
 

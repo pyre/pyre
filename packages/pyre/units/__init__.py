@@ -12,7 +12,7 @@ It contains definitions for all seven fundamental and twenty-one derived SI unit
 """
 
 # factories
-def unit(**kwds):
+def dimensional(**kwds):
     """
     Create and return an instance of a Diminesional.
 
@@ -24,6 +24,30 @@ def unit(**kwds):
     """
     from .Dimensional import Dimensional
     return Dimensional(**kwds)
+
+
+def parser(**kwds):
+    """
+    Return the unit parser singleton
+
+    The unit parser converts string representations of dimensional quantities into instances of
+    Dimensional
+    """
+    from .Parser import Parser
+    return Parser(**kwds)
+
+
+def modules():
+    """
+    Build a list of all available modules
+    """
+    from . import (
+        SI,
+        # angle, area, energy, force, length, mass, power, pressure,
+        # speed, substance, temperature, time, volume
+        )
+
+    return locals().values()
 
 
 # end of file 

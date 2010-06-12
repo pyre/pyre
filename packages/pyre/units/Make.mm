@@ -21,6 +21,8 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Dimensional.py \
+    Parser.py \
+    SI.py \
     exceptions.py \
     __init__.py
 

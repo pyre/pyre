@@ -91,6 +91,8 @@ class Dimensional(object):
             return Dimensional(self.value/other, self.derivation)
         # otherwise compute the units
         derivation = tuple(map(operator.sub, self.derivation, other.derivation))
+        # check whether the units cancelled
+        if derivation == self._zero: return value
         # and return a new dimensional
         return Dimensional(value, derivation)
 
@@ -263,6 +265,13 @@ class Dimensional(object):
         raise self.IncompatibleUnits("compare")
 
 
+    def __str__(self):
+        """
+        Conversion to str
+        """
+        return str(self.value) + ' ' + self._strDerivation()
+
+
     def __format__(self, code):
         """
         Formatting support
@@ -277,18 +286,60 @@ class Dimensional(object):
         Example:
             >>> from pyre.units.SI import m,s
             >>> g = 9.81*m/s
-            >>> "{accel:value=.2f,scale={scale},label=g}".format(accel=100*m/s**2, scale=g)
-            '10.2 g'
+            >>> "{accel:value=.2f,base={scale},label=g}".format(accel=100*m/s**2, scale=g)
+            '10.2*g'
         """
-        fields = dict(field.split('=') for field in code.split(','))
+        # spit out the code
+        # establish the formatting defaults
+        fields = {
+            'value': '',
+            'base': Dimensional(value=1, derivation=self.derivation),
+            'label': self._strDerivation()
+            }
+        # if the user supplied a format specifier
+        if code:
+            # update the formatting fields
+            fields.update(field.split('=') for field in code.split(','))
+        # show what we have so far
+        # get the fields
+        value = fields['value']
+        base = fields['base']
+        label = fields['label']
+        # convert the base specification if necessary
+        if isinstance(base, str):
+            # get the parser factory
+            from . import parser
+            # access the singleton
+            p = parser()
+            # make the conversion
+            base = p.parse(base)
+        # build the string and return it
+        try:
+            return format(self/base, value) + ' ' + label
+        except TypeError as error:
+            raise
 
+
+    # implementation details
+    def _strDerivation(self):
+        """
+        Build a representation of the fundamental unit labels raised to the exponents specified
+        in my derivation.
+
+        The unit parser can parse this textual representation and convert it back into a
+       dimensional quantity.
+        """
+        return '*'.join(
+            "{}**{}".format(label,exponent) if exponent != 1 else label
+            for label, exponent in zip(self._fundamental, self.derivation) if exponent)
+              
 
     # exceptions
     from .exceptions import IncompatibleUnits, InvalidConversion
             
 
     # private data
-    _fundamental = ('m', 'kg', 's', 'A', 'K', 'mol', 'cd') # the SI fundamental units
+    _fundamental = ('kg', 'm', 's', 'A', 'K', 'mol', 'cd') # the SI fundamental units
     _zero = (0,) * len(_fundamental)
     _negativeOne = (-1, ) * len(_fundamental)
 

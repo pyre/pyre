@@ -10,7 +10,7 @@ def test():
     import math
     import pyre.units
 
-    one = pyre.units.unit(value=1, derivation=(0,0,0,0,0,0,0))
+    one = pyre.units.dimensional(value=1, derivation=(0,0,0,0,0,0,0))
 
     assert 1.0 == float(one)
     assert -1.0 == float(-one)

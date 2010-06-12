@@ -7,12 +7,14 @@
 #
 
 def test():
-    import pyre.units
+    from pyre.units.SI import meter, second
 
-    m = pyre.units.dimensional(value=1, derivation=(1,0,0,0,0,0,0))
-    assert m+m == 2*m
-    assert 0 == m-m
-    assert m**2 == m*m
+    g = 9.81*meter/second**2
+    accel = 100*g
+
+    assert type(accel/g) == float
+    assert accel/g == 100
+    assert "{0:value=.2f,base={base},label=g}".format(accel, base=g) == "100.00 g"
 
     return
 
@@ -20,8 +22,5 @@ def test():
 if __name__ == "__main__":
     test()
 
-
-# version
-__id__ = "$Id$"
 
 # end of file 
