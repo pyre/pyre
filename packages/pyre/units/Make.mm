@@ -23,6 +23,20 @@ EXPORT_PYTHON_MODULES = \
     Dimensional.py \
     Parser.py \
     SI.py \
+    angle.py \
+    area.py \
+    density.py \
+    energy.py \
+    force.py \
+    length.py \
+    mass.py \
+    power.py \
+    pressure.py \
+    speed.py \
+    substance.py \
+    temperature.py \
+    time.py \
+    volume.py \
     exceptions.py \
     __init__.py
 

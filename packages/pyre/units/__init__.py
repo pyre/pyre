@@ -43,8 +43,8 @@ def modules():
     """
     from . import (
         SI,
-        # angle, area, energy, force, length, mass, power, pressure,
-        # speed, substance, temperature, time, volume
+        angle, area, energy, force, length, mass, power, pressure,
+        speed, substance, temperature, time, volume
         )
 
     return locals().values()
