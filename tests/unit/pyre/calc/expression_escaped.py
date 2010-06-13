@@ -25,6 +25,22 @@ def test():
     # check that the escaped delimiters were processed correctly
     assert literal.value == r"{{production}}"
 
+    # and another
+    another = pyre.calc.newNode(
+        value=pyre.calc.expression(formula=r"{{{{cost per unit}}}}", model=model))
+    # check that the escaped delimiters were processed correctly
+    assert another.value == r"{{{{cost per unit}}}}"
+
+    # finally
+    tricky = pyre.calc.newNode(
+        value=pyre.calc.expression(formula=r"{{{number of items}}}", model=model))
+    # check that the escaped delimiters were processed correctly
+    try:
+        tricky.value
+        assert False
+    except tricky.UnresolvedNodeError:
+        pass
+
     return
 
 

@@ -66,6 +66,14 @@ class Expression(Polyadic):
         Callback for re.sub that extracts node references, adds them to my symbol table and
         converts them into legal python identifiers
         """
+        # if the pattern matched an escaped opening brace
+        if match.group("esc_open"):
+            # return a single one
+            return "{"
+        # if the pattern matched an escaped opening brace
+        if match.group("esc_close"):
+            # return a single one
+            return "}"
         # extract the name from the match
         identifier = match.group('identifier')
         # if the identifier has been seen before
@@ -107,9 +115,11 @@ class Expression(Polyadic):
 
     # regex choices
     _scanner = re.compile(
-        r"(?<!{){"
-        r"(?P<identifier>[^}{]+)"
-        r"(?<!})}")
+        r"(?P<esc_open>{{)"
+        r"|"
+        r"(?P<esc_close>}})"
+        r"|"
+        r"{(?P<identifier>[^}{]+)}")
     
 
 # end of file 

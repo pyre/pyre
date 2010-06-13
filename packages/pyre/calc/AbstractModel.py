@@ -135,7 +135,11 @@ class AbstractModel(Named):
 
 
     # exceptions
-    from .exceptions import CircularReferenceError, DuplicateNodeError, ExpressionError, NodeError
+    from .exceptions import (
+        CircularReferenceError, DuplicateNodeError, ExpressionError, NodeError,
+        UnresolvedNodeError
+        )
+
 
     # meta methods
     def __init__(self, **kwds):
