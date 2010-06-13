@@ -18,9 +18,9 @@ class Simplifier(object):
     scanner = re.compile(
         r"(?P<surrounding>\s*(?P<operator>[*/+-]{1})\s*)"
         r"|"
-        r"(?P<open>\s*[(]\s*)"
+        r"(?P<open>\s*(?P<oparen>[(]+)\s*)"
         r"|"
-        r"(?P<close>\s*[)]\s*)"
+        r"(?P<close>\s*(?P<cparen>[)]+)\s*)"
         r"|"
         r"(?P<whitespace>[\s]+)"
         )
@@ -32,9 +32,9 @@ class Simplifier(object):
         if match.group("whitespace"):
             return " "
         if match.group("open"):
-            return " ("
+            return " " + match.group("oparen")
         if match.group("close"):
-            return ") "
+            return match.group("cparen") + " "
         if match.group("surrounding"):
             return match.group("operator")
         return ""
@@ -49,8 +49,8 @@ class Simplifier(object):
 def test():
     s = Simplifier()
 
-    expr = "12      a      (b          +     c  )           d/         4"
-    assert s.simplify(expr) == "12*a*(b+c)*d/4"
+    expr = "12      a      (((b          +     c  )d))           d/         4"
+    assert s.simplify(expr) == "12*a*(((b+c)*d))*d/4"
 
     return
 
