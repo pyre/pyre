@@ -8,7 +8,7 @@
 
 
 """
-Exercises the fileserver
+Sanity check: verify that the codec manager can be instantiated
 """
 
 

@@ -7,6 +7,7 @@
 
 
 import os
+import re
 import itertools
 import pyre.framework
 
@@ -110,8 +111,10 @@ class Executive(object):
         """
         Load configuration settings from {uri}.
         """
+        # decode the uri
+        scheme, address, fragment = self.parseURI(uri)
         # get the fileserver to deduce the encoding and produce the input stream
-        encoding, source = self.fileserver.open(uri)
+        encoding, source = self.fileserver.open(scheme=scheme, address=address)
         # instantiate the requested reader
         reader = self.codecs.newCodec(encoding)
         # decode the configuration stream
@@ -158,6 +161,30 @@ class Executive(object):
         return component
 
 
+    # utilities
+    def parseURI(self, uri, defaultScheme="file"):
+        """
+        Extract the scheme, address and fragment from {uri}.
+        """
+        # run uri through the recognizer
+        match = self._uriRecognizer.match(uri)
+        # if it fails to match, it must be malformed (or my regex is bad...)
+        if match is None:
+            raise self.BadResourceLocatorError(uri=uri, reason="unrecognizable")
+        # extract the scheme
+        scheme = match.group("scheme") or defaultScheme
+        scheme = scheme.strip().lower()
+        # extract the addres
+        address = match.group("address")
+        # check that it's not blank
+        if not address:
+            raise self.BadResourceLocatorError(uri=uri, reason="missing address")
+        # extract the fragment
+        fragment = match.group("fragment")
+        # and return the triplet
+        return scheme, address, fragment
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -186,7 +213,22 @@ class Executive(object):
 
 
     # exceptions
-    from .exceptions import FrameworkError
+    from .exceptions import FrameworkError, BadResourceLocatorError
+
+
+    # private data
+    _uriRecognizer = re.compile(
+        r"((?P<scheme>[^:]+)://)?(?P<address>[^#]*)(#(?P<fragment>.*))?"
+        )
+
+    # from http://regexlib.com/Search.aspx?k=URL
+    r"""
+    ^(?=[^&])
+    (?:(?<scheme>[^:/?#]+):)?
+    (?://(?<authority>[^/?#]*))?
+    (?<path>[^?#]*)(?:\?(?<query>[^#]*))?
+    (?:#(?<fragment>.*))?
+    """
 
 
 # end of file 

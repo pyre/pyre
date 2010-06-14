@@ -8,40 +8,40 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Exercise URI parsing by the executive
 """
 
 
 def test():
     import pyre.framework
-    fs = pyre.framework.newFileServer()
+    executive = pyre.framework.executive()
 
     # a simple case
-    method, address, fragment = fs.parseURI("pyre.pml")
+    method, address, fragment = executive.parseURI("pyre.pml")
     assert method == "file"
     assert address == "pyre.pml"
     assert fragment == None
 
     # another simple case
-    method, address, fragment = fs.parseURI("/pyre/system/pyre.pml")
+    method, address, fragment = executive.parseURI("/pyre/system/pyre.pml")
     assert method == "file"
     assert address == "/pyre/system/pyre.pml"
     assert fragment == None
 
     # the full set
-    method, address, fragment = fs.parseURI("file:///pyre.pml#anchor")
+    method, address, fragment = executive.parseURI("file:///pyre.pml#anchor")
     assert method == "file"
     assert address == "/pyre.pml"
     assert fragment == "anchor"
 
     # a poorly formed one
     try:
-        fs.parseURI("file://#anchor")
+        executive.parseURI("file://#anchor")
         assert False
-    except fs.BadResourceLocatorError as error:
+    except executive.BadResourceLocatorError as error:
         assert error.reason == "missing address"
 
-    return fs
+    return executive
 
 
 # main

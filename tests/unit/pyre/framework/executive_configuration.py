@@ -8,7 +8,7 @@
 
 
 """
-Exercises the fileserver
+Verify that a sample configuration file can be ingested correctly
 """
 
 

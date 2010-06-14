@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Sanity check: verify that the property binder can be instantiated
 """
 
 
