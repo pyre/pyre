@@ -49,6 +49,75 @@ class Executive(object):
 
 
     # interface
+    # retrieval
+    def retrieveComponentDescriptor(self, uri):
+        """
+        Interpret {uri} as a component descriptor and attempt to resolve it
+
+        {uri} encodes the descriptor using the URI specification 
+            scheme://address#factory
+        Currently, the two schemes that are supported are "import" and "file".
+
+        The "import" scheme requires that the component descriptor is accessible on the python
+        path. The corresponding codec uses the interpreter to import the symbol {factory} using
+        {address} to access the containing module. For example, the {uri}
+
+            import://package.subpackage.module#myFactory
+
+        is treated as if the following statement had been issued to the interpreter
+
+            from package.subpackage.module import myFactory
+
+        See below for the requirements myFactory must satisfy
+
+        The "file" scheme assumes that {address} is a valid path in the logical application
+        namespace, managed by the executive.fileserver. The extension of the loical file is
+        used to retrieve an apropriate decoder, which becomes responsible for retrieving the
+        contents of the file and processing it. For example, the {uri}
+
+            file:///local/sample.odb#myFactory
+
+        expects that the fileserver can resolve the address local/sample.odb into a valid file,
+        that there is a codec registered with the executive.codecs manager that can handle the
+        odb encoding, and can produce the symbol myFactory
+
+        The symbol referenced by the {factory} fragment must be a callable that can produce
+        component instances given the name of the component instance as its sole argument. For
+        example
+
+            from pyre.components.Component import Component
+            class mine(Component): pass
+            def myFactory(name):
+                return mine(name)
+
+        would be valid contents for an accessible module or an odb file.
+        """
+        # parse the {uri}
+        scheme, address, factory = self.parseURI(uri)
+        # if the scheme is "import"
+        if scheme == "import":
+            # use the address as the shelf hash key
+            key = address
+            # build the codec
+            codec = self.codecs.newCodec(encoding=scheme)
+        # otherwise, expect the scheme to be "file"
+        elif scheme == "file":
+            # look up the adrress 
+            vnode = self.fileserver[address]
+            # split the address into two parts
+            path,encoding = os.path.splitext(address)
+            # use the extension to build the codec; don't forget to skip past the '.'
+            codec = self.codecs.newCodec(encoding=encoding[1:])
+        # otherwise, raise a firewall
+        else:
+            import journal
+        #
+        print(codec)
+        # now decode the address
+        shelf = codec.decode(address)
+        print(shelf)
+
+
     # registration
     def registerComponentClass(self, component):
         """

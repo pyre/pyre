@@ -7,41 +7,24 @@
 
 
 PROJECT = pyre
-PACKAGE = codecs
+PACKAGE = codecs/odb
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
-RECURSE_DIRS = \
-    native \
-    odb \
-    pml \
-    pcs \
 
 #--------------------------------------------------------------------------
 #
 
 all: export
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
-
-clean::
-	BLD_ACTION="clean" $(MM) recurse
-
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
-
 #--------------------------------------------------------------------------
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Codec.py \
-    CodecManager.py \
-    exceptions.py \
+    ODB.py \
+    Shelf.py \
     __init__.py
 
 
 export:: export-package-python-modules
-	BLD_ACTION="export" $(MM) recurse
-
 
 # end of file 

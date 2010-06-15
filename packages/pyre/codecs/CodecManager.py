@@ -59,6 +59,10 @@ class CodecManager(object):
         """
         index = collections.OrderedDict()
 
+        # the odb file handler
+        from .odb.ODB import ODB
+        index[ODB.encoding] = ODB
+
         # the pml file handler
         from .pml.PML import PML
         index[PML.encoding] = PML

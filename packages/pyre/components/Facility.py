@@ -7,6 +7,7 @@
 
 
 from .Property import Property
+from .Component import Component
 
 
 class Facility(Property):
@@ -24,6 +25,12 @@ class Facility(Property):
         """
         Convert {value} to an actual component
         """
+        # check whether value is already a component
+        if isinstance(value, Component):
+            return value
+
+        # if not, get my interface specficiation to convert it into one
+        print("{.name!r}: binding to {!r}".format(self, value))
         print("NYI: facility needs to cast values to components")
         return value
 

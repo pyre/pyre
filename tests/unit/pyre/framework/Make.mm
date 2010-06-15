@@ -13,27 +13,22 @@ PROJECT = pyre
 
 all: test
 
-test: sanity managers framework
+test: sanity framework
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./exceptions.py
-
-managers: binder fileserver
-
-binder:
-	${PYTHON} ./binder.py
-
-fileserver:
 	${PYTHON} ./fileserver.py
-	${PYTHON} ./fileserver_uri.py
-	${PYTHON} ./fileserver_mount.py
+	${PYTHON} ./binder.py
+	${PYTHON} ./executive.py
 
 framework:
-	${PYTHON} ./executive.py
+	${PYTHON} ./fileserver_uri.py
+	${PYTHON} ./fileserver_mount.py
 	${PYTHON} ./executive_registrar.py
 	${PYTHON} ./executive_codecs.py
 	${PYTHON} ./executive_configuration.py
+	${PYTHON} ./executive_retrieveComponentDescriptor.py
 
 
 # end of file 

@@ -6,6 +6,9 @@
 #
 
 
+import collections
+
+
 class Binder(object):
     """
     Binder converts trait values from configuration settings to the trait native types
@@ -13,6 +16,12 @@ class Binder(object):
 
 
     # interface
+    def retrieveComponentDescriptor(self, executive, uri):
+        """
+        """
+        print("NYI: binder.retrieveComponentDescriptor")
+
+
     def bindComponentInstance(self, component, executive):
         """
         Resolve and convert the current values of the traits of {component} into the native
@@ -22,6 +31,7 @@ class Binder(object):
         that involves resolving the component requests into actual class records, instantiating
         them and binding them to the {component} trait.
         """
+        print("Hello")
         # access the component inventory
         inventory = component._pyre_inventory
         # iterate over the traits
@@ -34,6 +44,9 @@ class Binder(object):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
+
+        self.shelves = {}
+
         return
 
 

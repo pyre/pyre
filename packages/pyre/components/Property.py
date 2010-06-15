@@ -81,7 +81,10 @@ class Property(Trait):
         """
         # if the value is None, force the evaluation of {node}
         value = node.value if value is None else value
-        # cast it
+        # if the value is None, leave it alone: it means the property is uninitialized
+        # NYI: check whether the descriptor says that this is allowed (optional==TRUE?)
+        if value is None: return None
+        # otherwise, cast it
         value = self.pyre_cast(value)
         # validate it
         value = self.pyre_validate(value)
