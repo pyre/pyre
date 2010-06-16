@@ -15,11 +15,24 @@ class Binder(object):
     """
 
 
+    # public data
+    shelves = None # the index of component sources
+
+
     # interface
-    def retrieveComponentDescriptor(self, executive, uri):
+    def retrieveComponentDescriptor(self, codec, source, symbol, locator):
         """
         """
         print("NYI: binder.retrieveComponentDescriptor")
+        try:
+            shelf = self.shelves[source]
+        except KeyError:
+            shelf = codec.decode(source=source, locator=locator)
+            self.shelves[source] = shelf
+
+        descriptor = codec.retrieveSymbol(shelf=shelf, symbol=symbol)
+
+        return descriptor
 
 
     def bindComponentInstance(self, component, executive):
@@ -31,7 +44,6 @@ class Binder(object):
         that involves resolving the component requests into actual class records, instantiating
         them and binding them to the {component} trait.
         """
-        print("Hello")
         # access the component inventory
         inventory = component._pyre_inventory
         # iterate over the traits

@@ -46,7 +46,7 @@ class Codec(object):
     
 
     # exceptions
-    from .exceptions import EncodingError, DecodingError
+    from .exceptions import EncodingError, DecodingError, ShelfError, SymbolNotFoundError
 
 
 # end of file

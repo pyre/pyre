@@ -50,16 +50,16 @@ class Executive(object):
 
     # interface
     # retrieval
-    def retrieveComponentDescriptor(self, uri):
+    def retrieveComponentDescriptor(self, uri, locator=None):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
 
         {uri} encodes the descriptor using the URI specification 
-            scheme://address#factory
+            scheme://address#symbol
         Currently, the two schemes that are supported are "import" and "file".
 
         The "import" scheme requires that the component descriptor is accessible on the python
-        path. The corresponding codec uses the interpreter to import the symbol {factory} using
+        path. The corresponding codec uses the interpreter to import the symbol {symbol} using
         {address} to access the containing module. For example, the {uri}
 
             import://package.subpackage.module#myFactory
@@ -81,7 +81,7 @@ class Executive(object):
         that there is a codec registered with the executive.codecs manager that can handle the
         odb encoding, and can produce the symbol myFactory
 
-        The symbol referenced by the {factory} fragment must be a callable that can produce
+        The symbol referenced by the {symbol} fragment must be a callable that can produce
         component instances given the name of the component instance as its sole argument. For
         example
 
@@ -93,17 +93,17 @@ class Executive(object):
         would be valid contents for an accessible module or an odb file.
         """
         # parse the {uri}
-        scheme, address, factory = self.parseURI(uri)
+        scheme, address, symbol = self.parseURI(uri)
         # if the scheme is "import"
         if scheme == "import":
             # use the address as the shelf hash key
-            key = address
+            source = address
             # build the codec
             codec = self.codecs.newCodec(encoding=scheme)
         # otherwise, expect the scheme to be "file"
         elif scheme == "file":
-            # look up the adrress 
-            vnode = self.fileserver[address]
+            # look up the address 
+            source = self.fileserver[address]
             # split the address into two parts
             path,encoding = os.path.splitext(address)
             # use the extension to build the codec; don't forget to skip past the '.'
@@ -111,12 +111,12 @@ class Executive(object):
         # otherwise, raise a firewall
         else:
             import journal
-        #
-        print(codec)
-        # now decode the address
-        shelf = codec.decode(address)
-        print(shelf)
-
+        # now, get the binder to retrieve the descriptor
+        descriptor = self.binder.retrieveComponentDescriptor(
+            codec=codec, source=source, symbol=symbol, locator=locator)
+        # and return it
+        return descriptor
+            
 
     # registration
     def registerComponentClass(self, component):

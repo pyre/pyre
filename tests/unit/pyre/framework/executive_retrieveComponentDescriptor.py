@@ -18,12 +18,16 @@ def test():
 
     # retrieve a component descriptor from the puthon path
     base = executive.retrieveComponentDescriptor(uri="import://pyre.components.Component#Component")
-    print(base)
+    print(base, id(base))
     # retrieve a component descriptor from a file
     one = executive.retrieveComponentDescriptor(uri="file://local/sample.odb#one")
-    print(one)
+    print(one, id(one))
+    two = executive.retrieveComponentDescriptor(uri="file://local/sample.odb#one")
+    print(two, id(two))
     # check that one derives from the other
     assert issubclass(one, base)
+    assert issubclass(two, base)
+    assert one == two
 
     # all done
     return executive

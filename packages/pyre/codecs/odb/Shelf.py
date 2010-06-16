@@ -38,23 +38,28 @@ class Shelf(dict):
 
 
     # interface
-    def retrieveContents(self, vnode):
+    @classmethod
+    def retrieveContents(cls, vnode):
         """
         Read the contents of the filesystem {vnode} and return them as a string
         """
         # open the vnode with the default encoding
-        contents = vnode.open(encoding=self.defaultEncoding).read()
-        # print("       opened as a {0!r} file".format(self.defaultEncoding))
-
+        contents = vnode.open(encoding=cls.defaultEncoding).read()
+        # print("       opened as a {0!r} file".format(cls.defaultEncoding))
         # check whether the file contains an encoding declaration
-        hasEncoding = self._encodingDetector.search(contents, endpos=200)
+        hasEncoding = cls._encodingDetector.search(contents, endpos=200)
         if hasEncoding:
             encoding = hasEncoding.group(1).lower()
-            if encoding != self.defaultEncoding:
-                # print("       re-opened as a {0!r} file".format(self.encoding))
-                return vnode.open(encoding=encoding).read()
-        
-        return contents
+            if encoding != cls.defaultEncoding:
+                # print("       re-opened as a {0!r} file".format(cls.encoding))
+                contents = vnode.open(encoding=encoding).read()
+        # contents now is an open stream
+        # build a new shelf
+        shelf = Shelf()
+        # invoke the interpreter to parse its contents
+        exec(contents, shelf)
+        # and return the shelf
+        return shelf
 
 
     # implementation details
