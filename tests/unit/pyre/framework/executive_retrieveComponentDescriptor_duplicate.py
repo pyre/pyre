@@ -20,8 +20,10 @@ def test():
     base = executive.retrieveComponentDescriptor(uri="import://pyre.components.Component#Component")
     # retrieve a component descriptor from a file
     one = executive.retrieveComponentDescriptor(uri="file://local/sample.odb#one")
-    # check that one derives from the other
-    assert issubclass(one, base)
+    two = executive.retrieveComponentDescriptor(uri="file://local/sample.odb#one")
+    # check that the two retrievals yield identical results
+    assert one == two
+
     # all done
     return executive
 

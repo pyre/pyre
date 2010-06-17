@@ -112,7 +112,7 @@ class Executive(object):
         else:
             import journal
         # now, get the binder to retrieve the descriptor
-        descriptor = self.binder.retrieveComponentDescriptor(
+        descriptor = self.binder.retrieveSymbol(
             codec=codec, source=source, symbol=symbol, locator=locator)
         # and return it
         return descriptor
@@ -283,6 +283,7 @@ class Executive(object):
 
     # exceptions
     from .exceptions import FrameworkError, BadResourceLocatorError
+    from ..codecs.exceptions import DecodingError
 
 
     # private data

@@ -29,6 +29,8 @@ framework:
 	${PYTHON} ./executive_codecs.py
 	${PYTHON} ./executive_configuration.py
 	${PYTHON} ./executive_retrieveComponentDescriptor.py
+	${PYTHON} ./executive_retrieveComponentDescriptor_duplicate.py
+	${PYTHON} ./executive_retrieveComponentDescriptor_badImport.py
 
 
 # end of file 

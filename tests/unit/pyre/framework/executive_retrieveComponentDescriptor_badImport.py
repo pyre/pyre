@@ -17,11 +17,11 @@ def test():
     executive =  pyre.framework.executive()
 
     # retrieve a component descriptor from the puthon path
-    base = executive.retrieveComponentDescriptor(uri="import://pyre.components.Component#Component")
-    # retrieve a component descriptor from a file
-    one = executive.retrieveComponentDescriptor(uri="file://local/sample.odb#one")
-    # check that one derives from the other
-    assert issubclass(one, base)
+    try:
+        executive.retrieveComponentDescriptor(uri="import://not-there#unknown")
+        assert False
+    except executive.DecodingError as error:
+        pass
     # all done
     return executive
 

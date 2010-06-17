@@ -43,7 +43,7 @@ class EncodingError(CodecError):
     """
 
 
-class ShelfError(CodecError):
+class ShelfError(DecodingError):
 
     def __init__(self, shelf, symbol, **kwds):
         msg = "inappropriate shelf: {!r}".format(shelf)
@@ -52,7 +52,7 @@ class ShelfError(CodecError):
         return
                  
 
-class SymbolNotFoundError(CodecError):
+class SymbolNotFoundError(DecodingError):
 
     def __init__(self, shelf, symbol, **kwds):
         msg = "symbol {!r} not found in {!r}".format(symbol, shelf)

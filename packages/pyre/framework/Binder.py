@@ -20,18 +20,22 @@ class Binder(object):
 
 
     # interface
-    def retrieveComponentDescriptor(self, codec, source, symbol, locator):
+    def retrieveSymbol(self, codec, source, symbol, locator):
         """
+        Get {codec} to resolve {symbol} either by processing {source} or by retrieving from a
+        previously cached shelf
         """
-        print("NYI: binder.retrieveComponentDescriptor")
+        # check whether we have seen this {source} before
         try:
             shelf = self.shelves[source]
         except KeyError:
+            # if not, get the codec to build a new shelf
             shelf = codec.decode(source=source, locator=locator)
+            # and cache it
             self.shelves[source] = shelf
-
+        # extract the requested symbol
         descriptor = codec.retrieveSymbol(shelf=shelf, symbol=symbol)
-
+        # and return it
         return descriptor
 
 
