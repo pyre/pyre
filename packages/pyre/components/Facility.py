@@ -21,12 +21,12 @@ class Facility(Property):
 
 
     # interface
-    def pyre_cast(self, value):
+    def pyre_cast(self, configurable, value):
         """
         Convert {value} to an actual component
         """
-        print("{0.name!r}: type={0.type!r}".format(self))
-        return self.type.pyre_cast(name=self.name, value=value)
+        # print("{0.name!r}: type={0.type!r}".format(self))
+        return self.type.pyre_cast(configurable=configurable, name=self.name, value=value)
 
     
 

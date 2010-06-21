@@ -18,6 +18,7 @@ class Requirement(AttributeClassifier):
 
 
     # constants
+    _pyre_FAMILY_SEPARATOR = '.'
     _pyre_CLASSIFIER_NAME = "_pyre_category"
 
     # framework data

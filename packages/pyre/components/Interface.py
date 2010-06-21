@@ -24,7 +24,7 @@ class Interface(Configurable, metaclass=Role):
 
     # interface
     @classmethod
-    def pyre_cast(cls, name, value):
+    def pyre_cast(cls, configurable, name, value):
         """
         Convert {specification} into an actual component instance that is type compatible with me
         """
@@ -32,10 +32,11 @@ class Interface(Configurable, metaclass=Role):
         if isinstance(value, str):
             # get the pyre executive to convert it to a component factory
             factory = cls._pyre_executive.retrieveComponentDescriptor(value)
-            print("{._pyre_name!r}: assigning {!r} <- {!r}".format(cls, name, factory))
             
-        print("NYI: 'Interface.pyre_cast' not finished yet")
-        return value
+        # build the name of the instance
+        tag = cls._pyre_FAMILY_SEPARATOR.join(filter(None, [configurable._pyre_name, name]))
+        # attempt to instantiate it
+        return factory(name=tag)
 
 
 # end of file 

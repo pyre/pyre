@@ -11,6 +11,9 @@ PROJECT = gauss.pyre
 #--------------------------------------------------------------------------
 #
 
+working:
+	${PYTHON} ./montecarlo.py
+
 all: test
 
 test: sanity config

@@ -53,7 +53,7 @@ class Calculator(AbstractModel):
                 # establish a default value with the lowest possible priority
                 node = Variable(value=None, evaluator=None)
                 # attach the default
-                trait.pyre_assign(node=node, value=trait.default)
+                trait.pyre_assign(configurable=component, node=node, value=trait.default)
             # otherwise, build a reference to the ancestor's node
             else:
                 # print("  trait: {.name!r}, inherited from {.__name__!r}".format(trait, source))

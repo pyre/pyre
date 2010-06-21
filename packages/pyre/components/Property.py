@@ -55,7 +55,7 @@ class Property(Trait):
         return
 
 
-    def pyre_cast(self, value):
+    def pyre_cast(self, configurable, value):
         """
         Convert {value} to the trait native type
         """
@@ -74,7 +74,7 @@ class Property(Trait):
         return value
 
 
-    def pyre_assign(self, node, value=None):
+    def pyre_assign(self, configurable, node, value=None):
         """
         Assign {value} to {node} after making sure that it can be cast to the right type and
         passes the validation suite
@@ -85,7 +85,7 @@ class Property(Trait):
         # NYI: check whether the descriptor says that this is allowed (optional==TRUE?)
         if value is None: return None
         # otherwise, cast it
-        value = self.pyre_cast(value)
+        value = self.pyre_cast(configurable, value)
         # validate it
         value = self.pyre_validate(value)
         # store it back with the variable
@@ -109,7 +109,7 @@ class Property(Trait):
         # if this resulted in a literal value being deposited
         if node._value:
             # walk it through conversion and validation
-            self.pyre_assign(node)
+            self.pyre_assign(configurable=instance, node=node)
         # all done
         return
 
@@ -135,7 +135,7 @@ class Property(Trait):
             # just return it
             return value
         # otherwise, walk it through conversion and validation
-        return self.pyre_assign(node, value)
+        return self.pyre_assign(configurable=instance, node=node, value=value)
 
 
     # framework data

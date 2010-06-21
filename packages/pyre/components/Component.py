@@ -90,7 +90,7 @@ class Component(Configurable, metaclass=Actor):
         """
         # bail out if there is not family name
         if not cls._pyre_family: return None
-        # otherwise, split the family name na dreturn the first fragment
+        # otherwise, split the family name and return the first fragment
         return cls._pyre_family[0]
 
 

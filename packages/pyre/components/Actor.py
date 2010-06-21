@@ -23,10 +23,6 @@ class Actor(Requirement):
     """
 
 
-    # constants
-    _pyre_FAMILY_SEPARATOR = '.'
-
-
     # meta methods
     def __new__(cls, name, bases, attributes, family=None, implements=None, core=None, **kwds):
         """
