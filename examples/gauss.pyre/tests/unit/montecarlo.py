@@ -44,7 +44,7 @@ def test():
     integral = mc.integrate()
 
     # check the answer
-    # print("π =", 4*mc.integrate())
+    # print("π =", 4*integral)
     # print("error =", π - 4*integral)
     assert (π - 4*integral) < 1.0e-2
 

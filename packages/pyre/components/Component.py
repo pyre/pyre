@@ -99,7 +99,7 @@ class Component(Configurable, metaclass=Actor):
         """
         Return the extent of {cls}, i.e. the set of all its current instances
         """
-        return cls._pyre_registrar.registrar.components[cls]
+        return cls._pyre_executive.registrar.components[cls]
 
 
     # meta methods

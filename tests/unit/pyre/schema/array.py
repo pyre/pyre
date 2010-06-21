@@ -20,7 +20,6 @@ def test():
 
     # casts
     # successful
-    assert None == descriptor.cast(None)
     assert () == descriptor.cast([])
     assert (1.,) == descriptor.cast([1])
     assert (1., 2.) == descriptor.cast([1,2])
@@ -29,7 +28,7 @@ def test():
     assert () == descriptor.cast("{}")
     assert (1.,) == descriptor.cast("[1]")
     assert (1.,) == descriptor.cast("{1}")
-    assert (1.,) == descriptor.cast("(1)")
+    assert (1.,) == descriptor.cast("(1,)")
     assert (1., 2.) == descriptor.cast("[1, 2]")
     assert (1., 2.) == descriptor.cast("{1, 2}")
     assert (1., 2.) == descriptor.cast("(1, 2)")

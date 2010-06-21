@@ -21,6 +21,10 @@ class Float(Type):
         """
         Attempt to convert {value} into a float
         """
+        # get the interpreter to evaluate simple expressions
+        if isinstance(value, str):
+            value = eval(value)
+        # attempt to cast {value} into a float
         try:
             return float(value)
         except TypeError as error:

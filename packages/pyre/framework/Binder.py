@@ -52,6 +52,7 @@ class Binder(object):
         inventory = component._pyre_inventory
         # iterate over the traits
         for trait, source in component.pyre_traits(categories=component._pyre_CONFIGURABLE_TRAITS):
+            print("{._pyre_name!r}: binding {.name!r}".format(component, trait))
             trait.pyre_assign(getattr(inventory, trait.name))
         # all done
         return component

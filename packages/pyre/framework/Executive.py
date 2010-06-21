@@ -114,6 +114,7 @@ class Executive(object):
         # now, get the binder to retrieve the descriptor
         descriptor = self.binder.retrieveSymbol(
             codec=codec, source=source, symbol=symbol, locator=locator)
+        # NYI: verify that it is a callable
         # and return it
         return descriptor
             
@@ -176,7 +177,7 @@ class Executive(object):
 
 
     # configuration
-    def loadConfiguration(self, uri, priority, locator=None):
+    def loadConfiguration(self, uri, priority=USER_CONFIGURATION , locator=None):
         """
         Load configuration settings from {uri}.
         """

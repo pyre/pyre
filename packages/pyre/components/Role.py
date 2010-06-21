@@ -22,7 +22,7 @@ class Role(Requirement):
         """
         super().__init__(name, bases, attributes, **kwds)
         # register this interface class
-        self._pyre_registrar.registerInterfaceClass(self)
+        self._pyre_executive.registerInterfaceClass(self)
         # all done
         return
 

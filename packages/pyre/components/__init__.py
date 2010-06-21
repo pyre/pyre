@@ -48,6 +48,9 @@ Components go through the following life cycle stages
 """
 
 
+from .. import schema
+
+
 # property factories
 def array():
     """
@@ -56,6 +59,7 @@ def array():
     from .Property import Property
 
     descriptor = Property()
+    descriptor.type = schema.array
     descriptor.default = ()
 
     return descriptor
@@ -79,6 +83,7 @@ def float():
     from .Property import Property
 
     descriptor = Property()
+    descriptor.type = schema.float
     descriptor.default = 0.0
 
     return descriptor
@@ -92,6 +97,7 @@ def int():
     from .Property import Property
 
     descriptor = Property()
+    descriptor.type = schema.int
     descriptor.default = 0
 
     return descriptor
@@ -105,6 +111,7 @@ def str():
     from .Property import Property
 
     descriptor = Property()
+    descriptor.type = schema.str
     descriptor.default = ""
 
     return descriptor

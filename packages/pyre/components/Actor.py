@@ -66,7 +66,7 @@ class Actor(Requirement):
         # initialize the record
         super().__init__(name, bases, attributes, **kwds)
         # register this component class record
-        self._pyre_registrar.registerComponentClass(self)
+        self._pyre_executive.registerComponentClass(self)
         return
 
 
@@ -77,7 +77,7 @@ class Actor(Requirement):
         # build the instance
         instance = super().__call__(**kwds)
         # register this instance
-        self._pyre_registrar.registerComponentInstance(instance)
+        self._pyre_executive.registerComponentInstance(instance)
         # all done
         return instance
 

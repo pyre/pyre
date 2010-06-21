@@ -21,8 +21,8 @@ class Requirement(AttributeClassifier):
     _pyre_CLASSIFIER_NAME = "_pyre_category"
 
     # framework data
-    # the component registrar; shared by  all Component and Interface subclasses
-    _pyre_registrar = pyre.executive()
+    # access to the component registrar; shared by all Component and Interface subclasses
+    _pyre_executive = pyre.executive()
 
     # access to the base Inventory class
     # embryonic case for an invariant to simplify the metaclass implementations: all classes in

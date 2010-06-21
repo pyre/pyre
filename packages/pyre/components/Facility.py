@@ -25,14 +25,8 @@ class Facility(Property):
         """
         Convert {value} to an actual component
         """
-        # check whether value is already a component
-        if isinstance(value, Component):
-            return value
-
-        # if not, get my interface specficiation to convert it into one
-        print("{.name!r}: binding to {!r}".format(self, value))
-        print("NYI: facility needs to cast values to components")
-        return value
+        print("{0.name!r}: type={0.type!r}".format(self))
+        return self.type.pyre_cast(name=self.name, value=value)
 
     
 

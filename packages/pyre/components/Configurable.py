@@ -7,10 +7,9 @@
 
 
 import itertools
-from .Requirement import Requirement
 
 
-class Configurable(object): #, metaclass=Requirement):
+class Configurable(object):
     """
     The base class for framework configurable classes
 

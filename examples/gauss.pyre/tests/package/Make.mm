@@ -8,24 +8,18 @@
 
 PROJECT = gauss.pyre
 
-RECURSE_DIRS = \
-    unit \
-    package \
-
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: test
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
+test: sanity config
 
-clean::
-	BLD_ACTION="clean" $(MM) recurse
+sanity:
+	${PYTHON} ./sanity.py
 
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
+config:
+	${PYTHON} ./montecarlo.py
 
 
 # end of file 
