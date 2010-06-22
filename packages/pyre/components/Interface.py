@@ -31,12 +31,15 @@ class Interface(Configurable, metaclass=Role):
         # if value is a string
         if isinstance(value, str):
             # get the pyre executive to convert it to a component factory
-            factory = cls._pyre_executive.retrieveComponentDescriptor(value)
-            
-        # build the name of the instance
-        tag = cls._pyre_FAMILY_SEPARATOR.join(filter(None, [configurable._pyre_name, name]))
-        # attempt to instantiate it
-        return factory(name=tag)
+            value = cls._pyre_executive.retrieveComponentDescriptor(value)
+        # if it is not a component instance, interpret it a factory for one
+        if not isinstance(value, Configurable):
+            # build the name of the instance
+            tag = cls._pyre_FAMILY_SEPARATOR.join(filter(None, [configurable._pyre_name, name]))
+            # attempt to instantiate it
+            value = value(name=tag)
+        # and return it
+        return value
 
 
 # end of file 
