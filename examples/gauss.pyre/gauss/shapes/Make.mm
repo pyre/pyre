@@ -22,6 +22,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Ball.py \
     Box.py \
+    Shape.py \
     __init__.py
 
 

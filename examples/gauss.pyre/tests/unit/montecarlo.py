@@ -8,29 +8,25 @@
 
 
 """
-Sanity check: verify that the MonteCarlo integrator works as expected
+sanity check: verify that the MonteCarlo integrator works as expected
 """
 
 
 def test():
     import gauss
-
     from math import pi as π
 
     # instantiate the integrand
-    one = gauss.functors.one("one")
-
+    one = gauss.functors.one(name="one")
     # set up the bounding box for the random number generator
-    box = gauss.shapes.box("box")
+    box = gauss.shapes.box(name="box")
     box.diagonal = ((0,0), (1,1))
-
     # instantiate the region of integration
-    disk = gauss.shapes.ball("disk")
+    disk = gauss.shapes.ball(name="disk")
     disk.center = (0,0)
     disk.radius = 1.0
-
     # instantiate the point cloud generator
-    mesh = gauss.meshes.mersenne("mesh")
+    mesh = gauss.meshes.mersenne(name="mesh")
 
     # instantiate the integrator
     mc = gauss.integrators.montecarlo(name="mc")

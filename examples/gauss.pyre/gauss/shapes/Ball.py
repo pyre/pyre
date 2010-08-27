@@ -7,53 +7,48 @@
 
 
 import pyre
-from pyre.components.Component import Component
-from ..interfaces.Shape import Shape
+from .Shape import Shape
 
 
-class Ball(Component, family="gauss.shapes.ball", implements=Shape):
+class Ball(pyre.component, family="gauss.shapes.ball", implements=Shape):
     """
-    A representation of the interior of a sphere in $d$ dimensions
+    A representation of the interior of a spere in $d$ dimensions
     """
+
 
     # public state
-    # the center of the ball
-    center = pyre.components.array()
-    center.doc = "the center of the ball"
-    center.default = (0.0, 0.0)
+    center = pyre.properties.array(default=(0,0))
+    center.doc = "the location of the center of the ball"
 
-    # the radius of the ball
-    radius = pyre.components.float()
+    radius = pyre.properties.float(default=1)
     radius.doc = "the radius of the ball"
-    radius.default = 1.0
 
 
     # interface
-    @pyre.components.export
+    @pyre.export
     def measure(self):
         """
         Compute my volume
         """
         # get functools and operator
-        import operator
-        import functools
+        import functools, operator
         # get π
-        from math import pi as π
+        from math import  pi as π
         # compute the dimension of space
         d = len(self.center)
-        # branch on even/odd d
-        if d%2 == 0:
-            # for even d
+        # branch on even/odd $d$
+        if d % 2 == 0:
+            # for even $d$
             normalization = functools.reduce(operator.mul, range(1, d//2+1))
             # compute the volume
             return π**(d//2) * self.radius**d / normalization
-            
-        # for odd d
+
+        # for odd $d$
         normalization = functools.reduce(operator.mul, range(1, d+1, 2))
         return 2**((d+1)//2) * π**((d-1)//2) / normalization
 
 
-    @pyre.components.export
+    @pyre.export
     def contains(self, points):
         """
         Filter out the members of {points} that are exterior to this ball
@@ -64,8 +59,8 @@ class Ball(Component, family="gauss.shapes.ball", implements=Shape):
         r2 = self.radius**2
         # for each point
         for point in points:
-            # compute distance from the center
-            d2 = sum((p - r)**2 for p,r in zip(point,center))
+            # compute the distance from the center
+            d2 = sum((p - r)**2 for p,r in zip(point, center))
             # check whether this point is inside or outside
             if r2 >= d2:
                 yield point

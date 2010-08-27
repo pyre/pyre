@@ -5,21 +5,16 @@
 # (c) 1998-2010 all rights reserved
 #
 
-
 """
-Package that contains the declarations of the random number generators
+Package that contains the implemenations of point clouds
 """
 
-# factories
-def mersenne(name=None):
-    from .MersenneTwister import MersenneTwister
 
-    # if a name was given, instantiate and return
-    if name:
-        return MersenneTwister(name=name)
-    
-    # otherwise, return the class record
-    return MersenneTwister
+# the interfaces
+from .PointCloud import PointCloud
+
+# the components
+from .Mersenne import Mersenne as mersenne
 
 
 # end of file 

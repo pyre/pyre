@@ -8,13 +8,13 @@
 
 
 """
-Sanity check: verify that the Ball shape behaves as expected
+Sanity check: verify that the ball shape behaves as expected
 """
 
 
 def test():
+    import gauss
     from math import pi as π
-    import gauss.shapes
 
     # instantiate
     ball = gauss.shapes.ball(name="ball")

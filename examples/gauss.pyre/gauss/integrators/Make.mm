@@ -20,6 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Integrator.py \
     MonteCarlo.py \
     __init__.py
 

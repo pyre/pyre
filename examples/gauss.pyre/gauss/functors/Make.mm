@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Constant.py \
+    Functor.py \
     Gaussian.py \
     One.py \
     __init__.py

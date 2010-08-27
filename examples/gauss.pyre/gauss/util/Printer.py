@@ -6,22 +6,21 @@
 #
 
 
-class Printer(object):
+class Printer:
     """
     A stream filter that prints the objects that pass through it
     """
 
 
-    # meta methods
     def __call__(self, stream):
         """
-        Print the objects in the {stream} as the pass through
+        Count the number of objects in {stream} and pass them through
         """
         # loop through the iterable
         for item in stream:
             # print the item
             print(item)
-            # pass it through
+            # pass the item through
             yield item
         # all done
         return

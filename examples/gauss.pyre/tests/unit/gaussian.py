@@ -8,12 +8,12 @@
 
 
 """
-Sanity check: verify that the Gaussian functor behaves as expected
+Sanity check: verify that the gaussian functor behaves as expected
 """
 
 
 def test():
-    import gauss.functors
+    import gauss
 
     # instantiate
     bell = gauss.functors.gaussian(name="bell")

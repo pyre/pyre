@@ -13,18 +13,9 @@ application.
 See gauss.license() for terms of use
 """
 
-# factories
-def script(name="gauss"):
-    """
-    Factory for the gauss application component for use with pyre hosting shells that
-    expect a descendant of pyre.applications.Script to be in control of application behavior
-    """
-    from .shells.Quadrature import Quadrature
-    return Quadrature(name)
 
-
-# import the parts
-from . import shapes, functors, meshes, integrators, util
+# access to the package contents
+from . import functors, integrators, meshes, shapes, util
 
 
 # misc

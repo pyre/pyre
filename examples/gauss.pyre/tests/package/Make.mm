@@ -11,9 +11,6 @@ PROJECT = gauss.pyre
 #--------------------------------------------------------------------------
 #
 
-working:
-	${PYTHON} ./montecarlo.py
-
 all: test
 
 test: sanity config
@@ -22,7 +19,8 @@ sanity:
 	${PYTHON} ./sanity.py
 
 config:
-	${PYTHON} ./montecarlo.py
+	${PYTHON} ./pi.py
+	${PYTHON} ./gaussian.py
 
 
 # end of file 

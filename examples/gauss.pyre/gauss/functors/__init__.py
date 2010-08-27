@@ -7,41 +7,18 @@
 
 
 """
-Package that contains the functor declarations
+Package with functor definitions
 """
 
-# functors
-def constant(name=None):
-    from .Constant import Constant
 
-    # if a name was given, instantiate and return
-    if name:
-        return Constant(name=name)
-    
-    # otherwise, return the class record
-    return Constant
+# the interface
+from .Functor import Functor
 
 
-def gaussian(name=None):
-    from .Gaussian import Gaussian
-
-    # if a name was given, instantiate and return
-    if name:
-        return Gaussian(name=name)
-    
-    # otherwise, return the class record
-    return Gaussian
-
-
-def one(name=None):
-    from .One import One
-
-    # if a name was given, instantiate and return
-    if name:
-        return One(name=name)
-    
-    # otherwise, return the class record
-    return One
+# the components
+from .Constant import Constant as constant
+from .Gaussian import Gaussian as gaussian
+from .One import One as one
 
 
 # end of file 

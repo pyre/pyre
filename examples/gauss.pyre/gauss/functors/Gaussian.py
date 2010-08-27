@@ -7,33 +7,32 @@
 
 
 import pyre
-from pyre.components.Component import Component
-from ..interfaces.Functor import Functor
+from .Functor import Functor
 
 
-class Gaussian(Component, family="gauss.functors.gaussian", implements=Functor):
+class Gaussian(pyre.component, family="gauss.functors.gaussian", implements=Functor):
     r"""
     Component that implements the normal distribution with mean μ and variance σ^2 
 
         g(x; μ,σ) = \frac{1}{\sqrt{2π} σ} e^{-\frac{|x-μ|^2}{2σ^2}}
 
     μ and σ are implemented as component properties so that Gaussian can conform to the
-    Functor interface. See gauss.interfaces.Functor for more details.
+    functor interface. See gauss.interfaces.functor for more details.
     """
 
+
     # public state
-    mean = pyre.components.array()
+    mean = pyre.properties.array(default=[0])
+    mean.doc = "the mean of the gaussian distribution"
     mean.aliases.add("μ")
-    mean.doc = "the position of the mean of the Gaussian distribution"
-    mean.default = [0.0]
 
-    spread = pyre.components.float()
+    spread = pyre.properties.float(default=1)
+    spread.doc = "the variance of the gaussian distribution"
     spread.aliases.add("σ")
-    spread.doc = "the variance of the Gaussian distribution"
-    spread.default = 1.0
 
 
-    @pyre.components.export
+    # interface
+    @pyre.export
     def eval(self, points):
         """
         Compute the value of the gaussian

@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the Box shape behaves as expected
+Sanity check: verify that the box shape behaves as expected
 """
 
 

@@ -7,18 +7,12 @@
 
 
 """
-Package that contains the declarations of the random number generators
+Package with various utilities
 """
 
-# factories
-def counter():
-    from .Counter import Counter
-    return Counter()
 
-
-def printer():
-    from .Printer import Printer
-    return Printer()
+from .Counter import Counter as counter
+from .Printer import Printer as printer
 
 
 # end of file 

@@ -8,54 +8,55 @@
 
 import pyre
 
-# my ancestor
-from pyre.components.Component import Component
+# interfaces
+from .Integrator import Integrator
+from ..shapes.Shape import Shape
+from ..functors.Functor import Functor
+from ..meshes.PointCloud import PointCloud
 
-# the interface i implement
-from ..interfaces.Integrator import Integrator
-
-# my requirements
-from ..interfaces.Shape import Shape
-from ..interfaces.Functor import Functor
-from ..interfaces.PointCloud import PointCloud
+# components
+from ..shapes.Box import Box
+from ..shapes.Ball import Ball
+from ..functors.One import One
+from ..meshes.Mersenne import Mersenne
 
 
-class MonteCarlo(Component, family="gauss.integrators.montecarlo", implements=Integrator):
+class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implements=Integrator):
     """
-    Component that implements a Monte Carlo integrator
+    A Monte Carlo integrator
     """
 
     # public state
-    box = pyre.components.facility(interface=Shape)
-    box.doc = "the bounding box of my cloud of points"
+    samples = pyre.properties.int(default=10**5)
+    samples.doc = "the number of integrand evaluations"
 
-    samples = pyre.components.int()
-    samples.doc = "the number of evaluations of the integrand"
-    samples.default = 10**3
+    box = pyre.properties.facility(interface=Shape, default=Box)
+    box.doc = "the bounding box for my mesh"
 
-    # my requirements
-    region = pyre.components.facility(interface=Shape)
-    region.doc = "the region of integration"
-    
-    integrand = pyre.components.facility(interface=Functor)
+    mesh = pyre.properties.facility(interface=PointCloud, default=Mersenne)
+    mesh.doc = "the generator of points at which to evaluate the integrand"
+
+    region = pyre.properties.facility(interface=Shape, default=Ball)
+    region.doc = "the shape that defines the region of integration"
+
+    integrand = pyre.properties.facility(interface=Functor, default=One)
     integrand.doc = "the functor to integrate"
 
-    mesh = pyre.components.facility(interface=PointCloud)
-    mesh.doc = "the cloud of function evaluation points"
 
-    
     # interface
-    @pyre.components.export
+    @pyre.export
     def integrate(self):
         """
-        Compute the integral
+        Compute the integral as specified by my public state
         """
         # get the set of points
         points = self.mesh.points(count=self.samples, box=self.box)
-        # filter out the ones exterior to the region of integration
+        # narrow the set down to the ones interior to the region of integration
         interior = self.region.contains(points)
-        # sum up the integrand contributions at those points and return the integral
-        return self.box.measure() / self.samples * sum(self.integrand.eval(interior))
+        # sum up and scale the integrand contributions
+        integral = self.box.measure()/self.samples * sum(self.integrand.eval(interior))
+        # and return the value
+        return integral
 
 
 # end of file 

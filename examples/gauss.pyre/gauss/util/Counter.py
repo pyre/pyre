@@ -6,9 +6,9 @@
 #
 
 
-class Counter(object):
+class Counter:
     """
-    A stream filter that merely counts the number of objects that have passed through it
+    A stream filter that counts the number of objects that pass through it
     """
 
 
@@ -18,6 +18,9 @@ class Counter(object):
 
     # meta methods
     def __init__(self, start=0, **kwds):
+        """
+        Build a counter that start counting at {start}
+        """
         super().__init__(**kwds)
         self.count = start
         return
@@ -31,7 +34,7 @@ class Counter(object):
         for item in stream:
             # update the count
             self.count += 1
-            # pass the entry through
+            # pass the item through
             yield item
         # all done
         return

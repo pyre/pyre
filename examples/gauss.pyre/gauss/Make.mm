@@ -12,7 +12,6 @@ PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
 RECURSE_DIRS = \
     functors \
     integrators \
-    interfaces \
     meshes \
     shapes \
     util \

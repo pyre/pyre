@@ -16,12 +16,17 @@
     <!-- specify the components -->
     <bind property="box">import://gauss.shapes#box</bind>
     <bind property="mesh">import://gauss.meshes#mersenne</bind>
-    <bind property="integrand">import://gauss.functors#one</bind>
+    <bind property="integrand">import://gauss.functors#gaussian</bind>
     <bind property="region">import://gauss.shapes#ball</bind>
   </component>
 
   <component name="mc.box" class="gauss.shapes.box">
-    <bind property="diagonal">((0,0),(1,1))</bind>
+    <bind property="diagonal">((-1,-1), (1,1))</bind>
+  </component>
+
+  <component name="mc.integrand" class="gauss.functors.gaussian">
+    <bind property="μ">(0,0)</bind>
+    <bind property="σ">1/3</bind>
   </component>
 
 </config>

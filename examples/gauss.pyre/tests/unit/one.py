@@ -13,7 +13,7 @@ Sanity check: verify that the unit functor behaves as expected
 
 
 def test():
-    import gauss.functors
+    import gauss
 
     # instantiate
     one = gauss.functors.one(name="one")

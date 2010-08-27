@@ -7,25 +7,26 @@
 
 
 import pyre
-from pyre.components.Interface import Interface
 
 
-class Shape(Interface):
+class Shape(pyre.interface):
     """
-    Interface declaration for integration regions
+    Interface declarator for geometrical regions
     """
+
 
     # interface
-    @pyre.components.provides
+    @pyre.provides
     def measure(self):
         """
-        Compute my measure
+        Compute my measure (length, area, volume, etc)
         """
 
-    @pyre.components.provides
+
+    @pyre.provides
     def contains(self, points):
         """
-        Filter out the subset of {points} that is exterior to the shape
+        Filter out {points} that are on my exterior
         """
 
 

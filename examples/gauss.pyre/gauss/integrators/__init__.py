@@ -5,21 +5,17 @@
 # (c) 1998-2010 all rights reserved
 #
 
-
 """
-Package that contains the component declarations
+Package with integrator implementations
 """
 
-# factories
-def montecarlo(name=None):
-    from .MonteCarlo import MonteCarlo
 
-    # if a name was given, instantiate and return
-    if name:
-        return MonteCarlo(name=name)
-    
-    # otherwise, return the class record
-    return MonteCarlo
+# the interface
+from .Integrator import Integrator
+
+
+# the component
+from .MonteCarlo import MonteCarlo as montecarlo
 
 
 # end of file 

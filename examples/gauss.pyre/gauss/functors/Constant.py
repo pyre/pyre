@@ -7,29 +7,29 @@
 
 
 import pyre
-from pyre.components.Component import Component
-from ..interfaces.Functor import Functor
+from .Functor import Functor
 
 
-class Constant(Component, family="gauss.functors.constant", implements=Functor):
+class Constant(pyre.component, family="gauss.functors.constant", implements=Functor):
     """
-    Component that implements a constant function
+    A constant function
     """
+
 
     # public state
-    value = pyre.components.float()
-    value.doc = "the value of the function"
-    value.default = 1.0
+    value = pyre.properties.float(default=1)
+    value.doc = "the value of the constant functor"""
 
 
-    @pyre.components.export
+    # interface
+    @pyre.export
     def eval(self, points):
         """
-        Compute the value of the function
+        Compute the value of the function on the supplied points
         """
-        # cache the value
+        # local cache of the constant
         value = self.value
-        # the evaluation loop
+        # loop over the points
         for point in points:
             yield value
         # all done

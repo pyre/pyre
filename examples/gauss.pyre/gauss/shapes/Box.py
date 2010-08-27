@@ -6,53 +6,51 @@
 #
 
 
-import operator
-import functools
-
 import pyre
-from pyre.components.Component import Component
-from ..interfaces.Shape import Shape
+from .Shape import Shape
 
 
-class Box(Component, family="gauss.shapes.box", implements=Shape):
+class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
     """
-    A representation of the interior of a box in $d$ dimensions
+    A representation of the interios of a $d$-dimensional box
     """
+
 
     # public state
-    # the center of the box
-    diagonal = pyre.components.array()
+    diagonal = pyre.properties.array(default=((0,0),(1,1)))
     diagonal.doc = "a vector that specifies the major diagonal of the box"
-    diagonal.default = ((0, 0), (1,1)) # default: the unit square
 
 
-    # component interface
-    @pyre.components.export
+    # interface
+    @pyre.export
     def measure(self):
         """
         Compute my volume
         """
+        # get functools and operator
+        import functools, operator
+        # compute and return the volume
         return functools.reduce(operator.mul, ((right-left) for left,right in self.intervals()))
 
 
-    @pyre.components.export
+    @pyre.export
     def contains(self, points):
         """
         Filter out the members of {points} that are exterior to this box
         """
-        # form the list of intervals along each coördinate axis
-        intervals = tuple(zip(*self.diagonal))
-        # for each point
+        # form the list of intervals alomg each cöordinate axis
+        intervals = tuple(self.intervals())
+        # now, for each point
         for point in points:
-            # for each coördinate
-            for p,(left,right) in zip(point, intervals):
-                # if it is outside the box interval
+            # for each cöordinate
+            for p, (left,right) in zip(point, intervals):
+                # if this point is outside the box
                 if p < left or p > right:
-                    # bail out and process the next point
+                    # move on to the next point
                     break
-            # if we got here, all the tests passed; so
+            # if we got here all tests passed, so
             else:
-                # this one is interior
+                # this one is on the interior
                 yield point
         # all done
         return
@@ -60,7 +58,10 @@ class Box(Component, family="gauss.shapes.box", implements=Shape):
 
     # other interface
     def intervals(self):
+        """
+        Repack the diagonal vector as a list of the intervals along each axis
+        """
         return zip(*self.diagonal)
-
+                
 
 # end of file 

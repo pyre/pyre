@@ -13,7 +13,7 @@ PROJECT = gauss.pyre
 
 all: test
 
-test: sanity functors meshes shapes integrators
+test: sanity functors shapes meshes integrators
 
 sanity:
 	${PYTHON} ./sanity.py

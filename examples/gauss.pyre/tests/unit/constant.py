@@ -8,12 +8,12 @@
 
 
 """
-Sanity check: verify that the unit functor behaves as expected
+Sanity check: verify that the constant functor behaves as expected
 """
 
 
 def test():
-    import gauss.functors
+    import gauss
 
     # pick a value
     value = 2

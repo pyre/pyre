@@ -8,19 +8,19 @@
 
 
 """
-Sanity check: verify that the WichmannHill generator behaves as expected
+Sanity check: verify that the MersenneTwister generator behaves as expected
 """
 
 
 def test():
-    import gauss.meshes
+    import gauss
 
     # instantiate
     mt = gauss.meshes.mersenne(name="mt")
     # the number of points to generate
     size = 5
     # specify the box
-    box = gauss.shapes.box("box")
+    box = gauss.shapes.box(name="box")
     box.diagonal = ((0,0), (1,1))
     # make a bunch of random points
     points = tuple(mt.points(box=box, count=size))

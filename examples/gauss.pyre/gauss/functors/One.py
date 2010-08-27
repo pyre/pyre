@@ -7,24 +7,25 @@
 
 
 import pyre
-from pyre.components.Component import Component
-from ..interfaces.Functor import Functor
+from .Functor import Functor
 
 
-class One(Component, family="gauss.functors.one", implements=Functor):
+class One(pyre.component, family="gauss.functors.one", implements=Functor):
     """
-    Component that implements the unit function
+    The unit function 
     """
 
-    @pyre.components.export
+
+    # interface
+    @pyre.export
     def eval(self, points):
         """
-        Compute the value of the function: return 1
+        Compute the value of the function on the supplied points
         """
-
+        # loop over the points
         for point in points:
-            yield 1.0
-
+            yield 1
+        # all done
         return
 
 
