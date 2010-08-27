@@ -6,7 +6,7 @@
 #
 
 
-class Recognizer(object):
+class Recognizer:
     """
     Abstract base class for filesystem entry recognition.
     """

@@ -9,7 +9,7 @@
 import os
 
 
-class DirectoryWalker(object):
+class DirectoryWalker:
     """
     Class that encapsulates listing the contents of a local directory
     """

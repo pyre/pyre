@@ -56,7 +56,7 @@ def newFilesystem(uri=None, **kwds):
     except KeyError:
         pass
     # otherwise
-    raise MountPointError(path=uri, message="unrecognizable URI specification")
+    raise MountPointError(path=uri, description="unrecognizable URI specification")
 
 
 # factories for filesystems
@@ -217,5 +217,18 @@ from .exceptions import MountPointError
 _metaclass_Node = type
 _metaclass_Filesystem = type
 
+
+def debug():
+    """
+    Attach ExtentAware as the metaclass of Node and Filesystem so we can verify that all
+    instances of these classes are properly garbage collected
+    """
+    from ..patterns.ExtentAware import ExtentAware
+    global _metaclass_Node, _metaclass_Filesystem
+    _metaclass_Node = ExtentAware
+    _metaclass_Filesystem = ExtentAware
+
+    return
+    
 
 # end of file 

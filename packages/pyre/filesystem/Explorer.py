@@ -6,7 +6,7 @@
 #
 
 
-class Explorer(object):
+class Explorer:
     """
     Base class for visitors of the filesystem object model
     """

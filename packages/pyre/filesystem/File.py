@@ -9,7 +9,7 @@
 import stat
 
 
-class File(object):
+class File:
     """
     The base class for local filesystem entries
     """

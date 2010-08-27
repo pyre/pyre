@@ -10,7 +10,7 @@ import weakref
 from . import _metaclass_Node
 
 
-class Node(object, metaclass=_metaclass_Node):
+class Node(metaclass=_metaclass_Node):
     """
     The base class for all filesystem entries
     

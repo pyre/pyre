@@ -19,7 +19,7 @@ def test():
         )
 
     try:
-        raise GenericError(message=None)
+        raise GenericError(description=None)
     except GenericError as error:
         pass
 
@@ -34,7 +34,7 @@ def test():
         pass
 
     try:
-        raise FilesystemError(filesystem=None, node=None, message=None)
+        raise FilesystemError(filesystem=None, node=None, description=None)
     except FilesystemError as error:
         pass
 
@@ -49,7 +49,7 @@ def test():
         pass
 
     try:
-        raise URISpecificationError(uri=None, message=None)
+        raise URISpecificationError(uri=None, description=None)
     except URISpecificationError as error:
         pass
 

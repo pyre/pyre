@@ -45,13 +45,14 @@ def test():
 
 # main
 if __name__ == "__main__":
-    import pyre.filesystem
-    # adjust the package metaclasses
-    from pyre.patterns.ExtentAware import ExtentAware
-    pyre.filesystem._metaclass_Node = ExtentAware
-    pyre.filesystem._metaclass_Filesystem = ExtentAware
+    # request debugging support for the pyre.calc package
+    pyre_debug = { "pyre.filesystem" }
 
     test()
+
+    # destroy pyre.fileserver so it doesn't confuse the extent
+    import pyre
+    pyre.executive.fileserver = None
 
     # check that the filesystem was destroyed
     from pyre.filesystem.Filesystem import Filesystem
