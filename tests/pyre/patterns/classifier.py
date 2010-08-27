@@ -13,36 +13,35 @@ Verify that the AttributeClassifier works as advertised
 
 
 def test():
-    # here are some descriptors
-    class trait(object): category = "traits"
-    class component(object): category = "components"
-    # and a function decorator
-    def interface(func):
-        func.category = "interfaces"
-        return func
-
-    # declare the containg class
+    # get the classifier
     from pyre.patterns.AttributeClassifier import AttributeClassifier
 
-    class base(object, metaclass=AttributeClassifier, classifier="category", index="index"):
+    # here are some descriptors
+    class component(AttributeClassifier.pyre_Descriptor): pass
+    class property(AttributeClassifier.pyre_Descriptor): pass
 
-        trait1 = trait()
-        comp1 = component()
+    class behavior(AttributeClassifier.pyre_Descriptor):
+        def __init__(self, func): return
 
-        @interface
+
+    # declare the containg class
+    class base(metaclass=AttributeClassifier, descriptors="traits", categories="index"):
+
+        p1 = property()
+        c1 = component()
+
+        @behavior
         def can(self): pass
 
-        comp2 = component()
-        trait2 = trait()
+        c2 = component()
+        p2 = property()
 
-        @interface
+        @behavior
         def will(self): pass
 
     # now verify that it all happened correctly
-    assert len(base.index) == 3
-    assert base.index["traits"] == [ base.trait1, base.trait2 ]
-    assert base.index["components"] == [ base.comp1, base.comp2 ]
-    assert base.index["interfaces"] == [ base.can, base.will ]
+    assert len(base.traits) == 6
+    assert base.traits == ( base.p1, base.c1, base.can, base.c2, base.p2, base.will )
 
     return base
 
