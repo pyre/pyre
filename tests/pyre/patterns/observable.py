@@ -36,7 +36,7 @@ class node(Observable):
         return
 
 
-class probe(object):
+class probe:
     """
     the observer
     """

@@ -6,7 +6,10 @@
 #
 
 
-class Observable(object):
+import weakref
+
+
+class Observable:
     """
     Provide notification support for classes that maintain dynamic associations with multiple
     clients. 
@@ -35,41 +38,60 @@ class Observable(object):
         """
         # build a list before notification, just in case the observer's callback behavior
         # involves removing itself from our callback set
-        for callable in tuple(self._observers):
-            callable(self)
-
+        for instance, funcs in tuple(self._observers.items()):
+            for func in funcs:
+                # invoke the callable
+                func(instance, self)
+        # all done
         return
             
 
     # callback management
-    def addObserver(self, callable):
-        """
-        Add callable to the set of observers
-        """
-        self._observers.add(callable)
-        return callable
-
-
-    def removeObserver(self, callable):
-        """
-        Remove callable from the set of observers
-        """
-        self._observers.remove(callable)
-        return callable
-
-
     def addObservers(self, observable):
         """
         Add the observers of {observable} to my pile
         """
-        self._observers |= observable._observers
+        self._observers.update(observable._observers)
         return
+
+
+    def addObserver(self, callback):
+        """
+        Add callable to the set of observers
+        """
+        # extract the caller information from the method
+        instance = callback.__self__
+        function = callback.__func__
+        # get the registered callbacks for this instance
+        funcs = self._observers.setdefault(instance, set())
+        # add this callback
+        funcs.add(function)
+        # and return it back to the caller
+        return callback
+
+
+    def removeObserver(self, callback):
+        """
+        Remove callable from the set of observers
+        """
+        # extract the caller information from the method
+        instance = callback.__self__
+        function = callback.__func__
+        # attempt to get the regitered callbacks
+        try:
+            funcs = self._observers[instance]
+        except KeyError:
+            return callback
+        # remove this callable from the set
+        funcs.discard(function)
+        # and return the callback
+        return callback
 
 
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        self._observers = set()
+        self._observers = weakref.WeakKeyDictionary()
         return
 
 
