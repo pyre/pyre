@@ -6,13 +6,17 @@
 #
 
 
-class Named(object):
+class Named:
     """
     Base class for objects that have names
     """
 
+    
+    # public data
+    name = None
 
-    def __init__(self, *, name, **kwds):
+
+    def __init__(self, *, name=None, **kwds):
         super().__init__(**kwds)
         self.name = name
         return

@@ -9,7 +9,7 @@
 import collections
 
 
-class PathHash(object):
+class PathHash:
     """
     Implementation of a hash function for hierarchical namespaces with aliased entries.
 

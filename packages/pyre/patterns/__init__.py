@@ -25,7 +25,7 @@ def powerset(iterable):
 
 
 # factories
-def newPathhash(**kwds):
+def newPathHash(**kwds):
     """
     Build a hashing functor for name hierarchies
     """

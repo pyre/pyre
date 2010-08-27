@@ -14,9 +14,9 @@ Check that path hashes work as advertised
 
 def test():
     # access the class
-    from pyre.patterns.PathHash import PathHash
+    import pyre.patterns
     # build one
-    pathhash = PathHash()
+    pathhash = pyre.patterns.newPathHash()
     # here are a couple of multi-level addresses
     moduleName = "pyre.patterns.PathHash"
     klassName = moduleName + ".PathHash"
