@@ -6,7 +6,7 @@
 #
 
 
-class TokenDescriptor(object):
+class TokenDescriptor:
     """
     Class whose instances holds the token declaration information until the Lexer is able to
     build the actual token class
@@ -23,10 +23,6 @@ class TokenDescriptor(object):
         super().__init__(**kwds)
         self.pattern = pattern
         return
-
-
-    # meta data
-    _pyre_category = "tokens" # for the AttributeClassifier
 
 
 # end of file 

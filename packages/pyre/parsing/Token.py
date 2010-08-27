@@ -6,7 +6,7 @@
 #
 
 
-class Token(object):
+class Token:
     """
     Base class for tokens, the atomic units of recognizable text in a stream
     """

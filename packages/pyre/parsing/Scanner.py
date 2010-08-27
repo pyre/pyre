@@ -10,7 +10,7 @@ import pyre.tracking
 from .Lexer import Lexer
 
 
-class Scanner(object, metaclass=Lexer):
+class Scanner(metaclass=Lexer):
     """
     The input stream tokenizer
     """
@@ -106,7 +106,7 @@ class Scanner(object, metaclass=Lexer):
                 matches = match.groupdict()
                 # figure out what it was by looking for a non-empty group that matches the
                 # token class names
-                for token in self._pyre_Tokens:
+                for token in self.pyre_tokens:
                     text = matches[token.__name__]
                     if text:
                         yield token(lexeme=text, locator=self.locator)

@@ -22,9 +22,8 @@ class ParsingError(FrameworkError):
     Can be used to catch all exceptions raised by this package
     """
 
-    def __init__(self, description, locator, **kwds):
+    def __init__(self, locator, **kwds):
         super().__init__(**kwds)
-        self.description = description
         self.locator = locator
         return
 

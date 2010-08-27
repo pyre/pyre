@@ -38,7 +38,7 @@ def test():
     assert issubclass(Simple.comment, Token)
     assert issubclass(Simple.separator, Token)
     # check that the token index reflects the transmutation
-    assert getattr(Simple, Simple._pyre_INDEX) == [Simple.comment, Simple.separator]
+    assert getattr(Simple, Simple.pyre_TOKEN_INDEX) == [Simple.comment, Simple.separator]
     # check that the recognizer was built correctly
     assert Simple.recognizer.pattern == "(?P<comment>#)|(?P<separator>:)"
     

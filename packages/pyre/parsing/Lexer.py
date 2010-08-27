@@ -7,12 +7,12 @@
 
 
 import re
+import collections
 from .Token import Token
 from .TokenDescriptor import TokenDescriptor
-from ..patterns.AttributeClassifier import AttributeClassifier
 
 
-class Lexer(AttributeClassifier):
+class Lexer(type):
     """
     Metaclass that looks through a Scanner class record to convert TokenDescriptors into Token
     classes and build the Scanner's regular expression engine
@@ -20,33 +20,43 @@ class Lexer(AttributeClassifier):
 
 
     # constants
-    _pyre_INDEX = "_pyre_Tokens"
-    _pyre_CLASSIFIER_NAME = "_pyre_category"
+    pyre_TOKEN_INDEX = "pyre_tokens"
 
 
     # meta methods
     @classmethod
     def __prepare__(cls, name, bases, **kwds):
         """
-        Create and return a container for the attributes in the class record
+        Build an attribute table that maintains a category index for attribute descriptors
         """
-        return super().__prepare__(name, bases, classifier=cls._pyre_CLASSIFIER_NAME, **kwds)
+        return collections.OrderedDict()
 
 
     def __new__(cls, name, bases, attributes, **kwds):
         """
         Build the document class record
         """
+        # initialize the list of descriptors
+        harvest = []
+        # loop over the attributes
+        for attrname, attribute in attributes.items():
+            # for attributes that are descriptors
+            if isinstance(attribute, TokenDescriptor) or (
+                isinstance(attribute, type) and issubclass(attribute, Token)):
+                # set their name
+                attribute.name = attrname
+                # add them to the pile
+                harvest.append(attribute)
+        # save the descriptor tuple as a class attribute
+        attributes[cls.pyre_TOKEN_INDEX] = tuple(harvest)
         # let type build the class record
-        record = super().__new__(cls, name, bases, attributes, index=cls._pyre_INDEX, **kwds)
+        record = super().__new__(cls, name, bases, attributes, **kwds)
         # initialize the list of tokens
         tokens = []
         # initialize the list of recognizers harvested from the token declarations
         recognizers = []
-        # get the token index
-        tokenDescriptors = getattr(record, cls._pyre_INDEX)
         # visit each one of them
-        for descriptor in tokenDescriptors:
+        for descriptor in harvest:
             # extract descriptor info: the name of the class and the pattern
             tag = descriptor.name
             pattern = descriptor.pattern
@@ -82,44 +92,11 @@ class Lexer(AttributeClassifier):
                 recognizers.append(r"(?P<{0}>{1})".format(tag, pattern))
 
         # replace the token index
-        setattr(record, cls._pyre_INDEX, tokens)
+        setattr(record, cls.pyre_TOKEN_INDEX, tokens)
         # assemble and attach the regular expression
         setattr(record, "recognizer", re.compile("|".join(recognizers)))
         # return the new class record
         return record
 
-
-    @classmethod
-    def _pyre_buildCategoryIndex(cls, record, index, attributes):
-        """
-        Attach the category index to the class record as the attribute index
-
-        parameters:
-            {record}: the class record being decorated
-            {index}: the name of the attribute that will hold the category index
-            {attributes}: storage for the category index
-        """
-        # extract the element descriptors from the attribute categories
-        descriptors = attributes.categories["tokens"]
-        # return them so it can be bound to whatever name _pyre_INDEX specifies
-        return descriptors
-
-
-    # attribute storage
-    class _pyre_AttributeFilter(AttributeClassifier._pyre_AttributeFilter):
-        """
-        Storage and categorization for the token declarations
-        """
-
-
-        def decorateDescriptor(self, name, descriptor, category):
-            """
-            Attach the name of the descriptor
-            """
-            # set the name
-            descriptor.name = name
-            # and return the descriptor
-            return descriptor
-            
 
 # end of file 

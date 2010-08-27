@@ -6,7 +6,7 @@
 #
 
 
-class Parser(object):
+class Parser:
     """
     The base class for parsers
     """
