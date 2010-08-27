@@ -12,10 +12,9 @@ Verify that circular dependencies are caught properly
 """
 
 
-import pyre.calc
-
-
 def test():
+    import pyre.calc
+
     # a model
     model = pyre.calc.newModel(name="circular")
 
@@ -49,6 +48,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

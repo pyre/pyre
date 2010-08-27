@@ -8,7 +8,7 @@
 
 
 """
-Verify that reference nodes correctly reflect the value of their referends
+Verify nodes with literal values
 """
 
 
@@ -18,16 +18,12 @@ def test():
     # make a node and set its value
     v = 80.
     production = pyre.calc.newNode(value=v)
-    clone = production.newReference()
-
     assert production.value == v
-    assert clone.value == v
     
     # once more
     v = 100.
     production.value = v
     assert production.value == v
-    assert clone.value == v
 
     return
 

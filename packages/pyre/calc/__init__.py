@@ -61,6 +61,20 @@ def newNode(value=None, **kwds):
     return Node(value=value, evaluator=None, **kwds)
 
 
+# predicates
+def isExpression(string):
+    """
+    Check whether {string} is an expression
+
+    Currently, this predicate checks only for the presence of balanced pairs of braces; it
+    doesn't perform any other syntax or validity tests
+    """
+    # get the Expression evaluator class
+    from .Expression import Expression
+    # ask its scanner whether {string} is a match
+    return Expression._scanner.match(string)
+
+
 # evaluators
 def average(*args):
     """
@@ -85,6 +99,14 @@ def expression(*, formula, model, **kwds):
     """
     from .Expression import Expression
     return Expression(expression=formula, model=model, **kwds)
+
+
+def literal(value):
+    """
+    Create an evaluator that always returns the given value
+    """
+    from .Literal import Literal
+    return Literal(value)
 
 
 def max(*args):
@@ -130,5 +152,19 @@ def sum(*args):
 # debugging support
 _metaclass_Node = type
 _metaclass_Evaluator = type
+
+
+def debug():
+    """
+    Attach ExtentAware as the metaclass of Node and Evaluator so we can verify that all
+    instances of these classes are properly garbage collected
+    """
+    from ..patterns.ExtentAware import ExtentAware
+    global _metaclass_Node, _metaclass_Evaluator
+    _metaclass_Node = ExtentAware
+    _metaclass_Evaluator = ExtentAware
+
+    return
+    
 
 # end of file 

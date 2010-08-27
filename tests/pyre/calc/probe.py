@@ -12,25 +12,23 @@ Verify that probes get notified when the values of their nodes change
 """
 
 
-import pyre.calc
-
-
-# make a probe that records the values of the monitored nodes
-from pyre.calc.Probe import Probe
-class Recorder(Probe):
-
-    def activate(self, node):
-        self.nodes[node] = node.value
-        return
-
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-        self.nodes = {}
-        return
-
-
 # tuck all the object references in a function so they get a chance to go out of scope
 def test():
+    import pyre.calc
+
+    # make a probe that records the values of the monitored nodes
+    from pyre.calc.Probe import Probe
+    class Recorder(Probe):
+
+        def activate(self, node):
+            self.nodes[node] = node.value
+            return
+
+        def __init__(self, **kwds):
+            super().__init__(**kwds)
+            self.nodes = {}
+            return
+
     # make a probe
     probe = Recorder()
 
@@ -60,12 +58,13 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # get the extent manager
-    from pyre.patterns.ExtentAware import ExtentAware
-    # install it
-    pyre.calc._metaclass_Node = ExtentAware
+    # request debugging support for the pyre.calc package
+    pyre_debug = { "pyre.calc" }
     # run the test
     test()
+    # destroy the framework parts to make sure there are no excess nodes around
+    import pyre
+    pyre.executive.configurator = None
     # verify reference counts
     from pyre.calc.Node import Node
     # print(tuple(Node._pyre_extent))

@@ -8,15 +8,16 @@
 
 
 """
-Verify nodes with literal values
+Verify nodes with literal evaluators
 """
 
-import pyre.calc
 
 def test():
+    import pyre.calc
+
     # make a node and set its value
     v = 80.
-    production = pyre.calc.newNode(value=v)
+    production = pyre.calc.newNode(value=pyre.calc.literal(value=v))
     assert production.value == v
     
     # once more
@@ -29,12 +30,13 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # get the extent manager
-    from pyre.patterns.ExtentAware import ExtentAware
-    # install it
-    pyre.calc._metaclass_Node = pyre.calc._metaclass_Evaluator = ExtentAware
+    # request debugging support for the pyre.calc package
+    pyre_debug = { "pyre.calc" }
     # run the test
     test()
+    # destroy the framework parts to make sure there are no excess nodes around
+    import pyre
+    pyre.executive.configurator = None
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node

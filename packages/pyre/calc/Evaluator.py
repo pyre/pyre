@@ -10,7 +10,7 @@ import weakref
 from . import _metaclass_Evaluator
 
 
-class Evaluator(object, metaclass=_metaclass_Evaluator):
+class Evaluator(metaclass=_metaclass_Evaluator):
     """
     Base class for the objects that are responsible for computing the value of nodes
     """
@@ -37,7 +37,6 @@ class Evaluator(object, metaclass=_metaclass_Evaluator):
         """
         Prepare to start computing
         """
-        # print("Evaluator@0x{0:x}.initialize: owner=Node@0x{1:x}".format(id(self), id(owner)))
         self._owner = weakref.proxy(owner)
         return self
 
@@ -48,19 +47,6 @@ class Evaluator(object, metaclass=_metaclass_Evaluator):
         """
         self._owner = None
         return
-
-
-    # meta methods
-    # uncomment them for debugging
-    # def __init__(self, **kwds):
-        # super().__init__(**kwds)
-        # print("Evaluator@0x{0:x}.__init__".format(id(self)))
-        # return
-              
-
-    # def __del__(self, **kwds):
-        # print("Evaluator@0x{0:x}.__del__".format(id(self)))
-        # return
 
 
     # private data

@@ -12,11 +12,14 @@ from ..patterns.Observable import Observable
 
 class Node(Observable, metaclass=_metaclass_Node):
     """
-    Base class for objects that are involved in evaluation graphs
+    Base class for objects in evaluation graphs
     """
 
-    
+
+    # access to commonly used evaluators
     from .Evaluator import Evaluator
+    from .Expression import Expression
+    from .Literal import Literal
     from .Reference import Reference
 
 
@@ -53,6 +56,39 @@ class Node(Observable, metaclass=_metaclass_Node):
         Install a new evaluator
         """
         return self._setEvaluator(evaluator)
+
+
+    # introspection and evaluator factories
+    @classmethod
+    def isExpression(self, string):
+        """
+        Check whether {string} is an expression
+        """
+        # NYI: this is not very smart; FIX IT
+        return self.Expression._scanner.match(string)
+
+
+    @classmethod
+    def newExpression(self, formula, model, **kwds):
+        """
+        Build and return a new expression
+        """
+        return self.Expression(expression=formula, model=model, **kwds)
+    
+
+    @classmethod
+    def newLiteral(self, value, **kwds):
+        """
+        Build and return a new expression
+        """
+        return self.Literal(value=value, **kwds)
+
+
+    def newReference(self, **kwds):
+        """
+        Build and return a new reference to me
+        """
+        return self.__class__(value=None, evaluator=self.Reference(node=self), **kwds)
 
 
     # interface
@@ -97,13 +133,6 @@ class Node(Observable, metaclass=_metaclass_Node):
         return self
 
 
-    def newReference(self, **kwds):
-        """
-        Build and return a new reference to me
-        """
-        return self.__class__(value=None, evaluator=self.Reference(node=self), **kwds)
-
-
     def replace(self, *, node, name=None):
         """
         Remove {node} from its evaluation graph and graft {self} in its place
@@ -114,10 +143,8 @@ class Node(Observable, metaclass=_metaclass_Node):
         self.addObservers(node)
         # and iterate through them to adjust their domain
         for observer in node._observers:
-            # extract the client from the method callback
-            client = observer.__self__
-            # patch the domain of the client
-            client._replace(name=name, old=node, new=self)
+            # patch the observer's domain of the client
+            observer._replace(name=name, old=node, new=self)
         # all done
         return self
 
@@ -171,23 +198,13 @@ class Node(Observable, metaclass=_metaclass_Node):
     # meta methods
     def __init__(self, value, evaluator, **kwds):
         """
-        Unless you are building a Node specialization, it is almost always better to use the
-        factory method provided in the pyre.calc package, rather than calling this constructor
+        Unless you are building a {Node} specialization, it is almost always better to use the
+        factory methods provided in the pyre.calc package, rather than calling this constructor
         directly
         """
         super().__init__(**kwds)
         self._value = value
         self._evaluator = evaluator and evaluator.initialize(owner=self)
-        return
-
-
-    def __del__(self):
-        """
-        Destructor
-        """
-        # shutdown my evaluator
-        # print("Node@0x{0:x}.__del__: removing evaluator {1}".format(id(self), self._evaluator))
-        self._evaluator = self._prepareEvaluator(None)
         return
 
 
@@ -284,6 +301,6 @@ class Node(Observable, metaclass=_metaclass_Node):
     # private data
     _value = None
     _evaluator = None
-        
+
 
 # end of file 

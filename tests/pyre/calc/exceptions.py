@@ -20,7 +20,7 @@ def test():
         ExpressionError, UnresolvedNodeError )
 
     try:
-        raise NodeError()
+        raise NodeError(description="generic error")
     except NodeError as error:
         pass
 

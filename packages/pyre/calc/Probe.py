@@ -6,7 +6,7 @@
 #
 
 
-class Probe(object):
+class Probe:
     """
     The base class for objects that observe the values of nodes in a calc graph
     """

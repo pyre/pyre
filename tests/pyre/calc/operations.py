@@ -12,10 +12,9 @@ Verify on-the-fly building of nodes using the overloaded operators
 """
 
 
-import pyre.calc
-
-
 def test():
+    import pyre.calc
+
     # free variables
     c = 100.
     s = 20.
@@ -57,12 +56,13 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # get the extent manager
-    from pyre.patterns.ExtentAware import ExtentAware
-    # install it
-    pyre.calc._metaclass_Node = pyre.calc._metaclass_Evaluator = ExtentAware
+    # request debugging support for the pyre.calc package
+    pyre_debug = { "pyre.calc" }
     # run the test
     test()
+    # destroy the framework parts to make sure there are no excess nodes around
+    import pyre
+    pyre.executive.configurator = None
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
