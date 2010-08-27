@@ -18,12 +18,12 @@ def test():
         )
 
     try:
-        raise SchemaError(msg=None)
+        raise SchemaError(description=None)
     except SchemaError as error:
         pass
 
     try:
-        raise CastingError(msg=None, value=None)
+        raise CastingError(description=None, value=None)
     except CastingError as error:
         pass
 

@@ -21,12 +21,12 @@ def test():
 
     # casts
     # successful
-    assert m == descriptor.cast("meter")
-    assert 9.81*kg*m/s**2 == descriptor.cast("9.81 kg*m/s**2")
+    assert m == descriptor.pyre_cast("meter")
+    assert 9.81*kg*m/s**2 == descriptor.pyre_cast("9.81 kg*m/s**2")
 
     # failures
     try:
-        descriptor.cast(1)
+        descriptor.pyre_cast(1)
         assert False
     except descriptor.CastingError as error:
         assert str(error) == "could not convert 1 into a dimensional quantity"

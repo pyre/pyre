@@ -20,11 +20,11 @@ def test():
 
     # casts
     # successful
-    assert 1 == descriptor.cast(1)
-    assert 1 == descriptor.cast("1")
+    assert 1 == descriptor.pyre_cast(1)
+    assert 1 == descriptor.pyre_cast("1")
     # failures
     try:
-        descriptor.cast(test)
+        descriptor.pyre_cast(test)
         assert False
     except descriptor.CastingError as error:
         assert str(error) == "int() argument must be a string or a number, not 'function'"

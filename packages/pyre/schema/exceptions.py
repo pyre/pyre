@@ -16,15 +16,6 @@ class SchemaError(FrameworkError):
     """
 
 
-    def __init__(self, msg, **kwds):
-        super().__init__(**kwds)
-        self.msg = msg
-        return
-
-    def __str__(self):
-        return self.msg
-
-
 class CastingError(SchemaError):
     """
     Exception raised on failed attempts to convert a value to one of the supported types

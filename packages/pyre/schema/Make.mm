@@ -22,10 +22,14 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Array.py \
     Boolean.py \
+    Date.py \
+    Decimal.py \
     Dimensional.py \
     Float.py \
     Integer.py \
     Object.py \
+    String.py \
+    Time.py \
     Type.py \
     exceptions.py \
     __init__.py

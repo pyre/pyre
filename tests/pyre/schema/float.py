@@ -20,11 +20,11 @@ def test():
 
     # casts
     # successful
-    assert 1.2 == descriptor.cast(1.2)
-    assert 1.2 == descriptor.cast("1.2")
+    assert 1.2 == descriptor.pyre_cast(1.2)
+    assert 1.2 == descriptor.pyre_cast("1.2")
     # failures
     try:
-        descriptor.cast(test)
+        descriptor.pyre_cast(test)
         assert False
     except descriptor.CastingError as error:
         assert str(error) == "float() argument must be a string or a number"

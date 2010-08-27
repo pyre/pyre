@@ -8,18 +8,17 @@
 
 from .Type import Type
 from ..units import parser as parserFactory
-from ..units.Dimensional import Dimensional
 
 
 class Dimensional(Type):
     """
-    A type declarator for quantities with dimensions
+    A type declarator for quantities with units
     """
 
 
     # interface
     @classmethod
-    def cast(cls, value):
+    def pyre_cast(cls, value, **kwds):
         """
         Attempt to convert {value} into a dimensional
         """
@@ -31,7 +30,7 @@ class Dimensional(Type):
             return value
         # everything else is an error
         msg="could not convert {!r} into a dimensional quantity".format(value)
-        raise cls.CastingError(value=value, msg=msg)
+        raise cls.CastingError(value=value, description=msg)
         
 
     # public data

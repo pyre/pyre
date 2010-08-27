@@ -20,21 +20,21 @@ def test():
 
     # casts
     # successful
-    assert () == descriptor.cast([])
-    assert (1.,) == descriptor.cast([1])
-    assert (1., 2.) == descriptor.cast([1,2])
-    assert () == descriptor.cast("[]")
-    assert () == descriptor.cast("()")
-    assert () == descriptor.cast("{}")
-    assert (1.,) == descriptor.cast("[1]")
-    assert (1.,) == descriptor.cast("{1}")
-    assert (1.,) == descriptor.cast("(1,)")
-    assert (1., 2.) == descriptor.cast("[1, 2]")
-    assert (1., 2.) == descriptor.cast("{1, 2}")
-    assert (1., 2.) == descriptor.cast("(1, 2)")
+    assert () == descriptor.pyre_cast([])
+    assert (1.,) == descriptor.pyre_cast([1])
+    assert (1., 2.) == descriptor.pyre_cast([1,2])
+    assert () == descriptor.pyre_cast("[]")
+    assert () == descriptor.pyre_cast("()")
+    assert () == descriptor.pyre_cast("{}")
+    assert (1.,) == descriptor.pyre_cast("[1]")
+    assert (1.,) == descriptor.pyre_cast("{1}")
+    assert (1.,) == descriptor.pyre_cast("(1,)")
+    assert (1., 2.) == descriptor.pyre_cast("[1, 2]")
+    assert (1., 2.) == descriptor.pyre_cast("{1, 2}")
+    assert (1., 2.) == descriptor.pyre_cast("(1, 2)")
     # failures
     try:
-        descriptor.cast(test)
+        descriptor.pyre_cast(test)
         assert False
     except descriptor.CastingError as error:
         pass

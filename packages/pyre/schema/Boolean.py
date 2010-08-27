@@ -11,15 +11,15 @@ from .Type import Type
 
 class Boolean(Type):
     """
-    A boolean type declarator
+    A type declarator for booleans
     """
 
 
     # interface
     @classmethod
-    def cast(cls, value):
+    def pyre_cast(cls, value, **kwds):
         """
-        Attempt to convert {value} into a boolean
+        Convert {value} into a boolean
         """
         # native type pass through unchanged
         if isinstance(value, bool):
@@ -28,7 +28,7 @@ class Boolean(Type):
         if isinstance(value, str):
             return cls._strmap[value.lower()]
         # anything else is an error
-        raise cls.CastingError(msg='could not cast to bool', value=value)
+        raise cls.CastingError(description='could not cast to bool', value=value)
 
 
     _strmap = {

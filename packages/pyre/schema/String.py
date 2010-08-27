@@ -9,9 +9,9 @@
 from .Type import Type
 
 
-class Object(Type):
+class String(Type):
     """
-    A generic type declarator
+    A class declarator for strings
     """
 
 
@@ -19,10 +19,12 @@ class Object(Type):
     @classmethod
     def pyre_cast(cls, value, **kwds):
         """
-        Convert the given value into a python native object
+        Attempt to convert {value} into a string
         """
-        return value
-
+        try:
+            return str(value)
+        except Exception as error:
+            raise cls.CastingError(value=value, description=str(error)) from error
 
 
 # end of file 

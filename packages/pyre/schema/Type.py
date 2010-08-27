@@ -6,15 +6,15 @@
 #
 
 
-class Type(object):
+class Type:
     """
-    The base class for type representations
+    The base class for type declarators
     """
 
 
     # interface
     @classmethod
-    def cast(self, **kwds):
+    def pyre_cast(cls, *args, **kwds):
         """
         Convert the given value into the native type i represent
         """

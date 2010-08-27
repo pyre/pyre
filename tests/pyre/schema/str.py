@@ -8,12 +8,19 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Verify that string conversions work as  expected
 """
 
 
 def test():
-    import pyre
+    import pyre.schema
+
+    # create a descriptor
+    descriptor = pyre.schema.str
+
+    # casts
+    assert "hello" == descriptor.pyre_cast("hello")
+
     return
 
 

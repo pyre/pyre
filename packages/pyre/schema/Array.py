@@ -12,24 +12,24 @@ from .Type import Type
 
 class Array(Type):
     """
-    An array type declarator
+    The array type declarator
     """
 
 
     # interface
     @classmethod
-    def cast(cls, value):
+    def pyre_cast(cls, value, **kwds):
         """
-        Attempt to convert {value} into an array using {converter}
+        Convert {value} into a tuple
         """
-        # strings require some lexical analysis
-        if value and isinstance(value, str):
+        # evaluate the string
+        if isinstance(value, str):
             value = eval(value)
-        # if value is an iterable, retrun it
-        if isinstance(value, collections.Iterable):
+        # if {value} is an iterable, convert it to a  tuple and return it
+        if  isinstance(value, collections.Iterable):
             return tuple(value)
         # otherwise flag it as bad input
-        raise cls.CastingError(value=value, msg="unknown type: value={!r}".format(value))
+        raise cls.CastingError(value=value, description="unknown type: value={!r}".format(value))
 
 
 # end of file 

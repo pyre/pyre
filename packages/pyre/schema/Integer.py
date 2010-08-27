@@ -11,13 +11,13 @@ from .Type import Type
 
 class Integer(Type):
     """
-    An integer point type declarator
+    A class declarator for integers
     """
 
 
     # interface
     @classmethod
-    def cast(cls, value):
+    def pyre_cast(cls, value, **kwds):
         """
         Attempt to convert {value} into a float
         """
@@ -28,9 +28,9 @@ class Integer(Type):
         try:
             return int(value)
         except TypeError as error:
-            raise cls.CastingError(value=value, msg=str(error)) from error
+            raise cls.CastingError(value=value, description=str(error)) from error
         except ValueError as error:
-            raise cls.CastingError(value=value, msg=str(error)) from error
+            raise cls.CastingError(value=value, description=str(error)) from error
 
 
 # end of file 
