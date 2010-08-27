@@ -10,6 +10,7 @@
 Definitions for all the exceptions raised by this package
 """
 
+
 # violation notification
 # constraints throw exceptions rather than return True|False
 from ..framework.exceptions import FrameworkError

@@ -9,7 +9,7 @@
 import abc
 
 
-class Constraint(object, metaclass=abc.ABCMeta):
+class Constraint(metaclass=abc.ABCMeta):
     """
     The base class for constraints
     """
