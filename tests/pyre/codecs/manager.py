@@ -13,8 +13,8 @@ Sanity check: verify that the package is accessible
 
 
 def test():
-    import pyre.codecs
-    return pyre.codecs.newManager()
+    import pyre.config
+    return pyre.config.newCodecManager()
 
 
 # main

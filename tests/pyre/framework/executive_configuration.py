@@ -17,18 +17,17 @@ def test():
     # build the executive
     executive = pyre.framework.executive()
     # verify the right parts were built
-    assert executive.codecs is not None
+    assert executive.codex is not None
     assert executive.fileserver is not None
     assert executive.configurator is not None
-    assert executive.calculator is not None
     # load a configuration file
     executive.loadConfiguration(uri="sample.pml", priority=executive.USER_CONFIGURATION)
     # check that all is as expected
-    assert executive.calculator["package.home"] == "home"
-    assert executive.calculator["package.prefix"] == "prefix"
-    assert executive.calculator["package.user.name"] == "michael a.g. aïvázis"
-    assert executive.calculator["package.user.email"] == "aivazis@caltech.edu"
-    assert executive.calculator["package.user.affiliation"] == "california institute of technology"
+    assert executive.configurator["package.home"] == "home"
+    assert executive.configurator["package.prefix"] == "prefix"
+    assert executive.configurator["package.user.name"] == "michael a.g. aïvázis"
+    assert executive.configurator["package.user.email"] == "aivazis@caltech.edu"
+    assert executive.configurator["package.user.affiliation"] == "california institute of technology"
 
     # all done
     return executive

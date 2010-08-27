@@ -14,23 +14,19 @@ Verify that we can process an empty pml file
 
 def test():
     # package access
-    import pyre.codecs
     import pyre.config
     # get the codec manager
-    m = pyre.codecs.newManager()
+    m = pyre.config.newCodecManager()
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
-    # build a configurator to store the harvested venets
-    c = pyre.config.newConfigurator()
     # open a stream
     sample = open("sample-empty.pml")
     # read the contents
-    configuration = reader.decode(configurator=c, stream=sample)
+    configuration = reader.decode(source=sample)
     # check that we got a real instance back
     assert configuration is not None
     # check that it is an instance of the right type
-    from pyre.codecs.pml.Configuration import Configuration
-    assert isinstance(configuration, Configuration)
+    assert isinstance(configuration, reader.Configuration)
 
     return m, reader, configuration
 

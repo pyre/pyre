@@ -15,18 +15,13 @@ Verify that the Actor metaclass decorates class records properly
 def test():
     # access
     from pyre.components.Component import Component
-    from pyre.components.Inventory import Inventory
 
     # declare a class
     class base(Component):
         """test class"""
 
     # did my ancestor list get built properly
-    assert base._pyre_configurables == (base, Component)
-    # did the _pyre_Inventory embedded class get built?
-    inventory = base._pyre_Inventory
-    # is it properly subclassed?
-    assert issubclass(inventory, Inventory)
+    assert base.pyre_pedigree == (base, Component)
         
     return base
 

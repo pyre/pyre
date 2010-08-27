@@ -8,38 +8,25 @@
 
 
 """
-Declare a non-trivial interface
+Verify that an exception gets raised when an interface is instantiated
 """
 
 
 def test():
-    # access
-    import pyre.components
-    from pyre.components.Interface import Interface
-    from pyre.components.Property import Property
+    import pyre
 
-    # declare an interface
-    class interface(Interface):
+    # declare
+    class interface(pyre.interface):
         """a trivial interface"""
-        # traits
-        a = Property()
-        b = Property()
-        # interface
-        @pyre.components.provides
-        def behavior(self):
-            """a method required of all compatible implementations"""
+        p = pyre.property()
 
-    # try to instantiate one and catch the exception
-    # NYI: 
-    #     this should be a journal.firewall eventually
-    #     catch the ImportError for now, until journal gets implemented, at which point this
-    #     test will start to fail and it will need fixing
+    # attempt to instantiate
     try:
         interface()
         assert False
     except ImportError:
         pass
-     
+
     return interface
 
 

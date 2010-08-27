@@ -19,14 +19,6 @@ class ComponentError(FrameworkError):
     Base class for component specification errors
     """
 
-    def __init__(self, reason, **kwds):
-        super().__init__(**kwds)
-        self.reason = reason
-        return
-
-    def __str__(self):
-        return self.reason
-
 
 class CategoryMismatchError(ComponentError):
     """
@@ -36,9 +28,9 @@ class CategoryMismatchError(ComponentError):
 
     def __init__(self, configurable, target, name, **kwds):
         reason = (
-            "category mismatch in trait {0!r} between {1._pyre_name!r} and {2._pyre_name!r}"
+            "category mismatch in trait {0!r} between {1.pyre_name!r} and {2.pyre_name!r}"
             .format(name, configurable, target))
-        super().__init__(reason, **kwds)
+        super().__init__(description=reason, **kwds)
 
         self.configurable = configurable
         self.target = target
@@ -53,9 +45,8 @@ class ImplementationSpecificationError(ComponentError):
     errors, e.g. classes that don't derive from Interface
     """
 
-    def __init__(self, name, component, errors, **kwds):
-        reason = "component {0!r} has a poorly formed implementation specification".format(name)
-        super().__init__(reason, **kwds)
+    def __init__(self, name=None, component=None, errors=[], **kwds):
+        super().__init__(description="poorly formed implementation specification", **kwds)
 
         self.component = component
         self.errors = errors
@@ -71,9 +62,9 @@ class InterfaceError(ComponentError):
 
     def __init__(self, component, interface, report, **kwds):
         reason = (
-            "component {0._pyre_family!r} does not implement "
-            "interface {1._pyre_name!r} correctly".format(component, interface))
-        super().__init__(reason, **kwds)
+            "component {0.pyre_name!r} does not implement "
+            "interface {1.pyre_name!r} correctly".format(component, interface))
+        super().__init__(description=reason, **kwds)
         
         self.component = component
         self.interface = interface
@@ -88,11 +79,27 @@ class TraitNotFoundError(ComponentError):
     """
 
     def __init__(self, configurable, name, **kwds):
-        reason = "{0._pyre_name!r} doesn't have a trait named {1!r}".format(configurable, name)
-        super().__init__(reason, **kwds)
+        reason = "{0.pyre_name!r} doesn't have a trait named {1!r}".format(configurable, name)
+        super().__init__(description=reason, **kwds)
 
         self.configurable = configurable
         self.name = name
+
+        return
+
+
+class FacilitySpecificationError(ComponentError):
+    """
+    Exception raised when a facility cannot instantiate its configuration specification
+    """
+
+    def __init__(self, configurable, trait, value, **kwds):
+        reason = "{.pyre_name}.{.name}: could not instantiate {!r}".format(configurable,trait,value)
+        super().__init__(description=reason, **kwds)
+
+        self.configurable = configurable
+        self.trait = trait
+        self.value = value
 
         return
 

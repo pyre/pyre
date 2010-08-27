@@ -6,65 +6,44 @@
 #
 
 
-import collections
-
-
-class Binder(object):
+class Binder:
     """
-    Binder converts trait values from configuration settings to the trait native types
+    The manager of the component interdependencies.
+
+    Binder is responsible for instantiating and validating the values of the traits of
+    components and interfaces.
     """
-
-
-    # public data
-    shelves = None # the index of component sources
 
 
     # interface
-    def retrieveSymbol(self, codec, source, symbol, locator):
+    def bindComponentClass(self, component):
         """
-        Get {codec} to resolve {symbol} either by processing {source} or by retrieving from a
-        previously cached shelf
-        """
-        # check whether we have seen this {source} before
-        try:
-            shelf = self.shelves[source]
-        except KeyError:
-            # if not, get the codec to build a new shelf
-            shelf = codec.decode(source=source, locator=locator)
-            # and cache it
-            self.shelves[source] = shelf
-        # extract the requested symbol
-        descriptor = codec.retrieveSymbol(shelf=shelf, symbol=symbol)
-        # and return it
-        return descriptor
+        Initialize the {component} class record
 
-
-    def bindComponentInstance(self, component, executive):
+        After a component class is bound, its traits are known to be in good state
         """
-        Resolve and convert the current values of the traits of {component} into the native
-        types described by the trait descriptors.
-
-        Properties get cast to the native types. Facilities require more complex processing
-        that involves resolving the component requests into actual class records, instantiating
-        them and binding them to the {component} trait.
-        """
-        # access the component inventory
-        inventory = component._pyre_inventory
-        # iterate over the traits
-        for trait, source in component.pyre_traits(categories=component._pyre_CONFIGURABLE_TRAITS):
-            # print("{._pyre_name!r}: binding {.name!r}".format(component, trait))
-            trait.pyre_assign(configurable=component, node=getattr(inventory, trait.name))
+        # iterate over all the locally declared traits
+        for trait in component.pyre_inventory.keys():
+            # delegate binding activities
+            trait.pyre_bindClass(configurable=component)
         # all done
         return component
 
 
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
+    def bindComponentInstance(self, component):
+        """
+        Initialize the {component} instance
 
-        self.shelves = {}
-
-        return
+        After a component instance is bound, its traits are known to be in good state
+        """
+        # print("Binder.bindComponentInstance: component {.pyre_name!r}".format(component))
+        # iterate over all traits, both local and inherited
+        for trait in component.pyre_getTraitDescriptors():
+            # print("  trait {.name!r}".format(trait))
+            # delegate binding activities
+            trait.pyre_bindInstance(configurable=component)
+        # all done
+        return component
 
 
 # end of file 

@@ -15,7 +15,6 @@ Verify that the Requirement metaclass decorates class records properly
 def test():
     # access
     from pyre.components.Configurable import Configurable
-    from pyre.components.Inventory import Inventory
     from pyre.components.Requirement import Requirement
 
     # declare a class
@@ -23,13 +22,8 @@ def test():
         """test class"""
 
     # did my ancestor list get built properly
-    assert base._pyre_configurables == (base, )
+    assert base.pyre_pedigree == (base, )
 
-    # did the _pyre_Inventory embedded class get built?
-    assert hasattr(base, "_pyre_Inventory")
-    # is it properly subclassed?
-    assert issubclass(base._pyre_Inventory, Inventory)
-        
     return base
 
 

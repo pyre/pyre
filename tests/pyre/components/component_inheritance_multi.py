@@ -8,104 +8,97 @@
 
 
 """
-Exercise multiple inheritance among components
+Verify that multiple inheritance is treated properly
 """
 
 
 def test():
-    # access
-    import pyre.components
-    from pyre.components.Component import Component
-    from pyre.components.Property import Property
+    import pyre
 
-    # declare an component hierarchy
-    class base(Component):
-        # traits
-        common = Property()
-        common.default = "base"
-
-        a1 = Property()
-        a1.default = "base"
-
-        a2 = Property()
-        a2.default = "base"
+    # declare a couple of components
+    class base(pyre.component):
+        """the base component"""
+        common = pyre.property()
+        a1 = pyre.property()
+        a2 = pyre.property()
 
     class a1(base):
-        # traits
-        a1 = Property()
-        a1.default = "a1"
+        a1 = pyre.property()
 
     class a2(base):
-        # traits
-        a2 = Property()
-        a2.default = "a2"
+        a2 = pyre.property()
 
     class derived(a1, a2):
-        """a derived component"""
-        common = Property()
-        common.default = "derived"
-
-        extra = Property()
-        extra.default = "derived"
+        """the derived one"""
+        common = pyre.property()
+        extra = pyre.property()
         
-    # check that everything is as expected with the hierachy
-    assert base._pyre_configurables == (base, Component)
-    assert a1._pyre_configurables == (a1, base, Component)
-    assert a2._pyre_configurables == (a2, base, Component)
-    assert derived._pyre_configurables == (derived, a1, a2, base, Component)
+    # check the basics
+    assert base.__name__ == "base"
+    assert base.__bases__ == (pyre.component,)
+    # check the layout
+    assert base.pyre_name == "base"
+    assert base.pyre_state == "registered"
+    assert base.pyre_namemap == {'common':'common', 'a1':'a1', 'a2':'a2'}
+    assert base.pyre_pedigree == (base, pyre.component)
+    # traits
+    localNames = ['common', 'a1', 'a2']
+    localTraits = tuple(map(base.pyre_getTraitDescriptor, localNames))
+    assert base.pyre_traits == localTraits
+    allNames = localNames + []
+    allTraits = tuple(map(base.pyre_getTraitDescriptor, allNames))
+    assert tuple(base.pyre_getTraitDescriptors()) == allTraits
 
-    # check the _pyre_Inventory constructions
-    # first the expected inheritance relations
-    assert issubclass(base._pyre_Inventory, Component._pyre_Inventory)
-    assert issubclass(a1._pyre_Inventory, base._pyre_Inventory)
-    assert issubclass(a1._pyre_Inventory, Component._pyre_Inventory)
-    assert issubclass(a2._pyre_Inventory, base._pyre_Inventory)
-    assert issubclass(a2._pyre_Inventory, Component._pyre_Inventory)
-    assert issubclass(derived._pyre_Inventory, a1._pyre_Inventory)
-    assert issubclass(derived._pyre_Inventory, a2._pyre_Inventory)
-    assert issubclass(derived._pyre_Inventory, base._pyre_Inventory)
-    assert issubclass(derived._pyre_Inventory, Component._pyre_Inventory)
-    # and, more thoroughly, the __mro__
-    assert base._pyre_Inventory.__mro__ == (
-        base._pyre_Inventory,
-        Component._pyre_Inventory, object)
-    assert a1._pyre_Inventory.__mro__ == (
-        a1._pyre_Inventory, base._pyre_Inventory,
-        Component._pyre_Inventory, object)
-    assert a2._pyre_Inventory.__mro__ == (
-        a2._pyre_Inventory, base._pyre_Inventory,
-        Component._pyre_Inventory, object)
-    assert derived._pyre_Inventory.__mro__ == (
-        derived._pyre_Inventory, a1._pyre_Inventory, a2._pyre_Inventory, base._pyre_Inventory,
-        Component._pyre_Inventory, object)
+    # check the basics
+    assert a1.__name__ == "a1"
+    assert a1.__bases__ == (base,)
+    # check the layout
+    assert a1.pyre_name == "a1"
+    assert a1.pyre_state == "registered"
+    assert a1.pyre_namemap == {'a1':'a1'}
+    assert a1.pyre_pedigree == (a1, base, pyre.component)
+    # traits
+    localNames = ['a1']
+    localTraits = tuple(map(a1.pyre_getTraitDescriptor, localNames))
+    assert a1.pyre_traits == localTraits
+    allNames = localNames + ['common', 'a2']
+    allTraits = tuple(map(a1.pyre_getTraitDescriptor, allNames))
+    assert tuple(a1.pyre_getTraitDescriptors()) == allTraits
 
-    # access the traits of base
-    assert base.common == "base"
-    assert base.a1 == "base"
-    assert base.a2 == "base"
-    # access the traits of a1
-    assert a1.common == "base"
-    assert a1.a1 == "a1"
-    assert a1.a2 == "base"
-    # access the traits of a2
-    assert a2.common == "base"
-    assert a2.a1 == "base"
-    assert a2.a2 == "a2"
-    # access the traits of derived
-    assert derived.common == "derived"
-    assert derived.a1 == "a1"
-    assert derived.a2 == "a2"
-    assert derived.extra == "derived"
+    # check the basics
+    assert a2.__name__ == "a2"
+    assert a2.__bases__ == (base,)
+    # check the layout
+    assert a2.pyre_name == "a2"
+    assert a2.pyre_state == "registered"
+    assert a2.pyre_namemap == {'a2':'a2'}
+    assert a2.pyre_pedigree == (a2, base, pyre.component)
+    # traits
+    localNames = ['a2']
+    localTraits = tuple(map(a2.pyre_getTraitDescriptor, localNames))
+    assert a2.pyre_traits == localTraits
+    allNames = localNames + ['common', 'a1']
+    allTraits = tuple(map(a2.pyre_getTraitDescriptor, allNames))
+    assert tuple(a2.pyre_getTraitDescriptors()) == allTraits
 
-    # make sure derivation did not cause any pollution
-    try:
-        base.extra
-        assert False
-    except AttributeError:
-        pass
+    # check the basics
+    assert derived.__name__ == "derived"
+    assert derived.__bases__ == (a1, a2)
+    # check the layout
+    assert derived.pyre_name == "derived"
+    assert derived.pyre_state == "registered"
+    assert derived.pyre_namemap == {'common':'common', 'extra':'extra'}
+    assert derived.pyre_pedigree == (derived, a1, a2, base, pyre.component)
+    # traits
+    localNames = ['common', 'extra']
+    localTraits = tuple(map(derived.pyre_getTraitDescriptor, localNames))
+    assert derived.pyre_traits == localTraits
+    allNames = localNames + ['a1', 'a2']
+    allTraits = tuple(map(derived.pyre_getTraitDescriptor, allNames))
+    assert tuple(derived.pyre_getTraitDescriptors()) == allTraits
 
     return base, a1, a2, derived
-     
+
 
 # main
 if __name__ == "__main__":

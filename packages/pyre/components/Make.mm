@@ -26,7 +26,6 @@ EXPORT_PYTHON_MODULES = \
     Component.py \
     Configurable.py \
     Facility.py \
-    Inventory.py \
     Interface.py \
     Property.py \
     Registrar.py \
@@ -34,6 +33,7 @@ EXPORT_PYTHON_MODULES = \
     Role.py \
     Trait.py \
     exceptions.py \
+    properties.py \
     __init__.py
 
 

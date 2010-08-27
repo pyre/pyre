@@ -11,9 +11,7 @@
 Tests for all the exceptions raised by this package
 """
 
-
 def test():
-
     from pyre.components.Component import Component
     from pyre.components.exceptions import (
         ComponentError, 
@@ -26,7 +24,7 @@ def test():
     c2 = component(name="c2")
 
     try:
-        raise ComponentError(reason=None)
+        raise ComponentError(description=None)
     except ComponentError as error:
         pass
 

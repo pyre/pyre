@@ -11,27 +11,31 @@ from .Requirement import Requirement
 
 class Role(Requirement):
     """
-    The interface metaclass
+    The metaclass for interfaces
     """
 
 
     # meta methods
-    def __init__(self, name, bases, attributes, **kwds):
+    def __init__(self, name, bases, attributes, hidden=False, **kwds):
         """
         Initialize a new interface class record
         """
         super().__init__(name, bases, attributes, **kwds)
-        # register this interface class
-        self._pyre_executive.registerInterfaceClass(self)
+        # if this interface is not ignorable
+        if not hidden:
+            # register it
+            self.pyre_executive.registerInterfaceClass(self)
         # all done
         return
 
 
-    # disable instatiation of interfaces
     def __call__(self, **kwds):
+        """
+        Disable the instantiation of interface objects
+        """
         import journal
         firewall = journal.firewall("pyre.components")
-        raise firewall.log("interfaces can not be instantiated")
+        raise firewall.log("interfaces cannot be instantiated")
 
 
 # end of file 

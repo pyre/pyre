@@ -8,42 +8,39 @@
 
 
 """
-Verify that the interface compatibility checks are implemented correctly
+Verify that compatibility among interfaces is detected correctly
 """
 
 
 def test():
-    # access
-    import pyre.components
-    from pyre.components.Property import Property
-    from pyre.components.Interface import Interface
+    import pyre
 
-    # declare some interfaces
-    class base(Interface):
-        """a base interface"""
-        common = Property()
+    # declare a couple of interfaces
+    class base(pyre.interface):
+        """the base interface"""
+        common = pyre.property()
 
     class derived(base):
-        """a derived interface, so automatically compatible"""
-        extra = Property()
+        """a derived one, so automatically compatible"""
+        extra = pyre.property()
 
-    class ok(Interface):
-        """one that doesn't, but provides the correct public interface"""
-        common = Property()
+    class ok(pyre.interface):
+        """one that doesn't derive but has the right public interface"""
+        common = pyre.property()
         
-    class notok(Interface):
-        """one that doesn't provide the correct public interface"""
-        what = Property()
-
-    class badtype(Interface):
-        """one that has the right trait, but of the wrong category"""
-        @pyre.components.provides
+    class notok(pyre.interface):
+        """one that doesn't provide the right public interface"""
+        what = pyre.property()
+        
+    class badtype(pyre.interface):
+        """one that has the right trait but of the wrong type"""
+        @pyre.provides
         def common(self):
             """method, not property"""
         
     class shadow(base):
-        """one that has derives, but shadows the trait in an incompatible way"""
-        @pyre.components.provides
+        """one that derives but shadows the trait in an incompatible way"""
+        @pyre.provides
         def common(self):
             """method, not property"""
 

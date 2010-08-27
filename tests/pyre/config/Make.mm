@@ -14,19 +14,19 @@ PROJECT = pyre
 
 all: test
 
-test: sanity configurator calculator commandline
+test: sanity configuration configurator commandline
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./exceptions.py
 
+configuration:
+	${PYTHON} ./configuration.py
+	${PYTHON} ./configuration_assignments.py
+
 configurator:
 	${PYTHON} ./configurator.py
 	${PYTHON} ./configurator_assignments.py
-
-calculator:
-	${PYTHON} ./calculator.py
-	${PYTHON} ./calculator_assignments.py
 
 
 commandline:

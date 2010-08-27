@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the command line parser can be instantiated
+Verify that the pyre executive can communicate with external command line parsers
 """
 
 
@@ -17,9 +17,8 @@ def test():
 
     # get the executive instance
     import pyre
-    executive = pyre.executive()
-    # pull the configutor and calculator
-    calculator = executive.calculator
+    executive = pyre.executive
+    # pull the configutor
     configurator = executive.configurator
     # and a command line parser
     parser = pyre.config.newCommandLineParser()
@@ -38,20 +37,20 @@ def test():
         ]
 
     # get the parser to populate the configurator
-    parser.decode(configurator, commandline)
-    # and transfer the events to the calculator
-    configurator.configure(executive, executive.USER_CONFIGURATION)
+    configuration = parser.decode(commandline)
+    # and transfer the events to the configurator
+    configurator.configure(configuration=configuration, priority=executive.USER_CONFIGURATION)
     # dump the state
-    # calculator._dump()
+    # configurator._dump()
     # and check that the assignments took place
-    assert calculator["help"] == None
-    assert calculator["vtf.nodes"] == "1024"
-    assert calculator["vtf.solid"] == "solvers"
-    assert calculator["vtf.fluid"] == "solvers"
-    assert calculator["vtf.solid.nodes"] == "1024"
-    assert calculator["vtf.fluid.nodes"] == "1024"
-    assert calculator["journal.device"] == "file"
-    assert calculator["journal.debug.main"] == "on"
+    assert configurator["help"] == None
+    assert configurator["vtf.nodes"] == "1024"
+    assert configurator["vtf.solid"] == "solvers"
+    assert configurator["vtf.fluid"] == "solvers"
+    assert configurator["vtf.solid.nodes"] == "1024"
+    assert configurator["vtf.fluid.nodes"] == "1024"
+    assert configurator["journal.device"] == "file"
+    assert configurator["journal.debug.main"] == "on"
 
     # and return the managers
     return executive, parser

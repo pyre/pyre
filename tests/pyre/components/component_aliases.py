@@ -16,19 +16,16 @@ import pyre
 
 
 def test():
-    from pyre.components.Component import Component
-    from pyre.components.Property import Property
+    import pyre
 
-    class gaussian(Component, family="functor"):
+    class gaussian(pyre.component, family="functor"):
         """a representation of a gaussian function"""
 
         # properties
-        mean = Property()
-        mean.default = "0.01"
+        mean = pyre.properties.float(default="0.01")
         mean.aliases.add("μ")
 
-        spread = Property()
-        spread.default = "0.01"
+        spread = pyre.properties.float(default="0.01")
         spread.aliases.add("σ")
        
         # behaviors
@@ -37,10 +34,8 @@ def test():
             return x
       
     # check that the aliases were properly registered
-    assert gaussian.pyre_normalizeName("mean") == "mean"
-    assert gaussian.pyre_normalizeName("μ") == "mean"
-    assert gaussian.pyre_normalizeName("spread") == "spread"
-    assert gaussian.pyre_normalizeName("σ") == "spread"
+    assert gaussian.pyre_getTraitDescriptor("mean") == gaussian.pyre_getTraitDescriptor("μ")
+    assert gaussian.pyre_getTraitDescriptor("spread") == gaussian.pyre_getTraitDescriptor("σ")
     # print out the configuration state
     # print("gaussian: defaults: mean={0.mean!r}, spread={0.spread!r}".format(gaussian))
     # calculator = pyre.executive().calculator
@@ -49,8 +44,8 @@ def test():
 
     # check the class defaults
     # the values come from the defaults, functor.pml in this directory, and the command line
-    assert gaussian.mean == '0.10'
-    assert gaussian.spread == '0.54'
+    assert gaussian.mean == 0.1
+    assert gaussian.spread == 0.54
     # reset them to something meaningful
     gaussian.μ = 0.0
     gaussian.σ = 1.0
@@ -61,8 +56,8 @@ def test():
     # instantiate one
     g = gaussian(name="gaussian")
     # make sure the defaults were transferred correctly
-    assert g.mean == "0.56"
-    assert g.spread == '0.10'
+    assert g.mean == 0.56
+    assert g.spread == 0.10
     # use the canonical names to reconfigure
     g.mean = 1.0
     g.spread = 2.0

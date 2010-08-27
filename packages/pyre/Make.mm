@@ -12,7 +12,6 @@ PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
 
 RECURSE_DIRS = \
     calc \
-    codecs \
     components \
     config \
     constraints \
@@ -22,8 +21,8 @@ RECURSE_DIRS = \
     patterns \
     schema \
     tracking \
-    xml \
     units \
+    xml \
 
 
 #--------------------------------------------------------------------------
@@ -45,7 +44,6 @@ distclean::
 # export
 
 EXPORT_PYTHON_MODULES = \
-    exceptions.py \
     __init__.py
 
 

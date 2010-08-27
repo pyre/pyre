@@ -11,43 +11,39 @@ from ..patterns.Singleton import Singleton
 
 
 class Pyre(Executive, metaclass=Singleton):
-
     """
     The framework executive singleton
     """
 
 
-    # the start up sequence
+    # the startup sequence
     def boot(self):
         """
         Perform all the default initialization steps
         """
-        # install the default configuration settings
-        import pyre
-        self.calculator["pyre.home"] = pyre.home()
-        self.calculator["pyre.prefix"] = pyre.prefix()
-
-        # read and apply settings from the default configuration files
-        for folder in self.configpath:
-            source = self.fileserver.PATH_SEPARATOR.join([folder, self.bootup])
-            try:
-                self.loadConfiguration(uri=source, priority=self.BOOT_CONFIGURATION)
-            except self.fileserver.NotFoundError as error:
-                # ignore nonexistent files
-                pass
-
         # process the command line
         import sys
         from . import newCommandLineParser
         # build a command line parser
         parser = newCommandLineParser()
         # parse the command line
-        parser.decode(self.configurator, sys.argv[1:])
+        configuration = parser.decode(sys.argv[1:])
         # get the configurator to update my configuration
-        self.configurator.configure(executive=self, priority=self.USER_CONFIGURATION)
+        self.configurator.configure(configuration=configuration, priority=self.USER_CONFIGURATION)
 
+        # read and apply settings from the default configuration files
+        for folder in self.configpath:
+            for configfile  in self.bootconf:
+                source = self.fileserver.PATH_SEPARATOR.join([folder, configfile])
+                # print("Pyre.boot: loading {!r}".format(source))
+                try:
+                    self.loadConfiguration(uri=source, priority=self.BOOT_CONFIGURATION)
+                except self.fileserver.NotFoundError as error:
+                    # print("Pyre.boot: {!r} not found".format(source))
+                    # ignore non-existent files
+                    pass
         # ready to go
-        return
+        return self
 
 
     # meta methods
@@ -59,7 +55,7 @@ class Pyre(Executive, metaclass=Singleton):
 
 
     # constants
-    bootup = "pyre.pml"
+    bootconf = ("pyre.pml",)
 
 
 # end of file 

@@ -1,0 +1,53 @@
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2010 all rights reserved
+#
+
+
+
+from ..Codec import Codec
+
+
+class PML(Codec):
+    """
+    This package contains the implementation of the pml reader and writer
+    """
+
+
+    # constants
+    encoding = "pml"
+
+
+    # interface
+    def decode(self, source, locator=None):
+        """
+        Parse {source} and return its contents
+        """
+        # get access to the XML package
+        import pyre.xml
+        # and the pml document
+        from .Document import Document
+        # make a reader
+        reader = pyre.xml.newReader()
+        # parse the contents
+        try:
+            # harvest the configuration events in the source
+            configuration = reader.read(stream=source, document=Document())
+        except reader.ParsingError as error:
+            # adjust the locator if necessary
+            if locator:
+                loc = pyre.tracking.chain(this=error.locator, next=locator)
+            else:
+                loc = error.locator
+            uri = error.locator.source
+            msg = "decoding error in {}: {}".format(loc, error.description)
+            # convert the parsing error into a decoding error and raise it
+            raise self.DecodingError(
+                codec=self, uri=uri, locator=loc, description=msg) from error
+        # all done; return the harvested events
+        return configuration
+
+
+# end of file

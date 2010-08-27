@@ -8,43 +8,37 @@
 
 
 """
-Exercise component inheritance
+Verify that the trait defaults get registered correctly
 """
 
 
 def test():
-    # access
-    from pyre.components.Property import Property
-    from pyre.components.Component import Component
+    import pyre
 
-    # declare an component
-    class base(Component):
-        """a base component"""
-        # traits
-        common = Property()
+    # declare a couple of components
+    class base(pyre.component):
+        """the base component"""
+        common = pyre.property()
         common.default = "base.common"
 
-    # and derive another from it
     class derived(base):
-        """a derived component"""
-        # traits
-        extra = Property()
+        """the derived one"""
+        extra = pyre.property()
         extra.default = "derived.extra"
 
     # check that the defaults are readable
     assert base.common == "base.common"
-    assert derived.common == "base.common"
     assert derived.extra == "derived.extra"
-    # check that the defaults are writable
+    assert derived.common == "base.common"
+    # check that the defaults are writeable
     base.common = "base:common"
-    derived.common = "base:common"
+    derived.common = "derived:common"
     derived.extra = "derived:extra"
-    # check that the defaults were recorded properly
+    # check that they were recorded properly
     assert base.common == "base:common"
-    assert derived.common == "base:common"
+    assert derived.common == "derived:common"
     assert derived.extra == "derived:extra"
 
-        
     return base, derived
 
 

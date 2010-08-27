@@ -7,62 +7,64 @@
 
 
 from .Requirement import Requirement
+from .Role import Role
 
 
 class Actor(Requirement):
     """
-    The component metaclass.
+    The metaclass of components
 
-    Takes care of all the tasks necessary to convert a component declaration into a
-    configurable entity that fully coöperates with the framework
-
-    The correct implementation relies on the coöperation of the trait descriptors and interface
-    decorators from pyre.schema to endow the attribute declarations with a _pyre_category that
-    enables the trait classification. See pyre.components.Requirement and
-    pyre.patterns.AttributeClassifier for the details of how this is accomplished.
+    {Actor} takes care of all the tasks necessary to convert a component declaration into a
+    configurable entity that coöperates fully with the framework
     """
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, family=None, implements=None, core=None, **kwds):
+    def __new__(cls, name, bases, attributes, *, family=None, implements=None, **kwds):
         """
-        Build the class record
+        Build a new component class record
 
         parameters:
-            {cls}: the metaclass invoked; guaranteed to be a Requirement descendant
-            {name}: the name of the class being built
-            {bases}: a tuple of the base classes from which {cls} derives
-            {attributes}: a _pyre_AttributeFilter instance with the {cls} attributes
-
-            {implements}: a tuple of the interfaces that this component is known to implement
-            {core}: wrap this components around the class {core} that provides interface
-                    implementation
+            {cls}: the metaclass invoked; guaranteed to be a descendant of {Actor}
+            {name}, {bases}, {attributes}: the usual class specification
+            {family}: the public name of this component class; used to configure it
+            {implements}: the tuple of interfaces that this component is known to implement
         """
-        # get my ancestor to build the class record
+        # record the public name
+        attributes["pyre_family"] = family.split(cls.pyre_SEPARATOR) if family else []
+        # get my ancestors to build the class record
         component = super().__new__(cls, name, bases, attributes, **kwds)
-        # record the family name
-        component._pyre_family = family.split(cls._pyre_FAMILY_SEPARATOR) if family else ()
-        # build the implementation specification
-        interface = cls._pyre_buildImplementationSpecification(name, component, bases, implements)
+        # build the interface specification
+        try:
+            interface = cls.pyre_buildImplementationSpecification(bases, implements)
+        except cls.ImplementationSpecificationError as error:
+            error.name = name
+            error.component = component
+            error.description = "{}: {}".format(name, error.description)
+            raise
+        # and add it to the attributes
+        component.pyre_implements = interface
+        # if an interface spec was derivable from the declaration, check interface compatibility 
         if interface:
             # check whether the requirements were implemented correctly
             check = component.pyre_isCompatible(interface)
             if not check:
                 raise cls.InterfaceError(component, interface, check)
-            # and record the implementation specification
-            component._pyre_implements = interface
-        # pass it on
+        # and pass the component on
         return component
 
 
-    def __init__(self, name, bases, attributes, **kwds):
+    def __init__(self, name, bases, attributes, hidden=False, **kwds):
         """
         Initialize a new component record
         """
         # initialize the record
         super().__init__(name, bases, attributes, **kwds)
-        # register this component class record
-        self._pyre_executive.registerComponentClass(self)
+        # if this component class is not hidden
+        if not hidden:
+            # register it with the executive
+            self.pyre_executive.registerComponentClass(self)
+        # all done
         return
 
 
@@ -70,12 +72,12 @@ class Actor(Requirement):
         """
         Initialize a new component instance
         """
-        # build the instance
-        instance = super().__call__(**kwds)
+        # build the component instance
+        component = super().__call__(**kwds)
         # register this instance
-        self._pyre_executive.registerComponentInstance(instance)
+        self.pyre_executive.registerComponentInstance(component)
         # all done
-        return instance
+        return component
 
 
     def __setattr__(self, name, value):
@@ -84,77 +86,67 @@ class Actor(Requirement):
         value using the natural syntax
         """
         # bypass while the class record is being built
-        if self._pyre_state is None:
+        if self.pyre_state is None:
             super().__setattr__(name, value)
             return
-        # if we get here, the pyre.components.Registrar instance of the pyre executive has
-        # marked the class record as registered
+        # if we get here, the {Registrar} has marked this instance as registered
         # check whether the name corresponds to a trait
         try:
-            canonical = self.pyre_normalizeName(name)
-        except self.TraitNotFoundError:
-            # if not, treat this as a normal assignment
+            trait = self.pyre_getTraitDescriptor(alias=name)
+        # if it doesn't, bypass
+        except self.TraitNotFoundError as error:
             super().__setattr__(name, value)
             return
-        # so this must be a trait; get the descriptor
-        trait = self.pyre_getTraitDescriptor(canonical)
-        # store the value with the inventory class
-        getattr(self._pyre_Inventory, canonical).value = value
+        # so, the name resolved to a trait
+        # use it to set the value
+        trait.__set__(instance=self, value=value)
         # and return
         return
 
 
     # implementation details
     @classmethod
-    def _pyre_buildImplementationSpecification(cls, name, component, bases, implements):
+    def pyre_buildImplementationSpecification(cls, bases, implements):
         """
-        Build a class that describes the implementation requirements for this component
-
-        This is done by deriving a class out of whatever interfaces are listed explicitly in
-        {implements} and the implementation specification of all the ancestors in {bases}
-
-        parameters:
-          {component}: the component record we are building
-          {bases}: the tuple of direct bases of the component record we are building
-          {implements}: the interfaces mentioned in the declaration of this component
+        Build a class that describes the implementation requirements imposed on this
+        {component}, given its class record and the list of interfaces it {implements}
         """
-        # pull in the Interface class
-        from .Interface import Interface
-        # the set of interfaces implemented by this component
-        interfaces = set()
+        # initialize the list of interfaces
+        interfaces = []
         # try to understand what the component author specified
         if implements is not None:
-            # accumulator for bad interfaces
+            # accumulator for the interfaces {component} doesn't implement correctly
             errors = []
-            # if implements is a single interface, add it to the pile
-            # check that implements is a class before feeding it issubclass
-            if isinstance(implements, type) and issubclass(implements, Interface):
-                interfaces.add(implements)
+            # if {implements} is a single interface, add it to the pile
+            if isinstance(implements, Role):
+                interfaces.append(implements)
+            # the only legal alternative is an iterable of Interface subclasses
             else:
-                # the only legal alternative is an iterable of Interface descendants
                 try:
                     for interface in implements:
-                        if issubclass(interface, Interface):
-                            interfaces.add(interface)
+                        # if it's an actual Interface subclass
+                        if isinstance(interface, Role):
+                            # add it to the pile
+                            interfaces.append(interface)
+                        # otherwise, place it in the error bin
                         else:
                             errors.append(interface)
-                except TypeError:
+                # if {implemenents} is not iterable
+                except TypeError as error:
+                    # put it in the error bin
                     errors.append(implements)
-            # report the error we encountered
+            # report the errors we encountered
             if errors:
-                raise cls.ImplementationSpecificationError(name, component, errors)
-        # now, extract commitments made by my ancestors that are components
-        interfaces |= {
-            base._pyre_implements for base in bases
-            if isinstance(base, cls) and base._pyre_implements is not None }
-        # bail out if we couldn't find any interfaces
-        if not interfaces:
-            return None
-        # otherwise, derive a class from them and return it as the implementation specification
-        from .Role import Role
-        return Role(
-            "_pyre_Interface",
-            tuple(interfaces), cls._pyre_AttributeFilter(cls._pyre_CLASSIFIER_NAME))
+                raise cls.ImplementationSpecificationError(errors=errors)
+        # now, add the commitments made by my immediate ancestors
+        interfaces += [
+            base.pyre_implements for base in bases
+            if isinstance(base, cls) and base.pyre_implements is not None ]
+        # bail out if we didn't manage to find eny interfaces
+        if not interfaces: return None
+        # otherwise, derive an interface from the harvested ones and return it as the
+        # implementation specification
+        return Role("Interface", tuple(interfaces), dict(), hidden=True)
 
 
     # exceptions

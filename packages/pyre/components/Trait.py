@@ -6,10 +6,10 @@
 #
 
 
-from ..patterns.Named import Named
+from ..patterns.AttributeClassifier import AttributeClassifier
 
 
-class Trait(Named):
+class Trait(AttributeClassifier.pyre_Descriptor):
     """
     This is the base class for component features that form their public interface
 
@@ -28,11 +28,18 @@ class Trait(Named):
 
     # public data
     name = None # my canonical name; set at construction time or binding name
+    configurable = None # the class where my declaration was found
     aliases = None # the set of alternative names by which I am accessible
     tip = None # a short description of my purpose and constraints; see doc below
 
+    # framework data
+    # access to the framework executive; patched by the bootstrapping code in pyre/__init__.py
+    pyre_executive = None
+    # predicate that indicates whether this trait is subject to runtime configuration
+    pyre_isConfigurable = True
 
-    # wire doc to __doc__ so help can decorate properly without disturbing the trait declaration
+
+    # wire doc to __doc__ so the bultin help can decorate the attributes properly
     @property
     def doc(self):
         """
@@ -50,16 +57,40 @@ class Trait(Named):
 
 
     # interface 
-    def pyre_attach(self, configurable):
+    def pyre_normalize(self, configurable):
         """
-        Attach me to the given {configurable} class record.
+        Look through the metadata harvested from the class declaration and perform any
+        necessary cleanup
+        """
+        # remember where i was declared
+        self.configurable = configurable
+        # update my aliases to include my canonical name
+        self.aliases.add(self.name)
+        # update the namemap of the configurable
+        configurable.pyre_namemap.update({alias: self.name for alias in self.aliases})
+        # all done
+        return self
 
-        This is invoked by pyre.components.Requirement while processing the trait declarations
-        in {configurable} after the pyre_Inventory class has been inserted in the class
-        dictionary. No instances of {configurable} can possibly exist at this point, so careful
-        when looking through the {configurable} attributes.
+
+    def pyre_embed(self, configurable):
         """
-        return
+        Attach any metadata harvested by the requirement metaclass
+        """
+        return self
+
+
+    def pyre_bindClass(self, configurable):
+        """
+        Resolve and convert the current value of this trait of {configurable} into my native type
+        """
+        return configurable
+
+
+    def pyre_bindInstance(self, configurable):
+        """
+        Resolve and convert the current value of this trait of {configurable} into my native type
+        """
+        return configurable
 
 
     # meta methods
@@ -67,10 +98,6 @@ class Trait(Named):
         super().__init__(name=name, **kwds)
         self.aliases = set()
         return
-
-
-    # framework data
-    _pyre_category = "traits"
 
 
 # end of file 

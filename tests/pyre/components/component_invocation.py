@@ -13,12 +13,10 @@ Check that a component's behaviors are callable
 
 
 def test():
-    import pyre.components
-    from pyre.components.Component import Component
-    from pyre.components.Property import Property
+    import pyre
 
     # declare a component
-    class component(Component):
+    class component(pyre.component):
         """a test component"""
         # behavior
         @pyre.components.export

@@ -5,9 +5,8 @@
 # (c) 1998-2010 all rights reserved
 #
 
-
 """
-This packages contains the various top level framework managers.
+This package contains the various top level framework managers.
 
 This is the home of the pyre executive, a singleton that provides access to all pyre framework
 services. Use pyre.executive() to gain access to this object. The remainder of the classes that
@@ -29,15 +28,15 @@ def executive(**kwds):
     return Pyre(**kwds)
 
 
-# factories for other managers
-def newCalculator(**kwds):
-    from ..config import newCalculator
-    return newCalculator(**kwds)
+# the factories of the various managers
+def newBinder(**kwds):
+    from .Binder import Binder
+    return Binder(**kwds)
 
 
 def newCodecManager(**kwds):
-    from ..codecs import newManager
-    return newManager(**kwds)
+    from ..config import newCodecManager
+    return newCodecManager(**kwds)
 
 
 def newCommandLineParser(**kwds):
@@ -45,24 +44,19 @@ def newCommandLineParser(**kwds):
     return newCommandLineParser(**kwds)
 
 
+def newComponentRegistrar(**kwds):
+    from ..components import newRegistar
+    return newRegistar(**kwds)
+
+
 def newConfigurator(**kwds):
     from ..config import newConfigurator
     return newConfigurator(**kwds)
 
 
-def newBinder(**kwds):
-    from .Binder import Binder
-    return Binder(**kwds)
-
-
 def newFileServer(**kwds):
     from .FileServer import FileServer
     return FileServer(**kwds)
-
-
-def newComponentRegistrar(**kwds):
-    from ..components import newRegistrar
-    return newRegistrar(**kwds)
 
 
 # end of file 

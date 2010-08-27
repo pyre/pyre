@@ -10,7 +10,7 @@ import itertools
 import pyre.tracking
 
 
-class CommandLine(object):
+class CommandLine:
     """
     Support for parsing the application command line
 
@@ -56,15 +56,23 @@ class CommandLine(object):
     locator = staticmethod(pyre.tracking.newCommandLocator)
 
 
+    # types
+    from .Configuration import Configuration
+
+
     # interface
-    def decode(self, configurator, argv):
+    def decode(self, source, locator=None):
         """
-        Harvest the configuration events in {argv} and store them in {configurator}
+        Harvest the configuration events in {argv} and store them in a {configuration}
 
         parameters:
-            {argv}: a container of strings of the form "--key=value"
-            {configurator}: a pyre.config.Configurator compatible instance
+            {source}: a container of strings of the form "--key=value"
+            {locator}: an optional locator; not used by this decoder
         """
+        # the source is really an iterable of strings
+        argv = source
+        # buld a configuration object to store the processed commandline
+        configuration = self.Configuration()
         # run through the command line
         for index,arg in enumerate(argv):
             # look for an assignment
@@ -75,20 +83,19 @@ class CommandLine(object):
                 key = match.group("key")
                 value = match.group("value")
                 if key == 'config':
-                    configurator.recordConfigurationSource(
-                        source=value, locator=self.locator(arg=index))
+                    configuration.newSource(source=value, locator=self.locator(arg=index))
                 elif key:
                     # if a key were specified
-                    self._processAssignments(configurator, key,value, self.locator(arg=index))
+                    self._processAssignments(configuration, key,value, self.locator(arg=index))
                 else:
                     # we ran in to a '-' or '--' that signals the end of configuration options
-                    self._processArguments(configurator, *argv[index+1:])
+                    self._processArguments(configuration, *argv[index+1:])
                     break
             # else it must be a regylar command line argument
             else:
-                self._processArguments(configurator, arg)
-        # all done; return the configurator
-        return configurator
+                self._processArguments(configuration, arg)
+        # all done; return the configuration
+        return configuration
 
 
     def buildScanners(self):
@@ -129,7 +136,7 @@ class CommandLine(object):
 
 
     # implementation details
-    def _processAssignments(self, configurator, key, value, locator):
+    def _processAssignments(self, configuration, key, value, locator):
         """
         Handler for command line arguments that were interpreted as assignments
 
@@ -148,14 +155,14 @@ class CommandLine(object):
         # now, form all the specified addresses by computing the cartesian product
         for spec in itertools.product(*fields):
             # create a new assignment
-            configurator.recordAssignment(key=spec, value=value, locator=locator)
+            configuration.newAssignment(key=spec, value=value, locator=locator)
         # all done
         return
 
 
-    def _processArguments(self, configurator, *args):
+    def _processArguments(self, configuration, *args):
         """
-        Interpret {args} as application commands and store them in {configurator}
+        Interpret {args} as application commands and store them in {configuration}
         """
 
 

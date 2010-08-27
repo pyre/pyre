@@ -9,7 +9,7 @@
 import collections
 
 
-class CompatibilityReport(object):
+class CompatibilityReport:
     """
     Class that holds the assignment incompatibilities between to configurables
     """

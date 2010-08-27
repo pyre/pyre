@@ -9,47 +9,64 @@
 import os
 import re
 import itertools
-import pyre.framework
 
 
-class Executive(object):
-
+class Executive:
     """
-    The top level framework object.
+    The top level framework object
 
-    Executive maintains the following suite of objects that provide the various mechanisms and
-    policies that enable pyre applications:
+    This class maintains a suite of managers that are responsible for the various mechanisms
+    and policies that enable pyre applications. The Executive orchestrtes their interactions
+    and provides the top level interface of the framework.
 
-        NYI:
+    The actual executive is an instance of the class Pyre, also in this package. Pyre is a
+    singleton that is accessible as pyre.executive. For more details, see Pyre.py and
+    __init__.py in this package.
     """
 
 
     # public data
-    # paths
     configpath = ()
     # managers
-    binder = None # responsible for the casting and validation of user input
-    calculator = None # responsible for the framework evaluation model
-    codecs = None # the registrar of configuration file parsers
-    configurator = None # the accumulator of raw input from configuration sources
-    fileserver = None # my virtual filesystem
-    registrar = None # the component class and instance registrar
+    binder = None
+    codex = None
+    configurator = None
+    fileserver = None
+    registrar = None
     # book keeping
-    packages = () # the set of configured packages
-
+    packages = None
 
     # constants
     path = ("vfs:///pyre/system", "vfs:///pyre/user", "vfs:///local")
-
-    # priority levels for various configuration sources
-    BOOT_CONFIGURATION = 0 # defaults from the component declarations
+    # priority levels for the various configuration sources
+    DEFAULT_CONFIGURATION = -1 # defaults from the component declarations
+    BOOT_CONFIGURATION = 0 # configuration from the standard pyre boot files
     PACKAGE_CONFIGURATION = 5 # configuration from package files
     USER_CONFIGURATION = 10 # configurations supplied by the end user
     EXPLICIT_CONFIGURATION = 15 # programmatic overrides
 
 
-    # interface
-    # retrieval
+    # external interface
+    def loadConfiguration(self, uri, priority=USER_CONFIGURATION, locator=None):
+        """
+        Load configuration settings from {uri} and insert them in the configuration database
+        with the given {priority}.
+        """
+        # decode the uri
+        scheme, address, fragment = self.parseURI(uri)
+        # get the fileserverto  deduce the encoding and produce the input stream
+        encoding, source = self.fileserver.open(scheme, address=address)
+        # instantiate the requested reader
+        reader = self.codex.newCodec(encoding)
+        # extract the configuration setting from the source
+        configuration = reader.decode(source=source, locator=locator)
+        # update the evaluation model
+        self.configurator.configure(configuration=configuration, priority=priority)
+        # all done
+        return
+
+
+    # support for the various internal requests
     def retrieveComponentDescriptor(self, uri, locator=None):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
@@ -62,7 +79,7 @@ class Executive(object):
         path. The corresponding codec uses the interpreter to import the symbol {symbol} using
         {address} to access the containing module. For example, the {uri}
 
-            import://package.subpackage.module#myFactory
+            import://package.subpackage.module.myFactory
 
         is treated as if the following statement had been issued to the interpreter
 
@@ -78,124 +95,59 @@ class Executive(object):
             file:///local/sample.odb#myFactory
 
         expects that the fileserver can resolve the address local/sample.odb into a valid file,
-        that there is a codec registered with the executive.codecs manager that can handle the
+        that there is a codec registered with the executive.codex manager that can handle the
         odb encoding, and can produce the symbol myFactory
 
         The symbol referenced by the {symbol} fragment must be a callable that can produce
-        component instances given the name of the component instance as its sole argument. For
-        example
+        component class records when called. For example
 
             from pyre.components.Component import Component
             class mine(Component): pass
-            def myFactory(name):
-                return mine(name)
+            def myFactory():
+                return mine
 
         would be valid contents for an accessible module or an odb file.
         """
         # parse the {uri}
         scheme, address, symbol = self.parseURI(uri)
+        # print("Executive:retrieveComponentDescriptor: scheme={!r}, address={!r}, symbol={!r}".
+              # format(scheme, address, symbol))
         # if the scheme is "import"
         if scheme == "import":
             # use the address as the shelf hash key
             source = address
-            # build the codec
-            codec = self.codecs.newCodec(encoding=scheme)
+            # deduce the implied encoding
+            encoding = scheme
         # otherwise, expect the scheme to be "file"
         elif scheme == "file":
             # look up the address 
             source = self.fileserver[address]
             # split the address into two parts
-            path,encoding = os.path.splitext(address)
-            # use the extension to build the codec; don't forget to skip past the '.'
-            codec = self.codecs.newCodec(encoding=encoding[1:])
+            path, encoding = os.path.splitext(address)
+            # don't forget to skip past the '.'
+            encoding = encoding[1:]
         # otherwise, raise a firewall
         else:
             import journal
-        # now, get the binder to retrieve the descriptor
-        descriptor = self.binder.retrieveSymbol(
-            codec=codec, source=source, symbol=symbol, locator=locator)
-        # NYI: verify that it is a callable
+
+        # use the encoding to build the necessary codec to process this source
+        codec = self.codex.newCodec(encoding=encoding)
+        # check whether we have processed this source before
+        try:
+            # get the shelf
+            shelf = self.shelves[source]
+        # nope, it's the first time
+        except KeyError:
+            # extract the shelf
+            shelf = codec.decode(source=source, locator=locator)
+            # and cache it
+            self.shelves[source] = shelf
+        # now, retrieve the descriptor
+        descriptor = codec.retrieveSymbol(shelf=shelf, symbol=symbol)
         # and return it
         return descriptor
             
 
-    # registration
-    def registerComponentClass(self, component):
-        """
-        Register the {component} class record
-        """
-        # get the component class registered
-        self.registrar.registerComponentClass(component)
-        # invoke the class registration hook
-        component.pyre_prepareClass(executive=self)
-        # configure; do this before component class initialization
-        self.loadPackageConfiguration(component)
-        # transfer the configuration settings to the class properties
-        self.calculator.configureComponentClass(executive=self, component=component)
-        # invoke the class configuration hook
-        component.pyre_configureClass(executive=self)
-        # and hand back the class record
-        return component
-
-
-    def registerComponentInstance(self, component):
-        """
-        Register the {component} instance
-        """
-        # get the instance registered
-        self.registrar.registerComponentInstance(component)
-        # invoke the registration hook
-        component.pyre_prepare(executive=self)
-        # transfer the configuration settings to the instance properties
-        self.calculator.configureComponentInstance(executive=self, component=component)
-        # invoke the configuration hook
-        component.pyre_configure(executive=self)
-        # bind the configuration settings to the component
-        # currently, this is a required step so that component instances can have their
-        # properties propely cast to their native types
-        # NYI: rethink this process
-        self.binder.bindComponentInstance(executive=self, component=component)
-        # invoke the binding hook
-        component.pyre_bind(executive=self)
-        # todo
-        print("NYI: component instance initialization")
-        # and hand the instance back
-        return component
-
-
-    def registerInterfaceClass(self, interface):
-        """
-        Register the given interface class record
-        """
-        # not much to do with interfaces
-        # just forward the request to the component registar
-        self.registrar.registerInterfaceClass(interface)
-        # invoke the class registration hook
-        interface.pyre_prepareClass(executive=self)
-        # and hand back the interface class
-        return interface
-
-
-    # configuration
-    def loadConfiguration(self, uri, priority=USER_CONFIGURATION , locator=None):
-        """
-        Load configuration settings from {uri}.
-        """
-        # decode the uri
-        scheme, address, fragment = self.parseURI(uri)
-        # get the fileserver to deduce the encoding and produce the input stream
-        encoding, source = self.fileserver.open(scheme=scheme, address=address)
-        # instantiate the requested reader
-        reader = self.codecs.newCodec(encoding)
-        # decode the configuration stream
-        reader.decode(configurator=self.configurator, stream=source, locator=locator)
-        # get the configurator to update the evaluation model
-        self.configurator.configure(executive=self, priority=priority)
-        # all done
-        return
-
-
-    # configuration and initialization of component classes
     def loadPackageConfiguration(self, component):
         """
         Locate and load the configuration files for the package to which {component} belongs
@@ -216,7 +168,7 @@ class Executive(object):
         if package in self.packages: return
         # we have a package name
         # form all possible filenames for the configuration files
-        scope = itertools.product(reversed(self.configpath), [package], self.codecs.getEncodings())
+        scope = itertools.product(reversed(self.configpath), [package], self.codex.getEncodings())
         # attempt to load the configuration settings
         for path, filename, extension in scope:
             # construct the actual filename
@@ -229,6 +181,63 @@ class Executive(object):
 
         # all done
         return component
+
+
+    # registration of configurables
+    def registerComponentClass(self, component):
+        """
+        Register the {component} class record
+        """
+        # register the component
+        self.registrar.registerComponentClass(component)
+        # invoke the registration hook
+        component.pyre_registerClass(executive=self)
+        # load the package configuration; must do this before configuring the class
+        self.loadPackageConfiguration(component)
+        # populate the class defaults with the configuration information
+        self.configurator.configureComponentClass(component)
+        # invoke the configuration hook
+        component.pyre_configureClass(executive=self)
+        # bind the component
+        self.binder.bindComponentClass(component)
+        # invoke the initialization hook
+        component.pyre_initializeClass(executive=self)
+        # and hand back the class record
+        return component
+
+
+    def registerComponentInstance(self, component):
+        """
+        Register the {component} instance
+        """
+        # register the component instance
+        self.registrar.registerComponentInstance(component)
+        # invoke the registration hook
+        component.pyre_register(executive=self)
+        # configure it
+        self.configurator.configureComponentInstance(component)
+        # invoke the configuration hook
+        component.pyre_configure(executive=self)
+        # bind the component
+        self.binder.bindComponentInstance(component)
+        # invoke the binding hook
+        component.pyre_bind(executive=self)
+        # invoke the initialization hook
+        component.pyre_initialize(executive=self)
+        # and hand the instance back to the caller
+        return component
+
+
+    def registerInterfaceClass(self, interface):
+        """
+        Register the {interface} class record
+        """
+        # register the interface
+        self.registrar.registerInterfaceClass(interface)
+        # invoke the registration hook
+        interface.pyre_registerClass(executive=self)
+        # and hand back the class record
+        return interface
 
 
     # utilities
@@ -256,27 +265,28 @@ class Executive(object):
 
 
     # meta methods
-    def __init__(self, **kwds):
+    def __init__(self, managers, **kwds):
         super().__init__(**kwds)
-        # my codec manager
-        self.codecs = pyre.framework.newCodecManager()
-        # my virtual filesystem
-        self.fileserver = pyre.framework.newFileServer()
 
+        # the manager of the component interdependencies
+        self.binder = managers.newBinder()
+        # my codec manager
+        self.codex = managers.newCodecManager()
         # my configuration manager
-        self.configurator = pyre.framework.newConfigurator()
-        # the manager of configuration nodes
-        self.calculator = pyre.framework.newCalculator()
+        self.configurator = managers.newConfigurator(executive=self)
+        # the manager of my virtual filesystem
+        self.fileserver = managers.newFileServer()
         # the component registrar
-        self.registrar = pyre.framework.newComponentRegistrar()
-        # the trait binder
-        self.binder = pyre.framework.newBinder()
+        self.registrar = managers.newComponentRegistrar()
 
         # prime the configuration folder list
         self.configpath = list(self.path)
 
-        # the set of known packages
+        # initialize the set of known packages
         self.packages = set()
+
+        # initialize the set of known configuration sources
+        self.shelves = {}
 
         # all done
         return
@@ -284,7 +294,7 @@ class Executive(object):
 
     # exceptions
     from .exceptions import FrameworkError, BadResourceLocatorError
-    from ..codecs.exceptions import DecodingError
+    from ..config.exceptions import DecodingError
 
 
     # private data

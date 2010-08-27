@@ -10,24 +10,25 @@ from .Actor import Actor
 from .Configurable import Configurable
 
 
-class Component(Configurable, metaclass=Actor):
+class Component(Configurable, metaclass=Actor, hidden=True):
     """
     The base class for all components
     """
 
 
-    # framework data
-    _pyre_name = None # my public name
-    _pyre_family = () # my public name
-    _pyre_implements = None # the list of interfaces implemented by this component
-    _pyre_configurables = None # a tuple of all my ancestors that derive from Configurable
-
-    _pyre_traits = None # a list of the traits found in my declaration
-    _pyre_inventory = None # per-instance storage for trait values; built by Actor
+    # framework data; inherited from Configurable and repeated here for clarity
+    pyre_name = None # the public id of my instances
+    pyre_traits = None # a tuple of all the traits in my declaration
+    pyre_pedigree = None # a tuple of ancestors that are themselves configurables
+    pyre_state = None # track progress through the bootsrapping process
+    pyre_inventory = None # storage for my configurable state
+    # extras
+    pyre_family = () # my spot in the package hierarchy
+    pyre_implements = None # the interface specification built at compile time by the metaclass
 
 
     # framework notifications
-    def pyre_prepare(self, executive):
+    def pyre_register(self, executive):
         """
         Hook that gets invoked by the framework after the component instance has been
         registered but before any configuration events
@@ -84,37 +85,36 @@ class Component(Configurable, metaclass=Actor):
     @classmethod
     def pyre_getPackageName(cls):
         """
-        Extract the name of the package that this component is a part of by splitting the
-        family name apart based on the _pyre_FAMILY_SEPARATOR and returning the leading
-        fragment
+        Extract the name of the package to which this component belongs
+
+        The current implementation returns the first fragment of the component's {pyre_family}
         """
-        # bail out if there is not family name
-        if not cls._pyre_family: return None
-        # otherwise, split the family name and return the first fragment
-        return cls._pyre_family[0]
+        # attempt to extract and return the leading fragment of my {pyre_family}
+        try:
+            return cls.pyre_family[0]
+        except IndexError:
+            # otherwise
+            return None
 
 
     @classmethod
     def pyre_getExtent(cls):
         """
-        Return the extent of {cls}, i.e. the set of all its current instances
+        Return the extent of this component class, i.e. the set of its instances
         """
-        return cls._pyre_executive.registrar.components[cls]
+        return cls.pyre_executive.registrar.components[cls]
 
 
     # meta methods
     def __init__(self, name, **kwds):
+        # component instance registration is done by Actor.__call__,
+        # the metaclass method that # invokes this constructor
         super().__init__(**kwds)
-
-        # component instance registration is done by Actor.__call__, the metaclass method that
-        # invokes this constructor
-
         # store my name
-        self._pyre_name = name
-        # build my inventory instance by calling the constructor that my metaclass attached at
-        # compile time
-        self._pyre_inventory = self._pyre_Inventory()
-
+        self.pyre_name = name
+        # initialize the per-instance inventory
+        self.pyre_inventory = {}
+        
         return
 
 
@@ -126,7 +126,7 @@ class Component(Configurable, metaclass=Actor):
         """
         # attempt to resolve the attribute name by normalizing it
         try:
-            canonical = self.pyre_normalizeName(name)
+            canonical = self.pyre_getTraitDescriptor(alias=name).name
         except self.TraitNotFoundError as error:
             missing = AttributeError(
                 "{0.__class__.__name__!r} has no attribute {1!r}".format(self, name))
@@ -143,15 +143,11 @@ class Component(Configurable, metaclass=Actor):
         """
         # normalize the name
         try:
-            name = self.pyre_normalizeName(name)
+            canonical = self.pyre_getTraitDescriptor(alias=name).name
         except self.TraitNotFoundError:
             return super().__setattr__(name, value)
 
-        return super().__setattr__(name, value)
-
-
-    # exceptions
-    from ..constraints.exceptions import ConstraintViolationError
+        return super().__setattr__(canonical, value)
 
 
 # end of file 

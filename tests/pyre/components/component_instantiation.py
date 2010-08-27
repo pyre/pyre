@@ -8,73 +8,24 @@
 
 
 """
-A more elaborate component declaration
+Verify that components can be instantiated
 """
 
 
 def test():
-    import pyre.components
-    from pyre.components.Component import Component
-    from pyre.components.Property import Property
+    import pyre
 
-    class Sentry(Component, family="opal.authentication"):
-        """a user authentication component"""
+    # declare
+    class component(pyre.component):
+        """a trivial component"""
+        p = pyre.property()
 
-        # properties
-        username = Property()
-        username.default = "mga"
-        username.aliases.add("όνομα")
+    # attempt to instantiate
+    c = component(name="c")
+    # verify that the extent is recorded properly
+    assert set(c.pyre_getExtent()) == {c}
 
-        password = Property()
-        password.default = None
-        password.aliases.add("σύνθημα")
-       
-        # behaviors
-        @pyre.components.export
-        def authenticate(self):
-            """grant access based on the supplied credentials"""
-            return True
-      
-     
-    # instantiate
-    sentry = Sentry(name="naïve")
-
-    # check the class variables
-    assert sentry._pyre_name == "naïve"
-    assert sentry._pyre_family == ["opal", "authentication"]
-    assert sentry._pyre_configurables == (Sentry, Component)
-    assert sentry._pyre_implements == None
-
-    # verify that the instance was recorded in the extent
-    assert set(Sentry.pyre_getExtent()) == {sentry}
-    # check the properties
-    assert sentry.username == 'mga'
-    assert sentry.password == None
-    # set them to something else
-    sentry.username = 'aivazis'
-    sentry.password = 'deadbeef'
-    # check
-    assert sentry.username == 'aivazis'
-    assert sentry.password == 'deadbeef'
-    # check the class defaults
-    assert Sentry._pyre_Inventory.username.value == "mga"
-    assert Sentry._pyre_Inventory.password.value == None
-    # and make sure we didn't mess up the defaults
-    another = Sentry(name="another")
-    # verify that the new instance was recorded in the extent
-    assert set(Sentry.pyre_getExtent()) == {sentry, another}
-    assert another.username == 'mga'
-    assert another.password == None
-    # set them to something else
-    another.username = 'another'
-    another.password = 'feedbabe'
-    # check
-    assert another.username == 'another'
-    assert another.password == 'feedbabe'
-    assert sentry.username == 'aivazis'
-    assert sentry.password == 'deadbeef'
-
-    return sentry, another
+    return c
 
 
 # main

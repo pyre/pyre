@@ -8,46 +8,39 @@
 
 
 """
-Verify that the component compatibility checks are implemented correctly
+Verify that compatibility among components is detected correctly
 """
 
 
 def test():
-    # access
-    import pyre.components
-    from pyre.components.Property import Property
-    from pyre.components.Component import Component
+    import pyre
 
-    # declare some components
-    class base(Component):
-        """a base component"""
-        common = Property()
-        common.default = "base"
+    # declare a couple of components
+    class base(pyre.component):
+        """the base component"""
+        common = pyre.property()
 
     class derived(base):
-        """a derived component, so automatically compatible"""
-        extra = Property()
-        extra.default = "derived"
+        """a derived one, so automatically compatible"""
+        extra = pyre.property()
 
-    class ok(Component):
-        """one that doesn't, but provides the correct public component"""
-        common = Property()
-        common.default = "ok"
+    class ok(pyre.component):
+        """one that doesn't derive but has the right public component"""
+        common = pyre.property()
         
-    class notok(Component):
-        """one that doesn't provide the correct public component"""
-        what = Property()
-        what.default = "notok"
-
-    class badtype(Component):
-        """one that has the right trait, but of the wrong category"""
-        @pyre.components.provides
+    class notok(pyre.component):
+        """one that doesn't provide the right public component"""
+        what = pyre.property()
+        
+    class badtype(pyre.component):
+        """one that has the right trait but of the wrong type"""
+        @pyre.provides
         def common(self):
             """method, not property"""
         
     class shadow(base):
-        """one that has derives, but shadows the trait in an incompatible way"""
-        @pyre.components.provides
+        """one that derives but shadows the trait in an incompatible way"""
+        @pyre.provides
         def common(self):
             """method, not property"""
 

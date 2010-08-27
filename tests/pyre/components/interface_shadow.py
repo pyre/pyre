@@ -8,41 +8,56 @@
 
 
 """
-Verify that traits are shadowed properly in the presence of inheritance
+Verify that property shadowing in derived interfaces works as expected
 """
 
 
 def test():
-    # access
-    from pyre.components.Property import Property
-    from pyre.components.Interface import Interface
+    import pyre
 
-    # declare an interface
-    class base(Interface):
-        """a base interface"""
-        # traits
-        common = Property()
+    # declare a couple of interfaces
+    class base(pyre.interface):
+        """the base interface"""
+        common = pyre.property()
 
-    # and derive another from it
     class derived(base):
-        """a derived interface"""
-        # traits
-        common = Property()
+        """the derived one"""
+        common = pyre.property()
         
-    # check that everything is as expected with base
-    assert base._pyre_configurables == (base, Interface)
-    # access the traits of base
-    base_common = base.pyre_getTraitDescriptor("common")
-    assert base_common._pyre_category == "properties"
-     
-    # check that everything is as expected with derived
-    assert derived._pyre_configurables == (derived, base, Interface)
-    # access the traits of derived
-    derived_common = derived.pyre_getTraitDescriptor("common")
-    assert derived_common._pyre_category == "properties"
+    # check the basics
+    assert base.__name__ == "base"
+    assert base.__bases__ == (pyre.interface,)
+    # check the layout
+    assert base.pyre_name == "base"
+    assert base.pyre_state == "registered"
+    assert base.pyre_namemap == {'common': 'common'}
+    assert base.pyre_pedigree == (base, pyre.interface)
+    # traits
+    localNames = ['common']
+    localTraits = tuple(map(base.pyre_getTraitDescriptor, localNames))
+    assert base.pyre_traits == localTraits
+    allNames = localNames + []
+    allTraits = tuple(map(base.pyre_getTraitDescriptor, allNames))
+    assert tuple(base.pyre_getTraitDescriptors()) == allTraits
 
-    # make sure that the two descriptors are unrelated
-    assert base_common is not derived_common
+    # check the basics
+    assert derived.__name__ == "derived"
+    assert derived.__bases__ == (base, )
+    # check the layout
+    assert derived.pyre_name == "derived"
+    assert derived.pyre_state == "registered"
+    assert derived.pyre_namemap == {'common': 'common'}
+    assert derived.pyre_pedigree == (derived, base, pyre.interface)
+    # traits
+    localNames = ['common']
+    localTraits = tuple(map(derived.pyre_getTraitDescriptor, localNames))
+    assert derived.pyre_traits == localTraits
+    allNames = localNames + []
+    allTraits = tuple(map(derived.pyre_getTraitDescriptor, allNames))
+    assert tuple(derived.pyre_getTraitDescriptors()) == allTraits
+
+    # make sure the two descriptors are not related
+    assert base.pyre_getTraitDescriptor('common') is not derived.pyre_getTraitDescriptor('common')
 
     return base, derived
 

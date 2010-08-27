@@ -11,36 +11,44 @@ from .Trait import Trait
 
 class Behavior(Trait):
     """
+    The base class for component methods that are part of its external interface
     """
 
-
-    # public data
+    
+    # public data; inherited from Trait but repeated here for clarity
     name = None # my canonical name; set at construction time or binding name
+    configurable = None # the class where my declaration was found
     aliases = None # the set of alternative names by which I am accessible
     tip = None # a short description of my purpose and constraints; see doc below
+    # additional state
+    method = None # the actual callable in the component declaration
+    # predicate that indicates whether this trait is subject to runtime configuration
+    pyre_isConfigurable = False
 
 
     # meta methods
     def __init__(self, method, **kwds):
         super().__init__(**kwds)
-        self._method = method
+        self.method = method
         self.__doc__ = method.__doc__
         return
 
 
     def __get__(self, instance, cls=None):
         """
-        Dispatch to the encapsulated method
+        Access to the behavior: dispatch to the encapsulated method
         """
-        # if the caller specified the instance, bind _method to the instance and return it
-        if instance:
-            return self._method.__get__(instance, cls)
-        # otherwise, interpret this as a request for the descriptor
-        return self
+        # bind my method and return the resulting callable
+        return self.method.__get__(instance, cls)
 
 
-    # framework data
-    _pyre_category = "behaviors"
+    def __set__(self, instance, value):
+        """
+        Disable writing to behavior descriptors
+        """
+        raise TypeError(
+            "can't modify {0.name!r}, part of the public interface of {1.pyre_name!r}"
+            .format(self, instance))
 
 
 # end of file 

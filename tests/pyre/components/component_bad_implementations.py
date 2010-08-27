@@ -12,71 +12,64 @@ A more elaborate component declaration
 """
 
 # acccess to the parts
-import pyre.components
+import pyre
 import pyre.components.exceptions
 from pyre.components.Component import Component
 from pyre.components.Interface import Interface
 from pyre.components.Property import Property
 
 # declare an interface
-class interface(Interface):
+class interface(pyre.interface):
     """a simple interface"""
     # properties
-    name = Property()
-    name.default = "my name"
-
-    @pyre.components.provides
+    name = pyre.properties.str(default="my name")
+    # behaviors
+    @pyre.provides
     def say(self):
         """say my name"""
 
 # wrap the component declarations in functions so I can control when the exceptions get raised
 
 def badImplementationSpec():
-    class badspec(Component, implements=1):
+    class badspec(pyre.component, implements=1):
         """bad implementation specification: not an Interface subclass"""
     return badspec
 
 
 def missingProperty():
-    class missing(Component, implements=interface):
-        """missing property: diesn't have name"""
+    class missing(pyre.component, implements=interface):
+        """missing property: doesn't have {name}"""
     # properties
-    oops = Property()
-    oops.default = "my name"
-
-    @pyre.components.provides
+    oops = pyre.properties.str(default="my name")
+    # behaviors
+    @pyre.export
     def say(self):
         """say my name"""
-        return
 
     return missing
 
 
 def missingBehavior():
-    class missing(Component, implements=interface):
-        """missing property: doesn't have name"""
+    class missing(pyre.component, implements=interface):
+        """missing behavior: doesn't have {do}"""
     # properties
-    name = Property()
-    name.default = "my name"
-
-    @pyre.components.provides
+    name = pyre.properties.str(default="my name")
+    # behaviors
+    @pyre.export
     def do(self):
         """say my name"""
-        return
 
     return missing
 
 
 def noExport():
-    class missing(Component, implements=interface):
+    class missing(pyre.component, implements=interface):
         """missing behavior decorator"""
     # properties
-    name = Property()
-    name.default = "my name"
-
+    name = pyre.properties.str(default="my name")
+    # behaviors
     def say(self):
         """say my name"""
-        return
 
     return missing
 

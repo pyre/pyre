@@ -8,37 +8,56 @@
 
 
 """
-Verify that traits are shadowed properly in the presence of inheritance
+Verify that property shadowing in derived components works as expected
 """
 
 
 def test():
-    # access
-    from pyre.components.Property import Property
-    from pyre.components.Component import Component
+    import pyre
 
-    # declare an component
-    class base(Component):
-        """a base component"""
-        # traits
-        common = Property()
-        common.default = "base"
+    # declare a couple of components
+    class base(pyre.component):
+        """the base component"""
+        common = pyre.property()
 
-    # and derive another from it
     class derived(base):
-        """a derived component"""
-        # traits
-        common = Property()
-        common.default = "derived"
+        """the derived one"""
+        common = pyre.property()
         
-    # get the trait descriptors
-    base_common = base.pyre_getTraitDescriptor("common")
-    derived_common = derived.pyre_getTraitDescriptor("common")
-    # verify the traits were shadowed properly
-    assert base_common is not derived_common
-    assert base.common == "base"
-    assert derived.common == "derived"
-     
+    # check the basics
+    assert base.__name__ == "base"
+    assert base.__bases__ == (pyre.component,)
+    # check the layout
+    assert base.pyre_name == "base"
+    assert base.pyre_state == "registered"
+    assert base.pyre_namemap == {'common': 'common'}
+    assert base.pyre_pedigree == (base, pyre.component)
+    # traits
+    localNames = ['common']
+    localTraits = tuple(map(base.pyre_getTraitDescriptor, localNames))
+    assert base.pyre_traits == localTraits
+    allNames = localNames + []
+    allTraits = tuple(map(base.pyre_getTraitDescriptor, allNames))
+    assert tuple(base.pyre_getTraitDescriptors()) == allTraits
+
+    # check the basics
+    assert derived.__name__ == "derived"
+    assert derived.__bases__ == (base, )
+    # check the layout
+    assert derived.pyre_name == "derived"
+    assert derived.pyre_state == "registered"
+    assert derived.pyre_namemap == {'common': 'common'}
+    assert derived.pyre_pedigree == (derived, base, pyre.component)
+    # traits
+    localNames = ['common']
+    localTraits = tuple(map(derived.pyre_getTraitDescriptor, localNames))
+    assert derived.pyre_traits == localTraits
+    allNames = localNames + []
+    allTraits = tuple(map(derived.pyre_getTraitDescriptor, allNames))
+    assert tuple(derived.pyre_getTraitDescriptors()) == allTraits
+    # make sure the two descriptors are not related
+    assert base.pyre_getTraitDescriptor('common') is not derived.pyre_getTraitDescriptor('common')
+
     return base, derived
 
 

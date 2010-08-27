@@ -13,42 +13,39 @@ Check explicit and implicit interface compatibility
 
 
 def test():
-    import pyre.components
-    from pyre.components.Component import Component
-    from pyre.components.Interface import Interface
-    from pyre.components.Property import Property
+    import pyre
 
     # declare an interface
-    class interface(Interface):
+    class interface(pyre.interface):
         """a simple interface"""
         # properties
-        name = Property()
+        name = pyre.property()
         name.default = "my name"
 
-        @pyre.components.provides
+        @pyre.provides
         def say(self):
             """say my name"""
 
     # declare a component that claims to implement this interface explicitly
-    class explicit(Component, family="tests", implements=interface):
+    class explicit(pyre.component, family="tests", implements=interface):
         """a simple component"""
         # properties
-        name = Property()
+        name = pyre.property()
         name.default = "whatever"
 
-        @pyre.components.export
+        @pyre.export
         def say(self):
             """say my name"""
             return self.name
 
     # declare a component that implements this interface implicitly
-    class implicit(Component, family="tests"):
+    class implicit(pyre.component, family="tests"):
         """a simple component"""
         # properties
-        name = Property()
+        name = pyre.property()
         name.default = "whatever"
 
-        @pyre.components.export
+        @pyre.export
         def say(self):
             """say my name"""
             return self.name

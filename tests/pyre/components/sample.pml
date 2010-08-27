@@ -16,7 +16,7 @@
     <bind property="p2">sample - p2</bind>
   </component>
 
-  <!-- data for component_configuration_inheritance -->
+  <!-- data for component_class_configuration_inheritance -->
   <component family="sample.base">
     <!-- some bindings -->
     <bind property="common">base - common</bind>
@@ -28,11 +28,19 @@
     <bind property="common">derived - common</bind>
   </component>
 
-  <component name="d1" family="sample.derived">
+  <!-- data for component_instance_configuration -->
+  <component name="c" family="sample.configuration">
     <!-- some bindings -->
-    <bind property="extra">d1 - extra</bind>
-    <bind property="middle">d1 - middle</bind>
-    <bind property="common">d1 - common</bind>
+    <bind property="p1">p1 - instance</bind>
+    <bind property="p2">p2 - instance</bind>
+  </component>
+
+  <!-- data for component_instance_configuration_inheritance -->
+  <component name="d" family="sample.derived">
+    <!-- some bindings -->
+    <bind property="extra">d - extra</bind>
+    <bind property="middle">d - middle</bind>
+    <bind property="common">d - common</bind>
   </component>
 
   <!-- data for component_aliases -->

@@ -6,34 +6,31 @@
 #
 
 
-import itertools
-
-
-class Configurable(object):
+class Configurable:
     """
-    The base class for framework configurable classes
+    The base class for components and interfaces
 
     This class provides storage for class attributes and a place to park utilities that are
     common to both components and interfaces
     """
 
 
-    # framework data
-    _pyre_name = None # the instance name
-    _pyre_state = None # track progress through the bootsrapping process
-    _pyre_configurables = None # a tuple of all my ancestors that derive from Configurable
-    _pyre_traits = None # a list of all the traits in my declaration
+    # constant
+    pyre_SEPARATOR = '.'
 
 
-    # constants
-    # update these when new categories are added
-    _pyre_NONCONFIGURABLE_TRAITS = {"behaviors"}
-    _pyre_CONFIGURABLE_TRAITS = {"properties", "facilities"}
+    # framework data; patched up by metaclasses and the framework bootstrapping
+    pyre_name = None # my public id
+    pyre_state = None # track progress through the bootsrapping process
+    pyre_inventory = None # storage for my configurable state; patched by {Requirement}
+    pyre_namemap = None # a map of descriptor aliases to their canonical names
+    pyre_traits = None # a tuple of all the traits in my declaration
+    pyre_pedigree = None # a tuple of ancestors that are themselves configurables
 
 
     # framework notifications
     @classmethod
-    def pyre_prepareClass(cls, executive):
+    def pyre_registerClass(cls, executive):
         """
         Hook that gets invoked by the framework after the class record has been registered but
         before any configuration events
@@ -44,149 +41,144 @@ class Configurable(object):
     @classmethod
     def pyre_configureClass(cls, executive):
         """
-        Hook that gets invoked by the framework after the class record has been configured and
+        Hook that gets invoked by the framework after the class record has been configured,
         before any instances have been created
         """
         return
 
 
-    # trait access
     @classmethod
-    def pyre_traits(cls, mine=True, inherited=True, categories=None):
+    def pyre_initializeClass(cls, executive):
         """
-        Iterate over all my traits that meet the given criteria and return a typle containing
-        the trait and the configurable that declares it
+        Hook that gets invoked by the framework after the class record has been initialized,
+        before any instances have been created
         """
-        # initialize the trait name cache
-        # we cache the trait names that have been encountered already so we can shadow properly
-        # the traits declared by ancestors that are redefined by this class
+        return
+
+
+    # introspection interface
+    @classmethod
+    def pyre_getTraitDescriptors(cls):
+        """
+        Generate a sequence of all my trait descriptors
+
+        The only complexity here is proper shadowing in the presence of inheritance. If you are
+        looking for the traits declared in a particular class, use the attribute
+        {cls.pyre_traits} instead.
+        """
+        # as we traverse the sequence of ancestors, we build and maintain a set of names that
+        # have been encountered so that we can avoid returning traits that have been overriden
+        # or shadowed by later derivations
         known = set()
-        # start with the traits defined by this class
-        for trait in cls._pyre_traits:
-            # add the name to the cache
-            known.add(trait.name)
-            # see whether we should yield this one
-            # move on if we are skipping my local traits
-            if not mine: continue
-            # move on if we are checking categories and this trait is not in the right one
-            if categories and trait._pyre_category not in categories: continue
-            # otherwise yield it
-            yield trait, cls
-
-        # process the ancestors?
-        if not inherited: return
-
-        # iterate over all ancestors that have traits
-        for ancestor in cls._pyre_configurables[1:]:
-            # iterate over all the registered traits
-            for trait in ancestor._pyre_traits:
-                # if this name is known skip it
+        # loop over all the ancestors that are themselves subclasses of {Configurable}
+        for base in cls.pyre_pedigree:
+            # iterate over the registered traits
+            for trait in base.pyre_traits:
+                # skip it if something else by this name has been seen before
                 if trait.name in known: continue
-                # otherwise add it to the pile
-                known.add(trait.name)
-                # move on if we are checking categories and this one is not in the right group
-                if categories and trait._pyre_category not in categories: continue
-                # otherwise yield it
-                yield trait, ancestor
-
+                # otherwise, yield it
+                yield trait
+            # add everything in the attribute dictionary of this class to the known pile
+            known.update(base.__dict__.keys())
         # all done
         return
 
 
     @classmethod
-    def pyre_getTraitDescriptor(cls, name):
+    def pyre_getTraitDescriptor(cls, alias):
         """
-        Attempt to retrieve the trait descriptor associated with {name}
+        Given the name {alias}, locate and return the canonical name, descriptor and base class
+        where the descriptor was declared
         """
-        # walk through the traits
-        for trait,source in cls.pyre_traits():
-            # if the name matches
-            if trait.name == name:
-                # success
-                return trait
-        # otherwise return failure
-        return
+        # loop over the sequence of configurable ancestors
+        for base in cls.pyre_pedigree:
+            # attempt to normalize the given name
+            try:
+                canonical = base.pyre_namemap[alias]
+            # move on if it is not in this namemap
+            except KeyError:
+                continue
+            # otherwise, we got it
+            return base.__dict__[canonical]
+        # if the search failed
+        raise cls.TraitNotFoundError(configurable=cls, name=alias)
 
 
-    # compatibility checks
     @classmethod
-    def pyre_isCompatible(this, other, createReport=False):
+    def pyre_getTraitDefaultValue(cls, trait):
         """
-        Check whether {this} is assignment compatible with {other}, i.e. it provides the same
-        properties and behaviors as specified by {other}
-
-        If {createReport} is False, this method will return failure when the first
-        compatibility issue is detected, without performing an exhaustive check of all
-        traits. If {createReport} is True, it will perform a thorough check of all traits and
-        build a compatibility report
+        Look through my supeclasses for the current default value of {trait}
         """
-        # checking for an inheritance relationship between this and other is not sufficient:
-        # assignment compatible configurables do not have to derive from one another
-        # also, the existence of a trait with the correct name is not sufficient either; we
-        # must verify that it is of the correct category as well
+        # look through my ancestry for the value node
+        for record in cls.pyre_pedigree:
+            try:
+                return record.pyre_inventory[trait]
+            except KeyError:
+                pass
+        # if we got this far, we have a bug; report it
+        import journal
+        firewall = journal.firewall("pyre.components")
+        raise firewall.log(
+            "could not find trait {.name!r} in {.pyre_name!r}".format(trait, cls))
 
-        # get access to the compatibility report object
+
+    def pyre_getTraitFullName(self, name):
+        """
+        Build the full name of the given trait
+        """
+        return self.pyre_SEPARATOR.join(filter(None, [self.pyre_name, name]))
+
+
+    # compatibility check
+    @classmethod
+    def pyre_isCompatible(this, other, fast=True):
+        """
+        Check whether {this} is assignment compatible with {other}, i.e. whether it provides at
+        least the properties and behaviors specified by {other}
+
+        If {fast} is True, this method will return as soon as it encounters the first
+        incompatibility issue, without performing an exhaustive check of all traits. This is
+        the default behavior. If {fast} is False, a thorough check of all traits will be
+        performed resulting in a detailed compatibility report.
+        """
+        # gain access to the report factory
         from .CompatibilityReport import CompatibilityReport
-        # and build an instance
+        # build an empty one
         report = CompatibilityReport(this, other)
         # collect my traits
-        myTraits = { trait.name: trait for trait,source in this.pyre_traits() }
-        # iterate over hers
-        for trait,origin in other.pyre_traits():
+        myTraits = { trait.name: trait for trait in this.pyre_getTraitDescriptors() }
+        # iterate over the traits of {other}
+        for hers in other.pyre_getTraitDescriptors():
             # check existence
             try:
-                mine = myTraits[trait.name]
+                # here is mine
+                mine = myTraits[hers.name]
+            # oops
             except KeyError:
                 # build an error description
-                error = this.TraitNotFoundError(configurable=this, name=trait.name)
+                error = this.TraitNotFoundError(configurable=this, name=hers.name)
                 # add it to the report
-                report.incompatibilities[trait].append(error)
-                # bail out if we are not performing a thorough check
-                if not createReport:
-                    return report
-                # otherwise, move on
+                report.incompatibilities[hers].append(error)
+                # bail out if we are in fast mode
+                if fast: return report
+                # otherwise move on to the next trait
                 continue
-            # check categories for a match
-            if mine._pyre_category != trait._pyre_category:
+            # are the two traits instances of compatible classes?
+            if not issubclass(mine.__class__, hers.__class__):
                 # build an error description
-                error = this.CategoryMismatchError(configurable=this, target=other, name=trait.name)
+                error = this.CategoryMismatchError(configurable=this, target=other, name=hers.name)
                 # add it to the report
-                report.incompatibilities[trait].append(error)
-                report.incompatibilities[trait].append(error)
-                # bail out if we are not performing a thorough check
-                if not createReport:
-                    return report
-                # otherwise, move on
+                report.incompatibilities[hers].append(error)
+                # bail out if we are in fast mode
+                if fast: return report
+                # otherwise move on to the next trait
                 continue
-            # skip the rest of the checks if the trait is a behavior
-            if trait._pyre_category == "behavior":
-                continue
-            # check trait type
-            print("NYI: Configurable.pyre_isCompatible: check trait type")
-
         # all done
         return report
-    
-
-    # other utilities
-    @classmethod
-    def pyre_normalizeName(cls, name):
-        """
-        Convert the given trait name or alias to the canonical one
-        """
-        # iterate over my ancestors
-        for ancestor in cls._pyre_configurables:
-            # look up the name in the namemap
-            try:
-                return ancestor._pyre_Inventory._pyre_namemap[name]
-            except KeyError:
-                continue
-
-        raise cls.TraitNotFoundError(configurable=cls, name=name)
 
 
     # exceptions
-    from .exceptions import CategoryMismatchError, TraitNotFoundError
-
+    from .exceptions  import CategoryMismatchError, TraitNotFoundError
+                
 
 # end of file 

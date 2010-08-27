@@ -17,14 +17,6 @@ For terms of use, see pyre.license()
 import os
 
 
-# conveninece functions
-
-# factories for the various top level framework objects
-def executive(**kwds):
-    from . import framework
-    return framework.executive(**kwds)
-
-
 # geography
 def home():
     """
@@ -103,6 +95,76 @@ _pyre_license = """
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
     """
+
+
+# put these steps inside a function so there is no namespace pollution
+def debug():
+    """
+    Enable debugging of pyre modules
+
+    This must be done very early, before pyre itself starts importing its packages. One way to
+    request debugging is to create a variable {pyre_debug} in the __main__ module that contains
+    a set of strings, each one of which is the name of a pyre module that you would like to
+    debug.
+    """
+    # the set of packages to patch for debug support
+    packages = set()
+    # pull pyre_debug from the __main__ module
+    import __main__
+    try:
+        packages |= set(__main__.pyre_debug)
+    except Exception:
+        pass
+    # iterate over the names, import the package and invoke its debug method
+    for package in packages:
+        module = __import__(package, fromlist=["debug"])
+        module.debug()
+    # all done
+    return
+
+
+def boot():
+    """
+    Perform all the initialization steps necessary to bootstrap the framework
+    """
+    # check the version of python
+    import sys
+    major, minor, micro, level, serial = sys.version_info
+    if major < 3 and minor < 1:
+        raise PyreError(description="pyre needs python 3.1 or newer")
+
+    # force the creation of the executive singleton
+    from . import framework
+    p = framework.executive(managers=framework)
+
+    # patch Requirement
+    from .components.Requirement import Requirement
+    Requirement.pyre_executive = p
+
+    # patch Trait
+    from .components.Trait import Trait
+    Trait.pyre_executive = p
+
+    # and return the executive
+    return p
+    
+
+# kickstart
+# invoke the debug method in case the user asked for debugging support
+debug()
+# build the executive
+executive = boot()
+
+# gather the exported names
+# component declaration support
+from . import schema, constraints
+from .components import export, provides
+from .components import property, facility, interface, component
+from .components import properties
+
+
+# the base class of all pyre exceptions
+from .framework.exceptions import PyreError
 
 
 # end of file 

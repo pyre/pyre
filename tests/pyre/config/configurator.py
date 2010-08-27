@@ -8,13 +8,14 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Sanity check: verify that the configurator factory is accessible
 """
 
 
 def test():
+    import pyre
     import pyre.config
-    return pyre.config.newConfigurator()
+    return pyre.config.newConfigurator(executive=pyre.executive)
 
 
 # main

@@ -8,36 +8,32 @@
 
 
 """
-Sanity check: verify that the command line parser can be instantiated
+Verify that additional configuration files can be specified on the command line
 """
 
 
 def test():
-    import pyre.config
-
-    # get a raw executive instance
-    from pyre.framework.Executive import Executive
-    executive = Executive()
-    # pul the configutor and calculator
-    calculator = executive.calculator
+    import pyre
+    # get the executive instance
+    executive = pyre.executive
+    # pull the configutor
     configurator = executive.configurator
-    # and a command line parser
+    # and build a command line parser
     parser = pyre.config.newCommandLineParser()
-
     # build an argument list
     commandline = [
         '--config=sample.pml',
         ]
-
     # get the parser to populate the configurator
-    parser.decode(configurator, commandline)
-    # and transfer the events to the calculator
-    configurator.configure(executive, priority=executive.USER_CONFIGURATION)
+    configuration = parser.decode(commandline)
+    # and transfer the events to the configurator
+    configurator.configure(configuration=configuration, priority=executive.USER_CONFIGURATION)
     # now, check that the assignments took place
-    assert calculator["sample.user.name"] == "michael a.g. aïvázis"
-    assert calculator["sample.user.email"] == "aivazis@caltech.edu"
+    assert configurator["sample.user.name"] == "michael a.g. aïvázis"
+    assert configurator["sample.user.email"] == "aivazis@caltech.edu"
     # and return the managers
-    return executive, parser
+    return parser
+
 
 # main
 if __name__ == "__main__":

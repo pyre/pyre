@@ -14,17 +14,16 @@ Check catching of decoding errors when the input file has an unrecognized root t
 
 def test():
     # package access
-    import pyre.codecs
     import pyre.config
     # get the codec manager
-    m = pyre.codecs.newManager()
+    m = pyre.config.newCodecManager()
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
     # open a stream with an error
     sample = open("sample-badRoot.pml")
     # read the contents
     try:
-        reader.decode(configurator=None, stream=sample)
+        reader.decode(source=sample)
         assert False
     except reader.DecodingError as error:
         assert str(error) == (

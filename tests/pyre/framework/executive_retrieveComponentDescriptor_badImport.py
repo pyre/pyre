@@ -8,7 +8,7 @@
 
 
 """
-Verify that the binder can retrieve components from odb files
+Verify that bad component descriptors raise the correct exceptions
 """
 
 

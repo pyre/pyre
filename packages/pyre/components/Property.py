@@ -6,140 +6,260 @@
 #
 
 
+import collections
 from .Trait import Trait
 
 
 class Property(Trait):
     """
-    Base class for propery descriptors
-
-    Most properties take simple objects as their values, and therefore do not present any
-    serious challenges from a configuration/initialization point of view. However, properties
-    that represent acquired resources, such as file or network streams, may require complex
-    initialization. The needs of the former are probably taken care of by this class in their
-    entirety, whereas the latter may require more specialized descriptors.
+    The base class for attribute descriptors that describe a component's external state
     """
 
-    # import the schema
-    import pyre.schema as schema
-    import pyre.constraints as constraints
+
+    # import the packages exposed by properties for convenince
+    from .. import schema, constraints
 
 
-    # public data
+    # public data; inherited from Trait but repeated here for clarity
     name = None # my canonical name; set at construction time or binding name
-    type = schema.object # my type; most likely one of the pyre.schema type declarators
+    configurable = None # the class where my declaration was found
     aliases = None # the set of alternative names by which I am accessible
+    tip = None # a short description of my purpose and constraints; contrast with doc
+    # additional state
+    type = schema.object # my type; most likely one of the pyre.schema type declarators
     default = None # my default value
     optional = False # am i allowed to be uninitialized?
     converters = () # the chain of functions that are required to produce my native type
     validators = () # the chain of functions that validate my values
-    tip = None # a short description of my purpose and constraints; see doc below
 
 
-    # interface 
-    def pyre_attach(self, configurable):
+    # interface
+    def pyre_normalize(self, configurable):
         """
-        Attach me to the given {configurable} class record.
-
-        This is invoked by pyre.components.Requirement while processing the trait declarations
-        in {configurable} after the pyre_Inventory class has been inserted in the class
-        dictionary. No instances of {configurable} can possibly exist at this point, so careful
-        when looking through the {configurable} attributes.
+        Look through the metadata harvested from the class declaration and perform any
+        necessary cleanup
         """
-        # access the namemap
-        namemap = configurable._pyre_Inventory._pyre_namemap
-        # map my aliases
-        for alias in self.aliases:
-            namemap[alias] = self.name
+        # do whatever my superclass requires
+        super().pyre_normalize(configurable)
+
+        # adjust the validators
+        if self.validators is not tuple():
+            # if the user placed them in a container
+            if isinstance(self.validators, collections.Iterable):
+                # convert it into a tuple
+                self.validators = tuple(trait.validators)
+            # otherwise
+            else:
+                # make a tuple out of the lone validator
+                self.validators = (self.validators, )
+
+        # repeat for the converters
+        if self.converters is not tuple():
+            # if the user placed them in a container
+            if isinstance(self.converters, collections.Iterable):
+                # convert it into a tuple
+                self.converters = tuple(trait.converters)
+            # otherwise
+            else:
+                # make a tuple out of the lone converter
+                trait.converters = (trait.converters, )
+        
+        return self
+
+
+    def pyre_embed(self, configurable):
+        """
+        Attach any metadata harvested by the requirement metaclass
+
+        This gets called by Requirement, the metaclass of all configurables, as part of the
+        process that constructs the class record. Don't expect {configurable} to be fully
+        functioning at this point.
+        """
+        # do whatever my superclass requires
+        super().pyre_embed(configurable)
+
+        # access the storage class
+        from ..config.Slot import Slot
+
+        # if i was declared in this configurable
+        if self.configurable == configurable:
+            # inspect my default value and convert it into a (value, evaluator) pair
+            evaluator = Slot.recognize(
+                value=self.default, configuration=self.pyre_executive.configurator)
+            # instantiate storage for my trait values
+            node = Slot(value=None, evaluator=evaluator)
+        # otherwise
+        else:
+            # look through my pedigree for the closest ancestor that has a node for me
+            inherited = configurable.pyre_getTraitDefaultValue(self)
+            # and build a reference to it
+            node = inherited.newReference()
+        # either way, place this node in the inventory of the configurable
+        configurable.pyre_inventory[self] = node
         # and return
-        return
+        return self
 
 
-    def pyre_cast(self, configurable, value):
+    def pyre_bindClass(self, configurable):
         """
-        Convert {value} to the trait native type
+        Bind this trait to the {configurable} class record
+
+        This method gets called by the {Executive} after the class record {configurable} has
+        been through the configuration process. At this point, the value stored in the
+        {pyre_inventory} must be cast to its native type and validated
         """
-        return self.type.cast(value)
+        # get the node that holds my value
+        node = configurable.pyre_inventory[self]
+        # extract the cached value and the evaluator
+        value = node._value
+        evaluator = node._evaluator
+        # currently, the expectation is that if the value cache already contains a value, it
+        # has already gone through the casting and validation process, so there is nothing
+        # further to do.
+        if value is not None: return value
+        # further, uninitialized traits have None for both the value cache and the evaluator;
+        # leave those alone as well
+        if value is None and evaluator is None: return None
+        # so the only case that we have to handle is a null value in the cache and a non-null
+        # evaluator. attempt to get the evaluator to compute the value
+        try:
+            value = evaluator.compute()
+        # re-raise errors associated with unresolved nodes
+        except node.UnresolvedNodeError:
+            raise
+        # dress anything else up as an evaluation error
+        except Exception as error:
+            raise node.EvaluationError(evaluator=evaluator, error=error) from error
+        # walk the computed value through casting and validation
+        if value is not None:
+            # cast it
+            value = self.type.pyre_cast(value)
+            # convert it
+            for converter in self.converters:
+                value = converter.pyre_cast(value)
+            # validate it
+            for validator in self.validators:
+                value = validator(value)
+
+        # place it in the cache
+        node._value = value
+        # and return it back to the caller
+        return value
 
 
-    def pyre_validate(self, value):
+    def pyre_bindInstance(self, configurable):
         """
-        Run the value through my validators
+        Bind this trait to the {configurable} instance
         """
-        # this is guaranteed to be an iterable; the component registrar makes sure of that
-        for validator in self.validators:
-            # check whether the value passes the test
-            value = validator.validate(value)
+        # get my value from the inventory of {configurable}
+        node = configurable.pyre_inventory[self]
+        # get the component factory from the class record
+        value = node._value
+        evaluator = node._evaluator
+        # currently, the expectation is that if the value cache already contains a value, it
+        # has aleady gone throught the casting validation and instantiation process, so there
+        # is nothing further to do
+        if value is not None: return value
+        # facilities are not supposed to be uninitialized, so having both value and evaluator
+        # be None is an error
+        if value is None and evaluator is None:
+            raise self.FacilitySpecificationError(
+                configurable=configurable, trait=self, value=value)
+        # so the only case that we have to handle is a null value in the cache and a non-null
+        # evaluator. attempt to get the evaluator to compute the value
+        try:
+            value = evaluator.compute()
+        # re-raise errors associated with unresolved nodes
+        except node.UnresolvedNodeError:
+            raise
+        # dress anything else up as an evaluation error
+        except Exception as error:
+            raise node.EvaluationError(evaluator=evaluator, error=error) from error
+        # walk the computed value through casting and validation
+        if value is not None:
+            # cast it
+            value = self.type.pyre_cast(value)
+            # convert it
+            for converter in self.converters:
+                value = converter.pyre_cast(value)
+            # validate it
+            for validator in self.validators:
+                value = validator(value)
+        # place it in the cache
+        node._value = value
+        # and return it back to the caller
+        return value
+
+
+    # trait access
+    def getValue(self, client):
+        """
+        Retrieve the value of this trait
+        """
+        # print("Property.getValue: OBSOLETE")
+        # first, look through the client's inventory
+        try:
+            node = client.pyre_inventory[self]
+        except KeyError:
+            # if that failed, fetch the node with the default value from the class record
+            node = client.pyre_getTraitDefaultValue(self)
+        # we found the node; get the value
+        value = node._value
+        # if the value is not None, return it as is; it has already gone through casting and
+        # validation and it good to go
+        if value: return value
+        # otherwise, get the node evaluator
+        evaluator = node._evaluator
+        # if it is valid
+        if evaluator:
+            # attempt to get it to produce a value
+            try:
+                value = evaluator.compute()
+            # leave unresoved node errors alone
+            except node.UnresolvedNodeError:
+                raise
+            # dress anything else up as an evaluation error
+            except Exception as error:
+                raise node.EvaluationError(evaluator=evaluator, error=error) from error
+        # at this point, if value is None the trait is uninitialized so return it
+        if value is None: return None
+        # otherwise, walk it through casting and validation
+        # raise NotImplementedError("NYI")
         # and return it
         return value
 
 
-    def pyre_assign(self, configurable, node, value=None):
-        """
-        Assign {value} to {node} after making sure that it can be cast to the right type and
-        passes the validation suite
-        """
-        # if the value is None, force the evaluation of {node}
-        value = node.value if value is None else value
-        # if the value is None, leave it alone: it means the property is uninitialized
-        # NYI: check whether the descriptor says that this is allowed (optional==TRUE?)
-        if value is None: return None
-        # otherwise, cast it
-        value = self.pyre_cast(configurable, value)
-        # validate it
-        value = self.pyre_validate(value)
-        # store it back with the variable
-        node._value = value
-        # and return the node
-        return value
-
-
     # the descriptor interface
-    # NYI: 
-    #    these appear too raw to me
-    #    where do casting and validation occur???
+    def __get__(self, instance, cls):
+        """
+        Retrieve the value of this trait
+        """
+        client = instance if instance else cls
+        return self.getValue(client)
+
+
     def __set__(self, instance, value):
         """
-        Set the trait of {instance} to {value}
+        Set this trait of {instance} to {value}
+
+        The target {instance} may be a component instance or a component class record. Either
+        way, the assignment is performed through the {pyre_inventory} attribute, and the
+        property descriptor is unaware of the difference
         """
-        node = getattr(instance._pyre_inventory, self.name)
-        # update the value of the node in the instance inventory
-        node.value = value
-        # values could be literals, expressions, references, etc.
-        # if this resulted in a literal value being deposited
-        if node._value:
-            # walk it through conversion and validation
-            self.pyre_assign(configurable=instance, node=node)
-        # all done
+        return self.setValue(instance, value)
+
+
+    # FIXME
+    # OBSOLETE AND INCORRECT IMPLEMENTATIONS
+
+    def setValue(self, client, value):
+        """
+        Set this trait of {client} to value
+        """
+        # print("Property.setValue: OBSOLETE")
+        from ..config.Slot import Slot
+        client.pyre_inventory[self] = Slot(value=value, evaluator=None)
         return
-
-
-    def __get__(self, instance, cls=None):
-        """
-        Get the value of this trait
-        """
-        try:
-            # attempt to access the instance inventory
-            inventory = instance._pyre_inventory
-        except AttributeError:
-            # access through a class variable
-            inventory = cls._pyre_Inventory
-        # at this point, we have inventory, so look up the node using my name
-        node = getattr(inventory, self.name)
-        # check whether the node thinks it has a valid value
-        ok = True if node._value else False
-        # force an evaluation to take place
-        value = node.value
-        # if the value was previously cached
-        if ok:
-            # just return it
-            return value
-        # otherwise, walk it through conversion and validation
-        return self.pyre_assign(configurable=instance, node=node, value=value)
-
-
-    # framework data
-    _pyre_category = "properties"
 
 
 # end of file 

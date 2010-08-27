@@ -14,23 +14,45 @@ Verify processing of a correct pml input file
 
 def test():
     # package access
-    import pyre.codecs
     import pyre.config
     # get the codec manager
-    m = pyre.codecs.newManager()
+    m = pyre.config.newCodecManager()
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
-    # build a configurator to store the harvested events
-    c = pyre.config.newConfigurator()
     # open a stream
     sample = open("sample.pml")
     # read the contents
-    configuration = reader.decode(configurator=c, stream=sample)
+    configuration = reader.decode(source=sample)
     # check that we got a non-trivial instance
     assert configuration is not None
     # check that it is an instance of the right type
-    from pyre.codecs.pml.Configuration import Configuration
-    assert isinstance(configuration, Configuration)
+    assert isinstance(configuration, reader.Configuration)
+
+    # verify its contents
+    event = configuration.events[0]
+    assert isinstance(event, configuration.Assignment)
+    assert tuple(event.key) == ("pyre", "home")
+    assert event.value == "pyre.home()"
+
+    event = configuration.events[1]
+    assert isinstance(event, configuration.Assignment)
+    assert tuple(event.key) == ("pyre", "prefix")
+    assert event.value == "pyre.prefix()"
+
+    event = configuration.events[2]
+    assert isinstance(event, configuration.Assignment)
+    assert tuple(event.key) == ("pyre", "user", "name")
+    assert event.value == "michael a.g. aïvázis"
+
+    event = configuration.events[3]
+    assert isinstance(event, configuration.Assignment)
+    assert tuple(event.key) == ("pyre", "user", "email")
+    assert event.value == "aivazis@caltech.edu"
+
+    event = configuration.events[4]
+    assert isinstance(event, configuration.Assignment)
+    assert tuple(event.key) == ("pyre", "user", "affiliation")
+    assert event.value == "california institute of technology"
 
     return m, reader, configuration
 

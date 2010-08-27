@@ -10,27 +10,42 @@ PROJECT = pyre
 PACKAGE = config
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
+RECURSE_DIRS = \
+    native \
+    odb \
+    pml \
+    pcs \
 
 #--------------------------------------------------------------------------
 #
 
 all: export
 
+tidy::
+	BLD_ACTION="tidy" $(MM) recurse
+
+clean::
+	BLD_ACTION="clean" $(MM) recurse
+
+distclean::
+	BLD_ACTION="distclean" $(MM) recurse
+
 #--------------------------------------------------------------------------
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Assignment.py \
-    Calculator.py \
+    Codec.py \
+    CodecManager.py \
     CommandLine.py \
-    ConfigurationSource.py \
+    Configuration.py \
     Configurator.py \
-    Event.py \
-    Variable.py \
+    Slot.py \
     exceptions.py \
     __init__.py
 
 
 export:: export-package-python-modules
+	BLD_ACTION="export" $(MM) recurse
+
 
 # end of file 

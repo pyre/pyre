@@ -14,7 +14,7 @@ Test for all the exceptions raised by this package
 
 def test():
 
-    from pyre.codecs.exceptions import CodecError, DecodingError, EncodingError
+    from pyre.config.exceptions import CodecError, DecodingError, EncodingError
 
     try:
         raise CodecError(codec=None, uri=None, locator=None, description=None)

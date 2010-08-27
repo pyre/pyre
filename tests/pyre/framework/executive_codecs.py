@@ -18,8 +18,8 @@ def test():
     executive = pyre.framework.executive()
 
     # access the codec manager
-    codecs = executive.codecs
-    assert codecs is not None
+    codex = executive.codex
+    assert codex is not None
 
     # all done
     return executive

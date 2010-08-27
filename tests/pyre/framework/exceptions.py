@@ -18,7 +18,7 @@ def test():
         )
 
     try:
-        raise FrameworkError()
+        raise FrameworkError(description=None)
     except FrameworkError as error:
         pass
 

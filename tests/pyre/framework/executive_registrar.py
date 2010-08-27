@@ -21,17 +21,6 @@ def test():
     reg = executive.registrar
     assert reg is not None
 
-    # get to the singleton directly
-    from pyre.components.Registrar import Registrar
-    rd = Registrar()
-    # verify that these two are the same object
-    assert reg is rd
-
-    # get to the singleton through the factory
-    rf = pyre.framework.newComponentRegistrar()
-    # verify that this also the same object
-    assert reg is rf
-
     # all done
     return executive
 
