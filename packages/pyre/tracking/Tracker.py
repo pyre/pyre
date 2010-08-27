@@ -9,7 +9,7 @@
 import collections
 
 
-class Tracker(object):
+class Tracker:
     """
     Record the values a key has taken
     """

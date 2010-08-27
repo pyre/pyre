@@ -6,7 +6,7 @@
 #
 
 
-class File(object):
+class File:
     """
     Locator that records information relevant to file sources
     """

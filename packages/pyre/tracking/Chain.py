@@ -6,7 +6,7 @@
 #
 
 
-class Chain(object):
+class Chain:
     """
     Locator that ties two others together
     """

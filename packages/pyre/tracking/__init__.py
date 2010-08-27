@@ -6,15 +6,6 @@
 #
 
 
-def newTracker():
-    """
-    Build a new history tracker, an object that maintains a log of all the values a given key
-    has ever assumed, along with locators that describe the location of these assignments
-    """
-    from .Tracker import Tracker
-    return Tracker()
-
-
 def chain(*, this, next):
     """
     Build a locator that ties together two others in order to express that something in {next}
@@ -22,6 +13,19 @@ def chain(*, this, next):
     """
     from .Chain import Chain
     return Chain(this, next)
+
+
+def here(level=0):
+    """
+    Build a locator that records the caller's location
+
+    The parameter {level} specifies the level above the caller that is to be used as the
+    originating location. The default, {level}=0, indicates to use the caller's location;
+    setting {level} to 1 will use the caller's caller's location, and so on.
+    """
+    import traceback
+    source, line, function, text = traceback.extract_stack(limit=2+level)[0]
+    return newScriptLocator(source=source, line=line, function=function)
 
 
 def newCommandLocator(*, arg):
@@ -68,4 +72,13 @@ def newSimpleLocator(*, source):
     return Simple(source)
 
 
-# end of file 
+def newTracker():
+    """
+    Build a new history tracker, an object that maintains a log of all the values a given key
+    has ever assumed, along with locators that describe the location of these assignments
+    """
+    from .Tracker import Tracker
+    return Tracker()
+
+
+# end of file

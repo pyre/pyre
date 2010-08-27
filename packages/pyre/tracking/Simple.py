@@ -6,7 +6,7 @@
 #
 
 
-class Simple(object):
+class Simple:
     """
     Locator that records a simple named source with no further details
     """

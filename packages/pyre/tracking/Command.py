@@ -6,7 +6,7 @@
 #
 
 
-class Command(object):
+class Command:
     """
     Locator that records the position of a command line argument
     """
