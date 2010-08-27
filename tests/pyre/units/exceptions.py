@@ -18,7 +18,7 @@ def test():
         )
 
     try:
-        raise UnitError(msg=None, operand=None)
+        raise UnitError(description=None, operand=None)
     except UnitError as error:
         pass
 

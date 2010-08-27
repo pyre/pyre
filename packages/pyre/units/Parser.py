@@ -9,7 +9,7 @@
 from ..patterns.Singleton import Singleton
 
 
-class Parser(object, metaclass=Singleton):
+class Parser(metaclass=Singleton):
     """
     Singleton that converts string representations of dimensional quantities into instances of
     Dimensional

@@ -9,7 +9,7 @@
 import operator
 
 
-class Dimensional(object):
+class Dimensional:
     """
     This class comprises the fundamental representation of quantities with units
     """
