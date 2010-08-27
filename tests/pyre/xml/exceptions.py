@@ -18,7 +18,7 @@ def test():
         )
 
     try:
-        raise ParsingError()
+        raise ParsingError(description="some error")
     except ParsingError as error:
         pass
 
@@ -28,12 +28,12 @@ def test():
         pass
 
     try:
-        raise DTDError()
+        raise DTDError(description="some error")
     except DTDError as error:
         pass
 
     try:
-        raise ProcessingError()
+        raise ProcessingError(description="some error")
     except ProcessingError as error:
         pass
 

@@ -16,39 +16,13 @@ class DTD(AttributeClassifier):
     """
 
 
-    # contants
-    _pyre_DTD = "dtd" # the name of the attribute that holds the attribute index
-    _pyre_CLASSIFIER_NAME = "_pyre_category" # the location of index key
-
-
     # meta methods
-    @classmethod
-    def __prepare__(cls, name, bases, **kwds):
-        """
-        Create and return a container for the attributes in the class record
-        """
-        return super().__prepare__(name, bases, classifier=cls._pyre_CLASSIFIER_NAME, **kwds)
-
-
     def __new__(cls, name, bases, attributes, **kwds):
         """
         Build the document class record
         """
-        return super().__new__(cls, name, bases, attributes, index=cls._pyre_DTD, **kwds)
-
-
-    @classmethod
-    def _pyre_buildCategoryIndex(cls, record, index, attributes):
-        """
-        Attach the category index to the class record as the attribute index
-
-        parameters:
-            {record}: the class record being decorated
-            {index}: the name of the attribute that will hold the category index
-            {attributes}: storage for the category index
-        """
-        # extract the element descriptors from the attribute categories
-        descriptors = tuple(attributes.categories["elements"])
+        # build the node
+        node = super().__new__(cls, name, bases, attributes, descriptors="dtd", **kwds)
 
         # namespaces introduce a bit of complexity. unless it turns out to be inconsistent with
         # the rules, here is the strategy: if a nested element is in the same namespace as its
@@ -62,11 +36,11 @@ class DTD(AttributeClassifier):
         # need a slightly modified approach: if the namespace given matches the namespace of
         # the parent tag, look in _pyre_nodeIndex; if not look it up in _pyre_nodeQIndex
 
-        # build a (descriptor name -> handler) map
-        index = { descriptor.name: descriptor for descriptor in descriptors }
+        # build a (element name -> handler) map
+        index = { element.name: element for element in node.dtd }
 
         # now, build the dtd for each handler 
-        for element in descriptors:
+        for element in node.dtd:
             # get the class that handles this element
             handler = element.handler
             # initialize the class attributes
@@ -84,13 +58,12 @@ class DTD(AttributeClassifier):
                     handler._pyre_nodeQIndex[(nestling.namespace, tag)] = nestling
 
         # and now adjust the actual document class
-        if record.root is not None:
-            root = index[record.root].handler
-            record.namespace = root.namespace
-            record._pyre_nodeIndex = { record.root: root }
-
-        # return the list of descriptors so it can be attached to whatever name _pyre_DTD specifies
-        return descriptors
+        if node.root is not None:
+            root = index[node.root].handler
+            node.namespace = root.namespace
+            node._pyre_nodeIndex = { node.root: root }
+        # return the node to the caller
+        return node
 
 
 # end of file 

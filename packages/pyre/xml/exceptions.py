@@ -20,13 +20,11 @@ class ParsingError(FrameworkError):
     Base class for parsing errors
     """
 
-    def __init__(self, parser=None, document=None, description="", locator=None, **kwds):
+    def __init__(self, parser=None, document=None, locator=None, **kwds):
         super().__init__(**kwds)
         self.parser = parser
         self.document = document
-        self.description = description
         self.locator = newLocator(locator) if locator else None
-
         return
 
     def __str__(self):

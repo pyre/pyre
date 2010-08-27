@@ -6,10 +6,10 @@
 #
 
 
-from ..patterns.Named import Named
+from ..patterns.AttributeClassifier import AttributeClassifier
 
 
-class AttributeDescriptor(Named):
+class AttributeDescriptor(AttributeClassifier.pyre_Descriptor):
     """
     This class serves as the resting place for element metadata provided by the user during
     DTD formation. It is used by DTD-derived metaclasses to decorate the handlers of the various
@@ -40,10 +40,6 @@ class AttributeDescriptor(Named):
 
     # the default value
     default = None # the default value for the attribute
-
-
-    # category
-    _pyre_category = "attributes"
 
 
 # end of file 

@@ -6,7 +6,7 @@
 #
 
 
-class Node(object):
+class Node:
     """
     The base class for parsing event handlers
     """

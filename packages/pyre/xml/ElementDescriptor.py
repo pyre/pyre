@@ -6,10 +6,10 @@
 #
 
 
-from ..patterns.Named import Named
+from ..patterns.AttributeClassifier import AttributeClassifier
 
 
-class ElementDescriptor(Named):
+class ElementDescriptor(AttributeClassifier.pyre_Descriptor):
     """
     Descriptor class that gathers all the metadata about a document tag that was provided by
     the user during the DTD declaration. It is used by DTD derived classes to decorate the
@@ -21,10 +21,6 @@ class ElementDescriptor(Named):
     # element meta data
     handler = None # the Node descendant that handles parsing events for this document element
     attributes = () # a list of the tag attribute descriptors that encode the document DTD
-
-
-    # meta data
-    _pyre_category = "elements" # for the AttributeClassifier
 
 
     # meta methods
