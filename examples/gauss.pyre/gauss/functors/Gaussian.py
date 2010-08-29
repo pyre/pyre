@@ -51,7 +51,7 @@ class Gaussian(pyre.component, family="gauss.functors.gaussian", implements=Func
             # compute |x - μ|^2
             # this works as long as x and μ have the same length
             r2 = sum((x_i - μ_i)**2 for x_i, μ_i in zip(x, μ))
-            # yield the value at the xurrent x
+            # yield the value at the current x
             yield normalization * exp(- r2 / scaling)
 
         return

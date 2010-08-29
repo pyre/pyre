@@ -12,7 +12,7 @@ from .Shape import Shape
 
 class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
     """
-    A representation of the interios of a $d$-dimensional box
+    A representation of the interior of a $d$-dimensional box
     """
 
 
