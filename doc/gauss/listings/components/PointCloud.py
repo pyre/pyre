@@ -7,18 +7,17 @@
 
 
 import pyre
-from pyre.components.Interface import Interface
 
-class PointCloud(Interface):
+class PointCloud(pyre.interface):
     """
     An abstraction for an unstructured collection of points at which the integrand gets evaluated.
     """
     
     # interface
-    @pyre.components.provides
+    @pyre.provides
     def points(self, count, box):
         """
-        Return {count} random points from the interior of {box}
+        Build and return {count} random points from the interior of {box}
         """
 
 

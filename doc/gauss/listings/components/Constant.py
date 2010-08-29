@@ -7,19 +7,17 @@
 
 
 import pyre
-from pyre.components.Component import Component
-from Functor import Functor
+from .Functor import Functor
 
 
-class Constant(Component, family="gauss.functors.constant", implements=Functor):
+class Constant(pyre.component, family="gauss.functors.constant", implements=Functor):
     """
     Component that implements a constant function
     """
 
     # public state
-    value = pyre.components.float()
+    value = pyre.components.float(default=1)
     value.doc = "the value of the function"
-    value.default = 1.0
 
 
     @pyre.components.export

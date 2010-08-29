@@ -7,13 +7,12 @@
 
 
 import pyre
-from pyre.components.Interface import Interface
 
 # my requirements
-from Shape import Shape
-from Functor import Functor
+from .Shape import Shape
+from .Functor import Functor
 
-class Integrator(Interface):
+class Integrator(pyre.interface):
 
     """
     Interface declaration for integrators
@@ -27,7 +26,7 @@ class Integrator(Interface):
     integrand.doc = "the functor to integrate"
     
     # interface
-    @pyre.components.provides
+    @pyre.provides
     def integrate(self):
         """
         Compute the integral of the {intergrand} over the {region}

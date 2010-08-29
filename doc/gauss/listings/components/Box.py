@@ -6,45 +6,41 @@
 #
 
 
-import operator
-import functools
+import operator, functools
 
 import pyre
-from pyre.components.Component import Component
-from Shape import Shape
+from .Shape import Shape
 
-
-class Box(Component, family="gauss.shapes.box", implements=Shape):
+class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
     """
-    A representation of the interior of a box in $d$ dimensions
+    A representation of the interior of a d-dimensional box
     """
 
     # public state
     # the center of the box
-    diagonal = pyre.components.array()
+    diagonal = pyre.properties.array()
     diagonal.doc = "a vector that specifies the major diagonal of the box"
     diagonal.default = ((0, 0), (1,1)) # default: the unit square
 
-
     # component interface
-    @pyre.components.export
+    @pyre.export
     def measure(self):
         """
         Compute my volume
         """
-        return functools.reduce(operator.mul, ((right-left) for left,right in self.intervals()))
+        # compute and return the volume
+        return functools.reduce(operator.mul, ((right-left) for left,right in self.sides()))
 
-
-    @pyre.components.export
+    @pyre.export
     def contains(self, points):
         """
         Filter out the members of {points} that are exterior to this box
         """
         # form the list of intervals along each coördinate axis
-        intervals = tuple(zip(*self.diagonal))
-        # for each point
+        intervals = tuple(self.sides())
+        # now, for each point
         for point in points:
-            # for each coördinate
+            # and for each coordinate
             for p,(left,right) in zip(point, intervals):
                 # if it is outside the box interval
                 if p < left or p > right:
@@ -57,9 +53,11 @@ class Box(Component, family="gauss.shapes.box", implements=Shape):
         # all done
         return
 
-
     # other interface
-    def intervals(self):
+    def sides(self):
+        """
+        Repack the diagonal vector as a list of the intervals along each axis
+        """
         return zip(*self.diagonal)
 
 

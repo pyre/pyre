@@ -8,44 +8,40 @@
 
 import pyre
 
-# my ancestor
-from pyre.components.Component import Component
-
 # the interface i implement
-from Integrator import Integrator
+from .Integrator import Integrator
 
 # my requirements
-from Shape import Shape
-from Functor import Functor
-from PointCloud import PointCloud
+from .Shape import Shape
+from .Functor import Functor
+from .PointCloud import PointCloud
 
 
-class MonteCarlo(Component, family="gauss.integrators.montecarlo", implements=Integrator):
+class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implements=Integrator):
     """
     Component that implements a Monte Carlo integrator
     """
 
     # public state
-    box = pyre.components.facility(interface=Shape)
+    box = pyre.properties.facility(interface=Shape)
     box.doc = "the bounding box of my cloud of points"
 
-    samples = pyre.components.int()
+    samples = pyre.properties.int(default=10**5)
     samples.doc = "the number of evaluations of the integrand"
-    samples.default = 10**3
 
     # my requirements
-    region = pyre.components.facility(interface=Shape)
+    region = pyre.properties.facility(interface=Shape)
     region.doc = "the region of integration"
     
-    integrand = pyre.components.facility(interface=Functor)
+    integrand = pyre.properties.facility(interface=Functor)
     integrand.doc = "the functor to integrate"
 
-    mesh = pyre.components.facility(interface=PointCloud)
+    mesh = pyre.properties.facility(interface=PointCloud)
     mesh.doc = "the cloud of function evaluation points"
 
     
     # interface
-    @pyre.components.export
+    @pyre.export
     def integrate(self):
         """
         Compute the integral
@@ -55,7 +51,9 @@ class MonteCarlo(Component, family="gauss.integrators.montecarlo", implements=In
         # filter out the ones exterior to the region of integration
         interior = self.region.contains(points)
         # sum up the integrand contributions at those points and return the integral
-        return self.box.measure() / self.samples * sum(self.integrand.eval(interior))
+        integral = self.box.measure() / self.samples * sum(self.integrand.eval(interior))
+        # and return the value
+        return integral
 
 
 # end of file 

@@ -7,15 +7,14 @@
 
 
 import pyre
-from pyre.components.Interface import Interface
 
-class Functor(Interface):
+class Functor(pyre.interface):
     """
     Facility declaration for function objects
     """
 
     # interface
-    @pyre.components.provides
+    @pyre.provides
     def eval(self, points):
         """
         Evaluate the function at the supplied points

@@ -6,54 +6,48 @@
 #
 
 
+import operator, functools
+
 import pyre
-from pyre.components.Component import Component
-from Shape import Shape
+from .Shape import Shape
 
 
-class Ball(Component, family="gauss.shapes.ball", implements=Shape):
+class Ball(pyre.component, family="gauss.shapes.ball", implements=Shape):
     """
     A representation of the interior of a sphere in $d$ dimensions
     """
 
     # public state
-    # the center of the ball
-    center = pyre.components.array()
-    center.doc = "the center of the ball"
-    center.default = (0.0, 0.0)
-
     # the radius of the ball
-    radius = pyre.components.float()
+    radius = pyre.properties.float(default=1) # default: a unit sphere
     radius.doc = "the radius of the ball"
-    radius.default = 1.0
 
+    # the center of the ball
+    center = pyre.properties.array(default=(0,0)) # default: centered at the origin
+    center.doc = "the center of the ball"
 
     # interface
-    @pyre.components.export
+    @pyre.export
     def measure(self):
         """
         Compute my volume
         """
-        # get functools and operator
-        import operator
-        import functools
         # get #@$\pi$@
         from math import pi
         # compute the dimension of space
         d = len(self.center)
         # branch on even/odd d
+        # for even d
         if d%2 == 0:
-            # for even d
             normalization = functools.reduce(operator.mul, range(1, d//2+1))
             # compute the volume
             return pi**(d//2) * self.radius**d / normalization
-            
         # for odd d
         normalization = functools.reduce(operator.mul, range(1, d+1, 2))
+        # compute the volume
         return 2**((d+1)//2) * pi**((d-1)//2) / normalization
 
-
-    @pyre.components.export
+    @pyre.export
     def contains(self, points):
         """
         Filter out the members of {points} that are exterior to this ball

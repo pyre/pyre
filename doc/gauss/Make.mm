@@ -46,18 +46,18 @@ LISTINGS = \
     listings/classes/Disk.py \
     listings/classes/PointCloud.py \
     listings/classes/Shape.py \
-    listings/classes/MersenneTwister.py \
+    listings/classes/Mersenne.py \
     listings/classes/gauss.py \
     listings/containers/Disk.py \
     listings/containers/PointCloud.py \
     listings/containers/Shape.py \
-    listings/containers/MersenneTwister.py \
+    listings/containers/Mersenne.py \
     listings/containers/gauss.py \
     listings/generators/Constant.py \
     listings/generators/Disk.py \
     listings/generators/Functor.py \
     listings/generators/Gaussian.py \
-    listings/generators/MersenneTwister.py \
+    listings/generators/Mersenne.py \
     listings/generators/PointCloud.py \
     listings/generators/Shape.py \
     listings/generators/gauss.py \
@@ -68,7 +68,7 @@ LISTINGS = \
     listings/components/Functor.py \
     listings/components/Gaussian.py \
     listings/components/Integrator.py \
-    listings/components/MersenneTwister.py \
+    listings/components/Mersenne.py \
     listings/components/MonteCarlo.py \
     listings/components/PointCloud.py \
     listings/components/Shape.py \

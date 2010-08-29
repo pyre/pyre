@@ -44,7 +44,7 @@ object oriented machinery in languages like python and \cpp, we must identify an
 base class that encapsulates the role the random number generators plays in our integration
 algorithm. A moment's reflection should convince you that this role is to provide the cloud of
 points that are candidates for evaluating our integrand. The abstract class \class{PointCloud}
-will fit this bill very nicely, and its specialization \class{MersenneTwister} will create point
+will fit this bill very nicely, and its specialization \class{Mersenne} will create point
 clouds using the Mersenne Twister random number generator we used in \secref{simple:python}. 
 
 Abstract base classes are typically used to anchor class hierarchies. They define the interface
@@ -113,7 +113,7 @@ templates. Still, much of the code in modern scientific applications deals with 
 the computational environment; it is these parts that stand to benefit the most from the
 complexity management that object oriented techniques bring to the table.
 
-Returning to the problem at hand, we can now derive a class \class{MersenneTwister} that
+Returning to the problem at hand, we can now derive a class \class{Mersenne} that
 encapsulates the random number generator from the standard python library that we used in
 \secref{simple:python}. We require that \identifier{box} has enough structure so that we can
 deduce the dimensionality of the requested point, as well as build the set of transformations
@@ -128,8 +128,8 @@ iterable container with the structure shown will do.
 \python{
   firstline=9,lastline=29,
   label={lst:classes:wh},
-  caption={\srcfile{classes/MersenneTwister.py}: Encapsulating the standard python generator},
-}{listings/classes/MersenneTwister.py}
+  caption={\srcfile{classes/Mersenne.py}: Encapsulating the standard python generator},
+}{listings/classes/Mersenne.py}
 %
 We have unpacked the two corners of the bounding box in the assignment on
 \lstlineref{mt:unpack}. On \lstlineref{mt:zip}, we have used \function{zip} to build a tuple of
@@ -289,7 +289,7 @@ before.
     evaluation points},
 }{listings/containers/PointCloud.py}
 %
-The new implementation of the subclass \class{MersenneTwister} is shown in
+The new implementation of the subclass \class{Mersenne} is shown in
 \lstref{classes:mt:containers}. The method \method{points} builds, populates and returns a
 container of \identifier{n} random points. The trade off, of course, is that now we must pay
 the cost of managing this container. Since $n$ is potentially a large number we must be very
@@ -301,8 +301,8 @@ elements at the tail in essentially constant time.
 \python{
   firstline=9,lastline=33,
   label={lst:classes:mt:containers},
-  caption={\srcfile{containers/MersenneTwister.py}: Filling a container with random points},
-}{listings/containers/MersenneTwister.py}
+  caption={\srcfile{containers/Mersenne.py}: Filling a container with random points},
+}{listings/containers/Mersenne.py}
 %
 
 The abstract class \class{Shape} doesn't require any significant changes. We merely reinterpret
@@ -364,17 +364,17 @@ storage for a container. You can think of them as iterator generators, hence the
 Explaining what you actually get when you call a generator involves somewhat elaborate
 descriptions of python internals; for the purpose of this discussion, you can think of the
 result as something that can be used just like a normal iterator. Rather than getting lost in
-an abstract description, let's revisit \class{MersenneTwister}. The improvements we will
+an abstract description, let's revisit \class{Mersenne}. The improvements we will
 discuss in this section are focused entirely on the implementation details; the interface as
 specified in our abstract classes will remain intact. Hence, we will derive our improved class
 from the version of \class{PointCloud} shown in \lstref{classes:pointcloud:containers}. The new
-implementation of \class{MersenneTwister} is shown in \lstref{generators:mt}.
+implementation of \class{Mersenne} is shown in \lstref{generators:mt}.
 %
 \python{
   firstline=9,lastline=31,
   label={lst:generators:mt},
-  caption={\srcfile{containers/MersenneTwister.py}: The generator based implementation},
-}{listings/generators/MersenneTwister.py}
+  caption={\srcfile{containers/Mersenne.py}: The generator based implementation},
+}{listings/generators/Mersenne.py}
 %
 Almost everything looks the same as in \lstref{classes:mt:containers}, except for the new
 keyword \keyword{yield} on \lstlineref{mt:generators:yield}, and the \keyword{return} without a

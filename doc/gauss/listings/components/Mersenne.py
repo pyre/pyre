@@ -8,18 +8,15 @@
 
 import pyre
 import random
-from pyre.components.Component import Component
-from PointCloud import PointCloud
+from .PointCloud import PointCloud
 
-
-class MersenneTwister(Component, family="gauss.meshes.mersenne-twister", implements=PointCloud):
+class Mersenne(pyre.component, family="gauss.meshes.mersenne-twister", implements=PointCloud):
     """
     A point generator that uses the random number generator that is part of the python run time
     library to create a point cloud
     """
 
-
-    @pyre.components.export
+    @pyre.export
     def points(self, count, box):
         """
         Return {count} random points chosen from the interior of {box}
@@ -39,6 +36,5 @@ class MersenneTwister(Component, family="gauss.meshes.mersenne-twister", impleme
             yield p
         # all done
         return
-
 
 # end of file 
