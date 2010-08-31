@@ -53,6 +53,7 @@ components:
 	${PYTHON} ./component_class_binding.py
 	${PYTHON} ./component_class_binding_implicit.py
 	${PYTHON} ./component_class_validation.py
+	${PYTHON} ./component_class_trait_matrix.py
 	${PYTHON} ./component_defaults.py
 	${PYTHON} ./component_instantiation.py
 	${PYTHON} ./component_invocation.py
