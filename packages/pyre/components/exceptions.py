@@ -45,10 +45,10 @@ class ImplementationSpecificationError(ComponentError):
     errors, e.g. classes that don't derive from Interface
     """
 
-    def __init__(self, name=None, component=None, errors=[], **kwds):
+    def __init__(self, name=None, errors=[], **kwds):
         super().__init__(description="poorly formed implementation specification", **kwds)
 
-        self.component = component
+        self.name = name
         self.errors = errors
 
         return

@@ -32,18 +32,17 @@ class Actor(Requirement):
         """
         # record the public name
         attributes["pyre_family"] = family.split(cls.pyre_SEPARATOR) if family else []
-        # get my ancestors to build the class record
-        component = super().__new__(cls, name, bases, attributes, **kwds)
         # build the interface specification
         try:
             interface = cls.pyre_buildImplementationSpecification(bases, implements)
         except cls.ImplementationSpecificationError as error:
             error.name = name
-            error.component = component
             error.description = "{}: {}".format(name, error.description)
             raise
         # and add it to the attributes
-        component.pyre_implements = interface
+        attributes["pyre_implements"] = interface
+        # get my ancestors to build the class record
+        component = super().__new__(cls, name, bases, attributes, **kwds)
         # if an interface spec was derivable from the declaration, check interface compatibility 
         if interface:
             # check whether the requirements were implemented correctly
@@ -85,6 +84,7 @@ class Actor(Requirement):
         Trap attribute setting in my class record instances to support setting the default
         value using the natural syntax
         """
+        # print("Actor.__setattr__: {!r}<-{!r}".format(name, value))
         # bypass while the class record is being built
         if self.pyre_state is None:
             super().__setattr__(name, value)

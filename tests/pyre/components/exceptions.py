@@ -34,7 +34,7 @@ def test():
         pass
 
     try:
-        raise ImplementationSpecificationError(name="test", component=c1, errors=[])
+        raise ImplementationSpecificationError(name="test", errors=[])
     except ImplementationSpecificationError as error:
         pass
 
