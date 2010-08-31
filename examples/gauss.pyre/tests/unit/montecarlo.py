@@ -41,8 +41,9 @@ def test():
 
     # check the answer
     # print("π =", 4*integral)
+    error = (π - 4*integral)/π 
     # print("error =", π - 4*integral)
-    assert (π - 4*integral) < 1.0e-2
+    assert error < 1.0e-2
 
     return mc
 
