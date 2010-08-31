@@ -167,7 +167,7 @@ class AbstractModel(Named):
         regex = re.compile(pattern if pattern else '')
 
         print("model {0!r}:".format(self.name))
-        for name, node in self.getNodes():
+        for name, node in sorted(self.getNodes()):
             if regex.match(name):
                 print("    {0!r}: {1!r}".format(name, node.value))
         return
