@@ -28,6 +28,7 @@ class Configurator(AbstractModel):
     TRAIT_SEPARATOR = '.'
     FAMILY_SEPARATOR = '#'
     DEFAULT_PRIORITY = (-1, -1)
+    EXPLICIT_CONFIGURATION = (15, -1) # programmatic overrides
 
 
     # types
@@ -289,10 +290,10 @@ class Configurator(AbstractModel):
         This is expected to return a sequence of ({name}, {node}) tuples, regardles of the node
         storage details implemented by AbstractModel subclasses
         """
-        # for each of ny registered nodes
-        for key, node in  self._nodes.items():
+        # for each of my registered nodes
+        for key in self._nodes.keys():
             # look up the associated name and yield the required value
-            yield self._names[key], node
+            yield self._names[key], self._nodes[key]
         # all done
         return
 
@@ -319,6 +320,40 @@ class Configurator(AbstractModel):
         # and the event priority counter
         self.counter = collections.Counter()
 
+        return
+
+
+    # subscripted access
+    def __setitem__(self, key, value):
+        """
+        Associate {key} with {value} in the configuration store through an explicit assignment
+        """
+        # let bind do the hard work
+        # all we have to do is prepare the key and make up a priority and a locator
+        self.bind(
+            key=key.split(self.TRAIT_SEPARATOR), value=value,
+            priority = self.EXPLICIT_CONFIGURATION,
+            locator=pyre.tracking.here(level=1),
+            )
+        return
+
+
+    # debugging support
+    def _dump(self, pattern=None):
+        """
+        List my contents
+        """
+        # build the node name recognizer
+        import re
+        regex = re.compile(pattern if pattern else '')
+
+        print("model {0!r}:".format(self.name))
+        for name, node in sorted(self.getNodes()):
+            if regex.match(name):
+                print("  {0!r} <- {1!r}".format(name, node.value))
+                for value, location in self.tracker.getHistory(node):
+                    print("   >> {!r} from {}".format(value, location))
+                
         return
 
 
