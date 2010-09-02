@@ -45,7 +45,7 @@ class Expression(Polyadic):
                 raise self.ExpressionError(evaluator=self, error=error) from error
             # build my evaluation context
             self._nodeTable = {
-                self._symbolTable[name]: model.resolveNode(client=self, name=name)
+                self._symbolTable[name]: model.resolveNode(name=name)
                 for name in self._symbolTable }
             # and compute and return my domain
             domain = set(self._nodeTable.values())

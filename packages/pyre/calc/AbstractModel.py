@@ -68,7 +68,7 @@ class AbstractModel(Named):
         return self.addNode(name=name, node=node)
 
 
-    def resolveNode(self, name, client):
+    def resolveNode(self, name):
         """
         Find the named node
         """
