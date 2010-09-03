@@ -178,7 +178,9 @@ class Executive:
                 self.loadConfiguration(source, priority=self.PACKAGE_CONFIGURATION)
             except self.fileserver.NotFoundError as error:
                 pass
-
+        # in any case, this is the best that can be done for this package
+        # update the set of known packages
+        self.packages.add(package)
         # all done
         return component
 
