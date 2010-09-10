@@ -16,6 +16,8 @@
       <bind property="email">aivazis@caltech.edu</bind>
     </inventory>
 
+    <bind property="user.affiliation">california institute of technology</bind>
+
   </inventory>
 
 </config>

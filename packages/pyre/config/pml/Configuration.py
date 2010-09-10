@@ -10,7 +10,7 @@ from .Node import Node
 from ..Configuration import Configuration as Buffer
 
 
-class Configuration(Buffer, Node):
+class Configuration(Node):
     """
     Handler for the top level tag in pml documents
     """
@@ -39,7 +39,8 @@ class Configuration(Buffer, Node):
 
 
     # meta methods
-    def __init__(self, parent, attributes, locator):
+    def __init__(self, parent, attributes, locator, **kwds):
+        super().__init__(**kwds)
         self.events = Buffer()
         return
     
