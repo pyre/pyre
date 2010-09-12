@@ -7,15 +7,23 @@
 
 
 import re
-from .Polyadic import Polyadic
+from .Function import Function
 
 
-class Expression(Polyadic):
+class Expression(Function):
     """
     Evalutor that computes arbitrary python expression among nodes referenced by name
     """
 
+
     # interface
+    def getDomain(self):
+        """
+        Return an iterator over the set of nodes in my domain
+        """
+        return iter(self._domain)
+
+
     def compute(self):
         """
         Evaluate my program
@@ -58,11 +66,22 @@ class Expression(Polyadic):
             domain = []
 
         # invoke the constructor of the ancestor
-        super().__init__(domain=domain, **kwds)
+        self._domain = domain
+        super().__init__(**kwds)
         return
 
 
     # implementation details
+    def _replace(self, name, old, new):
+        """
+        Patch my domain by replacing {old} with {new}.
+
+        This is used by the model during node resolution. Please don't use directly unless you
+        have thought the many and painful implications through
+        """
+        return
+
+
     def _identifierHandler(self, match):
         """
         Callback for re.sub that extracts node references, adds them to my symbol table and
@@ -108,8 +127,11 @@ class Expression(Polyadic):
         # don't forget that the node name has been converted into a local symbol, so we need
         # an extra look up through the symbol table
         self._nodeTable[self._symbolTable[name]] = new
-        # and let my ancestors take care of my domain
-        return super()._replace(name, old, new)
+        # adjust the domain
+        self._domain.remove(old)
+        self._domain.add(new)
+        # all done
+        return new
 
 
     # exceptions
@@ -117,11 +139,12 @@ class Expression(Polyadic):
 
 
     # private data
+    _domain = None # the set on nodes i depend on
     _program = None # the compiled form of my expression
     _nodeTable = None # the map from node names to nodes
     _symbolTable = None # the map: {node name} -> {identifier}
 
-    # regex choices
+    # the expression tokenizer
     _scanner = re.compile(
         r"(?P<esc_open>{{)"
         r"|"

@@ -39,7 +39,11 @@ class Polyadic(Function):
         """
         self._domain.remove(old)
         self._domain.add(new)
-        return
+        return new
+
+
+    # private data
+    _domain = None
 
 
 # end of file 
