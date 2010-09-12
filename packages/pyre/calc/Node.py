@@ -65,7 +65,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         Check whether {string} is an expression
         """
         # NYI: this is not very smart; FIX IT
-        return self.Expression._scanner.match(string)
+        return self.Expression.scanner.match(string)
 
 
     @classmethod
@@ -73,7 +73,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         """
         Build and return a new expression
         """
-        return self.Expression(expression=formula, model=model, **kwds)
+        return self.Expression.parse(expression=formula, model=model, **kwds)
     
 
     @classmethod

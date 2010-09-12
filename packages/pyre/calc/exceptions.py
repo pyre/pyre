@@ -61,17 +61,30 @@ class EvaluationError(NodeError):
         return
 
 
+class EmptyExpressionError(NodeError):
+    """
+    Exception raised when the expression factory did not encounter any named references to
+    other nodes
+    """
+
+    def __init__(self, formula, **kwds):
+        msg = "while parsing {!r}: no references found".format(formula)
+        super().__init__(description=msg, **kwds)
+        self.expression = formula
+        return
+
+
 class ExpressionError(NodeError):
     """
-    Exception raised when the python interpreter encounters a SyntaxError compiling the
+    Exception raised when the python interpreter encounters a syntax error while compiling the
     expression
     """
 
-    def __init__(self, evaluator, error, **kwds):
-        msg = "while evaluating {._formula!r}: {}".format(evaluator, error)
+    def __init__(self, formula, error, **kwds):
+        msg = "while evaluating {!r}: {}".format(formula, error)
         super().__init__(description=msg, **kwds)
-        self.expression = evaluator._formula
-        self.program = evaluator._program
+        self.expression = formula
+        self.error = error
         return
 
 

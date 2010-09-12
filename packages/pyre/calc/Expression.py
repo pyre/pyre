@@ -16,58 +16,90 @@ class Expression(Function):
     """
 
 
+    # factory
+    @classmethod
+    def parse(cls, expression, model):
+        """
+        Examine the input string {expression} and attempt to convert it into an
+        Expression. Named references to other nodes are resolved against the symbol table
+        {model}, which is expected to be an {AbstractModel} instance
+        """
+        # initialize the symbol table
+        symbols = {}
+        # define the re.sub callback as a local function so it has access to the symbol table
+        def handler(match):
+            """
+            Callback for re.sub that extracts node references, adds them to my local symbol
+            table and converts them into legal python identifiers
+            """
+            # if the pattern matched an escaped opening brace, return it as a literal
+            if match.group("esc_open"): return "{"
+            # if the pattern matched an escaped closing brace, return it as a literal
+            if match.group("esc_close"): return "}"
+            # unmatched braces
+            if match.group("lone_open") or match.group("lone_closed"):
+                raise cls.ExpressionError(formula=expression, error="unmatched brace")
+            # only one case left: a valid node reference
+            # extract the name from the match
+            identifier = match.group('identifier')
+            # if the identifier has been seen before
+            try:
+                # translate it and return it
+                return symbols[identifier]
+            except KeyError:
+                # build a new name
+                symbol = "_{}".format(len(symbols))
+                # add it to the symbol table
+                symbols[identifier] = symbol
+                # build and return the matching expression fragment
+                return "(" + symbol + ".value)"
+        # convert node references to legal python identifiers
+        # print("Expression.parse: expression={!r}".format(expression))
+        normalized = cls.scanner.sub(handler, expression)
+        # print("  normalized: {!r}".format(normalized))
+        # print("  symbols:", symbols)
+        # raise an exception if there were no symbols
+        if not symbols:
+            raise cls.EmptyExpressionError(formula=expression)
+        # now, attempt to compile the expression
+        try:
+            program = compile(normalized, filename='expression', mode='eval')
+        except SyntaxError as error:
+            raise cls.ExpressionError(formula=expression, error=error) from error
+        # all is well if we get this far
+        # build the domain as a map of nodes to their normalized names
+        domain = { model.resolveNode(name=used): norm for used, norm in symbols.items() }
+        # print("  domain:", domain)
+        # build the node table as a map of normalized names to nodes
+        nodes = { norm: node for node, norm in domain.items() }
+        # print("  nodes:", nodes)
+        # we have all the parts; make the evaluator
+        return Expression(expression=expression, program=program, domain=domain, nodes=nodes)
+
     # interface
     def getDomain(self):
         """
         Return an iterator over the set of nodes in my domain
         """
-        return iter(self._domain)
+        return self.domain.keys()
 
 
     def compute(self):
         """
         Evaluate my program
         """
-        # if I were given a non-trivial expression
-        if self._program and self._nodeTable:
-            # evaluate it and return the result
-            return eval(self._program, self._nodeTable)
-        # otherwise, just return the original input
-        return self._formula
+        # evaluate my program and return the result
+        return eval(self.program, self.nodes)
 
 
     # meta methods
-    def __init__(self, expression, model, **kwds):
-        # save a copy of the input
-        self._formula = expression
-        # initialize the symbol table
-        self._symbolTable = {} # the map: {node name} -> {identifier}
-
-        # convert node references to legal python identifiers
-        # print("Expression.__init__: formula={!r}".format(expression))
-        expression = self._scanner.sub(self._identifierHandler, expression)
-        # print("  compiled: {!r}".format(expression))
-        # if there were references to other nodes
-        if self._symbolTable:
-            try:
-                self._program = compile(expression, filename='expression', mode='eval')
-            except SyntaxError as error:
-                raise self.ExpressionError(evaluator=self, error=error) from error
-            # build my evaluation context
-            self._nodeTable = {
-                self._symbolTable[name]: model.resolveNode(name=name)
-                for name in self._symbolTable }
-            # and compute and return my domain
-            domain = set(self._nodeTable.values())
-        # otherwise
-        else:
-            self._program = None
-            self._nodeTable = {}
-            domain = []
-
-        # invoke the constructor of the ancestor
-        self._domain = domain
+    def __init__(self, expression, program, domain, nodes, **kwds):
         super().__init__(**kwds)
+        # save a copy of the input
+        self.formula = expression
+        self.program = program
+        self.nodes = nodes
+        self.domain = domain
         return
 
 
@@ -77,75 +109,31 @@ class Expression(Function):
         Patch my domain by replacing {old} with {new}.
 
         This is used by the model during node resolution. Please don't use directly unless you
-        have thought the many and painful implications through
-        """
-        return
-
-
-    def _identifierHandler(self, match):
-        """
-        Callback for re.sub that extracts node references, adds them to my symbol table and
-        converts them into legal python identifiers
-        """
-        # if the pattern matched an escaped opening brace
-        if match.group("esc_open"):
-            # return a single one
-            return "{"
-        # if the pattern matched an escaped closing brace
-        if match.group("esc_close"):
-            # return a single one
-            return "}"
-
-        # unmatched braces
-        if match.group("lone_open") or match.group("lone_closed"):
-            raise self.ExpressionError(evaluator=self, error="unmatched brace")
-        
-        # only one case left: a valid node reference
-        # extract the name from the match
-        identifier = match.group('identifier')
-        # if the identifier has been seen before
-        try:
-            # translate it and return it
-            return self._symbolTable[identifier]
-        except KeyError:
-            # build a new name
-            symbol = "_node_{0:04d}".format(len(self._symbolTable))
-            # add it to the symbol table
-            self._symbolTable[identifier] = symbol
-            # and build and return the matching expression fragment
-            return "(" + symbol + ".value)"
-
-
-    def _replace(self, name, old, new):
-        """
-        Patch my domain by replacing {old} with {new}.
-
-        This is used by the model during node resolution. Please don't use directly unless you
         have thought through the many and painful implications
         """
-        # replace the node in the node table 
-        # don't forget that the node name has been converted into a local symbol, so we need
-        # an extra look up through the symbol table
-        self._nodeTable[self._symbolTable[name]] = new
+        # get the canonical name of the {old} node
+        canonical = self.domain[old]
         # adjust the domain
-        self._domain.remove(old)
-        self._domain.add(new)
+        del self.domain[old]
+        self.domain[new] = canonical
+        # adjust the node table
+        self.nodes[canonical] = new
         # all done
         return new
 
 
     # exceptions
-    from .exceptions import ExpressionError
+    from .exceptions import EmptyExpressionError, ExpressionError
 
 
     # private data
-    _domain = None # the set on nodes i depend on
-    _program = None # the compiled form of my expression
-    _nodeTable = None # the map from node names to nodes
-    _symbolTable = None # the map: {node name} -> {identifier}
+    formula = None # the expression supplied by the client
+    program = None # the compiled form of my expression
+    domain = None # the set on nodes i depend on
+    nodes = None # the map from node names to nodes
 
     # the expression tokenizer
-    _scanner = re.compile(
+    scanner = re.compile(
         r"(?P<esc_open>{{)"
         r"|"
         r"(?P<esc_close>}})"

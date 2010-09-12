@@ -19,16 +19,19 @@ def test():
     model = pyre.calc.newModel(name="expression_escaped")
 
     # escaped macro delimiters
-    literal = pyre.calc.newNode(
-        value=pyre.calc.expression(formula=r"{{production}}", model=model))
-    # check that the escaped delimiters were processed correctly
-    assert literal.value == r"{{production}}"
+    try:
+        pyre.calc.newNode(value=pyre.calc.expression(formula=r"{{production}}", model=model))
+        assert False
+    except pyre.calc.EmptyExpressionError:
+        pass
 
     # and another
-    another = pyre.calc.newNode(
-        value=pyre.calc.expression(formula=r"{{{{cost per unit}}}}", model=model))
-    # check that the escaped delimiters were processed correctly
-    assert another.value == r"{{{{cost per unit}}}}"
+    try:
+        pyre.calc.newNode(
+            value=pyre.calc.expression(formula=r"{{{{cost per unit}}}}", model=model))
+        assert False
+    except pyre.calc.EmptyExpressionError:
+        pass
 
     # finally
     tricky = pyre.calc.newNode(

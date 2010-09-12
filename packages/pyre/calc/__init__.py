@@ -72,7 +72,7 @@ def isExpression(string):
     # get the Expression evaluator class
     from .Expression import Expression
     # ask its scanner whether {string} is a match
-    return Expression._scanner.match(string)
+    return Expression.scanner.match(string)
 
 
 # evaluators
@@ -98,7 +98,7 @@ def expression(*, formula, model, **kwds):
     {model} as the name resolution context
     """
     from .Expression import Expression
-    return Expression(expression=formula, model=model, **kwds)
+    return Expression.parse(expression=formula, model=model, **kwds)
 
 
 def literal(value):
@@ -147,6 +147,9 @@ def sum(*args):
     """
     from .Sum import Sum
     return Sum(domain=args)
+
+
+from .exceptions import EmptyExpressionError
 
 
 # debugging support
