@@ -27,7 +27,7 @@ def test():
             """say my name"""
 
     # declare a component that claims to implement this interface explicitly
-    class explicit(pyre.component, family="tests", implements=interface):
+    class explicit(pyre.component, family="tests.explicit", implements=interface):
         """a simple component"""
         # properties
         name = pyre.property()
@@ -39,7 +39,7 @@ def test():
             return self.name
 
     # declare a component that implements this interface implicitly
-    class implicit(pyre.component, family="tests"):
+    class implicit(pyre.component, family="tests.implicit"):
         """a simple component"""
         # properties
         name = pyre.property()
