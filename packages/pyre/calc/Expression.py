@@ -36,8 +36,10 @@ class Expression(Polyadic):
         self._symbolTable = {} # the map: {node name} -> {identifier}
 
         # convert node references to legal python identifiers
+        # print("Expression.__init__: formula={!r}".format(expression))
         expression = self._scanner.sub(self._identifierHandler, expression)
-        # if there were refrences to other nodes
+        # print("  compiled: {!r}".format(expression))
+        # if there were references to other nodes
         if self._symbolTable:
             try:
                 self._program = compile(expression, filename='expression', mode='eval')
@@ -70,10 +72,16 @@ class Expression(Polyadic):
         if match.group("esc_open"):
             # return a single one
             return "{"
-        # if the pattern matched an escaped opening brace
+        # if the pattern matched an escaped closing brace
         if match.group("esc_close"):
             # return a single one
             return "}"
+
+        # unmatched braces
+        if match.group("lone_open") or match.group("lone_closed"):
+            raise self.ExpressionError(evaluator=self, error="unmatched brace")
+        
+        # only one case left: a valid node reference
         # extract the name from the match
         identifier = match.group('identifier')
         # if the identifier has been seen before
@@ -97,7 +105,7 @@ class Expression(Polyadic):
         have thought through the many and painful implications
         """
         # replace the node in the node table 
-        # don't forget that the node name has been converted into a local sysmbol, so we need
+        # don't forget that the node name has been converted into a local symbol, so we need
         # an extra look up through the symbol table
         self._nodeTable[self._symbolTable[name]] = new
         # and let my ancestors take care of my domain
@@ -119,7 +127,12 @@ class Expression(Polyadic):
         r"|"
         r"(?P<esc_close>}})"
         r"|"
-        r"{(?P<identifier>[^}{]+)}")
+        r"{(?P<identifier>[^}{]+)}"
+        r"|"
+        r"(?P<lone_open>{)"
+        r"|"
+        r"(?P<lone_closed>})"
+        )
     
 
 # end of file 

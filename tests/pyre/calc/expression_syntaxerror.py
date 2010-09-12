@@ -18,10 +18,26 @@ def test():
     # build a model
     model = pyre.calc.newModel(name="expression_syntaxerror")
 
+    # unbalanced open brace
+    try:
+        pyre.calc.newNode(
+            value=pyre.calc.expression(formula="{production", model=model))
+        assert False
+    except model.ExpressionError:
+        pass
+
+    # unbalanced open brace
+    try:
+        pyre.calc.newNode(
+            value=pyre.calc.expression(formula="production}", model=model))
+        assert False
+    except model.ExpressionError:
+        pass
+
     # unbalanced parenthesis
     try:
         pyre.calc.newNode(
-            evaluator=pyre.calc.expression(formula="{production}({shipping}", model=model))
+            value=pyre.calc.expression(formula="{production}({shipping}", model=model))
         assert False
     except model.ExpressionError:
         pass
