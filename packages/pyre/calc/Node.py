@@ -133,7 +133,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         return self
 
 
-    def replace(self, *, node, name=None):
+    def replace(self, *, node):
         """
         Remove {node} from its evaluation graph and graft {self} in its place
         """
@@ -144,7 +144,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         # and iterate through them to adjust their domain
         for observer in node._observers:
             # patch the observer's domain of the client
-            observer._replace(name=name, old=node, new=self)
+            observer._replace(old=node, new=self)
         # all done
         return self
 

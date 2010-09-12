@@ -60,10 +60,10 @@ class Slot(Node):
         return self
 
 
-    def replace(self, other, alias):
+    def replace(self, other):
         """
-        Replace references to node {other} under the name {alias}, and steal its value if its
-        priority is higher than mine
+        Replace references to node {other} and steal its value if its priority is higher than
+        mine
         """
         # print("      priorities: mine={0._priority!r}, hers={1._priority!r}".format(self, other))
         # if {other} has higher priority
@@ -76,7 +76,7 @@ class Slot(Node):
             self._evaluator = other._evaluator
             self._priority = other._priority
         # either way, she is redundant; so replace her
-        return super().replace(node=other, name=alias)
+        return super().replace(node=other)
 
 
     # meta methods

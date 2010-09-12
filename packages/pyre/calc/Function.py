@@ -68,7 +68,7 @@ class Function(Evaluator):
         return self._owner.flush()
 
 
-    def _replace(self, name, old, new):
+    def _replace(self, old, new):
         """
         Patch my domain by replacing {old} with {new}.
 
