@@ -160,7 +160,7 @@ class Configurator(AbstractModel):
                 finally:
                     # print("      aliasing {!r} to {!r}".format(key, canonical))
                     self._hash.alias(alias=key, original=canonical, separator=self.TRAIT_SEPARATOR)
-                # print("      processing setting: {!r} <- {!r}".format(alias, existing.value))
+                # print("      processing setting: {!r} <- {!r}".format(alias, existing))
                 node.replace(other=existing)
             # finally, register the node with the model
             # this must be done after the potential name clash has been prevented by removing all
@@ -232,7 +232,7 @@ class Configurator(AbstractModel):
                         # print("      aliasing {!r} to {!r}".format(key, canonical))
                         self._hash.alias(
                             alias=key, original=canonical, separator=self.TRAIT_SEPARATOR)
-                    # print("      processing setting: {!r} <- {!r}".format(alias, existing.value))
+                    # print("      processing setting: {!r} <- {!r}".format(alias, existing))
                     node.replace(other=existing)
             # finally, attach the node as an inventory attribute named after the trait
             inventory[trait] = node
