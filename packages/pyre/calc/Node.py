@@ -60,15 +60,6 @@ class Node(Observable, metaclass=_metaclass_Node):
 
     # introspection and evaluator factories
     @classmethod
-    def isExpression(self, string):
-        """
-        Check whether {string} is an expression
-        """
-        # NYI: this is not very smart; FIX IT
-        return self.Expression.scanner.match(string)
-
-
-    @classmethod
     def newExpression(self, formula, model, **kwds):
         """
         Build and return a new expression

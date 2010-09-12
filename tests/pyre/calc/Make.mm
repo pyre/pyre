@@ -13,15 +13,12 @@ PROJECT = pyre
 
 all: test
 
-test: sanity recognizers evaluators faulty resolution
+test: sanity evaluators faulty resolution
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./exceptions.py
 	${PYTHON} ./node.py
-
-recognizers:
-	${PYTHON} ./expression_check.py
 
 evaluators:
 	${PYTHON} ./explicit.py

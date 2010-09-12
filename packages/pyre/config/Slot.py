@@ -28,14 +28,21 @@ class Slot(Node):
         """
         # check whether {value} is the marker for uninitialized traits
         if value is None: return None
-        # check whether {value} can be turned into an expression
-        if isinstance(value, str) and cls.isExpression(value):
-            # build an expression evaluator and return it
-            return cls.newExpression(formula=value, model=configuration)
-        # check whether {value} is an evaluator
+        # check whether {value} is already an evaluator
         if isinstance(value, cls.Evaluator): return value
-        # otherwise, build a literal evaluator and return it
-        return cls.newLiteral(value=value)
+        # build a literal for non-strings
+        if not isinstance(value, str): return cls.newLiteral(value=value)
+        # check whether {value} can be turned into an expression
+        try:
+            return cls.newExpression(formula=value, model=configuration)
+        # convert empty expressions into literals
+        except cls.EmptyExpressionError:
+            # build a literal evaluator and return it
+            return cls.newLiteral(value=value)
+        # convert poorly formed expressions into literals
+        except cls.ExpressionError:
+            # build a literal evaluator and return it
+            return cls.newLiteral(value=value)
 
 
     def assign(self, *, value=None, evaluator=None, priority=DEFAULT_PRIORITY):
@@ -84,6 +91,10 @@ class Slot(Node):
         super().__init__(**kwds)
         self._priority = priority
         return
+
+
+    # exceptions
+    from pyre.calc.exceptions import EmptyExpressionError, ExpressionError
 
 
     # private data

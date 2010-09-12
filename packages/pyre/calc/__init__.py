@@ -61,20 +61,6 @@ def newNode(value=None, **kwds):
     return Node(value=value, evaluator=None, **kwds)
 
 
-# predicates
-def isExpression(string):
-    """
-    Check whether {string} is an expression
-
-    Currently, this predicate checks only for the presence of balanced pairs of braces; it
-    doesn't perform any other syntax or validity tests
-    """
-    # get the Expression evaluator class
-    from .Expression import Expression
-    # ask its scanner whether {string} is a match
-    return Expression.scanner.match(string)
-
-
 # evaluators
 def average(*args):
     """
