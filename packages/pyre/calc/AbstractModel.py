@@ -61,7 +61,7 @@ class AbstractModel(Named):
             # this is a name collision
             raise self.DuplicateNodeError(model=self, name=name, node=unresolved)
         # patching time...
-        node.replace(node=unresolved)
+        unresolved.cede(replacement=node)
         # remove the name from the unresolved pile
         self._unresolvedNames.remove(name)
         # and place the node in the model

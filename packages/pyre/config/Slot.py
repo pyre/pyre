@@ -19,7 +19,6 @@ class Slot(Node):
     DEFAULT_PRIORITY = (-1,-1)
 
 
-
     # interface
     @classmethod
     def recognize(cls, value, configuration):
@@ -67,23 +66,23 @@ class Slot(Node):
         return self
 
 
-    def replace(self, other):
+    def cede(self, replacement):
         """
-        Replace references to node {other} and steal its value if its priority is higher than
-        mine
+        Remove {self} from my evaluation graph and graft {replacement} in my place. If my
+        priority is higher, graft my value, evaluator and priority in my {replacement}
         """
         # print("      priorities: mine={0._priority!r}, hers={1._priority!r}".format(self, other))
         # if {other} has higher priority
-        if self._priority < other._priority:
+        if replacement._priority < self._priority:
             # print("      overriding")
             # shutdown my evaluator, if any
-            if self._evaluator: self._evaluator.finalize()
+            if replacement._evaluator: self._evaluator.finalize()
             # assume its value and priority
-            self._value = other._value
-            self._evaluator = other._evaluator
-            self._priority = other._priority
-        # either way, she is redundant; so replace her
-        return super().replace(node=other)
+            replacement._value = self._value
+            replacement._evaluator = self._evaluator
+            replacement._priority = self._priority
+        # either way, I am redundant; so replace me
+        return super().cede(replacement=replacement)
 
 
     # meta methods

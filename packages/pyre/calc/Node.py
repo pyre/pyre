@@ -79,7 +79,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         """
         Build and return a new reference to me
         """
-        return self.__class__(value=None, evaluator=self.Reference(node=self), **kwds)
+        return type(self)(value=None, evaluator=self.Reference(node=self), **kwds)
 
 
     # interface
@@ -124,21 +124,28 @@ class Node(Observable, metaclass=_metaclass_Node):
         return self
 
 
-    def replace(self, *, node):
+    def cede(self, replacement):
         """
-        Remove {node} from its evaluation graph and graft {self} in its place
+        Remove {self} from my evaluation graph and graft {replacement} in my place
         """
         # flush the old node
-        node.flush()
+        self.flush()
         # transfer the old observers
-        self.addObservers(node)
+        replacement.addObservers(self)
         # and iterate through them to adjust their domain
-        for observer in node.observers:
-            # patch the observer's domain of the client
-            # the observers are guaranteed to be nodes with evaluators
-            observer._evaluator._replace(old=node, new=self)
+        for observer in self.observers:
+            # patch the observer's set of observables
+            observer.replaceObservable(old=self, new=replacement)
         # all done
         return self
+
+
+    def replaceObservable(self, old, new):
+        """
+        Stop watching {old} and start monitoring {new}
+        """
+        # if i don't have an evaluator, this is a bug
+        return self._evaluator._replace(old=old, new=new)
 
 
     # exceptions

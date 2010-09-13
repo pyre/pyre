@@ -44,6 +44,18 @@ class Probe:
         return
 
 
+    def replaceObservable(self, old, new):
+        """
+        Stop watching {old} and start monitoring {new}
+        """
+        # drop the {old} observable
+        self._nodes.discard(old)
+        # add the {new} one
+        self._nodes.add(new)
+        # and return
+        return self
+
+
     def finalize(self):
         """
         Stop monitoring all nodes and prepare for shutdown
