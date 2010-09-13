@@ -112,14 +112,14 @@ class Node(Observable, metaclass=_metaclass_Node):
         return self
 
 
-    def flush(self):
+    def flush(self, node=None):
         """
         Invalidate my cache and notify my observers
         """
         # invalidate my cache
         self._value = None
         # notify the observers
-        self.notify()
+        self.notifyObservers()
         # and return
         return self
 
@@ -133,9 +133,10 @@ class Node(Observable, metaclass=_metaclass_Node):
         # transfer the old observers
         self.addObservers(node)
         # and iterate through them to adjust their domain
-        for observer in node._observers:
+        for observer in node.observers:
             # patch the observer's domain of the client
-            observer._replace(old=node, new=self)
+            # the observers are guaranteed to be nodes with evaluators
+            observer._evaluator._replace(old=node, new=self)
         # all done
         return self
 
@@ -230,7 +231,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         # clear out my evaluator
         self._evaluator  = self._prepareEvaluator(None)
         # invalidate my observers' caches
-        self.notify()
+        self.notifyObservers()
         # and return
         return self
 
@@ -244,7 +245,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         # install the new evaluator
         self._evaluator = self._prepareEvaluator(evaluator)
         # notify my observers
-        self.notify()
+        self.notifyObservers()
         # and return
         return self
 
@@ -279,9 +280,9 @@ class Node(Observable, metaclass=_metaclass_Node):
             for idx,op in enumerate(self._evaluator.getDomain()):
                 print("       op {}: {}".format(idx, op))
 
-        if self._observers:
+        if self.observers:
             print("   observers:")
-            for idx,observer in enumerate(self._observers):
+            for idx,observer in enumerate(self.observers):
                 print("       {}: {}".format(idx, observer))
                 print("           node: {}".format(observer.__self__))
                 print("           func: {}".format(observer.__func__))

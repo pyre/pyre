@@ -43,7 +43,7 @@ class Function(Evaluator):
         """
         # add me to the list of observers of all the nodes in my domain
         for node in self.getDomain():
-            node.addObserver(self._flush)
+            node.addObserver(owner.flush)
         # and chain up
         return super().initialize(owner)
 
@@ -54,20 +54,12 @@ class Function(Evaluator):
         """
         # remove me from the list of observers of all the nodes in my domain
         for node in self.getDomain():
-            node.removeObserver(self._flush)
+            node.removeObserver(self._owner.flush)
         # and chain up
         return super().finalize()
 
 
     # implementation details
-    def _flush(self, node):
-        """
-        Callback invoked by the nodes in my domain to notify me that their values have changed
-        """
-        # pass the information on to my node
-        return self._owner.flush()
-
-
     def _replace(self, old, new):
         """
         Patch my domain by replacing {old} with {new}.
