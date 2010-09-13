@@ -27,7 +27,7 @@ class node(Observable):
     @value.setter
     def value(self, value):
         self._value = value
-        self.notify()
+        self.notifyObservers()
         return self
 
     def __init__(self, value, **kwds):

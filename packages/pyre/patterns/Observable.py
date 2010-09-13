@@ -27,18 +27,23 @@ class Observable:
     interface:
       addObserver: registers its callable argument with the list of handlers to invoke
       removeObserver: remove an event handler from the list of handlers to invoke
-      notify: invoke the registered handlers in the order in which they were registered
+      notifyObservers: invoke the registered handlers in the order in which they were registered
     
     """
 
 
-    def notify(self):
+    # public data
+    observers = None
+    
+
+    # interface
+    def notifyObservers(self):
         """
         Notify all observers
         """
         # build a list before notification, just in case the observer's callback behavior
         # involves removing itself from our callback set
-        for instance, method in tuple(self._observers.items()):
+        for instance, method in tuple(self.observers.items()):
             # invoke the callable
             method(instance, self)
         # all done
@@ -51,7 +56,7 @@ class Observable:
         Add the observers of {observable} to my pile
         """
         # update my observers with her observers
-        self._observers.update(observable._observers)
+        self.observers.update(observable.observers)
         # all done
         return self
 
@@ -64,7 +69,7 @@ class Observable:
         instance = callback.__self__
         method = callback.__func__
         # update the observers
-        self._observers[instance] = method
+        self.observers[instance] = method
         # and return the callback
         return self
 
@@ -76,7 +81,7 @@ class Observable:
         # extract the caller information from the method
         instance = callback.__self__
         # remove this observer
-        del self._observers[instance]
+        del self.observers[instance]
         # and return the callback
         return self
 
@@ -84,12 +89,8 @@ class Observable:
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        self._observers = weakref.WeakKeyDictionary()
+        self.observers = weakref.WeakKeyDictionary()
         return
 
-
-    # private data
-    _observers = None
-    
 
 # end of file 
