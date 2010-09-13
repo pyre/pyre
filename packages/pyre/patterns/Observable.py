@@ -38,12 +38,11 @@ class Observable:
         """
         # build a list before notification, just in case the observer's callback behavior
         # involves removing itself from our callback set
-        for instance, funcs in tuple(self._observers.items()):
-            for func in funcs:
-                # invoke the callable
-                func(instance, self)
+        for instance, method in tuple(self._observers.items()):
+            # invoke the callable
+            method(instance, self)
         # all done
-        return
+        return self
             
 
     # callback management
@@ -51,8 +50,10 @@ class Observable:
         """
         Add the observers of {observable} to my pile
         """
+        # update my observers with her observers
         self._observers.update(observable._observers)
-        return
+        # all done
+        return self
 
 
     def addObserver(self, callback):
@@ -61,13 +62,11 @@ class Observable:
         """
         # extract the caller information from the method
         instance = callback.__self__
-        function = callback.__func__
-        # get the registered callbacks for this instance
-        funcs = self._observers.setdefault(instance, set())
-        # add this callback
-        funcs.add(function)
-        # and return it back to the caller
-        return callback
+        method = callback.__func__
+        # update the observers
+        self._observers[instance] = method
+        # and return the callback
+        return self
 
 
     def removeObserver(self, callback):
@@ -76,16 +75,10 @@ class Observable:
         """
         # extract the caller information from the method
         instance = callback.__self__
-        function = callback.__func__
-        # attempt to get the regitered callbacks
-        try:
-            funcs = self._observers[instance]
-        except KeyError:
-            return callback
-        # remove this callable from the set
-        funcs.discard(function)
+        # remove this observer
+        del self._observers[instance]
         # and return the callback
-        return callback
+        return self
 
 
     # meta methods
