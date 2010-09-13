@@ -29,8 +29,9 @@ def test():
     try:
         price.value
         assert False
-    except price.UnresolvedNodeError:
-        pass
+    except price.UnresolvedNodeError as error:
+        assert error.node == price
+        assert error.name == "production"
 
     # register the nodes
     model.registerNode(name="price", node=price)

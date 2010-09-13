@@ -37,20 +37,14 @@ class Evaluator(metaclass=_metaclass_Evaluator):
         """
         Prepare to start computing
         """
-        self._owner = weakref.proxy(owner)
         return self
 
 
-    def finalize(self):
+    def finalize(self, owner):
         """
         Shut down
         """
-        self._owner = None
         return
-
-
-    # private data
-    _owner = None
 
 
 # end of file 

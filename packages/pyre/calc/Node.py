@@ -130,7 +130,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         """
         # flush the old node
         self.flush()
-        # transfer the old observers
+        # transfer my observers to my replacement
         replacement.addObservers(self)
         # and iterate through them to adjust their domain
         for observer in self.observers:
@@ -143,6 +143,10 @@ class Node(Observable, metaclass=_metaclass_Node):
     def replaceObservable(self, old, new):
         """
         Stop watching {old} and start monitoring {new}
+
+        This is here only because there can be many different kinds of nodes in an evaluation
+        graph, many of which may have non-standard storage strategies for their
+        observables. The class Probe in this package is such an example.
         """
         # if i don't have an evaluator, this is a bug
         return self._evaluator._replace(old=old, new=new)
@@ -218,7 +222,8 @@ class Node(Observable, metaclass=_metaclass_Node):
             try:
                 self._value = self._evaluator and self._evaluator.compute()
             # leave unresolved node errors alone
-            except self.UnresolvedNodeError:
+            except self.UnresolvedNodeError as error:
+                error.node = self
                 raise
             # dress anything else up as an EvaluationError
             except Exception as error:
@@ -264,7 +269,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         # if i already have an evaluator
         if self._evaluator is not None:
             # shut it down
-            self._evaluator.finalize()
+            self._evaluator.finalize(owner=self)
         # initialize the new evaluator
         if evaluator is not None:
             evaluator.initialize(owner=self)

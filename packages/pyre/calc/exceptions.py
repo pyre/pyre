@@ -93,7 +93,7 @@ class UnresolvedNodeError(NodeError):
     Signal a value request from an unresolved node
     """
 
-    def __init__(self, name, node, **kwds):
+    def __init__(self, name, node=None, **kwds):
         msg = "node {!r} is unresolved".format(name)
         super().__init__(description=msg, **kwds)
         self.name = name

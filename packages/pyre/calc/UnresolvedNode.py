@@ -24,7 +24,7 @@ class UnresolvedNode(Error):
         """
         Compute my value
         """
-        raise self.UnresolvedNodeError(name=self.name, node=self._owner)
+        raise self.UnresolvedNodeError(name=self.name)
 
 
     # meta methods

@@ -125,7 +125,8 @@ class Property(Trait):
         try:
             value = evaluator.compute()
         # re-raise errors associated with unresolved nodes
-        except node.UnresolvedNodeError:
+        except node.UnresolvedNodeError as error:
+            error.node = node
             raise
         # dress anything else up as an evaluation error
         except Exception as error:
@@ -170,7 +171,8 @@ class Property(Trait):
         try:
             value = evaluator.compute()
         # re-raise errors associated with unresolved nodes
-        except node.UnresolvedNodeError:
+        except node.UnresolvedNodeError as error:
+            error.node = node
             raise
         # dress anything else up as an evaluation error
         except Exception as error:
@@ -216,7 +218,8 @@ class Property(Trait):
             try:
                 value = evaluator.compute()
             # leave unresoved node errors alone
-            except node.UnresolvedNodeError:
+            except node.UnresolvedNodeError as error:
+                error.node = node
                 raise
             # dress anything else up as an evaluation error
             except Exception as error:

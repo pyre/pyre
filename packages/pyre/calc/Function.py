@@ -41,20 +41,20 @@ class Function(Evaluator):
         """
         Prepare to start computing
         """
-        # add me to the list of observers of all the nodes in my domain
+        # add my owner to the list of observers of all the nodes in my domain
         for node in self.getDomain():
             node.addObserver(owner.flush)
         # and chain up
         return super().initialize(owner)
 
 
-    def finalize(self):
+    def finalize(self, owner):
         """
         Shut down
         """
-        # remove me from the list of observers of all the nodes in my domain
+        # remove my owner from the list of observers of all the nodes in my domain
         for node in self.getDomain():
-            node.removeObserver(self._owner.flush)
+            node.removeObserver(owner.flush)
         # and chain up
         return super().finalize()
 

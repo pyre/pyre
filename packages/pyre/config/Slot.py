@@ -53,7 +53,7 @@ class Slot(Node):
         if self._priority > priority: return self
 
         # if i have an evaluator, shut it down
-        if self._evaluator: self._evaluator.finalize()
+        if self._evaluator: self._evaluator.finalize(owner=self)
         # if i were handed an evaluator, initialize it
         if evaluator: evaluator.initialize(owner=self)
  
@@ -76,7 +76,7 @@ class Slot(Node):
         if replacement._priority < self._priority:
             # print("      overriding")
             # shutdown my evaluator, if any
-            if replacement._evaluator: self._evaluator.finalize()
+            if replacement._evaluator: self._evaluator.finalize(owner=self)
             # assume its value and priority
             replacement._value = self._value
             replacement._evaluator = self._evaluator
