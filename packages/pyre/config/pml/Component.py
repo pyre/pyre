@@ -15,7 +15,7 @@ class Component(Node):
     """
 
     # constants
-    elements = ("bind",)
+    elements = ("component", "bind")
 
 
     # interface

@@ -14,14 +14,14 @@
     <!-- the properties -->
     <bind property="samples">10**5</bind>
     <!-- specify the components -->
-    <bind property="box">import://gauss.shapes#box</bind>
     <bind property="mesh">import://gauss.meshes#mersenne</bind>
     <bind property="integrand">import://gauss.functors#gaussian</bind>
     <bind property="region">import://gauss.shapes#ball</bind>
-  </component>
 
-  <component name="mc.box" class="gauss.shapes.box">
-    <bind property="diagonal">((-1,-1), (1,1))</bind>
+    <component name="box">
+      <bind property="diagonal">((-1,-1), (1,1))</bind>
+    </component>
+
   </component>
 
   <component name="mc.integrand" class="gauss.functors.gaussian">
