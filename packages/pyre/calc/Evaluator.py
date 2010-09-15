@@ -6,7 +6,6 @@
 #
 
 
-import weakref
 from . import _metaclass_Evaluator
 
 
