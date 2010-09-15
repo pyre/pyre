@@ -15,6 +15,7 @@ For terms of use, see pyre.license()
 
 # imported symbols
 import os
+import weakref
 
 
 # geography
@@ -113,7 +114,7 @@ def debug():
     import __main__
     try:
         packages |= set(__main__.pyre_debug)
-    except Exception:
+    except:
         pass
     # iterate over the names, import the package and invoke its debug method
     for package in packages:
@@ -133,20 +134,41 @@ def boot():
     if major < 3 and minor < 1:
         raise PyreError(description="pyre needs python 3.1 or newer")
 
+    import __main__
+    try:
+        if __main__.pyre_noboot: return None
+    except:
+        pass
+
     # force the creation of the executive singleton
     from . import framework
     p = framework.executive(managers=framework)
 
     # patch Requirement
     from .components.Requirement import Requirement
-    Requirement.pyre_executive = p
+    Requirement.pyre_executive = weakref.proxy(p)
 
     # patch Trait
     from .components.Trait import Trait
-    Trait.pyre_executive = p
+    Trait.pyre_executive = weakref.proxy(p)
 
     # and return the executive
     return p
+
+
+def shutdown():
+    """
+    Attempt to hunt down and destroy all known references to the executive
+    """
+    # access the executive
+    global executive
+    # destroy the copy held by the Pyre singleton
+    executive.shutdown()
+    # and zero out the global reference
+    executive = None
+    # that should be enough
+    return
+
     
 
 # kickstart

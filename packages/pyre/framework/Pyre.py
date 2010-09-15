@@ -46,6 +46,16 @@ class Pyre(Executive, metaclass=Singleton):
         return self
 
 
+    # clean up
+    @classmethod
+    def shutdown(cls):
+        """
+        Remove the reference to me held by the singleton
+        """
+        cls._pyre_singletonInstance = None
+        return
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)

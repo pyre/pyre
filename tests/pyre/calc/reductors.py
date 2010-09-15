@@ -37,7 +37,7 @@ if __name__ == "__main__":
     test()
     # destroy the framework parts to make sure there are no excess nodes around
     import pyre
-    pyre.executive.configurator = None
+    pyre.shutdown()
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node

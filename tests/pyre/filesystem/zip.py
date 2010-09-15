@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     # destroy pyre.fileserver so it doesn't confuse the extent
     import pyre
-    pyre.executive.fileserver = None
+    pyre.shutdown()
 
     # check that the filesystem was destroyed
     from pyre.filesystem.Filesystem import Filesystem

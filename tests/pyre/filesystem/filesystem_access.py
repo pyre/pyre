@@ -45,14 +45,15 @@ def test():
 
 # main
 if __name__ == "__main__":
+    import gc
     # request debugging support for the pyre.calc package
     pyre_debug = { "pyre.filesystem" }
 
     test()
 
-    # destroy pyre.fileserver so it doesn't confuse the extent
+    # shutdown the framework
     import pyre
-    pyre.executive.fileserver = None
+    pyre.shutdown()
 
     # check that the filesystem was destroyed
     from pyre.filesystem.Filesystem import Filesystem
