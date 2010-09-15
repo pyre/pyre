@@ -242,21 +242,6 @@ class Configurator(AbstractModel):
         return component
 
 
-    # convenience
-    def validateNode(self, node):
-        """
-        Verify that {node} contains no circular references
-
-        N.B.: there is also AbstractModel.validate that checks the entire set of nodes
-        """
-        # remove the node from the known good set
-        self._clean.discard(node)
-        # traverse the subgraph rooted att his node
-        node.validate(clean=self._clean)
-        # all is good if no eception was thrown
-        return node
-
-
     # interface obligations from pyre.calc.AbstractModel
     def addNode(self, name, node):
         """
@@ -311,9 +296,6 @@ class Configurator(AbstractModel):
         self._nodes = {}
         self._hash = pyre.patterns.newPathHash()
 
-        # the model nodes that are known to be in good state
-        self._clean = set()
-
         # history tracking
         self.tracker = pyre.tracking.newTracker()
 
@@ -348,7 +330,10 @@ class Configurator(AbstractModel):
         regex = re.compile(pattern if pattern else '')
 
         print("model {0!r}:".format(self.name))
-        for name, node in sorted(self.getNodes()):
+        for key in self._nodes.keys():
+            # look up the associated name and yield the required value
+            name = self._names[key]
+            node = self._nodes[key]
             if regex.match(name):
                 print("  {0!r} <- {1!r}".format(name, node.value))
                 for value, location in self.tracker.getHistory(node):

@@ -42,13 +42,29 @@ class Model(AbstractModel):
         """
         Iterate over the nodes in my graph. Returns a sequence of ({name}, {node}) tuples.
         """
-        return self._nodes.items()
+        return self._nodes.values()
 
 
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self._nodes = {}
+        return
+
+
+    # debugging support
+    def _dump(self, pattern=None):
+        """
+        List my contents
+        """
+        # build the node name recognizer
+        import re
+        regex = re.compile(pattern if pattern else '')
+
+        print("model {0!r}:".format(self.name))
+        for name, node in sorted(self._nodes.items()):
+            if regex.match(name):
+                print("    {0!r}: {1!r}".format(name, node.value))
         return
 
 

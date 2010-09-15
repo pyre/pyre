@@ -19,7 +19,7 @@ class AbstractModel(Named):
 
 
     # interface
-    def validate(self):
+    def validate(self, root=None):
         """
         Attempt to validate the evaluation graph.
         
@@ -33,14 +33,22 @@ class AbstractModel(Named):
         The network is valid only as long as no new nodes have been inserted since the last
         time it was validated
         """
-        # initialize the clean node set
-        good = set()
+        # if we are validating the subgraph anchored at a given node
+        if root:
+            # limit the scope
+            scope = [root]
+            # initialize the clean set
+            self._cleanNodes.discard(root)
+        # otherwise
+        else:
+            # visit all nodes in the model
+            scope = self.getNodes()
+            # initialize the clean set
+            self._cleanNodes = set()
+
         # iterate over all the nodes looking for cycles
-        for name, node in self.getNodes():
-            node.validate(span=set(), clean=good)
-        # iterate over all the nodes ensuring that all nodes can compute their value
-        for name, node in self.getNodes():
-            node.value
+        for node in scope:
+            node.validate(clean=self._cleanNodes)
 
         return
 
@@ -144,6 +152,7 @@ class AbstractModel(Named):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
+        self._cleanNodes = set()
         self._unresolvedNames = set()
         return
 
@@ -154,22 +163,6 @@ class AbstractModel(Named):
 
     def __setitem__(self, name, value):
         self.findNode(name).value = value
-        return
-
-
-    # debugging support
-    def _dump(self, pattern=None):
-        """
-        List my contents
-        """
-        # build the node name recognizer
-        import re
-        regex = re.compile(pattern if pattern else '')
-
-        print("model {0!r}:".format(self.name))
-        for name, node in sorted(self.getNodes()):
-            if regex.match(name):
-                print("    {0!r}: {1!r}".format(name, node.value))
         return
 
 

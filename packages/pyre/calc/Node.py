@@ -94,9 +94,6 @@ class Node(Observable, metaclass=_metaclass_Node):
         # initialize my optional parameters
         span = set() if span is None else span
         clean = set() if clean is None else clean
-        # if i am in the clean set, we are done
-        if self in clean:
-            return
         # if i am in the span, we have a cycle
         if self in span:
             raise self.CircularReferenceError(node=self, path=span)

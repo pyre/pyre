@@ -32,6 +32,9 @@ class Function(Evaluator):
         """
         # loop over the nodes in my domain and ask them to do some checking
         for node in self.domain:
+            # skip clean nodes
+            if node in clean: continue
+            # otherwise ask the node to check
             node.validate(span, clean)
         # all done
         return
