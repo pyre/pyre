@@ -131,7 +131,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         # flush the old node
         self.flush()
         # transfer my observers to my replacement
-        replacement.addObservers(self)
+        replacement.observers.update(self.observers)
         # and iterate through them to adjust their domain
         for observer in self.observers:
             # patch the observer's set of observables

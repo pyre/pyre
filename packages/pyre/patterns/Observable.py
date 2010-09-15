@@ -51,38 +51,28 @@ class Observable:
             
 
     # callback management
-    def addObservers(self, observable):
-        """
-        Add the observers of {observable} to my pile
-        """
-        # update my observers with her observers
-        self.observers.update(observable.observers)
-        # all done
-        return self
-
-
     def addObserver(self, callback):
         """
-        Add callable to the set of observers
+        Add {callback} to the set of observers
         """
         # extract the caller information from the method
         instance = callback.__self__
         method = callback.__func__
         # update the observers
         self.observers[instance] = method
-        # and return the callback
+        # and return
         return self
 
 
     def removeObserver(self, callback):
         """
-        Remove callable from the set of observers
+        Remove {callback} from the set of observers
         """
         # extract the caller information from the method
         instance = callback.__self__
         # remove this observer
         del self.observers[instance]
-        # and return the callback
+        # and return
         return self
 
 
