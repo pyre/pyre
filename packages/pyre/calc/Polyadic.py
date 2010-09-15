@@ -16,7 +16,8 @@ class Polyadic(Function):
 
 
     # interface
-    def getDomain(self):
+    @property
+    def domain(self):
         """
         Return an iterator over the set of nodes in my domain
         """

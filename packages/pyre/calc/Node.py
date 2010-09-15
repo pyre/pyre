@@ -289,7 +289,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         print("   evaluator: {}".format(self._evaluator))
 
         if self._evaluator:
-            for idx,op in enumerate(self._evaluator.getDomain()):
+            for idx,op in enumerate(self._evaluator.domain):
                 print("       op {}: {}".format(idx, op))
 
         if self.observers:

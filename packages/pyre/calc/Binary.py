@@ -16,7 +16,8 @@ class Binary(Function):
 
 
     # interface
-    def getDomain(self):
+    @property
+    def domain(self):
         """
         Iterate over my domain
         """

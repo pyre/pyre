@@ -17,23 +17,24 @@ class Function(Evaluator):
 
 
     # interface
+    @property
+    def domain(self):
+        """
+        Return an iterable over the nodes in my domain
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must override 'domain'".format(self))
+        
+
     def validate(self, span, clean):
         """
         Check for faults
         """
         # loop over the nodes in my domain and ask them to do some checking
-        for node in self.getDomain():
+        for node in self.domain:
             node.validate(span, clean)
         # all done
         return
-
-
-    def getDomain(self):
-        """
-        Return an iterable over the nodes in my domain
-        """
-        raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override 'getDomain'".format(self))
 
 
     # life cycle management
@@ -42,7 +43,7 @@ class Function(Evaluator):
         Prepare to start computing
         """
         # add my owner to the list of observers of all the nodes in my domain
-        for node in self.getDomain():
+        for node in self.domain:
             node.addObserver(owner.flush)
         # and chain up
         return super().initialize(owner)
@@ -53,7 +54,7 @@ class Function(Evaluator):
         Shut down
         """
         # remove my owner from the list of observers of all the nodes in my domain
-        for node in self.getDomain():
+        for node in self.domain:
             node.removeObserver(owner.flush)
         # and chain up
         return super().finalize()

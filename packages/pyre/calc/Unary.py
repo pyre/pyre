@@ -16,7 +16,8 @@ class Unary(Function):
 
 
     # interface
-    def getDomain(self):
+    @property
+    def domain(self):
         """
         Return an iterable over my domain
         """

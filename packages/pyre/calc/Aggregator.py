@@ -20,7 +20,7 @@ class Aggregator(Polyadic):
         """
         Invoke the evaluation routines of my descendants to compute my value
         """
-        return self._closure(node.value for node in self.getDomain())
+        return self._closure(node.value for node in self.domain)
 
 
     ## the overriden method that performs the actual computation

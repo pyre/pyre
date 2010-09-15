@@ -76,12 +76,18 @@ class Expression(Function):
         # we have all the parts; make the evaluator
         return Expression(expression=expression, program=program, domain=domain, nodes=nodes)
 
+
+    # public data
+    formula = None # the expression supplied by the client
+
+
     # interface
-    def getDomain(self):
+    @property
+    def domain(self):
         """
         Return an iterator over the set of nodes in my domain
         """
-        return self.domain.keys()
+        return self._domain.keys()
 
 
     def compute(self):
@@ -89,7 +95,7 @@ class Expression(Function):
         Evaluate my program
         """
         # evaluate my program and return the result
-        return eval(self.program, self.nodes)
+        return eval(self._program, self._nodes)
 
 
     # meta methods
@@ -97,9 +103,9 @@ class Expression(Function):
         super().__init__(**kwds)
         # save a copy of the input
         self.formula = expression
-        self.program = program
-        self.nodes = nodes
-        self.domain = domain
+        self._program = program
+        self._nodes = nodes
+        self._domain = domain
         return
 
 
@@ -112,12 +118,12 @@ class Expression(Function):
         have thought through the many and painful implications
         """
         # get the canonical name of the {old} node
-        canonical = self.domain[old]
+        canonical = self._domain[old]
         # adjust the domain
-        del self.domain[old]
-        self.domain[new] = canonical
+        del self._domain[old]
+        self._domain[new] = canonical
         # adjust the node table
-        self.nodes[canonical] = new
+        self._nodes[canonical] = new
         # all done
         return new
 
@@ -127,10 +133,9 @@ class Expression(Function):
 
 
     # private data
-    formula = None # the expression supplied by the client
-    program = None # the compiled form of my expression
-    domain = None # the set on nodes i depend on
-    nodes = None # the map from node names to nodes
+    _program = None # the compiled form of my expression
+    _domain = None # the set on nodes i depend on
+    _nodes = None # the map from node names to nodes
 
     # the expression tokenizer
     scanner = re.compile(
