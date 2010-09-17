@@ -68,7 +68,7 @@ class Expression(Function):
             raise cls.ExpressionError(formula=expression, error=error) from error
         # all is well if we get this far
         # build the domain as a map of nodes to their normalized names
-        domain = { model.resolveNode(name=used): norm for used, norm in symbols.items() }
+        domain = { model.resolve(name=used): norm for used, norm in symbols.items() }
         # print("  domain:", domain)
         # build the node table as a map of normalized names to nodes
         nodes = { norm: node for node, norm in domain.items() }

@@ -28,10 +28,10 @@ def test():
     price = pyre.calc.newNode(value=pyre.calc.expression(formula="2*{cost}", model=model))
 
     # register the nodes
-    model.registerNode(name="production", node=production)
-    model.registerNode(name="shipping", node=shipping)
-    model.registerNode(name="cost", node=cost)
-    model.registerNode(name="price", node=price)
+    model.register(name="production", node=production)
+    model.register(name="shipping", node=shipping)
+    model.register(name="cost", node=cost)
+    model.register(name="price", node=price)
 
     # check the values
     assert production.value == p

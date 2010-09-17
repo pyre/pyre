@@ -34,8 +34,8 @@ def test():
         assert error.name == "production"
 
     # register the nodes
-    model.registerNode(name="price", node=price)
-    model.registerNode(name="production", node=production)
+    model.register(name="price", node=price)
+    model.register(name="production", node=production)
 
     # ask for the price again
     assert production.value == p

@@ -24,9 +24,9 @@ def test():
     cost = pyre.calc.newNode(
         value=pyre.calc.expression(formula="{production}&{shipping}", model=model))
 
-    model.registerNode(name="production", node=production)
-    model.registerNode(name="shipping", node=shipping)
-    model.registerNode(name="cost", node=cost)
+    model.register(name="production", node=production)
+    model.register(name="shipping", node=shipping)
+    model.register(name="cost", node=cost)
 
     try:
         cost.value

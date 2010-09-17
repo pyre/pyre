@@ -30,14 +30,14 @@ def test():
             formula="{price}*(1.0 - {discount})", model=model))
 
     # register the nodes
-    model.registerNode(node=production, name="production")
-    model.registerNode(node=shipping, name="shipping")
-    model.registerNode(node=cost, name="cost")
-    model.registerNode(node=margin, name="margin")
-    model.registerNode(node=overhead, name="overhead")
-    model.registerNode(node=price, name="price")
-    model.registerNode(node=discount, name="discount")
-    model.registerNode(node=total, name="total")
+    model.register(node=production, name="production")
+    model.register(node=shipping, name="shipping")
+    model.register(node=cost, name="cost")
+    model.register(node=margin, name="margin")
+    model.register(node=overhead, name="overhead")
+    model.register(node=price, name="price")
+    model.register(node=discount, name="discount")
+    model.register(node=total, name="total")
 
     # check
     assert production.value == 80

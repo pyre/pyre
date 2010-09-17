@@ -20,7 +20,7 @@ def test():
 
     # self reference
     cost = pyre.calc.newNode(value=pyre.calc.expression(formula="{cost}", model=model))
-    model.registerNode(name="cost", node=cost)
+    model.register(name="cost", node=cost)
 
     try:
         model.validate()
@@ -34,8 +34,8 @@ def test():
     cost = pyre.calc.newNode(value=pyre.calc.expression(formula="{price}", model=model))
     price = pyre.calc.newNode(value=pyre.calc.expression(formula="{cost}", model=model))
     # try to register one of them
-    model.registerNode(name="cost", node=cost)
-    model.registerNode(name="price", node=price)
+    model.register(name="cost", node=cost)
+    model.register(name="price", node=price)
     # now validate the graph, expecting the circular reference to raise an exception
     try:
         model.validate()

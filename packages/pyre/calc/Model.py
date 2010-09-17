@@ -16,33 +16,58 @@ class Model(AbstractModel):
 
 
     # interface
-    def addNode(self, name, node):
-        """
-        Implementation details of the mechanism for node insertion in the model.
-
-        If you are looking to insert a node in the model, please use 'registerNode',
-        which is a lot smarter and takes care of patching unresolved names.
-
-        Do not be tempted to detect duplicate names here; registerNode takes care of that. Just
-        add the node to whatever storage mechanism you use and return the same node to the
-        caller
-        """
-        self._nodes[name] = node
-        return node
-
-
-    def findNode(self, name):
-        """
-        Locate the node in the model that matches {name}
-        """
-        return self._nodes[name]
-
-
-    def getNodes(self):
+    @property
+    def nodes(self):
         """
         Iterate over the nodes in my graph. Returns a sequence of ({name}, {node}) tuples.
         """
         return self._nodes.values()
+
+
+    def register(self, *, name, node):
+        """
+        Add {node} into the model and make it accessible through {name}
+        """
+        # check whether this name has already been registered
+        try:
+            unresolved = self._nodes[name]
+        except KeyError:
+            # nope, this is the first time
+            self._nodes[name] = node
+            return
+        # so, we have seen this name before
+        # if it does not belong to an unresolved node
+        if name not in self._unresolvedNames:
+            # this is a name collision
+            raise self.DuplicateNodeError(model=self, name=name, node=unresolved)
+        # patching time...
+        unresolved.cede(replacement=node)
+        # remove the name from the unresolved pile
+        self._unresolvedNames.remove(name)
+        # place the node in the model
+        self._nodes[name] = node
+        # and return
+        return self
+
+
+    def resolve(self, name):
+        """
+        Find the named node
+        """
+        # attempt to return the node that is registered under {name}
+        try:
+            return self._nodes[name]
+        except KeyError:
+            pass
+        # otherwise, build an unresolved node
+        from .UnresolvedNode import UnresolvedNode
+        unresolved = self.newErrorNode(evaluator=UnresolvedNode(name))
+        # add it to the pile
+        self._nodes[name] = unresolved
+        # and store the name so we can track these guys down
+        self._unresolvedNames.add(name)
+        # and return it
+        return unresolved
 
 
     # meta methods

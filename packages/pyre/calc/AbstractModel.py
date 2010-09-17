@@ -19,6 +19,34 @@ class AbstractModel(Named):
 
 
     # interface
+    @property
+    def nodes(self):
+        """
+        Create an iterable over the nodes in my graph.
+
+        This is expected to return the complete sequence of nodes, regardless of the storage
+        details implemented by AbstractModel descendants
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must implement 'nodes'".format(self))
+
+
+    def register(self, *, name, node):
+        """
+        Add {node} into the model and make it accessible through {name}
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must implement 'register'".format(self))
+
+
+    def resolve(self, name):
+        """
+        Find the named node
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must implement 'register'".format(self))
+
+
     def validate(self, root=None):
         """
         Attempt to validate the evaluation graph.
@@ -42,7 +70,7 @@ class AbstractModel(Named):
         # otherwise
         else:
             # visit all nodes in the model
-            scope = self.getNodes()
+            scope = self.nodes
             # initialize the clean set
             self._cleanNodes = set()
 
@@ -51,49 +79,6 @@ class AbstractModel(Named):
             node.validate(clean=self._cleanNodes)
 
         return
-
-
-    def registerNode(self, *, name, node):
-        """
-        Add {node} into the model and make it accessible through {name}
-        """
-        # check whether this name has already been registered
-        try:
-            unresolved = self.findNode(name)
-        except KeyError:
-            # nope, this is the first time
-            return self.addNode(name=name, node=node)
-        # so, we have seen this name before
-        # if it does not belong to an unresolved node
-        if name not in self._unresolvedNames:
-            # this is a name collision
-            raise self.DuplicateNodeError(model=self, name=name, node=unresolved)
-        # patching time...
-        unresolved.cede(replacement=node)
-        # remove the name from the unresolved pile
-        self._unresolvedNames.remove(name)
-        # and place the node in the model
-        return self.addNode(name=name, node=node)
-
-
-    def resolveNode(self, name):
-        """
-        Find the named node
-        """
-        # attempt to return the node that is registered under {name}
-        try:
-            return self.findNode(name)
-        except KeyError:
-            pass
-        # otherwise, build an unresolved node
-        from .UnresolvedNode import UnresolvedNode
-        unresolved = self.newErrorNode(evaluator=UnresolvedNode(name))
-        # add it to the pile
-        self.addNode(name=name, node=unresolved)
-        # and store the name so we can track these guys down
-        self._unresolvedNames.add(name)
-        # and return it
-        return unresolved
 
 
     # methods that subclasses should override
@@ -105,41 +90,6 @@ class AbstractModel(Named):
         # subclasses should override this to provide their own nodes to host the error evaluator
         from .Node import Node
         return Node(value=None, evaluator=evaluator)
-
-
-    # abstract methods that must be overriden by descendants
-    def addNode(self, name, node):
-        """
-        Implementation details of the mechanism for node insertion in the model.
-
-        If you are looking to insert a node in the model, please use 'registerNode',
-        which is a lot smarter and takes care of patching unresolved names.
-
-        Do not be tempted to detect duplicate names here; registerNode takes care of that. Just
-        add the node to whatever storage mechanism you use and return the same node to the
-        caller
-        """
-        raise NotImplementedError(
-            "class {0.__class__.__name__!r} must implement 'addNode'".format(self))
-
-
-    def findNode(self, name):
-        """
-        Locate the node in the model that matches {name}.
-        """
-        raise NotImplementedError(
-            "class {0.__class__.__name__!r} must implement 'findNode'".format(self))
-        
-
-    def getNodes(self):
-        """
-        Iterate over the nodes in my graph.
-
-        This is expected to return a sequence of ({name}, {node}) tuples, regardless of the
-        node storage details implemented by AbstractModel descendants
-        """
-        raise NotImplementedError(
-            "class {0.__class__.__name__!r} must implement 'getNodes'".format(self))
 
 
     # exceptions
