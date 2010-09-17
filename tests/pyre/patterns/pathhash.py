@@ -18,30 +18,38 @@ def test():
     # build one
     pathhash = pyre.patterns.newPathHash()
     # here are a couple of multi-level addresses
-    moduleName = "pyre.patterns.PathHash"
-    klassName = moduleName + ".PathHash"
+    separator = '.'
+    moduleName = "pyre.patterns.PathHash".split(separator)
+    klassName = moduleName + ["PathHash"]
 
     # now hash the matching nodes
-    module = pathhash.hash(name=moduleName, separator='.')
-    klass = pathhash.hash(name=klassName, separator='.')
+    module = pathhash.hash(key=moduleName)
+    klass = pathhash.hash(key=klassName)
     # check that i get the same node the second time i retrieve it 
-    assert module == pathhash.hash(name=moduleName, separator='.')
-    assert klass == pathhash.hash(name=klassName, separator='.')
+    assert module == pathhash.hash(key=moduleName)
+    assert klass == pathhash.hash(key=klassName)
     # check that i can retrieve the class from within the module
-    assert klass == module.hash(name="PathHash", separator=".")
+    assert klass == module.hash(key=["PathHash"])
 
     # build an alias for the module
-    pathhash.alias(alias="pyre.pathhash", original="pyre.patterns.PathHash", separator='.')
+    alias = "pyre.pathhash".split(separator)
+    original = "pyre.patterns.PathHash".split(separator)
+    pathhash.alias(alias=alias, original=original)
     # check that the alias points where it should
-    assert module == pathhash.hash(name="pyre.pathhash", separator='.')
+    assert module == pathhash.hash(key=alias)
     # and that both contain the same class
-    assert klass == pathhash.hash(name="pyre.pathhash.PathHash", separator='.')
+    assert klass == pathhash.hash(key=alias+["PathHash"])
+
+    # dump out the contents of the hash
+    # pathhash.dump()
+
     # return the pathhash
     return pathhash
 
 
 # main
 if __name__ == "__main__":
+    pyre_noboot = True
     test()
 
 
