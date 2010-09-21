@@ -16,9 +16,9 @@ class Node(Observable, metaclass=_metaclass_Node):
     """
 
 
-    # access to commonly used evaluators
+    # access to the evaluator base
     from .Evaluator import Evaluator
-    from .Expression import Expression
+    # and some evaluator factories
     from .Literal import Literal
     from .Reference import Reference
 
@@ -29,57 +29,46 @@ class Node(Observable, metaclass=_metaclass_Node):
         """
         Refresh my value, if necessary, and return it
         """
-        return self._getValue()
+        # if my cached value is invalid
+        if self._value is None:
+            # get my evaluator to refresh it
+            try:
+                self._value = self._evaluator and self._evaluator.compute()
+            # leave unresolved node errors alone
+            except self.UnresolvedNodeError as error:
+                error.node = self
+                raise
+            # dress anything else up as an EvaluationError
+            except Exception as error:
+                raise self.EvaluationError(evaluator=self, error=error) from error
+        # and return it
+        return self._value
 
 
     @value.setter
     def value(self, value):
         """
-        Set my value to the passed literal value and notify my observers
-
-        This implies that i do not need my evaluator any more, so it is destroyed
+        Set my value to {value} and notify my observers
         """
-        return self._setValue(value)
-
-
-    @property
-    def evaluator(self):
-        """
-        Get my evaluator
-        """
-        return self._evaluator
-
-
-    @evaluator.setter
-    def evaluator(self, evaluator):
-        """
-        Install a new evaluator
-        """
-        return self._setEvaluator(evaluator)
-
-
-    # introspection and evaluator factories
-    @classmethod
-    def newExpression(self, formula, model, **kwds):
-        """
-        Build and return a new expression
-        """
-        return self.Expression.parse(expression=formula, model=model, **kwds)
-    
-
-    @classmethod
-    def newLiteral(self, value, **kwds):
-        """
-        Build and return a new expression
-        """
-        return self.Literal(value=value, **kwds)
-
-
-    def newReference(self, **kwds):
-        """
-        Build and return a new reference to me
-        """
-        return type(self)(value=None, evaluator=self.Reference(node=self), **kwds)
+        # invalidate my cache
+        self._value = None
+        # if i already have an evaluator
+        if self._evaluator is not None:
+            # clear it out
+            self._evaluator.finalize(owner=self)
+        # build my new evaluator
+        if isinstance(value, self.Evaluator):
+            evaluator = value
+        else:
+            evaluator = self.Literal(value=value)
+        # initialize it
+        evaluator.initialize(owner=self)
+        # attach it
+        self._evaluator = evaluator
+        # invalidate my observers' caches
+        self.notifyObservers()
+        # and return
+        return self
 
 
     # interface
@@ -104,6 +93,7 @@ class Node(Observable, metaclass=_metaclass_Node):
             # get the evaluator to loop over its domain
             self._evaluator.validate(span, clean)
         # if i made it this far without an exception, i must be clean
+        # so add myself to the clean pile
         clean.add(self)
         # and return
         return self
@@ -148,6 +138,22 @@ class Node(Observable, metaclass=_metaclass_Node):
         # if i don't have an evaluator, this is a bug
         return self._evaluator.patch(old=old, new=new)
 
+
+    # evaluator factories
+    @classmethod
+    def newLiteral(cls, value, **kwds):
+        """
+        Build a new literal evaluator
+        """
+        return cls.Literal(value=value, **kwds)
+
+
+    def newReference(self, **kwds):
+        """
+        Build a new reference to me
+        """
+        return self.Reference(node=self)
+        
 
     # exceptions
     from .exceptions import CircularReferenceError, EvaluationError, UnresolvedNodeError
@@ -206,72 +212,6 @@ class Node(Observable, metaclass=_metaclass_Node):
         self._value = value
         self._evaluator = evaluator and evaluator.initialize(owner=self)
         return
-
-
-    # implementation details
-    def _getValue(self):
-        """
-        Refresh my value, if necessary, and return it
-        """
-        # if my cached value is invalid
-        if self._value is None:
-            # get my evaluator to refresh it
-            try:
-                self._value = self._evaluator and self._evaluator.compute()
-            # leave unresolved node errors alone
-            except self.UnresolvedNodeError as error:
-                error.node = self
-                raise
-            # dress anything else up as an EvaluationError
-            except Exception as error:
-                raise self.EvaluationError(evaluator=self, error=error) from error
-        # and return it
-        return self._value
-
-
-    def _setValue(self, value):
-        """
-        Set my value to the passed literal value and notify my observers
-
-        This implies that i do not need my evaluator any more, so it is destroyed
-        """
-        # refresh my cache
-        self._value = value
-        # clear out my evaluator
-        self._evaluator  = self._prepareEvaluator(None)
-        # invalidate my observers' caches
-        self.notifyObservers()
-        # and return
-        return self
-
-
-    def _setEvaluator(self, evaluator):
-        """
-        Install a new evaluator
-        """
-        # invalidate my cache
-        self._value = None
-        # install the new evaluator
-        self._evaluator = self._prepareEvaluator(evaluator)
-        # notify my observers
-        self.notifyObservers()
-        # and return
-        return self
-
-
-    def _prepareEvaluator(self, evaluator):
-        """
-        Handle the transition to a new evaluator gracefully
-        """
-        # if i already have an evaluator
-        if self._evaluator is not None:
-            # shut it down
-            self._evaluator.finalize(owner=self)
-        # initialize the new evaluator
-        if evaluator is not None:
-            evaluator.initialize(owner=self)
-        # and return it
-        return evaluator
 
 
     # debugging

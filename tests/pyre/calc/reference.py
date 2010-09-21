@@ -18,7 +18,7 @@ def test():
     # make a node and set its value
     v = 80.
     production = pyre.calc.newNode(value=v)
-    clone = production.newReference()
+    clone = pyre.calc.newNode(value=production.newReference())
 
     assert production.value == v
     assert clone.value == v
