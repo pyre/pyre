@@ -146,7 +146,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         observables. The class Probe in this package is such an example.
         """
         # if i don't have an evaluator, this is a bug
-        return self._evaluator._replace(old=old, new=new)
+        return self._evaluator.patch(old=old, new=new)
 
 
     # exceptions

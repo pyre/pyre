@@ -98,19 +98,7 @@ class Expression(Function):
         return eval(self._program, self._nodes)
 
 
-    # meta methods
-    def __init__(self, expression, program, domain, nodes, **kwds):
-        super().__init__(**kwds)
-        # save a copy of the input
-        self.formula = expression
-        self._program = program
-        self._nodes = nodes
-        self._domain = domain
-        return
-
-
-    # implementation details
-    def _replace(self, old, new):
+    def patch(self, old, new):
         """
         Patch my domain by replacing {old} with {new}.
 
@@ -126,6 +114,17 @@ class Expression(Function):
         self._nodes[canonical] = new
         # all done
         return new
+
+
+    # meta methods
+    def __init__(self, expression, program, domain, nodes, **kwds):
+        super().__init__(**kwds)
+        # save a copy of the input
+        self.formula = expression
+        self._program = program
+        self._nodes = nodes
+        self._domain = domain
+        return
 
 
     # exceptions

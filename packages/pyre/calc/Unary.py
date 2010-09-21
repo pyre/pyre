@@ -25,22 +25,23 @@ class Unary(Function):
         return
 
 
-    # meta methods
-    def __init__(self, node, **kwds):
-        super().__init__(**kwds)
-        self._op = node
-        return
-
-
-    # implementation details
-    def _replace(self, old, new):
+    def patch(self, old, new):
         """
         Patch my domain by replacing {old} with {new}.
 
         This is used by the model during node resolution. Please don't use directly unless you
         have thought the many and painful implications through
         """
+        # easy enough since i only have one item in my domain
         self._op = new
+        # all done
+        return
+
+
+    # meta methods
+    def __init__(self, node, **kwds):
+        super().__init__(**kwds)
+        self._op = node
         return
 
 

@@ -27,16 +27,7 @@ class Binary(Function):
         return
 
 
-    # meta methods
-    def __init__(self, op1, op2, **kwds):
-        super().__init__(**kwds)
-        self._op1 = op1
-        self._op2 = op2
-        return
-
-
-    # implementation details
-    def _replace(self, old, new):
+    def patch(self, old, new):
         """
         Patch my domain by replacing {old} with {new}.
 
@@ -54,5 +45,13 @@ class Binary(Function):
         # else
         raise Firewall()
             
+
+    # meta methods
+    def __init__(self, op1, op2, **kwds):
+        super().__init__(**kwds)
+        self._op1 = op1
+        self._op2 = op2
+        return
+
 
 # end of file 

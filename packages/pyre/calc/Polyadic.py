@@ -24,23 +24,26 @@ class Polyadic(Function):
         return iter(self._domain)
 
 
-    # meta methods
-    def __init__(self, domain, **kwds):
-        super().__init__(**kwds)
-        self._domain = domain
-        return
-
-
-    def _replace(self, old, new):
+    def patch(self, old, new):
         """
         Patch my domain by replacing {old} with {new}.
 
         This is used by the model during node resolution. Please don't use directly unless you
         have thought the many and painful implications through
         """
+        # out with the old
         self._domain.remove(old)
+        # in with the new
         self._domain.add(new)
+        # all done
         return new
+
+
+    # meta methods
+    def __init__(self, domain, **kwds):
+        super().__init__(**kwds)
+        self._domain = domain
+        return
 
 
     # private data

@@ -40,6 +40,17 @@ class Function(Evaluator):
         return
 
 
+    def patch(self, old, new):
+        """
+        Patch my domain by replacing {old} with {new}.
+
+        This is used by the model during node resolution. Please don't use directly unless you
+        have thought the many and painful implications through
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must override '_replace'".format(self))
+
+
     # life cycle management
     def initialize(self, owner):
         """
@@ -61,18 +72,6 @@ class Function(Evaluator):
             node.removeObserver(owner.flush)
         # and chain up
         return super().finalize()
-
-
-    # implementation details
-    def _replace(self, old, new):
-        """
-        Patch my domain by replacing {old} with {new}.
-
-        This is used by the model during node resolution. Please don't use directly unless you
-        have thought the many and painful implications through
-        """
-        raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override '_replace'".format(self))
 
 
 # end of file 
