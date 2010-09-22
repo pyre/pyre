@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity evaluators faulty resolution
+test: sanity evaluators faulty resolution model
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -30,7 +30,6 @@ evaluators:
 	${PYTHON} ./reductors.py
 	${PYTHON} ./operations.py
 	${PYTHON} ./expression.py
-	${PYTHON} ./sample.py
 
 faulty:
 	${PYTHON} ./expression_escaped.py
@@ -41,5 +40,10 @@ faulty:
 resolution:
 	${PYTHON} ./patch.py
 	${PYTHON} ./expression_resolution.py
+
+model:
+	${PYTHON} ./model.py
+	${PYTHON} ./model_smart.py
+
 
 # end of file 

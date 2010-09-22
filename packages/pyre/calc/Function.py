@@ -48,7 +48,7 @@ class Function(Evaluator):
         have thought the many and painful implications through
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override '_replace'".format(self))
+            "class {0.__class__.__name__!r} must override 'patch'".format(self))
 
 
     # life cycle management

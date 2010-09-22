@@ -16,10 +16,9 @@ class Probe:
         """
         The callback that gets invoked when one of the monitored nodes receives a new value
         """
-
+        # if i am not supposed to stay quiet
         if not self._isSilent:
-            print("probe@0x{0:x}: node@0x{1:x}: value={2}".format(id(self), id(node), node.value))
-
+            print("probe@{:#x}: node@{:#x}: value={2}".format(id(self), id(node), node.value))
         return
 
 
@@ -27,9 +26,11 @@ class Probe:
         """
         Monitor node
         """
-
+        # add myself the pile of {node} observers
         node.addObserver(self.activate)
+        # add the node to the set of nodes i am monitoring
         self._nodes.add(node)
+        # and return
         return
 
 
@@ -37,14 +38,15 @@ class Probe:
         """
         Stop monitoring node
         """
-
+        # remove my callback from the pile of {node} obervers
         node.removeObserver(self.activate)
+        # remove node from my pile
         self._nodes.remove(node)
 
         return
 
 
-    def replaceObservable(self, old, new):
+    def patch(self, old, new):
         """
         Stop watching {old} and start monitoring {new}
         """
@@ -60,10 +62,10 @@ class Probe:
         """
         Stop monitoring all nodes and prepare for shutdown
         """
-
+        # extract me from all the nodes i monitor
         for node in self._nodes:
             node.removeObserver(self.activate)
-
+        # and clear out my node pile    
         self._nodes = None
 
         return

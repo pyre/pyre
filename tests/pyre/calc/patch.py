@@ -24,15 +24,32 @@ def test():
     price = cost + margin + overhead
     discount = .2
     total = price*(1.0 - discount)
+    # check we got the answer right
+    assert total.value == 136
     # the poser
-    poser = pyre.calc.newNode(value=150.)
-    # need a name to patch expressions
-    cost.cede(replacement=poser)
+    poser = pyre.calc.newNode(value=180.)
+
+    # introduce the cast
+    # print("production: node@{:#x}".format(id(production)))
+    # print("  shipping: node@{:#x}".format(id(shipping)))
+    # print("      cost: node@{:#x}".format(id(cost)))
+    # print("    margin: node@{:#x}".format(id(margin)))
+    # print("  overhead: node@{:#x}".format(id(overhead)))
+    # print("     price: node@{:#x}".format(id(price)))
+    # print("  discount: node@{:#x}".format(id(discount)))
+    # print("     total: node@{:#x}".format(id(total)))
+    # print("     poser: node@{:#x}".format(id(poser)))
+
+    # patch cost with the new production node
+    cost.patch(old=production, new=poser)
     # check
-    assert margin.value == .25*poser.value
-    assert overhead.value == .45*poser.value
-    assert price.value  == poser.value + margin.value + overhead.value
-    assert total.value == price.value*(1.0 - discount)
+    # assert cost.value == poser.value + shipping.value
+    # assert margin.value == .25*cost.value
+    # assert overhead.value == .45*cost.value
+    # assert price.value  == cost.value + margin.value + overhead.value
+    # assert total.value == price.value*(1.0 - discount)
+    # check we got the new answer right
+    assert total.value == 272
 
     return
 

@@ -103,6 +103,10 @@ class Node(Observable, metaclass=_metaclass_Node):
         """
         Invalidate my cache and notify my observers
         """
+        # if my value is already invalid
+        if self._value is None:
+            # all done
+            return
         # invalidate my cache
         self._value = None
         # notify the observers
@@ -111,23 +115,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         return self
 
 
-    def cede(self, replacement):
-        """
-        Remove {self} from my evaluation graph and graft {replacement} in my place
-        """
-        # flush the old node
-        self.flush()
-        # transfer my observers to my replacement
-        replacement.observers.update(self.observers)
-        # and iterate through them to adjust their domain
-        for observer in self.observers:
-            # patch the observer's set of observables
-            observer.replaceObservable(old=self, new=replacement)
-        # all done
-        return self
-
-
-    def replaceObservable(self, old, new):
+    def patch(self, new, old):
         """
         Stop watching {old} and start monitoring {new}
 
@@ -135,6 +123,8 @@ class Node(Observable, metaclass=_metaclass_Node):
         graph, many of which may have non-standard storage strategies for their
         observables. The class Probe in this package is such an example.
         """
+        # flush me
+        self.flush()
         # if i don't have an evaluator, this is a bug
         return self._evaluator.patch(old=old, new=new)
 

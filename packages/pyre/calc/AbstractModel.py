@@ -81,17 +81,6 @@ class AbstractModel(Named):
         return
 
 
-    # methods that subclasses should override
-    def newErrorNode(self, evaluator):
-        """
-        Create a new error node with the given evaluator
-        """
-        # why is this the right node factory?
-        # subclasses should override this to provide their own nodes to host the error evaluator
-        from .Node import Node
-        return Node(value=None, evaluator=evaluator)
-
-
     # exceptions
     from .exceptions import (
         CircularReferenceError, DuplicateNodeError, ExpressionError, NodeError,
@@ -103,23 +92,12 @@ class AbstractModel(Named):
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self._cleanNodes = set()
-        self._unresolvedNames = set()
-        return
-
-
-    # subscripted access
-    def __getitem__(self, name):
-        return self.findNode(name).value
-
-    def __setitem__(self, name, value):
-        self.findNode(name).value = value
         return
 
 
     # implementation details
     # private data
     _cleanNodes = None # the set of nodes known to have no cycles
-    _unresolvedNames = None # the name map of unresolved nodes
 
 
 # end of file 
