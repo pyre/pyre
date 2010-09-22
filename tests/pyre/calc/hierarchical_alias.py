@@ -21,18 +21,29 @@ def test():
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
     model["user.email"] = "aivazis@caltech.edu"
-    model["user.signature"] = pyre.calc.expression(
-        formula="{user.name}+' -- '+{user.email}", model=model)
-
+    model["user.signature"] = "{user.name}+' -- '+{user.email}"
     # check the signature
     assert model["user.signature"].value == "Michael Aïvázis -- aivazis@caltech.edu"
 
-    # create an alias
-    model.alias(canonical="user.signature", alias="email.signature")
+    # case 1: canonical does not exist, alias does not exist
+    model.alias(alias="author.affiliation", canonical="user.affiliation")
+    model["user.affiliation"] = "California Institute of Technology"
+    assert model["author.affiliation"].value == model["user.affiliation"].value
 
-    return
+    # case 2: canonical exists, alias does not
+    model.alias(alias="author.signature", canonical="user.signature")
     # check the signature
-    assert model["email.signature"].value == "Michael Aïvázis -- aivazis@caltech.edu"
+    assert model["author.signature"].value == model["user.signature"].value
+
+    # case 3: canonical does not exist, alias does
+    model["author.telephone"] = "+1 626.395.3424"
+    model.alias(alias="author.telephone", canonical="user.telephone")
+    assert model["author.telephone"].value == model["user.telephone"].value
+
+    # case 4: both are preëxisting nodes
+    model["author.name"] = "TBD"
+    model.alias(alias="author.name", canonical="user.name")
+    assert model["author.name"].value == model["user.name"].value
 
     return
 

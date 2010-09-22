@@ -21,8 +21,7 @@ def test():
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
     model["user.email"] = "aivazis@caltech.edu"
-    model["user.signature"] = pyre.calc.expression(
-        formula="{user.name}+' -- '+{user.email}", model=model)
+    model["user.signature"] = "{user.name}+' -- '+{user.email}"
 
     # check the signature
     assert model["user.signature"].value == "Michael Aïvázis -- aivazis@caltech.edu"
