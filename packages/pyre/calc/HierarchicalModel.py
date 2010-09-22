@@ -27,13 +27,6 @@ class HierarchicalModel(AbstractModel):
     SEPARATOR = '.'
 
 
-    # types
-    from .Node import Node
-    from .Evaluator import Evaluator
-    from .Expression import Expression
-    from .Literal import Literal
-
-
     # interface obligations from AbstractModel
     @property
     def nodes(self):
@@ -58,13 +51,8 @@ class HierarchicalModel(AbstractModel):
             self._nodes[key] = node
             self._names[key] = name
             return self
-        # patching time
-        # update the observers of the new node
-        node.observers.update(existing.observers)
-        # notify the old obervers of the change
-        for observer in existing.observers:
-            # domain adjustments
-            observer.patch(new=node, old=existing)
+        # patch the evaluation graph
+        self.patch(old=existing, new=node)
         # place the node in the model
         self._nodes[key] = node
         # and return
@@ -91,17 +79,6 @@ class HierarchicalModel(AbstractModel):
         return node
 
 
-    # factory for my nodes
-    def newNode(self, evaluator):
-        """
-        Create a new error node with the given evaluator
-        """
-        # why is this the right node factory?
-        # subclasses should override this to provide their own nodes to host the evaluator
-        from .Node import Node
-        return Node(value=None, evaluator=evaluator)
-
-
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -110,43 +87,6 @@ class HierarchicalModel(AbstractModel):
         self._names = {}
         self._nodes = {}
         self._hash = pyre.patterns.newPathHash()
-        return
-
-
-    # subscripted access
-    def __getitem__(self, name):
-        #  this is easy: get resolve to hunt down the node associated with {name}
-        return self.resolve(name)
-
-
-    def __setitem__(self, name, value):
-        # identify what kind of value we were given
-        # if {value} is another node
-        if isinstance(value, self.Node): 
-            # easy enough
-            node = value
-        # if {value} is an evaluator 
-        elif isinstance(value, self.Evaluator):
-            # build a node with this evaluator
-            node = self.newNode(evaluator=value)
-        # if it is a string
-        elif isinstance(value, str):
-            # check whether it is an expression
-            try:
-                expression = self.Expression.parse(expression=value, model=self)
-            except self.NodeError:
-                # treat it like a literal
-                node = self.newNode(evaluator=self.Literal(value=value))
-            else:
-                # build a node with this evaluator
-                node = self.newNode(evaluator=expression)
-        # otherwise
-        else:
-            # build a literal
-            node = self.newNode(evaluator=self.Literal(value=value))
-        # now, let register do its magic
-        self.register(name=name, node=node)
-        # all done
         return
 
 

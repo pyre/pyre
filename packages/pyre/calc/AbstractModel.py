@@ -18,6 +18,13 @@ class AbstractModel(Named):
     """
 
 
+    # types
+    from .Node import Node
+    from .Evaluator import Evaluator
+    from .Expression import Expression
+    from .Literal import Literal
+
+
     # interface
     @property
     def nodes(self):
@@ -45,6 +52,20 @@ class AbstractModel(Named):
         """
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must implement 'register'".format(self))
+
+
+    def patch(self, old, new):
+        """
+        Patch the evaluation graph by grafting {new} in the place of {old}
+        """
+        # update the set of observers of the new node
+        new.observers.update(old.observers)
+        # notify the old observers of the change
+        for observer in old.observers:
+            # domain adjustments
+            observer.patch(new=new, old=old)
+        # all done
+        return
 
 
     def validate(self, root=None):
@@ -88,10 +109,58 @@ class AbstractModel(Named):
         )
 
 
+    # factory for my nodes
+    def newNode(self, evaluator):
+        """
+        Create a new error node with the given evaluator
+        """
+        # why is this the right node factory?
+        # subclasses should override this to provide their own nodes to host the evaluator
+        from .Node import Node
+        return Node(value=None, evaluator=evaluator)
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self._cleanNodes = set()
+        return
+
+
+    # subscripted access
+    def __getitem__(self, name):
+        #  this is easy: get resolve to hunt down the node associated with {name}
+        return self.resolve(name)
+
+
+    def __setitem__(self, name, value):
+        # identify what kind of value we were given
+        # if {value} is another node
+        if isinstance(value, self.Node): 
+            # easy enough
+            node = value
+        # if {value} is an evaluator 
+        elif isinstance(value, self.Evaluator):
+            # build a node with this evaluator
+            node = self.newNode(evaluator=value)
+        # if it is a string
+        elif isinstance(value, str):
+            # check whether it is an expression
+            try:
+                expression = self.Expression.parse(expression=value, model=self)
+            except self.NodeError:
+                # treat it like a literal
+                node = self.newNode(evaluator=self.Literal(value=value))
+            else:
+                # build a node with this evaluator
+                node = self.newNode(evaluator=expression)
+        # otherwise
+        else:
+            # build a literal
+            node = self.newNode(evaluator=self.Literal(value=value))
+        # now, let register do its magic
+        self.register(name=name, node=node)
+        # all done
         return
 
 
