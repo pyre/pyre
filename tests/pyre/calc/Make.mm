@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity evaluators faulty resolution model
+test: sanity evaluators faulty resolution model hierarchical
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -44,6 +44,10 @@ resolution:
 model:
 	${PYTHON} ./model.py
 	${PYTHON} ./model_smart.py
+
+hierarchical:
+	${PYTHON} ./hierarchical.py
+	${PYTHON} ./hierarchical_smart.py
 
 
 # end of file 

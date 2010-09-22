@@ -39,6 +39,12 @@ def newModel(*, name, **kwds):
     return Model(name=name, **kwds)
 
 
+# hierarchical model
+def newHierarchicalModel(*, name, **kwds):
+    from .HierarchicalModel import HierarchicalModel
+    return HierarchicalModel(name=name, **kwds)
+
+
 # nodes
 def newNode(value=None, **kwds):
     """
