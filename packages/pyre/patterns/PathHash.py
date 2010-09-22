@@ -36,24 +36,25 @@ class PathHash:
         return node
 
 
-    def alias(self, alias, original):
+    def alias(self, alias, canonical):
         """
-        Establish {alias} as alternative to {original}
+        Establish {alias} as alternative to {canonical}
+
+        Each is expected to be an iterable of level names starting from the root of the
+        pathhash.
         """
-        # extract the hash key of the parent node
-        address = alias[:-1]
-        # the new name of the original node is the last chunk of the path
+        # find the node that corresponds to the canonical key
+        base = self.hash(canonical)
+        # retrieve the hash key of the parent node where the alias is to be registered
+        parent = self.hash(key=alias[:-1])
+        # the new name is the last fragment of the alias path
         newname = alias[-1]
-        # hunt down the right parent node
-        parent = self
-        for part in address:
-            parent = parent.nodes[part]
-        # now find the original node
-        node = self.hash(original)
-        # create an entry for {newname} that points to the original
-        parent.nodes[newname] = node
+        # save the original key for the alias
+        original = parent.nodes[newname]
+        # create an entry for it that points to the original
+        parent.nodes[newname] = base
         # and return the original node
-        return node
+        return original, base
 
 
     def dump(self, graphic=''):

@@ -11,6 +11,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working:
+	${PYTHON} ./hierarchical_alias.py
+
 all: test
 
 test: sanity evaluators faulty resolution model hierarchical
@@ -49,6 +52,7 @@ hierarchical:
 	${PYTHON} ./hierarchical.py
 	${PYTHON} ./hierarchical_smart.py
 	${PYTHON} ./hierarchical_patch.py
+	${PYTHON} ./hierarchical_alias.py
 
 
 # end of file 

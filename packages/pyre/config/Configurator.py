@@ -11,10 +11,9 @@ import collections
 import pyre.patterns
 import pyre.tracking
 
-from ..calc.AbstractModel import AbstractModel
 
 
-class Configurator(AbstractModel):
+class Configurator:
     """
     The keeper of all configurable values maintained by the framework
 
@@ -33,9 +32,11 @@ class Configurator(AbstractModel):
 
     # types
     from .Slot import Slot
+    from .Model import Model
 
 
     # public data
+    model = None # the configuration model
     counter = None # the event priority counter
     tracker = None # the node value history tracker
     # build a locator for values that come from trait defaults
@@ -71,35 +72,11 @@ class Configurator(AbstractModel):
         other variables in the model by following the rules in pyre.calc.Expression, and may
         make certain calls to the python runtime. The exact details are being worked out...
         """
-        # make sure not to bail out when {name} is empty; nameless traits still need a Variable
-        # built for them, since subclasses access them
-        name = self.TRAIT_SEPARATOR.join(key)
-        # run the value through the Slot recognizer
-        evaluator = self.Slot.recognize(value=value, configuration=self)
-        # print("Calculator.bind: {0!r} <- {1!r} with priority {2}".format(name, value, priority))
-        # check whether we have seen this variable before
-        try:
-            node = self.findNode(name)
-        except KeyError:
-            # if not, build one
-            # print("  first time for {!r}; building a new node".format(name))
-            node = self.Slot(value=None, evaluator=evaluator, priority=priority)
-            # and register it if a name was given
-            if name:
-                self.registerNode(name=name, node=node)
-        else:
-            # hand the information to the existing node and let it decide what to do
-            node.assign(value=None, evaluator=evaluator, priority=priority)
-
-        # log the event
-        # NYI: this is broken and needs fixin'
-        self.tracker.track(key=node, value=(value, locator))
-
-        # return the node
-        return node
+        # MGA
+        return
 
 
-    def loadConfiguration(self, source, locator, **kwds):
+    def load(self, source, locator, **kwds):
         """
         Ask the pyre {executive} to load the configuration settings in {source}
         """
@@ -115,6 +92,9 @@ class Configurator(AbstractModel):
         Look through the configuration store for nodes that correspond to defaults for the
         traits of the given {component} class and configure them
         """
+        # MGA
+        return
+
         # get the class inventory
         inventory = component.pyre_inventory
         # get the class family
@@ -178,6 +158,9 @@ class Configurator(AbstractModel):
         Initialize the component instance inventory by making the descriptors point to the
         evaluation nodes
         """
+        # MGA
+        return
+
         # get the component's family
         family = self.TRAIT_SEPARATOR.join(component.pyre_family)
         # build the component's name
@@ -242,102 +225,31 @@ class Configurator(AbstractModel):
         return component
 
 
-    # interface obligations from pyre.calc.AbstractModel
-    def addNode(self, name, node):
-        """
-        Implementation details of the node insertion mechanism: associate {node} with {name}
-        and insert it in the model
-
-        If you are looking for a way to insert a node in the model, please use 'registerNode';
-        it is a lot smarter and takes care of patching unresolved names
-        """
-        # hash the name
-        key = self._hash.hash(name, separator=self.TRAIT_SEPARATOR)
-        # add the node to the node store
-        self._nodes[key] = node
-        # add the name to the name store
-        self._names[key] = name
-        # all done
-        return
-
-
-    def findNode(self, name):
-        """
-        Lookup the model node that is associated with {name}
-        """
-        return self._nodes[self._hash.hash(name, separator=self.TRAIT_SEPARATOR)]
-
-
-    def getNodes(self):
-        """
-        Iterate over the nodes in my graph
-
-        This is expected to return a sequence of ({name}, {node}) tuples, regardles of the node
-        storage details implemented by AbstractModel subclasses
-        """
-        # for each of my registered nodes
-        for key in self._nodes.keys():
-            # look up the associated name and yield the required value
-            yield self._names[key], self._nodes[key]
-        # all done
-        return
-
-
     # meta methods
     def __init__(self, executive, name=None, **kwds):
+        super().__init__(**kwds)
+
+        # construct my name
         name = name if name is not None else "pyre.configurator"
-        super().__init__(name=name, **kwds)
 
         # record the executive
         self.executive = weakref.proxy(executive)
-
-        # model evaluation support
-        self._names = {}
-        self._nodes = {}
-        self._hash = pyre.patterns.newPathHash()
-
+        # the configuration model
+        self.model = self.Model(name=name, separator=self.TRAIT_SEPARATOR)
         # history tracking
         self.tracker = pyre.tracking.newTracker()
-
         # and the event priority counter
         self.counter = collections.Counter()
 
         return
 
 
-    # subscripted access
-    def __setitem__(self, key, value):
-        """
-        Associate {key} with {value} in the configuration store through an explicit assignment
-        """
-        # let bind do the hard work
-        # all we have to do is prepare the key and make up a priority and a locator
-        self.bind(
-            key=key.split(self.TRAIT_SEPARATOR), value=value,
-            priority = self.EXPLICIT_CONFIGURATION,
-            locator=pyre.tracking.here(level=1),
-            )
-        return
-
-
-    # debugging support
     def _dump(self, pattern=None):
         """
         List my contents
         """
-        # build the node name recognizer
-        import re
-        regex = re.compile(pattern if pattern else '')
-
-        print("model {0!r}:".format(self.name))
-        for key in self._nodes.keys():
-            # look up the associated name and yield the required value
-            name = self._names[key]
-            node = self._nodes[key]
-            if regex.match(name):
-                print("  {0!r} <- {1!r}".format(name, node.value))
-                for value, location in self.tracker.getHistory(node):
-                    print("   >> {!r} from {}".format(value, location))
+        # dump the contents of the configuration model
+        self.model.dump()
                 
         return
 

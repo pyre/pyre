@@ -26,6 +26,9 @@ class HierarchicalModel(AbstractModel):
     # constants
     SEPARATOR = '.'
 
+    # public data
+    separator = None
+
 
     # interface obligations from AbstractModel
     @property
@@ -37,12 +40,38 @@ class HierarchicalModel(AbstractModel):
         return self._nodes.values()
 
 
+    # interface
+    def alias(self, alias, canonical):
+        """
+        """
+        print("Hierarchical.alias:")
+        # ask the hash to alias the two names and retrieve the corresponding hash keys
+        aliasKey, canonicalKey = self._hash.alias(
+            alias=alias.split(self.separator), canonical=canonical.split(self.separator))
+        try:
+            existing = self._nodes[canonicalKey]
+        except KeyError:
+            existing = None
+        print("  canonical={!r}".format(canonical))
+        print("     key={!r}".format(canonicalKey))
+        print("     node={!r}".format(existing))
+        
+        try:
+            obsolete = self._nodes[aliasKey]
+        except KeyError:
+            obsolete = None
+        print("   alias={!r}".format(alias))
+        print("       key={!r}".format(aliasKey))
+        print("       node={!r}".format(obsolete))
+        
+
+    # AbstractModel obligations 
     def register(self, *, name, node):
         """
         Add {node} into the model and make it accessible through {name}
         """
         # split the name into its parts and hash it
-        key = self._hash.hash(name.split(self.SEPARATOR))
+        key = self._hash.hash(name.split(self.separator))
         # check whether we have a node registered under this name
         try:
             existing = self._nodes[key]
@@ -64,7 +93,7 @@ class HierarchicalModel(AbstractModel):
         Find the named node
         """
         # split the name into its parts and hash it
-        key = self._hash.hash(name.split(self.SEPARATOR))
+        key = self._hash.hash(name.split(self.separator))
         # attempt to return the node that is registered under {name}
         try:
             node = self._nodes[key]
@@ -80,8 +109,11 @@ class HierarchicalModel(AbstractModel):
 
 
     # meta methods
-    def __init__(self, **kwds):
+    def __init__(self, separator=SEPARATOR, **kwds):
         super().__init__(**kwds)
+
+        # the level separator
+        self.separator = separator
 
         # node storage strategy
         self._names = {}

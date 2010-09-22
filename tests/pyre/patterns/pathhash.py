@@ -34,7 +34,7 @@ def test():
     # build an alias for the module
     alias = "pyre.pathhash".split(separator)
     original = "pyre.patterns.PathHash".split(separator)
-    pathhash.alias(alias=alias, original=original)
+    pathhash.alias(alias=alias, canonical=original)
     # check that the alias points where it should
     assert module == pathhash.hash(key=alias)
     # and that both contain the same class

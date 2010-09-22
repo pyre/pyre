@@ -39,6 +39,7 @@ EXPORT_PYTHON_MODULES = \
     CommandLine.py \
     Configuration.py \
     Configurator.py \
+    Model.py \
     Slot.py \
     exceptions.py \
     __init__.py
