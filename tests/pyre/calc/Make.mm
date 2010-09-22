@@ -48,6 +48,7 @@ model:
 hierarchical:
 	${PYTHON} ./hierarchical.py
 	${PYTHON} ./hierarchical_smart.py
+	${PYTHON} ./hierarchical_patch.py
 
 
 # end of file 
