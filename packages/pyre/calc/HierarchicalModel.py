@@ -41,8 +41,26 @@ class HierarchicalModel(AbstractModel):
 
 
     # interface
+    def children(self, root):
+        """
+        Given the name {root}, iterate over all the canonical nodes that are its logical
+        children
+        """
+        # hash the root name
+        rootKey = self._hash.hash(root.split(self.separator))
+        # extract the unique hash subkeys
+        unique = set(rootKey.nodes.values())
+        # iterate over the unique keys
+        for key in unique:
+            # and extract the name and associated node
+            yield self._names[key], self._nodes[key]
+        # all done
+        return
+
+
     def alias(self, alias, canonical):
         """
+        Register the name {alias} as an alternate name for {canonical}
         """
         # ask the hash to alias the two names and retrieve the corresponding hash keys
         aliasKey, canonicalKey = self._hash.alias(
@@ -88,7 +106,7 @@ class HierarchicalModel(AbstractModel):
         # split the name into its parts and hash it
         # N.B.: when multiple names hash to the same key, the code below does not alter the
         # name database. this is as it should so that aliases are handled correctly. make sure
-        # to repsect this invariant when modifying what follows
+        # to respect this invariant when modifying what follows
         key = self._hash.hash(name.split(self.separator))
         # check whether we have a node registered under this name
         try:
