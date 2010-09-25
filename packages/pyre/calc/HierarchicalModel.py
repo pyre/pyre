@@ -58,13 +58,27 @@ class HierarchicalModel(AbstractModel):
         return
 
 
-    def alias(self, alias, canonical):
+    def alias(self, *, alias, canonical, aliasKey=None, canonicalKey=None):
         """
         Register the name {alias} as an alternate name for {canonical}
+
+        Either {alias} or {aliasKey} must be non-nil. Either {canonical} or {canonicalKey} must
+        be non-nil.
+
+        If the optional arguments {aliasKey} and {canonicalKey} are provided, they will be used
+        to generate the corresponding hash keys; otherwise the matching names will be split
+        using the model's field separator. If the keys are supplied but the names are not,
+        appropriate names will be constructed by splicing together the level in the
+        corresponding key using the model's field separator.
         """
+        # build the names
+        alias = alias if alias is not None else self.separator.join(aliasKey)
+        canonical = canonical if canonical is not None else self.separator.join(canonicalKey)
+        # build the multikeys
+        aliasKey = aliasKey if aliasKey is not None else alias.split(self.separator)
+        canonicalKey = canonicalKey if canonicalKey is not None else canonical.split(self.separator)
         # ask the hash to alias the two names and retrieve the corresponding hash keys
-        aliasKey, canonicalKey = self._hash.alias(
-            alias=alias.split(self.separator), canonical=canonical.split(self.separator))
+        aliasKey, canonicalKey = self._hash.alias(alias=aliasKey, canonical=canonicalKey)
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
         # look for a preëxisting node under the alias
@@ -99,15 +113,26 @@ class HierarchicalModel(AbstractModel):
         
 
     # AbstractModel obligations 
-    def register(self, *, name, node):
+    def register(self, *, node, name=None, key=None):
         """
         Add {node} into the model and make it accessible through {name}
+
+        Either {name} or {key} must be non-nil.
+
+        If the optional argument {key} is provided, it will be used to generate the hash key;
+        otherwise {name} will be split using the model's field separator. If {key} is supplied
+        but {name} is not, an appropriate name will be constructed by splicing together the
+        names in {key} using the model's field separator.
         """
-        # split the name into its parts and hash it
+        # build the name
+        name = name if name is not None else self.separator.join(key)
+        # build the key
         # N.B.: when multiple names hash to the same key, the code below does not alter the
         # name database. this is as it should so that aliases are handled correctly. make sure
         # to respect this invariant when modifying what follows
-        key = self._hash.hash(name.split(self.separator))
+        key = key if key is not None else name.split(self.separator)
+        # hash it
+        key = self._hash.hash(key)
         # check whether we have a node registered under this name
         try:
             existing = self._nodes[key]
@@ -124,12 +149,23 @@ class HierarchicalModel(AbstractModel):
         return self
             
             
-    def resolve(self, name):
+    def resolve(self, *, name=None, key=None):
         """
         Find the named node
+
+        Either {name} or {key} must be non-nil.
+
+        If the optional argument {key} is provided, it will be used to generate the hash key;
+        otherwise {name} will be split using the model's field separator. If {key} is supplied
+        but {name} is not, an appropriate name will be constructed by splicing together the
+        names in {key} using the model's field separator.
         """
-        # split the name into its parts and hash it
-        key = self._hash.hash(name.split(self.separator))
+        # build the name
+        name = name if name is not None else self.separator.join(key)
+        # build the key
+        key = key if key is not None else name.split(self.separator)
+        # hash it
+        key = self._hash.hash(key)
         # attempt to return the node that is registered under {name}
         try:
             node = self._nodes[key]
