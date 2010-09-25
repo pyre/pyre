@@ -41,7 +41,7 @@ def test():
     # and transfer the events to the configurator
     configurator.configure(configuration=configuration, priority=executive.USER_CONFIGURATION)
     # dump the state
-    # configurator._dump()
+    # configurator.dump()
     # and check that the assignments took place
     assert configurator["help"] == None
     assert configurator["vtf.nodes"] == "1024"

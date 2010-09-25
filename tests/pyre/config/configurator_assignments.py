@@ -32,7 +32,7 @@ def test():
         key=("sample", "user", "alias"), value="{sample.user.name}")
 
     # dump the contents of the model
-    # configurator._dump()
+    # configurator.dump()
 
     # check the variable bindings
     assert configurator["sample.user.name"] == "michael aïvázis"

@@ -65,7 +65,7 @@ class AbstractModel(Named):
             # domain adjustments
             observer.patch(new=new, old=old)
         # all done
-        return
+        return new
 
 
     def recognize(self, value):

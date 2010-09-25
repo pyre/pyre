@@ -124,13 +124,15 @@ class HierarchicalModel(AbstractModel):
         but {name} is not, an appropriate name will be constructed by splicing together the
         names in {key} using the model's field separator.
         """
-        # build the name
-        name = name if name is not None else self.separator.join(key)
         # build the key
         # N.B.: when multiple names hash to the same key, the code below does not alter the
         # name database. this is as it should so that aliases are handled correctly. make sure
         # to respect this invariant when modifying what follows
+        # N.B.B: the extra copy forced through the call to tuple is necessary to handle keys
+        # that are generators, since they can only be iterated through once...
         key = key if key is not None else name.split(self.separator)
+        # build the name
+        name = name if name is not None else self.separator.join(key)
         # hash it
         key = self._hash.hash(key)
         # check whether we have a node registered under this name
@@ -141,10 +143,10 @@ class HierarchicalModel(AbstractModel):
             self._nodes[key] = node
             self._names[key] = name
             return self
-        # patch the evaluation graph
-        self.patch(old=existing, new=node)
-        # place the node in the model
-        self._nodes[key] = node
+        # patch the evaluation graph 
+        # {self.patch} decides the best way to handle the replacement and returns the winner
+        # node, which must be reinserted in the model
+        self._nodes[key] = self.patch(old=existing, new=node)
         # and return
         return self
             

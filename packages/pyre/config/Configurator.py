@@ -8,9 +8,7 @@
 
 import weakref
 import collections
-import pyre.patterns
 import pyre.tracking
-
 
 
 class Configurator:
@@ -72,8 +70,9 @@ class Configurator:
         other variables in the model by following the rules in pyre.calc.Expression, and may
         make certain calls to the python runtime. The exact details are being worked out...
         """
-        # MGA
-        return
+        # handle the locator here
+        # and pass the buck to my configuration model
+        return self.model.bind(key=key, value=value, priority=priority)
 
 
     def load(self, source, locator, **kwds):
@@ -244,7 +243,21 @@ class Configurator:
         return
 
 
-    def _dump(self, pattern=None):
+    def __getitem__(self, name):
+        """
+        Indexed access of the configuration model
+        """
+        return self.model[name].value
+
+
+    def __setitem__(self, name, value):
+        """
+        Support for programmatic configuration bindings through indexing
+        """
+        raise("Hell")
+
+
+    def dump(self, pattern=None):
         """
         List my contents
         """

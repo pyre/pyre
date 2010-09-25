@@ -90,7 +90,7 @@ class Configuration:
         # interface
         def identify(self, inspector, **kwds):
             """Ask {inspector} to process a {Source} event"""
-            return inspector.loadConfiguration(source=self.source, locator=self.locator, **kwds)
+            return inspector.load(source=self.source, locator=self.locator, **kwds)
 
         # meta methods
         def __init__(self, source, **kwds):
