@@ -46,7 +46,7 @@ class AbstractModel(Named):
             "class {0.__class__.__name__!r} must implement 'register'".format(self))
 
 
-    def resolve(self, name):
+    def resolve(self, *, name):
         """
         Find the named node
         """
@@ -54,7 +54,7 @@ class AbstractModel(Named):
             "class {0.__class__.__name__!r} must implement 'register'".format(self))
 
 
-    def patch(self, old, new):
+    def patch(self, *, old, new):
         """
         Patch the evaluation graph by grafting {new} in the place of {old}
         """
@@ -66,6 +66,32 @@ class AbstractModel(Named):
             observer.patch(new=new, old=old)
         # all done
         return
+
+
+    def recognize(self, value):
+        """
+        Attempt to decipher {value} and convert it into a proper node
+        """
+        # identify what kind of value we were given
+        # if {value} is another node
+        if isinstance(value, self.Node): 
+            # easy enough
+            return value
+        # if {value} is an evaluator 
+        if isinstance(value, self.Evaluator):
+            # build a node with this evaluator
+            return self.newNode(evaluator=value)
+        # if it is a string
+        if isinstance(value, str):
+            # check whether it is an expression
+            try:
+                return self.newNode(evaluator=self.Expression.parse(expression=value, model=self))
+            except self.NodeError:
+                # treat it like a literal
+                return self.newNode(evaluator=self.Literal(value=value))
+        # otherwise
+        # build a literal
+        return self.newNode(evaluator=self.Literal(value=value))
 
 
     def validate(self, root=None):
@@ -116,8 +142,7 @@ class AbstractModel(Named):
         """
         # why is this the right node factory?
         # subclasses should override this to provide their own nodes to host the evaluator
-        from .Node import Node
-        return Node(value=None, evaluator=evaluator)
+        return self.Node(value=None, evaluator=evaluator)
 
 
     # meta methods
@@ -130,36 +155,12 @@ class AbstractModel(Named):
     # subscripted access
     def __getitem__(self, name):
         #  this is easy: get resolve to hunt down the node associated with {name}
-        return self.resolve(name)
+        return self.resolve(name=name)
 
 
     def __setitem__(self, name, value):
-        # identify what kind of value we were given
-        # if {value} is another node
-        if isinstance(value, self.Node): 
-            # easy enough
-            node = value
-        # if {value} is an evaluator 
-        elif isinstance(value, self.Evaluator):
-            # build a node with this evaluator
-            node = self.newNode(evaluator=value)
-        # if it is a string
-        elif isinstance(value, str):
-            # check whether it is an expression
-            try:
-                expression = self.Expression.parse(expression=value, model=self)
-            except self.NodeError:
-                # treat it like a literal
-                node = self.newNode(evaluator=self.Literal(value=value))
-            else:
-                # build a node with this evaluator
-                node = self.newNode(evaluator=expression)
-        # otherwise
-        else:
-            # build a literal
-            node = self.newNode(evaluator=self.Literal(value=value))
         # now, let register do its magic
-        self.register(name=name, node=node)
+        self.register(name=name, node=self.recognize(value=value))
         # all done
         return
 
