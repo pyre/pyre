@@ -30,8 +30,16 @@ def declare():
 
 
 def test():
+    # declare the components
     component = declare()
-    # check that the setting were read properly
+
+    # print out the configuration 
+    # import pyre
+    # pyre.executive.configurator.dump()
+    # print("component.p1 = {.p1!r}".format(component))
+    # print("component.p2 = {.p2!r}".format(component))
+
+    # check that the settings were read properly
     assert component.p1 == "sample - p1"
     assert component.p2 == "sample - p2"
     # and return the component

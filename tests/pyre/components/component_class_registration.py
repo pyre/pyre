@@ -20,8 +20,8 @@ def test():
     class interface(pyre.interface):
         """an interface"""
         # properties
-        p1 = pyre.property()
-        p2 = pyre.property()
+        p1 = pyre.properties.str()
+        p2 = pyre.properties.str()
         # behavior
         @pyre.provides
         def do(self):
@@ -31,11 +31,8 @@ def test():
     class component(pyre.component, family="test", implements=interface):
         """a component"""
         # traits
-        p1 = pyre.property()
-        p1.default = "p1"
-
-        p2 = pyre.property()
-        p2.default = "p2"
+        p1 = pyre.properties.str(default="p1")
+        p2 = pyre.properties.str(default="p2")
 
         @pyre.export
         def do(self):
