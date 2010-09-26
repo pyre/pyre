@@ -47,9 +47,10 @@ class Model(HierarchicalModel):
         # old and new are both guaranteed to be slot instances
         # if {new} overrides {old}
         if new._priority >= old._priority:
-            # get the ancestor to patch their domains
-            return super().patch(old=old, new=new)
-        # otherwise, return the od node
+            # MGA
+            print("pyre.config.Model.patch: NYI: transfer slot information")
+            super().patch(old=old, new=new)
+        # otherwise, return the old node
         return old
 
 
@@ -60,7 +61,14 @@ class Model(HierarchicalModel):
         """
         # why is this the right node factory?
         # subclasses should override this to provide their own nodes to host the evaluator
-        return self.Slot(value=None, evaluator=evaluator)
+        return self.Slot(value=None, evaluator=evaluator, priority=self.defaultPriority)
+
+
+    # meta methods
+    def __init__(self, defaultPriority, **kwds):
+        super().__init__(**kwds)
+        self.defaultPriority = defaultPriority
+        return
 
 
 # end of file 

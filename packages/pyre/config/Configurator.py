@@ -85,6 +85,14 @@ class Configurator:
         return self
 
 
+    def slot(self, value):
+        """
+        Build a new slot that holds {value}; 
+        """
+        # pass the buck to the model
+        return self.model.recognize(value=value)
+
+
     # framework requests
     def configureComponentClass(self, component):
         """
@@ -234,7 +242,8 @@ class Configurator:
         # record the executive
         self.executive = weakref.proxy(executive)
         # the configuration model
-        self.model = self.Model(name=name, separator=self.TRAIT_SEPARATOR)
+        self.model = self.Model(
+            name=name, separator=self.TRAIT_SEPARATOR, defaultPriority=self.DEFAULT_PRIORITY)
         # history tracking
         self.tracker = pyre.tracking.newTracker()
         # and the event priority counter

@@ -15,12 +15,8 @@ class Slot(Node):
     """
 
 
-    # constants
-    DEFAULT_PRIORITY = (-1,-1)
-
-
     # meta methods
-    def __init__(self, priority=DEFAULT_PRIORITY, **kwds):
+    def __init__(self, priority, **kwds):
         super().__init__(**kwds)
         self._priority = priority
         return

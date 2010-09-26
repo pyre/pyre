@@ -83,19 +83,17 @@ class Property(Trait):
 
         # if i was declared in this configurable
         if self.configurable == configurable:
-            # inspect my default value and convert it into a (value, evaluator) pair
-            evaluator = Slot.recognize(
-                value=self.default, configuration=self.pyre_executive.configurator)
-            # instantiate storage for my trait values
-            node = Slot(value=None, evaluator=evaluator)
+            # build my value out of the default
+            value = self.default
         # otherwise
         else:
-            # look through my pedigree for the closest ancestor that has a node for me
-            inherited = configurable.pyre_getTraitDefaultValue(self)
-            # and build a reference to it
-            node = inherited.newReference()
-        # either way, place this node in the inventory of the configurable
-        configurable.pyre_inventory[self] = node
+            # look through my pedigree for the closest ancestor that has a node for me and
+            # build a reference to it
+            value = configurable.pyre_getTraitDefaultValue(self).newReference()
+        # get the configurator to creat a new slot for me
+        slot = configurable.pyre_executive.configurator.slot(value=value)
+        # place this node in the inventory of the configurable
+        configurable.pyre_inventory[self] = slot
         # and return
         return self
 
