@@ -57,7 +57,7 @@ class Model(HierarchicalModel):
     # factory for my nodes
     def newNode(self, evaluator):
         """
-        Create a new error node with the given evaluator
+        Create a new node with the given evaluator
         """
         # why is this the right node factory?
         # subclasses should override this to provide their own nodes to host the evaluator
