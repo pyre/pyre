@@ -19,6 +19,9 @@ class Configurable:
     pyre_SEPARATOR = '.'
 
 
+    # access to the framework executive; patched during framework boot
+    pyre_executive = None
+
     # framework data; patched up by metaclasses and the framework bootstrapping
     pyre_name = None # my public id
     pyre_state = None # track progress through the bootsrapping process

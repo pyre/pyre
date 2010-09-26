@@ -33,8 +33,6 @@ class Trait(AttributeClassifier.pyre_Descriptor):
     tip = None # a short description of my purpose and constraints; see doc below
 
     # framework data
-    # access to the framework executive; patched by the bootstrapping code in pyre/__init__.py
-    pyre_executive = None
     # predicate that indicates whether this trait is subject to runtime configuration
     pyre_isConfigurable = True
 

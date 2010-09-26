@@ -148,9 +148,9 @@ def boot():
     from .components.Requirement import Requirement
     Requirement.pyre_executive = weakref.proxy(p)
 
-    # patch Trait
-    from .components.Trait import Trait
-    Trait.pyre_executive = weakref.proxy(p)
+    # patch Configurable
+    from .components.Configurable import Configurable
+    Configurable.pyre_executive = weakref.proxy(p)
 
     # and return the executive
     return p
@@ -168,7 +168,6 @@ def shutdown():
     executive = None
     # that should be enough
     return
-
     
 
 # kickstart
