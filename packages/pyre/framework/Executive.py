@@ -167,6 +167,7 @@ class Executive:
         # also, bail out if this package has been configured previously
         if package in self.packages: return
         # we have a package name
+        # print("Executive.loadPackageConfiguration: configuring package {!r}".format(package))
         # form all possible filenames for the configuration files
         scope = itertools.product(reversed(self.configpath), [package], self.codex.getEncodings())
         # attempt to load the configuration settings
