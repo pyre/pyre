@@ -94,7 +94,7 @@ class HierarchicalModel(AbstractModel):
             canonicalNode = self._nodes[canonicalKey]
         except KeyError:
             canonicalNode = None
-        # now, there are two cases to handle depending on whether canonical node was registerd
+        # now, there are two cases to handle depending on whether canonical node was registered
         # already; either way clean up after the obsolete aliased node
         del self._names[aliasKey]
         del self._nodes[aliasKey]
@@ -128,8 +128,6 @@ class HierarchicalModel(AbstractModel):
         # N.B.: when multiple names hash to the same key, the code below does not alter the
         # name database. this is as it should so that aliases are handled correctly. make sure
         # to respect this invariant when modifying what follows
-        # N.B.B: the extra copy forced through the call to tuple is necessary to handle keys
-        # that are generators, since they can only be iterated through once...
         key = key if key is not None else name.split(self.separator)
         # build the name
         name = name if name is not None else self.separator.join(key)
