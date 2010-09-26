@@ -31,6 +31,7 @@ test:
 	${PYTHON} ./inheritance_multiple.py
 	${PYTHON} ./inheritance_properties.py
 	${PYTHON} ./metaclass.py
+	${PYTHON} ./metaclass_interface.py
 	${PYTHON} ./metaclass_callsequence.py
 	${PYTHON} ./metaclass_dict.py
 	${PYTHON} ./metaclass_prime.py
