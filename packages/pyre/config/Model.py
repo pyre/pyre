@@ -6,6 +6,7 @@
 #
 
 
+import weakref
 from pyre.calc.HierarchicalModel import HierarchicalModel
 
 
@@ -20,38 +21,98 @@ class Model(HierarchicalModel):
     from .Slot import Slot
 
 
+    # public data
+    defaultPriority = None # the default priority to assign to ne slots
+    configurables = None # a map of keys to their handlers; for assignments that are handled by
+                         # other entities
+
+
     # interface
-    def bind(self, key, value, priority):
+    def recognize(self, value, priority=None):
+        """
+        Attempt to decipher {value} and build a slot to hold it
+        """
+        # get an annnncestor to build the slot
+        slot = super().recognize(value)
+        # adjust its priority
+        slot._priority = priority if priority is not None else self.defaultPriority
+        # and return it to the caller
+        return slot
+
+
+    def register(self, *, node, name=None, key=None):
+        """
+        Add {node} into the model and make it accessible through {name}
+
+        Either {name} or {key} must be non-nil.
+
+        If the optional argument {key} is provided, it will be used to generate the hash key;
+        otherwise {name} will be split using the model's field separator. If {key} is supplied
+        but {name} is not, an appropriate name will be constructed by splicing together the
+        names in {key} using the model's field separator.
+        """
+        return super().register(node=node, name=name, key=key)
+
+
+    def resolve(self, *, name=None, key=None):
+        """
+        Find the named node
+
+        Either {name} or {key} must be non-nil.
+
+        If the optional argument {key} is provided, it will be used to generate the hash key;
+        otherwise {name} will be split using the model's field separator. If {key} is supplied
+        but {name} is not, an appropriate name will be constructed by splicing together the
+        names in {key} using the model's field separator.
+        """
+        return super().resolve(name=name, key=key)
+
+
+    # configuration event processing
+    def bind(self, key, value, priority=None, locator=None):
         """
         Build a node with the given {priority} to hold {value}, and register it under {key}
         """
+        # adjust the priority
+        priority = priority if priority is not None else self.defaultPriority
+        # realize the key, in case we were passed a generator
+        key = tuple(key)
+        # hash the namespace part of the jey
+        nskey = self._hash.hash(key=key[:-1])
+        # attempt to retrieve the associated configurable
+        try:
+            configurable = self.configurables[key]
+        # not there
+        except KeyError:
+            pass
+        # got it; this is trait assignment
+        else:
+            # extract the name of the trait
+            name = key[-1]
+            # get the trait descriptor
+            descriptor = configurable.pyre_getTraitDescriptor(alias=name)
+            # and get it do the dirty work
+            return descriptor.setValue(client=configurable, value=value, priority=priority)
         # build a new node 
-        slot = self.recognize(value)
+        slot = self.recognize(value=value, priority=priority)
         # adjust its priority
         slot._priority = priority
         # get it registered
         # N.B.: the call to tuple forces the realization of generators; it is necessary because
         # register may need to iterate over the key multiple times
-        self.register(node=slot, key=tuple(key))
+        self.register(node=slot, key=key)
         # and return the new slot to the caller
         return slot
 
 
-    # overriden methods
-    def patch(self, *, old, new):
+    def load(self, source, locator, **kwds):
         """
-        Patch the evaluation graph by grafting {new} in the place of {old}
-
-        This method performs collision resolution for slots that are nominally indistinguishable.
+        Ask the pyre {executive} to load the configuration settings in {source}
         """
-        # old and new are both guaranteed to be slot instances
-        # if {new} overrides {old}
-        if new._priority >= old._priority:
-            # MGA
-            print("pyre.config.Model.patch: NYI: transfer slot information")
-            super().patch(old=old, new=new)
-        # otherwise, return the old node
-        return old
+        # get the executive to kick start the configuration loading
+        self.executive.loadConfiguration(uri=source, locator=locator)
+        # and return
+        return self
 
 
     # factory for my nodes
@@ -65,9 +126,16 @@ class Model(HierarchicalModel):
 
 
     # meta methods
-    def __init__(self, defaultPriority, **kwds):
+    def __init__(self, executive, defaultPriority, **kwds):
         super().__init__(**kwds)
+        # record the executive
+        self.executive = weakref.proxy(executive)
+        # the default priority for new slots
         self.defaultPriority = defaultPriority
+
+        # the name table of known component classes and instances
+        self.configurables = {}
+
         return
 
 

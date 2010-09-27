@@ -6,7 +6,6 @@
 #
 
 
-import weakref
 import collections
 import pyre.tracking
 
@@ -54,43 +53,17 @@ class Configurator:
             # update the counter
             self.counter[priority] += 1
             # and process the event
-            event.identify(inspector=self, priority=seq)
+            event.identify(inspector=self.model, priority=seq)
         # all done
         return
  
 
-    # configuration event processing
-    def bind(self, key, value, locator=None, priority=DEFAULT_PRIORITY, **kwds):
-        """
-        Construct a node to hold {value} and register it with the model under a name derived
-        from {key}
-
-        If there is no existing variable by this name, build one and register it with the
-        model. Otherwise, just update the existing node. The contents of {value} can refer to
-        other variables in the model by following the rules in pyre.calc.Expression, and may
-        make certain calls to the python runtime. The exact details are being worked out...
-        """
-        # handle the locator here
-        # and pass the buck to my configuration model
-        return self.model.bind(key=key, value=value, priority=priority)
-
-
-    def load(self, source, locator, **kwds):
-        """
-        Ask the pyre {executive} to load the configuration settings in {source}
-        """
-        # get the executive to kick start the configuration loading
-        self.executive.loadConfiguration(uri=source, locator=locator)
-        # and return
-        return self
-
-
-    def slot(self, value):
+    def slot(self, value, priority=None):
         """
         Build a new slot that holds {value}; 
         """
         # pass the buck to the model
-        return self.model.recognize(value=value)
+        return self.model.recognize(value=value, priority=priority)
 
 
     # framework requests
@@ -239,11 +212,10 @@ class Configurator:
         # construct my name
         name = name if name is not None else "pyre.configurator"
 
-        # record the executive
-        self.executive = weakref.proxy(executive)
         # the configuration model
         self.model = self.Model(
-            name=name, separator=self.TRAIT_SEPARATOR, defaultPriority=self.DEFAULT_PRIORITY)
+            name=name, executive=executive,
+            separator=self.TRAIT_SEPARATOR, defaultPriority=self.DEFAULT_PRIORITY)
         # history tracking
         self.tracker = pyre.tracking.newTracker()
         # and the event priority counter

@@ -78,9 +78,6 @@ class Property(Trait):
         # do whatever my superclass requires
         super().pyre_embed(configurable)
 
-        # access the storage class
-        from ..config.Slot import Slot
-
         # if i was declared in this configurable
         if self.configurable == configurable:
             # build my value out of the default
@@ -253,7 +250,7 @@ class Property(Trait):
     # FIXME
     # OBSOLETE AND INCORRECT IMPLEMENTATIONS
 
-    def setValue(self, client, value):
+    def setValue(self, client, value, priority=None, locator=None):
         """
         Set this trait of {client} to value
         """
