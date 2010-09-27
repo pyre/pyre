@@ -133,20 +133,8 @@ class HierarchicalModel(AbstractModel):
         name = name if name is not None else self.separator.join(key)
         # hash it
         key = self._hash.hash(key)
-        # check whether we have a node registered under this name
-        try:
-            existing = self._nodes[key]
-        except KeyError:
-            # nope, first time
-            self._nodes[key] = node
-            self._names[key] = name
-            return self
-        # patch the evaluation graph 
-        # {self.patch} decides the best way to handle the replacement and returns the winner
-        # node, which must be reinserted in the model
-        self._nodes[key] = self.patch(old=existing, new=node)
-        # and return
-        return self
+        # and pass the info to {_register}
+        return self._register(name=name, node=node, hashkey=key)
             
             
     def resolve(self, *, name=None, key=None):
@@ -166,18 +154,8 @@ class HierarchicalModel(AbstractModel):
         key = key if key is not None else name.split(self.separator)
         # hash it
         key = self._hash.hash(key)
-        # attempt to return the node that is registered under {name}
-        try:
-            node = self._nodes[key]
-        except KeyError:
-            # otherwise, build an unresolved node
-            from .UnresolvedNode import UnresolvedNode
-            node = self.newNode(evaluator=UnresolvedNode(name))
-            # add it to the pile
-            self._names[key] = name
-            self._nodes[key] = node
-        # and return it
-        return node
+        # and pass the info to the support routine
+        return self._resolve(name=name, hashkey=key)
 
 
     # meta methods
@@ -192,6 +170,45 @@ class HierarchicalModel(AbstractModel):
         self._nodes = {}
         self._hash = pyre.patterns.newPathHash()
         return
+
+
+    # implementation details
+    def _register(self, name, node, hashkey):
+        """
+        Attach {node} to the model under {hashkey}
+        """
+        # check whether we have a node registered under this name
+        try:
+            existing = self._nodes[hashkey]
+        except KeyError:
+            # nope, first time
+            self._nodes[hashkey] = node
+            self._names[hashkey] = name
+            return self
+        # patch the evaluation graph 
+        # {self.patch} decides the best way to handle the replacement and returns the winner
+        # node, which must be reinserted in the model
+        self._nodes[hashkey] = self.patch(old=existing, new=node)
+        # and return
+        return self
+ 
+
+    def _resolve(self, name, hashkey):
+        """
+        Find the named node
+        """
+        # attempt to return the node that is registered under {name} using the {hashkey}
+        try:
+            node = self._nodes[hashkey]
+        except KeyError:
+            # otherwise, build an unresolved node
+            from .UnresolvedNode import UnresolvedNode
+            node = self.newNode(evaluator=UnresolvedNode(name))
+            # add it to the pile
+            self._names[hashkey] = name
+            self._nodes[hashkey] = node
+        # and return it
+        return node
 
 
     # debug support
