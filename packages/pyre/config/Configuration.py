@@ -32,6 +32,15 @@ class Configuration:
         return
 
 
+    def newConditionalAssignment(self, component, family, key, value, locator):
+        """
+        Create a new conditional assignment and add it to the queue
+        """
+        self.events.append(self.ConditionalAssignment(
+                component=component, family=family, key=key, value=value, locator=locator))
+        return
+
+
     def newSource(self, source, locator):
         """
         Create a new instruction to process a configuration source and add it to the queue
@@ -79,7 +88,36 @@ class Configuration:
             return
 
         def __str__(self):
-            return "{{{0}: {1} <- {2}}}".format(self.locator, ".".join(self.key), self.value)
+            return "{{{}: {} <- {}}}".format(self.locator, ".".join(self.key), self.value)
+
+    class ConditionalAssignment(Event):
+        """A request to bind a {key} to a {value} subject to a condition"""
+
+        # public data
+        component = None
+        family = None
+        key = None
+        value = None
+
+        # interface
+        def identify(self, inspector, **kwds):
+            """Ask {inspector} to process an {Assignment}"""
+            return inspector.defer(
+                component=self.component, family=self.family,
+                key=self.key, value=self.value, locator=self.locator, **kwds)
+
+        # meta methods
+        def __init__(self, component, family, key, value, **kwds):
+            super().__init__(**kwds)
+            self.component = component
+            self.family = family
+            self.key = key
+            self.value = value
+            return
+
+        def __str__(self):
+            return "{{{}: {} <- {} if {}}}".format(
+                self.locator, ".".join(self.key), self.value, self.condition)
 
     class Source(Event):
         """A request to load configuration settings from a named source"""

@@ -6,6 +6,7 @@
 #
 
 
+import collections
 from .Node import Node
 
 
@@ -34,14 +35,14 @@ class Bind(Node):
         Let {parent} now that processing this bind tag is complete
         """
         parent.createAssignment(
-            key=list(reversed(self.key.split("."))), value="\n".join(self.text),
+            key=self.key, value="\n".join(self.text),
             locator=self.newLocator(locator))
         return
 
 
     # meta methods
     def __init__(self, parent, attributes, locator):
-        self.key = attributes['property']
+        self.key = collections.deque(attributes['property'].split(self.separator))
         self.text = []
         return
 

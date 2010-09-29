@@ -7,6 +7,7 @@
 
 
 import weakref
+import collections
 from pyre.calc.HierarchicalModel import HierarchicalModel
 
 
@@ -75,7 +76,7 @@ class Model(HierarchicalModel):
         """
         # adjust the priority
         priority = priority if priority is not None else self.defaultPriority
-        # realize the key, in case we were passed a generator
+        # realize the key so we can slice it
         key = tuple(key)
         # hash the namespace part of the jey
         nskey = self._hash.hash(key=key[:-1])
@@ -95,13 +96,35 @@ class Model(HierarchicalModel):
             return descriptor.setValue(client=configurable, value=value, priority=priority)
         # build a new node 
         slot = self.recognize(value=value, priority=priority)
-        # adjust its priority
-        slot._priority = priority
         # get it registered
         # N.B.: the call to tuple forces the realization of generators; it is necessary because
         # register may need to iterate over the key multiple times
         self.register(node=slot, key=key)
         # and return the new slot to the caller
+        return slot
+
+
+    def defer(self, component, family, key, value, locator, priority):
+        """
+        Build a node that corresponds to a conditional configuration
+        """
+        # print("Model.defer:")
+        # print("    component={}, family={}".format(component, family))
+        # print("    key={}, value={!r}".format(key, value))
+        # print("    from {}".format(locator))
+        # print("    with priority {}".format(priority))
+
+        # hash the component name
+        ckey = self._hash.hash(component)
+        # hash the family key
+        fkey = self._hash.hash(family)
+        # get the deferred event store
+        model = self.deferred[(ckey, fkey)]
+        # build a slot
+        slot = self.recognize(value=value, priority=priority)
+        # and add it to the pile
+        model.append( (key, slot) )
+        # all done
         return slot
 
 
@@ -132,6 +155,10 @@ class Model(HierarchicalModel):
         self.executive = weakref.proxy(executive)
         # the default priority for new slots
         self.defaultPriority = defaultPriority
+
+
+        # the database of deferred bidings
+        self.deferred = collections.defaultdict(list)
 
         # the name table of known component classes and instances
         self.configurables = {}

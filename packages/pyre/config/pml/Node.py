@@ -16,6 +16,7 @@ class Node(Base):
 
 
     # constants
+    separator = '.'
     namespace = "http://pyre.caltech.edu/releases/1.0/schema/fs.html"
 
 

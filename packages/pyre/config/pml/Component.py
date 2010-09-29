@@ -23,8 +23,30 @@ class Component(Node):
         """
         Transfer all the key,value bindings to my parent
         """
+        # build conditional assignments if i have both a name and a family
+        if self.name and self.family:
+            for key, value, locator in self.bindings:
+                parent.createConditionalAssignment(
+                    component=self.name, family=self.family,
+                    key=key, value=value, locator=locator)
+
+            return
+
+        # otherwise, build regular assignments out of my regular bindings
         for key, value, locator in self.bindings:
+            # add my namespace to the key
+            # if i have a name, use it as the namesapce qualifier
+            if self.name:
+                key.extendleft(reversed(self.name))
+            # otherwise use my family name
+            else:
+                key.extendleft(reversed(self.family))
+            # and store    
             parent.createAssignment(key=key, value=value, locator=locator)
+        # build conditional assignments out of the others
+        for component, family, key, value, locator in self.conditionals:
+            parent.createConditionalAssignment(
+                component=component, family=family, key=key, value=value, locator=locator)
         return
 
 
@@ -33,14 +55,31 @@ class Component(Node):
         """
         Process a binding of a property to a value
         """
-        # buld the configuration target out of the family and instance name
-        # this mechanism enables configuration settings for multiple possible bindings of a
-        # given property to coëxist in the same file
-        marker = '#'.join(tag for tag in [self.family, self.name] if tag)
-        # add my namespace to the key
-        key.append(marker)
         # store it with my other bindings
+        # print("config.pml.Component: key={}, value={!r}".format(key, value))
         self.bindings.append((key, value, locator))
+        return
+
+
+    def createConditionalAssignment(self, component, family, key, value, locator):
+        """
+        Process a conditional assignment
+        """
+        # check whether it is supported
+        if not self.name:
+            raise self.DTDError(
+                description="conditional binding in component with no name specification",
+                locator=locator
+                )
+        if self.family:
+            raise self.DTDError(
+                description="conditional binding in component with a family specification",
+                locator=locator
+                )
+        # add my name to the key
+        component.extendleft(reversed(self.name))
+        # store it with my other conditional bindings
+        self.conditionals.append((component, family, key, value, locator))
         return
 
 
@@ -49,14 +88,17 @@ class Component(Node):
         super().__init__(**kwds)
         # storage for my property bindings
         self.bindings = []
+        self.conditionals = []
         # extract the attributes
-        self.name = attributes.get('name')
-        self.family = attributes.get('family')
-
+        name = attributes.get('name')
+        family = attributes.get('family')
+        # split into fields and store
+        self.name = name.split(self.separator) if name else None
+        self.family = family.split(self.separator) if family else None
         # make sure that at least one of these attributes were given
         if not self.name and not self.family:
             raise self.DTDError(
-                description="neither 'name' not 'family' were specified",
+                description="neither 'name' nor 'family' were specified",
                 locator=locator
                 )
 

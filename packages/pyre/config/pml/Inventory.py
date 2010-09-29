@@ -34,7 +34,7 @@ class Inventory(Node):
         Process a binding of a property to a value
         """
         # add my namespace to the key
-        key.append(self.name)
+        key.appendleft(self.name)
         # store it with my other bindings
         self.bindings.append((key, value, locator))
         return

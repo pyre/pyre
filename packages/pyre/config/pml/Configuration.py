@@ -32,8 +32,19 @@ class Configuration(Node):
         """
         Process a binding of a property to a value
         """
-        # the namespace markers on the key are in stored reverse order
-        self.events.newAssignment(key=reversed(key), value=value, locator=locator)
+        # create a new assignment event
+        self.events.newAssignment(key=key, value=value, locator=locator)
+        # nothing else, for now
+        return
+
+
+    def createConditionalAssignment(self, component, family, key, value, locator):
+        """
+        Process a binding of a property to a value
+        """
+        # create a new conditional assignment event
+        self.events.newConditionalAssignment(
+            component=component, family=family, key=key, value=value, locator=locator)
         # nothing else, for now
         return
 
