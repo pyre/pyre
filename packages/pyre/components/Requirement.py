@@ -58,11 +58,8 @@ class Requirement(AttributeClassifier):
         # actual metaclass
         configurable.pyre_pedigree = tuple(
             base for base in configurable.__mro__ if isinstance(base, cls))
-        # normalize the local descriptors
+        # embed the local descriptors
         for descriptor in configurable.pyre_traits:
-            descriptor.pyre_normalize(configurable)
-        # embed all descriptors, both own and inherited
-        for descriptor in configurable.pyre_getTraitDescriptors():
             descriptor.pyre_embed(configurable)
         # return the record to the caller
         return configurable

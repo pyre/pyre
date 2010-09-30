@@ -34,13 +34,16 @@ class Property(Trait):
 
 
     # interface
-    def pyre_normalize(self, configurable):
+    def pyre_embed(self, configurable):
         """
-        Look through the metadata harvested from the class declaration and perform any
-        necessary cleanup
+        Attach any metadata harvested by the requirement metaclass
+
+        This gets called by Requirement, the metaclass of all configurables, as part of the
+        process that constructs the class record. Don't expect {configurable} to be fully
+        functioning at this point.
         """
         # do whatever my superclass requires
-        super().pyre_normalize(configurable)
+        super().pyre_embed(configurable)
 
         # adjust the validators
         if self.validators is not tuple():
@@ -64,20 +67,6 @@ class Property(Trait):
                 # make a tuple out of the lone converter
                 trait.converters = (trait.converters, )
         
-        return self
-
-
-    def pyre_embed(self, configurable):
-        """
-        Attach any metadata harvested by the requirement metaclass
-
-        This gets called by Requirement, the metaclass of all configurables, as part of the
-        process that constructs the class record. Don't expect {configurable} to be fully
-        functioning at this point.
-        """
-        # do whatever my superclass requires
-        super().pyre_embed(configurable)
-
         # if i was declared in this configurable
         if self.configurable == configurable:
             # build my value out of the default

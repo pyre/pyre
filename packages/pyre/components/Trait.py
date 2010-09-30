@@ -55,7 +55,7 @@ class Trait(AttributeClassifier.pyre_Descriptor):
 
 
     # interface 
-    def pyre_normalize(self, configurable):
+    def pyre_embed(self, configurable):
         """
         Look through the metadata harvested from the class declaration and perform any
         necessary cleanup
@@ -67,13 +67,6 @@ class Trait(AttributeClassifier.pyre_Descriptor):
         # update the namemap of the configurable
         configurable.pyre_namemap.update({alias: self.name for alias in self.aliases})
         # all done
-        return self
-
-
-    def pyre_embed(self, configurable):
-        """
-        Attach any metadata harvested by the requirement metaclass
-        """
         return self
 
 
