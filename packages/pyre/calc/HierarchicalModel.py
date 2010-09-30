@@ -55,7 +55,7 @@ class HierarchicalModel(AbstractModel):
         # iterate over the unique keys
         for key in unique:
             # and extract the name and associated node
-            yield self._names[key], self._nodes[key]
+            yield self._names[key], self._fqnames[key], self._nodes[key]
         # all done
         return
 
@@ -94,14 +94,16 @@ class HierarchicalModel(AbstractModel):
         # if there was no canonical node
         except KeyError:
             # install the alias as the canonical 
-            self._names[canonicalHash] = canonicalKey[-1]
             self._nodes[canonicalHash] = aliasNode
+            self._names[canonicalHash] = canonicalKey[-1]
+            self._fqnames[canonicalHash] = canonicalKey
             # all done
             return
         # either way clean up after the obsolete aliased node
         finally:
-            del self._names[aliasHash]
             del self._nodes[aliasHash]
+            del self._names[aliasHash]
+            del self._fqnames[aliasHash]
         # both preëxisted; the aliased info has been cleared out, the canonical is as
         # it should be. all that remains is to patch the two nodes
         self.patch(old=aliasNode, new=canonicalNode)
@@ -121,6 +123,8 @@ class HierarchicalModel(AbstractModel):
         but {name} is not, an appropriate name will be constructed by splicing together the
         names in {key} using the model's field separator.
         """
+        # build the name
+        name = name if name is not None else self.separator.join(key)
         # build the key
         # N.B.: when multiple names hash to the same key, the code below does not alter the
         # name database. this is as it should so that aliases are handled correctly. make sure
@@ -129,7 +133,7 @@ class HierarchicalModel(AbstractModel):
         # hash it
         hashkey = self._hash.hash(key)
         # and pass the info to {_register}
-        return self._register(name=key[-1], node=node, hashkey=hashkey)
+        return self._register(name=key[-1], fqname=name, node=node, hashkey=hashkey)
             
             
     def resolve(self, *, name=None, key=None):
@@ -143,12 +147,14 @@ class HierarchicalModel(AbstractModel):
         but {name} is not, an appropriate name will be constructed by splicing together the
         names in {key} using the model's field separator.
         """
+        # build the name
+        name = name if name is not None else self.separator.join(key)
         # build the key
         key = key if key is not None else name.split(self.separator)
         # hash it
         hashkey = self._hash.hash(key)
         # and pass the info to the support routine
-        return self._resolve(name=key[-1], hashkey=hashkey)
+        return self._resolve(name=key[-1], fqname=name, hashkey=hashkey)
 
 
     # meta methods
@@ -159,14 +165,15 @@ class HierarchicalModel(AbstractModel):
         self.separator = separator
 
         # node storage strategy
-        self._names = {}
         self._nodes = {}
+        self._names = {}
+        self._fqnames = {}
         self._hash = pyre.patterns.newPathHash()
         return
 
 
     # implementation details
-    def _register(self, name, node, hashkey):
+    def _register(self, name, fqname, node, hashkey):
         """
         Attach {node} to the model under {hashkey}
         """
@@ -177,6 +184,7 @@ class HierarchicalModel(AbstractModel):
             # nope, first time
             self._nodes[hashkey] = node
             self._names[hashkey] = name
+            self._fqnames[hashkey] = fqname
             return self
         # patch the evaluation graph 
         # {self.patch} decides the best way to handle the replacement and returns the winner
@@ -186,7 +194,7 @@ class HierarchicalModel(AbstractModel):
         return self
  
 
-    def _resolve(self, name, hashkey):
+    def _resolve(self, name, fqname, hashkey):
         """
         Find the named node
         """
@@ -198,8 +206,9 @@ class HierarchicalModel(AbstractModel):
             from .UnresolvedNode import UnresolvedNode
             node = self.newNode(evaluator=UnresolvedNode(name))
             # add it to the pile
-            self._names[hashkey] = name
             self._nodes[hashkey] = node
+            self._names[hashkey] = name
+            self._fqnames[hashkey] = fqname
         # and return it
         return node
 
@@ -215,7 +224,7 @@ class HierarchicalModel(AbstractModel):
 
         print("model {0!r}:".format(self.name))
         for key in self._nodes.keys():
-            name = self._names[key]
+            name = self._fqnames[key]
             if regex.match(name):
                 node = self._nodes[key]
                 print("  {0!r} <- {1!r}".format(name, node.value))
