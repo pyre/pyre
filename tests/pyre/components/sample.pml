@@ -9,7 +9,7 @@
 
 <config>
 
-  <!-- data for component_configuration -->
+  <!-- data for component_class_configuration -->
   <component family="sample.configuration">
     <!-- some bindings -->
     <bind property="p1">sample - p1</bind>
