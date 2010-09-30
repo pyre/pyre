@@ -73,19 +73,16 @@ class HierarchicalModel(AbstractModel):
         appropriate names will be constructed by splicing together the level in the
         corresponding key using the model's field separator.
         """
-        # build the names
-        alias = alias if alias is not None else self.separator.join(aliasKey)
-        canonical = canonical if canonical is not None else self.separator.join(canonicalKey)
         # build the multikeys
         aliasKey = aliasKey if aliasKey is not None else alias.split(self.separator)
         canonicalKey = canonicalKey if canonicalKey is not None else canonical.split(self.separator)
         # ask the hash to alias the two names and retrieve the corresponding hash keys
-        aliasKey, canonicalKey = self._hash.alias(alias=aliasKey, canonical=canonicalKey)
+        aliasHash, canonicalHash = self._hash.alias(alias=aliasKey, canonical=canonicalKey)
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
         # look for a preëxisting node under the alias
         try:
-            aliasNode = self._nodes[aliasKey]
+            aliasNode = self._nodes[aliasHash]
         except KeyError:
             # if no node has been previously registered under the alias we are done
             # if a registration appears, it will be treated as a duplicate by regiter, and
@@ -93,18 +90,18 @@ class HierarchicalModel(AbstractModel):
             return self
         # now, look for the canonical node
         try:
-            canonicalNode = self._nodes[canonicalKey]
+            canonicalNode = self._nodes[canonicalHash]
         # if there was no canonical node
         except KeyError:
             # install the alias as the canonical 
-            self._names[canonicalKey] = canonical
-            self._nodes[canonicalKey] = aliasNode
+            self._names[canonicalHash] = canonicalKey[-1]
+            self._nodes[canonicalHash] = aliasNode
             # all done
             return
         # either way clean up after the obsolete aliased node
         finally:
-            del self._names[aliasKey]
-            del self._nodes[aliasKey]
+            del self._names[aliasHash]
+            del self._nodes[aliasHash]
         # both preëxisted; the aliased info has been cleared out, the canonical is as
         # it should be. all that remains is to patch the two nodes
         self.patch(old=aliasNode, new=canonicalNode)
@@ -129,12 +126,10 @@ class HierarchicalModel(AbstractModel):
         # name database. this is as it should so that aliases are handled correctly. make sure
         # to respect this invariant when modifying what follows
         key = key if key is not None else name.split(self.separator)
-        # build the name
-        name = name if name is not None else self.separator.join(key)
         # hash it
-        key = self._hash.hash(key)
+        hashkey = self._hash.hash(key)
         # and pass the info to {_register}
-        return self._register(name=name, node=node, hashkey=key)
+        return self._register(name=key[-1], node=node, hashkey=hashkey)
             
             
     def resolve(self, *, name=None, key=None):
@@ -148,14 +143,12 @@ class HierarchicalModel(AbstractModel):
         but {name} is not, an appropriate name will be constructed by splicing together the
         names in {key} using the model's field separator.
         """
-        # build the name
-        name = name if name is not None else self.separator.join(key)
         # build the key
         key = key if key is not None else name.split(self.separator)
         # hash it
-        key = self._hash.hash(key)
+        hashkey = self._hash.hash(key)
         # and pass the info to the support routine
-        return self._resolve(name=name, hashkey=key)
+        return self._resolve(name=key[-1], hashkey=hashkey)
 
 
     # meta methods

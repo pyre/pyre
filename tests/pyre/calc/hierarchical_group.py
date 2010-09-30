@@ -30,7 +30,7 @@ def test():
     model.alias(alias="χρήστης.όνομα", canonical="user.name")
 
     # here are the canonical names
-    names = { "user.name", "user.email", "user.affiliation", "user.signature", "user.telephone" }
+    names = { "name", "email", "affiliation", "signature", "telephone" }
 
     # get all the subnodes of "user"
     assert len(names) == len(tuple(model.children(root="user")))
@@ -38,14 +38,14 @@ def test():
         # check that we got the canonical name
         assert name in names
         # and the correct node
-        assert model[name] == node
+        assert model["user."+name] == node
     # repeat with the alias "χρήστης"
     assert len(names) == len(tuple(model.children(root="χρήστης")))
     for name, node in model.children(root="χρήστης"):
         # check that we got the canonical name
         assert name in names
         # and the correct node
-        assert model[name] == node
+        assert model["χρήστης."+name] == node
 
     return
 
