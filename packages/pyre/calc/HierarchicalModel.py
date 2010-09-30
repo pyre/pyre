@@ -92,20 +92,18 @@ class HierarchicalModel(AbstractModel):
         # now, look for the canonical node
         try:
             canonicalNode = self._nodes[canonicalKey]
+        # if there was no canonical node
         except KeyError:
-            canonicalNode = None
-        # now, there are two cases to handle depending on whether canonical node was registered
-        # already; either way clean up after the obsolete aliased node
-        del self._names[aliasKey]
-        del self._nodes[aliasKey]
-        # first, if there was no canonical node
-        if canonicalNode is None:
             # install the alias as the canonical 
             self._names[canonicalKey] = canonical
             self._nodes[canonicalKey] = aliasNode
             # all done
             return
-        # finally, both preëxisted; the aliased info has been cleared out, the canonical is as
+        # either way clean up after the obsolete aliased node
+        finally:
+            del self._names[aliasKey]
+            del self._nodes[aliasKey]
+        # both preëxisted; the aliased info has been cleared out, the canonical is as
         # it should be. all that remains is to patch the two nodes
         self.patch(old=aliasNode, new=canonicalNode)
         # all done
