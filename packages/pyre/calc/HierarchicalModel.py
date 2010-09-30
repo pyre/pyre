@@ -41,13 +41,15 @@ class HierarchicalModel(AbstractModel):
 
 
     # interface
-    def children(self, root):
+    def children(self, root=None, rootKey=None):
         """
         Given the name {root}, iterate over all the canonical nodes that are its logical
         children
         """
-        # hash the root name
-        rootKey = self._hash.hash(root.split(self.separator))
+        # build the root key
+        rootKey = rootKey if rootKey is not None else root.split(self.separator)
+        # hash it
+        rootKey = self._hash.hash(rootKey)
         # extract the unique hash subkeys
         unique = set(rootKey.nodes.values())
         # iterate over the unique keys
