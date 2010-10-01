@@ -30,7 +30,11 @@ class Configurator:
     # types
     from .Slot import Slot
     from .Model import Model
-
+    # exceptions
+    from ..calc.exceptions import (
+        CircularReferenceError, DuplicateNodeError, ExpressionError, NodeError,
+        UnresolvedNodeError)
+    
 
     # public data
     model = None # the configuration model
@@ -72,17 +76,28 @@ class Configurator:
         Look through the configuration store for nodes that correspond to defaults for the
         traits of the given {component} class and configure them
         """
-        # MGA
-        return
-
-        # get the class inventory
-        inventory = component.pyre_inventory
         # get the class family
         family = component.pyre_family
         # if there is no family name we are done
         if not family: return self
-        # print("Calculator.configureComponentClass: configuring {!r}, family={!r}".format(
-                # component.pyre_name, family))
+        # get the class inventory
+        inventory = component.pyre_inventory
+
+        # MGA
+        print("Calculator.configureComponentClass: configuring {!r}, family={!r}".format(
+                component.pyre_name, family))
+        # inventory
+        print("  inventory:")
+        for descriptor, slot in inventory.items():
+            print("    {.name!r} <- {.value!r}".format(descriptor, slot))
+        # let's see what the model knows about {component}
+        print("  configuration model:")
+        for name, fqname, node in self.model.children(rootKey=family):
+            print("    {!r}: {.value!r}".format(name, node))
+
+        return
+
+
         # iterate over all traits, both own and inherited
         for trait in component.pyre_getTraitDescriptors():
             # if this is not configurable trait, skip it
@@ -235,7 +250,8 @@ class Configurator:
         """
         Support for programmatic configuration bindings through indexing
         """
-        raise("Hell")
+        self.model[name] = value
+        return
 
 
     def dump(self, pattern=None):

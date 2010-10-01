@@ -18,6 +18,18 @@ import os
 import weakref
 
 
+# convenience
+def loadConfiguration(uri):
+    """
+    Open {uri} and attempt to load its contents into the configaration model
+    """
+    # build a locator for these settings
+    import pyre.tracking
+    here = pyre.tracking.here(level=1)
+    # getthe executive to do its thing
+    return executive.loadConfiguration(uri=uri, locator=here)
+
+
 # geography
 def home():
     """

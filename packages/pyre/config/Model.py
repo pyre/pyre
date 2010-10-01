@@ -97,8 +97,6 @@ class Model(HierarchicalModel):
         # build a new node 
         slot = self.recognize(value=value, priority=priority)
         # get it registered
-        # N.B.: the call to tuple forces the realization of generators; it is necessary because
-        # register may need to iterate over the key multiple times
         self.register(node=slot, key=key)
         # and return the new slot to the caller
         return slot
