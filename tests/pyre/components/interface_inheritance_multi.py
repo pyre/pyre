@@ -44,7 +44,8 @@ def test():
     # traits
     localNames = ['common', 'a1', 'a2']
     localTraits = tuple(map(base.pyre_getTraitDescriptor, localNames))
-    assert base.pyre_traits == localTraits
+    assert base.pyre_localTraits == localTraits
+    assert base.pyre_inheritedTraits == ()
     allNames = localNames + []
     allTraits = tuple(map(base.pyre_getTraitDescriptor, allNames))
     assert tuple(base.pyre_getTraitDescriptors()) == allTraits
@@ -60,7 +61,10 @@ def test():
     # traits
     localNames = ['a1']
     localTraits = tuple(map(a1.pyre_getTraitDescriptor, localNames))
-    assert a1.pyre_traits == localTraits
+    assert a1.pyre_localTraits == localTraits
+    inheritedNames = ['common', 'a2']
+    inheritedTraits = tuple(map(a1.pyre_getTraitDescriptor, inheritedNames))
+    assert a1.pyre_inheritedTraits == inheritedTraits
     allNames = localNames + ['common', 'a2']
     allTraits = tuple(map(a1.pyre_getTraitDescriptor, allNames))
     assert tuple(a1.pyre_getTraitDescriptors()) == allTraits
@@ -76,7 +80,10 @@ def test():
     # traits
     localNames = ['a2']
     localTraits = tuple(map(a2.pyre_getTraitDescriptor, localNames))
-    assert a2.pyre_traits == localTraits
+    assert a2.pyre_localTraits == localTraits
+    inheritedNames = ['common', 'a1']
+    inheritedTraits = tuple(map(a2.pyre_getTraitDescriptor, inheritedNames))
+    assert a2.pyre_inheritedTraits == inheritedTraits
     allNames = localNames + ['common', 'a1']
     allTraits = tuple(map(a2.pyre_getTraitDescriptor, allNames))
     assert tuple(a2.pyre_getTraitDescriptors()) == allTraits
@@ -92,7 +99,10 @@ def test():
     # traits
     localNames = ['common', 'extra']
     localTraits = tuple(map(derived.pyre_getTraitDescriptor, localNames))
-    assert derived.pyre_traits == localTraits
+    assert derived.pyre_localTraits == localTraits
+    inheritedNames = ['a1', 'a2']
+    inheritedTraits = tuple(map(derived.pyre_getTraitDescriptor, inheritedNames))
+    assert derived.pyre_inheritedTraits == inheritedTraits
     allNames = localNames + ['a1', 'a2']
     allTraits = tuple(map(derived.pyre_getTraitDescriptor, allNames))
     assert tuple(derived.pyre_getTraitDescriptors()) == allTraits

@@ -28,7 +28,8 @@ def test():
     assert component.pyre_state == "registered"
     assert component.pyre_inventory == {}
     assert component.pyre_namemap == {}
-    assert component.pyre_traits == ()
+    assert component.pyre_localTraits == ()
+    assert component.pyre_inheritedTraits == ()
     assert component.pyre_pedigree == (component, pyre.component)
     assert component.pyre_family == []
     assert component.pyre_implements == None

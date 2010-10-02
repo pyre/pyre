@@ -35,7 +35,8 @@ def test():
     # traits
     localNames = ['common']
     localTraits = tuple(map(base.pyre_getTraitDescriptor, localNames))
-    assert base.pyre_traits == localTraits
+    assert base.pyre_localTraits == localTraits
+    assert base.pyre_inheritedTraits == ()
     allNames = localNames + []
     allTraits = tuple(map(base.pyre_getTraitDescriptor, allNames))
     assert tuple(base.pyre_getTraitDescriptors()) == allTraits
@@ -51,7 +52,8 @@ def test():
     # traits
     localNames = ['common']
     localTraits = tuple(map(derived.pyre_getTraitDescriptor, localNames))
-    assert derived.pyre_traits == localTraits
+    assert derived.pyre_localTraits == localTraits
+    assert derived.pyre_inheritedTraits == ()
     allNames = localNames + []
     allTraits = tuple(map(derived.pyre_getTraitDescriptor, allNames))
     assert tuple(derived.pyre_getTraitDescriptors()) == allTraits

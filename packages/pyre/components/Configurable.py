@@ -25,9 +25,9 @@ class Configurable:
     # framework data; patched up by metaclasses and the framework bootstrapping
     pyre_name = None # my public id
     pyre_state = None # track progress through the bootsrapping process
-    pyre_inventory = None # storage for my configurable state; patched by {Requirement}
     pyre_namemap = None # a map of descriptor aliases to their canonical names
-    pyre_traits = None # a tuple of all the traits in my declaration
+    pyre_localTraits = None # a tuple of all the traits in my declaration
+    pyre_inheritedTraits = None # a tuple of all the traits inheited from my superclasses
     pyre_pedigree = None # a tuple of ancestors that are themselves configurables
 
 
@@ -69,6 +69,20 @@ class Configurable:
         looking for the traits declared in a particular class, use the attribute
         {cls.pyre_traits} instead.
         """
+        # the full set of my descriptors is prepared by {Requirement} and separated into two
+        # piles: my local traits, i.e. traits that were first declared in my class record, and
+        # traits that i inhrerited
+        # first, iterate over my local traits in declaration order
+        for trait in cls.pyre_localTraits:
+            # yield the descriptor
+            yield trait
+        # now, iterate over the inherited ones
+        for trait in cls.pyre_inheritedTraits:
+            # yield the descriptor
+            yield trait
+        # all done
+        return
+
         # as we traverse the sequence of ancestors, we build and maintain a set of names that
         # have been encountered so that we can avoid returning traits that have been overriden
         # or shadowed by later derivations

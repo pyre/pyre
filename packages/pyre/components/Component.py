@@ -18,11 +18,13 @@ class Component(Configurable, metaclass=Actor, hidden=True):
 
     # framework data; inherited from Configurable and repeated here for clarity
     pyre_name = None # the public id of my instances
-    pyre_traits = None # a tuple of all the traits in my declaration
-    pyre_pedigree = None # a tuple of ancestors that are themselves configurables
     pyre_state = None # track progress through the bootsrapping process
+    pyre_namemap = None # a map of descriptor aliases to their canonical names
+    pyre_localTraits = None # a tuple of all the traits in my declaration
+    pyre_inheritedTraits = None # a tuple of all the traits inheited from my superclasses
+    pyre_pedigree = None # a tuple of ancestors that are themselves configurables
+    # component specific attributes
     pyre_inventory = None # storage for my configurable state
-    # extras
     pyre_family = () # my spot in the package hierarchy
     pyre_implements = None # the interface specification built at compile time by the metaclass
 

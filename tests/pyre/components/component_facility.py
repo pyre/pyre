@@ -38,7 +38,8 @@ def test():
     # traits
     localNames = ['p']
     localTraits = tuple(map(component.pyre_getTraitDescriptor, localNames))
-    assert component.pyre_traits == localTraits
+    assert component.pyre_localTraits == localTraits
+    assert component.pyre_inheritedTraits == ()
     allNames = localNames + []
     allTraits = tuple(map(component.pyre_getTraitDescriptor, allNames))
     assert tuple(component.pyre_getTraitDescriptors()) == allTraits

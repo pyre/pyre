@@ -31,7 +31,8 @@ def test():
     # traits
     localNames = ['p']
     localTraits = tuple(map(interface.pyre_getTraitDescriptor, localNames))
-    assert interface.pyre_traits == localTraits
+    assert interface.pyre_localTraits == localTraits
+    assert interface.pyre_inheritedTraits == ()
     allNames = localNames + []
     allTraits = tuple(map(interface.pyre_getTraitDescriptor, allNames))
     assert tuple(interface.pyre_getTraitDescriptors()) == allTraits

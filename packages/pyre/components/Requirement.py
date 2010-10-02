@@ -49,9 +49,33 @@ class Requirement(AttributeClassifier):
         attributes["pyre_inventory"] = {}
         # initialize the namemap
         attributes["pyre_namemap"] = {}
-        # build the record;  this also assigns to {pyre_traits}
+        # build the record
+        # also, build a tuple of the locally declared traits in {pyre_localTraits}
         configurable = super().__new__(
-            cls, name, bases, attributes, descriptors="pyre_traits", **kwds)
+            cls, name, bases, attributes, descriptors="pyre_localTraits", **kwds)
+
+        # harvest the inherited traits: this must be done from scratch for every new
+        # configurable class, since multiple inheritance messes with the __mro__ in
+        # unpredictable ways
+        # initialize the set of known names so we shadow them properly
+        known = set(attributes)
+        # initialize the trait accumulator
+        inheritedTraits = []
+        # iterate over the configurable's ancestors
+        for base in configurable.__mro__[1:]:
+            # only other configurables have traits
+            if isinstance(base, cls):
+                # loop over the traits in base
+                for trait in base.pyre_localTraits:
+                    # skip it if its something else by this name has been seen before
+                    if trait.name in known: continue
+                    # otherwise save it
+                    inheritedTraits.append(trait)
+            # in any case, add all the local attribute names onto the known pile
+            known.update(base.__dict__)
+        # attach the harvested traits to the class record
+        configurable.pyre_inheritedTraits = tuple(inheritedTraits)
+            
         # extract the ancestors in the configurable's mro that are themeselves configurable
         # n.b.: since {Requirement} is not the direct metaclass of any class, the chain here
         # stops at either Component or Interface, depending on whether {Actor} or {Role} is the
@@ -59,7 +83,7 @@ class Requirement(AttributeClassifier):
         configurable.pyre_pedigree = tuple(
             base for base in configurable.__mro__ if isinstance(base, cls))
         # embed the local descriptors
-        for descriptor in configurable.pyre_traits:
+        for descriptor in configurable.pyre_localTraits:
             descriptor.pyre_embed(configurable)
         # return the record to the caller
         return configurable
