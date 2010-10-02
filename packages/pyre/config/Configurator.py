@@ -94,9 +94,6 @@ class Configurator:
         for name, fqname, node in self.model.children(rootKey=family):
             print("    {!r}: {.value!r}".format(name, node))
 
-        # instruct the model to dispatch further access
-        self.model.configurables[self.model._hash.hash(family)] = component
-
         return
 
         # iterate over all traits, both own and inherited
