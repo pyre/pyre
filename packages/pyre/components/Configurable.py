@@ -6,6 +6,9 @@
 #
 
 
+import itertools
+
+
 class Configurable:
     """
     The base class for components and interfaces
@@ -72,33 +75,7 @@ class Configurable:
         # the full set of my descriptors is prepared by {Requirement} and separated into two
         # piles: my local traits, i.e. traits that were first declared in my class record, and
         # traits that i inhrerited
-        # first, iterate over my local traits in declaration order
-        for trait in cls.pyre_localTraits:
-            # yield the descriptor
-            yield trait
-        # now, iterate over the inherited ones
-        for trait in cls.pyre_inheritedTraits:
-            # yield the descriptor
-            yield trait
-        # all done
-        return
-
-        # as we traverse the sequence of ancestors, we build and maintain a set of names that
-        # have been encountered so that we can avoid returning traits that have been overriden
-        # or shadowed by later derivations
-        known = set()
-        # loop over all the ancestors that are themselves subclasses of {Configurable}
-        for base in cls.pyre_pedigree:
-            # iterate over the registered traits
-            for trait in base.pyre_traits:
-                # skip it if something else by this name has been seen before
-                if trait.name in known: continue
-                # otherwise, yield it
-                yield trait
-            # add everything in the attribute dictionary of this class to the known pile
-            known.update(base.__dict__.keys())
-        # all done
-        return
+        return itertools.chain(cls.pyre_localTraits, cls.pyre_inheritedTraits)
 
 
     @classmethod
@@ -107,18 +84,22 @@ class Configurable:
         Given the name {alias}, locate and return the canonical name, descriptor and base class
         where the descriptor was declared
         """
-        # loop over the sequence of configurable ancestors
+        # attempt to normalize the given name
+        try:
+            canonical = cls.pyre_namemap[alias]
+        # not one of my traits
+        except KeyError:
+            raise cls.TraitNotFoundError(configurable=cls, name=alias)
+        # got it
         for base in cls.pyre_pedigree:
-            # attempt to normalize the given name
             try:
-                canonical = base.pyre_namemap[alias]
-            # move on if it is not in this namemap
+                return base.__dict__[canonical]
             except KeyError:
-                continue
-            # otherwise, we got it
-            return base.__dict__[canonical]
-        # if the search failed
-        raise cls.TraitNotFoundError(configurable=cls, name=alias)
+                pass
+        # impossible
+        import journal
+        firewall = journal.firewall("pyre.components")
+        raise firewall.log("UNREACHABLE")
 
 
     @classmethod

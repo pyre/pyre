@@ -22,7 +22,6 @@ class Property(Trait):
 
     # public data; inherited from Trait but repeated here for clarity
     name = None # my canonical name; set at construction time or binding name
-    configurable = None # the class where my declaration was found
     aliases = None # the set of alternative names by which I am accessible
     tip = None # a short description of my purpose and constraints; contrast with doc
     # additional state
@@ -34,7 +33,7 @@ class Property(Trait):
 
 
     # interface
-    def pyre_embed(self, configurable):
+    def pyre_initialize(self):
         """
         Attach any metadata harvested by the requirement metaclass
 
@@ -43,8 +42,7 @@ class Property(Trait):
         functioning at this point.
         """
         # do whatever my superclass requires
-        super().pyre_embed(configurable)
-
+        super().pyre_initialize()
         # adjust the validators
         if self.validators is not tuple():
             # if the user placed them in a container
@@ -55,7 +53,6 @@ class Property(Trait):
             else:
                 # make a tuple out of the lone validator
                 self.validators = (self.validators, )
-
         # repeat for the converters
         if self.converters is not tuple():
             # if the user placed them in a container
@@ -66,24 +63,9 @@ class Property(Trait):
             else:
                 # make a tuple out of the lone converter
                 trait.converters = (trait.converters, )
-        
-        # if i was declared in this configurable
-        if self.configurable == configurable:
-            # build my value out of the default
-            value = self.default
-        # otherwise
-        else:
-            # look through my pedigree for the closest ancestor that has a node for me and
-            # build a reference to it
-            value = configurable.pyre_getTraitDefaultValue(self).newReference()
-        # get the configurator to creat a new slot for me
-        slot = configurable.pyre_executive.configurator.slot(value=value)
-        # place this node in the inventory of the configurable
-        configurable.pyre_inventory[self] = slot
-        # and return
         return self
 
-
+        
     def pyre_bindClass(self, configurable):
         """
         Bind this trait to the {configurable} class record

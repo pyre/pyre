@@ -28,7 +28,6 @@ class Trait(AttributeClassifier.pyre_Descriptor):
 
     # public data
     name = None # my canonical name; set at construction time or binding name
-    configurable = None # the class where my declaration was found
     aliases = None # the set of alternative names by which I am accessible
     tip = None # a short description of my purpose and constraints; see doc below
 
@@ -55,17 +54,13 @@ class Trait(AttributeClassifier.pyre_Descriptor):
 
 
     # interface 
-    def pyre_embed(self, configurable):
+    def pyre_initialize(self):
         """
         Look through the metadata harvested from the class declaration and perform any
         necessary cleanup
         """
-        # remember where i was declared
-        self.configurable = configurable
         # update my aliases to include my canonical name
         self.aliases.add(self.name)
-        # update the namemap of the configurable
-        configurable.pyre_namemap.update({alias: self.name for alias in self.aliases})
         # all done
         return self
 

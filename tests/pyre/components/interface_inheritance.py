@@ -47,7 +47,9 @@ def test():
     # check the layout
     assert derived.pyre_name == "derived"
     assert derived.pyre_state == "registered"
-    assert derived.pyre_namemap == {'extra': 'extra'}
+    assert derived.pyre_namemap == {
+        'common': 'common', 'extra': 'extra'
+        }
     assert derived.pyre_pedigree == (derived, base, pyre.interface)
     # traits
     localNames = ['extra']

@@ -54,6 +54,10 @@ class Requirement(AttributeClassifier):
         configurable = super().__new__(
             cls, name, bases, attributes, descriptors="pyre_localTraits", **kwds)
 
+        # initialize the locally declared descriptors
+        for descriptor in configurable.pyre_localTraits:
+            descriptor.pyre_initialize()
+
         # harvest the inherited traits: this must be done from scratch for every new
         # configurable class, since multiple inheritance messes with the __mro__ in
         # unpredictable ways
@@ -82,9 +86,12 @@ class Requirement(AttributeClassifier):
         # actual metaclass
         configurable.pyre_pedigree = tuple(
             base for base in configurable.__mro__ if isinstance(base, cls))
-        # embed the local descriptors
-        for descriptor in configurable.pyre_localTraits:
-            descriptor.pyre_embed(configurable)
+
+        # fix the namemap
+        for trait in configurable.pyre_getTraitDescriptors():
+            # update the name map with all the aliases of each trait
+            configurable.pyre_namemap.update({alias: trait.name for alias in trait.aliases})
+
         # return the record to the caller
         return configurable
         

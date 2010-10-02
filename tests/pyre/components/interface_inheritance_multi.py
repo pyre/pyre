@@ -56,7 +56,7 @@ def test():
     # check the layout
     assert a1.pyre_name == "a1"
     assert a1.pyre_state == "registered"
-    assert a1.pyre_namemap == {'a1':'a1'}
+    assert a1.pyre_namemap == {'common':'common', 'a1':'a1', 'a2':'a2'}
     assert a1.pyre_pedigree == (a1, base, pyre.interface)
     # traits
     localNames = ['a1']
@@ -75,7 +75,7 @@ def test():
     # check the layout
     assert a2.pyre_name == "a2"
     assert a2.pyre_state == "registered"
-    assert a2.pyre_namemap == {'a2':'a2'}
+    assert a2.pyre_namemap == {'common':'common', 'a1':'a1', 'a2':'a2'}
     assert a2.pyre_pedigree == (a2, base, pyre.interface)
     # traits
     localNames = ['a2']
@@ -94,7 +94,7 @@ def test():
     # check the layout
     assert derived.pyre_name == "derived"
     assert derived.pyre_state == "registered"
-    assert derived.pyre_namemap == {'common':'common', 'extra':'extra'}
+    assert derived.pyre_namemap == {'common':'common', 'a1':'a1', 'a2':'a2', 'extra': 'extra'}
     assert derived.pyre_pedigree == (derived, a1, a2, base, pyre.interface)
     # traits
     localNames = ['common', 'extra']
