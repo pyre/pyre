@@ -39,7 +39,6 @@ class Configurator:
     # public data
     model = None # the configuration model
     counter = None # the event priority counter
-    tracker = None # the node value history tracker
     # build a locator for values that come from trait defaults
     locator = pyre.tracking.newSimpleLocator(source="<defaults>")
 
@@ -95,8 +94,10 @@ class Configurator:
         for name, fqname, node in self.model.children(rootKey=family):
             print("    {!r}: {.value!r}".format(name, node))
 
-        return
+        # instruct the model to dispatch further access
+        self.model.configurables[self.model._hash.hash(family)] = component
 
+        return
 
         # iterate over all traits, both own and inherited
         for trait in component.pyre_getTraitDescriptors():
@@ -141,8 +142,6 @@ class Configurator:
             # this must be done after the potential name clash has been prevented by removing all
             # nodes that may be aliases of this one
             self.registerNode(name=canonical, node=node)
-            # and log the event
-            self.tracker.track(key=node, value=(trait.default, self.locator))
 
         # all done
         return component
@@ -231,8 +230,6 @@ class Configurator:
         self.model = self.Model(
             name=name, executive=executive,
             separator=self.TRAIT_SEPARATOR, defaultPriority=self.DEFAULT_PRIORITY)
-        # history tracking
-        self.tracker = pyre.tracking.newTracker()
         # and the event priority counter
         self.counter = collections.Counter()
 
