@@ -31,6 +31,7 @@ EXPORT_PYTHON_MODULES = \
     Registrar.py \
     Requirement.py \
     Role.py \
+    Slot.py \
     Trait.py \
     exceptions.py \
     properties.py \

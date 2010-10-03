@@ -7,6 +7,7 @@
 
 
 import collections
+import pyre.calc
 from .Trait import Trait
 
 
@@ -14,6 +15,10 @@ class Property(Trait):
     """
     The base class for attribute descriptors that describe a component's external state
     """
+
+
+    # types
+    from .Slot import Slot
 
 
     # import the packages exposed by properties for convenince
@@ -63,6 +68,51 @@ class Property(Trait):
             else:
                 # make a tuple out of the lone converter
                 trait.converters = (trait.converters, )
+        # and return
+        return self
+
+
+    def pyre_embedLocal(self, component):
+        """
+        Initialize the inventory of {component}
+        """
+        # build a literal evaluator to hold my default value
+        evaluator = pyre.calc.literal(value=self.default)
+        # build a slot
+        slot = self.Slot(descriptor=self, value=None, evaluator=evaluator)
+        # attach the slot to the inventory
+        component.pyre_inventory[self] = slot
+        # and return
+        return self
+
+
+    def pyre_embedInherited(self, component):
+        """
+        Initialize the {component} inventory by establishing a reference to the nearest
+        ancestor that has slot for me
+        """
+        # loop over my pedigree looking for an ancestor that has a slot for me
+        for base in component.pyre_pedigree:
+            # if it's here, get the slot and bail out
+            try:
+                node = base.pyre_inventory[self]
+                break
+            # if not, get the next
+            except KeyError:
+                continue
+        # impossible: couldn't find the slot; what went worng?
+        else:
+            import journal
+            firewall = journal.firewall("pyre.components")
+            raise firewall.log("UNREACHABLE")
+            
+        # build a reference to the slot
+        evaluator = node.newReference()
+        # make a slot  out of it
+        slot = self.Slot(descriptor=self, value=None, evaluator=evaluator)
+        # attach it to the inventory
+        component.pyre_inventory[self] = slot
+        # and return
         return self
 
         
@@ -226,8 +276,7 @@ class Property(Trait):
         Set this trait of {client} to value
         """
         # print("Property.setValue: OBSOLETE")
-        from ..config.Slot import Slot
-        client.pyre_inventory[self] = Slot(value=value, evaluator=None)
+        client.pyre_inventory[self] = self.Slot(value=value, evaluator=None)
         return
 
 

@@ -7,7 +7,6 @@
 
 
 from .Requirement import Requirement
-from .Role import Role
 
 
 class Actor(Requirement):
@@ -17,6 +16,9 @@ class Actor(Requirement):
     {Actor} takes care of all the tasks necessary to convert a component declaration into a
     configurable entity that coöperates fully with the framework
     """
+
+    # types
+    from .Role import Role
 
 
     # meta methods
@@ -55,10 +57,18 @@ class Actor(Requirement):
 
     def __init__(self, name, bases, attributes, hidden=False, **kwds):
         """
-        Initialize a new component record
+        Initialize a new component class record
         """
         # initialize the record
         super().__init__(name, bases, attributes, **kwds)
+
+        # ask each local trait to embed itself
+        for trait in self.pyre_localTraits:
+            trait.pyre_embedLocal(component=self)
+        # repeat with the inherited traits
+        for trait in self.pyre_inheritedTraits:
+            trait.pyre_embedInherited(component=self)
+
         # if this component class is not hidden
         if not hidden:
             # register it with the executive
@@ -118,14 +128,14 @@ class Actor(Requirement):
             # accumulator for the interfaces {component} doesn't implement correctly
             errors = []
             # if {implements} is a single interface, add it to the pile
-            if isinstance(implements, Role):
+            if isinstance(implements, cls.Role):
                 interfaces.append(implements)
             # the only legal alternative is an iterable of Interface subclasses
             else:
                 try:
                     for interface in implements:
                         # if it's an actual Interface subclass
-                        if isinstance(interface, Role):
+                        if isinstance(interface, cls.Role):
                             # add it to the pile
                             interfaces.append(interface)
                         # otherwise, place it in the error bin
@@ -146,7 +156,7 @@ class Actor(Requirement):
         if not interfaces: return None
         # otherwise, derive an interface from the harvested ones and return it as the
         # implementation specification
-        return Role("Interface", tuple(interfaces), dict(), hidden=True)
+        return cls.Role("Interface", tuple(interfaces), dict(), hidden=True)
 
 
     # exceptions

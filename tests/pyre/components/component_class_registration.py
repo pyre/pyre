@@ -50,6 +50,20 @@ def test():
     # check that the set of interface implementors is correct
     assert registrar.implementors[interface] == {component}
 
+    # now examine the component inventory
+    behaviors = tuple(map(component.pyre_getTraitDescriptor, ["do"]))
+    properties = tuple(map(component.pyre_getTraitDescriptor, ["p1", "p2"]))
+    # get the class inventory
+    inventory = component.pyre_inventory
+    # loop over behavior sand make sure they are not presentin the inventory
+    for trait in behaviors:
+        # verify it's not there
+        assert trait not in inventory
+    # loop over the properties and verify they are represented in the inventory
+    for trait in properties:
+        # verify existence
+        assert trait in inventory
+
     return component
      
 

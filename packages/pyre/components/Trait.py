@@ -65,6 +65,20 @@ class Trait(AttributeClassifier.pyre_Descriptor):
         return self
 
 
+    def pyre_embedLocal(self, component):
+        """
+        Build an association between this {configurable} and this locally declared trait
+        """
+        return self
+
+
+    def pyre_embedInherited(self, component):
+        """
+        Build an association between this {configurable} and this inherited trait
+        """
+        return self
+
+
     def pyre_bindClass(self, configurable):
         """
         Resolve and convert the current value of this trait of {configurable} into my native type
