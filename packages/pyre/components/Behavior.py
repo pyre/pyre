@@ -17,9 +17,8 @@ class Behavior(Trait):
     
     # public data; inherited from Trait but repeated here for clarity
     name = None # my canonical name; set at construction time or binding name
-    configurable = None # the class where my declaration was found
     aliases = None # the set of alternative names by which I am accessible
-    tip = None # a short description of my purpose and constraints; see doc below
+    tip = None # a short description of my purpose and constraints
     # additional state
     method = None # the actual callable in the component declaration
     # predicate that indicates whether this trait is subject to runtime configuration
@@ -47,7 +46,7 @@ class Behavior(Trait):
         Disable writing to behavior descriptors
         """
         raise TypeError(
-            "can't modify {0.name!r}, part of the public interface of {1.pyre_name!r}"
+            "can't modify {.name!r}, part of the public interface of {.pyre_name!r}"
             .format(self, instance))
 
 

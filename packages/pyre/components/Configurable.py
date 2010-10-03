@@ -90,10 +90,12 @@ class Configurable:
         # not one of my traits
         except KeyError:
             raise cls.TraitNotFoundError(configurable=cls, name=alias)
-        # got it
+        # got it; look through my ancestors' dictionaries for the descriptor
         for base in cls.pyre_pedigree:
+            # attempt to look it up in this base
             try:
                 return base.__dict__[canonical]
+            # not here; move on
             except KeyError:
                 pass
         # impossible
