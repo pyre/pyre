@@ -48,6 +48,7 @@ components:
 	${PYTHON} ./component_compatibility_reports.py
 	${PYTHON} ./component_implements.py
 	${PYTHON} ./component_class_registration.py
+	${PYTHON} ./component_class_registration_model.py
 	${PYTHON} ./component_class_configuration.py
 	${PYTHON} ./component_class_configuration_inheritance.py
 	${PYTHON} ./component_class_binding.py

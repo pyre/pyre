@@ -23,7 +23,6 @@ class Configurator:
     # constants
     TRAIT_SEPARATOR = '.'
     FAMILY_SEPARATOR = '#'
-    DEFAULT_PRIORITY = (-1, -1)
     EXPLICIT_CONFIGURATION = (15, -1) # programmatic overrides
 
 
@@ -75,75 +74,10 @@ class Configurator:
         Look through the configuration store for nodes that correspond to defaults for the
         traits of the given {component} class and configure them
         """
-        # get the class family
-        family = component.pyre_family
-        # if there is no family name we are done
-        if not family: return self
-        # get the class inventory
-        inventory = component.pyre_inventory
+        # register the class with the model and return any errors encountered in the process
+        return self.model.registerComponentClass(component)
 
-        # MGA
-        print("Calculator.configureComponentClass: configuring {!r}, family={!r}".format(
-                component.pyre_name, family))
-        # inventory
-        print("  inventory:")
-        for descriptor, slot in inventory.items():
-            print("    {.name!r} <- {.value!r}".format(descriptor, slot))
-        # let's see what the model knows about {component}
-        print("  configuration model:")
-        for name, fqname, node in self.model.children(rootKey=family):
-            print("    {!r}: {.value!r}".format(name, node))
-
-        return
-
-        # iterate over all traits, both own and inherited
-        for trait in component.pyre_getTraitDescriptors():
-            # if this is not configurable trait, skip it
-            if not trait.pyre_isConfigurable: continue
-            # find the inventory node that corresponds to this trait
-            node = inventory[trait]
-            # build the canonical name of the trait
-            canonical = self.TRAIT_SEPARATOR.join(family + [trait.name])
-            # print("  trait: name={!r}, canonical={!r}".format(trait.name, canonical))
-            # iterate over all possible names of this trait
-            for alias in trait.aliases:
-                # print("    alias: {!r}".format(alias))
-                # build the key for the target node
-                key = self.TRAIT_SEPARATOR.join(family + [alias])
-                # print("      looking for {!r}".format(key))
-                # look for the matching node
-                try:
-                    existing = self.findNode(key)
-                # if there is no match
-                except KeyError:
-                    # print("        no such configuration node")
-                    # move on to the next node
-                    continue # but after the finally clause below!
-                # if there is a match
-                else:
-                    # print("      removing the existing configuration node")
-                    # clean up the model by removing the aliased node
-                    # the actual value transfer will happen through the call to replace below
-                    aliasHash = self._hash.hash(key, separator=self.TRAIT_SEPARATOR)
-                    del self._nodes[aliasHash]
-                    del self._names[aliasHash]
-                # either way, make sure we register this alias with the hash table
-                # must be done after the call to findNode, otherwise aliasing will make the
-                # node inaccessible
-                finally:
-                    # print("      aliasing {!r} to {!r}".format(key, canonical))
-                    self._hash.alias(alias=key, original=canonical, separator=self.TRAIT_SEPARATOR)
-                # print("      processing setting: {!r} <- {!r}".format(alias, existing))
-                existing.cede(replacement=node)
-            # finally, register the node with the model
-            # this must be done after the potential name clash has been prevented by removing all
-            # nodes that may be aliases of this one
-            self.registerNode(name=canonical, node=node)
-
-        # all done
-        return component
-
-
+ 
     def configureComponentInstance(self, component):
         """
         Initialize the component instance inventory by making the descriptors point to the
@@ -224,9 +158,7 @@ class Configurator:
         name = name if name is not None else "pyre.configurator"
 
         # the configuration model
-        self.model = self.Model(
-            name=name, executive=executive,
-            separator=self.TRAIT_SEPARATOR, defaultPriority=self.DEFAULT_PRIORITY)
+        self.model = self.Model(name=name, executive=executive, separator=self.TRAIT_SEPARATOR)
         # and the event priority counter
         self.counter = collections.Counter()
 
@@ -242,9 +174,15 @@ class Configurator:
 
     def __setitem__(self, name, value):
         """
-        Support for programmatic configuration bindings through indexing
+        Support for programmatic modification of the configuration store
         """
-        self.model[name] = value
+        # build a slot
+        slot = self.model.recognize(value=value)
+        # build a locator
+        locator = pyre.tracking.here(level=1)
+        # register the slot
+        self.model.register(name=name, node=slot)
+        # and return
         return
 
 
