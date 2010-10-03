@@ -55,7 +55,7 @@ class HierarchicalModel(AbstractModel):
         # iterate over the unique keys
         for key in unique:
             # and extract the name and associated node
-            yield self._names[key], self._fqnames[key], self._nodes[key]
+            yield key, self._names[key], self._fqnames[key], self._nodes[key]
         # all done
         return
 
@@ -96,7 +96,7 @@ class HierarchicalModel(AbstractModel):
             # install the alias as the canonical 
             self._nodes[canonicalHash] = aliasNode
             self._names[canonicalHash] = canonicalKey[-1]
-            self._fqnames[canonicalHash] = canonicalKey
+            self._fqnames[canonicalHash] = canonical
             # all done
             return
         # either way clean up after the obsolete aliased node
@@ -223,12 +223,13 @@ class HierarchicalModel(AbstractModel):
         regex = re.compile(pattern if pattern else '')
 
         print("model {0!r}:".format(self.name))
-        for key in self._nodes.keys():
-            name = self._fqnames[key]
-            if regex.match(name):
-                node = self._nodes[key]
-                print("  {0!r} <- {1!r}".format(name, node.value))
-                
+        if self._nodes:
+            print("  nodes:")
+            for key in self._fqnames.keys():
+                name = self._fqnames[key]
+                if regex.match(name):
+                    node = self._nodes[key]
+                    print("    {0!r} <- {1!r}".format(name, node.value))
         return
 
 
