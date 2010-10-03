@@ -71,7 +71,7 @@ class Function(Evaluator):
         for node in self.domain:
             node.removeObserver(owner.flush)
         # and chain up
-        return super().finalize()
+        return super().finalize(owner=owner)
 
 
 # end of file 
