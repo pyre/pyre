@@ -22,23 +22,6 @@ class Model(HierarchicalModel):
     from .Slot import Slot
 
 
-    # public data
-    defaultPriority = None # the default priority to assign to ne slots
-
-
-    # interface
-    def recognize(self, value, priority=None):
-        """
-        Attempt to decipher {value} and build a slot to hold it
-        """
-        # get my ancestor to build the slot
-        slot = super().recognize(value)
-        # adjust its priority
-        slot._priority = priority if priority is not None else self.defaultPriority
-        # and return it to the caller
-        return slot
-
-
     # configuration event processing
     def bind(self, key, value, priority=None, locator=None):
         """
@@ -85,24 +68,23 @@ class Model(HierarchicalModel):
 
 
     # factory for my nodes
-    def newNode(self, evaluator):
+    def newNode(self, *, value=None, evaluator=None, priority=None, **kwds):
         """
         Create a new node with the given evaluator
         """
         # why is this the right node factory?
         # subclasses should override this to provide their own nodes to host the evaluator
-        return self.Slot(value=None, evaluator=evaluator, priority=self.defaultPriority)
+        return self.Slot(value=None, evaluator=evaluator, priority=priority)
 
 
     # meta methods
-    def __init__(self, executive, defaultPriority, **kwds):
+    def __init__(self, executive, **kwds):
         super().__init__(**kwds)
         # record the executive
         self.executive = weakref.proxy(executive)
-        # the default priority for new slots
-        self.defaultPriority = defaultPriority
         # the database of deferred bidings
         self.deferred = collections.defaultdict(list)
+        # done
         return
 
 

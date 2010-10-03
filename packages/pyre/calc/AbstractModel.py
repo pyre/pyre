@@ -68,7 +68,7 @@ class AbstractModel(Named):
         return new
 
 
-    def recognize(self, value):
+    def recognize(self, value, **kwds):
         """
         Attempt to decipher {value} and convert it into a proper node
         """
@@ -80,18 +80,19 @@ class AbstractModel(Named):
         # if {value} is an evaluator 
         if isinstance(value, self.Evaluator):
             # build a node with this evaluator
-            return self.newNode(evaluator=value)
+            return self.newNode(evaluator=value, **kwds)
         # if it is a string
         if isinstance(value, str):
             # check whether it is an expression
             try:
-                return self.newNode(evaluator=self.Expression.parse(expression=value, model=self))
+                return self.newNode(
+                    evaluator=self.Expression.parse(expression=value, model=self), **kwds)
             except self.NodeError:
                 # treat it like a literal
-                return self.newNode(evaluator=self.Literal(value=value))
+                return self.newNode(evaluator=self.Literal(value=value), **kwds)
         # otherwise
         # build a literal
-        return self.newNode(evaluator=self.Literal(value=value))
+        return self.newNode(evaluator=self.Literal(value=value), **kwds)
 
 
     def validate(self, root=None):
@@ -136,7 +137,7 @@ class AbstractModel(Named):
 
 
     # factory for my nodes
-    def newNode(self, evaluator):
+    def newNode(self, *, value=None, evaluator=None, **kwds):
         """
         Create a new node with the given evaluator
         """
