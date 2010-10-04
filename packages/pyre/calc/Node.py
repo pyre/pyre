@@ -23,9 +23,8 @@ class Node(Observable, metaclass=_metaclass_Node):
     from .Reference import Reference
 
 
-    # public data
-    @property
-    def value(self):
+    # interface
+    def getValue(self):
         """
         Refresh my value, if necessary, and return it
         """
@@ -45,8 +44,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         return self._value
 
 
-    @value.setter
-    def value(self, value):
+    def setValue(self, value):
         """
         Set my value to {value} and notify my observers
         """
@@ -69,6 +67,10 @@ class Node(Observable, metaclass=_metaclass_Node):
         self.notifyObservers()
         # and return
         return self
+
+
+    # install value setter/getter as a property
+    value = property(fget=getValue, fset=setValue, fdel=None, doc="Access to my value")
 
 
     # interface
@@ -103,11 +105,9 @@ class Node(Observable, metaclass=_metaclass_Node):
         """
         Invalidate my cache and notify my observers
         """
-        # if my value is already invalid
-        if self._value is None:
-            # all done
-            return
-        # invalidate my cache
+        # if my value is already invalid, there is nothing to do
+        if self._value is None: return
+        # otherwise, invalidate my cache
         self._value = None
         # notify the observers
         self.notifyObservers()
