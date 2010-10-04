@@ -53,9 +53,10 @@ class EvaluationError(NodeError):
     Base class for node evaluation exceptions
     """
 
-    def __init__(self, evaluator, error, **kwds):
+    def __init__(self, evaluator, error, node=None, **kwds):
         msg = "evaluation error: {}".format(error)
         super().__init__(description=msg, **kwds)
+        self.node = node
         self.evaluator = evaluator
         self.error = error
         return
