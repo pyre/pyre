@@ -29,6 +29,10 @@ class Component(Configurable, metaclass=Actor, hidden=True):
     pyre_implements = None # the interface specification built at compile time by the metaclass
 
 
+    # types
+    from .Slot import Slot
+
+
     # framework notifications
     def pyre_register(self, executive):
         """
@@ -114,9 +118,16 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         super().__init__(**kwds)
         # store my name
         self.pyre_name = name
-        # initialize the per-instance inventory
-        self.pyre_inventory = {}
-        
+        # access the inventory that belongs to my class record
+        classInventory = type(self).pyre_inventory
+
+        # build my inventory
+        self.pyre_inventory = {
+            trait: self.Slot(value=None, evaluator=slot.newReference(), descriptor=trait)
+            for trait, slot in classInventory.items()
+            }
+
+        # all done for now
         return
 
 
