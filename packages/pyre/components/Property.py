@@ -76,8 +76,10 @@ class Property(Trait):
         """
         Initialize the inventory of {component}
         """
+        # who else?
+        super().pyre_embedLocal(component=component)
         # build a literal evaluator to hold my default value
-        evaluator = pyre.calc.literal(value=self.default)
+        evaluator = component.pyre_executive.configurator.recognize(value=self.default)
         # build a slot
         slot = self.Slot(descriptor=self, value=None, evaluator=evaluator)
         # attach the slot to the inventory
@@ -91,6 +93,8 @@ class Property(Trait):
         Initialize the {component} inventory by establishing a reference to the nearest
         ancestor that has slot for me
         """
+        # who else?
+        super().pyre_embedInherited(component=component)
         # loop over my pedigree looking for an ancestor that has a slot for me
         for base in component.pyre_pedigree:
             # if it's here, get the slot and bail out

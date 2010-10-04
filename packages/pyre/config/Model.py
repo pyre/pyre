@@ -20,7 +20,7 @@ class Model(HierarchicalModel):
 
 
     # types
-    from .Slot import Slot
+    from .Slot import Slot as nodeFactory
 
 
     # interface from HierarchicalModel
@@ -80,7 +80,8 @@ class Model(HierarchicalModel):
         Build a node with the given {priority} to hold {value}, and register it under {key}
         """
         # build a new node 
-        slot = self.recognize(value=value, priority=priority)
+        slot = self.nodeFactory(
+            value=None, evaluator=self.recognize(value=value), priority=priority)
         # get it registered
         return self.register(node=slot, key=key)
 
@@ -102,7 +103,8 @@ class Model(HierarchicalModel):
         # get the deferred event store
         model = self.deferred[(ckey, fkey)]
         # build a slot
-        slot = self.recognize(value=value, priority=priority)
+        slot = self.nodeFactory(
+            value=None, evaluator=self.recognize(value=value), priority=priority)
         # and add it to the pile
         model.append( (key, slot) )
         # all done
@@ -117,16 +119,6 @@ class Model(HierarchicalModel):
         self.executive.loadConfiguration(uri=source, locator=locator)
         # and return
         return self
-
-
-    # factory for my nodes
-    def newNode(self, *, value=None, evaluator=None, priority=None, **kwds):
-        """
-        Create a new node with the given evaluator
-        """
-        # why is this the right node factory?
-        # subclasses should override this to provide their own nodes to host the evaluator
-        return self.Slot(value=None, evaluator=evaluator, priority=priority)
 
 
     # meta methods

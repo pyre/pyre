@@ -204,7 +204,7 @@ class HierarchicalModel(AbstractModel):
         except KeyError:
             # otherwise, build an unresolved node
             from .UnresolvedNode import UnresolvedNode
-            node = self.newNode(evaluator=UnresolvedNode(name))
+            node = self.nodeFactory(value=None, evaluator=UnresolvedNode(name))
             # add it to the pile
             self._nodes[hashkey] = node
             self._names[hashkey] = name

@@ -19,10 +19,12 @@ class AbstractModel(Named):
 
 
     # types
+    from .Node import Node as nodeFactory
     from .Node import Node
     from .Evaluator import Evaluator
     from .Expression import Expression
     from .Literal import Literal
+    from .Reference import Reference
 
 
     # interface
@@ -76,23 +78,22 @@ class AbstractModel(Named):
         # if {value} is another node
         if isinstance(value, self.Node): 
             # easy enough
-            return value
+            return value.newReference()
         # if {value} is an evaluator 
         if isinstance(value, self.Evaluator):
             # build a node with this evaluator
-            return self.newNode(evaluator=value, **kwds)
+            return value
         # if it is a string
         if isinstance(value, str):
             # check whether it is an expression
             try:
-                return self.newNode(
-                    evaluator=self.Expression.parse(expression=value, model=self), **kwds)
+                return self.Expression.parse(expression=value, model=self)
             except self.NodeError:
                 # treat it like a literal
-                return self.newNode(evaluator=self.Literal(value=value), **kwds)
+                return self.Literal(value=value)
         # otherwise
         # build a literal
-        return self.newNode(evaluator=self.Literal(value=value), **kwds)
+        return self.Literal(value=value)
 
 
     def validate(self, root=None):
@@ -136,16 +137,6 @@ class AbstractModel(Named):
         )
 
 
-    # factory for my nodes
-    def newNode(self, *, value=None, evaluator=None, **kwds):
-        """
-        Create a new node with the given evaluator
-        """
-        # why is this the right node factory?
-        # subclasses should override this to provide their own nodes to host the evaluator
-        return self.Node(value=None, evaluator=evaluator)
-
-
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -160,8 +151,14 @@ class AbstractModel(Named):
 
 
     def __setitem__(self, name, value):
+        # if {value} is alreay a node
+        if isinstance(value, self.nodeFactory):
+            node = value
+        # otherwise, get the node factory to build one
+        else:
+            node = self.nodeFactory(value=None, evaluator=self.recognize(value))
         # now, let register do its magic
-        self.register(name=name, node=self.recognize(value=value))
+        self.register(name=name, node=node)
         # all done
         return
 

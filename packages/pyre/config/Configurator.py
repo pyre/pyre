@@ -55,14 +55,6 @@ class Configurator(Model):
         return
  
 
-    def slot(self, value, priority=None):
-        """
-        Build a new slot that holds {value}; 
-        """
-        # pass the buck to the model
-        return self.recognize(value=value, priority=priority)
-
- 
     # support for the pyre executive
     def configureComponentClass(self, component):
         """
@@ -208,7 +200,7 @@ class Configurator(Model):
         # update the counter
         self.counter[explicit] += 1
         # build a slot
-        slot = self.recognize(value=value, priority=seq)
+        slot = self.nodeFactory(value=None, evaluator=self.recognize(value=value), priority=seq)
         # build a locator
         locator = pyre.tracking.here(level=1)
         # register the slot
