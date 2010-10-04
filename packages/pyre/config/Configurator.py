@@ -64,36 +64,12 @@ class Configurator(Model):
         its inventory. Register {component} as the handler of future configuration events in
         its namespace
         """
-        # the accumulator of error
-        errors = []
         # get the class family
-        family = component.pyre_family
-        # if there is no family, we are done
-        if not family: return errors
-        # get the class inventory
-        inventory = component.pyre_inventory
-        # let's see what is known about {component}
-        for key, name, fqname, node in self.children(rootKey=family):
-            # find the corresponding descriptor
-            try:
-                descriptor = component.pyre_getTraitDescriptor(alias=name)
-            # found a typo?
-            except component.TraitNotFoundError as error:
-                errors.append(error)
-
-            # get the inventory slot
-            slot = inventory[descriptor]
-            # merge the slots
-            slot.merge(other=node)
-            # patch me
-            self.patch(old=node, new=slot)
-            # replace the node with the inventory slot so aliases still work
-            self._nodes[key] = slot
-            # and eliminate the old node from the name stores
-            del self._names[key]
-            del self._fqnames[key]
-        # establish {component} as the handler of events in its configuration namespace
-        self.configurables[self.separator.join(family)] = component
+        ns = component.pyre_family
+        # if there is no family name, we are done
+        if not ns: return []
+        # transfer the configuration under the component's family name
+        errors = self._transferConfigurationSettings(configurable=component, namespace=ns)
         # return the accumulated errors
         return errors
 
@@ -103,71 +79,13 @@ class Configurator(Model):
         Initialize the component instance inventory by making the descriptors point to the
         evaluation nodes
         """
-        # MGA
-        return
-
-        # get the component's family
-        family = self.TRAIT_SEPARATOR.join(component.pyre_family)
-        # build the component's name
-        name = component.pyre_name
-        # build the fully qualified name
-        fqname = self.FAMILY_SEPARATOR.join(tag for tag in [family,name] if tag)
-        # get the component's inventory
-        inventory = component.pyre_inventory
-        # checkpoint
-        # print("Configurator.configureComponentInstance: configuring {!r}, family={!r}".format(
-                # component.pyre_name, family))
-        # print("  inventory:", inventory)
-        # iterate over my traits
-        for trait in component.pyre_getTraitDescriptors():
-            # skip non-configurable traits
-            if not trait.pyre_isConfigurable:
-                continue
-            # get the node that holds the class default value
-            default = component.__class__.pyre_inventory[trait]
-            # and its canonical name
-            canonical = self.TRAIT_SEPARATOR.join([name, trait.name])
-            # print("  trait: name={!r}, canonical={!r}".format(trait.name, canonical))
-            # build the authoritative node for this trait
-            node = default.newReference()
-            # now look for configurations for this trait
-            for alias in trait.aliases:
-                # print("    alias: {!r}".format(alias))
-                # form the name of the potential node
-                # first the unqualified name
-                uqKey = self.TRAIT_SEPARATOR.join([name, alias])
-                # and now the fully qualified name
-                fqKey = self.TRAIT_SEPARATOR.join([fqname, alias])
-                # for either of these names
-                for key in [fqKey, uqKey]:
-                    # look for the node
-                    # print("      looking for {!r}".format(key))
-                    try:
-                        existing = self.findNode(key)
-                    # if not there
-                    except KeyError:
-                        # print("      no such configuration node")
-                        continue
-                    # if the node is there
-                    else:
-                        # print("      removing the existing configuration node")
-                        # clean up the model
-                        aliasHash = self._hash.hash(key, separator=self.TRAIT_SEPARATOR)
-                        del self._nodes[aliasHash]
-                        del self._names[aliasHash]
-                    # either way, make sure we register this alias with the has table
-                    finally:
-                        # print("      aliasing {!r} to {!r}".format(key, canonical))
-                        self._hash.alias(
-                            alias=key, original=canonical, separator=self.TRAIT_SEPARATOR)
-                    # print("      processing setting: {!r} <- {!r}".format(alias, existing))
-                    existing.cede(replacement=node)
-            # finally, attach the node as an inventory attribute named after the trait
-            inventory[trait] = node
-            # register it with the model
-            self.registerNode(name=canonical, node=node)
-        # all done; hand the component back
-        return component
+        # build the component name and key
+        ns = component.pyre_name.split(self.separator)
+        # transfer the configuration under the component's name
+        errors = self._transferConfigurationSettings(configurable=component, namespace=ns)
+        # transfer the conditional configuration settings
+        # return the accumulated errors
+        return errors
 
 
     # meta methods
@@ -207,6 +125,45 @@ class Configurator(Model):
         self.register(name=name, node=slot)
         # and return
         return
+
+
+    # implementation details
+    def _transferConfigurationSettings(self, configurable, namespace, errors=None):
+        """
+        Transfer ownership of the configuration store to {configurable} and apply whatever
+        configuration id available for it in the configuration store
+        """
+        # initialize the error accumulator
+        errors = errors if errors is not None else []
+        # get the inventory
+        inventory = configurable.pyre_inventory
+        # let's see what is known about this instance
+        # let's see what is known about this instance
+        for key, name, fqname, node in self.children(rootKey=namespace):
+            # find the corresponding descriptor
+            try:
+                descriptor = configurable.pyre_getTraitDescriptor(alias=name)
+            # found a typo?
+            except configurable.TraitNotFoundError as error:
+                errors.append(error)
+                continue
+            # get the inventory slot
+            slot = inventory[descriptor]
+            # merge the information
+            slot.merge(other=node)
+            # patch the model
+            self.patch(old=node, new=slot)
+            # replace the node with the inventory slot so aliases still work
+            self._nodes[key] = slot
+            # and eliminate the old node from the name stores
+            del self._names[key]
+            del self._fqnames[key]
+        # establish {component} as the handler of events in its configuration namespace
+        self.configurables[self.separator.join(namespace)] = configurable
+        # return the accumulated errors
+        return errors
+        
+        
 
 
 # end of file 
