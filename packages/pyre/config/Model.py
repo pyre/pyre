@@ -74,48 +74,6 @@ class Model(HierarchicalModel):
 
 
     # interface for my configurator
-    def registerComponentClass(self, component):
-        """
-        Adjust the model for the presence of a component
-
-        Look through the model for settings that correspond to {component} and transfer them to
-        its inventory. Register {component} as the handler of future configuration events in
-        its namespace
-        """
-        # the accumulator of error
-        errors = []
-        # get the class family
-        family = component.pyre_family
-        # if there is no family, we are done
-        if not family: return errors
-        # get the class inventory
-        inventory = component.pyre_inventory
-        # let's see what is known about {component}
-        for key, name, fqname, node in self.children(rootKey=family):
-            # find the corresponding descriptor
-            try:
-                descriptor = component.pyre_getTraitDescriptor(alias=name)
-            # found a typo?
-            except component.TraitNotFoundError as error:
-                errors.append(error)
-
-            # get the inventory slot
-            slot = inventory[descriptor]
-            # merge the slots
-            slot.merge(other=node)
-            # patch me
-            self.patch(old=node, new=slot)
-            # replace the node with the inventory slot so aliases still work
-            self._nodes[key] = slot
-            # and eliminate the old node from the name stores
-            del self._names[key]
-            del self._fqnames[key]
-        # establish {component} as the handler of events in its configuration namespace
-        self.configurables[self.separator.join(family)] = component
-        # return the accumulated errors
-        return errors
-
-
     # configuration event processing
     def bind(self, key, value, priority=None, locator=None):
         """
@@ -181,21 +139,6 @@ class Model(HierarchicalModel):
         # the configurables that manage theor own namespace
         self.configurables = weakref.WeakValueDictionary()
         # done
-        return
-
-
-    # subscripted access
-    def __setitem__(self, name, value):
-        """
-        Support for programmatic modification of the configuration store
-        """
-        # build a slot
-        slot = self.recognize(value=value)
-        # build a locator
-        locator = pyre.tracking.here(level=1)
-        # register the slot
-        self.register(name=name, node=slot)
-        # and return
         return
 
 

@@ -47,10 +47,8 @@ def declare():
 
 def test():
 
-    # fetch the configurator
-    conf = pyre.executive.configurator
     # and the model
-    model = conf.model
+    model = pyre.executive.configurator
     # model.dump()
 
     # print(" -- making some configuration changes")
@@ -61,10 +59,10 @@ def test():
     # and a reference to the alias
     model['ref'] = '{p1}'
     # check that they point to the same slot
-    assert model['p1'] == model['test.p1']
+    assert model.resolve(name='p1') == model.resolve(name='test.p1')
     # save the nodes
-    ref = model['ref']
-    step_0 = model['test.p1']
+    ref = model.resolve(name='ref')
+    step_0 = model.resolve(name='test.p1')
     # print("original node:", step_0)
     # print("    _value: {._value!r}".format(step_0))
     # print("    _evaluator: {._evaluator!r}".format(step_0))
@@ -93,11 +91,11 @@ def test():
 
     # check that the model is as we expect
     # model.dump()
-    assert model['test.p1'] == p1slot
-    assert model['test.p2'] == p2slot
+    assert model.resolve(name='test.p1') == p1slot
+    assert model.resolve(name='test.p2') == p2slot
     # how about the alias and the reference?
-    assert model['ref'].value == component.p1
-    assert model['p1'].value == component.p1
+    assert model['ref'] == component.p1
+    assert model['p1'] == component.p1
 
     # finally, make a late registration to what is now the component trait
     model['test.p2'] = 'step 2'

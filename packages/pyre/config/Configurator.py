@@ -8,9 +8,10 @@
 
 import collections
 import pyre.tracking
+from .Model import Model
 
 
-class Configurator:
+class Configurator(Model):
     """
     The keeper of all configurable values maintained by the framework
 
@@ -23,12 +24,7 @@ class Configurator:
     # constants
     TRAIT_SEPARATOR = '.'
     FAMILY_SEPARATOR = '#'
-    EXPLICIT_CONFIGURATION = (15, -1) # programmatic overrides
 
-
-    # types
-    from .Slot import Slot
-    from .Model import Model
     # exceptions
     from ..calc.exceptions import (
         CircularReferenceError, DuplicateNodeError, ExpressionError, NodeError,
@@ -36,7 +32,6 @@ class Configurator:
     
 
     # public data
-    model = None # the configuration model
     counter = None # the event priority counter
     # build a locator for values that come from trait defaults
     locator = pyre.tracking.newSimpleLocator(source="<defaults>")
@@ -55,7 +50,7 @@ class Configurator:
             # update the counter
             self.counter[priority] += 1
             # and process the event
-            event.identify(inspector=self.model, priority=seq)
+            event.identify(inspector=self, priority=seq)
         # all done
         return
  
@@ -65,19 +60,52 @@ class Configurator:
         Build a new slot that holds {value}; 
         """
         # pass the buck to the model
-        return self.model.recognize(value=value, priority=priority)
-
-
-    # framework requests
-    def configureComponentClass(self, component):
-        """
-        Look through the configuration store for nodes that correspond to defaults for the
-        traits of the given {component} class and configure them
-        """
-        # register the class with the model and return any errors encountered in the process
-        return self.model.registerComponentClass(component)
+        return self.recognize(value=value, priority=priority)
 
  
+    # support for the pyre executive
+    def configureComponentClass(self, component):
+        """
+        Adjust the model for the presence of a component
+
+        Look through the model for settings that correspond to {component} and transfer them to
+        its inventory. Register {component} as the handler of future configuration events in
+        its namespace
+        """
+        # the accumulator of error
+        errors = []
+        # get the class family
+        family = component.pyre_family
+        # if there is no family, we are done
+        if not family: return errors
+        # get the class inventory
+        inventory = component.pyre_inventory
+        # let's see what is known about {component}
+        for key, name, fqname, node in self.children(rootKey=family):
+            # find the corresponding descriptor
+            try:
+                descriptor = component.pyre_getTraitDescriptor(alias=name)
+            # found a typo?
+            except component.TraitNotFoundError as error:
+                errors.append(error)
+
+            # get the inventory slot
+            slot = inventory[descriptor]
+            # merge the slots
+            slot.merge(other=node)
+            # patch me
+            self.patch(old=node, new=slot)
+            # replace the node with the inventory slot so aliases still work
+            self._nodes[key] = slot
+            # and eliminate the old node from the name stores
+            del self._names[key]
+            del self._fqnames[key]
+        # establish {component} as the handler of events in its configuration namespace
+        self.configurables[self.separator.join(family)] = component
+        # return the accumulated errors
+        return errors
+
+
     def configureComponentInstance(self, component):
         """
         Initialize the component instance inventory by making the descriptors point to the
@@ -152,14 +180,11 @@ class Configurator:
 
     # meta methods
     def __init__(self, executive, name=None, **kwds):
-        super().__init__(**kwds)
-
         # construct my name
         name = name if name is not None else "pyre.configurator"
+        super().__init__(name=name, executive=executive, separator=self.TRAIT_SEPARATOR, **kwds)
 
-        # the configuration model
-        self.model = self.Model(name=name, executive=executive, separator=self.TRAIT_SEPARATOR)
-        # and the event priority counter
+        # the event priority counter
         self.counter = collections.Counter()
 
         return
@@ -167,32 +192,28 @@ class Configurator:
 
     def __getitem__(self, name):
         """
-        Indexed access of the configuration model
+        Indexed access to the configuration store
         """
-        return self.model[name].value
+        return self.resolve(name=name).value
 
 
     def __setitem__(self, name, value):
         """
         Support for programmatic modification of the configuration store
         """
+        # get the priority sequence class for explicit settings
+        explicit = self.executive.EXPLICIT_CONFIGURATION
+        # build the event sequence number, which becomes its priority level
+        seq = (explicit, self.counter[explicit])
+        # update the counter
+        self.counter[explicit] += 1
         # build a slot
-        slot = self.model.recognize(value=value)
+        slot = self.recognize(value=value, priority=seq)
         # build a locator
         locator = pyre.tracking.here(level=1)
         # register the slot
-        self.model.register(name=name, node=slot)
+        self.register(name=name, node=slot)
         # and return
-        return
-
-
-    def dump(self, pattern=None):
-        """
-        List my contents
-        """
-        # dump the contents of the configuration model
-        self.model.dump()
-                
         return
 
 

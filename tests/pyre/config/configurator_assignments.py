@@ -20,15 +20,15 @@ def test():
     configurator = executive.configurator
 
     # create some assignments
-    configurator.model.bind(
+    configurator.bind(
         key=("sample", "user", "name"), value="Michael Aïvázis")
-    configurator.model.bind(
+    configurator.bind(
         key=("sample", "user", "name"), value="michael aïvázis")
-    configurator.model.bind(
+    configurator.bind(
         key=("sample", "user", "email"), value="michael.aivazis@caltech.edu")
-    configurator.model.bind(
+    configurator.bind(
         key=("sample", "user", "affiliation"), value="california institute of technology")
-    configurator.model.bind(
+    configurator.bind(
         key=("sample", "user", "alias"), value="{sample.user.name}")
 
     # dump the contents of the model
