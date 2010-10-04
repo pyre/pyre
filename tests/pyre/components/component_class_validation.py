@@ -20,15 +20,16 @@ def test():
         # declare a component
         class base(pyre.component):
             """the base component"""
-            number = pyre.properties.int()
-            number.default = 0
+            number = pyre.properties.int(default=0)
             number.validators = pyre.constraints.isGreater(value=0)
 
+    # access the exception that will get raised
+    from pyre.constraints.exceptions import ConstraintViolationError
     # check the default values
     try:
         declare()
         assert False
-    except pyre.PyreError:
+    except ConstraintViolationError:
         pass
 
     return
