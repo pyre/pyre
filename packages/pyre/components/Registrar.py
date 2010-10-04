@@ -81,7 +81,7 @@ class Registrar:
             import journal
             firewall = journal.firewall("pyre.components")
             raise firewall.log(
-                "pyre.components.Registrar: unregistered class {0.__class__.__name!r} "
+                "pyre.components.Registrar: unregistered class {0.__class__.__name__!r} "
                 "of component {0.pyre_name!r}".format(component))
         # and return the instance back to the caller
         return component
