@@ -21,33 +21,37 @@ def test():
     # the nodes
     p = 80.
     s = .25*80
-    production = pyre.calc.newNode(value=p)
-    shipping = pyre.calc.newNode(value=s)
-    cost = pyre.calc.newNode(
-        value=pyre.calc.expression(formula="{production}+{shipping}", model=model))
-    price = pyre.calc.newNode(value=pyre.calc.expression(formula="2*{cost}", model=model))
-
     # register the nodes
-    model.register(name="production", node=production)
-    model.register(name="shipping", node=shipping)
-    model.register(name="cost", node=cost)
-    model.register(name="price", node=price)
+    model["production"] = p
+    model["shipping"] = s
+    model["cost"] = "{production}+{shipping}"
+    model["price"] = "2*{cost}"
 
     # check the values
-    assert production.value == p
-    assert shipping.value == s
-    assert cost.value == production.value + shipping.value
-    assert price.value == 2*cost.value
+    # print("before:")
+    # print("  production:", model["production"])
+    # print("  shipping:", model["shipping"])
+    # print("  cost:", model["cost"])
+    # print("  price:", model["price"])
+    assert model["production"] == p
+    assert model["shipping"] == s
+    assert model["cost"] == model["production"] + model["shipping"]
+    assert model["price"] == 2*model["cost"]
 
     # make a change
     p = 100.
-    production.value = p
+    model["production"] = p
 
-    # chek again
-    assert production.value == p
-    assert shipping.value == s
-    assert cost.value == production.value + shipping.value
-    assert price.value == 2*cost.value
+    # check again
+    # print("after:")
+    # print("  production:", production.value)
+    # print("  shipping:", shipping.value)
+    # print("  cost:", cost.value)
+    # print("  price:", price.value)
+    assert model["production"] == p
+    assert model["shipping"] == s
+    assert model["cost"] == model["production"] + model["shipping"]
+    assert model["price"] == 2*model["cost"]
 
     return
 

@@ -74,6 +74,52 @@ class Node(Observable, metaclass=_metaclass_Node):
 
 
     # interface
+    def merge(self, other):
+        """
+        Transfer the information from {other} if its priority is higher or equal to mine
+        """
+        # print("pyre.calc.Node.merge:")
+        # print(" ++ this:")
+        # self.dump()
+        # print(" ++ other:")
+        # other.dump()
+        # invalidate my cache
+        self._value = None
+        # grab stuff from other
+        value = other._value
+        evaluator = other._evaluator
+        # shutdown my evaluator
+        if self._evaluator:  self._evaluator.finalize(owner=self)
+        # if other had an evaluator
+        if evaluator: 
+            # shut it down
+            evaluator.finalize(owner=other)
+            # initialize it for me
+            evaluator.initialize(owner=self)
+        # otherwise
+        else:
+            # build a literal out of the other's value
+            # literals don't need to be initialized
+            evaluator = None if value is None else self.Literal(value=other._value)
+        # atatch the evaluator to me
+        self._evaluator = evaluator
+
+        # update the my observers
+        self.observers.update(other.observers)
+        # notify the old observers of the change
+        for observer in other.observers:
+            # domain adjustments
+            observer.patch(new=self, old=other)
+
+        # notify my observers
+        self.notifyObservers()
+
+        # print(" ++ after the merge:")
+        # self.dump()
+        # and return
+        return
+
+        
     def validate(self, span=None, clean=None):
         """
         Make sure that my branch of the evaluation graph is free of cycles
@@ -221,10 +267,8 @@ class Node(Observable, metaclass=_metaclass_Node):
 
         if self.observers:
             print("   observers:")
-            for idx,observer in enumerate(self.observers):
+            for idx, observer in enumerate(self.observers):
                 print("       {}: {}".format(idx, observer))
-                print("           node: {}".format(observer.__self__))
-                print("           func: {}".format(observer.__func__))
 
         return
 

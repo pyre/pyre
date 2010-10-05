@@ -23,27 +23,27 @@ def test():
     model["user.email"] = "aivazis@caltech.edu"
     model["user.signature"] = "{user.name}+' -- '+{user.email}"
     # check the signature
-    assert model["user.signature"].value == "Michael Aïvázis -- aivazis@caltech.edu"
+    assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
 
     # case 1: canonical does not exist, alias does not exist
     model.alias(alias="author.affiliation", canonical="user.affiliation")
     model["user.affiliation"] = "California Institute of Technology"
-    assert model["author.affiliation"].value == model["user.affiliation"].value
+    assert model["author.affiliation"] == model["user.affiliation"]
 
     # case 2: canonical exists, alias does not
     model.alias(alias="author.signature", canonical="user.signature")
     # check the signature
-    assert model["author.signature"].value == model["user.signature"].value
+    assert model["author.signature"] == model["user.signature"]
 
     # case 3: canonical does not exist, alias does
     model["author.telephone"] = "+1 626.395.3424"
     model.alias(alias="author.telephone", canonical="user.telephone")
-    assert model["author.telephone"].value == model["user.telephone"].value
+    assert model["author.telephone"] == model["user.telephone"]
 
     # case 4: both are preëxisting nodes
     model["author.name"] = "TBD"
     model.alias(alias="author.name", canonical="user.name")
-    assert model["author.name"].value == model["user.name"].value
+    assert model["author.name"] == model["user.name"]
 
     return
 

@@ -106,7 +106,7 @@ class HierarchicalModel(AbstractModel):
             del self._fqnames[aliasHash]
         # both preëxisted; the aliased info has been cleared out, the canonical is as
         # it should be. all that remains is to patch the two nodes
-        self.patch(old=aliasNode, new=canonicalNode)
+        self.patch(discard=aliasNode, keep=canonicalNode)
         # all done
         return self
         
@@ -189,7 +189,7 @@ class HierarchicalModel(AbstractModel):
         # patch the evaluation graph 
         # {self.patch} decides the best way to handle the replacement and returns the winner
         # node, which must be reinserted in the model
-        self._nodes[hashkey] = self.patch(old=existing, new=node)
+        self._nodes[hashkey] = self.patch(keep=existing, discard=node)
         # and return
         return self
  

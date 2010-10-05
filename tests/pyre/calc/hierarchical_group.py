@@ -38,14 +38,14 @@ def test():
         # check that we got the canonical name
         assert name in names
         # and the correct node
-        assert model[fqname] == node
+        assert model.resolve(name=fqname) == node
     # repeat with the alias "χρήστης"
     assert len(names) == len(tuple(model.children(root="χρήστης")))
     for key, name, fqname, node in model.children(root="χρήστης"):
         # check that we got the canonical name
         assert name in names
         # and the correct node
-        assert model[fqname] == node
+        assert model.resolve(name=fqname) == node
 
     return
 

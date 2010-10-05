@@ -18,35 +18,31 @@ def test():
     # set up the model
     model = pyre.calc.newModel(name="expression")
 
-    # the production node
-    p = 80.
-    production = pyre.calc.newNode(value=p)
-    # production.dump("production")
-    price = pyre.calc.newNode(value=pyre.calc.expression(formula="2*{production}", model=model))
-    # price.dump("price")
+    # set up an expression with an unresolved node
+    model["price"] = "2*{production}"
 
     # ask for the price
     try:
-        price.value
+        model["price"]
         assert False
-    except price.UnresolvedNodeError as error:
-        assert error.node == price
+    except model.UnresolvedNodeError as error:
+        assert error.node == model.resolve(name="price")
         assert error.name == "production"
 
-    # register the nodes
-    model.register(name="price", node=price)
-    model.register(name="production", node=production)
+    # resovle the node
+    p = 80.
+    model["production"] = p
 
     # ask for the price again
-    assert production.value == p
-    assert price.value == 2*production.value
+    assert model["production"] == p
+    assert model["price"] == 2*model["production"]
 
     # make a change
     p = 100.
-    production.value = p
+    model["production"] = p
     # chek again
-    assert production.value == p
-    assert price.value == 2*production.value
+    assert model["production"] == p
+    assert model["price"] == 2*model["production"]
 
     return
 

@@ -28,17 +28,18 @@ class Model(AbstractModel):
         """
         Add {node} into the model and make it accessible through {name}
         """
+        # print("pyre.calc.Model.register: name={!r}, node={}".format(name, node))
         # check whether we already have a node registered nuder this name
         try:
             existing = self._nodes[name]
         except KeyError:
             # nope, first time
+            # node.dump()
             self._nodes[name] = node
             return self
         # patch the evaluation graph
-        self.patch(old=existing, new=node)
-        # place the node in the model
-        self._nodes[name] = node
+        # print("pyre.calc.Model.resolve: patching {!r} {}".format(name, existing))
+        self.patch(keep=existing, discard=node)
         # and return
         return self
 
@@ -49,13 +50,16 @@ class Model(AbstractModel):
         """
         # attempt to return the node that is registered under {name}
         try:
-            node = self._nodes[name]
+           return self._nodes[name]
+        # not there...
         except KeyError:
-            # otherwise, build an unresolved node
-            from .UnresolvedNode import UnresolvedNode
-            node = self.nodeFactory(value=None, evaluator=UnresolvedNode(name))
-            # add it to the pile
-            self._nodes[name] = node
+            pass
+        # otherwise, build an unresolved node
+        from .UnresolvedNode import UnresolvedNode
+        node = self.nodeFactory(value=None, evaluator=UnresolvedNode(name))
+        # print("pyre.calc.Model.resolve: new unresolved node {!r} {}".format(name, node))
+        # add it to the pile
+        self._nodes[name] = node
         # and return it
         return node
 

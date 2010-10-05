@@ -43,11 +43,9 @@ resolution:
 
 model:
 	${PYTHON} ./model.py
-	${PYTHON} ./model_smart.py
 
 hierarchical:
 	${PYTHON} ./hierarchical.py
-	${PYTHON} ./hierarchical_smart.py
 	${PYTHON} ./hierarchical_patch.py
 	${PYTHON} ./hierarchical_alias.py
 	${PYTHON} ./hierarchical_group.py

@@ -41,9 +41,11 @@ class Observable:
         """
         Notify all observers
         """
+        # print("pyre.patterns.Observable: {}".format(self))
         # build a list before notification, just in case the observer's callback behavior
         # involves removing itself from our callback set
         for instance, method in tuple(self.observers.items()):
+            # print("  notifying {}".format(instance))
             # invoke the callable
             method(instance, self)
         # all done

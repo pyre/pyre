@@ -56,18 +56,14 @@ class AbstractModel(Named):
             "class {0.__class__.__name__!r} must implement 'register'".format(self))
 
 
-    def patch(self, *, old, new):
+    def patch(self, *, discard, keep):
         """
         Patch the evaluation graph by grafting {new} in the place of {old}
         """
-        # update the set of observers of the new node
-        new.observers.update(old.observers)
-        # notify the old observers of the change
-        for observer in old.observers:
-            # domain adjustments
-            observer.patch(new=new, old=old)
+        # transfer information from the throw away to the keeper
+        keep.merge(other=discard)
         # all done
-        return new
+        return keep
 
 
     def recognize(self, value, **kwds):
@@ -147,7 +143,7 @@ class AbstractModel(Named):
     # subscripted access
     def __getitem__(self, name):
         #  this is easy: get resolve to hunt down the node associated with {name}
-        return self.resolve(name=name)
+        return self.resolve(name=name).value
 
 
     def __setitem__(self, name, value):

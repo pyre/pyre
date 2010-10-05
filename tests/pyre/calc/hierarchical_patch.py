@@ -25,13 +25,13 @@ def test():
         formula="{user.name}+' -- '+{user.email}", model=model)
 
     # check the signature
-    assert model["user.signature"].value == "Michael Aïvázis -- aivazis@caltech.edu"
+    assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
 
     # modify one of the nodes
     model["user.email"] = "michael.aivazis@orthologue.com"
 
     # check the new signature
-    assert model["user.signature"].value == "Michael Aïvázis -- michael.aivazis@orthologue.com"
+    assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
     return
 

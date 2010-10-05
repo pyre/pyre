@@ -19,59 +19,48 @@ def test():
     model = pyre.calc.newModel(name="sample")
 
     # the nodes
-    production = pyre.calc.newNode(value = 80.)
-    shipping = pyre.calc.newNode(value = 20.)
-    cost = production + shipping
-    margin = pyre.calc.newNode(value=pyre.calc.expression(formula=".25*{cost}", model=model))
-    overhead = pyre.calc.newNode(value=pyre.calc.expression(formula=".45*{cost}", model=model))
-    price = pyre.calc.newNode(value=pyre.calc.sum(cost, margin, overhead))
-    discount = pyre.calc.newNode(value = .2)
-    total = pyre.calc.newNode(value=pyre.calc.expression(
-            formula="{price}*(1.0 - {discount})", model=model))
-
-    # register the nodes
-    model.register(node=production, name="production")
-    model.register(node=shipping, name="shipping")
-    model.register(node=cost, name="cost")
-    model.register(node=margin, name="margin")
-    model.register(node=overhead, name="overhead")
-    model.register(node=price, name="price")
-    model.register(node=discount, name="discount")
-    model.register(node=total, name="total")
+    model["production"] = 80.
+    model["shipping"] = 20
+    model["cost"] = model.resolve("production") + model.resolve("shipping")
+    model["margin"] = ".25*{cost}"
+    model["overhead"] = ".45*{cost}"
+    model["price"] = "{cost}+{margin}+{overhead}"
+    model["discount"] = .2
+    model["total"] = "{price}*(1.0 - {discount})"
 
     # check
-    assert production.value == 80
-    assert shipping.value == 20
-    assert cost.value == production.value + shipping.value
-    assert margin.value == .25*cost.value
-    assert overhead.value == .45*cost.value
-    assert price.value == margin.value+overhead.value+cost.value
-    assert discount.value == .2
-    assert total.value == (1-discount.value)*price.value
+    assert model["production"] == 80
+    assert model["shipping"] == 20
+    assert model["cost"] == model["production"] + model["shipping"]
+    assert model["margin"] == .25*model["cost"]
+    assert model["overhead"] == .45*model["cost"]
+    assert model["price"] == model["margin"]+model["overhead"]+model["cost"]
+    assert model["discount"] == .2
+    assert model["total"] == (1-model["discount"])*model["price"]
     
     # change and check
     newcost = 100.
-    production.value = newcost
-    assert production.value == newcost
-    assert shipping.value == 20
-    assert cost.value == production.value + shipping.value
-    assert margin.value == .25*cost.value
-    assert overhead.value == .45*cost.value
-    assert price.value == margin.value+overhead.value+cost.value
-    assert discount.value == .2
-    assert total.value == (1-discount.value)*price.value
+    model["production"] = newcost
+    assert model["production"] == newcost
+    assert model["shipping"] == 20
+    assert model["cost"] == model["production"] + model["shipping"]
+    assert model["margin"] == .25*model["cost"]
+    assert model["overhead"] == .45*model["cost"]
+    assert model["price"] == model["margin"]+model["overhead"]+model["cost"]
+    assert model["discount"] == .2
+    assert model["total"] == (1-model["discount"])*model["price"]
     
     # change and check again
     newdiscount = .45
-    discount.value = newdiscount
-    assert production.value == newcost
-    assert shipping.value == 20
-    assert cost.value == production.value + shipping.value
-    assert margin.value == .25*cost.value
-    assert overhead.value == .45*cost.value
-    assert price.value == margin.value+overhead.value+cost.value
-    assert discount.value == newdiscount
-    assert total.value == (1-discount.value)*price.value
+    model["discount"] = newdiscount
+    assert model["production"] == newcost
+    assert model["shipping"] == 20
+    assert model["cost"] == model["production"] + model["shipping"]
+    assert model["margin"] == .25*model["cost"]
+    assert model["overhead"] == .45*model["cost"]
+    assert model["price"] == model["margin"]+model["overhead"]+model["cost"]
+    assert model["discount"] == newdiscount
+    assert model["total"] == (1-model["discount"])*model["price"]
 
     return
 

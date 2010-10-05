@@ -18,19 +18,12 @@ def test():
     # create a model
     model = pyre.calc.newHierarchicalModel(name="sample")
 
-    # the nodes
-    name = pyre.calc.newNode(value="Michael Aïvázis")
-    email = pyre.calc.newNode(value="aivazis@caltech.edu")
-    signature = pyre.calc.newNode(value=pyre.calc.expression(
-            formula="{user.name}+' -- '+{user.email}", model=model))
-    
     # register the nodes
-    model.register(name="user.name", node=name)
-    model.register(name="user.email", node=email)
-    model.register(name="user.signature", node=signature)
-
+    model["user.name"] = "Michael Aïvázis"
+    model["user.email"] = "aivazis@caltech.edu"
+    model["user.signature"] = "{user.name}+' -- '+{user.email}"
     # check the signature
-    assert signature.value == "Michael Aïvázis -- aivazis@caltech.edu"
+    assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
 
     return
 

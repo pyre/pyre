@@ -15,6 +15,10 @@ class Evaluator(metaclass=_metaclass_Evaluator):
     """
 
 
+    # public data
+    domain = []
+
+
     # interface
     def validate(self, span, clean):
         """
