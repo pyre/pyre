@@ -74,16 +74,49 @@ class Configurator(Model):
         return errors
 
 
-    def configureComponentInstance(self, component):
+    def configureComponentInstance(self, component, name=None):
         """
         Initialize the component instance inventory by making the descriptors point to the
         evaluation nodes
         """
-        # build the component name and key
-        ns = component.pyre_name.split(self.separator)
+        # build the namespace
+        name = name if name is not None else component.pyre_name
+        # turn it into a key
+        ns = name.split(self.separator)
         # transfer the configuration under the component's name
         errors = self._transferConfigurationSettings(configurable=component, namespace=ns)
-        # transfer the conditional configuration settings
+
+        # get the family name
+        family = component.pyre_family
+        # if there isn't one, we are all done
+        if not family: return errors
+        # get the inventory
+        inventory = component.pyre_inventory
+        # hash the two to build the deferal key
+        ckey = self._hash.hash(ns)
+        fkey = self._hash.hash(family)
+        # if there aren't any setting that match these criteria, we are all done
+        if (ckey, fkey) not in self.deferred: return errors
+        # otherwise, loop over the assignments
+        for trait, node in self.deferred[(ckey,fkey)]:
+            # build the trait name
+            alias = self.separator.join(trait)
+            # look for the corresponding descriptor
+            try:
+                descriptor = component.pyre_getTraitDescriptor(alias=alias)
+            # found a typo?
+            except component.TraitNotFoundError as error:
+                errors.append(error)
+                continue
+            # get the inventory slot
+            slot = inventory[descriptor]
+            # merge the information
+            slot.merge(other=node)
+            # patch the model
+            self.patch(old=node, new=slot)
+        # wipe out these conditional bindings
+        del self.deferred[(ckey,fkey)]
+
         # return the accumulated errors
         return errors
 
@@ -162,8 +195,6 @@ class Configurator(Model):
         self.configurables[self.separator.join(namespace)] = configurable
         # return the accumulated errors
         return errors
-        
-        
 
 
 # end of file 
