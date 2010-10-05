@@ -38,9 +38,9 @@ def test():
     assert gaussian.pyre_getTraitDescriptor("spread") == gaussian.pyre_getTraitDescriptor("σ")
     # print out the configuration state
     # print("gaussian: defaults: mean={0.mean!r}, spread={0.spread!r}".format(gaussian))
-    # calculator = pyre.executive().calculator
-    # calculator._dump(pattern="(functor|gaussian)")
-    # calculator._hash.dump()
+    # cfg = pyre.executive.configurator
+    # cfg.dump(pattern="(functor|gaussian)")
+    # cfg._hash.dump()
 
     # check the class defaults
     # the values come from the defaults, functor.pml in this directory, and the command line
@@ -52,6 +52,8 @@ def test():
     # verify the change
     assert gaussian.mean == 0.0
     assert gaussian.spread == 1.0
+
+    return
     
     # instantiate one
     g = gaussian(name="gaussian")
@@ -72,8 +74,8 @@ def test():
     assert g.σ == g.spread
 
     # check the properties
-    # print("g: mean={0.mean!r}, spread={0.spread!r}".format(g))
-    # calculator._dump(pattern="(functor|gaussian)")
+    print("g: mean={0.mean!r}, spread={0.spread!r}".format(g))
+    cfg._dump(pattern="(functor|gaussian)")
 
     return gaussian
 

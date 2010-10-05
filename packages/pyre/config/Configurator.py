@@ -166,24 +166,33 @@ class Configurator(Model):
         Transfer ownership of the configuration store to {configurable} and apply whatever
         configuration id available for it in the configuration store
         """
+        # print("Configurator._transferConfigurationSettings:")
+        # print("  configurable={.pyre_name!r}".format(configurable))
+        # print("  namespace={!r}".format(namespace))
         # initialize the error accumulator
         errors = errors if errors is not None else []
         # get the inventory
         inventory = configurable.pyre_inventory
         # let's see what is known about this instance
-        # let's see what is known about this instance
+        # print("  looking for configuration settings:")
         for key, name, fqname, node in self.children(rootKey=namespace):
+            # print("    found {!r} <- {.value!r}".format(fqname, node))
+            # print("      with priority: {._priority}".format(node))
             # find the corresponding descriptor
             try:
                 descriptor = configurable.pyre_getTraitDescriptor(alias=name)
+                # print("      matching descriptor: {.name!r}".format(descriptor))
             # found a typo?
             except configurable.TraitNotFoundError as error:
+                # print("      no matching descriptor")
                 errors.append(error)
                 continue
             # get the inventory slot
             slot = inventory[descriptor]
             # merge the information
+            # print("      before: {0._descriptor.name!r} <- {0.value!r}".format(slot))
             slot.merge(other=node)
+            # print("      after: {0._descriptor.name!r} <- {0.value!r}".format(slot))
             # patch the model
             self.patch(old=node, new=slot)
             # replace the node with the inventory slot so aliases still work
