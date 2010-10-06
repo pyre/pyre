@@ -25,10 +25,7 @@ class Property(Trait):
     from .. import schema, constraints
 
 
-    # public data; inherited from Trait but repeated here for clarity
-    name = None # my canonical name; set at construction time or binding name
-    aliases = None # the set of alternative names by which I am accessible
-    tip = None # a short description of my purpose and constraints; contrast with doc
+    # public data; name, aliases and tip are inherited from Trait
     # additional state
     type = schema.object # my type; most likely one of the pyre.schema type declarators
     default = None # my default value
