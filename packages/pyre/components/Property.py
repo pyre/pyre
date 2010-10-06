@@ -126,7 +126,7 @@ class Property(Trait):
         # validate it
         slot.validate()
         # get it to compute its value
-        return slot.value
+        return slot.getValue()
 
         
     def pyre_bindInstance(self, configurable):
@@ -138,7 +138,7 @@ class Property(Trait):
         # validate it
         slot.validate()
         # get it to compute its value
-        return slot.value
+        return slot.getValue()
 
         
     # the descriptor interface
@@ -150,7 +150,7 @@ class Property(Trait):
         # grab the slot from the client's inventory
         slot = client.pyre_inventory[self]
         # compute and return its value
-        return slot.value
+        return slot.getValue()
 
 
     def __set__(self, instance, value):

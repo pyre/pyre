@@ -35,7 +35,9 @@ interfaces:
 	${PYTHON} ./interface_compatibility_reports.py
 	${PYTHON} ./interface_instantiation.py
 
-components:
+components: components-basics component-class component-instance
+
+components-basics:
 	${PYTHON} ./component.py
 	${PYTHON} ./component_family.py
 	${PYTHON} ./component_behavior.py
@@ -47,6 +49,8 @@ components:
 	${PYTHON} ./component_compatibility.py
 	${PYTHON} ./component_compatibility_reports.py
 	${PYTHON} ./component_implements.py
+
+component-class:
 	${PYTHON} ./component_class_registration.py
 	${PYTHON} ./component_class_registration_model.py
 	${PYTHON} ./component_class_configuration.py
@@ -55,6 +59,8 @@ components:
 	${PYTHON} ./component_class_binding_implicit.py
 	${PYTHON} ./component_class_validation.py
 	${PYTHON} ./component_class_trait_matrix.py
+
+component-instance:
 	${PYTHON} ./component_defaults.py
 	${PYTHON} ./component_instantiation.py
 	${PYTHON} ./component_invocation.py

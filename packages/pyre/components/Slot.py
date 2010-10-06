@@ -33,7 +33,7 @@ class Slot(Base):
         # further, uninitialized traits have both value and evaluator set to None; leave such
         # alone as well
         if evaluator is None: return None
-        # the only case remaining is a null value but non-null evaluator
+        # the only case remaining is: null value but non-null evaluator
         # get the evaluator to compute the value
         try:
             value = evaluator.compute()
@@ -44,23 +44,9 @@ class Slot(Base):
         # dress up anything else as an evaluation error
         except Exception as error:
             raise self.EvaluationError(evaluator=evaluator, error=error) from error
+        #  bind my value
+        return self.bind(value)
         
-        # now, walk {value} through casting and validation
-        descriptor = self._descriptor
-        if value is not None:
-            # cast it
-            value = descriptor.type.pyre_cast(value)
-            # convert it
-            for converter in descriptor.converters:
-                value = converter.pyre_cast(value)
-            # validate it
-            for validator in descriptor.validators:
-                value = validator(value)
-        # place it in the cache
-        self._value = value
-        # and return it back to the caller
-        return value
-
 
     def setValue(self, value, locator=None):
         """
@@ -80,10 +66,19 @@ class Slot(Base):
             # it is not ready yet...
             except self.UnresolvedNodeError as error:
                 value = None
-        # now, walk {value} through casting and validation
-        descriptor = self._descriptor
+        # bind it
+        return self.bind(value)
+
+
+    def bind(self, value):
+        """
+        Walk {value} through casting and validation, refresg my cache and notify my observers
+        """
+        # walk {value} through casting and validation
         if value is not None:
-            # cast it
+            # access the descriptor
+            descriptor = self._descriptor
+            # cast {value}
             value = descriptor.type.pyre_cast(value)
             # convert it
             for converter in descriptor.converters:
@@ -96,7 +91,7 @@ class Slot(Base):
         # and notify my observers
         self.notifyObservers()
         # and return
-        return
+        return value
 
    
     # install value setter/getter as a property
