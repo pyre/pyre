@@ -85,38 +85,13 @@ class Configurator(Model):
         ns = name.split(self.separator)
         # transfer the configuration under the component's name
         errors = self._transferConfigurationSettings(configurable=component, namespace=ns)
+        # transfer the deferred configuration
+        errors = self._transferConditionalConfigurationSettings(
+            configurable=component, namespace=ns, errors=errors)
 
-        # get the family name
-        family = component.pyre_family
-        # if there isn't one, we are all done
-        if not family: return errors
-        # get the inventory
-        inventory = component.pyre_inventory
-        # hash the two to build the deferal key
-        ckey = self._hash.hash(ns)
-        fkey = self._hash.hash(family)
-        # if there aren't any setting that match these criteria, we are all done
-        if (ckey, fkey) not in self.deferred: return errors
-        # otherwise, loop over the assignments
-        for trait, node in self.deferred[(ckey,fkey)]:
-            # build the trait name
-            alias = self.separator.join(trait)
-            # look for the corresponding descriptor
-            try:
-                descriptor = component.pyre_getTraitDescriptor(alias=alias)
-            # found a typo?
-            except component.TraitNotFoundError as error:
-                errors.append(error)
-                continue
-            # get the inventory slot
-            slot = inventory[descriptor]
-            # merge the information
-            self.patch(discard=node, keep=slot)
-        # wipe out these conditional bindings
-        del self.deferred[(ckey,fkey)]
-
-        # return the accumulated errors
+        # and return
         return errors
+
 
 
     # meta methods
@@ -155,7 +130,7 @@ class Configurator(Model):
     def _transferConfigurationSettings(self, configurable, namespace, errors=None):
         """
         Transfer ownership of the configuration store to {configurable} and apply whatever
-        configuration id available for it in the configuration store
+        configuration is available for it in the configuration store
         """
         # print("Configurator._transferConfigurationSettings:")
         # print("  configurable={.pyre_name!r}".format(configurable))
@@ -192,6 +167,44 @@ class Configurator(Model):
             del self._fqnames[key]
         # establish {component} as the handler of events in its configuration namespace
         self.configurables[self.separator.join(namespace)] = configurable
+        # return the accumulated errors
+        return errors
+
+
+    def _transferConditionalConfigurationSettings(self, configurable, namespace, errors=None):
+        """
+        Apply whatever deferred configuration settings are available in the configuration store
+        under {namespace}
+        """
+        # get the family name
+        family = configurable.pyre_family
+        # if there isn't one, we are all done
+        if not family: return errors
+        # get the inventory
+        inventory = configurable.pyre_inventory
+        # hash the two to build the deferal key
+        ckey = self._hash.hash(namespace)
+        fkey = self._hash.hash(family)
+        # if there aren't any setting that match these criteria, we are all done
+        if (ckey, fkey) not in self.deferred: return errors
+        # otherwise, loop over the assignments
+        for trait, node in self.deferred[(ckey,fkey)]:
+            # build the trait name
+            alias = self.separator.join(trait)
+            # look for the corresponding descriptor
+            try:
+                descriptor = configurable.pyre_getTraitDescriptor(alias=alias)
+            # found a typo?
+            except configurable.TraitNotFoundError as error:
+                errors.append(error)
+                continue
+            # get the inventory slot
+            slot = inventory[descriptor]
+            # merge the information
+            self.patch(discard=node, keep=slot)
+        # wipe out these conditional bindings
+        del self.deferred[(ckey,fkey)]
+
         # return the accumulated errors
         return errors
 
