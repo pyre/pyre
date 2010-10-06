@@ -26,14 +26,10 @@ class Slot(Node):
         """
         # if her priority is higher or equal
         if other._priority >= self._priority:
-            # shutdown my evaluator
-            if self._evaluator:  self._evaluator.finalize(owner=self)
-            # assume the attributes of other
-            self._value = other._value
-            self._evaluator = other._evaluator
+            # transfer the priority
             self._priority = other._priority
-            # notify my observers
-            self.notifyObservers()
+            # get an ancestor to transfer the node info
+            super().merge(other)
         # all done
         return
 

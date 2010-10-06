@@ -111,9 +111,7 @@ class Configurator(Model):
             # get the inventory slot
             slot = inventory[descriptor]
             # merge the information
-            slot.merge(other=node)
-            # patch the model
-            self.patch(old=node, new=slot)
+            self.patch(discard=node, keep=slot)
         # wipe out these conditional bindings
         del self.deferred[(ckey,fkey)]
 
@@ -131,13 +129,6 @@ class Configurator(Model):
         self.counter = collections.Counter()
 
         return
-
-
-    def __getitem__(self, name):
-        """
-        Indexed access to the configuration store
-        """
-        return self.resolve(name=name).value
 
 
     def __setitem__(self, name, value):
@@ -191,10 +182,9 @@ class Configurator(Model):
             slot = inventory[descriptor]
             # merge the information
             # print("      before: {0._descriptor.name!r} <- {0.value!r}".format(slot))
-            slot.merge(other=node)
+            self.patch(discard=node, keep=slot)
             # print("      after: {0._descriptor.name!r} <- {0.value!r}".format(slot))
             # patch the model
-            self.patch(old=node, new=slot)
             # replace the node with the inventory slot so aliases still work
             self._nodes[key] = slot
             # and eliminate the old node from the name stores

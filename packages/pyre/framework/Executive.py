@@ -176,12 +176,14 @@ class Executive:
             source = self.fileserver.join(path, filename, extension)
             # and try to load the configuration
             try:
-                self.loadConfiguration(source, priority=self.PACKAGE_CONFIGURATION)
+                self.loadConfiguration(uri=source, priority=self.PACKAGE_CONFIGURATION)
             except self.fileserver.NotFoundError as error:
-                pass
+                continue
+            # print("Executive.loadPackageConfiguration: loaded {!r}".format(source))
         # in any case, this is the best that can be done for this package
         # update the set of known packages
         self.packages.add(package)
+        # print("Executive.loadPackageConfiguration: done")
         # all done
         return component
 

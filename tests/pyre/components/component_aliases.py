@@ -15,8 +15,7 @@ A more elaborate component declaration
 import pyre
 
 
-def test():
-    import pyre
+def declare():
 
     class gaussian(pyre.component, family="functor"):
         """a representation of a gaussian function"""
@@ -33,14 +32,31 @@ def test():
         def eval(self, x):
             return x
       
+    return gaussian
+
+
+def test():
+
+    # print the store before the declaration
+    # print(" -- at startup:")
+    # cfg = pyre.executive.configurator
+    # cfg.dump(pattern="(functor|gaussian)")
+    # get the commandline slots
+    # mean = cfg.resolve(name='functor.μ')
+    # print('functor.μ:')
+    # mean.dump()
+    # print(" -- done")
+
+    gaussian = declare()
     # check that the aliases were properly registered
     assert gaussian.pyre_getTraitDescriptor("mean") == gaussian.pyre_getTraitDescriptor("μ")
     assert gaussian.pyre_getTraitDescriptor("spread") == gaussian.pyre_getTraitDescriptor("σ")
     # print out the configuration state
+    # print(" -- after the declaration:")
     # print("gaussian: defaults: mean={0.mean!r}, spread={0.spread!r}".format(gaussian))
-    # cfg = pyre.executive.configurator
     # cfg.dump(pattern="(functor|gaussian)")
     # cfg._hash.dump()
+    # print(" -- done")
 
     # check the class defaults
     # the values come from the defaults, functor.pml in this directory, and the command line
@@ -53,8 +69,6 @@ def test():
     assert gaussian.mean == 0.0
     assert gaussian.spread == 1.0
 
-    return
-    
     # instantiate one
     g = gaussian(name="gaussian")
     # make sure the defaults were transferred correctly
@@ -74,8 +88,8 @@ def test():
     assert g.σ == g.spread
 
     # check the properties
-    print("g: mean={0.mean!r}, spread={0.spread!r}".format(g))
-    cfg._dump(pattern="(functor|gaussian)")
+    # print("g: mean={0.mean!r}, spread={0.spread!r}".format(g))
+    # cfg._dump(pattern="(functor|gaussian)")
 
     return gaussian
 
