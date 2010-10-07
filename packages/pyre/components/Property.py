@@ -78,11 +78,11 @@ class Property(Trait):
         # build a literal evaluator to hold my default value
         evaluator = component.pyre_executive.configurator.recognize(value=self.default)
         # build a slot
-        slot = self.Slot(descriptor=self, value=None, evaluator=evaluator)
+        slot = self.pyre_classSlot(evaluator=evaluator)
         # attach the slot to the inventory
         component.pyre_inventory[self] = slot
         # and return
-        return self
+        return
 
 
     def pyre_embedInherited(self, component):
@@ -110,11 +110,11 @@ class Property(Trait):
         # build a reference to the slot
         evaluator = node.newReference()
         # make a slot  out of it
-        slot = self.Slot(descriptor=self, value=None, evaluator=evaluator)
+        slot = self.pyre_classSlot(evaluator=evaluator)
         # attach it to the inventory
         component.pyre_inventory[self] = slot
         # and return
-        return self
+        return
 
 
     def pyre_bindClass(self, configurable):
@@ -123,8 +123,6 @@ class Property(Trait):
         """
         # get my slot from the {configurable}
         slot = configurable.pyre_inventory[self]
-        # validate it
-        slot.validate()
         # get it to compute its value
         return slot.getValue()
 
@@ -135,12 +133,27 @@ class Property(Trait):
         """
         # get my slot from the {configurable}
         slot = configurable.pyre_inventory[self]
-        # validate it
-        slot.validate()
         # get it to compute its value
         return slot.getValue()
 
         
+    # slot building
+    def pyre_classSlot(self, evaluator):
+        """
+        Create a new slot suitable for placing in a component class inventory
+        """
+        # make a slot with the given {evaluator}
+        return self.Slot(processor=self, value=None, evaluator=evaluator)
+
+
+    def pyre_instanceSlot(self, evaluator):
+        """
+        Create a new slot suitable for placing in a component instance inventory
+        """
+        # make a slot with the given {evaluator}
+        return self.Slot(processor=self, value=None, evaluator=evaluator)
+
+
     # the descriptor interface
     def __get__(self, instance, cls):
         """

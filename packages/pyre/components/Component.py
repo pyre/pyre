@@ -21,16 +21,12 @@ class Component(Configurable, metaclass=Actor, hidden=True):
     pyre_state = None # track progress through the bootsrapping process
     pyre_namemap = None # a map of descriptor aliases to their canonical names
     pyre_localTraits = None # a tuple of all the traits in my declaration
-    pyre_inheritedTraits = None # a tuple of all the traits inheited from my superclasses
+    pyre_inheritedTraits = None # a tuple of all the traits inherited from my superclasses
     pyre_pedigree = None # a tuple of ancestors that are themselves configurables
     # component specific attributes
     pyre_inventory = None # storage for my configurable state
     pyre_family = () # my spot in the package hierarchy
     pyre_implements = None # the interface specification built at compile time by the metaclass
-
-
-    # types
-    from .Slot import Slot
 
 
     # framework notifications
@@ -121,9 +117,9 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         # access the inventory that belongs to my class record
         classInventory = type(self).pyre_inventory
 
-        # build my inventory
+        # create my inventory
         self.pyre_inventory = {
-            trait: self.Slot(value=None, evaluator=slot.newReference(), descriptor=trait)
+            trait: trait.pyre_instanceSlot(evaluator=slot.newReference())
             for trait, slot in classInventory.items()
             }
 

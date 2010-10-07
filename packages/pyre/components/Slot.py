@@ -76,18 +76,20 @@ class Slot(Base):
         """
         # walk {value} through casting and validation
         if value is not None:
-            # access the descriptor
-            descriptor = self._descriptor
+            # access the processor
+            processor = self._processor
             # cast {value}
-            value = descriptor.type.pyre_cast(value)
+            value = processor.type.pyre_cast(value)
             # convert it
-            for converter in descriptor.converters:
+            for converter in processor.converters:
                 value = converter.pyre_cast(value)
             # validate it
-            for validator in descriptor.validators:
+            for validator in processor.validators:
                 value = validator(value)
         # place it in the cache
         self._value = value
+        # validate me
+        self.validate()
         # and notify my observers
         self.notifyObservers()
         # and return
@@ -99,13 +101,13 @@ class Slot(Base):
 
 
     # meta methods
-    def __init__(self, descriptor, **kwds):
+    def __init__(self, processor, **kwds):
         super().__init__(**kwds)
-        self._descriptor = descriptor
+        self._processor = processor
    
 
     # private data
-    _descriptor = None
+    _processor = None
 
 
 # end of file 
