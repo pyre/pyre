@@ -39,10 +39,11 @@ class Facility(Property):
         converters = ()
 
     # the wrapper that creates component instances on {pyre_cast}
-    class instancemaker:
+    class factory:
         # types
         from .Component import Component
         # public data
+        name = None
         interface = None
         # interface
         def pyre_cast(self, value):
@@ -54,11 +55,12 @@ class Facility(Property):
                 # let my interface have a pass
                 value = self.interface.pyre_cast(value)
                 # instantiate it
-                value = value(name="foo")
+                value = value(name=self.name)
             # and return it
             return value
 
-        def __init__(self, interface):
+        def __init__(self, name, interface):
+            self.name = name
             self.interface = interface
 
 
@@ -71,14 +73,14 @@ class Facility(Property):
         return self.Slot(processor=self, value=None, evaluator=evaluator)
 
         
-    def pyre_instanceSlot(self, evaluator):
+    def pyre_instanceSlot(self, name, evaluator):
         """
         Create a new slot suitable for placing in a component instance inventory
         """
         # build a value processor
         processor = self.trait()
         # attach a class maker
-        processor.type = self.instancemaker(interface=self.type)
+        processor.type = self.factory(name=name, interface=self.type)
         # make a slot with the given {evaluator}
         return self.Slot(processor=processor, value=None, evaluator=evaluator)
 

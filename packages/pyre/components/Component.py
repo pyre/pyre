@@ -118,10 +118,18 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         classInventory = type(self).pyre_inventory
 
         # create my inventory
-        self.pyre_inventory = {
-            trait: trait.pyre_instanceSlot(evaluator=slot.newReference())
-            for trait, slot in classInventory.items()
-            }
+        sep = self.pyre_SEPARATOR
+        inventory = {}
+
+        for trait, slot in classInventory.items():
+            # build the name of the trait
+            tag = sep.join([name, trait.name])
+            # make a slot
+            slot = trait.pyre_instanceSlot(name=tag, evaluator=slot.newReference())
+            # add it to my inventory
+            inventory[trait] = slot
+        # and attach it
+        self.pyre_inventory = inventory
 
         # all done for now
         return

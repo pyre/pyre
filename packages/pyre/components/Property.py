@@ -146,7 +146,7 @@ class Property(Trait):
         return self.Slot(processor=self, value=None, evaluator=evaluator)
 
 
-    def pyre_instanceSlot(self, evaluator):
+    def pyre_instanceSlot(self, name, evaluator):
         """
         Create a new slot suitable for placing in a component instance inventory
         """
