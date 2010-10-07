@@ -49,13 +49,24 @@ class HierarchicalModel(AbstractModel):
         # build the root key
         rootKey = rootKey if rootKey is not None else root.split(self.separator)
         # hash it
+        # print("HierarchicalModel.children: rootKey={}".format(rootKey))
         rootKey = self._hash.hash(rootKey)
+        # print("   names: {}".format(rootKey.nodes.items()))
         # extract the unique hash subkeys
         unique = set(rootKey.nodes.values())
         # iterate over the unique keys
         for key in unique:
+            # print("  looking for:", key)
+            node = self._nodes[key]
+            name = self._names[key]
+            fqname = self._fqnames[key]
             # and extract the name and associated node
-            yield key, self._names[key], self._fqnames[key], self._nodes[key]
+            try:
+                yield key, self._names[key], self._fqnames[key], self._nodes[key]
+            # if not there, it's because one of these is a facility with its own settings
+            except KeyError:
+                # we'll get that later, when it is actually instantiated
+                continue
         # all done
         return
 
