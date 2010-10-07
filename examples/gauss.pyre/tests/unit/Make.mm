@@ -11,9 +11,6 @@ PROJECT = gauss.pyre
 #--------------------------------------------------------------------------
 #
 
-integrators:
-	${PYTHON} ./montecarlo.py
-
 all: test
 
 test: sanity functors shapes meshes integrators
