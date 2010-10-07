@@ -17,7 +17,7 @@ def test():
     import pyre
     executive = pyre.executive
     executive.loadConfiguration(uri="vfs://local/pi.pml")
-    executive.configurator.dump()
+    # executive.configurator.dump()
     # get the montecarlo integrator from the gauss package
     import gauss
     mc = gauss.integrators.montecarlo(name="mc")

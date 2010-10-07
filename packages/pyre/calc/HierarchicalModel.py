@@ -57,9 +57,6 @@ class HierarchicalModel(AbstractModel):
         # iterate over the unique keys
         for key in unique:
             # print("  looking for:", key)
-            node = self._nodes[key]
-            name = self._names[key]
-            fqname = self._fqnames[key]
             # and extract the name and associated node
             try:
                 yield key, self._names[key], self._fqnames[key], self._nodes[key]
