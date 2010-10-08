@@ -6,6 +6,7 @@
 #
 
 
+import pyre.tracking
 from .Requirement import Requirement
 
 
@@ -108,8 +109,10 @@ class Actor(Requirement):
             super().__setattr__(name, value)
             return
         # so, the name resolved to a trait
-        # use it to set the value
-        trait.__set__(instance=self, value=value)
+        # build an appropriate locator
+        locator = pyre.tracking.here(level=1)
+        # ask the trait descripto to set the value
+        trait.pyre_setClassTrait(configurable=self, value=value, locator=locator)
         # and return
         return
 

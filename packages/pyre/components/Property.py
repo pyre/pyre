@@ -154,11 +154,41 @@ class Property(Trait):
         return self.Slot(processor=self, value=None, evaluator=evaluator)
 
 
+    # slot value access
+    def pyre_setClassTrait(self, configurable, value, locator):
+        """
+        Set this trait of the class record {configurable} to value
+        """
+        # grab the slot from the client's inventory
+        slot = configurable.pyre_inventory[self]
+        # let the configurator build an evaluator for {value}
+        evaluator = configurable.pyre_executive.configurator.recognize(value)
+        # set the value of the slot
+        slot.setValue(value=value, locator=locator)
+        # and return
+        return
+
+
+    def pyre_setInstanceTrait(self, instance, value, locator):
+        """
+        Set this trait of {instance} to value
+        """
+        # grab the slot from the client's inventory
+        slot = instance.pyre_inventory[self]
+        # let the configurator build an evaluator for {value}
+        evaluator = instance.pyre_executive.configurator.recognize(value)
+        # set the value of the slot
+        slot.setValue(value=value, locator=locator)
+        # and return
+        return
+
+
     # the descriptor interface
     def __get__(self, instance, cls):
         """
         Retrieve the value of this trait
         """
+        # find out whose inventory we are supposed to access
         client = instance if instance else cls
         # grab the slot from the client's inventory
         slot = client.pyre_inventory[self]
@@ -169,19 +199,11 @@ class Property(Trait):
     def __set__(self, instance, value):
         """
         Set this trait of {instance} to {value}
-
-        The target {instance} may be a component instance or a component class record. Either
-        way, the assignment is performed through the {pyre_inventory} attribute, and the
-        property descriptor is unaware of the difference
         """
-        # grab the slot from the client's inventory
-        slot = instance.pyre_inventory[self]
-        # let the configurator build an evaluator for {value}
-        evaluator = instance.pyre_executive.configurator.recognize(value)
-        # set the value of the slot
-        slot.setValue(value=value, locator=pyre.tracking.here(level=1))
-        # and return
-        return
+        # build an appropriate locator
+        locator = pyre.tracking.here(level=1)
+        # call the instance value setter
+        return self.pyre_setInstanceTrait(instance=instance, value=value, locator=locator)
 
 
 # end of file 
