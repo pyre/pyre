@@ -20,6 +20,7 @@ class Facility(Property):
 
 
     # types
+    from .Component import Component
 
     # Facility is faced with the following problem: the expectations of {pyre_cast} are
     # different depending on whether the object whose trait is being processed is a component
@@ -62,6 +63,40 @@ class Facility(Property):
         def __init__(self, name, interface):
             self.name = name
             self.interface = interface
+            return
+
+
+    # property overrides
+    def pyre_setInstanceTrait(self, instance, value, locator):
+        """
+        Set this trait of {instance} to value
+        """
+        # treat it the assignment like a property
+        value = super().pyre_setInstanceTrait(instance, value, locator)
+        # as a side-effect, the value has been coverted into my native type
+        # if, for any reason, that didn't go through
+        if not isinstance(value, self.Component):
+            # bail
+            return value
+        # otherwise
+        # get the trait slot
+        slot = instance.pyre_inventory[self]
+        # look up the registration name
+        registration = slot._processor.type.name
+        # if the two names match, this is an instance that was auto-created by the
+        # configuration process
+        if registration == value.pyre_name:
+            # and there is nothing further to do
+            return value
+        # otherwise
+        # get the configurator
+        cfg = instance.pyre_executive.configurator
+        # build the namespace
+        namespace = registration.split(cfg.TRAIT_SEPARATOR)
+        # transfer any deferred configuration settings
+        errors = cfg._transferConditionalConfigurationSettings(
+            configurable=value, namespace=namespace)
+        return value
 
 
     # framework obligations

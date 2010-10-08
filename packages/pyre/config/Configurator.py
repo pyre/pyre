@@ -176,6 +176,9 @@ class Configurator(Model):
         Apply whatever deferred configuration settings are available in the configuration store
         under {namespace}
         """
+        # print("transferring {!r} to {.pyre_name!r}".format(namespace, configurable))
+        # initialize the error pile
+        errors = errors if errors is not None else []
         # get the family name
         family = configurable.pyre_family
         # if there isn't one, we are all done
@@ -201,9 +204,9 @@ class Configurator(Model):
             # get the inventory slot
             slot = inventory[descriptor]
             # merge the information
+            # MGA: this is not right: what if you have to reapply these settings on a second
+            # assignment to the same trait?
             self.patch(discard=node, keep=slot)
-        # wipe out these conditional bindings
-        del self.deferred[(ckey,fkey)]
 
         # return the accumulated errors
         return errors

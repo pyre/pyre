@@ -66,7 +66,7 @@ class Node(Observable, metaclass=_metaclass_Node):
         # invalidate my observers' caches
         self.notifyObservers()
         # and return
-        return self
+        return value
 
 
     # install value setter/getter as a property

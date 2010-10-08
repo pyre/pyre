@@ -69,6 +69,7 @@ component-instance:
 	${PYTHON} ./component_instance_configuration_inheritance.py
 	${PYTHON} ./component_instance_binding.py
 	${PYTHON} ./component_instance_binding_implicit.py
+	${PYTHON} ./component_instance_binding_configuration.py
 #
 	${PYTHON} ./component_bad_implementations.py
 	${PYTHON} ./component_aliases.py --functor.μ=0.10 --gaussian.spread=0.10

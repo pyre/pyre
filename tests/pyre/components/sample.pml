@@ -43,6 +43,17 @@
     <bind property="common">d - common</bind>
   </component>
 
+  <!-- data for component_instance_binding_configuration -->
+  <component name="c" family="sample.manager">
+    <bind property="jobs">10</bind>
+  </component>
+  <component name="w" family="sample.worker">
+    <bind property="host">pyre.caltech.edu</bind>
+  </component>
+  <component name="c.gopher" family="sample.worker">
+    <bind property="host">foxtrot.caltech.edu</bind>
+  </component>
+
   <!-- data for component_aliases -->
   <component family="sample.functor">
     <bind property="mean">mean</bind>

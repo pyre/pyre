@@ -177,10 +177,8 @@ class Property(Trait):
         slot = instance.pyre_inventory[self]
         # let the configurator build an evaluator for {value}
         evaluator = instance.pyre_executive.configurator.recognize(value)
-        # set the value of the slot
-        slot.setValue(value=value, locator=locator)
-        # and return
-        return
+        # set the value of the slot and return it
+        return slot.setValue(value=value, locator=locator)
 
 
     # the descriptor interface
