@@ -81,7 +81,8 @@ class Model(HierarchicalModel):
         """
         # build a new node 
         slot = self.nodeFactory(
-            value=None, evaluator=self.recognize(value=value), priority=priority)
+            value=None, evaluator=self.recognize(value=value),
+            priority=priority, locator=locator)
         # get it registered
         return self.register(node=slot, key=key)
 

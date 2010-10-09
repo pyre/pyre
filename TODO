@@ -1,0 +1,111 @@
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2010 all rights reserved
+#
+
+- configuration errors:
+
+  - trap, collect, show on exit
+
+  - is it part of {help}?
+
+- traits:
+
+  - treat them like components; some are: input and output streams have both a configuration
+    and an initailization phase; the latter grabs the system resource and should be done after
+    its reasonably certain that the user has made up his mind about the name of the file. the
+    goal is to not leave behind zerolength output files that were created when some assignment
+    was made that was later overriden by something else
+
+  - same considerations apply to components themselves; formalize the sequence of
+    startup/shutdown steps
+
+- filesystem:
+
+  - the factories in __init__ are kind of ugly. fix 
+
+  - sync should not be done by default, especially now that it supports the number of levels to
+    expand; this should speed up {import pyre} in directories with deep structures. this means
+    that i need to hunt down all uses of filesystems and make sure the clients sync before they
+    look things up. also, folders need to know how to cause their filesystems to fillout their
+    contents, which means adding a {sync} method that dispatches to the filesystem with
+    root=self
+
+  - implement http
+
+  - transport mechanisms: wget/curl, ftp, scp, rsync, ...
+
+  - can i build one dynamically? create a folder and start adding files?
+
+- history tracking:
+
+  - must trace all the paths that assign values to slots and make sure that locator/priority
+    are saved in _history
+
+  - install a tracker as a command line event handler; make it save the names of the traits to
+    track; make it print out a report of the history of tracked traits at shutdown
+
+- journal: make
+
+- weaver: make
+
+- help: make
+
+  - component Inspector
+
+    - how does python help work? who/how generates the formatted output?
+
+    - inspect: 
+      properties, facilities: doc, tip, current value, default value, history?
+      interface: doc, arg list, annotations, return value
+
+    - make sure inline documentation is always sufficient for Inspector to work
+
+    - use in opal and fold into the UI for Forms
+
+- db: make
+
+  - db Query and View as Components
+
+- opal: make
+
+  - Form as Component
+
+- merlin: make
+
+- tabular: make
+
+- function overload: revisit
+
+  - use function annotations instead of explicit signatures in the decorator
+
+  - can the full set of funcdecls be supported?
+
+    - positional args, positionals with defaults, keyword only, keyword only with defaults
+    - what to register
+    - what to cache
+    - who shadows whom? what's ambiguous?
+    - how to retrieve a matching signature quickly
+
+  - is it worth the hassle and performance penalty?
+
+  - overload on precondition a la Ebby?
+
+- shells:
+
+  - let "pyre" be the hosting script: 
+
+    - hosting options are command line options to this script
+
+    - the application is specified as the directory appname.pyre
+
+    - pyre looks inside for geometry and dynamics
+
+  - can the reconfiguration of a component get triggered after the application has started? the
+    use case here is manipulating the journal channels for long-running apps: can i turn on
+    channels after launch?
+
+
+# end of file 

@@ -12,6 +12,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working:
+	${PYTHON} ./configurator_locators.py
+
 all: test
 
 test: sanity configuration configurator commandline
