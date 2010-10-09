@@ -10,7 +10,9 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
+    design \
     packages \
+    stencils \
 
 #--------------------------------------------------------------------------
 #
