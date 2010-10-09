@@ -19,7 +19,7 @@ def test():
     # pull the configutor
     configurator = executive.configurator
     # and build a command line parser
-    parser = pyre.config.newCommandLineParser()
+    parser = executive.newCommandLineParser()
     # build an argument list
     commandline = [
         '--config=sample.pml',

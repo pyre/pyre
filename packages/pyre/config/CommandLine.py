@@ -52,6 +52,7 @@ class CommandLine:
     groupSeparator = ','
     groupEnd = ')'
 
+    handlers = None # the special handlers of command line arguments
     assignmentScanner = None
     locator = staticmethod(pyre.tracking.newCommandLocator)
 
@@ -82,9 +83,7 @@ class CommandLine:
                 # get the tokens from the scanner
                 key = match.group("key")
                 value = match.group("value")
-                if key == 'config':
-                    configuration.newSource(source=value, locator=self.locator(arg=index))
-                elif key:
+                if key:
                     # if a key were specified
                     self._processAssignments(configuration, key,value, self.locator(arg=index))
                 else:
@@ -127,10 +126,12 @@ class CommandLine:
                     
 
     # meta methods
-    def __init__(self, **kwds):
+    def __init__(self, handlers=None, **kwds):
         super().__init__(**kwds)
         # build the scanners
         self.buildScanners()
+        # the list of registered handlers of commandline events
+        self.handlers = handlers if handlers is not None else {}
         # all done
         return
 
@@ -154,8 +155,16 @@ class CommandLine:
                 fields.append([field])
         # now, form all the specified addresses by computing the cartesian product
         for spec in itertools.product(*fields):
-            # create a new assignment
-            configuration.newAssignment(key=spec, value=value, locator=locator)
+            # check whether there is a handler registered for this spec
+            try:
+                handler = self.handlers[spec[0]]
+            # nope, not there
+            except KeyError:
+                # create a new assignment
+                configuration.newAssignment(key=spec, value=value, locator=locator)
+            # got it
+            else:
+                handler(key=spec, value=value, locator=locator)
         # all done
         return
 
