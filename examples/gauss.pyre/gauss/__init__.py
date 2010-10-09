@@ -14,6 +14,10 @@ See gauss.license() for terms of use
 """
 
 
+# interface declarations
+from . import interfaces
+
+
 # access to the package contents
 from . import functors, integrators, meshes, shapes, util
 
