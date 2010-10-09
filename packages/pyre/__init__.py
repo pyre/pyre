@@ -169,6 +169,8 @@ def boot():
     return p
 
 
+import atexit
+@atexit.register
 def shutdown():
     """
     Attempt to hunt down and destroy all known references to the executive
