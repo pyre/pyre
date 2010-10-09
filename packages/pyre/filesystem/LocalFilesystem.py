@@ -46,7 +46,7 @@ class LocalFilesystem(Filesystem):
         return open(uri, **kwds)
 
 
-    def sync(self, walker=None, recognizer=None):
+    def sync(self, walker=None, recognizer=None, root=None, levels=None):
         """
         Traverse my directory structure and refresh my contents so that they match the
         underlying filesystem
@@ -56,10 +56,14 @@ class LocalFilesystem(Filesystem):
         # use the explicitly supplied traversal support, if available
         walker = walker or self.walker
         recognizer = recognizer or self.recognizer
+        # establish the starting point
+        root = root if root is not None else self
         # initialize the traversal at my root
-        todo = [ self ]
+        todo = [ (root, 0) ]
         # and start walking and recognizing
-        for folder in todo:
+        for folder, level in todo:
+            # should we process?
+            if levels is not None and level >= levels: continue
             # compute the actual location of this directory
             location = self.vnodes[folder].uri
             # walk through the contents
@@ -72,7 +76,7 @@ class LocalFilesystem(Filesystem):
                 # decide what kind of node to build
                 if nodeInfo.isDirectory():
                     node = self.newFolder()
-                    todo.append(node)
+                    todo.append((node, level+1))
                 else:
                     node = self.newNode()
                 # insert the node in my contents and attach the file info in my vnodes table
