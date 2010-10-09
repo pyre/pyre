@@ -23,7 +23,7 @@ class Configurator(Model):
 
     # constants
     TRAIT_SEPARATOR = '.'
-    FAMILY_SEPARATOR = '#'
+
 
     # exceptions
     from ..calc.exceptions import (
