@@ -44,6 +44,8 @@ class Actor(Requirement):
             raise
         # and add it to the attributes
         attributes["pyre_implements"] = interface
+        # create storage for the configurable state
+        attributes["pyre_inventory"] = {}
         # get my ancestors to build the class record
         component = super().__new__(cls, name, bases, attributes, **kwds)
         # if an interface spec was derivable from the declaration, check interface compatibility 

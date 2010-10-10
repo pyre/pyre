@@ -45,8 +45,6 @@ class Requirement(AttributeClassifier):
         # record is being decorated; and it must be done for every new class, since the
         # ancestor's pyre_state is immediately available to subclasses
         attributes["pyre_state"] = None
-        # create storage for the configurable state
-        attributes["pyre_inventory"] = {}
         # initialize the namemap
         attributes["pyre_namemap"] = {}
         # build the record
