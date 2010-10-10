@@ -178,7 +178,7 @@ def shutdown():
     # access the executive
     global executive
     # destroy the copy held by the Pyre singleton
-    executive.shutdown()
+    if executive: executive.shutdown()
     # and zero out the global reference
     executive = None
     # that should be enough
