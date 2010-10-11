@@ -20,6 +20,7 @@ RECURSE_DIRS = \
     parsing \
     patterns \
     schema \
+    tabular \
     tracking \
     units \
     xml \

@@ -17,6 +17,7 @@ RECURSE_DIRS = \
     schema \
     constraints \
     calc \
+    tabular \
     filesystem \
     codecs \
     config \
