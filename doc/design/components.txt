@@ -1,6 +1,7 @@
 Support for components in the pyre framework
 
 
+
 Consider the following code snippet:
 
 #----------
@@ -41,19 +42,20 @@ Once the python interpreter recognizes the end of the class declaration, it coll
       class declaration
 
 The interpreter tries to identify which object is responsible for building the actual class
-record. This record builder is a class known as the metaclass of our class. It is a class
-that could be specified explicitly in the class declaration through the metaclass variable, or
-implicitly by looking for the metaclass of the base classes. This search must yield a unique
+record. This record builder is a class known as the metaclass of our class. A class can specify
+its metaclass explicitly in its class declaration through the {metaclass} variable, or
+implicitly by deriving from a class that specifies a metaclass. This search must yield a unique
 metaclass, and that metaclass must be a plausible handler for all the classes in the ancestry
 of exp. In our case, {exp} derives from {pyre.component}, whose metaclass is explicitly
 specified as {pyre.components.Actor} in its declaration. {Actor} itself derives from
 {pyre.components.Requirement}, which in turn derives from
-{pyre.patterns.AttributeClassifier}. The latter must derive from {type} in order to be
-considered a valid metaclass by the interpreter. {AttributeClassifier} is responsible for
-detecting the special attributes and methods in the class declaration that make up the
-component's interface and publicly accessible state. {Requirement} handles the aspects of class
-record building that are common between components and interfaces, and {Actor} handles all the
-tasks necessary to turn {exp} into a component.
+{pyre.patterns.AttributeClassifier}. The latter must derive from {type}, which is the base
+class of all metaclasses, in order to be considered a valid metaclass by the
+interpreter. {AttributeClassifier} is responsible for detecting the special attributes and
+methods in the class declaration that make up the component's interface and publicly accessible
+state. {Requirement} handles the aspects of class record building that are common between
+components and interfaces, and {Actor} handles all the tasks necessary to turn {exp} into a
+component.
 
 The metaclass interface consists of four methods: 
 
@@ -75,10 +77,37 @@ The metaclass interface consists of four methods:
 
   (o) {__call__}: this is the method that enables classes to act as callables. It is invoked
       whenever a request is made to construct an instance of the class, and it is supposed to
-      build and return a new instance. Trapping that enables control over what happens right
+      build and return a new instance. Trapping it enables control over what happens right
       before or right after the creation of a new class instance. The actual instance building
       is performed by {type.__call__}, so you must make sure it is invoked by your
       implementation.
+
+Here is what the metaclass hierarchy looks like for components. Note the marker <<instance>> in
+the relationship between {Component} and its metaclass {Actor}: a component class is an
+instance of its metaclass. This relationship is the source of any brain twisting you may feel
+while contemplating metaclasses.
+
+
+  type
+   ^
+   |  __prepare__
+   |  __new__
+   |  __init__
+   |  __call
+   |
+  AttributeClassifier
+   ^
+   |  __prepare__               object
+   |                             ^
+  Requirement                    |
+   ^                            Configurable
+   |  __new__                    ^
+   |                             |
+  Actor  <--------------------- Component
+      __new__     <<instance>>   ^
+      __init__                   |
+      __call                    exp
+
 
 For components, the implementation of {__prepare__} is provided by {AttributeClassifier}, which
 returns an ordered dictionary since components must record the declaration order of their
@@ -92,11 +121,11 @@ first two coöperate to attach attributes that are common to components and inte
       component class records, it is initially just the name of the class; instances record
       here the name provided during their construction.
 
-  (o) {pyre_state}: an internal variable that marks the framework stages the component class
+  (o) {pyre_state}: an internal variable that marks the life cycle stages the component class
       has passed successfully after it is created.
 
   (o) {pyre_namemap}: a dictionary that maps aliases of class attributes to their canonical
-      name, i.e. the name provided by the declaration of the trait.
+      name, i.e. the name provided by the declaration of the trait. 
 
   (o) {pyre_localTraits}: a tuple of the descriptors of the traits declared locally in this
       class; these are harvested by {AttributeClassifier} .
@@ -118,5 +147,10 @@ first two coöperate to attach attributes that are common to components and inte
       statement. If present, the framework will check that the declared component implements
       its obligations correctly and raise an exception if it doesn't.
 
-Requests to build actual component instances are trapped by {Actor.__init__}, which makes that 
+After these attributes are attached to class record, {Actor} registers the freshly minted class
+record with the pyre executive.
+
+Requests to build actual component instances are trapped by {Actor.__init__}, which makes sure
+that the constructor of your component is called by delegating that task to {type}, and
+registers the newly created instance with the framework executive.
 
