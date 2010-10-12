@@ -121,9 +121,6 @@ first two coöperate to attach attributes that are common to components and inte
       component class records, it is initially just the name of the class; instances record
       here the name provided during their construction.
 
-  (o) {pyre_state}: an internal variable that marks the life cycle stages the component class
-      has passed successfully after it is created.
-
   (o) {pyre_namemap}: a dictionary that maps aliases of class attributes to their canonical
       name, i.e. the name provided by the declaration of the trait. 
 
