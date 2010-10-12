@@ -5,6 +5,12 @@
 # (c) 1998-2010 all rights reserved
 #
 
+- framework:
+
+  - look for a better way to install escape handlers for the command line parser; does the
+    actual parsing happen too early? how would i then bootstrap the framework without having to
+    check its state every time something significant happens?
+
 - configuration errors:
 
   - trap, collect, show on exit
@@ -15,8 +21,8 @@
 
   - treat them like components; some are: input and output streams have both a configuration
     and an initailization phase; the latter grabs the system resource and should be done after
-    its reasonably certain that the user has made up his mind about the name of the file. the
-    goal is to not leave behind zerolength output files that were created when some assignment
+    it's reasonably certain that the user has made up his mind about the name of the file. the
+    goal is to not leave behind zero length output files that were created when some assignment
     was made that was later overriden by something else
 
   - same considerations apply to components themselves; formalize the sequence of
@@ -39,6 +45,8 @@
 
   - can i build one dynamically? create a folder and start adding files?
 
+    - how do i know that a filesystem node is a "future" one?
+
 - history tracking:
 
   - must trace all the paths that assign values to slots and make sure that locator/priority
@@ -47,9 +55,13 @@
   - install a tracker as a command line event handler; make it save the names of the traits to
     track; make it print out a report of the history of tracked traits at shutdown
 
+  - should this be part of {help}? see below
+
 - journal: make
 
 - weaver: make
+
+  - i want my own rst, and my own sphinx...
 
 - help: make
 
@@ -74,6 +86,8 @@
   - Form as Component
 
 - merlin: make
+
+  - while i am dreaming: i want my own coverage tool...
 
 - tabular: make
 

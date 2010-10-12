@@ -31,7 +31,7 @@ class exp(pyre.component, family="gauss.functors.exp", implements=gauss.interfac
         β = self.β
         # loop over the points
         for x in points:
-            # compute the exponet
+            # compute the exponent
             exponent = sum(x_i*β_i for x_i, β_i in zip(x, β))
             # yield the value on this point
             yield a * exp(exponent)

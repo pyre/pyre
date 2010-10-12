@@ -1,10 +1,12 @@
 Support for components in the pyre framework
-
-
+============================================
 
 Consider the following code snippet:
 
 #----------
+import pyre
+import gauss
+
 class exp(pyre.component, family="gauss.functors.exp", implements=gauss.interfaces.functor):
     r"""
     A functor implementation of the form $a \exp^{\beta x}$
@@ -25,13 +27,16 @@ class exp(pyre.component, family="gauss.functors.exp", implements=gauss.interfac
         β = self.β
         # loop over the points
         for x in points:
-            # compute the exponet
+            # compute the exponent
             exponent = sum(x_i*β_i for x_i, β_i in zip(x, β))
             # yield the value on this point
             yield a * exp(exponent)
         # all done
         return
 #----------
+
+It declares a component {exp} that implements the interface {functor} found in the package
+{gauss} as {gauss.interfaces.functor}.
             
 Once the python interpreter recognizes the end of the class declaration, it collects
 
