@@ -6,10 +6,10 @@
 #
 
 
-from ..patterns.AttributeClassifier import AttributeClassifier
+from ..patterns.Named import Named
 
 
-class Trait(AttributeClassifier.pyre_Descriptor):
+class Trait(Named):
     """
     This is the base class for component features that form their public interface
 

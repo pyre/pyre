@@ -6,10 +6,10 @@
 #
 
 
-from ..patterns.AttributeClassifier import AttributeClassifier
+from .Descriptor import Descriptor
 
 
-class ElementDescriptor(AttributeClassifier.pyre_Descriptor):
+class ElementDescriptor(Descriptor):
     """
     Descriptor class that gathers all the metadata about a document tag that was provided by
     the user during the DTD declaration. It is used by DTD derived classes to decorate the

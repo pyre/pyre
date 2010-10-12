@@ -38,8 +38,6 @@ class Registrar:
         """
         # add to the pile
         self.interfaces.add(interface)
-        # update the state
-        interface.pyre_state = "registered"
         # and hand it back to the caller
         return interface
         
@@ -62,8 +60,6 @@ class Registrar:
         # update the map of interfaces it implements
         for interface in self.findRegisteredInterfaces(component):
             self.implementors[interface].add(component)
-        # update the state
-        component.pyre_state = "registered"
         # and hand it back to the caller
         return component
 

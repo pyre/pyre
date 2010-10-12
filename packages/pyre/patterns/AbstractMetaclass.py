@@ -15,11 +15,19 @@ class AbstractMetaclass(type):
     impossible to build correct metaclass hierarchies. Hopefully this will be fixed soon.
 
     implementation details:
+      __new__: swallow the **kwds that {type} does not recognize
       __init__: swallow the **kwds that {type} does not recognize
     """
 
 
     # meta methods
+    def __new__(cls, name, bases, attributes, **kwds):
+        """
+        Swallow **kwds and call type.__new__
+        """
+        return super().__new__(cls, name, bases, attributes)
+
+
     def __init__(self, name, bases, attributes, **kwds):
         """
         Swallow **kwds and call type.__init__

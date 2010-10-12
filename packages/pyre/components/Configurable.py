@@ -27,7 +27,6 @@ class Configurable:
 
     # framework data; patched up by metaclasses and the framework bootstrapping
     pyre_name = None # my public id
-    pyre_state = None # track progress through the bootsrapping process
     pyre_namemap = None # a map of descriptor aliases to their canonical names
     pyre_localTraits = None # a tuple of all the traits in my declaration
     pyre_inheritedTraits = None # a tuple of all the traits inheited from my superclasses

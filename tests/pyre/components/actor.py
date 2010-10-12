@@ -14,14 +14,14 @@ Verify that the Actor metaclass decorates class records properly
 
 def test():
     # access
-    from pyre.components.Component import Component
+    import pyre
 
     # declare a class
-    class base(Component):
+    class base(pyre.component):
         """test class"""
 
     # did my ancestor list get built properly
-    assert base.pyre_pedigree == (base, Component)
+    assert base.pyre_pedigree == [base, pyre.component]
         
     return base
 

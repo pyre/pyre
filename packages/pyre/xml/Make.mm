@@ -21,6 +21,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     AttributeDescriptor.py \
     DTD.py \
+    Descriptor.py \
     Document.py \
     ElementDescriptor.py \
     Node.py \

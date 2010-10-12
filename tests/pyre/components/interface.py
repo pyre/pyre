@@ -25,11 +25,10 @@ def test():
 
     # check the layout
     assert interface.pyre_name == "interface"
-    assert interface.pyre_state == "registered"
     assert interface.pyre_namemap == {}
-    assert interface.pyre_localTraits == ()
-    assert interface.pyre_inheritedTraits == ()
-    assert interface.pyre_pedigree == (interface, pyre.interface)
+    assert interface.pyre_localTraits == []
+    assert interface.pyre_inheritedTraits == []
+    assert interface.pyre_pedigree == [interface, pyre.interface]
 
     # exercise the configurable interface
     assert tuple(interface.pyre_getTraitDescriptors()) == ()

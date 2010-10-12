@@ -26,6 +26,10 @@ class Requirement(AttributeClassifier):
     # constants
     pyre_SEPARATOR = Configurable.pyre_SEPARATOR
 
+
+    # types
+    from .Trait import Trait
+
     # framework data
     # access to the framework executive; patched by the bootstrapping code in pyre/__init__.py
     pyre_executive = None
@@ -40,29 +44,25 @@ class Requirement(AttributeClassifier):
         """
         # set the name so it is always available
         attributes["pyre_name"] = name
-        # add the state attribute to the pile
-        # this must be done very early so that __setattr__ below doesn't trigger as the class
-        # record is being decorated; and it must be done for every new class, since the
-        # ancestor's pyre_state is immediately available to subclasses
-        attributes["pyre_state"] = None
         # initialize the namemap
         attributes["pyre_namemap"] = {}
-        # build the record
-        # also, build a tuple of the locally declared traits in {pyre_localTraits}
-        configurable = super().__new__(
-            cls, name, bases, attributes, descriptors="pyre_localTraits", **kwds)
+        # extract the descriptors
+        attributes["pyre_localTraits"] = localTraits = cls.pyre_harvest(attributes, cls.Trait)
+        # make room for the inherited traits
+        attributes["pyre_inheritedTraits"] = inheritedTraits = []
+        # and the list of ancestors that are themselves configurables
+        attributes["pyre_pedigree"] = pedigree = []
 
-        # initialize the locally declared descriptors
-        for descriptor in configurable.pyre_localTraits:
-            descriptor.pyre_initialize()
+        # build the record
+        configurable = super().__new__(cls, name, bases, dict(attributes), **kwds)
 
         # harvest the inherited traits: this must be done from scratch for every new
         # configurable class, since multiple inheritance messes with the __mro__ in
         # unpredictable ways
+        # the code fragment appends directly to the local variable that points to the same list
+        # as the configurable attribute
         # initialize the set of known names so we shadow them properly
         known = set(attributes)
-        # initialize the trait accumulator
-        inheritedTraits = []
         # iterate over the configurable's ancestors
         for base in configurable.__mro__[1:]:
             # only other configurables have traits
@@ -75,16 +75,17 @@ class Requirement(AttributeClassifier):
                     inheritedTraits.append(trait)
             # in any case, add all the local attribute names onto the known pile
             known.update(base.__dict__)
-        # attach the harvested traits to the class record
-        configurable.pyre_inheritedTraits = tuple(inheritedTraits)
             
         # extract the ancestors in the configurable's mro that are themeselves configurable
         # n.b.: since {Requirement} is not the direct metaclass of any class, the chain here
         # stops at either Component or Interface, depending on whether {Actor} or {Role} is the
         # actual metaclass
-        configurable.pyre_pedigree = tuple(
-            base for base in configurable.__mro__ if isinstance(base, cls))
+        for base in configurable.__mro__:
+            if isinstance(base, cls): pedigree.append(base)
 
+        # initialize the locally declared descriptors
+        for descriptor in localTraits:
+            descriptor.pyre_initialize()
         # fix the namemap
         for trait in configurable.pyre_getTraitDescriptors():
             # update the name map with all the aliases of each trait

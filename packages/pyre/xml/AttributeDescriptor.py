@@ -6,10 +6,10 @@
 #
 
 
-from ..patterns.AttributeClassifier import AttributeClassifier
+from .Descriptor import Descriptor
 
 
-class AttributeDescriptor(AttributeClassifier.pyre_Descriptor):
+class AttributeDescriptor(Descriptor):
     """
     This class serves as the resting place for element metadata provided by the user during
     DTD formation. It is used by DTD-derived metaclasses to decorate the handlers of the various

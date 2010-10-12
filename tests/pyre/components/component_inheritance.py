@@ -29,36 +29,34 @@ def test():
     assert base.__bases__ == (pyre.component,)
     # check the layout
     assert base.pyre_name == "base"
-    assert base.pyre_state == "registered"
     assert base.pyre_namemap == {'common': 'common'}
-    assert base.pyre_pedigree == (base, pyre.component)
+    assert base.pyre_pedigree == [base, pyre.component]
     # traits
     localNames = ['common']
-    localTraits = tuple(map(base.pyre_getTraitDescriptor, localNames))
+    localTraits = list(map(base.pyre_getTraitDescriptor, localNames))
     assert base.pyre_localTraits == localTraits
-    assert base.pyre_inheritedTraits == ()
+    assert base.pyre_inheritedTraits == []
     allNames = localNames + []
-    allTraits = tuple(map(base.pyre_getTraitDescriptor, allNames))
-    assert tuple(base.pyre_getTraitDescriptors()) == allTraits
+    allTraits = list(map(base.pyre_getTraitDescriptor, allNames))
+    assert list(base.pyre_getTraitDescriptors()) == allTraits
 
     # check the basics
     assert derived.__name__ == "derived"
     assert derived.__bases__ == (base, )
     # check the layout
     assert derived.pyre_name == "derived"
-    assert derived.pyre_state == "registered"
     assert derived.pyre_namemap == {'common':'common', 'extra': 'extra'}
-    assert derived.pyre_pedigree == (derived, base, pyre.component)
+    assert derived.pyre_pedigree == [derived, base, pyre.component]
     # traits
     localNames = ['extra']
-    localTraits = tuple(map(derived.pyre_getTraitDescriptor, localNames))
+    localTraits = list(map(derived.pyre_getTraitDescriptor, localNames))
     assert derived.pyre_localTraits == localTraits
     inheritedNames = ['common']
-    inheritedTraits = tuple(map(derived.pyre_getTraitDescriptor, inheritedNames))
+    inheritedTraits = list(map(derived.pyre_getTraitDescriptor, inheritedNames))
     assert derived.pyre_inheritedTraits == inheritedTraits
     allNames = localNames + ['common']
-    allTraits = tuple(map(derived.pyre_getTraitDescriptor, allNames))
-    assert tuple(derived.pyre_getTraitDescriptors()) == allTraits
+    allTraits = list(map(derived.pyre_getTraitDescriptor, allNames))
+    assert list(derived.pyre_getTraitDescriptors()) == allTraits
 
     return base, derived
 

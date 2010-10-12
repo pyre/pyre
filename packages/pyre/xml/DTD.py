@@ -16,13 +16,19 @@ class DTD(AttributeClassifier):
     """
 
 
+    # types
+    from .Descriptor import Descriptor
+
+
     # meta methods
     def __new__(cls, name, bases, attributes, **kwds):
         """
         Build the document class record
         """
+        # make roome for the list of nodes
+        attributes["dtd"] = dtd = cls.pyre_harvest(attributes, cls.Descriptor)
         # build the node
-        node = super().__new__(cls, name, bases, attributes, descriptors="dtd", **kwds)
+        node = super().__new__(cls, name, bases, attributes, **kwds)
 
         # namespaces introduce a bit of complexity. unless it turns out to be inconsistent with
         # the rules, here is the strategy: if a nested element is in the same namespace as its
@@ -37,10 +43,10 @@ class DTD(AttributeClassifier):
         # the parent tag, look in _pyre_nodeIndex; if not look it up in _pyre_nodeQIndex
 
         # build a (element name -> handler) map
-        index = { element.name: element for element in node.dtd }
+        index = { element.name: element for element in dtd }
 
         # now, build the dtd for each handler 
-        for element in node.dtd:
+        for element in dtd:
             # get the class that handles this element
             handler = element.handler
             # initialize the class attributes

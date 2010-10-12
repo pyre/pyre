@@ -17,15 +17,23 @@ def test():
     from pyre.patterns.AttributeClassifier import AttributeClassifier
 
     # here are some descriptors
-    class component(AttributeClassifier.pyre_Descriptor): pass
-    class property(AttributeClassifier.pyre_Descriptor): pass
+    class descriptor: pass
+    class component(descriptor): pass
+    class property(descriptor): pass
 
-    class behavior(AttributeClassifier.pyre_Descriptor):
+    class behavior(descriptor):
         def __init__(self, func): return
+
+    # here is the metaclass
+    class meta(AttributeClassifier):
+
+        def __new__(cls, name, bases, attributes):
+            attributes["traits"] = cls.pyre_harvest(attributes, descriptor)
+            return super().__new__(cls, name, bases, attributes)
 
 
     # declare the containg class
-    class base(metaclass=AttributeClassifier, descriptors="traits", categories="index"):
+    class base(metaclass=meta):
 
         p1 = property()
         c1 = component()
@@ -41,7 +49,7 @@ def test():
 
     # now verify that it all happened correctly
     assert len(base.traits) == 6
-    assert base.traits == ( base.p1, base.c1, base.can, base.c2, base.p2, base.will )
+    assert base.traits == [ base.p1, base.c1, base.can, base.c2, base.p2, base.will ]
 
     return base
 

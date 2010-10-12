@@ -19,7 +19,6 @@ class Interface(Configurable, metaclass=Role, hidden=True):
 
     # framework data; inherited from Configurable and repeated here for clarity
     pyre_name = None # the instance name
-    pyre_state = None # track progress through the bootsrapping process
     pyre_namemap = None # a map of descriptor aliases to their canonical names
     pyre_localTraits = None # a tuple of all the traits in my declaration
     pyre_inheritedTraits = None # a tuple of all the traits inherited from my superclasses

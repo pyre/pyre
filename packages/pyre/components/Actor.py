@@ -98,11 +98,6 @@ class Actor(Requirement):
         value using the natural syntax
         """
         # print("Actor.__setattr__: {!r}<-{!r}".format(name, value))
-        # bypass while the class record is being built
-        if self.pyre_state is None:
-            super().__setattr__(name, value)
-            return
-        # if we get here, the {Registrar} has marked this instance as registered
         # check whether the name corresponds to a trait
         try:
             trait = self.pyre_getTraitDescriptor(alias=name)

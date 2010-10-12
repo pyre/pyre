@@ -52,7 +52,7 @@ class FSD(Document):
 # make sure it is processed correctly
 def test():
     # verify that the descriptors were correctly harvested by the metaclass
-    assert FSD.dtd == ( FSD.owner, FSD.permissions, FSD.file, FSD.folder , FSD.filesystem )
+    assert FSD.dtd == [ FSD.owner, FSD.permissions, FSD.file, FSD.folder , FSD.filesystem ]
 
     # verify that each Node has the right (tag, handler constructor) map
     assert Owner._pyre_nodeIndex == {}

@@ -22,7 +22,7 @@ def test():
         """test class"""
 
     # did my ancestor list get built properly
-    assert base.pyre_pedigree == (base, )
+    assert base.pyre_pedigree == [base]
 
     return base
 
