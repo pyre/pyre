@@ -13,9 +13,12 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity sheets
 
 sanity:
 	${PYTHON} ./sanity.py
+
+sheets:
+	${PYTHON} ./sheet.py
 
 # end of file 

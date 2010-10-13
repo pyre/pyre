@@ -20,6 +20,9 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Measure.py \
+    Sheet.py \
+    Templater.py \
     exceptions.py \
     __init__.py
 
