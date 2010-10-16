@@ -15,11 +15,18 @@ class Templater(AttributeClassifier):
     """
 
 
+    # types
+    from .Measure import Measure
+
+
+    # meta methods
     def __new__(cls, name, bases, attributes, **kwds):
         """
         Build a new worksheet record
         """
-        # do some stuff
+        # harvest the measures
+        measures = cls.pyre_harvest(attributes, cls.Measure)
+        print(measures)
         # build the record
         sheet = super().__new__(cls, name, bases, attributes, descriptors="pyre_measures", **kwds)
         # return the class record

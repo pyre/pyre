@@ -15,4 +15,29 @@ class Measure(Named):
     """
 
 
+    # algebra
+    def __add__(self, other):
+        return type(self)()
+
+
+    def __radd__(self, other):
+        return type(self)()
+
+
+    def __sub__(self, other):
+        return type(self)()
+
+
+    def __rsub__(self, other):
+        return type(self)()
+
+
+    def __mul__(self, other):
+        return type(self)()
+
+
+    def __truediv__(self, other):
+        return type(self)()
+
+
 # end of file 
