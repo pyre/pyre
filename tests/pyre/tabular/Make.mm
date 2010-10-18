@@ -13,12 +13,18 @@ PROJECT = pyre
 
 all: test
 
-test: sanity sheets
+test: sanity records sheets
 
 sanity:
 	${PYTHON} ./sanity.py
 
+records:
+	${PYTHON} ./record.py
+
 sheets:
 	${PYTHON} ./sheet.py
+	${PYTHON} ./sheet_class_layout.py
+	${PYTHON} ./sheet_class_inheritance.py
+	${PYTHON} ./sheet_class_inheritance_multi.py
 
 # end of file 

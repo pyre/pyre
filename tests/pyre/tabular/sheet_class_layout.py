@@ -34,6 +34,17 @@ class pricing(pyre.tabular.sheet):
 
 
 def test():
+
+    assert pricing.pyre_name == "pricing"
+
+    assert pricing.pyre_localMeasures == [
+        pricing.sku, pricing.production, pricing.shipping, pricing.margin,
+        pricing.overhead, pricing.discount, pricing.cost, pricing.msrp,
+        pricing.price
+        ]
+
+    assert pricing.pyre_inheritedMeasures == []
+
     return pricing
 
 

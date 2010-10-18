@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Measure.py \
+    Record.py \
     Sheet.py \
     Templater.py \
     exceptions.py \

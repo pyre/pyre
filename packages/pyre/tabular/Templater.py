@@ -20,15 +20,42 @@ class Templater(AttributeClassifier):
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, **kwds):
+    def __new__(cls, name, bases, attributes, hidden=False, **kwds):
         """
         Build a new worksheet record
         """
-        # harvest the measures
-        measures = cls.pyre_harvest(attributes, cls.Measure)
-        print(measures)
         # build the record
-        sheet = super().__new__(cls, name, bases, attributes, descriptors="pyre_measures", **kwds)
+        sheet = super().__new__(cls, name, bases, attributes, **kwds)
+
+        # no need to be shy here about accessing the record: there is no Templater.__setattr__
+        # add the introspection attributes
+        sheet.pyre_name = name
+
+        # harvest the local measures
+        if not hidden:
+            sheet.pyre_localMeasures = list(cls.pyre_harvest(attributes, cls.Measure))
+        else:
+            sheet.pyre_localMeasures = []
+
+        # extract the inherited measures from the superclasses
+        sheet.pyre_inheritedMeasures = []
+        # prime the set of known names
+        known = set(attributes)
+        # iterate over the ancestors of the sheet
+        for base in sheet.__mro__[1:]:
+            # focus on other sheets
+            if isinstance(base, cls):
+                # loop over its local measures
+                for measure in base.pyre_localMeasures:
+                    # skip it if it is shadowed by some other attributes
+                    if measure.name in known: continue
+                    # otherwise save it
+                    sheet.pyre_inheritedMeasures.append(measure)
+            # in any case, add all the attributes of this base class to the known set
+            known.update(base.__dict__)
+
+        # create the Record subclass that holds the data
+
         # return the class record
         return sheet
 
@@ -45,12 +72,13 @@ class Templater(AttributeClassifier):
 
     def __call__(self, **kwds):
         """
-        Build a new row
+        Build a new sheet
         """
-        # create the row
-        row = super().__call__(**kwds)
+        # create the sheet
+        print("Templater.__call__: building a new sheet instance")
+        sheet = super().__call__(**kwds)
         # and return it
-        return row
+        return sheet
 
 
 
