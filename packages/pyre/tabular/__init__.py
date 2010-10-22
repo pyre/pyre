@@ -6,8 +6,11 @@
 #
 
 
-# access to the basic object in the package
+# access to the basic objects in the package
 from .Sheet import Sheet as sheet
+
+from .Record import Record as record
+from .Accessor import Accessor as accessor
 
 
 # descriptors

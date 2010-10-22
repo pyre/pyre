@@ -20,6 +20,7 @@ sanity:
 
 records:
 	${PYTHON} ./record.py
+	${PYTHON} ./record_accessors.py
 
 sheets:
 	${PYTHON} ./sheet.py
