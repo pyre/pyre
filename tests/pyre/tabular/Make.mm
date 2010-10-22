@@ -27,5 +27,6 @@ sheets:
 	${PYTHON} ./sheet_class_layout.py
 	${PYTHON} ./sheet_class_inheritance.py
 	${PYTHON} ./sheet_class_inheritance_multi.py
+	${PYTHON} ./sheet_class_record.py
 
 # end of file 

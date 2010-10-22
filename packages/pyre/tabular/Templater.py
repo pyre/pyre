@@ -6,6 +6,7 @@
 #
 
 
+import itertools
 from ..patterns.AttributeClassifier import AttributeClassifier
 
 
@@ -16,7 +17,9 @@ class Templater(AttributeClassifier):
 
 
     # types
+    from .Accessor import Accessor
     from .Measure import Measure
+    from .Record import Record
 
 
     # meta methods
@@ -30,12 +33,7 @@ class Templater(AttributeClassifier):
         # no need to be shy here about accessing the record: there is no Templater.__setattr__
         # add the introspection attributes
         sheet.pyre_name = name
-
-        # harvest the local measures
-        if not hidden:
-            sheet.pyre_localMeasures = list(cls.pyre_harvest(attributes, cls.Measure))
-        else:
-            sheet.pyre_localMeasures = []
+        sheet.pyre_localMeasures = list(cls.pyre_harvest(attributes, cls.Measure))
 
         # extract the inherited measures from the superclasses
         sheet.pyre_inheritedMeasures = []
@@ -55,6 +53,16 @@ class Templater(AttributeClassifier):
             known.update(base.__dict__)
 
         # create the Record subclass that holds the data
+        recordName = name + "_record"
+        recordBases = (cls.Record, )
+        recordAttributes = {
+            measure.name: cls.Accessor(index=index)
+            for index, measure in enumerate(
+                itertools.chain(sheet.pyre_localMeasures, sheet.pyre_inheritedMeasures))
+            }
+        recordType = type(recordName, recordBases, recordAttributes)
+        # attach it to the sheet
+        sheet.pyre_Record = recordType
 
         # return the class record
         return sheet
