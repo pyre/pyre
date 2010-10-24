@@ -16,6 +16,15 @@ class Sheet(metaclass=Templater, hidden=True):
     """
 
 
+    # interface
+    def populate(self, records, namemap=None):
+        """
+        Place values from {records} into the sheet. The optional {namemap} maps the local sheet
+        names for the measures to the names in {records}
+        """
+        return self
+
+
     # introspection
     @classmethod
     def pyre_measures(cls):

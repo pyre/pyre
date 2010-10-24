@@ -57,9 +57,9 @@ class Templater(AttributeClassifier):
         recordBases = (cls.Record, )
         recordAttributes = {
             measure.name: cls.Accessor(index=index)
-            for index, measure in enumerate(
-                itertools.chain(sheet.pyre_localMeasures, sheet.pyre_inheritedMeasures))
+            for index, measure in enumerate(sheet.pyre_measures()) 
             }
+        recordAttributes["__doc__"] = "The class that specifies sheet rows"
         recordType = type(recordName, recordBases, recordAttributes)
         # attach it to the sheet
         sheet.pyre_Record = recordType

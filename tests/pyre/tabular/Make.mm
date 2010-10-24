@@ -11,6 +11,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working:
+	${PYTHON} ./sheet_instance_populate.py
+
 all: test
 
 test: sanity records sheets
@@ -29,5 +32,8 @@ sheets:
 	${PYTHON} ./sheet_class_inheritance_multi.py
 	${PYTHON} ./sheet_class_record.py
 	${PYTHON} ./sheet_class_inheritance_record.py
+	${PYTHON} ./sheet_instance.py
+	${PYTHON} ./sheet_instance_populate.py
+
 
 # end of file 
