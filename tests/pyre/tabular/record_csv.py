@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2010 all rights reserved
+#
+
+
+"""
+Load records from a csv file
+"""
+
+
+def test():
+    import pyre.tabular
+
+    # build the target tuple
+    target = [
+        ("4000", "tomatoes", "2.95", "5", ".2", "50"),
+        ("4001", "pepers", "0.35", "15", ".1", "25"),
+        ("4002", "grapes", "1.65", "15", ".15", "15"),
+        ("4003", "kiwis", "0.95", "7", ".15", "75"),
+        ("4004", "lemons", "0.50", "4", ".25", "50"),
+        ("4005", "oranges", "0.50", "4", ".25", "50"),
+        ]
+
+    # setup the csv data source
+    source = pyre.tabular.record.csv_read(filename="vegetables.csv")
+
+    # check
+    for given, loaded in zip(target, source):
+        assert given == loaded
+
+    return
+
+
+# main
+if __name__ == "__main__":
+    test()
+
+
+# end of file 

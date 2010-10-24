@@ -11,9 +11,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working:
-	${PYTHON} ./sheet_instance_populate.py
-
 all: test
 
 test: sanity records sheets
@@ -24,6 +21,8 @@ sanity:
 records:
 	${PYTHON} ./record.py
 	${PYTHON} ./record_accessors.py
+	${PYTHON} ./record_csv.py
+	${PYTHON} ./record_csv_partial.py
 
 sheets:
 	${PYTHON} ./sheet.py
