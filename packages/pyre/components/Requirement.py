@@ -47,7 +47,7 @@ class Requirement(AttributeClassifier):
         # initialize the namemap
         attributes["pyre_namemap"] = {}
         # extract the descriptors
-        attributes["pyre_localTraits"] = localTraits = cls.pyre_harvest(attributes, cls.Trait)
+        attributes["pyre_localTraits"] = localTraits = list(cls.pyre_harvest(attributes, cls.Trait))
         # make room for the inherited traits
         attributes["pyre_inheritedTraits"] = inheritedTraits = []
         # and the list of ancestors that are themselves configurables

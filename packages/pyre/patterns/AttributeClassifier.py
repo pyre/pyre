@@ -44,18 +44,16 @@ class AttributeClassifier(AbstractMetaclass):
         """
         Examine {attributes}, looking for instances of {descriptor}
         """
-        # initialize the list of descriptors
-        harvest = []
         # loop over the attributes
         for name, attribute in attributes.items():
             # if this is a descriptor
             if isinstance(attribute, descriptor):
                 # set its name
                 attribute.name = name
-                # and add it to the pile
-                harvest.append(attribute)
-        # return the harvest
-        return harvest
+                # and return it to the caller
+                yield attribute
+        # all done
+        return
 
 
 # end of file 

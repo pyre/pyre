@@ -26,7 +26,7 @@ class DTD(AttributeClassifier):
         Build the document class record
         """
         # make roome for the list of nodes
-        attributes["dtd"] = dtd = cls.pyre_harvest(attributes, cls.Descriptor)
+        attributes["dtd"] = dtd = tuple(cls.pyre_harvest(attributes, cls.Descriptor))
         # build the node
         node = super().__new__(cls, name, bases, attributes, **kwds)
 
