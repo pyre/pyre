@@ -24,5 +24,4 @@ class Object(Type):
         return value
 
 
-
 # end of file 
