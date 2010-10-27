@@ -24,7 +24,7 @@ class Facility(Property):
 
     # Facility is faced with the following problem: the expectations of {pyre_cast} are
     # different depending on whether the object whose trait is being processed is a component
-    # class or a component instance. In the latter case, we want to case the trait value into
+    # class or a component instance. In the latter case, we want to cast the trait value into
     # an actual component instance that is compatible with the facility requireements; in the
     # former we are happy with either a compatible component declaration or an instance
 
