@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2010 all rights reserved
+#
+
+
+"""
+Build a rudimentary table
+"""
+
+
+import pyre.records
+
+
+class record(pyre.records.record):
+    """
+    A sample record
+    """
+    sku = pyre.records.field()
+    description = pyre.records.field()
+    cost = pyre.records.field()
+    overhead = pyre.records.field()
+    price = pyre.records.field()
+
+
+def test():
+    # explore the record class
+    assert isinstance(record.sku, pyre.records.field)
+    assert isinstance(record.description, pyre.records.field)
+    assert isinstance(record.cost, pyre.records.field)
+    assert isinstance(record.overhead, pyre.records.field)
+    assert isinstance(record.price, pyre.records.field)
+
+    assert record.pyre_localFields == (
+        record.sku, record.description, record.cost, record.overhead, record.price)
+    assert record.pyre_inheritedFields == ()
+
+    assert record.pyre_index(record.sku) == 0
+    assert record.pyre_index(record.description) == 1
+    assert record.pyre_index(record.cost) == 2
+    assert record.pyre_index(record.overhead) == 3
+    assert record.pyre_index(record.price) == 4
+
+    return record
+
+
+# main
+if __name__ == "__main__":
+    test()
+
+
+# end of file 

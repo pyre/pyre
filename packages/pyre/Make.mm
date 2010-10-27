@@ -19,6 +19,7 @@ RECURSE_DIRS = \
     framework \
     parsing \
     patterns \
+    records \
     schema \
     tabular \
     tracking \
