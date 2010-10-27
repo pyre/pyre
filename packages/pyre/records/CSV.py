@@ -48,9 +48,9 @@ class CSV:
         # start reading lines from the input source
         for row in reader:
             # assemble the requested data tuple
-            data = tuple( row[namemap[column]] for column in columns )
-            # build record out of it and yield it
-            yield layout(data)
+            data = (row[namemap[column]] for column in columns)
+            # build a record out of it and yield it
+            yield layout(raw=data)
         # all done
         return
 
