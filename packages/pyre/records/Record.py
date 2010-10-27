@@ -59,12 +59,13 @@ class Record(tuple, metaclass=Templater):
         return super().__new__(cls, data)
 
 
-    # meta methods
-    def __new__(cls, raw=None, **kwds):
+    @classmethod
+    def pyre_process(cls, raw, **kwds):
         """
-        Initialize a record either from the tuple {raw}, or by extracting the data from {kwds}
+        Form the tuple that holds my values by extracting information from either {raw} or
+        {kwds} and walking it through casting, conversion and validation
         """
-        # if were not goven an explict tuple
+        # if were not given an explict tuple
         if raw is None:
             # extract the values from the {kwds}
             raw = tuple(kwds.pop(field.name, field.default) for field in cls.pyre_fields())
@@ -87,8 +88,16 @@ class Record(tuple, metaclass=Templater):
             # and store it
             data.append(value)
 
-        # form the tuple and build the instance
-        return super().__new__(cls, tuple(data))
+        # form the tuple and return it
+        return tuple(data)
+
+
+    # meta methods
+    def __new__(cls, raw=None, **kwds):
+        """
+        Initialize a record either from the tuple {raw}, or by extracting the data from {kwds}
+        """
+        return super().__new__(cls, cls.pyre_process(raw, **kwds))
 
 
     # exceptions
