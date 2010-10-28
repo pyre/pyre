@@ -25,12 +25,12 @@ def test():
         shipping = pyre.records.field()
         margin = pyre.records.field()
         # type information
-        sku.type = pyre.schema.str()
-        description.type = pyre.schema.str()
-        production.type = pyre.schema.float()
-        overhead.type = pyre.schema.float()
-        shipping.type = pyre.schema.float()
-        margin.type = pyre.schema.float()
+        sku.type = pyre.schema.str
+        description.type = pyre.schema.str
+        production.type = pyre.schema.float
+        overhead.type = pyre.schema.float
+        shipping.type = pyre.schema.float
+        margin.type = pyre.schema.float
 
     # build the target tuple
     target = [

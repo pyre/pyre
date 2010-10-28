@@ -24,8 +24,8 @@ class interval(pyre.records.record):
     right = pyre.records.field()
 
     # type information
-    left.type = pyre.schema.float()
-    right.type = pyre.schema.float()
+    left.type = pyre.schema.float
+    right.type = pyre.schema.float
 
     # constraints
     left.validators = pyre.constraints.isLess(value=0),

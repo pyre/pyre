@@ -27,11 +27,11 @@ class record(pyre.records.record):
     price = pyre.records.field()
 
     # type information
-    sku.type = pyre.schema.str()
-    description.type = pyre.schema.str()
-    cost.type = pyre.schema.float()
-    overhead.type = pyre.schema.float()
-    price.type = pyre.schema.float()
+    sku.type = pyre.schema.str
+    description.type = pyre.schema.str
+    cost.type = pyre.schema.float
+    overhead.type = pyre.schema.float
+    price.type = pyre.schema.float
 
 
 def test():

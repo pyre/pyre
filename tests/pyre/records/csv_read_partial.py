@@ -22,9 +22,9 @@ def test():
         margin = pyre.records.field()
         description = pyre.records.field()
         # type information
-        sku.type = pyre.schema.str()
-        margin.type = pyre.schema.float()
-        description.type = pyre.schema.str()
+        sku.type = pyre.schema.str
+        margin.type = pyre.schema.float
+        description.type = pyre.schema.str
 
     # build the target tuple
     target = [
