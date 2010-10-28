@@ -6,8 +6,9 @@
     This work has been funded in part by the US Department of Energy, the National Science
     Foundation, and Orthologue, LLC.
 
-    None of this would have been possible without Dan Meiron, Mike Gurnis, and Brent Fultz, all
-    of whom took a risk by supporting pyre at various stages in its development.
+    None of this would have been possible without Dan Meiron, Michael Ortiz, Mike Gurnis, and
+    Brent Fultz, all of whom took a risk by supporting pyre at various stages in its
+    development.
 
     Much of the current design of pyre is due to ideas and constructive criticism by Leif
     Strand.
