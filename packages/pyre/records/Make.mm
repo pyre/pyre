@@ -20,11 +20,24 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Absolute.py \
+    Addition.py \
+    Binary.py \
     CSV.py \
     ConstAccessor.py \
+    Derivation.py \
+    Division.py \
     Field.py \
+    FloorDivision.py \
+    Minus.py \
+    Multiplication.py \
+    Plus.py \
+    Power.py \
     Record.py \
+    Remainder.py \
+    Subtraction.py \
     Templater.py \
+    Unary.py \
     exceptions.py \
     __init__.py
 

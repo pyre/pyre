@@ -46,8 +46,13 @@ class Record(tuple, metaclass=Templater):
 
 
     @classmethod
-    def pyre_index(cls, descriptor):
-        return tuple(cls.pyre_fields()).index(descriptor)
+    def pyre_derivations(cls):
+        return itertools.chain(cls.pyre_localDerivations, cls.pyre_inheritedDerivations)
+
+
+    @classmethod
+    def pyre_items(cls):
+        return itertools.chain(cls.pyre_fields(), cls.pyre_derivations())
 
 
     @classmethod
@@ -73,9 +78,9 @@ class Record(tuple, metaclass=Templater):
             if kwds:
                 raise ValueError("unexpected field names: {}".format(", ".join(kwds.keys())))
 
-        # cast, convert and validate
+        # storage for my tuple
         data = []
-        # iterate over my entire field set
+        # cast, convert and validate my field data
         for value, field in zip(raw, cls.pyre_fields()):
             # cast the value
             value = field.type.pyre_cast(value)
@@ -85,6 +90,13 @@ class Record(tuple, metaclass=Templater):
             # validate it
             for validator in field.validators:
                 value = validator(value)
+            # and store it
+            data.append(value)
+
+        # evaluate the derivations
+        for derivation in cls.pyre_derivations():
+            # compute the value
+            value = derivation.eval(values=data, index=cls.pyre_index)
             # and store it
             data.append(value)
 

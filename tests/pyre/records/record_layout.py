@@ -38,11 +38,11 @@ def test():
         record.sku, record.description, record.cost, record.overhead, record.price)
     assert record.pyre_inheritedFields == ()
 
-    assert record.pyre_index(record.sku) == 0
-    assert record.pyre_index(record.description) == 1
-    assert record.pyre_index(record.cost) == 2
-    assert record.pyre_index(record.overhead) == 3
-    assert record.pyre_index(record.price) == 4
+    assert record.pyre_index[record.sku] == 0
+    assert record.pyre_index[record.description] == 1
+    assert record.pyre_index[record.cost] == 2
+    assert record.pyre_index[record.overhead] == 3
+    assert record.pyre_index[record.price] == 4
 
     return record
 

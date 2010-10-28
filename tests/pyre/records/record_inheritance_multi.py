@@ -41,8 +41,8 @@ def test():
     assert item.pyre_inheritedFields == ()
     assert tuple(item.pyre_fields()) == (item.sku, item.description)
 
-    assert item.pyre_index(item.sku) == 0
-    assert item.pyre_index(item.description) == 1
+    assert item.pyre_index[item.sku] == 0
+    assert item.pyre_index[item.description] == 1
 
     # explore the production record
     assert isinstance(production.cost, pyre.records.field)
@@ -52,8 +52,8 @@ def test():
     assert production.pyre_inheritedFields == ()
     assert tuple(production.pyre_fields()) == (production.cost, production.overhead)
 
-    assert item.pyre_index(item.sku) == 0
-    assert item.pyre_index(item.description) == 1
+    assert production.pyre_index[production.cost] == 0
+    assert production.pyre_index[production.overhead] == 1
 
     # explore the derived class
     assert isinstance(pricing.sku, pyre.records.field)
@@ -73,11 +73,11 @@ def test():
         pricing.cost, pricing.overhead
         )
 
-    assert pricing.pyre_index(pricing.price) == 0
-    assert pricing.pyre_index(pricing.sku) == 1
-    assert pricing.pyre_index(pricing.description) == 2
-    assert pricing.pyre_index(pricing.cost) == 3
-    assert pricing.pyre_index(pricing.overhead) == 4
+    assert pricing.pyre_index[pricing.price] == 0
+    assert pricing.pyre_index[pricing.sku] == 1
+    assert pricing.pyre_index[pricing.description] == 2
+    assert pricing.pyre_index[pricing.cost] == 3
+    assert pricing.pyre_index[pricing.overhead] == 4
 
     return item, pricing
 

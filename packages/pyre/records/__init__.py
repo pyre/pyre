@@ -9,6 +9,7 @@
 # data records
 from .Record import Record as record
 from .Field import Field as field
+from .Derivation import Derivation as derivation
 
 
 # persistence

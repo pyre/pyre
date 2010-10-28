@@ -28,6 +28,8 @@ records:
 	${PYTHON} ./record_kwds.py
 	${PYTHON} ./record_conversions.py
 	${PYTHON} ./record_validations.py
+	${PYTHON} ./record_derivations.py
+	${PYTHON} ./record_derivations_inheritance.py
 
 csv:
 	${PYTHON} ./csv_instance.py
