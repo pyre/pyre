@@ -41,7 +41,6 @@ test:
 	${PYTHON} ./metaclass_refcount.py
 	${PYTHON} ./expressions.py
 	${PYTHON} ./arithmetic.py
-
-
+	${PYTHON} ./algebra.py
 
 # end of file 
