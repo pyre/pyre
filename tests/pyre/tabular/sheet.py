@@ -20,12 +20,12 @@ class pricing(pyre.tabular.sheet):
     The sheet layout
     """
 
-    sku = pyre.tabular.auto()
-    production = pyre.tabular.auto()
-    shipping = pyre.tabular.auto()
-    margin = pyre.tabular.auto()
-    overhead = pyre.tabular.auto()
-    discount = pyre.tabular.auto()
+    sku = pyre.tabular.measure()
+    production = pyre.tabular.measure()
+    shipping = pyre.tabular.measure()
+    margin = pyre.tabular.measure()
+    overhead = pyre.tabular.measure()
+    discount = pyre.tabular.measure()
 
     cost = production + shipping
     msrp = (1 + margin + overhead)*cost

@@ -21,8 +21,6 @@ sanity:
 records:
 	${PYTHON} ./record.py
 	${PYTHON} ./record_accessors.py
-	${PYTHON} ./record_csv.py
-	${PYTHON} ./record_csv_partial.py
 
 sheets:
 	${PYTHON} ./sheet.py

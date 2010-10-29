@@ -8,7 +8,7 @@
 
 
 """
-Build a rudimentary table
+Sanity check: build a table record
 """
 
 

@@ -10,19 +10,8 @@
 from .Sheet import Sheet as sheet
 
 from .Record import Record as record
-from .Accessor import Accessor as accessor
-
-
-# descriptors
-def auto(**kwds):
-    """
-    Build a descriptor that corresponds to a field that is automatically retrieved from the
-    data store by looking up an entry by the same name
-    """
-    # access measure
-    from .Measure import Measure
-    # build one and return it
-    return Measure(**kwds)
+from .Measure import Measure as measure
+from .Derivation import Derivation as derivation
 
 
 # end of file 

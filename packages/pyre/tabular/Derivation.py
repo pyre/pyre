@@ -6,13 +6,7 @@
 #
 
 
-import pyre.records
-
-
-class Record(pyre.records.dynamicrecord):
-    """
-    The base class of sheet entries
-    """
+from ..records.Derivation import Derivation
 
 
 # end of file 

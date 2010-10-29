@@ -20,12 +20,12 @@ class pricing(pyre.tabular.sheet):
     The sheet layout
     """
 
-    sku = pyre.tabular.auto()
-    production = pyre.tabular.auto()
-    shipping = pyre.tabular.auto()
-    margin = pyre.tabular.auto()
-    overhead = pyre.tabular.auto()
-    discount = pyre.tabular.auto()
+    sku = pyre.tabular.measure()
+    production = pyre.tabular.measure()
+    shipping = pyre.tabular.measure()
+    margin = pyre.tabular.measure()
+    overhead = pyre.tabular.measure()
+    discount = pyre.tabular.measure()
 
     cost = production + shipping
     msrp = (1 + margin + overhead)*cost
@@ -37,13 +37,13 @@ def test():
 
     assert pricing.pyre_name == "pricing"
 
-    assert pricing.pyre_localMeasures == [
+    assert pricing.pyre_localMeasures == (
         pricing.sku, pricing.production, pricing.shipping, pricing.margin,
-        pricing.overhead, pricing.discount, pricing.cost, pricing.msrp,
-        pricing.price
-        ]
-
-    assert pricing.pyre_inheritedMeasures == []
+        pricing.overhead, pricing.discount
+        )
+    assert pricing.pyre_inheritedMeasures == ()
+    assert pricing.pyre_localDerivations == (pricing.cost, pricing.msrp, pricing.price,)
+    assert pricing.pyre_inheritedDerivations == ()
 
     return pricing
 

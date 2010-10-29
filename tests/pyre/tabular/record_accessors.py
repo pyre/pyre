@@ -14,45 +14,36 @@ Build a rudimentary table
 
 import pyre.calc
 import pyre.tabular
+import pyre.records
 
 
 class record(pyre.tabular.record):
     """
     A sample record
     """
-    sku = pyre.tabular.accessor(index=0)
-    description = pyre.tabular.accessor(index=1)
-    cost = pyre.tabular.accessor(index=2)
-    overhead = pyre.tabular.accessor(index=3)
-    price = pyre.tabular.accessor(index=4)
-
-    def __new__(cls, sku, description, cost):
-        # build the model nodes
-        n_sku = pyre.calc.newNode(value=sku)
-        n_description = pyre.calc.newNode(value=description)
-        n_cost = pyre.calc.newNode(value=cost)
-        n_overhead = pyre.calc.newNode(value=.15)
-        n_price = n_cost + n_overhead
-        # place them in a tuple
-        nodes = (n_sku, n_description, n_cost, n_overhead, n_price)
-        # build the record
-        return super().__new__(cls, nodes)
+    sku = pyre.tabular.measure()
+    description = pyre.tabular.measure()
+    cost = pyre.tabular.measure()
+    overhead = pyre.tabular.measure()
+    price = cost + overhead
 
 
 def test():
     # explore the record class
-    assert isinstance(record.sku, pyre.tabular.accessor)
-    assert isinstance(record.description, pyre.tabular.accessor)
-    assert isinstance(record.price, pyre.tabular.accessor)
+    assert isinstance(record.sku, pyre.tabular.measure)
+    assert isinstance(record.description, pyre.tabular.measure)
+    assert isinstance(record.cost, pyre.tabular.measure)
+    assert isinstance(record.overhead, pyre.tabular.measure)
+    assert isinstance(record.price, pyre.records.derivation)
 
-    assert record.sku.index == 0
-    assert record.description.index == 1
-    assert record.cost.index == 2
-    assert record.overhead.index == 3
-    assert record.price.index == 4
+    assert record.pyre_index[record.sku] == 0
+    assert record.pyre_index[record.description] == 1
+    assert record.pyre_index[record.cost] == 2
+    assert record.pyre_index[record.overhead] == 3
+    assert record.pyre_index[record.price] == 4
 
     # build a record
-    r = record(sku="9-4013", description="organic kiwi", cost=.85)
+    r = record(sku="9-4013", description="organic kiwi", cost=.85, overhead=.15)
     # check
     assert r.sku == "9-4013"
     assert r.description == "organic kiwi"

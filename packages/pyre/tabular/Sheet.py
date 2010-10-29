@@ -17,23 +17,28 @@ class Sheet(metaclass=Templater, hidden=True):
 
 
     # interface
-    def populate(self, records, namemap=None):
+    def populate(self, records=None):
         """
-        Place values from {records} into the sheet. The optional {namemap} maps the local sheet
-        names for the measures to the names in {records}
         """
-        return self
 
 
     # introspection
     @classmethod
     def pyre_measures(cls):
-        """
-        Generate a sequence of all my measures
-        """
         return itertools.chain(cls.pyre_localMeasures, cls.pyre_inheritedMeasures)
 
 
+    @classmethod
+    def pyre_derivations(cls):
+        return itertools.chain(cls.pyre_localDerivations, cls.pyre_inheritedDerivations)
+
+
+    @classmethod
+    def pyre_items(cls):
+        return itertools.chain(cls.pyre_measures(), cls.pyre_derivations())
+
+
+    # meta methods
     def __init__(self, name=None, **kwds):
         super().__init__(**kwds)
 
