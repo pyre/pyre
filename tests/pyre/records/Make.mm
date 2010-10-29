@@ -44,6 +44,7 @@ csv:
 	${PYTHON} ./csv_read.py
 	${PYTHON} ./csv_read_partial.py
 	${PYTHON} ./csv_read_derivations.py
+	${PYTHON} ./csv_read_dynamic.py
 	${PYTHON} ./csv_bad_source.py
 
 
