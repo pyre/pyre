@@ -196,6 +196,7 @@ class Node(Observable, metaclass=_metaclass_Node):
 
 
     # my algebra
+    # the forward ones
     def __add__(self, other):
         if isinstance(other, Node):
             from .Addition import Addition
@@ -204,15 +205,6 @@ class Node(Observable, metaclass=_metaclass_Node):
         from .Increment import Increment
         return Node(value=None, evaluator=Increment(node=self, increment=other))
 
-        
-    def __mul__(self, other):
-        if isinstance(other, Node):
-            from .Multiplication import Multiplication
-            return Node(value=None, evaluator=Multiplication(op1=self, op2=other))
-
-        from .Scaling import Scaling
-        return Node(value=None, evaluator=Scaling(node=self, factor=other))
-                    
         
     def __sub__(self, other):
         if isinstance(other, Node):
@@ -223,6 +215,15 @@ class Node(Observable, metaclass=_metaclass_Node):
         return Node(value=None, evaluator=Increment(node=self, increment=-other))
 
         
+    def __mul__(self, other):
+        if isinstance(other, Node):
+            from .Multiplication import Multiplication
+            return Node(value=None, evaluator=Multiplication(op1=self, op2=other))
+
+        from .Scaling import Scaling
+        return Node(value=None, evaluator=Scaling(node=self, factor=other))
+
+
     def __truediv__(self, other):
         if isinstance(other, Node):
             from .Division import Division
@@ -230,12 +231,56 @@ class Node(Observable, metaclass=_metaclass_Node):
 
         from .Scaling import Scaling
         return Node(value=None, evaluator=Scaling(node=self, factor=1/other))
+
+
+    def __pow__(self, other):
+        if isinstance(other, Node):
+            from .Power import Power
+            return Node(value=None, evaluator=Power(op1=self, op2=other))
+
+        from .ScalarPower import ScalarPower
+        return Node(value=None, evaluator=ScalarPower(node=self, exponent=other))
+
+
+    def __pos__(self):
+        return self
+
+
+    def __neg__(self):
+        from .Scaling import Scaling
+        return Node(value=None, evaluator=Scaling(node=self, factor=-1))
+
+
+    def __abs__(self):
+        from .Absolute import Absolute
+        return Node(value=None, evaluator=Absolute(node=self))
                     
         
+    # reflections
+    def __radd__(self, scalar):
+        from .Increment import Increment
+        return Node(value=None, evaluator=Increment(node=self, increment=scalar))
+
+
+    def __rsub__(self, scalar):
+        from .ReflectiveDecrement import ReflectiveDecrement
+        return Node(value=None, evaluator=ReflectiveDecrement(node=self, increment=scalar))
+
+
     def __rmul__(self, scalar):
         from .Scaling import Scaling
         return Node(value=None, evaluator=Scaling(node=self, factor=scalar))
                     
+
+    def __rtruediv__(self, scalar):
+        from .ReflectiveDivision import ReflectiveDivision
+        return Node(value=None, evaluator=ReflectiveDivision(node=self, factor=scalar))
+                    
+
+    def __rpow__(self, scalar):
+        from .ReflectivePower import ReflectivePower
+        return Node(value=None, evaluator=ReflectivePower(node=self, base=scalar))
+
 
     # meta methods
     def __init__(self, value, evaluator, **kwds):

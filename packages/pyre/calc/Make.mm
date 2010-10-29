@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     AbstractModel.py \
+    Absolute.py \
     Addition.py \
     Aggregator.py \
     Average.py \
@@ -40,10 +41,15 @@ EXPORT_PYTHON_MODULES = \
     Multiplication.py \
     Node.py \
     Polyadic.py \
+    Power.py \
     Probe.py \
     Product.py \
     Reductor.py \
     Reference.py \
+    ReflectiveDecrement.py \
+    ReflectiveDivision.py \
+    ReflectivePower.py \
+    ScalarPower.py \
     Scaling.py \
     Subtraction.py \
     Sum.py \

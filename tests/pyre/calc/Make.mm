@@ -30,6 +30,7 @@ evaluators:
 	${PYTHON} ./reductors.py
 	${PYTHON} ./operations.py
 	${PYTHON} ./expression.py
+	${PYTHON} ./algebra.py
 
 faulty:
 	${PYTHON} ./expression_escaped.py
