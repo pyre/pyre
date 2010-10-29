@@ -31,7 +31,7 @@ class NodalFieldAccessor:
         Retrieve the value of my field from {record}
         """
         try:
-            return record[self.index].value
+            return record[self.index]
         except TypeError:
             return self.descriptor
 
@@ -43,7 +43,7 @@ class NodalFieldAccessor:
         # get the descriptor to cast, convert and validate
         value = self.descriptor.process(value)
         # attach it to the node
-        record[self.index].value = value
+        record[self.index] = value
         # all done
         return
 

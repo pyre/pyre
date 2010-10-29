@@ -31,7 +31,7 @@ class NodalDerivationAccessor:
         Retrieve the value of my field from {record}
         """
         try:
-            return record[self.index].value
+            return record[self.index]
         except TypeError:
             return self.descriptor
 

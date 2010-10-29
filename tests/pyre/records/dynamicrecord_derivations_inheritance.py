@@ -113,6 +113,10 @@ def test():
     assert p.overhead == 20
     assert p.margin == 50
     assert p.price == p.cost*(1.0 + p.overhead/100 + p.margin/100)
+    # make a change
+    p.cost = 2.0
+    assert p.cost == 2.0
+    assert p.price == p.cost*(1.0 + p.overhead/100 + p.margin/100)
 
     return p
 

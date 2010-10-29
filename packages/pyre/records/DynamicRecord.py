@@ -67,4 +67,20 @@ class DynamicRecord(Record):
         return tuple(data)
 
 
+    # meta methods
+    def __getitem__(self, index):
+        """
+        Indexed read access: get the value of the associated node
+        """
+        return super().__getitem__(index).value
+
+
+    def __setitem__(self, index, value):
+        """
+        Indexed write access: set the value of the associated node
+        """
+        super().__getitem__(index).value = value
+        return
+
+
 # end of file 
