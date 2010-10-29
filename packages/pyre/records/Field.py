@@ -36,6 +36,22 @@ class Field:
 
 
     # interface
+    def process(self, value):
+        """
+        Walk value through casting, conversion and validation
+        """
+        # cast the value
+        value = self.type.pyre_cast(value)
+        # convert it
+        for converter in self.converters:
+            value = converter(value)
+        # validate it
+        for validator in self.validators:
+            value = validator(value)
+        # and return it
+        return value
+
+
     def eval(self, values, index):
         """
         Compute my value by looking up my offset in {index} and returning the corresponding
@@ -97,5 +113,10 @@ class Field:
     def __rpow__(self, other):
         return self.Power(op2=self, op1=other)
     
+
+    # dumping
+    def __str__(self):
+        return "({.name})".format(self)
+
 
 # end of file 

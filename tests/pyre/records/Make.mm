@@ -14,7 +14,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity records csv
+test: sanity records dynamicrecords csv
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -30,6 +30,14 @@ records:
 	${PYTHON} ./record_validations.py
 	${PYTHON} ./record_derivations.py
 	${PYTHON} ./record_derivations_inheritance.py
+
+dynamicrecords:
+	${PYTHON} ./dynamicrecord.py
+	${PYTHON} ./dynamicrecord_layout.py
+	${PYTHON} ./dynamicrecord_inheritance.py
+	${PYTHON} ./dynamicrecord_inheritance_multi.py
+	${PYTHON} ./dynamicrecord_derivations.py
+	${PYTHON} ./dynamicrecord_derivations_inheritance.py
 
 csv:
 	${PYTHON} ./csv_instance.py

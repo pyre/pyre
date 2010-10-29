@@ -26,4 +26,9 @@ class Minus(Unary):
         return -op
 
 
+    # meta methods
+    def __str__(self):
+        return "(-{0.op})".format(self)
+
+
 # end of file 

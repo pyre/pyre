@@ -31,7 +31,8 @@ class Record(tuple, metaclass=Templater):
 
 
     # types
-    from .ConstAccessor import ConstAccessor as pyre_accessor
+    from .ConstAccessor import ConstAccessor as pyre_fieldAccessor
+    from .ConstAccessor import ConstAccessor as pyre_derivationAccessor
 
 
     # public data
@@ -82,14 +83,8 @@ class Record(tuple, metaclass=Templater):
         data = []
         # cast, convert and validate my field data
         for value, field in zip(raw, cls.pyre_fields()):
-            # cast the value
-            value = field.type.pyre_cast(value)
-            # convert it
-            for converter in field.converters:
-                value = converter(value)
-            # validate it
-            for validator in field.validators:
-                value = validator(value)
+            # get the descriptor to process the value
+            value = field.process(value)
             # and store it
             data.append(value)
 

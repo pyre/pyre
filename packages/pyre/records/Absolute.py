@@ -26,4 +26,9 @@ class Absolute(Unary):
         return abs(op)
 
 
+    # meta methods
+    def __str__(self):
+        return "abs({0.op})".format(self)
+
+
 # end of file 

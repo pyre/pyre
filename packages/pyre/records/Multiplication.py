@@ -31,4 +31,9 @@ class Multiplication(Binary):
         return op1 * op2
 
 
+    # meta methods
+    def __str__(self):
+        return "({0.op1} * {0.op2})".format(self)
+
+
 # end of file 

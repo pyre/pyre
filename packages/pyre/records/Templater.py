@@ -83,14 +83,28 @@ class Templater(AttributeClassifier):
         # delegate
         super().__init__(name, bases, attributes, **kwds)
 
+        # cache my fields
+        fields = tuple(self.pyre_fields())
+        derivations = tuple(self.pyre_derivations())
+
         # initialize the items index
         subscripts = {}
-        # iterate over all the fields and derivations
-        for index, descriptor in enumerate(self.pyre_items()):
+        # iterate over all the fields
+        for index, descriptor in enumerate(fields):
             # store the index
             subscripts[descriptor] = index
             # build the data accessor
-            accessor = self.pyre_accessor(index=index, descriptor=descriptor)
+            accessor = self.pyre_fieldAccessor(index=index, descriptor=descriptor)
+            # and attach it
+            setattr(self, descriptor.name, accessor)
+        # record the offset
+        offset = len(fields)
+        # iterate over all the derivations
+        for index, descriptor in enumerate(derivations):
+            # store the index
+            subscripts[descriptor] = offset + index
+            # build the data accessor
+            accessor = self.pyre_derivationAccessor(index=offset+index, descriptor=descriptor)
             # and attach it
             setattr(self, descriptor.name, accessor)
 

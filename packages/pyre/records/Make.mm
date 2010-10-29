@@ -27,10 +27,13 @@ EXPORT_PYTHON_MODULES = \
     ConstAccessor.py \
     Derivation.py \
     Division.py \
+    DynamicRecord.py \
     Field.py \
     FloorDivision.py \
     Minus.py \
     Multiplication.py \
+    NodalDerivationAccessor.py \
+    NodalFieldAccessor.py \
     Plus.py \
     Power.py \
     Record.py \
