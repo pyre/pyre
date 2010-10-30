@@ -31,6 +31,10 @@ class Templater(AttributeClassifier):
         # harvest the locally declared fields from the class declaration
         localMeasures = tuple(cls.pyre_harvest(attributes, cls.Measure))
         localDerivations = tuple(cls.pyre_harvest(attributes, cls.Derivation))
+        # remove them from the attributes for now
+        # we will replace them with intelligent accessors in __init__; see below
+        for item in itertools.chain(localMeasures, localDerivations):
+            del attributes[item.name]
 
         # set up the attributes
         attributes["pyre_name"] = name
@@ -89,6 +93,25 @@ class Templater(AttributeClassifier):
         # initialize the record
         # print("Templater.__init__: initializing a new sheet class")
         super().__init__(name, bases, attributes, **kwds)
+        # cache my fields
+        measures = tuple(self.pyre_measures())
+        derivations = tuple(self.pyre_derivations())
+
+        # iterate over all the items
+        for index, descriptor in enumerate(measures):
+            # build the data accessor
+            accessor = self.pyre_measureAccessor(index=index, descriptor=descriptor)
+            # and attach it
+            setattr(self, descriptor.name, accessor)
+        # record the offset
+        offset = len(measures)
+        # iterate over all the derivations
+        for index, descriptor in enumerate(derivations):
+            # build the data accessor
+            accessor = self.pyre_measureAccessor(index=offset+index, descriptor=descriptor)
+            # and attach it
+            setattr(self, descriptor.name, accessor)
+
         # and return
         return
 

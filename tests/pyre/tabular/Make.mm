@@ -30,6 +30,8 @@ sheets:
 	${PYTHON} ./sheet_class_record.py
 	${PYTHON} ./sheet_class_inheritance_record.py
 	${PYTHON} ./sheet_instance.py
+	${PYTHON} ./sheet_populate.py
+	${PYTHON} ./sheet_columns.py
 
 csv:
 	${PYTHON} ./csv_instance.py

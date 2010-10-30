@@ -16,6 +16,10 @@ class Sheet(metaclass=Templater):
     """
 
 
+    # types
+    from .Column import Column as pyre_measureAccessor
+
+
     # public data
     pyre_name = None # the name of the sheet
     pyre_data = None # the list of records

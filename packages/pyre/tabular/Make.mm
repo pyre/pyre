@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     CSV.py \
+    Column.py \
     Derivation.py \
     Measure.py \
     Record.py \
