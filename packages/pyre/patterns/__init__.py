@@ -11,6 +11,22 @@ This package contains classes that encapsulate common usage patterns.
 """
 
 # utilities
+def average(iterable):
+    """
+    Compute the average value of the entries in {iterable}
+    """
+    # initialize the counters
+    total = 0
+    count = 0
+    # loop
+    for item in iterable:
+        # update the counters
+        count += 1
+        total += item
+    # all done
+    return total/count
+
+
 def powerset(iterable):
     """
     Compute the full power set, i.e. the set of all permutations, of the given iterable.
