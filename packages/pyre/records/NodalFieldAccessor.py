@@ -19,7 +19,8 @@ class NodalFieldAccessor:
 
 
     # meta methods
-    def __init__(self, index, descriptor):
+    def __init__(self, index, descriptor, **kwds):
+        super().__init__(**kwds)
         self.index = index
         self.descriptor = descriptor
         return
