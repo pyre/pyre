@@ -11,9 +11,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working:
-	${PYTHON} ./sheet_index.py
-
 all: test
 
 test: sanity records sheets csv

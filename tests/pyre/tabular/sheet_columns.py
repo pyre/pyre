@@ -26,6 +26,8 @@ class pricing(pyre.tabular.sheet):
     shipping = pyre.tabular.measure()
     margin = pyre.tabular.measure()
     overhead = pyre.tabular.measure()
+    # index on skus
+    sku.index = True
     # type information
     sku.type = pyre.schema.str
     description.type = pyre.schema.str
@@ -52,6 +54,8 @@ def test():
         # populate the sheet
         p.append(record=p.pyre_Record(datum))
 
+    # get the list of skus in the data set ad check it against the dataset
+    assert tuple(p.sku) == tuple(record[0] for record in data)
     # compute the average production cost and check we got it right
     assert pyre.patterns.average(p.production) == sum(entry[2] for entry in data)/len(data)
         
