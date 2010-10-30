@@ -29,7 +29,7 @@ def test():
     # build the target tuple
     target = [
         ("4000", 50, "tomatoes"),
-        ("4001", 25, "pepers"),
+        ("4001", 25, "peppers"),
         ("4002", 15, "grapes"),
         ("4003", 75, "kiwis"),
         ("4004", 50, "lemons"),
