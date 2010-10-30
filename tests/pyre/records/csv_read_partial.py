@@ -39,7 +39,7 @@ def test():
     # create the reader
     csv = pyre.records.csv()
     # read the csv data 
-    source = csv.read(layout=item, filename="vegetables.csv")
+    source = csv.read(layout=item, uri="vegetables.csv")
     # check
     for given, loaded in zip(target, source):
         assert given == loaded

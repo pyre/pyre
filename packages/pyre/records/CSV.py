@@ -16,22 +16,21 @@ class CSV:
     """
 
 
-    def read(self, layout, filename=None, stream=None, **kwds):
+    def read(self, layout, uri=None, stream=None, **kwds):
         """
         Read lines from a csv formatted input source
 
         The argument {layout} is expected to be a subclass of {pyre.records.Record}. It will be
         inspected to extract the names of the columns to ingest.
 
-        If {filename} is not None, it will be opened for reading in the manner recommended by
-        the {csv} package; if {stream} is given instead, it will be passed directly to the
-        {csv} package. The first record is assumed to be headers that name the columns of the
-        data.
+        If {uri} is not None, it will be opened for reading in the manner recommended by the
+        {csv} package; if {stream} is given instead, it will be passed directly to the {csv}
+        package. The first record is assumed to be headers that name the columns of the data.
         """
-        # check whether {filename} was provided
-        if filename:
+        # check whether {uri} was provided
+        if uri:
             # build the associated stream
-            stream = open(filename, newline='')
+            stream = open(uri, newline='')
         # look for a valid stream
         if not stream:
             raise self.SourceSpecificationError()
