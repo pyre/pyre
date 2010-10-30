@@ -15,4 +15,8 @@ class Measure(Field):
     """
 
 
+    # public data in addition to what is inherited from Field
+    index = False # True when this measure is a primary key that can be used to create an index
+
+
 # end of file 

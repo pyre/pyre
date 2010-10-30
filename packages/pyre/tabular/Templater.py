@@ -97,10 +97,19 @@ class Templater(AttributeClassifier):
         measures = tuple(self.pyre_measures())
         derivations = tuple(self.pyre_derivations())
 
+        # storage for the indexed measure accessors
+        indices = []
+
         # iterate over all the items
         for index, descriptor in enumerate(measures):
             # build the data accessor
-            accessor = self.pyre_measureAccessor(index=index, descriptor=descriptor)
+            # either an indexed column
+            if descriptor.index:
+                accessor = self.pyre_indexedAccessor(index=index, descriptor=descriptor)
+                indices.append(accessor)
+            # or a normal column
+            else:
+                accessor = self.pyre_measureAccessor(index=index, descriptor=descriptor)
             # and attach it
             setattr(self, descriptor.name, accessor)
         # record the offset
@@ -111,6 +120,9 @@ class Templater(AttributeClassifier):
             accessor = self.pyre_measureAccessor(index=offset+index, descriptor=descriptor)
             # and attach it
             setattr(self, descriptor.name, accessor)
+
+        # attach the tuple of primary keys
+        self.pyre_primaries = tuple(indices)
 
         # and return
         return
@@ -123,9 +135,13 @@ class Templater(AttributeClassifier):
         # create the sheet
         # print("Templater.__call__: building a new sheet instance")
         sheet = super().__call__(**kwds)
+        # initialize the primary keys
+        for accessor in self.pyre_primaries:
+            # install the associated keymap
+            sheet.pyre_keymaps[accessor] = accessor.keymap(sheet=sheet, column=accessor.index)
+            # otherwise
         # and return it
         return sheet
-
 
 
 # end of file 

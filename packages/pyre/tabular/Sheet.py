@@ -17,12 +17,15 @@ class Sheet(metaclass=Templater):
 
 
     # types
+    from .Index import Index as pyre_indexedAccessor
     from .Column import Column as pyre_measureAccessor
 
 
     # public data
     pyre_name = None # the name of the sheet
     pyre_data = None # the list of records
+    pyre_primaries = None # a list of measure accessors that are primary keys
+    pyre_keymaps = None # storage for measures that are primary keys
 
 
     # interface
@@ -30,7 +33,16 @@ class Sheet(metaclass=Templater):
         """
         Add {record} to my data set
         """
+        # the collation number of this record
+        rank = len(self.pyre_data)
         # update my indices
+        for primary in self.pyre_primaries:
+            # grab the associated keymap
+            keymap = self.pyre_keymaps[primary]
+            # the key is the value of the indexed column
+            key = record[primary.index]
+            # update
+            keymap[key] = rank
         # what's the right thing to do when a new record with a key conflict shows up?
         # add the record to the data set
         self.pyre_data.append(record)
@@ -69,6 +81,7 @@ class Sheet(metaclass=Templater):
 
         self.pyre_name = name
         self.pyre_data = []
+        self.pyre_keymaps = {} # populated by my metaclass
 
         return
 

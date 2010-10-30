@@ -23,6 +23,7 @@ EXPORT_PYTHON_MODULES = \
     CSV.py \
     Column.py \
     Derivation.py \
+    Index.py \
     Measure.py \
     Record.py \
     Sheet.py \
