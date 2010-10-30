@@ -14,4 +14,8 @@ from .Measure import Measure as measure
 from .Derivation import Derivation as derivation
 
 
+# readers/writers
+from .CSV import CSV as csv
+
+
 # end of file 

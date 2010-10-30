@@ -24,7 +24,7 @@ class Templater(AttributeClassifier):
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, hidden=False, **kwds):
+    def __new__(cls, name, bases, attributes, **kwds):
         """
         Build a new worksheet record
         """

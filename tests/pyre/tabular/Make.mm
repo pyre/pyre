@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity records sheets
+test: sanity records sheets csv
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -30,7 +30,10 @@ sheets:
 	${PYTHON} ./sheet_class_record.py
 	${PYTHON} ./sheet_class_inheritance_record.py
 	${PYTHON} ./sheet_instance.py
-	${PYTHON} ./sheet_instance_populate.py
+
+csv:
+	${PYTHON} ./csv_instance.py
+	${PYTHON} ./csv_read.py
 
 
 # end of file 
