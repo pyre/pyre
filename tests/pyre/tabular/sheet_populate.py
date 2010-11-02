@@ -53,7 +53,7 @@ def test():
         p.append(record=p.pyre_Record(datum))
     # check that all is good
     for expected, actual in zip(data, p):
-        assert expected == tuple(node.value for node in actual)
+        assert expected == tuple(actual)
         
     # and return the data set
     return p

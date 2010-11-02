@@ -57,7 +57,7 @@ def test():
     # get the peppers record
     peppers = p.sku["4001"]
     # check that we extracted the right record
-    assert data[1] == tuple(node.value for node in peppers)
+    assert data[1] == tuple(peppers)
         
     # and return the data set
     return p

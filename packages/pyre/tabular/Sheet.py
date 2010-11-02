@@ -86,6 +86,14 @@ class Sheet(metaclass=Templater):
         return
 
 
+    def __getitem__(self, index):
+        """
+        Indexed access to the data
+        """
+        # delegate to the storage
+        return self.pyre_data[index]
+
+
     def __iter__(self):
         """
         Build an iterator over my data set

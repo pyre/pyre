@@ -53,7 +53,7 @@ def test():
         ]
     # compare with what we extracted
     for expected, loaded in zip(target, sheet):
-        assert expected == tuple(node.value for node in loaded)
+        assert expected == tuple(loaded)
     # and return the sheet
     return sheet
 
