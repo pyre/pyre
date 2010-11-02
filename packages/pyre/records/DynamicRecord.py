@@ -83,4 +83,13 @@ class DynamicRecord(Record):
         return
 
 
+    def __iter__(self):
+        """
+        Build an iterator over my contents
+        """
+        for node in super().__iter__():
+            yield node.value
+        return
+
+
 # end of file 
