@@ -37,7 +37,7 @@ def bool(default=True):
 
 def dimensional(default=0):
     """
-    Build a bool property descriptor
+    Build a property descriptor with units
     """
     descriptor = Property()
     descriptor.type = schema.dimensional
@@ -56,7 +56,7 @@ def facility(interface, default=None):
 
 def float(default=0):
     """
-    Build a bool property descriptor
+    Build a float property descriptor
     """
     descriptor = Property()
     descriptor.type = schema.float
@@ -86,7 +86,7 @@ def object(default=None):
 
 def str(default=""):
     """
-    Build a str property descriptor
+    Build a string property descriptor
     """
     descriptor = Property()
     descriptor.type = schema.str
