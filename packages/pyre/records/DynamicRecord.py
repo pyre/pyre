@@ -87,9 +87,28 @@ class DynamicRecord(Record):
         """
         Build an iterator over my contents
         """
+        # get my superclass to iterate over the nodes
         for node in super().__iter__():
+            # dereference and yield
             yield node.value
+        # all done
         return
+
+
+    def __repr__(self):
+        """
+        Derefence my nodes to build a tuple with my values
+        """
+        # convert me into a tuple; this calls self.__iter__ implicitly
+        return tuple(self)
+
+
+    def __str__(self):
+        """
+        Build a string representation of my data
+        """
+        # build the string rep of my value tuple
+        return str(self.__repr__())
 
 
 # end of file 
