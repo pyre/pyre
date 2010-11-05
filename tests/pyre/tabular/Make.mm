@@ -33,6 +33,7 @@ sheets:
 	${PYTHON} ./sheet_populate.py
 	${PYTHON} ./sheet_columns.py
 	${PYTHON} ./sheet_index.py
+	${PYTHON} ./sheet_updates.py
 
 views:
 	${PYTHON} ./view.py
