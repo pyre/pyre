@@ -29,6 +29,22 @@ class Sheet(metaclass=Templater):
 
 
     # interface
+    def populate(self, data):
+        """
+        Assume that the layout of the iterable {data} is compatible with my record layout; use
+        it to populate my data set
+
+        Compatibility with my record layout implies that {data} is a container of records, and
+        each record is itself an iterable that has as many entries as i have measures.
+        """
+        # iterate of the reords in {data}
+        for datum in data:
+            # populate the data set
+            self.append(record=self.pyre_Record(datum))
+        # all done
+        return self
+                        
+        
     def append(self, record):
         """
         Add {record} to my data set
