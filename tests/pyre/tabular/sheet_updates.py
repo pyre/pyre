@@ -51,7 +51,7 @@ def test():
     assert abs(kiwi.msrp - 13.92) < .01
     # make small change in the production cost
     kiwi.production = 1.15
-    # check that the update is reflected in the msrp f kiwis
+    # check that the update is reflected in the msrp of kiwis
     assert abs(kiwi.msrp - 14.26) < .01
 
     # and return the data set

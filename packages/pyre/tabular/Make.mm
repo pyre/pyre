@@ -25,9 +25,11 @@ EXPORT_PYTHON_MODULES = \
     Derivation.py \
     Index.py \
     Measure.py \
+    Pivot.py \
     Record.py \
     Sheet.py \
     Templater.py \
+    View.py \
     exceptions.py \
     __init__.py
 

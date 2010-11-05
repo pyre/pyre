@@ -21,11 +21,12 @@ from .CSV import CSV as csv
 from .. import schema
 
 
-# measure factories with type information
+# convenience factories that build measures of specific types
 def dimensional(default=0):
     """
-    Build a measure that has units; legal assignments are constrained to have units that match
-    those of the default value supplied
+    Build a measure that has units
+
+    Legal assignments are constrained to have units compatible with the default value
     """
     m = measure()
     m.type = schema.dimensional
