@@ -7,9 +7,25 @@
 
 - framework:
 
+  - pyre.patterns.Named has to become a little more sophisticated with its name handling:
+
+    - passing name=<foo> to the constructor must have an indentical net effect as leaving it
+      blank at construction time and setting it later
+
   - look for a better way to install escape handlers for the command line parser; does the
     actual parsing happen too early? how would i then bootstrap the framework without having to
     check its state every time something significant happens?
+
+  - package names can be placed in their own namespace by auto prepending a special character
+    to their name. which character? what is the current status?
+
+  - what is the full set of options for allowing configuration changes past the initialization
+    phase?
+
+    - deal with this on a component by component basis?
+    - flag the capability?
+    - trap the events and redistribute?
+    - is this a component attribute? or a trait decoration?
 
 - configuration errors:
 
@@ -17,13 +33,19 @@
 
   - is it part of {help}?
 
+    - temporary invalid assignments that get later overriden by valid ones are not fatal
+      errors; they could get reported by {help}
+
+    - is the last valid assignment the one that wins? is it fatal if the last assignment
+      violates a constraint or do I fall back? how does the user control this behavior?
+
 - traits:
 
-  - treat them like components; some are: input and output streams have both a configuration
-    and an initailization phase; the latter grabs the system resource and should be done after
-    it's reasonably certain that the user has made up his mind about the name of the file. the
-    goal is to not leave behind zero length output files that were created when some assignment
-    was made that was later overriden by something else
+  - treat them like components; some are: input and output streams have both configuration and
+    initialization phases; the latter grabs the system resource and should be done after it's
+    reasonably certain that the user has made up her mind about the name of the file. the goal
+    is to not leave behind zero length output files that were created when some assignment was
+    made that was later overriden by something else
 
   - same considerations apply to components themselves; formalize the sequence of
     startup/shutdown steps
@@ -79,7 +101,9 @@
 
 - db: make
 
-  - db Query and View as Components
+  - db Query and View as Components 
+  
+    ? not sure what i meant with this. records, sheets and views are now closer to this
 
 - opal: make
 
@@ -89,7 +113,36 @@
 
   - while i am dreaming: i want my own coverage tool...
 
-- tabular: make
+- tabular: 
+
+  - resolve the uri argument to cvs.read through the pyre fileserver
+
+  - indexed columns must support iteration over their contents, like non-indexed ones. should
+    they iterate in record order? or is any order ok?
+
+  - take advantage of change notifications: should a record know that one of its values
+    changed? should a sheet know that one of its values changed
+
+  - allow the creation of records over multiple sessions
+
+  - allow the deletion of records; rethink this from a {calc} viewpoint: what does it mean for
+    a {calc} node to disappear? aggregators can drop it from their domain; others may raise
+    UnresolvedNode, or some such...
+
+  - views
+
+  - pivots
+
+    - {selector}: related to {SELECT} and {GROUP BY} from SQL: given a table, a selector can
+      aswer quickly questions like "produce the set of records that have <measure>=<value>", or
+      even "<measure> in the neighborhood of <value>" by controlling the binning strategy
+
+    - implement using {selectors}, i.e. the binning strategy that specifies the dimensions, and
+      a {cell}, i.e. the description of what operation to perform on the data slice that
+      corresponds to each fully qualified coordinate vector
+
+    - CHANGE notification: rebin a record when the matching value changed, just like an
+      aggregation gets recomputed when one of the factors changes
 
 - function overload: revisit
 
