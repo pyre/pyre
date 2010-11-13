@@ -115,6 +115,10 @@
 
 - tabular: 
 
+  - sheet inheritance is "broken" because derived classes rearrange the order of measures and
+    derivations. this means that instances of a class are not compatible with instances of its
+    direct ancestor, even in single inheritance
+
   - resolve the uri argument to cvs.read through the pyre fileserver
 
   - indexed columns must support iteration over their contents, like non-indexed ones. should
@@ -133,11 +137,11 @@
 
   - pivots
 
-    - {selector}: related to {SELECT} and {GROUP BY} from SQL: given a table, a selector can
+    - {chart}: related to {SELECT} and {GROUP BY} from SQL: given a table, a chart can
       aswer quickly questions like "produce the set of records that have <measure>=<value>", or
       even "<measure> in the neighborhood of <value>" by controlling the binning strategy
 
-    - implement using {selectors}, i.e. the binning strategy that specifies the dimensions, and
+    - implement using {chart}, i.e. the binning strategy that specifies the dimensions, and
       a {cell}, i.e. the description of what operation to perform on the data slice that
       corresponds to each fully qualified coordinate vector
 
