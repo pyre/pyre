@@ -29,7 +29,7 @@ class cost(pyre.tabular.sheet):
 
 
 class sales(pyre.tabular.sheet):
-    """The sales numbers for the first week of 2010/11"""
+    """The transaction data"""
     # layout
     date = pyre.tabular.str()
     time = pyre.tabular.str()
