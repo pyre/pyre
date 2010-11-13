@@ -91,6 +91,14 @@ class Sheet(metaclass=Templater):
         return itertools.chain(cls.pyre_measures(), cls.pyre_derivations())
 
 
+    @classmethod
+    def pyre_offset(cls, measure):
+        """
+        Return the offset of {measure} within my records
+        """
+        return cls.__dict__[measure.name].index
+
+
     # meta methods
     def __init__(self, name=None, **kwds):
         super().__init__(**kwds)
