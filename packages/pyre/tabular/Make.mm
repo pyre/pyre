@@ -20,13 +20,18 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Aggregator.py \
     CSV.py \
+    Chart.py \
     Column.py \
     Derivation.py \
+    Dimension.py \
     Index.py \
+    InferredDimension.py \
     Measure.py \
     Pivot.py \
     Record.py \
+    Reduction.py \
     Sheet.py \
     Templater.py \
     View.py \

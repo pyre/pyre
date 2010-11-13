@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity records sheets views pivots csv
+test: sanity records sheets csv views charts pivots
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -37,6 +37,13 @@ sheets:
 
 views:
 	${PYTHON} ./view.py
+
+charts:
+	${PYTHON} ./chart.py
+	${PYTHON} ./chart_class_layout.py
+	${PYTHON} ./chart_class_inheritance.py
+	${PYTHON} ./chart_instance.py
+	${PYTHON} ./chart_sales.py
 
 pivots:
 	${PYTHON} ./pivot.py
