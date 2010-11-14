@@ -118,6 +118,13 @@ class Sheet(metaclass=Templater):
         return self.pyre_data[index]
 
 
+    def __len__(self):
+        """
+        Compute the number of records in the sheet
+        """
+        return len(self.pyre_data)
+
+
     def __iter__(self):
         """
         Build an iterator over my data set
