@@ -20,7 +20,9 @@ class Chart(metaclass=Aggregator):
     sku in a given time period".
 
     Charts are used by pivot tables as a means of imposing structure on the data and
-    precomputing data slices.
+    precomputing data slices. Charts ar enot useful by themslevs since they cannot be used to
+    directly reference the facts in a sheet; they only provide access through record ranks, and
+    independent access to the fact sheet is record before actual records can be retrieved.
 
     See {pyre.tabular.Pivot} and the {pyre.tabular.Dimension} subclasses for more details.
     """
@@ -36,19 +38,19 @@ class Chart(metaclass=Aggregator):
     pyre_localDimensions = () # the tuple of aggregation dimensions declared locally in this Chart
     pyre_inheritedDimensions = () # the tuple of aggregation dimensions inherited from superclasses
     # instance data
-    pyre_facts = None # the associated fact sheet
     pyre_bins = None # local storage for the dimension bins
 
 
     # interface
     def project(self, facts):
         # iterate over all facts
+        # make sure this happens in one pass through the data, in case the source is a stream
         for rank, fact in enumerate(facts):
             # and over al my dimensions
             for dimension in self.pyre_dimensions:
                 # ask each one to bin this fact
                 self.pyre_bins[dimension].project(record=fact, rank=rank)
-
+        # all done
         return
 
 
@@ -64,12 +66,6 @@ class Chart(metaclass=Aggregator):
         # attach the bin storage
         self.pyre_bins = bins
         
-        return
-
-        # iterate over all the records
-        for index, record in enumerate(facts):
-            print("{}: {}".format(index, record))
-
         return
 
 
