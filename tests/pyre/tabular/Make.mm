@@ -43,6 +43,7 @@ charts:
 	${PYTHON} ./chart_class_layout.py
 	${PYTHON} ./chart_class_inheritance.py
 	${PYTHON} ./chart_instance.py
+	${PYTHON} ./chart_inferred.py
 	${PYTHON} ./chart_sales.py
 
 pivots:
