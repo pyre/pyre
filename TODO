@@ -115,6 +115,12 @@
 
 - tabular: 
 
+  - give records some of the aggregator capabilities that tables have so that streams of data
+    with no associated storage can be binned; of course, no storage implies that the charts
+    must immediately update some reduction, since no ranks or references to the data should be
+    retained. what effect should this have on the design/implementation of Sheet, Chart and
+    Pivot?
+
   - sheet inheritance is "broken" because derived classes rearrange the order of measures and
     derivations. this means that instances of a class are not compatible with instances of its
     direct ancestor, even in single inheritance
