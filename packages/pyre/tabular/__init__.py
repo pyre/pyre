@@ -67,12 +67,8 @@ def str(default="", **kwds):
 
 
 # dimension factories
-def inferred(measure, **kwds):
-    """
-    Build a dimension that assumes values in the range of {measure}
-    """
-    from .InferredDimension import InferredDimension
-    return InferredDimension(measure=measure, **kwds)
+from .InferredDimension import InferredDimension as inferred
+from .IntervalDimension import IntervalDimension as interval
 
 
 # end of file 

@@ -28,6 +28,7 @@ EXPORT_PYTHON_MODULES = \
     Dimension.py \
     Index.py \
     InferredDimension.py \
+    IntervalDimension.py \
     Measure.py \
     Pivot.py \
     Record.py \
