@@ -43,9 +43,18 @@ def test():
     # build a chart
     cube = chart()
     # bin the transactions
-    cube.project(transactions)
+    cube.pyre_project(transactions)
+    # here are the skus we expect to retrieve from the data set
+    skus = ("4000", "4001", "4002", "4003", "4004", "4005")
     # check that the skus were classified correctly
-    assert tuple(cube.sku.bins) == ("4000", "4001", "4002", "4003", "4004", "4005")
+    assert tuple(sku for sku, bin in cube.sku.bins) == skus
+    # check that all the transactions were binned
+    assert len(transactions) == sum(len(bin) for info, bin in cube.sku.bins)
+    
+    # verify that all transaction records binned as having a given sku do so
+    for sku, bin in cube.sku.bins:
+        for rank in bin:
+            assert transactions[rank].sku == sku
 
     # and return the charts and the sheets
     return cube, transactions

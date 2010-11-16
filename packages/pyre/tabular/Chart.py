@@ -42,7 +42,22 @@ class Chart(metaclass=Aggregator):
 
 
     # interface
-    def project(self, facts):
+    def pyre_initialize(self):
+        # check whether we've already done this
+        if self._pyre_initialized: return self
+        # otherwise, iterate over my dimensions
+        for dimension in self.pyre_dimensions:
+            # and initialize my bin handlers
+            self.pyre_bins[dimension].initialize()
+        # set the flag
+        self._pyre_initialized = True
+        # and return
+        return self
+
+
+    def pyre_project(self, facts):
+        # make sure i have been initialized
+        self.pyre_initialize()
         # iterate over all facts
         # make sure this happens in one pass through the data, in case the source is a stream
         for rank, fact in enumerate(facts):
@@ -67,6 +82,10 @@ class Chart(metaclass=Aggregator):
         self.pyre_bins = bins
         
         return
+
+
+    # private data
+    _pyre_initialized = False
 
 
 # end of file 

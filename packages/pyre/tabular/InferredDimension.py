@@ -25,7 +25,13 @@ class InferredDimension(Dimension):
         # interface
         @property
         def bins(self):
-            return sorted(self.keys())
+            return sorted(self.items())
+
+        def initialize(self):
+            """
+            Prepare to receive and bin data
+            """
+            return
 
         def project(self, record, rank):
             """
