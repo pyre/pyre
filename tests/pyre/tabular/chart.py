@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: chart accessibility
+Sanity check: chart class accessibility
 """
 
 

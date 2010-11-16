@@ -34,11 +34,9 @@ class chart(pyre.tabular.chart, sheet=sales):
 
 
 def test():
-    # make a chart instance
+    # create a chart instance
     c = chart()
-    # adjust the binning strategy
-    
-    # and return the chart object
+    # and return it
     return c
 
 
