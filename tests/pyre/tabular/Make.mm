@@ -46,6 +46,7 @@ charts:
 	${PYTHON} ./chart_inferred.py
 	${PYTHON} ./chart_interval.py
 	${PYTHON} ./chart_instance_config.py
+	${PYTHON} ./chart_select.py
 	${PYTHON} ./chart_sales.py
 
 pivots:
