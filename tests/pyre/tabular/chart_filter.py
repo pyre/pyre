@@ -45,18 +45,13 @@ def test():
     cube = chart()
     # bin the transactions
     cube.pyre_project(transactions)
-    # here are the skus and dates we expect to retrieve from the data set
-    skus = ("4000", "4001", "4002", "4003", "4004", "4005")
-    dates = ("2010/11/01","2010/11/02","2010/11/03","2010/11/04","2010/11/05",)
-    # check that the skus were classified correctly
-    assert tuple(sku for sku, bin in cube.sku.bins) == skus
-    # check that the dates were classified correctly
-    assert tuple(date for date, bin in cube.date.bins) == dates
 
     # select the records the match a given sku and date
-    grp = cube.pyre_select(sku="4000", date="2010/11/01")
+    grp = cube.pyre_filter(date="2010/11/01", sku="4000")
+    # check that we got what we expected
+    assert grp == {0, 5, 6}
 
-    # and return the charts and the sheets
+    # and return the chart and the sheet
     return cube, transactions
 
 

@@ -35,6 +35,8 @@ class Chart(metaclass=Aggregator):
     # public data
     # class data
     pyre_dimensions = () # the tuple of aggregation dimensions
+    pyre_namemap = None
+
     pyre_localDimensions = () # the tuple of aggregation dimensions declared locally in this Chart
     pyre_inheritedDimensions = () # the tuple of aggregation dimensions inherited from superclasses
     # instance data
@@ -43,6 +45,9 @@ class Chart(metaclass=Aggregator):
 
     # interface
     def pyre_initialize(self):
+        """
+        Make a chart ready to process records from a sheet by initializing its bin strategies
+        """
         # check whether we've already done this
         if self._pyre_initialized: return self
         # otherwise, iterate over my dimensions
@@ -56,6 +61,9 @@ class Chart(metaclass=Aggregator):
 
 
     def pyre_project(self, facts):
+        """
+        Iterate through {facts} and bin each one accroding to the user specified dimensions
+        """
         # make sure i have been initialized
         self.pyre_initialize()
         # iterate over all facts
@@ -69,18 +77,37 @@ class Chart(metaclass=Aggregator):
         return
 
 
+    def pyre_filter(self, **kwds):
+        """
+        Create an iterable over those facts that statisfy the criteria specified in {kwds},
+        which is assumed to be a value specification for each dimension that is to be used to
+        restrict the data set
+        """
+        # identify the relevant bins
+        bins = (self.pyre_namemap[name][value] for name, value in kwds.items())
+        # build and return the restriction
+        return set.intersection(*bins)
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
         # initialize the bin storage
         bins = {}
+        namemap = {}
         # iterate over my dimensions
         for dimension in self.pyre_dimensions:
-            # ask for the bin handler and deposit it in my local storage
-            bins[dimension] = dimension.pyre_register(chart=self)
+            # build the bin handler
+            handler = dimension.pyre_register(chart=self)
+            # attach it to the bin registry
+            bins[dimension] = handler
+            # and the name map
+            namemap[dimension.name] = handler
         # attach the bin storage
         self.pyre_bins = bins
-        
+        # and the namemap
+        self.pyre_namemap = namemap
+        # all done
         return
 
 
