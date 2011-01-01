@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2010 all rights reserved
+# (c) 1998-2011 all rights reserved
 #
 
 """
@@ -71,11 +71,11 @@ def version():
 # license
 _pyre_version = (1, 0, 0)
 
-_pyre_copyright = "pyre: Copyright (c) 1998-2010 Michael A.G. Aïvázis"
+_pyre_copyright = "pyre: Copyright (c) 1998-2011 Michael A.G. Aïvázis"
 
 _pyre_license = """
     pyre 1.0
-    Copyright (c) 1998-2010 Michael A.G. Aïvázis
+    Copyright (c) 1998-2011 Michael A.G. Aïvázis
     All Rights Reserved
 
 
