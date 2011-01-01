@@ -9,6 +9,7 @@ PROJECT = pyre
 PACKAGE = doc/gauss
 
 RECURSE_DIRS = \
+   diagrams \
    figures \
    listings \
 

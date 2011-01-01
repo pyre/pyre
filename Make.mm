@@ -13,6 +13,7 @@ RECURSE_DIRS = \
     packages \
     depository \
     tests \
+    bin \
     doc \
     schema \
     examples \

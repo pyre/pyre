@@ -14,6 +14,7 @@ RECURSE_DIRS = \
     classes \
     containers \
     generators \
+    components \
 
 #--------------------------------------------------------------------------
 #
