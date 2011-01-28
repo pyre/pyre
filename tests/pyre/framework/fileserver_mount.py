@@ -21,7 +21,7 @@ def test():
     fs = executive.fileserver
 
     # build a file system for the current directory
-    local = pyre.filesystem.newLocalFilesystem('.')
+    local = pyre.filesystem.newLocalFilesystem('.').sync()
     # and mount it
     fs['local'] = local
     # check that this file is there

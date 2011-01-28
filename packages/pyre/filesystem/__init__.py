@@ -94,8 +94,6 @@ def newLocalFilesystem(root, walker=None, recognizer=None, **kwds):
         # build the filesystem
         from .LocalFilesystem import LocalFilesystem
         fs = LocalFilesystem(info=node, walker=walker, recognizer=recognizer, **kwds)
-        # populate it
-        fs.sync()
         # and return it to the caller
         return fs
     elif isinstance(node, File):
@@ -104,8 +102,6 @@ def newLocalFilesystem(root, walker=None, recognizer=None, **kwds):
             # build the file system
             from .ZipFilesystem import ZipFilesystem
             fs = ZipFilesystem(info=node)
-            # populate it
-            fs.sync()
             # and return it
             return fs
     # otherwise
@@ -145,8 +141,6 @@ def newZipFilesystem(root, recognizer=None, **kwds):
     # build the file system
     from .ZipFilesystem import ZipFilesystem
     fs = ZipFilesystem(info=info)
-    # populate it
-    fs.sync()
     # and return it
     return fs
 

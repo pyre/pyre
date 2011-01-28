@@ -88,7 +88,7 @@ class FileServer(Filesystem):
         # both are handled correctly by the pyre.filesystem.newFilesystem factory
         try:
             # so invoke it to build the filesystem for us
-            self.systemfs = pyre.filesystem.newFilesystem(pyre.prefix())
+            self.systemfs = pyre.filesystem.newFilesystem(pyre.prefix()).sync(levels=1)
         except self.GenericError:
             # if this failed, just create a new empty folder
             system = self.newFolder()
@@ -105,9 +105,10 @@ class FileServer(Filesystem):
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
+        userdir = os.path.expanduser(self.DOT_PYRE) 
         try:
             # make filesystem out of the preference directory
-            self.userfs = pyre.filesystem.newFilesystem(os.path.expanduser(self.DOT_PYRE))
+            self.userfs = pyre.filesystem.newFilesystem(userdir).sync(levels=1)
         except self.GenericError:
             self.userfs = self.newFolder()
        # mount this directory as /pyre/user
@@ -116,7 +117,7 @@ class FileServer(Filesystem):
         # finally, mount the current working directory
         try:
             # make filesystem out of the preference directory
-            self.localfs = pyre.filesystem.newFilesystem(".")
+            self.localfs = pyre.filesystem.newFilesystem(".").sync(levels=1)
         except self.GenericError:
             self.localfs = self.newFolder()
        # mount this directory as /local

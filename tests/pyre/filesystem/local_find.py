@@ -15,7 +15,7 @@ Verify searching through folders for named nodes
 def test():
     import pyre.filesystem
     # build a filesystem
-    home = pyre.filesystem.newLocalFilesystem(root="..")
+    home = pyre.filesystem.newLocalFilesystem(root="..").sync()
     # look for this file
     this = home["filesystem/local_find.py"]
     # make sure we got it
