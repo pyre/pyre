@@ -11,6 +11,7 @@ PROJECT = pyre
 RECURSE_DIRS = \
     lib \
     packages \
+    extensions \
     depository \
     tests \
     bin \

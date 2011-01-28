@@ -7,31 +7,15 @@
 
 
 PROJECT = pyre
-PACKAGE = pyre
-PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
 
 RECURSE_DIRS = \
-    calc \
-    components \
-    config \
-    constraints \
-    db \
-    filesystem \
-    framework \
-    parsing \
-    patterns \
-    records \
-    schema \
-    tabular \
-    tracking \
-    units \
-    xml \
-
+    pyrepg
 
 #--------------------------------------------------------------------------
 #
 
-all: export
+all:
+	BLD_ACTION="all" $(MM) recurse
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -42,15 +26,15 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-
 #--------------------------------------------------------------------------
-# export
+#
 
-EXPORT_PYTHON_MODULES = \
-    __init__.py
+PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
 
+zip:
+	for package in $(PACKAGES); do { \
+	    ( cd $${package}; zip -r ${PYRE_ZIP} $${package}; ) \
+	} done
 
-export:: export-python-modules
-	BLD_ACTION="export" $(MM) recurse
 
 # end of file 
