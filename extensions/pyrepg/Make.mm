@@ -7,11 +7,11 @@
 
 PROJECT = pyre
 PACKAGE = db
-MODULE = pyrepgmodule
+MODULE = pyrepg
 
 include std-pythonmodule.def
 
 PROJ_SRCS = \
-    misc.cc
+    pyrepg-metadata.cc
 
 # end of file
