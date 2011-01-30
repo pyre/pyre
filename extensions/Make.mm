@@ -26,15 +26,4 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-#--------------------------------------------------------------------------
-#
-
-PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
-
-zip:
-	for package in $(PACKAGES); do { \
-	    ( cd $${package}; zip -r ${PYRE_ZIP} $${package}; ) \
-	} done
-
-
 # end of file 
