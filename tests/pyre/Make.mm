@@ -19,6 +19,7 @@ RECURSE_DIRS = \
     calc \
     records \
     tabular \
+    db \
     filesystem \
     codecs \
     config \
