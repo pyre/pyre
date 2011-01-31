@@ -8,7 +8,7 @@
 #include <portinfo>
 #include <Python.h>
 
-#include "pyrepg-metadata.h"
+#include "metadata.h"
 
 
 // copyright

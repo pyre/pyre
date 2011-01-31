@@ -12,6 +12,6 @@ MODULE = pyrepg
 include std-pythonmodule.def
 
 PROJ_SRCS = \
-    pyrepg-metadata.cc
+    metadata.cc
 
 # end of file

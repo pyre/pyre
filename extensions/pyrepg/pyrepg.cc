@@ -9,13 +9,15 @@
 #include <Python.h>
 
 // the module method declarations
-#include "pyrepg-metadata.h"
+#include "metadata.h"
 
 // put everything in my private namespace
 namespace pyrepg {
 
     // the module method table
     PyMethodDef methods[] = {
+
+        // module metadata
         // the copyright method
         { copyright__name__, copyright, METH_VARARGS, copyright__doc__ },
         // the version method
@@ -51,7 +53,14 @@ namespace pyrepg {
 PyMODINIT_FUNC
 PyInit_pyrepg()
 {
-    return PyModule_Create(&pyrepg::module);
+    // create the module
+    PyObject * module = PyModule_Create(&pyrepg::module);
+    // check whether module creation succeeded and raise an exception if not
+    if (!module) {
+        return module;
+    }
+    // and return the newly created module
+    return module;
 }
 
 

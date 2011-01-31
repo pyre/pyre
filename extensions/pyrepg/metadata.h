@@ -5,8 +5,8 @@
 // (c) 1998-2011 all rights reserved
 // 
 
-#if !defined(pyrepg_pyrepg_metadata_h)
-#define pyrepg_pyrepg_metadata_h
+#if !defined(pyrepg_metadata_h)
+#define pyrepg_metadata_h
 
 
 // place everything in my private namespace
