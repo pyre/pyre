@@ -27,7 +27,7 @@ PyObject * pyrepg::registerExceptionHierarchy(PyObject * module) {
     // build its name
     std::string errorName = stem + pyrepg::Error__name__;
     // and the exception object
-    pyrepg::Error = PyErr_NewException(errorName.c_str(), 0, 0);
+    pyrepg::Error = PyErr_NewException(errorName.c_str(), PyExc_Exception, 0);
     // increment its reference count so we can pass ownership to the module
     Py_INCREF(pyrepg::Error);
     // register it with the module
