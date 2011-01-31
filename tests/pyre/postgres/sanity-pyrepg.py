@@ -13,7 +13,7 @@ Sanity check: verify that the module is accessible
 
 
 def test():
-    import pyre.db.pyrepg
+    import pyre.postgres.pyrepg
     return
 
 

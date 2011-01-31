@@ -13,18 +13,18 @@ Sanity check: verify that the exceptions defined in the module are accessible
 
 
 def test():
-    import pyre.db.pyrepg
+    import pyre.postgres.pyrepg
 
     # make sure the exception object is accessible
-    error = pyre.db.pyrepg.Error
+    error = pyre.postgres.pyrepg.Error
     # make sure it is decorated correctly
     assert error.__name__ == 'Error'
     assert error.__module__ == 'pyrepg'
     assert error.__bases__ == (Exception,)
     # verify it can be caught
     try:
-        raise pyre.db.pyrepg.Error
-    except pyre.db.pyrepg.Error as error:
+        raise pyre.postgres.pyrepg.Error
+    except pyre.postgres.pyrepg.Error as error:
         pass
 
     return 

@@ -13,9 +13,14 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity pyrepg
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./sanity-pyrepg.py
+
+pyrepg:
+	${PYTHON} ./pyrepg-exceptions.py
+	${PYTHON} ./pyrepg-connect.py
 
 # end of file 
