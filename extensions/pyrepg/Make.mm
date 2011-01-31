@@ -12,6 +12,7 @@ MODULE = pyrepg
 include std-pythonmodule.def
 
 PROJ_SRCS = \
+    exceptions.cc \
     metadata.cc
 
 # end of file

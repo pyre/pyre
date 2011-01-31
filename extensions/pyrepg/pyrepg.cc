@@ -10,6 +10,7 @@
 
 // the module method declarations
 #include "metadata.h"
+#include "exceptions.h"
 
 // put everything in my private namespace
 namespace pyrepg {
@@ -59,6 +60,8 @@ PyInit_pyrepg()
     if (!module) {
         return module;
     }
+    // register the module exceptions
+    pyrepg::registerExceptionHierarchy(module);
     // and return the newly created module
     return module;
 }

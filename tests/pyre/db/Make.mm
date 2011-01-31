@@ -13,10 +13,13 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity pyrepg
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./sanity-pyrepg.py
+
+pyrepg:
+	${PYTHON} ./pyrepg-exceptions.py
 
 # end of file 
