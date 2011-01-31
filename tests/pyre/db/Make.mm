@@ -21,5 +21,6 @@ sanity:
 
 pyrepg:
 	${PYTHON} ./pyrepg-exceptions.py
+	${PYTHON} ./pyrepg-connect.py
 
 # end of file 

@@ -9,20 +9,23 @@
 #include <Python.h>
 
 // the module method declarations
-#include "metadata.h"
+#include "connection.h"
 #include "exceptions.h"
+#include "metadata.h"
 
 // put everything in my private namespace
 namespace pyrepg {
 
     // the module method table
     PyMethodDef methods[] = {
-
         // module metadata
         // the copyright method
         { copyright__name__, copyright, METH_VARARGS, copyright__doc__ },
         // the version method
         { version__name__, version, METH_VARARGS, version__doc__ },
+
+        // connections
+        { connect__name__, connect, METH_VARARGS, connect__doc__ },
 
         // sentinel
         {0, 0, 0, 0}
