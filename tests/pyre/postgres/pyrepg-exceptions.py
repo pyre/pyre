@@ -13,15 +13,21 @@ Sanity check: verify that the exceptions defined in the module are accessible
 
 
 def test():
-    from pyre.postgres import pyrepg
-    from pyre.framework.exceptions import FrameworkError
+    # access the relevant modules
+    import pyre.postgres.pyrepg as pyrepg
+    import pyre.db.exceptions as exceptions
+    # initialize the module exceptions manually
+    # this is normally done automatically when a client first requests a connection to the
+    # database back end
+    pyrepg.registerExceptions(exceptions)
 
+    # now check
     # make sure the exception object is accessible
     warning = pyrepg.Warning
     # make sure it is decorated correctly
     assert warning.__name__ == 'Warning'
     assert warning.__module__ == 'pyre.db.exceptions'
-    assert warning.__bases__ == (FrameworkError,)
+    assert warning.__bases__ == (exceptions.FrameworkError,)
     # verify it can be caught
     try:
         raise pyrepg.Warning('a generic database warning')
@@ -33,7 +39,7 @@ def test():
     # make sure it is decorated correctly
     assert error.__name__ == 'Error'
     assert error.__module__ == 'pyre.db.exceptions'
-    assert error.__bases__ == (FrameworkError,)
+    assert error.__bases__ == (exceptions.FrameworkError,)
     # verify it can be caught
     try:
         raise pyrepg.Error('a generic database error')
