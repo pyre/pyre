@@ -15,6 +15,8 @@ namespace pyrepg {
     const char * const connect__doc__ = "establish a connection to the postgres back end";
     PyObject * connect(PyObject *, PyObject *);
 
+    // disconnect from the back end
+    void disconnect(PyObject *);
 }
 
 
