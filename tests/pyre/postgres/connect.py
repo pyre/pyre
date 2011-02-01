@@ -16,7 +16,7 @@ def test():
     # import the postgres module
     import pyre.postgres
     # use the high level connection factory
-    connection = pyre.postgres.connect()
+    connection = pyre.postgres.connect(database='pyrepg')
     # return the connection
     return connection
 

@@ -16,9 +16,15 @@
 
 // establish a new connection
 PyObject * pyrepg::connect(PyObject *, PyObject * args) {
+    // the connection specification
+    const char * specification;
+    // extract the arguments
+    if (!PyArg_ParseTuple(args, "s", &specification)) {
+        return 0;
+    }
 
     // establish a connection
-    PGconn * connection = PQconnectdb("dbname=pyrepg");
+    PGconn * connection = PQconnectdb(specification);
     // check
     if (PQstatus(connection) != CONNECTION_OK) {
         return 0;

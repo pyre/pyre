@@ -14,9 +14,9 @@ Sanity check: verify that the module is accessible
 
 def test():
     import pyre.postgres.pyrepg
-
-    connection = pyre.postgres.pyrepg.connect()
-
+    # make a conection
+    connection = pyre.postgres.pyrepg.connect("dbname=pyrepg")
+    # and return it
     return connection
 
 
