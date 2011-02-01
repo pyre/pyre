@@ -19,6 +19,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Connection.py \
     __init__.py
 
 

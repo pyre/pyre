@@ -6,14 +6,15 @@
 #
 
 
-# import and set up the postgres extension
-# access the extension
-from . import pyrepg
-# get hold of the standard compliant exception hierarchy
-from ..db import exceptions
-# register the exception hierarchy with the module so that the exceptions it raises are
-# subclasses of the ones defined in pyre.db
-pyrepg.registerExceptions(exceptions)
+def connect(**kwds):
+    """
+    Establish a new connection to a database back end
+
+    See the Connection class documentation for information on how to control the connection
+    details through the arguments to this function
+    """
+    from .Connection import Connection
+    return Connection(**kwds)
 
 
 # end of file 
