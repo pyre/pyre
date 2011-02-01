@@ -13,7 +13,11 @@
 namespace pyrepg {
 
     // exception registration
-    PyObject * registerExceptionHierarchy(PyObject *);
+    const char * const registerExceptions__name__ = "registerExceptions";
+    const char * const registerExceptions__doc__ = 
+        "register the classes that represent the standard exceptions raised by"
+        "DB API 2.0 compliant implementations";
+    PyObject * registerExceptions(PyObject *, PyObject *);
 
 } // of namespace pyrepg
 

@@ -24,6 +24,9 @@ namespace pyrepg {
         // the version method
         { version__name__, version, METH_VARARGS, version__doc__ },
 
+        // exceptions
+        { registerExceptions__name__, registerExceptions, METH_VARARGS, registerExceptions__doc__ },
+
         // connections
         { connect__name__, connect, METH_VARARGS, connect__doc__ },
 
@@ -63,8 +66,6 @@ PyInit_pyrepg()
     if (!module) {
         return module;
     }
-    // register the module exceptions
-    pyrepg::registerExceptionHierarchy(module);
     // and return the newly created module
     return module;
 }
