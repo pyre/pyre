@@ -42,6 +42,13 @@ class Connection:
         return self.pyrepg.disconnect(self.connection)
 
 
+    def execute(self, command):
+        """
+        Execute command and return the result
+        """
+        return self.pyrepg.execute(self.connection, command)
+
+
     # meta methods
     def __init__(self, *, # keyword arguments only from here on
                  # only a subset of the connection speficiations parameters are supported 

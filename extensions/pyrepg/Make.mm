@@ -14,6 +14,7 @@ MODULE = pyrepg
 include std-pythonmodule.def
 
 PROJ_SRCS = \
+    execute.cc \
     exceptions.cc \
     connection.cc \
     metadata.cc

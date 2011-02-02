@@ -11,6 +11,7 @@
 // the module method declarations
 #include "connection.h"
 #include "exceptions.h"
+#include "execute.h"
 #include "metadata.h"
 
 // put everything in my private namespace
@@ -30,6 +31,9 @@ namespace pyrepg {
         // connections
         { connect__name__, connect, METH_VARARGS, connect__doc__ },
         { disconnect__name__, disconnect, METH_VARARGS, disconnect__doc__ },
+
+        // SQL command execution
+        { execute__name__, execute, METH_VARARGS, execute__doc__ },
 
         // sentinel
         {0, 0, 0, 0}
