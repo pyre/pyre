@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the module is accessible
+Open a connection and close it explicitly
 """
 
 

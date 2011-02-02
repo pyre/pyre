@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the module is accessible
+Make a connection through the high level interface
 """
 
 
