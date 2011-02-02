@@ -25,6 +25,7 @@ pyrepg:
 
 connections:
 	${PYTHON} ./connect.py
+	${PYTHON} ./disconnect.py
 
 
 # end of file 

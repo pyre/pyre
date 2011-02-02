@@ -13,6 +13,12 @@
 
 #include "connection.h"
 
+// local additions to the namespace
+namespace pyrepg {
+    // the name of the connection capsule
+    const char * const connectionCapsuleName = "pyrepg.connection";
+}
+
 
 // establish a new connection
 PyObject * pyrepg::connect(PyObject *, PyObject * args) {
@@ -30,18 +36,38 @@ PyObject * pyrepg::connect(PyObject *, PyObject * args) {
         return 0;
     }
 
-    return PyCapsule_New(connection, "pyrepg.connection", pyrepg::disconnect);
+    return PyCapsule_New(connection, pyrepg::connectionCapsuleName, pyrepg::finish);
+}
+
+PyObject * pyrepg::disconnect(PyObject *, PyObject * args) {
+    // the connection capsule
+    PyObject * connection;
+    // extract it from the arguments
+    if (!PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &connection)) {
+        return 0;
+    }
+    // call the destructor
+    pyrepg::finish(connection);
+    // and remove the destructor
+    PyCapsule_SetDestructor(connection, 0);
+
+    // all done
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 
 // shutdown an existing connection
-void pyrepg::disconnect(PyObject * capsule) {
+void pyrepg::finish(PyObject * capsule) {
+    // bail if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, "pyrepg.connection")) {
+        return;
+    }
     // get pointer from the capsule and cast it to a pg connection
     PGconn * connection =
-        static_cast<PGconn *>(PyCapsule_GetPointer(capsule, "pyrepg.connection"));
+        static_cast<PGconn *>(PyCapsule_GetPointer(capsule, pyrepg::connectionCapsuleName));
     // shutdown 
     PQfinish(connection);
-
     // all done
     return;
 }

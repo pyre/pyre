@@ -30,6 +30,18 @@ class Connection:
     pyrepg = initializeExtension() # the handle to the postgres extension module
 
 
+    # interface
+    def close(self):
+        """
+        Close the connection to the database
+
+        Closing a connection makes it unsuitable for any further database access. This applies
+        to all objects that may retain a reference to the connection being closed. Any
+        uncommitted changes will be lost
+        """
+        return self.pyrepg.disconnect(self.connection)
+
+
     # meta methods
     def __init__(self, *, # keyword arguments only from here on
                  # only a subset of the connection speficiations parameters are supported 
@@ -51,7 +63,7 @@ class Connection:
         spec = ' '.join([ '='.join(entry) for entry in spec ])
         
         # establish a connection
-        connection = self.pyrepg.connect(spec)
+        self.connection = self.pyrepg.connect(spec)
 
         # all done
         return

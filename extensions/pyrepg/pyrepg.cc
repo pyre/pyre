@@ -29,6 +29,7 @@ namespace pyrepg {
 
         // connections
         { connect__name__, connect, METH_VARARGS, connect__doc__ },
+        { disconnect__name__, disconnect, METH_VARARGS, disconnect__doc__ },
 
         // sentinel
         {0, 0, 0, 0}

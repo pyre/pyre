@@ -16,7 +16,11 @@ namespace pyrepg {
     PyObject * connect(PyObject *, PyObject *);
 
     // disconnect from the back end
-    void disconnect(PyObject *);
+    const char * const disconnect__name__ = "disconnect";
+    const char * const disconnect__doc__ = "shut down a connection to the postgres back end";
+    PyObject * disconnect(PyObject *, PyObject *);
+
+    void finish(PyObject *);
 }
 
 
