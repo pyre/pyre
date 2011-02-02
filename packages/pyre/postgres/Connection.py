@@ -35,6 +35,7 @@ class Connection:
                  # only a subset of the connection speficiations parameters are supported 
                  database, # the name of the database to access
                  user=None, password=None, # authentication
+                 application=None,
                  **kwds):
 
         # chain to the ancestors
@@ -46,6 +47,7 @@ class Connection:
             ]
         if user is not None: spec.append(['user', user])
         if password is not None: spec.append(('password', password))
+        if application is not None: spec.append(('application_name', application))
         spec = ' '.join([ '='.join(entry) for entry in spec ])
         
         # establish a connection
