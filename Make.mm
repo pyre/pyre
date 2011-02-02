@@ -20,6 +20,22 @@ RECURSE_DIRS = \
     examples \
 
 #--------------------------------------------------------------------------
+#  shortcuts to building in my subdirectories
+.PHONY: lib extensions packages tests
+
+lib:
+	(cd lib; mm)
+
+extensions:
+	(cd extensions; mm)
+
+packages:
+	(cd packages; mm)
+
+tests:
+	(cd tests; mm)
+
+#--------------------------------------------------------------------------
 #
 
 all:
