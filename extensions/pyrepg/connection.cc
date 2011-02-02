@@ -19,7 +19,7 @@ PyObject * pyrepg::connect(PyObject *, PyObject * args) {
     // the connection specification
     const char * specification;
     // extract the arguments
-    if (!PyArg_ParseTuple(args, "s", &specification)) {
+    if (!PyArg_ParseTuple(args, "s:connect", &specification)) {
         return 0;
     }
 
@@ -37,7 +37,7 @@ PyObject * pyrepg::disconnect(PyObject *, PyObject * args) {
     // the connection capsule
     PyObject * connection;
     // extract it from the arguments
-    if (!PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &connection)) {
+    if (!PyArg_ParseTuple(args, "O!:disconnect", &PyCapsule_Type, &connection)) {
         return 0;
     }
     // call the destructor

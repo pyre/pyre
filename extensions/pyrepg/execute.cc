@@ -20,7 +20,7 @@ PyObject * pyrepg::execute(PyObject *, PyObject * args) {
     const char * command;
     PyObject * connection;
     // extract the arguments
-    if (!PyArg_ParseTuple(args, "O!s", &PyCapsule_Type, &connection, &command)) {
+    if (!PyArg_ParseTuple(args, "O!s:execute", &PyCapsule_Type, &connection, &command)) {
         return 0;
     }
 

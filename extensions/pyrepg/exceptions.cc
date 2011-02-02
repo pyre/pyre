@@ -32,7 +32,7 @@ PyObject * pyrepg::registerExceptions(PyObject * module, PyObject * args) {
 
     // unpack the arguments
     PyObject * exceptions;
-    if (!PyArg_ParseTuple(args, "O!", &PyModule_Type, &exceptions)) {
+    if (!PyArg_ParseTuple(args, "O!:registerExceptions", &PyModule_Type, &exceptions)) {
         return 0;
     }
 
