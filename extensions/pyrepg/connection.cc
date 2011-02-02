@@ -11,14 +11,8 @@
 #include <Python.h>
 #include <libpq-fe.h>
 
+#include "constants.h"
 #include "connection.h"
-
-// local additions to the namespace
-namespace pyrepg {
-    // the name of the connection capsule
-    const char * const connectionCapsuleName = "pyrepg.connection";
-}
-
 
 // establish a new connection
 PyObject * pyrepg::connect(PyObject *, PyObject * args) {
@@ -60,7 +54,7 @@ PyObject * pyrepg::disconnect(PyObject *, PyObject * args) {
 // shutdown an existing connection
 void pyrepg::finish(PyObject * capsule) {
     // bail if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, "pyrepg.connection")) {
+    if (!PyCapsule_IsValid(capsule, pyrepg::connectionCapsuleName)) {
         return;
     }
     // get pointer from the capsule and cast it to a pg connection
