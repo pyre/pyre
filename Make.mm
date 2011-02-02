@@ -20,22 +20,6 @@ RECURSE_DIRS = \
     examples \
 
 #--------------------------------------------------------------------------
-#  shortcuts to building in my subdirectories
-.PHONY: lib extensions packages tests
-
-lib:
-	(cd lib; mm)
-
-extensions:
-	(cd extensions; mm)
-
-packages:
-	(cd packages; mm)
-
-tests:
-	(cd tests; mm)
-
-#--------------------------------------------------------------------------
 #
 
 all:
@@ -50,6 +34,22 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+
+#--------------------------------------------------------------------------
+#  shortcuts to building in my subdirectories
+.PHONY: lib extensions packages tests
+
+lib:
+	(cd lib; mm)
+
+extensions:
+	(cd extensions; mm)
+
+packages:
+	(cd packages; mm)
+
+tests:
+	(cd tests; mm)
 
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
 
