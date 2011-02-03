@@ -19,12 +19,12 @@ class Record(tuple, metaclass=Templater):
     requred by the application
 
     Records are similar to named tuples: the underlying storage mechanism is a tuple, and the
-    fields are descriptors that provide named access to the tuple entries. Thee are superior to
+    fields are descriptors that provide named access to the tuple entries. They are superior to
     named tuples since they enable the data model designer to specify types and constraints
     that must be satisfied by the data, and automate the conversion process to a large degree.
 
     Inheritance among {Record} subclasses is interpreted as composition: the set of fields that
-    define a recors is built out of the descriptors declared both locally and by all of its
+    define a record is built out of the descriptors declared both locally and by all of its
     ancestors. Descriptor composition is subject to name shadowing, a restriction that may be
     lifted in a future implementation.
     """
