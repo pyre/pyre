@@ -25,6 +25,7 @@ EXPORT_PYTHON_MODULES = \
     Date.py \
     Decimal.py \
     Dimensional.py \
+    Descriptor.py \
     Float.py \
     Integer.py \
     Object.py \
