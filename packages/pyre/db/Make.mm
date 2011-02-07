@@ -19,6 +19,10 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Schemer.py \
+    Server.py \
+    Table.py \
+    View.py \
     exceptions.py \
     __init__.py
 
