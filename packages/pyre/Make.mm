@@ -11,6 +11,7 @@ PACKAGE = pyre
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
 
 RECURSE_DIRS = \
+    algebraic \
     calc \
     components \
     config \
