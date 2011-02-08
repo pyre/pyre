@@ -16,16 +16,17 @@ class Binary(Expression):
 
 
     # traversal of the nodes in my expression tree
+    @property
     def pyre_dependencies(self):
         """
         Traverse my expression tree looking for leaf nodes
         """
         # visit my left operand
-        for node in self.op1.pyre_dependencies():
+        for node in self.op1.pyre_dependencies:
             # yield any nodes discovered
             yield node
         # and now my right operand
-        for node in self.op2.pyre_dependencies():
+        for node in self.op2.pyre_dependencies:
             # yield any nodes discovered
             yield node
         # all done

@@ -16,12 +16,13 @@ class Unary(Expression):
 
 
     # traversal of the nodes in my expression tree
+    @property
     def pyre_dependencies(self):
         """
         Traverse my expression tree looking for leaf nodes
         """
         # traverse my expression
-        for node in self.op.pyre_dependencies():
+        for node in self.op.pyre_dependencies:
             # and yield any nodes discovered
             yield node
         # all done

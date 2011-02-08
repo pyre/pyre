@@ -20,6 +20,7 @@ class Node:
 
 
     # traversal of the nodes in my expression tree
+    @property
     def pyre_dependencies(self):
         """
         Traverse my expression tree looking for leaf nodes
