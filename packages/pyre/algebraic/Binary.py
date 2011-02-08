@@ -15,6 +15,23 @@ class Binary(Expression):
     """
 
 
+    # traversal of the nodes in my expression tree
+    def dependencies(self):
+        """
+        Traverse my expression tree looking for leaf nodes
+        """
+        # visit my left operand
+        for node in self.op1.dependencies():
+            # yield any nodes discovered
+            yield node
+        # and now my right operand
+        for node in self.op2.dependencies():
+            # yield any nodes discovered
+            yield node
+        # all done
+        return
+
+
     # meta methods
     def __init__(self, op1, op2, **kwds):
         super().__init__(**kwds)

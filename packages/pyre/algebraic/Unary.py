@@ -15,6 +15,20 @@ class Unary(Expression):
     """
 
 
+    # traversal of the nodes in my expression tree
+    def dependencies(self):
+        """
+        Traverse my expression tree looking for leaf nodes
+        """
+        # traverse my expression
+        for node in self.op.dependencies():
+            # and yield any nodes discovered
+            yield node
+        # all done
+        return
+
+
+    # meta methods
     def __init__(self, op, **kwds):
         super().__init__(**kwds)
         self.op = op

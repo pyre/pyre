@@ -20,5 +20,6 @@ sanity:
 
 algebra:
 	${PYTHON} ./algebra.py
+	${PYTHON} ./dependencies.py
 
 # end of file 

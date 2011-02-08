@@ -19,6 +19,15 @@ class Node:
     """
 
 
+    # traversal of the nodes in my expression tree
+    def dependencies(self):
+        """
+        Traverse my expression tree looking for leaf nodes
+        """
+        # just return myself
+        yield self
+
+
     # algebra; methods are listed in the order they show up in the python documentation
     def __add__(self, other):
         # if this an operation among nodes
