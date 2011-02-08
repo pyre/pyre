@@ -44,7 +44,13 @@ class Aggregator(AttributeClassifier):
         chart = super().__new__(cls, name, bases, attributes, **kwds)
 
         # harvest the locally declared dimensions
-        localDimensions = tuple(cls.pyre_harvest(attributes, cls.Dimension))
+        localDimensions = []
+        for dimensionName, dimension in cls.pyre_harvest(attributes, cls.Dimension):
+            # store the name
+            dimension.name = dimensionName
+            # and add this on to the pile
+            localDimensions.append(dimension)
+
         # extract the inherited dimensions
         inheritedDimensions = []
         # prime the set of known names
@@ -61,12 +67,10 @@ class Aggregator(AttributeClassifier):
                     inheritedDimensions.append(dimension)
             # in any case, add this ancestor's attrinutes to the list of known names
             known.update(base.__dict__)
-        # convert to read-only storage
-        inheritedDimensions = tuple(inheritedDimensions)
-        # attach the dimesion tuples to the chart record
-        chart.pyre_localDimensions = localDimensions
-        chart.pyre_inheritedDimensions = inheritedDimensions
-        chart.pyre_dimensions = localDimensions + inheritedDimensions
+        # attach the dimesion tuples to the chart record as read-only
+        chart.pyre_localDimensions = tuple(localDimensions)
+        chart.pyre_inheritedDimensions = tuple(inheritedDimensions)
+        chart.pyre_dimensions = tuple(localDimensions + inheritedDimensions)
 
         # and return the new chart
         return chart

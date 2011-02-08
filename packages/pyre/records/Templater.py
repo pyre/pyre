@@ -27,8 +27,15 @@ class Templater(AttributeClassifier):
         Build a new {Record} class
         """
         # harvest the locally declared fields from the class declaration
-        localFields = tuple(cls.pyre_harvest(attributes, cls.Field))
-        localDerivations = tuple(cls.pyre_harvest(attributes, cls.Derivation))
+        localFields = []
+        for fieldName, field in cls.pyre_harvest(attributes, cls.Field):
+            field.name = fieldName
+            localFields.append(field)
+        localDerivations = []
+        for derivationName, derivation in cls.pyre_harvest(attributes, cls.Derivation):
+            derivation.name = derivationName
+            localDerivations.append(derivation)
+
         # remove them from the attributes for now
         # we will replace them with record specific accessors in __init__; see below
         for field in itertools.chain(localFields, localDerivations):
@@ -41,8 +48,8 @@ class Templater(AttributeClassifier):
         record = super().__new__(cls, name, bases, attributes, **kwds)
 
         # attach the local fields
-        record.pyre_localFields = localFields
-        record.pyre_localDerivations = localDerivations
+        record.pyre_localFields = tuple(localFields)
+        record.pyre_localDerivations = tuple(localDerivations)
 
         # scan the mro for inherited fields, subject to name shadowing
         # initialize the temporary storage for the harvest

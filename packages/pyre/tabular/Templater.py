@@ -28,9 +28,23 @@ class Templater(AttributeClassifier):
         """
         Build a new worksheet record
         """
-        # harvest the locally declared fields from the class declaration
-        localMeasures = tuple(cls.pyre_harvest(attributes, cls.Measure))
-        localDerivations = tuple(cls.pyre_harvest(attributes, cls.Derivation))
+        # harvest the locally declared measures from the class declaration
+        # also, remove them from the attributes for now
+        # we will replace them with intelligent accessors in __init__; see below
+        localMeasures = []
+        for measureName, measure in cls.pyre_harvest(attributes, cls.Measure):
+            # record the name
+            measure.name = measureName
+            # and add it to the pile
+            localMeasures.append(measure)
+        # harvest the locally declared derivations from the class declaration
+        localDerivations = []
+        for derivationName, derivation in cls.pyre_harvest(attributes, cls.Derivation):
+            # record the name
+            derivation.name = derivationName
+            # and add it to the pile
+            localDerivations.append(derivation)
+
         # remove them from the attributes for now
         # we will replace them with intelligent accessors in __init__; see below
         for item in itertools.chain(localMeasures, localDerivations):
@@ -38,8 +52,8 @@ class Templater(AttributeClassifier):
 
         # set up the attributes
         attributes["pyre_name"] = name
-        attributes["pyre_localMeasures"] = localMeasures
-        attributes["pyre_localDerivations"] = localDerivations
+        attributes["pyre_localMeasures"] = tuple(localMeasures)
+        attributes["pyre_localDerivations"] = tuple(localDerivations)
         attributes["pyre_inheritedMeasures"] = ()
         attributes["pyre_inheritedDerivations"] = ()
         

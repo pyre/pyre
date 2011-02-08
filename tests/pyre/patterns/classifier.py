@@ -28,7 +28,11 @@ def test():
     class meta(AttributeClassifier):
 
         def __new__(cls, name, bases, attributes):
-            attributes["traits"] = list(cls.pyre_harvest(attributes, descriptor))
+            traits = []
+            for traitName, trait in cls.pyre_harvest(attributes, descriptor):
+                trait.name = traitName
+                traits.append(trait)
+            attributes["traits"] = traits
             return super().__new__(cls, name, bases, attributes)
 
 

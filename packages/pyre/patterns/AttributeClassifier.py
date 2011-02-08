@@ -48,10 +48,8 @@ class AttributeClassifier(AbstractMetaclass):
         for name, attribute in attributes.items():
             # if this is a descriptor
             if isinstance(attribute, descriptor):
-                # set its name
-                attribute.name = name
-                # and return it to the caller
-                yield attribute
+                # return it to the caller along with its name
+                yield name, attribute
         # all done
         return
 
