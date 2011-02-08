@@ -22,6 +22,7 @@ EXPORT_PYTHON_MODULES = \
     Absolute.py \
     Addition.py \
     Binary.py \
+    Expression.py \
     FloorDivision.py \
     Increment.py \
     Inverse.py \

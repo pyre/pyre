@@ -6,10 +6,10 @@
 #
 
 
-from .Node import Node
+from .Expression import Expression
 
 
-class Binary(Node):
+class Binary(Expression):
     """
     Base class for nodes that capture binary operations
     """

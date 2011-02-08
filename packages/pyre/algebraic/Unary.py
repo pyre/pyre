@@ -6,10 +6,10 @@
 #
 
 
-from .Node import Node
+from .Expression import Expression
 
 
-class Unary(Node):
+class Unary(Expression):
     """
     Base class for nodes that capture unary operations
     """
