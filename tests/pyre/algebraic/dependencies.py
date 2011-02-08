@@ -22,23 +22,23 @@ def test():
     n2 = Node()
 
     # check that they have no dependencies
-    assert set(n1.dependencies()) == {n1}
-    assert set(n2.dependencies()) == {n2}
+    assert set(n1.pyre_dependencies()) == {n1}
+    assert set(n2.pyre_dependencies()) == {n2}
 
     # an expression involving a unary operator
     n = -n1
-    assert set(n.dependencies()) == {n1}
+    assert set(n.pyre_dependencies()) == {n1}
     
     # an expression involving a pseudo-unary operator
     n = 2*n1
-    assert set(n.dependencies()) == {n1}
+    assert set(n.pyre_dependencies()) == {n1}
     
     # an expression involving a binary operator
     n = n1 + n2
-    assert set(n.dependencies()) == {n1, n2}
+    assert set(n.pyre_dependencies()) == {n1, n2}
     
     # a more complicated example
-    assert set((2*(.5 - n1*n2 + n2**2)*n1).dependencies()) == {n1, n2}
+    assert set((2*(.5 - n1*n2 + n2**2)*n1).pyre_dependencies()) == {n1, n2}
 
     return
 
