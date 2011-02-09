@@ -27,6 +27,16 @@ class Node:
         """
         # just return myself
         yield self
+        # and no more
+        return
+
+
+    # interface
+    def patch(self, *args, **kwds):
+        """
+        Sentinel method for node patching in expression trees
+        """
+        return
 
 
     # algebra; methods are listed in the order they show up in the python documentation

@@ -18,4 +18,22 @@ class Expression(Node):
     """
 
 
+    # interface
+    def eval(self, **kwds):
+        """
+        Compute the value of my expression tree
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'eval'".format(self))
+
+
+    def patch(self, replacements):
+        """
+        Look through the dictionary {replacements} for any of my operands and replace them with
+        the indicated nodes.
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'patch'".format(self))
+
+
 # end of file 

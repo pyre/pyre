@@ -29,6 +29,24 @@ class Unary(Expression):
         return
 
 
+    # interface
+    def patch(self, replacements):
+        """
+        Look through the dictionary {replacements} for any of my operands and replace them with
+        the indicated nodes.
+        """
+        # check whether my operand shows in the map
+        if self.op in replacements:
+            # it does; replace it
+            self.op = replacements[self.op]
+        # otherwise
+        else:
+            # pass the replacement map down
+            self.op.patch(replacements)
+        # all done
+        return
+
+
     # meta methods
     def __init__(self, op, **kwds):
         super().__init__(**kwds)

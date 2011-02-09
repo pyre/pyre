@@ -21,5 +21,6 @@ sanity:
 algebra:
 	${PYTHON} ./algebra.py
 	${PYTHON} ./dependencies.py
+	${PYTHON} ./patch.py
 
 # end of file 

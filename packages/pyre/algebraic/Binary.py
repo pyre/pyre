@@ -33,6 +33,33 @@ class Binary(Expression):
         return
 
 
+    # interface
+    def patch(self, replacements):
+        """
+        Look through the dictionary {replacements} for any of my operands and replace them with
+        the indicated nodes.
+        """
+        # check whether my left operand shows in the map
+        if self.op1 in replacements:
+            # it does; replace it
+            self.op1 = replacements[self.op1]
+        # otherwise
+        else:
+            # pass the replacement map down
+            self.op1.patch(replacements)
+
+        # check whether my right operand shows in the map
+        if self.op2 in replacements:
+            # it does; replace it
+            self.op2 = replacements[self.op2]
+        # otherwise
+        else:
+            # pass the replacement map down
+            self.op2.patch(replacements)
+        # all done
+        return
+
+
     # meta methods
     def __init__(self, op1, op2, **kwds):
         super().__init__(**kwds)
