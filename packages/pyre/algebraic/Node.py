@@ -32,7 +32,7 @@ class Node:
 
 
     # interface
-    def patch(self, *args, **kwds):
+    def pyre_patch(self, *args, **kwds):
         """
         Sentinel method for node patching in expression trees
         """

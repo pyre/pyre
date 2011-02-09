@@ -34,7 +34,7 @@ class Binary(Expression):
 
 
     # interface
-    def patch(self, replacements):
+    def pyre_patch(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with
         the indicated nodes.
@@ -46,7 +46,7 @@ class Binary(Expression):
         # otherwise
         else:
             # pass the replacement map down
-            self.op1.patch(replacements)
+            self.op1.pyre_patch(replacements)
 
         # check whether my right operand shows in the map
         if self.op2 in replacements:
@@ -55,7 +55,7 @@ class Binary(Expression):
         # otherwise
         else:
             # pass the replacement map down
-            self.op2.patch(replacements)
+            self.op2.pyre_patch(replacements)
         # all done
         return
 

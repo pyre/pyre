@@ -30,7 +30,7 @@ class Unary(Expression):
 
 
     # interface
-    def patch(self, replacements):
+    def pyre_patch(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with
         the indicated nodes.
@@ -42,7 +42,7 @@ class Unary(Expression):
         # otherwise
         else:
             # pass the replacement map down
-            self.op.patch(replacements)
+            self.op.pyre_patch(replacements)
         # all done
         return
 
