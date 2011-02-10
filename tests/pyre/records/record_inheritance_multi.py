@@ -37,9 +37,10 @@ def test():
     assert isinstance(item.sku, pyre.records.field)
     assert isinstance(item.description, pyre.records.field)
 
-    assert item.pyre_localFields == (item.sku, item.description)
-    assert item.pyre_inheritedFields == ()
-    assert tuple(item.pyre_fields()) == (item.sku, item.description)
+    assert item.pyre_localItems == (item.sku, item.description)
+    assert item.pyre_items == (item.sku, item.description)
+    assert item.pyre_fields == item.pyre_items
+    assert item.pyre_derivations == ()
 
     assert item.pyre_index[item.sku] == 0
     assert item.pyre_index[item.description] == 1
@@ -48,9 +49,10 @@ def test():
     assert isinstance(production.cost, pyre.records.field)
     assert isinstance(production.overhead, pyre.records.field)
 
-    assert production.pyre_localFields == (production.cost, production.overhead)
-    assert production.pyre_inheritedFields == ()
-    assert tuple(production.pyre_fields()) == (production.cost, production.overhead)
+    assert production.pyre_localItems == (production.cost, production.overhead)
+    assert production.pyre_items == (production.cost, production.overhead)
+    assert production.pyre_fields == (production.cost, production.overhead)
+    assert production.pyre_derivations == ()
 
     assert production.pyre_index[production.cost] == 0
     assert production.pyre_index[production.overhead] == 1
@@ -62,24 +64,22 @@ def test():
     assert isinstance(pricing.overhead, pyre.records.field)
     assert isinstance(pricing.price, pyre.records.field)
 
-    assert pricing.pyre_localFields == (pricing.price,)
-    assert pricing.pyre_inheritedFields == (
-        pricing.sku, pricing.description,
-        pricing.cost, pricing.overhead
-        )
-    assert tuple(pricing.pyre_fields()) == (
-        pricing.price, 
+    assert pricing.pyre_localItems == (pricing.price,)
+    assert pricing.pyre_items == (
+        pricing.cost, pricing.overhead,
         pricing.sku, pricing.description, 
-        pricing.cost, pricing.overhead
+        pricing.price, 
         )
+    assert pricing.pyre_fields == pricing.pyre_items
+    assert pricing.pyre_derivations == ()
 
-    assert pricing.pyre_index[pricing.price] == 0
-    assert pricing.pyre_index[pricing.sku] == 1
-    assert pricing.pyre_index[pricing.description] == 2
-    assert pricing.pyre_index[pricing.cost] == 3
-    assert pricing.pyre_index[pricing.overhead] == 4
+    assert pricing.pyre_index[pricing.cost] == 0
+    assert pricing.pyre_index[pricing.overhead] == 1
+    assert pricing.pyre_index[pricing.sku] == 2
+    assert pricing.pyre_index[pricing.description] == 3
+    assert pricing.pyre_index[pricing.price] == 4
 
-    return item, pricing
+    return item, production, pricing
 
 
 # main

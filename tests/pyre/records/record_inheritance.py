@@ -34,9 +34,10 @@ def test():
     assert isinstance(item.sku, pyre.records.field)
     assert isinstance(item.description, pyre.records.field)
 
-    assert item.pyre_localFields == (item.sku, item.description)
-    assert item.pyre_inheritedFields == ()
-    assert tuple(item.pyre_fields()) == (item.sku, item.description)
+    assert item.pyre_localItems == (item.sku, item.description)
+    assert item.pyre_items == (item.sku, item.description)
+    assert item.pyre_fields == (item.sku, item.description)
+    assert item.pyre_derivations == ()
 
     assert item.pyre_index[item.sku] == 0
     assert item.pyre_index[item.description] == 1
@@ -48,18 +49,19 @@ def test():
     assert isinstance(pricing.overhead, pyre.records.field)
     assert isinstance(pricing.price, pyre.records.field)
 
-    assert pricing.pyre_localFields == (pricing.cost, pricing.overhead, pricing.price)
-    assert pricing.pyre_inheritedFields == (pricing.sku, pricing.description)
-    assert tuple(pricing.pyre_fields()) == (
+    assert pricing.pyre_localItems == (pricing.cost, pricing.overhead, pricing.price)
+    assert pricing.pyre_items == (
+        pricing.sku, pricing.description,
         pricing.cost, pricing.overhead, pricing.price, 
-        pricing.sku, pricing.description
         )
+    assert pricing.pyre_fields == pricing.pyre_items
+    assert pricing.pyre_derivations == ()
 
-    assert pricing.pyre_index[pricing.cost] == 0
-    assert pricing.pyre_index[pricing.overhead] == 1
-    assert pricing.pyre_index[pricing.price] == 2
-    assert pricing.pyre_index[pricing.sku] == 3
-    assert pricing.pyre_index[pricing.description] == 4
+    assert pricing.pyre_index[pricing.sku] == 0
+    assert pricing.pyre_index[pricing.description] == 1
+    assert pricing.pyre_index[pricing.cost] == 2
+    assert pricing.pyre_index[pricing.overhead] == 3
+    assert pricing.pyre_index[pricing.price] == 4
 
     return item, pricing
 

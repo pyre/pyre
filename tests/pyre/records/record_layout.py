@@ -34,9 +34,11 @@ def test():
     assert isinstance(record.overhead, pyre.records.field)
     assert isinstance(record.price, pyre.records.field)
 
-    assert record.pyre_localFields == (
+    assert record.pyre_localItems == (
         record.sku, record.description, record.cost, record.overhead, record.price)
-    assert record.pyre_inheritedFields == ()
+    assert record.pyre_items == record.pyre_localItems
+    assert record.pyre_fields == record.pyre_localItems
+    assert record.pyre_derivations == ()
 
     assert record.pyre_index[record.sku] == 0
     assert record.pyre_index[record.description] == 1
