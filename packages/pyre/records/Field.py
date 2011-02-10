@@ -19,10 +19,10 @@ class Field(Descriptor, Node):
 
 
     # interface
-    def pyre_accessor(self, record, index):
+    def pyre_recordFieldAccessor(self, record, index):
         """
-        Ask {record} for an accessor factory that it appropriate to fields and use it to build
-        one that knows my index in the tuple of items of {record}
+        Ask {record} for an accessor factory that is appropriate for fields, and use it to build
+        an accessor that knows my index in the tuple of items of {record}
         """
         return record.pyre_fieldAccessor(index=index, field=self)
 

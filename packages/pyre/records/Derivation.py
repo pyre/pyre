@@ -38,7 +38,7 @@ class Derivation(Node):
 
 
     # interface
-    def pyre_accessor(self, record, index):
+    def pyre_recordFieldAccessor(self, record, index):
         """
         Ask {record} for an accessor factory that it appropriate for derivations and use it to
         build one that knows my index in the tuple of items of {record} 

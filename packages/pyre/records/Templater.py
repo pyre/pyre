@@ -128,7 +128,7 @@ class Templater(AttributeClassifier):
             # record the index of this item
             subscripts[item] = index
             # build the data accessor
-            accessor = item.pyre_accessor(record=self, index=index)
+            accessor = item.pyre_recordFieldAccessor(record=self, index=index)
             # and attach it
             setattr(self, item.name, accessor)
         # attach the subscript index
