@@ -6,23 +6,22 @@
 #
 
 
-class NodalDerivationAccessor:
+class Accessor:
     """
-    Descriptor that provides access to the fields of a record assuming that the values are
-    stored in {pyre.calc.Node} compatible objects
+    Descriptor that provides access to a record item
     """
 
 
     # public data
     index = None # the index of my value in the data tuple
-    descriptor = None # the descriptor with the meta data
+    field = None # the field with the meta data
 
 
     # meta methods
-    def __init__(self, index, descriptor, **kwds):
+    def __init__(self, index, field, **kwds):
         super().__init__(**kwds)
         self.index = index
-        self.descriptor = descriptor
+        self.field = field
         return
 
 
@@ -34,7 +33,18 @@ class NodalDerivationAccessor:
         try:
             return record[self.index]
         except TypeError:
-            return self.descriptor
+            return self.field
 
+
+    def __set__(self, record, value):
+        """
+        Store {value} in my {record} field
+        """
+        # get the field to cast, convert and validate
+        value = self.field.pyre_process(value)
+        # attach it to the node
+        record[self.index] = value
+        # all done
+        return
 
 # end of file 

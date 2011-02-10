@@ -6,7 +6,6 @@
 #
 
 
-import itertools
 from .Templater import Templater
 
 
@@ -16,7 +15,7 @@ class Record(tuple, metaclass=Templater):
 
     Records have field descriptors that provide the information necessary to convert data
     between the representation used by the persistent store and the native python object
-    requred by the application
+    required by the application
 
     Records are similar to named tuples: the underlying storage mechanism is a tuple, and the
     fields are descriptors that provide named access to the tuple entries. They are superior to
@@ -27,88 +26,106 @@ class Record(tuple, metaclass=Templater):
     define a record is built out of the descriptors declared both locally and by all of its
     ancestors. Descriptor composition is subject to name shadowing, a restriction that may be
     lifted in a future implementation.
+
+    Records support {derivations}: fields whose value is computed using other record
+    fields. Such fields are built automatically whenever a field declaration contains any sort
+    of arithmetic on the right hand side.
+
+    Details of the current implementation:
+
+    * As mentioned above, {tuple} provides storage for the actual values. This implies that
+      indexed access using integers works as expected and does not require any special handling
+
+    * Named access is handled through the field descriptors. Supporting composition via
+      inheritance complicates the implementation a bit, as the rank of a given field is not
+      known until the class mro is traversed and shadowing is taken into account. Each {Record}
+      subclass maintains its own map from descriptor instances to the integer rank in the
+      corresponding underlying tuple.
     """
 
 
     # types
+    from .Field import Field
     from .ConstAccessor import ConstAccessor as pyre_fieldAccessor
-    from .ConstAccessor import ConstAccessor as pyre_derivationAccessor
+    pyre_derivationAccessor = pyre_fieldAccessor
+
+
+    # exceptions
+    from ..constraints.exceptions import ConstraintViolationError
 
 
     # public data
-    pyre_localFields = () # the field descriptors found in my class declaratino
-    pyre_inheritedFields = () # the field descriptors I inherited
+    pyre_items = () # tuple with all my entries
+    pyre_fields = () # a tuple of only my fields
+    pyre_derivations = () # a tuple with only my derivations
+    pyre_proxies = None # a set with the fields used in derivations
+
+    pyre_index = None # the map of descriptors to indices
+    pyre_process = None # the data processing algorithm
 
 
     # interface
     @classmethod
-    def pyre_fields(cls):
-        return itertools.chain(cls.pyre_localFields, cls.pyre_inheritedFields)
-
-
-    @classmethod
-    def pyre_derivations(cls):
-        return itertools.chain(cls.pyre_localDerivations, cls.pyre_inheritedDerivations)
-
-
-    @classmethod
-    def pyre_items(cls):
-        return itertools.chain(cls.pyre_fields(), cls.pyre_derivations())
-
-
-    @classmethod
     def pyre_raw(cls, data):
         """
-        Bypass casting, conversions and validations for those special clients that know the
-        data is good. Use with caution.
+        Bypass casting, conversions and validations for those special clients that know their
+        data is good. Use with caution
         """
         return super().__new__(cls, data)
 
-
+    
     @classmethod
-    def pyre_process(cls, raw, **kwds):
+    def pyre_processFields(cls, raw, **kwds):
         """
-        Form the tuple that holds my values by extracting information from either {raw} or
-        {kwds} and walking it through casting, conversion and validation
+        Form the tuple that holds my values by extracting information either from {raw} or
+        {kwds}, and walking the data through casting, conversion and validation
+
+        In the absence of derivations, the data tuple can be constructed by simply asking each
+        field to consume one item from the raw input, convert it and place it in the record
+        tuple
         """
-        # if were not given an explict tuple
-        if raw is None:
-            # extract the values from the {kwds}
-            raw = tuple(kwds.pop(field.name, field.default) for field in cls.pyre_fields())
-            # if any {kwds} remained, we got some unknown fields
-            if kwds:
-                raise ValueError("unexpected field names: {}".format(", ".join(kwds.keys())))
+        # if I were given an explicit tuple, build an iterator over it
+        source = iter(raw) if raw is not None else (
+            # otherwise, build a generator that extracts values from {kwds}
+            kwds.pop(item.name, item.default) for item in cls.pyre_items)
+        # build the data tuple and return it
+        return (item.eval(data=source) for item in cls.pyre_items)
 
-        # storage for my tuple
-        data = []
-        # cast, convert and validate my field data
-        for value, field in zip(raw, cls.pyre_fields()):
-            # get the descriptor to process the value
-            value = field.process(value)
-            # and store it
-            data.append(value)
-
-        # evaluate the derivations
-        for derivation in cls.pyre_derivations():
-            # compute the value
-            value = derivation.eval(values=data, index=cls.pyre_index)
-            # and store it
-            data.append(value)
-
-        # form the tuple and return it
-        return tuple(data)
+            
+    @classmethod
+    def pyre_processFieldsAndDerivations(cls, raw, **kwds):
+        """
+        In the presence of derivations, things are a little more complicated: we must grant
+        derivations access to the fields they depend on. To avoid casting, converting and
+        validating the fields more than once, we maintain a cache with their values. An
+        important step is performed by the metaclass: scanning derivation expressions and
+        converting references to fields into field proxies
+        """
+        # if I were given an explicit tuple, build an iterator over it
+        source = iter(raw) if raw is not None else (
+            # otherwise, build a generator that extracts values from {kwds}
+            kwds.pop(item.name, item.default) for item in cls.pyre_items)
+        # prepare my cache
+        cache = {}
+        # iterate over my items
+        for item in cls.pyre_items:
+            # get the item to compute its value
+            value = item.eval(data=source, cache=cache)
+            # add it to the cache
+            cache[item] = value
+            # and yield the value
+            yield value
+        # all done
+        return
 
 
     # meta methods
     def __new__(cls, raw=None, **kwds):
         """
-        Initialize a record either from the tuple {raw}, or by extracting the data from {kwds}
+        Initialize a record using either the pre-qualified tuple {raw}, or by extracting the
+        data from {kwds}
         """
         return super().__new__(cls, cls.pyre_process(raw, **kwds))
-
-
-    # exceptions
-    from ..constraints.exceptions import ConstraintViolationError
 
 
 # end of file 

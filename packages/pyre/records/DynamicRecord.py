@@ -6,14 +6,17 @@
 #
 
 
-import itertools
+# packages
 import pyre.calc
+
+# superclasses
 from .Record import Record
 
 
+# declaration
 class DynamicRecord(Record):
     """
-    The base class for representing data extracted from persistent stores
+    Another base class for representing data extracted from persistent stores
 
     {DynamicRecord} uses a tuple of {pyre.calc} nodes for the value storage. This provides
     support for fields whose value can be changed. Derivations are setup with evaluators from
@@ -22,52 +25,64 @@ class DynamicRecord(Record):
 
 
     # types
-    from .NodalFieldAccessor import NodalFieldAccessor as pyre_fieldAccessor
-    from .NodalDerivationAccessor import NodalDerivationAccessor as pyre_derivationAccessor
+    from .Accessor import Accessor as pyre_fieldAccessor
+    from .ConstAccessor import ConstAccessor as pyre_derivationAccessor
 
 
+    # interface
     @classmethod
-    def pyre_process(cls, raw, **kwds):
+    def pyre_processFields(cls, raw, **kwds):
         """
-        Form the tuple that holds my values by extracting information from either {raw} or
-        {kwds} and walking it through casting, conversion and validation
-        """
-        # if were not given an explict tuple
-        if raw is None:
-            # extract the values from the {kwds}
-            raw = tuple(kwds.pop(field.name, field.default) for field in cls.pyre_fields())
-            # if any {kwds} remained, we got some unknown fields
-            if kwds:
-                raise ValueError("unexpected field names: {}".format(", ".join(kwds.keys())))
+        Form the tuple that holds my values by extracting information either from {raw} or
+        {kwds}, and walking the data through casting, conversion and validation
 
-        # storage for my tuple
-        data = []
-        # cast, convert and validate my field data
-        for value, field in zip(raw, cls.pyre_fields()):
-            # get the descriptor to process the value
-            value = field.process(value)
-            # build a new node
+        In the absence of derivations, the data tuple can be constructed by simply asking each
+        field to consume one item from the raw input and convert it. We then build a
+        pyre.calc.node to hold the value and place it in the output tuple
+        """
+        # if I were given an explicit tuple, build an iterator over it
+        source = iter(raw) if raw is not None else (
+            # otherwise, build a generator that extracts values from {kwds}
+            kwds.pop(item.name, item.default) for item in cls.pyre_items)
+        # build the data tuple and return it
+        for item in cls.pyre_items:
+            # construct the value
+            value = item.eval(data=source)
+            # build a calc node for it
             node = pyre.calc.newNode(value=value)
-            # and store it
-            data.append(node)
-
-        # evaluate the derivations
-        # print("processing derivations")
-        for derivation in cls.pyre_derivations():
-            # print("  {.name!r}".format(derivation))
-            # print("    type: {!r}".format(derivation))
-            # print("    expr: {}".format(derivation))
-            # compute the value
-            value = derivation.eval(values=data, index=cls.pyre_index)
-            # print("    value: {!r}".format(value))
-            # thanks to nodal algebra, this already a node; store it
-            data.append(value)
-
-        # form the tuple and return it
-        return tuple(data)
-
+            # and yield it
+            yield node
+        # all  done
+        return
+        
+            
+    @classmethod
+    def pyre_processFieldsAndDerivations(cls, raw, **kwds):
+        """
+        """
+        # if I were given an explicit tuple, build an iterator over it
+        source = iter(raw) if raw is not None else (
+            # otherwise, build a generator that extracts values from {kwds}
+            kwds.pop(item.name, item.default) for item in cls.pyre_items)
+        # initialize the cache
+        cache = {}
+        # build the data tuple
+        for item in cls.pyre_items:
+            # get the item to compute its value
+            value = item.eval(data=source, cache=cache)
+            # if this item is a field, we have to convert the value into a calc node
+            if isinstance(item, cls.Field):
+                value = pyre.calc.newNode(value=value)
+            # add it to the cache
+            cache[item] = value
+            # and yield the value
+            yield value
+        # all done
+        return
+            
 
     # meta methods
+    # replace the methods in {tuple} with ones that are aware of the calc node interface
     def __getitem__(self, index):
         """
         Indexed read access: get the value of the associated node

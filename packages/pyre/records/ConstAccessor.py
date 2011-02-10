@@ -8,20 +8,20 @@
 
 class ConstAccessor:
     """
-    Descriptor that provides access to the fields of a record
+    Descriptor that provides access to a record item
     """
 
 
     # public data
     index = None # the index of my value in the data tuple
-    descriptor = None # the descriptor with the meta data
+    field = None # the field with the meta data
 
 
     # meta methods
-    def __init__(self, index, descriptor, **kwds):
+    def __init__(self, index, field, **kwds):
         super().__init__(**kwds)
         self.index = index
-        self.descriptor = descriptor
+        self.field = field
         return
 
 
@@ -33,7 +33,7 @@ class ConstAccessor:
         try:
             return record[self.index]
         except TypeError:
-            return self.descriptor
+            return self.field
 
 
 # end of file 

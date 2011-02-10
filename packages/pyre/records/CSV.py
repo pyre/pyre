@@ -43,7 +43,7 @@ class CSV:
         # build the name map
         namemap = { name: index for index, name in enumerate(headers) }
         # adjust the column specification
-        columns = tuple(field.name for field in layout.pyre_fields())
+        columns = tuple(field.name for field in layout.pyre_fields)
         # start reading lines from the input source
         for row in reader:
             # assemble the requested data tuple
