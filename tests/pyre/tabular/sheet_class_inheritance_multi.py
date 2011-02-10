@@ -41,25 +41,38 @@ def test():
 
     # check the bases
     assert production.pyre_name == "production"
-    assert production.pyre_localMeasures == ( production.sku, production.production )
-    assert production.pyre_inheritedMeasures == ()
-    assert production.pyre_localDerivations == ()
-    assert production.pyre_inheritedDerivations == ()
+    assert production.pyre_localItems == ( production.sku, production.production )
+    assert production.pyre_items == ( production.sku, production.production )
+    assert production.pyre_measures == ( production.sku, production.production )
+    assert production.pyre_derivations == ()
 
     assert shipping.pyre_name == "shipping"
-    assert shipping.pyre_localMeasures == ( shipping.shipping, )
-    assert shipping.pyre_inheritedMeasures == ()
-    assert shipping.pyre_localDerivations == ()
-    assert shipping.pyre_inheritedDerivations == ()
+    assert shipping.pyre_localItems == ( shipping.shipping, )
+    assert shipping.pyre_items == ( shipping.shipping, )
+    assert shipping.pyre_measures == ( shipping.shipping, )
+    assert shipping.pyre_derivations == ()
     
     # check the subclass
     assert pricing.pyre_name == "pricing"
-    assert pricing.pyre_localMeasures == ( pricing.margin, pricing.overhead, pricing.discount )
-    assert pricing.pyre_inheritedMeasures == (
-        production.sku, production.production, shipping.shipping )
-    assert pricing.pyre_localDerivations == (pricing.cost, pricing.msrp, pricing.price)
-    assert pricing.pyre_inheritedDerivations == ()
-
+    assert pricing.pyre_localItems == (
+        pricing.margin, pricing.overhead, pricing.discount,
+        pricing.cost, pricing.msrp, pricing.price
+        )
+    assert pricing.pyre_items == (
+        pricing.shipping,
+        pricing.sku, pricing.production,
+        pricing.margin, pricing.overhead, pricing.discount,
+        pricing.cost, pricing.msrp, pricing.price
+        )
+    assert pricing.pyre_measures == (
+        pricing.shipping,
+        pricing.sku, pricing.production,
+        pricing.margin, pricing.overhead, pricing.discount,
+        )
+    assert pricing.pyre_derivations == (
+        pricing.cost, pricing.msrp, pricing.price
+        )
+    
     return pricing, shipping, production
 
 

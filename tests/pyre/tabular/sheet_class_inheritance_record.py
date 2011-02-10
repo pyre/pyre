@@ -68,12 +68,12 @@ def test():
     assert isinstance(record.msrp, pyre.tabular.derivation)
     assert isinstance(record.price, pyre.tabular.derivation)
     # and their indices
-    assert record.pyre_index[record.margin] == 0
-    assert record.pyre_index[record.overhead] == 1
-    assert record.pyre_index[record.discount] == 2
-    assert record.pyre_index[record.sku] == 3
-    assert record.pyre_index[record.production] == 4
-    assert record.pyre_index[record.shipping] == 5
+    assert record.pyre_index[record.shipping] == 0
+    assert record.pyre_index[record.sku] == 1
+    assert record.pyre_index[record.production] == 2
+    assert record.pyre_index[record.margin] == 3
+    assert record.pyre_index[record.overhead] == 4
+    assert record.pyre_index[record.discount] == 5
     assert record.pyre_index[record.cost] == 6
     assert record.pyre_index[record.msrp] == 7
     assert record.pyre_index[record.price] == 8

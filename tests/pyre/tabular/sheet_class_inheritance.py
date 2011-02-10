@@ -39,22 +39,34 @@ def test():
 
     # check the base
     assert raw.pyre_name == "raw"
-    assert raw.pyre_localMeasures == (
-        raw.sku, raw.production, raw.shipping, raw.margin,
-        raw.overhead, raw.discount)
-    assert raw.pyre_inheritedMeasures == ()
-    assert raw.pyre_localDerivations == ()
-    assert raw.pyre_inheritedDerivations == ()
+    assert raw.pyre_localItems == (
+        raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount
+        )
+    assert raw.pyre_items == raw.pyre_localItems
+    assert raw.pyre_measures == (
+        raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount
+        )
+    assert raw.pyre_derivations == ()
 
     
     # check the subclass
     assert pricing.pyre_name == "pricing"
-    assert pricing.pyre_localMeasures == ()
-    assert pricing.pyre_inheritedMeasures == (
+
+    assert pricing.pyre_localItems == (
+        pricing.cost, pricing.msrp, pricing.price
+        )
+    assert pricing.pyre_items == (
         pricing.sku, pricing.production, pricing.shipping, pricing.margin,
-        pricing.overhead, pricing.discount )
-    assert pricing.pyre_localDerivations == ( pricing.cost, pricing.msrp, pricing.price )
-    assert pricing.pyre_inheritedDerivations == ()
+        pricing.overhead, pricing.discount,
+        pricing.cost, pricing.msrp, pricing.price
+        )
+    assert pricing.pyre_measures == (
+        pricing.sku, pricing.production, pricing.shipping, pricing.margin,
+        pricing.overhead, pricing.discount,
+        )
+    assert pricing.pyre_derivations == (
+        pricing.cost, pricing.msrp, pricing.price
+        )
 
     return pricing, raw
 

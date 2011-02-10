@@ -17,7 +17,7 @@ class Index:
 
     # public data
     index = None # the index of this column
-    descriptor = None # the original descriptor with the meta data
+    measure = None # the original descriptor with the meta data
 
 
     # types
@@ -36,10 +36,10 @@ class Index:
 
 
     # meta methods
-    def __init__(self, index, descriptor, **kwds):
+    def __init__(self, index, measure, **kwds):
         super().__init__(**kwds)
         self.index = index
-        self.descriptor = descriptor
+        self.measure = measure
         return
 
 
@@ -56,7 +56,7 @@ class Index:
         # otherwise
         except AttributeError:
             # return the descriptor itself
-            return self.descriptor
+            return self.measure
 
 
 # end of file 

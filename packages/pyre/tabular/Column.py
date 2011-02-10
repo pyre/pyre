@@ -14,7 +14,7 @@ class Column:
 
     # public data
     index = None # the index of this column
-    descriptor = None # the original descriptor with the meta data
+    measure = None # the original measure with the meta data
 
 
     # interface
@@ -31,10 +31,10 @@ class Column:
 
 
     # meta methods
-    def __init__(self, index, descriptor, **kwds):
+    def __init__(self, index, measure, **kwds):
         super().__init__(**kwds)
         self.index = index
-        self.descriptor = descriptor
+        self.measure = measure
         return
 
 
@@ -48,7 +48,7 @@ class Column:
             # return the column data selector
             return self.column(sheet)
         # otherwise,return the descriptor itself
-        return self.descriptor
+        return self.measure
 
 
 # end of file 

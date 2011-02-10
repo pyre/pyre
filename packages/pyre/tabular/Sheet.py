@@ -27,6 +27,9 @@ class Sheet(metaclass=Templater):
     pyre_primaries = None # a list of measure accessors that are primary keys
     pyre_keymaps = None # storage for measures that are primary keys
 
+    pyre_items = () # the full set of measures and derivations
+    pyre_localItems = () # the locally declared measures and derivations
+
 
     # interface
     def populate(self, data):
@@ -67,30 +70,6 @@ class Sheet(metaclass=Templater):
         
 
     # introspection
-    @classmethod
-    def pyre_measures(cls):
-        """
-        Return an iterable over the entire set of my measures
-        """
-        return itertools.chain(cls.pyre_localMeasures, cls.pyre_inheritedMeasures)
-
-
-    @classmethod
-    def pyre_derivations(cls):
-        """
-        Return an iterable over the entire set of my derivations
-        """
-        return itertools.chain(cls.pyre_localDerivations, cls.pyre_inheritedDerivations)
-
-
-    @classmethod
-    def pyre_items(cls):
-        """
-        Return an iterable over the entire set of both my measures and my derivations
-        """
-        return itertools.chain(cls.pyre_measures(), cls.pyre_derivations())
-
-
     @classmethod
     def pyre_offset(cls, measure):
         """

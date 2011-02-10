@@ -37,13 +37,19 @@ def test():
 
     assert pricing.pyre_name == "pricing"
 
-    assert pricing.pyre_localMeasures == (
+    assert pricing.pyre_localItems == (
         pricing.sku, pricing.production, pricing.shipping, pricing.margin,
-        pricing.overhead, pricing.discount
+        pricing.overhead, pricing.discount,
+        pricing.cost, pricing.msrp, pricing.price,
         )
-    assert pricing.pyre_inheritedMeasures == ()
-    assert pricing.pyre_localDerivations == (pricing.cost, pricing.msrp, pricing.price,)
-    assert pricing.pyre_inheritedDerivations == ()
+    assert pricing.pyre_items == pricing.pyre_localItems
+    assert pricing.pyre_measures == (
+        pricing.sku, pricing.production, pricing.shipping, pricing.margin,
+        pricing.overhead, pricing.discount,
+        )
+    assert pricing.pyre_derivations == (
+        pricing.cost, pricing.msrp, pricing.price,
+        )
 
     return pricing
 
