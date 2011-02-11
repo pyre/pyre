@@ -63,7 +63,7 @@ class Executive:
         # update the evaluation model
         self.configurator.configure(configuration=configuration, priority=priority)
         # all done
-        return
+        return self
 
 
     # support for the various internal requests
