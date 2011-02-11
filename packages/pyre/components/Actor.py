@@ -65,6 +65,9 @@ class Actor(Requirement):
         # initialize the record
         super().__init__(name, bases, attributes, **kwds)
 
+        # record whether I am hidden
+        self.pyre_hidden = hidden
+
         # ask each local trait to embed itself
         for trait in self.pyre_localTraits:
             trait.pyre_embedLocal(component=self)

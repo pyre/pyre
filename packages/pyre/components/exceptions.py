@@ -61,11 +61,19 @@ class InterfaceError(ComponentError):
     """
 
     def __init__(self, component, interface, report, **kwds):
+        # extract the actual interfaces, skipping {object}
+        interfaces = tuple(
+            "{!r}".format(base.pyre_name)
+            for base in interface.__mro__[:-1] if not base.pyre_hidden )
+        # support for singular/plural
+        s = '' if len(interfaces) == 1 else 's'
+        # here is the error description
         reason = (
-            "component {0.pyre_name!r} does not implement "
-            "interface {1.pyre_name!r} correctly".format(component, interface))
+            "component {.pyre_name!r} does not implement correctly the following interface{}: {}"
+            .format(component, s, ", ".join(interfaces)))
+        # pass this information along to my superclass
         super().__init__(description=reason, **kwds)
-        
+        # and record the error conditions for whomever may be catching this exception
         self.component = component
         self.interface = interface
         self.report = report

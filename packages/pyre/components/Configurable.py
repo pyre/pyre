@@ -31,6 +31,7 @@ class Configurable:
     pyre_localTraits = None # a tuple of all the traits in my declaration
     pyre_inheritedTraits = None # a tuple of all the traits inheited from my superclasses
     pyre_pedigree = None # a tuple of ancestors that are themselves configurables
+    pyre_hidden = True # true
 
 
     # framework notifications

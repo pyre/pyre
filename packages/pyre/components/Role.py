@@ -21,6 +21,8 @@ class Role(Requirement):
         Initialize a new interface class record
         """
         super().__init__(name, bases, attributes, **kwds)
+        # record whether I am hidden
+        self.pyre_hidden = hidden
         # if this interface is not ignorable
         if not hidden:
             # register it
