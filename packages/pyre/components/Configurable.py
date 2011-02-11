@@ -130,7 +130,7 @@ class Configurable:
 
     # compatibility check
     @classmethod
-    def pyre_isCompatible(this, other, fast=True):
+    def pyre_isCompatible(this, other, fast=False):
         """
         Check whether {this} is assignment compatible with {other}, i.e. whether it provides at
         least the properties and behaviors specified by {other}
