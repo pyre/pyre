@@ -7,11 +7,12 @@
 #
 
 
-PROJECT = pyre
+PROJECT = contacts.pyre
 
 RECURSE_DIRS = \
-    contacts.pyre \
-    gauss.pyre
+    contacts \
+    depository \
+    tests
 
 #--------------------------------------------------------------------------
 #

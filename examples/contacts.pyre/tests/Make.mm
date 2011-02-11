@@ -4,14 +4,13 @@
 # california institute of technology
 # (c) 1998-2011 all rights reserved
 #
-#
 
 
-PROJECT = pyre
+PROJECT = contacts.pyre
 
 RECURSE_DIRS = \
-    contacts.pyre \
-    gauss.pyre
+    unit \
+    package \
 
 #--------------------------------------------------------------------------
 #
