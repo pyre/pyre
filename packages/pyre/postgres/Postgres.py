@@ -16,7 +16,6 @@ class Postgres(pyre.db.server, family="pyre.db.postgres"):
     Component that manages the connection to a Postgres database
     """
 
-
     # public state
     database = pyre.properties.str(default="postgres")
     database.doc = "the name of the database to connect to"
@@ -26,6 +25,10 @@ class Postgres(pyre.db.server, family="pyre.db.postgres"):
 
     password = pyre.properties.str(default=None)
     username.doc = "the password to use for the connection"
+
+
+    # exceptions
+    from pyre.db.exceptions import OperationalError
 
 
     # interface
