@@ -6,19 +6,29 @@
 #
 
 
+# packages
+import pyre
+from .DataStore import DataStore as datastore
+
+
 # declaration
-class Server:
+class Server(pyre.component, implements=datastore):
     """
-    Encapsulation of the connection to a database back end
+    Abstract component that encapsulates the connection to a database back end
+
+    This class is meant to be used as the base class for back end specific component
+    implementations. It provides a complete but trivial implementation of the {DataStore}
+    interface.
     """
 
 
-    # meta methods
-    def __init__(self, **kwds):
-        # chain to the ancestors
-        super().__init__(**kwds)
-        # all done
-        return
+    @pyre.export
+    def attach(self):
+        """
+        Connect to the database back end
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must override 'attach'".format(self))
 
 
 # end of file 
