@@ -12,6 +12,19 @@
 namespace pyrepg {
     // the name of the connection capsule
     const char * const connectionCapsuleName = "pyrepg.connection";
+
+    // exception hierarchy for pyrepg errors
+    extern PyObject * Error;
+    extern PyObject * Warning;
+    extern PyObject * InterfaceError;
+    extern PyObject * DatabaseError;
+    extern PyObject * DataError;
+    extern PyObject * OperationalError;
+    extern PyObject * IntegrityError;
+    extern PyObject * InternalError;
+    extern PyObject * ProgrammingError;
+    extern PyObject * NotSupportedError;
+
 }
 
 

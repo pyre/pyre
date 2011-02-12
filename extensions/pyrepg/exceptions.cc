@@ -13,7 +13,7 @@
 #include "exceptions.h"
 
 namespace pyrepg {
-    // base class for pyrepg errors
+    // exception hierarchy for pyrepg errors
     PyObject * Error = 0;
     PyObject * Warning = 0;
     PyObject * InterfaceError = 0;

@@ -27,6 +27,18 @@ PyObject * pyrepg::connect(PyObject *, PyObject * args) {
     PGconn * connection = PQconnectdb(specification);
     // check
     if (PQstatus(connection) != CONNECTION_OK) {
+        // diagnose the error condition so we can raise an informative exception
+        // according to DB API 2.0, connection errors are OperationalError
+
+        // this code fragment illustrates how to instantiate objects of a known type using
+        // keyword arguments
+        PyObject * args = PyTuple_New(0);
+        const char * description = PQerrorMessage(connection);
+        PyObject * kwds = Py_BuildValue("{s:s}", "description", description);
+        PyObject * exception = PyObject_Call(pyrepg::OperationalError, args, kwds);
+        // prepare to raise the instance of OperationalError
+        PyErr_SetObject(OperationalError, exception);
+        // and return the error indicator
         return 0;
     }
 
