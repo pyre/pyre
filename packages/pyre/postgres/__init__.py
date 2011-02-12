@@ -6,6 +6,12 @@
 #
 
 
+from .Postgres import Postgres as database
+
+
+# package methods
+# these are a bit too low level for most uses; please consider using postgres, the component
+# that encapsulates access to the database back end
 def connect(**kwds):
     """
     Establish a new connection to a database back end

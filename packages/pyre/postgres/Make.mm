@@ -20,6 +20,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Connection.py \
+    Postgres.py \
     __init__.py
 
 
