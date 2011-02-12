@@ -12,13 +12,14 @@ Tests for all the exceptions raised by this package
 """
 
 def test():
-    from pyre.components.Component import Component
+    import pyre
     from pyre.components.exceptions import (
         ComponentError, 
         CategoryMismatchError, ImplementationSpecificationError, InterfaceError,
         TraitNotFoundError)
 
-    class component(Component): pass
+    class component(pyre.component): pass
+    class interface(pyre.interface): pass
 
     c1 = component(name="c1")
     c2 = component(name="c2")
@@ -39,7 +40,7 @@ def test():
         pass
 
     try:
-        raise InterfaceError(component=c1, interface=c2, report=None)
+        raise InterfaceError(component=c1, interface=interface, report=None)
     except InterfaceError as error:
         pass
 
