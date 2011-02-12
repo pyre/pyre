@@ -20,13 +20,13 @@ RECURSE_DIRS = \
     calc \
     records \
     tabular \
-    postgres \
-    db \
     filesystem \
     codecs \
     config \
     framework \
     components \
+    db \
+    postgres \
 
 #--------------------------------------------------------------------------
 #
