@@ -43,6 +43,8 @@ class Configurator(Model):
         Iterate over the {configuration} events and insert them into the model at the given
         {priority} level
         """
+        # error accumulator
+        errors = []
         # loop over events
         for event in configuration.events:
             # build the event sequence number, which becomes its priority level
@@ -52,7 +54,7 @@ class Configurator(Model):
             # and process the event
             event.identify(inspector=self, priority=seq)
         # all done
-        return
+        return errors
  
 
     # support for the pyre executive
@@ -185,7 +187,7 @@ class Configurator(Model):
         if not family: return errors
         # get the inventory
         inventory = configurable.pyre_inventory
-        # hash the two to build the deferal key
+        # hash the two to build the deferral key
         ckey = self._hash.hash(namespace)
         fkey = self._hash.hash(family)
         # if there aren't any setting that match these criteria, we are all done
@@ -204,7 +206,7 @@ class Configurator(Model):
             # get the inventory slot
             slot = inventory[descriptor]
             # merge the information
-            # MGA: this is not right: what if you have to reapply these settings on a second
+            # MGA: this is not right: what if you have to re-apply these settings on a second
             # assignment to the same trait?
             self.patch(discard=node, keep=slot)
 

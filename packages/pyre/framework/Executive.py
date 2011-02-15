@@ -35,6 +35,7 @@ class Executive:
     registrar = None
     # book keeping
     packages = None
+    errors = None
 
     # constants
     path = ("vfs:///pyre/system", "vfs:///pyre/user", "vfs:///local")
@@ -61,7 +62,9 @@ class Executive:
         # extract the configuration setting from the source
         configuration = reader.decode(source=source, locator=locator)
         # update the evaluation model
-        self.configurator.configure(configuration=configuration, priority=priority)
+        errors = self.configurator.configure(configuration=configuration, priority=priority)
+        # add any errors to the pile
+        self.errors.extend(errors)
         # all done
         return self
 
@@ -200,7 +203,9 @@ class Executive:
         # load the package configuration; must do this before configuring the class
         self.loadPackageConfiguration(component)
         # populate the class defaults with the configuration information
-        self.configurator.configureComponentClass(component)
+        errors = self.configurator.configureComponentClass(component)
+        # add any errors encountered to the pile
+        self.errors.extend(errors)
         # invoke the configuration hook
         component.pyre_configureClass(executive=self)
         # bind the component
@@ -220,7 +225,9 @@ class Executive:
         # invoke the registration hook
         component.pyre_register(executive=self)
         # configure it
-        self.configurator.configureComponentInstance(component)
+        errors = self.configurator.configureComponentInstance(component)
+        # add any errors encountered to the pile
+        self.errors.extend(errors)
         # invoke the configuration hook
         component.pyre_configure(executive=self)
         # bind the component
@@ -289,6 +296,9 @@ class Executive:
 
         # initialize the set of known packages
         self.packages = set()
+
+        # initialize the list of errors encountered during configuration
+        self.errors = []
 
         # initialize the set of known configuration sources
         self.shelves = {}
