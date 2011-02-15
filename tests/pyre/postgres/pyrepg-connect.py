@@ -13,13 +13,13 @@ Sanity check: verify that the module is accessible
 
 
 def test():
-    import pyre.postgres.pyrepg
+    from pyre.postgres import pyrepg
     # initialize the module exceptions
     import pyre.db.exceptions as exceptions
     pyrepg.registerExceptions(exceptions)
 
-    # make a conection
-    connection = pyre.postgres.pyrepg.connect("dbname=pyrepg")
+    # make a connection
+    connection = pyrepg.connect("dbname=pyrepg")
     # and return it
     return connection
 
