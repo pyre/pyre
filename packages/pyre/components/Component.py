@@ -76,7 +76,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
 
     def pyre_finalize(self, executive):
         """
-        Hook that gets invoked by the framework right before the component is decomissioned.
+        Hook that gets invoked by the framework right before the component is decommissioned.
         The instance should release all acquired resources.
         """
         return self
@@ -136,7 +136,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
 
     def __getattr__(self, name):
         """
-        Trap attribute lookup errors and attempt to resolve the name in my inventory's namemap
+        Trap attribute lookup errors and attempt to resolve the name in my inventory's name map
 
         This makes it possible to get the value of a trait by using any of its aliases.
         """
