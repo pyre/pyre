@@ -81,8 +81,7 @@ class Model(HierarchicalModel):
         """
         # build a new node 
         slot = self.nodeFactory(
-            value=None, evaluator=self.recognize(value=value),
-            priority=priority, locator=locator)
+            value=None, evaluator=self.recognize(value=value), priority=priority, locator=locator)
         # get it registered
         return self.register(node=slot, key=key)
 
@@ -105,11 +104,21 @@ class Model(HierarchicalModel):
         model = self.deferred[(ckey, fkey)]
         # build a slot
         slot = self.nodeFactory(
-            value=None, evaluator=self.recognize(value=value), priority=priority)
+            value=None, evaluator=self.recognize(value=value), priority=priority, locator=locator)
         # and add it to the pile
         model.append( (key, slot) )
         # all done
         return slot
+
+
+    def execute(self, command, priority, locator):
+        """
+        Record a request to execute a command
+        """
+        # record the command and its context
+        self.commands.append((priority, command, locator))
+        # all done
+        return self
 
 
     def load(self, source, locator, **kwds):
@@ -127,9 +136,11 @@ class Model(HierarchicalModel):
         super().__init__(**kwds)
         # record the executive
         self.executive = weakref.proxy(executive)
-        # the database of deferred bidings
+        # the list of command requests
+        self.commands = []
+        # the database of deferred bindings
         self.deferred = collections.defaultdict(list)
-        # the configurables that manage theor own namespace
+        # the configurables that manage their own namespace
         self.configurables = weakref.WeakValueDictionary()
         # done
         return

@@ -72,7 +72,7 @@ class CommandLine:
         """
         # the source is really an iterable of strings
         argv = source
-        # buld a configuration object to store the processed commandline
+        # build a configuration object to store the processed command line
         configuration = self.Configuration()
         # run through the command line
         for index,arg in enumerate(argv):
@@ -88,11 +88,12 @@ class CommandLine:
                     self._processAssignments(configuration, key,value, self.locator(arg=index))
                 else:
                     # we ran in to a '-' or '--' that signals the end of configuration options
-                    self._processArguments(configuration, *argv[index+1:])
+                    index += 1
+                    self._processArguments(configuration, index, *argv[index:])
                     break
-            # else it must be a regylar command line argument
+            # else it must be a regular command line argument
             else:
-                self._processArguments(configuration, arg)
+                self._processArguments(configuration, index, arg)
         # all done; return the configuration
         return configuration
 
@@ -100,7 +101,7 @@ class CommandLine:
     def buildScanners(self):
         """
         Build the command line recognizers that are used to detect the supported command line
-        argunent syntactical forms
+        argument syntactical forms
         """
         import re
 
@@ -130,7 +131,7 @@ class CommandLine:
         super().__init__(**kwds)
         # build the scanners
         self.buildScanners()
-        # the list of registered handlers of commandline events
+        # the list of registered handlers of command line events
         self.handlers = handlers if handlers is not None else {}
         # all done
         return
@@ -153,7 +154,7 @@ class CommandLine:
             else:
                 # otherwise, just store the field name
                 fields.append([field])
-        # now, form all the specified addresses by computing the cartesian product
+        # now, form all the specified addresses by computing the Cartesian product
         for spec in itertools.product(*fields):
             # check whether there is a handler registered for this spec
             try:
@@ -169,10 +170,18 @@ class CommandLine:
         return
 
 
-    def _processArguments(self, configuration, *args):
+    def _processArguments(self, configuration, index, *args):
         """
         Interpret {args} as application commands and store them in {configuration}
         """
+        # iterate over the command line arguments that were handed to me
+        for arg in args:
+            # ask the configuration object to build a command request
+            configuration.newCommand(command=arg, locator=self.locator(arg=index))
+            # update the index
+            index += 1
+        # all done
+        return
 
 
 # end of file 

@@ -12,7 +12,7 @@ class Configuration:
 
     The various codecs build and populate instances of this class as part of the ingestion of
     configuration sources. They provide a temporary holding place to store the harvested events
-    until the entire source is processed without errors. This way, the configuation retrieved
+    until the entire source is processed without errors. This way, the configuration retrieved
     from the source will be known to be at least syntactically correct without the risk of
     polluting the global framework configuration data structures with partial input from
     invalid sources.
@@ -24,6 +24,14 @@ class Configuration:
 
 
     # interface
+    def newCommand(self, command, locator):
+        """
+        Create a new command request and add it to the queue
+        """
+        self.events.append(self.Command(command=command, locator=locator))
+        return
+
+
     def newAssignment(self, key, value, locator):
         """
         Create a new assignment event and add it to the queue
@@ -68,6 +76,26 @@ class Configuration:
             self.locator = locator
             return
 
+    class Command(Event):
+        """A command"""
+
+        # public data
+        command = None
+
+        # interface
+        def identify(self, inspector, **kwds):
+            """Ask {inspector} to process a {Command}"""
+            return inspector.execute(command=self.command, locator=self.locator, **kwds)
+
+        # meta methods
+        def __init__(self, command, **kwds):
+            super().__init__(**kwds)
+            self.command = command
+            return
+
+        def __str__(self):
+            return "{{{}: {}}}".format(self.locator, self.command)
+
     class Assignment(Event):
         """A request to bind a {key} to a {value}"""
 
@@ -101,7 +129,7 @@ class Configuration:
 
         # interface
         def identify(self, inspector, **kwds):
-            """Ask {inspector} to process an {Assignment}"""
+            """Ask {inspector} to process a {ConditionalAssignment}"""
             return inspector.defer(
                 component=self.component, family=self.family,
                 key=self.key, value=self.value, locator=self.locator, **kwds)
@@ -138,5 +166,6 @@ class Configuration:
 
         def __str__(self):
             return "{{{0.locator}: loading {0.source}}".format(self)
+
 
 # end of file 
