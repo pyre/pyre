@@ -32,8 +32,10 @@ class Merlin(metaclass=Singleton):
         # extract the non-configurational parts of the command line
         request = tuple(c for p,c,l in self.executive.configurator.commands)
 
-        # show the help screen if there was nothing useful on the command line
-        if request == (): return self.help()
+        # show the default help screen if there was nothing useful on the command line
+        if request == (): 
+            import merlin
+            return merlin.usage()
 
         # interpret the request as the name of one of my actors, followed by an argument tuple
         # for the actor's main entry point
@@ -61,6 +63,23 @@ class Merlin(metaclass=Singleton):
 
         # all done
         return self
+
+
+    def help(self, *topics):
+        """
+        Access to the help system
+        """
+        print("help:", topics)
+        return
+
+
+    # meta methods
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+
+        print(" ** instantiating the merlin executive")
+
+        return
 
 
 # end of file 
