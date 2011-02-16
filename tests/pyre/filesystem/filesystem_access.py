@@ -38,7 +38,7 @@ def test():
     tools["hello.py"] = hello
 
     # dump the contents
-    fs._dump(interactive=False) # switch to True to see the dump
+    fs.dump(interactive=False) # switch to True to see the dump
     
     return fs
 

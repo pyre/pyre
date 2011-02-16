@@ -79,7 +79,7 @@ def test():
     fs = reader.read(stream=open("sample-fs.xml"), document=FSD())
 
     # dump the contents
-    fs._dump(False) # switch to True to see the contents
+    fs.dump(False) # switch to True to see the contents
 
     # verify
     assert fs is not None

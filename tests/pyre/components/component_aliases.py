@@ -89,7 +89,7 @@ def test():
 
     # check the properties
     # print("g: mean={0.mean!r}, spread={0.spread!r}".format(g))
-    # cfg._dump(pattern="(functor|gaussian)")
+    # cfg.dump(pattern="(functor|gaussian)")
 
     return gaussian
 

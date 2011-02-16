@@ -16,7 +16,7 @@ def test():
     import pyre.filesystem
 
     home = pyre.filesystem.newLocalFilesystem(root="../../../..")
-    home._dump(interactive=False) # change to True to see the dump
+    home.dump(interactive=False) # change to True to see the dump
 
     return home
 

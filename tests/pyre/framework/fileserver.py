@@ -30,7 +30,7 @@ def test():
     assert user is not None
 
     # dump the filesystem
-    fs._dump(False) # switch to True to see the dump
+    fs.dump(False) # switch to True to see the dump
 
     # all done
     return executive

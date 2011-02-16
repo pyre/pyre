@@ -28,7 +28,7 @@ def test():
     
     # open it as a filesystem
     home = pyre.filesystem.newZipFilesystem(root=archive)
-    home._dump(interactive=False) # change to True to see the dump
+    home.dump(interactive=False) # change to True to see the dump
 
     # remove the zipfile
     os.unlink(archive)

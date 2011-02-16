@@ -27,7 +27,7 @@ def test():
     # check that this file is there
     assert fs['local/fileserver_mount.py']
     # dump the filesystem
-    fs._dump(False) # switch to True to see the dump
+    fs.dump(False) # switch to True to see the dump
 
     # all done
     return executive

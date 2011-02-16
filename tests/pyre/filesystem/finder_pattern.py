@@ -24,7 +24,7 @@ def test():
     fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.newNode()
     
     # dump the contents
-    fs._dump(False) # switch to True to see the dump
+    fs.dump(False) # switch to True to see the dump
 
     # explore
     finder = pyre.filesystem.newFinder()
