@@ -16,7 +16,7 @@ class Executive:
     The top level framework object
 
     This class maintains a suite of managers that are responsible for the various mechanisms
-    and policies that enable pyre applications. The Executive orchestrtes their interactions
+    and policies that enable pyre applications. The Executive orchestrates their interactions
     and provides the top level interface of the framework.
 
     The actual executive is an instance of the class Pyre, also in this package. Pyre is a
@@ -55,7 +55,7 @@ class Executive:
         """
         # decode the uri
         scheme, address, fragment = self.parseURI(uri)
-        # get the fileserverto  deduce the encoding and produce the input stream
+        # get the fileserver to  deduce the encoding and produce the input stream
         encoding, source = self.fileserver.open(scheme, address=address)
         # instantiate the requested reader
         reader = self.codex.newCodec(encoding)
@@ -82,7 +82,7 @@ class Executive:
         path. The corresponding codec uses the interpreter to import the symbol {symbol} using
         {address} to access the containing module. For example, the {uri}
 
-            import://package.subpackage.module.myFactory
+            import://package.subpackage.module#myFactory
 
         is treated as if the following statement had been issued to the interpreter
 
@@ -91,8 +91,8 @@ class Executive:
         See below for the requirements myFactory must satisfy
 
         The "file" scheme assumes that {address} is a valid path in the logical application
-        namespace, managed by the executive.fileserver. The extension of the loical file is
-        used to retrieve an apropriate decoder, which becomes responsible for retrieving the
+        namespace, managed by the executive.fileserver. The extension of the logical file is
+        used to retrieve an appropriate decoder, which becomes responsible for retrieving the
         contents of the file and processing it. For example, the {uri}
 
             file:///local/sample.odb#myFactory
@@ -265,7 +265,7 @@ class Executive:
         # extract the scheme
         scheme = match.group("scheme") or defaultScheme
         scheme = scheme.strip().lower()
-        # extract the addres
+        # extract the address
         address = match.group("address")
         # check that it's not blank
         if not address:
