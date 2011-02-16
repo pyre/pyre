@@ -19,39 +19,8 @@ def main():
 
     There are other possible ways to invoke merlin. See the package documentation.
     """
-    import pyre
-    # extract the non-configurational parts of the command line
-    request = tuple(c for p,c,l in pyre.executive.configurator.commands)
-
-    # show the help screen if there was nothing useful on the command line
-    if request == (): return help()
-
-
-    # interpret the request as the name of a merlin component, followed by an argument tuple to
-    # its main entry point
-    componentName = request[0]
-    args = request[1:]
-
-    # convert the component name into a uri
-    uri = "import://merlin#{}".format(componentName)
-
-    # attempt to retrieve the component factory
-    try:
-        factory = pyre.executive.retrieveComponentDescriptor(uri)
-    except pyre.executive.FrameworkError:
-        # NYI: try other component sources
-        return usage()
-
-    # instantiate the component
-    actor = factory(name="merlin-"+componentName)
-
-    # if it is a merlin actor
-    if isinstance(actor, pyre.component):
-        # ask it process the user request
-        actor.exec(*args)
-
-    # all done
-    return
+    # let the executive do its thing
+    return merlin.main()
 
 
 # administrative
@@ -152,6 +121,17 @@ _merlin_license = _merlin_header + """
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
     """
+
+
+# bootstrapping
+def boot():
+    # access the executive factory
+    from .components.Merlin import Merlin
+    # build one and return it
+    return Merlin()
+
+
+merlin = boot()
 
 
 # end of file 
