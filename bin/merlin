@@ -8,11 +8,10 @@
 
 
 # shell for invoking merlin commands
-if __name__ == "__main__":
-    # package access
-    import merlin
-    # invoke its main entry point
-    merlin.main()
+# package access
+import merlin
+# invoke its main entry point
+merlin.main()
 
 
 # end of file 
