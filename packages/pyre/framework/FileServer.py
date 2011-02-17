@@ -41,6 +41,12 @@ class FileServer(Filesystem):
     """
 
 
+    # public data
+    prefixfs = None # a filesystem rooted at the pyre installation folder
+    userfixfs = None # a filesystem typically rooted at .pyre in the user's home directory
+    localfs = None # filesystem rooted at the initial application working directory
+
+
     # interface
     def open(self, scheme, address, **kwds):
         """
@@ -97,16 +103,17 @@ class FileServer(Filesystem):
         # both are handled correctly by the pyre.filesystem.newFilesystem factory
         try:
             # so invoke it to build the filesystem for us
-            self.systemfs = pyre.filesystem.newFilesystem(pyre.prefix()).sync(levels=1)
+            self.prefix = pyre.filesystem.newFilesystem(pyre.prefix()).sync(levels=1)
         except self.GenericError:
             # if this failed, just create a new empty folder
             system = self.newFolder()
         else:
             try:
                 # hunt down the depository subdirectory
-                system = self.systemfs["depository"]
+                system = self.prefix["depository"]
             except self.NotFoundError:
                 # hmm... why is this directory missing from the distribution?
+                print(" ** warning: could not find system depository")
                 # moving on...
                 system = self.newFolder()
        # mount the system directory
