@@ -44,6 +44,7 @@ class FileServer(Filesystem):
     # interface
     def open(self, scheme, address, **kwds):
         """
+        Convert the pair {scheme},{address} into an input stream ready for reading
         """
         # get the extension 
         path, extension = os.path.splitext(address)

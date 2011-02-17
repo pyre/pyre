@@ -76,7 +76,7 @@ class Executive:
 
         {uri} encodes the descriptor using the URI specification 
             scheme://address#symbol
-        Currently, the two schemes that are supported are "import" and "file".
+        Currently, there is support for two classes of schemes.
 
         The "import" scheme requires that the component descriptor is accessible on the python
         path. The corresponding codec uses the interpreter to import the symbol {symbol} using
@@ -90,16 +90,16 @@ class Executive:
 
         See below for the requirements myFactory must satisfy
 
-        The "file" scheme assumes that {address} is a valid path in the logical application
-        namespace, managed by the executive.fileserver. The extension of the logical file is
-        used to retrieve an appropriate decoder, which becomes responsible for retrieving the
-        contents of the file and processing it. For example, the {uri}
+        Any other scheme specification is interpreted as a request for a file based component
+        factory. The executive assumes that {address} is a valid path in the physical or
+        logical filesystems managed by the executive.fileserver, and that it contains
+        executable python code the provides the definition of the required symbol.  For
+        example, the {uri}
 
-            file:///local/sample.odb#myFactory
+            vfs:///local/sample.odb#myFactory
 
-        expects that the fileserver can resolve the address local/sample.odb into a valid file,
-        that there is a codec registered with the executive.codex manager that can handle the
-        odb encoding, and can produce the symbol myFactory
+        expects that the fileserver can resolve the address local/sample.odb into a valid file
+        within the virtual filesystem that forms the application namespace.
 
         The symbol referenced by the {symbol} fragment must be a callable that can produce
         component class records when called. For example
@@ -115,26 +115,20 @@ class Executive:
         scheme, address, symbol = self.parseURI(uri)
         # print("Executive:retrieveComponentDescriptor: scheme={!r}, address={!r}, symbol={!r}".
               # format(scheme, address, symbol))
+
         # if the scheme is "import"
         if scheme == "import":
             # use the address as the shelf hash key
             source = address
-            # deduce the implied encoding
-            encoding = scheme
-        # otherwise, expect the scheme to be "file"
-        elif scheme == "file":
-            # look up the address 
-            source = self.fileserver[address]
-            # split the address into two parts
-            path, encoding = os.path.splitext(address)
-            # don't forget to skip past the '.'
-            encoding = encoding[1:]
-        # otherwise, raise a firewall
+            # build the codec
+            codec = self.codex.newCodec(encoding="import")
+        # otherwise, assume the source points to a file with python code
         else:
-            import journal
+            # build a unique identifier for this source
+            source = (scheme, address)
+            # build the codec
+            codec = self.codex.newCodec(encoding="odb", filesystem=self.fileserver)
 
-        # use the encoding to build the necessary codec to process this source
-        codec = self.codex.newCodec(encoding=encoding)
         # check whether we have processed this source before
         try:
             # get the shelf
@@ -145,6 +139,7 @@ class Executive:
             shelf = codec.decode(source=source, locator=locator)
             # and cache it
             self.shelves[source] = shelf
+
         # now, retrieve the descriptor
         descriptor = codec.retrieveSymbol(shelf=shelf, symbol=symbol)
         # and return it
