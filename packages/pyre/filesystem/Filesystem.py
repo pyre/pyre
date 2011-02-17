@@ -39,6 +39,7 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
     # meta methods
     def __init__(self, root='/', **kwds):
         super().__init__(filesystem=self, **kwds)
+        self.root = root
         return
 
 

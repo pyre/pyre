@@ -93,7 +93,7 @@ def newLocalFilesystem(root, walker=None, recognizer=None, **kwds):
     if isinstance(node, Directory):
         # build the filesystem
         from .LocalFilesystem import LocalFilesystem
-        fs = LocalFilesystem(info=node, walker=walker, recognizer=recognizer, **kwds)
+        fs = LocalFilesystem(root=root, info=node, walker=walker, recognizer=recognizer, **kwds)
         # and return it to the caller
         return fs
     elif isinstance(node, File):
@@ -101,7 +101,7 @@ def newLocalFilesystem(root, walker=None, recognizer=None, **kwds):
         if zipfile.is_zipfile(root):
             # build the file system
             from .ZipFilesystem import ZipFilesystem
-            fs = ZipFilesystem(info=node)
+            fs = ZipFilesystem(root=root, info=node)
             # and return it
             return fs
     # otherwise
@@ -140,7 +140,7 @@ def newZipFilesystem(root, recognizer=None, **kwds):
 
     # build the file system
     from .ZipFilesystem import ZipFilesystem
-    fs = ZipFilesystem(info=info)
+    fs = ZipFilesystem(root=root, info=info)
     # and return it
     return fs
 

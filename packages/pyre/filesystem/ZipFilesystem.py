@@ -24,6 +24,13 @@ class ZipFilesystem(Filesystem):
     vnodes = None # the map from filesystem virtual nodes to zipfile info objects
     zipfile = None # the zipfile object that manages my physical file
 
+    @property
+    def mountpoint(self):
+        """
+        The absolute path to my zipfile
+        """
+        return self.zipfile.filename
+
 
     # interface
     def open(self, node, **kwds):
