@@ -90,9 +90,11 @@ class URISpecificationError(GenericError):
     Exception raised when the supplied uri cannot be decoded
     """
 
-    def __init__(self, uri, **kwds):
-        super().__init__(**kwds)
+    def __init__(self, uri, reason, **kwds):
+        msg = "{}: {}".format(uri, reason)
+        super().__init__(description=msg , **kwds)
         self.uri = uri
+        self.reason = reason
         return
 
 
