@@ -20,6 +20,11 @@ class ZipFilesystem(Filesystem):
     """
 
 
+    # public data
+    vnodes = None # the map from filesystem virtual nodes to zipfile info objects
+    zipfile = None # the zipfile object that manages my physical file
+
+
     # interface
     def open(self, node, **kwds):
         """
