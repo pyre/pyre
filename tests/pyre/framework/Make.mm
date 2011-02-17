@@ -26,6 +26,7 @@ framework:
 	${PYTHON} ./fileserver_uri.py
 	${PYTHON} ./fileserver_mount.py
 	${PYTHON} ./executive_registrar.py
+	${PYTHON} ./executive_uri.py
 	${PYTHON} ./executive_codecs.py
 	${PYTHON} ./executive_configuration.py
 	${PYTHON} ./executive_retrieveComponentDescriptor.py

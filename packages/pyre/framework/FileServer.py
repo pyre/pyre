@@ -15,7 +15,7 @@ class FileServer(Filesystem):
     """
     The manager of the virtual filesystem
 
-    Intances of FileServer manage hierarchical namespaces implemented as a virtual
+    Instances of FileServer manage hierarchical namespaces implemented as a virtual
     filesystem. The contents of these namespaces are retrieved using URIs, and can be arbitrary
     objects, although they are typically either local or remote files.
 
@@ -52,13 +52,21 @@ class FileServer(Filesystem):
 
         # if {scheme} is missing, assume it is a file from the local filesystem
         if scheme is None or scheme == "file":
-            return encoding, open(address, **kwds)
+            try:
+                return encoding, open(address, **kwds)
+            except IOError as error:
+                raise self.NotFoundError(filesystem=self, node=None, path=address, fragment='file')
 
         # if {scheme} is 'vfs', assume {address} is from our virtual filesystem
         if scheme == "vfs":
             return encoding, self[address].open()
 
-        raise self.BadResourceLocatorError(uri=uri, reason="unsupported scheme")
+        # oops: the file server doesn't know what to do with this
+        # piece back the uri
+        uri = "{}://{}".format(scheme, address)
+        # and raise an exception
+        raise self.URISpecificationError(
+            uri=uri, reason="unsupported scheme {!r}".format(scheme))
 
 
     def join(self, path, address, extension=None):
@@ -127,7 +135,7 @@ class FileServer(Filesystem):
 
 
     # exceptions
-    from .exceptions import BadResourceLocatorError
+    from ..filesystem.exceptions import NotFoundError, URISpecificationError
 
 
     # constants
