@@ -7,16 +7,15 @@
 
 
 PROJECT = pyre
-PACKAGE = depository
+PACKAGE = depository/merlin
 
 RECURSE_DIRS = \
-    merlin \
+    spells \
 
 #--------------------------------------------------------------------------
 #
 
 all: export
-
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -33,8 +32,6 @@ distclean::
 
 EXPORT_ETCDIR = $(EXPORT_ROOT)
 EXPORT_ETC = \
-    pyre.pml
-
 
 export:: export-etc
 	BLD_ACTION="export" $(MM) recurse
