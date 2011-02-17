@@ -37,9 +37,14 @@ class ZipFilesystem(Filesystem):
         return self.zipfile.open(info, **kwds)
 
 
-    def sync(self):
+    def sync(self, **kwds):
         """
         Populate the filesystem with the contents of the zipfile
+
+        The current implementation does not allow the specification of the number of levels in
+        the hierarchy to retrieve, mostly because the interface of the underlying zipfile
+        object does not allow for efficient retrievals. This may change in a future
+        implementation.
         """
         # create a timestamp
         timestamp = time.gmtime()
