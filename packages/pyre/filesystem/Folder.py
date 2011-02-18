@@ -21,7 +21,7 @@ class Folder(Node):
     # interface
     def find(self, **kwds):
         """
-        Generate the list of name that match the given {pattern}
+        Generate the list of names that match the given {pattern}
 
         By default, find will create a generator that visits the entire contents of the tree
         rooted at this folder. Use the optional arguments to restrict the set of matching
@@ -158,7 +158,7 @@ class Folder(Node):
     # access through subscripts
     def __getitem__(self, path):
         """
-        Enable the sytax folder[{path}]
+        Enable the syntax folder[{path}]
         """
         return self._find(path)
 
