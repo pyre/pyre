@@ -19,6 +19,13 @@ class Folder(Node):
 
 
     # interface
+    def explore(self, **kwds):
+        """
+        Ask my filesystem to populate me
+        """
+        return self._filesystem().sync(root=self, **kwds)
+
+
     def find(self, **kwds):
         """
         Generate the list of names that match the given {pattern}
