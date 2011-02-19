@@ -44,6 +44,13 @@ class ZipFilesystem(Filesystem):
         return self.zipfile.open(info, **kwds)
 
 
+    def info(self, node, **kwds):
+        """
+        Look up {node} in my {vnodes} and return the associated info node
+        """
+        return self.vnodes[node]
+
+
     def sync(self, **kwds):
         """
         Populate the filesystem with the contents of the zipfile

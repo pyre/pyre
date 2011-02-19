@@ -15,7 +15,23 @@ class Folder(Node):
     """
 
     # public data
+    # constants
+    from . import PATH_SEPARATOR
+    
+    # data members
     contents = None # the container that assigns names to my contents
+
+    @property
+    def mountpoint(self):
+        """
+        My location
+        """
+        return self._filesystem().info(self).uri
+
+
+    # types
+    # exceptions
+    from .exceptions import FolderInsertionError, NotFoundError
 
 
     # interface
@@ -177,12 +193,22 @@ class Folder(Node):
         return self._insert(path=path, node=node)
 
 
-    # constants
-    from . import PATH_SEPARATOR
-
-
-    # exceptions
-    from .exceptions import FolderInsertionError, NotFoundError
+    # debugging support
+    def dump(self, interactive=True):
+        """
+        Print out my contents using a tree explorer
+        """
+        # build the explorer
+        from . import newTreeExplorer
+        explorer = newTreeExplorer()
+        # get the representation of my contents
+        printout = explorer.explore(self)
+        # dump it out
+        if interactive:
+            for line in printout:
+                print(line)
+        # and return the explorer to the caller
+        return explorer
 
 
 # end of file 
