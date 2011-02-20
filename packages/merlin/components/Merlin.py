@@ -22,6 +22,7 @@ class Merlin(metaclass=Singleton):
 
     # public data
     executive = pyre.executive # access to the pyre executive
+    fileserver = executive.fileserver # access to the pyre file server
 
 
     # interface
@@ -29,6 +30,8 @@ class Merlin(metaclass=Singleton):
         """
         The main entry point for merlin
         """
+        print(" ** main: temporarily disabled")
+        return
         # extract the non-configurational parts of the command line
         request = tuple(c for p,c,l in self.executive.configurator.commands)
 
@@ -79,6 +82,78 @@ class Merlin(metaclass=Singleton):
 
         print(" ** instantiating the merlin executive")
 
+        print(" ** populating the application namespace")
+
+        print("    hunting down the project directory")
+        project = self._mountProjectDirectory()
+        
+        # collect the spells
+        self._collectSpells()
+
+        # dump the filesystem
+        self.fileserver._dump()
+
+        return
+
+
+    # implementation details
+    def _mountProjectDirectory(self):
+        """
+        Walk up from {cwd} to the directory that contains the {.merlin} folder
+        """
+        # for path related arithmetic
+        import os
+        # access the filesystem rooted at the application current directory
+        local = self.fileserver['/local']
+        # access the filesystem's recognizer
+        recognizer = local.recognizer
+        # start with the current directory
+        curdir = os.path.abspath(local.mountpoint)
+        # loop until we find the {.merlin} directory or run up to the root
+        while 1:
+            # form the candidate path
+            candidate = os.path.join(curdir, ".merlin")
+
+            try:
+                # get the file server's recognizer to tell us what this is
+                node = recognizer.recognize(candidate)
+            except OSError:
+                # the file doesn't exist; move on
+                pass
+            else:
+                # if it is a directory, we are done
+                if node.isDirectory(): break
+            # if we got this far, the current guess for the {.merlin} directory was no good
+            # save this path
+            olddir = curdir
+            # try the parent
+            curdir = os.path.abspath(os.path.join(curdir, os.pardir))
+            # if the parent directory is identical with the current directory, we are at the root
+            if olddir == curdir:
+                # which means that there is no appropriate {.merlin}, so raise an exception
+                raise local.NotFoundError(
+                    filesystem=local, node=None, path=".merlin", fragment='file')
+
+        # got it
+        # access the filesystem package
+        import pyre.filesystem
+        # create a local file system
+        project = pyre.filesystem.newLocalFilesystem(root=node.uri).sync()
+        # mount it as /project
+        self.fileserver['/project'] = project
+        # and return it
+        return project
+
+
+    def _collectSpells(self):
+        """
+        Traverse the application namespace looking for spells and cataloging them
+        """
+        print("    spells:")
+        # establish the folder
+        self.fileserver['/merlin/spells'] = self.fileserver.newFolder()
+
+        # all done
         return
 
 
