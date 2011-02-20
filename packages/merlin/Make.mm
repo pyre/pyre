@@ -11,8 +11,8 @@ PACKAGE = merlin
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
 
 RECURSE_DIRS = \
-    actors \
-    components
+    components \
+    spells \
 
 
 #--------------------------------------------------------------------------
