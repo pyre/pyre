@@ -33,7 +33,7 @@ distclean::
 EXPORT_ETCDIR = $(EXPORT_ROOT)
 EXPORT_ETC = \
 
-export:: export-etc
+export:: # export-etc
 	BLD_ACTION="export" $(MM) recurse
 
 
