@@ -35,11 +35,11 @@ class Folder(Node):
 
 
     # interface
-    def explore(self, **kwds):
+    def discover(self, **kwds):
         """
         Ask my filesystem to populate me
         """
-        return self._filesystem().sync(root=self, **kwds)
+        return self._filesystem().discover(root=self, **kwds)
 
 
     def find(self, **kwds):

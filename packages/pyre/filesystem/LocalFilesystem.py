@@ -53,7 +53,7 @@ class LocalFilesystem(Filesystem):
         return self.vnodes[node]
 
 
-    def sync(self, walker=None, recognizer=None, root=None, levels=None):
+    def discover(self, walker=None, recognizer=None, root=None, levels=None):
         """
         Traverse my directory structure and refresh my contents so that they match the
         underlying filesystem

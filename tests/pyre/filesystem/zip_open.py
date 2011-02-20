@@ -27,7 +27,7 @@ def test():
     target.close()
     
     # open it as a filesystem
-    home = pyre.filesystem.newZipFilesystem(root=archive).sync()
+    home = pyre.filesystem.newZipFilesystem(root=archive).discover()
     # locate this file
     this = home["zip_open.py"]
     # turn it into a stream and read its content

@@ -51,7 +51,7 @@ class ZipFilesystem(Filesystem):
         return self.vnodes[node]
 
 
-    def sync(self, **kwds):
+    def discover(self, **kwds):
         """
         Populate the filesystem with the contents of the zipfile
 

@@ -37,7 +37,7 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
             "class {0.__class__.__name__!r} must override 'info'".format(self))
 
 
-    def sync(self):
+    def discover(self, **kwds):
         """
         Populate the filesystem by reading the external source it represents
         """
