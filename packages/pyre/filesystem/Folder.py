@@ -37,9 +37,12 @@ class Folder(Node):
     # interface
     def discover(self, **kwds):
         """
-        Ask my filesystem to populate me
+        Fill my contents
         """
-        return self._filesystem().discover(root=self, **kwds)
+        # get the filesystem to do the work
+        self._filesystem().discover(root=self, **kwds)
+        # and return
+        return self
 
 
     def find(self, **kwds):

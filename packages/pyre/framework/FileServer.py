@@ -110,14 +110,14 @@ class FileServer(Filesystem):
         else:
             try:
                 # hunt down the depository subdirectory
-                system = self.prefixfs["depository"].discover(levels=1)
+                system = self.prefixfs["depository"]
             except self.NotFoundError:
                 # hmm... why is this directory missing from the distribution?
                 print(" ** warning: could not find system depository")
                 # moving on...
                 system = self.newFolder()
        # mount the system directory
-        self["pyre/system"] = system
+        self["pyre/system"] = system.discover(levels=1)
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
