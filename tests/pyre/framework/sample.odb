@@ -12,5 +12,8 @@ from pyre.components.Component import Component
 class one(Component):
     """a sample component"""
 
+class two(one):
+    """another sample component"""
+
 
 # end of file 

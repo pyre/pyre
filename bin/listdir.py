@@ -17,7 +17,7 @@ def listdir():
     import pyre.filesystem
 
     finder = pyre.filesystem.newFinder()
-    cwd = pyre.filesystem.newLocalFilesystem(root=".").sync()
+    cwd = pyre.filesystem.newLocalFilesystem(root=".").discover()
 
     me = os.path.normpath(__file__)
     for node,path in finder.explore(cwd):

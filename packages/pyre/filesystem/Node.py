@@ -32,6 +32,13 @@ class Node(metaclass=_metaclass_Node):
         return self._filesystem().open(self, **kwds)
 
 
+    def info(self):
+        """
+        Ask my filesystem to retrieve my information node
+        """
+        return self._filesystem.info(self)
+
+
     # explorer support
     def identify(self, explorer, **kwds):
         """

@@ -20,6 +20,18 @@ class ZipFilesystem(Filesystem):
     """
 
 
+    # public data
+    vnodes = None # the map from filesystem virtual nodes to zipfile info objects
+    zipfile = None # the zipfile object that manages my physical file
+
+    @property
+    def mountpoint(self):
+        """
+        The absolute path to my zipfile
+        """
+        return self.zipfile.filename
+
+
     # interface
     def open(self, node, **kwds):
         """
@@ -32,9 +44,21 @@ class ZipFilesystem(Filesystem):
         return self.zipfile.open(info, **kwds)
 
 
-    def sync(self):
+    def info(self, node, **kwds):
+        """
+        Look up {node} in my {vnodes} and return the associated info node
+        """
+        return self.vnodes[node]
+
+
+    def discover(self, **kwds):
         """
         Populate the filesystem with the contents of the zipfile
+
+        The current implementation does not allow the specification of the number of levels in
+        the hierarchy to retrieve, mostly because the interface of the underlying zipfile
+        object does not allow for efficient retrievals. This may change in a future
+        implementation.
         """
         # create a timestamp
         timestamp = time.gmtime()

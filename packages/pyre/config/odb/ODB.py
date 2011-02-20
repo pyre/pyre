@@ -18,6 +18,7 @@ class ODB(Codec):
 
     # constants
     encoding = "odb"
+    filesystem = None
 
 
     # interface
@@ -27,7 +28,7 @@ class ODB(Codec):
         contents into a shelf
         """
         # place the {source} contents in a shelf
-        shelf = Shelf.retrieveContents(vnode=source)
+        shelf = Shelf.retrieveContents(filesystem=self.filesystem, source=source)
         # and return it
         return shelf
         
@@ -42,6 +43,13 @@ class ODB(Codec):
             raise self.SymbolNotFoundError(codec=self, shelf=shelf, symbol=symbol) from error
         except TypeError as error:
             raise self.ShelfError(codec=self, shelf=shelf, symbol=symbol) from error
+
+
+    # meta methods
+    def __init__(self, filesystem, **kwds):
+        super().__init__(**kwds)
+        self.filesystem = filesystem
+        return
 
 
 # end of file

@@ -39,12 +39,16 @@ class Shelf(dict):
 
     # interface
     @classmethod
-    def retrieveContents(cls, vnode):
+    def retrieveContents(cls, filesystem, source):
         """
         Read the contents of the filesystem {vnode} and return them as a string
         """
-        # open the vnode with the default encoding
-        contents = vnode.open(encoding=cls.defaultEncoding).read()
+        # unpack the source
+        scheme, address = source
+        # open with the default encoding
+        encoding, stream = filesystem.open(
+            scheme=scheme, address=address, encoding=cls.defaultEncoding)
+        contents = stream.read()
         # print("       opened as a {0!r} file".format(cls.defaultEncoding))
         # check whether the file contains an encoding declaration
         hasEncoding = cls._encodingDetector.search(contents, endpos=200)
@@ -52,7 +56,9 @@ class Shelf(dict):
             encoding = hasEncoding.group(1).lower()
             if encoding != cls.defaultEncoding:
                 # print("       re-opened as a {0!r} file".format(cls.encoding))
-                contents = vnode.open(encoding=encoding).read()
+                encoding, stream = filesystem.open(
+                    scheme=scheme, address=address, encoding=encoding)
+                contents = stream.read()
         # contents now is an open stream
         # build a new shelf
         shelf = Shelf()

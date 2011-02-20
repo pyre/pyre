@@ -8,40 +8,68 @@
 
 
 """
-Exercise URI parsing by the executive
+Exercise file opening by the file server
 """
 
 
 def test():
+    import os
     import pyre.framework
-    executive = pyre.framework.executive()
+    f = pyre.framework.executive().fileserver
 
-    # a simple case
-    method, address, fragment = executive.parseURI("pyre.pml")
-    assert method == "file"
-    assert address == "pyre.pml"
-    assert fragment == None
+    # a simple case that looks for a file in the current directory
+    encoding, stream = f.open(scheme="file", address="sample.odb")
+    assert encoding == 'odb'
+    assert stream.name == 'sample.odb'
 
-    # another simple case
-    method, address, fragment = executive.parseURI("/pyre/system/pyre.pml")
-    assert method == "file"
-    assert address == "/pyre/system/pyre.pml"
-    assert fragment == None
+    # using absolute path for the same file
+    encoding, stream = f.open(scheme='file', address=os.path.abspath("sample.odb"))
+    assert encoding == 'odb'
+    assert stream.name == os.path.abspath('sample.odb')
 
-    # the full set
-    method, address, fragment = executive.parseURI("file:///pyre.pml#anchor")
-    assert method == "file"
-    assert address == "/pyre.pml"
-    assert fragment == "anchor"
+    # using vfs
+    encoding, stream = f.open(scheme="vfs", address="/local/sample.odb")
+    assert encoding == 'odb'
+    assert stream.name == os.path.abspath('sample.odb')
 
-    # a poorly formed one
+    # test failure modes
+    # bad scheme
     try:
-        executive.parseURI("file://#anchor")
+        f.open(scheme="unknown", address="sample.odb")
         assert False
-    except executive.BadResourceLocatorError as error:
-        assert error.reason == "missing address"
+    except f.URISpecificationError as error:
+        assert error.uri == "unknown://sample.odb"
+        assert error.reason == "unsupported scheme 'unknown'"
 
-    return executive
+    # missing physical file 
+    try:
+        f.open(scheme="file", address="not-there.odb")
+        assert False
+    except f.NotFoundError as error:
+        assert error.filesystem == f
+        assert error.path == 'not-there.odb'
+        assert error.fragment == 'file'
+
+    # missing logical file
+    try:
+        f.open(scheme='vfs', address='/local/not-there.odb')
+        assert False
+    except f.NotFoundError as error:
+        assert error.filesystem == f
+        assert error.path == '/local/not-there.odb'
+        assert error.fragment == 'not-there.odb'
+
+    # missing logical directory
+    try:
+        f.open(scheme='vfs', address='/oops/not-there.odb')
+        assert False
+    except f.NotFoundError as error:
+        assert error.filesystem == f
+        assert error.path == '/oops/not-there.odb'
+        assert error.fragment == 'oops'
+
+    # return the file server
+    return f
 
 
 # main

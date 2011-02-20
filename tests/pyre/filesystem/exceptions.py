@@ -49,7 +49,7 @@ def test():
         pass
 
     try:
-        raise URISpecificationError(uri=None, description=None)
+        raise URISpecificationError(uri=None, reason=None)
     except URISpecificationError as error:
         pass
 

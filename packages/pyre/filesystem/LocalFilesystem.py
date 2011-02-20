@@ -46,7 +46,14 @@ class LocalFilesystem(Filesystem):
         return open(uri, **kwds)
 
 
-    def sync(self, walker=None, recognizer=None, root=None, levels=None):
+    def info(self, node, **kwds):
+        """
+        Look up {node} in my {vnodes} and return the associated info node
+        """
+        return self.vnodes[node]
+
+
+    def discover(self, walker=None, recognizer=None, root=None, levels=None):
         """
         Traverse my directory structure and refresh my contents so that they match the
         underlying filesystem

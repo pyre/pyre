@@ -10,8 +10,8 @@ from .SimpleExplorer import SimpleExplorer
 
 class TreeExplorer(SimpleExplorer):
     """
-    A visitors that creates an tree representation of the name and node type of the contenst of
-    a filesystem
+    A visitor that creates a tree representation with the name and node type of the contents of
+    a folder
     """
 
 
@@ -53,7 +53,6 @@ class TreeExplorer(SimpleExplorer):
         self._graphic = graphic
 
         return
-
 
 
     # meta methods

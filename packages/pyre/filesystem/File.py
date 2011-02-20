@@ -60,6 +60,24 @@ class File:
         return
 
 
+    # debugging support
+    def dump(self):
+        """
+        Print out the known information about this file
+        """
+        import time
+        print("node {}".format(self))
+        print("  uri:", self.uri)
+        print("  owner:", self.owner)
+        print("  uid:", self.uid)
+        print("  gid:", self.gid)
+        print("  size:", self.size)
+        print("  permissions: {:o}".format(self.permissions))
+        print("  access time:", time.asctime(time.localtime(self.accessTime)))
+        print("  creation time:", time.asctime(time.localtime(self.creationTime)))
+        print("  modification time:", time.asctime(time.localtime(self.modificationTime)))
+
+
     # meta methods
     def __init__(self, uri, info=None, **kwds):
         super().__init__(**kwds)

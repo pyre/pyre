@@ -15,7 +15,7 @@ class FileServer(Filesystem):
     """
     The manager of the virtual filesystem
 
-    Intances of FileServer manage hierarchical namespaces implemented as a virtual
+    Instances of FileServer manage hierarchical namespaces implemented as a virtual
     filesystem. The contents of these namespaces are retrieved using URIs, and can be arbitrary
     objects, although they are typically either local or remote files.
 
@@ -41,9 +41,16 @@ class FileServer(Filesystem):
     """
 
 
+    # public data
+    prefixfs = None # a filesystem rooted at the pyre installation folder
+    userfs = None # a filesystem typically rooted at .pyre in the user's home directory
+    localfs = None # filesystem rooted at the initial application working directory
+
+
     # interface
     def open(self, scheme, address, **kwds):
         """
+        Convert the pair {scheme},{address} into an input stream ready for reading
         """
         # get the extension 
         path, extension = os.path.splitext(address)
@@ -52,13 +59,21 @@ class FileServer(Filesystem):
 
         # if {scheme} is missing, assume it is a file from the local filesystem
         if scheme is None or scheme == "file":
-            return encoding, open(address, **kwds)
+            try:
+                return encoding, open(address, **kwds)
+            except IOError as error:
+                raise self.NotFoundError(filesystem=self, node=None, path=address, fragment='file')
 
         # if {scheme} is 'vfs', assume {address} is from our virtual filesystem
         if scheme == "vfs":
             return encoding, self[address].open()
 
-        raise self.BadResourceLocatorError(uri=uri, reason="unsupported scheme")
+        # oops: the file server doesn't know what to do with this
+        # piece back the uri
+        uri = "{}://{}".format(scheme, address)
+        # and raise an exception
+        raise self.URISpecificationError(
+            uri=uri, reason="unsupported scheme {!r}".format(scheme))
 
 
     def join(self, path, address, extension=None):
@@ -88,27 +103,28 @@ class FileServer(Filesystem):
         # both are handled correctly by the pyre.filesystem.newFilesystem factory
         try:
             # so invoke it to build the filesystem for us
-            self.systemfs = pyre.filesystem.newFilesystem(pyre.prefix()).sync(levels=1)
+            self.prefixfs = pyre.filesystem.newFilesystem(pyre.prefix()).discover(levels=1)
         except self.GenericError:
             # if this failed, just create a new empty folder
             system = self.newFolder()
         else:
             try:
                 # hunt down the depository subdirectory
-                system = self.systemfs["depository"]
+                system = self.prefixfs["depository"]
             except self.NotFoundError:
                 # hmm... why is this directory missing from the distribution?
+                print(" ** warning: could not find system depository")
                 # moving on...
                 system = self.newFolder()
        # mount the system directory
-        self["pyre/system"] = system
+        self["pyre/system"] = system.discover(levels=1)
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
         userdir = os.path.expanduser(self.DOT_PYRE) 
         try:
             # make filesystem out of the preference directory
-            self.userfs = pyre.filesystem.newFilesystem(userdir).sync(levels=1)
+            self.userfs = pyre.filesystem.newFilesystem(userdir).discover(levels=1)
         except self.GenericError:
             self.userfs = self.newFolder()
        # mount this directory as /pyre/user
@@ -117,7 +133,7 @@ class FileServer(Filesystem):
         # finally, mount the current working directory
         try:
             # make filesystem out of the preference directory
-            self.localfs = pyre.filesystem.newFilesystem(".").sync(levels=1)
+            self.localfs = pyre.filesystem.newFilesystem(".").discover(levels=1)
         except self.GenericError:
             self.localfs = self.newFolder()
        # mount this directory as /local
@@ -127,7 +143,7 @@ class FileServer(Filesystem):
 
 
     # exceptions
-    from .exceptions import BadResourceLocatorError
+    from ..filesystem.exceptions import NotFoundError, URISpecificationError
 
 
     # constants

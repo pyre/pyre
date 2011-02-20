@@ -17,12 +17,12 @@ class SimpleExplorer(Explorer):
 
 
     # interface
-    def explore(self, filesystem):
+    def explore(self, folder):
         """
         Traverse the filesystem and print out its contents
         """
         self.printout = []
-        filesystem.identify(self, name=filesystem.mountpoint)
+        folder.identify(self, name=folder.mountpoint)
         return self.printout
 
 
