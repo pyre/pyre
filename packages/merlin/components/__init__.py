@@ -5,5 +5,7 @@
 # (c) 1998-2011 all rights reserved
 #
 
+from .Spell import Spell as spell
+
 
 # end of file 

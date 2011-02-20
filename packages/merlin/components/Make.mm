@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Merlin.py \
+    Spell.py \
     __init__.py
 
 
