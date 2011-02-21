@@ -21,6 +21,9 @@ class Merlin(metaclass=Singleton):
 
 
     # public data
+    project = None # the filesystem mounted over the project {.merlin} directory
+
+    # access to the pyre executive and its services
     executive = pyre.executive # access to the pyre executive
     fileserver = executive.fileserver # access to the pyre file server
 
@@ -84,14 +87,18 @@ class Merlin(metaclass=Singleton):
 
         print(" ** populating the application namespace")
 
+        print("    exploring the system directory")
+        # self.fileserver['/pyre/system'].discover()
+        system  = self.fileserver['/pyre/system/merlin'].discover()
+
         print("    hunting down the project directory")
-        project = self._mountProjectDirectory()
+        self.project = self._mountProjectDirectory()
         
         # collect the spells
         self._collectSpells()
 
         # dump the filesystem
-        self.fileserver._dump()
+        self.fileserver.dump()
 
         return
 
@@ -138,7 +145,7 @@ class Merlin(metaclass=Singleton):
         # access the filesystem package
         import pyre.filesystem
         # create a local file system
-        project = pyre.filesystem.newLocalFilesystem(root=node.uri).sync()
+        project = pyre.filesystem.newLocalFilesystem(root=node.uri).discover()
         # mount it as /project
         self.fileserver['/project'] = project
         # and return it
@@ -151,10 +158,12 @@ class Merlin(metaclass=Singleton):
         """
         print("    spells:")
         # establish the folder
-        self.fileserver['/merlin/spells'] = self.fileserver.newFolder()
+        spells = self.fileserver.newFolder()
 
-        # all done
-        return
+        # mount the spell folder 
+        self.fileserver['/merlin/spells'] = spells
+        # and return it
+        return spells
 
 
 # end of file 
