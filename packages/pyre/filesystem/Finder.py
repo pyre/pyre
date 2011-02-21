@@ -12,7 +12,7 @@ from .Explorer import Explorer
 
 class Finder(Explorer):
     """
-    A visitor that generates a list of the contents of a filsystem
+    A visitor that generates a list of the contents of a filesystem
     """
 
 
@@ -48,7 +48,7 @@ class Finder(Explorer):
             # add the name of this child to the path trace
             path.append(name)
             # build the string
-            yield (node, path)
+            yield (child, path)
             # recurse into its children
             for node, path in self._explore(node=child, path=path):
                 yield (node, path)
