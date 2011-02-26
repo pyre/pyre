@@ -9,6 +9,9 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
+    algebra \
+    patterns \
+    timers \
 
 #--------------------------------------------------------------------------
 #
