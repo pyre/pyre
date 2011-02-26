@@ -1,0 +1,59 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+//
+
+
+#if !defined(pyre_timers_Timer_icc)
+#error This header file contains implementation details of the typename Timer
+#else
+
+// interface
+pyre::timers::Timer::name_t pyre::timers::Timer::name() const {
+    return _name;
+}
+
+void pyre::timers::Timer::start() {
+    // start a timer: record a timestamp so i can report elapsed time later
+    _start = _theClock.time();
+    return;
+}
+
+void pyre::timers::Timer::stop() {
+    // start a timer: record a timestamp so i can report elapsed time later
+    _accumulated += _theClock.time() - _start;
+    return;
+}
+
+void pyre::timers::Timer::reset() {
+    // zero out the accumulated time
+    _accumulated = 0;
+    return;
+}
+
+double pyre::timers::Timer::read() {
+    // get the elapsed time recorded
+    // running timers do not include the time interval since they were last stopped
+    // use lap to read accumulated time non-destructively from a running timer
+    return _theClock.elapsed(_accumulated);
+}
+
+double pyre::timers::Timer::lap() {
+    clock_t::tick_t now = _theClock.time();
+    return _theClock.elapsed(_accumulated + now - _start);
+}
+
+// constructor
+pyre::timers::Timer::Timer(name_t name) :
+    _name(name),
+    _start(_theClock.time()),
+    _accumulated(0) {
+}
+
+#endif
+
+
+// end of file

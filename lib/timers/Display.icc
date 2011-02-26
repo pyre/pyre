@@ -1,0 +1,44 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+//
+
+#if !defined(pyre_timers_Display_icc)
+#error This header file contains implementation details of the class Display
+#else
+
+// interface
+pyre::timers::Display::name_t pyre::timers::Display::name() const {
+    return _timer.name();
+}
+
+pyre::timers::Display & pyre::timers::Display::start() {
+    _timer.start();
+    return *this;
+}
+
+pyre::timers::Display & pyre::timers::Display::stop() {
+    _timer.stop();
+    return *this;
+}
+
+pyre::timers::Display & pyre::timers::Display::reset() {
+    _timer.reset();
+    return *this;
+}
+
+double pyre::timers::Display::read() {
+    return _timer.read();
+}
+
+// constructor
+pyre::timers::Display::Display(name_t name) :
+    _timer(_findTimer(name)) {
+}
+
+#endif
+
+// end of file
