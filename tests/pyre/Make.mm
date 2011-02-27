@@ -25,6 +25,7 @@ RECURSE_DIRS = \
     config \
     framework \
     components \
+    timers \
     db \
     postgres \
 
