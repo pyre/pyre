@@ -10,6 +10,13 @@
 #if !defined(pyre_timers_Display_h)
 #define pyre_timers_Display_h
 
+
+// The class Display is a wrapper around Timer that adds the ability to assign names to timers
+// and register them with a local registry. Clients can retrieve timer instances by name, so
+// that timer control can be accomplished throughout and application without having to pass
+// timer instances around.
+
+// place me in the proper namespace
 namespace pyre {
     namespace timers {
         class Display;
@@ -20,7 +27,6 @@ namespace pyre {
 #include <string>
 #include "Timer.h"
 #include <pyre/patterns/Registrar.h>
-
 
 // declaration
 class pyre::timers::Display {
