@@ -33,6 +33,7 @@ class Executive:
     configurator = None
     fileserver = None
     registrar = None
+    timers = None
     # book keeping
     packages = None
     errors = None
@@ -67,6 +68,15 @@ class Executive:
         self.errors.extend(errors)
         # all done
         return self
+
+
+    # other facilities
+    def timer(self, **kwds):
+        """
+        Build and return a timer
+        """
+        # let the timer registry do its thing
+        return self.timers.timer(**kwds)
 
 
     # support for the various internal requests
@@ -290,6 +300,8 @@ class Executive:
         self.fileserver = managers.newFileServer()
         # the component registrar
         self.registrar = managers.newComponentRegistrar()
+        # the timer manager
+        self.timers = managers.newTimerRegistrar()
 
         # prime the configuration folder list
         self.configpath = list(self.path)

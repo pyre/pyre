@@ -59,4 +59,9 @@ def newFileServer(**kwds):
     return FileServer(**kwds)
 
 
+def newTimerRegistrar(**kwds):
+    from ..timers import newTimerRegistrar
+    return newTimerRegistrar(**kwds)
+
+
 # end of file 
