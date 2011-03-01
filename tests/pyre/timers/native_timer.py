@@ -8,16 +8,16 @@
 
 
 """
-Access timers through the pyre executive
+Access the extension module implementation
 """
 
 
 def test():
     # access
-    import pyre
+    from pyre.timers.NativeTimer import NativeTimer as timer
 
     # make one
-    t = pyre.executive.timer(name="test")
+    t = timer(name="test")
 
     # start it
     t.start()

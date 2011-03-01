@@ -20,6 +20,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     AbstractTimer.py \
+    NativeTimer.py \
     PythonTimer.py \
     Registrar.py \
     __init__.py

@@ -13,16 +13,19 @@ PROJECT = pyre
 
 all: test
 
-test: sanity python-timer pyre-timer
+test: sanity python native pyre
 
 sanity:
 	${PYTHON} ./sanity.py
 
-python-timer:
+python:
 	${PYTHON} ./python_timer.py
 	${PYTHON} ./python_timer_errors.py
 
-pyre-timer:
+native:
+	${PYTHON} ./native_timer.py
+
+pyre:
 	${PYTHON} ./pyre_timer.py
 
 # end of file 
