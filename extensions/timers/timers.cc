@@ -10,6 +10,7 @@
 
 // the module method declarations
 #include "metadata.h"
+#include "display.h"
 
 // put everything in my private namespace
 namespace pyre {
@@ -22,6 +23,14 @@ namespace pyre {
             { copyright__name__, copyright, METH_VARARGS, copyright__doc__ },
             // the version method
             { version__name__, version, METH_VARARGS, version__doc__ },
+
+            // timer access
+            { newTimer__name__, newTimer, METH_VARARGS, newTimer__doc__ },
+            { start__name__, start, METH_VARARGS, start__doc__ },
+            { stop__name__, stop, METH_VARARGS, stop__doc__ },
+            { reset__name__, reset, METH_VARARGS, reset__doc__ },
+            { lap__name__, lap, METH_VARARGS, lap__doc__ },
+            { read__name__, read, METH_VARARGS, read__doc__ },
 
             // sentinel
             {0, 0, 0, 0}
