@@ -33,7 +33,7 @@ class Executive:
     configurator = None
     fileserver = None
     registrar = None
-    timers = None
+    timekeeper = None
     # book keeping
     packages = None
     errors = None
@@ -76,7 +76,7 @@ class Executive:
         Build and return a timer
         """
         # let the timer registry do its thing
-        return self.timers.timer(**kwds)
+        return self.timekeeper.timer(**kwds)
 
 
     # support for the various internal requests
@@ -290,6 +290,11 @@ class Executive:
     def __init__(self, managers, **kwds):
         super().__init__(**kwds)
 
+        # the timer manager
+        self.timekeeper = managers.newTimerRegistrar()
+        # build and start a timer
+        self.timer = self.timekeeper.timer(name="pyre").start()
+
         # the manager of the component interdependencies
         self.binder = managers.newBinder()
         # my codec manager
@@ -300,8 +305,6 @@ class Executive:
         self.fileserver = managers.newFileServer()
         # the component registrar
         self.registrar = managers.newComponentRegistrar()
-        # the timer manager
-        self.timers = managers.newTimerRegistrar()
 
         # prime the configuration folder list
         self.configpath = list(self.path)
