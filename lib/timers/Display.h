@@ -51,6 +51,9 @@ public:
     // get the number of seconds accumulated by a *stopped* timer
     double read();
 
+    // locate a timer given its name
+    static timer_t & retrieveTimer(name_t name);
+
     // meta methods
 public:
     virtual ~Display();
@@ -64,7 +67,6 @@ private:
 
     // implementation details
 private:
-    static timer_t & _findTimer(name_t name);
 };
 
 // get the inline definitions

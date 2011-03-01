@@ -36,7 +36,7 @@ double pyre::timers::Display::read() {
 
 // constructor
 pyre::timers::Display::Display(name_t name) :
-    _timer(_findTimer(name)) {
+    _timer(retrieveTimer(name)) {
 }
 
 #endif

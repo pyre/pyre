@@ -20,7 +20,7 @@ Display::index_t Display::_index;
 
 
 // lookup a timer in the index and return it 
-Display::timer_t & Display::_findTimer(name_t name) {
+Display::timer_t & Display::retrieveTimer(name_t name) {
     // 
     // lookup <name> in the _index and return the associated timer
     // if not found, create a new one and index it under <name>
