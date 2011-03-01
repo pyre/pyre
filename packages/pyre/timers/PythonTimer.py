@@ -28,7 +28,7 @@ class PythonTimer(AbstractTimer):
         Start the timer
         """
         # take a reading from the system clock
-        self._start = time.clock()
+        self._start = time.time()
         # enable chaining
         return self
 
@@ -38,7 +38,7 @@ class PythonTimer(AbstractTimer):
         Stop the timer
         """
         # update the accumulated time
-        self._accumulatedTime += time.clock() - self._start
+        self._accumulatedTime += time.time() - self._start
         # disable the timer
         self._start = None
         # and return
@@ -72,7 +72,7 @@ class PythonTimer(AbstractTimer):
         Read the total time this timer has been running without disturbing it
         """
         # take a reading from the system clock
-        now = time.clock()
+        now = time.time()
         # and return the total time accumulated so far
         return self._accumulatedTime + (now - self._start)
 
