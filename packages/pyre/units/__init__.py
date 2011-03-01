@@ -6,21 +6,23 @@
 #
 
 """
-This package provides support for working with diensional quantities
+This package provides support for working with dimensional quantities
 
-It contains definitions for all seven fundamental and twenty-one derived SI units, as well as support for units from other systems
+It contains definitions for all seven fundamental and twenty-one derived SI units, as well as
+support for units from other systems
 """
+
 
 # factories
 def dimensional(**kwds):
     """
-    Create and return an instance of a Diminesional.
+    Create and return an instance of a Dimensional.
 
-    This factory grants access to the low level interfeace, useful for building dimensional
+    This factory grants access to the low level interface, useful for building dimensional
     objects directly from their representation. However, manipulating one of the predefined
     unit objects should be sufficient for most uses. Please let me know if you find something
-    that cannot be done any other way and you find yourself resorting to building dimensionals
-    directly.
+    that cannot be done any other way and you find yourself resorting to building dimensional
+    quantities directly.
     """
     from .Dimensional import Dimensional
     return Dimensional(**kwds)
