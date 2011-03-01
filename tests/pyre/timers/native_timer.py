@@ -24,12 +24,16 @@ def test():
     # stop it 
     t.stop()
     # read it
-    assert t.read() != 0
+    elapsed = t.read()
+    assert type(elapsed) == float
+    assert elapsed != 0
 
     # start it again
     t.start()
     # take a lap reading
-    t.lap()
+    elapsed = t.lap()
+    assert type(elapsed) == float
+    assert elapsed != 0
     # stop it
     t.stop()
 
