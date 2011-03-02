@@ -14,9 +14,9 @@
     <!-- the properties -->
     <bind property="samples">10**5</bind>
     <!-- specify the components -->
-    <bind property="mesh">import://gauss.meshes#mersenne</bind>
-    <bind property="integrand">import://gauss.functors#one</bind>
-    <bind property="region">import://gauss.shapes#ball</bind>
+    <bind property="mesh">import:gauss.meshes#mersenne</bind>
+    <bind property="integrand">import:gauss.functors#one</bind>
+    <bind property="region">import:gauss.shapes#ball</bind>
   </component>
 
   <component name="mc.box">

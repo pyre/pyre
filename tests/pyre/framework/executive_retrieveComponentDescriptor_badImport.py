@@ -16,9 +16,9 @@ def test():
     import pyre.framework
     executive =  pyre.framework.executive()
 
-    # retrieve a component descriptor from the puthon path
+    # retrieve a component descriptor from the python path
     try:
-        executive.retrieveComponentDescriptor(uri="import://not-there#unknown")
+        executive.retrieveComponentDescriptor(uri="import:not-there#unknown")
         assert False
     except executive.DecodingError as error:
         pass

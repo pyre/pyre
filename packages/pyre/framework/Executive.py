@@ -54,7 +54,7 @@ class Executive:
         with the given {priority}.
         """
         # decode the uri
-        scheme, address, fragment = self.parseURI(uri)
+        scheme, authority, address, query, fragment = self.parseURI(uri)
         # get the fileserver to  deduce the encoding and produce the input stream
         encoding, source = self.fileserver.open(scheme, address=address)
         # instantiate the requested reader
@@ -75,14 +75,14 @@ class Executive:
         Interpret {uri} as a component descriptor and attempt to resolve it
 
         {uri} encodes the descriptor using the URI specification 
-            scheme://address#symbol
+            scheme://authority/address#symbol
         Currently, there is support for two classes of schemes.
 
         The "import" scheme requires that the component descriptor is accessible on the python
         path. The corresponding codec uses the interpreter to import the symbol {symbol} using
         {address} to access the containing module. For example, the {uri}
 
-            import://package.subpackage.module#myFactory
+            import:package.subpackage.module#myFactory
 
         is treated as if the following statement had been issued to the interpreter
 
@@ -112,9 +112,15 @@ class Executive:
         would be valid contents for an accessible module or an odb file.
         """
         # parse the {uri}
-        scheme, address, symbol = self.parseURI(uri)
+        scheme, authority, address, query, symbol = self.parseURI(uri)
         # print("Executive:retrieveComponentDescriptor: scheme={!r}, address={!r}, symbol={!r}".
               # format(scheme, address, symbol))
+
+        # make some adjustments
+        if scheme:
+            scheme = scheme.strip().lower()
+        else:
+            scheme = 'file'
 
         # if the scheme is "import"
         if scheme == "import":
@@ -248,7 +254,7 @@ class Executive:
 
 
     # utilities
-    def parseURI(self, uri, defaultScheme="file"):
+    def parseURI(self, uri):
         """
         Extract the scheme, address and fragment from {uri}.
         """
@@ -258,17 +264,17 @@ class Executive:
         if match is None:
             raise self.BadResourceLocatorError(uri=uri, reason="unrecognizable")
         # extract the scheme
-        scheme = match.group("scheme") or defaultScheme
-        scheme = scheme.strip().lower()
+        scheme = match.group("scheme")
+        # extract the authority
+        authority = match.group("authority")
         # extract the address
         address = match.group("address")
-        # check that it's not blank
-        if not address:
-            raise self.BadResourceLocatorError(uri=uri, reason="missing address")
+        # extract the query
+        query = match.group("query")
         # extract the fragment
         fragment = match.group("fragment")
         # and return the triplet
-        return scheme, address, fragment
+        return scheme, authority, address, query, fragment
 
 
     # meta methods
@@ -309,17 +315,14 @@ class Executive:
 
     # private data
     _uriRecognizer = re.compile(
-        r"((?P<scheme>[^:]+)://)?(?P<address>[^#]*)(#(?P<fragment>.*))?"
-        )
-
-    # from http://regexlib.com/Search.aspx?k=URL
-    r"""
-    ^(?=[^&])
-    (?:(?<scheme>[^:/?#]+):)?
-    (?://(?<authority>[^/?#]*))?
-    (?<path>[^?#]*)(?:\?(?<query>[^#]*))?
-    (?:#(?<fragment>.*))?
-    """
+        "".join(( # adapted from http://regexlib.com/Search.aspx?k=URL
+                r"^(?=[^&])", # disallow '&' at the beginning of uri
+                r"(?:(?P<scheme>[^:/?#]+):)?", # grab the scheme
+                r"(?://(?P<authority>[^/?#]*))?", # grab the authority
+                r"(?P<address>[^?#]*)", # grab the address, typically a path
+                r"(?:\?(?P<query>[^#]*))?", # grab the query, i.e. the ?key=value&... chunks
+                r"(?:#(?P<fragment>.*))?"
+                )))
 
 
 # end of file 
