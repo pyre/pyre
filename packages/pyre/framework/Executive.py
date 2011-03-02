@@ -33,6 +33,7 @@ class Executive:
     configurator = None
     fileserver = None
     registrar = None
+    timekeeper = None
     # book keeping
     packages = None
     errors = None
@@ -67,6 +68,15 @@ class Executive:
         self.errors.extend(errors)
         # all done
         return self
+
+
+    # other facilities
+    def newTimer(self, **kwds):
+        """
+        Build and return a timer
+        """
+        # let the timer registry do its thing
+        return self.timekeeper.timer(**kwds)
 
 
     # support for the various internal requests
@@ -280,6 +290,11 @@ class Executive:
     # meta methods
     def __init__(self, managers, **kwds):
         super().__init__(**kwds)
+
+        # the timer manager
+        self.timekeeper = managers.newTimerRegistrar()
+        # build and start a timer
+        self.timer = self.timekeeper.timer(name="pyre").start()
 
         # the manager of the component interdependencies
         self.binder = managers.newBinder()

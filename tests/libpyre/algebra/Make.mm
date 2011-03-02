@@ -1,30 +1,30 @@
 # -*- Makefile -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
 # california institute of technology
 # (c) 1998-2011 all rights reserved
 #
 
-
 PROJECT = pyre
+PACKAGE = algebra
 
-RECURSE_DIRS = \
-    pyrepg \
-    timers
+PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
+PROJ_CLEAN += $(TESTS)
+
+
+TESTS = bcd
 
 #--------------------------------------------------------------------------
-#
+all: test
+	bcd
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+test: $(TESTS)
+	./bcd
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
 
-clean::
-	BLD_ACTION="clean" $(MM) recurse
+bcd: bcd.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXX_FLAGS)
 
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
 
 # end of file 

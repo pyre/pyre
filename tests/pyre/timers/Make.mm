@@ -8,25 +8,24 @@
 
 PROJECT = pyre
 
-RECURSE_DIRS = \
-    python \
-    libpyre \
-    pyre
-
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: test
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
+test: sanity python native pyre
 
-clean::
-	BLD_ACTION="clean" $(MM) recurse
+sanity:
+	${PYTHON} ./sanity.py
 
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
+python:
+	${PYTHON} ./python_timer.py
+	${PYTHON} ./python_timer_errors.py
 
+native:
+	${PYTHON} ./native_timer.py
+
+pyre:
+	${PYTHON} ./pyre_timer.py
 
 # end of file 

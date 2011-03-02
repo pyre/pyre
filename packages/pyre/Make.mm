@@ -25,6 +25,7 @@ RECURSE_DIRS = \
     records \
     schema \
     tabular \
+    timers \
     tracking \
     units \
     xml \
