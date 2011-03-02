@@ -71,7 +71,7 @@ class Executive:
 
 
     # other facilities
-    def timer(self, **kwds):
+    def newTimer(self, **kwds):
         """
         Build and return a timer
         """

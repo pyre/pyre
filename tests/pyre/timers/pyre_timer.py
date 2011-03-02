@@ -17,7 +17,7 @@ def test():
     import pyre
 
     # make one
-    t = pyre.executive.timer(name="test")
+    t = pyre.executive.newTimer(name="test")
 
     # start it
     t.start()
