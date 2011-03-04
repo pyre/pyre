@@ -15,7 +15,6 @@ RECURSE_DIRS = \
     depository \
     tests \
     bin \
-    doc \
     schema \
     examples \
 
@@ -39,6 +38,10 @@ distclean::
 #  shortcuts to building in my subdirectories
 .PHONY: lib extensions packages tests
 
+doc:
+	(cd doc; mm)
+
+extensions:
 lib:
 	(cd lib; mm)
 
