@@ -131,6 +131,7 @@ def boot():
     return Merlin()
 
 
+# the singleton
 merlin = boot()
 
 
