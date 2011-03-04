@@ -72,7 +72,7 @@ class Dimensional:
             return Dimensional(other*self.value, self.derivation)
         # otherwise, compute the units
         derivation = tuple(map(operator.add, self.derivation, other.derivation))
-        # if the units cancelled out, return a float
+        # if the units canceled out, return a float
         if derivation == self._zero: return value
         # otherwise build a new one and return it
         return Dimensional(value, derivation)
@@ -91,7 +91,7 @@ class Dimensional:
             return Dimensional(self.value/other, self.derivation)
         # otherwise compute the units
         derivation = tuple(map(operator.sub, self.derivation, other.derivation))
-        # check whether the units cancelled
+        # check whether the units canceled
         if derivation == self._zero: return value
         # and return a new dimensional
         return Dimensional(value, derivation)
@@ -342,6 +342,11 @@ class Dimensional:
     _fundamental = ('kg', 'm', 's', 'A', 'K', 'mol', 'cd') # the SI fundamental units
     _zero = (0,) * len(_fundamental)
     _negativeOne = (-1, ) * len(_fundamental)
+
+
+    # public data: default values
+    value = 0
+    derivation = _zero
 
 
 # instances

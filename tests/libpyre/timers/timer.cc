@@ -1,0 +1,32 @@
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+//
+
+
+// for the build system
+#include <portinfo>
+
+// grab the timer objects
+#include <pyre/timers/timers.h>
+
+// main program
+int main() {
+    // make a timer
+    pyre::timer_t test("test");
+
+    // exercise the interface
+    // start the timer
+    test.start();
+    // stop the timer
+    test.stop();
+    // read the timer
+    test.read();
+
+    // all done
+    return 0;
+}
+
+// end of file

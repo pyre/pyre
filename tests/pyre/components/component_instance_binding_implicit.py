@@ -25,7 +25,7 @@ def test():
     # declare a component
     class component(pyre.component):
         """a component"""
-        task = pyre.facility(interface=job, default="import://sample#worker")
+        task = pyre.facility(interface=job, default="import:sample#worker")
 
     # instantiate
     c = component(name="c")

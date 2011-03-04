@@ -14,13 +14,11 @@ Assemble an integration entirely through a local configuration file
 
 def test():
     # load the local configuration file
-    import pyre
-    executive = pyre.executive
-    executive.loadConfiguration(uri="vfs://local/pi.pml")
-    # executive.configurator.dump()
+    # import pyre
+    # pyre.executive.configurator.dump()
     # get the montecarlo integrator from the gauss package
     import gauss
-    mc = gauss.integrators.montecarlo(name="mc")
+    mc = gauss.integrators.montecarlo(name="mc-π")
 
     # print the state of the integrator
     # print("integrator {.pyre_name!r}:".format(mc))

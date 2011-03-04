@@ -14,13 +14,11 @@ Assemble an integration entirely through a local configuration file
 
 def test():
     # load the local configuration file
-    import pyre
-    executive = pyre.executive
-    executive.loadConfiguration(uri="vfs://local/gaussian.pml")
-    # executive.configurator.dump()
+    # import pyre
+    # pyre.executive.configurator.dump()
     # get the montecarlo integrator from the gauss package
     import gauss
-    mc = gauss.integrators.montecarlo(name="mc")
+    mc = gauss.integrators.montecarlo(name="mc-gaussian")
 
     # print the state of the integrator
     # print("integrator {.pyre_name!r}:".format(mc))
@@ -34,6 +32,8 @@ def test():
     # print("    name: {.region.pyre_name!r}".format(mc))
     # print("  integrand: {.integrand!r}".format(mc))
     # print("    name: {.integrand.pyre_name!r}".format(mc))
+    # print("    μ: {.integrand.μ!r}".format(mc))
+    # print("    σ: {.integrand.σ!r}".format(mc))
 
     # integrate to get the area of a quarter circle
     integral = mc.integrate()

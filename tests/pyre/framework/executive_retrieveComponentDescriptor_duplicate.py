@@ -16,11 +16,11 @@ def test():
     import pyre.framework
     executive =  pyre.framework.executive()
 
-    # retrieve a component descriptor from the puthon path
-    base = executive.retrieveComponentDescriptor(uri="import://pyre.components.Component#Component")
+    # retrieve a component descriptor from the python path
+    base = executive.retrieveComponentDescriptor(uri="import:pyre.components.Component#Component")
     # retrieve a component descriptor from a file
-    one = executive.retrieveComponentDescriptor(uri="file://sample.odb#one")
-    two = executive.retrieveComponentDescriptor(uri="file://sample.odb#one")
+    one = executive.retrieveComponentDescriptor(uri="file:sample.odb#one")
+    two = executive.retrieveComponentDescriptor(uri="file:sample.odb#one")
     # check that the two retrievals yield identical results
     assert one == two
 
