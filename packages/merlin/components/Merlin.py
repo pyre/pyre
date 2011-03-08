@@ -6,15 +6,12 @@
 #
 
 
-# packages
-import re
-
 # access to the framework
 import pyre
-
-
 # my metaclass
 from pyre.patterns.Singleton import Singleton
+# my part
+from .Spellbook import Spellbook
 
 
 class Merlin(metaclass=Singleton):
@@ -35,17 +32,7 @@ class Merlin(metaclass=Singleton):
     # access to the pyre executive and its services
     executive = pyre.executive # access to the pyre executive
     fileserver = executive.fileserver # access to the pyre file server
-
-    # properties
-    @property
-    def spellpath(self):
-        return self._spellpath
-
-    @spellpath.setter
-    def spellpath(self, folders):
-        self._spellpath = folders
-        self._spelldirs = re.compile('(' + "|".join(folders) + ')/')
-        return
+    spellbook = None # build at construction time
 
 
     # interface
@@ -53,8 +40,9 @@ class Merlin(metaclass=Singleton):
         """
         The main entry point for merlin
         """
-        # print(" ** main: temporarily disabled")
-        # return
+        self.fileserver.dump()
+        print(" ** main: temporarily disabled")
+        return
         # extract the non-configurational parts of the command line
         request = tuple(c for p,c,l in self.executive.configurator.commands) 
         # show the default help screen if there was nothing useful on the command line
@@ -98,27 +86,6 @@ class Merlin(metaclass=Singleton):
         return
 
 
-    # utilities
-    def findSpells(self, pattern=None):
-        # check whether the pattern starts with the name of one of the spell directories look
-        # only there
-        match = self._spelldirs.match(pattern) if pattern else None
-        # if it does
-        if match:
-            # focus the search on the folder only
-            folders = [ match.group(1) ]
-            pattern = pattern[match.end():]
-        # otherwise
-        else:
-            folders = self.spellpath
-        # iterate through the spell locations
-        for folder in folders:
-            # look for spells
-            for node, path in self.spells[folder].find(pattern=pattern):
-                print(node.info.uri)
-        return
-
-
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -127,9 +94,10 @@ class Merlin(metaclass=Singleton):
         self.system, self.user = self._discoverConfigurationLayout()
         # hunt down the root of the project where the {.merlin} folder lives
         self.project = self._mountProjectDirectory()
-        # assemble the spells in their own namespace
-        self.spells = self._collectSpells()
+        # create and bind the spell book
+        self.spellbook = Spellbook(name="merlin.spellbook")
 
+        # all done
         return
 
 
@@ -171,6 +139,7 @@ class Merlin(metaclass=Singleton):
                 raise local.NotFoundError(
                     filesystem=local, node=None, path=".merlin", fragment='file')
         # got it
+        print(" ** project directory at {!r}".format(node.uri))
         # access the filesystem package
         import pyre.filesystem
         # create a local file system
@@ -179,49 +148,6 @@ class Merlin(metaclass=Singleton):
         self.fileserver['/project'] = project
         # and return it
         return project
-
-
-    def _collectSpells(self):
-        """
-        Traverse the application namespace looking for spells and cataloging them
-        """
-        # establish the folder
-        spells = self.fileserver.newFolder()
-        # mount it at the right spot
-        self.fileserver['/merlin/spells'] = spells
-
-        # look for the system spell directory
-        try:
-            # if all is well, this should succeed
-            system = self.fileserver['/pyre/system/merlin/spells']
-        except self.fileserver.NotFoundError as error:
-            # something is wrong with the installation...
-            system = self.fileserver.newFolder()
-        # attach the system folder
-        spells['system'] = system
-
-        # now look for the user's spells
-        try:
-            # if the user has any spells
-            user = self.fileserver['/pyre/user/merlin/spells']
-        except self.fileserver.NotFoundError as error:
-            # otherwise just build an empty folder
-            user = self.fileserver.newFolder()
-        # attach the user folder
-        spells['user'] = user
-
-        # finally, the project spells
-        try:
-            # does the project specify any spells?
-            project = self.fileserver['/project/spells']
-        except self.fileserver.NotFoundError as error:
-            # something is wrong with the installation...
-            project = self.fileserver.newFolder()
-        # attach the project folder
-        spells['project'] = project
-
-        # and return it
-        return spells
 
 
     def _discoverConfigurationLayout(self):
@@ -261,9 +187,5 @@ class Merlin(metaclass=Singleton):
         # all done
         return system, user
 
-
-    # private data
-    _spellpath = ('project', 'user', 'system')
-    _spelldirs = re.compile('(' + "|".join(_spellpath) + ')/')
 
 # end of file 
