@@ -10,7 +10,7 @@
 #if !defined(pyre_timers_h)
 #define pyre_timers_h
 
-#include "Display.h"
+#include "timers/Display.h"
 
 namespace pyre {
     typedef timers::Display timer_t;

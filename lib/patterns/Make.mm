@@ -17,7 +17,7 @@ all: export
 
 export:: export-package-headers
 
-EXPORT_HEADERS = \
+EXPORT_PKG_HEADERS = \
     Registrar.h Registrar.icc
 
 # end of file 
