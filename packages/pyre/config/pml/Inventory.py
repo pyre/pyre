@@ -15,7 +15,7 @@ class Inventory(Node):
     """
 
     # constants
-    elements = ("inventory", "bind")
+    elements = ("component", "inventory", "bind")
 
 
     # interface
