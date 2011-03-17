@@ -12,6 +12,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working:
+	${PYTHON} ./pml_componentName.py
+
 all: test
 
 test: sanity formats
@@ -30,6 +33,8 @@ pml:
 	${PYTHON} ./pml_unknownNode.py
 	${PYTHON} ./pml_badNode.py
 	${PYTHON} ./pml_badAttribute.py
-	${PYTHON} ./pml_sample.py
+	${PYTHON} ./pml_inventory.py
+	${PYTHON} ./pml_componentFamily.py
+	${PYTHON} ./pml_componentName.py
 
 # end of file 
