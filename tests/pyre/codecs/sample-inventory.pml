@@ -11,18 +11,9 @@
 
   <inventory name="pyre">
     <!-- some global settings -->
-    <bind property="home">pyre.home()</bind>
-    <bind property="prefix">pyre.prefix()</bind>
-
-    <!-- and some per user settings -->
-    <inventory name="user">
-      <bind property="name">michael a.g. aïvázis</bind>
-      <bind property="email">aivazis@caltech.edu</bind>
-    </inventory>
-
+    <bind property="home">pyre.home</bind>
+    <bind property="prefix">pyre.prefix</bind>
   </inventory>
-
-  <bind property="pyre.user.affiliation">california institute of technology</bind>
 
 </config>
 
