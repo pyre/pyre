@@ -29,7 +29,7 @@ class Configurable:
     pyre_name = None # my public id
     pyre_namemap = None # a map of descriptor aliases to their canonical names
     pyre_localTraits = None # a tuple of all the traits in my declaration
-    pyre_inheritedTraits = None # a tuple of all the traits inheited from my superclasses
+    pyre_inheritedTraits = None # a tuple of all the traits inherited from my superclasses
     pyre_pedigree = None # a tuple of ancestors that are themselves configurables
     pyre_hidden = True # true
 
@@ -74,7 +74,7 @@ class Configurable:
         """
         # the full set of my descriptors is prepared by {Requirement} and separated into two
         # piles: my local traits, i.e. traits that were first declared in my class record, and
-        # traits that i inhrerited
+        # traits that i inherited
         return itertools.chain(cls.pyre_localTraits, cls.pyre_inheritedTraits)
 
 
@@ -102,24 +102,6 @@ class Configurable:
         import journal
         firewall = journal.firewall("pyre.components")
         raise firewall.log("UNREACHABLE")
-
-
-    @classmethod
-    def pyre_getTraitDefaultValue(cls, trait):
-        """
-        Look through my supeclasses for the current default value of {trait}
-        """
-        # look through my ancestry for the value node
-        for record in cls.pyre_pedigree:
-            try:
-                return record.pyre_inventory[trait]
-            except KeyError:
-                pass
-        # if we got this far, we have a bug; report it
-        import journal
-        firewall = journal.firewall("pyre.components")
-        raise firewall.log(
-            "could not find trait {.name!r} in {.pyre_name!r}".format(trait, cls))
 
 
     def pyre_getTraitFullName(self, name):
