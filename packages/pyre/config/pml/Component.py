@@ -77,6 +77,13 @@ class Component(Node):
                 locator=locator
                 )
         # add my name to the key
+        # print("***************************************")
+        # print("pyre.config.pml.Component: name={.name!r}".format(self))
+        # print("    component: {!r}".format(component))
+        # print("    family: {!r}".format(family))
+        # print("    key: {!r}".format(key))
+        # print("    value: {!r}".format(value))
+        # print("    locator: {}".format(locator))
         component.extendleft(reversed(self.name))
         # store it with my other conditional bindings
         self.conditionals.append((component, family, key, value, locator))
