@@ -35,6 +35,7 @@ class Facility(Property):
 
     # the descriptor stand-in
     class trait:
+        name = None
         type = None
         validators = ()
         converters = ()
@@ -114,6 +115,8 @@ class Facility(Property):
         """
         # build a value processor
         processor = self.trait()
+        # name it
+        processor.name = self.name
         # attach a class maker
         processor.type = self.factory(name=name, interface=self.type)
         # make a slot with the given {evaluator}
