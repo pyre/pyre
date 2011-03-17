@@ -36,12 +36,11 @@ distclean::
 
 #--------------------------------------------------------------------------
 #  shortcuts to building in my subdirectories
-.PHONY: lib extensions packages tests
+.PHONY: doc lib extensions packages tests
 
 doc:
 	(cd doc; mm)
 
-extensions:
 lib:
 	(cd lib; mm)
 
@@ -54,8 +53,8 @@ packages:
 tests:
 	(cd tests; mm)
 
-PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
 
+PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
 zip: tidy
 	zip -r ${PYRE_ZIP} packages depository -x \*Make.mm 
 
