@@ -158,15 +158,16 @@ class Configurator(Model):
             # get the inventory slot
             slot = inventory[descriptor]
             # merge the information
-            # print("      before: {0._descriptor.name!r} <- {0.value!r}".format(slot))
+            # print("      before: {0._processor.name!r} <- {0.value!r}".format(slot))
             self.patch(discard=node, keep=slot)
-            # print("      after: {0._descriptor.name!r} <- {0.value!r}".format(slot))
+            # print("      after: {0._processor.name!r} <- {0.value!r}".format(slot))
             # patch the model
             # replace the node with the inventory slot so aliases still work
             self._nodes[key] = slot
             # and eliminate the old node from the name stores
             del self._names[key]
             del self._fqnames[key]
+        # print("  done with {.pyre_name!r}".format(configurable))
         # establish {component} as the handler of events in its configuration namespace
         self.configurables[self.separator.join(namespace)] = configurable
         # return the accumulated errors
@@ -178,29 +179,39 @@ class Configurator(Model):
         Apply whatever deferred configuration settings are available in the configuration store
         under {namespace}
         """
-        # print("transferring {!r} to {.pyre_name!r}".format(namespace, configurable))
+        # print("Configurator._transferConditionalConfigurationSettings:")
+        # print("  configurable={.pyre_name!r}".format(configurable))
+        # print("  namespace={!r}".format(namespace))
         # initialize the error pile
         errors = errors if errors is not None else []
         # get the family name
         family = configurable.pyre_family
+        # print("  family={!r}".format(family))
         # if there isn't one, we are all done
-        if not family: return errors
+        if not family: 
+            # print("  no family, bailing out")
+            return errors
         # get the inventory
         inventory = configurable.pyre_inventory
         # hash the two to build the deferral key
         ckey = self._hash.hash(namespace)
         fkey = self._hash.hash(family)
         # if there aren't any setting that match these criteria, we are all done
-        if (ckey, fkey) not in self.deferred: return errors
+        if (ckey, fkey) not in self.deferred: 
+            # print("  no deferred configuration")
+            return errors
         # otherwise, loop over the assignments
         for trait, node in self.deferred[(ckey,fkey)]:
             # build the trait name
             alias = self.separator.join(trait)
+            # print("    found {!r} <- {.value!r}".format(alias, node))
             # look for the corresponding descriptor
             try:
                 descriptor = configurable.pyre_getTraitDescriptor(alias=alias)
+                # print("      matching descriptor: {.name!r}".format(descriptor))
             # found a typo?
             except configurable.TraitNotFoundError as error:
+                # print("      no matching descriptor")
                 errors.append(error)
                 continue
             # get the inventory slot
@@ -208,8 +219,11 @@ class Configurator(Model):
             # merge the information
             # MGA: this is not right: what if you have to re-apply these settings on a second
             # assignment to the same trait?
+            # print("      before: {0._processor.name!r} <- {0.value!r}".format(slot))
             self.patch(discard=node, keep=slot)
+            # print("      after: {0._processor.name!r} <- {0.value!r}".format(slot))
 
+        # print("  done with {.pyre_name!r}".format(configurable))
         # return the accumulated errors
         return errors
 
