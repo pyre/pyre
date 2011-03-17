@@ -20,7 +20,7 @@ def test():
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
     # open a stream
-    sample = open("sample.pml")
+    sample = open("sample-inventory.pml")
     # read the contents
     configuration = reader.decode(source=sample)
     # check that we got a non-trivial instance
