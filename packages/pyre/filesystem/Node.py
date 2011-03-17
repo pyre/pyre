@@ -22,6 +22,14 @@ class Node(metaclass=_metaclass_Node):
     # public data
     contents = {} # i don't have any, but some of my descendants do
 
+    # properties
+    @property
+    def info(self):
+        """
+        Ask my filesystem to retrieve my information node
+        """
+        return self._filesystem().info(self)
+
 
     # interface
     def open(self, **kwds):
@@ -30,13 +38,6 @@ class Node(metaclass=_metaclass_Node):
         """
         # delegate the action to the containing filesystem
         return self._filesystem().open(self, **kwds)
-
-
-    def info(self):
-        """
-        Ask my filesystem to retrieve my information node
-        """
-        return self._filesystem.info(self)
 
 
     # explorer support
