@@ -190,7 +190,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         Dump out my configuration
         """
         # spit out my name
-        print("component {.pyre_name!r}:".format(self))
+        print("{.pyre_name}: configuration".format(self))
         # spit out my class
         print("  instance of {0.pyre_name!r} from {0}".format(self.__class__))
         # print out my family
