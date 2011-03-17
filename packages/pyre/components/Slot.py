@@ -66,13 +66,15 @@ class Slot(Base):
             # it is not ready yet...
             except self.UnresolvedNodeError as error:
                 value = None
+        # attach the locator
+        self._locator = locator
         # bind it
         return self.bind(value)
 
 
     def bind(self, value):
         """
-        Walk {value} through casting and validation, refresg my cache and notify my observers
+        Walk {value} through casting and validation, refresh my cache and notify my observers
         """
         # walk {value} through casting and validation
         if value is not None:
