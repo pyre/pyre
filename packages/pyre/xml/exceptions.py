@@ -24,13 +24,12 @@ class ParsingError(FrameworkError):
         super().__init__(**kwds)
         self.parser = parser
         self.document = document
-        self.locator = newLocator(locator) if locator else None
+        self.locator = locator
         return
 
     def __str__(self):
         if self.locator:
             return "{0}: {1}".format(str(self.locator), self.description)
-
         return self.description
 
 
@@ -56,6 +55,12 @@ class ProcessingError(ParsingError):
     """
     Errors relating to the handling of the document
     """
+
+    def __init__(self, saxlocator, **kwds):
+        # convert the SAX locator to one of our own
+        locator = newLocator(saxlocator) if saxlocator else None
+        super().__init__(locator=locator, **kwds)
+        return
 
 
 # end of file 

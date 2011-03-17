@@ -33,7 +33,7 @@ def test():
         pass
 
     try:
-        raise ProcessingError(description="some error")
+        raise ProcessingError(description="some error", saxlocator=None)
     except ProcessingError as error:
         pass
 
