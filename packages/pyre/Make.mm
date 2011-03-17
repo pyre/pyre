@@ -28,6 +28,7 @@ RECURSE_DIRS = \
     timers \
     tracking \
     units \
+    weaver \
     xml \
 
 

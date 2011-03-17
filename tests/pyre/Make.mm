@@ -26,6 +26,7 @@ RECURSE_DIRS = \
     framework \
     components \
     timers \
+    weaver \
     db \
     postgres \
 
