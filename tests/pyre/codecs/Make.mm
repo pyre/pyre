@@ -12,9 +12,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working:
-	${PYTHON} ./pml_componentName.py
-
 all: test
 
 test: sanity formats
@@ -34,7 +31,9 @@ pml:
 	${PYTHON} ./pml_badNode.py
 	${PYTHON} ./pml_badAttribute.py
 	${PYTHON} ./pml_inventory.py
+	${PYTHON} ./pml_inventoryNested.py
 	${PYTHON} ./pml_componentFamily.py
 	${PYTHON} ./pml_componentName.py
+	${PYTHON} ./pml_componentConditional.py
 
 # end of file 
