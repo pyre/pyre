@@ -52,6 +52,7 @@ class Configurator(Model):
             # update the counter
             self.counter[priority] += 1
             # and process the event
+            # print("pyre.config.Configurator.configure: event=", event)
             event.identify(inspector=self, priority=seq)
         # all done
         return errors
@@ -93,7 +94,6 @@ class Configurator(Model):
 
         # and return
         return errors
-
 
 
     # meta methods
@@ -196,7 +196,7 @@ class Configurator(Model):
         # hash the two to build the deferral key
         ckey = self._hash.hash(namespace)
         fkey = self._hash.hash(family)
-        # if there aren't any setting that match these criteria, we are all done
+        # if there aren't any settings that match these criteria, we are all done
         if (ckey, fkey) not in self.deferred: 
             # print("  no deferred configuration")
             return errors
