@@ -19,10 +19,10 @@ def test():
     weaver = pyre.weaver.newWeaver(name="basic")
 
     # verify it is configured correctly
-    weaver.pyre_dump()
+    # weaver.pyre_dump()
 
     # dump the configuration state
-    pyre.executive.configurator.dump()
+    # pyre.executive.configurator.dump()
 
     return
 
