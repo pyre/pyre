@@ -144,8 +144,8 @@ class Configuration:
             return
 
         def __str__(self):
-            return "{{{}: {} <- {} if {}}}".format(
-                self.locator, ".".join(self.key), self.value, self.condition)
+            return "{{{0.locator}: {1} <- {0.value} if component={0.component}, family={0.family}}}".format(
+                self, ".".join(self.key))
 
     class Source(Event):
         """A request to load configuration settings from a named source"""
