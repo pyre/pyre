@@ -35,14 +35,15 @@ class Component(Node):
         # otherwise, build regular assignments out of my regular bindings
         for key, value, locator in self.bindings:
             # add my namespace to the key
-            # if i have a name, use it as the namesapce qualifier
+            # if i have a name, use it as the namespace qualifier
             if self.name:
-                key.extendleft(reversed(self.name))
+                path = self.name + key
             # otherwise use my family name
             else:
-                key.extendleft(reversed(self.family))
+                path = self.family + key
             # and store    
-            parent.createAssignment(key=key, value=value, locator=locator)
+            parent.createAssignment(key=path, value=value, locator=locator)
+
         # build conditional assignments out of the others
         for component, family, key, value, locator in self.conditionals:
             parent.createConditionalAssignment(
@@ -50,14 +51,13 @@ class Component(Node):
         return
 
 
-    # assignment handler
     def createAssignment(self, key, value, locator):
         """
         Process a binding of a property to a value
         """
         # store it with my other bindings
-        # print("config.pml.Component: key={}, value={!r}".format(key, value))
         self.bindings.append((key, value, locator))
+        # and return
         return
 
 
@@ -65,6 +65,12 @@ class Component(Node):
         """
         Process a conditional assignment
         """
+        # print("pyre.config.pml.Component: name={.name!r}".format(self))
+        # print("    component: {!r}".format(component))
+        # print("    family: {!r}".format(family))
+        # print("    key: {!r}".format(key))
+        # print("    value: {!r}".format(value))
+        # print("    locator: {}".format(locator))
         # check whether it is supported
         if not self.name:
             raise self.DTDError(
@@ -77,16 +83,9 @@ class Component(Node):
                 locator=locator
                 )
         # add my name to the key
-        # print("***************************************")
-        # print("pyre.config.pml.Component: name={.name!r}".format(self))
-        # print("    component: {!r}".format(component))
-        # print("    family: {!r}".format(family))
-        # print("    key: {!r}".format(key))
-        # print("    value: {!r}".format(value))
-        # print("    locator: {}".format(locator))
-        component.extendleft(reversed(self.name))
+        path = self.name + component
         # store it with my other conditional bindings
-        self.conditionals.append((component, family, key, value, locator))
+        self.conditionals.append((component, family, path, value, locator))
         return
 
 
@@ -100,8 +99,9 @@ class Component(Node):
         name = attributes.get('name')
         family = attributes.get('family')
         # split into fields and store
-        self.name = name.split(self.separator) if name else None
-        self.family = family.split(self.separator) if family else None
+        self.name = name.split(self.separator) if name else []
+        self.family = family.split(self.separator) if family else []
+
         # make sure that at least one of these attributes were given
         if not self.name and not self.family:
             raise self.DTDError(

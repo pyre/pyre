@@ -23,8 +23,12 @@ class Inventory(Node):
         """
         Transfer all the key,value bindings to my parent
         """
+        # process my bindings
         for key, value, locator in self.bindings:
-            parent.createAssignment(key=key, value=value, locator=locator)
+            # add my namespace to the key
+            path = self.name + key
+            # dispatch the event to my parent
+            parent.createAssignment(key=path, value=value, locator=locator)
         return
 
 
@@ -33,10 +37,9 @@ class Inventory(Node):
         """
         Process a binding of a property to a value
         """
-        # add my namespace to the key
-        key.appendleft(self.name)
         # store it with my other bindings
         self.bindings.append((key, value, locator))
+        # and return
         return
 
 
@@ -44,7 +47,7 @@ class Inventory(Node):
     def __init__(self, parent, attributes, locator, **kwds):
         super().__init__(**kwds)
 
-        self.name = attributes['name']
+        self.name = attributes['name'].split(self.separator)
         self.bindings = []
         return
     

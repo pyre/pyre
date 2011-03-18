@@ -42,7 +42,7 @@ class Bind(Node):
 
     # meta methods
     def __init__(self, parent, attributes, locator):
-        self.key = collections.deque(attributes['property'].split(self.separator))
+        self.key = attributes['property'].split(self.separator)
         self.text = []
         return
 
