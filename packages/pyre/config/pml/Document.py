@@ -34,11 +34,15 @@ class Document(Base):
 
 
     # interface
-    def onConfiguration(self, configuration):
+    def onConfiguration(self, node):
         """
         Handle the top level tag
         """
-        self.dom = configuration.events
+        # {node} is the rep of the <config> tag, which stores the configuration events in a
+        # {pyre.config.Configuration} instance; grab the configuration instance and make it my
+        # contents (perhaps I should just grab the event iterable instead)
+        self.dom = node.configuration
+        # all done
         return
 
 

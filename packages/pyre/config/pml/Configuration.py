@@ -33,7 +33,7 @@ class Configuration(Node):
         Process a binding of a property to a value
         """
         # create a new assignment event
-        self.events.newAssignment(key=key, value=value, locator=locator)
+        self.configuration.newAssignment(key=key, value=value, locator=locator)
         # nothing else, for now
         return
 
@@ -43,7 +43,7 @@ class Configuration(Node):
         Process a binding of a property to a value
         """
         # create a new conditional assignment event
-        self.events.newConditionalAssignment(
+        self.configuration.newConditionalAssignment(
             component=component, family=family, key=key, value=value, locator=locator)
         # nothing else, for now
         return
@@ -52,7 +52,7 @@ class Configuration(Node):
     # meta methods
     def __init__(self, parent, attributes, locator, **kwds):
         super().__init__(**kwds)
-        self.events = Buffer()
+        self.configuration = Buffer()
         return
     
 
