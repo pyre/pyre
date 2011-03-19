@@ -11,11 +11,11 @@ from .Node import Node
 
 class Inventory(Node):
     """
-    Handler for the inventory tag in pml documents
+    Handler for the package tag in pml documents
     """
 
     # constants
-    elements = ("component", "inventory", "bind")
+    elements = ("component", "package", "bind")
 
 
     # interface

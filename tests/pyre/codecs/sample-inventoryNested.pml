@@ -9,18 +9,18 @@
 
 <config>
 
-  <inventory name="pyre">
+  <package name="pyre">
     <!-- some global settings -->
     <bind property="home">pyre.home()</bind>
     <bind property="prefix">pyre.prefix()</bind>
 
     <!-- and some per user settings -->
-    <inventory name="user">
+    <package name="user">
       <bind property="name">michael a.g. aïvázis</bind>
       <bind property="email">aivazis@caltech.edu</bind>
-    </inventory>
+    </package>
 
-  </inventory>
+  </package>
 
   <bind property="pyre.user.affiliation">california institute of technology</bind>
 

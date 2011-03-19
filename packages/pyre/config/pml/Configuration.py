@@ -16,7 +16,7 @@ class Configuration(Node):
     """
 
     # constants
-    elements = ("component", "inventory", "bind")
+    elements = ("component", "package", "bind")
 
 
     # interface

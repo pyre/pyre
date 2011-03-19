@@ -11,7 +11,7 @@ from .Node import Node
 
 class Component(Node):
     """
-    Handler for the inventory tag in pml documents
+    Handler for the component tag in pml documents
     """
 
     # constants

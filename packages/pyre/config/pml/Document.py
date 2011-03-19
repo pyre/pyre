@@ -30,7 +30,7 @@ class Document(Base):
     bind = pyre.xml.element(tag="bind", handler=Bind)
     component = pyre.xml.element(tag="component", handler=Component)
     config = pyre.xml.element(tag="config", handler=Configuration)
-    inventory = pyre.xml.element(tag="inventory", handler=Inventory)
+    package = pyre.xml.element(tag="package", handler=Inventory)
 
 
     # interface

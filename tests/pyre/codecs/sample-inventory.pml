@@ -9,11 +9,11 @@
 
 <config>
 
-  <inventory name="pyre">
+  <package name="pyre">
     <!-- some global settings -->
     <bind property="home">pyre.home</bind>
     <bind property="prefix">pyre.prefix</bind>
-  </inventory>
+  </package>
 
 </config>
 
