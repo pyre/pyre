@@ -8,7 +8,6 @@
 
 import weakref
 import collections
-import pyre.tracking
 from pyre.calc.HierarchicalModel import HierarchicalModel
 
 
