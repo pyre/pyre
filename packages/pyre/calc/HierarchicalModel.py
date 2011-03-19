@@ -78,7 +78,7 @@ class HierarchicalModel(AbstractModel):
         If the optional arguments {aliasKey} and {canonicalKey} are provided, they will be used
         to generate the corresponding hash keys; otherwise the matching names will be split
         using the model's field separator. If the keys are supplied but the names are not,
-        appropriate names will be constructed by splicing together the level in the
+        appropriate names will be constructed by splicing together the levels in the
         corresponding key using the model's field separator.
         """
         # build the multikeys
@@ -93,7 +93,7 @@ class HierarchicalModel(AbstractModel):
             aliasNode = self._nodes[aliasHash]
         except KeyError:
             # if no node has been previously registered under the alias we are done
-            # if a registration appears, it will be treated as a duplicate by regiter, and
+            # if a registration appears, it will be treated as a duplicate by {register}, and
             # patched appropriately
             return self
         # now, look for the canonical node
