@@ -22,6 +22,7 @@ class Facility(Property):
     # types
     from .Component import Component
 
+    # MGA: 20110318: this description is out of date; FIX
     # Facility is faced with the following problem: the expectations of {pyre_cast} are
     # different depending on whether the object whose trait is being processed is a component
     # class or a component instance. In the latter case, we want to cast the trait value into
