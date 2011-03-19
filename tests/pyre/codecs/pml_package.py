@@ -20,7 +20,7 @@ def test():
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
     # open a stream
-    sample = open("sample-inventoryNested.pml")
+    sample = open("sample-package.pml")
     # read the contents
     configuration = reader.decode(source=sample)
     # check that we got a non-trivial instance
@@ -32,27 +32,12 @@ def test():
     event = configuration.events[0]
     assert isinstance(event, configuration.Assignment)
     assert tuple(event.key) == ("pyre", "home")
-    assert event.value == "pyre.home()"
+    assert event.value == "pyre.home"
 
     event = configuration.events[1]
     assert isinstance(event, configuration.Assignment)
     assert tuple(event.key) == ("pyre", "prefix")
-    assert event.value == "pyre.prefix()"
-
-    event = configuration.events[2]
-    assert isinstance(event, configuration.Assignment)
-    assert tuple(event.key) == ("pyre", "user", "name")
-    assert event.value == "michael a.g. aïvázis"
-
-    event = configuration.events[3]
-    assert isinstance(event, configuration.Assignment)
-    assert tuple(event.key) == ("pyre", "user", "email")
-    assert event.value == "aivazis@caltech.edu"
-
-    event = configuration.events[4]
-    assert isinstance(event, configuration.Assignment)
-    assert tuple(event.key) == ("pyre", "user", "affiliation")
-    assert event.value == "california institute of technology"
+    assert event.value == "pyre.prefix"
 
     return m, reader, configuration
 

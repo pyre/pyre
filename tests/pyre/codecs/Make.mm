@@ -30,8 +30,8 @@ pml:
 	${PYTHON} ./pml_unknownNode.py
 	${PYTHON} ./pml_badNode.py
 	${PYTHON} ./pml_badAttribute.py
-	${PYTHON} ./pml_inventory.py
-	${PYTHON} ./pml_inventoryNested.py
+	${PYTHON} ./pml_package.py
+	${PYTHON} ./pml_packageNested.py
 	${PYTHON} ./pml_componentFamily.py
 	${PYTHON} ./pml_componentName.py
 	${PYTHON} ./pml_componentConditional.py
