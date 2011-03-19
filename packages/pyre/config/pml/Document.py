@@ -13,7 +13,7 @@ from pyre.xml.Document import Document as Base
 from .Bind import Bind
 from .Component import Component
 from .Configuration import Configuration
-from .Inventory import Inventory
+from .Package import Package
 
 
 class Document(Base):
@@ -30,7 +30,7 @@ class Document(Base):
     bind = pyre.xml.element(tag="bind", handler=Bind)
     component = pyre.xml.element(tag="component", handler=Component)
     config = pyre.xml.element(tag="config", handler=Configuration)
-    package = pyre.xml.element(tag="package", handler=Inventory)
+    package = pyre.xml.element(tag="package", handler=Package)
 
 
     # interface

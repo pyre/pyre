@@ -9,7 +9,7 @@
 from .Node import Node
 
 
-class Inventory(Node):
+class Package(Node):
     """
     Handler for the package tag in pml documents
     """
