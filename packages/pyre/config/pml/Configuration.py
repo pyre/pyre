@@ -33,7 +33,7 @@ class Configuration(Node):
         Process a binding of a property to a value
         """
         # create a new assignment event
-        self.configuration.newAssignment(key=key, value=value, locator=locator)
+        self.configuration.createAssignmentEvent(key=key, value=value, locator=locator)
         # nothing else, for now
         return
 
@@ -43,7 +43,7 @@ class Configuration(Node):
         Process a binding of a property to a value
         """
         # create a new conditional assignment event
-        self.configuration.newConditionalAssignment(
+        self.configuration.createConditionalAssignmentEvent(
             component=component, family=family, key=key, value=value, locator=locator)
         # nothing else, for now
         return

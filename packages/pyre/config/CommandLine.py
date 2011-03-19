@@ -162,7 +162,7 @@ class CommandLine:
             # nope, not there
             except KeyError:
                 # create a new assignment
-                configuration.newAssignment(key=spec, value=value, locator=locator)
+                configuration.createAssignmentEvent(key=spec, value=value, locator=locator)
             # got it
             else:
                 handler(key=spec, value=value, locator=locator)
@@ -177,7 +177,7 @@ class CommandLine:
         # iterate over the command line arguments that were handed to me
         for arg in args:
             # ask the configuration object to build a command request
-            configuration.newCommand(command=arg, locator=self.locator(arg=index))
+            configuration.createCommandEvent(command=arg, locator=self.locator(arg=index))
             # update the index
             index += 1
         # all done

@@ -24,7 +24,7 @@ class Configuration:
 
 
     # interface
-    def newCommand(self, command, locator):
+    def createCommandEvent(self, command, locator):
         """
         Create a new command request and add it to the queue
         """
@@ -32,7 +32,7 @@ class Configuration:
         return
 
 
-    def newAssignment(self, key, value, locator):
+    def createAssignmentEvent(self, key, value, locator):
         """
         Create a new assignment event and add it to the queue
         """
@@ -40,7 +40,7 @@ class Configuration:
         return
 
 
-    def newConditionalAssignment(self, component, family, key, value, locator):
+    def createConditionalAssignmentEvent(self, component, family, key, value, locator):
         """
         Create a new conditional assignment and add it to the queue
         """
@@ -49,7 +49,7 @@ class Configuration:
         return
 
 
-    def newSource(self, source, locator):
+    def createConfigurationSourceEvent(self, source, locator):
         """
         Create a new instruction to process a configuration source and add it to the queue
         """
