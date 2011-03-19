@@ -28,23 +28,22 @@ class Configuration(Node):
 
 
     # assignment handler
-    def createAssignment(self, key, value, locator):
+    def createAssignment(self, **kwds):
         """
         Process a binding of a property to a value
         """
         # create a new assignment event
-        self.configuration.createAssignmentEvent(key=key, value=value, locator=locator)
+        self.configuration.createAssignmentEvent(**kwds)
         # nothing else, for now
         return
 
 
-    def createConditionalAssignment(self, component, family, key, value, locator):
+    def createConditionalAssignment(self, **kwds):
         """
         Process a binding of a property to a value
         """
         # create a new conditional assignment event
-        self.configuration.createConditionalAssignmentEvent(
-            component=component, family=family, key=key, value=value, locator=locator)
+        self.configuration.createConditionalAssignmentEvent(**kwds)
         # nothing else, for now
         return
 

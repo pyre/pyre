@@ -24,36 +24,35 @@ class Configuration:
 
 
     # interface
-    def createCommandEvent(self, command, locator):
+    def createCommandEvent(self, **kwds):
         """
         Create a new command request and add it to the queue
         """
-        self.events.append(self.Command(command=command, locator=locator))
+        self.events.append(self.Command(**kwds))
         return
 
 
-    def createAssignmentEvent(self, key, value, locator):
+    def createAssignmentEvent(self, **kwds):
         """
         Create a new assignment event and add it to the queue
         """
-        self.events.append(self.Assignment(key=key, value=value, locator=locator))
+        self.events.append(self.Assignment(**kwds))
         return
 
 
-    def createConditionalAssignmentEvent(self, component, family, key, value, locator):
+    def createConditionalAssignmentEvent(self, **kwds):
         """
         Create a new conditional assignment and add it to the queue
         """
-        self.events.append(self.ConditionalAssignment(
-                component=component, family=family, key=key, value=value, locator=locator))
+        self.events.append(self.ConditionalAssignment(**kwds))
         return
 
 
-    def createConfigurationSourceEvent(self, source, locator):
+    def createConfigurationSourceEvent(self, **kwds):
         """
         Create a new instruction to process a configuration source and add it to the queue
         """
-        self.events.append(self.Source(source=source, locator=locator))
+        self.events.append(self.Source(**kwds))
 
 
     # meta methods
