@@ -40,10 +40,17 @@ class Component(Node):
         """
         # if i have both a name and a family
         if self.name and self.family:
+            # the event key has the current full path to the trait
+
+            # for conditional assignments, we need to split this into two parts: the naked name
+            # of the actual trait to receive the value, and the namespace within which this
+            # assignment is to take place
+            key = event.key[-1:]
+            namespace = self.name + event.key[:-1]
             # build a conditional assignment
             event = self.ConditionalAssignment(
-                component=self.name, condition=(self.name, self.family),
-                key=event.key, value=event.value,
+                component=namespace, condition=(self.name, self.family),
+                key=key, value=event.value,
                 locator=event.locator)
             # add it to my conditionals
             self.conditionals.append(event)
