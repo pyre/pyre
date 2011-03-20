@@ -23,22 +23,41 @@ class Package(Node):
         """
         Transfer all the key,value bindings to my parent
         """
-        # process my bindings
-        for key, value, locator in self.bindings:
-            # add my namespace to the key
-            path = self.name + key
-            # dispatch the event to my parent
-            parent.createAssignment(key=path, value=value, locator=locator)
+        # dispatch the assignment events to my parent
+        for event in self.assignments:
+            parent.assignment(event)
+
+        # dispatch the assignment events to my parent
+        for event in self.conditionals:
+            parent.conditionalAssignment(event)
+
+        # all done
         return
 
 
     # assignment handler
-    def createAssignment(self, key, value, locator):
+    def assignment(self, event):
         """
         Process a binding of a property to a value
         """
+        # add my namespace to the event key
+        event.key = self.name + event.key
         # store it with my other bindings
-        self.bindings.append((key, value, locator))
+        self.assignments.append(event)
+        # and return
+        return
+
+
+    def conditionalAssignment(self, event):
+        """
+        Process a conditional assignment
+        """
+        # update the event with my name space
+        event.component = self.name + event.component
+        event.conditions = [ (self.name+name, family) for name, family in event.conditions ]
+
+        # store it with my other conditional bindings
+        self.conditionals.append(event)
         # and return
         return
 
@@ -48,7 +67,9 @@ class Package(Node):
         super().__init__(**kwds)
 
         self.name = attributes['name'].split(self.separator)
-        self.bindings = []
+        # storage for my assignments
+        self.assignments = []
+        self.conditionals = []
         return
     
 

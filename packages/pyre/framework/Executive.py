@@ -212,7 +212,7 @@ class Executive:
         # load the package configuration; must do this before configuring the class
         self.loadPackageConfiguration(package=component.pyre_getPackageName())
         # populate the class defaults with the configuration information
-        errors = self.configurator.configureComponentClass(component)
+        errors = self.configurator.configureComponentClass(self.registrar, component)
         # add any errors encountered to the pile
         self.errors.extend(errors)
         # invoke the configuration hook
@@ -234,7 +234,7 @@ class Executive:
         # invoke the registration hook
         component.pyre_register(executive=self)
         # configure it
-        errors = self.configurator.configureComponentInstance(component)
+        errors = self.configurator.configureComponentInstance(self.registrar, component)
         # add any errors encountered to the pile
         self.errors.extend(errors)
         # invoke the configuration hook

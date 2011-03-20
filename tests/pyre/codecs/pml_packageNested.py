@@ -15,6 +15,7 @@ Verify processing of a correct pml input file
 def test():
     # package access
     import pyre.config
+    from pyre.config.events import Assignment
     # get the codec manager
     m = pyre.config.newCodecManager()
     # ask for a pml codec
@@ -22,39 +23,37 @@ def test():
     # open a stream
     sample = open("sample-packageNested.pml")
     # read the contents
-    configuration = reader.decode(source=sample)
+    events = reader.decode(source=sample)
     # check that we got a non-trivial instance
-    assert configuration is not None
-    # check that it is an instance of the right type
-    assert isinstance(configuration, reader.Configuration)
+    assert events
 
     # verify its contents
-    event = configuration.events[0]
-    assert isinstance(event, configuration.Assignment)
+    event = events[0]
+    assert isinstance(event, Assignment)
     assert tuple(event.key) == ("pyre", "home")
     assert event.value == "pyre.home()"
 
-    event = configuration.events[1]
-    assert isinstance(event, configuration.Assignment)
+    event = events[1]
+    assert isinstance(event, Assignment)
     assert tuple(event.key) == ("pyre", "prefix")
     assert event.value == "pyre.prefix()"
 
-    event = configuration.events[2]
-    assert isinstance(event, configuration.Assignment)
+    event = events[2]
+    assert isinstance(event, Assignment)
     assert tuple(event.key) == ("pyre", "user", "name")
     assert event.value == "michael a.g. aïvázis"
 
-    event = configuration.events[3]
-    assert isinstance(event, configuration.Assignment)
+    event = events[3]
+    assert isinstance(event, Assignment)
     assert tuple(event.key) == ("pyre", "user", "email")
     assert event.value == "aivazis@caltech.edu"
 
-    event = configuration.events[4]
-    assert isinstance(event, configuration.Assignment)
+    event = events[4]
+    assert isinstance(event, Assignment)
     assert tuple(event.key) == ("pyre", "user", "affiliation")
     assert event.value == "california institute of technology"
 
-    return m, reader, configuration
+    return m, reader, events
 
 
 # main

@@ -58,7 +58,7 @@ class CommandLine:
 
 
     # types
-    from .Configuration import Configuration
+    from .events import Command, Assignment
 
 
     # interface
@@ -73,7 +73,7 @@ class CommandLine:
         # the source is really an iterable of strings
         argv = source
         # build a configuration object to store the processed command line
-        configuration = self.Configuration()
+        configuration = []
         # run through the command line
         for index,arg in enumerate(argv):
             # look for an assignment
@@ -162,7 +162,9 @@ class CommandLine:
             # nope, not there
             except KeyError:
                 # create a new assignment
-                configuration.createAssignmentEvent(key=spec, value=value, locator=locator)
+                event = self.Assignment(key=spec, value=value, locator=locator)
+                # add it to the pile
+                configuration.append(event)
             # got it
             else:
                 handler(key=spec, value=value, locator=locator)
@@ -176,8 +178,10 @@ class CommandLine:
         """
         # iterate over the command line arguments that were handed to me
         for arg in args:
-            # ask the configuration object to build a command request
-            configuration.createCommandEvent(command=arg, locator=self.locator(arg=index))
+            # build a command request
+            event = self.Command(command=arg, locator=self.locator(arg=index))
+            # add it to the pile
+            configuration.append(event)
             # update the index
             index += 1
         # all done

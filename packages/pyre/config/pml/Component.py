@@ -23,69 +23,65 @@ class Component(Node):
         """
         Transfer all the key,value bindings to my parent
         """
-        # build conditional assignments if i have both a name and a family
-        if self.name and self.family:
-            for key, value, locator in self.bindings:
-                parent.createConditionalAssignment(
-                    component=self.name, family=self.family,
-                    key=key, value=value, locator=locator)
+        # dispatch my regular assignments
+        for event in self.assignments:
+            parent.assignment(event)
 
-            return
+        # dispatch my conditional assignments
+        for event in self.conditionals:
+            parent.conditionalAssignment(event)
 
-        # otherwise, build regular assignments out of my regular bindings
-        for key, value, locator in self.bindings:
-            # add my namespace to the key
-            # if i have a name, use it as the namespace qualifier
-            if self.name:
-                path = self.name + key
-            # otherwise use my family name
-            else:
-                path = self.family + key
-            # and store    
-            parent.createAssignment(key=path, value=value, locator=locator)
-
-        # build conditional assignments out of the others
-        for component, family, key, value, locator in self.conditionals:
-            parent.createConditionalAssignment(
-                component=component, family=family, key=key, value=value, locator=locator)
         return
 
 
-    def createAssignment(self, key, value, locator):
+    def assignment(self, event):
         """
         Process a binding of a property to a value
         """
+        # if i have both a name and a family
+        if self.name and self.family:
+            # build a conditional assignment
+            event = self.ConditionalAssignment(
+                component=self.name, condition=(self.name, self.family),
+                key=event.key, value=event.value,
+                locator=event.locator)
+            # add it to my conditionals
+            self.conditionals.append(event)
+            # and return
+            return
+
+        # otherwise, deduce my qualifier
+        qualifier = self.name if self.name else self.family
+
+        # add the qualifier to the event key
+        event.key = qualifier + event.key
         # store it with my other bindings
-        self.bindings.append((key, value, locator))
+        self.assignments.append(event)
         # and return
         return
 
 
-    def createConditionalAssignment(self, component, family, key, value, locator):
+    def conditionalAssignment(self, event):
         """
         Process a conditional assignment
         """
-        # print("pyre.config.pml.Component: name={.name!r}".format(self))
-        # print("    component: {!r}".format(component))
-        # print("    family: {!r}".format(family))
-        # print("    key: {!r}".format(key))
-        # print("    value: {!r}".format(value))
-        # print("    locator: {}".format(locator))
-        # check whether it is supported
+        # if i don't have a name
         if not self.name:
-            raise self.DTDError(
-                description="conditional binding in component with no name specification",
-                locator=locator
-                )
-        if self.family:
-            raise self.DTDError(
-                description="conditional binding in component with a family specification",
-                locator=locator
-                )
-        # add my name to the key
-        path = self.name + component
+            # raise an exception
+            raise NotImplementedError("NYI")
+
+        # update the event with my name space
+        event.component = self.name + event.component
+        event.conditions = [ (self.name+name, family) for name, family in event.conditions ]
+
+        # if I have both a name and a key
+        if self.name and self.family:
+            # add my constraints to the conditions
+            event.conditions.append((self.name, self.family))
+
         # store it with my other conditional bindings
-        self.conditionals.append((component, family, path, value, locator))
+        self.conditionals.append(event)
+        # and return
         return
 
 
@@ -93,8 +89,9 @@ class Component(Node):
     def __init__(self, parent, attributes, locator, **kwds):
         super().__init__(**kwds)
         # storage for my property bindings
-        self.bindings = []
+        self.assignments = []
         self.conditionals = []
+
         # extract the attributes
         name = attributes.get('name')
         family = attributes.get('family')

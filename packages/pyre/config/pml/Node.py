@@ -15,6 +15,10 @@ class Node(Base):
     """
 
 
+    # types
+    from ..events import Assignment, ConditionalAssignment, Source
+
+
     # constants
     separator = '.'
     namespace = "http://pyre.caltech.edu/releases/1.0/schema/fs.html"

@@ -35,5 +35,7 @@ pml:
 	${PYTHON} ./pml_componentFamily.py
 	${PYTHON} ./pml_componentName.py
 	${PYTHON} ./pml_componentConditional.py
+	${PYTHON} ./pml_componentConditionalNested.py
+	${PYTHON} ./pml_sample.py
 
 # end of file 

@@ -15,6 +15,7 @@ Verify processing of a correct pml input file
 def test():
     # package access
     import pyre.config
+    from pyre.config.events import Assignment
     # get the codec manager
     m = pyre.config.newCodecManager()
     # ask for a pml codec
@@ -22,24 +23,22 @@ def test():
     # open a stream
     sample = open("sample-componentFamily.pml")
     # read the contents
-    configuration = reader.decode(source=sample)
+    events = reader.decode(source=sample)
     # check that we got a non-trivial instance
-    assert configuration is not None
-    # check that it is an instance of the right type
-    assert isinstance(configuration, reader.Configuration)
+    assert events
 
     # verify its contents
-    event = configuration.events[0]
-    assert isinstance(event, configuration.Assignment)
+    event = events[0]
+    assert isinstance(event, Assignment)
     assert tuple(event.key) == ("test", "sample", "author")
     assert event.value == "Michael Aïvázis"
 
-    event = configuration.events[1]
-    assert isinstance(event, configuration.Assignment)
+    event = events[1]
+    assert isinstance(event, Assignment)
     assert tuple(event.key) == ("test", "sample", "affiliation")
     assert event.value == "California Institute of Technology"
 
-    return m, reader, configuration
+    return m, reader, events
 
 
 # main

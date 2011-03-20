@@ -97,7 +97,7 @@ class Facility(Property):
         namespace = registration.split(cfg.TRAIT_SEPARATOR)
         # transfer any deferred configuration settings
         errors = cfg._transferConditionalConfigurationSettings(
-            configurable=value, namespace=namespace)
+            registrar=instance.pyre_executive.registrar, configurable=value, namespace=namespace)
         return value
 
 

@@ -105,26 +105,27 @@ class Model(HierarchicalModel):
         return self.register(node=slot, key=key)
 
 
-    def defer(self, component, family, key, value, locator, priority):
+    def defer(self, assignment, priority):
         """
         Build a node that corresponds to a conditional configuration
         """
         # print("Model.defer:")
-        # print("    component={}, family={}".format(component, family))
+        # print("    component={}".format(component))
+        # print("    conditions={}".format(conditions))
         # print("    key={}, value={!r}".format(key, value))
         # print("    from {}".format(locator))
         # print("    with priority {}".format(priority))
         # hash the component name
-        ckey = self._hash.hash(component)
-        # hash the family key
-        fkey = self._hash.hash(family)
-        # get the deferred event store
-        model = self.deferred[(ckey, fkey)]
+        ckey = self._hash.hash(assignment.component)
         # build a slot
         slot = self.nodeFactory(
-            value=None, evaluator=self.recognize(value=value), priority=priority, locator=locator)
-        # and add it to the pile
-        model.append( (key, slot) )
+            value=None, 
+            evaluator=self.recognize(value=assignment.value),
+            priority=priority, locator=assignment.locator)
+
+        # get the deferred event store and add the event and the slot to the pile
+        model = self.deferred[ckey].append( (assignment, slot) )
+
         # all done
         return slot
 
