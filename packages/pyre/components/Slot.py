@@ -106,6 +106,7 @@ class Slot(Base):
     def __init__(self, processor, **kwds):
         super().__init__(**kwds)
         self._processor = processor
+        return
    
 
     # private data

@@ -101,7 +101,7 @@ class Node(Observable, metaclass=_metaclass_Node):
             # build a literal out of the other's value
             # literals don't need to be initialized
             evaluator = None if value is None else self.Literal(value=other._value)
-        # atatch the evaluator to me
+        # attach the evaluator to me
         self._evaluator = evaluator
 
         # update the my observers
@@ -298,7 +298,7 @@ class Node(Observable, metaclass=_metaclass_Node):
     # debugging
     def dump(self, tag=None):
         """
-        Debugging tool that print out the relevant parts
+        Debugging tool that prints out the relevant parts
         """
         tag = tag + ": " if tag else ''
 
