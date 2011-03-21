@@ -10,10 +10,9 @@
 <config>
 
   <!-- weaver settings -->
-  <component name="basic" family="pyre.weaver">
-    <bind property="author">michael a.g. aïvázis</bind>
-    <bind property="email">aivazis@caltech.edu</bind>
-    <bind property="affiliation">california institute of technology</bind>
+  <component name="sanity.banner">
+    <bind property="author">Michael Aivazis</bind>
+    <bind property="affiliation">California Institute of Technology</bind>
     <bind property="copyright">(c) 1998-2011 all right reserved</bind>
   </component>
 
