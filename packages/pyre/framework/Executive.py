@@ -162,7 +162,7 @@ class Executive:
         return descriptor
             
 
-    def loadPackageConfiguration(self, component):
+    def loadPackageConfiguration(self, package):
         """
         Locate and load the configuration files for the package to which {component} belongs
 
@@ -174,10 +174,8 @@ class Executive:
         This behavior is triggered by the first encountered component from each package, and it
         is done only once.
         """
-        # get the package that this component belongs to
-        package = component.pyre_getPackageName()
         # if none were provided, there is no file-based configuration
-        if not package: return
+        if not package: return package
         # also, bail out if this package has been configured previously
         if package in self.packages: return
         # we have a package name
@@ -197,9 +195,9 @@ class Executive:
         # in any case, this is the best that can be done for this package
         # update the set of known packages
         self.packages.add(package)
-        # print("Executive.loadPackageConfiguration: done")
+        # print("Executive.loadPackageConfiguration: done; packages={}".format(self.packages))
         # all done
-        return component
+        return package
 
 
     # registration of configurables
@@ -212,9 +210,9 @@ class Executive:
         # invoke the registration hook
         component.pyre_registerClass(executive=self)
         # load the package configuration; must do this before configuring the class
-        self.loadPackageConfiguration(component)
+        self.loadPackageConfiguration(package=component.pyre_getPackageName())
         # populate the class defaults with the configuration information
-        errors = self.configurator.configureComponentClass(component)
+        errors = self.configurator.configureComponentClass(self.registrar, component)
         # add any errors encountered to the pile
         self.errors.extend(errors)
         # invoke the configuration hook
@@ -236,7 +234,7 @@ class Executive:
         # invoke the registration hook
         component.pyre_register(executive=self)
         # configure it
-        errors = self.configurator.configureComponentInstance(component)
+        errors = self.configurator.configureComponentInstance(self.registrar, component)
         # add any errors encountered to the pile
         self.errors.extend(errors)
         # invoke the configuration hook

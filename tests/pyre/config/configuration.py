@@ -13,8 +13,8 @@ Sanity check: verify that the configuration factory is accessible
 
 
 def test():
-    import pyre.config
-    return pyre.config.newConfiguration()
+    from pyre.config import events
+    return events
 
 
 # main

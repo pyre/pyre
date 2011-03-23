@@ -13,18 +13,21 @@ Check that configurations can be populated correctly
 
 
 def test():
-    import pyre.config
-    # build a new configurator
-    configuration = pyre.config.newConfiguration()
+    from pyre.config.events import Assignment
+    # build a list to hold the events
+    configuration = []
     # create some assignments
-    configuration.newAssignment(
-        key=("pyre", "user", "name"), value="michael aïvázis", locator=None)
-    configuration.newAssignment(
-        key=("pyre", "user", "email"), value="michael.aivazis@orthologue.com", locator=None)
-    configuration.newAssignment(
-        key=("pyre", "user", "affiliation"), value="caltech", locator=None)
+    configuration.append(
+        Assignment(key=("pyre", "user", "name"), value="michael aïvázis", locator=None))
+    configuration.append(
+        Assignment(
+            key=("pyre", "user", "email"), value="michael.aivazis@orthologue.com", 
+            locator=None))
+    configuration.append(
+        Assignment(key=("pyre", "user", "affiliation"), value="caltech", locator=None))
+
     # check that they were created and inserted correctly
-    assert list(map(str, configuration.events)) == [
+    assert list(map(str, configuration)) == [
         "{None: pyre.user.name <- michael aïvázis}",
         "{None: pyre.user.email <- michael.aivazis@orthologue.com}",
         "{None: pyre.user.affiliation <- caltech}",

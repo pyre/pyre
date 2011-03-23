@@ -26,21 +26,14 @@ class Pyre(Executive, metaclass=Singleton):
         # build a command line parser
         parser = self.newCommandLineParser()
         # parse the command line
-        configuration = parser.decode(sys.argv[1:])
+        commandline = parser.decode(sys.argv[1:])
         # get the configurator to update my configuration
-        self.configurator.configure(configuration=configuration, priority=self.USER_CONFIGURATION)
+        self.configurator.configure(configuration=commandline, priority=self.USER_CONFIGURATION)
 
         # read and apply settings from the default configuration files
-        for folder in self.configpath:
-            for configfile  in self.bootconf:
-                source = self.fileserver.PATH_SEPARATOR.join([folder, configfile])
-                # print("Pyre.boot: loading {!r}".format(source))
-                try:
-                    self.loadConfiguration(uri=source, priority=self.BOOT_CONFIGURATION)
-                except self.fileserver.NotFoundError as error:
-                    # print("Pyre.boot: {!r} not found".format(source))
-                    # ignore non-existent files
-                    pass
+        for package in self.defaultPackages:
+            self.loadPackageConfiguration(package)
+
         # ready to go
         return self
 
@@ -89,7 +82,7 @@ class Pyre(Executive, metaclass=Singleton):
         return
 
     # constants
-    bootconf = ("pyre.pml",)
+    defaultPackages = ("pyre",)
 
 
 # end of file 

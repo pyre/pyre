@@ -34,15 +34,18 @@ class Bind(Node):
         """
         Let {parent} now that processing this bind tag is complete
         """
-        parent.createAssignment(
-            key=self.key, value="\n".join(self.text),
-            locator=self.newLocator(locator))
+        # make an assignment event
+        event = self.Assignment(
+            key=self.key, value="\n".join(self.text), locator=self.newLocator(locator))
+        # and pass it on to my parent
+        parent.assignment(event)
+        # all done
         return
 
 
     # meta methods
     def __init__(self, parent, attributes, locator):
-        self.key = collections.deque(attributes['property'].split(self.separator))
+        self.key = attributes['property'].split(self.separator)
         self.text = []
         return
 

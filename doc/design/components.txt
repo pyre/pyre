@@ -111,7 +111,7 @@ while contemplating metaclasses.
   Actor  <--------------------- Component
       __new__     <<instance>>   ^
       __init__                   |
-      __call                    exp
+      __call__                  exp
 
 
 For components, the implementation of {__prepare__} is provided by {AttributeClassifier}, which

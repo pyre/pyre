@@ -8,7 +8,7 @@
 // externals
 #include <portinfo>
 #include <Python.h>
-#include <pyre/timers/timers.h>
+#include <pyre/timers.h>
 
 // access the declarations
 #include "display.h"

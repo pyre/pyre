@@ -9,16 +9,16 @@
 
 <config>
 
-  <inventory name="sample">
+  <package name="sample">
     <!-- some global settings -->
-    <inventory name="user">
+    <package name="user">
       <bind property="name">michael a.g. aïvázis</bind>
       <bind property="email">aivazis@caltech.edu</bind>
-    </inventory>
+    </package>
 
     <bind property="user.affiliation">california institute of technology</bind>
 
-  </inventory>
+  </package>
 
 </config>
 

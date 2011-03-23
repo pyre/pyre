@@ -22,13 +22,11 @@ def test():
     # open a stream
     sample = open("sample-empty.pml")
     # read the contents
-    configuration = reader.decode(source=sample)
+    events = reader.decode(source=sample)
     # check that we got a real instance back
-    assert configuration is not None
-    # check that it is an instance of the right type
-    assert isinstance(configuration, reader.Configuration)
+    assert events == []
 
-    return m, reader, configuration
+    return m, reader, events
 
 
 # main

@@ -15,7 +15,7 @@ all: export
 export:: export-package-headers
 
 
-EXPORT_HEADERS = \
+EXPORT_PKG_HEADERS = \
     Clock.h Clock.icc
 
 # end of file 

@@ -106,6 +106,24 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         return cls.pyre_executive.registrar.components[cls]
 
 
+    @classmethod
+    def pyre_getTraitDefaultValue(cls, trait):
+        """
+        Look through my supeclasses for the current default value of {trait}
+        """
+        # look through my ancestry for the value node
+        for record in cls.pyre_pedigree:
+            try:
+                return record.pyre_inventory[trait].value
+            except KeyError:
+                pass
+        # if we got this far, we have a bug; report it
+        import journal
+        firewall = journal.firewall("pyre.components")
+        raise firewall.log(
+            "could not find trait {.name!r} in {.pyre_name!r}".format(trait, cls))
+
+
     # meta methods
     def __init__(self, name, **kwds):
         # component instance registration is done by Actor.__call__,
@@ -166,4 +184,43 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         return super().__setattr__(canonical, value)
 
 
-# end of file 
+    # debugging
+    def pyre_dump(self):
+        """
+        Dump out my configuration
+        """
+        # spit out my name
+        print("{.pyre_name}: configuration".format(self))
+        # spit out my class
+        print("  instance of {0.pyre_name!r} from {0}".format(self.__class__))
+        # print out my family
+        print("  family: {!r}".format(self.pyre_SEPARATOR.join(self.pyre_family)))
+        # print out my interfaces
+        print("  implements:", self.pyre_implements)
+        # configuration section
+        print("  configuration:")
+        # iterate over all my traits
+        for trait in self.pyre_getTraitDescriptors():
+            # skip non-inventory items (e.g. behaviors)
+            if (trait in self.pyre_inventory):
+                # print out the trait name
+                print("    {}".format(self.pyre_getTraitFullName(trait.name)))
+                # get the associated slot
+                slot = self.pyre_inventory[trait]
+                # the trait value
+                print("      value: {!r}".format(slot.value))
+                # what was the default value?
+                print("      default: {!r}".format(self.pyre_getTraitDefaultValue(trait)))
+                # aliases for this trait
+                print("      aliases: {!r}".format(trait.aliases))
+                # and its documentation string
+                print("      purpose: {!r}".format(trait.doc))
+                # where did this value come from?
+                print("      from: {}".format(slot._locator))
+                # slot.dump()
+
+        # all done
+        return
+
+
+# end of file

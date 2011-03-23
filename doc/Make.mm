@@ -12,6 +12,7 @@ PROJECT = pyre
 RECURSE_DIRS = \
     design \
     diagrams \
+    overview \
     gauss \
 
 #--------------------------------------------------------------------------

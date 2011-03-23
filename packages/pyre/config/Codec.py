@@ -12,10 +12,6 @@ class Codec:
     """
 
 
-    # access to the default event buffer
-    from .Configuration import Configuration
-
-
     # public data
     encoding = None # descnedants must specify this
 
@@ -48,11 +44,6 @@ class Codec:
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must override 'decode'".format(self))
 
-
-    # factory
-    def newConfiguration(self, **kwds):
-        return self.Configuration(**kwds)
-    
 
     # exceptions
     from .exceptions import EncodingError, DecodingError, ShelfError, SymbolNotFoundError

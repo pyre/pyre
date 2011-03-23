@@ -9,21 +9,25 @@
 
 <config>
 
-  <inventory name="pyre">
-    <!-- some global settings -->
-    <bind property="home">pyre.home()</bind>
-    <bind property="prefix">pyre.prefix()</bind>
+  <package name="gauss">
+    <bind property="name">gauss</bind> 
 
-    <!-- and some per user settings -->
-    <inventory name="user">
-      <bind property="name">michael a.g. aïvázis</bind>
-      <bind property="email">aivazis@caltech.edu</bind>
-    </inventory>
+    <component name="mc">
+      <bind property="samples">10**6</bind>
+      <bind property="integrand">import:gauss.fuctors.#gaussian</bind>
+    
+      <component name="box">
+        <bind property="diagonal">((-1,-1), (1,1))</bind>
+      </component>
 
-  </inventory>
+      <component name="integrand" family="gauss.functors.gaussian">
+        <bind property="μ">(0,0)</bind>
+        <bind property="σ">1/3</bind>
+      </component>
 
-  <bind property="pyre.user.affiliation">california institute of technology</bind>
+    </component>
 
+  </package>
 </config>
 
 

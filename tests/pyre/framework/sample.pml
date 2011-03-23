@@ -9,18 +9,18 @@
 
 <config>
 
-  <inventory name="package">
+  <package name="package">
     <!-- some global settings -->
     <bind property="home">home</bind>
     <bind property="prefix">prefix</bind>
 
     <!-- and some per user settings -->
-    <inventory name="user">
+    <package name="user">
       <bind property="name">michael a.g. aïvázis</bind>
       <bind property="email">aivazis@caltech.edu</bind>
-    </inventory>
+    </package>
 
-  </inventory>
+  </package>
 
   <bind property="package.user.affiliation">california institute of technology</bind>
 

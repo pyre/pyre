@@ -46,19 +46,20 @@ class Configurator(Model):
         # error accumulator
         errors = []
         # loop over events
-        for event in configuration.events:
+        for event in configuration:
             # build the event sequence number, which becomes its priority level
             seq = (priority, self.counter[priority])
             # update the counter
             self.counter[priority] += 1
             # and process the event
+            # print("pyre.config.Configurator.configure: event=", event)
             event.identify(inspector=self, priority=seq)
         # all done
         return errors
  
 
     # support for the pyre executive
-    def configureComponentClass(self, component):
+    def configureComponentClass(self, registrar, component):
         """
         Adjust the model for the presence of a component
 
@@ -76,7 +77,7 @@ class Configurator(Model):
         return errors
 
 
-    def configureComponentInstance(self, component, name=None):
+    def configureComponentInstance(self, registrar, component, name=None):
         """
         Initialize the component instance inventory by making the descriptors point to the
         evaluation nodes
@@ -89,11 +90,10 @@ class Configurator(Model):
         errors = self._transferConfigurationSettings(configurable=component, namespace=ns)
         # transfer the deferred configuration
         errors = self._transferConditionalConfigurationSettings(
-            configurable=component, namespace=ns, errors=errors)
+            registrar=registrar, configurable=component, namespace=ns, errors=errors)
 
         # and return
         return errors
-
 
 
     # meta methods
@@ -158,49 +158,99 @@ class Configurator(Model):
             # get the inventory slot
             slot = inventory[descriptor]
             # merge the information
-            # print("      before: {0._descriptor.name!r} <- {0.value!r}".format(slot))
+            # print("      before: {0._processor.name!r} <- {0.value!r}".format(slot))
             self.patch(discard=node, keep=slot)
-            # print("      after: {0._descriptor.name!r} <- {0.value!r}".format(slot))
+            # print("      after: {0._processor.name!r} <- {0.value!r}".format(slot))
             # patch the model
             # replace the node with the inventory slot so aliases still work
             self._nodes[key] = slot
             # and eliminate the old node from the name stores
             del self._names[key]
             del self._fqnames[key]
+        # print("  done with {.pyre_name!r}".format(configurable))
         # establish {component} as the handler of events in its configuration namespace
         self.configurables[self.separator.join(namespace)] = configurable
         # return the accumulated errors
         return errors
 
 
-    def _transferConditionalConfigurationSettings(self, configurable, namespace, errors=None):
+    def _transferConditionalConfigurationSettings(
+           self,
+           registrar, configurable, namespace, errors=None):
         """
         Apply whatever deferred configuration settings are available in the configuration store
         under {namespace}
         """
-        # print("transferring {!r} to {.pyre_name!r}".format(namespace, configurable))
+        # print("Configurator._transferConditionalConfigurationSettings:")
+        # print("  configurable={.pyre_name!r}".format(configurable))
+        # print("  namespace={!r}".format(namespace))
         # initialize the error pile
         errors = errors if errors is not None else []
         # get the family name
         family = configurable.pyre_family
+        # print("  family={!r}".format(family))
         # if there isn't one, we are all done
-        if not family: return errors
+        if not family: 
+            # print("  no family, bailing out")
+            return errors
         # get the inventory
         inventory = configurable.pyre_inventory
         # hash the two to build the deferral key
         ckey = self._hash.hash(namespace)
-        fkey = self._hash.hash(family)
-        # if there aren't any setting that match these criteria, we are all done
-        if (ckey, fkey) not in self.deferred: return errors
+        # if there aren't any settings that match these criteria, we are all done
+        if ckey not in self.deferred: 
+            # print("  no deferred configuration")
+            return errors
         # otherwise, loop over the assignments
-        for trait, node in self.deferred[(ckey,fkey)]:
+        for assignment, node in self.deferred[ckey]:
             # build the trait name
-            alias = self.separator.join(trait)
+            alias = self.separator.join(assignment.key)
+            # print("    found {!r} <- {.value!r}".format(alias, node))
+
+            # make sure all the conditions apply
+            match = False
+            # print("    conditions:")
+            for name, family in assignment.conditions:
+                # print("      name={}, family={}".format(name, family))
+
+                # if the name matches the given {namespace},
+                if name == namespace:
+                    # print("      namespace match")
+                    target = configurable
+                # otherwise, look for a registered component by that name
+                else:
+                    # print("      looking up by name...")
+                    try:
+                        target = registrar.names[self.separator.join(name)]
+                        # print("        got it")
+                    # no match
+                    except KeyError:
+                        # print("        not there")
+                        # and search no more
+                        break
+                # bail out if the families don't match
+                if target.pyre_family != family: 
+                    # print("        families don't match")
+                    break
+                # otherwise
+                # print("        families match")
+            # if we didn't exit prematurely, it's a match
+            else:
+                match = True
+                
+            # if no match
+            if not match:
+                # move on to the next one
+                continue
+
+            # print("    all conditions passed")
             # look for the corresponding descriptor
             try:
                 descriptor = configurable.pyre_getTraitDescriptor(alias=alias)
+                # print("    matching descriptor: {.name!r}".format(descriptor))
             # found a typo?
             except configurable.TraitNotFoundError as error:
+                # print("    no matching descriptor")
                 errors.append(error)
                 continue
             # get the inventory slot
@@ -208,8 +258,11 @@ class Configurator(Model):
             # merge the information
             # MGA: this is not right: what if you have to re-apply these settings on a second
             # assignment to the same trait?
+            # print("    before: {0._processor.name!r} <- {0.value!r}".format(slot))
             self.patch(discard=node, keep=slot)
+            # print("    after: {0._processor.name!r} <- {0.value!r}".format(slot))
 
+        # print("  done with {.pyre_name!r}".format(configurable))
         # return the accumulated errors
         return errors
 

@@ -30,7 +30,7 @@ class Reader(xml.sax.ContentHandler):
     # interface
     def read(self, *, stream, document, features=(), saxparser=None):
         """
-        Buld a representation of the information in {stream}
+        Build a representation of the information in {stream}
 
         parameters:
             {stream}: a URI or file-like object
@@ -38,7 +38,7 @@ class Reader(xml.sax.ContentHandler):
                         contents of {stream}
             {saxparser}: the SAX style parser to use; defaults to xml.sax.make_parser()
             {features}: the optional parsing features to enable; expected to be a tuple of
-                        (feature, value) pairs; for more details, see the builtin package
+                        (feature, value) pairs; for more details, see the built in package
                         xml.sax or your parser's documentation
 
         The Reader attempts to normalize the exceptions that may be generated while attempting
@@ -69,9 +69,9 @@ class Reader(xml.sax.ContentHandler):
             parser.parse(stream)
         except xml.sax.SAXParseException as error:
             # something bad happened; normalize the exception
-            raise self.ParsingError(
+            raise self.ProcessingError(
                 parser=self, document=document, description=error.getMessage(),
-                locator=self._locator) from error
+                saxlocator=self._locator) from error
         except self.ParsingError as error:
             error.parser = self
             error.document = document
@@ -228,11 +228,15 @@ class Reader(xml.sax.ContentHandler):
         # let the parent node know we reached an element end
         try:
             node.notify(parent=self._currentNode, locator=self._locator)
+        except self.ParsingError:
+            # leave our own exception alone
+            raise
         except Exception as error:
-            msg = "error while calling the method 'notify' of {0}".format(self._currentNode)
+            # convert everything else to a ProcessingError
+            msg = "error while calling the method 'notify' of {}".format(self._currentNode)
             raise self.ProcessingError(
                 parser=self, document=self._document,
-                description=msg, locator=self._locator) from error
+                description=msg, saxlocator=self._locator) from error
             
         return
 

@@ -22,6 +22,7 @@ class Facility(Property):
     # types
     from .Component import Component
 
+    # MGA: 20110318: this description is out of date; FIX
     # Facility is faced with the following problem: the expectations of {pyre_cast} are
     # different depending on whether the object whose trait is being processed is a component
     # class or a component instance. In the latter case, we want to cast the trait value into
@@ -35,6 +36,7 @@ class Facility(Property):
 
     # the descriptor stand-in
     class trait:
+        name = None
         type = None
         validators = ()
         converters = ()
@@ -95,7 +97,7 @@ class Facility(Property):
         namespace = registration.split(cfg.TRAIT_SEPARATOR)
         # transfer any deferred configuration settings
         errors = cfg._transferConditionalConfigurationSettings(
-            configurable=value, namespace=namespace)
+            registrar=instance.pyre_executive.registrar, configurable=value, namespace=namespace)
         return value
 
 
@@ -114,6 +116,8 @@ class Facility(Property):
         """
         # build a value processor
         processor = self.trait()
+        # name it
+        processor.name = self.name
         # attach a class maker
         processor.type = self.factory(name=name, interface=self.type)
         # make a slot with the given {evaluator}

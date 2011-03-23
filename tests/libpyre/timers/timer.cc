@@ -10,7 +10,7 @@
 #include <portinfo>
 
 // grab the timer objects
-#include <pyre/timers/timers.h>
+#include <pyre/timers.h>
 
 // main program
 int main() {

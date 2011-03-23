@@ -19,15 +19,15 @@
   </component>
 
   <!-- configuration for the example that integrates the gaussian -->
-  <component name="mc-gaussian" class="gauss.integrators.montecarlo">
-    <!-- specify the components -->
+  <component name="mc-gaussian" family="gauss.integrators.montecarlo">
+    <!-- specify the integrand -->
     <bind property="integrand">import:gauss.functors#gaussian</bind>
 
     <component name="box">
       <bind property="diagonal">((-1,-1), (1,1))</bind>
     </component>
 
-    <component name="integrand" class="gauss.functors.gaussian">
+    <component name="integrand" family="gauss.functors.gaussian">
       <bind property="μ">(0,0)</bind>
       <bind property="σ">1/3</bind>
     </component>
@@ -35,13 +35,14 @@
   </component>
 
   <!-- configuration for the example that computes π -->
-  <component name="mc-π" class="gauss.integrators.montecarlo">
-    <!-- specify the components -->
+  <component name="mc-π" family="gauss.integrators.montecarlo">
+    <!-- specify the integrand -->
     <bind property="integrand">import:gauss.functors#one</bind>
-  </component>
 
-  <component name="mc-π.box">
-    <bind property="diagonal">((0,0),(1,1))</bind>
+    <component name="box">
+      <bind property="diagonal">((0,0),(1,1))</bind>
+    </component>
+
   </component>
 
 </config>

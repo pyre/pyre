@@ -8,7 +8,6 @@
 
 import weakref
 import collections
-import pyre.tracking
 from pyre.calc.HierarchicalModel import HierarchicalModel
 
 
@@ -23,8 +22,18 @@ class Model(HierarchicalModel):
     from .Slot import Slot as nodeFactory
 
 
-    # interface from HierarchicalModel
+    # interface obligations from HierarchicalModel
     def register(self, *, node, name=None, key=None):
+        """
+        Add {node} into the model and make it accessible through {name}
+
+        Either {name} or {key} must be non-nil.
+
+        If the optional argument {key} is provided, it will be used to generate the hash key;
+        otherwise {name} will be split using the model's field separator. If {key} is supplied
+        but {name} is not, an appropriate name will be constructed by splicing together the
+        names in {key} using the model's field separator.
+        """
         # print("pyre.config.Model.register: name={!r}, key={!r}".format(name, key))
         # build the name
         name = name if name is not None else self.separator.join(key)
@@ -52,6 +61,16 @@ class Model(HierarchicalModel):
 
 
     def resolve(self, *, name=None, key=None):
+        """
+        Find the named node
+
+        Either {name} or {key} must be non-nil.
+
+        If the optional argument {key} is provided, it will be used to generate the hash key;
+        otherwise {name} will be split using the model's field separator. If {key} is supplied
+        but {name} is not, an appropriate name will be constructed by splicing together the
+        names in {key} using the model's field separator.
+        """
         # print("pyre.config.Model.resolve: name={!r}, key={!r}".format(name, key))
         # build the name
         name = name if name is not None else self.separator.join(key)
@@ -86,27 +105,27 @@ class Model(HierarchicalModel):
         return self.register(node=slot, key=key)
 
 
-    def defer(self, component, family, key, value, locator, priority):
+    def defer(self, assignment, priority):
         """
         Build a node that corresponds to a conditional configuration
         """
         # print("Model.defer:")
-        # print("    component={}, family={}".format(component, family))
+        # print("    component={}".format(component))
+        # print("    conditions={}".format(conditions))
         # print("    key={}, value={!r}".format(key, value))
         # print("    from {}".format(locator))
         # print("    with priority {}".format(priority))
-
         # hash the component name
-        ckey = self._hash.hash(component)
-        # hash the family key
-        fkey = self._hash.hash(family)
-        # get the deferred event store
-        model = self.deferred[(ckey, fkey)]
+        ckey = self._hash.hash(assignment.component)
         # build a slot
         slot = self.nodeFactory(
-            value=None, evaluator=self.recognize(value=value), priority=priority, locator=locator)
-        # and add it to the pile
-        model.append( (key, slot) )
+            value=None, 
+            evaluator=self.recognize(value=assignment.value),
+            priority=priority, locator=assignment.locator)
+
+        # get the deferred event store and add the event and the slot to the pile
+        model = self.deferred[ckey].append( (assignment, slot) )
+
         # all done
         return slot
 

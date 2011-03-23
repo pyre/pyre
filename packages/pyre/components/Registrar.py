@@ -55,6 +55,12 @@ class Registrar:
         enables the framework to answer questions about the possible implementations of a given
         interface.
         """
+        # register it under its family name
+        if component.pyre_family:
+            # turn the family iterable into a single string
+            family = component.pyre_SEPARATOR.join(component.pyre_family)
+            # and add it to the weak dictionary
+            self.families[family] = component
         # prime the component extent
         self.components[component] = weakref.WeakSet()
         # update the map of interfaces it implements
@@ -68,6 +74,8 @@ class Registrar:
         """
         Register this {component} instance
         """
+        # update the name map
+        self.names[component.pyre_name] = component
         # add {component} to the set of registered instances of its class
         # Actor, the component metaclass, guarantees that component classes get registered
         # before any of their instances, so the lookup for the class should never fail
@@ -107,9 +115,12 @@ class Registrar:
         super().__init__(**kwds)
 
         # the component registries
-        self.components = {}
-        self.interfaces = set()
-        self.implementors = collections.defaultdict(set)
+        self.components = {} # map: component class -> set of instances
+        self.interfaces = set() # a collection of known interfaces
+        self.implementors = collections.defaultdict(set) # map: interfaces -> components
+
+        self.names = weakref.WeakValueDictionary() # map: component names -> component instances
+        self.families = {} # map: component families -> component classes
 
         return
 

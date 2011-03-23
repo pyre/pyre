@@ -7,7 +7,6 @@
 
 
 from .Node import Node
-from ..Configuration import Configuration as Buffer
 
 
 class Configuration(Node):
@@ -16,7 +15,7 @@ class Configuration(Node):
     """
 
     # constants
-    elements = ("component", "inventory", "bind")
+    elements = ("component", "package", "bind")
 
 
     # interface
@@ -28,23 +27,22 @@ class Configuration(Node):
 
 
     # assignment handler
-    def createAssignment(self, key, value, locator):
+    def assignment(self, event):
         """
-        Process a binding of a property to a value
+        Process the binding of a property to a value
         """
-        # create a new assignment event
-        self.events.newAssignment(key=key, value=value, locator=locator)
+        # add the event to the pile
+        self.configuration.append(event)
         # nothing else, for now
         return
 
 
-    def createConditionalAssignment(self, component, family, key, value, locator):
+    def conditionalAssignment(self, event):
         """
         Process a binding of a property to a value
         """
-        # create a new conditional assignment event
-        self.events.newConditionalAssignment(
-            component=component, family=family, key=key, value=value, locator=locator)
+        # add the event to the pile
+        self.configuration.append(event)
         # nothing else, for now
         return
 
@@ -52,7 +50,7 @@ class Configuration(Node):
     # meta methods
     def __init__(self, parent, attributes, locator, **kwds):
         super().__init__(**kwds)
-        self.events = Buffer()
+        self.configuration = []
         return
     
 

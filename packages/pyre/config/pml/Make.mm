@@ -24,9 +24,9 @@ EXPORT_PYTHON_MODULES = \
     Component.py \
     Configuration.py \
     Document.py \
-    Inventory.py \
     Node.py \
     PML.py \
+    Package.py \
     __init__.py
 
 
