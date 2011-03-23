@@ -9,16 +9,15 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
-    python \
-    libpyre \
-    pyre \
-    merlin
+    components \
 
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: test
+
+test::
+	BLD_ACTION="test" $(MM) recurse
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
