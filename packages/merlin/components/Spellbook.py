@@ -19,7 +19,7 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
     """
 
     # public state
-    path = pyre.properties.str()
+    path = pyre.properties.array()
     path.doc = "the ordered list of directories with spells"
 
 
@@ -48,12 +48,15 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
         return
 
 
-    # life cycle management
-    def pyre_initialize(self, executive, **kwds):
+    # meta methods
+    def __init__(self, **kwds):
+        # chain to my ancestors
+        super().__init__(**kwds)
+
         print(" ** spellbook initialization")
         print("    path: {.path!r}".format(self))
         # chain to my ancestors
-        return super().pyre_initialize(executive, **kwds)
+        return
 
 
     # implementation details

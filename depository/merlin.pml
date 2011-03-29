@@ -8,6 +8,13 @@
 -->
 
 <config>
+
+    <!-- spellbook configuration -->
+    <component name="merlin.spellbook">
+      <bind property="path">
+      </bind>
+    </component>
+
 </config>
 
 
