@@ -19,6 +19,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Application.py \
     __init__.py
 
 
