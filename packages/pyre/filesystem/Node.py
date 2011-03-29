@@ -37,7 +37,7 @@ class Node(metaclass=_metaclass_Node):
 
     # interface
     @classmethod
-    def join(cls, *paths):
+    def join(cls, *fragments):
         """
         Concatenate the collection of path names in {paths} using the path separator.
 
@@ -47,7 +47,7 @@ class Node(metaclass=_metaclass_Node):
         # access the package utility
         from . import join
         # build the answer
-        return join(fragments)
+        return join(*fragments)
             
 
     def open(self, **kwds):
