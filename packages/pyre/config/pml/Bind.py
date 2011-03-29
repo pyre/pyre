@@ -34,9 +34,16 @@ class Bind(Node):
         """
         Let {parent} now that processing this bind tag is complete
         """
+        # convert the collected text into a value
+        # flatten a single line of text into a string
+        if len(self.text) == 1:
+            value = self.text[0]
+        # pass multi-line input as a list
+        else:
+            value = self.text
         # make an assignment event
         event = self.Assignment(
-            key=self.key, value="\n".join(self.text), locator=self.newLocator(locator))
+            key=self.key, value=value, locator=self.newLocator(locator))
         # and pass it on to my parent
         parent.assignment(event)
         # all done
