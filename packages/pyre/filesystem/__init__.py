@@ -141,7 +141,7 @@ def newVirtualFilesystem(root='/', **kwds):
     of resources from the identifiers that application use to refer to them
     """
     from .Filesystem import Filesystem
-    return Filesystem(**kwds)
+    return Filesystem(root=root, **kwds)
 
 
 def newZipFilesystem(root, recognizer=None, **kwds):
