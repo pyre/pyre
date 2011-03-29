@@ -20,5 +20,7 @@ sanity:
 
 application:
 	${PYTHON} ./application-sanity.py
+	${PYTHON} ./application-instantiation.py
+	${PYTHON} ./application-namespace.py
 
 # end of file 

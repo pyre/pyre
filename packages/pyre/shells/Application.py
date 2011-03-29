@@ -9,9 +9,12 @@
 # access to the framework
 import pyre
 
+# access to my metaclass
+from .Director import Director
+
 
 # declaration
-class Application(pyre.component):
+class Application(pyre.component, metaclass=Director, hidden=True):
     """
     Base class for top-level application components
 
@@ -20,6 +23,9 @@ class Application(pyre.component):
 
 
     # per-instance public data
+    pyre_filesystem = None # the root of my private filesystem
+
+
     @property
     def executive(self):
         """
@@ -54,17 +60,5 @@ class Application(pyre.component):
         raise NotImplementedError(
             "application {.pyre_name!r} must implement 'help'".format(self))
         
-
-    # meta methods
-    def __init__(self, name, **kwds):
-        # chain to the ancestors
-        super().__init__(name=name, **kwds)
-
-        # all done
-        return
-
-
-    # implementation details
-
 
 # end of file 

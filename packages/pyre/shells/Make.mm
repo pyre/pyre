@@ -20,6 +20,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Application.py \
+    Director.py \
     __init__.py
 
 
