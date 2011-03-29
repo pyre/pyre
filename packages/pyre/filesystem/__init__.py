@@ -20,6 +20,30 @@ Explain explorers
 import os
 import re
 
+
+# utilities
+def join(*paths):
+    """
+    Concatenate the collection of path names in {paths} using the path separator.
+
+    Absolute path names cause all previous path components to be discarded, just like
+    {os.path.join}
+    """
+    # cache the path separator
+    separator = PATH_SEPARATOR
+    # prime the result
+    fragments = []
+    # iterate over the given names
+    for path in paths:
+        # discard the current state if this is an absolute path
+        if path[0] == separator: fragments = []
+        # add this path to the pile
+        fragments.append(path)
+    # assemble the answer
+    return separator.join(fragments)
+            
+
+
 # NYI:
 # it looks like the filesystem creation logic is complicated enough that there should be
 # a filesystem factory object, perhaps a singleton, so that there is a chance to simplify
@@ -117,7 +141,7 @@ def newVirtualFilesystem(root='/', **kwds):
     of resources from the identifiers that application use to refer to them
     """
     from .Filesystem import Filesystem
-    return Filesystem(**kwds)
+    return Filesystem(root=root, **kwds)
 
 
 def newZipFilesystem(root, recognizer=None, **kwds):

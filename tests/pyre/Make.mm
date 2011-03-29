@@ -25,6 +25,7 @@ RECURSE_DIRS = \
     config \
     framework \
     components \
+    shells \
     timers \
     weaver \
     db \

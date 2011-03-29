@@ -19,6 +19,10 @@ class Node(metaclass=_metaclass_Node):
     """
 
     
+    # constants
+    from . import PATH_SEPARATOR
+
+
     # public data
     contents = {} # i don't have any, but some of my descendants do
 
@@ -32,6 +36,20 @@ class Node(metaclass=_metaclass_Node):
 
 
     # interface
+    @classmethod
+    def join(cls, *fragments):
+        """
+        Concatenate the collection of path names in {paths} using the path separator.
+
+        Absolute path names cause all previous path components to be discarded, just like
+        {os.path.join}
+        """
+        # access the package utility
+        from . import join
+        # build the answer
+        return join(*fragments)
+            
+
     def open(self, **kwds):
         """
         Access the contents of the physical resource that i point to.

@@ -19,6 +19,7 @@ sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./exceptions.py
 	${PYTHON} ./node.py
+	${PYTHON} ./join.py
 	${PYTHON} ./folder.py
 	${PYTHON} ./directory_walker.py
 	${PYTHON} ./stat_recognizer.py
