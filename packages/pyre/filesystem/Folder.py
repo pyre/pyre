@@ -15,9 +15,6 @@ class Folder(Node):
     """
 
     # public data
-    # constants
-    from . import PATH_SEPARATOR
-    
     # data members
     contents = None # the container that assigns names to my contents
 
