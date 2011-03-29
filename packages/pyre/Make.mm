@@ -24,6 +24,7 @@ RECURSE_DIRS = \
     patterns \
     records \
     schema \
+    shells \
     tabular \
     timers \
     tracking \
