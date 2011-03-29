@@ -76,7 +76,7 @@ class FileServer(Filesystem):
             uri=uri, reason="unsupported scheme {!r}".format(scheme))
 
 
-    def join(self, path, address, extension=None):
+    def splice(self, path, address, extension=None):
         """
         Join {path}, {address} and {extension} to form a valid pathname
         """

@@ -185,7 +185,7 @@ class Executive:
         # attempt to load the configuration settings
         for path, filename, extension in scope:
             # construct the actual filename
-            source = self.fileserver.join(path, filename, extension)
+            source = self.fileserver.splice(path, filename, extension)
             # and try to load the configuration
             try:
                 self.loadConfiguration(uri=source, priority=self.PACKAGE_CONFIGURATION)
