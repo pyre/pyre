@@ -7,35 +7,34 @@
 
 
 # access to the framework
-import pyre
-# my metaclass
-from pyre.patterns.Singleton import Singleton
-# my part
+import pyre.shells
+# my parts
 from .Spellbook import Spellbook
 
 
-class Merlin(metaclass=Singleton):
+# constants
+MERLIN = "merlin"
+
+
+class Merlin(pyre.shells.application, family=MERLIN):
     """
     The merlin executive
     """
 
 
     # constants
-    merlinFolder = ".merlin"
+    merlinFolder = "." + MERLIN
 
 
     # public data
-    system = None # the location of the default configuration
-    user = None # the user overrides and extensions
     project = None # the project specific settings
 
-    # access to the pyre executive and its services
-    executive = pyre.executive # access to the pyre executive
-    fileserver = executive.fileserver # access to the pyre file server
+    # my subcomponents
     spellbook = None # build at construction time
 
 
     # interface
+    @pyre.export
     def main(self):
         """
         The main entry point for merlin
@@ -67,7 +66,7 @@ class Merlin(metaclass=Singleton):
             return merlin.usage()
 
         # instantiate the component
-        actor = factory(name="merlin-"+componentName)
+        actor = factory(name=MERLIN+"-"+componentName)
 
         # if it is a merlin actor
         if isinstance(actor, pyre.component):
@@ -78,6 +77,7 @@ class Merlin(metaclass=Singleton):
         return self
 
 
+    @pyre.export
     def help(self, *topics):
         """
         Access to the help system
@@ -87,15 +87,13 @@ class Merlin(metaclass=Singleton):
 
 
     # meta methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
+    def __init__(self, name=MERLIN, **kwds):
+        super().__init__(name=name, **kwds)
 
-        # look through the standard configuration folders
-        self.system, self.user = self._discoverConfigurationLayout()
         # hunt down the root of the project where the {.merlin} folder lives
         self.project = self._mountProjectDirectory()
         # create and bind the spell book
-        self.spellbook = Spellbook(name="merlin.spellbook")
+        self.spellbook = Spellbook(name=name+".spellbook")
 
         # all done
         return
@@ -137,55 +135,19 @@ class Merlin(metaclass=Singleton):
             if olddir == curdir:
                 # which means that there is no appropriate {.merlin}, so raise an exception
                 raise local.NotFoundError(
-                    filesystem=local, node=None, path=".merlin", fragment='file')
+                    filesystem=local, node=None, path=self.merlinFolder, fragment=self.merlinFolder)
         # got it
         print(" ** project directory at {!r}".format(node.uri))
         # access the filesystem package
         import pyre.filesystem
         # create a local file system
         project = pyre.filesystem.newLocalFilesystem(root=node.uri).discover()
-        # mount it as /project
-        self.fileserver['/project'] = project
+        # build the address
+        address = self.fileserver.join(MERLIN, "project")
+        # mount it as /merlin/project
+        self.fileserver[address] = project
         # and return it
         return project
-
-
-    def _discoverConfigurationLayout(self):
-        """
-        Look through the standard configuration folders for merlin settings
-        """
-        # look for the system directory
-        try:
-            # it should always be there
-            system = self.fileserver['/pyre/system/merlin']
-        # if not
-        except self.fileserver.NotFoundError as error:
-            # just create an empty folder
-            system = self.fileserver.newFolder()
-            # and mount it at the right place
-            self.fileserver['pyre/system/merlin'] = system
-        # and
-        else:
-            # fill the folder with its contents
-            system.discover()
-
-        # now the user directory
-        # if the user has any settings
-        try:
-            # attach them to our namespace
-            user = self.fileserver['/pyre/user/merlin']
-        # if not
-        except self.fileserver.NotFoundError as error:
-            # just create an empty folder
-            user = self.fileserver.newFolder()
-            # and mount it at the right place
-            self.fileserver['pyre/user/merlin'] = user
-        # and
-        else:
-            # fill the folder with its contents
-            user.discover()
-        # all done
-        return system, user
 
 
 # end of file 
