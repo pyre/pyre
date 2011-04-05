@@ -32,7 +32,7 @@ class Pyre(Executive, metaclass=Singleton):
 
         # read and apply settings from the default configuration files
         for package in self.defaultPackages:
-            self.loadPackageConfiguration(package)
+            self.configurePackage(package)
 
         # ready to go
         return self

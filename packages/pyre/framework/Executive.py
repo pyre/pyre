@@ -142,7 +142,7 @@ class Executive:
         return descriptor
             
 
-    def loadPackageConfiguration(self, package):
+    def configurePackage(self, package):
         """
         Locate and load the configuration files for the package to which {component} belongs
 
@@ -159,7 +159,7 @@ class Executive:
         # also, bail out if this package has been configured previously
         if package in self.packages: return
         # we have a package name
-        # print("Executive.loadPackageConfiguration: configuring package {!r}".format(package))
+        # print("Executive.configurePackage: configuring package {!r}".format(package))
         # form all possible filenames for the configuration files
         scope = itertools.product(reversed(self.configpath), [package], self.codex.getEncodings())
         # attempt to load the configuration settings
@@ -171,11 +171,11 @@ class Executive:
                 self.loadConfiguration(uri=source, priority=self.PACKAGE_CONFIGURATION)
             except self.fileserver.NotFoundError as error:
                 continue
-            # print("Executive.loadPackageConfiguration: loaded {!r}".format(source))
+            # print("Executive.configurePackage: loaded {!r}".format(source))
         # in any case, this is the best that can be done for this package
         # update the set of known packages
         self.packages.add(package)
-        # print("Executive.loadPackageConfiguration: done; packages={}".format(self.packages))
+        # print("Executive.configurePackage: done; packages={}".format(self.packages))
         # all done
         return package
 
@@ -190,7 +190,7 @@ class Executive:
         # invoke the registration hook
         component.pyre_registerClass(executive=self)
         # load the package configuration; must do this before configuring the class
-        self.loadPackageConfiguration(package=component.pyre_getPackageName())
+        self.configurePackage(package=component.pyre_getPackageName())
         # populate the class defaults with the configuration information
         errors = self.configurator.configureComponentClass(self.registrar, component)
         # add any errors encountered to the pile
