@@ -25,6 +25,11 @@ class Executive:
     """
 
 
+    # exceptions
+    from .exceptions import FrameworkError, BadResourceLocatorError
+    from ..config.exceptions import DecodingError
+
+
     # public data
     configpath = ()
     # managers
@@ -103,10 +108,10 @@ class Executive:
         Any other scheme specification is interpreted as a request for a file based component
         factory. The executive assumes that {address} is a valid path in the physical or
         logical filesystems managed by the executive.fileserver, and that it contains
-        executable python code the provides the definition of the required symbol.  For
+        executable python code that provides the definition of the required symbol.  For
         example, the {uri}
 
-            vfs:///local/sample.odb#myFactory
+            vfs:/local/sample.odb#myFactory
 
         expects that the fileserver can resolve the address local/sample.odb into a valid file
         within the virtual filesystem that forms the application namespace.
@@ -114,55 +119,26 @@ class Executive:
         The symbol referenced by the {symbol} fragment must be a callable that can produce
         component class records when called. For example
 
-            from pyre.components.Component import Component
-            class mine(Component): pass
             def myFactory():
+                import pyre
+                class mine(pyre.component): pass
                 return mine
 
         would be valid contents for an accessible module or an odb file.
         """
         # parse the {uri}
         scheme, authority, address, query, symbol = self.parseURI(uri)
-        # print("Executive:retrieveComponentDescriptor: scheme={!r}, address={!r}, symbol={!r}".
-              # format(scheme, address, symbol))
-
-        # make some adjustments
-        if scheme:
-            scheme = scheme.strip().lower()
-        else:
-            scheme = 'file'
-
-        # if the scheme is "import"
-        if scheme == "import":
-            # use the address as the shelf hash key
-            source = address
-            # build the codec
-            codec = self.codex.newCodec(encoding="import")
-        # otherwise, assume the source points to a file with python code
-        else:
-            # build a unique identifier for this source
-            source = (scheme, address)
-            # build the codec
-            codec = self.codex.newCodec(encoding="odb", filesystem=self.fileserver)
-
-        # check whether we have processed this source before
-        try:
-            # get the shelf
-            shelf = self.shelves[source]
-        # nope, it's the first time
-        except KeyError:
-            # extract the shelf
-            shelf = codec.decode(source=source, locator=locator)
-            # and cache it
-            self.shelves[source] = shelf
-
-        # now, retrieve the descriptor
-        descriptor = codec.retrieveSymbol(shelf=shelf, symbol=symbol)
+        # locate the shelf
+        shelf = self._loadShelf(
+            scheme=scheme, authority=authority, address=address,
+            locator=locator)
+        # retrieve the descriptor
+        descriptor = shelf.retrieveSymbol(symbol=symbol)
         # and return it
         return descriptor
             
 
-    def loadPackageConfiguration(self, package):
+    def configurePackage(self, package):
         """
         Locate and load the configuration files for the package to which {component} belongs
 
@@ -172,6 +148,7 @@ class Executive:
         the components in the package.
         
         This behavior is triggered by the first encountered component from each package, and it
+
         is done only once.
         """
         # if none were provided, there is no file-based configuration
@@ -179,7 +156,7 @@ class Executive:
         # also, bail out if this package has been configured previously
         if package in self.packages: return
         # we have a package name
-        # print("Executive.loadPackageConfiguration: configuring package {!r}".format(package))
+        # print("Executive.configurePackage: configuring package {!r}".format(package))
         # form all possible filenames for the configuration files
         scope = itertools.product(reversed(self.configpath), [package], self.codex.getEncodings())
         # attempt to load the configuration settings
@@ -191,13 +168,23 @@ class Executive:
                 self.loadConfiguration(uri=source, priority=self.PACKAGE_CONFIGURATION)
             except self.fileserver.NotFoundError as error:
                 continue
-            # print("Executive.loadPackageConfiguration: loaded {!r}".format(source))
+            # print("Executive.configurePackage: loaded {!r}".format(source))
         # in any case, this is the best that can be done for this package
         # update the set of known packages
         self.packages.add(package)
-        # print("Executive.loadPackageConfiguration: done; packages={}".format(self.packages))
+        # print("Executive.configurePackage: done; packages={}".format(self.packages))
         # all done
         return package
+
+
+    def loadShelf(self, uri, locator=None):
+        """
+        Load the contents of the shelf pointed to by {uri}
+        """
+        # parse the {uri}
+        scheme, authority, address, query, symbol = self.parseURI(uri)
+        # and retrieve the shelf
+        return self._loadShelf(scheme=scheme, authority=authority, address=address, locator=locator)
 
 
     # registration of configurables
@@ -210,7 +197,7 @@ class Executive:
         # invoke the registration hook
         component.pyre_registerClass(executive=self)
         # load the package configuration; must do this before configuring the class
-        self.loadPackageConfiguration(package=component.pyre_getPackageName())
+        self.configurePackage(package=component.pyre_getPackageName())
         # populate the class defaults with the configuration information
         errors = self.configurator.configureComponentClass(self.registrar, component)
         # add any errors encountered to the pile
@@ -285,6 +272,33 @@ class Executive:
         return scheme, authority, address, query, fragment
 
 
+    def normalizeURI(self, 
+                     scheme=None, authority=None, address=None, query=None, symbol=None
+                     ):
+        """
+        Construct a uri in normal form
+        """
+        # initialize the fragment container
+        uri = []
+        # handle the scheme
+        if scheme is not None:
+            uri.append(scheme + ":")
+        # handle the authority
+        if authority is not None:
+            uri.append("//" + authority)
+        # handle the address
+        if address is not None:
+            uri.append(address)
+        # handle the query
+        if query is not None:
+            uri.append("?" + query)
+        # handle the symbol
+        if symbol is not None:
+            uri.append("#" + symbol)
+        # assemble and return
+        return "".join(uri)
+
+
     # meta methods
     def __init__(self, managers, **kwds):
         super().__init__(**kwds)
@@ -321,9 +335,40 @@ class Executive:
         return
 
 
-    # exceptions
-    from .exceptions import FrameworkError, BadResourceLocatorError
-    from ..config.exceptions import DecodingError
+    # implementation details
+    def _loadShelf(self, scheme, authority, address, locator):
+        """
+        Load the contents of the shelf pointed to by the given URI fragments
+        """
+        # adjust the scheme, if necessary
+        scheme = scheme.strip().lower() if scheme else 'file'
+        # construct the normal form for the filename part
+        source = self.normalizeURI(scheme=scheme, authority=authority, address=address)
+        # check whether we have processed this source before
+        try:
+            # get the shelf
+            return self.shelves[source]
+        # not there (yet)
+        except KeyError:
+            pass
+        # if the scheme is "import", build a native codec
+        if scheme == "import":
+            # for the native codec, the source is the address fragment
+            shelf = self.codex.newCodec(encoding="import").decode(source=address, locator=locator)
+        else:
+            # anything else is file based, for now
+            # ask the file server to open the uri
+            _, stream = self.fileserver.open(scheme=scheme, address=address)
+            # build an odb codec
+            codec = self.codex.newCodec(encoding="odb")
+            # ask it for the shelf
+            shelf = codec.decode(source=stream, locator=locator)
+
+        # update the shelf index
+        self.shelves[source] = shelf
+
+        # and return the shelf
+        return shelf
 
 
     # private data
