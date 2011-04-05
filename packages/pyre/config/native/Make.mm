@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Importer.py \
+    Shelf.py \
     __init__.py
 
 

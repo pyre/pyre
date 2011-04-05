@@ -7,7 +7,6 @@
 
 
 from ..Codec import Codec
-from .Shelf import Shelf
 
 
 class ODB(Codec):
@@ -15,40 +14,33 @@ class ODB(Codec):
     This package contains the implementation of the native importer
     """
 
+    
+    # type
+    from .Shelf import Shelf
+
 
     # constants
     encoding = "odb"
-    filesystem = None
 
 
     # interface
     def decode(self, source, locator=None):
         """
-        Interpret {source} as a vnode that points to an odb file, open it and place its
-        contents into a shelf
+        Interpret {source} as an open stream, execute it, and place its contents into a shelf
         """
-        # place the {source} contents in a shelf
-        shelf = Shelf.retrieveContents(filesystem=self.filesystem, source=source)
-        # and return it
+        # read the contents
+        contents = source.read()
+        # build a new shelf
+        shelf = self.Shelf()
+        # invoke the interpreter to parse its contents
+        exec(contents, shelf)
+        # and return the shelf
         return shelf
-        
-
-    def retrieveSymbol(self, shelf, symbol):
-        """
-        Retrieve {symbol} from an existing {shelf}
-        """
-        try:
-            return shelf[symbol]
-        except AttributeError as error:
-            raise self.SymbolNotFoundError(codec=self, shelf=shelf, symbol=symbol) from error
-        except TypeError as error:
-            raise self.ShelfError(codec=self, shelf=shelf, symbol=symbol) from error
 
 
     # meta methods
-    def __init__(self, filesystem, **kwds):
+    def __init__(self, **kwds):
         super().__init__(**kwds)
-        self.filesystem = filesystem
         return
 
 
