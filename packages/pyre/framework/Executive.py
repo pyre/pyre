@@ -338,7 +338,7 @@ class Executive:
     # implementation details
     def _loadShelf(self, scheme, authority, address, locator):
         """
-        Load the contents of the shelf pointed to by {uri}
+        Load the contents of the shelf pointed to by the given URI fragments
         """
         # adjust the scheme, if necessary
         scheme = scheme.strip().lower() if scheme else 'file'
