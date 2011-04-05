@@ -128,12 +128,8 @@ class Executive:
         """
         # parse the {uri}
         scheme, authority, address, query, symbol = self.parseURI(uri)
-        # print("Executive:retrieveComponentDescriptor: scheme={!r}, address={!r}, symbol={!r}".
-              # format(scheme, address, symbol))
-        # adjust the scheme, if necessary
-        scheme = scheme.strip().lower() if scheme else 'file'
         # locate the shelf
-        shelf = self._retrieveShelf(
+        shelf = self._loadShelf(
             scheme=scheme, authority=authority, address=address,
             locator=locator)
         # retrieve the descriptor
@@ -152,6 +148,7 @@ class Executive:
         the components in the package.
         
         This behavior is triggered by the first encountered component from each package, and it
+
         is done only once.
         """
         # if none were provided, there is no file-based configuration
@@ -178,6 +175,16 @@ class Executive:
         # print("Executive.configurePackage: done; packages={}".format(self.packages))
         # all done
         return package
+
+
+    def loadShelf(self, uri, locator=None):
+        """
+        Load the contents of the shelf pointed to by {uri}
+        """
+        # parse the {uri}
+        scheme, authority, address, query, symbol = self.parseURI(uri)
+        # and retrieve the shelf
+        return self._loadShelf(scheme=scheme, authority=authority, address=address, locator=locator)
 
 
     # registration of configurables
@@ -329,10 +336,12 @@ class Executive:
 
 
     # implementation details
-    def _retrieveShelf(self, scheme, authority, address, locator):
+    def _loadShelf(self, scheme, authority, address, locator):
         """
-        Locate the shelf pointed to by {uri}, which is expected to be in normal form
+        Load the contents of the shelf pointed to by {uri}
         """
+        # adjust the scheme, if necessary
+        scheme = scheme.strip().lower() if scheme else 'file'
         # construct the normal form for the filename part
         source = self.normalizeURI(scheme=scheme, authority=authority, address=address)
         # check whether we have processed this source before
@@ -342,7 +351,6 @@ class Executive:
         # not there (yet)
         except KeyError:
             pass
-
         # if the scheme is "import", build a native codec
         if scheme == "import":
             # for the native codec, the source is the address fragment
