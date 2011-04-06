@@ -137,7 +137,7 @@ class Merlin(pyre.shells.application, family=MERLIN):
                 raise local.NotFoundError(
                     filesystem=local, node=None, path=self.merlinFolder, fragment=self.merlinFolder)
         # got it
-        print(" ** project directory at {!r}".format(node.uri))
+        # print(" ** project directory at {!r}".format(node.uri))
         # access the filesystem package
         import pyre.filesystem
         # create a local file system
