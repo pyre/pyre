@@ -28,6 +28,7 @@ framework:
 	${PYTHON} ./executive_registrar.py
 	${PYTHON} ./executive_uri.py
 	${PYTHON} ./executive_codecs.py
+	${PYTHON} ./executive_shelves.py
 	${PYTHON} ./executive_configuration.py
 	${PYTHON} ./executive_retrieveComponentDescriptor.py
 	${PYTHON} ./executive_retrieveComponentDescriptor_duplicate.py
