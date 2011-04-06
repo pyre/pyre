@@ -35,7 +35,7 @@ class ODB(Codec):
         # invoke the interpreter to parse its contents
         try:
             exec(contents, shelf)
-        except SyntaxError as error:
+        except Exception as error:
             raise self.DecodingError(
                 codec=self, uri=source.name, locator=locator, description=str(error)) from error
         # and return the shelf

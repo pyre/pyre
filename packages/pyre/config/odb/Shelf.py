@@ -34,7 +34,7 @@ class Shelf(dict):
 
 
     # exceptions
-    from ..exceptions import SymbolNotFoundError, ShelfError
+    from ..exceptions import SymbolNotFoundError
 
 
     # public data

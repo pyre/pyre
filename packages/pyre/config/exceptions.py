@@ -51,8 +51,7 @@ class EncodingError(CodecError):
 class ShelfError(ConfigurationError):
 
     def __init__(self, shelf, **kwds):
-        msg = "generic shelf error: {!r}".format(shelf)
-        super().__init__(description=msg, **kwds)
+        super().__init__(**kwds)
         self.shelf = shelf
         return
                  
@@ -65,6 +64,5 @@ class SymbolNotFoundError(ShelfError):
         self.symbol = symbol
         return
                  
-
 
 # end of file
