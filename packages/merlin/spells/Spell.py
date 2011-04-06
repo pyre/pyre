@@ -6,6 +6,7 @@
 #
 
 
+import pyre
 from ..components import spell
 
 

@@ -7,7 +7,7 @@
 
 
 PROJECT = merlin
-PACKAGE = components
+PACKAGE = spells
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
