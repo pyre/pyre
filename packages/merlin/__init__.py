@@ -123,6 +123,11 @@ _merlin_license = _merlin_header + """
     """
 
 
+# load the framework
+from pyre import export
+from .spells.Spell import Spell as spell
+
+
 # bootstrapping
 def boot():
     # access the executive factory
