@@ -83,7 +83,7 @@ class Shelf(dict):
         try:
             return self[symbol]
         except KeyError as error:
-            raise self.ShelfError(shelf=self, symbol=symbol) from error
+            raise self.SymbolNotFoundError(shelf=self, symbol=symbol) from error
 
 
     # implementation details
