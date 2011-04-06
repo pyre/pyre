@@ -11,9 +11,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working:
-	${PYTHON} ./merlin-shell.py
-
 all: test
 
 test: sanity merlin
@@ -23,6 +20,7 @@ sanity:
 
 merlin:
 	${PYTHON} ./merlin-shell.py
+	${PYTHON} ./merlin-spell.py
 
 
 # end of file 
