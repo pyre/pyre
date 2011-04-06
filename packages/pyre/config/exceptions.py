@@ -20,7 +20,7 @@ class ConfigurationError(FrameworkError):
     """
 
 
-class CodecError(FrameworkError):
+class CodecError(ConfigurationError):
     """
     Base class for codec errors
     """
@@ -48,24 +48,21 @@ class EncodingError(CodecError):
     """
 
 
-class ShelfError(DecodingError):
+class ShelfError(ConfigurationError):
 
-    def __init__(self, shelf, symbol, **kwds):
-        msg = "inappropriate shelf: {!r}".format(shelf)
-        super().__init__(description=msg, **kwds)
+    def __init__(self, shelf, **kwds):
+        super().__init__(**kwds)
         self.shelf = shelf
         return
                  
 
-class SymbolNotFoundError(DecodingError):
+class SymbolNotFoundError(ShelfError):
 
     def __init__(self, shelf, symbol, **kwds):
         msg = "symbol {!r} not found in {!r}".format(symbol, shelf)
-        super().__init__(description=msg, **kwds)
-        self.shelf = shelf
+        super().__init__(description=msg, shelf=shelf, **kwds)
         self.symbol = symbol
         return
                  
-
 
 # end of file

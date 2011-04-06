@@ -34,7 +34,7 @@ class Shelf(dict):
 
 
     # exceptions
-    from ..exceptions import SymbolNotFoundError, ShelfError
+    from ..exceptions import SymbolNotFoundError
 
 
     # public data
@@ -82,10 +82,8 @@ class Shelf(dict):
         """
         try:
             return self[symbol]
-        except AttributeError as error:
-            raise self.SymbolNotFoundError(codec=None, shelf=self, symbol=symbol) from error
-        except TypeError as error:
-            raise self.ShelfError(codec=None, shelf=self, symbol=symbol) from error
+        except KeyError as error:
+            raise self.SymbolNotFoundError(shelf=self, symbol=symbol) from error
 
 
     # implementation details

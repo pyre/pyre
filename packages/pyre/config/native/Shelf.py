@@ -29,7 +29,7 @@ class Shelf:
         try:
             return getattr(self.module, symbol)
         except AttributeError as error:
-            raise self.SymbolNotFoundError(codec=None, shelf=self, symbol=symbol) from error
+            raise self.SymbolNotFoundError(shelf=self, symbol=symbol) from error
 
 
     # meta methods

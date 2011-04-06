@@ -35,6 +35,9 @@ class Importer(Codec):
         except ImportError as error:
             raise self.DecodingError(
                 codec=self, uri=source, locator=locator, description=str(error)) from error
+        except SyntaxError as error:
+            raise self.DecodingError(
+                codec=self, uri=source, locator=locator, description=str(error)) from error
         # now look it up in the list of modules and return it
         return self.Shelf(module=sys.modules[source])
 
