@@ -19,10 +19,10 @@ def test():
     spellbook = merlin.spellbook
 
     # ask it to find a spell
-    spell = spellbook.findSpell(spell="foo")
+    spell = spellbook.findSpell(spell="test")
 
     # and return
-    return
+    return spell
 
 
 # main

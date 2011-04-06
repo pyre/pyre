@@ -6,8 +6,6 @@
 #
 
 
-# packages
-import re
 # access to the framework
 import pyre
 
@@ -18,7 +16,8 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
     This is a sample documentation string for Spellbook
     """
 
-    # per instance public data
+    # exceptions
+    from .exceptions import SpellNotFoundError
 
 
     # utilities
@@ -27,21 +26,22 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
         Look through the registered spell locations for a spell shelf that contains the given
         {spell} name.
         """
-        print("Spellbook.findSpell: looking for {!r}".format(spell))
+        # print("Spellbook.findSpell: looking for {!r}".format(spell))
         # access to the pyre executive
         executive = self.pyre_executive
         # iterate over the registered archives
         for archive in self.archives:
-            print("  looking in {!r}".format(archive))
+            # print("  looking in {!r}".format(archive))
             # ask the file server for the matching folder
             try:
                 folder = executive.fileserver[archive]
             # if not there, move on...
             except executive.fileserver.NotFoundError:
-                print("    archive does not exist")
+                # print("    archive does not exist")
                 continue
             # now, iterate over the contents of the folder
             for entry in folder.contents:
+                # print("    opening {!r}".format(entry))
                 # form the name of the item
                 address = folder.join(archive, entry)
                 # try to load the associated shelf
@@ -52,12 +52,15 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
                     continue
                 # try to look up the spell
                 try:
-                    factory = shelf.retrieveSymbol(spell)
+                    symbol = shelf.retrieveSymbol(spell)
                 except pyre.PyreError:
                     continue
+                # invoke it to get the spell factory
+                factory = symbol()
                 # instantiate it
                 instance = factory(name=spell)
                 # and return it
+                # print("    found it!")
                 return instance
         # couldn't find the spell
         raise self.SpellNotFoundError(spell=spell)
@@ -67,8 +70,8 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
     def __init__(self, **kwds):
         # chain to my ancestors
         super().__init__(**kwds)
-        print(" ** spellbook initialization")
 
+        # the ordered list of locations with spell archives
         self.archives = [
             '/merlin/project/spells',
             '/merlin/user/spells',
