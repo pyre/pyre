@@ -26,7 +26,7 @@ class Executive:
 
 
     # exceptions
-    from .exceptions import FrameworkError, BadResourceLocatorError
+    from .exceptions import FrameworkError, BadResourceLocatorError, SymbolNotFoundError
     from ..config.exceptions import DecodingError
 
 
@@ -224,7 +224,7 @@ class Executive:
                 try:
                     descriptor = shelf.retrieveSymbol(symbol=component)
                 # if not there, try the next entry in the folder
-                except pyre.PyreError:
+                except self.FrameworkError:
                     continue
                 # and return it
                 return descriptor
