@@ -21,49 +21,20 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
 
 
     # utilities
-    def findSpell(self, spell):
+    def findSpell(self, name):
         """
         Look through the registered spell locations for a spell shelf that contains the given
-        {spell} name.
+        spell {name}.
         """
-        # print("Spellbook.findSpell: looking for {!r}".format(spell))
+        # print("Spellbook.findSpell: looking for {!r}".format(name))
         # access to the pyre executive
         executive = self.pyre_executive
-        # iterate over the registered archives
-        for archive in self.archives:
-            # print("  looking in {!r}".format(archive))
-            # ask the file server for the matching folder
-            try:
-                folder = executive.fileserver[archive]
-            # if not there, move on...
-            except executive.fileserver.NotFoundError:
-                # print("    archive does not exist")
-                continue
-            # now, iterate over the contents of the folder
-            for entry in folder.contents:
-                # print("    opening {!r}".format(entry))
-                # form the name of the item
-                address = folder.join(archive, entry)
-                # try to load the associated shelf
-                try:
-                    shelf = executive._loadShelf(
-                        scheme="vfs", authority=None, address=address, locator=None)
-                except pyre.PyreError:
-                    continue
-                # try to look up the spell
-                try:
-                    symbol = shelf.retrieveSymbol(spell)
-                except pyre.PyreError:
-                    continue
-                # invoke it to get the spell factory
-                factory = symbol()
-                # instantiate it
-                instance = factory(name=spell)
-                # and return it
-                # print("    found it!")
-                return instance
-        # couldn't find the spell
-        raise self.SpellNotFoundError(spell=spell)
+        # ask the executive to locate the spell factory
+        factory = executive.locateComponentDescriptor(component=name, locations=self.archives)
+        # instantiate it
+        spell = factory(name=name)
+        # and return it
+        return spell
 
 
     # meta methods
