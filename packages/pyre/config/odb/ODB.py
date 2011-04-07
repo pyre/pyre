@@ -37,7 +37,7 @@ class ODB(Codec):
             exec(contents, shelf)
         except Exception as error:
             raise self.DecodingError(
-                codec=self, uri=locator.filename, description=str(error),
+                codec=self, uri=locator.source, description=str(error),
                 locator=locator) from error
         # and return the shelf
         return shelf
