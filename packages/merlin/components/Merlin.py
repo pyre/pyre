@@ -8,8 +8,6 @@
 
 # access to the framework
 import pyre.shells
-# my parts
-from .Spellbook import Spellbook
 
 
 # constants
@@ -26,6 +24,10 @@ class Merlin(pyre.shells.application, family=MERLIN):
     merlinFolder = "." + MERLIN
 
 
+    # types
+    from .Spellbook import Spellbook
+
+
     # public data
     project = None # the project specific settings
 
@@ -39,39 +41,28 @@ class Merlin(pyre.shells.application, family=MERLIN):
         """
         The main entry point for merlin
         """
-        self.fileserver.dump()
-        print(" ** main: temporarily disabled")
-        return
         # extract the non-configurational parts of the command line
-        request = tuple(c for p,c,l in self.executive.configurator.commands) 
+        request = tuple(c for _,c,_ in self.executive.configurator.commands) 
         # show the default help screen if there was nothing useful on the command line
         if request == (): 
-            import merlin
-            return merlin.usage()
+            return self.help()
 
         # interpret the request as the name of one of my actors, followed by an argument tuple
         # for the actor's main entry point
-        componentName = request[0]
+        spell = request[0]
         args = request[1:]
 
-        # convert the component name into a uri
-        uri = "import://merlin#{}".format(componentName)
-
-        # attempt to retrieve the component factory
-        try:
-            factory = self.executive.retrieveComponentDescriptor(uri)
-        except self.executive.FrameworkError:
-            import merlin
-            # NYI: try other component sources
-            return merlin.usage()
-
         # instantiate the component
-        actor = factory(name=MERLIN+"-"+componentName)
+        try:
+            actor = self.spellbook.findSpell(name=spell)
+        except self.FrameworkError:
+            print("spell {!r} not found".format(spell))
+            return self
 
         # if it is a merlin actor
         if isinstance(actor, pyre.component):
             # ask it to process the user request
-            actor.exec(*args)
+            actor.main(*args)
 
         # all done
         return self
@@ -82,8 +73,15 @@ class Merlin(pyre.shells.application, family=MERLIN):
         """
         Access to the help system
         """
+        # if not topics were specified
+        if not topics:
+            # show the default usage message
+            from .. import usage
+            usage()
+            return self
+        # otherwise, invoke the help system
         print("help:", topics)
-        return
+        return self
 
 
     # meta methods
@@ -93,7 +91,7 @@ class Merlin(pyre.shells.application, family=MERLIN):
         # hunt down the root of the project where the {.merlin} folder lives
         self.project = self._mountProjectDirectory()
         # create and bind the spell book
-        self.spellbook = Spellbook(name=name+".spellbook")
+        self.spellbook = self.Spellbook(name=name+".spellbook")
 
         # all done
         return
