@@ -86,6 +86,13 @@ class Shelf(dict):
             raise self.SymbolNotFoundError(shelf=self, symbol=symbol) from error
 
 
+    # meta methods
+    def __init__(self, locator, **kwds):
+        super().__init__(**kwds)
+        self.locator = locator
+        return
+
+
     # implementation details
     # the encoding detector
     _encodingDetector = re.compile("coding[:=]\s*([-\w.]+)")

@@ -25,7 +25,7 @@ class Importer(Codec):
 
 
     # interface
-    def decode(self, source, locator=None):
+    def decode(self, source, locator):
         """
         Interpret {source} as a module to be imported
         """
@@ -39,7 +39,7 @@ class Importer(Codec):
             raise self.DecodingError(
                 codec=self, uri=source, locator=locator, description=str(error)) from error
         # now look it up in the list of modules and return it
-        return self.Shelf(module=sys.modules[source])
+        return self.Shelf(module=sys.modules[source], locator=locator)
 
 
 # end of file

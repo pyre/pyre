@@ -33,9 +33,10 @@ class Shelf:
 
 
     # meta methods
-    def __init__(self, module,  **kwds):
+    def __init__(self, module, locator,  **kwds):
         super().__init__(**kwds)
         self.module = module
+        self.locator = locator
         return
 
 

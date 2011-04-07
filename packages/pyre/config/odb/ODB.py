@@ -24,20 +24,21 @@ class ODB(Codec):
 
 
     # interface
-    def decode(self, source, locator=None):
+    def decode(self, source, locator):
         """
         Interpret {source} as an open stream, execute it, and place its contents into a shelf
         """
         # read the contents
         contents = source.read()
         # build a new shelf
-        shelf = self.Shelf()
+        shelf = self.Shelf(locator=locator)
         # invoke the interpreter to parse its contents
         try:
             exec(contents, shelf)
         except Exception as error:
             raise self.DecodingError(
-                codec=self, uri=source.name, locator=locator, description=str(error)) from error
+                codec=self, uri=locator.filename, description=str(error),
+                locator=locator) from error
         # and return the shelf
         return shelf
 

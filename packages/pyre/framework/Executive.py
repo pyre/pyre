@@ -213,7 +213,7 @@ class Executive:
             for entry in folder.contents:
                 # print("    opening {!r}".format(entry))
                 # form the name of the item
-                address = folder.join(archive, entry)
+                address = folder.join(location, entry)
                 # try to load the associated shelf
                 try:
                     shelf = self._loadShelf(
@@ -222,9 +222,14 @@ class Executive:
                     continue
                 # try to look up the symbol
                 try:
-                    return shelf.retrieveSymbol(component)
+                    descriptor = shelf.retrieveSymbol(symbol=component)
+                # if not there, try the next entry in the folder
                 except pyre.PyreError:
                     continue
+                # and return it
+                return descriptor
+
+
         # couldn't find the spell
         raise self.SymbolNotFoundError(symbol=component)
             
@@ -386,6 +391,10 @@ class Executive:
         scheme = scheme.strip().lower() if scheme else 'file'
         # construct the normal form for the filename part
         source = self.normalizeURI(scheme=scheme, authority=authority, address=address)
+        # build a locator, if necessary
+        if locator is None:
+            from ..tracking import newFileLocator
+            locator = newFileLocator(source=source)
         # check whether we have processed this source before
         try:
             # get the shelf
