@@ -17,6 +17,9 @@ class Configurable:
     common to both components and interfaces
     """
 
+    # exceptions
+    from .exceptions import FrameworkError
+
 
     # constant
     pyre_SEPARATOR = '.'
