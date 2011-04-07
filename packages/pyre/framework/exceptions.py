@@ -40,4 +40,13 @@ class BadResourceLocatorError(FrameworkError):
         return
 
 
+class SymbolNotFoundError(FrameworkError):
+
+    def __init__(self, shelf, symbol, **kwds):
+        msg = "symbol {!r} not found".format(symbol)
+        super().__init__(description=msg, **kwds)
+        self.symbol = symbol
+        return
+                 
+
 # end of file 

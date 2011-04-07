@@ -85,6 +85,62 @@ class Executive:
 
 
     # support for the various internal requests
+    def configurePackage(self, package):
+        """
+        Locate and load the configuration files for the package to which {component} belongs
+
+        If the package to which {component} belongs can be deduced from its family name, this
+        method will locate and load the package configuration files. These files are meant to
+        allow site managers and end users to override the class wide defaults for the traits of
+        the components in the package.
+        
+        This behavior is triggered by the first encountered component from each package, and it
+
+        is done only once.
+        """
+        # if none were provided, there is no file-based configuration
+        if not package: return package
+        # also, bail out if this package has been configured previously
+        if package in self.packages: return
+        # we have a package name
+        # print("Executive.configurePackage: configuring package {!r}".format(package))
+        # form all possible filenames for the configuration files
+        scope = itertools.product(reversed(self.configpath), [package], self.codex.getEncodings())
+        # attempt to load the configuration settings
+        for path, filename, extension in scope:
+            # construct the actual filename
+            source = self.fileserver.splice(path, filename, extension)
+            # and try to load the configuration
+            try:
+                self.loadConfiguration(uri=source, priority=self.PACKAGE_CONFIGURATION)
+            except self.fileserver.NotFoundError as error:
+                continue
+            # print("Executive.configurePackage: loaded {!r}".format(source))
+        # in any case, this is the best that can be done for this package
+        # update the set of known packages
+        self.packages.add(package)
+        # print("Executive.configurePackage: done; packages={}".format(self.packages))
+        # all done
+        return package
+
+
+    def loadShelf(self, uri, locator=None):
+        """
+        Load the contents of the shelf pointed to by {uri}
+
+        {uri} encodes the descriptor using the URI specification 
+            scheme://authority/address
+        where
+             scheme: one of import, file, vfs
+             authority: currently not used; you may leave blank
+             address: a scheme dependent specification of the location of the shelf
+        """
+        # parse the {uri}
+        scheme, authority, address, query, symbol = self.parseURI(uri)
+        # and retrieve the shelf
+        return self._loadShelf(scheme=scheme, authority=authority, address=address, locator=locator)
+
+
     def retrieveComponentDescriptor(self, uri, locator=None):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
@@ -136,56 +192,42 @@ class Executive:
         descriptor = shelf.retrieveSymbol(symbol=symbol)
         # and return it
         return descriptor
-            
 
-    def configurePackage(self, package):
+
+    def locateComponentDescriptor(self, component, locations):
         """
-        Locate and load the configuration files for the package to which {component} belongs
-
-        If the package to which {component} belongs can be deduced from its family name, this
-        method will locate and load the package configuration files. These files are meant to
-        allow site managers and end users to override the class wide defaults for the traits of
-        the components in the package.
-        
-        This behavior is triggered by the first encountered component from each package, and it
-
-        is done only once.
+        Attempt to retrieve {component} from the first shelf within {locations}
         """
-        # if none were provided, there is no file-based configuration
-        if not package: return package
-        # also, bail out if this package has been configured previously
-        if package in self.packages: return
-        # we have a package name
-        # print("Executive.configurePackage: configuring package {!r}".format(package))
-        # form all possible filenames for the configuration files
-        scope = itertools.product(reversed(self.configpath), [package], self.codex.getEncodings())
-        # attempt to load the configuration settings
-        for path, filename, extension in scope:
-            # construct the actual filename
-            source = self.fileserver.splice(path, filename, extension)
-            # and try to load the configuration
+        # print("Executive.locateComponentDescriptor: looking for {!r}".format(component))
+        # iterate over the given locations
+        for location in locations:
+            # print("  looking in {!r}".format(location))
+            # ask the file server for the matching folder
             try:
-                self.loadConfiguration(uri=source, priority=self.PACKAGE_CONFIGURATION)
-            except self.fileserver.NotFoundError as error:
+                folder = self.fileserver[location]
+            # if not there, move on...
+            except fileserver.NotFoundError:
+                # print("    locations does not exist")
                 continue
-            # print("Executive.configurePackage: loaded {!r}".format(source))
-        # in any case, this is the best that can be done for this package
-        # update the set of known packages
-        self.packages.add(package)
-        # print("Executive.configurePackage: done; packages={}".format(self.packages))
-        # all done
-        return package
-
-
-    def loadShelf(self, uri, locator=None):
-        """
-        Load the contents of the shelf pointed to by {uri}
-        """
-        # parse the {uri}
-        scheme, authority, address, query, symbol = self.parseURI(uri)
-        # and retrieve the shelf
-        return self._loadShelf(scheme=scheme, authority=authority, address=address, locator=locator)
-
+            # now, iterate over the contents of the folder
+            for entry in folder.contents:
+                # print("    opening {!r}".format(entry))
+                # form the name of the item
+                address = folder.join(archive, entry)
+                # try to load the associated shelf
+                try:
+                    shelf = self._loadShelf(
+                        scheme="vfs", authority=None, address=address, locator=None)
+                except self.FrameworkError:
+                    continue
+                # try to look up the symbol
+                try:
+                    return shelf.retrieveSymbol(component)
+                except pyre.PyreError:
+                    continue
+        # couldn't find the spell
+        raise self.SymbolNotFoundError(symbol=component)
+            
 
     # registration of configurables
     def registerComponentClass(self, component):
