@@ -7,19 +7,15 @@
 
 
 PROJECT = pyre
+PACKAGE = depository/merlin
 
 RECURSE_DIRS = \
-    $(PACKAGES)
-
-PACKAGES = \
-    pyre \
-    merlin \
+    spells \
 
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: export
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -30,15 +26,15 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+
 #--------------------------------------------------------------------------
 #
 
-PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
+EXPORT_ETCDIR = $(EXPORT_ROOT)
+EXPORT_ETC = \
 
-zip:
-	for package in $(PACKAGES); do { \
-	    ( cd $${package}; zip -r ${PYRE_ZIP} $${package}; ) \
-	} done
+export:: # export-etc
+	BLD_ACTION="export" $(MM) recurse
 
 
 # end of file 

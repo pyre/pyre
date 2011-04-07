@@ -7,27 +7,22 @@
 
 
 PROJECT = pyre
-
-RECURSE_DIRS = \
-    python \
-    libpyre \
-    pyre \
-    merlin
+PACKAGE = depository/merlin/spells
 
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: export
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
 
-clean::
-	BLD_ACTION="clean" $(MM) recurse
+#--------------------------------------------------------------------------
+#
 
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
+EXPORT_ETCDIR = $(EXPORT_ROOT)
+EXPORT_ETC = \
+   info.py \
+
+export:: export-etc
 
 
 # end of file 

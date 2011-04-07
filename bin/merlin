@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2011 all rights reserved
+#
+
+
+# shell for invoking merlin commands
+# package access
+import merlin
+# invoke its main entry point
+merlin.main()
+
+
+# end of file 

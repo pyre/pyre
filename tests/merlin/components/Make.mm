@@ -8,26 +8,19 @@
 
 PROJECT = pyre
 
-RECURSE_DIRS = \
-    python \
-    libpyre \
-    pyre \
-    merlin
-
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: test
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
+test: sanity merlin
 
-clean::
-	BLD_ACTION="clean" $(MM) recurse
+sanity:
+	${PYTHON} ./sanity.py
 
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
+merlin:
+	${PYTHON} ./merlin-shell.py
+	${PYTHON} ./merlin-spell.py
 
 
 # end of file 

@@ -9,17 +9,15 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
-    $(PACKAGES)
-
-PACKAGES = \
-    pyre \
-    merlin \
+    components \
 
 #--------------------------------------------------------------------------
 #
 
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: test
+
+test::
+	BLD_ACTION="test" $(MM) recurse
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -29,16 +27,6 @@ clean::
 
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
-
-#--------------------------------------------------------------------------
-#
-
-PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
-
-zip:
-	for package in $(PACKAGES); do { \
-	    ( cd $${package}; zip -r ${PYRE_ZIP} $${package}; ) \
-	} done
 
 
 # end of file 
