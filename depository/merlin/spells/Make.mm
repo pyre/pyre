@@ -20,7 +20,7 @@ all: export
 
 EXPORT_ETCDIR = $(EXPORT_ROOT)
 EXPORT_ETC = \
-   info.py \
+   builtin.py \
 
 export:: export-etc
 

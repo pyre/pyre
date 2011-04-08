@@ -6,7 +6,7 @@
 #
 
 
-from merlin.spells.Docent import Docent as info
+from merlin.spells.Initializer import Initializer as init
 
 
 # end of file 
