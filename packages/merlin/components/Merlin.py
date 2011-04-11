@@ -84,21 +84,9 @@ class Merlin(pyre.shells.application, family=MERLIN):
         return self
 
 
-    # meta methods
-    def __init__(self, name=MERLIN, **kwds):
-        super().__init__(name=name, **kwds)
 
-        # hunt down the root of the project where the {.merlin} folder lives
-        self.project = self._mountProjectDirectory()
-        # create and bind the spell book
-        self.spellbook = self.Spellbook(name=name+".spellbook")
-
-        # all done
-        return
-
-
-    # implementation details
-    def _mountProjectDirectory(self):
+    # utilities
+    def mountProjectDirectory(self):
         """
         Walk up from {cwd} to the directory that contains the {.merlin} folder
         """
@@ -146,6 +134,17 @@ class Merlin(pyre.shells.application, family=MERLIN):
         self.fileserver[address] = project
         # and return it
         return project
+
+
+    # meta methods
+    def __init__(self, name=MERLIN, **kwds):
+        super().__init__(name=name, **kwds)
+
+        # create and bind the spell book
+        self.spellbook = self.Spellbook(name=name+".spellbook")
+
+        # all done
+        return
 
 
 # end of file 
