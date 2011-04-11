@@ -206,7 +206,7 @@ class Executive:
             try:
                 folder = self.fileserver[location]
             # if not there, move on...
-            except fileserver.NotFoundError:
+            except self.fileserver.NotFoundError:
                 # print("    locations does not exist")
                 continue
             # now, iterate over the contents of the folder
