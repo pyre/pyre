@@ -133,8 +133,13 @@ def boot():
     # access the executive factory
     from .components.Merlin import Merlin
     # build one and return it
-    return Merlin()
-
+    executive = Merlin()
+    # patch spells with access to this executive
+    from .spells.Spell import Spell
+    Spell.melrin = executive
+    # and return it
+    return executive
+    
 
 # the singleton
 merlin = boot()

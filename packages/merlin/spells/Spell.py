@@ -16,6 +16,10 @@ class Spell(pyre.component, implements=spell):
     """
 
 
+    # access to the merlin executive
+    merlin = None # patched by the merlin boot sequence
+
+
     # interface
     @pyre.export
     def main(self, **kwds):
