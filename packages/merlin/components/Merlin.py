@@ -28,9 +28,6 @@ class Merlin(pyre.shells.application, family=MERLIN):
     from .Spellbook import Spellbook
 
 
-    # public data
-    project = None # the project specific settings
-
     # my subcomponents
     spellbook = None # build at construction time
 
