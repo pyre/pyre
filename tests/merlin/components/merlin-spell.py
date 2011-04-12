@@ -15,6 +15,8 @@ Sanity check: verify that the merlin shell is accessible
 def test():
     # access to the merlin executive
     from merlin import merlin
+    # mount the project directory
+    merlin.mountProjectDirectory()
     # get the spellbook
     spellbook = merlin.spellbook
 

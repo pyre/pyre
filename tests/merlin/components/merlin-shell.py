@@ -18,8 +18,10 @@ def test():
     import merlin
     # invoke its main entry point
     executive = merlin.boot()
+    # mount the project directory
+    project = executive.mountProjectDirectory()
     # check the project directory
-    assert executive.project.mountpoint == os.path.join(os.getcwd(), '.merlin')
+    assert project.mountpoint == os.path.join(os.getcwd(), '.merlin')
     # and return
     return
 
