@@ -12,4 +12,8 @@ class Asset:
     """
 
 
+    # public data
+    vnode = None # the filesystem node associated with this asset
+
+
 # end of file 
