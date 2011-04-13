@@ -21,6 +21,7 @@ sanity:
 merlin:
 	${PYTHON} ./merlin-shell.py
 	${PYTHON} ./merlin-spell.py
+	${PYTHON} ./merlin-curator.py
 
 
 # end of file 

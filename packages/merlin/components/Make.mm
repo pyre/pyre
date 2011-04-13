@@ -20,6 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Curator.py \
     Merlin.py \
     Spell.py \
     Spellbook.py \

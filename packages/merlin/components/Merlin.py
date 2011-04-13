@@ -25,11 +25,16 @@ class Merlin(pyre.shells.application, family=MERLIN):
 
 
     # types
+    from .Curator import Curator
     from .Spellbook import Spellbook
+    # exceptions
+    from pyre.framework.exceptions import PyreError
+    from pyre.filesystem.exceptions import NotFoundError
 
 
-    # my subcomponents
-    spellbook = None # build at construction time
+    # my subcomponents; built at construction time
+    curator = None # the manager of the project persistent store
+    spellbook = None # the manager of the installed spells
 
 
     # interface
@@ -81,6 +86,18 @@ class Merlin(pyre.shells.application, family=MERLIN):
         return self
 
 
+    # schema factories
+    def newProject(self, name):
+        """
+        Create a new project description object
+        """
+        # access the class
+        from ..schema.Project import Project
+        # build the object
+        project = Project(name=name)
+        # and return it 
+        return project
+        
 
     # utilities
     def mountProjectDirectory(self):
@@ -139,6 +156,8 @@ class Merlin(pyre.shells.application, family=MERLIN):
 
         # create and bind the spell book
         self.spellbook = self.Spellbook(name=name+".spellbook")
+        # create and bind the curator
+        self.curator = self.Curator(name=name+".curator")
 
         # all done
         return
