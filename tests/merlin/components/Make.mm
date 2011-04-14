@@ -18,10 +18,12 @@ test: sanity merlin
 sanity:
 	${PYTHON} ./sanity.py
 
-merlin:
+merlin: clean
 	${PYTHON} ./merlin-shell.py
 	${PYTHON} ./merlin-spell.py
 	${PYTHON} ./merlin-curator.py
 
+PROJ_CLEAN = \
+    .merlin/project.pickle
 
 # end of file 

@@ -18,22 +18,16 @@ def test():
     # mount the project directory
     merlin.mountProjectDirectory()
 
-
     # get the curator
     curator = merlin.curator
-    # ask it to load the project description
-    try:
-        project = curator.loadProject()
-    # not there
-    except merlin.NotFoundError:
-        # create a project description object
-        project = merlin.newProject(name="test")
-        # archive it
-        curator.saveProject(project)
-        # refresh the folder
-        merlin.pyre_executive.fileserver['/merlin/project'].discover()
-        # and load it back in
-        project = curator.loadProject()
+    # create a project description object
+    project = merlin.newProject(name="test")
+    # archive it
+    curator.saveProject(project)
+    # refresh the folder
+    merlin.pyre_executive.fileserver['/merlin/project'].discover()
+    # and load it back in
+    project = curator.loadProject()
 
     # check the name
     assert project.name == "test"
