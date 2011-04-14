@@ -15,11 +15,9 @@ Sanity check: verify that the merlin shell is accessible
 def test():
     # package access
     import os
-    import merlin
-    # invoke its main entry point
-    executive = merlin.boot()
+    from merlin import merlin
     # mount the project directory
-    project = executive.mountProjectDirectory()
+    project = merlin.mountProjectDirectory()
     # check the project directory
     assert project.mountpoint == os.path.join(os.getcwd(), '.merlin')
     # and return
