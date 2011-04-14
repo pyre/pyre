@@ -26,40 +26,65 @@ class Curator(pyre.component, family="merlin.curator"):
         """
         Retrieve the project configuration information from the archive
         """
-        # access the file server
-        fileserver = self.pyre_executive.fileserver
-        # ask for the project pickle file
-        db = fileserver["/merlin/project/project.pickle"].open(mode="rb")
-        # retrieve the project information
-        project  = pickle.load(db)
-        # and return it
-        return project
+        # retrieve the project instance from the file
+        return self._load(tag="project")
 
 
     def saveProject(self, project):
         """
         Save the given project configuration to the archive
         """
-        # access the file server
-        fileserver = self.pyre_executive.fileserver
-        # verify that the project directory exists and is mounted
-        # if not there, this will raise an exception that the caller has to handle
-        folder = fileserver["/merlin/project"]
-        # look for the project file and open it in write-binary mode
-        try:
-            db = folder["project.pickle"].open(mode="wb")
-        # if not there, create it
-        except folder.NotFoundError:
-            # build the path to the file
-            path = folder.join(folder.mountpoint, "project.pickle")
-            # and open it in write-binary mode
-            db = open(path, mode="wb")
-
-        # store the project information
-        pickle.dump(project, db)
-            
+        # pickle the project information into the associated file
+        self._save(tag="project", item=project)
         # and return
         return self
+
+
+    # implementation details
+    def _load(self, tag):
+        """
+        Retrieve an object from the merlin file identified by {tag}
+        """
+        # access the file server
+        fileserver = self.pyre_executive.fileserver
+        # derive the filename from {tag}
+        vname = "/merlin/project/{}.pickle".format(tag)
+        # open the associated file; the caller is responsible for catching any exceptions
+        store = fileserver[vname].open(mode="rb")
+        # retrieve the object from the store
+        item = pickle.load(store)
+        # and return it
+        return item
+
+
+    def _save(self, tag, item):
+        """
+        Pickle {item} into the merlin file indicated by {tag}
+        """
+        # access the file server
+        fileserver = self.pyre_executive.fileserver
+        # verify that the project directory exists and is mounted; the caller is responsible
+        # for catching any exceptions
+        folder = fileserver["/merlin/project"]
+        # build the filename associated with {tag}
+        vname = "{}.pickle".format(tag)
+        # look for the file
+        try:
+            # careful: this overwrites existing files
+            store = folder[vname].open(mode="wb")
+        # if not there, create it
+        except folder.NotFoundError:
+            # FIXME - FILESERVER: this steps outside the file server abstraction, since file
+            # creation is not supported yet
+            # build the path to the file
+            path = folder.join(folder.mountpoint, vname)
+            # and open it in write-binary mode
+            store = open(path, mode="wb")
+        # pickle the item
+        pickle.dump(item, store)
+        # and return
+        return
+        
 
 
 # end of file 
