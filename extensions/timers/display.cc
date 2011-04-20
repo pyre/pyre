@@ -14,16 +14,18 @@
 #include "display.h"
 
 namespace pyre {
-    namespace extension_timers {
+    namespace extensions {
+        namespace timers {
 
-        // the capsule tag
-        const char * const timerCapsuleName = "pyre.timers.timer";
-    }
-}
+            // the capsule tag
+            const char * const timerCapsuleName = "pyre.timers.timer";
+        } // of namespace timers
+    } // of namespace extensions
+} // of namespace pyre
 
 
 // newTimer
-PyObject * pyre::extension_timers::newTimer(PyObject *, PyObject * args)
+PyObject * pyre::extensions::timers::newTimer(PyObject *, PyObject * args)
 {
     // the name of the timer
     const char * name;
@@ -40,7 +42,7 @@ PyObject * pyre::extension_timers::newTimer(PyObject *, PyObject * args)
 }
 
 // start
-PyObject * pyre::extension_timers::start(PyObject *, PyObject * args)
+PyObject * pyre::extensions::timers::start(PyObject *, PyObject * args)
 {
     // the capsule with the timer pointer
     PyObject * capsule;
@@ -63,7 +65,7 @@ PyObject * pyre::extension_timers::start(PyObject *, PyObject * args)
 }
 
 // stop
-PyObject * pyre::extension_timers::stop(PyObject *, PyObject * args)
+PyObject * pyre::extensions::timers::stop(PyObject *, PyObject * args)
 {
     // the capsule with the timer pointer
     PyObject * capsule;
@@ -86,7 +88,7 @@ PyObject * pyre::extension_timers::stop(PyObject *, PyObject * args)
 }
 
 // reset
-PyObject * pyre::extension_timers::reset(PyObject *, PyObject * args)
+PyObject * pyre::extensions::timers::reset(PyObject *, PyObject * args)
 {
     // the capsule with the timer pointer
     PyObject * capsule;
@@ -109,7 +111,7 @@ PyObject * pyre::extension_timers::reset(PyObject *, PyObject * args)
 }
 
 // read
-PyObject * pyre::extension_timers::read(PyObject *, PyObject * args)
+PyObject * pyre::extensions::timers::read(PyObject *, PyObject * args)
 {
     // the capsule with the timer pointer
     PyObject * capsule;
@@ -131,7 +133,7 @@ PyObject * pyre::extension_timers::read(PyObject *, PyObject * args)
 }
 
 // lap
-PyObject * pyre::extension_timers::lap(PyObject *, PyObject * args)
+PyObject * pyre::extensions::timers::lap(PyObject *, PyObject * args)
 {
     // the capsule with the timer pointer
     PyObject * capsule;
