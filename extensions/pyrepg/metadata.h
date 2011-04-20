@@ -5,24 +5,28 @@
 // (c) 1998-2011 all rights reserved
 // 
 
-#if !defined(pyrepg_metadata_h)
-#define pyrepg_metadata_h
+#if !defined(pyre_extensions_postgres_metadata_h)
+#define pyre_extensions_postgres_metadata_h
 
 
 // place everything in my private namespace
-namespace pyrepg {
+namespace pyre {
+    namespace extensions {
+        namespace postgres {
 
-    // copyright note
-    const char * const copyright__name__ = "copyright";
-    const char * const copyright__doc__ = "the module copyright string";
-    PyObject * copyright(PyObject *, PyObject *);
+            // copyright note
+            const char * const copyright__name__ = "copyright";
+            const char * const copyright__doc__ = "the module copyright string";
+            PyObject * copyright(PyObject *, PyObject *);
 
-    // version string
-    const char * const version__name__ = "version";
-    const char * const version__doc__ = "the module version string";
-    PyObject * version(PyObject *, PyObject *);
+            // version string
+            const char * const version__name__ = "version";
+            const char * const version__doc__ = "the module version string";
+            PyObject * version(PyObject *, PyObject *);
 
-}
+        } // of namespace postgres
+    } // of namespace extensions
+} // of namespace pyre
 
 #endif
 

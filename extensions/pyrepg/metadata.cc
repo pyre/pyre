@@ -12,7 +12,9 @@
 
 
 // copyright
-PyObject * pyrepg::copyright(PyObject *, PyObject *)
+PyObject * 
+pyre::extensions::postgres::
+copyright(PyObject *, PyObject *)
 {
     const char * const copyright_note = "pyrepg: (c) 1998-2011 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
@@ -20,7 +22,9 @@ PyObject * pyrepg::copyright(PyObject *, PyObject *)
     
 
 // version
-PyObject * pyrepg::version(PyObject *, PyObject *)
+PyObject * 
+pyre::extensions::postgres::
+version(PyObject *, PyObject *)
 {
     const char * const version_string = "1.0";
     return Py_BuildValue("s", version_string);

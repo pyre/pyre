@@ -15,7 +15,9 @@
 #include "connection.h"
 
 // establish a new connection
-PyObject * pyrepg::connect(PyObject *, PyObject * args) {
+PyObject *
+pyre::extensions::postgres::
+connect(PyObject *, PyObject * args) {
     // the connection specification
     const char * specification;
     // extract the arguments
@@ -35,17 +37,19 @@ PyObject * pyrepg::connect(PyObject *, PyObject * args) {
         PyObject * args = PyTuple_New(0);
         const char * description = PQerrorMessage(connection);
         PyObject * kwds = Py_BuildValue("{s:s}", "description", description);
-        PyObject * exception = PyObject_Call(pyrepg::OperationalError, args, kwds);
+        PyObject * exception = PyObject_Call(OperationalError, args, kwds);
         // prepare to raise the instance of OperationalError
         PyErr_SetObject(OperationalError, exception);
         // and return the error indicator
         return 0;
     }
 
-    return PyCapsule_New(connection, pyrepg::connectionCapsuleName, pyrepg::finish);
+    return PyCapsule_New(connection, connectionCapsuleName, finish);
 }
 
-PyObject * pyrepg::disconnect(PyObject *, PyObject * args) {
+PyObject *
+pyre::extensions::postgres::
+disconnect(PyObject *, PyObject * args) {
     // the connection capsule
     PyObject * connection;
     // extract it from the arguments
@@ -53,7 +57,7 @@ PyObject * pyrepg::disconnect(PyObject *, PyObject * args) {
         return 0;
     }
     // call the destructor
-    pyrepg::finish(connection);
+    finish(connection);
     // and remove the destructor
     PyCapsule_SetDestructor(connection, 0);
 
@@ -64,14 +68,16 @@ PyObject * pyrepg::disconnect(PyObject *, PyObject * args) {
 
 
 // shutdown an existing connection
-void pyrepg::finish(PyObject * capsule) {
+void 
+pyre::extensions::postgres::
+finish(PyObject * capsule) {
     // bail if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, pyrepg::connectionCapsuleName)) {
+    if (!PyCapsule_IsValid(capsule, connectionCapsuleName)) {
         return;
     }
     // get pointer from the capsule and cast it to a pg connection
     PGconn * connection =
-        static_cast<PGconn *>(PyCapsule_GetPointer(capsule, pyrepg::connectionCapsuleName));
+        static_cast<PGconn *>(PyCapsule_GetPointer(capsule, connectionCapsuleName));
     // shutdown 
     PQfinish(connection);
     // all done

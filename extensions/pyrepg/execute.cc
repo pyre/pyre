@@ -15,7 +15,9 @@
 
 
 // establish a new connection
-PyObject * pyrepg::execute(PyObject *, PyObject * args) {
+PyObject * 
+pyre::extensions::postgres::
+execute(PyObject *, PyObject * args) {
     // the connection specification
     const char * command;
     PyObject * connection;

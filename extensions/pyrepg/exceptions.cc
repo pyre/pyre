@@ -12,23 +12,29 @@
 
 #include "exceptions.h"
 
-namespace pyrepg {
-    // exception hierarchy for pyrepg errors
-    PyObject * Error = 0;
-    PyObject * Warning = 0;
-    PyObject * InterfaceError = 0;
-    PyObject * DatabaseError = 0;
-    PyObject * DataError = 0;
-    PyObject * OperationalError = 0;
-    PyObject * IntegrityError = 0;
-    PyObject * InternalError = 0;
-    PyObject * ProgrammingError = 0;
-    PyObject * NotSupportedError = 0;
-}
+namespace pyre {
+    namespace extensions {
+        namespace postgres {
+            // exception hierarchy for postgres errors
+            PyObject * Error = 0;
+            PyObject * Warning = 0;
+            PyObject * InterfaceError = 0;
+            PyObject * DatabaseError = 0;
+            PyObject * DataError = 0;
+            PyObject * OperationalError = 0;
+            PyObject * IntegrityError = 0;
+            PyObject * InternalError = 0;
+            PyObject * ProgrammingError = 0;
+            PyObject * NotSupportedError = 0;
+        } // of namespace postgres
+    } // of namespace extensions
+} // of namespace pyre
 
 
 // exception registration
-PyObject * pyrepg::registerExceptions(PyObject * module, PyObject * args) {
+PyObject *
+pyre::extensions::postgres::
+registerExceptions(PyObject * module, PyObject * args) {
 
     // unpack the arguments
     PyObject * exceptions;
@@ -37,35 +43,35 @@ PyObject * pyrepg::registerExceptions(PyObject * module, PyObject * args) {
     }
 
     // keep a record of the standard exception classes and register them with the module
-    pyrepg::Warning = PyObject_GetAttrString(exceptions, "Warning");
-    PyModule_AddObject(module, "Warning", pyrepg::Warning);
+    Warning = PyObject_GetAttrString(exceptions, "Warning");
+    PyModule_AddObject(module, "Warning", Warning);
 
-    pyrepg::Error = PyObject_GetAttrString(exceptions, "Error");
-    PyModule_AddObject(module, "Error", pyrepg::Error);
+    Error = PyObject_GetAttrString(exceptions, "Error");
+    PyModule_AddObject(module, "Error", Error);
 
-    pyrepg::InterfaceError = PyObject_GetAttrString(exceptions, "InterfaceError");
-    PyModule_AddObject(module, "InterfaceError", pyrepg::InterfaceError);
+    InterfaceError = PyObject_GetAttrString(exceptions, "InterfaceError");
+    PyModule_AddObject(module, "InterfaceError", InterfaceError);
 
-    pyrepg::DatabaseError = PyObject_GetAttrString(exceptions, "DatabaseError");
-    PyModule_AddObject(module, "DatabaseError", pyrepg::DatabaseError);
+    DatabaseError = PyObject_GetAttrString(exceptions, "DatabaseError");
+    PyModule_AddObject(module, "DatabaseError", DatabaseError);
 
-    pyrepg::DataError = PyObject_GetAttrString(exceptions, "DataError");
-    PyModule_AddObject(module, "DataError", pyrepg::DataError);
+    DataError = PyObject_GetAttrString(exceptions, "DataError");
+    PyModule_AddObject(module, "DataError", DataError);
 
-    pyrepg::OperationalError = PyObject_GetAttrString(exceptions, "OperationalError");
-    PyModule_AddObject(module, "OperationalError", pyrepg::OperationalError);
+    OperationalError = PyObject_GetAttrString(exceptions, "OperationalError");
+    PyModule_AddObject(module, "OperationalError", OperationalError);
 
-    pyrepg::IntegrityError = PyObject_GetAttrString(exceptions, "IntegrityError");
-    PyModule_AddObject(module, "IntegrityError", pyrepg::IntegrityError);
+    IntegrityError = PyObject_GetAttrString(exceptions, "IntegrityError");
+    PyModule_AddObject(module, "IntegrityError", IntegrityError);
 
-    pyrepg::InternalError = PyObject_GetAttrString(exceptions, "InternalError");
-    PyModule_AddObject(module, "InternalError", pyrepg::InternalError);
+    InternalError = PyObject_GetAttrString(exceptions, "InternalError");
+    PyModule_AddObject(module, "InternalError", InternalError);
 
-    pyrepg::ProgrammingError = PyObject_GetAttrString(exceptions, "ProgrammingError");
-    PyModule_AddObject(module, "ProgrammingError", pyrepg::ProgrammingError);
+    ProgrammingError = PyObject_GetAttrString(exceptions, "ProgrammingError");
+    PyModule_AddObject(module, "ProgrammingError", ProgrammingError);
 
-    pyrepg::NotSupportedError = PyObject_GetAttrString(exceptions, "NotSupportedError");
-    PyModule_AddObject(module, "NotSupportedError", pyrepg::NotSupportedError);
+    NotSupportedError = PyObject_GetAttrString(exceptions, "NotSupportedError");
+    PyModule_AddObject(module, "NotSupportedError", NotSupportedError);
 
     // and return the module
     Py_INCREF(Py_None);
