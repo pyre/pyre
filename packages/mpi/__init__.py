@@ -6,27 +6,6 @@
 #
 
 
-# attempt to load the mpi extension
-try:
-    from . import mpi
-
-# if it fails for any reason
-except Exception:
-    # build {world} out of a trivial communicator
-    from .TrivialCommunicator import TrivialCommunicator as world
-    # set the number of processes
-    processes = 1
-
-# otherwise, we have bindings and hence MPI support
-else:
-    # access the communicator wrapper
-    from .Communicator import Communicator as communicator
-    # build world
-    world = communicator(mpi.world)
-    # set the number of processes
-    processes = world.size
-
-
 # administrative
 def copyright():
     """
@@ -90,6 +69,30 @@ _mpi_license = """
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
     """
+
+# bootstrapping
+# attempt to load the mpi extension
+try:
+    from . import mpi
+
+# if it fails for any reason
+except Exception:
+    # build {world} out of a trivial communicator
+    from .TrivialCommunicator import TrivialCommunicator as world
+    # set the number of processes
+    processes = 1
+
+# otherwise, we have bindings and hence MPI support
+else:
+    # access the communicator wrapper
+    from .Communicator import Communicator as communicator
+    # build world
+    world = communicator(mpi.world)
+    # set the number of processes
+    processes = world.size
+    # register the finalization routine to happen when the interpreter exits
+    import atexit
+    atexit.register(mpi.finalize)
 
 
 # end of file 
