@@ -48,6 +48,11 @@ class Group(Object):
         # chain to my ancestors
         super().__init__(**kwds)
 
+        # store my attributes
+        self._handle = handle
+        self.rank = self.mpi.groupRank(handle)
+        self.size = self.mpi.groupSize(handle)
+
         # all done
         return
 
