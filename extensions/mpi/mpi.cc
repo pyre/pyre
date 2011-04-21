@@ -5,12 +5,16 @@
 // (c) 1998-2011 all rights reserved
 // 
 
+// for the build system
 #include <portinfo>
+// external dependencies
 #include <Python.h>
+#include <pyre/mpi.h>
 
 // the module method declarations
-#include "exceptions.h"
+#include "constants.h"
 #include "communicators.h"
+#include "exceptions.h"
 #include "groups.h"
 #include "metadata.h"
 #include "ports.h"
@@ -86,6 +90,8 @@ namespace pyre {
 } // of namespace pyre
 
 
+using namespace pyre::extensions::mpi;
+
 // initialization function for the module
 // *must* be called PyInit_mpi
 PyMODINIT_FUNC
@@ -95,10 +101,22 @@ PyInit_mpi()
     PyObject * module = PyModule_Create(&pyre::extensions::mpi::module_definition);
     // check whether module creation succeeded and raise an exception if not
     if (!module) {
-        return module;
+        return 0;
     }
     // otherwise, we have an initialized module
     pyre::extensions::mpi::registerExceptionHierarchy(module);
+
+    // initialize MPI
+    if (!pyre::extensions::mpi::initialize(0, 0)) {
+        return 0;
+    }
+
+    // build the world communicator
+    communicator_t * world = new communicator_t(MPI_COMM_WORLD);
+    // wrap it in a capsule
+    PyObject * capsule = PyCapsule_New(world, communicatorCapsuleName, 0);
+    // and register it with the module
+    PyModule_AddObject(module, "world", capsule);
 
     // and return the newly created module
     return module;
