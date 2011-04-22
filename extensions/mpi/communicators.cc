@@ -72,17 +72,17 @@ communicatorCreate(PyObject *, PyObject * args)
     group_t * group =
         static_cast<group_t *>(PyCapsule_GetPointer(py_group, groupCapsuleName));
 
-    // allocate a new communicator
+    // create the new communiucator
     communicator_t * comm = old->newCommunicator(*group);
 
-    // if the allocation failed
+    // if the creation failed
     if (!comm) {
         // bail out
-        PyErr_SetString(Error, "communicator could not be created");
-        return 0;
+        Py_INCREF(Py_None);
+        return Py_None;
     }
 
-    // wrap in a capsule and return the new communicator
+    // otherwise, wrap the handle in a capsule and return it
     return PyCapsule_New(comm, communicatorCapsuleName, deleteCommunicator);
 }
 
