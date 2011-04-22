@@ -24,7 +24,7 @@ int pyre::mpi::Group::size() const throw(pyre::mpi::Error) {
     return size;
 }
 
-// the eank of this process within this group
+// the rank of this process within this group
 int pyre::mpi::Group::rank() const throw(pyre::mpi::Error) {
     int rank;
     int status = MPI_Group_rank(_group, &rank);

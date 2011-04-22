@@ -43,7 +43,7 @@ public:
 // meta-methods
 public:
     inline Group(MPI_Group handle) throw();
-    virtual ~Group();
+    virtual ~Group() throw();
 
 // hide these
 private:

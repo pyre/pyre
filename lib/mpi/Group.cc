@@ -139,7 +139,7 @@ pyre::mpi::groupDifference(const pyre::mpi::Group * a, const pyre::mpi::Group * 
 }
 
 // destructor
-pyre::mpi::Group::~Group() {
+pyre::mpi::Group::~Group() throw() {
     MPI_Group_free(&_group);
 }
 
