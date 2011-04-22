@@ -14,6 +14,7 @@ PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT)-$(PACKAGE).$(EXT_SAR)
 PROJ_DLL = $(BLD_LIBDIR)/lib$(PROJECT)-$(PACKAGE).$(EXT_SO)
 
 PROJ_SRCS = \
+    Error.cc \
     Communicator.cc \
     Group.cc \
 
@@ -31,7 +32,8 @@ EXPORT_HEADERS = \
 
 EXPORT_PKG_HEADERS = \
     Communicator.h \
-    Group.h \
+    Error.h Error.icc \
+    Group.h Group.icc \
 
 
 # end of file 

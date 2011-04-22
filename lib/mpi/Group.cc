@@ -12,122 +12,142 @@
 // #include "journal/diagnostics.h"
 
 // local
+#include "Error.h"
 #include "Group.h"
 #include "Communicator.h"
 
 // interface
-MPI_Group pyre::mpi::Group::handle() const {
-    return _group;
-}
 
-
-int pyre::mpi::Group::size() const {
-    int size;
-    int status = MPI_Group_size(_group, &size);
-    if (status != MPI_SUCCESS) {
-        return -1;
-    }
-
-    return size;
-}
-
-
-int pyre::mpi::Group::rank() const {
-    int rank;
-    int status = MPI_Group_rank(_group, &rank);
-    if (status != MPI_SUCCESS) {
-        return -1;
-    }
-
-    return rank;
-}
-
-
+// build the group that is associated with the given communicator
 pyre::mpi::Group *
-pyre::mpi::Group::newGroup(const pyre::mpi::Communicator & comm) {
-
-    MPI_Comm commHandle = comm.handle();
-
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-#if 0
-    journal::debug_t info("mpi.init");
-    info
-        << journal::at(__HERE__)
-        << "[" << rank << ":" << size << "] "
-        << "creating communicator gourp: "
-        << "communicator=" << commHandle
-        << journal::endl;
-#endif
-        
+pyre::mpi::Group::
+newGroup(const pyre::mpi::Communicator & communicator) {
+    // get the raw MPI communicator
+    MPI_Comm handle = communicator.handle();
+    // and its associated group
     MPI_Group group;
-    int status = MPI_Comm_group(commHandle, &group);
+    int status = MPI_Comm_group(handle, &group);
+    // convert MPI failures to exceptions
     if (status != MPI_SUCCESS) {
-#if 0
-        journal::error_t error("mpi.init");
-        error
-            << journal::at(__HERE__)
-            << "[" << rank << ":" << size << "] "
-            << "mpi failure " << status << " while creating communicator group: "
-            << "communicator=" << commHandle
-            << journal::endl;
-#endif
-        return 0;
+        throw(Error(status));
     }
-
-    if (group == MPI_GROUP_NULL) {
-        return 0;
+    // if the new group is empty
+    if (group == MPI_GROUP_EMPTY) {
+        // return the empty singleton
+        return empty;
     }
-
-    // return
+    // otherwise, wrap the handle and return
     return new Group(group);
 }
     
     
+// build a group by including only the processes in {ranks}
 pyre::mpi::Group * pyre::mpi::Group::include(int size, int ranks []) const {
-    MPI_Group newGroup = MPI_GROUP_NULL;
+    // build the new group
+    MPI_Group newGroup;
     int status = MPI_Group_incl(_group, size, ranks, &newGroup);
-
+    // convert MPI failures to exceptions
     if (status != MPI_SUCCESS) {
-        return 0;
+        throw(Error(status));
     }
-
-    if (newGroup == MPI_GROUP_NULL) {
-        return 0;
+    // if the new group is empty
+    if (newGroup == MPI_GROUP_EMPTY) {
+        // return the empty singleton
+        return empty;
     }
-
+    // otherwise, wrap the new handle and return it
     return new Group(newGroup);
 }
     
 
+// build a group by excluding the processes in {ranks}
 pyre::mpi::Group * pyre::mpi::Group::exclude(int size, int ranks []) const {
-    MPI_Group newGroup = MPI_GROUP_NULL;
+    // build the new group
+    MPI_Group newGroup;
     int status = MPI_Group_excl(_group, size, ranks, &newGroup);
-
+    // if the MPI call failed
     if (status != MPI_SUCCESS) {
-        return 0;
+        throw(Error(status));
     }
-
-    if (newGroup == MPI_GROUP_NULL) {
-        return 0;
+    // if the new group is empty
+    if (newGroup == MPI_GROUP_EMPTY) {
+        // return the empty singleton
+        return empty;
     }
-
+    // otherwise, wrap the new handle and return it
     return new Group(newGroup);
 }
 
 
-// constructor
-pyre::mpi::Group::Group(MPI_Group handle):
-    _group(handle)
-{}
+// build a group from the union of two others
+pyre::mpi::Group *
+pyre::mpi::groupUnion(const pyre::mpi::Group * a, const pyre::mpi::Group * b) {
+    // the new group
+    MPI_Group newGroup;
+    int status = MPI_Group_union(a->handle(), b->handle(), &newGroup);
+    // if the MPI call failed
+    if (status != MPI_SUCCESS) {
+        throw(Error(status));
+    }
+    // if the new group is empty
+    if (newGroup == MPI_GROUP_EMPTY) {
+        // return the empty singleton
+        return Group::empty;
+    }
+    // otherwise, wrap the new handle and return it
+    return new Group(newGroup);
+}
 
+
+// build a group from the intersection of two others
+pyre::mpi::Group *
+pyre::mpi::groupIntersection(const pyre::mpi::Group * a, const pyre::mpi::Group * b) {
+    // the new group
+    MPI_Group newGroup;
+    int status = MPI_Group_intersection(a->handle(), b->handle(), &newGroup);
+    // if the MPI call failed
+    if (status != MPI_SUCCESS) {
+        throw(Error(status));
+    }
+    // if the new group is empty
+    if (newGroup == MPI_GROUP_EMPTY) {
+        // return the empty singleton
+        return Group::empty;
+    }
+    // otherwise, wrap the new handle and return it
+    return new Group(newGroup);
+}
+
+
+// build a group from the difference of two others
+pyre::mpi::Group *
+pyre::mpi::groupDifference(const pyre::mpi::Group * a, const pyre::mpi::Group * b) {
+    // the new group
+    MPI_Group newGroup;
+    int status = MPI_Group_difference(a->handle(), b->handle(), &newGroup);
+    // if the MPI call failed
+    if (status != MPI_SUCCESS) {
+        throw(Error(status));
+    }
+    // if the new group is empty
+    if (newGroup == MPI_GROUP_EMPTY) {
+        // return the empty singleton
+        return Group::empty;
+    }
+    // otherwise, wrap the new handle and return it
+    return new Group(newGroup);
+}
 
 // destructor
 pyre::mpi::Group::~Group() {
     MPI_Group_free(&_group);
 }
+
+
+// static data
+pyre::mpi::Group * pyre::mpi::Group::null = new pyre::mpi::Group(MPI_GROUP_NULL);
+pyre::mpi::Group * pyre::mpi::Group::empty = new pyre::mpi::Group(MPI_GROUP_EMPTY);
+
 
 // end of file
     

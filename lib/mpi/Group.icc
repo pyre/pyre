@@ -1,0 +1,54 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+//
+
+
+#if !defined(pyre_mpi_Group_icc)
+#error This header file contains implementation details of the typename Group
+#else
+
+
+// interface
+// the size of the group
+int pyre::mpi::Group::size() const throw(pyre::mpi::Error) {
+    int size;
+    int status = MPI_Group_size(_group, &size);
+    if (status != MPI_SUCCESS) {
+        throw Error(status);
+    }
+
+    return size;
+}
+
+// the eank of this process within this group
+int pyre::mpi::Group::rank() const throw(pyre::mpi::Error) {
+    int rank;
+    int status = MPI_Group_rank(_group, &rank);
+    if (status != MPI_SUCCESS) {
+        throw Error(status);
+    }
+
+    return rank;
+}
+
+
+// acess to the raw MPI handle
+MPI_Group pyre::mpi::Group::handle() const throw() {
+    return _group;
+}
+
+
+// constructor
+pyre::mpi::Group::Group(MPI_Group handle) throw():
+    _group(handle)
+{}
+
+
+#endif
+
+
+// end of file
