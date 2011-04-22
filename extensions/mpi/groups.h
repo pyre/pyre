@@ -13,6 +13,13 @@ namespace pyre {
     namespace extensions {
         namespace mpi {
 
+            // the predefined groups
+            extern PyObject * nullGroup;
+            extern PyObject * emptyGroup;
+
+            // the group capsule destructor
+            void deleteGroup(PyObject *);
+
             // create a communicator group (MPI_Comm_group)
             extern const char * const groupCreate__name__;
             extern const char * const groupCreate__doc__;

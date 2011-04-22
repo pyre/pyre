@@ -14,20 +14,17 @@
 #include "journal/debug.h"
 #endif
 
-
 #include "constants.h"
 #include "groups.h"
 #include "exceptions.h"
 
-// helpers
-// place everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace mpi {
-            void deleteGroup(PyObject *);
-        } // of namespace mpi
-    } // of namespace extensions
-} // of namespace pyre
+// the predefined groups
+PyObject *
+pyre::extensions::mpi::nullGroup = PyCapsule_New(group_t::null, groupCapsuleName, 0);
+
+PyObject *
+pyre::extensions::mpi::emptyGroup = PyCapsule_New(group_t::empty, groupCapsuleName, 0);
+
 
 // create a communicator group (MPI_Comm_group)
 const char * const
@@ -193,14 +190,21 @@ groupInclude(PyObject *, PyObject * args)
     // make the MPI call
     group_t * newGroup = group->include(size, ranks);
 
-    // clean up and return
+    // clean up
     delete [] ranks;
 
+    // check that the new group is not a null pointer
     if (!newGroup) {
         PyErr_SetString(Error, "could not build process group");
         return 0;
     }
 
+    // is it the empty group?
+    if (newGroup == group_t::empty) {
+        return emptyGroup;
+    }
+    
+    // otherwise, wrap it in a capsule and return it
     return PyCapsule_New(newGroup, groupCapsuleName, deleteGroup);
 }
 
