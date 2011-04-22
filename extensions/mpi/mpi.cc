@@ -111,12 +111,8 @@ PyInit_mpi()
         return 0;
     }
 
-    // build the world communicator
-    communicator_t * world = new communicator_t(MPI_COMM_WORLD);
-    // wrap it in a capsule
-    PyObject * worldCapsule = PyCapsule_New(world, communicatorCapsuleName, 0);
-    // and register it with the module
-    PyModule_AddObject(module, "world", worldCapsule);
+    // add the world communicator
+    PyModule_AddObject(module, "world", worldCommunicator);
 
     // constants
     PyModule_AddObject(module, "undefined", PyLong_FromLong(MPI_UNDEFINED));

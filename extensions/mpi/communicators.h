@@ -15,6 +15,12 @@ namespace pyre {
     namespace extensions {
         namespace mpi {
 
+            // the predefined communicators
+            extern PyObject * worldCommunicator;
+
+            // destructors
+            void deleteCommunicator(PyObject *);
+
             // create a communicator (MPI_Comm_create)
             extern const char * const communicatorCreate__name__;
             extern const char * const communicatorCreate__doc__;

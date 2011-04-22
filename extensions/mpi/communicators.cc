@@ -15,21 +15,11 @@
 #include "communicators.h"
 #include "exceptions.h"
 
-// helpers
-// place everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace mpi {
-            // destructors
-            void deleteCommunicator(PyObject *);
 
-        } // of namespace mpi
-    } // of namespace extensions
-} // of namespace pyre
-
-
-using namespace pyre::extensions::mpi;
-
+// the predefined groups
+PyObject *
+pyre::extensions::mpi::
+worldCommunicator = PyCapsule_New(communicator_t::world, communicatorCapsuleName, 0);
 
 // create a communicator (MPI_Comm_create)
 const char * const 
