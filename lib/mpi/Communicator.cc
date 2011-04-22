@@ -125,4 +125,10 @@ pyre::mpi::Communicator::~Communicator() throw() {
     MPI_Comm_free(&_communicator);
 }
 
+
+// static data
+pyre::mpi::Communicator * 
+pyre::mpi::Communicator::world = new pyre::mpi::Communicator(MPI_COMM_WORLD);
+
+
 // end of file
