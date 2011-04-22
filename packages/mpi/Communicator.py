@@ -23,28 +23,42 @@ class Communicator(Object):
 
 
     # communicator factories
-    def include(self, included):
+    def include(self, processes):
         """
-        Build a new communicator with the processes in {included} as its members
+        Build a new communicator with the processes in the iterable {processes} as its members
         """
-        # create a new group out of the {included} processes
-        group = self.group().include(included)
-        # use it build a new communicator handle
+        # get my group
+        mine = self.group()
+        # create a new group out of {processes}
+        group = mine.include(tuple(processes))
+        # bail out if the new group is empty
+        if group == mine.empty: return None
+        # otherwise, use it to build a new communicator handle
         handle = self.mpi.communicatorCreate(self._handle, group._handle)
-        # wrap it and return it
-        return Communicator(handle=handle)
+        # if successful
+        if handle is not None:
+            # wrap it and return it
+            return Communicator(handle=handle)
+        # otherwise
+        return None
         
 
-    def exclude(self, excluded):
+    def exclude(self, processes):
         """
-        Build a new communicator with all my processes except those in {excluded}
+        Build a new communicator with all my processes except those in {processes}
         """
-        # create a new group out of the processes not in {excluded}
-        group = self.group().exclude(excluded)
-        # use it build a new communicator handle
+        # create a new group out of the processes not in {processes}
+        group = self.group().exclude(tuple(processes))
+        # bail out if the new group is empty
+        if group == mine.empty: return None
+        # otherwise, use it to build a new communicator handle
         handle = self.mpi.communicatorCreate(self._handle, group._handle)
-        # wrap it and return it
-        return Communicator(handle=handle)
+        # if successful
+        if handle is not None:
+            # wrap it and return it
+            return Communicator(handle=handle)
+        # otherwise
+        return None
 
 
     def cartesian(self, axes, periods, reorder=1):
