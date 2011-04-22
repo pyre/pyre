@@ -84,15 +84,22 @@ except Exception:
 
 # otherwise, we have bindings and hence MPI support
 else:
+    # register the finalization routine to happen when the interpreter exits
+    import atexit
+    atexit.register(mpi.finalize)
+
     # access the communicator wrapper
     from .Communicator import Communicator as communicator
     # build world
     world = communicator(mpi.world)
     # set the number of processes
     processes = world.size
-    # register the finalization routine to happen when the interpreter exits
-    import atexit
-    atexit.register(mpi.finalize)
+
+    # access the group wrapper
+    from .Group import Group as group
+    # build the predefined groups
+    group.null = group(handle=mpi.nullGroup)
+    group.empty = group(handle=mpi.emptyGroup)
 
 
 # end of file 
