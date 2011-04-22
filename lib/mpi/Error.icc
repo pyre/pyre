@@ -1,0 +1,23 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+//
+
+
+#if !defined(pyre_mpi_Error_icc)
+#error This header file contains implementation details of the typename Error
+#else
+
+
+pyre::mpi::Error::Error(int code) throw() :
+    std::exception(),
+    _code(code)
+{}
+
+#endif
+
+
+// end of file

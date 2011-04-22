@@ -12,6 +12,7 @@
 // #include "journal/diagnostics.h"
 
 // local
+#include "Error.h"
 #include "Group.h"
 #include "Communicator.h"
 

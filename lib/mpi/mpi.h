@@ -12,11 +12,13 @@
 
 #include <mpi.h>
 
+#include "mpi/Error.h"
 #include "mpi/Group.h"
 #include "mpi/Communicator.h"
 
 namespace pyre {
     namespace mpi {
+        typedef Error error_t;
         typedef Communicator communicator_t;
         typedef Group group_t;
     }
