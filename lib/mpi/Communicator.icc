@@ -1,0 +1,63 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+//
+
+
+#if !defined(pyre_mpi_Communicator_icc)
+#error This header file contains implementation details of the typename Communicator
+#else
+
+
+// interface
+// the size of the communicator
+int pyre::mpi::Communicator::size() const throw(pyre::mpi::Error) {
+    int size;
+    int status = MPI_Comm_size(_communicator, &size);
+    if (status != MPI_SUCCESS) {
+        throw Error(status);
+    }
+
+    return size;
+}
+
+// the rank of this process within this communicator
+int pyre::mpi::Communicator::rank() const throw(pyre::mpi::Error) {
+    int rank;
+    int status = MPI_Comm_rank(_communicator, &rank);
+    if (status != MPI_SUCCESS) {
+        throw Error(status);
+    }
+
+    return rank;
+}
+
+
+// acess to the raw MPI handle
+MPI_Comm pyre::mpi::Communicator::handle() const throw() {
+    return _communicator;
+}
+
+// synchronization barrier
+void pyre::mpi::Communicator::barrier() const throw(Error) {
+    int status = MPI_Barrier(_communicator);
+    if (status != MPI_SUCCESS) {
+        throw Error(status);
+    }
+
+    return;
+}
+
+// constructor
+pyre::mpi::Communicator::Communicator(MPI_Comm handle) throw():
+    _communicator(handle)
+{}
+
+
+#endif
+
+
+// end of file

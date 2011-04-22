@@ -31,7 +31,7 @@ EXPORT_HEADERS = \
     mpi.h \
 
 EXPORT_PKG_HEADERS = \
-    Communicator.h \
+    Communicator.h Communicator.icc \
     Error.h Error.icc \
     Group.h Group.icc \
 

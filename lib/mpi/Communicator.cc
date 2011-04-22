@@ -92,59 +92,6 @@ pyre::mpi::Communicator::cartesian(int size, int * procs, int * periods, int reo
 
 // interface
 
-int pyre::mpi::Communicator::size() const {
-    int size;
-    int status = MPI_Comm_size(_communicator, &size);
-    if (status != MPI_SUCCESS) {
-        return -1;
-        }
-
-    return size;
-}
-
-
-int pyre::mpi::Communicator::rank() const {
-    int rank;
-    int status = MPI_Comm_rank(_communicator, &rank);
-    if (status != MPI_SUCCESS) {
-#if 0
-        journal::error_t error("mpi.cartesian");
-        error 
-            << journal::at(__HERE__)
-            << "MPI_Comm_rank: error " << status
-            << journal::endl;
-#endif
-        return -1;
-    }
-
-    return rank;
-}
-
-
-void pyre::mpi::Communicator::barrier() const
-{
-    int status = MPI_Barrier(_communicator);
-    if (status != MPI_SUCCESS) {
-#if 0
-        journal::error_t error("mpi.cartesian");
-        error 
-            << journal::at(__HERE__)
-            << "MPI_Barrier: error " << status
-            << journal::endl;
-#endif
-
-        return;
-    }
-
-    return;
-}
-
-
-MPI_Comm pyre::mpi::Communicator::handle() const
-{
-    return _communicator;
-}
-
 
 void pyre::mpi::Communicator::cartesianCoordinates(int rank, int dim, int * coordinates) const {
     int status = MPI_Cart_coords(_communicator, rank, dim, coordinates);
@@ -173,14 +120,8 @@ void pyre::mpi::Communicator::cartesianCoordinates(int rank, int dim, int * coor
 }
 
 
-// constructors
-pyre::mpi::Communicator::Communicator(MPI_Comm handle):
-    _communicator(handle)
-{}
-
-
 // destructor
-pyre::mpi::Communicator::~Communicator() {
+pyre::mpi::Communicator::~Communicator() throw() {
     MPI_Comm_free(&_communicator);
 }
 

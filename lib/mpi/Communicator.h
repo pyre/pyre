@@ -15,37 +15,46 @@ namespace pyre {
     }
 }
 
+// encapsulation of MPI_Comm
 class pyre::mpi::Communicator {
 // interface
 public:
-    int size() const;
-    int rank() const;
+    inline int size() const throw(Error);
+    inline int rank() const throw(Error);
+    inline MPI_Comm handle() const throw();
 
-    void barrier() const;
+    inline void barrier() const throw(Error);
     void cartesianCoordinates(int rank, int dim, int * coordinates) const;
 
-    MPI_Comm handle() const;
-
     // factories
+    // make a communicator out of the given group of processes
     Communicator * newCommunicator(const Group & group) const;
+    // build a Cartesian communicator
     Communicator * cartesian(int size, int * procs, int * periods, int reorder) const;
-
 
 // meta-methods
 public:
-    Communicator(MPI_Comm handle);
-    virtual ~Communicator();
+    inline Communicator(MPI_Comm handle) throw();
+    virtual ~Communicator() throw();
 
 // hide these
 private:
     Communicator(const Communicator &);
     Communicator & operator=(const Communicator &);
 
+// data
+public:
+    static Communicator * world; // a wrapper around MPI_COMM_WORLD
+
 // instance atributes
 protected:
-
     MPI_Comm _communicator;
 };
+
+// get the inline definitions
+#define pyre_mpi_Communicator_icc
+#include "Communicator.icc"
+#undef pyre_mpi_Communicator_icc
 
 #endif
 
