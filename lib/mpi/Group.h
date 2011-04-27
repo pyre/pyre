@@ -15,9 +15,9 @@ namespace pyre {
         class Group;
         class Communicator;
 
-        Group groupUnion(const Group &, const Group &) throw(Error);
-        Group groupIntersection(const Group &, const Group &) throw(Error);
-        Group groupDifference(const Group &, const Group &) throw(Error);
+        inline Group groupUnion(const Group &, const Group &) throw(Error);
+        inline Group groupIntersection(const Group &, const Group &) throw(Error);
+        inline Group groupDifference(const Group &, const Group &) throw(Error);
     }
 }
 
@@ -50,7 +50,7 @@ public:
 
     // meta methods
 public:
-    ~Group() throw();
+    inline ~Group() throw();
     inline Group(handle_t handle, bool = false) throw();
     inline Group(const Group &) throw();
     inline const Group & operator=(const Group &) throw();
