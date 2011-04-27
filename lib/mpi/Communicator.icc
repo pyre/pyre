@@ -1,63 +1,158 @@
 // -*- C++ -*-
-// -*- coding: utf-8 -*-
-//
+// 
 // michael a.g. aïvázis
 // california institute of technology
 // (c) 1998-2011 all rights reserved
-//
-
+// 
 
 #if !defined(pyre_mpi_Communicator_icc)
-#error This header file contains implementation details of the typename Communicator
+#error This header file contains implementation details of class Communicator
 #else
 
-
 // interface
-// the size of the communicator
-int pyre::mpi::Communicator::size() const throw(pyre::mpi::Error) {
-    int size;
-    int status = MPI_Comm_size(_communicator, &size);
-    if (status != MPI_SUCCESS) {
-        throw Error(status);
-    }
-
-    return size;
+// check whether this communicator is null
+bool
+pyre::mpi::Communicator::
+isNull() const throw()
+{
+    // check the handle against the predefined null communicator
+    return _handle ==  MPI_COMM_NULL;
 }
 
-// the rank of this process within this communicator
-int pyre::mpi::Communicator::rank() const throw(pyre::mpi::Error) {
-    int rank;
-    int status = MPI_Comm_rank(_communicator, &rank);
+// establish a barrier
+void
+pyre::mpi::Communicator::
+barrier() const throw(Error)
+{
+    int status = MPI_Barrier(_handle);
+    // check the return status 
     if (status != MPI_SUCCESS) {
+        // throw an exception if something went wrong
         throw Error(status);
     }
-
-    return rank;
-}
-
-
-// acess to the raw MPI handle
-MPI_Comm pyre::mpi::Communicator::handle() const throw() {
-    return _communicator;
-}
-
-// synchronization barrier
-void pyre::mpi::Communicator::barrier() const throw(Error) {
-    int status = MPI_Barrier(_communicator);
-    if (status != MPI_SUCCESS) {
-        throw Error(status);
-    }
-
+    // and return
     return;
 }
 
-// constructor
-pyre::mpi::Communicator::Communicator(MPI_Comm handle) throw():
-    _communicator(handle)
+// compute the rank of this process
+int
+pyre::mpi::Communicator::
+rank() const throw(Error)
+{
+    int rank;
+    int status = MPI_Comm_rank(_handle, &rank);
+    // check the return status 
+    if (status != MPI_SUCCESS) {
+        // throw an exception if something went wrong
+        throw Error(status);
+    }
+    // and return
+    return rank;
+}
+
+// compute the size of this communicator
+int
+pyre::mpi::Communicator::
+size() const throw(Error)
+{
+    int size;
+    int status = MPI_Comm_size(_handle, &size);
+    // check the return status 
+    if (status != MPI_SUCCESS) {
+        // throw an exception if something went wrong
+        throw Error(status);
+    }
+    // and return
+    return size;
+}
+
+// access to my process group
+pyre::mpi::Group
+pyre::mpi::Communicator::
+group() const throw(Error)
+{
+    // storage for the new group handle
+    MPI_Group group;
+    // construct it
+    int status = MPI_Comm_group(_handle, &group);
+    // check the return status
+    if (status != MPI_SUCCESS) {
+        // throw an exception if something went wrong
+        throw Error(status);
+    }
+    // all ok
+    return group_t(group);
+}
+
+pyre::mpi::Communicator
+pyre::mpi::Communicator::
+communicator(const group_t & group) const throw(Error)
+{
+    // storage for the new group handle
+    MPI_Comm communicator;
+    // construct it
+    int status = MPI_Comm_create(_handle, group, &communicator);
+    // check the return status
+    if (status != MPI_SUCCESS) {
+        // throw an exception if something went wrong
+        throw Error(status);
+    }
+    // if this process does not participate in the new communicator
+    if (communicator == MPI_COMM_NULL) {
+        // return the null communicator
+        return Communicator(communicator, true); // the null communicator lives forever
+    }
+    // otherwise, wrap the new handle and return it
+    return Communicator(communicator);
+}
+
+// free a communicator handle
+void
+pyre::mpi::Communicator::
+free(MPI_Comm * handle) throw(Error)
+{
+    int status = MPI_Comm_free(handle);
+    //
+    // check the return status 
+    if (status != MPI_SUCCESS) {
+        // throw an exception if something went wrong
+        throw Error(status);
+    }
+    // and return
+    return;
+}
+
+
+// the destructor
+pyre::mpi::Communicator::
+~Communicator() throw()
 {}
 
+// the default constructor
+pyre::mpi::Communicator::
+Communicator(Communicator::handle_t value, bool immortal) throw() :
+    _handle(value, immortal)
+{}
 
-#endif
+// the copy constructor
+pyre::mpi::Communicator::
+Communicator(const pyre::mpi::Communicator & other) throw() :
+    _handle(other._handle)
+{}
 
+// operator =
+const pyre::mpi::Communicator &
+pyre::mpi::Communicator::
+operator = (const pyre::mpi::Communicator & other) throw()
+{
+    // skip assignment to self
+    if (&other == this) { return *this; }
+    // otherwise, move the data
+    _handle = other._handle;
+    // and return me
+    return *this;
+}
+
+# endif
 
 // end of file

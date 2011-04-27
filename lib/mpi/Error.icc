@@ -12,12 +12,19 @@
 #else
 
 
+// destructor
+pyre::mpi::Error::
+~Error() throw()
+ {}
+
+
+// constructor
 pyre::mpi::Error::Error(int code) throw() :
     std::exception(),
     _code(code)
 {}
 
-#endif
 
+#endif
 
 // end of file

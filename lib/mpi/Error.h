@@ -10,7 +10,6 @@
 
 
 // access to the base class
-#include <exception>
 
 
 // forward declarations
@@ -26,7 +25,7 @@ class pyre::mpi::Error : public std::exception {
 // meta-methods
 public:
     inline Error(int code) throw();
-    virtual ~Error() throw();
+    inline ~Error() throw();
 
 // data
 private:

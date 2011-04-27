@@ -1,69 +1,76 @@
 // -*- C++ -*-
-//
-// michael a.g. aivazis
+// 
+// michael a.g. aïvázis
 // california institute of technology
 // (c) 1998-2011 all rights reserved
-//
+// 
 
-#if !defined(pyre_mpi_Group_h__)
-#define pyre_mpi_Group_h__
+// code guard
+#if !defined(pyre_mpi_Group_h)
+#define pyre_mpi_Group_h
 
-
-// forward declarations
+// place Group in namespace pyre::mpi
 namespace pyre {
     namespace mpi {
         class Group;
-        class Error;
         class Communicator;
 
-        // global operators
-        Group * groupUnion(const Group *, const Group *);
-        Group * groupIntersection(const Group *, const Group *);
-        Group * groupDifference(const Group *, const Group *);
+        Group groupUnion(const Group &, const Group &) throw(Error);
+        Group groupIntersection(const Group &, const Group &) throw(Error);
+        Group groupDifference(const Group &, const Group &) throw(Error);
     }
 }
 
-
-// a wrapper around MPI_Group
+// declaration
 class pyre::mpi::Group {
+    friend class Communicator;
+    friend class Shareable<Group>;
 
-// interface
+    friend Group groupUnion(const Group &, const Group &) throw(Error);
+    friend Group groupIntersection(const Group &, const Group &) throw(Error);
+    friend Group groupDifference(const Group &, const Group &) throw(Error);
+
+    // types
 public:
-    inline int size() const throw(Error); // the size of the group
-    inline int rank() const throw(Error); // the rank of this process in this group
-    inline MPI_Group handle() const throw(); // access to the raw MPI handle
+    typedef MPI_Group handle_t;
+    typedef Handle<Group> storage_t;
+    typedef Shareable<Group> shared_t;
 
-    // factories
-    // make a group out of the processes in the given communicator
-    static Group * newGroup(const Communicator & comm);
-    // make a new group by including or excluding certain processes from this group
-    Group * include(int size, int ranks[]) const;
-    Group * exclude(int size, int ranks[]) const;
-    
-// meta-methods
+    typedef Group group_t;
+    typedef std::vector<int> ranklist_t;
+
+    // interface
 public:
-    inline Group(MPI_Group handle) throw();
-    virtual ~Group() throw();
+    inline bool isEmpty() const throw();
+    inline int rank() const throw(Error);
+    inline int size() const throw(Error);
 
-// hide these
+    inline group_t include(const ranklist_t &) const throw(Error);
+    inline group_t exclude(const ranklist_t &) const throw(Error);
+
+    // meta methods
+public:
+    ~Group() throw();
+    inline Group(handle_t handle, bool = false) throw();
+    inline Group(const Group &) throw();
+    inline const Group & operator=(const Group &) throw();
+
+    // hidden
 private:
-    Group(const Group &);
-    Group & operator=(const Group &);
-
-// data
-public:
-    static Group * null; // a wrapper around the predefined null group
-    static Group * empty; // a wrapper around the predefined empty group
-
-protected:
-    MPI_Group _group; // the raw MPI handle
+    inline operator handle_t () const throw();
+    static inline void free(MPI_Group *) throw(Error);
+    
+    // data members
+private:
+    storage_t _handle;
 };
+
 
 // get the inline definitions
 #define pyre_mpi_Group_icc
 #include "Group.icc"
 #undef pyre_mpi_Group_icc
 
-#endif
 
+# endif
 // end of file

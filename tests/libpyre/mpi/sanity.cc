@@ -9,15 +9,11 @@
 // for the build system
 #include <portinfo>
 
-// grab the timer objects
-#include <mpi.h>
+// access to the raw mpi routines
+#include <pyre/mpi.h>
 
 // main program
 int main() {
-    // initialize
-    MPI_Init(0, 0);
-    // finalize
-    MPI_Finalize();
     // all done
     return 0;
 }

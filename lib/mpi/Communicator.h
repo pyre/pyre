@@ -1,61 +1,70 @@
 // -*- C++ -*-
-//
-// michael a.g. aivazis
+// 
+// michael a.g. aïvázis
 // california institute of technology
 // (c) 1998-2011 all rights reserved
-//
+// 
 
-#if !defined(pyre_mpi_Communicator_h__)
-#define pyre_mpi_Communicator_h__
+// code guard
+#if !defined(pyre_mpi_Communicator_h)
+#define pyre_mpi_Communicator_h
 
+// place Communicator in namespace pyre::mpi
 namespace pyre {
     namespace mpi {
-        class Group;
         class Communicator;
+        class Error;
+        class Group;
     }
 }
 
-// encapsulation of MPI_Comm
+// declaration
 class pyre::mpi::Communicator {
-// interface
+    friend class Shareable<Communicator>;
+
+    // types
 public:
-    inline int size() const throw(Error);
-    inline int rank() const throw(Error);
-    inline MPI_Comm handle() const throw();
+    typedef MPI_Comm handle_t;
+    typedef Handle<Communicator> storage_t;
+    typedef Shareable<Communicator> shared_t;
 
-    inline void barrier() const throw(Error);
-    void cartesianCoordinates(int rank, int dim, int * coordinates) const;
+    typedef Group group_t;
+    typedef Communicator communicator_t;
 
-    // factories
-    // make a communicator out of the given group of processes
-    Communicator * newCommunicator(const Group & group) const;
-    // build a Cartesian communicator
-    Communicator * cartesian(int size, int * procs, int * periods, int reorder) const;
-
-// meta-methods
+    // interface
 public:
-    inline Communicator(MPI_Comm handle) throw();
-    virtual ~Communicator() throw();
+    inline bool isNull() const throw();
 
-// hide these
+    inline void barrier() const throw(Error); // build a synchronization barrier
+
+    inline int rank() const throw(Error); // compute the rank of this process
+    inline int size() const throw(Error); // compute my size
+
+    inline group_t group() const throw(Error); // access to my group of processes
+    inline communicator_t communicator(const group_t &) const throw(Error);
+
+    // meta methods
+public:
+    ~Communicator() throw();
+    inline Communicator(handle_t, bool = false) throw();
+    inline Communicator(const Communicator &) throw();
+    inline const Communicator & operator=(const Communicator &) throw();
+    
+    // hidden
 private:
-    Communicator(const Communicator &);
-    Communicator & operator=(const Communicator &);
+    static inline void free(MPI_Comm *) throw(Error);
 
-// data
-public:
-    static Communicator * world; // a wrapper around MPI_COMM_WORLD
-
-// instance atributes
-protected:
-    MPI_Comm _communicator;
+    // data members
+private:
+    storage_t _handle;
 };
+
 
 // get the inline definitions
 #define pyre_mpi_Communicator_icc
 #include "Communicator.icc"
 #undef pyre_mpi_Communicator_icc
 
-#endif
 
+# endif
 // end of file

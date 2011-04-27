@@ -13,21 +13,50 @@ PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
 PROJ_CLEAN += $(TESTS)
 
 
-TESTS = sanity
+TESTS = \
+    sanity \
+    world \
+    group \
+    group-include \
+    group-exclude \
+    group-setops \
+    communicator \
 
-PROJ_LCXX_LIBPATH = $(BLD_LIBDIR)
-LIBRARIES = -lpyre-mpi $(EXTERNAL_LIBS)
+LIBRARIES = $(EXTERNAL_LIBS)
 
 #--------------------------------------------------------------------------
+
 all: test
 
 
 test: $(TESTS)
-	./sanity
-
+	$(MPI_EXECUTIVE) -np 4 ./sanity
+	$(MPI_EXECUTIVE) -np 4 ./world
+	$(MPI_EXECUTIVE) -np 4 ./group
+	$(MPI_EXECUTIVE) -np 8 ./group-include
+	$(MPI_EXECUTIVE) -np 8 ./group-exclude
+	$(MPI_EXECUTIVE) -np 7 ./group-setops
+	$(MPI_EXECUTIVE) -np 8 ./communicator
 
 sanity: sanity.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
+world: world.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+group: group.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+group-include: group-include.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+group-exclude: group-exclude.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+group-setops: group-setops.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+communicator: communicator.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 # end of file 

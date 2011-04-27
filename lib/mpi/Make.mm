@@ -10,19 +10,11 @@ PROJECT = pyre
 PACKAGE = mpi
 
 PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
-PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT)-$(PACKAGE).$(EXT_SAR)
-PROJ_DLL = $(BLD_LIBDIR)/lib$(PROJECT)-$(PACKAGE).$(EXT_SO)
-
-PROJ_SRCS = \
-    Error.cc \
-    Communicator.cc \
-    Group.cc \
-
 
 #--------------------------------------------------------------------------
 #
 
-all: $(PROJ_DLL) export
+all: export
 
 export:: export-headers export-package-headers
 
@@ -34,6 +26,8 @@ EXPORT_PKG_HEADERS = \
     Communicator.h Communicator.icc \
     Error.h Error.icc \
     Group.h Group.icc \
+    Handle.h Handle.icc \
+    Shareable.h Shareable.icc \
 
 
 # end of file 
