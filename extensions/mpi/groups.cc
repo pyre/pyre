@@ -18,14 +18,6 @@
 #include "groups.h"
 #include "exceptions.h"
 
-// the predefined groups
-PyObject *
-pyre::extensions::mpi::nullGroup = PyCapsule_New(group_t::null, groupCapsuleName, 0);
-
-PyObject *
-pyre::extensions::mpi::emptyGroup = PyCapsule_New(group_t::empty, groupCapsuleName, 0);
-
-
 // create a communicator group (MPI_Comm_group)
 const char * const
 pyre::extensions::mpi::
@@ -57,7 +49,7 @@ groupCreate(PyObject *, PyObject * args)
         static_cast<communicator_t *>(PyCapsule_GetPointer(py_comm, communicatorCapsuleName));
 
     // build the associated group
-    group_t * group = group_t::newGroup(*comm);
+    group_t * group = new group_t(comm->group());
 
     if (!group) {
         PyErr_SetString(PyExc_ValueError, "group could not be created");
@@ -181,17 +173,13 @@ groupInclude(PyObject *, PyObject * args)
 
     // store the ranks in a vector
     int size = PySequence_Length(rankSeq);
-    int * ranks = new int[size];
-
+    group_t::ranklist_t ranks;
     for (int i = 0; i < size; ++i) {
-        ranks[i] = PyLong_AsLong(PySequence_GetItem(rankSeq, i));
+        ranks.push_back(PyLong_AsLong(PySequence_GetItem(rankSeq, i)));
     }
 
     // make the MPI call
-    group_t * newGroup = group->include(size, ranks);
-
-    // clean up
-    delete [] ranks;
+    group_t * newGroup = new group_t(group->include(ranks));
 
     // check that the new group is not a null pointer
     if (!newGroup) {
@@ -199,11 +187,6 @@ groupInclude(PyObject *, PyObject * args)
         return 0;
     }
 
-    // is it the empty group?
-    if (newGroup == group_t::empty) {
-        return emptyGroup;
-    }
-    
     // otherwise, wrap it in a capsule and return it
     return PyCapsule_New(newGroup, groupCapsuleName, deleteGroup);
 }
@@ -249,17 +232,13 @@ groupExclude(PyObject *, PyObject * args)
 
     // store the ranks in a vector
     int size = PySequence_Length(rankSeq);
-    int * ranks = new int[size];
-
+    group_t::ranklist_t ranks;
     for (int i = 0; i < size; ++i) {
-        ranks[i] = PyLong_AsLong(PySequence_GetItem(rankSeq, i));
+        ranks.push_back(PyLong_AsLong(PySequence_GetItem(rankSeq, i)));
     }
 
     // make the MPI call
-    group_t * newGroup = group->exclude(size, ranks);
-
-    // clean up and return
-    delete [] ranks;
+    group_t * newGroup = new group_t(group->exclude(ranks));
 
     if (!newGroup) {
         PyErr_SetString(Error, "could not build process group");

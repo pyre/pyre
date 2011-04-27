@@ -19,7 +19,7 @@
 // the predefined groups
 PyObject *
 pyre::extensions::mpi::
-worldCommunicator = PyCapsule_New(communicator_t::world, communicatorCapsuleName, 0);
+worldCommunicator = PyCapsule_New(new communicator_t(MPI_COMM_WORLD), communicatorCapsuleName, 0);
 
 // create a communicator (MPI_Comm_create)
 const char * const 
@@ -62,8 +62,8 @@ communicatorCreate(PyObject *, PyObject * args)
     group_t * group =
         static_cast<group_t *>(PyCapsule_GetPointer(py_group, groupCapsuleName));
 
-    // create the new communiucator
-    communicator_t * comm = old->newCommunicator(*group);
+    // create the new communicator
+    communicator_t * comm = new communicator_t(old->communicator(*group));
 
     // if the creation failed
     if (!comm) {
@@ -139,17 +139,17 @@ communicatorCreateCartesian(PyObject *, PyObject * args)
     info << journal::at(__HERE__) << "dimension = " << size << journal::newline;
 #endif
 
-    // allocate the arrays for the MPI call
-    int * procs = new int[size];
-    int * periods = new int[size];
+    // allocate the vectors
+    std::vector<int> procs;
+    std::vector<int> periods;
 
     // copy the data over
 #if 0
     info << journal::at(__HERE__) << "axes: ";
 #endif
     for (int dim = 0; dim < size; ++dim) {
-        procs[dim] = PyLong_AsLong(PySequence_GetItem(procSeq, dim));
-        periods[dim] = PyLong_AsLong(PySequence_GetItem(periodSeq, dim));
+        procs.push_back(PyLong_AsLong(PySequence_GetItem(procSeq, dim)));
+        periods.push_back(PyLong_AsLong(PySequence_GetItem(periodSeq, dim)));
 #if 0
         info << " (" << procs[dim] << "," << periods[dim] << ")";
 #endif
@@ -159,7 +159,7 @@ communicatorCreateCartesian(PyObject *, PyObject * args)
 #endif
 
     // make the MPI call
-    communicator_t * cartesian = comm->cartesian(size, procs, periods, reorder);
+    communicator_t * cartesian = new communicator_t(comm->cartesian(procs, periods, reorder));
 #if 0
     info
         << journal::at(__HERE__)
@@ -168,9 +168,6 @@ communicatorCreateCartesian(PyObject *, PyObject * args)
 #endif
 
 // clean up and return
-    delete [] procs;
-    delete [] periods;
-
     if (!cartesian) {
         PyErr_SetString(Error, "could not build cartesian communicator");
         return 0;
@@ -331,12 +328,6 @@ communicatorCartesianCoordinates(PyObject *, PyObject * args)
     communicator_t * cartesian = 
         static_cast<communicator_t *>(PyCapsule_GetPointer(py_comm, communicatorCapsuleName));
 
-    // allocate room for the coordinates
-    int * coordinates = new int[dim];
-    for (int i=0; i<dim; ++i) {
-        coordinates[i] = 0;
-    }
-
     // dump
 #if 0
     journal::debug_t info("mpi.cartesian");
@@ -353,7 +344,7 @@ communicatorCartesianCoordinates(PyObject *, PyObject * args)
     }
 #endif
 
-    cartesian->cartesianCoordinates(rank, dim, coordinates);
+    communicator_t::ranklist_t coordinates = cartesian->coordinates(rank);
 #if 0
     info << "coordinates:";
     for (int i=0; i < dim; ++i) {
@@ -367,9 +358,6 @@ communicatorCartesianCoordinates(PyObject *, PyObject * args)
         PyTuple_SET_ITEM(value, i, PyLong_FromLong(coordinates[i]));
     }
 
-    // clean up
-    delete [] coordinates;
-    
     // and return
     return value;
 }
