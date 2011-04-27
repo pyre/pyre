@@ -10,6 +10,14 @@
 #else
 
 // interface
+// return the raw MPI handle
+pyre::mpi::Communicator::handle_t
+pyre::mpi::Communicator::
+handle() const throw()
+{
+    return _handle;
+}
+
 // check whether this communicator is null
 bool
 pyre::mpi::Communicator::
@@ -84,6 +92,7 @@ group() const throw(Error)
     return group_t(group);
 }
 
+// build a communicator out the given group
 pyre::mpi::Communicator
 pyre::mpi::Communicator::
 communicator(const group_t & group) const throw(Error)
@@ -105,6 +114,82 @@ communicator(const group_t & group) const throw(Error)
     // otherwise, wrap the new handle and return it
     return Communicator(communicator);
 }
+
+
+// build a cartesian communicator
+pyre::mpi::Communicator
+pyre::mpi::Communicator::
+cartesian(const ranklist_t & ranks, const ranklist_t & periods, int reorder) const throw(Error)
+{
+    // check that the two ranklists are the same size
+    if (ranks.size() != periods.size()) {
+        throw Error(0);
+    }
+    // the size of the two ranklists
+    int size = ranks.size();
+    // allocate two arrays, one for the ranks and another for the periods
+    int * rlist = new int[size];
+    int * plist = new int[size];
+    // populate them
+    for (int rank = 0; rank < size; ++rank) {
+        rlist[rank] = ranks[rank];
+        plist[rank] = periods[rank];
+    }
+    // storage for the new group handle
+    MPI_Comm cartesian;
+    // construct it
+    int status = MPI_Cart_create(_handle, size, rlist, plist, reorder, &cartesian);
+    // deallocate
+    delete [] rlist;
+    delete [] plist;
+    // check the return status
+    if (status != MPI_SUCCESS) {
+        // throw an exception if something went wrong
+        throw Error(status);
+    }
+    // wrap the new handle and return it
+    return Communicator(cartesian);
+}
+
+// compute the cartesian coordinates of the given rank
+pyre::mpi::Communicator::ranklist_t
+pyre::mpi::Communicator::
+coordinates(int rank) const throw(Error)
+{
+    // storage for the length of the coordinate arrays
+    int dim;
+    // ask the cartesian communicator for this information
+    int status = MPI_Cartdim_get(_handle, &dim);
+    // check the return status 
+    if (status != MPI_SUCCESS) {
+        // throw an exception if something went wrong
+        throw Error(status);
+    }
+    // allocate an array to accept the coordinates
+    int * raw = new int[dim];
+    // extract them
+    status = MPI_Cart_coords(_handle, rank, dim, raw);
+    // check the return status 
+    if (status != MPI_SUCCESS) {
+        // deallocate
+        delete [] raw;
+        // throw an exception if something went wrong
+        throw Error(status);
+    }
+    // start building the return value
+    ranklist_t coordinates;
+    // move the information from the array to the ranklist
+    for (int i = 0; i < dim; ++i) {
+        coordinates.push_back(raw[i]);
+    }
+    // deallocate
+    delete [] raw;
+    // and return
+    return coordinates;
+            
+
+}
+
 
 // free a communicator handle
 void

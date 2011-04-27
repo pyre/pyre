@@ -30,9 +30,11 @@ public:
 
     typedef Group group_t;
     typedef Communicator communicator_t;
+    typedef std::vector<int> ranklist_t;
 
     // interface
 public:
+    inline handle_t handle() const throw();
     inline bool isNull() const throw();
 
     inline void barrier() const throw(Error); // build a synchronization barrier
@@ -43,9 +45,12 @@ public:
     inline group_t group() const throw(Error); // access to my group of processes
     inline communicator_t communicator(const group_t &) const throw(Error);
 
+    inline communicator_t cartesian(const ranklist_t &, const ranklist_t &, int) const throw(Error);
+    inline ranklist_t coordinates(int) const throw(Error);
+
     // meta methods
 public:
-    ~Communicator() throw();
+    inline ~Communicator() throw();
     inline Communicator(handle_t, bool = false) throw();
     inline Communicator(const Communicator &) throw();
     inline const Communicator & operator=(const Communicator &) throw();
