@@ -17,14 +17,11 @@ def test():
     import mpi
     # grab the world communicator
     world = mpi.world
-    # build a 4 process communicator out of world
-    restricted = world.include(range(4))
+    # access the world process group
+    whole = world.group()
 
-    # if my rank is in [0,3]
-    if world.rank in range(4):
-        assert world.rank == restricted.rank
-    else:
-        assert restricted is None
+    # check that I can compute ranks correctly
+    assert world.rank == whole.rank
 
     return
 
