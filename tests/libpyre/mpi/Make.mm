@@ -33,8 +33,8 @@ test: $(TESTS)
 	$(MPI_EXECUTIVE) -np 4 ./sanity
 	$(MPI_EXECUTIVE) -np 4 ./world
 	$(MPI_EXECUTIVE) -np 4 ./group
-	$(MPI_EXECUTIVE) -np 8 ./group-include
-	$(MPI_EXECUTIVE) -np 8 ./group-exclude
+	$(MPI_EXECUTIVE) -np 7 ./group-include
+	$(MPI_EXECUTIVE) -np 7 ./group-exclude
 	$(MPI_EXECUTIVE) -np 7 ./group-setops
 	$(MPI_EXECUTIVE) -np 8 ./communicator
 

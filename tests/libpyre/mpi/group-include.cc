@@ -50,7 +50,7 @@ int main() {
 
         // check
         // the new group size if half the original
-        assert(size == wsize/2);
+        assert(size == (wsize+1)/2);
         // check my rank in the new group
         if (wrank % 2 == 0) {
             assert (rank == wrank / 2);
