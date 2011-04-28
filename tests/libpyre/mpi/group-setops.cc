@@ -54,7 +54,7 @@ int main() {
 
         // compute the difference world - odd
         group_t gd = pyre::mpi::groupDifference(whole, odd);
-        // verify it is empty
+        // verify it is the same size as the even group
         assert(gd.size() == even.size());
 
     }
