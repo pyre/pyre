@@ -66,7 +66,7 @@ communicatorCreate(PyObject *, PyObject * args)
     communicator_t * comm = new communicator_t(old->communicator(*group));
 
     // if the creation failed
-    if (!comm) {
+    if (comm->handle() == MPI_COMM_NULL) {
         // bail out
         Py_INCREF(Py_None);
         return Py_None;

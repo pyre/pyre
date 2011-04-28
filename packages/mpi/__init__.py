@@ -95,11 +95,4 @@ else:
     # set the number of processes
     processes = world.size
 
-    # access the group wrapper
-    from .Group import Group as group
-    # build the predefined groups
-    group.null = group(handle=mpi.nullGroup)
-    group.empty = group(handle=mpi.emptyGroup)
-
-
 # end of file 

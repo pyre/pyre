@@ -31,9 +31,7 @@ class Communicator(Object):
         mine = self.group()
         # create a new group out of {processes}
         group = mine.include(tuple(processes))
-        # bail out if the new group is empty
-        if group == mine.empty: return None
-        # otherwise, use it to build a new communicator handle
+        # use it to build a new communicator handle
         handle = self.mpi.communicatorCreate(self._handle, group._handle)
         # if successful
         if handle is not None:
@@ -49,9 +47,7 @@ class Communicator(Object):
         """
         # create a new group out of the processes not in {processes}
         group = self.group().exclude(tuple(processes))
-        # bail out if the new group is empty
-        if group == mine.empty: return None
-        # otherwise, use it to build a new communicator handle
+        # use it to build a new communicator handle
         handle = self.mpi.communicatorCreate(self._handle, group._handle)
         # if successful
         if handle is not None:

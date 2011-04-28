@@ -117,12 +117,6 @@ PyInit_mpi()
     // constants
     PyModule_AddObject(module, "undefined", PyLong_FromLong(MPI_UNDEFINED));
 
-    // groups
-    // add the null group capsule as a module attribute
-    PyModule_AddObject(module, "nullGroup", nullGroup);
-    // add the empty group capsule as a module attribute
-    PyModule_AddObject(module, "emptyGroup", emptyGroup);
-
     // and return the newly created module
     return module;
 }

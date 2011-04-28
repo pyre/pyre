@@ -181,12 +181,6 @@ groupInclude(PyObject *, PyObject * args)
     // make the MPI call
     group_t * newGroup = new group_t(group->include(ranks));
 
-    // check that the new group is not a null pointer
-    if (!newGroup) {
-        PyErr_SetString(Error, "could not build process group");
-        return 0;
-    }
-
     // otherwise, wrap it in a capsule and return it
     return PyCapsule_New(newGroup, groupCapsuleName, deleteGroup);
 }
@@ -239,11 +233,6 @@ groupExclude(PyObject *, PyObject * args)
 
     // make the MPI call
     group_t * newGroup = new group_t(group->exclude(ranks));
-
-    if (!newGroup) {
-        PyErr_SetString(Error, "could not build process group");
-        return 0;
-    }
 
     return PyCapsule_New(newGroup, groupCapsuleName, deleteGroup);
 }
