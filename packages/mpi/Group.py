@@ -16,6 +16,9 @@ class Group(Object):
     Encapsulation of MPI communicator groups
     """
 
+    # class level public data
+    undefined = None # patched by the bootstrapping code with the value from the extension module
+
 
     # per-instance public data
     rank = 0 # my rank in this group
@@ -28,7 +31,7 @@ class Group(Object):
         Build a group out of the processes in {included}
         """
         # build a new group handle
-        handle = self.mpi.groupInclude(self._handle, included)
+        handle = self.mpi.groupInclude(self._handle, tuple(included))
         # check whether it is the empty group
         if handle:
             # wrap it and return it
@@ -42,7 +45,7 @@ class Group(Object):
         Build a group out of all processes except those in {excluded}
         """
         # build a new group handle
-        handle = self.mpi.groupExclude(self._handle, excluded)
+        handle = self.mpi.groupExclude(self._handle, tuple(excluded))
         # check whether it is the empty group
         if handle:
             # wrap it and return it

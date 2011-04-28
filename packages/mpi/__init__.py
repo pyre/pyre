@@ -95,4 +95,9 @@ else:
     # set the number of processes
     processes = world.size
 
+    # access the group wrapper
+    from .Group import Group as group
+    # attach the constants
+    group.undefined = mpi.undefined
+
 # end of file 
