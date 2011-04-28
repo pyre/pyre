@@ -18,6 +18,42 @@
 #include "groups.h"
 #include "exceptions.h"
 
+// check whether the given group is empty
+const char * const
+pyre::extensions::mpi::
+groupIsEmpty__name__ = "groupIsEmpty";
+
+const char * const
+pyre::extensions::mpi::
+groupIsEmpty__doc__ = "check whether the given group is empty";
+
+PyObject *
+pyre::extensions::mpi::
+groupIsEmpty(PyObject *, PyObject * args)
+{
+    // placeholder for the python object
+    PyObject * py_group;
+
+    // extract the communicator from the argument tuple
+    if (!PyArg_ParseTuple(args, "O!:groupIsEmpty", &PyCapsule_Type, &py_group)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_group, groupCapsuleName)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid group");
+        return 0;
+    }
+
+    // get the group
+    group_t * group = 
+        static_cast<group_t *>(PyCapsule_GetPointer(py_group, groupCapsuleName));
+
+    // check and return
+    return PyBool_FromLong(group->isEmpty());
+}
+
+
 // create a communicator group (MPI_Comm_group)
 const char * const
 pyre::extensions::mpi::
@@ -59,8 +95,6 @@ groupCreate(PyObject *, PyObject * args)
     // wrap in a capsule and return the new communicator
     return PyCapsule_New(group, groupCapsuleName, deleteGroup);
 }
-
-
 // return the communicator group size (MPI_Group_size)
 const char * const
 pyre::extensions::mpi::
@@ -233,6 +267,144 @@ groupExclude(PyObject *, PyObject * args)
 
     // make the MPI call
     group_t * newGroup = new group_t(group->exclude(ranks));
+
+    return PyCapsule_New(newGroup, groupCapsuleName, deleteGroup);
+}
+
+
+// build a group out of the union of two others
+const char * const
+pyre::extensions::mpi::
+groupUnion__name__ = "groupUnion";
+
+const char * const 
+pyre::extensions::mpi::
+groupUnion__doc__ = "build a group out of the union of two others";
+
+PyObject *
+pyre::extensions::mpi::
+groupUnion(PyObject *, PyObject * args)
+{
+    PyObject * py_g1;
+    PyObject * py_g2;
+
+    if (!PyArg_ParseTuple(
+                          args, 
+                          "O!O!:groupUnion",
+                          &PyCapsule_Type, &py_g1,
+                          &PyCapsule_Type, &py_g2)) {
+        return 0;
+    }
+    // check that we were handed the correct kind of capsules
+    if (!PyCapsule_IsValid(py_g1, groupCapsuleName)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid group");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(py_g2, groupCapsuleName)) {
+        PyErr_SetString(PyExc_TypeError, "the second argument must be a valid group");
+        return 0;
+    }
+
+    // get the communicator groups
+    group_t * g1 = 
+        static_cast<group_t *>(PyCapsule_GetPointer(py_g1, groupCapsuleName));
+    group_t * g2 = 
+        static_cast<group_t *>(PyCapsule_GetPointer(py_g2, groupCapsuleName));
+
+    // make the MPI call
+    group_t * newGroup = new group_t(groupUnion(*g1, *g2));
+
+    return PyCapsule_New(newGroup, groupCapsuleName, deleteGroup);
+}
+
+
+// build a group out of the intersection of two others
+const char * const
+pyre::extensions::mpi::
+groupIntersection__name__ = "groupIntersection";
+
+const char * const 
+pyre::extensions::mpi::
+groupIntersection__doc__ = "build a group out of the intersection of two others";
+
+PyObject *
+pyre::extensions::mpi::
+groupIntersection(PyObject *, PyObject * args)
+{
+    PyObject * py_g1;
+    PyObject * py_g2;
+
+    if (!PyArg_ParseTuple(
+                          args, 
+                          "O!O!:groupIntersection",
+                          &PyCapsule_Type, &py_g1,
+                          &PyCapsule_Type, &py_g2)) {
+        return 0;
+    }
+    // check that we were handed the correct kind of capsules
+    if (!PyCapsule_IsValid(py_g1, groupCapsuleName)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid group");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(py_g2, groupCapsuleName)) {
+        PyErr_SetString(PyExc_TypeError, "the second argument must be a valid group");
+        return 0;
+    }
+
+    // get the communicator groups
+    group_t * g1 = 
+        static_cast<group_t *>(PyCapsule_GetPointer(py_g1, groupCapsuleName));
+    group_t * g2 = 
+        static_cast<group_t *>(PyCapsule_GetPointer(py_g2, groupCapsuleName));
+
+    // make the MPI call
+    group_t * newGroup = new group_t(groupIntersection(*g1, *g2));
+
+    return PyCapsule_New(newGroup, groupCapsuleName, deleteGroup);
+}
+
+
+// build a group out of the difference of two others
+const char * const
+pyre::extensions::mpi::
+groupDifference__name__ = "groupDifference";
+
+const char * const 
+pyre::extensions::mpi::
+groupDifference__doc__ = "build a group out of the difference of two others";
+
+PyObject *
+pyre::extensions::mpi::
+groupDifference(PyObject *, PyObject * args)
+{
+    PyObject * py_g1;
+    PyObject * py_g2;
+
+    if (!PyArg_ParseTuple(
+                          args, 
+                          "O!O!:groupDifference",
+                          &PyCapsule_Type, &py_g1,
+                          &PyCapsule_Type, &py_g2)) {
+        return 0;
+    }
+    // check that we were handed the correct kind of capsules
+    if (!PyCapsule_IsValid(py_g1, groupCapsuleName)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid group");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(py_g2, groupCapsuleName)) {
+        PyErr_SetString(PyExc_TypeError, "the second argument must be a valid group");
+        return 0;
+    }
+
+    // get the communicator groups
+    group_t * g1 = 
+        static_cast<group_t *>(PyCapsule_GetPointer(py_g1, groupCapsuleName));
+    group_t * g2 = 
+        static_cast<group_t *>(PyCapsule_GetPointer(py_g2, groupCapsuleName));
+
+    // make the MPI call
+    group_t * newGroup = new group_t(groupDifference(*g1, *g2));
 
     return PyCapsule_New(newGroup, groupCapsuleName, deleteGroup);
 }

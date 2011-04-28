@@ -54,11 +54,17 @@ namespace pyre {
                   communicatorCartesianCoordinates__doc__ },
 
                 // groups
+                { groupIsEmpty__name__, groupIsEmpty, METH_VARARGS, groupIsEmpty__doc__ },
                 { groupCreate__name__, groupCreate, METH_VARARGS, groupCreate__doc__ },
                 { groupSize__name__, groupSize, METH_VARARGS, groupSize__doc__ },
                 { groupRank__name__, groupRank, METH_VARARGS, groupRank__doc__ },
                 { groupInclude__name__, groupInclude, METH_VARARGS, groupInclude__doc__ },
                 { groupExclude__name__, groupExclude, METH_VARARGS, groupExclude__doc__ },
+
+                { groupUnion__name__, groupUnion, METH_VARARGS, groupUnion__doc__ },
+                { groupIntersection__name__, 
+                  groupIntersection, METH_VARARGS, groupIntersection__doc__ },
+                { groupDifference__name__, groupDifference, METH_VARARGS, groupDifference__doc__ },
 
                 // ports
                 { sendString__name__, sendString, METH_VARARGS, sendString__doc__ },

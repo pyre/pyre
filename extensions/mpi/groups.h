@@ -20,6 +20,11 @@ namespace pyre {
             // the group capsule destructor
             void deleteGroup(PyObject *);
 
+            // check whether a group is empty
+            extern const char * const groupIsEmpty__name__;
+            extern const char * const groupIsEmpty__doc__;
+            PyObject * groupIsEmpty(PyObject *, PyObject *);
+
             // create a communicator group (MPI_Comm_group)
             extern const char * const groupCreate__name__;
             extern const char * const groupCreate__doc__;
@@ -44,6 +49,21 @@ namespace pyre {
             extern const char * const groupExclude__name__;
             extern const char * const groupExclude__doc__;
             PyObject * groupExclude(PyObject *, PyObject *);
+
+            // build a group out of the union of two others
+            extern const char * const groupUnion__name__;
+            extern const char * const groupUnion__doc__;
+            PyObject * groupUnion(PyObject *, PyObject *);
+
+            // build a group out of the intersection of two others
+            extern const char * const groupIntersection__name__;
+            extern const char * const groupIntersection__doc__;
+            PyObject * groupIntersection(PyObject *, PyObject *);
+
+            // build a group out of the difference of two others
+            extern const char * const groupDifference__name__;
+            extern const char * const groupDifference__doc__;
+            PyObject * groupDifference(PyObject *, PyObject *);
 
         } // of namespace mpi
     } // of namespace extensions

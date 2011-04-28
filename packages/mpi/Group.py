@@ -24,15 +24,23 @@ class Group(Object):
     rank = 0 # my rank in this group
     size = 0 # the size of this group
 
+    
+    # check whether a group is empty
+    def isEmpty(self):
+        """
+        Check whether i am an empty group
+        """
+        return self.mpi.groupIsEmpty(self._handle)
 
-    # class interface
+
+    # building groups using explicit ranklists
     def include(self, included):
         """
         Build a group out of the processes in {included}
         """
         # build a new group handle
         handle = self.mpi.groupInclude(self._handle, tuple(included))
-        # check whether it is the empty group
+        # check whether it is a valid group
         if handle:
             # wrap it and return it
             return Group(handle=handle)
@@ -46,11 +54,54 @@ class Group(Object):
         """
         # build a new group handle
         handle = self.mpi.groupExclude(self._handle, tuple(excluded))
-        # check whether it is the empty group
+        # check whether it is a valid group
         if handle:
             # wrap it and return it
             return Group(handle=handle)
         # otherwise return an invalid group
+        return None
+
+
+    # the set-like operations
+    def union(self, g):
+        """
+        Build a new group whose processes are the union of mine and {g}'s
+        """
+        # build the new group handle
+        handle = self.mpi.groupUnion(self._handle, g._handle)
+        # check whether it is a valid group
+        if handle:
+            # wrap it and return it
+            return Group(handle=handle)
+        # otherwise
+        return None
+
+
+    def intersection(self, g):
+        """
+        Build a new group whose processes are the intersection of mine and {g}'s
+        """
+        # build the new group handle
+        handle = self.mpi.groupIntersection(self._handle, g._handle)
+        # check whether it is a valid group
+        if handle:
+            # wrap it and return it
+            return Group(handle=handle)
+        # otherwise
+        return None
+
+
+    def difference(self, g):
+        """
+        Build a new group whose processes are the difference of mine and {g}'s
+        """
+        # build the new group handle
+        handle = self.mpi.groupDifference(self._handle, g._handle)
+        # check whether it is a valid group
+        if handle:
+            # wrap it and return it
+            return Group(handle=handle)
+        # otherwise
         return None
 
 

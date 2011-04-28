@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2011 all rights reserved
+#
+
+
+"""
+Exercise the group manipulation interface. This test assumes 4 or more processes
+"""
+
+
+def test():
+    # access the package
+    import mpi
+    # grab the world communicator
+    world = mpi.world
+    # build a 4 process communicator out of world
+    whole = world.group()
+    # build a tuple of the even ranks
+    ranks = tuple(rank for rank in range(world.size) if (rank % 2 == 0))
+
+    # build two groups
+    odds = whole.exclude(ranks)
+    evens = whole.include(ranks)
+
+    # compute the union of the two
+    union = odds.union(evens)
+    # verify that the size is right
+    assert union.size == world.size
+
+    # compute the intersection of the two
+    intersection = odds.intersection(evens)
+    # verify the this is an empty group
+    assert intersection.isEmpty()
+
+    # compute the difference (world - odd)
+    difference = whole.difference(odds)
+    # verify it is the same size as evens
+    assert difference.size == evens.size
+
+    return
+
+
+# main
+if __name__ == "__main__":
+    test()
+
+
+# end of file 

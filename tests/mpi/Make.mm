@@ -26,7 +26,7 @@ package:
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./group.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_include.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_exclude.py
-
+	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_setops.py
 
 
 # end of file 
