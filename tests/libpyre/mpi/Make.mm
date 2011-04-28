@@ -26,8 +26,7 @@ LIBRARIES = $(EXTERNAL_LIBS)
 
 #--------------------------------------------------------------------------
 
-all: test
-
+all: test clean
 
 test: $(TESTS)
 	$(MPI_EXECUTIVE) -np 4 ./sanity

@@ -19,7 +19,7 @@ PROJ_LCXX_LIBPATH = $(BLD_LIBDIR)
 LIBRARIES = -lpyre-timers
 
 #--------------------------------------------------------------------------
-all: test
+all: test clean
 
 
 test: $(TESTS)

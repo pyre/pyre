@@ -16,8 +16,9 @@ PROJ_CLEAN += $(TESTS)
 TESTS = bcd
 
 #--------------------------------------------------------------------------
-all: test
-	bcd
+
+all: test clean
+
 
 test: $(TESTS)
 	./bcd
