@@ -16,6 +16,13 @@ namespace pyre {
     }
 }
 
+// This class maintains the map
+//
+//    (severity, channel) -> state
+//
+// Each {Chronicler} owns an {Index}. The index is primed at construction time with settings
+// from the environment variable {DEBUG_OPT}. Diagnostics access the index at construction time to
+// discover whether they are enabled, and therefore allowed to generate output
 
 // declaration
 class pyre::journal::Index {
@@ -29,7 +36,7 @@ public:
 
     // interface: place the public methods here
 public:
-    inline state_t & lookup(const string_t & channel, const string_t & name);
+    inline state_t & lookup(const string_t & severity, const string_t & channel);
 
     // meta methods: constructors, destructors
 public:

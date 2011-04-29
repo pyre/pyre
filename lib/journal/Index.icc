@@ -10,14 +10,14 @@
 # else
 
 
-// lookup the pair (channel,name) and return a reference to its state
+// lookup the pair (severity,channel) and return a reference to its state
 pyre::journal::Index::state_t &
 pyre::journal::Index::
 lookup(
-       const pyre::journal::Index::string_t & channel,
-       const pyre::journal::Index::string_t & name) 
+       const pyre::journal::Index::string_t & severity,
+       const pyre::journal::Index::string_t & channel) 
 {
-    return _index[key_t(channel, name)];
+    return _index[key_t(severity, channel)];
 }
 
 
