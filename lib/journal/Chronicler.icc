@@ -1,0 +1,65 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_Chronicler_icc)
+#error This header file contains implementation details of class Chronicler
+# else
+
+
+// interface
+// look up the state of a channel
+pyre::journal::Chronicler::state_t &
+pyre::journal::Chronicler::
+getChannelState(
+                const pyre::journal::Chronicler::string_t & severity,
+                const pyre::journal::Chronicler::string_t & channel
+                )
+{
+    return _channels.lookup(severity, channel);
+}
+
+
+// destructor
+pyre::journal::Chronicler::
+~Chronicler() {}
+
+
+// the default constructor
+pyre::journal::Chronicler::
+Chronicler() :
+    _channels()
+{
+    // read the magic environment variable
+    const char * var = std::getenv("DEBUG_OPT");
+    // if set
+    if (var) {
+        // convert it into a string
+        string_t setting(var);
+        // the channels are delimited by colons
+        string_t delimiter = ":";
+        // the severity setting for channels extracted from the user settings
+        string_t severity("debug");
+        // declare a couple of cursor to assist with the scanning
+        string_t::size_type last;
+        string_t::size_type first = setting.find_first_not_of(delimiter);
+        // scan away...
+        while (first != string_t::npos) {
+            // find the end of the current token
+            last = setting.find_first_of(delimiter, first);
+            // extract the channel name
+            string_t channel = setting.substr(first, last-first);
+            // and activate it
+            _channels.lookup(severity, channel) = true;
+            // position the scanner to the beginning of the next token
+            first = setting.find_first_not_of(delimiter, last);
+        }
+    }
+}
+
+
+# endif
+// end of file

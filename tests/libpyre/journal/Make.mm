@@ -16,7 +16,8 @@ PROJ_CLEAN += $(TESTS)
 TESTS = \
     sanity \
     index \
-    index-envvar \
+    chronicler \
+    chronicler-envvar \
     debug \
 
 LIBRARIES = $(EXTERNAL_LIBS)
@@ -28,7 +29,8 @@ all: test clean
 test: $(TESTS)
 	./sanity
 	./index
-	DEBUG_OPT=pyre.journal.test1:pyre.journal.test2 ./index-envvar
+	./chronicler
+	DEBUG_OPT=pyre.journal.test1:pyre.journal.test2 ./chronicler-envvar
 	./debug
 
 
@@ -38,7 +40,10 @@ sanity: sanity.cc
 index: index.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
-index-envvar: index-envvar.cc
+chronicler: chronicler.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+chronicler-envvar: chronicler-envvar.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 debug: debug.cc
