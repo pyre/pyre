@@ -10,6 +10,7 @@ PROJECT = pyre
 
 RECURSE_DIRS = \
     algebra \
+    journal \
     mpi \
     timers \
 

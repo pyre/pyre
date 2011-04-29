@@ -9,10 +9,11 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
+    journal \
     algebra \
-    mpi \
     patterns \
     timers \
+    mpi \
 
 #--------------------------------------------------------------------------
 #

@@ -1,0 +1,37 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_Index_icc)
+#error This header file contains implementation details of class Index
+# else
+
+
+// lookup the pair (channel,name) and return a reference to its state
+pyre::journal::Index::state_t &
+pyre::journal::Index::
+lookup(
+       const pyre::journal::Index::string_t & channel,
+       const pyre::journal::Index::string_t & name) 
+{
+    return _index[key_t(channel, name)];
+}
+
+
+// destructor
+pyre::journal::Index::
+~Index()
+{}
+
+
+// the default constructor
+pyre::journal::Index::
+Index() :
+    _index()
+{}
+
+# endif
+// end of file
