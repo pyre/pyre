@@ -12,31 +12,31 @@
 // place Index in namespace pyre::journal
 namespace pyre {
     namespace journal {
-        class Index;
+        template <typename> class Index;
     }
 }
 
 // This class maintains the map
 //
-//    (severity, channel) -> state
+//    (severity, channel) -> value
 //
-// Each {Chronicler} owns an {Index}. The index is primed at construction time with settings
-// from the environment variable {DEBUG_OPT}. Diagnostics access the index at construction time to
-// discover whether they are enabled, and therefore allowed to generate output
+// to enable the maintenance of per-channel information. For example, {Chronicler} owns an
+// {Index<bool>} to hold the activation state of output channels.
 
 // declaration
+template <typename Value>
 class pyre::journal::Index {
 
     // types
 public:
-    typedef bool state_t;
+    typedef Value value_t;
     typedef std::string string_t;
     typedef std::pair<string_t, string_t> key_t;
-    typedef std::map<key_t, state_t> index_t;
+    typedef std::map<key_t, value_t> index_t;
 
     // interface: place the public methods here
 public:
-    inline state_t & lookup(const string_t & severity, const string_t & channel);
+    inline value_t & lookup(const string_t & severity, const string_t & channel);
 
     // meta methods: constructors, destructors
 public:

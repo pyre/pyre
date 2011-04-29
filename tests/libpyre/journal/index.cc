@@ -20,7 +20,7 @@
 #include <pyre/journal/Index.h>
 
 // convenience
-typedef pyre::journal::Index index_t;
+typedef pyre::journal::Index<bool> index_t;
 
 // main program
 int main() {
@@ -29,7 +29,7 @@ int main() {
     index_t index;
 
     // request a key that is not there
-    index_t::state_t & state = index.lookup("debug", "test");
+    bool & state = index.lookup("debug", "test");
     // verify that this is off by default
     assert(state == false);
     // turn it on
