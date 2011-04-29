@@ -28,17 +28,13 @@ int main() {
     // instantiate an index
     index_t index;
 
-    // request a key that is not there
-    index_t::state_t & state = index.lookup("debug", "test");
-    // verify that this is off by default
-    assert(state == false);
-    // turn it on
-    state = true;
-
-    // ask for it again, this time read only
-    bool again = index.lookup("debug", "test");
-    // verify that it is now on
-    assert(again == true);
+    // request a couple of keys that are known to be present, as a result of the environment
+    // variable setting in the makefile invocation
+    index_t::state_t test1 = index.lookup("debug", "pyre.journal.test1");
+    index_t::state_t test2 = index.lookup("debug", "pyre.journal.test2");
+    // verify that they are activated
+    assert(test1 == true);
+    assert(test2 == true);
 
     // all done
     return 0;

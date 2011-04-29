@@ -31,7 +31,34 @@ pyre::journal::Index::
 pyre::journal::Index::
 Index() :
     _index()
-{}
+{
+    // read the magic environment variable
+    const char * var = std::getenv("DEBUG_OPT");
+    // if set
+    if (var) {
+        // convert it into a string
+        string_t setting(var);
+        // the channels are delimited by colons
+        string_t delimiter = ":";
+        // the severity setting for channels extracted from the user settings
+        string_t severity("debug");
+        // declare a couple of cursor to assist with the scanning
+        string_t::size_type last;
+        string_t::size_type first = setting.find_first_not_of(delimiter);
+        // scan away...
+        while (first != string_t::npos) {
+            // find the end of the current token
+            last = setting.find_first_of(delimiter, first);
+            // extract the channel name
+            string_t channel = setting.substr(first, last-first);
+            // and activate it
+            lookup(severity, channel) = true;
+            // position the scanner to the beginning of the next token
+            first = setting.find_first_not_of(delimiter, last);
+        }
+    }
+}
+
 
 # endif
 // end of file
