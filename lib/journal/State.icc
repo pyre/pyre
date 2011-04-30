@@ -77,8 +77,8 @@ State(State::state_t state, State::device_t * device) :
 template <bool Default>
 pyre::journal::State<Default>::
 State(const pyre::journal::State<Default> & other) :
-    _state(other.state),
-    _device(other.device)
+    _state(other._state),
+    _device(other._device)
 {}
 
 

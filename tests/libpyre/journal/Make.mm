@@ -17,6 +17,7 @@ TESTS = \
     sanity \
     state \
     index \
+    index-state \
     chronicler \
     chronicler-envvar \
     debug \
@@ -31,6 +32,7 @@ test: $(TESTS)
 	./sanity
 	./state
 	./index
+	./index-state
 	./chronicler
 	DEBUG_OPT=pyre.journal.test1:pyre.journal.test2 ./chronicler-envvar
 	./debug
@@ -43,6 +45,9 @@ state: state.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 index: index.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+index-state: index-state.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 chronicler: chronicler.cc
