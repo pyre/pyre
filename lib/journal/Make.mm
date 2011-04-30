@@ -28,6 +28,7 @@ EXPORT_HEADERS = \
     journal.h
 
 EXPORT_PKG_HEADERS = \
+    Channel.h Channel.icc \
     Chronicler.h Chronicler.icc \
     Index.h Index.icc \
     State.h State.icc \

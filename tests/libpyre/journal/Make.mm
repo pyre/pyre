@@ -20,6 +20,7 @@ TESTS = \
     index-state \
     chronicler \
     chronicler-envvar \
+    channel \
     debug \
 
 LIBRARIES = $(EXTERNAL_LIBS)
@@ -35,6 +36,7 @@ test: $(TESTS)
 	./index-state
 	./chronicler
 	DEBUG_OPT=pyre.journal.test1:pyre.journal.test2 ./chronicler-envvar
+	./channel
 	./debug
 
 
@@ -54,6 +56,9 @@ chronicler: chronicler.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 chronicler-envvar: chronicler-envvar.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+channel: channel.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 debug: debug.cc

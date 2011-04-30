@@ -1,0 +1,53 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_Channel_icc)
+#error This header file contains implementation details of class Channel
+#else
+
+
+// destructor
+template <bool DefaultState>
+pyre::journal::Channel<DefaultState>::
+~Channel()
+{}
+
+
+// the default constructor
+template <bool DefaultState>
+pyre::journal::Channel<DefaultState>::
+Channel(pyre::journal::Channel<DefaultState>::string_t name) :
+    _name(name)
+{}
+
+
+// the copy constructor
+template <bool DefaultState>
+pyre::journal::Channel<DefaultState>::
+Channel(const pyre::journal::Channel<DefaultState> & other) :
+    _name(other._name)
+{}
+
+
+// operator =
+template <bool DefaultState>
+const pyre::journal::Channel<DefaultState> &
+pyre::journal::Channel<DefaultState>::
+operator = (const pyre::journal::Channel<DefaultState> & other)
+{
+    // skip assignment to self
+    if (&other == this) { return *this; }
+    // otherwise, move the data
+    _name = other._name;
+    // and return me
+    return *this;
+}
+
+
+# endif
+
+// end of file
