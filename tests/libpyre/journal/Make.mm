@@ -15,6 +15,7 @@ PROJ_CLEAN += $(TESTS)
 
 TESTS = \
     sanity \
+    state \
     index \
     chronicler \
     chronicler-envvar \
@@ -28,6 +29,7 @@ all: test clean
 
 test: $(TESTS)
 	./sanity
+	./state
 	./index
 	./chronicler
 	DEBUG_OPT=pyre.journal.test1:pyre.journal.test2 ./chronicler-envvar
@@ -35,6 +37,9 @@ test: $(TESTS)
 
 
 sanity: sanity.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+state: state.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 index: index.cc

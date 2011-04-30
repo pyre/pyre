@@ -30,6 +30,7 @@ EXPORT_HEADERS = \
 EXPORT_PKG_HEADERS = \
     Chronicler.h Chronicler.icc \
     Index.h Index.icc \
+    State.h State.icc \
 
 
 # end of file 
