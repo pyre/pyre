@@ -22,6 +22,7 @@ template <bool DefaultState>
 class pyre::journal::Channel {
     // types
 public:
+    typedef std::string string_t;
     typedef Inventory<DefaultState> inventory_t;
     typedef typename inventory_t::state_t state_t;
     typedef typename inventory_t::device_t device_t;
@@ -40,12 +41,13 @@ public:
     // meta methods
 public:
     inline ~Channel();
-    inline Channel(inventory_t &);
+    inline Channel(string_t, inventory_t &);
     inline Channel(const Channel &);
     inline const Channel & operator=(const Channel &);
     
     // data members
 private:
+    string_t _name;
     inventory_t & _inventory;
 };
 

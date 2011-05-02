@@ -67,7 +67,10 @@ pyre::journal::Channel<DefaultState>::
 // the default constructor
 template <bool DefaultState>
 pyre::journal::Channel<DefaultState>::
-Channel(typename Channel::inventory_t & inventory) :
+Channel(
+        typename Channel<DefaultState>::string_t name,
+        typename Channel<DefaultState>::inventory_t & inventory) :
+    _name(name),
     _inventory(inventory)
 {}
 
@@ -76,6 +79,7 @@ Channel(typename Channel::inventory_t & inventory) :
 template <bool DefaultState>
 pyre::journal::Channel<DefaultState>::
 Channel(const pyre::journal::Channel<DefaultState> & other) :
+    _name(other._name),
     _inventory(other._inventory)
 {}
 
@@ -89,6 +93,7 @@ operator = (const pyre::journal::Channel<DefaultState> & other)
     // skip assignment to self
     if (&other != this) {
         // otherwise, copy the data
+        _name = other._name;
         _inventory = other._inventory;
     }
     // and return me

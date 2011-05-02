@@ -20,16 +20,14 @@ pyre::journal::Debug::
 // the default constructor
 pyre::journal::Debug::
 Debug(pyre::journal::Debug::string_t name) :
-    pyre::journal::Channel<false>(_index.lookup(name)),
-    _name(name)
+    pyre::journal::Channel<false>(name, _index.lookup(name))
 {}
 
 
 // the copy constructor
 pyre::journal::Debug::
 Debug(const pyre::journal::Debug & other) :
-    pyre::journal::Channel<false>(_index.lookup(other._name)),
-    _name(other._name)
+    pyre::journal::Channel<false>(other)
 {}
 
 
@@ -42,7 +40,6 @@ operator = (const pyre::journal::Debug & other)
     if (&other != this) {
         // otherwise, copy the data
         channel_t::operator=(other);
-        _name = other._name;
     }
     // and return me
     return *this;

@@ -11,6 +11,7 @@
 
 // packages
 #include <assert.h>
+#include <string>
 
 // access to the low level inventory header file
 #include <pyre/journal/Inventory.h>
@@ -30,8 +31,8 @@ int main() {
     true_t on;
     false_t off;
     // and wrap channels over them
-    trueref_t on_ref(on);
-    falseref_t off_ref(off);
+    trueref_t on_ref("true", on);
+    falseref_t off_ref("true", off);
 
     // check their default settings
     assert(on_ref.isActive() == true);

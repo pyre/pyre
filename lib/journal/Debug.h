@@ -38,9 +38,7 @@ public:
     
     // data members
 private:
-    string_t _name;
-
-    // per-class
+    // per class
     static index_t _index;
 };
 
