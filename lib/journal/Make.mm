@@ -29,9 +29,9 @@ EXPORT_HEADERS = \
     journal.h
 
 EXPORT_PKG_HEADERS = \
-    Debug.h Debug.icc \
     Channel.h Channel.icc \
     Chronicler.h Chronicler.icc \
+    Debug.h Debug.icc \
     Index.h Index.icc \
     Inventory.h Inventory.icc \
 

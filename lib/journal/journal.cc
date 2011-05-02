@@ -17,6 +17,7 @@
 // local types header
 #include "Inventory.h"
 #include "Index.h"
+#include "Channel.h"
 #include "Debug.h"
 
 

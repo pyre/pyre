@@ -11,23 +11,39 @@
 
 // packages
 #include <assert.h>
-#include <map>
-#include <string>
-#include <cstdlib>
 
-// access to the low level state header file
+// access to the low level inventory header file
 #include <pyre/journal/Inventory.h>
-#include <pyre/journal/Index.h>
 #include <pyre/journal/Channel.h>
 
 // convenience
-// channel
-typedef pyre::journal::Channel<false> channel_t;
+typedef pyre::journal::Inventory<true> true_t;
+typedef pyre::journal::Inventory<false> false_t;
+
+typedef pyre::journal::Channel<true> trueref_t;
+typedef pyre::journal::Channel<false> falseref_t;
 
 // main program
 int main() {
-    //
-    channel_t debug("pyre.journal.test");
+
+    // instantiate a couple of inventories
+    true_t on;
+    false_t off;
+    // and wrap channels over them
+    trueref_t on_ref(on);
+    falseref_t off_ref(off);
+
+    // check their default settings
+    assert(on_ref.isActive() == true);
+    assert(off_ref.isActive() == false);
+
+    // flip them
+    on_ref.deactivate();
+    off_ref.activate();
+
+    // check again
+    assert(on_ref.isActive() == false);
+    assert(off_ref.isActive() == true);
 
     // all done
     return 0;

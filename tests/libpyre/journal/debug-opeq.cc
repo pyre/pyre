@@ -27,8 +27,11 @@ int main() {
     // and check
     assert(debug.isActive() == true);
 
-    // now, instantiate again using the same channel name
-    pyre::journal::debug_t again("pyre.journal.test");
+    // now, build another instance through operator=
+    pyre::journal::debug_t again("junk");
+    // why would you ever do this???
+    again = debug;
+
     // check that it is active
     assert(again.isActive() == true);
 

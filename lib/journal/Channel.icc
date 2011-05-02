@@ -10,6 +10,53 @@
 #else
 
 
+// accessors
+template <bool DefaultState>
+typename pyre::journal::Channel<DefaultState>::state_t
+pyre::journal::Channel<DefaultState>::
+isActive() const
+{
+    return _inventory.state();
+}
+
+
+template <bool DefaultState>
+const typename pyre::journal::Channel<DefaultState>::device_t &
+pyre::journal::Channel<DefaultState>::
+device() const
+{
+    return _inventory.device();
+}
+
+
+// mutators
+template <bool DefaultState>
+void
+pyre::journal::Channel<DefaultState>::
+activate()
+{
+    _inventory.activate();
+}
+
+
+template <bool DefaultState>
+void
+pyre::journal::Channel<DefaultState>::
+deactivate()
+{
+    _inventory.deactivate();
+}
+
+
+template <bool DefaultState>
+void
+pyre::journal::Channel<DefaultState>::
+device(typename Channel::device_t * device)
+{
+    _inventory.device(device);
+}
+
+
 // destructor
 template <bool DefaultState>
 pyre::journal::Channel<DefaultState>::
@@ -20,8 +67,8 @@ pyre::journal::Channel<DefaultState>::
 // the default constructor
 template <bool DefaultState>
 pyre::journal::Channel<DefaultState>::
-Channel(pyre::journal::Channel<DefaultState>::string_t name) :
-    _name(name)
+Channel(typename Channel::inventory_t & inventory) :
+    _inventory(inventory)
 {}
 
 
@@ -29,7 +76,7 @@ Channel(pyre::journal::Channel<DefaultState>::string_t name) :
 template <bool DefaultState>
 pyre::journal::Channel<DefaultState>::
 Channel(const pyre::journal::Channel<DefaultState> & other) :
-    _name(other._name)
+    _inventory(other._inventory)
 {}
 
 
@@ -40,9 +87,10 @@ pyre::journal::Channel<DefaultState>::
 operator = (const pyre::journal::Channel<DefaultState> & other)
 {
     // skip assignment to self
-    if (&other == this) { return *this; }
-    // otherwise, move the data
-    _name = other._name;
+    if (&other != this) {
+        // otherwise, copy the data
+        _inventory = other._inventory;
+    }
     // and return me
     return *this;
 }

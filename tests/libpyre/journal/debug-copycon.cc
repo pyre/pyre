@@ -27,8 +27,8 @@ int main() {
     // and check
     assert(debug.isActive() == true);
 
-    // now, instantiate again using the same channel name
-    pyre::journal::debug_t again("pyre.journal.test");
+    // build one using the copy constructor
+    pyre::journal::debug_t again = debug;
     // check that it is active
     assert(again.isActive() == true);
 

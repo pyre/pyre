@@ -16,15 +16,14 @@ namespace pyre {
     }
 }
 
-// imported types and other includes
-
 
 // declaration
-class pyre::journal::Debug {
+class pyre::journal::Debug : public pyre::journal::Channel<false> {
     // types
 public:
     typedef std::string string_t;
-    typedef Inventory<false> inventory_t;
+    typedef Channel<false> channel_t;
+    typedef channel_t::inventory_t inventory_t;
     typedef Index<inventory_t> index_t;
 
     // interface

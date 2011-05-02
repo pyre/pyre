@@ -6,44 +6,47 @@
 // 
 
 // code guard
-#if !defined(pyre_journal_Channel_h)
-#define pyre_journal_Channel_h
+#if !defined(pyre_journal_Channel)
+#define pyre_journal_Channel
 
-// place Channel in namespace pyre::journal
+// place Inventory in namespace pyre::journal
 namespace pyre {
-     namespace journal {
-         template <bool> class Channel;
-         template <typename> class Index;
-     }
+    namespace journal {
+        template <bool> class Channel;
+    }
 }
 
 
 // declaration
 template <bool DefaultState>
 class pyre::journal::Channel {
-    // types: place typedefs here
+    // types
 public:
-    typedef std::string string_t;
     typedef Inventory<DefaultState> inventory_t;
-    typedef Index<inventory_t> index_t;
+    typedef typename inventory_t::state_t state_t;
+    typedef typename inventory_t::device_t device_t;
 
-    // interface: place the public methods here
+    // interface
 public:
+    // accessors
+    inline state_t isActive() const;
+    inline const device_t & device() const;
 
-    // meta methods: constructors, destructors
+    // mutators
+    inline void activate();
+    inline void deactivate();
+    inline void device(device_t *);
+
+    // meta methods
 public:
     inline ~Channel();
-    inline Channel(string_t);
+    inline Channel(inventory_t &);
     inline Channel(const Channel &);
     inline const Channel & operator=(const Channel &);
     
     // data members
 private:
-    // per-instance
-    string_t _name;
-
-    // per-class
-    static index_t _index;
+    inventory_t & _inventory;
 };
 
 
