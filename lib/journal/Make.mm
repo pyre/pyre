@@ -14,6 +14,7 @@ PROJ_SAR = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SAR)
 PROJ_DLL = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SO)
 
 PROJ_SRCS = \
+    journal.cc \
 
 
 #--------------------------------------------------------------------------
@@ -28,10 +29,11 @@ EXPORT_HEADERS = \
     journal.h
 
 EXPORT_PKG_HEADERS = \
+    Debug.h Debug.icc \
     Channel.h Channel.icc \
     Chronicler.h Chronicler.icc \
     Index.h Index.icc \
-    State.h State.icc \
+    Inventory.h Inventory.icc \
 
 
 # end of file 

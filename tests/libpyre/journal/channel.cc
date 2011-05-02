@@ -16,7 +16,7 @@
 #include <cstdlib>
 
 // access to the low level state header file
-#include <pyre/journal/State.h>
+#include <pyre/journal/Inventory.h>
 #include <pyre/journal/Index.h>
 #include <pyre/journal/Channel.h>
 

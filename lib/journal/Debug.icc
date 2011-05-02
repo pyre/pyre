@@ -1,0 +1,51 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_Debug_icc)
+#error This header file contains implementation details of class Debug
+#else
+
+
+// meta methods
+// destructor
+pyre::journal::Debug::
+~Debug()
+{}
+
+
+// the default constructor
+pyre::journal::Debug::
+Debug(pyre::journal::Debug::string_t name) :
+    _name(name)
+{}
+
+
+// the copy constructor
+pyre::journal::Debug::
+Debug(const pyre::journal::Debug & other) :
+    _name(other._name)
+{}
+
+
+// operator =
+const pyre::journal::Debug &
+pyre::journal::Debug::
+operator = (const pyre::journal::Debug & other)
+{
+    // skip assignment to self
+    if (&other != this) {
+        // otherwise, copy the data
+        _name = other._name;
+    }
+    // and return me
+    return *this;
+}
+
+
+# endif
+
+// end of file

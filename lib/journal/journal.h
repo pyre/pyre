@@ -18,12 +18,18 @@
 #else
 
 // external packages
+#include <map>
+#include <string>
 
 // local declarations
+#include "journal/Inventory.h"
+#include "journal/Index.h"
+#include "journal/Debug.h"
 
 // typedefs for convenience
 namespace pyre {
     namespace journal {
+        typedef Debug debug_t;
     }
 }
 

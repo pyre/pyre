@@ -27,13 +27,9 @@ namespace pyre {
 class pyre::journal::Chronicler {
     // types
 public:
-    typedef Index<bool> index_t;
-    typedef typename index_t::value_t state_t;
-    typedef typename index_t::string_t string_t;
 
     // interface
 public:
-    inline state_t & getChannelState(const string_t & severity, const string_t & channel);
 
     // meta methods
 public:
@@ -46,7 +42,6 @@ private:
     
     // data members
 private:
-    index_t _channels;
 };
 
 

@@ -12,22 +12,18 @@
 // packages
 #include <assert.h>
 // access to the packages used by Chronicler
-#include <map>
-#include <string>
-#include <cstdlib>
+// access to the journal header file
+#include <pyre/journal.h>
 
-// access to the low level header files
-#include <pyre/journal/Index.h>
-#include <pyre/journal/Chronicler.h>
-
-// convenience
-typedef pyre::journal::Chronicler chronicler_t;
 
 // main program
 int main() {
 
-    // instantiate a chronicler
-    chronicler_t chronicler;
+    // instantiate a debug channel that is supposed to be on due to the value of the DEBUG_OPT
+    // environment variable
+    pyre::journal::debug_t debug("pyre.journal.test");
+    // verify that it is on
+    // assert(debug.isActive() == true);
 
     // all done
     return 0;

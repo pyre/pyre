@@ -29,14 +29,14 @@ int main() {
     index_t index;
 
     // request a key that is not there
-    bool & state = index.lookup("debug", "test");
+    bool & state = index.lookup("test");
     // verify that this is off by default
     assert(state == false);
     // turn it on
     state = true;
 
     // ask for it again, this time read only
-    bool again = index.lookup("debug", "test");
+    bool again = index.lookup("test");
     // verify that it is now on
     assert(again == true);
 

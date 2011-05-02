@@ -6,21 +6,21 @@
 // 
 
 // code guard
-#if !defined(pyre_journal_State_h)
-#define pyre_journal_State_h
+#if !defined(pyre_journal_Inventory)
+#define pyre_journal_Inventory
 
-// place State in namespace pyre::journal
+// place Inventory in namespace pyre::journal
 namespace pyre {
     namespace journal {
-        template <bool = true> class State;
+        template <bool = true> class Inventory;
         class Device;
     }
 }
 
 
 // declaration
-template <bool Default>
-class pyre::journal::State {
+template <bool DefaultState>
+class pyre::journal::Inventory {
     // types
 public:
     typedef bool state_t;
@@ -39,10 +39,10 @@ public:
 
     // meta methods
 public:
-    inline ~State();
-    inline State(state_t = Default, device_t * = 0);
-    inline State(const State &);
-    inline const State & operator=(const State &);
+    inline ~Inventory();
+    inline Inventory(state_t = DefaultState, device_t * = 0);
+    inline Inventory(const Inventory &);
+    inline const Inventory & operator=(const Inventory &);
     
     // data members
 private:
@@ -52,9 +52,9 @@ private:
 
 
 // get the inline definitions
-#define pyre_journal_State_icc
-#include "State.icc"
-#undef pyre_journal_State_icc
+#define pyre_journal_Inventory_icc
+#include "Inventory.icc"
+#undef pyre_journal_Inventory_icc
 
 
 # endif

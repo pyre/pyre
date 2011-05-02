@@ -9,11 +9,16 @@
 // for the build system
 #include <portinfo>
 
+// packages
+#include <assert.h>
 // access to the journal header file
 #include <pyre/journal.h>
 
 // main program
 int main() {
+
+    // instantiate a debug channel
+    pyre::journal::debug_t debug("pyre.journal.test");
 
     // all done
     return 0;

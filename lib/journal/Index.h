@@ -18,10 +18,10 @@ namespace pyre {
 
 // This class maintains the map
 //
-//    (severity, channel) -> value
+//    channel name -> channel inventory
 //
-// to enable the maintenance of per-channel information. For example, {Chronicler} owns an
-// {Index<bool>} to hold the activation state of output channels.
+// to enable the maintenance of per-channel information. Each concrete subclass of {Diagnostic}
+// maintains an {Index<Inventory<bool>>} to hold the activation state its output channels.
 
 // declaration
 template <typename Value>
@@ -31,21 +31,19 @@ class pyre::journal::Index {
 public:
     typedef Value value_t;
     typedef std::string string_t;
-    typedef std::pair<string_t, string_t> key_t;
+    typedef string_t key_t;
     typedef std::map<key_t, value_t> index_t;
 
     // interface: place the public methods here
 public:
-    inline value_t & lookup(const string_t & severity, const string_t & channel);
+    inline value_t & lookup(const string_t & channel);
 
     // meta methods: constructors, destructors
 public:
     inline ~Index();
     inline Index();
-    // disable
-private:
     inline Index(const Index &);
-    inline const Index & operator=(const Index &);
+    inline Index & operator=(const Index &);
     
     // data members
 private:

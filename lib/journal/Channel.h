@@ -24,8 +24,8 @@ class pyre::journal::Channel {
     // types: place typedefs here
 public:
     typedef std::string string_t;
-    typedef State<DefaultState> state_t;
-    typedef Index<state_t> index_t;
+    typedef Inventory<DefaultState> inventory_t;
+    typedef Index<inventory_t> index_t;
 
     // interface: place the public methods here
 public:

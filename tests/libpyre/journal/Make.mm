@@ -15,13 +15,13 @@ PROJ_CLEAN += $(TESTS)
 
 TESTS = \
     sanity \
-    state \
+    inventory \
     index \
-    index-state \
+    index-inventory \
     chronicler \
-    chronicler-envvar \
     channel \
     debug \
+    debug-envvar \
 
 LIBRARIES = $(EXTERNAL_LIBS)
 
@@ -31,37 +31,37 @@ all: test clean
 
 test: $(TESTS)
 	./sanity
-	./state
+	./inventory
 	./index
-	./index-state
+	./index-inventory
 	./chronicler
-	DEBUG_OPT=pyre.journal.test1:pyre.journal.test2 ./chronicler-envvar
 	./channel
 	./debug
+	DEBUG_OPT=pyre.journal.test ./debug-envvar
 
 
 sanity: sanity.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
-state: state.cc
+inventory: inventory.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 index: index.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
-index-state: index-state.cc
+index-inventory: index-inventory.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 chronicler: chronicler.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
-
-chronicler-envvar: chronicler-envvar.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 channel: channel.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 debug: debug.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+debug-envvar: debug-envvar.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 

@@ -12,17 +12,17 @@
 // packages
 #include <assert.h>
 
-// access to the low level state header file
-#include <pyre/journal/State.h>
+// access to the low level inventory header file
+#include <pyre/journal/Inventory.h>
 
 // convenience
-typedef pyre::journal::State<true> true_t;
-typedef pyre::journal::State<false> false_t;
+typedef pyre::journal::Inventory<true> true_t;
+typedef pyre::journal::Inventory<false> false_t;
 
 // main program
 int main() {
 
-    // instantiate a couple of states
+    // instantiate a couple of inventories
     true_t on;
     false_t off;
 
