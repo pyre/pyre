@@ -20,14 +20,14 @@ pyre::journal::Debug::
 // the default constructor
 pyre::journal::Debug::
 Debug(pyre::journal::Debug::string_t name) :
-    pyre::journal::Channel<false>(name, _index.lookup(name))
+    pyre::journal::Channel<pyre::journal::Debug, false>(name)
 {}
 
 
 // the copy constructor
 pyre::journal::Debug::
 Debug(const pyre::journal::Debug & other) :
-    pyre::journal::Channel<false>(other)
+    pyre::journal::Channel<pyre::journal::Debug, false>(other)
 {}
 
 

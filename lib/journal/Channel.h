@@ -12,13 +12,13 @@
 // place Inventory in namespace pyre::journal
 namespace pyre {
     namespace journal {
-        template <bool> class Channel;
+        template <typename, bool> class Channel;
     }
 }
 
 
 // declaration
-template <bool DefaultState>
+template <typename Severity, bool DefaultState=true>
 class pyre::journal::Channel {
     // types
 public:
@@ -26,6 +26,7 @@ public:
     typedef Inventory<DefaultState> inventory_t;
     typedef typename inventory_t::state_t state_t;
     typedef typename inventory_t::device_t device_t;
+    typedef Index<inventory_t> index_t;
 
     // interface
 public:
@@ -41,7 +42,7 @@ public:
     // meta methods
 public:
     inline ~Channel();
-    inline Channel(string_t, inventory_t &);
+    inline Channel(string_t);
     inline Channel(const Channel &);
     inline const Channel & operator=(const Channel &);
     
@@ -49,6 +50,8 @@ public:
 private:
     string_t _name;
     inventory_t & _inventory;
+    // per class
+    static index_t _index;
 };
 
 

@@ -18,11 +18,11 @@ namespace pyre {
 
 
 // declaration
-class pyre::journal::Debug : public pyre::journal::Channel<false> {
+class pyre::journal::Debug : public pyre::journal::Channel<Debug, false> {
     // types
 public:
     typedef std::string string_t;
-    typedef Channel<false> channel_t;
+    typedef Channel<Debug, false> channel_t;
     typedef channel_t::inventory_t inventory_t;
     typedef Index<inventory_t> index_t;
 
@@ -35,11 +35,6 @@ public:
     inline Debug(string_t name);
     inline Debug(const Debug &);
     inline const Debug & operator=(const Debug &);
-    
-    // data members
-private:
-    // per class
-    static index_t _index;
 };
 
 

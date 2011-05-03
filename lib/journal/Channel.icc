@@ -11,18 +11,18 @@
 
 
 // accessors
-template <bool DefaultState>
-typename pyre::journal::Channel<DefaultState>::state_t
-pyre::journal::Channel<DefaultState>::
+template <typename Severity, bool DefaultState>
+typename pyre::journal::Channel<Severity, DefaultState>::state_t
+pyre::journal::Channel<Severity, DefaultState>::
 isActive() const
 {
     return _inventory.state();
 }
 
 
-template <bool DefaultState>
-const typename pyre::journal::Channel<DefaultState>::device_t &
-pyre::journal::Channel<DefaultState>::
+template <typename Severity, bool DefaultState>
+const typename pyre::journal::Channel<Severity, DefaultState>::device_t &
+pyre::journal::Channel<Severity, DefaultState>::
 device() const
 {
     return _inventory.device();
@@ -30,27 +30,27 @@ device() const
 
 
 // mutators
-template <bool DefaultState>
+template <typename Severity, bool DefaultState>
 void
-pyre::journal::Channel<DefaultState>::
+pyre::journal::Channel<Severity, DefaultState>::
 activate()
 {
     _inventory.activate();
 }
 
 
-template <bool DefaultState>
+template <typename Severity, bool DefaultState>
 void
-pyre::journal::Channel<DefaultState>::
+pyre::journal::Channel<Severity, DefaultState>::
 deactivate()
 {
     _inventory.deactivate();
 }
 
 
-template <bool DefaultState>
+template <typename Severity, bool DefaultState>
 void
-pyre::journal::Channel<DefaultState>::
+pyre::journal::Channel<Severity, DefaultState>::
 device(typename Channel::device_t * device)
 {
     _inventory.device(device);
@@ -58,37 +58,35 @@ device(typename Channel::device_t * device)
 
 
 // destructor
-template <bool DefaultState>
-pyre::journal::Channel<DefaultState>::
+template <typename Severity, bool DefaultState>
+pyre::journal::Channel<Severity, DefaultState>::
 ~Channel()
 {}
 
 
 // the default constructor
-template <bool DefaultState>
-pyre::journal::Channel<DefaultState>::
-Channel(
-        typename Channel<DefaultState>::string_t name,
-        typename Channel<DefaultState>::inventory_t & inventory) :
+template <typename Severity, bool DefaultState>
+pyre::journal::Channel<Severity, DefaultState>::
+Channel(typename Channel<Severity, DefaultState>::string_t name) :
     _name(name),
-    _inventory(inventory)
+    _inventory(_index.lookup(name))
 {}
 
 
 // the copy constructor
-template <bool DefaultState>
-pyre::journal::Channel<DefaultState>::
-Channel(const pyre::journal::Channel<DefaultState> & other) :
+template <typename Severity, bool DefaultState>
+pyre::journal::Channel<Severity, DefaultState>::
+Channel(const pyre::journal::Channel<Severity, DefaultState> & other) :
     _name(other._name),
     _inventory(other._inventory)
 {}
 
 
 // operator =
-template <bool DefaultState>
-const pyre::journal::Channel<DefaultState> &
-pyre::journal::Channel<DefaultState>::
-operator = (const pyre::journal::Channel<DefaultState> & other)
+template <typename Severity, bool DefaultState>
+const pyre::journal::Channel<Severity, DefaultState> &
+pyre::journal::Channel<Severity, DefaultState>::
+operator = (const pyre::journal::Channel<Severity, DefaultState> & other)
 {
     // skip assignment to self
     if (&other != this) {

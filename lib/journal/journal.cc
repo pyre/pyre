@@ -61,8 +61,10 @@ static debugindex_t initializeDebugIndex()
 }
 
 
-// the indices
-debugindex_t debug_t::_index = initializeDebugIndex();
+// specializations that serve as definitions of the indices
+template <>
+debugindex_t 
+debug_t::channel_t::_index = initializeDebugIndex();
 
 
 // end of file
