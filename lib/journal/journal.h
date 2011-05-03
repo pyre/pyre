@@ -25,6 +25,7 @@
 #include "journal/Inventory.h"
 #include "journal/Index.h"
 #include "journal/Channel.h"
+#include "journal/Diagnostic.h"
 #include "journal/Debug.h"
 
 // typedefs for convenience

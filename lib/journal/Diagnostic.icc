@@ -1,0 +1,61 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_Diagnostic_icc)
+#error This header file contains implementation details of class Diagnostic
+#else
+
+
+// interface
+template <typename Severity>
+void
+pyre::journal::Diagnostic<Severity>::
+record()
+{
+    bool state = static_cast<Severity *>(this)->isActive();
+}
+
+
+// the destructor
+template <typename Severity>
+pyre::journal::Diagnostic<Severity>::
+~Diagnostic()
+{}
+
+
+// the default constructor
+template <typename Severity>
+pyre::journal::Diagnostic<Severity>::
+Diagnostic()
+{}
+
+
+// the copy constructor
+template <typename Severity>
+pyre::journal::Diagnostic<Severity>::
+Diagnostic(const pyre::journal::Diagnostic<Severity> & other)
+{}
+
+
+// operator =
+template <typename Severity>
+const pyre::journal::Diagnostic<Severity> &
+pyre::journal::Diagnostic<Severity>::
+operator = (const pyre::journal::Diagnostic<Severity> & other)
+{
+    // skip assignment to self
+    if (&other != this) {
+        // otherwise, copy the data
+    }
+    // and return me
+    return *this;
+}
+
+
+# endif
+
+// end of file

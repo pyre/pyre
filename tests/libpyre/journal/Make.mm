@@ -16,6 +16,7 @@ PROJ_CLEAN += $(TESTS)
 TESTS = \
     sanity \
     inventory \
+    diagnostic \
     channel \
     index \
     index-inventory \
@@ -35,6 +36,7 @@ all: test clean
 test: $(TESTS)
 	./sanity
 	./inventory
+	./diagnostic
 	./channel
 	./index
 	./index-inventory
@@ -49,6 +51,9 @@ sanity: sanity.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 inventory: inventory.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+diagnostic: diagnostic.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 channel: channel.cc

@@ -32,6 +32,7 @@ EXPORT_PKG_HEADERS = \
     Channel.h Channel.icc \
     Chronicler.h Chronicler.icc \
     Debug.h Debug.icc \
+    Diagnostic.h Diagnostic.icc \
     Index.h Index.icc \
     Inventory.h Inventory.icc \
 
