@@ -23,8 +23,6 @@ class pyre::journal::Debug : public pyre::journal::Channel<Debug, false> {
 public:
     typedef std::string string_t;
     typedef Channel<Debug, false> channel_t;
-    typedef channel_t::inventory_t inventory_t;
-    typedef Index<inventory_t> index_t;
 
     // interface
 public:
