@@ -18,8 +18,7 @@ namespace pyre {
     }
 }
 
-// the injection operators: leave these in the global namespace
-// injection of manipulators with one argument
+// the injection operator: leave this in the global namespace
 template <typename Channel, typename arg1_t>
 Channel &
 operator<< (
