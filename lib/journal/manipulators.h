@@ -11,68 +11,94 @@
 #define pyre_journal_manipulators_h
 
 
-// manipulators with zero arguments
+// declaration of the injection operators; place these in global scope
+// injection by function
+template <typename Channel>
+inline
+pyre::journal::Diagnostic<Channel> &
+operator << (
+             pyre::journal::Diagnostic<Channel> &,
+             pyre::journal::Diagnostic<Channel> &
+             (*)(pyre::journal::Diagnostic<Channel> &));
+
+// injection by manipulator
+template <typename Channel, typename Manipulator>
+inline
+pyre::journal::Diagnostic<Channel> &
+operator << (pyre::journal::Diagnostic<Channel> &, Manipulator);
+
+
+// forward declarations
 namespace pyre {
     namespace journal {
-        
-        // definition of the injection operator with arity zero manipulators
-        template <typename Diagnostic>
-        inline
-        Diagnostic &
-        operator << (
-                     Diagnostic & diagnostic,
-                     Diagnostic & (*manipulator)(Diagnostic &)
-                     ) {
-            return manipulator(diagnostic);
-        }
 
+        // manipulators with zero arguments
         // end of insertion
-        template <typename Diagnostic>
+        template <typename Channel>
         inline
-        Diagnostic &
-        endl(Diagnostic & diagnostic) {
-            std::cout << "    endl" << std::endl;
-            return diagnostic;
-        }
+        Channel & endl(Channel &);
+
+        // new line
+        template <typename Channel> 
+        inline
+        Channel & newline(Channel &);
+
+        // manipulators with more arguments
+        class at;
+        class set;
     }
 }
 
-
-// manipulators with one, two and three arguments
-namespace pyre {
-    namespace journal {
-
-        template <typename Severity, typename arg1_t> class manipulator_1;
-        template <typename Severity, typename arg1_t, typename arg2_t> class manipulator_2;
-        template <typename Severity, typename arg1_t, typename arg2_t, typename arg3_t> 
-            class manipulator_3;
-
-    }
-}
-
-// the injection operators: leave these in the global namespace
-// injection of manipulators with one argument
-template <typename Severity, typename arg1_t>
-pyre::journal::Diagnostic<Severity> &
-operator<< (
-            pyre::journal::Diagnostic<Severity> &,
-            pyre::journal::manipulator_1<Severity, arg1_t>
-            );
-
-// definition of one argument manipulators
-template <typename Severity, typename arg1_t>
-class pyre::journal::manipulator_1 {
-    // types
+// definitions
+// location
+class pyre::journal::at {
+    // interface
 public:
-    typedef Diagnostic<Severity> diagnostic_t;
+    template <typename Channel>
+    inline
+    Diagnostic<Channel> & 
+    inject(Diagnostic<Channel> & channel) const;
 
-    // declare the injection operator as a friend
-    friend
-    diagnostic_t &
-    ::operator<< <> (diagnostic_t &, manipulator_1<Severity, arg1_t>);
+    // meta methods
+public:
+    at(const char *, int, const char * = 0);
 
+    // data
+public:
+    const char * const _file;
+    const int _line;
+    const char * const _function;
 };
 
-#endif // pyre_journal_manipulators_h
+
+// attributes
+class pyre::journal::set {
+    // types
+public:
+    typedef std::string string_t;
+    // interface
+public:
+    template <typename Channel>
+    inline
+    Diagnostic<Channel> & 
+    inject(Diagnostic<Channel> & channel) const;
+
+    // meta methods
+public:
+    set(string_t, string_t);
+
+    // data
+public:
+    const string_t _key;
+    const string_t _value;
+};
+
+
+// get the inline definitions
+#define pyre_journal_manipulators_icc
+#include "manipulators.icc"
+#undef pyre_journal_manipulators_icc
+
+#endif // pyre_journal_manipulators_0_h
 
 // end of file

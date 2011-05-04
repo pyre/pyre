@@ -14,7 +14,7 @@
 #include <string>
 #include <cstdlib>
 
-// local types header
+// local types
 #include "Inventory.h"
 #include "Index.h"
 #include "Channel.h"

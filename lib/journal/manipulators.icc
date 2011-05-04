@@ -1,0 +1,96 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_manipulators_icc)
+#error This header file contains implementation details of arity 0 manipulators
+#else
+
+
+// injection operator for functions
+template <typename Channel>
+inline
+pyre::journal::Diagnostic<Channel> &
+operator << (
+             pyre::journal::Diagnostic<Channel> & channel,
+             pyre::journal::Diagnostic<Channel> & 
+             (*manipulator)(pyre::journal::Diagnostic<Channel> &))
+{
+    return manipulator(channel);
+}
+
+// injection operator for manipulators
+template <typename Channel, typename Manipulator>
+pyre::journal::Diagnostic<Channel> &
+operator<< (pyre::journal::Diagnostic<Channel> & channel, Manipulator manipulator) {
+    return manipulator.inject(channel);
+}
+
+
+// end of insertion
+template <typename Channel>
+inline
+Channel &
+pyre::journal::endl(Channel & channel) {
+    return channel.record();
+}
+
+
+// new line
+template <typename Channel>
+inline
+Channel &
+pyre::journal::newline(Channel & channel) {
+    return channel.newline();
+}
+
+// implementation of the {at} manipulator
+template <typename Channel>
+inline
+pyre::journal::Diagnostic<Channel> &
+pyre::journal::at::
+inject(pyre::journal::Diagnostic<Channel> & channel) const
+{
+    // convert the line number into a string
+    std::stringstream tmp;
+    tmp << _line;
+    // decorate
+    channel.setattr("file", _file);
+    channel.setattr("line", tmp.str());
+    channel.setattr("function", _function);
+    // and return the channel
+    return channel;
+}
+
+inline
+pyre::journal::at::
+at(const char * file, int line, const char * function) :
+    _file(file),
+    _line(line),
+    _function(function)
+{}
+
+
+// implementation of the {set} manipulator
+template <typename Channel>
+inline
+pyre::journal::Diagnostic<Channel> &
+pyre::journal::set::
+inject(pyre::journal::Diagnostic<Channel> & channel) const
+{
+    return channel.setattr(_key, _value);
+}
+
+inline
+pyre::journal::set::
+set(pyre::journal::set::string_t key, pyre::journal::set::string_t value) :
+    _key(key),
+    _value(value)
+{}
+
+# endif
+
+// end of file

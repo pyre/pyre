@@ -20,18 +20,19 @@
 // external packages
 #include <map>
 #include <string>
+#include <sstream>
 
 // local declarations
+// infrastructure
 #include "journal/macros.h"
 #include "journal/Inventory.h"
 #include "journal/Index.h"
 #include "journal/Channel.h"
 #include "journal/Diagnostic.h"
+// the predefined diagnostics
 #include "journal/Debug.h"
-
-#include "journal/manipulators-0.h"
-#include "journal/manipulators-1.h"
-#include "journal/manipulators-3.h"
+// manipulators
+#include "journal/manipulators.h"
 
 // typedefs for convenience
 namespace pyre {

@@ -24,13 +24,14 @@ template <typename Severity>
 class pyre::journal::Diagnostic {
     // types: place typedefs here
 public:
-    typedef int member_t;
     typedef Severity severity_t;
+    typedef std::string string_t;
 
     // interface
 public:
     Diagnostic & record();
     Diagnostic & newline();
+    Diagnostic & setattr(string_t, string_t);
     Diagnostic & print(const char *);
 
     // meta methods

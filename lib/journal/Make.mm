@@ -30,9 +30,7 @@ EXPORT_HEADERS = \
 
 EXPORT_PKG_HEADERS = \
     macros.h \
-    manipulators-0.h manipulators-0.icc \
-    manipulators-1.h manipulators-1.icc \
-    manipulators-3.h manipulators-3.icc \
+    manipulators.h manipulators.icc \
     Channel.h Channel.icc \
     Chronicler.h Chronicler.icc \
     Debug.h Debug.icc \
