@@ -17,8 +17,10 @@
 
 // access to the low level diagnostic header file
 #include <pyre/journal/Diagnostic.h>
+#include <pyre/journal/macros.h>
 #include <pyre/journal/manipulators-0.h>
 #include <pyre/journal/manipulators-1.h>
+#include <pyre/journal/manipulators-3.h>
 
 
 // a simple channel class

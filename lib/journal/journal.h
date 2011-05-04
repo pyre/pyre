@@ -31,6 +31,7 @@
 
 #include "journal/manipulators-0.h"
 #include "journal/manipulators-1.h"
+#include "journal/manipulators-3.h"
 
 // typedefs for convenience
 namespace pyre {
