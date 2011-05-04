@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <map>
 #include <string>
+#include <iostream>
 
 // access to the low level diagnostic header file
 #include <pyre/journal/Diagnostic.h>
@@ -30,8 +31,6 @@ int main() {
 
     // instantiate
     diagnostic_t d;
-    // invoke a member of Diagnostic that delegates to a member of Debug
-    d.record();
 
     // all done
     return 0;

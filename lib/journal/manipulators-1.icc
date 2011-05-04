@@ -1,0 +1,15 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_manipulators_1_icc)
+#error This header file contains implementation details of arity 1 manipulators
+#else
+
+
+# endif
+
+// end of file

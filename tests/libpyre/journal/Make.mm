@@ -17,6 +17,7 @@ TESTS = \
     sanity \
     inventory \
     diagnostic \
+    diagnostic-injection \
     channel \
     index \
     index-inventory \
@@ -37,6 +38,7 @@ test: $(TESTS)
 	./sanity
 	./inventory
 	./diagnostic
+	./diagnostic-injection
 	./channel
 	./index
 	./index-inventory
@@ -54,6 +56,9 @@ inventory: inventory.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 diagnostic: diagnostic.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+diagnostic-injection: diagnostic-injection.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 channel: channel.cc

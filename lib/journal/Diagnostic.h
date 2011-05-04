@@ -29,14 +29,15 @@ public:
 
     // interface
 public:
-    void record();
+    Diagnostic & record();
+    Diagnostic & newline();
 
     // meta methods
 public:
     inline ~Diagnostic();
     inline Diagnostic();
     inline Diagnostic(const Diagnostic &);
-    inline const Diagnostic & operator=(const Diagnostic &);
+    inline Diagnostic & operator=(const Diagnostic &);
     
     // data members
 private:

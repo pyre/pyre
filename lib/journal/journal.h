@@ -22,11 +22,15 @@
 #include <string>
 
 // local declarations
+#include "journal/macros.h"
 #include "journal/Inventory.h"
 #include "journal/Index.h"
 #include "journal/Channel.h"
 #include "journal/Diagnostic.h"
 #include "journal/Debug.h"
+
+#include "journal/manipulators-0.h"
+#include "journal/manipulators-1.h"
 
 // typedefs for convenience
 namespace pyre {

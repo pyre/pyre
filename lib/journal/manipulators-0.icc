@@ -1,0 +1,44 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_manipulators_0_icc)
+#error This header file contains implementation details of arity 0 manipulators
+#else
+
+
+// definition of the injection operator with arity zero manipulators
+template <typename Diagnostic>
+inline
+Diagnostic &
+operator << (
+             Diagnostic & diagnostic,
+             Diagnostic & (*manipulator)(Diagnostic &)
+             ) {
+    return manipulator(diagnostic);
+}
+
+// end of insertion
+template <typename Diagnostic>
+inline
+Diagnostic &
+pyre::journal::endl(Diagnostic & diagnostic) {
+    return diagnostic.record();
+}
+
+
+// new line
+template <typename Diagnostic>
+inline
+Diagnostic &
+pyre::journal::newline(Diagnostic & diagnostic) {
+    return diagnostic.newline();
+}
+
+
+# endif
+
+// end of file

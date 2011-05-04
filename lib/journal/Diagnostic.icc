@@ -12,11 +12,19 @@
 
 // interface
 template <typename Severity>
-void
+pyre::journal::Diagnostic<Severity> &
 pyre::journal::Diagnostic<Severity>::
 record()
 {
-    bool state = static_cast<Severity *>(this)->isActive();
+    return static_cast<Severity *>(this)->record();
+}
+
+template <typename Severity>
+pyre::journal::Diagnostic<Severity> &
+pyre::journal::Diagnostic<Severity>::
+newline()
+{
+    return static_cast<Severity *>(this)->newline();
 }
 
 
@@ -43,7 +51,7 @@ Diagnostic(const pyre::journal::Diagnostic<Severity> & other)
 
 // operator =
 template <typename Severity>
-const pyre::journal::Diagnostic<Severity> &
+pyre::journal::Diagnostic<Severity> &
 pyre::journal::Diagnostic<Severity>::
 operator = (const pyre::journal::Diagnostic<Severity> & other)
 {
