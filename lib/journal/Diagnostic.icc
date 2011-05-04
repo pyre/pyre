@@ -28,6 +28,15 @@ newline()
 }
 
 
+template <typename Severity>
+pyre::journal::Diagnostic<Severity> &
+pyre::journal::Diagnostic<Severity>::
+print(const char * text)
+{
+    return static_cast<Severity *>(this)->print(text);
+}
+
+
 // the destructor
 template <typename Severity>
 pyre::journal::Diagnostic<Severity>::

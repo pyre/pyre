@@ -10,6 +10,28 @@
 #else
 
 
+// implementation of the injection operator
+template <typename Channel, typename arg1_t>
+Channel &
+operator<< (
+            Channel & channel,
+            pyre::journal::manipulator_1<Channel, arg1_t> manipulator)
+{
+    return manipulator._factory(channel, manipulator._arg1);
+}
+
+
+// the manipulator_1 constructor
+template <typename Channel, typename arg1_t>
+pyre::journal::manipulator_1<Channel, arg1_t>::
+manipulator_1(
+              typename pyre::journal::manipulator_1<Channel, arg1_t>::factory_t factory,
+              arg1_t arg1
+              ) :
+    _factory(factory),
+    _arg1(arg1)
+{}
+
 # endif
 
 // end of file

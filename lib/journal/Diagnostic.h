@@ -31,6 +31,7 @@ public:
 public:
     Diagnostic & record();
     Diagnostic & newline();
+    Diagnostic & print(const char *);
 
     // meta methods
 public:

@@ -18,7 +18,10 @@
 // access to the low level diagnostic header file
 #include <pyre/journal/Diagnostic.h>
 #include <pyre/journal/manipulators-0.h>
+#include <pyre/journal/manipulators-1.h>
 
+
+// a simple channel class
 class Debug : public pyre::journal::Diagnostic<Debug> {
 public:
     bool isActive() const { return true; }
@@ -30,6 +33,11 @@ public:
 
     Debug & newline() {
         std::cout << "    newline" << std::endl;
+        return *this;
+    }
+
+    Debug & print(const char * text) {
+        std::cout << "    " << text << std::endl;
         return *this;
     }
 
@@ -66,7 +74,19 @@ public:
 
 };
 
+
 typedef pyre::journal::Diagnostic<Debug> diagnostic_t;
+typedef pyre::journal::manipulator_1<diagnostic_t, const char *> str_t;
+
+inline
+diagnostic_t &
+set_manipulator(diagnostic_t & d, const char * text) {
+    return d.print(text);
+}
+
+inline str_t str(const char * text) {
+    return str_t(set_manipulator, text);
+}
 
 
 // main program
@@ -78,6 +98,7 @@ int main() {
     // inject
     d 
         << pyre::journal::newline
+        << str("Hello")
         << pyre::journal::endl;
 
     // all done

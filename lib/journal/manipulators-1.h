@@ -30,15 +30,25 @@ operator<< (
 // definition of one argument manipulators
 template <typename Channel, typename arg1_t>
 class pyre::journal::manipulator_1 {
-    // types
-public:
-
     // declare the injection operator as a friend
     friend
     Channel &
     ::operator<< <> (Channel &, manipulator_1<Channel, arg1_t>);
 
+    // types
+public:
+    typedef Channel & (*factory_t)(Channel &, arg1_t);
+
+    // meta methods
+public:
+    inline manipulator_1(factory_t f, arg1_t arg1);
+
+    // data
+private:
+    factory_t _factory;
+    arg1_t _arg1;
 };
+
 
 // get the inline definitions
 #define pyre_journal_manipulators_1_icc
