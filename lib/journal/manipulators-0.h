@@ -13,13 +13,10 @@
 
 // declaration of the injection operator with arity zero manipulators
 // place this in global scope
-template <typename Diagnostic>
+template <typename Channel>
 inline
-Diagnostic &
-operator << (
-             Diagnostic & diagnostic,
-             Diagnostic & (*manipulator)(Diagnostic &)
-             );
+Channel &
+operator << (Channel &, Channel & (*)(Channel &));
 
 
 // manipulators with zero arguments
@@ -27,16 +24,16 @@ namespace pyre {
     namespace journal {
         
         // end of insertion
-        template <typename Diagnostic>
+        template <typename Channel>
         inline
-        Diagnostic &
-        endl(Diagnostic & diagnostic);
+        Channel &
+        endl(Channel &);
 
         // new line
-        template <typename Diagnostic>
+        template <typename Channel>
         inline
-        Diagnostic &
-        newline(Diagnostic & diagnostic);
+        Channel &
+        newline(Channel &);
     }
 }
 

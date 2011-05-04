@@ -11,31 +11,28 @@
 
 
 // definition of the injection operator with arity zero manipulators
-template <typename Diagnostic>
+template <typename Channel>
 inline
-Diagnostic &
-operator << (
-             Diagnostic & diagnostic,
-             Diagnostic & (*manipulator)(Diagnostic &)
-             ) {
-    return manipulator(diagnostic);
+Channel &
+operator << (Channel & channel, Channel & (*manipulator)(Channel &)) {
+    return manipulator(channel);
 }
 
 // end of insertion
-template <typename Diagnostic>
+template <typename Channel>
 inline
-Diagnostic &
-pyre::journal::endl(Diagnostic & diagnostic) {
-    return diagnostic.record();
+Channel &
+pyre::journal::endl(Channel & channel) {
+    return channel.record();
 }
 
 
 // new line
-template <typename Diagnostic>
+template <typename Channel>
 inline
-Diagnostic &
-pyre::journal::newline(Diagnostic & diagnostic) {
-    return diagnostic.newline();
+Channel &
+pyre::journal::newline(Channel & channel) {
+    return channel.newline();
 }
 
 
