@@ -17,11 +17,6 @@ namespace pyre {
         // forward declaration of arity 3 manipulators
         template <typename Channel, typename arg1_t, typename arg2_t, typename arg3_t>
         class manipulator_3;
-
-        // location
-        inline
-        manipulator_3<Debug, const char*, int, const char*>
-        at(const char *, int, const char *);
     }
 }
 
