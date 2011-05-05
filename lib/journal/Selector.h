@@ -19,6 +19,13 @@ namespace pyre {
 }
 
 
+// the injection operator; should be at global scope
+template <typename Channel>
+inline
+pyre::journal::Diagnostic<Channel> &
+operator << (pyre::journal::Diagnostic<Channel> &, const pyre::journal::Selector &);
+
+
 // definitions
 // attributes
 class pyre::journal::Selector {

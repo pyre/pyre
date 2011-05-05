@@ -10,6 +10,15 @@
 #else
 
 
+template <typename Channel>
+pyre::journal::Diagnostic<Channel> &
+operator<< (
+            pyre::journal::Diagnostic<Channel> & channel,
+            const pyre::journal::Selector & selector) {
+    return selector.inject(channel);
+}
+
+
 // implementation of the {set} manipulator
 // injector
 template <typename Channel>

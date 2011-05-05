@@ -33,19 +33,7 @@ operator << (
              pyre::journal::Diagnostic<Channel> &
              (*)(pyre::journal::Diagnostic<Channel> &));
 
-// injection by manipulator
-template <typename Channel>
-inline
-pyre::journal::Diagnostic<Channel> &
-operator << (pyre::journal::Diagnostic<Channel> &, const pyre::journal::Locator &);
 
-template <typename Channel>
-inline
-pyre::journal::Diagnostic<Channel> &
-operator << (pyre::journal::Diagnostic<Channel> &, const pyre::journal::Selector &);
-
-
-// get the inline definitions
 #define pyre_journal_manipulators_icc
 #include "manipulators.icc"
 #undef pyre_journal_manipulators_icc
