@@ -16,7 +16,11 @@ namespace pyre {
     }
 }
 
-// imported types and other includes
+// the injection operator
+template <typename Channel, typename item_t>
+inline
+pyre::journal::Diagnostic<Channel> &
+operator << (pyre::journal::Diagnostic<Channel> &, item_t);
 
 
 // declaration
@@ -32,9 +36,15 @@ public:
 
     // interface
 public:
-    Diagnostic & record();
-    Diagnostic & newline();
-    Diagnostic & setattr(string_t, string_t);
+    // complete an entry
+    inline Diagnostic & record();
+    // add a new line
+    inline Diagnostic & newline();
+    // decorate with (key,value) meta data
+    inline Diagnostic & setattr(string_t, string_t);
+    // inject an item into the message stream
+    template <typename item_t>
+    inline Diagnostic & inject(item_t datum);
 
     // meta methods
 public:
@@ -44,7 +54,7 @@ public:
     inline Diagnostic & operator=(const Diagnostic &);
     
     // data members
-private:
+public:
     metadata_t _metadata;
 
 };
