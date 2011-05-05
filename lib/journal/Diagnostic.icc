@@ -16,7 +16,7 @@ pyre::journal::Diagnostic<Severity> &
 pyre::journal::Diagnostic<Severity>::
 record()
 {
-    return static_cast<Severity *>(this)->record();
+    return *static_cast<Severity *>(this); // MGA: FIXME -- NYI
 }
 
 template <typename Severity>
@@ -24,7 +24,7 @@ pyre::journal::Diagnostic<Severity> &
 pyre::journal::Diagnostic<Severity>::
 newline()
 {
-    return static_cast<Severity *>(this)->newline();
+    return *static_cast<Severity *>(this); // MGA: FIXME -- NYI
 }
 
 
@@ -37,15 +37,6 @@ setattr(
         )
 {
     return *static_cast<Severity *>(this); // MGA: FIXME -- NYI
-}
-
-
-template <typename Severity>
-pyre::journal::Diagnostic<Severity> &
-pyre::journal::Diagnostic<Severity>::
-print(const char * text)
-{
-    return static_cast<Severity *>(this)->print(text);
 }
 
 

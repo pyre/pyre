@@ -32,7 +32,6 @@ public:
     Diagnostic & record();
     Diagnostic & newline();
     Diagnostic & setattr(string_t, string_t);
-    Diagnostic & print(const char *);
 
     // meta methods
 public:
