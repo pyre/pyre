@@ -19,7 +19,7 @@ namespace pyre {
 }
 
 // locator
-class pyre::journal::Locator : public pyre::journal::Manipulator<pyre::journal::Locator> {
+class pyre::journal::Locator {
     // interface
 public:
     template <typename Channel>
@@ -31,11 +31,12 @@ public:
 public:
     inline ~Locator();
     inline Locator(const char *, int, const char * = 0);
+private:
     inline Locator(const Locator &);
     inline Locator & operator=(const Locator &);
 
     // data
-public:
+private:
     const char * _file;
     int _line;
     const char * _function;

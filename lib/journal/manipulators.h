@@ -37,12 +37,12 @@ operator << (
 template <typename Channel>
 inline
 pyre::journal::Diagnostic<Channel> &
-operator << (pyre::journal::Diagnostic<Channel> &, pyre::journal::Locator);
+operator << (pyre::journal::Diagnostic<Channel> &, const pyre::journal::Locator &);
 
 template <typename Channel>
 inline
 pyre::journal::Diagnostic<Channel> &
-operator << (pyre::journal::Diagnostic<Channel> &, pyre::journal::Selector);
+operator << (pyre::journal::Diagnostic<Channel> &, const pyre::journal::Selector &);
 
 
 // get the inline definitions

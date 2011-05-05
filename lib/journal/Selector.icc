@@ -32,35 +32,10 @@ pyre::journal::Selector::
 // constructor
 pyre::journal::Selector::
 Selector(pyre::journal::Selector::string_t key, pyre::journal::Selector::string_t value) :
-    pyre::journal::Manipulator<Selector>(),
     _key(key),
     _value(value)
 {}
 
-
-// copy constructor
-pyre::journal::Selector::
-Selector(const Selector & other) :
-    pyre::journal::Manipulator<Selector>(other),
-    _key(other._key),
-    _value(other._value)
-{}
-
-
-// operator =
-pyre::journal::Selector &
-pyre::journal::Selector::
-operator = (const Selector & other) {
-    // skip assignment to self
-    if (&other != this) {
-        // copy the data
-        Manipulator<Selector>::operator=(other);
-        _key = other._key;
-        _value = other._value;
-    }
-    // return me
-    return *this;
-}
 
 # endif
 

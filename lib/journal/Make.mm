@@ -38,7 +38,6 @@ EXPORT_PKG_HEADERS = \
     Index.h Index.icc \
     Inventory.h Inventory.icc \
     Locator.h Locator.icc \
-    Manipulator.h Manipulator.icc \
     Selector.h Selector.icc \
 
 

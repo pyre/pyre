@@ -21,7 +21,7 @@ namespace pyre {
 
 // definitions
 // attributes
-class pyre::journal::Selector : public pyre::journal::Manipulator<pyre::journal::Selector> {
+class pyre::journal::Selector {
     // types
 public:
     typedef std::string string_t;
@@ -36,11 +36,13 @@ public:
 public:
     inline ~Selector();
     inline Selector(string_t, string_t);
+    // disallow
+private:
     inline Selector(const Selector &);
     inline Selector & operator= (const Selector &);
 
     // data
-public:
+private:
     string_t _key;
     string_t _value;
 };

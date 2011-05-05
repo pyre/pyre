@@ -20,7 +20,6 @@
 #include <pyre/journal/Diagnostic.h>
 #include <pyre/journal/macros.h>
 
-#include <pyre/journal/Manipulator.h>
 #include <pyre/journal/Locator.h>
 #include <pyre/journal/Selector.h>
 #include <pyre/journal/manipulators.h>
