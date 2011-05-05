@@ -26,6 +26,9 @@ class pyre::journal::Diagnostic {
 public:
     typedef Severity severity_t;
     typedef std::string string_t;
+    typedef string_t metakey_t;
+    typedef string_t metavalue_t;
+    typedef std::map<metakey_t, metavalue_t> metadata_t;
 
     // interface
 public:
@@ -42,6 +45,8 @@ public:
     
     // data members
 private:
+    metadata_t _metadata;
+
 };
 
 
