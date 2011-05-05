@@ -11,7 +11,9 @@
 
 // external packages
 #include <map>
+#include <vector>
 #include <string>
+#include <sstream>
 #include <cstdlib>
 
 // local types

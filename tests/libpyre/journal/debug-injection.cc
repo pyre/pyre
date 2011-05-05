@@ -27,8 +27,12 @@ int main() {
     debug << pyre::journal::at(__HERE__);
     debug << pyre::journal::set("key", "value");
 
-    // make sure injection of built in types works;
+    // make sure injections of built in types work
+    debug << 0;
+    debug << 0.0;
+    debug << (void *)0;
     debug << "Hello world!";
+    debug << std::string("Hello world!");
 
     // all done
     return 0;

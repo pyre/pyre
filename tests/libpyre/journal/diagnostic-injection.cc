@@ -12,6 +12,7 @@
 // packages
 #include <assert.h>
 #include <map>
+#include <vector>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -38,10 +39,11 @@ int main() {
     // instantiate
     Debug d;
     // inject
+    d << pyre::journal::Selector("key", "value");
+    d << pyre::journal::Locator(__HERE__);
+    d << "Hello world!";
     d << pyre::journal::newline;
     d << pyre::journal::endl;;
-    d << pyre::journal::Locator(__HERE__);
-    d << pyre::journal::Selector("key", "value");
 
     // all done
     return 0;

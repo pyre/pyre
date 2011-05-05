@@ -19,6 +19,7 @@
 
 // external packages
 #include <map>
+#include <vector>
 #include <string>
 #include <sstream>
 

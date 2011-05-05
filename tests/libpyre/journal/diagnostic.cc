@@ -12,7 +12,9 @@
 // packages
 #include <assert.h>
 #include <map>
+#include <vector>
 #include <string>
+#include <sstream>
 #include <iostream>
 
 // access to the low level diagnostic header file

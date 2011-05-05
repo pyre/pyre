@@ -35,6 +35,11 @@ pyre::journal::Diagnostic<Severity> &
 pyre::journal::Diagnostic<Severity>::
 newline()
 {
+    // add the contents of the buffer to the message page
+    _page.push_back(_buffer.str());
+    // clear out the buffer contents
+    _buffer.str(string_t());
+    // and return
     return *this;
 }
 
@@ -59,6 +64,7 @@ template <typename item_t>
 pyre::journal::Diagnostic<Severity> &
 pyre::journal::Diagnostic<Severity>:: inject(item_t item)
 {
+    _buffer << item;
     return *this;
 }
 
@@ -74,7 +80,10 @@ pyre::journal::Diagnostic<Severity>::
 // the default constructor
 template <typename Severity>
 pyre::journal::Diagnostic<Severity>::
-Diagnostic()
+Diagnostic() :
+    _page(),
+    _buffer(),
+    _metadata()
 {}
 
 

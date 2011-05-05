@@ -32,6 +32,9 @@ public:
     typedef std::string string_t;
     typedef string_t metakey_t;
     typedef string_t metavalue_t;
+
+    typedef std::vector<string_t> page_t;
+    typedef std::stringstream buffer_t;
     typedef std::map<metakey_t, metavalue_t> metadata_t;
 
     // interface
@@ -55,6 +58,8 @@ public:
     
     // data members
 public:
+    page_t _page;
+    buffer_t _buffer;
     metadata_t _metadata;
 
 };
