@@ -12,6 +12,7 @@
 // packages
 #include <assert.h>
 // access to the journal header file
+#include <iostream>
 #include <pyre/journal.h>
 
 // main program
@@ -21,11 +22,12 @@ int main() {
     pyre::journal::debug_t debug("pyre.journal.test");
 
     // inject all the standard manipulators
-    debug
-        << pyre::journal::at(__HERE__)
-        << pyre::journal::set("key", "value")
-        << pyre::journal::newline
-        << pyre::journal::endl;
+    debug << pyre::journal::newline;
+    debug << pyre::journal::endl;
+    debug << pyre::journal::at(__HERE__);
+    debug << pyre::journal::set("key", "value");
+
+    // make sure injection of builtin types works;
 
     // all done
     return 0;

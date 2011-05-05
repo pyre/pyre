@@ -1,0 +1,67 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_Selector_icc)
+#error This header file contains implementation details of class Selector
+#else
+
+
+// implementation of the {set} manipulator
+// injector
+template <typename Channel>
+inline
+pyre::journal::Diagnostic<Channel> &
+pyre::journal::Selector::
+inject(pyre::journal::Diagnostic<Channel> & channel) const
+{
+    return channel.setattr(_key, _value);
+}
+
+
+// meta methods
+// destructor
+pyre::journal::Selector::
+~Selector()
+{}
+
+
+// constructor
+pyre::journal::Selector::
+Selector(pyre::journal::Selector::string_t key, pyre::journal::Selector::string_t value) :
+    pyre::journal::Manipulator<Selector>(),
+    _key(key),
+    _value(value)
+{}
+
+
+// copy constructor
+pyre::journal::Selector::
+Selector(const Selector & other) :
+    pyre::journal::Manipulator<Selector>(other),
+    _key(other._key),
+    _value(other._value)
+{}
+
+
+// operator =
+pyre::journal::Selector &
+pyre::journal::Selector::
+operator = (const Selector & other) {
+    // skip assignment to self
+    if (&other != this) {
+        // copy the data
+        Manipulator<Selector>::operator=(other);
+        _key = other._key;
+        _value = other._value;
+    }
+    // return me
+    return *this;
+}
+
+# endif
+
+// end of file

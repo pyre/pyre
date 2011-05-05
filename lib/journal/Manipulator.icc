@@ -1,0 +1,59 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_Manipulator_icc)
+#error This header file contains implementation details class Manipulator
+#else
+
+
+// interface
+template <typename Injector>
+template <typename Channel>
+pyre::journal::Diagnostic<Channel> &
+pyre::journal::Manipulator<Injector>::
+inject(pyre::journal::Diagnostic<Channel> & channel) const
+{
+    return static_cast<const Injector *>(this)->inject(channel);
+}
+
+
+// meta methods
+// destructor
+template <typename Injector>
+pyre::journal::Manipulator<Injector>::
+~Manipulator()
+{}
+
+
+// constructor
+template <typename Injector>
+pyre::journal::Manipulator<Injector>::
+Manipulator()
+{}
+
+
+// copy constructor
+template <typename Injector>
+pyre::journal::Manipulator<Injector>::
+Manipulator(const pyre::journal::Manipulator<Injector> &)
+{}
+
+
+// operator =
+template <typename Injector>
+pyre::journal::Manipulator<Injector> &
+pyre::journal::Manipulator<Injector>::
+operator = (const pyre::journal::Manipulator<Injector> &)
+{
+    // return me
+    return *this;
+}
+
+
+# endif
+
+// end of file

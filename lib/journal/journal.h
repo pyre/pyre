@@ -32,12 +32,20 @@
 // the predefined diagnostics
 #include "journal/Debug.h"
 // manipulators
+#include "journal/Manipulator.h"
+#include "journal/Locator.h"
+#include "journal/Selector.h"
 #include "journal/manipulators.h"
 
 // typedefs for convenience
 namespace pyre {
     namespace journal {
+        // diagnostics
         typedef Debug debug_t;
+
+        // locators
+        typedef Locator at;
+        typedef Selector set;
     }
 }
 

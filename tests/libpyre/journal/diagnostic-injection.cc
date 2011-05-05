@@ -19,6 +19,10 @@
 // access to the low level diagnostic header file
 #include <pyre/journal/Diagnostic.h>
 #include <pyre/journal/macros.h>
+
+#include <pyre/journal/Manipulator.h>
+#include <pyre/journal/Locator.h>
+#include <pyre/journal/Selector.h>
 #include <pyre/journal/manipulators.h>
 
 
@@ -34,13 +38,11 @@ int main() {
 
     // instantiate
     Debug d;
-   
     // inject
-    d 
-        << pyre::journal::at(__HERE__)
-        << pyre::journal::set("key", "value")
-        << pyre::journal::newline
-        << pyre::journal::endl;
+    d << pyre::journal::newline;
+    d << pyre::journal::endl;;
+    d << pyre::journal::Locator(__HERE__);
+    d << pyre::journal::Selector("key", "value");
 
     // all done
     return 0;
