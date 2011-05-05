@@ -26,6 +26,7 @@ TESTS = \
     debug-copycon \
     debug-opeq \
     debug-envvar \
+    debug-injection \
 
 PROJ_LCXX_LIBPATH = $(PROJ_LIBDIR)
 LIBRARIES = -ljournal $(EXTERNAL_LIBS)
@@ -47,6 +48,7 @@ test: $(TESTS)
 	./debug-copycon
 	./debug-opeq
 	DEBUG_OPT=pyre.journal.test ./debug-envvar
+	./debug-injection
 
 
 sanity: sanity.cc
@@ -83,6 +85,9 @@ debug-opeq: debug-opeq.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 debug-envvar: debug-envvar.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+debug-injection: debug-injection.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 
