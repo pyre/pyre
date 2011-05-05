@@ -18,10 +18,14 @@ namespace pyre {
 
 
 // declaration
-class pyre::journal::Debug : public pyre::journal::Channel<Debug, false> {
+class pyre::journal::Debug : 
+    public pyre::journal::Diagnostic<Debug>,
+    public pyre::journal::Channel<Debug, false> 
+{
     // types
 public:
     typedef std::string string_t;
+    typedef Diagnostic<Debug> diagnostic_t;
     typedef Channel<Debug, false> channel_t;
 
     // interface
