@@ -53,6 +53,8 @@ public:
 public:
     inline ~Diagnostic();
     inline Diagnostic(string_t, string_t);
+    // disallow
+private:
     inline Diagnostic(const Diagnostic &);
     inline Diagnostic & operator=(const Diagnostic &);
     
@@ -61,7 +63,6 @@ public:
     page_t _page;
     buffer_t _buffer;
     metadata_t _metadata;
-
 };
 
 

@@ -25,30 +25,6 @@ Debug(pyre::journal::Debug::string_t name) :
 {}
 
 
-// the copy constructor
-pyre::journal::Debug::
-Debug(const pyre::journal::Debug & other) :
-    pyre::journal::Diagnostic<pyre::journal::Debug>(other),
-    pyre::journal::Channel<pyre::journal::Debug, false>(other)
-{}
-
-
-// operator =
-const pyre::journal::Debug &
-pyre::journal::Debug::
-operator = (const pyre::journal::Debug & other)
-{
-    // skip assignment to self
-    if (&other != this) {
-        // otherwise, copy the data
-        diagnostic_t::operator=(other);
-        channel_t::operator=(other);
-    }
-    // and return me
-    return *this;
-}
-
-
 # endif
 
 // end of file

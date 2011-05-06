@@ -93,28 +93,6 @@ Diagnostic(
 }
 
 
-// the copy constructor
-template <typename Severity>
-pyre::journal::Diagnostic<Severity>::
-Diagnostic(const pyre::journal::Diagnostic<Severity> & other)
-{}
-
-
-// operator =
-template <typename Severity>
-pyre::journal::Diagnostic<Severity> &
-pyre::journal::Diagnostic<Severity>::
-operator = (const pyre::journal::Diagnostic<Severity> & other)
-{
-    // skip assignment to self
-    if (&other != this) {
-        // otherwise, copy the data
-    }
-    // and return me
-    return *this;
-}
-
-
 # endif
 
 // end of file

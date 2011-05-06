@@ -35,6 +35,8 @@ public:
 public:
     inline ~Debug();
     inline Debug(string_t name);
+    // disallow
+private:
     inline Debug(const Debug &);
     inline const Debug & operator=(const Debug &);
 };

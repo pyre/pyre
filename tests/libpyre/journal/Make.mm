@@ -23,8 +23,6 @@ TESTS = \
     index-inventory \
     chronicler \
     debug \
-    debug-copycon \
-    debug-opeq \
     debug-envvar \
     debug-injection \
 
@@ -45,8 +43,6 @@ test: $(TESTS)
 	./index-inventory
 	./chronicler
 	./debug
-	./debug-copycon
-	./debug-opeq
 	DEBUG_OPT=pyre.journal.test ./debug-envvar
 	./debug-injection
 
@@ -76,12 +72,6 @@ chronicler: chronicler.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 debug: debug.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
-
-debug-copycon: debug-copycon.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
-
-debug-opeq: debug-opeq.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 debug-envvar: debug-envvar.cc
