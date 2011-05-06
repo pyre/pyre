@@ -1,0 +1,49 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+// code guard
+#if !defined(pyre_journal_Device_h)
+#define pyre_journal_Device_h
+
+// place Device in namespace pure::journal
+namespace pure {
+    namespace journal {
+        class Device;
+    }
+}
+
+// declaration
+class pure::journal::Device {
+    // types
+public:
+    typedef std::string string_t;
+    typedef std::vector<string_t> entry_t;
+    typedef std::map<string_t, string_t> metadata_t;
+
+    // interface
+public:
+    virtual void record(const entry_t &, const metadata_t &) = 0;
+
+    // meta methods
+public:
+    virtual ~Device();
+    inline Device();
+    // disallow
+private:
+    Device(const Device &);
+    const Device & operator=(const Device &);
+};
+
+
+// get the inline definitions
+#define pyre_journal_Device_icc
+#include "Device.icc"
+#undef pyre_journal_Device_icc
+
+
+# endif
+// end of file

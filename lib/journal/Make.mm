@@ -15,6 +15,8 @@ PROJ_DLL = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SO)
 
 PROJ_SRCS = \
     journal.cc \
+    Device.cc \
+    Renderer.cc \
 
 
 #--------------------------------------------------------------------------
@@ -34,10 +36,12 @@ EXPORT_PKG_HEADERS = \
     Channel.h Channel.icc \
     Chronicler.h Chronicler.icc \
     Debug.h Debug.icc \
+    Device.h Device.icc \
     Diagnostic.h Diagnostic.icc \
     Index.h Index.icc \
     Inventory.h Inventory.icc \
     Locator.h Locator.icc \
+    Renderer.h Renderer.icc \
     Selector.h Selector.icc \
 
 
