@@ -21,12 +21,13 @@ class pyre::journal::Renderer {
     // types
 public:
     typedef std::string string_t;
+    typedef std::stringstream stream_t;
     typedef std::vector<string_t> entry_t;
     typedef std::map<string_t, string_t> metadata_t;
 
     // interface
 public:
-    virtual string_t render(const entry_t &, const metadata_t &) = 0;
+    virtual string_t render(entry_t &, metadata_t &);
 
     // meta methods
 public:
@@ -39,11 +40,9 @@ private:
 
     // implementation details
 protected:
-    virtual string_t header(const entry_t &, const metadata_t &) = 0;
-    virtual string_t body(const entry_t &, const metadata_t &) = 0;
-    virtual string_t footer(const entry_t &, const metadata_t &) = 0;
-
-    // meta methods
+    virtual void header(stream_t &, entry_t &, metadata_t &);
+    virtual void body(stream_t &, entry_t &, metadata_t &);
+    virtual void footer(stream_t &, entry_t &, metadata_t &);
 };
 
 
