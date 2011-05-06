@@ -43,6 +43,8 @@ public:
 public:
     inline ~Channel();
     inline Channel(string_t);
+    // disallow
+private:
     inline Channel(const Channel &);
     inline const Channel & operator=(const Channel &);
     

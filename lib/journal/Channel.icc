@@ -73,32 +73,6 @@ Channel(typename Channel<Severity, DefaultState>::string_t name) :
 {}
 
 
-// the copy constructor
-template <typename Severity, bool DefaultState>
-pyre::journal::Channel<Severity, DefaultState>::
-Channel(const pyre::journal::Channel<Severity, DefaultState> & other) :
-    _name(other._name),
-    _inventory(other._inventory)
-{}
-
-
-// operator =
-template <typename Severity, bool DefaultState>
-const pyre::journal::Channel<Severity, DefaultState> &
-pyre::journal::Channel<Severity, DefaultState>::
-operator = (const pyre::journal::Channel<Severity, DefaultState> & other)
-{
-    // skip assignment to self
-    if (&other != this) {
-        // otherwise, copy the data
-        _name = other._name;
-        _inventory = other._inventory;
-    }
-    // and return me
-    return *this;
-}
-
-
 # endif
 
 // end of file
