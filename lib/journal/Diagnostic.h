@@ -26,16 +26,14 @@ operator << (pyre::journal::Diagnostic<Channel> &, item_t);
 // declaration
 template <typename Severity>
 class pyre::journal::Diagnostic {
-    // types: place typedefs here
+    // types
 public:
     typedef Severity severity_t;
     typedef std::string string_t;
-    typedef string_t metakey_t;
-    typedef string_t metavalue_t;
 
-    typedef std::vector<string_t> page_t;
+    typedef std::vector<string_t> entry_t;
     typedef std::stringstream buffer_t;
-    typedef std::map<metakey_t, metavalue_t> metadata_t;
+    typedef std::map<string_t, string_t> metadata_t;
 
     // interface
 public:
@@ -60,7 +58,7 @@ private:
     
     // data members
 public:
-    page_t _page;
+    entry_t _entry;
     buffer_t _buffer;
     metadata_t _metadata;
 };

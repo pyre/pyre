@@ -36,7 +36,7 @@ pyre::journal::Diagnostic<Severity>::
 newline()
 {
     // add the contents of the buffer to the message page
-    _page.push_back(_buffer.str());
+    _entry.push_back(_buffer.str());
     // clear out the buffer contents
     _buffer.str(string_t());
     // and return
@@ -84,7 +84,7 @@ Diagnostic(
            pyre::journal::Diagnostic<Severity>::string_t severity,
            pyre::journal::Diagnostic<Severity>::string_t name
            ) :
-    _page(),
+    _entry(),
     _buffer(),
     _metadata()
 {
