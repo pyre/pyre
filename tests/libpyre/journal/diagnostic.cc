@@ -21,18 +21,20 @@
 #include <pyre/journal/Diagnostic.h>
 
 class Debug : public pyre::journal::Diagnostic<Debug> {
+    // types
 public:
-    bool isActive() const { return true; }
+    typedef std::string string_t;
+    // meta methods
+public:
+    Debug(string_t name) : Diagnostic<Debug>("debug", name) {}
 };
-
-typedef pyre::journal::Diagnostic<Debug> diagnostic_t;
 
 
 // main program
 int main() {
 
     // instantiate
-    diagnostic_t d;
+    Debug d("pyre.journal.test");
 
     // all done
     return 0;

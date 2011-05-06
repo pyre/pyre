@@ -80,11 +80,17 @@ pyre::journal::Diagnostic<Severity>::
 // the default constructor
 template <typename Severity>
 pyre::journal::Diagnostic<Severity>::
-Diagnostic() :
+Diagnostic(
+           pyre::journal::Diagnostic<Severity>::string_t severity,
+           pyre::journal::Diagnostic<Severity>::string_t name
+           ) :
     _page(),
     _buffer(),
     _metadata()
-{}
+{
+    setattr("channel", name);
+    setattr("severity", severity);
+}
 
 
 // the copy constructor

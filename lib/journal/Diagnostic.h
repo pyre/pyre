@@ -52,7 +52,7 @@ public:
     // meta methods
 public:
     inline ~Diagnostic();
-    inline Diagnostic();
+    inline Diagnostic(string_t, string_t);
     inline Diagnostic(const Diagnostic &);
     inline Diagnostic & operator=(const Diagnostic &);
     

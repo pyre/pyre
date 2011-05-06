@@ -28,8 +28,12 @@
 
 // a simple channel class
 class Debug : public pyre::journal::Diagnostic<Debug> {
+    // types
 public:
-    bool isActive() const { return true; }
+    typedef std::string string_t;
+    // meta methods
+public:
+    Debug(string_t name) : Diagnostic<Debug>("debug", name) {}
 };
 
 
@@ -37,7 +41,7 @@ public:
 int main() {
 
     // instantiate
-    Debug d;
+    Debug d("pyre.journal.test");
     // inject
     d << pyre::journal::Selector("key", "value");
     d << pyre::journal::Locator(__HERE__);

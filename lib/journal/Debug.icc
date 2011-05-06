@@ -20,7 +20,7 @@ pyre::journal::Debug::
 // the default constructor
 pyre::journal::Debug::
 Debug(pyre::journal::Debug::string_t name) :
-    pyre::journal::Diagnostic<pyre::journal::Debug>(),
+    pyre::journal::Diagnostic<pyre::journal::Debug>("debug", name),
     pyre::journal::Channel<pyre::journal::Debug, false>(name)
 {}
 
