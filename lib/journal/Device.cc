@@ -19,7 +19,7 @@
 
 
 // destructor
-pure::journal::Device::
+pyre::journal::Device::
 ~Device() {}
 
 

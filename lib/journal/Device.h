@@ -9,15 +9,15 @@
 #if !defined(pyre_journal_Device_h)
 #define pyre_journal_Device_h
 
-// place Device in namespace pure::journal
-namespace pure {
+// place Device in namespace pyre::journal
+namespace pyre {
     namespace journal {
         class Device;
     }
 }
 
 // declaration
-class pure::journal::Device {
+class pyre::journal::Device {
     // types
 public:
     typedef std::string string_t;

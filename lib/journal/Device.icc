@@ -11,7 +11,7 @@
 
 
 // the default constructor
-pure::journal::Device::
+pyre::journal::Device::
 Device()
 {}
 
