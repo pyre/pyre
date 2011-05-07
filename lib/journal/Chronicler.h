@@ -26,22 +26,22 @@ namespace pyre {
 // declaration
 class pyre::journal::Chronicler {
     // types
-public:
+protected:
+    class journal_t {
+    };
 
     // interface
-public:
+protected:
+    static journal_t & journal();
 
     // meta methods
-public:
+protected:
     inline ~Chronicler();
     inline Chronicler();
     // disallow
 private:
     inline Chronicler(const Chronicler &);
     inline const Chronicler & operator=(const Chronicler &);
-    
-    // data members
-private:
 };
 
 

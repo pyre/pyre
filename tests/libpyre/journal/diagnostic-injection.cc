@@ -18,6 +18,7 @@
 #include <sstream>
 
 // access to the low level diagnostic header file
+#include <pyre/journal/Chronicler.h>
 #include <pyre/journal/Diagnostic.h>
 #include <pyre/journal/macros.h>
 

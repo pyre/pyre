@@ -40,7 +40,7 @@ public:
     inline void device(device_t *);
 
     // meta methods
-public:
+protected:
     inline ~Channel();
     inline Channel(string_t);
     // disallow

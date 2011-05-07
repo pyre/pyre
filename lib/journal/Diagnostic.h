@@ -48,7 +48,7 @@ public:
     inline Diagnostic & inject(item_t datum);
 
     // meta methods
-public:
+protected:
     inline ~Diagnostic();
     inline Diagnostic(string_t, string_t);
     // disallow

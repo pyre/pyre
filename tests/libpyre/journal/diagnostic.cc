@@ -18,6 +18,7 @@
 #include <iostream>
 
 // access to the low level diagnostic header file
+#include <pyre/journal/Chronicler.h>
 #include <pyre/journal/Diagnostic.h>
 
 class Debug : public pyre::journal::Diagnostic<Debug> {

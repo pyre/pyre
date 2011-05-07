@@ -20,8 +20,12 @@
 #include <pyre/journal/Index.h>
 #include <pyre/journal/Chronicler.h>
 
-// convenience
-typedef pyre::journal::Chronicler chronicler_t;
+// must subclass chronicler to gain access to its constructor/destructor, which are protected
+class chronicler_t : pyre::journal::Chronicler {
+public:
+    ~chronicler_t() {}
+    chronicler_t() {}
+};
 
 // main program
 int main() {

@@ -19,19 +19,27 @@
 #include <pyre/journal/Index.h>
 #include <pyre/journal/Channel.h>
 
-class Debug {};
+using namespace pyre::journal;
 
 // convenience
-typedef pyre::journal::Inventory<true> true_t;
-typedef pyre::journal::Inventory<false> false_t;
+typedef Inventory<true> true_t;
+typedef Inventory<false> false_t;
 
-typedef pyre::journal::Channel<Debug> trueref_t;
-typedef pyre::journal::Channel<Debug, false> falseref_t;
+// must subclass since the Channel constructor and destructor are protected
+class trueref_t : public Channel<trueref_t> {
+public:
+    trueref_t(string_t name) : Channel<trueref_t>::Channel(name) {}
+};
+
+class falseref_t : public Channel<falseref_t, false> {
+public:
+    falseref_t(string_t name) : Channel<falseref_t,false>::Channel(name) {}
+};
 
 
 // specializations for the static data members
-template<> typename trueref_t::index_t trueref_t::_index = trueref_t::index_t();
-template<> typename falseref_t::index_t falseref_t::_index = falseref_t::index_t();
+template<> typename trueref_t::index_t Channel<trueref_t>::_index = trueref_t::index_t();
+template<> typename falseref_t::index_t Channel<falseref_t,false>::_index = falseref_t::index_t();
 
 // main program
 int main() {
