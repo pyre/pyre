@@ -20,6 +20,8 @@
 #include "Inventory.h"
 #include "Index.h"
 #include "Channel.h"
+#include "Device.h"
+#include "Renderer.h"
 #include "Chronicler.h"
 #include "Diagnostic.h"
 #include "Debug.h"

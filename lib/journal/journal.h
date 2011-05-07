@@ -29,6 +29,8 @@
 #include "journal/Inventory.h"
 #include "journal/Index.h"
 #include "journal/Channel.h"
+#include "journal/Device.h"
+#include "journal/Renderer.h"
 #include "journal/Chronicler.h"
 #include "journal/Diagnostic.h"
 // the predefined diagnostics
