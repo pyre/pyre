@@ -25,7 +25,7 @@ operator << (pyre::journal::Diagnostic<Channel> &, item_t);
 
 // declaration
 template <typename Severity>
-class pyre::journal::Diagnostic {
+class pyre::journal::Diagnostic : public pyre::journal::Chronicler {
     // types
 public:
     typedef Severity severity_t;

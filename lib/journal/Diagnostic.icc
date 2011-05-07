@@ -84,6 +84,7 @@ Diagnostic(
            pyre::journal::Diagnostic<Severity>::string_t severity,
            pyre::journal::Diagnostic<Severity>::string_t name
            ) :
+    pyre::journal::Chronicler::Chronicler(),
     _entry(),
     _buffer(),
     _metadata()
