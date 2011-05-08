@@ -18,6 +18,7 @@ PROJ_SRCS = \
     Chronicler.cc \
     Device.cc \
     Renderer.cc \
+    Streaming.cc \
 
 
 #--------------------------------------------------------------------------
@@ -44,6 +45,7 @@ EXPORT_PKG_HEADERS = \
     Locator.h Locator.icc \
     Renderer.h Renderer.icc \
     Selector.h Selector.icc \
+    Streaming.h Streaming.icc \
 
 
 # end of file 

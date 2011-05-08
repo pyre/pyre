@@ -1,0 +1,22 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_journal_Streaming_icc)
+#error This header file contains implementation details of class Streaming
+#else
+
+
+// the default constructor
+pyre::journal::Streaming::
+Streaming(Streaming::stream_t & stream) :
+    _stream(stream)
+{}
+
+
+# endif
+
+// end of file
