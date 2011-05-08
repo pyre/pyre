@@ -10,7 +10,7 @@
 #include <portinfo>
 
 // packages
-#include <assert.h>
+#include <cassert>
 #include <map>
 #include <vector>
 #include <string>
@@ -18,6 +18,8 @@
 #include <sstream>
 
 // access to the low level diagnostic header file
+#include <pyre/journal/Device.h>
+#include <pyre/journal/Renderer.h>
 #include <pyre/journal/Chronicler.h>
 #include <pyre/journal/Diagnostic.h>
 #include <pyre/journal/macros.h>

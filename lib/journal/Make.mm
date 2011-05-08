@@ -15,6 +15,7 @@ PROJ_DLL = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SO)
 
 PROJ_SRCS = \
     journal.cc \
+    Chronicler.cc \
     Device.cc \
     Renderer.cc \
 
