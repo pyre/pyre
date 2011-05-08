@@ -29,7 +29,7 @@ public:
     virtual void record(const entry_t &, const metadata_t &) = 0;
 
     // meta methods
-public:
+protected:
     virtual ~Device();
     inline Device();
     // disallow
