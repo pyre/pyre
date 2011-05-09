@@ -20,19 +20,18 @@ int main() {
 
     // instantiate a debug channel
     pyre::journal::debug_t debug("pyre.journal.test");
+    // debug.activate();
 
-    // inject all the standard manipulators
-    debug << pyre::journal::newline;
-    debug << pyre::journal::endl;
-    debug << pyre::journal::at(__HERE__);
-    debug << pyre::journal::set("key", "value");
-
-    // make sure injections of built in types work
-    debug << 0;
-    debug << 0.0;
-    debug << (void *)0;
-    debug << "Hello world!";
-    debug << std::string("Hello world!");
+    // inject all the standard manipulators and built in types
+    debug 
+        << pyre::journal::at(__HERE__)
+        << pyre::journal::set("key", "value")
+        << 0 << pyre::journal::newline
+        << 0.0 << pyre::journal::newline
+        << (void *)0 << pyre::journal::newline
+        << "Hello world!" << pyre::journal::newline
+        << std::string("Hello world!") << pyre::journal::newline
+        << pyre::journal::endl;
 
     // all done
     return 0;

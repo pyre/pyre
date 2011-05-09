@@ -10,13 +10,16 @@
 #include <portinfo>
 
 // packages
-#include <assert.h>
+#include <cassert>
 // access to the packages used by Index
 #include <map>
+#include <vector>
 #include <string>
 #include <cstdlib>
 
 // access to the low level header files
+#include <pyre/journal/Device.h>
+#include <pyre/journal/Chronicler.h>
 #include <pyre/journal/Inventory.h>
 #include <pyre/journal/Index.h>
 

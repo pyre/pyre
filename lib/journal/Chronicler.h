@@ -26,37 +26,13 @@ namespace pyre {
 // declaration
 class pyre::journal::Chronicler {
     // types
-protected:
-    class journal_t {
-        // types
-    public:
-        typedef Device device_t;
-        typedef Renderer renderer_t;
-        // interface
-    public:
-        inline device_t & device() const;
-        inline journal_t & device(device_t *);
-
-        inline renderer_t & renderer() const;
-        inline journal_t & renderer(renderer_t *);
-        // meta methods
-    public:
-        inline ~journal_t();
-        inline journal_t(device_t *, renderer_t *);
-        // disallow
-    private:
-        journal_t(const journal_t &);
-        journal_t & operator=(const journal_t &);
-
-        // data
-    private:
-        device_t * _device;
-        renderer_t * _renderer;
-    };
+public:
+    typedef Device device_t;
 
     // interface
-protected:
-    static journal_t & journal();
+public:
+    static inline device_t * defaultDevice();
+    static inline void defaultDevice(device_t *);
 
     // meta methods
 protected:
@@ -66,6 +42,10 @@ protected:
 private:
     inline Chronicler(const Chronicler &);
     inline const Chronicler & operator=(const Chronicler &);
+
+    // data
+private:
+    static device_t * _defaultDevice;
 };
 
 

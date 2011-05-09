@@ -18,7 +18,7 @@ namespace pyre {
 
 
 // declaration
-class pyre::journal::Streaming {
+class pyre::journal::Streaming : public pyre::journal::Device {
     // types
 public:
     typedef std::ostream stream_t;

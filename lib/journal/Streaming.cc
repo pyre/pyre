@@ -10,9 +10,13 @@
 #include <portinfo>
 
 // packages
+#include <map>
+#include <vector>
+#include <string>
 #include <ostream>
 
 // my class header
+#include "Device.h"
 #include "Streaming.h"
 
 

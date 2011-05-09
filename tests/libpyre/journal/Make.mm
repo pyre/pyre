@@ -15,13 +15,13 @@ PROJ_CLEAN += $(TESTS)
 
 TESTS = \
     sanity \
+    chronicler \
     inventory \
     diagnostic \
     diagnostic-injection \
     channel \
     index \
     index-inventory \
-    chronicler \
     debug \
     debug-envvar \
     debug-injection \

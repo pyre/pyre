@@ -26,10 +26,10 @@ public:
 
     // interface
 public:
-    virtual void record(const entry_t &, const metadata_t &) = 0;
+    virtual void record(entry_t &, metadata_t &) = 0;
 
     // meta methods
-protected:
+public:
     virtual ~Device();
     inline Device();
     // disallow

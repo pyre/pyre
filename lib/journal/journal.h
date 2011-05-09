@@ -25,17 +25,16 @@
 
 // local declarations
 // infrastructure
-#include "journal/macros.h"
+#include "journal/Device.h"
+#include "journal/Chronicler.h"
 #include "journal/Inventory.h"
 #include "journal/Index.h"
 #include "journal/Channel.h"
-#include "journal/Device.h"
-#include "journal/Renderer.h"
-#include "journal/Chronicler.h"
 #include "journal/Diagnostic.h"
 // the predefined diagnostics
 #include "journal/Debug.h"
-// manipulators
+// manipulators and associated support
+#include "journal/macros.h"
 #include "journal/Locator.h"
 #include "journal/Selector.h"
 #include "journal/manipulators.h"

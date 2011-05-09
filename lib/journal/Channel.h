@@ -32,7 +32,7 @@ public:
 public:
     // accessors
     inline state_t isActive() const;
-    inline const device_t & device() const;
+    inline device_t & device() const;
 
     // mutators
     inline void activate();

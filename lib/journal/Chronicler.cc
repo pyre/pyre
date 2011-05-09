@@ -15,11 +15,15 @@
 #include <string>
 
 // local types
+#if 0
 #include "Inventory.h"
 #include "Index.h"
 #include "Channel.h"
+#endif
 #include "Device.h"
+#include "Streaming.h"
 #include "Renderer.h"
+#include "Console.h"
 #include "Chronicler.h"
 
 
@@ -27,22 +31,8 @@
 using namespace pyre::journal;
 
 
-// implementation of {Chronicler}
-// definition of the static methods
-pyre::journal::Chronicler::journal_t &
-pyre::journal::Chronicler::
-journal()
-{
-    // N.B.: this only happens once!
-    static journal_t * _journal 
-        = new journal_t(
-                        // the default device is the console
-                        0,
-                        // build a new default renderer
-                        new Renderer());
-    // return the static instance
-    return *_journal;
-}
+// initialize the default device
+Chronicler::device_t * Chronicler::_defaultDevice = new Console();
 
 
 // end of file

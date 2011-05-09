@@ -13,6 +13,7 @@
 // the default constructor
 pyre::journal::Streaming::
 Streaming(Streaming::stream_t & stream) :
+    pyre::journal::Device(),
     _stream(stream)
 {}
 

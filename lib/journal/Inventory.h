@@ -30,7 +30,7 @@ public:
 public:
     // accessors
     inline state_t state() const;
-    inline const device_t & device() const;
+    inline device_t & device() const;
 
     // mutators
     inline void activate();
@@ -40,7 +40,7 @@ public:
     // meta methods
 public:
     inline ~Inventory();
-    inline Inventory(state_t = DefaultState, device_t * = 0);
+    inline Inventory(state_t = DefaultState, device_t * = Chronicler::defaultDevice());
     inline Inventory(const Inventory &);
     inline const Inventory & operator=(const Inventory &);
     

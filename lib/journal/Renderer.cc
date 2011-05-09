@@ -65,7 +65,7 @@ header(
         << std::endl << marker;
     // render the filename
     const size_t maxlen = 60;
-    string_t & filename = metadata["filename"];
+    string_t & filename = metadata["file"];
     // names longer than 60 characters get shortened
     if (filename.size() > maxlen) {
         stream

@@ -11,6 +11,31 @@
 
 
 // interface
+// attach a new default device
+void
+pyre::journal::Chronicler::
+defaultDevice(pyre::journal::Chronicler::device_t * device)
+{
+    // make sure we are really swapping out the old device
+    if (device != _defaultDevice) {
+        // delete the old one
+        delete _defaultDevice;
+        // attach the new one
+        _defaultDevice = device;
+    }
+    // and return
+    return ;
+}
+
+
+// retrieve the default device
+pyre::journal::Chronicler::device_t *
+pyre::journal::Chronicler::
+defaultDevice()
+{
+    // return the default device
+    return _defaultDevice;
+}
 
 
 // destructor
@@ -21,77 +46,6 @@ pyre::journal::Chronicler::
 // the default constructor
 pyre::journal::Chronicler::
 Chronicler()
-{}
-
-
-// the implementation of the embedded class journal
-// interface
-// access to the default journal device
-pyre::journal::Chronicler::journal_t::device_t &
-pyre::journal::Chronicler::journal_t::
-device() const 
-{
-    return *_device;
-}
-
-
-// attaching a new device
-pyre::journal::Chronicler::journal_t &
-pyre::journal::Chronicler::journal_t::
-device(device_t * newDevice)
-{
-    // check whether the new device is the same as the old device
-    if (_device != newDevice) {
-        // delete the old  device
-        delete _device;
-        // attach the new one
-        _device = newDevice;
-    }
-    // and return me
-    return *this;
-}
-
-
-// access to the default journal renderer
-pyre::journal::Chronicler::journal_t::renderer_t &
-pyre::journal::Chronicler::journal_t::
-renderer() const 
-{
-    return *_renderer;
-}
-
-
-// attaching a new renderer
-pyre::journal::Chronicler::journal_t &
-pyre::journal::Chronicler::journal_t::
-renderer(renderer_t * newRenderer)
-{
-    // check whether the new renderer is the same as the old renderer
-    if (_renderer != newRenderer) {
-        // delete the old  renderer
-        delete _renderer;
-        // attach the new one
-        _renderer = newRenderer;
-    }
-    // and return me
-    return *this;
-}
-
-
-// the destructor
-pyre::journal::Chronicler::journal_t::
-~journal_t()
-{
-    delete _device;
-    delete _renderer;
-}
-
-
-// the constructor
-pyre::journal::Chronicler::journal_t::
-journal_t(device_t * device, renderer_t * renderer) :
-    _device(device),
-    _renderer(renderer)
 {}
 
 

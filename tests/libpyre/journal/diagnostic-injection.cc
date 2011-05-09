@@ -22,6 +22,9 @@
 #include <pyre/journal/Renderer.h>
 #include <pyre/journal/Chronicler.h>
 #include <pyre/journal/Diagnostic.h>
+#include <pyre/journal/Index.h>
+#include <pyre/journal/Inventory.h>
+#include <pyre/journal/Channel.h>
 #include <pyre/journal/macros.h>
 
 #include <pyre/journal/Locator.h>
@@ -30,14 +33,25 @@
 
 
 // a simple channel class
-class Debug : public pyre::journal::Diagnostic<Debug> {
+class Debug : 
+    public pyre::journal::Diagnostic<Debug>,
+    public pyre::journal::Channel<Debug, false> 
+{
     // types
 public:
     typedef std::string string_t;
     // meta methods
 public:
-    Debug(string_t name) : Diagnostic<Debug>("debug", name) {}
+    Debug(string_t name) :
+        Diagnostic<Debug>("debug", name),
+        Channel<Debug, false>(name)
+    {}
 };
+
+
+// storage for the index
+template <>
+Debug::index_t pyre::journal::Channel<Debug, false>::_index = Debug::index_t();
 
 
 // main program

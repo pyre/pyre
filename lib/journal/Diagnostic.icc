@@ -25,6 +25,16 @@ pyre::journal::Diagnostic<Severity> &
 pyre::journal::Diagnostic<Severity>::
 record()
 {
+    // me as a {Severity}...
+    Severity * severity = static_cast<Severity *>(this);
+    // if I am active
+    if (severity->isActive()) {
+        // grab my device
+        device_t & device = severity->device();
+        // get it to record my info
+        device.record(_entry, _metadata);
+    }
+    // and return me
     return *this;
 }
 

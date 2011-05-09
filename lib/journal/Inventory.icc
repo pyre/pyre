@@ -21,7 +21,7 @@ state() const
 
 
 template <bool DefaultState>
-const typename pyre::journal::Inventory<DefaultState>::device_t &
+typename pyre::journal::Inventory<DefaultState>::device_t &
 pyre::journal::Inventory<DefaultState>::
 device() const
 {

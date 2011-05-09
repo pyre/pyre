@@ -10,9 +10,14 @@
 #include <portinfo>
 
 // packages
-#include <assert.h>
+#include <cassert>
+#include <map>
+#include <vector>
+#include <string>
 
 // access to the low level inventory header file
+#include <pyre/journal/Device.h>
+#include <pyre/journal/Chronicler.h>
 #include <pyre/journal/Inventory.h>
 
 // convenience
