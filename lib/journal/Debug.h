@@ -28,9 +28,6 @@ public:
     typedef Diagnostic<Debug> diagnostic_t;
     typedef Channel<Debug, false> channel_t;
 
-    // interface
-public:
-
     // meta methods
 public:
     inline ~Debug();
