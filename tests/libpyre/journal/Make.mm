@@ -27,6 +27,8 @@ TESTS = \
     debug-injection \
     firewall \
     firewall-injection \
+    info \
+    info-injection \
 
 PROJ_LCXX_LIBPATH = $(PROJ_LIBDIR)
 LIBRARIES = -ljournal $(EXTERNAL_LIBS)
@@ -49,6 +51,8 @@ test: $(TESTS)
 	./debug-injection
 	./firewall
 	./firewall-injection
+	./info
+	./info-injection
 
 
 sanity: sanity.cc
@@ -88,6 +92,12 @@ firewall: firewall.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 firewall-injection: firewall-injection.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+info: info.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+info-injection: info-injection.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 

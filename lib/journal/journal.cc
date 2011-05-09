@@ -26,6 +26,7 @@
 #include "Diagnostic.h"
 #include "Debug.h"
 #include "Firewall.h"
+#include "Informational.h"
 
 // type aliases
 typedef std::string string_t;
@@ -36,6 +37,9 @@ typedef firewall_t::index_t firewallindex_t;
 // debug
 typedef pyre::journal::Debug debug_t;
 typedef debug_t::index_t debugindex_t;
+// informational
+typedef pyre::journal::Informational info_t;
+typedef info_t::index_t infoindex_t;
 
 
 // initialization routines
@@ -74,13 +78,18 @@ static debugindex_t initializeDebugIndex()
 // specializations that serve as definitions of the indices
 // firewall
 template <>
-debugindex_t 
-debug_t::channel_t::_index = initializeDebugIndex();
+firewallindex_t 
+firewall_t::channel_t::_index = firewallindex_t();
 
 // debug
 template <>
-firewallindex_t 
-firewall_t::channel_t::_index = firewallindex_t();
+debugindex_t 
+debug_t::channel_t::_index = initializeDebugIndex();
+
+// info
+template <>
+infoindex_t 
+info_t::channel_t::_index = infoindex_t();
 
 
 // end of file

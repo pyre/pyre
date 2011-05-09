@@ -34,6 +34,7 @@
 // the predefined diagnostics
 #include "journal/Debug.h"
 #include "journal/Firewall.h"
+#include "journal/Informational.h"
 // manipulators and associated support
 #include "journal/macros.h"
 #include "journal/Locator.h"
@@ -46,6 +47,7 @@ namespace pyre {
         // diagnostics
         typedef Debug debug_t;
         typedef Firewall firewall_t;
+        typedef Informational info_t;
 
         // locators
         typedef Locator at;
