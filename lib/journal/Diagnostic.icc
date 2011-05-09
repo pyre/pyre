@@ -29,10 +29,14 @@ record()
     Severity * severity = static_cast<Severity *>(this);
     // if I am active
     if (severity->isActive()) {
+        // flush the buffer
+        newline();
         // grab my device
         device_t & device = severity->device();
-        // get it to record my info
+        // get it to record the accumulated information
         device.record(_entry, _metadata);
+        // clear out the entry
+        _entry.clear();
     }
     // and return me
     return *this;
@@ -49,6 +53,8 @@ newline()
     _entry.push_back(_buffer.str());
     // clear out the buffer contents
     _buffer.str(string_t());
+    // reset any error flags
+    _buffer.clear();
     // and return
     return *this;
 }
