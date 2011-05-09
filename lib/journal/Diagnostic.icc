@@ -27,6 +27,8 @@ record()
 {
     // me as a {Severity}...
     Severity * severity = static_cast<Severity *>(this);
+    // invoke the start hook
+    severity->_startRecording();
     // if I am active
     if (severity->isActive()) {
         // flush the buffer
@@ -38,6 +40,8 @@ record()
         // clear out the entry
         _entry.clear();
     }
+    // invoke the end hook
+    severity->_endRecording();
     // and return me
     return *this;
 }
@@ -107,6 +111,23 @@ Diagnostic(
 {
     setattr("channel", name);
     setattr("severity", severity);
+}
+
+
+// implementation details
+template <typename Severity>
+void
+pyre::journal::Diagnostic<Severity>::
+_startRecording() {
+    return;
+}
+
+
+template <typename Severity>
+void
+pyre::journal::Diagnostic<Severity>::
+_endRecording() {
+    return;
 }
 
 

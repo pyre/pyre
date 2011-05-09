@@ -57,10 +57,15 @@ private:
     inline Diagnostic & operator=(const Diagnostic &);
     
     // data members
-public:
+private:
     entry_t _entry;
     buffer_t _buffer;
     metadata_t _metadata;
+
+    // implementation details
+protected:
+    inline void _startRecording();
+    inline void _endRecording();
 };
 
 
