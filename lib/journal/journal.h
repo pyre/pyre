@@ -35,6 +35,7 @@
 #include "journal/Debug.h"
 #include "journal/Firewall.h"
 #include "journal/Informational.h"
+#include "journal/Warning.h"
 // manipulators and associated support
 #include "journal/macros.h"
 #include "journal/Locator.h"
@@ -48,6 +49,7 @@ namespace pyre {
         typedef Debug debug_t;
         typedef Firewall firewall_t;
         typedef Informational info_t;
+        typedef Warning warning_t;
 
         // locators
         typedef Locator at;

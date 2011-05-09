@@ -50,6 +50,7 @@ EXPORT_PKG_HEADERS = \
     Renderer.h Renderer.icc \
     Selector.h Selector.icc \
     Streaming.h Streaming.icc \
+    Warning.h Warning.icc \
 
 
 # end of file 

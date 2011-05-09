@@ -27,6 +27,7 @@
 #include "Debug.h"
 #include "Firewall.h"
 #include "Informational.h"
+#include "Warning.h"
 
 // type aliases
 typedef std::string string_t;
@@ -40,6 +41,9 @@ typedef debug_t::index_t debugindex_t;
 // informational
 typedef pyre::journal::Informational info_t;
 typedef info_t::index_t infoindex_t;
+// warning
+typedef pyre::journal::Warning warning_t;
+typedef warning_t::index_t warningindex_t;
 
 
 // initialization routines
@@ -90,6 +94,11 @@ debug_t::channel_t::_index = initializeDebugIndex();
 template <>
 infoindex_t 
 info_t::channel_t::_index = infoindex_t();
+
+// warning
+template <>
+warningindex_t 
+warning_t::channel_t::_index = warningindex_t();
 
 
 // end of file
