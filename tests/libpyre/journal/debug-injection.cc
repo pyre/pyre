@@ -20,7 +20,7 @@ int main() {
 
     // instantiate a debug channel
     pyre::journal::debug_t debug("pyre.journal.test");
-    debug.activate();
+    // debug.activate();
 
     // inject all the standard manipulators and built in types
     debug 
