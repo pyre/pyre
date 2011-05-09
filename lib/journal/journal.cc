@@ -22,13 +22,18 @@
 #include "Inventory.h"
 #include "Index.h"
 #include "Channel.h"
+// diagnostics
 #include "Diagnostic.h"
 #include "Debug.h"
-
+#include "Firewall.h"
 
 // type aliases
 typedef std::string string_t;
 
+// firewall
+typedef pyre::journal::Firewall firewall_t;
+typedef firewall_t::index_t firewallindex_t;
+// debug
 typedef pyre::journal::Debug debug_t;
 typedef debug_t::index_t debugindex_t;
 
@@ -67,9 +72,15 @@ static debugindex_t initializeDebugIndex()
 
 
 // specializations that serve as definitions of the indices
+// firewall
 template <>
 debugindex_t 
 debug_t::channel_t::_index = initializeDebugIndex();
+
+// debug
+template <>
+firewallindex_t 
+firewall_t::channel_t::_index = firewallindex_t();
 
 
 // end of file

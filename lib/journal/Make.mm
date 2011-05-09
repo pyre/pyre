@@ -42,6 +42,7 @@ EXPORT_PKG_HEADERS = \
     Debug.h Debug.icc \
     Device.h Device.icc \
     Diagnostic.h Diagnostic.icc \
+    Firewall.h Firewall.icc \
     Index.h Index.icc \
     Inventory.h Inventory.icc \
     Locator.h Locator.icc \

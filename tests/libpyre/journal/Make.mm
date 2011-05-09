@@ -25,6 +25,8 @@ TESTS = \
     debug \
     debug-envvar \
     debug-injection \
+    firewall \
+    firewall-injection \
 
 PROJ_LCXX_LIBPATH = $(PROJ_LIBDIR)
 LIBRARIES = -ljournal $(EXTERNAL_LIBS)
@@ -45,6 +47,8 @@ test: $(TESTS)
 	./debug
 	DEBUG_OPT=pyre.journal.test ./debug-envvar
 	./debug-injection
+	./firewall
+	./firewall-injection
 
 
 sanity: sanity.cc
@@ -78,6 +82,12 @@ debug-envvar: debug-envvar.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 debug-injection: debug-injection.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+firewall: firewall.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+firewall-injection: firewall-injection.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 
