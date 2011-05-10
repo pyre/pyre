@@ -25,6 +25,7 @@
 // diagnostics
 #include "Diagnostic.h"
 #include "Debug.h"
+#include "Error.h"
 #include "Firewall.h"
 #include "Informational.h"
 #include "Warning.h"
@@ -38,6 +39,9 @@ typedef firewall_t::index_t firewallindex_t;
 // debug
 typedef pyre::journal::Debug debug_t;
 typedef debug_t::index_t debugindex_t;
+// error
+typedef pyre::journal::Error error_t;
+typedef error_t::index_t errorindex_t;
 // informational
 typedef pyre::journal::Informational info_t;
 typedef info_t::index_t infoindex_t;
@@ -89,6 +93,11 @@ firewall_t::channel_t::_index = firewallindex_t();
 template <>
 debugindex_t 
 debug_t::channel_t::_index = initializeDebugIndex();
+
+// error
+template <>
+errorindex_t 
+error_t::channel_t::_index = errorindex_t();
 
 // info
 template <>

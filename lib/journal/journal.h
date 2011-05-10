@@ -33,6 +33,7 @@
 #include "journal/Diagnostic.h"
 // the predefined diagnostics
 #include "journal/Debug.h"
+#include "journal/Error.h"
 #include "journal/Firewall.h"
 #include "journal/Informational.h"
 #include "journal/Warning.h"
@@ -47,6 +48,7 @@ namespace pyre {
     namespace journal {
         // diagnostics
         typedef Debug debug_t;
+        typedef Error error_t;
         typedef Firewall firewall_t;
         typedef Informational info_t;
         typedef Warning warning_t;

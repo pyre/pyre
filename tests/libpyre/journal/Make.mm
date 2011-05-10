@@ -31,6 +31,8 @@ TESTS = \
     info-injection \
     warning \
     warning-injection \
+    error \
+    error-injection \
 
 PROJ_LCXX_LIBPATH = $(PROJ_LIBDIR)
 LIBRARIES = -ljournal $(EXTERNAL_LIBS)
@@ -57,6 +59,8 @@ test: $(TESTS)
 	./info-injection
 	./warning
 	./warning-injection
+	./error
+	./error-injection
 
 
 sanity: sanity.cc
@@ -108,6 +112,12 @@ warning: warning.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 warning-injection: warning-injection.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+error: error.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+error-injection: error-injection.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 
