@@ -24,7 +24,7 @@ def test():
     try:
         interface()
         assert False
-    except ImportError:
+    except AttributeError:
         pass
 
     return interface

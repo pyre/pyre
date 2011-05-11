@@ -12,6 +12,7 @@ RECURSE_DIRS = \
     python \
     libpyre \
     pyre \
+    journal \
     mpi \
     merlin
 
