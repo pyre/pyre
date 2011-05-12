@@ -70,11 +70,48 @@ _journal_license = """
     POSSIBILITY OF SUCH DAMAGE.
     """
 
+# various initialization routines
+# channel configuration
+def configureChannels(config, channels):
+    """
+    Extract and apply channel configuration information
+    """
+    # access the type converters
+    import pyre.schema
+    # and iterate over {channels}, updating their indices with the contents of the pyre
+    # configuration store in {config}
+    for channel in channels:
+        # build the key prefix
+        prefix = "journal\." + channel.severity
+        # identify the relevant keys
+        for name, node in config.select(pattern=prefix):
+            # get the value
+            value = node.value
+            # if it's {None}, it probably came from the command line without an assignment
+            if value is None: value = True
+            # attempt to cast to a bool
+            try:
+                value = pyre.schema.bool.pyre_cast(value)
+            # if this fails
+            except pyre.schema.bool.CastingError:
+                # ignore it and move on
+                continue
+            # extract the channel name
+            channelname = '.'.join(name.split('.')[2:])
+            # update the index
+            channel(channelname).active = value
+
+
 
 # diagnostics
 from .Debug import Debug as debug
 from .Firewall import Firewall as firewall
 
+
+# collect them all in one place
+channels = [
+    debug, firewall
+    ]
 
 # boot strapping
 # attempt to load the journal extension
@@ -89,34 +126,9 @@ else:
     # install the index from the extension module that enables interaction with low level code
     pass
 
-# access the pyre configuration store
+# configure the journal channels
 import pyre
-# and the type converters
-import pyre.schema
-configurator = pyre.executive.configurator
-# build a list of the known channels
-channels = [debug, firewall]
-# and iterate over them, updating their indices with the contents of the pyre configuration store
-for channel in channels:
-    # build the key prefix
-    prefix = "journal\." + channel.severity
-    # identify the relevant keys
-    for name, node in configurator.select(pattern=prefix):
-        # get the value
-        value = node.value
-        # if it's {None}, it probably came from the command line without an assignment
-        if value is None: value = True
-        # attempt to cast to a bool
-        try:
-            value = pyre.schema.bool.pyre_cast(value)
-        # if this fails
-        except pyre.schema.bool.CastingError:
-            # ignore it and move on
-            continue
-        # extract the channel name
-        channelname = '.'.join(name.split('.')[2:])
-        # update the index
-        channel(channelname).active = value
+configureChannels(config=pyre.executive.configurator, channels=channels)
 
 
 # end of file 
