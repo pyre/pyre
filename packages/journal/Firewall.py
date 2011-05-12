@@ -27,6 +27,7 @@ class Firewall(Channel):
 
     # public data
     fatal = False
+    severity = "firewall"
 
 
     # interface
