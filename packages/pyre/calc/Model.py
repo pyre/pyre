@@ -19,7 +19,7 @@ class Model(AbstractModel):
     @property
     def nodes(self):
         """
-        Iterate over the nodes in my graph. Returns a sequence of ({name}, {node}) tuples.
+        Iterate over the nodes in my graph
         """
         return self._nodes.values()
 
