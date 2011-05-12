@@ -11,17 +11,19 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working:
-	${PYTHON} ./journal_cmdline.py --journal.debug.pyre.test1 --journal.debug.pyre.test2=off --journal.foo=4
+working: debug
 
 all: test
 
-test: sanity journal
+test: sanity journal debug
 
 sanity:
 	${PYTHON} ./sanity.py
 
 journal:
 	${PYTHON} ./journal_cmdline.py --journal.debug.pyre.test1 --journal.debug.pyre.test2=off
+
+debug:
+	${PYTHON} ./debug.py
 
 # end of file 
