@@ -21,6 +21,14 @@ class TextRenderer(pyre.component, family="journal.renderers.text", implements=R
     """
 
 
+    # public state
+    header = pyre.properties.str(default=">>")
+    header.doc = "the marker to use while rendering the diagnostic metadata"
+
+    body = pyre.properties.str(default="--")
+    body.doc = "the marker to use while rendering the diagnostic body"
+
+
     # interface
     @pyre.provides
     def render(self, page, metadata):
@@ -28,11 +36,11 @@ class TextRenderer(pyre.component, family="journal.renderers.text", implements=R
         Convert the diagnostic information into a form that a device can record
         """
         # build the header
-        yield " >> {filename}:{line}:{function}".format(**metadata)
-        yield " >> {name}({severity})".format(**metadata)
+        yield " >> {filename}:{line}:{function}".format(self.header, **metadata)
+        yield " >> {name}({severity})".format(self.header, **metadata)
         # and the body
         for line in page:
-            yield " -- " + line
+            yield " {} {} ".format(self.body, line)
 
         # all done
         return
