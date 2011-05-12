@@ -19,7 +19,15 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Channel.py \
+    Console.py \
     Debug.py \
+    Device.py \
+    Diagnostic.py \
+    Firewall.py \
+    Renderer.py \
+    TextRenderer.py \
+    exceptions.py \
     __init__.py
 
 

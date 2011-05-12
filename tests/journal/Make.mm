@@ -11,11 +11,11 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working: debug
+working: channels
 
 all: test
 
-test: sanity journal debug
+test: sanity journal channels
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -23,7 +23,9 @@ sanity:
 journal:
 	${PYTHON} ./journal_cmdline.py --journal.debug.pyre.test1 --journal.debug.pyre.test2=off
 
-debug:
+channels:
 	${PYTHON} ./debug.py
+	${PYTHON} ./debug-injection.py
+	${PYTHON} ./firewall.py
 
 # end of file 

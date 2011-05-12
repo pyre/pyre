@@ -73,6 +73,7 @@ _journal_license = """
 
 # diagnostics
 from .Debug import Debug as debug
+from .Firewall import Firewall as firewall
 
 
 # boot strapping

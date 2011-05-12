@@ -12,19 +12,35 @@ import collections
 
 # super-classes
 from .Channel import Channel
-from .Diagnostic import Diagnostic
 
 
 # declaration
-class Debug(Diagnostic, Channel):
+class Firewall(Channel):
     """
     This class is the implementation of the debug channel
     """
 
 
-    # public data
-    severity = "debug"
+    # types
+    from .exceptions import FirewallError
 
+
+    # public data
+    fatal = False
+
+
+    # interface
+    def log(self, message=None):
+        """
+        Record my message to my device
+        """
+        # first, record the entry
+        super().log(message)
+        # if firewalls are not fatal, return normally
+        if notself.fatal: return self
+        # otherwise, raise an exception
+        raise self.FirewallError(firewall=self)
+        
 
     # meta methods
     def __init__(self, name, **kwds):
@@ -38,7 +54,7 @@ class Debug(Diagnostic, Channel):
     # types
     class _State:
         # public data
-        state = False
+        state = True
         device = None
 
 
