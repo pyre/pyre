@@ -88,6 +88,35 @@ except Exception:
 else:
     # install the index from the extension module that enables interaction with low level code
     pass
-    
+
+# access the pyre configuration store
+import pyre
+# and the type converters
+import pyre.schema
+configurator = pyre.executive.configurator
+# build a list of the known channels
+channels = [debug, firewall]
+# and iterate over them, updating their indices with the contents of the pyre configuration store
+for channel in channels:
+    # build the key prefix
+    prefix = "journal\." + channel.severity
+    # identify the relevant keys
+    for name, node in configurator.select(pattern=prefix):
+        # get the value
+        value = node.value
+        # if it's {None}, it probably came from the command line without an assignment
+        if value is None: value = True
+        # attempt to cast to a bool
+        try:
+            value = pyre.schema.bool.pyre_cast(value)
+        # if this fails
+        except pyre.schema.bool.CastingError:
+            # ignore it and move on
+            continue
+        # extract the channel name
+        channelname = '.'.join(name.split('.')[2:])
+        # update the index
+        channel(channelname).active = value
+
 
 # end of file 
