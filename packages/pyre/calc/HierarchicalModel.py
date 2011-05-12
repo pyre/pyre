@@ -6,10 +6,14 @@
 #
 
 
+# packages
+import re
 import pyre.patterns
+# super-class
 from .AbstractModel import AbstractModel
 
 
+# declaration
 class HierarchicalModel(AbstractModel):
     """
     Storage and naming services for calc nodes
@@ -41,6 +45,27 @@ class HierarchicalModel(AbstractModel):
 
 
     # interface
+    def select(self, pattern=''):
+        """
+        Generate a sequence of (name, value) pairs for all nodes in the model whose name
+        matches the supplied {pattern}. Careful to properly escape periods and other characters
+        that may occur in the name of the requested keys that are recognized by the {re}
+        package
+        """
+        # check whether i have any nodes
+        if not self._nodes: return
+        # build the name recognizer
+        regex = re.compile(pattern)
+        # iterate over all the fully qualified names in the model
+        for key, name in self._fqnames.items():
+            # if the name matches the pattern
+            if regex.match(name):
+                # yield the fully qualified name and the value of the node
+                yield name, self._nodes[key]
+        # all done
+        return
+
+
     def children(self, root=None, rootKey=None):
         """
         Given the name {root}, iterate over all the canonical nodes that are its logical
@@ -60,9 +85,14 @@ class HierarchicalModel(AbstractModel):
             # and extract the name and associated node
             try:
                 yield key, self._names[key], self._fqnames[key], self._nodes[key]
-            # if not there, it's because one of these is a facility with its own settings
+            # if not there, it's because the key exists in the model but none of its immediate
+            # children are leaf nodes with associated values. this happens often for
+            # configuration settings to facilities that have not yet been converted into
+            # concrete components; it also happens for configuration settings that are not meant
+            # for components at all, such as journal channel activations
             except KeyError:
-                # we'll get that later, when it is actually instantiated
+                # skip it, for now. facility settings will be harvested when the associated
+                # component is instantiated and assigned
                 continue
         # all done
         return
@@ -222,22 +252,14 @@ class HierarchicalModel(AbstractModel):
 
 
     # debug support
-    def dump(self, pattern=None):
+    def dump(self, pattern=''):
         """
         List my contents
         """
-        # build the node name recognizer
-        import re
-        regex = re.compile(pattern if pattern else '')
-
         print("model {0!r}:".format(self.name))
-        if self._nodes:
-            print("  nodes:")
-            for key in self._fqnames.keys():
-                name = self._fqnames[key]
-                if regex.match(name):
-                    node = self._nodes[key]
-                    print("    {0!r} <- {1!r}".format(name, node.value))
+        print("  nodes:")
+        for name, node in self.select(pattern):
+            print("    {!r} <- {!r}".format(name, node.value))
         return
 
 

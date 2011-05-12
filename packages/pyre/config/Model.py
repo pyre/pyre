@@ -165,7 +165,7 @@ class Model(HierarchicalModel):
         return
 
 
-    def dump(self, pattern=None):
+    def dump(self, pattern=''):
         super().dump(pattern)
         if self.configurables:
             print("  configurables:")
