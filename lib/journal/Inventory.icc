@@ -21,11 +21,11 @@ state() const
 
 
 template <bool DefaultState>
-typename pyre::journal::Inventory<DefaultState>::device_t &
+typename pyre::journal::Inventory<DefaultState>::device_t *
 pyre::journal::Inventory<DefaultState>::
 device() const
 {
-    return *_device;
+    return _device;
 }
 
 

@@ -11,7 +11,6 @@
 
 // packages
 #include <assert.h>
-// access to the packages used by Chronicler
 // access to the journal header file
 #include <pyre/journal.h>
 

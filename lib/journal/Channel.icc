@@ -21,7 +21,7 @@ isActive() const
 
 
 template <typename Severity, bool DefaultState>
-typename pyre::journal::Channel<Severity, DefaultState>::device_t &
+typename pyre::journal::Channel<Severity, DefaultState>::device_t *
 pyre::journal::Channel<Severity, DefaultState>::
 device() const
 {

@@ -34,9 +34,13 @@ record()
         // flush the buffer
         newline();
         // grab my device
-        device_t & device = severity->device();
+        device_t * device = severity->device();
+        // if it is null, use the global default device
+        if (!device) {
+            device = Chronicler::defaultDevice();
+        }
         // get it to record the accumulated information
-        device.record(_entry, _metadata);
+        device->record(_entry, _metadata);
         // clear out the entry
         _entry.clear();
     }

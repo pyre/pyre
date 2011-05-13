@@ -18,8 +18,6 @@
 #include <cstdlib>
 
 // access to the low level header files
-#include <pyre/journal/Device.h>
-#include <pyre/journal/Chronicler.h>
 #include <pyre/journal/Inventory.h>
 #include <pyre/journal/Index.h>
 
