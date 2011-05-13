@@ -8,7 +8,7 @@
 
 
 """
-Verify that debug channels by the same name share a common state
+Verify that {debug.log} works as expected
 """
 
 

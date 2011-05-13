@@ -8,7 +8,7 @@
 
 
 """
-Verify that firewall channels by the same name share a common state
+Verify that {firewall.log} works as expected
 """
 
 
