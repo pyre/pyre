@@ -39,6 +39,9 @@ public:
     inline void deactivate();
     inline void device(device_t *);
 
+    // access to the index
+    inline static index_t & index();
+
     // meta methods
 protected:
     inline ~Channel();

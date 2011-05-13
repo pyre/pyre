@@ -57,6 +57,15 @@ device(typename Channel::device_t * device)
 }
 
 
+template <typename Severity, bool DefaultState>
+typename pyre::journal::Channel<Severity, DefaultState>::index_t &
+pyre::journal::Channel<Severity, DefaultState>::
+index()
+{
+    return _index;
+}
+
+
 // destructor
 template <typename Severity, bool DefaultState>
 pyre::journal::Channel<Severity, DefaultState>::
