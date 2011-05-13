@@ -12,10 +12,11 @@ import collections
 
 # super-classes
 from .Channel import Channel
+from .Diagnostic import Diagnostic
 
 
 # declaration
-class Firewall(Channel):
+class Firewall(Diagnostic, Channel):
     """
     This class is the implementation of the debug channel
     """
@@ -38,7 +39,7 @@ class Firewall(Channel):
         # first, record the entry
         super().log(message)
         # if firewalls are not fatal, return normally
-        if notself.fatal: return self
+        if not self.fatal: return self
         # otherwise, raise an exception
         raise self.FirewallError(firewall=self)
         

@@ -11,6 +11,7 @@
 
   <!-- journal settings -->
   <bind property="journal.debug.activation">on</bind>
+  <bind property="journal.firewall.activation">off</bind>
 
 </config>
 

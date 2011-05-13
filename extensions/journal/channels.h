@@ -28,6 +28,21 @@ namespace pyre {
             const char * const debugGet__doc__ = "get the state of a debug channel";
             PyObject * debugGet(PyObject *, PyObject *);
 
+            // lookup a name in the firewall index
+            const char * const firewallLookup__name__ = "firewallLookup";
+            const char * const firewallLookup__doc__ = 
+                "get the channel state from the firewall index";
+            PyObject * firewallLookup(PyObject *, PyObject *);
+
+            // manipulate the state of a firewall channel
+            const char * const firewallSet__name__ = "firewallSet";
+            const char * const firewallSet__doc__ = "set the state of a firewall channel";
+            PyObject * firewallSet(PyObject *, PyObject *);
+
+            const char * const firewallGet__name__ = "firewallGet";
+            const char * const firewallGet__doc__ = "get the state of a firewall channel";
+            PyObject * firewallGet(PyObject *, PyObject *);
+
 
         } // of namespace journal
     } // of namespace extensions

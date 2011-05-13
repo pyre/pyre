@@ -27,5 +27,8 @@ channels:
 	DEBUG_OPT=activation ${PYTHON} ./debug-activation.py
 	${PYTHON} ./debug-injection.py
 	${PYTHON} ./firewall.py
+	${PYTHON} ./firewall-activation.py --journal.firewall.activation=off
+	${PYTHON} ./firewall-activation.py --config=activation.pml
+	${PYTHON} ./firewall-injection.py
 
 # end of file 

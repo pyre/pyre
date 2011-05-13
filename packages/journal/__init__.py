@@ -128,8 +128,14 @@ def boot():
         # access the index that's tied to the C++ maps
         from .Index import Index as proxy
         # install the C++ indices
+        # for debug channels
         debug._index = proxy(
-            lookup=journal.debugLookup, getter=journal.debugGet, setter=journal.debugSet)
+            lookup=journal.debugLookup, 
+            getter=journal.debugGet, setter=journal.debugSet)
+        # for firewalls
+        firewall._index = proxy(
+            lookup=journal.firewallLookup,
+            getter=journal.firewallGet, setter=journal.firewallSet)
 
     # configure the journal channels
     import pyre

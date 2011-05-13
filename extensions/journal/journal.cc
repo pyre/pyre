@@ -31,6 +31,10 @@ namespace pyre {
                 { debugLookup__name__, debugLookup, METH_VARARGS, debugLookup__doc__ },
                 { debugSet__name__, debugSet, METH_VARARGS, debugSet__doc__ },
                 { debugGet__name__, debugGet, METH_VARARGS, debugGet__doc__ },
+                // firewall
+                { firewallLookup__name__, firewallLookup, METH_VARARGS, firewallLookup__doc__ },
+                { firewallSet__name__, firewallSet, METH_VARARGS, firewallSet__doc__ },
+                { firewallGet__name__, firewallGet, METH_VARARGS, firewallGet__doc__ },
         
                 // sentinel
                 {0, 0, 0, 0}
