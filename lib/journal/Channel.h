@@ -40,7 +40,7 @@ public:
     inline void device(device_t *);
 
     // access to the index
-    inline static index_t & index();
+    inline static inventory_t & lookup(string_t name);
 
     // meta methods
 protected:
