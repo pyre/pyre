@@ -71,6 +71,11 @@ _journal_license = """
     """
 
 # various initialization routines
+# diagnostics
+from .Debug import Debug as debug
+from .Firewall import Firewall as firewall
+
+
 # channel configuration
 def configureChannels(config, channels):
     """
@@ -100,35 +105,42 @@ def configureChannels(config, channels):
             channelname = '.'.join(name.split('.')[2:])
             # update the index
             channel(channelname).active = value
+    # all done
+    return
 
 
+def boot():
+    # collect all channels in one place
+    channels = [
+        debug, firewall
+        ]
 
-# diagnostics
-from .Debug import Debug as debug
-from .Firewall import Firewall as firewall
+    # attempt to load the journal extension
+    try:
+        from . import journal
+    # if it fails for any reason
+    except Exception:
+        # ignore it; the default implementation will kick in
+        pass
+    # otherwise
+    else:
+        # install the index from the extension module that enables interaction with low level code
+        # access the index that's tied to the C++ maps
+        from .Index import Index as proxy
+        # install the C++ indices
+        debug._index = proxy(
+            lookup=journal.debugLookup, getter=journal.debugGet, setter=journal.debugSet)
+
+    # configure the journal channels
+    import pyre
+    configureChannels(config=pyre.executive.configurator, channels=channels)
+
+    # all done
+    return
 
 
-# collect them all in one place
-channels = [
-    debug, firewall
-    ]
-
-# boot strapping
-# attempt to load the journal extension
-try:
-    from . import journal
-# if it fails for any reason
-except Exception:
-    # install the pure python diagnostic index
-    pass
-# otherwise
-else:
-    # install the index from the extension module that enables interaction with low level code
-    pass
-
-# configure the journal channels
-import pyre
-configureChannels(config=pyre.executive.configurator, channels=channels)
+# initialize the package
+boot()
 
 
 # end of file 

@@ -24,6 +24,7 @@ channels:
 	${PYTHON} ./debug.py
 	${PYTHON} ./debug-activation.py --journal.debug.activation
 	${PYTHON} ./debug-activation.py --config=activation.pml
+	DEBUG_OPT=activation ${PYTHON} ./debug-activation.py
 	${PYTHON} ./debug-injection.py
 	${PYTHON} ./firewall.py
 
