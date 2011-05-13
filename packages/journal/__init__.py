@@ -70,10 +70,12 @@ _journal_license = """
     POSSIBILITY OF SUCH DAMAGE.
     """
 
-# various initialization routines
+# access to the public names
 # diagnostics
 from .Debug import Debug as debug
 from .Firewall import Firewall as firewall
+# exceptions
+from .exceptions import FirewallError
 
 
 # channel configuration

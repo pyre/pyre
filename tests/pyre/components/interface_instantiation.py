@@ -15,6 +15,10 @@ Verify that an exception gets raised when an interface is instantiated
 def test():
     import pyre
 
+    # shut the firewall up
+    import journal
+    journal.firewall("pyre.components").active = False
+
     # declare
     class interface(pyre.interface):
         """a trivial interface"""
@@ -24,7 +28,7 @@ def test():
     try:
         interface()
         assert False
-    except AttributeError:
+    except journal.FirewallError:
         pass
 
     return interface

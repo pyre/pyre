@@ -37,7 +37,7 @@ class Role(Requirement):
         """
         import journal
         firewall = journal.firewall("pyre.components")
-        raise firewall.log("interfaces cannot be instantiated")
+        raise firewall.log("interfaces cannot be instantiated", stackdepth=-1)
 
 
 # end of file 

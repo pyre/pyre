@@ -32,16 +32,18 @@ class Firewall(Diagnostic, Channel):
 
 
     # interface
-    def log(self, message=None):
+    def log(self, message=None, stackdepth=0):
         """
         Record my message to my device
         """
         # first, record the entry
-        super().log(message)
-        # if firewalls are not fatal, return normally
-        if not self.fatal: return self
-        # otherwise, raise an exception
-        raise self.FirewallError(firewall=self)
+        super().log(message, stackdepth)
+        # build an instance of the firewall exception
+        error = self.FirewallError(firewall=self)
+        # if firewalls are not fatal, return the exception instance
+        if not self.fatal: return error
+        # otherwise, raise it
+        raise error
         
 
     # meta methods
@@ -62,6 +64,7 @@ class Firewall(Diagnostic, Channel):
 
     # class private data
     _index = collections.defaultdict(_State)
+    stackdepth = -3 # there is an extra stack level for firewalls...
 
 
 # end of file 

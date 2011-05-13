@@ -35,7 +35,7 @@ class Diagnostic:
         return self
 
 
-    def log(self, message=None):
+    def log(self, message=None, stackdepth=0):
         """
         Add the optional {message} to my text and make a journal entry
         """
@@ -44,9 +44,12 @@ class Diagnostic:
         # if {message} is non-empty, add it to the pile
         if message is not None: self.text.append(message)
 
+        # adjust the stack depth
+        stackdepth += self.stackdepth
+
         # infer some more meta data
         trace = traceback.extract_stack()
-        filename, line, function, source = trace[self.stackdepth]
+        filename, line, function, source = trace[stackdepth]
         # decorate
         meta = self.meta
         meta["filename"] = filename

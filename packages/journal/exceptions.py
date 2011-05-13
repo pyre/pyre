@@ -12,7 +12,8 @@ class FirewallError(Exception):
     """
 
 
-    def __init__(self, firewall):
+    def __init__(self, firewall, **kwds):
+        super().__init__(**kwds)
         self.firewall = firewall
         return
 

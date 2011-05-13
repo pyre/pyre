@@ -11,11 +11,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working: channels
-
 all: test
 
-test: sanity journal channels
+test: sanity channels
 
 sanity:
 	${PYTHON} ./sanity.py
