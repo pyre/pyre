@@ -74,6 +74,9 @@ _journal_license = """
 # diagnostics
 from .Debug import Debug as debug
 from .Firewall import Firewall as firewall
+from .Info import Info as info
+from .Warning import Warning as warning
+from .Error import Error as error
 # exceptions
 from .exceptions import FirewallError
 
@@ -113,9 +116,7 @@ def configureChannels(config, channels):
 
 def boot():
     # collect all channels in one place
-    channels = [
-        debug, firewall
-        ]
+    channels = [ debug, firewall, info, warning, error ]
 
     # attempt to load the journal extension
     try:
@@ -138,6 +139,18 @@ def boot():
         firewall._index = proxy(
             lookup=journal.firewallLookup,
             getter=journal.firewallGet, setter=journal.firewallSet)
+        # for info channels
+        info._index = proxy(
+            lookup=journal.infoLookup, 
+            getter=journal.infoGet, setter=journal.infoSet)
+        # for warning channels
+        warning._index = proxy(
+            lookup=journal.warningLookup, 
+            getter=journal.warningGet, setter=journal.warningSet)
+        # for error channels
+        error._index = proxy(
+            lookup=journal.errorLookup, 
+            getter=journal.errorGet, setter=journal.errorSet)
 
     # configure the journal channels
     import pyre

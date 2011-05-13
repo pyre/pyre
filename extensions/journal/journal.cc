@@ -35,6 +35,18 @@ namespace pyre {
                 { firewallLookup__name__, firewallLookup, METH_VARARGS, firewallLookup__doc__ },
                 { firewallSet__name__, firewallSet, METH_VARARGS, firewallSet__doc__ },
                 { firewallGet__name__, firewallGet, METH_VARARGS, firewallGet__doc__ },
+                // info
+                { infoLookup__name__, infoLookup, METH_VARARGS, infoLookup__doc__ },
+                { infoSet__name__, infoSet, METH_VARARGS, infoSet__doc__ },
+                { infoGet__name__, infoGet, METH_VARARGS, infoGet__doc__ },
+                // warning
+                { warningLookup__name__, warningLookup, METH_VARARGS, warningLookup__doc__ },
+                { warningSet__name__, warningSet, METH_VARARGS, warningSet__doc__ },
+                { warningGet__name__, warningGet, METH_VARARGS, warningGet__doc__ },
+                // error
+                { errorLookup__name__, errorLookup, METH_VARARGS, errorLookup__doc__ },
+                { errorSet__name__, errorSet, METH_VARARGS, errorSet__doc__ },
+                { errorGet__name__, errorGet, METH_VARARGS, errorGet__doc__ },
         
                 // sentinel
                 {0, 0, 0, 0}

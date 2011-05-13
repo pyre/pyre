@@ -28,5 +28,17 @@ channels:
 	${PYTHON} ./firewall-activation.py --journal.firewall.activation=off
 	${PYTHON} ./firewall-activation.py --config=activation.pml
 	${PYTHON} ./firewall-injection.py
+	${PYTHON} ./info.py
+	${PYTHON} ./info-activation.py --journal.info.activation
+	${PYTHON} ./info-activation.py --config=activation.pml
+	${PYTHON} ./info-injection.py
+	${PYTHON} ./warning.py
+	${PYTHON} ./warning-activation.py --journal.warning.activation=off
+	${PYTHON} ./warning-activation.py --config=activation.pml
+	${PYTHON} ./warning-injection.py
+	${PYTHON} ./error.py
+	${PYTHON} ./error-activation.py --journal.error.activation=off
+	${PYTHON} ./error-activation.py --config=activation.pml
+	${PYTHON} ./error-injection.py
 
 # end of file 

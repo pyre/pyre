@@ -24,10 +24,13 @@ EXPORT_PYTHON_MODULES = \
     Debug.py \
     Device.py \
     Diagnostic.py \
+    Error.py \
     Firewall.py \
     Index.py \
+    Info.py \
     Renderer.py \
     TextRenderer.py \
+    Warning.py \
     exceptions.py \
     __init__.py
 

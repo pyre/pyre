@@ -12,6 +12,9 @@
   <!-- journal settings -->
   <bind property="journal.debug.activation">on</bind>
   <bind property="journal.firewall.activation">off</bind>
+  <bind property="journal.info.activation">on</bind>
+  <bind property="journal.warning.activation">off</bind>
+  <bind property="journal.error.activation">off</bind>
 
 </config>
 
