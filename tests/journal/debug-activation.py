@@ -19,13 +19,18 @@ def test():
     debug = journal.debug("activation")
     # verify that it is on by default, activated from a configuration source
     assert debug.active == True
-    # enable it
+    # disable it
     debug.active = False
 
     # access the same channel through another object
     clone = journal.debug("activation")
-    # verify that it is now on
+    # verify that it is off 
     assert clone.active == False
+    # enable it
+    clone.active = True
+
+    # check that the other channel has been activated as well
+    assert debug.active == True
 
     # all done
     return
