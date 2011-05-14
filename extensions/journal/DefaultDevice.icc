@@ -1,0 +1,25 @@
+// -*- C++ -*-
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2011 all rights reserved
+// 
+
+#if !defined(pyre_extensions_journal_DefaultDevice_icc)
+#error This header file contains implementation details of class DefaultDevice
+#else
+
+
+// the default constructor
+pyre::extensions::journal::DefaultDevice::
+DefaultDevice(PyObject * owner):
+    pyre::journal::Device::Device(),
+    _owner(owner)
+{
+    Py_INCREF(owner);
+}
+
+
+# endif
+
+// end of file

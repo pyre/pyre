@@ -9,6 +9,7 @@
 #include <Python.h>
 
 // the module method declarations
+#include "init.h"
 #include "exceptions.h"
 #include "metadata.h"
 #include "channels.h"
@@ -25,6 +26,9 @@ namespace pyre {
                 { copyright__name__, copyright, METH_VARARGS, copyright__doc__ },
                 // the version
                 { version__name__, version, METH_VARARGS, version__doc__ },
+
+                // initialization
+                { initialize__name__, initialize, METH_VARARGS, initialize__doc__ },
 
                 // channels
                 // debug

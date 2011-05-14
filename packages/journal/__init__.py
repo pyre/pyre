@@ -127,6 +127,11 @@ def boot():
         pass
     # otherwise
     else:
+        # access the {Channel} class
+        from .Channel import Channel
+        # so we can hand it to the default proxy device
+        journal.initialize(Channel)
+
         # install the index from the extension module that enables interaction with low level code
         # access the index that's tied to the C++ maps
         from .Index import Index as proxy
