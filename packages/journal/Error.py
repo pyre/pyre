@@ -21,29 +21,11 @@ class Error(Diagnostic, Channel):
     This class is the implementation of the error channel
     """
 
-
     # public data
     severity = "error"
 
-
-    # meta methods
-    def __init__(self, name, **kwds):
-        # chain to my ancestors
-        super().__init__(name=name, inventory=self._index[name], **kwds)
-        # and return
-        return
-
-
-    # implementation details
-    # types
-    class _State:
-        # public data
-        state = True
-        device = None
-
-
     # class private data
-    _index = collections.defaultdict(_State)
+    _index = collections.defaultdict(Channel.Enabled)
 
 
 # end of file 

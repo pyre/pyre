@@ -46,24 +46,8 @@ class Firewall(Diagnostic, Channel):
         raise error
         
 
-    # meta methods
-    def __init__(self, name, **kwds):
-        # chain to my ancestors
-        super().__init__(name=name, inventory=self._index[name], **kwds)
-        # and return
-        return
-
-
-    # implementation details
-    # types
-    class _State:
-        # public data
-        state = True
-        device = None
-
-
     # class private data
-    _index = collections.defaultdict(_State)
+    _index = collections.defaultdict(Channel.Enabled)
     stackdepth = -3 # there is an extra stack level for firewalls...
 
 

@@ -74,13 +74,25 @@ class Channel(Named):
 
 
     # meta methods
-    def __init__(self, inventory, **kwds):
+    def __init__(self, name, **kwds):
         # chain to my ancestors
-        super().__init__(**kwds)
+        super().__init__(name=name, **kwds)
         # look up my shared state
-        self._inventory = inventory
+        self._inventory = self._index[name]
         # and return
         return
+
+
+    # implementation details
+    class Enabled:
+        """Shared state for channels that are enabled by default"""
+        state = True
+        device = None
+
+    class Disabled:
+        """Shared state for channels that are disabled by default"""
+        state = False
+        device = None
 
 
 # end of file 

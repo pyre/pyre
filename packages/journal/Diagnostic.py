@@ -39,7 +39,7 @@ class Diagnostic:
         """
         Add the optional {message} to my text and make a journal entry
         """
-        # bail if  I am not active
+        # bail if I am not active
         if not self.active: return self
         # if {message} is non-empty, add it to the pile
         if message is not None: self.text.append(message)
@@ -84,8 +84,6 @@ class Diagnostic:
     # implementation details
     # per class private data
     stackdepth = -2
-
-
 
 
 # end of file 
