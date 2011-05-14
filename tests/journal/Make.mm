@@ -40,5 +40,6 @@ channels:
 	${PYTHON} ./error-activation.py --journal.error.activation=off
 	${PYTHON} ./error-activation.py --config=activation.pml
 	${PYTHON} ./error-injection.py
+	${PYTHON} ./crosstalk.py
 
 # end of file 
