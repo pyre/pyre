@@ -27,6 +27,7 @@ EXPORT_PYTHON_MODULES = \
     Error.py \
     Firewall.py \
     Info.py \
+    Journal.py \
     Renderer.py \
     TextRenderer.py \
     Warning.py \

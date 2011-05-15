@@ -11,7 +11,7 @@ import collections
 
 
 # local types
-from .Console import Console as console
+from .Journal import Journal
 
 
 # super-classes
@@ -26,7 +26,8 @@ class Channel(Named):
 
 
     # class data
-    defaultDevice = console(name="journal.console")
+    # the anchor component with the configurable parts
+    journal = Journal(name="journal")
 
 
     # public data
@@ -59,7 +60,7 @@ class Channel(Named):
         # if one was assigned, return it
         if device is not None: return device
         # otherwise, issue a request for the default device
-        return self.defaultDevice
+        return self.journal.device
 
 
     @device.setter
