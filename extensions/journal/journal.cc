@@ -31,27 +31,22 @@ namespace pyre {
                 { initialize__name__, initialize, METH_VARARGS, initialize__doc__ },
 
                 // channels
-                // debug
-                { debugLookup__name__, debugLookup, METH_VARARGS, debugLookup__doc__ },
-                { debugSet__name__, debugSet, METH_VARARGS, debugSet__doc__ },
-                { debugGet__name__, debugGet, METH_VARARGS, debugGet__doc__ },
-                // firewall
-                { firewallLookup__name__, firewallLookup, METH_VARARGS, firewallLookup__doc__ },
-                { firewallSet__name__, firewallSet, METH_VARARGS, firewallSet__doc__ },
-                { firewallGet__name__, firewallGet, METH_VARARGS, firewallGet__doc__ },
-                // info
-                { infoLookup__name__, infoLookup, METH_VARARGS, infoLookup__doc__ },
-                { infoSet__name__, infoSet, METH_VARARGS, infoSet__doc__ },
-                { infoGet__name__, infoGet, METH_VARARGS, infoGet__doc__ },
-                // warning
-                { warningLookup__name__, warningLookup, METH_VARARGS, warningLookup__doc__ },
-                { warningSet__name__, warningSet, METH_VARARGS, warningSet__doc__ },
-                { warningGet__name__, warningGet, METH_VARARGS, warningGet__doc__ },
-                // error
-                { errorLookup__name__, errorLookup, METH_VARARGS, errorLookup__doc__ },
-                { errorSet__name__, errorSet, METH_VARARGS, errorSet__doc__ },
-                { errorGet__name__, errorGet, METH_VARARGS, errorGet__doc__ },
-        
+                // lookup
+                { lookupDebug__name__, lookupDebug, METH_VARARGS, lookupDebug__doc__ },
+                { lookupFirewall__name__, lookupFirewall, METH_VARARGS, lookupFirewall__doc__ },
+                { lookupInfo__name__, lookupInfo, METH_VARARGS, lookupInfo__doc__ },
+                { lookupWarning__name__, lookupWarning, METH_VARARGS, lookupWarning__doc__ },
+                { lookupError__name__, lookupError, METH_VARARGS, lookupError__doc__ },
+
+                // access the state of Inventory<true>
+                { setEnabledState__name__, setEnabledState, METH_VARARGS, setEnabledState__doc__ },
+                { getEnabledState__name__, getEnabledState, METH_VARARGS, getEnabledState__doc__ },
+                // access the state of Inventory<false>
+                { setDisabledState__name__,
+                  setDisabledState, METH_VARARGS, setDisabledState__doc__ },
+                { getDisabledState__name__,
+                  getDisabledState, METH_VARARGS, getDisabledState__doc__ },
+
                 // sentinel
                 {0, 0, 0, 0}
             };

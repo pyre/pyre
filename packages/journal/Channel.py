@@ -84,6 +84,18 @@ class Channel(Named):
 
 
     # implementation details
+    # private class data
+    # subclasses must supply a non-trivial implementation of the mechanism by which state
+    # shared among channel instances is managed. the pure python implementation that this
+    # package defaults to when the C++ extension is not available, uses a {defaultdict}; this
+    # implies that we need access to a factory that builds instance with the correct default
+    # activation state, hence the two nested class declaration below
+    _index = None 
+
+    # two classes for the configurable bits of channels. their names reflect their default
+    # state, in the absence of any configuration instructions by the user. when the state is
+    # False, the channel does not produce any output; when the device is {None}, the default
+    # device is used instead
     class Enabled:
         """Shared state for channels that are enabled by default"""
         state = True

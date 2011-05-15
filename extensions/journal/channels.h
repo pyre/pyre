@@ -15,78 +15,46 @@ namespace pyre {
         namespace journal {
 
             // lookup a name in the debug index
-            const char * const debugLookup__name__ = "debugLookup";
-            const char * const debugLookup__doc__ = "get the channel state from the debug index";
-            PyObject * debugLookup(PyObject *, PyObject *);
-
-            // manipulate the state of a debug channel
-            const char * const debugSet__name__ = "debugSet";
-            const char * const debugSet__doc__ = "set the state of a debug channel";
-            PyObject * debugSet(PyObject *, PyObject *);
-
-            const char * const debugGet__name__ = "debugGet";
-            const char * const debugGet__doc__ = "get the state of a debug channel";
-            PyObject * debugGet(PyObject *, PyObject *);
-
+            const char * const lookupDebug__name__ = "lookupDebugInventory";
+            const char * const lookupDebug__doc__ = "get the channel state from the debug index";
+            PyObject * lookupDebug(PyObject *, PyObject *);
             // lookup a name in the firewall index
-            const char * const firewallLookup__name__ = "firewallLookup";
-            const char * const firewallLookup__doc__ = 
+            const char * const lookupFirewall__name__ = "lookupFirewallInventory";
+            const char * const lookupFirewall__doc__ = 
                 "get the channel state from the firewall index";
-            PyObject * firewallLookup(PyObject *, PyObject *);
-
-            // manipulate the state of a firewall channel
-            const char * const firewallSet__name__ = "firewallSet";
-            const char * const firewallSet__doc__ = "set the state of a firewall channel";
-            PyObject * firewallSet(PyObject *, PyObject *);
-
-            const char * const firewallGet__name__ = "firewallGet";
-            const char * const firewallGet__doc__ = "get the state of a firewall channel";
-            PyObject * firewallGet(PyObject *, PyObject *);
-
+            PyObject * lookupFirewall(PyObject *, PyObject *);
             // lookup a name in the info index
-            const char * const infoLookup__name__ = "infoLookup";
-            const char * const infoLookup__doc__ = "get the channel state from the info index";
-            PyObject * infoLookup(PyObject *, PyObject *);
-
-            // manipulate the state of a info channel
-            const char * const infoSet__name__ = "infoSet";
-            const char * const infoSet__doc__ = "set the state of a info channel";
-            PyObject * infoSet(PyObject *, PyObject *);
-
-            const char * const infoGet__name__ = "infoGet";
-            const char * const infoGet__doc__ = "get the state of a info channel";
-            PyObject * infoGet(PyObject *, PyObject *);
-
+            const char * const lookupInfo__name__ = "lookupInfoInventory";
+            const char * const lookupInfo__doc__ = "get the channel state from the info index";
+            PyObject * lookupInfo(PyObject *, PyObject *);
             // lookup a name in the warning index
-            const char * const warningLookup__name__ = "warningLookup";
-            const char * const warningLookup__doc__ =
+            const char * const lookupWarning__name__ = "lookupWarningInventory";
+            const char * const lookupWarning__doc__ =
                 "get the channel state from the warning index";
-            PyObject * warningLookup(PyObject *, PyObject *);
-
-            // manipulate the state of a warning channel
-            const char * const warningSet__name__ = "warningSet";
-            const char * const warningSet__doc__ = "set the state of a warning channel";
-            PyObject * warningSet(PyObject *, PyObject *);
-
-            const char * const warningGet__name__ = "warningGet";
-            const char * const warningGet__doc__ = "get the state of a warning channel";
-            PyObject * warningGet(PyObject *, PyObject *);
-
+            PyObject * lookupWarning(PyObject *, PyObject *);
             // lookup a name in the error index
-            const char * const errorLookup__name__ = "errorLookup";
-            const char * const errorLookup__doc__ =
+            const char * const lookupError__name__ = "lookupErrorInventory";
+            const char * const lookupError__doc__ =
                 "get the channel state from the error index";
-            PyObject * errorLookup(PyObject *, PyObject *);
+            PyObject * lookupError(PyObject *, PyObject *);
 
-            // manipulate the state of a error channel
-            const char * const errorSet__name__ = "errorSet";
-            const char * const errorSet__doc__ = "set the state of a error channel";
-            PyObject * errorSet(PyObject *, PyObject *);
+            // access the state of Inventory<true>
+            const char * const setEnabledState__name__ = "setEnabledState";
+            const char * const setEnabledState__doc__ = "set the state of a normally on channel";
+            PyObject * setEnabledState(PyObject *, PyObject *);
 
-            const char * const errorGet__name__ = "errorGet";
-            const char * const errorGet__doc__ = "get the state of a error channel";
-            PyObject * errorGet(PyObject *, PyObject *);
+            const char * const getEnabledState__name__ = "getEnabledState";
+            const char * const getEnabledState__doc__ = "get the state of a normally on channel";
+            PyObject * getEnabledState(PyObject *, PyObject *);
 
+            // access the state of Inventory<false>
+            const char * const setDisabledState__name__ = "setDisabledState";
+            const char * const setDisabledState__doc__ = "set the state of a normally off channel";
+            PyObject * setDisabledState(PyObject *, PyObject *);
+
+            const char * const getDisabledState__name__ = "getDisabledState";
+            const char * const getDisabledState__doc__ = "get the state of a normally off channel";
+            PyObject * getDisabledState(PyObject *, PyObject *);
 
         } // of namespace journal
     } // of namespace extensions

@@ -26,12 +26,12 @@ EXPORT_PYTHON_MODULES = \
     Diagnostic.py \
     Error.py \
     Firewall.py \
-    Index.py \
     Info.py \
     Renderer.py \
     TextRenderer.py \
     Warning.py \
     exceptions.py \
+    proxies.py \
     __init__.py
 
 

@@ -134,28 +134,14 @@ def boot():
 
         # install the index from the extension module that enables interaction with low level code
         # access the index that's tied to the C++ maps
-        from .Index import Index as proxy
+        from . import proxies
         # install the C++ indices
         # for debug channels
-        debug._index = proxy(
-            lookup=journal.debugLookup, 
-            getter=journal.debugGet, setter=journal.debugSet)
-        # for firewalls
-        firewall._index = proxy(
-            lookup=journal.firewallLookup,
-            getter=journal.firewallGet, setter=journal.firewallSet)
-        # for info channels
-        info._index = proxy(
-            lookup=journal.infoLookup, 
-            getter=journal.infoGet, setter=journal.infoSet)
-        # for warning channels
-        warning._index = proxy(
-            lookup=journal.warningLookup, 
-            getter=journal.warningGet, setter=journal.warningSet)
-        # for error channels
-        error._index = proxy(
-            lookup=journal.errorLookup, 
-            getter=journal.errorGet, setter=journal.errorSet)
+        debug._index = proxies.debugIndex()
+        # firewall._index = proxies.firewallIndex()
+        # info._index = proxies.infoIndex()
+        # warning._index = proxies.warningIndex()
+        # error._index = proxies.errorIndex()
 
     # configure the journal channels
     import pyre
