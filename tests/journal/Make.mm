@@ -8,10 +8,12 @@
 
 PROJECT = pyre
 
+PROJ_CLEAN = journal.log
+
 #--------------------------------------------------------------------------
 #
 
-all: test
+all: test clean
 
 test: sanity channels devices
 
@@ -43,6 +45,7 @@ channels:
 	${PYTHON} ./crosstalk.py
 
 devices:
-	${PYTHON} ./debug.py --journal.device=import:journal#console
+	${PYTHON} ./debug-injection.py --journal.device=import:journal#console
+	${PYTHON} ./debug-injection.py --journal.device=import:journal#file --journal.device.log="journal.log"
 
 # end of file 

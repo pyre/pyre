@@ -16,6 +16,7 @@ from .Error import Error as error
 
 # devices
 from .Console import Console as console
+from .File import File as file
     
 # the package exception
 from .exceptions import FirewallError

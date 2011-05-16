@@ -25,6 +25,7 @@ EXPORT_PYTHON_MODULES = \
     Device.py \
     Diagnostic.py \
     Error.py \
+    File.py \
     Firewall.py \
     Info.py \
     Journal.py \
