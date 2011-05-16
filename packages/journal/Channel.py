@@ -10,10 +10,6 @@
 import collections
 
 
-# local types
-from .Journal import Journal
-
-
 # super-classes
 from pyre.patterns.Named import Named
 
@@ -27,7 +23,7 @@ class Channel(Named):
 
     # class data
     # the anchor component with the configurable parts
-    journal = Journal(name="journal")
+    journal = None # patched by the journal bootstrapping process
 
 
     # public data

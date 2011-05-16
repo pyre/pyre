@@ -81,42 +81,10 @@ from .Error import Error as error
 from .exceptions import FirewallError
 
 
-# channel configuration
-def configureChannels(config, channels):
-    """
-    Extract and apply channel configuration information
-    """
-    # access the type converters
-    import pyre.schema
-    # and iterate over {channels}, updating their indices with the contents of the pyre
-    # configuration store in {config}
-    for channel in channels:
-        # build the key prefix
-        prefix = "journal\." + channel.severity
-        # identify the relevant keys
-        for name, node in config.select(pattern=prefix):
-            # get the value
-            value = node.value
-            # if it's {None}, it probably came from the command line without an assignment
-            if value is None: value = True
-            # attempt to cast to a bool
-            try:
-                value = pyre.schema.bool.pyre_cast(value)
-            # if this fails
-            except pyre.schema.bool.CastingError:
-                # ignore it and move on
-                continue
-            # extract the channel name
-            channelname = '.'.join(name.split('.')[2:])
-            # update the index
-            channel(channelname).active = value
-    # all done
-    return
-
-
 def boot():
-    # collect all channels in one place
-    channels = [ debug, firewall, info, warning, error ]
+    # access to the local types
+    from .Journal import Journal
+    from .Channel import Channel
 
     # attempt to load the journal extension
     try:
@@ -136,16 +104,18 @@ def boot():
         # access the index that's tied to the C++ maps
         from . import proxies
         # install the C++ indices
-        # for debug channels
         debug._index = proxies.debugIndex()
-        # firewall._index = proxies.firewallIndex()
-        # info._index = proxies.infoIndex()
-        # warning._index = proxies.warningIndex()
-        # error._index = proxies.errorIndex()
+        firewall._index = proxies.firewallIndex()
+        info._index = proxies.infoIndex()
+        warning._index = proxies.warningIndex()
+        error._index = proxies.errorIndex()
 
-    # configure the journal channels
-    import pyre
-    configureChannels(config=pyre.executive.configurator, channels=channels)
+    # collect all channel categories in one place
+    categories = [ debug, firewall, info, warning, error ]
+    # instantiate the journal component
+    executive = Journal(name="journal", categories=categories)
+    # patch {Channel}
+    Channel.journal = executive
 
     # all done
     return
