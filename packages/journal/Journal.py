@@ -16,7 +16,7 @@ from .Console import Console
 
 
 # declaration
-class Journal(pyre.component, family="journal"):
+class Journal(pyre.component, family="journal.executive"):
     """
     Place holder for the configurable bits of the journal package
     """
