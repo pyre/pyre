@@ -31,7 +31,7 @@ inject(pyre::journal::Diagnostic<Channel> & channel) const
     std::stringstream tmp;
     tmp << _line;
     // decorate
-    channel.setattr("file", _file);
+    channel.setattr("filename", _file);
     channel.setattr("line", tmp.str());
     channel.setattr("function", _function);
     // and return the channel
