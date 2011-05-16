@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity channels
+test: sanity channels devices
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -41,5 +41,8 @@ channels:
 	${PYTHON} ./error-activation.py --config=activation.pml
 	${PYTHON} ./error-injection.py
 	${PYTHON} ./crosstalk.py
+
+devices:
+	${PYTHON} ./debug.py --journal.device=import:journal#console
 
 # end of file 

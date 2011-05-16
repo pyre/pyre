@@ -6,6 +6,21 @@
 #
 
 
+# access to the public names
+# the channel categories
+from .Debug import Debug as debug
+from .Firewall import Firewall as firewall
+from .Info import Info as info
+from .Warning import Warning as warning
+from .Error import Error as error
+
+# devices
+from .Console import Console as console
+    
+# the package exception
+from .exceptions import FirewallError
+
+
 # administrative
 def copyright():
     """
@@ -70,17 +85,8 @@ _journal_license = """
     POSSIBILITY OF SUCH DAMAGE.
     """
 
-# access to the public names
-# diagnostics
-from .Debug import Debug as debug
-from .Firewall import Firewall as firewall
-from .Info import Info as info
-from .Warning import Warning as warning
-from .Error import Error as error
-# exceptions
-from .exceptions import FirewallError
 
-
+# the bootstrapping logic is tucked away in a function to prevent namespace pollution
 def boot():
     # access to the local types
     from .Journal import Journal
@@ -112,16 +118,14 @@ def boot():
 
     # collect all channel categories in one place
     categories = [ debug, firewall, info, warning, error ]
-    # instantiate the journal component
-    executive = Journal(name="journal", categories=categories)
-    # patch {Channel}
-    Channel.journal = executive
+    # instantiate the journal component and patch {Channel}
+    Channel.journal = Journal(name="journal", categories=categories)
 
     # all done
     return
 
 
-# initialize the package
+# make it so...
 boot()
 
 
