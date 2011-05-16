@@ -106,7 +106,7 @@ def boot():
     else:
         # hand the journal instance to the extension module so it can have access to the
         # default device
-        journal.initialize(Channel.journal)
+        journal.registerJournal(Channel.journal)
 
         # attach the indices from the extension module to the channel categories
         # access the index factories
