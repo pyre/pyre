@@ -12,6 +12,7 @@ This package provides factories for typed properties
 
 from .Facility import Facility
 from .Property import Property
+from .OutputFile import OutputFile
 from .. import schema
 
 
@@ -80,6 +81,17 @@ def object(default=None):
     """
     descriptor = Property()
     descriptor.type = schema.object
+    descriptor.default = default
+    return descriptor
+
+
+def outputfile(mode=OutputFile.mode, default=OutputFile.default):
+    """
+    Build a descriptor for an output file
+    """
+    descriptor = OutputFile()
+    descriptor.type = descriptor # output files are their schema specifications
+    descriptor.mode = mode
     descriptor.default = default
     return descriptor
 

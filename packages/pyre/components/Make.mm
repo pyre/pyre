@@ -27,6 +27,7 @@ EXPORT_PYTHON_MODULES = \
     Configurable.py \
     Facility.py \
     Interface.py \
+    OutputFile.py \
     Property.py \
     Registrar.py \
     Requirement.py \
