@@ -73,7 +73,7 @@ class Diagnostic:
         self.text = []
         # prime the meta data
         self.meta = {
-            "name": name,
+            "channel": name,
             "severity": self.severity
             }
 
