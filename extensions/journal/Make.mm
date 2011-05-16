@@ -16,10 +16,11 @@ include std-pythonmodule.def
 EXTERNAL_LIBS += -ljournal
 
 PROJ_SRCS = \
-    DefaultDevice.cc \
+    DeviceProxy.cc \
     exceptions.cc \
     channels.cc \
     init.cc \
-    metadata.cc
+    metadata.cc \
+    tests.cc \
 
 # end of file

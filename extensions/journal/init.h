@@ -15,9 +15,9 @@ namespace pyre {
         namespace journal {
 
             // initialization
-            const char * const initialize__name__ = "initialize";
-            const char * const initialize__doc__ = "the extension initialization";
-            PyObject * initialize(PyObject *, PyObject *);
+            const char * const registerJournal__name__ = "registerJournal";
+            const char * const registerJournal__doc__ = "the extension initialization";
+            PyObject * registerJournal(PyObject *, PyObject *);
 
         } // of namespace journal
     } // of namespace extensions

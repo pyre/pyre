@@ -13,6 +13,7 @@
 #include "exceptions.h"
 #include "metadata.h"
 #include "channels.h"
+#include "tests.h"
 
 
 // put everything in my private namespace
@@ -28,7 +29,7 @@ namespace pyre {
                 { version__name__, version, METH_VARARGS, version__doc__ },
 
                 // initialization
-                { initialize__name__, initialize, METH_VARARGS, initialize__doc__ },
+                { registerJournal__name__, registerJournal, METH_VARARGS, registerJournal__doc__ },
 
                 // channels
                 // lookup
@@ -46,6 +47,13 @@ namespace pyre {
                   setDisabledState, METH_VARARGS, setDisabledState__doc__ },
                 { getDisabledState__name__,
                   getDisabledState, METH_VARARGS, getDisabledState__doc__ },
+
+                // examples
+                { debugTest__name__, debugTest, METH_VARARGS, debugTest__doc__},
+                { firewallTest__name__, firewallTest, METH_VARARGS, firewallTest__doc__},
+                { infoTest__name__, infoTest, METH_VARARGS, infoTest__doc__},
+                { warningTest__name__, warningTest, METH_VARARGS, warningTest__doc__},
+                { errorTest__name__, errorTest, METH_VARARGS, errorTest__doc__},
 
                 // sentinel
                 {0, 0, 0, 0}

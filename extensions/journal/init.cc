@@ -11,7 +11,7 @@
 #include <pyre/journal.h>
 
 #include "init.h"
-#include "DefaultDevice.h"
+#include "DeviceProxy.h"
 
 using namespace pyre::extensions::journal;
 
@@ -19,17 +19,17 @@ using namespace pyre::extensions::journal;
 // initialize
 PyObject * 
 pyre::extensions::journal::
-initialize(PyObject *, PyObject * args)
+registerJournal(PyObject *, PyObject * args)
 {
     // accept one argument
-    PyObject * channel; // the class that keeps a reference to the default device
+    PyObject * journal; // the class that keeps a reference to the default device
     // extract it from the argument tuple
-    if (!PyArg_ParseTuple(args, "O:initialize", &channel)) {
+    if (!PyArg_ParseTuple(args, "O:registerJournal", &journal)) {
         return 0;
     }
 
     // build a new device handler
-    DefaultDevice * device = new DefaultDevice(channel);
+    DeviceProxy * device = new DeviceProxy(journal);
     
     // attach it as the default device
     pyre::journal::Chronicler::defaultDevice(device);
