@@ -36,8 +36,8 @@ class TextRenderer(pyre.component, family="journal.renderers.text", implements=R
         Convert the diagnostic information into a form that a device can record
         """
         # build the header
-        yield " >> {filename}:{line}:{function}".format(self.header, **metadata)
-        yield " >> {name}({severity})".format(self.header, **metadata)
+        yield " {} {filename}:{line}:{function}".format(self.header, **metadata)
+        yield " {} {channel}({severity})".format(self.header, **metadata)
         # and the body
         for line in page:
             yield " {} {} ".format(self.body, line)
