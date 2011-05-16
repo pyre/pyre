@@ -63,15 +63,4 @@ class Journal(pyre.component, family="journal.executive"):
         return
 
 
-    # meta methods
-    def __init__(self, categories, **kwds):
-        # chain to my ancestors
-        super().__init__(**kwds)
-        # configure the default channels
-        self.configureCategories(categories)
-        # all done
-        return
-
-
-
 # end of file 

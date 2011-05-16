@@ -92,6 +92,8 @@ def boot():
     # access to the local types
     from .Journal import Journal
     from .Channel import Channel
+    # instantiate the journal component and patch {Channel}
+    Channel.journal = Journal(name="journal")
 
     # attempt to load the journal extension
     try:
@@ -102,25 +104,23 @@ def boot():
         pass
     # otherwise
     else:
-        # access the {Channel} class
-        from .Channel import Channel
-        # so we can hand it to the default proxy device
-        journal.initialize(Channel)
+        # hand the journal instance to the extension module so it can have access to the
+        # default device
+        journal.initialize(Channel.journal)
 
-        # install the index from the extension module that enables interaction with low level code
-        # access the index that's tied to the C++ maps
+        # attach the indices from the extension module to the channel categories
+        # access the index factories
         from . import proxies
-        # install the C++ indices
+        # install
         debug._index = proxies.debugIndex()
         firewall._index = proxies.firewallIndex()
         info._index = proxies.infoIndex()
         warning._index = proxies.warningIndex()
         error._index = proxies.errorIndex()
 
-    # collect all channel categories in one place
+    # transfer settings from the configuration store
     categories = [ debug, firewall, info, warning, error ]
-    # instantiate the journal component and patch {Channel}
-    Channel.journal = Journal(name="journal", categories=categories)
+    Channel.journal.configureCategories(categories)
 
     # all done
     return
