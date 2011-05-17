@@ -121,27 +121,24 @@ pyre::mpi::Communicator
 pyre::mpi::Communicator::
 cartesian(const ranklist_t & ranks, const ranklist_t & periods, int reorder) const throw(Error)
 {
+    // check that neither ranklist is empty
+    if (ranks.empty() || periods.empty()) {
+        throw Error(0);
+    }
     // check that the two ranklists are the same size
     if (ranks.size() != periods.size()) {
         throw Error(0);
     }
     // the size of the two ranklists
     int size = ranks.size();
-    // allocate two arrays, one for the ranks and another for the periods
-    int * rlist = new int[size];
-    int * plist = new int[size];
-    // populate them
-    for (int rank = 0; rank < size; ++rank) {
-        rlist[rank] = ranks[rank];
-        plist[rank] = periods[rank];
-    }
     // storage for the new group handle
     MPI_Comm cartesian;
     // construct it
-    int status = MPI_Cart_create(_handle, size, rlist, plist, reorder, &cartesian);
-    // deallocate
-    delete [] rlist;
-    delete [] plist;
+    int status = MPI_Cart_create(
+                                 _handle, size, 
+                                 const_cast<int *>(&ranks[0]),
+                                 const_cast<int *>(&periods[0]),
+                                 reorder, &cartesian);
     // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong

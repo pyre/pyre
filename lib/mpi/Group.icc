@@ -125,18 +125,10 @@ include(const pyre::mpi::Group::ranklist_t & ranks) const throw(Error)
 {
     // the size of the ranklist
     int size = ranks.size();
-    // allocate space for the primitive argument
-    int * ranklist = new int [size];
-    // populate it
-    for (int rank=0; rank < size; ++rank) {
-        ranklist[rank] = ranks[rank];
-    }
     // storage for the new group handle
     MPI_Group group;
     // build it
-    int status = MPI_Group_incl(_handle, size, ranklist, &group);
-    // deallocate the temporary rank list
-    delete [] ranklist;
+    int status = MPI_Group_incl(_handle, size, const_cast<int *>(&ranks[0]), &group);
     // check the return status 
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
@@ -153,18 +145,10 @@ exclude(const pyre::mpi::Group::ranklist_t & ranks) const throw(Error)
 {
     // the size of the ranklist
     int size = ranks.size();
-    // allocate space for the primitive argument
-    int * ranklist = new int [size];
-    // populate it
-    for (int rank=0; rank < size; ++rank) {
-        ranklist[rank] = ranks[rank];
-    }
     // storage for the new group handle
     MPI_Group group;
     // build it
-    int status = MPI_Group_excl(_handle, size, ranklist, &group);
-    // deallocate the temporary rank list
-    delete [] ranklist;
+    int status = MPI_Group_excl(_handle, size, const_cast<int *>(&ranks[0]), &group);
     // check the return status 
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
