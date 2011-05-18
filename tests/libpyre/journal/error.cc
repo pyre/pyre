@@ -10,7 +10,7 @@
 #include <portinfo>
 
 // packages
-#include <assert.h>
+#include <cassert>
 // access to the journal header file
 #include <pyre/journal.h>
 

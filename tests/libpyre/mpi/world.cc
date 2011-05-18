@@ -9,7 +9,7 @@
 // for the build system
 #include <portinfo>
 //  other packages
-#include <assert.h>
+#include <cassert>
 // grab the mpi objects
 #include <pyre/mpi.h>
 

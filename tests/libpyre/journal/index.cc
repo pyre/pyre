@@ -10,7 +10,7 @@
 #include <portinfo>
 
 // packages
-#include <assert.h>
+#include <cassert>
 // access to the packages used by Index
 #include <map>
 #include <string>

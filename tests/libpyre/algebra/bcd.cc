@@ -9,7 +9,7 @@
 #include <portinfo>
 
 // system includes
-#include <assert.h>
+#include <cassert>
 
 // dependencies
 #include <pyre/algebra/BCD.h>
