@@ -17,8 +17,10 @@ namespace pyre {
 
         // manipulators with zero arguments
         // end of insertion
+        inline Null & endl(Null &);
         template <typename Channel> inline Channel & endl(Channel &);
         // new line
+        inline Null & newline(Null &);
         template <typename Channel> inline Channel & newline(Channel &);
     }
 }
@@ -32,6 +34,14 @@ operator << (
              pyre::journal::Diagnostic<Channel> &,
              pyre::journal::Diagnostic<Channel> &
              (*)(pyre::journal::Diagnostic<Channel> &));
+
+
+// injection on null diagnostics
+inline
+pyre::journal::Null &
+operator << (
+             pyre::journal::Null &,
+             pyre::journal::Null & (*)(pyre::journal::Null &));
 
 
 #define pyre_journal_manipulators_icc

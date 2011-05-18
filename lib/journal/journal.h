@@ -10,13 +10,6 @@
 #if !defined(pyre_journal_h)
 #define pyre_journal_h
 
-// allow journal code to compile even without the runtime support
-#if defined(WITHOUT_JOURNAL)
-
-
-// ok: we have journal!
-#else
-
 // external packages
 #include <map>
 #include <vector>
@@ -36,6 +29,7 @@
 #include "journal/Error.h"
 #include "journal/Firewall.h"
 #include "journal/Informational.h"
+#include "journal/Null.h"
 #include "journal/Warning.h"
 // manipulators and associated support
 #include "journal/macros.h"
@@ -44,12 +38,31 @@
 #include "journal/manipulators.h"
 
 // typedefs for convenience
+// debugging support
+namespace pyre {
+    namespace journal {
+
+        // debug
+#if defined(WITHOUT_JOURNAL_DEBUG)
+        typedef Null debug_t;
+#else
+        typedef Debug debug_t;
+#endif
+
+        // firewalls
+#if defined(WITHOUT_JOURNAL_FIREWALLS)
+        typedef Null firewall_t;
+#else
+        typedef Firewall firewall_t;
+#endif
+    }
+}
+
+// diagnostics
 namespace pyre {
     namespace journal {
         // diagnostics
-        typedef Debug debug_t;
         typedef Error error_t;
-        typedef Firewall firewall_t;
         typedef Informational info_t;
         typedef Warning warning_t;
 
@@ -58,8 +71,6 @@ namespace pyre {
         typedef Selector set;
     }
 }
-
-#endif // WITHOUT_JOURNAL
 
 #endif // pyre_journal_h
 

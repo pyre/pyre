@@ -25,8 +25,10 @@ TESTS = \
     debug \
     debug-envvar \
     debug-injection \
+    debug-null \
     firewall \
     firewall-injection \
+    firewall-null \
     info \
     info-injection \
     warning \
@@ -53,8 +55,10 @@ test: $(TESTS)
 	./debug
 	DEBUG_OPT=pyre.journal.test ./debug-envvar
 	./debug-injection
+	./debug-null
 	./firewall
 	./firewall-injection
+	./firewall-null
 	./info
 	./info-injection
 	./warning
@@ -96,10 +100,16 @@ debug-envvar: debug-envvar.cc
 debug-injection: debug-injection.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
+debug-null: debug-null.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
 firewall: firewall.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 firewall-injection: firewall-injection.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+firewall-null: firewall-null.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 info: info.cc

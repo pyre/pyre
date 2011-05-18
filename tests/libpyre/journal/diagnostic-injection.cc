@@ -27,6 +27,7 @@
 #include <pyre/journal/Channel.h>
 #include <pyre/journal/macros.h>
 
+#include <pyre/journal/Null.h>
 #include <pyre/journal/Locator.h>
 #include <pyre/journal/Selector.h>
 #include <pyre/journal/manipulators.h>

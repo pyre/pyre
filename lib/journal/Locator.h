@@ -25,6 +25,11 @@ inline
 pyre::journal::Diagnostic<Channel> &
 operator << (pyre::journal::Diagnostic<Channel> &, const pyre::journal::Locator &);
 
+// null diagnostics
+inline
+pyre::journal::Null &
+operator<< (pyre::journal::Null &, const pyre::journal::Locator &);
+
 
 // locator
 class pyre::journal::Locator {

@@ -12,7 +12,6 @@
 
 // injection operator for functions
 template <typename Channel>
-inline
 pyre::journal::Diagnostic<Channel> &
 operator << (
              pyre::journal::Diagnostic<Channel> & channel,
@@ -23,21 +22,42 @@ operator << (
 }
 
 
+pyre::journal::Null &
+operator << (
+             pyre::journal::Null & null,
+             pyre::journal::Null & (*)(pyre::journal::Null &))
+{
+    return null;
+}
+
+
 // end of insertion
 template <typename Channel>
-inline
 Channel &
 pyre::journal::endl(Channel & channel) {
     return channel.record();
 }
 
 
+// on null diagnostics
+pyre::journal::Null &
+pyre::journal::endl(pyre::journal::Null & null) {
+    return null;
+}
+
+
 // new line
 template <typename Channel>
-inline
 Channel &
 pyre::journal::newline(Channel & channel) {
     return channel.newline();
+}
+
+
+// on null diagnostics
+pyre::journal::Null &
+pyre::journal::newline(pyre::journal::Null & null) {
+    return null;
 }
 
 

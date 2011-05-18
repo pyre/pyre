@@ -19,10 +19,16 @@ operator<< (
 }
 
 
+// and on null diagnostics
+pyre::journal::Null &
+operator<< (pyre::journal::Null & null, const pyre::journal::Selector &) {
+    return null;
+}
+
+
 // implementation of the {set} manipulator
 // injector
 template <typename Channel>
-inline
 pyre::journal::Diagnostic<Channel> &
 pyre::journal::Selector::
 inject(pyre::journal::Diagnostic<Channel> & channel) const

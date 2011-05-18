@@ -48,6 +48,7 @@ EXPORT_PKG_HEADERS = \
     Informational.h Informational.icc \
     Inventory.h Inventory.icc \
     Locator.h Locator.icc \
+    Null.h Null.icc \
     Renderer.h Renderer.icc \
     Selector.h Selector.icc \
     Streaming.h Streaming.icc \

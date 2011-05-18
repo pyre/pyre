@@ -26,6 +26,12 @@ pyre::journal::Diagnostic<Channel> &
 operator << (pyre::journal::Diagnostic<Channel> &, const pyre::journal::Selector &);
 
 
+// null diagnostics
+inline
+pyre::journal::Null &
+operator<< (pyre::journal::Null &, const pyre::journal::Selector &);
+
+
 // definitions
 // attributes
 class pyre::journal::Selector {

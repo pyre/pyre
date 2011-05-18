@@ -19,10 +19,15 @@ operator<< (
 }
 
 
+// and on null diagnostics
+pyre::journal::Null &
+operator<< (pyre::journal::Null & null, const pyre::journal::Locator &) {
+    return null;
+}
+
 
 // interface
 template <typename Channel>
-inline
 pyre::journal::Diagnostic<Channel> &
 pyre::journal::Locator::
 inject(pyre::journal::Diagnostic<Channel> & channel) const
