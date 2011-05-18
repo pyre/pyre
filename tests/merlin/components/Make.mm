@@ -8,22 +8,22 @@
 
 PROJECT = pyre
 
+PROJ_CLEAN += \
+    .merlin/project.pickle
+
 #--------------------------------------------------------------------------
 #
 
 all: test
 
-test: sanity merlin
+test: sanity merlin clean
 
 sanity:
 	${PYTHON} ./sanity.py
 
-merlin: clean
+merlin:
 	${PYTHON} ./merlin-shell.py
 	${PYTHON} ./merlin-spell.py
 	${PYTHON} ./merlin-curator.py
-
-PROJ_CLEAN = \
-    .merlin/project.pickle
 
 # end of file 
