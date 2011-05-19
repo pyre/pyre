@@ -14,6 +14,8 @@ PROJ_SAR = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SAR)
 PROJ_DLL = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SO)
 
 PROJ_SRCS = \
+    debuginfo.cc \
+    firewalls.cc \
     journal.cc \
     Chronicler.cc \
     Console.cc \
@@ -34,6 +36,8 @@ EXPORT_HEADERS = \
     journal.h
 
 EXPORT_PKG_HEADERS = \
+    debuginfo.h \
+    firewalls.h \
     macros.h \
     manipulators.h manipulators.icc \
     Channel.h Channel.icc \

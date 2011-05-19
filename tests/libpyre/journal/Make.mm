@@ -35,7 +35,10 @@ TESTS = \
     warning-injection \
     error \
     error-injection \
+    debuginfo \
+    firewalls \
 
+PROJ_LCC_LIBPATH = $(PROJ_LIBDIR)
 PROJ_LCXX_LIBPATH = $(PROJ_LIBDIR)
 LIBRARIES = -ljournal $(EXTERNAL_LIBS)
 
@@ -65,6 +68,8 @@ test: $(TESTS)
 	./warning-injection
 	./error
 	./error-injection
+	./debuginfo
+	./firewalls
 
 
 sanity: sanity.cc
@@ -129,6 +134,12 @@ error: error.cc
 
 error-injection: error-injection.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+
+debuginfo: debuginfo.c
+	$(CC) $(CFLAGS) $< -o $@ $(LCFLAGS) $(LIBRARIES)
+
+firewalls: firewalls.c
+	$(CC) $(CFLAGS) $< -o $@ $(LCFLAGS) $(LIBRARIES)
 
 
 # end of file 
