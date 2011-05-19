@@ -10,9 +10,7 @@
 #include <Python.h>
 #include <pyre/mpi.h>
 
-#if 0
-#include "journal/debug.h"
-#endif
+#include <pyre/journal.h>
 
 #include "constants.h"
 #include "groups.h"
@@ -423,13 +421,12 @@ deleteGroup(PyObject * py_group)
     group_t * group = 
         static_cast<group_t *>(PyCapsule_GetPointer(py_group, groupCapsuleName));
 
-#if 0
-    journal::debug_t info("mpi.fini");
+    pyre::journal::debug_t info("mpi.fini");
     info
-        << journal::at(__HERE__)
+        << pyre::journal::at(__HERE__)
         << "group@" << group << ": deleting"
-        << journal::endl;
-#endif
+        << pyre::journal::endl;
+
     // delete it
     delete group;
     // and return

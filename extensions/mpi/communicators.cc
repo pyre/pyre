@@ -9,7 +9,7 @@
 #include <Python.h>
 #include <pyre/mpi.h>
 
-// #include "journal/debug.h"
+#include <pyre/journal.h>
 
 #include "constants.h"
 #include "communicators.h"
@@ -95,9 +95,7 @@ communicatorCreateCartesian(PyObject *, PyObject * args)
     PyObject * procSeq;
     PyObject * periodSeq;
 
-#if 0
-    journal::debug_t info("mpi.cartesian");
-#endif
+    pyre::journal::debug_t info("mpi.cartesian");
 
     // extract them from the argument tuple
     if (!PyArg_ParseTuple(
@@ -135,37 +133,34 @@ communicatorCreateCartesian(PyObject *, PyObject * args)
         return 0;
     }
 
-#if 0
-    info << journal::at(__HERE__) << "dimension = " << size << journal::newline;
-#endif
+    info << pyre::journal::at(__HERE__) << "dimension = " << size << pyre::journal::newline;
 
     // allocate the vectors
     std::vector<int> procs;
     std::vector<int> periods;
 
     // copy the data over
-#if 0
-    info << journal::at(__HERE__) << "axes: ";
-#endif
+    info << pyre::journal::at(__HERE__) << "axes: ";
+
     for (int dim = 0; dim < size; ++dim) {
         procs.push_back(PyLong_AsLong(PySequence_GetItem(procSeq, dim)));
         periods.push_back(PyLong_AsLong(PySequence_GetItem(periodSeq, dim)));
-#if 0
+
         info << " (" << procs[dim] << "," << periods[dim] << ")";
-#endif
+
     }
-#if 0
-    info << journal::endl;
-#endif
+
+    info << pyre::journal::endl;
+
 
     // make the MPI call
     communicator_t * cartesian = new communicator_t(comm->cartesian(procs, periods, reorder));
-#if 0
+
     info
-        << journal::at(__HERE__)
+        << pyre::journal::at(__HERE__)
         << "created cartesian@" << cartesian << " from comm@" << comm
-        << journal::endl;
-#endif
+        << pyre::journal::endl;
+
 
 // clean up and return
     if (!cartesian) {
@@ -329,29 +324,25 @@ communicatorCartesianCoordinates(PyObject *, PyObject * args)
         static_cast<communicator_t *>(PyCapsule_GetPointer(py_comm, communicatorCapsuleName));
 
     // dump
-#if 0
-    journal::debug_t info("mpi.cartesian");
-    if (info.state()) {
+    pyre::journal::debug_t info("mpi.cartesian");
+    if (info.isActive()) {
         int wr, ws;
         MPI_Comm_rank(MPI_COMM_WORLD, &wr);
         MPI_Comm_size(MPI_COMM_WORLD, &ws);
         info
-            << journal::at(__HERE__)
+            << pyre::journal::at(__HERE__)
             << "[" << wr << ":" << ws << "] "
             << "communicator@" << cartesian << ": "
             << dim << "-dim cartesian communicator, rank=" << rank
-            << journal::newline;
+            << pyre::journal::newline;
     }
-#endif
 
     communicator_t::ranklist_t coordinates = cartesian->coordinates(rank);
-#if 0
     info << "coordinates:";
     for (int i=0; i < dim; ++i) {
         info << " " << coordinates[i];
     }
-    info << journal::endl;
-#endif
+    info << pyre::journal::endl;
 
     PyObject *value = PyTuple_New(dim);
     for (int i = 0; i < dim; ++i) {
@@ -376,14 +367,12 @@ deleteCommunicator(PyObject * comm)
     communicator_t * communicator = 
         static_cast<communicator_t *>(PyCapsule_GetPointer(comm, communicatorCapsuleName));
 
-#if 0
-    journal::debug_t info("mpi.fini");
+    pyre::journal::debug_t info("mpi.fini");
     info
-        << journal::at(__HERE__)
+        << pyre::journal::at(__HERE__)
         << "[" << communicator->rank() << ":" << communicator->size() << "] "
         << "deleting comm@" << communicator
-        << journal::endl;
-#endif
+        << pyre::journal::endl;
 
     delete communicator;
 

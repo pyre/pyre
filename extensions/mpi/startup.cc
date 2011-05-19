@@ -9,9 +9,7 @@
 #include <Python.h>
 #include <pyre/mpi.h>
 
-#if 0
-#include "journal/debug.h"
-#endif
+#include <pyre/journal.h>
 
 #include "startup.h"
 
@@ -42,20 +40,18 @@ initialize(PyObject *, PyObject *)
         MPI_Init(0, 0);
     }
 
-#if 0
-    journal::debug_t info("mpi.init");
-    if (info.state()) {
+    pyre::journal::debug_t info("mpi.init");
+    if (info.isActive()) {
         int rank, size;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &size);
 
         info
-            << journal::at(__HERE__)
+            << pyre::journal::at(__HERE__)
             << "[" << rank << ":" << size << "] "
             << "MPI_Init succeeded"
-            << journal::endl;
+            << pyre::journal::endl;
     }
-#endif
 
     // and return
     Py_INCREF(Py_None);

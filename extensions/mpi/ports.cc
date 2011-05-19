@@ -15,9 +15,7 @@
 #include <Python.h>
 #include <pyre/mpi.h>
 
-#if 0
-#include "journal/debug.h"
-#endif
+#include <pyre/journal.h>
 
 #include "constants.h"
 #include "ports.h"
@@ -63,16 +61,14 @@ sendString(PyObject *, PyObject * args)
     communicator_t * comm = 
         static_cast<communicator_t *>(PyCapsule_GetPointer(py_comm, communicatorCapsuleName));
 
-#if 0
     // dump arguments
-    journal::debug_t info("mpi.ports");
+    pyre::journal::debug_t info("mpi.ports");
     info
-        << journal::at(__HERE__)
+        << pyre::journal::at(__HERE__)
         << "peer={" << peer
         << "}, tag={" << tag
         << "}, string={" << str << "}@" << len
-        << journal::endl;
-#endif
+        << pyre::journal::endl;
 
     // send the length of the string
     int status = MPI_Send(&len, 1, MPI_INT, peer, tag, comm->handle());
@@ -132,16 +128,14 @@ receiveString(PyObject *, PyObject * args)
     char * str = new char[len+1];
     MPI_Recv(str, len+1, MPI_CHAR, peer, tag, comm->handle(), &status);
 
-#if 0
     // dump message
-    journal::debug_t info("mpi.ports");
+    pyre::journal::debug_t info("mpi.ports");
     info
-        << journal::at(__HERE__)
+        << pyre::journal::at(__HERE__)
         << "peer={" << peer
         << "}, tag={" << tag
         << "}, string={" << str << "}@" << len
-        << journal::endl;
-#endif
+        << pyre::journal::endl;
 
     // build the return value
     PyObject * value = Py_BuildValue("s", str);
