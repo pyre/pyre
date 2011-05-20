@@ -148,6 +148,9 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         # and attach it
         self.pyre_inventory = inventory
 
+        # now, register with the executive
+        self.pyre_executive.registerComponentInstance(self)
+
         # all done for now
         return
 

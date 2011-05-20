@@ -83,18 +83,6 @@ class Actor(Requirement):
         return
 
 
-    def __call__(self, **kwds):
-        """
-        Initialize a new component instance
-        """
-        # build the component instance
-        component = super().__call__(**kwds)
-        # register this instance
-        self.pyre_executive.registerComponentInstance(component)
-        # all done
-        return component
-
-
     def __setattr__(self, name, value):
         """
         Trap attribute setting in my class record instances to support setting the default
