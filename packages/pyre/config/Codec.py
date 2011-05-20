@@ -12,8 +12,9 @@ class Codec:
     """
 
 
-    # public data
-    encoding = None # descnedants must specify this
+    # public data: descendants must specify these
+    encoding = None 
+    separator = None 
 
 
     # interface
@@ -43,6 +44,20 @@ class Codec:
         """
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must override 'decode'".format(self))
+
+
+    def parseAddress(self, address):
+        """
+        Given an {address}, extract the package and factory parts
+        """
+        # split apart
+        fields = address.split(self.separator)
+        # the package is everything up to the last separator
+        package = self.separator.join(fields[:-1])
+        # and the symbol is the trailing part
+        symbol = fields[-1]
+        # return them to the caller
+        return (package, symbol)
 
 
     # exceptions

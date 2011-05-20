@@ -138,7 +138,7 @@ class Executive:
         # parse the {uri}
         scheme, authority, address, query, symbol = self.parseURI(uri)
         # and retrieve the shelf
-        return self._loadShelf(scheme=scheme, authority=authority, address=address, locator=locator)
+        return self._loadShelf(scheme=scheme, address=address, locator=locator)
 
 
     def retrieveComponentDescriptor(self, uri, locator=None):
@@ -146,14 +146,21 @@ class Executive:
         Interpret {uri} as a component descriptor and attempt to resolve it
 
         {uri} encodes the descriptor using the URI specification 
-            scheme://authority/address#symbol
-        Currently, there is support for two classes of schemes.
+            scheme://authority/address
+        where 
+            {scheme}: the resolution mechanism
+            {authority}: the process that will perform the resolution
+            {address}: the location of the component descriptor
+
+        Currently, there is support for two classes of schemes:
 
         The "import" scheme requires that the component descriptor is accessible on the python
-        path. The corresponding codec uses the interpreter to import the symbol {symbol} using
-        {address} to access the containing module. For example, the {uri}
+        path. The corresponding codec interprets {address} as two parts: {package}.{symbol},
+        with {symbol} being the trailing part of {address} after the last '.'. The codec then
+        uses the interpreter to import the symbol {symbol} using {address} to access the
+        containing module. For example, the {uri}
 
-            import:package.subpackage.module#myFactory
+            import:package.subpackage.module.myFactory
 
         is treated as if the following statement had been issued to the interpreter
 
@@ -162,12 +169,13 @@ class Executive:
         See below for the requirements myFactory must satisfy
 
         Any other scheme specification is interpreted as a request for a file based component
-        factory. The executive assumes that {address} is a valid path in the physical or
-        logical filesystems managed by the executive.fileserver, and that it contains
-        executable python code that provides the definition of the required symbol.  For
-        example, the {uri}
+        factory. The {address} is again split into two parts: {path}/{symbol}, where {symbol}
+        is the trailing part after the last '/' separator. The codec assumes that {path} is a
+        valid path in the physical or logical filesystems managed by the executive.fileserver,
+        and that it contains executable python code that provides the definition of the
+        required symbol.  For example, the {uri}
 
-            vfs:/local/sample.odb#myFactory
+            vfs:/local/sample.odb/myFactory
 
         expects that the fileserver can resolve the address local/sample.odb into a valid file
         within the virtual filesystem that forms the application namespace.
@@ -183,11 +191,11 @@ class Executive:
         would be valid contents for an accessible module or an odb file.
         """
         # parse the {uri}
-        scheme, authority, address, query, symbol = self.parseURI(uri)
+        scheme, _, address, _, _ = self.parseURI(uri)
+        # split the address into a package and a symbol
+        package, symbol = self._parseDescriptorAddress(scheme=scheme, address=address)
         # locate the shelf
-        shelf = self._loadShelf(
-            scheme=scheme, authority=authority, address=address,
-            locator=locator)
+        shelf = self._loadShelf(scheme=scheme, address=package, locator=locator)
         # retrieve the descriptor
         descriptor = shelf.retrieveSymbol(symbol=symbol)
         # and return it
@@ -216,8 +224,7 @@ class Executive:
                 address = folder.join(location, entry)
                 # try to load the associated shelf
                 try:
-                    shelf = self._loadShelf(
-                        scheme="vfs", authority=None, address=address, locator=None)
+                    shelf = self._loadShelf(scheme="vfs", address=address, locator=None)
                 except self.FrameworkError:
                     continue
                 # try to look up the symbol
@@ -319,9 +326,7 @@ class Executive:
         return scheme, authority, address, query, fragment
 
 
-    def normalizeURI(self, 
-                     scheme=None, authority=None, address=None, query=None, symbol=None
-                     ):
+    def normalizeURI(self, scheme=None, authority=None, address=None, query=None, symbol=None):
         """
         Construct a uri in normal form
         """
@@ -332,16 +337,19 @@ class Executive:
             uri.append(scheme + ":")
         # handle the authority
         if authority is not None:
-            uri.append("//" + authority)
+            uri.append("//")
+            uri.append(authority)
         # handle the address
         if address is not None:
             uri.append(address)
         # handle the query
         if query is not None:
-            uri.append("?" + query)
+            uri.append("?")
+            uri.append(query)
         # handle the symbol
         if symbol is not None:
-            uri.append("#" + symbol)
+            uri.append("#")
+            uri.append(symbol)
         # assemble and return
         return "".join(uri)
 
@@ -383,14 +391,14 @@ class Executive:
 
 
     # implementation details
-    def _loadShelf(self, scheme, authority, address, locator):
+    def _loadShelf(self, scheme, address, locator):
         """
         Load the contents of the shelf pointed to by the given URI fragments
         """
         # adjust the scheme, if necessary
         scheme = scheme.strip().lower() if scheme else 'file'
         # construct the normal form for the filename part
-        source = self.normalizeURI(scheme=scheme, authority=authority, address=address)
+        source = self.normalizeURI(scheme=scheme, address=address)
         # build a locator, if necessary
         if locator is None:
             from ..tracking import newFileLocator
@@ -420,6 +428,16 @@ class Executive:
 
         # and return the shelf
         return shelf
+
+
+    def _parseDescriptorAddress(self, scheme, address):
+        """
+        Extract the package and symbol names from the given {address} specification
+        """
+        # build a codec for {scheme}
+        codex = self.codex.newCodec(encoding=scheme)
+        # ask it to extract the (package, symbol) tuple and return it
+        return codex.parseAddress(address)
 
 
     # private data

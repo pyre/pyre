@@ -22,6 +22,7 @@ class Importer(Codec):
 
     # constants
     encoding = "import"
+    separator = '.'
 
 
     # interface
@@ -32,6 +33,9 @@ class Importer(Codec):
         # import the module
         try:
             module = __import__(source)
+        except ValueError as error: # raise when {source} is empty
+            raise self.DecodingError(
+                codec=self, uri=source, locator=locator, description=str(error)) from error
         except ImportError as error:
             raise self.DecodingError(
                 codec=self, uri=source, locator=locator, description=str(error)) from error

@@ -25,7 +25,7 @@ def test():
     # declare a component
     class component(pyre.component):
         """a component"""
-        task = pyre.facility(interface=job, default="import:sample#worker")
+        task = pyre.facility(interface=job, default="import:sample.worker")
 
     # check that task was bound according to our expectations from sample.py
     assert issubclass(component.task, pyre.component)

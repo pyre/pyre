@@ -21,6 +21,7 @@ class ODB(Codec):
 
     # constants
     encoding = "odb"
+    separator = '/'
 
 
     # interface

@@ -45,7 +45,7 @@ channels:
 	${PYTHON} ./crosstalk.py
 
 devices:
-	${PYTHON} ./debug-injection.py --journal.device=import:journal#console
-	${PYTHON} ./debug-injection.py --journal.device=import:journal#file --journal.device.log="journal.log"
+	${PYTHON} ./debug-injection.py --journal.device=import:journal.console
+	${PYTHON} ./debug-injection.py --journal.device=import:journal.file --journal.device.log="journal.log"
 
 # end of file 
