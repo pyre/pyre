@@ -29,7 +29,9 @@ PROJ_SRCS = \
 
 all: $(PROJ_DLL) export
 
-export:: export-headers export-package-headers
+export:: export-headers export-package-headers export-libraries
+
+EXPORT_LIBS = $(PROJ_DLL)
 
 
 EXPORT_HEADERS = \

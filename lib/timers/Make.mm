@@ -43,9 +43,10 @@ distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
 
-export:: export-headers export-package-headers
+export:: export-headers export-package-headers export-libraries
 	BLD_ACTION="export" $(MM) recurse
 
+EXPORT_LIBS = $(PROJ_DLL)
 
 EXPORT_HEADERS = \
     timers.h \
