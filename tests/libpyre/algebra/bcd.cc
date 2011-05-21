@@ -15,7 +15,7 @@
 #include <pyre/algebra/BCD.h>
 
 // make short alias for the BCD type we are testing
-typedef pyre::algebra::BCD<10, unsigned int> bcd;
+typedef pyre::algebra::BCD<10, int> bcd;
 
 
 // main program
@@ -42,6 +42,16 @@ int main(int argc, char* argv[]) {
     assert(one + zero == 1.0);
     assert(zero + one == 1.0);
     assert(one + one == 2.0);
+
+    // operator +=
+    another += zero;
+    assert(another == 1);
+    another += one;
+    assert(another == 2);
+
+    //  operator -=
+    another -= one;
+    assert(another == 1);
 
     // exercise the overflow logic
     bcd almost(0,9);

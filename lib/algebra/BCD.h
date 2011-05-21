@@ -17,6 +17,25 @@ namespace pyre {
 }
 
 
+// global arithmetic operators
+// binary +
+template <size_t scale, typename precision_t>
+pyre::algebra::BCD<scale, precision_t>
+operator+(
+          const pyre::algebra::BCD<scale, precision_t> &,
+          const pyre::algebra::BCD<scale, precision_t> &
+          );
+
+
+// binary -
+template <size_t scale, typename precision_t>
+pyre::algebra::BCD<scale, precision_t>
+operator-(
+          const pyre::algebra::BCD<scale, precision_t> &,
+          const pyre::algebra::BCD<scale, precision_t> &
+          );
+
+
 // the BCD class
 template <size_t scale, typename precision_t>
 class pyre::algebra::BCD {
@@ -25,6 +44,13 @@ public:
 
     // convert to double
     operator double () const;
+
+    // arithmetic
+    BCD operator+ () const;
+    BCD operator- () const;
+
+    BCD & operator+= (const BCD &);
+    BCD & operator-= (const BCD &);
 
     // meta methods
 public:
