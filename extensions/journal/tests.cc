@@ -11,14 +11,6 @@
 
 #include "tests.h"
 
-// typedefs
-typedef pyre::journal::debug_t debug_t;
-typedef pyre::journal::firewall_t firewall_t;
-typedef pyre::journal::info_t info_t;
-typedef pyre::journal::warning_t warning_t;
-typedef pyre::journal::error_t error_t;
-
-
 // debug
 PyObject * 
 pyre::extensions::journal::
@@ -32,7 +24,7 @@ debugTest(PyObject *, PyObject * args)
     }
 
     // build the channel
-    debug_t debug(name);
+    pyre::journal::debug_t debug(name);
 
     // say something
     debug 
@@ -59,7 +51,7 @@ firewallTest(PyObject *, PyObject * args)
     }
 
     // build the channel
-    firewall_t firewall(name);
+    pyre::journal::firewall_t firewall(name);
 
     // say something
     firewall 
@@ -86,7 +78,7 @@ infoTest(PyObject *, PyObject * args)
     }
 
     // build the channel
-    info_t info(name);
+    pyre::journal::info_t info(name);
 
     // say something
     info 
@@ -113,8 +105,8 @@ warningTest(PyObject *, PyObject * args)
     }
 
     // build the channel
-    warning_t warning(name);
-
+    pyre::journal::warning_t warning(name);
+        
     // say something
     warning 
         << pyre::journal::at(__HERE__)
@@ -140,7 +132,7 @@ errorTest(PyObject *, PyObject * args)
     }
 
     // build the channel
-    error_t error(name);
+    pyre::journal::error_t error(name);
 
     // say something
     error 
