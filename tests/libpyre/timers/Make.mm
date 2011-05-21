@@ -6,6 +6,8 @@
 # (c) 1998-2011 all rights reserved
 #
 
+include clock/default.def
+
 PROJECT = pyre
 PACKAGE = timers
 
@@ -16,7 +18,7 @@ PROJ_CLEAN += $(TESTS)
 TESTS = timer
 
 PROJ_LCXX_LIBPATH = $(BLD_LIBDIR)
-LIBRARIES = -lpyre-timers
+LIBRARIES = -lpyre-timers $(EXTERNAL_LIBS)
 
 #--------------------------------------------------------------------------
 all: test clean
