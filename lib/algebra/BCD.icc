@@ -84,7 +84,7 @@ operator+= (const pyre::algebra::BCD<scale, precision_t> & other)
     _lsw += other._lsw;
     _msw += other._msw;
     // overflow?
-    if (abs(_lsw) > scale) {
+    if (std::abs(_lsw) > scale) {
         // move the carry
         _msw += 1;
         // adjust the low bits

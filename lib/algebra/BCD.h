@@ -9,6 +9,8 @@
 #if !defined(pyre_algebra_BCD_h)
 #define pyre_algebra_BCD_h
 
+// to get std::abs
+#include <cstdlib>
 
 namespace pyre {
     namespace algebra {
