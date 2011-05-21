@@ -13,6 +13,7 @@
 
 # the source directory
   export BLD_ROOT=${DV_DIR}/builds/${nickname}
+  export BLD_ROOT=${DV_DIR}/builds/${nickname}
   echo "    building in '${BLD_ROOT}'"
   # create the directory if it doesn't already exist
   if [ ! -d ${BLD_ROOT} ]; then
@@ -28,5 +29,7 @@
 
 # adjust the path
   export PATH=${PATH}:${PYRE_DIR}/bin
+# and the location of the shared objects
+  export LD_LIBRARY_PATH=${EXPORT_ROOT}/lib:${LD_LIBRARY_PATH}
 
 # end of file
