@@ -12,12 +12,6 @@
 #include "channels.h"
 
 // typedefs
-typedef pyre::journal::debug_t debug_t;
-typedef pyre::journal::firewall_t firewall_t;
-typedef pyre::journal::info_t info_t;
-typedef pyre::journal::warning_t warning_t;
-typedef pyre::journal::error_t error_t;
-
 typedef pyre::journal::Inventory<true> enabled_t;
 typedef pyre::journal::Inventory<false> disabled_t;
 
@@ -37,7 +31,7 @@ lookupDebug(PyObject *, PyObject * args)
         return 0;
     }
     // access the state
-    disabled_t * inventory = &debug_t::lookup(name);
+    disabled_t * inventory = &pyre::journal::debug_t::lookup(name);
     // encapsulate it and return it
     return PyCapsule_New(inventory, disabledInventoryCapsuleName, 0);
 }
@@ -55,7 +49,7 @@ lookupFirewall(PyObject *, PyObject * args)
         return 0;
     }
     // access the state
-    enabled_t * inventory = &firewall_t::lookup(name);
+    enabled_t * inventory = &pyre::journal::firewall_t::lookup(name);
     // encapsulate it and return it
     return PyCapsule_New(inventory, enabledInventoryCapsuleName, 0);
 }
@@ -73,7 +67,7 @@ lookupInfo(PyObject *, PyObject * args)
         return 0;
     }
     // access the state
-    disabled_t * inventory = &info_t::lookup(name);
+    disabled_t * inventory = &pyre::journal::info_t::lookup(name);
     // encapsulate it and return it
     return PyCapsule_New(inventory, disabledInventoryCapsuleName, 0);
 }
@@ -91,7 +85,7 @@ lookupWarning(PyObject *, PyObject * args)
         return 0;
     }
     // access the state
-    enabled_t * inventory = &warning_t::lookup(name);
+    enabled_t * inventory = &pyre::journal::warning_t::lookup(name);
     // encapsulate it and return it
     return PyCapsule_New(inventory, enabledInventoryCapsuleName, 0);
 }
@@ -109,7 +103,7 @@ lookupError(PyObject *, PyObject * args)
         return 0;
     }
     // access the state
-    enabled_t * inventory = &error_t::lookup(name);
+    enabled_t * inventory = &pyre::journal::error_t::lookup(name);
     // encapsulate it and return it
     return PyCapsule_New(inventory, enabledInventoryCapsuleName, 0);
 }
