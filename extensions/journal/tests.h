@@ -15,24 +15,24 @@ namespace pyre {
         namespace journal {
 
             // debug
-            const char * const debugTest__name__ = "debugTest";
-            const char * const debugTest__doc__ = "test the debug channel";
+            extern const char * const debugTest__name__;
+            extern const char * const debugTest__doc__;
             PyObject * debugTest(PyObject *, PyObject *);
             // firewall
-            const char * const firewallTest__name__ = "firewallTest";
-            const char * const firewallTest__doc__ = "test the firewall channel";
+            extern const char * const firewallTest__name__;
+            extern const char * const firewallTest__doc__;
             PyObject * firewallTest(PyObject *, PyObject *);
             // info
-            const char * const infoTest__name__ = "infoTest";
-            const char * const infoTest__doc__ = "test the info channel";
+            extern const char * const infoTest__name__;
+            extern const char * const infoTest__doc__;
             PyObject * infoTest(PyObject *, PyObject *);
             // warning
-            const char * const warningTest__name__ = "warningTest";
-            const char * const warningTest__doc__ = "test the warning channel";
+            extern const char * const warningTest__name__;
+            extern const char * const warningTest__doc__;
             PyObject * warningTest(PyObject *, PyObject *);
             // error
-            const char * const errorTest__name__ = "errorTest";
-            const char * const errorTest__doc__ = "test the error channel";
+            extern const char * const errorTest__name__;
+            extern const char * const errorTest__doc__;
             PyObject * errorTest(PyObject *, PyObject *);
 
         } // of namespace journal

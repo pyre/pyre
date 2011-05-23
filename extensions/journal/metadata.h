@@ -15,13 +15,13 @@ namespace pyre {
         namespace journal {
 
             // copyright note
-            const char * const copyright__name__ = "copyright";
-            const char * const copyright__doc__ = "the module copyright string";
+            extern const char * const copyright__name__;
+            extern const char * const copyright__doc__;
             PyObject * copyright(PyObject *, PyObject *);
 
             // version
-            const char * const version__name__ = "version";
-            const char * const version__doc__ = "the module version string";
+            extern const char * const version__name__;
+            extern const char * const version__doc__;
             PyObject * version(PyObject *, PyObject *);
 
         } // of namespace journal

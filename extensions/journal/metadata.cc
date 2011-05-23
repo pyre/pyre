@@ -12,6 +12,14 @@
 
 
 // copyright
+const char * const 
+pyre::extensions::journal::
+copyright__name__ = "copyright";
+
+const char * const
+pyre::extensions::journal::
+copyright__doc__ = "the module copyright string";
+
 PyObject * 
 pyre::extensions::journal::
 copyright(PyObject *, PyObject *)
@@ -22,6 +30,14 @@ copyright(PyObject *, PyObject *)
     
 
 // version
+const char * const
+pyre::extensions::journal::
+version__name__ = "version";
+
+const char * const
+pyre::extensions::journal::
+version__doc__ = "the module version string";
+
 PyObject * 
 pyre::extensions::journal::
 version(PyObject *, PyObject *)

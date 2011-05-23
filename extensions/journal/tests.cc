@@ -12,6 +12,14 @@
 #include "tests.h"
 
 // debug
+const char * const
+pyre::extensions::journal::
+debugTest__name__ = "debugTest";
+
+const char * const 
+pyre::extensions::journal::
+debugTest__doc__ = "test the debug channel";
+
 PyObject * 
 pyre::extensions::journal::
 debugTest(PyObject *, PyObject * args)
@@ -39,6 +47,14 @@ debugTest(PyObject *, PyObject * args)
 
 
 // firewall
+const char * const 
+pyre::extensions::journal::
+firewallTest__name__ = "firewallTest";
+
+const char * const
+pyre::extensions::journal::
+firewallTest__doc__ = "test the firewall channel";
+
 PyObject * 
 pyre::extensions::journal::
 firewallTest(PyObject *, PyObject * args)
@@ -66,6 +82,14 @@ firewallTest(PyObject *, PyObject * args)
 
 
 // info
+const char * const
+pyre::extensions::journal::
+infoTest__name__ = "infoTest";
+
+const char * const
+pyre::extensions::journal::
+infoTest__doc__ = "test the info channel";
+
 PyObject * 
 pyre::extensions::journal::
 infoTest(PyObject *, PyObject * args)
@@ -93,6 +117,14 @@ infoTest(PyObject *, PyObject * args)
 
 
 // warning
+const char * const
+pyre::extensions::journal::
+warningTest__name__ = "warningTest";
+
+const char * const
+pyre::extensions::journal::
+warningTest__doc__ = "test the warning channel";
+
 PyObject * 
 pyre::extensions::journal::
 warningTest(PyObject *, PyObject * args)
@@ -120,6 +152,14 @@ warningTest(PyObject *, PyObject * args)
 
 
 // error
+const char * const
+pyre::extensions::journal::
+errorTest__name__ = "errorTest";
+
+const char * const
+pyre::extensions::journal::
+errorTest__doc__ = "test the error channel";
+
 PyObject * 
 pyre::extensions::journal::
 errorTest(PyObject *, PyObject * args)
