@@ -101,7 +101,7 @@ class Property(Trait):
             # if not, get the next
             except KeyError:
                 continue
-        # impossible: couldn't find the slot; what went worng?
+        # impossible: couldn't find the slot; what went wrong?
         else:
             import journal
             firewall = journal.firewall("pyre.components")
