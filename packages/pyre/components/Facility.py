@@ -22,17 +22,21 @@ class Facility(Property):
     # types
     from .Component import Component
 
-    # MGA: 20110318: this description is out of date; FIX
     # Facility is faced with the following problem: the expectations of {pyre_cast} are
     # different depending on whether the object whose trait is being processed is a component
     # class or a component instance. In the latter case, we want to cast the trait value into
-    # an actual component instance that is compatible with the facility requireements; in the
-    # former we are happy with either a compatible component declaration or an instance
+    # an actual component instance that is compatible with the facility requirements; in the
+    # former we are happy with either a compatible component declaration or an instance.
+    # Properties don't have this problem, since they ostensibly represent simple types that can
+    # be instantiated without substantial penalty for both component classes and their
+    # instances.
 
-    # In order to pull this off, Facility declares two classes that serve as the processors
-    # that are attached to trait slots: one for class traits and another for instance
-    # traits. It decides which one to attach to a slot during binding -- see pyre_bindClass and
-    # pyre_bindInstance below
+    # Normally, conversions of configuration settings to appropriate inventory values is
+    # handled by a trait's type. For facilities, this is normally a subclass of
+    # {Interface}. {Interface.pyre_cast} solves the first half of the problem: converting a
+    # value in to a component class record. In order to solve the second half, Facility
+    # declares two classes that serve as a trait and type proxies for inventories of component
+    # instances.
 
     # the descriptor stand-in
     class trait:
@@ -73,7 +77,7 @@ class Facility(Property):
         """
         Set this trait of {instance} to value
         """
-        # treat it the assignment like a property
+        # treat the assignment like a property
         value = super().pyre_setInstanceTrait(instance, value, locator)
         # as a side-effect, the value has been coverted into my native type
         # if, for any reason, that didn't go through
@@ -98,6 +102,7 @@ class Facility(Property):
         # transfer any deferred configuration settings
         errors = cfg._transferConditionalConfigurationSettings(
             registrar=instance.pyre_executive.registrar, configurable=value, namespace=namespace)
+        # and return the freshly configured instance
         return value
 
 
