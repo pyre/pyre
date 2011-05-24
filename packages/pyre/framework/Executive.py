@@ -44,7 +44,7 @@ class Executive:
     errors = None
 
     # constants
-    path = ("vfs:///pyre/system", "vfs:///pyre/user", "vfs:///local")
+    path = ("vfs:/pyre/system", "vfs:/pyre/user", "vfs:/local")
     # priority levels for the various configuration sources
     DEFAULT_CONFIGURATION = -1 # defaults from the component declarations
     BOOT_CONFIGURATION = 0 # configuration from the standard pyre boot files
