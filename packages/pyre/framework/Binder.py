@@ -22,8 +22,10 @@ class Binder:
 
         After a component class is bound, its traits are known to be in good state
         """
-        # iterate over all the locally declared traits
-        for trait in component.pyre_inventory.keys():
+        # print("Binder.bindComponentClass: component {.pyre_name!r}".format(component))
+        # iterate over the traits
+        for trait in component.pyre_getTraitDescriptors():
+            # print("  trait {.name!r}".format(trait))
             # delegate binding activities
             trait.pyre_bindClass(configurable=component)
         # all done
@@ -37,7 +39,7 @@ class Binder:
         After a component instance is bound, its traits are known to be in good state
         """
         # print("Binder.bindComponentInstance: component {.pyre_name!r}".format(component))
-        # iterate over all traits, both local and inherited
+        # iterate over the traits
         for trait in component.pyre_getTraitDescriptors():
             # print("  trait {.name!r}".format(trait))
             # delegate binding activities
