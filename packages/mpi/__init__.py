@@ -73,6 +73,16 @@ _mpi_license = """
 # bootstrapping
 # attempt to load the mpi extension
 try:
+
+    # the current default builds of openmpi on linux do not link their pluggins against libmpi
+    # so they all report unresolved symbols; the temporary fix is to change the way python
+    # dlopens our extension module so the mpi symbols go to the global namespace, where the
+    # pluggins will be able to find them. hopefully, the openmpi people will fix this soon
+    import sys
+    if sys.platform == 'linux2':
+        import ctypes
+        sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
+
     from . import mpi
 
 # if it fails for any reason
