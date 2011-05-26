@@ -8,22 +8,22 @@
 
 
 """
-Verify that component family names are recorded correctly
+Verify that interface family names are recorded correctly
 """
 
 
 def test():
     import pyre
 
-    class component(pyre.component, family="test.components.trivial"):
-        """a trivial component"""
+    class interface(pyre.interface, family="test.interfaces.trivial"):
+        """a trivial interface"""
 
     # check the family
-    assert component.pyre_family == ["test", "components", "trivial"]
+    assert interface.pyre_family == ["test", "interfaces", "trivial"]
     # check the package name
-    assert component.pyre_getPackageName() == "test"
+    assert interface.pyre_getPackageName() == "test"
 
-    return component
+    return interface
 
 
 # main

@@ -26,6 +26,7 @@ metaclasses:
 
 interfaces:
 	${PYTHON} ./interface.py
+	${PYTHON} ./interface_family.py
 	${PYTHON} ./interface_behavior.py
 	${PYTHON} ./interface_property.py
 	${PYTHON} ./interface_inheritance.py

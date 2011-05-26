@@ -36,7 +36,7 @@ class Requirement(AttributeClassifier):
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, **kwds):
+    def __new__(cls, name, bases, attributes, *, family=None, **kwds):
         """
         Build a new configurable class record
 
@@ -44,6 +44,8 @@ class Requirement(AttributeClassifier):
         """
         # set the name so it is always available
         attributes["pyre_name"] = name
+        # record the public name
+        attributes["pyre_family"] = family.split(cls.pyre_SEPARATOR) if family else []
         # initialize the namemap
         attributes["pyre_namemap"] = {}
         # the locally declared traits

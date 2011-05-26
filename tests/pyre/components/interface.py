@@ -25,6 +25,7 @@ def test():
 
     # check the layout
     assert interface.pyre_name == "interface"
+    assert interface.pyre_family == []
     assert interface.pyre_namemap == {}
     assert interface.pyre_localTraits == []
     assert interface.pyre_inheritedTraits == []

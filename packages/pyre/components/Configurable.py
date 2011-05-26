@@ -30,6 +30,7 @@ class Configurable:
 
     # framework data; patched up by metaclasses and the framework bootstrapping
     pyre_name = None # my public id
+    pyre_family = () # the user-visible name of my class
     pyre_namemap = None # a map of descriptor aliases to their canonical names
     pyre_localTraits = None # a tuple of all the traits in my declaration
     pyre_inheritedTraits = None # a tuple of all the traits inherited from my superclasses
@@ -66,6 +67,21 @@ class Configurable:
 
 
     # introspection interface
+    @classmethod
+    def pyre_getPackageName(cls):
+        """
+        Extract the name of the package to which this configurable belongs
+
+        The current implementation returns the first fragment of {pyre_family}
+        """
+        # attempt to extract and return the leading fragment of my {pyre_family}
+        try:
+            return cls.pyre_family[0]
+        except IndexError:
+            # otherwise
+            return None
+
+
     @classmethod
     def pyre_getTraitDescriptors(cls):
         """

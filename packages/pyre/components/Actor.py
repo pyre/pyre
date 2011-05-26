@@ -23,7 +23,7 @@ class Actor(Requirement):
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, *, family=None, implements=None, **kwds):
+    def __new__(cls, name, bases, attributes, *, implements=None, **kwds):
         """
         Build a new component class record
 
@@ -33,8 +33,6 @@ class Actor(Requirement):
             {family}: the public name of this component class; used to configure it
             {implements}: the tuple of interfaces that this component is known to implement
         """
-        # record the public name
-        attributes["pyre_family"] = family.split(cls.pyre_SEPARATOR) if family else []
         # build the interface specification
         try:
             interface = cls.pyre_buildImplementationSpecification(bases, implements)
