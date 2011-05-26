@@ -191,15 +191,19 @@ class Executive:
         would be valid contents for an accessible module or an odb file.
         """
         # parse the {uri}
-        scheme, _, address, _, _ = self.parseURI(uri)
+        scheme, _, address, _, name = self.parseURI(uri)
         # split the address into a package and a symbol
         package, symbol = self._parseDescriptorAddress(scheme=scheme, address=address)
         # locate the shelf
         shelf = self._loadShelf(scheme=scheme, address=package, locator=locator)
         # retrieve the descriptor
         descriptor = shelf.retrieveSymbol(symbol=symbol)
-        # and return it
-        return descriptor
+        # if there was no name specified
+        if name is None:
+            # return it
+            return descriptor
+        # otherwise, instantiate it and return it
+        return descriptor(name=name)
 
 
     def locateComponentDescriptor(self, component, locations):

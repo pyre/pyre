@@ -11,7 +11,7 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-all: test
+all: test clean
 
 test: sanity framework
 
