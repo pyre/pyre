@@ -23,7 +23,7 @@ class AttributeClassifier(AbstractMetaclass):
     that capture the syntax, semantics and processing behavior of tags by employing descriptors
     to capture the layout of an XML document.
 
-    This class defines {pyre_harvest}, which scans the class attribute dictinoary for instances
+    This class defines {pyre_harvest}, which scans the class attribute dictionary for instances
     of the special class {descriptor}. It also overrides {__prepare__} to provide attribute
     storage that records the order in which attributes were encountered in the class record.
     """
