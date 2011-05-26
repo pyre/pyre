@@ -110,12 +110,12 @@ class Component(Configurable, metaclass=Actor, hidden=True):
 
 
     # meta methods
-    def __init__(self, name, **kwds):
+    def __init__(self, name=None, **kwds):
         # component instance registration is done by Actor.__call__,
         # the metaclass method that # invokes this constructor
         super().__init__(**kwds)
         # store my name
-        self.pyre_name = name
+        self.pyre_name = name if name is not None else "<component @ {:#x}>".format(id(self))
         # access the inventory that belongs to my class record
         classInventory = type(self).pyre_inventory
 
@@ -125,7 +125,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
 
         for trait, slot in classInventory.items():
             # build the name of the trait
-            tag = sep.join([name, trait.name])
+            tag = sep.join([self.pyre_name, trait.name])
             # make a slot
             slot = trait.pyre_instanceSlot(name=tag, evaluator=slot.newReference())
             # add it to my inventory
