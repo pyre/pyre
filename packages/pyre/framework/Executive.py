@@ -26,7 +26,8 @@ class Executive:
 
 
     # exceptions
-    from .exceptions import FrameworkError, BadResourceLocatorError, SymbolNotFoundError
+    from .exceptions import FrameworkError, BadResourceLocatorError
+    from .exceptions import ComponentNotFoundError, SymbolNotFoundError
     from ..config.exceptions import DecodingError
 
 
@@ -44,7 +45,9 @@ class Executive:
     errors = None
 
     # constants
-    path = ("vfs:/pyre/system", "vfs:/pyre/user", "vfs:/local")
+    defaultLocations = ("/pyre/system", "/pyre/user", "/local")
+    path = tuple('vfs:' + location for location in defaultLocations)
+
     # priority levels for the various configuration sources
     DEFAULT_CONFIGURATION = -1 # defaults from the component declarations
     BOOT_CONFIGURATION = 0 # configuration from the standard pyre boot files
@@ -141,7 +144,7 @@ class Executive:
         return self._loadShelf(scheme=scheme, address=address, locator=locator)
 
 
-    def retrieveComponentDescriptor(self, uri, locator=None):
+    def retrieveComponentDescriptor(self, uri, context=None, locator=None):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
 
@@ -190,20 +193,40 @@ class Executive:
 
         would be valid contents for an accessible module or an odb file.
         """
-        # parse the {uri}
-        scheme, _, address, _, name = self.parseURI(uri)
-        # split the address into a package and a symbol
-        package, symbol = self._parseDescriptorAddress(scheme=scheme, address=address)
-        # locate the shelf
-        shelf = self._loadShelf(scheme=scheme, address=package, locator=locator)
-        # retrieve the descriptor
-        descriptor = shelf.retrieveSymbol(symbol=symbol)
-        # if there was no name specified
-        if name is None:
-            # return it
-            return descriptor
-        # otherwise, instantiate it and return it
-        return descriptor(name=name)
+        # make sure {context} is iterable
+        context = context if context is not None else ()
+        # attempt to parse the {uri}
+        try:
+            scheme, _, address, _, name = self.parseURI(uri)
+        except self.BadResourceLocatorError as error:
+            raise self.ComponentNotFoundError(uri=uri) from error
+
+        # if {uri} contains a scheme, use it; otherwise, try the default ones
+        schemes = [scheme] if scheme else ["vfs", "import"]
+
+        # iterate over the candidate schemes
+        for scheme in schemes:
+            # split the address into a package and a symbol
+            package, symbol = self._parseDescriptorAddress(scheme=scheme, address=address)
+            # if successful, use the given package; otherwise, build one from the auxiliary info
+            packages = [package] if package else self._buildPackageContext(scheme, context)
+            # iterate over the candidate package names
+            for package in packages:
+                # print("scheme: {!r}, package: {!r}, symbol: {!r}".format(scheme,package,symbol))
+                # try to locate the shelf associated with the ({scheme}, {address}) pair
+                try:
+                    shelf = self._loadShelf(scheme=scheme, address=package, locator=locator)
+                except:
+                    continue
+                # retrieve the descriptor
+                descriptor = shelf.retrieveSymbol(symbol=symbol)
+                # if there was no name specified, return the descriptor
+                if name is None: return descriptor
+                # otherwise, build a component instance and return it
+                return descriptor(name=name)
+
+        # otherwise
+        raise self.ComponentNotFoundError(uri=uri)
 
 
     def locateComponentDescriptor(self, component, locations):
@@ -442,6 +465,43 @@ class Executive:
         codex = self.codex.newCodec(encoding=scheme)
         # ask it to extract the (package, symbol) tuple and return it
         return codex.parseAddress(address)
+
+
+    def _buildPackageContext(self, scheme, context):
+        """
+        Use the given {scheme} to build possible package names out of {context}. This method is
+        used by {retrieveComponentDescriptor} to create candidates for resolving unqualified
+        symbols
+        """
+        # i don't see a way to handle both {vfs} and {import} symmetrically at this point, so
+        # if the {scheme} is {import}
+        if scheme == 'import':
+            # get the {scheme} separator
+            separator = self.codex.newCodec(encoding=scheme).separator
+            # build an iteration over the possible sublists of context
+            for marker in reversed(range(1, len(context)+1)):
+                # form the candidate package name and yield it
+                yield separator.join(context[:marker])
+            # all done for {import}
+            return
+
+        # the only other scheme currently supported is {vfs}
+        if scheme == 'vfs':
+            # get the {scheme} separator
+            separator = self.codex.newCodec(encoding=scheme).separator
+            # iterate over the directories in my path, highest priority first
+            for prefix in reversed(self.defaultLocations):
+                # build an iteration over the possible sublists of context
+                for marker in reversed(range(1, len(context)+1)):
+                    # form the candidate package name and yield it
+                    yield separator.join([prefix] + context[:marker]) + '.py'
+                
+            # all done for {vfs}
+            return
+
+        # all done
+        return
+                
 
 
     # private data

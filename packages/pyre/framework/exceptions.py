@@ -40,6 +40,15 @@ class BadResourceLocatorError(FrameworkError):
         return
 
 
+class ComponentNotFoundError(FrameworkError):
+
+    def __init__(self, uri, **kwds):
+        self.uri = uri
+        msg = "could not resolve {.uri!r} into a component".format(self)
+        super().__init__(description=msg, **kwds)
+        return
+                 
+
 class SymbolNotFoundError(FrameworkError):
 
     def __init__(self, symbol, **kwds):

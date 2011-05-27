@@ -20,7 +20,7 @@ def test():
     try:
         executive.retrieveComponentDescriptor(uri="import:not-there/unknown")
         assert False
-    except executive.DecodingError as error:
+    except executive.ComponentNotFoundError as error:
         pass
     # all done
     return executive
