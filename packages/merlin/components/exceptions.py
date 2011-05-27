@@ -6,10 +6,10 @@
 #
 
 
-from pyre.framework.exceptions import PyreError
+import pyre
 
 
-class MerlinError(PyreError):
+class MerlinError(pyre.PyreError):
     """
     Base class for merlin exceptions
     """
