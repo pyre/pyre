@@ -7,14 +7,14 @@
 
 
 # access to the framework
-import pyre.shells
+import pyre
 
 
 # constants
 MERLIN = "merlin"
 
 
-class Merlin(pyre.shells.application, family=MERLIN):
+class Merlin(pyre.application, family=MERLIN):
     """
     The merlin executive
     """
@@ -28,8 +28,7 @@ class Merlin(pyre.shells.application, family=MERLIN):
     from .Curator import Curator
     from .Spellbook import Spellbook
     # exceptions
-    from pyre.framework.exceptions import PyreError
-    from pyre.filesystem.exceptions import NotFoundError
+    from .exceptions import MerlinError
 
 
     # my subcomponents; built at construction time
@@ -100,12 +99,14 @@ class Merlin(pyre.shells.application, family=MERLIN):
         
 
     # utilities
-    def mountProjectDirectory(self):
+    @classmethod
+    def pyre_mountApplicationFolders(cls):
         """
-        Walk up from {cwd} to the directory that contains the {.merlin} folder
+        Mount the project directory by walking up from {cwd} to the directory that contains the
+        {.merlin} folder
         """
         # access the file server
-        fileserver = self.fileserver
+        fileserver = cls.pyre_executive.fileserver
         # build the address where the project .merlin directory will be mounted
         vpath = fileserver.join(MERLIN, "project")
         # is it already there?
@@ -116,8 +117,8 @@ class Merlin(pyre.shells.application, family=MERLIN):
             pass
         # otherwise, it is already mounted
         else:
-            # print("Merlin.mountProjectDirectory: already mounted")
-            return folder
+            # print("Merlin.pyre_mountApplicationFolders: already mounted")
+            return
         # go file hunting
         # for path related arithmetic
         import os
@@ -130,7 +131,7 @@ class Merlin(pyre.shells.application, family=MERLIN):
         # loop until we find the {.merlin} directory or run up to the root
         while 1:
             # form the candidate path
-            candidate = os.path.join(curdir, self.merlinFolder)
+            candidate = os.path.join(curdir, cls.merlinFolder)
 
             try:
                 # get the file server's recognizer to tell us what this is
@@ -149,7 +150,7 @@ class Merlin(pyre.shells.application, family=MERLIN):
             # if the parent directory is identical with the current directory, we are at the root
             if olddir == curdir:
                 # which means that there is no appropriate {.merlin}, so return empty-handed
-                return None
+                return
         # got it
         # print(" ** project directory at {!r}".format(node.uri))
         # access the filesystem package
@@ -159,7 +160,7 @@ class Merlin(pyre.shells.application, family=MERLIN):
         # mount it as /merlin/project
         fileserver[vpath] = project
         # and return it
-        return project
+        return
 
 
     # meta methods
@@ -170,10 +171,6 @@ class Merlin(pyre.shells.application, family=MERLIN):
         self.spellbook = self.Spellbook(name=name+".spellbook")
         # create and bind the curator
         self.curator = self.Curator(name=name+".curator")
-
-        # mount the project configuration directory 
-        self.mountProjectDirectory()
-        
 
         # all done
         return

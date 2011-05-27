@@ -17,9 +17,13 @@ def test():
     import os
     from merlin import merlin
     # mount the project directory
-    project = merlin.mountProjectDirectory()
+    project = merlin.vfs['/merlin/project']
     # check the project directory
     assert project.mountpoint == os.path.join(os.getcwd(), '.merlin')
+
+    # debug: show me the vfs layout
+    # merlin.vfs.dump()
+
     # and return
     return
 
