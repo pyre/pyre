@@ -149,11 +149,12 @@ class Executive:
         Interpret {uri} as a component descriptor and attempt to resolve it
 
         {uri} encodes the descriptor using the URI specification 
-            scheme://authority/address
+            scheme://authority/address#namme
         where 
             {scheme}: the resolution mechanism
             {authority}: the process that will perform the resolution
             {address}: the location of the component descriptor
+            {name}: the optional name to use when instantiating the retrieved descriptor
 
         Currently, there is support for two classes of schemes:
 
