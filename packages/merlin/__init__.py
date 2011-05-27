@@ -136,7 +136,7 @@ def boot():
     executive = Merlin()
     # patch spells with access to this executive
     from .spells.Spell import Spell
-    Spell.melrin = executive
+    Spell.merlin = executive
     # and return it
     return executive
     
