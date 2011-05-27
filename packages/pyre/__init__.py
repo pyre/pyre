@@ -198,6 +198,8 @@ from .components import export, provides
 from .components import property, facility, interface, component
 from .components import properties
 
+# shells
+from .shells import application
 
 # the base class of all pyre exceptions
 from .framework.exceptions import PyreError
