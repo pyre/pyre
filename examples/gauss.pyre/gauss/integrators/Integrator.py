@@ -9,7 +9,7 @@
 import pyre
 
 
-class Integrator(pyre.interface):
+class Integrator(pyre.interface, family="gauss.integrators"):
     """
     Interface declarator for integrators
     """

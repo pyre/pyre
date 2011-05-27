@@ -14,14 +14,14 @@
     <!-- the properties -->
     <bind property="samples">10**5</bind>
     <!-- specify the components -->
-    <bind property="mesh">import:gauss.meshes.mersenne</bind>
-    <bind property="region">import:gauss.shapes.ball</bind>
+    <bind property="mesh">mersenne</bind>
+    <bind property="region">ball</bind>
   </component>
 
   <!-- configuration for the example that integrates the gaussian -->
   <component name="mc-gaussian" family="gauss.integrators.montecarlo">
     <!-- specify the integrand -->
-    <bind property="integrand">import:gauss.functors.gaussian</bind>
+    <bind property="integrand">gaussian</bind>
 
     <component name="box">
       <bind property="diagonal">((-1,-1), (1,1))</bind>
@@ -37,7 +37,7 @@
   <!-- configuration for the example that computes π -->
   <component name="mc-π" family="gauss.integrators.montecarlo">
     <!-- specify the integrand -->
-    <bind property="integrand">import:gauss.functors.one</bind>
+    <bind property="integrand">one</bind>
 
     <component name="box">
       <bind property="diagonal">((0,0),(1,1))</bind>

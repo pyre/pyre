@@ -9,7 +9,7 @@
 import pyre
 
 
-class Shape(pyre.interface):
+class Shape(pyre.interface, family="gauss.shapes"):
     """
     Interface declarator for geometrical regions
     """

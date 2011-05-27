@@ -9,7 +9,7 @@
 import pyre
 
 
-class Functor(pyre.interface):
+class Functor(pyre.interface, family="gauss.functors"):
     """
     Interface declarator for function objects
     """

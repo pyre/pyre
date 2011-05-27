@@ -9,7 +9,7 @@
 import pyre
 
 
-class PointCloud(pyre.interface):
+class PointCloud(pyre.interface, family="gauss.meshes"):
     """
     Interface declarator for an unstructured collection of points
     """
