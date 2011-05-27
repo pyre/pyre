@@ -26,11 +26,11 @@ def test():
     # verify that the filesystem attribute was set
     assert(app.pyre_filesystem)
     # and that it is correctly mounted
-    assert(app.pyre_filesystem == app.fileserver["/sample"])
+    assert(app.pyre_filesystem == app.vfs["/sample"])
 
     # check the namespace
-    assert(app.fileserver["/sample/system"])
-    assert(app.fileserver["/sample/user"])
+    assert(app.vfs["/sample/system"])
+    assert(app.vfs["/sample/user"])
 
     return
 
