@@ -11,13 +11,41 @@ class Codec:
     The base class for readers/writers of the pyre configuration files
     """
 
+    
+    # types
+    # exceptions
+    from .exceptions import EncodingError, DecodingError, ShelfError, SymbolNotFoundError
+
 
     # public data: descendants must specify these
     encoding = None 
     separator = None 
 
+    # per-instance data
+    client = None # the entity i am interacting with; normally the pyre executive
+
 
     # interface
+    def locateSymbol(self, specification, context, locator):
+        """
+        Locate and load the symbol that corresponds to the given {specification}; if
+        {specification} is not sufficiently qualified to point to a unique location, use
+        {context} to form candidates until one results in a loadable shelf that can resolve the
+        {specification}
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must override 'locateSymbol'".format(self))
+
+
+    def loadShelf(self, address, locator):
+        """
+        Attempt locate and decode the shelf at {address}; if successful, register the resulting
+        shelf with my client
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must override 'loadShelf'".format(self))
+
+
     def resolve(self, client, address, factory):
         """
         Request by a client to resolve an (address, factory name) pair into a callable that
@@ -60,8 +88,10 @@ class Codec:
         return (package, symbol)
 
 
-    # exceptions
-    from .exceptions import EncodingError, DecodingError, ShelfError, SymbolNotFoundError
+    # meta methods
+    def __init__(self, *, client=None):
+        self.client = client
+        return
 
 
 # end of file
