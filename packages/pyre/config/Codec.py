@@ -21,12 +21,9 @@ class Codec:
     encoding = None 
     separator = None 
 
-    # per-instance data
-    client = None # the entity i am interacting with; normally the pyre executive
-
 
     # interface
-    def locateSymbol(self, specification, context, locator):
+    def locateSymbol(self, client, scheme, specification, context, locator):
         """
         Locate and load the symbol that corresponds to the given {specification}; if
         {specification} is not sufficiently qualified to point to a unique location, use
@@ -37,7 +34,7 @@ class Codec:
             "class {0.__class__.__name__!r} must override 'locateSymbol'".format(self))
 
 
-    def loadShelf(self, address, locator):
+    def loadShelf(self, client, scheme, address, locator):
         """
         Attempt locate and decode the shelf at {address}; if successful, register the resulting
         shelf with my client
@@ -86,12 +83,6 @@ class Codec:
         symbol = fields[-1]
         # return them to the caller
         return (package, symbol)
-
-
-    # meta methods
-    def __init__(self, *, client=None):
-        self.client = client
-        return
 
 
 # end of file
