@@ -16,6 +16,10 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
     This is a sample documentation string for Spellbook
     """
 
+    # constants
+    context = ["merlin", "spells"]
+
+
     # exceptions
     from .exceptions import SpellNotFoundError
 
@@ -30,12 +34,34 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
         # access to the pyre executive
         executive = self.pyre_executive
         # ask the executive to locate the spell factory
-        factory = executive.locateComponentDescriptor(component=name, locations=self.archives)
+        factory = executive.retrieveComponentDescriptor(uri=name, context=self.context)
         # instantiate it
         spell = factory(name=name)
         # and return it
         return spell
 
+
+    def volumes(self):
+        """
+        Iterate over all the spell files in all the standard places
+        """
+        # access the file server
+        vfs = self.pyre_executive.fileserver
+        # iterate over the standard locations
+        for archive in self.archives:
+            # ask the file server for the matching folder
+            try:
+                folder = vfs[archive]
+            # if not there, move on...
+            except vfs.NotFoundError:
+                continue
+            # now, iterate over the contents of the folder
+            for volume in folder.contents:
+                # form the name of the volume
+               yield folder.join(archive, volume)
+        # all done
+        return
+                
 
     # meta methods
     def __init__(self, **kwds):

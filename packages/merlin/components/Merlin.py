@@ -164,17 +164,27 @@ class Merlin(pyre.application, family=MERLIN):
 
 
     # namespace resolver obligations
-    @classmethod
-    def pyre_possibleShelfLocations(cls, request, context):
+    # support for automatically resolving merlin names
+    def componentSearchPath(self, context):
         """
-        Build a sequence of possible locations that may resolve the unqualified {request}
-        within the given {context}.
+        Make sure the project directory participates in the resolution of component names
+        """
+        # the first part is my tag
+        assert context[0] == MERLIN
+        # if there is only one fragment
+        if len(context) == 1:
+            # there is nothing to do
+            return
 
-        {request}: typically the name of a component factory
-        {context}: typically the family of the interface expected by a facility
-        """
-        # nothing from me
-        return []
+        # if the second fragment of the context is "spells"
+        if context[1] == "spells":
+            # hand it to the spellbook
+            for volume in self.spellbook.volumes():
+                # which will iterate over all the spell files
+                yield volume
+
+        # and no more
+        return
 
 
     # meta methods
