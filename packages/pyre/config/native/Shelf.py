@@ -20,6 +20,13 @@ class Shelf:
     # public data
     module = None
 
+    @property
+    def source(self):
+        """
+        Return the filename associated with this module
+        """
+        return self.module.__file__
+
 
     # interface
     def retrieveSymbol(self, symbol):
