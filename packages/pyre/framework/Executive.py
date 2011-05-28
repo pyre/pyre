@@ -105,6 +105,32 @@ class Executive:
         return
 
 
+    def componentSearchPath(self, context):
+        """
+        Build a sequence of locations where component descriptors from {package} may be found
+        """
+        # first, use the package to find the namespace resolver
+        try:
+            resolver = self.resolvers[context[0]]
+        # if there isn't one registered for this package
+        except KeyError:
+            # move on
+            pass
+        # otherwise
+        else:
+            # let the resolver provide locations
+            for location in resolver.componentSearchPath(context):
+                # to hand to our client
+                yield location
+
+        # now, go through the standard locations, in reverse order
+        for location in reversed(self.defaultLocations):
+            yield location
+
+        # no more
+        return
+
+
     # support for the various internal requests
     def configurePackage(self, package):
         """
@@ -199,41 +225,6 @@ class Executive:
         context = context if context is not None else ()
         # attempt to parse the {uri}
         try:
-            scheme, _, address, _, name = self.parseURI(uri)
-        except self.BadResourceLocatorError as error:
-            raise self.ComponentNotFoundError(uri=uri) from error
-
-        # if {uri} contains a scheme, use it; otherwise, try the default ones
-        schemes = [scheme] if scheme else ["vfs", "import"]
-
-        # iterate over the candidate schemes
-        for scheme in schemes:
-            # split the address into a package and a symbol
-            package, symbol = self._parseDescriptorAddress(scheme=scheme, address=address)
-            # if successful, use the given package; otherwise, build one from the auxiliary info
-            packages = [package] if package else self._buildPackageContext(scheme, context)
-            # iterate over the candidate package names
-            for package in packages:
-                # print("scheme: {!r}, package: {!r}, symbol: {!r}".format(scheme,package,symbol))
-                # try to locate the shelf associated with the ({scheme}, {address}) pair
-                try:
-                    shelf = self._loadShelf(scheme=scheme, address=package, locator=locator)
-                except:
-                    continue
-                # retrieve the descriptor
-                descriptor = shelf.retrieveSymbol(symbol=symbol)
-                # if there was no name specified, return the descriptor
-                if name is None: return descriptor
-                # otherwise, build a component instance and return it
-                return descriptor(name=name)
-
-        # otherwise
-        raise self.ComponentNotFoundError(uri=uri)
-
-        # make sure {context} is iterable
-        context = context if context is not None else ()
-        # attempt to parse the {uri}
-        try:
             # pull out only, the currently supported parts
             scheme, _, address, _, name = self.parseURI(uri)
         # if parsing failed, it is a badly formed request
@@ -247,50 +238,28 @@ class Executive:
         # iterate over the encoding possibilities
         for scheme in schemes:
             # build a codec for this candidate scheme
-            codec = self.codex.newCodec(encoding=scheme, client=self)
-            # locate a candidate shelf
-            codec.locateSymbol(address=address, context=context, locator=locator)
-
-        # otherwise
+            codec = self.codex.newCodec(encoding=scheme)
+            # attempt to locate a component descriptor
+            try:
+                descriptor = codec.locateSymbol(
+                    client=self, scheme=scheme, specification=address,
+                    context=context, locator=locator)
+            # if that fails
+            except codec.SymbolNotFoundError:
+                # try the next scheme
+                continue
+            # if there was no component name specified, return the descriptor
+            if name is None: return descriptor
+            # otherwise, try to build a component instance and return it
+            try:
+                return descriptor(name=name)
+            # if that fails
+            except:
+                # try the next scheme
+                continue
+        # if we get this far, everything we could try has gfailed
         raise self.ComponentNotFoundError(uri=uri)
 
-
-    def locateComponentDescriptor(self, component, locations):
-        """
-        Attempt to retrieve {component} from the first shelf within {locations}
-        """
-        # print("Executive.locateComponentDescriptor: looking for {!r}".format(component))
-        # iterate over the given locations
-        for location in locations:
-            # print("  looking in {!r}".format(location))
-            # ask the file server for the matching folder
-            try:
-                folder = self.fileserver[location]
-            # if not there, move on...
-            except self.fileserver.NotFoundError:
-                # print("    locations does not exist")
-                continue
-            # now, iterate over the contents of the folder
-            for entry in folder.contents:
-                # print("    opening {!r}".format(entry))
-                # form the name of the item
-                address = folder.join(location, entry)
-                # try to load the associated shelf
-                try:
-                    shelf = self._loadShelf(scheme="vfs", address=address, locator=None)
-                except self.FrameworkError:
-                    continue
-                # try to look up the symbol
-                try:
-                    descriptor = shelf.retrieveSymbol(symbol=component)
-                # if not there, try the next entry in the folder
-                except self.FrameworkError:
-                    continue
-                # and return it
-                return descriptor
-        # couldn't find the spell
-        raise self.SymbolNotFoundError(symbol=component)
-            
 
     # registration of configurables
     def registerComponentClass(self, component):
@@ -510,52 +479,6 @@ class Executive:
         # and return the shelf
         return shelf
 
-
-    def _parseDescriptorAddress(self, scheme, address):
-        """
-        Extract the package and symbol names from the given {address} specification
-        """
-        # build a codec for {scheme}
-        codex = self.codex.newCodec(encoding=scheme)
-        # ask it to extract the (package, symbol) tuple and return it
-        return codex.parseAddress(address)
-
-
-    def _buildPackageContext(self, scheme, context):
-        """
-        Use the given {scheme} to build possible package names out of {context}. This method is
-        used by {retrieveComponentDescriptor} to create candidates for resolving unqualified
-        symbols
-        """
-        # i don't see a way to handle both {vfs} and {import} symmetrically at this point, so
-        # if the {scheme} is {import}
-        if scheme == 'import':
-            # get the {scheme} separator
-            separator = self.codex.newCodec(encoding=scheme).separator
-            # build an iteration over the possible sublists of context
-            for marker in reversed(range(1, len(context)+1)):
-                # form the candidate package name and yield it
-                yield separator.join(context[:marker])
-            # all done for {import}
-            return
-
-        # the only other scheme currently supported is {vfs}
-        if scheme == 'vfs':
-            # get the {scheme} separator
-            separator = self.codex.newCodec(encoding=scheme).separator
-            # iterate over the directories in my path, highest priority first
-            for prefix in reversed(self.defaultLocations):
-                # build an iteration over the possible sublists of context
-                for marker in reversed(range(1, len(context)+1)):
-                    # form the candidate package name and yield it
-                    yield separator.join([prefix] + context[:marker]) + '.py'
-                
-            # all done for {vfs}
-            return
-
-        # all done
-        return
-                
 
     # private data
     _uriRecognizer = re.compile(
