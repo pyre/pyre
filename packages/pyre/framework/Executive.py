@@ -125,7 +125,10 @@ class Executive:
 
         # now, go through the standard locations, in reverse order
         for location in reversed(self.defaultLocations):
-            yield location
+            # starting with the full context path and shrinking
+            for marker in reversed(range(1, len(context)+1)):
+                # build and present a filename
+                yield self.fileserver.join(location, *context[:marker])+'.py'
 
         # no more
         return

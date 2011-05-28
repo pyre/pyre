@@ -45,19 +45,12 @@ class ODB(Codec):
         else:
             # construct a sequence of progressively less qualified namespaces out of the given
             # context
-            candidates = (
-                # build a filename
-                self.separator.join([prefix] + context[:marker])+'.py'
-                # out of a prefix built by the client
-                for prefix in client.componentSearchPath(context=context)
-                # starting with the full context path and shrinking
-                for marker in reversed(range(1, len(context)+1))
-                )
+            candidates = client.componentSearchPath(context=context)
         # and, just in case there are no candidates
         shelf = None
         # now, iterate over the candidates
         for filename in candidates:
-            # first, ask the client to normalize the address
+            # ask the client to normalize the address
             source = client.normalizeURI(scheme=scheme, address=filename)
             # attempt to retrieve a previously loaded shelf using the normalized uri
             try:
