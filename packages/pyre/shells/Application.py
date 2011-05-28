@@ -124,4 +124,18 @@ class Application(pyre.component, metaclass=Director, hidden=True):
         return
 
 
+    # namespace resolver obligations
+    @classmethod
+    def pyre_possibleShelfLocations(cls, request, context):
+        """
+        Build a sequence of possible locations that may resolve the unqualified {request}
+        within the given {context}.
+
+        {request}: typically the name of a component factory
+        {context}: typically the family of the interface expected by a facility
+        """
+        # nothing from me
+        return []
+
+
 # end of file 

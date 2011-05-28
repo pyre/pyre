@@ -33,6 +33,10 @@ class Director(Actor):
         # and mount any additional application-specific directories
         self.pyre_mountApplicationFolders()
 
+        # register the application class as the resolver of its namespace
+        self.pyre_executive.registerNamespaceResolver(
+            resolver=self, namespace=self.pyre_getPackageName())
+
         # all done
         return
 

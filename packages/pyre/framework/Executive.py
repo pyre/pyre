@@ -40,6 +40,8 @@ class Executive:
     fileserver = None
     registrar = None
     timekeeper = None
+    resolvers = None
+
     # book keeping
     packages = None
     errors = None
@@ -87,6 +89,22 @@ class Executive:
         return self.timekeeper.timer(**kwds)
 
 
+    def registerNamespaceResolver(self, resolver, namespace):
+        """
+        Add {resolver} to the table of entities that get notified when an unqualified component
+        resolution request is made
+
+        For example, {pyre.shells.Director} registers an application class as a resolver of
+        requests within the namespace specified by the application family. This way,
+        unqualified requests for facility bindings can be resolved in an application specific
+        manner. Look at {Executive.retrieveComponentDescriptor} for more details
+        """
+        # register the {resolver} under the key {namespace}
+        self.resolvers[namespace] = resolver
+        # and return
+        return
+
+
     # support for the various internal requests
     def configurePackage(self, package):
         """
@@ -125,23 +143,6 @@ class Executive:
         # print("Executive.configurePackage: done; packages={}".format(self.packages))
         # all done
         return package
-
-
-    def loadShelf(self, uri, locator=None):
-        """
-        Load the contents of the shelf pointed to by {uri}
-
-        {uri} encodes the descriptor using the URI specification 
-            scheme://authority/address
-        where
-             scheme: one of import, file, vfs
-             authority: currently not used; you may leave blank
-             address: a scheme dependent specification of the location of the shelf
-        """
-        # parse the {uri}
-        scheme, authority, address, query, symbol = self.parseURI(uri)
-        # and retrieve the shelf
-        return self._loadShelf(scheme=scheme, address=address, locator=locator)
 
 
     def retrieveComponentDescriptor(self, uri, context=None, locator=None):
@@ -229,6 +230,30 @@ class Executive:
         # otherwise
         raise self.ComponentNotFoundError(uri=uri)
 
+        # make sure {context} is iterable
+        context = context if context is not None else ()
+        # attempt to parse the {uri}
+        try:
+            # pull out only, the currently supported parts
+            scheme, _, address, _, name = self.parseURI(uri)
+        # if parsing failed, it is a badly formed request
+        except self.BadResourceLocatorError as error:
+            # just give up
+            raise self.ComponentNotFoundError(uri=uri) from error
+
+        # if {uri} contains a scheme, use it; otherwise, try all the options
+        schemes = [scheme] if scheme else ["vfs", "import"]
+
+        # iterate over the encoding possibilities
+        for scheme in schemes:
+            # build a codec for this candidate scheme
+            codec = self.codex.newCodec(encoding=scheme, client=self)
+            # locate a candidate shelf
+            codec.locateSymbol(address=address, context=context, locator=locator)
+
+        # otherwise
+        raise self.ComponentNotFoundError(uri=uri)
+
 
     def locateComponentDescriptor(self, component, locations):
         """
@@ -263,8 +288,6 @@ class Executive:
                     continue
                 # and return it
                 return descriptor
-
-
         # couldn't find the spell
         raise self.SymbolNotFoundError(symbol=component)
             
@@ -328,6 +351,34 @@ class Executive:
         interface.pyre_registerClass(executive=self)
         # and hand back the class record
         return interface
+
+
+    # access to the shelf registry
+    def registerShelf(self, shelf, source):
+        """
+        Record the {source} that corresponds to the given {shelf}
+        """
+        # add {source} to the dictionary with the loaded shelves
+        self.shelves[source] = shelf
+        # and return
+        return self
+
+
+    def loadShelf(self, uri, locator=None):
+        """
+        Load the contents of the shelf pointed to by {uri}
+
+        {uri} encodes the descriptor using the URI specification 
+            scheme://authority/address
+        where
+             scheme: one of import, file, vfs
+             authority: currently not used; you may leave blank
+             address: a scheme dependent specification of the location of the shelf
+        """
+        # parse the {uri}
+        scheme, authority, address, query, symbol = self.parseURI(uri)
+        # and retrieve the shelf
+        return self._loadShelf(scheme=scheme, address=address, locator=locator)
 
 
     # utilities
@@ -401,6 +452,8 @@ class Executive:
         self.fileserver = managers.newFileServer()
         # the component registrar
         self.registrar = managers.newComponentRegistrar()
+        # the map of namespaces to the entities that resolve name requests
+        self.resolvers = {}
 
         # prime the configuration folder list
         self.configpath = list(self.path)
@@ -452,7 +505,7 @@ class Executive:
             shelf = codec.decode(source=stream, locator=locator)
 
         # update the shelf index
-        self.shelves[source] = shelf
+        self.registerShelf(source=source, shelf=shelf)
 
         # and return the shelf
         return shelf
@@ -503,7 +556,6 @@ class Executive:
         # all done
         return
                 
-
 
     # private data
     _uriRecognizer = re.compile(
