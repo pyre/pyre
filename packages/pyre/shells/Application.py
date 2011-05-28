@@ -126,16 +126,26 @@ class Application(pyre.component, metaclass=Director, hidden=True):
 
     # namespace resolver obligations
     @classmethod
-    def pyre_possibleShelfLocations(cls, request, context):
+    def componentSearchPath(cls, context):
         """
-        Build a sequence of possible locations that may resolve the unqualified {request}
-        within the given {context}.
+        Build a sequence of possible locations that may resolve the unqualified requests within
+        the given {context}.
 
-        {request}: typically the name of a component factory
         {context}: typically the family of the interface expected by a facility
         """
         # nothing from me
         return []
+
+
+    # meta methods
+    def __init__(self, name, **kwds):
+        super().__init__(**kwds)
+
+        # register the application class as the resolver of its namespace
+        self.pyre_executive.registerNamespaceResolver(resolver=self, namespace=name)
+
+        # all done
+        return
 
 
 # end of file 
