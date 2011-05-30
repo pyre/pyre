@@ -41,7 +41,7 @@ class ODB(Codec):
         fileserver = client.fileserver
         # ask it to open the file
         try:
-            location, stream = fileserver.open(scheme=scheme, address=source)
+            _, stream = fileserver.open(scheme=scheme, address=source)
         # if this fails
         except fileserver.GenericError as error:
             # report it as a decoding error
@@ -61,10 +61,8 @@ class ODB(Codec):
             raise self.DecodingError(
                 codec=self, uri=locator.source, description=str(error),
                 locator=locator) from error
-        # at this point we have opened the shelf and processed its contents successfuly
-        # register the shelf with the client under its known location
-        client.registerShelf(shelf=shelf, source=location)
-        # and return the shelf
+        # at this point we have opened the shelf and processed its contents successfully
+        # return the shelf
         return shelf
 
 
