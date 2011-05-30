@@ -227,6 +227,7 @@ class Executive:
         # print(" ** Executive.retrieveComponentDescriptor:")
         # print("        uri: {!r}".format(uri))
         # print("        context: {!r}".format(context))
+        # print("        shelves: {!r}".format(tuple(self.shelves.keys())))
         # make sure {context} is iterable
         context = context if context is not None else ()
         # attempt to parse the {uri}
