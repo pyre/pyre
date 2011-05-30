@@ -27,7 +27,7 @@ class Executive:
 
     # exceptions
     from .exceptions import FrameworkError, BadResourceLocatorError
-    from .exceptions import ComponentNotFoundError, SymbolNotFoundError
+    from .exceptions import ComponentNotFoundError, ShelfNotFoundError, SymbolNotFoundError
     from ..config.exceptions import DecodingError
 
 
@@ -224,6 +224,9 @@ class Executive:
 
         would be valid contents for an accessible module or an odb file.
         """
+        # print(" ** Executive.retrieveComponentDescriptor:")
+        # print("        uri: {!r}".format(uri))
+        # print("        context: {!r}".format(context))
         # make sure {context} is iterable
         context = context if context is not None else ()
         # attempt to parse the {uri}
@@ -237,30 +240,21 @@ class Executive:
 
         # if {uri} contains a scheme, use it; otherwise, try all the options
         schemes = [scheme] if scheme else ["vfs", "import"]
+        # print("        schemes: {!r}".format(schemes))
 
         # iterate over the encoding possibilities
         for scheme in schemes:
             # build a codec for this candidate scheme
             codec = self.codex.newCodec(encoding=scheme)
             # attempt to locate a component descriptor
-            try:
-                descriptor = codec.locateSymbol(
-                    client=self, scheme=scheme, specification=address,
-                    context=context, locator=locator)
-            # if that fails
-            except codec.SymbolNotFoundError:
-                # try the next scheme
-                continue
-            # if there was no component name specified, return the descriptor
-            if name is None: return descriptor
-            # otherwise, try to build a component instance and return it
-            try:
+            for descriptor in codec.locateSymbol(
+                client=self,
+                scheme=scheme, specification=address, context=context, locator=locator):
+                # if there was no component name specified, return the descriptor
+                if name is None: return descriptor
+                # otherwise, try to build a component instance and return it
                 return descriptor(name=name)
-            # if that fails
-            except:
-                # try the next scheme
-                continue
-        # if we get this far, everything we could try has gfailed
+        # if we get this far, everything we could try has failed
         raise self.ComponentNotFoundError(uri=uri)
 
 
@@ -349,8 +343,17 @@ class Executive:
         """
         # parse the {uri}
         scheme, authority, address, query, symbol = self.parseURI(uri)
-        # and retrieve the shelf
-        return self._loadShelf(scheme=scheme, address=address, locator=locator)
+        # adjust the scheme, if necessary
+        scheme = scheme.strip().lower() if scheme else 'file'
+        # use the {scheme} to build a codec
+        codec = self.codex.newCodec(encoding=scheme)
+        # get it to hunt down candidates
+        for shelf in codec.locateShelves(
+            client=self, scheme=scheme, address=address, context=(), locator=locator):
+            # i am only interested in the first hit
+            return shelf
+        # if no appropriate candidate was found
+        raise self.ShelfNotFoundError(uri=uri)
 
 
     # utilities
@@ -375,34 +378,6 @@ class Executive:
         fragment = match.group("fragment")
         # and return the triplet
         return scheme, authority, address, query, fragment
-
-
-    def normalizeURI(self, scheme=None, authority=None, address=None, query=None, symbol=None):
-        """
-        Construct a uri in normal form
-        """
-        # initialize the fragment container
-        uri = []
-        # handle the scheme
-        if scheme is not None:
-            uri.append(scheme + ":")
-        # handle the authority
-        if authority is not None:
-            uri.append("//")
-            uri.append(authority)
-        # handle the address
-        if address is not None:
-            uri.append(address)
-        # handle the query
-        if query is not None:
-            uri.append("?")
-            uri.append(query)
-        # handle the symbol
-        if symbol is not None:
-            uri.append("#")
-            uri.append(symbol)
-        # assemble and return
-        return "".join(uri)
 
 
     # meta methods
@@ -441,46 +416,6 @@ class Executive:
 
         # all done
         return
-
-
-    # implementation details
-    def _loadShelf(self, scheme, address, locator):
-        """
-        Load the contents of the shelf pointed to by the given URI fragments
-        """
-        # adjust the scheme, if necessary
-        scheme = scheme.strip().lower() if scheme else 'file'
-        # construct the normal form for the filename part
-        source = self.normalizeURI(scheme=scheme, address=address)
-        # build a locator, if necessary
-        if locator is None:
-            from ..tracking import newFileLocator
-            locator = newFileLocator(source=source)
-        # check whether we have processed this source before
-        try:
-            # get the shelf
-            return self.shelves[source]
-        # not there (yet)
-        except KeyError:
-            pass
-        # if the scheme is "import", build a native codec
-        if scheme == "import":
-            # for the native codec, the source is the address fragment
-            shelf = self.codex.newCodec(encoding="import").decode(source=address, locator=locator)
-        else:
-            # anything else is file based, for now
-            # ask the file server to open the uri
-            _, stream = self.fileserver.open(scheme=scheme, address=address)
-            # build an odb codec
-            codec = self.codex.newCodec(encoding="odb")
-            # ask it for the shelf
-            shelf = codec.decode(source=stream, locator=locator)
-
-        # update the shelf index
-        self.registerShelf(source=source, shelf=shelf)
-
-        # and return the shelf
-        return shelf
 
 
     # private data
