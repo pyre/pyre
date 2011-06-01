@@ -37,7 +37,7 @@ debugTest(PyObject *, PyObject * args)
     // say something
     debug 
         << pyre::journal::at(__HERE__)
-        << "hello from C++"
+        << "here is a debug message from C++"
         << pyre::journal::endl;
 
     // and return
@@ -72,7 +72,7 @@ firewallTest(PyObject *, PyObject * args)
     // say something
     firewall 
         << pyre::journal::at(__HERE__)
-        << "hello from C++"
+        << "here is a firewall from C++"
         << pyre::journal::endl;
 
     // and return
@@ -107,7 +107,7 @@ infoTest(PyObject *, PyObject * args)
     // say something
     info 
         << pyre::journal::at(__HERE__)
-        << "hello from C++"
+        << "here is an informational from C++"
         << pyre::journal::endl;
 
     // and return
@@ -142,7 +142,7 @@ warningTest(PyObject *, PyObject * args)
     // say something
     warning 
         << pyre::journal::at(__HERE__)
-        << "hello from C++"
+        << "here is a warning from C++"
         << pyre::journal::endl;
 
     // and return
@@ -177,7 +177,7 @@ errorTest(PyObject *, PyObject * args)
     // say something
     error 
         << pyre::journal::at(__HERE__)
-        << "hello from C++"
+        << "here is an error from C++"
         << pyre::journal::endl;
 
     // and return
