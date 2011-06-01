@@ -17,7 +17,7 @@ from .Device import Device
 # declaration
 class Console(pyre.component, family="journal.devices.console", implements=Device):
     """
-    This is a sample documentation string for class Console
+    A device that sends journal messages to the standard output
     """
 
 
