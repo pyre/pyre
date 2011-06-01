@@ -25,7 +25,7 @@
   export PYRE_DIR=${USER_TOOLS_DIR}/${nickname}
   export EXPORT_ROOT=${PYRE_DIR}
   echo "    deploying at '${EXPORT_ROOT}'"
-  export PYTHONPATH=${EXPORT_ROOT}/packages
+  export PYTHONPATH=${EXPORT_ROOT}
 
 # adjust the path
   export PATH=${PATH}:${PYRE_DIR}/bin

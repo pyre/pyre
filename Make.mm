@@ -44,6 +44,9 @@ doc:
 lib:
 	(cd lib; mm)
 
+depository:
+	(cd depository; mm)
+
 extensions:
 	(cd extensions; mm)
 
@@ -54,9 +57,9 @@ tests:
 	(cd tests; mm)
 
 
-PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
-zip: tidy
-	zip -r ${PYRE_ZIP} packages depository -x \*Make.mm 
+PYRE_ZIP = $(EXPORT_ROOT)/pyre-1.0.zip
+zip: packages depository
+	(cd $(EXPORT_ROOT); zip -r ${PYRE_ZIP} * -x \*Make.mm )
 
 
 # end of file 

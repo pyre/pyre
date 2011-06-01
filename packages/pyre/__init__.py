@@ -42,7 +42,7 @@ def prefix():
     """
     Compute the pathname of the pyre installation
     """
-    return os.path.abspath(os.path.join(home(), os.path.pardir, os.path.pardir))
+    return os.path.abspath(os.path.join(home(), os.path.pardir))
     
 
 # administrative
