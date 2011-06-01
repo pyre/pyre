@@ -98,9 +98,9 @@ class LightBackground(NoColor, family="journal.schemes.light"):
 
     src = pyre.properties.str(default="blue")
 
-    channel = pyre.properties.str(default="cyan")
+    channel = pyre.properties.str(default="light-blue")
     debug = pyre.properties.str(default="cyan")
-    firewall = pyre.properties.str(default="red")
+    firewall = pyre.properties.str(default="purple")
     info = pyre.properties.str(default="green")
     warning = pyre.properties.str(default="brown")
     error = pyre.properties.str(default="red")
