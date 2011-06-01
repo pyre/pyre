@@ -19,6 +19,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    ANSIRenderer.py \
     Channel.py \
     Console.py \
     Debug.py \
@@ -34,6 +35,7 @@ EXPORT_PYTHON_MODULES = \
     Warning.py \
     exceptions.py \
     proxies.py \
+    schemes.py \
     __init__.py
 
 

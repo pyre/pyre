@@ -15,9 +15,9 @@ from .Renderer import Renderer
 
 
 # declaration
-class TextRenderer(pyre.component, family="journal.renderers.text", implements=Renderer):
+class TextRenderer(pyre.component, family="journal.renderers.plain", implements=Renderer):
     """
-    This is a sample documentation string for class Console
+    A plain text renderer
     """
 
 
@@ -36,8 +36,36 @@ class TextRenderer(pyre.component, family="journal.renderers.text", implements=R
         Convert the diagnostic information into a form that a device can record
         """
         # build the header
-        yield " {} {filename}:{line}:{function}".format(self.header, **metadata)
-        yield " {} {channel}({severity})".format(self.header, **metadata)
+        # the marker
+        header = [" {} ".format(self.header)]
+        # the filename
+        try:
+            header.append("{filename}:".format(**metadata))
+        except KeyError:
+            pass
+        # the line number
+        try:
+            header.append("{line}:".format(**metadata))
+        except KeyError:
+            pass
+        # the severity
+        try:
+            header.append(" {severity}".format(**metadata))
+        except KeyError:
+            pass
+        # the channel
+        try:
+            header.append("({channel}):".format(**metadata))
+        except KeyError:
+            pass
+        # the function
+        try:
+            header.append(" in {function}:".format(**metadata))
+        except KeyError:
+            pass
+                          
+        # return the header
+        yield "".join(header)
         # and the body
         for line in page:
             yield " {} {} ".format(self.body, line)
