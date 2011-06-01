@@ -11,7 +11,7 @@ import pyre
 
 
 # declaration
-class Device(pyre.interface):
+class Device(pyre.interface, family="journal.devices"):
     """
     The interface that devices must implement
     """

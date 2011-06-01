@@ -11,7 +11,7 @@ import pyre
 
 
 # declaration
-class Renderer(pyre.interface):
+class Renderer(pyre.interface, family="journal.renderers"):
     """
     The interface specification that renderers must satisfy
     """
