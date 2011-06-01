@@ -89,6 +89,13 @@ _journal_license = """
 
 # the bootstrapping logic is tucked away in a function to prevent namespace pollution
 def boot():
+    """
+    Initialize the journal package.
+
+    Attempt to locate the C++ extension and use it if available; fall back on the pure python
+    implementation if the fails. Either way, return a marker that enables clients to check
+    whether there is support for journal messages from C/C++/FORTRAN.
+    """
     # access to the local types
     from .Journal import Journal
     from .Channel import Channel
@@ -101,9 +108,11 @@ def boot():
     # if it fails for any reason
     except Exception:
         # ignore it; the default implementation will kick in
-        pass
+        extension = None
     # otherwise
     else:
+        # save the extension module
+        extension = journal
         # hand the journal instance to the extension module so it can have access to the
         # default device
         journal.registerJournal(Channel.journal)
@@ -123,11 +132,11 @@ def boot():
     Channel.journal.configureCategories(categories)
 
     # all done
-    return
+    return extension
 
 
 # make it so...
-boot()
+extension = boot()
 
 
 # end of file 
