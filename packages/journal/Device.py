@@ -35,7 +35,7 @@ class Device(pyre.interface, family="journal.devices"):
 
     # utilities
     @classmethod
-    def default(cls):
+    def defaultRenderer(cls):
         """
         Examine {sys.stdout} and turn on color output if the current terminal type supports it
         """
