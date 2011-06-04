@@ -19,4 +19,12 @@ class PCS(Codec):
     encoding = "pcs"
 
 
+    # interface
+    def decode(self, source, locator=None):
+        """
+        Parse {source} and return the configuration events it contains
+        """
+        return []
+
+
 # end of file
