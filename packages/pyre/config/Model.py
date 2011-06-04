@@ -98,6 +98,11 @@ class Model(HierarchicalModel):
         """
         Build a node with the given {priority} to hold {value}, and register it under {key}
         """
+        # print("Model.bind:")
+        # print("    key: {!r}".format(key))
+        # print("    value: {!r}".format(value))
+        # print("    priority: {}".format(priority))
+        # print("    locator: {}".format(locator))
         # build a new node 
         slot = self.nodeFactory(
             value=None, evaluator=self.recognize(value=value), priority=priority, locator=locator)
