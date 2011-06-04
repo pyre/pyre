@@ -14,17 +14,19 @@ class Weaver(pyre.component, family="pyre.weaver"):
     The base component for content generation
     """
 
-    author = pyre.properties.str(default=None)
-    author.doc = "the name of the entity to blame for this content"
+    # types
+    from .components.Stationery import Stationery
 
-    affiliation = pyre.properties.str(default=None)
-    affiliation.doc = "the author's institutional affiliation"
+    # traits
+    stationery = pyre.properties.facility(interface=Stationery, default=Stationery.default())
+    stationery.doc = "the overall layout of the document"
 
 
     @pyre.export
-    def foo(self):
+    def weave(self):
         """
-        A behavior
+        Assemble the document
         """
+
 
 # end of file 

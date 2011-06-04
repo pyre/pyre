@@ -9,11 +9,18 @@
 
 <config>
 
+  <!-- override the {pyre} settings that weaver reads -->
+  <package name="pyre">
+    <package name="user">
+      <bind property="name">Michael A.G. Aïvázis</bind>
+      <bind property="affiliation">California Institute of Technology</bind>
+    </package>
+  </package>
+
   <!-- weaver settings -->
-  <component name="sanity.banner">
-    <bind property="author">Michael Aivazis</bind>
-    <bind property="affiliation">California Institute of Technology</bind>
-    <bind property="copyright">(c) 1998-2011 all right reserved</bind>
+  <component name="sanity.stationery">
+    <bind property="copyright">(c) 1998-2011 All Rights Reserved</bind>
+    <bind property="footer">end of file</bind>
   </component>
 
 </config>

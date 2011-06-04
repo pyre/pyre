@@ -20,6 +20,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Banner.py \
+    Stationery.py \
     __init__.py
 
 

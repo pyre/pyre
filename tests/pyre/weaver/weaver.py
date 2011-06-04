@@ -18,11 +18,11 @@ def test():
     # instantiate a weaver
     weaver = pyre.weaver.newWeaver(name="sanity")
 
-    # verify it is configured correctly
-    weaver.pyre_dump()
-
-    # dump the configuration state
-    pyre.executive.configurator.dump()
+    # check the configuration
+    assert weaver.stationery.author == "Michael A.G. Aïvázis"
+    assert weaver.stationery.affiliation == "California Institute of Technology"
+    assert weaver.stationery.copyright == "(c) 1998-2011 All Rights Reserved"
+    assert weaver.stationery.footer == "end of file"
 
     return
 
