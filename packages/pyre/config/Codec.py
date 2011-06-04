@@ -59,6 +59,8 @@ class Codec:
         # corresponds to the component factory we are looking for, the {package} is the
         # namespace to which it belongs
         package, symbol = self.parseAddress(specification)
+        # give register namespace handlers an opportunity to adjust the extracted {symbol}
+        client.translateSymbol(symbol=symbol, context=context)
         # iterate over the locations in {specification}
         for shelf in self.locateShelves(client, scheme, package, context, locator):
             # attempt to look for our {symbol}

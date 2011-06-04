@@ -105,20 +105,29 @@ class Executive:
         return
 
 
+    def translateSymbol(self, symbol, context):
+        """
+        Give registered namespace resolvers an opportunity to translate {symbol}
+        """
+        # check whether there is a registered resolver for this namespace
+        resolver = self.locateNamespaceResolver(context)
+        # if one has been registered
+        if resolver:
+            # let it translate the symbol
+            return resolver.translateSymbol(symbol=symbol, context=context)
+        # otherwise,  return the {symbol} as is
+        return symbol
+
+
     def componentSearchPath(self, context):
         """
-        Build a sequence of locations where component descriptors from {package} may be found
+        Build a sequence of locations where component descriptors from {context} may be found
         """
-        # first, use the package to find the namespace resolver
-        try:
-            resolver = self.resolvers[context[0]]
-        # if there isn't one registered for this package
-        except KeyError:
-            # move on
-            pass
-        # otherwise
-        else:
-            # let the resolver provide locations
+        # check whether there is a registered resolver for this namespace
+        resolver = self.locateNamespaceResolver(context)
+        # if one has been registered
+        if resolver:
+            # let it provide appropriate locations
             for location in resolver.componentSearchPath(context):
                 # to hand to our client
                 yield location
@@ -132,6 +141,26 @@ class Executive:
 
         # no more
         return
+
+
+    def locateNamespaceResolver(self, context):
+        """
+        Attempt to locate a registered resolver for {context} namespaces
+        """
+        # print(" ** Executive.locateNamespaceResolver: context={!r}".format(context))
+        # use the {context} to find the namespace resolver, starting with the full
+        # {context} and progressively shrinking it
+        for count in reversed(range(1, len(context)+1)):
+            try:
+                candidate = ".".join(context[:count])
+                # print("    candidate: {!r}".format(candidate))
+                return self.resolvers[candidate]
+            # if there isn't one registered for this package
+            except KeyError:
+                # move on
+                continue
+        # otherwise
+        return None
 
 
     # support for the various internal requests

@@ -23,7 +23,8 @@ class Actor(Requirement):
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, *, implements=None, **kwds):
+    def __new__(cls, name, bases, attributes,
+                *, family=None, implements=None, resolver=False, **kwds):
         """
         Build a new component class record
 
@@ -45,13 +46,17 @@ class Actor(Requirement):
         # create storage for the configurable state
         attributes["pyre_inventory"] = {}
         # get my ancestors to build the class record
-        component = super().__new__(cls, name, bases, attributes, **kwds)
+        component = super().__new__(cls, name, bases, attributes, family=family, **kwds)
         # if an interface spec was derivable from the declaration, check interface compatibility 
         if interface:
             # check whether the requirements were implemented correctly
             check = component.pyre_isCompatible(interface)
             if not check:
                 raise cls.InterfaceError(component, interface, check)
+        # if the component wants to intercept descriptor retrieval from its namespace
+        if resolver:
+            # register it with the executive
+            component.pyre_executive.registerNamespaceResolver(resolver=component, namespace=family)
         # and pass the component on
         return component
 
