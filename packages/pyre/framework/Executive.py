@@ -114,7 +114,7 @@ class Executive:
         # if one has been registered
         if resolver:
             # let it translate the symbol
-            return resolver.translateSymbol(symbol=symbol, context=context)
+            return resolver.pyre_translateSymbol(symbol=symbol, context=context)
         # otherwise,  return the {symbol} as is
         return symbol
 
@@ -128,7 +128,7 @@ class Executive:
         # if one has been registered
         if resolver:
             # let it provide appropriate locations
-            for location in resolver.componentSearchPath(context):
+            for location in resolver.pyre_componentSearchPath(context):
                 # to hand to our client
                 yield location
 

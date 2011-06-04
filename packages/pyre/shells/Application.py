@@ -125,7 +125,7 @@ class Application(pyre.component, metaclass=Director, hidden=True):
 
 
     # namespace resolver obligations
-    def translateSymbol(self, context, symbol):
+    def pyre_translateSymbol(self, context, symbol):
         """
         Translate the given {symbol} from {context}
         """
@@ -134,7 +134,7 @@ class Application(pyre.component, metaclass=Director, hidden=True):
         return symbol
 
 
-    def componentSearchPath(cls, context):
+    def pyre_componentSearchPath(cls, context):
         """
         Build a sequence of possible locations that may resolve the unqualified requests within
         the given {context}.
