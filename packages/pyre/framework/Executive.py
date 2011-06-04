@@ -155,11 +155,12 @@ class Executive:
         # we have a package name
         # print("Executive.configurePackage: configuring package {!r}".format(package))
         # form all possible filenames for the configuration files
-        scope = itertools.product(reversed(self.configpath), [package], self.codex.getEncodings())
+        scope = itertools.product(self.configpath, [package], self.codex.getEncodings())
         # attempt to load the configuration settings
         for path, filename, extension in scope:
             # construct the actual filename
             source = self.fileserver.splice(path, filename, extension)
+            # print("Executive.configurePackage: loading {!r}".format(source))
             # and try to load the configuration
             try:
                 self.loadConfiguration(uri=source, priority=self.PACKAGE_CONFIGURATION)
