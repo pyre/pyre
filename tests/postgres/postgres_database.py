@@ -13,15 +13,13 @@ Instantiate the postgres component
 
 
 def test():
-    # access the postgres package
-    import pyre.postgres
+    # access the package
+    import postgres
 
     # build a database component
-    db = pyre.postgres.database(name="postgres-attach")
-    # connect to the database specified in the local configuration file
-    db.attach()
+    db = postgres.database(name="sample")
 
-    # and return the component
+    # and return it
     return db
 
 

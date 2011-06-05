@@ -14,7 +14,7 @@ Sanity check: verify that the exceptions defined in the module are accessible
 
 def test():
     # access the relevant modules
-    import pyre.postgres.pyrepg as pyrepg
+    import postgres.pyrepg as pyrepg
     import pyre.db.exceptions as exceptions
     # initialize the module exceptions manually
     # this is normally done automatically when a client first requests a connection to the

@@ -8,12 +8,12 @@
 
 
 """
-Sanity check: verify that the module is accessible
+Sanity check: verify that the package is accessible
 """
 
 
 def test():
-    import pyre.postgres.pyrepg
+    import postgres
     return
 
 

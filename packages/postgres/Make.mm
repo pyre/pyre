@@ -5,7 +5,7 @@
 # (c) 1998-2011 all rights reserved
 #
 
-PROJECT = pyre
+PROJECT = postgres
 PACKAGE = postgres
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
@@ -24,6 +24,6 @@ EXPORT_PYTHON_MODULES = \
     __init__.py
 
 
-export:: export-package-python-modules
+export:: export-python-modules
 
 # end of file 

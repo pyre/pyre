@@ -17,7 +17,6 @@ RECURSE_DIRS = \
     config \
     constraints \
     db \
-    postgres \
     filesystem \
     framework \
     parsing \

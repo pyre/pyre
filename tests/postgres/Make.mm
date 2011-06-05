@@ -29,7 +29,7 @@ connections:
 	${PYTHON} ./execute.py
 
 components:
-	${PYTHON} ./postgres.py
+	${PYTHON} ./postgres_database.py
 	${PYTHON} ./postgres_attach.py
 
 

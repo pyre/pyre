@@ -8,17 +8,15 @@
 
 
 """
-Execute a trivial command
+Make a connection through the high level interface
 """
 
 
 def test():
     # import the postgres module
-    import pyre.postgres
+    import postgres
     # use the high level connection factory
-    connection = pyre.postgres.connect(database='pyrepg', application='connect')
-    # make it do something
-    connection.execute('rollback')
+    connection = postgres.connect(database='pyrepg', application='connect')
     # return the connection
     return connection
 

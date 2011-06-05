@@ -11,7 +11,7 @@ def initializeExtension():
     # access the extension
     from . import pyrepg
     # get hold of the standard compliant exception hierarchy
-    from ..db import exceptions
+    from pyre.db import exceptions
     # register the exception hierarchy with the module so that the exceptions it raises are
     # subclasses of the ones defined in pyre.db
     pyrepg.registerExceptions(exceptions)

@@ -8,19 +8,13 @@
 
 
 """
-Instantiate the postgres component
+Sanity check: verify that the module is accessible
 """
 
 
 def test():
-    # access the package
-    import pyre.postgres
-
-    # build a database component
-    db = pyre.postgres.database(name="sample")
-
-    # and return it
-    return db
+    import postgres.pyrepg
+    return
 
 
 # main

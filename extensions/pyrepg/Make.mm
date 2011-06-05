@@ -7,8 +7,8 @@
 
 include libpq/default.def
 
-PROJECT = pyre
-PACKAGE = postgres
+PROJECT = postgres
+PACKAGE = 
 MODULE = pyrepg
 
 include std-pythonmodule.def

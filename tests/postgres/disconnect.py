@@ -8,15 +8,17 @@
 
 
 """
-Make a connection through the high level interface
+Open a connection and close it explicitly
 """
 
 
 def test():
     # import the postgres module
-    import pyre.postgres
+    import postgres
     # use the high level connection factory
-    connection = pyre.postgres.connect(database='pyrepg', application='connect')
+    connection = postgres.connect(database='pyrepg', application='connect')
+    # and shut it down explicitly
+    connection.close()
     # return the connection
     return connection
 

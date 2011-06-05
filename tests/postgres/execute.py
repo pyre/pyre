@@ -8,17 +8,17 @@
 
 
 """
-Open a connection and close it explicitly
+Execute a trivial command
 """
 
 
 def test():
     # import the postgres module
-    import pyre.postgres
+    import postgres
     # use the high level connection factory
-    connection = pyre.postgres.connect(database='pyrepg', application='connect')
-    # and shut it down explicitly
-    connection.close()
+    connection = postgres.connect(database='pyrepg', application='connect')
+    # make it do something
+    connection.execute('rollback')
     # return the connection
     return connection
 

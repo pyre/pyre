@@ -14,7 +14,8 @@ RECURSE_DIRS = \
     pyre \
     journal \
     mpi \
-    merlin
+    merlin \
+    postgres
 
 #--------------------------------------------------------------------------
 #

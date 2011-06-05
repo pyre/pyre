@@ -13,7 +13,7 @@ Sanity check: verify that the module is accessible
 
 
 def test():
-    from pyre.postgres import pyrepg
+    from postgres import pyrepg
     # initialize the module exceptions
     import pyre.db.exceptions as exceptions
     pyrepg.registerExceptions(exceptions)
