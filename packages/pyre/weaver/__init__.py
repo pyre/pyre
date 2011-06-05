@@ -17,4 +17,10 @@ The primary target is human readable formats, such source code for programming l
 from .Weaver import Weaver as newWeaver
 
 
+# access to the known languages
+from .C import C as c
+from .Cxx import Cxx as cxx
+
+
+
 # end of file 

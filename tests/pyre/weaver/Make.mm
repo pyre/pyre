@@ -11,16 +11,18 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working: weaver
+all: test clean
 
-all: test
-
-test: sanity weaver
+test: sanity weaver documents
 
 sanity:
 	${PYTHON} ./sanity.py
 
 weaver:
 	${PYTHON} ./weaver.py
+
+documents:
+	${PYTHON} ./document_c.py
+	${PYTHON} ./document_cpp.py
 
 # end of file 

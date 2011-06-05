@@ -28,6 +28,8 @@ class Banner(pyre.component, family="pyre.weaver.banner", implements=Stationery)
     copyright = pyre.properties.str()
     copyright.doc = "the copyright note"
 
+    license = pyre.properties.str()
+    license.doc = "the license"
 
     footer = pyre.properties.str()
     footer.doc = "the marker to drop at the bottom of the document"

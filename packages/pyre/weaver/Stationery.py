@@ -25,8 +25,13 @@ class Stationery(pyre.interface, family="pyre.weaver.layouts"):
     affiliation.doc = "the author's institutional affiliation"
 
     copyright = pyre.properties.str()
-    affiliation.doc = "the author's institutional affiliation"
+    copyright.doc = "the copyright notice"
 
+    license = pyre.properties.str()
+    license.doc = "the license"
+
+    footer = pyre.properties.str()
+    footer.doc = "the marker to drop at the bottom of the document"
 
     # utilities
     @classmethod
