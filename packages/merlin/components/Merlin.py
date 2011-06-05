@@ -165,7 +165,7 @@ class Merlin(pyre.application, family=MERLIN):
 
     # namespace resolver obligations
     # support for automatically resolving merlin names
-    def componentSearchPath(self, context):
+    def pyre_componentSearchPath(self, context):
         """
         Make sure the project directory participates in the resolution of component names
         """
