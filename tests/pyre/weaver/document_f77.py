@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: instantiate a weaver and verify its configuration
+Exercise a Fortran77 weaver
 """
 
 
@@ -17,19 +17,19 @@ def test():
     import pyre.weaver
     # instantiate a weaver
     weaver = pyre.weaver.newWeaver(name="sanity")
-    weaver.language = "C++"
+    weaver.language = "f77"
 
     text = list(weaver.weave())
     assert text == [
-        '// -*- C++ -*-',
-        '//',
-        '// Michael A.G. Aïvázis',
-        '// California Institute of Technology',
-        '// (c) 1998-2011 All Rights Reserved',
-        '//',
+        'c -*- Fortran -*-',
+        'c',
+        'c Michael A.G. Aïvázis',
+        'c California Institute of Technology',
+        'c (c) 1998-2011 All Rights Reserved',
+        'c',
         '',
         '',
-        '// end of file',
+        'c end of file',
         ]
 
     return

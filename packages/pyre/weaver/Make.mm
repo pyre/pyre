@@ -23,14 +23,24 @@ EXPORT_PYTHON_MODULES = \
     BlockComments.py \
     BlockMill.py \
     C.py \
+    CSh.py \
     Cxx.py \
+    F77.py \
+    F90.py \
+    HTML.py \
     Indenter.py \
     Language.py \
     LineComments.py \
     LineMill.py \
+    Make.py \
     Mill.py \
+    Perl.py \
+    Python.py \
+    Sh.py \
     Stationery.py \
+    TeX.py \
     Weaver.py \
+    XML.py \
     __init__.py
 
 

@@ -8,7 +8,7 @@
 
 
 """
-Exercise a C weaver
+Exercise a Bourne shell weaver
 """
 
 
@@ -17,21 +17,19 @@ def test():
     import pyre.weaver
     # instantiate a weaver
     weaver = pyre.weaver.newWeaver(name="sanity")
-    weaver.language = "C"
+    weaver.language = "sh"
 
     text = list(weaver.weave())
     assert text == [
-        '/*',
-        ' * -*- C -*-',
-        ' * ',
-        ' * Michael A.G. Aïvázis',
-        ' * California Institute of Technology',
-        ' * (c) 1998-2011 All Rights Reserved',
-        ' * ',
-        ' */',
+        '#!/bin/bash',
+        '#',
+        '# Michael A.G. Aïvázis',
+        '# California Institute of Technology',
+        '# (c) 1998-2011 All Rights Reserved',
+        '#',
         '',
         '',
-        '/* end of file */'
+        '# end of file',
         ]
 
     return

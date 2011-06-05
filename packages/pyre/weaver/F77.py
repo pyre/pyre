@@ -9,24 +9,24 @@
 # access to the pyre package
 import pyre
 # my ancestor
-from .BlockMill import BlockMill
+from .LineMill import LineMill
 
 
 # my declaration
-class C(BlockMill):
+class F77(LineMill):
     """
-    Support for C
+    Support for Fortran 77
     """
 
 
     # traits
-    languageMarker = pyre.properties.str(default='C')
+    languageMarker = pyre.properties.str(default='Fortran')
     languageMarker.doc = "the variant to use in the language marker"
 
     
     # meta methods
     def __init__(self, **kwds):
-        super().__init__(startBlock='/*', commentMarker=' *', endBlock='*/', **kwds)
+        super().__init__(comment='c', **kwds)
         return
 
 

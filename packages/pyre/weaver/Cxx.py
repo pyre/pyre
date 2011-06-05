@@ -6,6 +6,8 @@
 #
 
 
+# access to the pyre package
+import pyre
 # my ancestor
 from .LineMill import LineMill
 
@@ -17,8 +19,14 @@ class Cxx(LineMill):
     """
 
 
+    # traits
+    languageMarker = pyre.properties.str(default='C++')
+    languageMarker.doc = "the variant to use in the language marker"
+
+    
+    # meta methods
     def __init__(self, **kwds):
-        super().__init__(comment='//', languageMarker='-*- C++ -*-', **kwds)
+        super().__init__(comment='//', **kwds)
         return
 
 

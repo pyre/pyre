@@ -81,7 +81,9 @@ class Weaver(pyre.component, family="pyre.weaver", resolver=True):
 
     # the language aliases table
     languages = {
-        "c++": "cxx"
+        "c++": "cxx",
+        "fortran": "f77",
+        "fortran77": "f77",
         }
 
 

@@ -8,7 +8,7 @@
 
 
 """
-Exercise a C weaver
+Exercise a python weaver
 """
 
 
@@ -17,21 +17,22 @@ def test():
     import pyre.weaver
     # instantiate a weaver
     weaver = pyre.weaver.newWeaver(name="sanity")
-    weaver.language = "C"
+    weaver.language = "python"
+    weaver.language.script = True
+    weaver.language.version = "3.2"
+    weaver.language.languageMarker = ""
 
     text = list(weaver.weave())
     assert text == [
-        '/*',
-        ' * -*- C -*-',
-        ' * ',
-        ' * Michael A.G. Aïvázis',
-        ' * California Institute of Technology',
-        ' * (c) 1998-2011 All Rights Reserved',
-        ' * ',
-        ' */',
+        '#!/usr/bin/env python3.2',
+        '#',
+        '# Michael A.G. Aïvázis',
+        '# California Institute of Technology',
+        '# (c) 1998-2011 All Rights Reserved',
+        '#',
         '',
         '',
-        '/* end of file */'
+        '# end of file',
         ]
 
     return

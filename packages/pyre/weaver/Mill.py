@@ -23,6 +23,11 @@ class Mill(pyre.component, Indenter, implements=Language):
     """
 
 
+    # traits
+    languageMarker = pyre.properties.str()
+    languageMarker.doc = "the string to use as the language marker"
+
+
     # interface
     @pyre.provides
     def render(self, document, stationery):
@@ -54,7 +59,7 @@ class Mill(pyre.component, Indenter, implements=Language):
         # if we have a language marker
         if self.languageMarker:
             # render it
-            yield self.languageMarker
+            yield "-*- " + self.languageMarker + " -*-"
         # a blank, commented line
         yield ''
         # render the author
@@ -81,13 +86,6 @@ class Mill(pyre.component, Indenter, implements=Language):
             # render the footer
             yield self.commentLine(stationery.footer)
         # all done
-        return
-
-
-    # meta methods
-    def __init__(self, languageMarker, **kwds):
-        super().__init__(**kwds)
-        self.languageMarker = languageMarker
         return
 
 

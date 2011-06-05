@@ -9,24 +9,24 @@
 # access to the pyre package
 import pyre
 # my ancestor
-from .BlockMill import BlockMill
+from .LineMill import LineMill
 
 
 # my declaration
-class C(BlockMill):
+class Make(LineMill):
     """
-    Support for C
+    Support for makefiles
     """
 
 
     # traits
-    languageMarker = pyre.properties.str(default='C')
-    languageMarker.doc = "the variant to use in the language marker"
+    languageMarker = pyre.properties.str(default='Makefile')
+    languageMarker.doc = "the language marker"
 
     
     # meta methods
     def __init__(self, **kwds):
-        super().__init__(startBlock='/*', commentMarker=' *', endBlock='*/', **kwds)
+        super().__init__(comment='#', **kwds)
         return
 
 
