@@ -49,11 +49,9 @@ class HTML(BlockMill):
     # constants
     doctypes = {
         'html5': '',
-
         'html4-strict':
-            ' public "-//w3c//dtd html 4.01 transitional//en" "http://www.w3.org/TR/html4/strict.dtd"',
-
-        'html4-transitional': ' public "-//w3c//dtd html 4.0 transitional//en"',
+            ' public "-//w3c//dtd html 4.01//en" "http://www.w3.org/TR/html4/strict.dtd"',
+        'html4-transitional': ' public "-//w3c//dtd html 4.01 transitional//en"',
         }
 
 
