@@ -11,7 +11,7 @@ import pyre.db
 
 
 # declaration
-class Postgres(pyre.db.server, family="pyre.db.postgres"):
+class Postgres(pyre.db.server, family="postgres.server"):
     """
     Component that manages the connection to a Postgres database
     """
@@ -24,7 +24,7 @@ class Postgres(pyre.db.server, family="pyre.db.postgres"):
     username.doc = "the username to use for the connection"
 
     password = pyre.properties.str(default=None)
-    username.doc = "the password to use for the connection"
+    password.doc = "the password to use for the connection"
 
 
     # exceptions
