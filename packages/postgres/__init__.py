@@ -6,7 +6,8 @@
 #
 
 
-from .Postgres import Postgres as database
+# access to the data store implementation provided by this package
+from .Postgres import Postgres as server
 
 
 # package methods
