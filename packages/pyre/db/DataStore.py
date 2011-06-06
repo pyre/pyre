@@ -11,7 +11,7 @@ import pyre
 
 
 # declaration
-class DataStore(pyre.interface):
+class DataStore(pyre.interface, family="pyre.db.server"):
     """
     Interface declaration for database managers
     """
