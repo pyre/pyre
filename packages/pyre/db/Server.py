@@ -8,11 +8,11 @@
 
 # packages
 import pyre
-from .DataStore import DataStore as datastore
+from . import datastore
 
 
 # declaration
-class Server(pyre.component, implements=datastore):
+class Server(pyre.component, implements=datastore, hidden=True):
     """
     Abstract component that encapsulates the connection to a database back end
 
