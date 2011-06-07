@@ -55,14 +55,16 @@ class Codec:
         {context} to form candidates until one results in a loadable shelf that can resolve the
         {specification}
         """
+        # convert the context into a namespace
+        namespace = context.pyre_family if context else ()
         # {specification} should have two parts: a {package} and a {symbol}; the {symbol}
         # corresponds to the component factory we are looking for, the {package} is the
         # namespace to which it belongs
         package, symbol = self.parseAddress(specification)
         # give register namespace handlers an opportunity to adjust the extracted {symbol}
-        symbol = client.translateSymbol(symbol=symbol, context=context)
+        symbol = client.translateSymbol(symbol=symbol, context=namespace)
         # iterate over the locations in {specification}
-        for shelf in self.locateShelves(client, scheme, package, context, locator):
+        for shelf in self.locateShelves(client, scheme, package, namespace, locator):
             # attempt to look for our {symbol}
             try:
                 descriptor = shelf.retrieveSymbol(symbol)
@@ -72,7 +74,22 @@ class Codec:
                 continue
             # otherwise, success!
             yield descriptor
-        # no more from me
+
+        # now, for my next trick: attempt to interpret the symbol itself as a shelf
+        try:
+            shelf = self.decode(client=client, scheme=scheme, source=symbol, locator=locator)
+        # if that fails
+        except self.DecodingError:
+            pass
+        # if it succeeds
+        else:
+            # look through the registered implementors of this interface
+            for implementor in client.registrar.implementors[context]:
+                # for the one whose package name matches our symbol
+                if implementor.pyre_getPackageName() == symbol:
+                    yield implementor
+        
+        # out of ideas....
         return
 
 
@@ -102,7 +119,7 @@ class Codec:
                 except self.DecodingError:
                     # move on
                     continue
-                # we got the shelf; first register it with the client
+                # we got a shelf; first register it with the client
                 client.registerShelf(shelf=shelf, source=source)
             # and return it to my caller
             yield shelf

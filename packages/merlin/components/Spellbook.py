@@ -11,13 +11,10 @@ import pyre
 
 
 # declaration
-class Spellbook(pyre.component, family="merlin.spellbook"):
+class Spellbook(pyre.component, family="merlin.spells"):
     """
     This is a sample documentation string for Spellbook
     """
-
-    # constants
-    context = ["merlin", "spells"]
 
 
     # exceptions
@@ -34,7 +31,7 @@ class Spellbook(pyre.component, family="merlin.spellbook"):
         # access to the pyre executive
         executive = self.pyre_executive
         # ask the executive to locate the spell factory
-        factory = executive.retrieveComponentDescriptor(uri=name, context=self.context)
+        factory = executive.retrieveComponentDescriptor(uri=name, context=self)
         # instantiate it
         spell = factory(name=name)
         # and return it
