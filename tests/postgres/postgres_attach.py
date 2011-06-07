@@ -17,7 +17,7 @@ def test():
     import postgres
 
     # build a database component
-    db = postgres.database(name="postgres-attach")
+    db = postgres.server(name="postgres-attach")
     # connect to the database specified in the local configuration file
     db.attach()
 

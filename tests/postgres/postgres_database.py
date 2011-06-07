@@ -17,7 +17,7 @@ def test():
     import postgres
 
     # build a database component
-    db = postgres.database(name="sample")
+    db = postgres.server(name="sample")
 
     # and return it
     return db
