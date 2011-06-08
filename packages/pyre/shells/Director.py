@@ -27,12 +27,6 @@ class Director(Actor):
         # if I am a hidden application subclass, we are all done
         if self.pyre_hidden: return
 
-        # otherwise
-        # build the private file space
-        self.pyre_filesystem = self.pyre_mountVirtualFilesystem()
-        # and mount any additional application-specific directories
-        self.pyre_mountApplicationFolders()
-
         # all done
         return
 

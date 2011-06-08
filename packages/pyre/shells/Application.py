@@ -62,36 +62,33 @@ class Application(pyre.component, metaclass=Director, hidden=True):
         
 
     # initialization hooks
-    @classmethod
-    def pyre_mountVirtualFilesystem(cls):
+    def pyre_mountVirtualFilesystem(self):
         """
         Gather all standard directories that are relevant for this application family into its
         own private namespace and register it with the executive file server
         """
         # build the top level folder for my stuff
-        private = cls.pyre_executive.fileserver.newFolder()
+        private = self.executive.fileserver.newFolder()
         # flatten my family
-        family = cls.pyre_SEPARATOR.join(cls.pyre_family)
+        family = self.pyre_SEPARATOR.join(self.pyre_family)
         # mount it at the right place
-        cls.pyre_executive.fileserver[family] = private
+        self.vfs[family] = private
         # mount the system folder
-        cls.pyre_mountFolder(parent=private, folder="system", tag=family)
+        self.pyre_mountFolder(parent=private, folder="system", tag=family)
         # mount the user folder
-        cls.pyre_mountFolder(parent=private, folder="user", tag=family)
+        self.pyre_mountFolder(parent=private, folder="user", tag=family)
         # and return the private folder
         return private
 
 
-    @classmethod
-    def pyre_mountApplicationFolders(cls):
+    def pyre_mountApplicationFolders(self):
         """
         Hook to enable applications to mount additional directories in the virtual filesystem
         """
         return
 
 
-    @classmethod
-    def pyre_mountFolder(cls, folder, parent, tag):
+    def pyre_mountFolder(self, folder, parent, tag):
         """
         Look through the standard configuration folders for {tag}/{folder} and mount it in the
         application private namespace anchored at {parent}. If the folder does not exist,
@@ -104,7 +101,7 @@ class Application(pyre.component, metaclass=Director, hidden=True):
         and retrieve its contents without having to first test for its existence
         """
         # cache the file server
-        fileserver = cls.pyre_executive.fileserver
+        fileserver = self.vfs
         # build the target name
         path = fileserver.join("/pyre", folder, tag)
         # look for it 
@@ -134,7 +131,7 @@ class Application(pyre.component, metaclass=Director, hidden=True):
         return symbol
 
 
-    def pyre_componentSearchPath(cls, context):
+    def pyre_componentSearchPath(self, context):
         """
         Build a sequence of possible locations that may resolve the unqualified requests within
         the given {context}.
@@ -150,7 +147,13 @@ class Application(pyre.component, metaclass=Director, hidden=True):
         super().__init__(**kwds)
 
         # register the application class as the resolver of its namespace
-        self.pyre_executive.registerNamespaceResolver(resolver=self, namespace=name)
+        self.executive.registerNamespaceResolver(resolver=self, namespace=name)
+
+        # build the private file space
+        self.pyre_filesystem = self.pyre_mountVirtualFilesystem()
+        # and mount any additional application-specific directories
+        self.pyre_mountApplicationFolders()
+
 
         # all done
         return
