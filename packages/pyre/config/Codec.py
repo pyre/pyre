@@ -33,7 +33,7 @@ class Codec:
 
     def decode(self, client, scheme, source, locator=None):
         """
-        Injest {source} and return the decoded contents
+        Ingest {source} and return the decoded contents
         """
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must override 'decode'".format(self))
@@ -61,7 +61,7 @@ class Codec:
         # corresponds to the component factory we are looking for, the {package} is the
         # namespace to which it belongs
         package, symbol = self.parseAddress(specification)
-        # give register namespace handlers an opportunity to adjust the extracted {symbol}
+        # give registered namespace handlers an opportunity to adjust the extracted {symbol}
         symbol = client.translateSymbol(symbol=symbol, context=namespace)
         # iterate over the locations in {specification}
         for shelf in self.locateShelves(client, scheme, package, namespace, locator):
