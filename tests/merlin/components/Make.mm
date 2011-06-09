@@ -25,5 +25,6 @@ merlin:
 	${PYTHON} ./merlin-shell.py
 	${PYTHON} ./merlin-spell.py
 	${PYTHON} ./merlin-curator.py
+	${PYTHON} ./merlin-packages.py
 
 # end of file 

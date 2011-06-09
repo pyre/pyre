@@ -26,6 +26,7 @@ class Merlin(pyre.application, family=MERLIN):
 
     # types
     from .Curator import Curator
+    from .PackageManager import PackageManager
     from .Spellbook import Spellbook
     # exceptions
     from .exceptions import MerlinError
@@ -213,6 +214,8 @@ class Merlin(pyre.application, family=MERLIN):
     def __init__(self, name=MERLIN, **kwds):
         super().__init__(name=name, **kwds)
 
+        # create and bind the package manager
+        self.packages = self.PackageManager(name=name+'.packages')
         # create and bind the spell book
         self.spellbook = self.Spellbook(name=name+".spellbook")
         # create and bind the curator

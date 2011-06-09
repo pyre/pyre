@@ -22,6 +22,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Curator.py \
     Merlin.py \
+    PackageManager.py \
     Spell.py \
     Spellbook.py \
     exceptions.py \
