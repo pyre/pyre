@@ -38,40 +38,15 @@ class Spellbook(pyre.component, family="merlin.spells"):
         return spell
 
 
-    def volumes(self):
+    def shelves(self, name, folder):
         """
-        Iterate over all the spell files in all the standard places
+        Iterate over the contents of {folder} and return candidate shelves
         """
-        # access the file server
-        vfs = self.pyre_executive.fileserver
-        # iterate over the standard locations
-        for archive in self.archives:
-            # ask the file server for the matching folder
-            try:
-                folder = vfs[archive]
-            # if not there, move on...
-            except vfs.NotFoundError:
-                continue
-            # now, iterate over the contents of the folder
-            for volume in folder.contents:
-                # form the name of the volume
-               yield folder.join(archive, volume)
+        # go through the entire contents
+        for shelf in folder.contents:
+            # everybody is a candidate, for now
+            yield folder.join(name, shelf)
         # all done
-        return
-                
-
-    # meta methods
-    def __init__(self, **kwds):
-        # chain to my ancestors
-        super().__init__(**kwds)
-
-        # the ordered list of locations with spell archives
-        self.archives = [
-            '/merlin/project/spells',
-            '/merlin/user/spells',
-            '/merlin/system/spells',
-            ]
-
         return
 
 

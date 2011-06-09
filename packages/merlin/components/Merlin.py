@@ -98,8 +98,7 @@ class Merlin(pyre.application, family=MERLIN):
         return project
         
 
-    # utilities
-    @classmethod
+    # application initialization hooks
     def pyre_mountApplicationFolders(cls):
         """
         Mount the project directory by walking up from {cwd} to the directory that contains the
@@ -167,7 +166,10 @@ class Merlin(pyre.application, family=MERLIN):
     # support for automatically resolving merlin names
     def pyre_componentSearchPath(self, context):
         """
-        Make sure the project directory participates in the resolution of component names
+        Hook invoked during the resolution of component names into descriptors.
+
+        merlin iterates through the each of the standard places, asking a {context} specific
+        sub-component for assistance in retrieving candidate shelves from the filesystem.
         """
         # the first part is my tag
         assert context[0] == MERLIN
@@ -176,14 +178,34 @@ class Merlin(pyre.application, family=MERLIN):
             # there is nothing to do
             return
 
-        # if the second fragment of the context is "spells"
-        if context[1] == "spells":
-            # hand it to the spellbook
-            for volume in self.spellbook.volumes():
-                # which will iterate over all the spell files
-                yield volume
+        # what are we looking for?
+        category = context[1]
+        # look up the responsible subcomponent
+        try:
+            component = self.categories[category]
+        except KeyError:
+            # any other ideas?
+            return
 
-        # and no more
+        # my file server
+        vfs = self.vfs
+        # iterate over the standard locations
+        for root in self.configpath:
+            # form the name of category sub folder
+            location = vfs.join(root, category)
+            # and look for it
+            try:
+                folder = vfs[location]
+            # if not there
+            except vfs.NotFoundError:
+                # move on to the next one
+                continue
+            # hand each one to the resolving subcomponent and get back shelves
+            for shelf in component.shelves(folder=folder, name=location):
+                # which, in turn, are processed by the caller
+                yield shelf
+
+        # no more
         return
 
 
@@ -195,6 +217,18 @@ class Merlin(pyre.application, family=MERLIN):
         self.spellbook = self.Spellbook(name=name+".spellbook")
         # create and bind the curator
         self.curator = self.Curator(name=name+".curator")
+
+        # register the components that explore my vfs looking for configuration choices
+        self.categories = {
+            "spells": self.spellbook,
+            }
+
+        # the ordered list of folders to visit while resolving names
+        self.configpath = [
+            '/merlin/project',
+            '/merlin/user',
+            '/merlin/system',
+            ]
 
         # all done
         return
