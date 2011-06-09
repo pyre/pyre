@@ -224,6 +224,7 @@ class Merlin(pyre.application, family=MERLIN):
         # register the components that explore my vfs looking for configuration choices
         self.categories = {
             "spells": self.spellbook,
+            "packages": self.packages,
             }
 
         # the ordered list of folders to visit while resolving names
