@@ -60,7 +60,7 @@ namespace pyre {
 } // of namespace pyre
 
 // initialization function for the module
-// *must* be called PyInit_pyrepg
+// *must* be called PyInit_timers
 PyMODINIT_FUNC
 PyInit_timers()
 {
