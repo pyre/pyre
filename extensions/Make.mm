@@ -11,7 +11,7 @@ PROJECT = pyre
 RECURSE_DIRS = \
     journal \
     mpi \
-    pyrepg \
+    postgres \
     timers
 
 #--------------------------------------------------------------------------

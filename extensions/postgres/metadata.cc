@@ -16,7 +16,7 @@ PyObject *
 pyre::extensions::postgres::
 copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "pyrepg: (c) 1998-2011 Michael A.G. Aïvázis";
+    const char * const copyright_note = "postgres: (c) 1998-2011 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
 }
     

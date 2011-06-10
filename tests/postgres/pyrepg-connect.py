@@ -8,18 +8,18 @@
 
 
 """
-Sanity check: verify that the module is accessible
+Make a connection to a database using the low level interface from the extension module
 """
 
 
 def test():
-    from postgres import pyrepg
+    from postgres import postgres as pyrepg
     # initialize the module exceptions
     import pyre.db.exceptions as exceptions
     pyrepg.registerExceptions(exceptions)
 
     # make a connection
-    connection = pyrepg.connect("dbname=pyrepg")
+    connection = pyrepg.connect("dbname=pyre")
     # and return it
     return connection
 

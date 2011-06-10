@@ -51,7 +51,7 @@ namespace pyre {
                 // header
                 PyModuleDef_HEAD_INIT,
                 // the name of the module
-                "pyrepg",
+                "postgres",
                 // the module documentation string
                 doc,
                 // size of the per-interpreter state of the module; -1 if this state is global
@@ -66,9 +66,9 @@ namespace pyre {
 
 
 // initialization function for the module
-// *must* be called PyInit_pyrepg
+// *must* be called PyInit_postgres
 PyMODINIT_FUNC
-PyInit_pyrepg()
+PyInit_postgres()
 {
     // create the module
     PyObject * module = PyModule_Create(&pyre::extensions::postgres::module);

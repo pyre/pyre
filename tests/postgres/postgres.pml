@@ -10,13 +10,13 @@
 <config>
 
   <!-- some global settings -->
-  <component family="pyre.db.postgres">
+  <component family="postgres.server">
     <bind property="database">postgres</bind>
   </component>
 
   <!--  settings for particular test cases -->
-  <component name="postgres-attach" family="pyre.db.postgres">
-    <bind property="database">pyrepg</bind>
+  <component name="postgres-attach" family="postgres.server">
+    <bind property="database">pyre</bind>
   </component>
 
 </config>

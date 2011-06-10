@@ -9,14 +9,14 @@
 # helper routine to initialize the extension module
 def initializeExtension():
     # access the extension
-    from . import pyrepg
+    from . import postgres
     # get hold of the standard compliant exception hierarchy
     from pyre.db import exceptions
     # register the exception hierarchy with the module so that the exceptions it raises are
     # subclasses of the ones defined in pyre.db
-    pyrepg.registerExceptions(exceptions)
+    postgres.registerExceptions(exceptions)
     # and return the module
-    return pyrepg
+    return postgres
 
 
 # declaration
@@ -27,7 +27,7 @@ class Connection:
 
 
     # class public data
-    pyrepg = initializeExtension() # the handle to the postgres extension module
+    postgres = initializeExtension() # the handle to the postgres extension module
 
 
     # interface
@@ -39,14 +39,14 @@ class Connection:
         to all objects that may retain a reference to the connection being closed. Any
         uncommitted changes will be lost
         """
-        return self.pyrepg.disconnect(self.connection)
+        return self.postgres.disconnect(self.connection)
 
 
     def execute(self, command):
         """
         Execute command and return the result
         """
-        return self.pyrepg.execute(self.connection, command)
+        return self.postgres.execute(self.connection, command)
 
 
     # meta methods
@@ -70,7 +70,7 @@ class Connection:
         spec = ' '.join([ '='.join(entry) for entry in spec ])
         
         # establish a connection
-        self.connection = self.pyrepg.connect(spec)
+        self.connection = self.postgres.connect(spec)
 
         # all done
         return

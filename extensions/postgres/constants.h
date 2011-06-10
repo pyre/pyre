@@ -13,9 +13,9 @@ namespace pyre {
     namespace extensions {
         namespace postgres {
             // the name of the connection capsule
-            const char * const connectionCapsuleName = "pyrepg.connection";
+            const char * const connectionCapsuleName = "postgres.connection";
 
-            // exception hierarchy for pyrepg errors
+            // exception hierarchy for postgres errors
             extern PyObject * Error;
             extern PyObject * Warning;
             extern PyObject * InterfaceError;
