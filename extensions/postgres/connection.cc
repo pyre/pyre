@@ -14,7 +14,25 @@
 #include "constants.h"
 #include "connection.h"
 
+
+namespace pyre {
+    namespace extensions {
+        namespace postgres {
+            void finish(PyObject *);
+        } // of namespace postgres
+    } // of namespace extensions
+} // of namespace pyre
+
+
 // establish a new connection
+const char * const
+pyre::extensions::postgres::
+connect__name__ = "connect";
+
+const char * const 
+pyre::extensions::postgres::
+connect__doc__ = "establish a connection to the postgres back end";
+
 PyObject *
 pyre::extensions::postgres::
 connect(PyObject *, PyObject * args) {
@@ -46,6 +64,14 @@ connect(PyObject *, PyObject * args) {
 
     return PyCapsule_New(connection, connectionCapsuleName, finish);
 }
+
+const char * const 
+pyre::extensions::postgres::
+disconnect__name__ = "disconnect";
+
+const char * const
+pyre::extensions::postgres::
+disconnect__doc__ = "shut down a connection to the postgres back end";
 
 PyObject *
 pyre::extensions::postgres::

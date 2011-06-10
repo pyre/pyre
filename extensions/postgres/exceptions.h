@@ -15,10 +15,8 @@ namespace pyre {
         namespace postgres {
 
             // exception registration
-            const char * const registerExceptions__name__ = "registerExceptions";
-            const char * const registerExceptions__doc__ = 
-                "register the classes that represent the standard exceptions raised by"
-                "DB API 2.0 compliant implementations";
+            extern const char * const registerExceptions__name__;
+            extern const char * const registerExceptions__doc__;
             PyObject * registerExceptions(PyObject *, PyObject *);
 
         } // of namespace postgres

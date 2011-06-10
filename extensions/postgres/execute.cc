@@ -15,6 +15,14 @@
 
 
 // establish a new connection
+const char * const
+pyre::extensions::postgres::
+execute__name__ = "execute";
+
+const char * const
+pyre::extensions::postgres::
+execute__doc__ = "execute a single command";
+
 PyObject * 
 pyre::extensions::postgres::
 execute(PyObject *, PyObject * args) {

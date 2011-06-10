@@ -13,8 +13,8 @@ namespace pyre {
         namespace postgres {
 
             // establish a connection to the pg back end
-            const char * const execute__name__ = "execute";
-            const char * const execute__doc__ = "execute a single command";
+            extern const char * const execute__name__;
+            extern const char * const execute__doc__;
             PyObject * execute(PyObject *, PyObject *);
 
         } // of namespace postgres

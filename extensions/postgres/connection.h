@@ -13,16 +13,14 @@ namespace pyre {
         namespace postgres {
 
             // establish a connection to the pg back end
-            const char * const connect__name__ = "connect";
-            const char * const connect__doc__ = "establish a connection to the postgres back end";
+            extern const char * const connect__name__;
+            extern const char * const connect__doc__;
             PyObject * connect(PyObject *, PyObject *);
 
             // disconnect from the back end
-            const char * const disconnect__name__ = "disconnect";
-            const char * const disconnect__doc__ = "shut down a connection to the postgres back end";
+            extern const char * const disconnect__name__;
+            extern const char * const disconnect__doc__;
             PyObject * disconnect(PyObject *, PyObject *);
-
-            void finish(PyObject *);
 
         } // of namespace postgres
     } // of namespace extensions

@@ -12,6 +12,14 @@
 
 
 // copyright
+const char * const
+pyre::extensions::postgres::
+copyright__name__ = "copyright";
+
+const char * const
+pyre::extensions::postgres::
+copyright__doc__ = "the module copyright string";
+
 PyObject * 
 pyre::extensions::postgres::
 copyright(PyObject *, PyObject *)
@@ -22,6 +30,14 @@ copyright(PyObject *, PyObject *)
     
 
 // version
+const char * const
+pyre::extensions::postgres::
+version__name__ = "version";
+
+const char * const
+pyre::extensions::postgres::
+version__doc__ = "the module version string";
+
 PyObject * 
 pyre::extensions::postgres::
 version(PyObject *, PyObject *)

@@ -32,6 +32,16 @@ namespace pyre {
 
 
 // exception registration
+const char * const
+pyre::extensions::postgres::
+registerExceptions__name__ = "registerExceptions";
+
+const char * const
+pyre::extensions::postgres::
+registerExceptions__doc__ = 
+    "register the classes that represent the standard exceptions raised by"
+    "DB API 2.0 compliant implementations";
+
 PyObject *
 pyre::extensions::postgres::
 registerExceptions(PyObject * module, PyObject * args) {
