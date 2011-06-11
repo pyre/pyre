@@ -19,7 +19,11 @@
 namespace pyre {
     namespace extensions {
         namespace postgres {
+            // helpers
             void finish(PyObject *);
+
+            // constants
+            const char * const connectionCapsuleName = "postgres.connection";
         } // of namespace postgres
     } // of namespace extensions
 } // of namespace pyre

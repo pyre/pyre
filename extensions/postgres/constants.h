@@ -13,7 +13,7 @@ namespace pyre {
     namespace extensions {
         namespace postgres {
             // the name of the connection capsule
-            const char * const connectionCapsuleName = "postgres.connection";
+            extern const char * const connectionCapsuleName;
 
             // exception hierarchy for postgres errors
             extern PyObject * Error;
