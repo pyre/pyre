@@ -81,7 +81,7 @@ class ANSIRenderer(pyre.component, family="journal.renderers.ansi", implements=R
             fields["function"] = ''
         else:
             color = palette["function"]
-            fields["function"] = " in {}{}{}:".format(color, function, normal)
+            fields["function"] = " in {}{!r}{}:".format(color, function, normal)
 
         # build the header
         header = " {0.header} {filename}{line}{diagnostic}{function}".format(self, **fields)

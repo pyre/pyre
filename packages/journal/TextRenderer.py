@@ -45,12 +45,12 @@ class TextRenderer(pyre.component, family="journal.renderers.plain", implements=
             pass
         # the line number
         try:
-            header.append("{line}:".format(**metadata))
+            header.append("{line}: ".format(**metadata))
         except KeyError:
             pass
         # the severity
         try:
-            header.append(" {severity}".format(**metadata))
+            header.append("{severity}".format(**metadata))
         except KeyError:
             pass
         # the channel
@@ -60,7 +60,7 @@ class TextRenderer(pyre.component, family="journal.renderers.plain", implements=
             pass
         # the function
         try:
-            header.append(" in {function}:".format(**metadata))
+            header.append(" in {function!r}:".format(**metadata))
         except KeyError:
             pass
                           
