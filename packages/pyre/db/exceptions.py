@@ -72,6 +72,14 @@ class ProgrammingError(DatabaseError):
     """
     Exception raised when there is a problem with the SQL statement being executed
     """
+
+    def __init__(self, command, **kwds):
+        self.command = command
+        super().__init__(**kwds)
+        return
+
+    def __str__(self):
+        return "while executing {.command!r}: ".format(self) + super().__str__()
     
 
 class NotSupportedError(DatabaseError):

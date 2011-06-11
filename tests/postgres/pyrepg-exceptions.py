@@ -126,7 +126,7 @@ def test():
     assert error.__bases__ == (pyrepg.DatabaseError,)
     # verify it can be caught
     try:
-        raise pyrepg.ProgrammingError('a generic database error')
+        raise pyrepg.ProgrammingError(description='a generic database error', command='none')
     except pyrepg.ProgrammingError as error:
         pass
 
