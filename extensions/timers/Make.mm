@@ -13,7 +13,7 @@ MODULE = timers
 
 include std-pythonmodule.def
 
-PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)module
+PROJ_TMPDIR = $(BLD_TMPDIR)/extensions/$(PACKAGE)
 PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
 PROJ_CXX_SRCLIB += -lpyre-timers
 
