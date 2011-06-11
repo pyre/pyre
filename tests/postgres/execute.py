@@ -15,10 +15,16 @@ Execute a trivial command
 def test():
     # import the postgres module
     import postgres
+
+    # import journal
+    # journal.debug("postgres.execution").active = True
+
     # use the high level connection factory
     connection = postgres.connect(database='pyre', application='connect')
     # make it do something
-    connection.execute('rollback')
+    command = 'show client_encoding'
+    connection.execute(command)
+
     # return the connection
     return connection
 
