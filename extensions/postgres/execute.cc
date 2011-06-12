@@ -6,7 +6,6 @@
 // 
 
 #include <portinfo>
-#include <iostream>
 
 #include <Python.h>
 #include <libpq-fe.h>
@@ -55,19 +54,47 @@ execute(PyObject *, PyObject * args) {
     // execute the command
     PGresult * result = PQexec(connection, command);
     // error check
+    // null result indicates we have run out of memory
     if (!result) {
         // convert the error to human readable form
         const char * description = PQerrorMessage(connection);
         // and return an error indicator
-        return raiseProgrammingError(description, command);
+        return raiseOperationalError(description);
+    }
+
+    //  this is what we will return to the caller
+    PyObject * value;
+    if (PQresultStatus(result) == PGRES_COMMAND_OK) {
+        // the command was executed successfully
+        debug 
+            << pyre::journal::at(__HERE__)
+            << "success: command: '" << command << "'"
+            << pyre::journal::endl;
+        // None for now
+        Py_INCREF(Py_None);
+        value = Py_None;
+
+    } else if (PQresultStatus(result) == PGRES_TUPLES_OK) {
+        // the query succeeded and there are tuples to harvest
+        debug 
+            << pyre::journal::at(__HERE__)
+            << "success: query: '" << command << "'"
+            << pyre::journal::endl;
+        // None for now
+        Py_INCREF(Py_None);
+        value = Py_None;
+    } else {
+        // there was something wrong with the command
+        const char * description = PQresultErrorMessage(result);
+        // raise a ProgrammingError
+        value = raiseProgrammingError(description, command);
     }
 
     // all is well
     // free the result
     PQclear(result);
     // and return
-    Py_INCREF(Py_None);
-    return Py_None;
+    return value;
 }
 
 // end of file
