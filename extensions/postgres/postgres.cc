@@ -7,6 +7,7 @@
 
 #include <portinfo>
 #include <Python.h>
+#include <pyre/journal.h>
 
 // the module method declarations
 #include "connection.h"
@@ -72,10 +73,20 @@ PyInit_postgres()
 {
     // create the module
     PyObject * module = PyModule_Create(&pyre::extensions::postgres::module);
+
+    // create the debug channel
+    pyre::journal::debug_t debug("postgres.init");
+    debug << pyre::journal::at(__HERE__);
+
     // check whether module creation succeeded and raise an exception if not
     if (!module) {
-        return module;
+        debug << "'postgres' module initialization failed";
+    } else {
+        debug << "'postgres' module initialization succeeded";
     }
+
+    debug << pyre::journal::endl;
+
     // and return the newly created module
     return module;
 }
