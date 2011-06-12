@@ -13,6 +13,11 @@ Make a connection to a database using the low level interface from the extension
 
 
 def test():
+    # import journal
+    # journal.debug("postgres.init").active = True
+    # journal.debug("postgres.connection").active = True
+    # journal.debug("postgres.execution").active = True
+
     from postgres import postgres as pyrepg
     # initialize the module exceptions
     import pyre.db.exceptions as exceptions

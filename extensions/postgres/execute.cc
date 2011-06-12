@@ -66,20 +66,30 @@ execute(PyObject *, PyObject * args) {
     PyObject * value;
     if (PQresultStatus(result) == PGRES_COMMAND_OK) {
         // the command was executed successfully
-        debug 
-            << pyre::journal::at(__HERE__)
-            << "success: command: '" << command << "'"
-            << pyre::journal::endl;
-        // None for now
+        // diagnostics
+        if (debug.isActive()) {
+            debug 
+                << pyre::journal::at(__HERE__)
+                << "success: " << PQcmdStatus(result)
+                << pyre::journal::endl;
+        }
+        // build the return value
         Py_INCREF(Py_None);
         value = Py_None;
 
     } else if (PQresultStatus(result) == PGRES_TUPLES_OK) {
         // the query succeeded and there are tuples to harvest
-        debug 
-            << pyre::journal::at(__HERE__)
-            << "success: query: '" << command << "'"
-            << pyre::journal::endl;
+        if (debug.isActive()) {
+            int fields = PQnfields(result);
+            int tuples = PQntuples(result);
+            debug 
+                << pyre::journal::at(__HERE__)
+                << "success: " 
+                << tuples << " tuple" << (tuples == 1 ? "" : "s")
+                << " with " << fields << " field" << (fields == 1 ? "" : "s") << " each"
+                << pyre::journal::endl;
+        }
+        // build the return value
         value = stringTuple(result);
     } else {
         // there was something wrong with the command
