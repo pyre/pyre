@@ -14,6 +14,7 @@
 
 #include "execute.h"
 #include "constants.h"
+#include "interlayer.h"
 
 
 // establish a new connection
@@ -55,18 +56,10 @@ execute(PyObject *, PyObject * args) {
     PGresult * result = PQexec(connection, command);
     // error check
     if (!result) {
-        PyObject * args = PyTuple_New(0);
+        // convert the error to human readable form
         const char * description = PQerrorMessage(connection);
-        PyObject * kwds = Py_BuildValue(
-                                        "{s:s, s:s}", 
-                                        "description", description,
-                                        "command", command
-                                        );
-        PyObject * exception = PyObject_Call(OperationalError, args, kwds);
-        // prepare to raise the instance of OperationalError
-        PyErr_SetObject(OperationalError, exception);
-        // and return the error indicator
-        return 0;
+        // and return an error indicator
+        return raiseProgrammingError(description, command);
     }
 
     // all is well

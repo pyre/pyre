@@ -12,8 +12,9 @@
 #include <libpq-fe.h>
 #include <pyre/journal.h>
 
-#include "constants.h"
 #include "connection.h"
+#include "constants.h"
+#include "interlayer.h"
 
 
 namespace pyre {
@@ -59,23 +60,15 @@ connect(PyObject *, PyObject * args) {
     PGconn * connection = PQconnectdb(specification);
     // check
     if (PQstatus(connection) != CONNECTION_OK) {
-        // diagnose the error condition so we can raise an informative exception
-        // according to DB API 2.0, connection errors are OperationalError
-
-        // this code fragment illustrates how to instantiate objects of a known type using
-        // keyword arguments
-        PyObject * args = PyTuple_New(0);
+        // convert the error to human readable form
         const char * description = PQerrorMessage(connection);
-        PyObject * kwds = Py_BuildValue("{s:s}", "description", description);
-        PyObject * exception = PyObject_Call(OperationalError, args, kwds);
-        // prepare to raise the instance of OperationalError
-        PyErr_SetObject(OperationalError, exception);
-        // and return the error indicator
-        return 0;
+        // according to DB API 2.0, connection errors are OperationalError
+        return raiseOperationalError(description);
     }
 
     return PyCapsule_New(connection, connectionCapsuleName, finish);
 }
+
 
 const char * const 
 pyre::extensions::postgres::

@@ -18,9 +18,10 @@ PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
 EXTERNAL_LIBS += -ljournal
 
 PROJ_SRCS = \
+    connection.cc \
     execute.cc \
     exceptions.cc \
-    connection.cc \
+    interlayer.cc \
     metadata.cc
 
 # end of file
