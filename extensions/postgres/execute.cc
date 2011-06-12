@@ -80,9 +80,7 @@ execute(PyObject *, PyObject * args) {
             << pyre::journal::at(__HERE__)
             << "success: query: '" << command << "'"
             << pyre::journal::endl;
-        // None for now
-        Py_INCREF(Py_None);
-        value = Py_None;
+        value = stringTuple(result);
     } else {
         // there was something wrong with the command
         const char * description = PQresultErrorMessage(result);

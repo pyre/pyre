@@ -21,11 +21,13 @@ def test():
     # make a connection
     connection = pyrepg.connect("dbname=pyre")
     # execute a command
-    result = pyrepg.execute(connection, "SHOW client_encoding")
-    assert result == None
+    command = "SELECT datname FROM pg_database WHERE datname='pyre'"
+    result = pyrepg.execute(connection, command)
+    # check that we got what we expected
+    assert result == (('pyre',),)
 
-    # and return it
-    return connection
+    # and return the connection and the resulting tuple
+    return connection, result
 
 
 # main

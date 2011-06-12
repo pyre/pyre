@@ -18,8 +18,39 @@
 // convert the tuples in PGresult into a python tuple
 PyObject *
 pyre::extensions::postgres::
-resultTuples(PGresult * result)
+stringTuple(PGresult * result)
 {
+    // find out how many tuples in the result
+    int tuples = PQntuples(result);
+    // and how many fields in each tuple
+    int fields = PQnfields(result);
+    // build a python tuple to hold the data
+    PyObject * data = PyTuple_New(tuples);
+
+    // iterate over the rows
+    for (int tuple = 0; tuple < tuples; tuple++) {
+        // build a tuple to hold this row
+        PyObject * row = PyTuple_New(fields); 
+        // iterate over the data fields
+        for (int field = 0; field < fields; field++) {
+            // place holder for the field value
+            char * value = "";
+            // if it is not null
+            if (!PQgetisnull(result, tuple, field)) {
+                // extract it
+                value = PQgetvalue(result, tuple, field);
+            }
+            // convert it into a python string
+            PyObject * item = PyUnicode_FromString(value);
+            // add  it to the tuple
+            PyTuple_SET_ITEM(row, field, item);
+        }
+        // and now that the row tuple is fully built, add it to the data set
+        PyTuple_SET_ITEM(data, tuple, row);
+    }
+
+    // return the data tuple
+    return data;
 }
 
 

@@ -18,7 +18,7 @@ namespace pyre {
             typedef const char * const string_t;
 
             // other utilities
-            PyObject * resultTuples(PGresult *);
+            PyObject * stringTuple(PGresult *);
 
             // exceptions
             PyObject * raiseOperationalError(string_t description);
