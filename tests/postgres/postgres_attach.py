@@ -13,11 +13,16 @@ Instantiate the postgres component
 
 
 def test():
+    # import journal
+    # journal.debug("postgres.init").active = True
+    # journal.debug("postgres.execute").active = True
+    # journal.debug("postgres.connection").active = True
+
     # access the postgres package
     import postgres
 
     # build a database component
-    db = postgres.server(name="postgres-attach")
+    db = postgres.server(name="test")
     # connect to the database specified in the local configuration file
     db.attach()
 

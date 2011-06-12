@@ -15,7 +15,7 @@
   </component>
 
   <!--  settings for particular test cases -->
-  <component name="postgres-attach" family="postgres.server">
+  <component name="test" family="postgres.server">
     <bind property="database">pyre</bind>
   </component>
 

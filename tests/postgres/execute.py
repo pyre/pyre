@@ -13,11 +13,13 @@ Execute a trivial command
 
 
 def test():
+    # import journal
+    # journal.debug("postgres.init").active = True
+    # journal.debug("postgres.execution").active = True
+    # journal.debug("postgres.connection").active = True
+
     # import the postgres module
     import postgres
-
-    # import journal
-    # journal.debug("postgres.execution").active = True
 
     # use the high level connection factory
     connection = postgres.connect(database='pyre', application='connect')
