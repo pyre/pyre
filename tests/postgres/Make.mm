@@ -20,8 +20,10 @@ sanity:
 	${PYTHON} ./sanity-pyrepg.py
 
 pyrepg:
-	${PYTHON} ./pyrepg-exceptions.py
-	${PYTHON} ./pyrepg-connect.py
+	${PYTHON} ./pyrepg_exceptions.py
+	${PYTHON} ./pyrepg_connect.py
+	${PYTHON} ./pyrepg_execute.py
+	${PYTHON} ./pyrepg_execute_badCommand.py
 
 connections:
 	${PYTHON} ./connect.py
