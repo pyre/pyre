@@ -24,7 +24,7 @@ def test():
     command = "SELECT datname FROM pg_database WHERE datname='pyre'"
     result = pyrepg.execute(connection, command)
     # check that we got what we expected
-    assert result == (('pyre',),)
+    assert result == (('datname',), ('pyre',))
 
     # and return the connection and the resulting tuple
     return connection, result

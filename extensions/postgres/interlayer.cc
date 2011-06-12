@@ -25,7 +25,17 @@ stringTuple(PGresult * result)
     // and how many fields in each tuple
     int fields = PQnfields(result);
     // build a python tuple to hold the data
-    PyObject * data = PyTuple_New(tuples);
+    PyObject * data = PyTuple_New(tuples+1);
+
+    // build a tuple to hold the names of the fields
+    PyObject * header = PyTuple_New(fields); 
+    // populate the header tuple with the names of the fields
+    for (int field = 0; field < fields; field++) {
+        // add the field name to the tuple
+        PyTuple_SET_ITEM(header, field, PyUnicode_FromString(PQfname(result, field)));
+    }
+    // add the header to the data set
+    PyTuple_SET_ITEM(data, 0, header);
 
     // iterate over the rows
     for (int tuple = 0; tuple < tuples; tuple++) {
@@ -42,11 +52,11 @@ stringTuple(PGresult * result)
             }
             // convert it into a python string
             PyObject * item = PyUnicode_FromString(value);
-            // add  it to the tuple
+            // add it to the tuple
             PyTuple_SET_ITEM(row, field, item);
         }
         // and now that the row tuple is fully built, add it to the data set
-        PyTuple_SET_ITEM(data, tuple, row);
+        PyTuple_SET_ITEM(data, tuple+1, row);
     }
 
     // return the data tuple
