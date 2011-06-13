@@ -24,6 +24,7 @@ pyrepg:
 	${PYTHON} ./pyrepg_connect.py
 	${PYTHON} ./pyrepg_execute.py
 	${PYTHON} ./pyrepg_execute_badCommand.py
+	${PYTHON} ./pyrepg_submit.py
 
 connections:
 	${PYTHON} ./connect.py

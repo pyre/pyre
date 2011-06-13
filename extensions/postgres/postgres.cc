@@ -38,6 +38,10 @@ namespace pyre {
 
                 // SQL command execution
                 { execute__name__, execute, METH_VARARGS, execute__doc__ },
+                { submit__name__, submit, METH_VARARGS, submit__doc__ },
+                { consume__name__, consume, METH_VARARGS, consume__doc__ },
+                { retrieve__name__, retrieve, METH_VARARGS, retrieve__doc__ },
+                { resultAvailable__name__, resultAvailable, METH_VARARGS, resultAvailable__doc__ },
 
                 // sentinel
                 {0, 0, 0, 0}

@@ -17,6 +17,26 @@ namespace pyre {
             extern const char * const execute__doc__;
             PyObject * execute(PyObject *, PyObject *);
 
+            // submit a query for asynchronous processing
+            extern const char * const submit__name__;
+            extern const char * const submit__doc__;
+            PyObject * submit(PyObject *, PyObject *);
+
+            // consume partial results from the server
+            extern const char * const consume__name__;
+            extern const char * const consume__doc__;
+            PyObject * consume(PyObject *, PyObject *);
+
+            // retrieve results from the server
+            extern const char * const retrieve__name__;
+            extern const char * const retrieve__doc__;
+            PyObject * retrieve(PyObject *, PyObject *);
+
+            // check whether a result set is available
+            extern const char * const resultAvailable__name__;
+            extern const char * const resultAvailable__doc__;
+            PyObject * resultAvailable(PyObject *, PyObject *);
+
         } // of namespace postgres
     } // of namespace extensions
 } // of namespace pyre
