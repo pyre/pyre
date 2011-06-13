@@ -79,7 +79,16 @@ processResult(string_t command, PGresult * result, resultProcessor_t processor)
     //  this is what we will return to the caller
     PyObject * value;
     // start looking
-    if (PQresultStatus(result) == PGRES_COMMAND_OK) {
+    if (!result) {
+        // a null result signifies that there is nothing available from the server this can
+        // happen when repeatedly calling {retrieve} to get the result of queries that contain
+        // multiple SQL statements; it is not necessarily and error
+
+        // return None
+        Py_INCREF(Py_None);
+        value = Py_None;
+
+    } else if (PQresultStatus(result) == PGRES_COMMAND_OK) {
         // the command was executed successfully
         // diagnostics
         if (debug.isActive()) {

@@ -39,6 +39,10 @@ def test():
     # check that we got what we expected
     assert result == (('datname',), ('pyre',))
 
+    # call retrieve again; this time there should be nothing to get
+    result = pyrepg.retrieve(connection)
+    assert result == None
+
     # and return the connection and the resulting tuple
     return connection, result
 
