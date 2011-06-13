@@ -28,7 +28,16 @@ def test():
     # execute a command
     command = "SELECT datname FROM pg_database WHERE datname='pyre'"
     # submit it for asynchronous processing
-    result = pyrepg.submit(connection, command)
+    pyrepg.submit(connection, command)
+
+    # loop until the entire result has been assembled
+    while pyrepg.busy(connection):
+        pyrepg.consume(connection)
+
+    # retrieve it
+    result = pyrepg.retrieve(connection)
+    # check that we got what we expected
+    assert result == (('datname',), ('pyre',))
 
     # and return the connection and the resulting tuple
     return connection, result

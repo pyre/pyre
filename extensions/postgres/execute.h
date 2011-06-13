@@ -33,9 +33,9 @@ namespace pyre {
             PyObject * retrieve(PyObject *, PyObject *);
 
             // check whether a result set is available
-            extern const char * const resultAvailable__name__;
-            extern const char * const resultAvailable__doc__;
-            PyObject * resultAvailable(PyObject *, PyObject *);
+            extern const char * const busy__name__;
+            extern const char * const busy__doc__;
+            PyObject * busy(PyObject *, PyObject *);
 
         } // of namespace postgres
     } // of namespace extensions

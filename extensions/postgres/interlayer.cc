@@ -44,7 +44,7 @@ stringTuple(PGresult * result)
         // iterate over the data fields
         for (int field = 0; field < fields; field++) {
             // place holder for the field value
-            char * value = "";
+            const char * value = "";
             // if it is not null
             if (!PQgetisnull(result, tuple, field)) {
                 // extract it
@@ -61,6 +61,63 @@ stringTuple(PGresult * result)
 
     // return the data tuple
     return data;
+}
+
+
+// analyze and process the result set
+PyObject *
+pyre::extensions::postgres::
+processResult(string_t command, PGresult * result, resultProcessor_t processor)
+{
+    // in case someone is listening...
+    pyre::journal::debug_t debug("postgres.execution");
+    debug 
+        << pyre::journal::at(__HERE__)
+        << "analyzing result set"
+        << pyre::journal::endl;
+
+    //  this is what we will return to the caller
+    PyObject * value;
+    // start looking
+    if (PQresultStatus(result) == PGRES_COMMAND_OK) {
+        // the command was executed successfully
+        // diagnostics
+        if (debug.isActive()) {
+            debug 
+                << pyre::journal::at(__HERE__)
+                << "success: " << PQcmdStatus(result)
+                << pyre::journal::endl;
+        }
+        // build the return value
+        Py_INCREF(Py_None);
+        value = Py_None;
+
+    } else if (PQresultStatus(result) == PGRES_TUPLES_OK) {
+        // the query succeeded and there are tuples to harvest
+        if (debug.isActive()) {
+            int fields = PQnfields(result);
+            int tuples = PQntuples(result);
+            debug 
+                << pyre::journal::at(__HERE__)
+                << "success: " 
+                << tuples << " tuple" << (tuples == 1 ? "" : "s")
+                << " with " << fields << " field" << (fields == 1 ? "" : "s") << " each"
+                << pyre::journal::endl;
+        }
+        // build the return value
+        value = processor(result);
+    } else {
+        // there was something wrong with the command
+        const char * description = PQresultErrorMessage(result);
+        // raise a ProgrammingError
+        value = raiseProgrammingError(description, command);
+    }
+
+    // all is well
+    // free the result
+    PQclear(result);
+    // and return
+    return value;
 }
 
 

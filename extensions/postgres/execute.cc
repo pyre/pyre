@@ -62,47 +62,8 @@ execute(PyObject *, PyObject * args) {
         return raiseOperationalError(description);
     }
 
-    //  this is what we will return to the caller
-    PyObject * value;
-    if (PQresultStatus(result) == PGRES_COMMAND_OK) {
-        // the command was executed successfully
-        // diagnostics
-        if (debug.isActive()) {
-            debug 
-                << pyre::journal::at(__HERE__)
-                << "success: " << PQcmdStatus(result)
-                << pyre::journal::endl;
-        }
-        // build the return value
-        Py_INCREF(Py_None);
-        value = Py_None;
-
-    } else if (PQresultStatus(result) == PGRES_TUPLES_OK) {
-        // the query succeeded and there are tuples to harvest
-        if (debug.isActive()) {
-            int fields = PQnfields(result);
-            int tuples = PQntuples(result);
-            debug 
-                << pyre::journal::at(__HERE__)
-                << "success: " 
-                << tuples << " tuple" << (tuples == 1 ? "" : "s")
-                << " with " << fields << " field" << (fields == 1 ? "" : "s") << " each"
-                << pyre::journal::endl;
-        }
-        // build the return value
-        value = stringTuple(result);
-    } else {
-        // there was something wrong with the command
-        const char * description = PQresultErrorMessage(result);
-        // raise a ProgrammingError
-        value = raiseProgrammingError(description, command);
-    }
-
-    // all is well
-    // free the result
-    PQclear(result);
-    // and return
-    return value;
+    // delegate
+    return processResult(command, result, stringTuple);
 }
 
 
@@ -166,7 +127,7 @@ consume__name__ = "consume";
 
 const char * const
 pyre::extensions::postgres::
-consume__doc__ = "submit a command for asynchronous execution";
+consume__doc__ = "check with the server for any partial results and fetch them if available";
 
 PyObject * 
 pyre::extensions::postgres::
@@ -185,6 +146,13 @@ consume(PyObject *, PyObject * args) {
     // get the connection object
     PGconn * connection = 
         static_cast<PGconn *>(PyCapsule_GetPointer(py_connection, connectionCapsuleName));
+
+    // in case someone is listening...
+    pyre::journal::debug_t debug("postgres.execution");
+    debug 
+        << pyre::journal::at(__HERE__)
+        << "consuming partial results from the server"
+        << pyre::journal::endl;
 
     // consume the available partial result
     PQconsumeInput(connection);
@@ -222,37 +190,30 @@ retrieve(PyObject *, PyObject * args) {
     PGconn * connection = 
         static_cast<PGconn *>(PyCapsule_GetPointer(py_connection, connectionCapsuleName));
 
-    // MGA: NYI
-    pyre::journal::error_t error("postgres.NYI");
-    error
-        << pyre::journal::at(__HERE__)
-        << "postgres.retrieve: NYI" 
-        << pyre::journal::endl;
     // retrieve the result
-    PQgetResult(connection);
+    PGresult * result = PQgetResult(connection);
 
-    // and return
-    Py_INCREF(Py_None);
-    return Py_None;
+    // and delegate the processing
+    return processResult("<unknown>", result, stringTuple);
 }
 
 
 // check whether a query result set has been computed
 const char * const
 pyre::extensions::postgres::
-resultAvailable__name__ = "resultAvailable";
+busy__name__ = "busy";
 
 const char * const
 pyre::extensions::postgres::
-resultAvailable__doc__ = "check the availability of a result set from a previously submitted query";
+busy__doc__ = "check the availability of a result set from a previously submitted query";
 
 PyObject * 
 pyre::extensions::postgres::
-resultAvailable(PyObject *, PyObject * args) {
+busy(PyObject *, PyObject * args) {
     // the connection specification
     PyObject * py_connection;
     // extract the arguments
-    if (!PyArg_ParseTuple(args, "O!:resultAvailable", &PyCapsule_Type, &py_connection)) {
+    if (!PyArg_ParseTuple(args, "O!:busy", &PyCapsule_Type, &py_connection)) {
         return 0;
     }
     // check that we were handed the correct kind of capsule
@@ -264,8 +225,15 @@ resultAvailable(PyObject *, PyObject * args) {
     PGconn * connection = 
         static_cast<PGconn *>(PyCapsule_GetPointer(py_connection, connectionCapsuleName));
 
+    // in case someone is listening...
+    pyre::journal::debug_t debug("postgres.execution");
+    debug 
+        << pyre::journal::at(__HERE__)
+        << "checking for query completion"
+        << pyre::journal::endl;
+
     // check
-    if (PQisBusy(connection) == 0) {
+    if (PQisBusy(connection)) {
         Py_INCREF(Py_True);
         return Py_True;
     }
