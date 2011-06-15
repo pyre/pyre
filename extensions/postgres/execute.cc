@@ -63,7 +63,7 @@ execute(PyObject *, PyObject * args) {
     }
 
     // delegate
-    return processResult(command, result, stringTuple);
+    return processResult(command, result, buildResultTuple);
 }
 
 
@@ -194,7 +194,7 @@ retrieve(PyObject *, PyObject * args) {
     PGresult * result = PQgetResult(connection);
 
     // and delegate the processing
-    return processResult("<unknown>", result, stringTuple);
+    return processResult("<unknown>", result, buildResultTuple);
 }
 
 

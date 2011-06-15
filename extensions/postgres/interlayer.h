@@ -19,7 +19,7 @@ namespace pyre {
             typedef PyObject * (*resultProcessor_t)(PGresult *);
 
             // other utilities
-            PyObject * stringTuple(PGresult *);
+            PyObject * buildResultTuple(PGresult *);
 
             PyObject * processResult(
                                      string_t command,

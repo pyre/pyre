@@ -15,11 +15,22 @@
 #include "constants.h"
 
 
+// types
+typedef PyObject * (*pythonizer_t)(const char *);
+
+// declarations of the converters; definitions at the bottom
+PyObject * asNone(const char *);
+PyObject * asString(const char *);
+
+
 // convert the tuples in PGresult into a python tuple
 PyObject *
 pyre::extensions::postgres::
-stringTuple(PGresult * result)
+buildResultTuple(PGresult * result)
 {
+    // set up the debug channel
+    pyre::journal::debug_t debug("postgres.conversions");
+
     // find out how many tuples in the result
     int tuples = PQntuples(result);
     // and how many fields in each tuple
@@ -36,6 +47,44 @@ stringTuple(PGresult * result)
     }
     // add the header to the data set
     PyTuple_SET_ITEM(data, 0, header);
+    // bail out if the output is trivial
+    if (tuples == 0) {
+        return data;
+    }
+
+    // create a vector of data processors
+    std::vector<pythonizer_t> converters;
+    // iterate over the columns looking for the appropriate converter
+    for (int field = 0; field < fields; field++) {
+        // text, binary, or what?
+        if (PQfformat(result, field) == 0) {
+            debug
+                << pyre::journal::at(__HERE__)
+                << "field '" << PQfname(result, field) << "' is formatted as text"
+                << pyre::journal::endl;
+            converters.push_back(asString);
+
+        } else if (PQfformat(result, field) == 1) {
+            pyre::journal::firewall_t firewall("postgress.conversions");
+            firewall
+                << pyre::journal::at(__HERE__)
+                << "NYI: binary data for field '"
+                << PQfname(result, field)
+                << "'"
+                << pyre::journal::endl;
+            converters.push_back(asNone);
+
+        } else {
+            pyre::journal::firewall_t firewall("postgress.conversions");
+            firewall
+                << pyre::journal::at(__HERE__)
+                << "unknown postgres format code for field '"
+                << PQfname(result, field)
+                << "'"
+                << pyre::journal::endl;
+            converters.push_back(asNone);
+        }
+    }
 
     // iterate over the rows
     for (int tuple = 0; tuple < tuples; tuple++) {
@@ -43,15 +92,19 @@ stringTuple(PGresult * result)
         PyObject * row = PyTuple_New(fields); 
         // iterate over the data fields
         for (int field = 0; field < fields; field++) {
-            // place holder for the field value
-            const char * value = "";
+
+            // place-holder for the field value
+            PyObject * item;
             // if it is not null
             if (!PQgetisnull(result, tuple, field)) {
                 // extract it
-                value = PQgetvalue(result, tuple, field);
+                const char * value = PQgetvalue(result, tuple, field);
+                item = converters[field](value);
+            } else {
+                // otherwise it is null, which we encode as None
+                Py_INCREF(Py_None);
+                item = Py_None;
             }
-            // convert it into a python string
-            PyObject * item = PyUnicode_FromString(value);
             // add it to the tuple
             PyTuple_SET_ITEM(row, field, item);
         }
@@ -163,5 +216,17 @@ raiseProgrammingError(string_t description, string_t command)
     return 0;
 }
 
+
+// data converter definitions
+ PyObject * asNone(const char * value)
+ {
+     Py_INCREF(Py_None);
+     return Py_None;
+ }
+
+ PyObject * asString(const char * value)
+ {
+     return PyUnicode_FromString(value);
+ }
 
 // end of file
