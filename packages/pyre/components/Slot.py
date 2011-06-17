@@ -80,11 +80,11 @@ class Slot(Base):
         if value is not None:
             # access the processor
             processor = self._processor
-            # cast {value}
-            value = processor.type.pyre_cast(value)
-            # convert it
+            # convert {value}
             for converter in processor.converters:
-                value = converter.pyre_cast(value)
+                value = converter(value)
+            # cast it
+            value = processor.type.pyre_cast(value)
             # validate it
             for validator in processor.validators:
                 value = validator(value)
