@@ -18,6 +18,10 @@ class Field(Descriptor, Node):
     """
 
 
+    # public data
+    aliases = None # the set of alternative names by which I am accessible
+
+
     # interface
     def pyre_recordFieldAccessor(self, record, index):
         """
@@ -31,11 +35,11 @@ class Field(Descriptor, Node):
         """
         Walk {value} through casting, conversion and validation
         """
-        # cast it
-        value = self.type.pyre_cast(value)
         # convert it
         for converter in self.converters:
             value = converter(value)
+        # cast it
+        value = self.type.pyre_cast(value)
         # validate it
         for validator in self.validators:
             value = validator(value)
@@ -47,18 +51,18 @@ class Field(Descriptor, Node):
         """
         Extract my value from {data} and walk it through casting, conversion and validation
         """
-        # get the value
-        value = next(data)
-        # cast it
-        value = self.type.pyre_cast(value)
-        # convert it
-        for converter in self.converters:
-            value = converter(value)
-        # validate it
-        for validator in self.validators:
-            value = validator(value)
-        # and return it
-        return value
+        # get the value and process it
+        return self.pyre_process(value=next(data))
+
+
+    # meta methods
+    def __init__(self, aliases=None, **kwds):
+        # chain to my ancestors
+        super().__init__(**kwds)
+        # initialize my aliases
+        self.aliases = set() if aliases is None else aliases
+        # all done
+        return
 
 
 # end of file 

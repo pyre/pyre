@@ -66,6 +66,37 @@ class Record(tuple, metaclass=Templater):
 
     # interface
     @classmethod
+    def pyre_selectColumns(cls, headers):
+        """
+        Prepare a tuple of the column numbers needed to populate my instances, given a map
+        (column name) -> (column index).
+
+        This enables the managers of the various persistent stores to build record instances
+        from a subset of the information they have access to. It is also designed to perform
+        column name translations from whatever meta data is available in the store to the
+        canonical record field names
+        """
+        # iterate over my fields
+        for field in cls.pyre_fields:
+            # and over its aliases
+            for alias in field.aliases:
+                # if this alias appears in the headers
+                try:
+                    # compute the column index and return it
+                    yield headers[alias]
+                    # get the next field
+                    break
+                except KeyError:
+                    continue
+            # error: unable to find a source for this field
+            else:
+                raise "Hell"
+        # all done
+        return
+
+
+    # fast but dangerous short-cut to record creation
+    @classmethod
     def pyre_raw(cls, data):
         """
         Bypass casting, conversions and validations for those special clients that know their
@@ -74,11 +105,12 @@ class Record(tuple, metaclass=Templater):
         return super().__new__(cls, data)
 
     
+    # behavior invoked by the metaclass while assembling the class record 
     @classmethod
     def pyre_processFields(cls, raw, **kwds):
         """
         Form the tuple that holds my values by extracting information either from {raw} or
-        {kwds}, and walking the data through casting, conversion and validation
+        {kwds}, and walking the data through conversion, casting and validation.
 
         In the absence of derivations, the data tuple can be constructed by simply asking each
         field to consume one item from the raw input, convert it and place it in the record

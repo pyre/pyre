@@ -41,13 +41,13 @@ class CSV:
         # get the headers
         headers = next(reader)
         # build the name map
-        namemap = { name: index for index, name in enumerate(headers) }
+        index = { name: offset for offset, name in enumerate(headers) }
         # adjust the column specification
-        columns = tuple(field.name for field in layout.pyre_fields)
+        columns = tuple(layout.pyre_selectColumns(headers=index))
         # start reading lines from the input source
         for row in reader:
             # assemble the requested data tuple
-            data = (row[namemap[column]] for column in columns)
+            data = (row[column] for column in columns)
             # build a record out of it and yield it
             yield layout(raw=data)
         # all done
