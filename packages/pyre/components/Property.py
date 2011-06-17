@@ -50,7 +50,7 @@ class Property(Trait):
             # if the user placed them in a container
             if isinstance(self.validators, collections.Iterable):
                 # convert it into a tuple
-                self.validators = tuple(trait.validators)
+                self.validators = tuple(self.validators)
             # otherwise
             else:
                 # make a tuple out of the lone validator
@@ -60,11 +60,11 @@ class Property(Trait):
             # if the user placed them in a container
             if isinstance(self.converters, collections.Iterable):
                 # convert it into a tuple
-                self.converters = tuple(trait.converters)
+                self.converters = tuple(self.converters)
             # otherwise
             else:
                 # make a tuple out of the lone converter
-                trait.converters = (trait.converters, )
+                self.converters = (self.converters, )
         # and return
         return self
 
