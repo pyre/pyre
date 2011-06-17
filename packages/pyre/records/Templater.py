@@ -47,8 +47,10 @@ class Templater(AttributeClassifier):
             else:
                 # record its name
                 item.name = itemName
-                # place its name in the set of its aliases
-                item.aliases.add(itemName)
+                # if this is a regular {Field}
+                if isinstance(item, cls.Field):
+                    # place its name in the set of its aliases
+                    item.aliases.add(itemName)
             # and add it to the pile
             localItems.append(item)
 
