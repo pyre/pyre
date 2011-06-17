@@ -28,6 +28,11 @@ class Component(Configurable, metaclass=Actor, hidden=True):
     pyre_implements = None # the interface specification built at compile time by the metaclass
 
 
+    # types
+    # exceptions
+    from ..constraints.exceptions import ConstraintViolationError
+
+
     # framework notifications
     def pyre_register(self, executive):
         """
