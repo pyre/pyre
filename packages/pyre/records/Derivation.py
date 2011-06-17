@@ -32,7 +32,7 @@ class Derivation(Node):
     # meta methods
     def __init__(self, expression, name=None, **kwds):
         super().__init__(**kwds)
-        self.name = None
+        self.name = name
         self.expression = expression
         return
 

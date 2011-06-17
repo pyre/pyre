@@ -42,10 +42,13 @@ class Templater(AttributeClassifier):
             # check whether this is an Expression
             if isinstance(item, cls.Expression):
                 # convert it into a derivation
-                item = cls.Derivation(expression=item)
-
-            # in any case, record its name
-            item.name = itemName
+                item = cls.Derivation(name=itemName, expression=item)
+            # otherwise
+            else:
+                # record its name
+                item.name = itemName
+                # place its name in the set of its aliases
+                item.aliases.add(itemName)
             # and add it to the pile
             localItems.append(item)
 
