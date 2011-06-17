@@ -33,7 +33,7 @@ class Descriptor:
     optional = False # am i allowed to be uninitialized?
     type = Object # my type; most likely one of the pyre.schema type declarators
     validators = () # the chain of functions that inspect and validate my value
-    converters = () # the chain of transformation necessary to produce a value in my native type
+    converters = () # the chain of transformations necessary to produce a value in my native type
 
 
 # end of file 
