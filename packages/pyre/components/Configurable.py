@@ -17,8 +17,10 @@ class Configurable:
     common to both components and interfaces
     """
 
+
+    # types
     # exceptions
-    from .exceptions import FrameworkError
+    from .exceptions import FrameworkError, CategoryMismatchError, TraitNotFoundError
 
 
     # constant
@@ -177,9 +179,5 @@ class Configurable:
         # all done
         return report
 
-
-    # exceptions
-    from .exceptions  import CategoryMismatchError, TraitNotFoundError
-                
 
 # end of file 
