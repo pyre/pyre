@@ -77,7 +77,7 @@ LISTINGS = \
 #--------------------------------------------------------------------------
 #
 
-all: $(DOCUMENT).pdf
+all: $(DOCUMENT).pdf clean
 	BLD_ACTION="all" $(MM) recurse
 
 tidy::

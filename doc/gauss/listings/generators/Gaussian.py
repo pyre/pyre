@@ -33,7 +33,7 @@ class Gaussian(Functor):
             r2 = sum((p_i - mean_i)**2 for p_i, mean_i in zip(p, mean))
             # yield the value at the current p
             yield normalization * exp(- r2/scaling)
-
+        # all done    
         return
 
     # meta methods
