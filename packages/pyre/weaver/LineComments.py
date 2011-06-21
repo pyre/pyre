@@ -41,7 +41,7 @@ class LineComments:
             # mark it
             return self.comment + ' ' + line
         # otherwise, just return the comment characters
-        return self.comment + line
+        return self.comment
 
 
     # meta methods

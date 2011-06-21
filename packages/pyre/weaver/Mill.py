@@ -46,7 +46,7 @@ class Mill(pyre.component, Indenter, implements=Language):
         yield ''
         # and the footer
         for line in self.footer(stationery):
-            yield line
+            yield self.commentLine(line)
         # all done
         return
 
@@ -84,7 +84,7 @@ class Mill(pyre.component, Indenter, implements=Language):
         # if we have a footer
         if stationery.footer:
             # render the footer
-            yield self.commentLine(stationery.footer)
+            yield stationery.footer
         # all done
         return
 

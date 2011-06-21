@@ -38,7 +38,7 @@ class BlockComments:
             # mark it
             return self.startBlock + ' ' + line + ' ' + self.endBlock
         # otherwise, just return the comment characters
-        return self.commentMarker + line
+        return line
 
 
     # meta methods
