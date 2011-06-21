@@ -37,6 +37,7 @@ EXPORT_PYTHON_MODULES = \
     MixedComments.py \
     Perl.py \
     Python.py \
+    SQL.py \
     Sh.py \
     Stationery.py \
     TeX.py \

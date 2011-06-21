@@ -33,6 +33,7 @@ documents:
 	${PYTHON} ./document_perl.py
 	${PYTHON} ./document_python.py
 	${PYTHON} ./document_sh.py
+	${PYTHON} ./document_sql.py
 	${PYTHON} ./document_tex.py
 	${PYTHON} ./document_xml.py
 
