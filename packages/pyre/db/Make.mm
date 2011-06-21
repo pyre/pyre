@@ -19,6 +19,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Column.py \
     DataStore.py \
     Schemer.py \
     Server.py \

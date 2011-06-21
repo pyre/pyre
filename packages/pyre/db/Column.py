@@ -6,14 +6,12 @@
 #
 
 
-# metaclass
-from .Schemer import Schemer
+from ..schema.Descriptor import Descriptor
 
 
-# declaration
-class Table(metaclass=Schemer):
+class Column(Descriptor):
     """
-    Base class for database table declarations
+    The base class for database table descriptors
     """
 
 

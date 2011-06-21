@@ -13,9 +13,13 @@ PROJECT = pyre
 
 all: test
 
-test: sanity
+test: sanity tables
 
 sanity:
 	${PYTHON} ./sanity.py
+
+tables:
+	${PYTHON} ./table_declaration.py
+	${PYTHON} ./table_create.py
 
 # end of file 

@@ -6,8 +6,12 @@
 #
 
 
+# the base class that triggers descriptor sniffing
+from ..patterns.AttributeClassifier import AttributeClassifier
+
+
 # declaration
-class Schemer(type):
+class Schemer(AttributeClassifier):
     """
     Metaclass that inspects a table declaration and builds the information necessary to connect
     its attributes to the columns of the underlying table in the database back end
@@ -17,14 +21,14 @@ class Schemer(type):
     # meta methods
     def __new__(cls, name, bases, attributes, **kwds):
         # chain to the ancestors
-        super().__new__(cls, name, bases, attributes, **kwds)
+        table = super().__new__(cls, name, bases, attributes, **kwds)
         # all done
-        return
+        return table
 
 
     def __init__(self, name, bases, attributes, **kwds):
         # chain to the ancestors
-        super().__init__(self, name, bases, attributes, **kwds)
+        super().__init__(name, bases, attributes, **kwds)
         # all done
         return
 
