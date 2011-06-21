@@ -34,6 +34,7 @@ EXPORT_PYTHON_MODULES = \
     LineMill.py \
     Make.py \
     Mill.py \
+    MixedComments.py \
     Perl.py \
     Python.py \
     Sh.py \
