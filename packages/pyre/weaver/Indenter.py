@@ -12,13 +12,17 @@ class Indenter:
     """
 
 
+    # public data
+    leader = "" # the current contents to prepend to every line
+
+
     # interface
     def indent(self):
         """
         Increase the indentation level by one
         """
         self._level += 1
-        self._margin = self._indenter * self._level
+        self.leader = self._indenter * self._level
         return
 
 
@@ -27,12 +31,12 @@ class Indenter:
         Decrease the indentation level by one
         """
         self._level -= 1
-        self._margin = self._indenter * self._level
+        self.leader = self._indenter * self._level
         return
 
 
     def place(self, line):
-        return self._margin + line
+        return self.leader + line
 
 
     # meta methods
@@ -40,7 +44,7 @@ class Indenter:
         super().__init__(**kwds)
 
         self._level = 0
-        self._margin = ""
+        self.leader = ""
         self._indenter = self.INDENTER if indenter is None else indenter
 
         return
@@ -52,7 +56,6 @@ class Indenter:
 
     # private data
     _level = 0
-    _margin = ""
     _indenter = None
 
 
