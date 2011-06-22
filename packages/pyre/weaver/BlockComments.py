@@ -17,13 +17,15 @@ class BlockComments:
         """
         Create a comment block out of the given {lines}
         """
+        # build the leader
+        leader = self.leader + self.commentMarker
         # place the start comment block marker
-        yield self.startBlock
+        yield self.leader + self.startBlock
         # iterate over the {lines}
         for line in lines:
-            yield self.commentMarker + ' ' + line
+            yield leader + ' ' + line
         # place the end comment block marker
-        yield ' ' + self.endBlock
+        yield self.leader + ' ' + self.endBlock
 
         # all done
         return
@@ -36,7 +38,7 @@ class BlockComments:
         # if the line is non-empty
         if line:
             # mark it
-            return self.startBlock + ' ' + line + ' ' + self.endBlock
+            return self.leader + self.startBlock + ' ' + line + ' ' + self.endBlock
         # otherwise, just return the comment characters
         return line
 

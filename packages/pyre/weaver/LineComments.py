@@ -17,16 +17,18 @@ class LineComments:
         """
         Create a comment block out of the given {lines}
         """
+        # build the leader
+        leader = self.leader + self.comment
         # iterate over the {lines}
         for line in lines:
             # if the line is not empty
             if line:
                 # render it
-                yield self.comment + ' ' + line
+                yield leader + ' ' + line
             # otherwise
             else:
                 # render just the comment marker
-                yield self.comment
+                yield leader
 
         # all done
         return
@@ -36,12 +38,14 @@ class LineComments:
         """
         Mark {line} as a comment
         """
+        # build the leader
+        leader = self.leader + self.comment
         # if the line is non-empty
         if line:
             # mark it
-            return self.comment + ' ' + line
+            return leader + ' ' + line
         # otherwise, just return the comment characters
-        return self.comment
+        return leader
 
 
     # meta methods
