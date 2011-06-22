@@ -23,19 +23,26 @@ class Mill(pyre.component, Indenter, implements=Language):
     """
 
 
+    # types
+    from .Stationery import Stationery
+
+
     # traits
+    stationery = pyre.properties.facility(interface=Stationery, default=Stationery.default())
+    stationery.doc = "the overall layout of the document"
+
     languageMarker = pyre.properties.str()
     languageMarker.doc = "the string to use as the language marker"
 
 
     # interface
     @pyre.provides
-    def render(self, document, stationery):
+    def render(self, document, stationery=None):
         """
         Layout the {document} using {stationery} for the header and footer
         """
         # create the header
-        for line in self.commentBlock(self.header(stationery)):
+        for line in self.header(stationery):
             yield line
         # and a blank line
         yield ''
@@ -46,16 +53,45 @@ class Mill(pyre.component, Indenter, implements=Language):
         yield ''
         # and the footer
         for line in self.footer(stationery):
-            yield self.commentLine(line)
+            yield line
+        # all done
+        return
+
+
+    # the lower level interface
+    def header(self, stationery=None):
+        """
+        Build the header of the document
+        """
+        # the low level guy does all the work; just wrap everything in a comment block
+        for line in self.commentBlock(self._header(stationery)):
+            # pass it on
+            yield line
+        # all done
+        return
+
+                                          
+    def footer(self, stationery=None):
+        """
+        Build the footer of the document
+        """
+        # my stationery or yours?
+        stationery = self.stationery if stationery is None else stationery
+        # if we have a footer
+        if stationery.footer:
+            # render the footer
+            yield self.commentLine(stationery.footer)
         # all done
         return
 
 
     # implementation details
-    def header(self, stationery):
+    def _header(self, stationery):
         """
-        Build the header of the document
+        Workhorse for the header generator
         """
+        # my stationery or yours?
+        stationery = self.stationery if stationery is None else stationery
         # if we have a language marker
         if self.languageMarker:
             # render it
@@ -73,18 +109,6 @@ class Mill(pyre.component, Indenter, implements=Language):
             yield stationery.copyright
         # a blank, commented line
         yield ''
-        # all done
-        return
-
-
-    def footer(self, stationery):
-        """
-        Build the footer of the document
-        """
-        # if we have a footer
-        if stationery.footer:
-            # render the footer
-            yield stationery.footer
         # all done
         return
 

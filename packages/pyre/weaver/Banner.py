@@ -35,11 +35,4 @@ class Banner(pyre.component, family="pyre.weaver.banner", implements=Stationery)
     footer.doc = "the marker to drop at the bottom of the document"
 
 
-    @pyre.export
-    def foo(self):
-        """
-        A behavior
-        """
-
-
 # end of file 

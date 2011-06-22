@@ -20,6 +20,7 @@ def test():
     weaver.language = "C"
 
     text = list(weaver.weave())
+    # print("\n".join(text))
     assert text == [
         '/*',
         ' * -*- C -*-',
