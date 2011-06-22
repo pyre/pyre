@@ -14,14 +14,11 @@ ends
 
 # interfaces
 from .DataStore import DataStore as datastore
-
 # components
+from .SQL import SQL as sql
 from .Server import Server as server
-
 # the table class
 from .Table import Table as table
-
-
 # the data model
 from .Column import Column as column
 

@@ -17,6 +17,9 @@ def test():
 
     # declare a simple table
     class Weather(pyre.db.table, id="weather"):
+        """
+        The sample table from the postgres tutorial
+        """
 
         # the fields
         city = pyre.db.str()
@@ -34,6 +37,19 @@ def test():
         precipitation = pyre.db.float()
         precipitation.doc = "amount of rainfall"
 
+    # get a server
+    server = pyre.db.server(name="test")
+    # to build the SQL statement
+    stmt = tuple(server.sql.createTable(table=Weather))
+    assert stmt == (
+        "CREATE TABLE weather",
+        "    --",
+        "    -- The sample table from the postgres tutorial",
+        "    --",
+        "(",
+        ");"
+        )
+    
 
     return
 

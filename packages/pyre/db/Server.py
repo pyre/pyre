@@ -8,11 +8,12 @@
 
 # packages
 import pyre
-from . import datastore
+import pyre.weaver
+from . import datastore, sql
 
 
 # declaration
-class Server(pyre.component, implements=datastore, hidden=True):
+class Server(pyre.component, implements=datastore):
     """
     Abstract component that encapsulates the connection to a database back end
 
@@ -20,6 +21,11 @@ class Server(pyre.component, implements=datastore, hidden=True):
     implementations. It provides a complete but trivial implementation of the {DataStore}
     interface.
     """
+
+
+    # traits
+    sql = pyre.properties.facility(interface=pyre.weaver.language, default=sql)
+    sql.doc = "the generator of the SQL statements"
 
 
     @pyre.export

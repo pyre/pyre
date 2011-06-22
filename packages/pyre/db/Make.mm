@@ -21,6 +21,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Column.py \
     DataStore.py \
+    SQL.py \
     Schemer.py \
     Server.py \
     Table.py \

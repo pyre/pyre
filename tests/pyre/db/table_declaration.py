@@ -19,7 +19,7 @@ def test():
     # declare a simple table
     class Weather(pyre.db.table, id="weather"):
         """
-        The sample table from the PostgreSQL tutorial
+        The sample table from the postgre tutorial
         """
 
         # the fields
