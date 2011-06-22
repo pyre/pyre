@@ -26,15 +26,15 @@ class Perl(LineMill):
 
     # interface
     @pyre.provides
-    def render(self, document, stationery):
+    def render(self, document):
         """
-        Layout the {document} using {stationery} for the header and footer
+        Layout the {document} using my stationery for the header and footer
         """
         # render the hash-bang line
         if self.version:
             yield "#!/usr/bin/env perl" + self.version
         # and the rest
-        for line in super().render(document, stationery):
+        for line in super().render(document):
             yield line
         # all done
         return

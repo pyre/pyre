@@ -17,8 +17,8 @@
     </package>
   </package>
 
-  <!-- weaver settings -->
-  <component name="sanity.stationery">
+  <!-- banner settings -->
+  <component name="pyre.weaver.banner">
     <bind property="copyright">(c) 1998-2011 All Rights Reserved</bind>
     <bind property="footer">end of file</bind>
   </component>

@@ -17,14 +17,10 @@ def test():
     import pyre.weaver
     # instantiate a weaver
     weaver = pyre.weaver.newWeaver(name="sanity")
-
-    # check the configuration
-    assert weaver.stationery.author == "Michael A.G. Aïvázis"
-    assert weaver.stationery.affiliation == "California Institute of Technology"
-    assert weaver.stationery.copyright == "(c) 1998-2011 All Rights Reserved"
-    assert weaver.stationery.footer == "end of file"
-
-    return
+    # by default, there is no language setting
+    assert weaver.language == None
+    # and return it
+    return weaver
 
 
 # main

@@ -21,14 +21,14 @@ class XML(BlockMill):
 
     # interface
     @pyre.provides
-    def render(self, document, stationery):
+    def render(self, document):
         """
-        Layout the {document} using {stationery} for the header and footer
+        Layout the {document} using my stationery for the header and footer
         """
         # render the xml marker
         yield '<?xml version="1.0"?>'
         # and the rest
-        for line in super().render(document, stationery):
+        for line in super().render(document):
             yield line
         # all done
         return

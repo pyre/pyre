@@ -26,15 +26,15 @@ class HTML(BlockMill):
 
     # interface
     @pyre.provides
-    def render(self, document, stationery):
+    def render(self, document):
         """
-        Layout the {document} using {stationery} for the header and footer
+        Layout the {document} using my stationery for the header and footer
         """
         # render the doctype
         if self.doctype:
             yield "<!doctype html{}>".format(self.doctypes[self.doctype])
         # and the rest
-        for line in super().render(document, stationery):
+        for line in super().render(document):
             yield line
         # all done
         return

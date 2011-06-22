@@ -26,15 +26,15 @@ class Sh(LineMill):
 
     # interface
     @pyre.provides
-    def render(self, document, stationery):
+    def render(self, document):
         """
-        Layout the {document} using {stationery} for the header and footer
+        Layout the {document} using my stationery for the header and footer
         """
         # render the hash-bang line
         if self.variant:
             yield "#!" + self.variant
         # and the rest
-        for line in super().render(document, stationery):
+        for line in super().render(document):
             yield line
         # all done
         return

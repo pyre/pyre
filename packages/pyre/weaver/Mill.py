@@ -37,12 +37,12 @@ class Mill(pyre.component, Indenter, implements=Language):
 
     # interface
     @pyre.provides
-    def render(self, document, stationery=None):
+    def render(self, document):
         """
-        Layout the {document} using {stationery} for the header and footer
+        Layout the {document} using my stationery for the header and footer
         """
         # create the header
-        for line in self.header(stationery):
+        for line in self.header():
             yield line
         # and a blank line
         yield ''
@@ -52,31 +52,31 @@ class Mill(pyre.component, Indenter, implements=Language):
         # another blank line
         yield ''
         # and the footer
-        for line in self.footer(stationery):
+        for line in self.footer():
             yield line
         # all done
         return
 
 
     # the lower level interface
-    def header(self, stationery=None):
+    def header(self):
         """
         Build the header of the document
         """
         # the low level guy does all the work; just wrap everything in a comment block
-        for line in self.commentBlock(self._header(stationery)):
+        for line in self.commentBlock(self._header()):
             # pass it on
             yield line
         # all done
         return
 
                                           
-    def footer(self, stationery=None):
+    def footer(self):
         """
         Build the footer of the document
         """
-        # my stationery or yours?
-        stationery = self.stationery if stationery is None else stationery
+        # cache my stationery
+        stationery = self.stationery
         # if we have a footer
         if stationery.footer:
             # render the footer
@@ -86,12 +86,12 @@ class Mill(pyre.component, Indenter, implements=Language):
 
 
     # implementation details
-    def _header(self, stationery):
+    def _header(self):
         """
         Workhorse for the header generator
         """
-        # my stationery or yours?
-        stationery = self.stationery if stationery is None else stationery
+        # cache my stationery
+        stationery = self.stationery
         # if we have a language marker
         if self.languageMarker:
             # render it

@@ -19,9 +19,6 @@ class Weaver(pyre.component, family="pyre.weaver", resolver=True):
     from .Stationery import Stationery
 
     # traits
-    stationery = pyre.properties.facility(interface=Stationery, default=Stationery.default())
-    stationery.doc = "the overall layout of the document"
-
     language = pyre.properties.facility(interface=Language, default=None)
     language.doc = "the desired output language"
 
@@ -35,7 +32,7 @@ class Weaver(pyre.component, family="pyre.weaver", resolver=True):
         # create an empty {document} if none was give
         document = () if document is None else document
         # render the document
-        for line in self.language.render(document=document, stationery=self.stationery):
+        for line in self.language.render(document=document):
             yield line
         # and return
         return
