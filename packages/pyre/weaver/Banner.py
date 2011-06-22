@@ -19,6 +19,9 @@ class Banner(pyre.component, family="pyre.weaver.banner", implements=Stationery)
     The base component for content generation
     """
 
+    width = pyre.properties.int(default=100)
+    width.doc = "the preferred width of the generated text"
+
     author = pyre.properties.str(default="{pyre.user.name}")
     author.doc = "the name of the entity to blame for this content"
 

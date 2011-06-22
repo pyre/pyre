@@ -18,6 +18,9 @@ class Stationery(pyre.interface, family="pyre.weaver.layouts"):
 
 
     # traits
+    width = pyre.properties.int()
+    width.doc = "the preferred width of the generated text"
+
     author = pyre.properties.str()
     author.doc = "the name of the entity to blame for this content"
 
