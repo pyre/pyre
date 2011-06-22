@@ -32,7 +32,7 @@ class Indenter:
 
 
     def place(self, line):
-        return self._margin + line + "\n"
+        return self._margin + line
 
 
     # meta methods
