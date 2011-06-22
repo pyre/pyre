@@ -12,6 +12,29 @@ class Indenter:
     """
 
 
+    # interface
+    def indent(self):
+        """
+        Increase the indentation level by one
+        """
+        self._level += 1
+        self._margin = self._indenter * self._level
+        return
+
+
+    def outdent(self):
+        """
+        Decrease the indentation level by one
+        """
+        self._level -= 1
+        self._margin = self._indenter * self._level
+        return
+
+
+    def place(self, line):
+        return self._margin + line + "\n"
+
+
     # meta methods
     def __init__(self, indenter=None, **kwds):
         super().__init__(**kwds)
@@ -21,29 +44,6 @@ class Indenter:
         self._indenter = self.INDENTER if indenter is None else indenter
 
         return
-
-
-    # implementation details
-    def _indent(self):
-        """
-        Increase the indentation level by one
-        """
-        self._level += 1
-        self._margin = self._indenter * self._level
-        return
-
-
-    def _outdent(self):
-        """
-        Decrease the indentation level by one
-        """
-        self._level -= 1
-        self._margin = self._indenter * self._level
-        return
-
-
-    def _render(self, line):
-        return self._margin + line + "\n"
 
 
     # constants
