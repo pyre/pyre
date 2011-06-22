@@ -15,6 +15,8 @@ The primary target is human readable formats, such source code for programming l
 
 # access to the main component in this package
 from .Weaver import Weaver as newWeaver
+# and the language interface
+from .Language import Language as language
 
 
 # access to the known languages
