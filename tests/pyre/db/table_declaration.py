@@ -18,6 +18,9 @@ def test():
 
     # declare a simple table
     class Weather(pyre.db.table, id="weather"):
+        """
+        The sample table from the PostgreSQL tutorial
+        """
 
         # the fields
         city = pyre.db.str()
@@ -35,7 +38,15 @@ def test():
         precipitation = pyre.db.float()
         precipitation.doc = "amount of rainfall"
 
+    # check the name
+    assert Weather.pyre_name == "weather"
+    # make sure we harvested all the descriptors (and in the right order)
+    assert Weather.pyre_localColumns == (
+        Weather.city, Weather.date, Weather.low, Weather.high, Weather.precipitation )
+    # no inheritance here, so these should match
+    assert Weather.pyre_localColumns == Weather.pyre_columns
 
+    # all done
     return
 
 
