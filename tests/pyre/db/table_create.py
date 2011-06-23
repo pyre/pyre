@@ -41,6 +41,9 @@ def test():
     server = pyre.db.server(name="test")
     # to build the SQL statement
     stmt = tuple(server.sql.createTable(table=Weather))
+    print('\n'.join(stmt))
+    return
+
     assert stmt == (
         "CREATE TABLE weather",
         "    --",

@@ -17,4 +17,10 @@ class Table(metaclass=Schemer):
     """
 
 
+    # publicly accessible data in the protected pyre namespace
+    pyre_name = None # the name of the table; must match the name in the database
+    pyre_localColumns = None # a tuple of the column descriptors that were declared locally
+    pyre_columns = None # a tuple of all the column descriptors, including inherited ones
+
+
 # end of file 

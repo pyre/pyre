@@ -20,6 +20,7 @@ from .Server import Server as server
 # the table class
 from .Table import Table as table
 # the data model
+from .. import schema
 from .Column import Column as column
 
 
@@ -64,6 +65,7 @@ def int(**kwds):
     Integers
     """
     c = column(**kwds)
+    c.type = schema.int
     return c
 
 

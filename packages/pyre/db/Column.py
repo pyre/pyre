@@ -15,4 +15,15 @@ class Column(Descriptor):
     """
 
 
+    # interface
+    def setDefault(self, value):
+        """
+        Set a new default value
+        """
+        # install the new value
+        self.default = value
+        # enable chaining
+        return self
+
+
 # end of file 
