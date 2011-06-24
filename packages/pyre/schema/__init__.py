@@ -19,4 +19,8 @@ from .String import String as str
 from .Time import Time as time
 
 
+# the descriptor base class
+from .Descriptor import Descriptor as descriptor
+
+
 # end of file 
