@@ -52,4 +52,14 @@ class Descriptor:
         return
 
 
+    # meta methods
+    def __init__(self, name=None, default=None, **kwds):
+        super().__init__(**kwds)
+        # the attributes that are likely to be known at construction time
+        self.name = name
+        self.default = default
+        # and return
+        return
+
+
 # end of file 
