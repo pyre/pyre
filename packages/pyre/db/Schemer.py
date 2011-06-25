@@ -24,20 +24,22 @@ class Schemer(AttributeClassifier):
 
     # meta methods
     def __new__(cls, name, bases, attributes, id=None, **kwds):
+        # chain to my ancestor
+        table = super().__new__(cls, name, bases, attributes, **kwds)
+
         # set up the table name
-        attributes["pyre_name"] = name if id is None else id
+        table.pyre_name = name if id is None else id
         # harvest the locally declared columns
         local = []
         for columnName, column in cls.pyre_harvest(attributes, cls.Column):
+            # attach the table to the column
+            column.table = table
             # set the name of the column
             column.name = columnName
             # add it to the pile
             local.append(column)
         # store the harvested columns
-        attributes["pyre_localColumns"] = tuple(local)
-
-        # chain to my ancestor
-        table = super().__new__(cls, name, bases, attributes, **kwds)
+        table.pyre_localColumns = tuple(local)
 
         # now that the class record is built, we can hunt down inherited columns
         inherited = []
@@ -46,7 +48,7 @@ class Schemer(AttributeClassifier):
             # restrict the search to {Table} subclasses
             if isinstance(base, cls):
                 # add the columns from this ancestor to the pile
-                inherited.extend(base.pyre_columns)
+                inherited.extend(base.pyre_localColumns)
 
         # build the tuple of all my columns
         table.pyre_columns = tuple(inherited + local)
