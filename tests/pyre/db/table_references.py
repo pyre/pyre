@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2011 all rights reserved
+#
+
+
+"""
+Exercise table declaration
+"""
+
+
+def test():
+    # access to the package
+    import pyre.db
+
+    # the foreign table
+    class City(pyre.db.table, id="cities"):
+        """
+        A table of cities
+        """
+        # the fields
+        id = pyre.db.int().primary()
+        name = pyre.db.str()
+        state = pyre.db.str(maxlen=2)
+
+
+    # declare a simple table
+    class Weather(pyre.db.table, id="weather"):
+        """
+        The sample table from the postgre tutorial
+        """
+
+        # the fields
+        city = pyre.db.int(default=None).references(column=City.id)
+        date = pyre.db.date()
+        low = pyre.db.int()
+        high = pyre.db.int()
+        precipitation = pyre.db.float()
+
+    # get a server
+    server = pyre.db.server(name="test")
+    # to build the SQL statement
+    stmt = tuple(server.sql.createTable(table=Weather))
+    # print('\n'.join(stmt))
+    assert stmt == (
+        "CREATE TABLE weather",
+        "    --",
+        "    -- The sample table from the postgre tutorial",
+        "    --",
+        "(",
+        "    city INTEGER",
+        "        REFERENCES cities (id)",
+        "        ,",
+        "    date DATE ,",
+        "    low INTEGER DEFAULT 0 ,",
+        "    high INTEGER DEFAULT 0 ,",
+        "    precipitation DOUBLE PRECISION DEFAULT 0.0",
+        ");"
+        )
+    # all done
+    return Weather, City
+
+
+# main
+if __name__ == "__main__":
+    test()
+
+
+# end of file 

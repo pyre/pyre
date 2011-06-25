@@ -76,7 +76,8 @@ class SQL(Mill):
         if comma and not column._decorated:
             declarator.append(',')
         # add the docstring as a comment
-        declarator += [self.comment, column.doc ]
+        if column.doc:
+            declarator += [self.comment, column.doc ]
         # render the name and type of the column
         yield " ".join(filter(None, declarator))
 
@@ -89,7 +90,13 @@ class SQL(Mill):
         if column._notNull: yield "NOT NULL"
         # unique
         if column._unique: yield "UNIQUE"
-        
+        # foreign keys
+        if column._foreign:
+            table, column = column._foreign
+            if column is None:
+                yield "REFERENCES {.pyre_name}".format(table)
+            else:
+                yield "REFERENCES {.pyre_name} ({.name})".format(table, column)
 
         # render a column separator, if necessary 
         if comma and column._decorated:

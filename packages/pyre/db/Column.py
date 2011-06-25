@@ -62,6 +62,20 @@ class Column(schema.descriptor):
         return self
 
 
+    def references(self, table=None, column=None):
+        """
+        Mark a column as a foreign key
+        """
+        # if we got a fully qualified column reference, use it; otherwise construct one out of
+        # the table, leaving the column name to a default value
+        self._foreign = column if column else (table, None)
+        # leave a clue for the weaver
+        self._decorated = True
+        # and return
+        return self
+        
+
+
     # implementation details
     def decldefault(self):
         """
@@ -73,22 +87,6 @@ class Column(schema.descriptor):
             return "DEFAULT {}".format(self.default)
         # otherwise just send back an empty string
         return ""
-
-
-    # meta methods
-    def __init__(self, primary=None, unique=None, notNull=None, **kwds):
-        super().__init__(**kwds)
-        
-        # my private data
-        self._primary = primary
-        self._unique = unique
-        self._notNull = notNull
-
-        # mark me
-        if primary or unique or notNull:
-            self._decorated = True
-
-        return
 
 
     def __get__(self, instance, cls):
@@ -103,6 +101,8 @@ class Column(schema.descriptor):
     _primary = None # am i a primary key?
     _unique = None # are my values unique across the rows of the table?
     _notNull = None # do i accept NULL as a value?
+
+    _foreign = None # foreign key: a tuple (foreign_table, column_descriptor)
 
     _decorated = False # true when this column has decorations other than type
 

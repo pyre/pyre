@@ -23,5 +23,6 @@ tables:
 	${PYTHON} ./table_inheritance.py
 	${PYTHON} ./table_instantiation.py
 	${PYTHON} ./table_create.py
+	${PYTHON} ./table_references.py
 
 # end of file 
