@@ -26,6 +26,7 @@ EXPORT_PYTHON_MODULES = \
     Server.py \
     Table.py \
     View.py \
+    columns.py \
     exceptions.py \
     __init__.py
 

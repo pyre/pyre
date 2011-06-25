@@ -46,15 +46,19 @@ class SQL(Mill):
 
         # the column declarations
         self.indent()
-        # iterate over the columns
+        # iterate over the columns except the last one
         for column in table.pyre_columns[:-1]:
             # some declarations span multiple lines
-            for line in self.columnDeclaration(column):
-                yield line
+            for line in self._columnDeclaration(column, comma=True):
+                yield self.leader + line
+
+        # and the last one, which does  not need the ',' separator
+        for line in self._columnDeclaration(table.pyre_columns[-1], comma=False):
+            yield self.leader + line
         # push out
         self.outdent()
 
-        # the terminator
+        # the table declaration terminator
         yield self.leader + ");"
 
         # all done
@@ -62,35 +66,38 @@ class SQL(Mill):
 
 
     # implementation details
-    def columnDeclaration(self, column):
+    def _columnDeclaration(self, column, comma):
         """
         Build the declaration lines for a given table column
         """
         # initialize the declaration
-        declarator = [
-            self.leader, column.name, ' ', self.columnType(column),  ","
-            ]
+        declarator = [ column.name, column.decl(), column.decldefault() ]
+        # terminate one liners
+        if comma and not column._decorated:
+            declarator.append(',')
         # add the docstring as a comment
-        if column.doc:
-            declarator += [' ', self.comment, ' ', column.doc ]
-            
+        declarator += [self.comment, column.doc ]
         # render the name and type of the column
-        yield "".join(declarator)
+        yield " ".join(filter(None, declarator))
+
+        # indent
+        self.indent()
+
+        # a primary key
+        if column._primary: yield "PRIMARY KEY"
+        # not null
+        if column._notNull: yield "NOT NULL"
+        # unique
+        if column._unique: yield "UNIQUE"
+        
+
+        # render a column separator, if necessary 
+        if comma and column._decorated:
+            yield ','
+
         # all done
+        self.outdent()
         return
 
-
-    def columnType(self, column):
-        """
-        Inspect the type of the given {column} and return the proper SQL declaration form
-        """
-        # access the type descriptors
-        import pyre.schema
-
-        if column.type == pyre.schema.int:
-            return 'INTEGER'
-
-        return ''
-            
 
 # end of file 

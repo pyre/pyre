@@ -28,77 +28,15 @@ from .Column import Column as column
 null = object()
 
 # descriptor factories
-def bool(**kwds):
-    """
-    Booleans
-    """
-    c = column(**kwds)
-    return c
-
-
-def date(**kwds):
-    """
-    Support for dates
-    """
-    c = column(**kwds)
-    return c
-
-
-def decimal(precision=None, scale=None, **kwds):
-    """
-    Support for arbitrary precision numbers
-    """
-    c = column(**kwds)
-    return c
-
-
-def float(**kwds):
-    """
-    Double precision floating point numbers
-    """
-    c = column(**kwds)
-    return c
-
-
-def int(**kwds):
-    """
-    Integers
-    """
-    c = column(**kwds)
-    c.type = schema.int
-    return c
-
-
-def str(maxlen=None, **kwds):
-    """
-    String of arbitrary length
-    """
-    c = column(**kwds)
-    return c
-
-
-def time(timezone=False, **kwds):
-    """
-    Time of day, with or without timezone
-    """
-    c = column(**kwds)
-    return c
-
-
-def timedelta(**kwds):
-    """
-    Time intervals with microsecond resolution
-    """
-    c = column(**kwds)
-    return c
-
-
-def timestamp(timezone=False, **kwds):
-    """
-    Both date and time of day, with or without timezone
-    """
-    c = column(**kwds)
-    return c
+from .columns import (
+    Boolean as bool,
+    Date as date,
+    Decimal as decimal,
+    Float as float,
+    Integer as int,
+    String as str,
+    Time as time,
+    )
 
 
 # end of file 

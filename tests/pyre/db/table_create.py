@@ -16,45 +16,56 @@ def test():
     import pyre.db
 
     # declare a simple table
-    class Weather(pyre.db.table, id="weather"):
+    class TypeFest(pyre.db.table, id="typefest"):
         """
-        The sample table from the postgres tutorial
+        Exercise the type declarations
         """
 
         # the fields
         city = pyre.db.str()
-        city.doc = "the name of the city"
+        city.doc = "a string of arbitrary length"
+        city.primary()
 
-        date = pyre.db.date()
-        date.doc = "the date of the measurement"
+        state = pyre.db.str(maxlen=2)
+        state.doc = "a string with maximum length 2"
+        state.notNull()
 
-        low = pyre.db.int()
-        low.doc = "the low temperature"
+        when = pyre.db.date()
+        when.doc = "a date"
+        when.unique()
 
-        high = pyre.db.int()
-        high.doc = "the high temperature"
+        price = pyre.db.decimal(precision=6, scale=2)
+        price.doc = "a decimal"
 
-        precipitation = pyre.db.float()
-        precipitation.doc = "amount of rainfall"
+        pi = pyre.db.float()
+        pi.doc = "a floating point number"
 
     # get a server
     server = pyre.db.server(name="test")
     # to build the SQL statement
-    stmt = tuple(server.sql.createTable(table=Weather))
-    print('\n'.join(stmt))
-    return
-
+    stmt = tuple(server.sql.createTable(table=TypeFest))
+    # print('\n'.join(stmt))
     assert stmt == (
-        "CREATE TABLE weather",
+        "CREATE TABLE typefest",
         "    --",
-        "    -- The sample table from the postgres tutorial",
+        "    -- Exercise the type declarations",
         "    --",
         "(",
-        ");"
+        "    city TEXT DEFAULT '' -- a string of arbitrary length",
+        "        PRIMARY KEY",
+        "        ,",
+        "    state VARCHAR(2) DEFAULT '' -- a string with maximum length 2",
+        "        NOT NULL",
+        "        ,",
+        "    when DATE -- a date",
+        "        UNIQUE",
+        "        ,",
+        "    price DECIMAL(6, 2) DEFAULT 0 , -- a decimal",
+        "    pi DOUBLE PRECISION DEFAULT 0.0 -- a floating point number",
+        ");",
         )
-    
 
-    return
+    return TypeFest
 
 
 # main

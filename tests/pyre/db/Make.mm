@@ -20,6 +20,8 @@ sanity:
 
 tables:
 	${PYTHON} ./table_declaration.py
+	${PYTHON} ./table_inheritance.py
+	${PYTHON} ./table_instantiation.py
 	${PYTHON} ./table_create.py
 
 # end of file 

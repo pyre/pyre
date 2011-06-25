@@ -64,4 +64,13 @@ class Schemer(AttributeClassifier):
         return
 
 
+    def __call__(self, **kwds):
+        """
+        Disable the instantiation of tables
+        """
+        import journal
+        firewall = journal.firewall("pyre.db")
+        raise firewall.log("database tables cannot be instantiated", stackdepth=-1)
+
+
 # end of file 
