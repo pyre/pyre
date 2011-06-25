@@ -27,13 +27,29 @@ class Descriptor:
     """
 
 
-    # class public data
+    # public data
     name = None # my name
     default = None # my default value
     optional = False # am i allowed to be uninitialized?
     type = Object # my type; most likely one of the pyre.schema type declarators
     validators = () # the chain of functions that inspect and validate my value
     converters = () # the chain of transformations necessary to produce a value in my native type
+
+    # wire doc to __doc__ so the bultin help can decorate the attributes properly
+    @property
+    def doc(self):
+        """
+        Return my  documentation string
+        """
+        return self.__doc__
+
+    @doc.setter
+    def doc(self, text):
+        """
+        Store text as my documentation string
+        """
+        self.__doc__ = text
+        return
 
 
 # end of file 
