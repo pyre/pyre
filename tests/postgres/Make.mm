@@ -17,7 +17,7 @@ test: sanity pyrepg connections components
 
 sanity:
 	${PYTHON} ./sanity.py
-	${PYTHON} ./sanity-pyrepg.py
+	${PYTHON} ./sanity_pyrepg.py
 
 pyrepg:
 	${PYTHON} ./pyrepg_exceptions.py
