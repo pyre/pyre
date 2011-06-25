@@ -58,6 +58,7 @@ class Descriptor:
         # the attributes that are likely to be known at construction time
         self.name = name
         self.default = default
+        self.__doc__ = None
         # and return
         return
 
