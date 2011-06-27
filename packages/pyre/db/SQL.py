@@ -65,6 +65,16 @@ class SQL(Mill):
         return
 
 
+    def dropTable(self, table):
+        """
+        Build the statement to drop the given {table}
+        """
+        # this is easy enogh
+        yield "DROP TABLE {};".format(table.pyre_name)
+        # all done
+        return
+
+
     # implementation details
     def _columnDeclaration(self, column, comma):
         """
