@@ -22,7 +22,7 @@ def initializeExtension():
 # declaration
 class Connection:
     """
-    This is a sample documentation string for class Connection
+    Encapsulation of the communication conduit with the database back end
     """
 
 
@@ -54,7 +54,7 @@ class Connection:
                  # only a subset of the connection speficiations parameters are supported 
                  database, # the name of the database to access
                  user=None, password=None, # authentication
-                 application=None,
+                 application=None, # version 9: application-specific tag for logging
                  **kwds):
 
         # chain to the ancestors
