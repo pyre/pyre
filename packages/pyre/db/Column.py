@@ -15,6 +15,11 @@ class Column(schema.descriptor):
     """
 
 
+    # types
+    from . import actions
+    from .ColumnReference import ColumnReference as referenceSpec
+
+
     # column decorations
     def setDefault(self, value):
         """
@@ -62,17 +67,22 @@ class Column(schema.descriptor):
         return self
 
 
-    def references(self, table=None, column=None):
+    def references(self, spec):
         """
-        Mark a column as a foreign key
+        Mark a column as a foreign key.
+
+        Note: this call returns a {ColumnReference} instance, not a {Column} instance. Hence,
+        it breaks the update chain for column descriptors and creates a chain on the reference
+        spec itself.
         """
-        # if we got a fully qualified column reference, use it; otherwise construct one out of
-        # the table, leaving the column name to a default value
-        self._foreign = column if column else (table, None)
+        # use the specification to create a column reference object
+        foreignKey = self.referenceSpec(spec)
+        # record it
+        self._foreign = foreignKey
         # leave a clue for the weaver
         self._decorated = True
-        # and return
-        return self
+        # and return the reference spec
+        return foreignKey
         
 
 

@@ -35,6 +35,7 @@ components:
 	${PYTHON} ./postgres_database.py
 	${PYTHON} ./postgres_attach.py
 	${PYTHON} ./postgres_table.py
+	${PYTHON} ./postgres_references.py
 
 
 # end of file 

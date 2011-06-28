@@ -132,16 +132,46 @@ class SQL(Mill):
         if column._unique: yield "UNIQUE"
         # foreign keys
         if column._foreign:
-            table, column = column._foreign
-            if column is None:
-                yield "REFERENCES {.pyre_name}".format(table)
-            else:
-                yield "REFERENCES {.pyre_name} ({.name})".format(table, column)
-
+            for line in self._referenceDeclaration(column._foreign):
+                yield line
         # render a column separator, if necessary 
         if comma and column._decorated:
             yield ','
 
+        # all done
+        self.outdent()
+        return
+
+
+    def _referenceDeclaration(self, foreign):
+        """
+        Build a declaration for a foreign key
+        """
+        table = foreign.table
+        column = foreign.column
+        if column is None:
+            yield "REFERENCES {.pyre_name}".format(table)
+        else:
+            yield "REFERENCES {.pyre_name} ({.name})".format(table, column)
+
+        # if there is nothing further to do
+        if foreign.update is None and foreign.delete is None:
+            # move on
+            return
+
+        # otherwise
+        self.indent()
+
+        # if there is a registered update action
+        if foreign.update:
+            # record it
+            yield "ON UPDATE {}".format(foreign.update)
+            
+        # if there is a registered delete action
+        if foreign.delete:
+            # record it
+            yield "ON DELETE {}".format(foreign.delete)
+            
         # all done
         self.outdent()
         return

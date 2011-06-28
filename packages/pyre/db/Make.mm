@@ -20,12 +20,14 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Column.py \
+    ColumnReference.py \
     DataStore.py \
     SQL.py \
     Schemer.py \
     Server.py \
     Table.py \
     View.py \
+    actions.py \
     columns.py \
     exceptions.py \
     __init__.py
