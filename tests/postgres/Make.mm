@@ -34,6 +34,7 @@ connections:
 components:
 	${PYTHON} ./postgres_database.py
 	${PYTHON} ./postgres_attach.py
+	${PYTHON} ./postgres_table.py
 
 
 # end of file 

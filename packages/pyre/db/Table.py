@@ -23,4 +23,33 @@ class Table(metaclass=Schemer):
     pyre_columns = None # a tuple of all the column descriptors, including inherited ones
 
 
+    # interface
+    @classmethod
+    def create(cls, datastore):
+        """
+        Convert the table specification into the appropriate SQL statements and execute them to
+        create this table
+        """
+        # get the weaver attached to this datastore
+        weaver = datastore.sql
+        # generate the statements
+        sql = tuple(weaver.createTable(cls))
+        # and get them executed
+        return datastore.execute(sql)
+
+
+    @classmethod
+    def drop(cls, datastore):
+        """
+        Convert the table specification into the appropriate SQL statements and execute them to
+        remove this table from the datastore
+        """
+        # get the weaver attached to this datastore
+        weaver = datastore.sql
+        # generate the statements
+        sql = weaver.dropTable(cls)
+        # and get them executed
+        return datastore.execute(sql)
+
+
 # end of file 
