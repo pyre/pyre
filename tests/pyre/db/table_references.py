@@ -30,7 +30,7 @@ def test():
     # declare a simple table
     class Weather(pyre.db.table, id="weather"):
         """
-        The sample table from the postgre tutorial
+        The sample table from the postgres tutorial
         """
 
         # the fields
@@ -49,7 +49,7 @@ def test():
     assert stmt == (
         "CREATE TABLE weather",
         "    --",
-        "    -- The sample table from the postgre tutorial",
+        "    -- The sample table from the postgres tutorial",
         "    --",
         "(",
         "    city INTEGER",

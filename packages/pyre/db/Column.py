@@ -79,7 +79,6 @@ class Column(schema.descriptor):
         return self
         
 
-
     # implementation details
     def decldefault(self):
         """
