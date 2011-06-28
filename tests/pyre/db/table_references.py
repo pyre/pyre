@@ -34,7 +34,8 @@ def test():
         """
 
         # the fields
-        city = pyre.db.int(default=None).references(column=City.id)
+        city = pyre.db.int(default=None).references(ref=City.id)
+
         date = pyre.db.date()
         low = pyre.db.int()
         high = pyre.db.int()

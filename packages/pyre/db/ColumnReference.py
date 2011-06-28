@@ -23,36 +23,20 @@ class ColumnReference:
     delete = None # the specified action to take when the referenced column is deleted
 
 
-    # interface
-    def onDelete(self, action):
-        """
-        Perform {action} when the referenced row is deleted
-        """
-        # record the action
-        self.delete = action
-        # enable chaining
-        return self
-
-
-    def onUpdate(self, action):
-        """
-        Perform {action} when the referenced column get a new value
-        """
-        # record the action
-        self.update = action
-        # enable chaining
-        return self
-
-
     # meta methods
-    def __init__(self, spec, **kwds):
+    def __init__(self, ref, onDelete=None, onUpdate=None, **kwds):
         super().__init__(**kwds)
 
+        # record the column spec
         try:
-            self.table, self.column = spec
+            self.table, self.column = ref
         except TypeError:
-            self.table = spec
+            self.table = ref
             self.column = None
+
+        # and the actions
+        self.delete = onDelete
+        self.update = onUpdate
 
         return
 

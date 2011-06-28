@@ -67,22 +67,16 @@ class Column(schema.descriptor):
         return self
 
 
-    def references(self, spec):
+    def references(self, **kwds):
         """
         Mark a column as a foreign key.
-
-        Note: this call returns a {ColumnReference} instance, not a {Column} instance. Hence,
-        it breaks the update chain for column descriptors and creates a chain on the reference
-        spec itself.
         """
-        # use the specification to create a column reference object
-        foreignKey = self.referenceSpec(spec)
-        # record it
-        self._foreign = foreignKey
+        # use the specification to create a column reference object and record it
+        self._foreign = self.referenceSpec( **kwds)
         # leave a clue for the weaver
         self._decorated = True
-        # and return the reference spec
-        return foreignKey
+        # and return
+        return self
         
 
 
