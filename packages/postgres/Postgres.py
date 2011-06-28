@@ -44,7 +44,14 @@ class Postgres(pyre.db.server, family="postgres.server"):
             database=self.database, user=self.username, password=self.password
             )
         # all done
-        return
+        return self
+
+
+    def execute(self, sql):
+        """
+        Execute the sequence of SQL statements in SQL as a single command
+        """
+        return self._connection.execute("\n".join(sql))
 
 
     # meta methods
@@ -54,6 +61,28 @@ class Postgres(pyre.db.server, family="postgres.server"):
         self._connection = None
 
         return
+
+
+    # context manager interface
+    def __enter__(self):
+        """
+        Hook invoked when the context manager is entered
+        """
+        status = self.execute(self.sql.transaction())
+        return self
+
+
+    def __exit__(self, exc_type, exc_instance, exc_traceback):
+        """
+        Hook invoked when the context manager's block exits
+        """
+        if exc_type is None:
+            status = self.execute(self.sql.commit())
+        else:
+            status = self.execute(self.sql.rollback())
+
+        # re-raise any exception that occurred while executing the body of the with statement
+        return False
 
 
 # end of file 

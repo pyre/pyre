@@ -18,6 +18,36 @@ class SQL(Mill):
     """
 
 
+    def transaction(self):
+        """
+        Generate the SQL statement that initiates a transaction block
+        """
+        # simple enough
+        yield "START TRANSACTION;"
+        # all done
+        return
+
+
+    def commit(self):
+        """
+        Generate the SQL statement that closes a transaction block
+        """
+        # simple enough
+        yield "COMMIT;"
+        # all done
+        return
+
+
+    def rollback(self):
+        """
+        Generate the SQL statement that rolls back a transaction
+        """
+        # simple enough
+        yield "ROLLBACK;"
+        # all done
+        return
+
+
     def createTable(self, table):
         """
         Generate the SQL statement to create a database table given its description.

@@ -28,6 +28,7 @@ class Server(pyre.component, implements=datastore):
     sql.doc = "the generator of the SQL statements"
 
 
+    # required interface
     @pyre.export
     def attach(self):
         """
@@ -35,6 +36,23 @@ class Server(pyre.component, implements=datastore):
         """
         raise NotImplementedError(
             "class {.__class__.__name__!r} must override 'attach'".format(self))
+
+
+    # meta methods
+    # context manager support
+    def __enter__(self):
+        """
+        Hook invoked when the context manager is entered
+        """
+        return self
+
+
+    def __exit__(self, exc_type, exc_instance, exc_traceback):
+        """
+        Hook invoked when the context manager's block exits
+        """
+        # re-raise any exception that occurred while executing the body of the with statement
+        return False
 
 
 # end of file 
