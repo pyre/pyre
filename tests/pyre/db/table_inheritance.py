@@ -36,7 +36,7 @@ def test():
     assert Measurement.pyre_name == "measurement"
     # make sure we harvested all the descriptors (and in the right order)
     assert Measurement.pyre_localColumns == tuple(
-        value[1] for value in (
+        value.column for value in (
             Measurement.low, Measurement.high, Measurement.precipitation ))
     # no inheritance here, so these should match
     assert Measurement.pyre_localColumns == Measurement.pyre_columns
@@ -62,7 +62,7 @@ def test():
     assert Location.pyre_name == "location"
     # make sure we harvested all the descriptors (and in the right order)
     assert Location.pyre_localColumns == tuple(
-        value[1] for value in (Location.city, Location.state))
+        value.column for value in (Location.city, Location.state))
     # no inheritance here, so these should match
     assert Location.pyre_localColumns == Location.pyre_columns
 
@@ -81,11 +81,11 @@ def test():
     # check the name
     assert Weather.pyre_name == "weather"
     # make sure we harvested all the descriptors (and in the right order)
-    assert Weather.pyre_localColumns == (Weather.date[1],)
+    assert Weather.pyre_localColumns == (Weather.date.column,)
     # print(Weather.pyre_columns)
     # print(tuple(column.name for column in Weather.pyre_columns))
     assert Weather.pyre_columns == tuple(
-        value[1] for value in (
+        value.column for value in (
             Weather.low, Weather.high, Weather.precipitation,
             Weather.city, Weather.state,
             Weather.date ))

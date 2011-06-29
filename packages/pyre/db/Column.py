@@ -17,7 +17,8 @@ class Column(schema.descriptor):
 
     # types
     from . import actions
-    from .ColumnReference import ColumnReference as referenceSpec
+    from .ForeignKey import ForeignKey
+    from .ColumnReference import ColumnReference
 
 
     # column decorations
@@ -72,12 +73,19 @@ class Column(schema.descriptor):
         Mark a column as a foreign key.
         """
         # use the specification to create a column reference object and record it
-        self._foreign = self.referenceSpec( **kwds)
+        self._foreign = self.ForeignKey(**kwds)
         # leave a clue for the weaver
         self._decorated = True
         # and return
         return self
         
+
+    def check(self, constraint):
+        """
+        Attach a constraint
+        """
+
+
 
     # implementation details
     def decldefault(self):
@@ -96,7 +104,7 @@ class Column(schema.descriptor):
         """
         Table attribute access is interpreted as a request for the pair (table, descriptor)
         """
-        return (cls, self)
+        return self.ColumnReference(table=cls, column=self)
 
 
     # private data

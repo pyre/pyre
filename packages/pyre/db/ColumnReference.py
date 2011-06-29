@@ -6,9 +6,6 @@
 #
 
 
-from .. import schema
-
-
 class ColumnReference:
     """
     A column decorator that encapsulates references to table columns
@@ -19,25 +16,15 @@ class ColumnReference:
     table = None # the table class
     column = None # the column descriptor
 
-    update = None # the specified action to take when the referenced column is updated
-    delete = None # the specified action to take when the referenced column is deleted
-
 
     # meta methods
-    def __init__(self, ref, onDelete=None, onUpdate=None, **kwds):
+    def __init__(self, table, column, **kwds):
         super().__init__(**kwds)
 
-        # record the column spec
-        try:
-            self.table, self.column = ref
-        except TypeError:
-            self.table = ref
-            self.column = None
-
-        # and the actions
-        self.delete = onDelete
-        self.update = onUpdate
+        self.table = table
+        self.column = column
 
         return
+
 
 # end of file 

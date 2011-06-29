@@ -147,8 +147,8 @@ class SQL(Mill):
         """
         Build a declaration for a foreign key
         """
-        table = foreign.table
-        column = foreign.column
+        table = foreign.reference.table
+        column = foreign.reference.column
         if column is None:
             yield "REFERENCES {.pyre_name}".format(table)
         else:

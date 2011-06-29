@@ -42,7 +42,7 @@ def test():
     assert Weather.pyre_name == "weather"
     # make sure we harvested all the descriptors (and in the right order)
     assert Weather.pyre_localColumns == tuple(
-        value[1] for value in (
+        value.column for value in (
             Weather.city, Weather.date, Weather.low, Weather.high, Weather.precipitation
             ))
 
