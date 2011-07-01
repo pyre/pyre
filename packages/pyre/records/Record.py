@@ -121,7 +121,7 @@ class Record(tuple, metaclass=Templater):
             # otherwise, build a generator that extracts values from {kwds}
             kwds.pop(item.name, item.default) for item in cls.pyre_items)
         # build the data tuple and return it
-        return (item.eval(data=source) for item in cls.pyre_items)
+        return (item.pyre_eval(data=source) for item in cls.pyre_items)
 
             
     @classmethod
@@ -142,7 +142,7 @@ class Record(tuple, metaclass=Templater):
         # iterate over my items
         for item in cls.pyre_items:
             # get the item to compute its value
-            value = item.eval(data=source, cache=cache)
+            value = item.pyre_eval(data=source, cache=cache)
             # add it to the cache
             cache[item] = value
             # and yield the value

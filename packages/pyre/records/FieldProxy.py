@@ -20,7 +20,7 @@ class FieldProxy(Node):
 
 
     # interface
-    def eval(self, *, cache, **kwds):
+    def pyre_eval(self, *, cache, **kwds):
         """
         Look up and return the value of my field
         """

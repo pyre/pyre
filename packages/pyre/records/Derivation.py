@@ -57,7 +57,7 @@ class Derivation(Node):
         return
 
 
-    def eval(self, *, cache, **kwds):
+    def pyre_eval(self, *, cache, **kwds):
         """
         Compute and return the value of my expression
         """
@@ -66,7 +66,7 @@ class Derivation(Node):
             # yes; return the previously computed value
             return cache[self]
         # nope; compute and return the value of my expression
-        return self.expression.eval(cache=cache)
+        return self.expression.pyre_eval(cache=cache)
         
 
 # end of file 
