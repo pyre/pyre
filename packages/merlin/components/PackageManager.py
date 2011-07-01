@@ -52,8 +52,8 @@ class PackageManager(pyre.component, family="merlin.packages"):
 
         # figure out the hostname
         if not self.hostname:
-            import socket
-            self.hostname = socket.gethostbyaddr(socket.gethostname())[0]
+            import platform
+            self.hostname = platform.node()
 
         return
 
