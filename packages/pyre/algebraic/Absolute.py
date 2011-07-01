@@ -16,9 +16,9 @@ class Absolute(Unary):
 
 
     # interface
-    def eval(self, **kwds):
+    def pyre_eval(self, **kwds):
         # compute the value of my operand
-        op = self.op.eval(**kwds)
+        op = self.op.pyre_eval(**kwds)
         # compute its absolute value and return it
         return abs(op)
 

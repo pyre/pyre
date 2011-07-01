@@ -16,9 +16,9 @@ class Opposite(Unary):
 
 
     # interface
-    def eval(self, **kwds):
+    def pyre_eval(self, **kwds):
         # compute the value of my operand
-        op = self.op.eval(**kwds)
+        op = self.op.pyre_eval(**kwds)
         # reverse its sign and return it
         return -op
 

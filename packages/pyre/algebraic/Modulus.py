@@ -16,11 +16,11 @@ class Modulus(Binary):
 
 
     # interface
-    def eval(self, **kwds):
+    def pyre_eval(self, **kwds):
         # compute the value of the first operand
-        op1 = self.op1.eval(**kwds)
+        op1 = self.op1.pyre_eval(**kwds)
         # compute the value of the second operand
-        op2 = self.op2.eval(**kwds)
+        op2 = self.op2.pyre_eval(**kwds)
         # and put them together
         return op1 % op2
 

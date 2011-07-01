@@ -32,6 +32,14 @@ class Node:
 
 
     # interface
+    def pyre_eval(self, **kwds):
+        """
+        Compute the value of my expression tree
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'pyre_eval'".format(self))
+
+
     def pyre_patch(self, *args, **kwds):
         """
         Sentinel method for node patching in expression trees
@@ -41,96 +49,89 @@ class Node:
 
     # algebra; methods are listed in the order they show up in the python documentation
     def __add__(self, other):
-        # if this an operation among nodes
-        if isinstance(other, Node):
-            # build an addition representation
-            from .Addition import Addition
-            # and return it
-            return Addition(op1=self, op2=other)
-        # otherwise, build an increment node
-        from .Increment import Increment
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build an addition representation
+        from .Addition import Addition
         # and return it
-        return Increment(op=self, value=other)
+        return Addition(op1=self, op2=other)
 
     
     def __sub__(self, other):
-        # if this an operation among nodes
-        if isinstance(other, Node):
-            # build a subtraction representation out of Addition and Opposite
-            from .Addition import Addition
-            from .Opposite import Opposite
-            # and return it
-            return Addition(op1=self, op2=Opposite(op=other))
-        # otherwise, increment my opposite by other
-        from .Increment import Increment
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of subtraction out of {Addition} and {Opposite}
+        from .Addition import Addition
+        from .Opposite import Opposite
         # and return it
-        return Increment(op=self, value=-other)
+        return Addition(op1=self, op2=Opposite(op=other))
 
     
     def __mul__(self, other):
-        # if this an operation among nodes
-        if isinstance(other, Node):
-            # build an addition representation
-            from .Multiplication import Multiplication
-            # and return it
-            return Multiplication(op1=self, op2=other)
-        # otherwise, build a scaling node
-        from .Scaling import Scaling
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation for multiplication
+        from .Multiplication import Multiplication
         # and return it
-        return Scaling(op=self, value=other)
+        return Multiplication(op1=self, op2=other)
 
     
     def __truediv__(self, other):
-        # if this an operation among nodes
-        if isinstance(other, Node):
-            # build a representation of division out of Multiplication and Inverse
-            from .Inverse import Inverse
-            from .Multiplication import Multiplication
-            # and return it
-            return Multiplication(op1=self, op2=Inverse(op=other))
-        # otherwise, build a scaling node
-        from .Scaling import Scaling
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of division out of {Multiplication} and {Inverse}
+        from .Inverse import Inverse
+        from .Multiplication import Multiplication
         # and return it
-        return Scaling(op=self, value=1/other)
+        return Multiplication(op1=self, op2=Inverse(op=other))
 
     
     def __floordiv__(self, other):
-        # if this an operation among nodes
-        if isinstance(other, Node):
-            # build an addition representation
-            from .FloorDivision import FloorDivision
-            # and return it
-            return FloorDivision(op1=self, op2=other)
-        # otherwise, build an increment node
-        from .LeftFloorDivision import LeftFloorDivision
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of floor-division 
+        from .FloorDivision import FloorDivision
         # and return it
-        return LeftFloorDivision(op=self, value=other)
+        return FloorDivision(op1=self, op2=other)
     
 
     def __mod__(self, other):
-        # if this an operation among nodes
-        if isinstance(other, Node):
-            # build an addition representation
-            from .Modulus import Modulus
-            # and return it
-            return Modulus(op1=self, op2=other)
-        # otherwise, build an increment node
-        from .LeftModulus import LeftModulus
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a modulus representation
+        from .Modulus import Modulus
         # and return it
-        return LeftModulus(op=self, value=other)
+        return Modulus(op1=self, op2=other)
     
 
     def __pow__(self, other):
-        # if this an operation among nodes
-        if isinstance(other, Node):
-            # build an addition representation
-            from .Power import Power
-            # and return it
-            return Power(op1=self, op2=other)
-        # otherwise, build an increment node
-        from .LeftPower import LeftPower
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of exponentiation
+        from .Power import Power
         # and return it
-        return LeftPower(op=self, value=other)
+        return Power(op1=self, op2=other)
     
 
     def __pos__(self):
@@ -147,56 +148,77 @@ class Node:
         return Absolute(op=self)
 
     
-    # reflected ones
+    # reflected ones: one operand was not a node, so it gets promoted through {Literal}
     def __radd__(self, other):
-        # convert the operation to an increment node
-        from .Increment import Increment
+        # {other} is not a node, so promote it
+        from .Literal import Literal
+        other = Literal(value=other)
+        # build an addition representation
+        from .Addition import Addition
         # and return it
-        return Increment(op=self, value=other)
+        return Addition(op1=other, op2=self)
 
     
     def __rsub__(self, other):
-        # convert the operation to an increment node
+        # {other} is not a node, so promote it
+        from .Literal import Literal
+        other = Literal(value=other)
+        # build an addition representation
+        from .Addition import Addition
         from .Opposite import Opposite
-        from .Increment import Increment
         # and return it
-        return Increment(op=Opposite(op=self), value=other)
+        return Addition(op1=other, op2=Opposite(op=self))
 
     
     def __rmul__(self, other):
-        # convert the operation to a scaling
-        from .Scaling import Scaling
+        # {other} is not a node, so promote it
+        from .Literal import Literal
+        other = Literal(value=other)
+        # build a representation of multiplication
+        from .Multiplication import Multiplication
         # and return it
-        return Scaling(op=self, value=other)
+        return Multiplication(op1=other, op2=self)
 
     
     def __rtruediv__(self, other):
-        # convert the operation to a scaling
+        # {other} is not a node, so promote it
+        from .Literal import Literal
+        other = Literal(value=other)
+        # build a representation of division out of {Multiplication} and {Inverse}
         from .Inverse import Inverse
-        from .Scaling import Scaling
+        from .Multiplication import Multiplication
         # and return it
-        return Scaling(op=Inverse(op=self), value=other)
+        return Multiplication(op1=other, op2=Inverse(op=self))
 
     
     def __rfloordiv__(self, other):
-        # convert the operation to a right floor division
-        from .RightFloorDivision import RightFloorDivision
+        # {other} is not a node, so promote it
+        from .Literal import Literal
+        other = Literal(value=other)
+        # build a representation of floor-division 
+        from .FloorDivision import FloorDivision
         # and return it
-        return RightFloorDivision(op=self, value=other)
+        return FloorDivision(op1=other, op2=self)
     
 
     def __rmod__(self, other):
-        # convert the operation to a right remainder
-        from .RightModulus import RightModulus
+        # {other} is not a node, so promote it
+        from .Literal import Literal
+        other = Literal(value=other)
+        # build a modulus representation
+        from .Modulus import Modulus
         # and return it
-        return RightModulus(op=self, value=other)
+        return Modulus(op1=other, op2=self)
 
     
     def __rpow__(self, other):
-        # convert the operation to a right power
-        from .RightPower import RightPower
+        # {other} is not a node, so promote it
+        from .Literal import Literal
+        other = Literal(value=other)
+        # build a representation of exponentiation
+        from .Power import Power
         # and return it
-        return RightPower(op=self, value=other)
+        return Power(op1=other, op2=self)
     
 
 # end of file 

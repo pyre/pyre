@@ -15,11 +15,11 @@ Verify that we can traverse the expression tree correctly and completely
 def test():
 
     # access to the basic node
-    from pyre.algebraic.Node import Node
+    import pyre.algebraic
 
     # make a few to use as operands
-    n1 = Node()
-    n2 = Node()
+    n1 = pyre.algebraic.node()
+    n2 = pyre.algebraic.node()
 
     # check that they have no dependencies
     assert set(n1.pyre_dependencies) == {n1}

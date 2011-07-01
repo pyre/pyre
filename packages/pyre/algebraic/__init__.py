@@ -19,4 +19,8 @@ want to enable this behavior, and implement {eval} so the expression can be eval
 """
 
 
+from .Node import Node as node
+from .Literal import Literal as literal
+
+
 # end of file 

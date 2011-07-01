@@ -24,21 +24,13 @@ EXPORT_PYTHON_MODULES = \
     Binary.py \
     Expression.py \
     FloorDivision.py \
-    Increment.py \
     Inverse.py \
-    LeftModulus.py \
-    LeftFloorDivision.py \
-    LeftPower.py \
+    Literal.py \
     Modulus.py \
     Multiplication.py \
     Node.py \
     Opposite.py \
     Power.py \
-    PseudoUnary.py \
-    RightFloorDivision.py \
-    RightModulus.py \
-    RightPower.py \
-    Scaling.py \
     Unary.py \
     __init__.py
 
