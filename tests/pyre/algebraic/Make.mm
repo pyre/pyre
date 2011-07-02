@@ -25,5 +25,6 @@ algebra:
 
 logic:
 	${PYTHON} ./logic.py
+	${PYTHON} ./boolean.py
 
 # end of file 

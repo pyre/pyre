@@ -221,6 +221,31 @@ class Node:
         return Power(op1=other, op2=self)
 
 
+    # logical operations
+    def __and__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of the equality test
+        from .And import And
+        # and return it
+        return And(op1=self, op2=other)
+
+
+    def __or__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of the equality test
+        from .Or import Or
+        # and return it
+        return Or(op1=self, op2=other)
+
+
     # comparisons
     def __eq__(self, other):
         # if {other} is not a node
@@ -248,6 +273,7 @@ class Node:
         from .NotEqual import NotEqual
         # and return it
         return NotEqual(op1=self, op2=other)
+
 
     def __le__(self, other):
         # if {other} is not a node

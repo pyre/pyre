@@ -21,6 +21,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Absolute.py \
     Addition.py \
+    And.py \
     Binary.py \
     Equal.py \
     Expression.py \
@@ -36,6 +37,7 @@ EXPORT_PYTHON_MODULES = \
     Node.py \
     NotEqual.py \
     Opposite.py \
+    Or.py \
     Power.py \
     Unary.py \
     __init__.py
