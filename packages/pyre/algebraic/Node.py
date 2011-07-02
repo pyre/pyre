@@ -219,6 +219,82 @@ class Node:
         from .Power import Power
         # and return it
         return Power(op1=other, op2=self)
-    
+
+
+    # comparisons
+    def __eq__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of the equality test
+        from .Equal import Equal
+        # and return it
+        return Equal(op1=self, op2=other)
+
+    # and of course, now that we have overridden __eq__, we must specify this so that {Node}s
+    # can be keys of dictionaries and members of sets...
+    __hash__ = object.__hash__
+
+
+    def __ne__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of the equality test
+        from .NotEqual import NotEqual
+        # and return it
+        return NotEqual(op1=self, op2=other)
+
+    def __le__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of the equality test
+        from .LessEqual import LessEqual
+        # and return it
+        return LessEqual(op1=self, op2=other)
+        
+
+    def __ge__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of the equality test
+        from .GreaterEqual import GreaterEqual
+        # and return it
+        return GreaterEqual(op1=self, op2=other)
+        
+
+    def __lt__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of the equality test
+        from .Less import Less
+        # and return it
+        return Less(op1=self, op2=other)
+        
+
+    def __gt__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Node):
+            # promote it
+            from .Literal import Literal
+            other = Literal(value=other)
+        # build a representation of the equality test
+        from .Greater import Greater
+        # and return it
+        return Greater(op1=self, op2=other)
+        
 
 # end of file 

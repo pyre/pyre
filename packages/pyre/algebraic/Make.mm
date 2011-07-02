@@ -22,13 +22,19 @@ EXPORT_PYTHON_MODULES = \
     Absolute.py \
     Addition.py \
     Binary.py \
+    Equal.py \
     Expression.py \
     FloorDivision.py \
+    Greater.py \
+    GreaterEqual.py \
     Inverse.py \
+    Less.py \
+    LessEqual.py \
     Literal.py \
     Modulus.py \
     Multiplication.py \
     Node.py \
+    NotEqual.py \
     Opposite.py \
     Power.py \
     Unary.py \

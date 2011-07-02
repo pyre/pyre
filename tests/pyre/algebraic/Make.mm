@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity algebra
+test: sanity algebra logic
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -22,5 +22,8 @@ algebra:
 	${PYTHON} ./algebra.py
 	${PYTHON} ./dependencies.py
 	${PYTHON} ./patch.py
+
+logic:
+	${PYTHON} ./logic.py
 
 # end of file 
