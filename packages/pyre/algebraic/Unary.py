@@ -47,6 +47,16 @@ class Unary(Expression):
         return
 
 
+    def pyre_eval(self, **kwds):
+        """
+        Evaluate my operand and then apply the operation i represent
+        """
+        # compute the value of my operand
+        op = self.op.pyre_eval(**kwds)
+        # and compute
+        return self.pyre_apply(op)
+
+
     # meta methods
     def __init__(self, op, **kwds):
         super().__init__(**kwds)

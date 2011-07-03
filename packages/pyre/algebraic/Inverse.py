@@ -16,10 +16,8 @@ class Inverse(Unary):
 
 
     # interface
-    def pyre_eval(self, **kwds):
-        # compute the value of my operand
-        op = self.op.pyre_eval(**kwds)
-        # and return its inverse
+    def pyre_apply(self, op):
+        # return its inverse
         return 1/op
 
 

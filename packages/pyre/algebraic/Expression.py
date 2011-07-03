@@ -28,4 +28,14 @@ class Expression(Node):
             "class {.__class__.__name__!r} must implement 'pyre_patch'".format(self))
 
 
+    # subclasses must define a representation of their symbol
+    @property
+    def symbol(self):
+        """
+        A textual representation of my operator
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'symbol'".format(self))
+
+
 # end of file 
