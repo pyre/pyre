@@ -11,6 +11,8 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working: expressions
+
 all: test clean
 
 test: sanity weaver documents
@@ -36,5 +38,11 @@ documents:
 	${PYTHON} ./document_sql.py
 	${PYTHON} ./document_tex.py
 	${PYTHON} ./document_xml.py
+
+expressions:
+	${PYTHON} ./expressions_c.py
+	${PYTHON} ./expressions_cxx.py
+	${PYTHON} ./expressions_python.py
+	${PYTHON} ./expressions_sql.py
 
 # end of file 

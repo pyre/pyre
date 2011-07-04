@@ -25,6 +25,7 @@ EXPORT_PYTHON_MODULES = \
     C.py \
     CSh.py \
     Cxx.py \
+    Expression.py \
     F77.py \
     F90.py \
     HTML.py \
@@ -43,6 +44,7 @@ EXPORT_PYTHON_MODULES = \
     TeX.py \
     Weaver.py \
     XML.py \
+    algebraic.py \
     __init__.py
 
 

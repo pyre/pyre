@@ -8,12 +8,13 @@
 
 # access to the pyre package
 import pyre
-# my ancestor
+# my ancestors
 from .LineMill import LineMill
+from .Expression import Expression
 
 
 # my declaration
-class Python(LineMill):
+class Python(LineMill, Expression):
     """
     Support for python
     """

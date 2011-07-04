@@ -8,12 +8,13 @@
 
 # access to the pyre package
 import pyre
-# my ancestor
+# my ancestors
 from .BlockMill import BlockMill
+from .Expression import Expression
 
 
 # my declaration
-class C(BlockMill):
+class C(BlockMill, Expression):
     """
     Support for C
     """
@@ -27,7 +28,27 @@ class C(BlockMill):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(startBlock='/*', commentMarker=' *', endBlock='*/', **kwds)
+
+        # adjust the symbol table
+        self._symbols[self.algebraic.And] = "&&"
+        self._symbols[self.algebraic.Or] = "||"
+
+        # and the rendering strategy table
+        self._renderers[self.algebraic.Power] = self._powerRenderer
+
         return
+
+
+    # implementation details
+    def _powerRenderer(self, node):
+        """
+        Render {node.op1} raised to the {node.op2} power
+        """
+        # render my operands
+        op1 = self._renderers[node.op1.__class__](node.op1)
+        op2 = self._renderers[node.op2.__class__](node.op2)
+        # and return my string
+        return "pow({},{})".format(op1, op2)
 
 
 # end of file 

@@ -8,12 +8,13 @@
 
 # access to the pyre package
 import pyre
-# my ancestor
+# my ancestors
 from .LineMill import LineMill
+from .Expression import Expression
 
 
 # my declaration
-class SQL(LineMill):
+class SQL(LineMill, Expression):
     """
     Support for SQL
     """
@@ -27,7 +28,25 @@ class SQL(LineMill):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(comment='--', **kwds)
+
+        # adjust the symbol table
+        self._symbols[self.algebraic.And] = "AND"
+        self._symbols[self.algebraic.Equal] = "="
+        self._symbols[self.algebraic.NotEqual] = "<>"
+        self._symbols[self.algebraic.Or] = "OR"
+        self._symbols[self.algebraic.Power] = "^"
+
         return
 
+
+    def _absoluteRenderer(self, node):
+        """
+        Render the absolute value of {node}
+        """
+        # render my operand
+        op = self._renderers[node.op.__class__](node.op)
+        # and return my string
+        return "@({})".format(op)
+        
 
 # end of file 
