@@ -29,7 +29,6 @@ EXPORT_PYTHON_MODULES = \
     FloorDivision.py \
     Greater.py \
     GreaterEqual.py \
-    Inverse.py \
     Less.py \
     LessEqual.py \
     Literal.py \
