@@ -23,6 +23,7 @@ EXPORT_PYTHON_MODULES = \
     Addition.py \
     And.py \
     Binary.py \
+    Division.py \
     Equal.py \
     Expression.py \
     FloorDivision.py \
@@ -39,6 +40,7 @@ EXPORT_PYTHON_MODULES = \
     Opposite.py \
     Or.py \
     Power.py \
+    Subtraction.py \
     Unary.py \
     __init__.py
 

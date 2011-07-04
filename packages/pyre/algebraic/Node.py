@@ -76,11 +76,10 @@ class Node:
             # promote it
             from .Literal import Literal
             other = Literal(value=other)
-        # build a representation of subtraction out of {Addition} and {Opposite}
-        from .Addition import Addition
-        from .Opposite import Opposite
+        # build a subtraction representation
+        from .Subtraction import Subtraction
         # and return it
-        return Addition(op1=self, op2=Opposite(op=other))
+        return Subtraction(op1=self, op2=other)
 
     
     def __mul__(self, other):
@@ -101,11 +100,10 @@ class Node:
             # promote it
             from .Literal import Literal
             other = Literal(value=other)
-        # build a representation of division out of {Multiplication} and {Inverse}
-        from .Inverse import Inverse
-        from .Multiplication import Multiplication
+        # build a representation of division
+        from .Division import Division
         # and return it
-        return Multiplication(op1=self, op2=Inverse(op=other))
+        return Division(op1=self, op2=other)
 
     
     def __floordiv__(self, other):
@@ -173,11 +171,10 @@ class Node:
         # {other} is not a node, so promote it
         from .Literal import Literal
         other = Literal(value=other)
-        # build an addition representation
-        from .Addition import Addition
-        from .Opposite import Opposite
+        # build a subtraction representation
+        from .Subtraction import Subtraction
         # and return it
-        return Addition(op1=other, op2=Opposite(op=self))
+        return Subtraction(op1=other, op2=self)
 
     
     def __rmul__(self, other):
@@ -194,11 +191,10 @@ class Node:
         # {other} is not a node, so promote it
         from .Literal import Literal
         other = Literal(value=other)
-        # build a representation of division out of {Multiplication} and {Inverse}
-        from .Inverse import Inverse
-        from .Multiplication import Multiplication
+        # build a representation of division
+        from .Division import Division
         # and return it
-        return Multiplication(op1=other, op2=Inverse(op=self))
+        return Division(op1=other, op2=self)
 
     
     def __rfloordiv__(self, other):
