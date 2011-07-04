@@ -41,4 +41,8 @@ class Literal(Node):
         return
 
 
+    def __str__(self):
+        return "{.value!r}".format(self)
+
+
 # end of file 
