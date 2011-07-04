@@ -11,11 +11,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working: expressions
-
 all: test clean
 
-test: sanity weaver documents
+test: sanity weaver documents expressions
 
 sanity:
 	${PYTHON} ./sanity.py
