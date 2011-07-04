@@ -28,6 +28,14 @@ class Expression(Node):
             "class {.__class__.__name__!r} must implement 'pyre_patch'".format(self))
 
 
+    def pyre_dfs(self, **kwds):
+        """
+        Traverse an expression graph in depth-first order
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'pyre_dfs'".format(self))
+
+
     # subclasses must define a representation of their symbol
     @property
     def symbol(self):

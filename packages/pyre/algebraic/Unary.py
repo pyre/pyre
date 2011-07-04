@@ -15,11 +15,11 @@ class Unary(Expression):
     """
 
 
-    # traversal of the nodes in my expression tree
+    # traversal of the nodes in my expression graph
     @property
     def pyre_dependencies(self):
         """
-        Traverse my expression tree looking for leaf nodes
+        Traverse my expression graph looking for leaf nodes
         """
         # traverse my expression
         for node in self.op.pyre_dependencies:
@@ -55,6 +55,20 @@ class Unary(Expression):
         op = self.op.pyre_eval(**kwds)
         # and compute
         return self.pyre_apply(op)
+
+
+    def pyre_dfs(self, **kwds):
+        """
+        Traverse an expression graph in depth-first order
+        """
+        # traverse my operand
+        for node in self.op.pyre_dfs(**kwds):
+            # return whatever it discovered
+            yield node
+        # now return myself
+        yield self
+        # and no more
+        return
 
 
     # meta methods

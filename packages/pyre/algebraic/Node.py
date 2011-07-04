@@ -19,11 +19,11 @@ class Node:
     """
 
 
-    # traversal of the nodes in my expression tree
+    # traversal of the nodes in my expression graph
     @property
     def pyre_dependencies(self):
         """
-        Traverse my expression tree looking for leaf nodes
+        Traverse my expression graph looking for leaf nodes
         """
         # just return myself
         yield self
@@ -34,15 +34,25 @@ class Node:
     # interface
     def pyre_eval(self, **kwds):
         """
-        Compute the value of my expression tree
+        Compute the value of my expression graph
         """
         raise NotImplementedError(
             "class {.__class__.__name__!r} must implement 'pyre_eval'".format(self))
 
 
+    def pyre_dfs(self, **kwds):
+        """
+        Traverse an expression graph in depth-first order
+        """
+        # by default, node instances yield themselves
+        yield self
+        # and no more
+        return
+
+
     def pyre_patch(self, *args, **kwds):
         """
-        Sentinel method for node patching in expression trees
+        Sentinel method for node patching in expression graphs
         """
         return
 

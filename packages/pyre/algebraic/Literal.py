@@ -15,11 +15,11 @@ class Literal(Node):
     """
 
 
-    # traversal of the nodes in my expression tree
+    # traversal of the nodes in my expression graph
     @property
     def pyre_dependencies(self):
         """
-        Traverse my expression tree looking for leaf nodes
+        Traverse my expression graph looking for leaf nodes
         """
         # literals don't count as true dependencies
         return []

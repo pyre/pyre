@@ -10,7 +10,7 @@
 This package provides the machinery for implementing deferred evaluation in python.
 
 The strategy is to capture arithmetic operations among a collection of instances as an
-expression tree built out of the operators in this package. Actual evaluation takes place when
+expression graph built out of the operators in this package. Actual evaluation takes place when
 the {pyre_eval} method is called.
 
 The classes in this package provide a complete set of overloaded special methods for all the

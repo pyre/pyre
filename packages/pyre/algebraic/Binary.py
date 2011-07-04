@@ -15,11 +15,11 @@ class Binary(Expression):
     """
 
 
-    # traversal of the nodes in my expression tree
+    # traversal of the nodes in my expression graph
     @property
     def pyre_dependencies(self):
         """
-        Traverse my expression tree looking for leaf nodes
+        Traverse my expression graph looking for leaf nodes
         """
         # visit my left operand
         for node in self.op1.pyre_dependencies:
@@ -70,6 +70,24 @@ class Binary(Expression):
         op2 = self.op2.pyre_eval(**kwds)
         # and put them together
         return self.pyre_apply(op1, op2)
+
+
+    def pyre_dfs(self, **kwds):
+        """
+        Traverse an expression graph in depth-first order
+        """
+        # traverse my left operand
+        for node in self.op1.pyre_dfs(**kwds):
+            # return whatever it discovered
+            yield node
+        # repeat for my right operand
+        for node in self.op2.pyre_dfs(**kwds):
+            # and return whatever it discovered
+            yield node
+        # now return myself
+        yield self
+        # and no more
+        return
 
 
     # meta methods
