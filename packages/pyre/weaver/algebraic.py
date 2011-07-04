@@ -12,7 +12,6 @@ from ..algebraic.Literal import Literal
 
 # unary operators
 from ..algebraic.Absolute import Absolute
-from ..algebraic.Inverse import Inverse
 from ..algebraic.Opposite import Opposite
 
 # binary operators
