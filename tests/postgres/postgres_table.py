@@ -54,11 +54,11 @@ def test():
     # in a transaction block
     with db:
         # create the table
-        Weather.create(db)
+        Weather.pyre_create(db)
         # verify it is there
         assert db.execute(sql) == (('tablename',), ('weather',))
         # drop the table    
-        Weather.drop(db)
+        Weather.pyre_drop(db)
         # verify it is not there
         assert db.execute(sql) == (('tablename',),)
 

@@ -29,7 +29,7 @@ class Table(metaclass=Schemer):
 
     # interface
     @classmethod
-    def create(cls, datastore):
+    def pyre_create(cls, datastore):
         """
         Convert the table specification into the appropriate SQL statements and execute them to
         create this table
@@ -43,7 +43,7 @@ class Table(metaclass=Schemer):
 
 
     @classmethod
-    def drop(cls, datastore):
+    def pyre_drop(cls, datastore):
         """
         Convert the table specification into the appropriate SQL statements and execute them to
         remove this table from the datastore
