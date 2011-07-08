@@ -28,6 +28,52 @@ class Table(metaclass=Schemer):
 
 
     # interface
+    # declaration decorators
+    @classmethod
+    def pyre_primaryKey(cls, reference):
+        """
+        Add {reference} to the tuple of columns that must be marked as primary keys
+        """
+        # add it to the pile
+        cls._pyre_primaryKeys.add(reference.column)
+        # and return
+        return cls
+
+
+    @classmethod
+    def pyre_unique(cls, reference):
+        """
+        Add {reference} to the tuple of columns that must be marked as unique
+        """
+        # add it to the pile
+        cls._pyre_uniqueColumns.add(reference.column)
+        # and return
+        return cls
+
+
+    @classmethod
+    def pyre_foreignKey(cls, column, foreign):
+        """
+        Mark {column} as a reference to {foreign}
+        """
+        # add an entry to the foreign key list
+        cls._pyre_foreignKeys.append( (column, foreign) )
+        # and return
+        return cls
+
+
+    @classmethod
+    def pyre_check(cls, expression):
+        """
+        Add {expression} to the list of my nameless constraints
+        """
+        # add {expression} to my pile of constraints
+        cls._pyre_constraints.append(expression)
+        # and return
+        return cls
+
+
+    # interface used by the weavers and db back-ends
     @classmethod
     def pyre_create(cls, datastore):
         """
@@ -54,6 +100,15 @@ class Table(metaclass=Schemer):
         sql = weaver.dropTable(cls)
         # and get them executed
         return datastore.execute(sql)
+
+
+    # private data
+    # these are sensitive to inheritance among tables may not work as expected (or at all...)
+    # for the time being
+    _pyre_primaryKeys = set() # the list of my primary key specifications
+    _pyre_uniqueColumns = set() # the list of my unique columns
+    _pyre_foreignKeys = [] # the list of my foreign key specifications
+    _pyre_constraints = [] # the list of my nameless constraints
 
 
 # end of file 

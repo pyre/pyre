@@ -17,7 +17,11 @@ class SQL(Mill):
     Generate SQL statements
     """
 
+    # types
+    from .ColumnReference import ColumnReference # i get to render these as part of expressions
 
+
+    # interface
     def transaction(self):
         """
         Generate the SQL statement that initiates a transaction block
@@ -62,6 +66,11 @@ class SQL(Mill):
             error.log("table {!r} has no column information".format(table.pyre_name))
             return
 
+        # does this table declaration have annotations past the column declarations?
+        annotations = len(tuple(filter(None, [
+            len(table._pyre_primaryKeys), len(table._pyre_foreignKeys),
+            len(table._pyre_uniqueColumns), len(table._pyre_constraints) ])))
+
         # the header
         yield self.place("CREATE TABLE " + table.pyre_name)
         # convert the table docstring into a comment block
@@ -82,9 +91,58 @@ class SQL(Mill):
             for line in self._columnDeclaration(column, comma=True):
                 yield self.leader + line
 
-        # and the last one, which does  not need the ',' separator
-        for line in self._columnDeclaration(table.pyre_columns[-1], comma=False):
+        # and the last one, which may not need the ',' separator
+        for line in self._columnDeclaration(table.pyre_columns[-1], comma=annotations):
             yield self.leader + line
+
+        # if there are any table annotations
+        if annotations:
+            # separate the annotations with a blank line
+            yield ""
+            # the primary keys
+            if len(table._pyre_primaryKeys):
+                annotations -= 1
+                yield self.leader + "PRIMARY KEY ({}){}".format(
+                    ','.join(column.name for column in table._pyre_primaryKeys),
+                    ',' if annotations else ''
+                    )
+            # the unique constraints
+            if len(table._pyre_uniqueColumns):
+                annotations -= 1
+                yield self.leader + "UNIQUE ({}){}".format(
+                    ','.join(column.name for column in table._pyre_uniqueColumns),
+                    ',' if annotations else ''
+                    )
+            # the foreign keys
+            fkeys = len(table._pyre_foreignKeys)
+            if fkeys:
+                # update the annotation count
+                annotations -= 1
+                # go through each foreign key declaration
+                for local, foreign in table._pyre_foreignKeys:
+                    # update the key count
+                    fkeys -= 1
+                    # build the declaration
+                    yield self.leader + "FOREIGN KEY ({}) REFERENCES {} ({}){}".format(
+                        local.column.name, foreign.table.pyre_name, foreign.column.name,
+                        ',' if fkeys or annotations else ''
+                        )
+
+            # the constraints
+            constraints = len(table._pyre_constraints)
+            if constraints:
+                # update the annotation count
+                annotations -= 1
+                # go through each constraint
+                for constraint in table._pyre_constraints:
+                    # update the constraint count
+                    constraints -= 1
+                    # build the declaration
+                    yield self.leader + "CHECK ({}){}".format(
+                        self.expression(root=constraint, table=table),
+                        ',' if constraints or annotations else ''
+                        )
+
         # push out
         self.outdent()
 
@@ -105,7 +163,30 @@ class SQL(Mill):
         return
 
 
+    # meta methods
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+
+        # adjust the rendering strategy table
+        self._renderers[self.ColumnReference] = self._columnReference
+
+        # and return
+        return
+
+
     # implementation details
+    def _columnReference(self, node, table, **kwds):
+        """
+        Render {node} as reference to a column
+        """
+        # if the reference is to a column in {table}
+        if node.table == table:
+            # skip the table name
+            return node.column.name
+        # otherwise, build a fully qualified reference
+        return "{0.table.pyre_name}.{0.column.name}".format(node)
+
+
     def _columnDeclaration(self, column, comma):
         """
         Build the declaration lines for a given table column
