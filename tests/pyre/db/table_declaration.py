@@ -49,9 +49,11 @@ def test():
     # no inheritance here, so these should match
     assert Weather.pyre_localColumns == Weather.pyre_columns
 
-    # make sure all the column descriptors know Weather as their table
+    # make sure all the column descriptors report Weather as their table
     for column in Weather.pyre_columns:
-        assert column.table == Weather
+        ref = getattr(Weather, column.name)
+        assert ref.table == Weather
+        assert ref.column == column
 
     # all done
     return Weather
