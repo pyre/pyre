@@ -7,11 +7,15 @@
 
 
 from .. import schema
+from .. import algebraic
 
 
-class Column(schema.descriptor):
+class Column(schema.descriptor, algebraic.node):
     """
     The base class for database table descriptors
+
+    This class is endowed with the full algebra from {pyre.algebraic} so that column
+    descriptors can be used in expressions to specify constraints or columns in views
     """
 
 
@@ -38,6 +42,8 @@ class Column(schema.descriptor):
         """
         # mark 
         self._primary = True
+        # primary keys do not get default values
+        self.default = None
         # leave a clue for the weaver
         self._decorated = True
         # and return
@@ -58,7 +64,7 @@ class Column(schema.descriptor):
 
     def notNull(self):
         """
-        Mark a column not accepting a NULL value
+        Mark a column as not accepting a NULL value
         """
         # mark 
         self._notNull = True
@@ -84,7 +90,6 @@ class Column(schema.descriptor):
         """
         Attach a constraint
         """
-
 
 
     # implementation details

@@ -51,7 +51,7 @@ def test():
         "    -- Exercise the type declarations",
         "    --",
         "(",
-        "    city TEXT DEFAULT '' -- a string of arbitrary length",
+        "    city TEXT -- a string of arbitrary length",
         "        PRIMARY KEY",
         "        ,",
         "    state VARCHAR(2) DEFAULT '' -- a string with maximum length 2",
