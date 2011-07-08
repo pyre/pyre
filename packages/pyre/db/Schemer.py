@@ -32,8 +32,6 @@ class Schemer(AttributeClassifier):
         # harvest the locally declared columns
         local = []
         for columnName, column in cls.pyre_harvest(attributes, cls.Column):
-            # attach the table to the column
-            column.table = table
             # set the name of the column
             column.name = columnName
             # add it to the pile
@@ -41,17 +39,45 @@ class Schemer(AttributeClassifier):
         # store the harvested columns
         table.pyre_localColumns = tuple(local)
 
-        # now that the class record is built, we can hunt down inherited columns
+        # now that the class record is built, we can hunt down inherited attributes
         inherited = []
+        primary = set()
+        unique = set()
+        foreign = []
+        constraints = []
+        knownColumns = set()
         # traverse the mro
-        for base in reversed(table.__mro__[1:]):
+        for base in table.__mro__:
             # restrict the search to {Table} subclasses
-            if isinstance(base, cls):
-                # add the columns from this ancestor to the pile
-                inherited.extend(base.pyre_localColumns)
+            if not isinstance(base, cls): continue
+            # iterate over the columns declared locally in this ancestor
+            for column in base.pyre_localColumns:
+                # if this column is shadowed by another with the same name, skip it
+                if column in knownColumns: continue
+                # it's not shadowed; add it to the pile
+                inherited.append(column)
+                knownColumns.add(column)
+                # if this column is a primary key for its table
+                if column in base._pyre_primaryKeys:
+                    # then it is a primary key for mine too
+                    primary.add(column)
+                # if this column is unique over its table
+                if column in base._pyre_uniqueColumns:
+                    # then it is unique for mine too
+                    unique.add(column)
+                # NYI: foreign keys
+                # NYI: constraints
 
         # build the tuple of all my columns
-        table.pyre_columns = tuple(inherited + local)
+        table.pyre_columns = tuple(inherited)
+        # save my primary keys
+        table._pyre_primaryKeys = primary
+        # save my unique columns
+        table._pyre_uniqueColumns = unique
+        # save my foreign key specs
+        table._pyre_foreignKeys = foreign
+        # save my constraints
+        table._pyre_constraints = constraints
 
         # and return the table record
         return table

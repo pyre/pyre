@@ -43,8 +43,9 @@ def test():
 
     # make sure all the column descriptors know Measurement as their table
     for column in Measurement.pyre_columns:
-        assert column.table == Measurement
-
+        ref = getattr(Measurement, column.name)
+        assert ref.table == Measurement
+        assert ref.column == column
 
     # now the table with the location info
     class Location(pyre.db.table, id="location"):
@@ -68,15 +69,15 @@ def test():
 
     # make sure all the column descriptors know Location as their table
     for column in Location.pyre_columns:
-        assert column.table == Location
-
+        ref = getattr(Location, column.name)
+        assert ref.table == Location
+        assert ref.column == column
 
     # now put it all together
     class Weather(Location, Measurement, id="weather"):
 
         date = pyre.db.date()
         date.doc = "the date of the measurement"
-
 
     # check the name
     assert Weather.pyre_name == "weather"
@@ -86,9 +87,9 @@ def test():
     # print(tuple(column.name for column in Weather.pyre_columns))
     assert Weather.pyre_columns == tuple(
         value.column for value in (
-            Weather.low, Weather.high, Weather.precipitation,
+            Weather.date,
             Weather.city, Weather.state,
-            Weather.date ))
+            Weather.low, Weather.high, Weather.precipitation))
 
     # all done
     return Measurement, Location, Weather
