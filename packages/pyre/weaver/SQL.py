@@ -39,12 +39,12 @@ class SQL(LineMill, Expression):
         return
 
 
-    def _absoluteRenderer(self, node):
+    def _absoluteRenderer(self, node, **kwds):
         """
         Render the absolute value of {node}
         """
         # render my operand
-        op = self._renderers[node.op.__class__](node.op)
+        op = self._renderers[node.op.__class__](node=node.op, **kwds)
         # and return my string
         return "@({})".format(op)
         

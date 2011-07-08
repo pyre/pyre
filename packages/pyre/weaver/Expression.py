@@ -23,7 +23,7 @@ class Expression:
         Build a representation of {node}, assumed to be an instance of a {pyre.algebraic.Node}
         subclass
         """
-        return self._renderers[root.__class__](root)
+        return self._renderers[root.__class__](root, **kwds)
 
 
     # meta methods
@@ -104,47 +104,47 @@ class Expression:
 
 
     # the actual rendering strategies
-    def _absoluteRenderer(self, node):
+    def _absoluteRenderer(self, node, **kwds):
         """
         Render the absolute value of {node}
         """
         # render my operand
-        op = self._renderers[node.op.__class__](node.op)
+        op = self._renderers[node.op.__class__](node=node.op)
         # and return my string
         return "abs({})".format(op)
         
 
-    def _inverseRenderer(self, node):
+    def _inverseRenderer(self, node, **kwds):
         """
         Render the inverse of {node}
         """
         # render my operand
-        op = self._renderers[node.op.__class__](node.op)
+        op = self._renderers[node.op.__class__](node=node.op)
         # and return my string
         return "(1/{})".format(op)
         
 
-    def _oppositeRenderer(self, node):
+    def _oppositeRenderer(self, node, **kwds):
         """
         Render the opposite of {node}
         """
         # render my operand
-        op = self._renderers[node.op.__class__](node.op)
+        op = self._renderers[node.op.__class__](node=node.op)
         # and return my string
         return "(-{})".format(op)
         
 
-    def _absoluteRenderer(self, node):
+    def _absoluteRenderer(self, node, **kwds):
         """
         Render the absolute value of {node}
         """
         # render my operand
-        op = self._renderers[node.op.__class__](node.op)
+        op = self._renderers[node.op.__class__](node=node.op)
         # and return my string
         return "abs({})".format(op)
         
 
-    def _literalRenderer(self, node):
+    def _literalRenderer(self, node, **kwds):
         """
         Render {node} as a literal
         """
@@ -152,19 +152,18 @@ class Expression:
         return str(node)
 
 
-    def _binaryOperatorRenderer(self, node):
+    def _binaryOperatorRenderer(self, node, **kwds):
         """
         Render {node} assuming it is a binary operator
         """
         # render the left operand
-        op1 = self._renderers[node.op1.__class__](node.op1)
+        op1 = self._renderers[node.op1.__class__](node=node.op1, **kwds)
         # render the right operand
-        op2 = self._renderers[node.op2.__class__](node.op2)
+        op2 = self._renderers[node.op2.__class__](node=node.op2, **kwds)
         # look up the operator symbol
         symbol = self._symbols[node.__class__]
         # put it all together
         return "({} {} {})".format(op1, symbol, op2)
-
 
 
 # end of file 
