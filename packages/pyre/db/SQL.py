@@ -17,9 +17,6 @@ class SQL(Mill):
     Generate SQL statements
     """
 
-    # types
-    from .ColumnReference import ColumnReference # i get to render these as part of expressions
-
 
     # interface
     def transaction(self):
@@ -71,29 +68,33 @@ class SQL(Mill):
             len(table._pyre_primaryKeys), len(table._pyre_foreignKeys),
             len(table._pyre_uniqueColumns), len(table._pyre_constraints) ])))
 
-        # the header
-        yield self.place("CREATE TABLE " + table.pyre_name)
-        # convert the table docstring into a comment block
+        # if there is a docstring
         if table.__doc__:
+            # place the header
+            yield self.place("CREATE TABLE " + table.pyre_name)
+            # convert the docstring into a comment block
             self.indent()
             for line in self.commentBlock(line.strip() for line in table.__doc__.splitlines()):
                 yield line
             self.outdent()
-
-        # start the declaration body
-        yield self.leader + "("
+            # start the declaration body
+            yield self.place("(")
+        # otherwise
+        else:
+            # put it all on one line
+            yield self.place("CREATE TABLE " + table.pyre_name + " (")
 
         # the column declarations
         self.indent()
+        # how many?
+        nColumns = len(table.pyre_columns)
         # iterate over the columns except the last one
-        for column in table.pyre_columns[:-1]:
+        for index, column in enumerate(table.pyre_columns):
+            # do we need a comma
+            comma = (annotations > 0) or (index+1 < nColumns)
             # some declarations span multiple lines
-            for line in self._columnDeclaration(column, comma=True):
-                yield self.leader + line
-
-        # and the last one, which may not need the ',' separator
-        for line in self._columnDeclaration(table.pyre_columns[-1], comma=annotations):
-            yield self.leader + line
+            for line in self._columnDeclaration(column, comma):
+                yield self.place(line)
 
         # if there are any table annotations
         if annotations:
@@ -102,17 +103,17 @@ class SQL(Mill):
             # the primary keys
             if len(table._pyre_primaryKeys):
                 annotations -= 1
-                yield self.leader + "PRIMARY KEY ({}){}".format(
+                yield self.place("PRIMARY KEY ({}){}".format(
                     ','.join(column.name for column in table._pyre_primaryKeys),
                     ',' if annotations else ''
-                    )
+                    ))
             # the unique constraints
             if len(table._pyre_uniqueColumns):
                 annotations -= 1
-                yield self.leader + "UNIQUE ({}){}".format(
+                yield self.place("UNIQUE ({}){}".format(
                     ','.join(column.name for column in table._pyre_uniqueColumns),
                     ',' if annotations else ''
-                    )
+                    ))
             # the foreign keys
             fkeys = len(table._pyre_foreignKeys)
             if fkeys:
@@ -123,10 +124,10 @@ class SQL(Mill):
                     # update the key count
                     fkeys -= 1
                     # build the declaration
-                    yield self.leader + "FOREIGN KEY ({}) REFERENCES {} ({}){}".format(
+                    yield self.place("FOREIGN KEY ({}) REFERENCES {} ({}){}".format(
                         local.column.name, foreign.table.pyre_name, foreign.column.name,
                         ',' if fkeys or annotations else ''
-                        )
+                        ))
 
             # the constraints
             constraints = len(table._pyre_constraints)
@@ -138,16 +139,16 @@ class SQL(Mill):
                     # update the constraint count
                     constraints -= 1
                     # build the declaration
-                    yield self.leader + "CHECK ({}){}".format(
+                    yield self.place("CHECK ({}){}".format(
                         self.expression(root=constraint, table=table),
                         ',' if constraints or annotations else ''
-                        )
+                        ))
 
         # push out
         self.outdent()
 
         # the table declaration terminator
-        yield self.leader + ");"
+        yield self.place(");")
 
         # all done
         return
@@ -167,8 +168,10 @@ class SQL(Mill):
     def __init__(self, **kwds):
         super().__init__(**kwds)
 
+        # i get to render these as part of expressions
+        from .ColumnReference import ColumnReference 
         # adjust the rendering strategy table
-        self._renderers[self.ColumnReference] = self._columnReference
+        self._renderers[ColumnReference] = self._columnReference
 
         # and return
         return
@@ -191,49 +194,67 @@ class SQL(Mill):
         """
         Build the declaration lines for a given table column
         """
-        # initialize the declaration
-        declarator = [ column.name, column.decl(), column.decldefault() ]
-        # terminate one liners
-        if comma and not column._decorated:
-            declarator.append(',')
-        # add the docstring as a comment
-        if column.doc:
-            declarator += [self.comment, column.doc ]
-        # render the name and type of the column
-        yield " ".join(filter(None, declarator))
+        # the column name
+        name = column.name
+        # the column type
+        typedecl = column.decl()
+        # default value if any
+        default = column.decldefault()
+        # compute the annotations
+        annotations = []
+        # a primary key
+        if column._primary: annotations.append("PRIMARY KEY")
+        # not null
+        if column._notNull: annotations.append("NOT NULL")
+        # unique
+        if column._unique: annotations.append("UNIQUE")
+        # assemble them
+        annotations = " ".join(annotations)
 
+        # is this a single line declaration
+        oneLiner = not (annotations or column._foreign)
+        # a column is "decorated" if it has annotations or is a foreign key declaration
+        separator = ',' if (comma and oneLiner) else ''
+        # is there a comment
+        if column.doc:
+            comment = ' ' + self.comment + ' ' + column.doc
+        else:
+            comment = ''
+
+        # build the declaration line
+        yield "{} {}{}{}{}".format(name, typedecl, default, separator, comment)
         # indent
         self.indent()
 
-        # a primary key
-        if column._primary: yield "PRIMARY KEY"
-        # not null
-        if column._notNull: yield "NOT NULL"
-        # unique
-        if column._unique: yield "UNIQUE"
+        # annotations
+        if annotations:
+            # comma?
+            separator = ',' if (comma and not column._foreign) else ''
+            yield annotations + separator
         # foreign keys
         if column._foreign:
-            for line in self._referenceDeclaration(column._foreign):
+            for line in self._referenceDeclaration(column._foreign, comma):
                 yield line
-        # render a column separator, if necessary 
-        if comma and column._decorated:
-            yield ','
 
         # all done
         self.outdent()
         return
 
 
-    def _referenceDeclaration(self, foreign):
+    def _referenceDeclaration(self, foreign, comma):
         """
         Build a declaration for a foreign key
         """
         table = foreign.reference.table
         column = foreign.reference.column
+
+        # comma?
+        separator = ',' if comma and not (foreign.update or foreign.delete) else ''
+        # build the reference line
         if column is None:
-            yield "REFERENCES {.pyre_name}".format(table)
+            yield "REFERENCES {.pyre_name}{}{}".format(table, separator)
         else:
-            yield "REFERENCES {.pyre_name} ({.name})".format(table, column)
+            yield "REFERENCES {.pyre_name} ({.name}){}".format(table, column, separator)
 
         # if there is nothing further to do
         if foreign.update is None and foreign.delete is None:
@@ -245,13 +266,17 @@ class SQL(Mill):
 
         # if there is a registered update action
         if foreign.update:
+            # comma?
+            separator = ',' if (comma and not foreign.delete) else ''
             # record it
-            yield "ON UPDATE {}".format(foreign.update)
+            yield "ON UPDATE {}{}".format(foreign.update, separator)
             
         # if there is a registered delete action
         if foreign.delete:
+            # comma?
+            separator = ',' if comma else ''
             # record it
-            yield "ON DELETE {}".format(foreign.delete)
+            yield "ON DELETE {}{}".format(foreign.delete, separator)
             
         # all done
         self.outdent()

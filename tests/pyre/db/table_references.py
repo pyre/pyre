@@ -53,11 +53,10 @@ def test():
         "    --",
         "(",
         "    city INTEGER",
-        "        REFERENCES cities (id)",
-        "        ,",
-        "    date DATE ,",
-        "    low INTEGER DEFAULT 0 ,",
-        "    high INTEGER DEFAULT 0 ,",
+        "        REFERENCES cities (id),",
+        "    date DATE,",
+        "    low INTEGER DEFAULT 0,",
+        "    high INTEGER DEFAULT 0,",
         "    precipitation DOUBLE PRECISION DEFAULT 0.0",
         ");"
         )

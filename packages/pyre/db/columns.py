@@ -28,7 +28,7 @@ class Boolean(Column):
 
     def decldefault(self):
         if self.default is not None:
-            return "DEFAULT {}".format('true' if self.default else 'false')
+            return " DEFAULT {}".format('true' if self.default else 'false')
         return ""
 
     
@@ -117,7 +117,7 @@ class String(Column):
         Invoked by the SQL mill to create the default value part of the declaration
         """
         if self.default is not None:
-            return "DEFAULT '{}'".format(self.default)
+            return " DEFAULT '{}'".format(self.default)
         return ""
 
     def __init__(self, maxlen=None, default='', **kwds):

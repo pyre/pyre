@@ -46,7 +46,6 @@ def test():
     # mark {cid} as a foreign key
     Order.pyre_foreignKey(column=Order.cid, foreign=Customer.cid)
 
-
     # get a server
     server = pyre.db.server(name="test")
 
@@ -59,12 +58,11 @@ def test():
         "    -- Simple customer table",
         "    --",
         "(",
-        "    cid INTEGER , -- the customer id",
+        "    cid INTEGER, -- the customer id",
         "    name TEXT DEFAULT ''",
-        "        NOT NULL",
-        "        ,",
-        "    phone VARCHAR(10) DEFAULT '' ,",
-        "    balance DECIMAL(7, 2) DEFAULT 0 ,",
+        "        NOT NULL,",
+        "    phone VARCHAR(10) DEFAULT '',",
+        "    balance DECIMAL(7, 2) DEFAULT 0,",
         "",
         "    PRIMARY KEY (cid),",
         "    UNIQUE (name),",
@@ -83,9 +81,8 @@ def test():
         "    --",
         "(",
         "    oid INTEGER",
-        "        PRIMARY KEY",
-        "        ,",
-        "    cid INTEGER ,",
+        "        PRIMARY KEY,",
+        "    cid INTEGER,",
         "",
         "    FOREIGN KEY (cid) REFERENCES customers (cid)",
         ");"

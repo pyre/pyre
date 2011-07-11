@@ -44,8 +44,6 @@ class Column(schema.descriptor, algebraic.node):
         self._primary = True
         # primary keys do not get default values
         self.default = None
-        # leave a clue for the weaver
-        self._decorated = True
         # and return
         return self
 
@@ -56,8 +54,6 @@ class Column(schema.descriptor, algebraic.node):
         """
         # mark 
         self._unique = True
-        # leave a clue for the weaver
-        self._decorated = True
         # and return
         return self
 
@@ -68,8 +64,6 @@ class Column(schema.descriptor, algebraic.node):
         """
         # mark 
         self._notNull = True
-        # leave a clue for the weaver
-        self._decorated = True
         # and return
         return self
 
@@ -80,17 +74,9 @@ class Column(schema.descriptor, algebraic.node):
         """
         # use the specification to create a column reference object and record it
         self._foreign = self.ForeignKey(**kwds)
-        # leave a clue for the weaver
-        self._decorated = True
         # and return
         return self
         
-
-    def check(self, constraint):
-        """
-        Attach a constraint
-        """
-
 
     # implementation details
     def decldefault(self):
@@ -100,7 +86,7 @@ class Column(schema.descriptor, algebraic.node):
         # if my default has been specified
         if self.default is not None:
             # render it
-            return "DEFAULT {}".format(self.default)
+            return " DEFAULT {}".format(self.default)
         # otherwise just send back an empty string
         return ""
 
@@ -117,10 +103,7 @@ class Column(schema.descriptor, algebraic.node):
     _primary = None # am i a primary key?
     _unique = None # are my values unique across the rows of the table?
     _notNull = None # do i accept NULL as a value?
-
     _foreign = None # foreign key: a tuple (foreign_table, column_descriptor)
-
-    _decorated = False # true when this column has decorations other than type
 
 
 # end of file 
