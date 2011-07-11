@@ -38,6 +38,27 @@ class Server(pyre.component, implements=datastore):
             "class {.__class__.__name__!r} must override 'attach'".format(self))
 
 
+    # convenience
+    def create(self, table):
+        """
+        Build and execute the SQL statement necessary to create {table}
+        """
+        # build the sql statement
+        sql = self.sql.createTable(table)
+        # and execute it
+        return self.execute(sql)
+
+
+    def drop(self, table):
+        """
+        Build and execute the SQL statement necessary to delete {table} from the datastore
+        """
+        # build the sql statement
+        sql = self.sql.dropTable(table)
+        # and execute it
+        return self.execute(sql)
+        
+
     # meta methods
     # context manager support
     def __enter__(self):

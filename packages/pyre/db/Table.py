@@ -73,35 +73,6 @@ class Table(metaclass=Schemer):
         return cls
 
 
-    # interface used by the weavers and db back-ends
-    @classmethod
-    def pyre_create(cls, datastore):
-        """
-        Convert the table specification into the appropriate SQL statements and execute them to
-        create this table
-        """
-        # get the weaver attached to this datastore
-        weaver = datastore.sql
-        # generate the statements
-        sql = weaver.createTable(cls)
-        # and get them executed
-        return datastore.execute(sql)
-
-
-    @classmethod
-    def pyre_drop(cls, datastore):
-        """
-        Convert the table specification into the appropriate SQL statements and execute them to
-        remove this table from the datastore
-        """
-        # get the weaver attached to this datastore
-        weaver = datastore.sql
-        # generate the statements
-        sql = weaver.dropTable(cls)
-        # and get them executed
-        return datastore.execute(sql)
-
-
     # private data
     # these are sensitive to inheritance among tables may not work as expected (or at all...)
     # for the time being
