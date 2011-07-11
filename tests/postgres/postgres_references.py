@@ -78,6 +78,7 @@ def test():
         assert queryForTable(db, Location) == (('tablename',), (Location.pyre_name,))
 
         # create the weather table
+        # print('\n'.join(db.sql.createTable(Weather)))
         Weather.pyre_create(db)
         # verify it is there
         assert queryForTable(db, Weather) == (('tablename',), (Weather.pyre_name,))
@@ -88,6 +89,7 @@ def test():
         assert queryForTable(db, Weather) == (('tablename',),)
 
         # drop the location table
+        # print('\n'.join(db.sql.createTable(Location)))
         Location.pyre_drop(db)
         # and check it's gone too
         assert queryForTable(db, Location) == (('tablename',),)
