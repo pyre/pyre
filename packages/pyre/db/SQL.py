@@ -252,7 +252,7 @@ class SQL(Mill):
         separator = ',' if comma and not (foreign.update or foreign.delete) else ''
         # build the reference line
         if column is None:
-            yield "REFERENCES {.pyre_name}{}{}".format(table, separator)
+            yield "REFERENCES {.pyre_name}{}".format(table, separator)
         else:
             yield "REFERENCES {.pyre_name} ({.name}){}".format(table, column, separator)
 
