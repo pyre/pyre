@@ -49,7 +49,7 @@ class Postgres(pyre.db.server, family="postgres.server"):
 
     def execute(self, sql):
         """
-        Execute the sequence of SQL statements in SQL as a single command
+        Execute the sequence of SQL statements in {sql} as a single command
         """
         return self._connection.execute("\n".join(sql))
 

@@ -38,8 +38,17 @@ class Server(pyre.component, implements=datastore):
             "class {.__class__.__name__!r} must override 'attach'".format(self))
 
 
+    @pyre.export
+    def execute(self, sql):
+        """
+        Execute the sequence of SQL statements in {sql} as a single command
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must override 'execute'".format(self))
+
+
     # convenience
-    def create(self, table):
+    def createTable(self, table):
         """
         Build and execute the SQL statement necessary to create {table}
         """
@@ -49,7 +58,7 @@ class Server(pyre.component, implements=datastore):
         return self.execute(sql)
 
 
-    def drop(self, table):
+    def dropTable(self, table):
         """
         Build and execute the SQL statement necessary to delete {table} from the datastore
         """

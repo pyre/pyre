@@ -73,24 +73,24 @@ def test():
     # in a transaction block
     with db:
         # create the location table
-        db.create(Location)
+        db.createTable(Location)
         # verify it is there
         assert queryForTable(db, Location) == (('tablename',), (Location.pyre_name,))
 
         # create the weather table
         # print('\n'.join(db.sql.createTable(Weather)))
-        db.create(Weather)
+        db.createTable(Weather)
         # verify it is there
         assert queryForTable(db, Weather) == (('tablename',), (Weather.pyre_name,))
 
         # drop the weather table
-        db.drop(Weather)
+        db.dropTable(Weather)
         # and check it's gone
         assert queryForTable(db, Weather) == (('tablename',),)
 
         # drop the location table
         # print('\n'.join(db.sql.createTable(Location)))
-        db.drop(Location)
+        db.dropTable(Location)
         # and check it's gone too
         assert queryForTable(db, Location) == (('tablename',),)
 

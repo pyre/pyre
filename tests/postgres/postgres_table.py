@@ -54,11 +54,11 @@ def test():
     # in a transaction block
     with db:
         # create the table
-        db.create(Weather)
+        db.createTable(Weather)
         # verify it is there
         assert db.execute(sql) == (('tablename',), ('weather',))
         # drop the table    
-        db.drop(Weather)
+        db.dropTable(Weather)
         # verify it is not there
         assert db.execute(sql) == (('tablename',),)
 
