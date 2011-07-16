@@ -12,7 +12,8 @@
   echo "setting up development for '${nickname}'"
 
 # the source directory
-  export BLD_ROOT=${DV_DIR}/builds/${nickname}
+  export DV_DIR=${HOME}/dv
+  export BLD_CONFIG=${DV_DIR}/config
   export BLD_ROOT=${DV_DIR}/builds/${nickname}
   echo "    building in '${BLD_ROOT}'"
   # create the directory if it doesn't already exist
@@ -28,7 +29,7 @@
   export PYTHONPATH=${EXPORT_ROOT}
 
 # adjust the path
-  export PATH=${PATH}:${PYRE_DIR}/bin
+  export PATH=${BLD_CONFIG}/make:${PYRE_DIR}/bin:${PATH}
 # and the location of the shared objects
   export LD_LIBRARY_PATH=${EXPORT_ROOT}/lib:${LD_LIBRARY_PATH}
 
