@@ -26,6 +26,9 @@ from .Column import Column as column
 
 # the representation of NULL
 null = object()
+# the representation of DEFAULT
+default = object()
+
 
 # descriptor factories
 from .columns import (
