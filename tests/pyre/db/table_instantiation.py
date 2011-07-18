@@ -29,21 +29,29 @@ def test():
         date = pyre.db.date()
         date.doc = "the date of the measurement"
 
+        low = pyre.db.decimal(precision=5, scale=2)
+        low.doc = "the low temperature"
 
-    # access to the journal
-    import journal
-    # quiet down the firewall we expect to breach
-    journal.firewall("pyre.db").active = False
+        high = pyre.db.decimal(precision=5, scale=2)
+        high.doc = "the high temperature"
 
-    # attempt to instantiate
-    try:
-        Weather()
-        assert False
-    except journal.FirewallError:
-        pass
+        precipitation = pyre.db.decimal(precision=3, scale=1)
+        precipitation.doc = "amount of rainfall"
+
+    # build one
+    measurement = Weather(
+        city='Los Angeles', date='2011/07/04', low=62, high=71, precipitation=0
+        )
+
+    # verify it
+    assert measurement.city == 'Los Angeles'
+    assert measurement.date == '2011/07/04'
+    assert measurement.low == 62
+    assert measurement.high == 71
+    assert measurement.precipitation == 0
 
     # all done
-    return Weather
+    return measurement
 
 
 # main

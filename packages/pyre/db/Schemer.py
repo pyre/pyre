@@ -83,20 +83,4 @@ class Schemer(AttributeClassifier):
         return table
 
 
-    def __init__(self, name, bases, attributes, **kwds):
-        # chain to the ancestors
-        super().__init__(name, bases, attributes, **kwds)
-        # all done
-        return
-
-
-    def __call__(self, **kwds):
-        """
-        Disable the instantiation of tables
-        """
-        import journal
-        firewall = journal.firewall("pyre.db")
-        raise firewall.log("database tables cannot be instantiated", stackdepth=-1)
-
-
 # end of file 

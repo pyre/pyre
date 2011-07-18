@@ -95,7 +95,13 @@ class Column(schema.descriptor, algebraic.node):
         """
         Table attribute access is interpreted as a request for the pair (table, descriptor)
         """
-        return self.ColumnReference(table=cls, column=self)
+        # at the class level
+        if instance is None:
+            # build a reference to this field
+            return self.ColumnReference(table=cls, column=self)
+        # otherwise, look my value up in the instance cache
+        return instance._pyre_data[self]
+
 
 
     # private data

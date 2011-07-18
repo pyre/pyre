@@ -66,6 +66,16 @@ class Server(pyre.component, implements=datastore):
         sql = self.sql.dropTable(table)
         # and execute it
         return self.execute(sql)
+
+
+    def insert(self, *items):
+        """
+        Insert {items} into the database
+        """
+        # build the sql statements
+        sql = self.sql.insertItems(items)
+        # and execute
+        return self.execute(sql)
         
 
     # meta methods
