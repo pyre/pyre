@@ -73,9 +73,31 @@ class Table(metaclass=Schemer):
         return cls
 
 
+    # meta methods
+    def __init__(self, **kwds):
+        # build the per instance field cache
+        self._pyre_data = cache ={}
+        # and populate it by hunting down a value for each field
+        for field in self.pyre_columns:
+            # if this field is among the {kwds}
+            try:
+                # get the value we were passed
+                value = kwds[field.name]
+            # otherwise
+            except KeyError:
+                # look up the default
+                value = field.default
+            # and set it
+            cache[field] = value
+        # all done
+        return
+
+
     # private data
-    # these are sensitive to inheritance among tables may not work as expected (or at all...)
-    # for the time being
+    _pyre_data = None # a dictionary that holds the per-instance column values
+
+    # these are sensitive to inheritance among tables; they may not work as expected (or at
+    # all...), for the time being
     _pyre_primaryKeys = set() # the list of my primary key specifications
     _pyre_uniqueColumns = set() # the list of my unique columns
     _pyre_foreignKeys = [] # the list of my foreign key specifications
