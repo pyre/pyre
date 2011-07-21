@@ -49,6 +49,7 @@ class SQL(Mill):
         return
 
 
+    # table management
     def createTable(self, table):
         """
         Generate the SQL statement to create a database table given its description.
@@ -143,13 +144,10 @@ class SQL(Mill):
                         self.expression(root=constraint, table=table),
                         ',' if constraints or annotations else ''
                         ))
-
         # push out
         self.outdent()
-
         # the table declaration terminator
         yield self.place(");")
-
         # all done
         return
 
@@ -160,6 +158,52 @@ class SQL(Mill):
         """
         # this is easy enogh
         yield "DROP TABLE {};".format(table.pyre_name)
+        # all done
+        return
+
+
+    # record management
+    def insertRecords(self, *records):
+        """
+        Insert {records}, an iterable of table records, into their corresponding table
+        """
+        # markers
+        dangling = "" # a bit of complexity to support {records} as generators
+        targetTable = None
+        # iterate over the records
+        for record in records:
+            # check whether this record is from the table we are processing, if any
+            if record.__class__ is not targetTable:
+                # if we are in the middle of a statement
+                if targetTable is not None:
+                    # terminate the statement
+                    yield self.place(dangling + ";")
+                    # outdent
+                    self.outdent().outdent()
+                # in any case, save the target table
+                targetTable = record.__class__
+                # initiate the statement
+                yield self.place("INSERT INTO {}".format(record.pyre_name))
+                # indent
+                self.indent()
+                # the column names in declaration order
+                yield self.place("({})".format(
+                        ", ".join(column.name for column in record.pyre_columns)))
+                # start the section with the record values
+                yield self.place("VALUES")
+                # further in
+                self.indent()
+            # otherwise
+            else:
+                # render any dangling values
+                yield self.place(dangling + ',') # add a comma since we know there are more...
+            # render the record values
+            dangling = "({})".format(record.pyre_toSQL())
+
+        # render any left overs
+        yield self.place(dangling + ';')
+        # bounce out to top level
+        self.outdent().outdent()
         # all done
         return
 

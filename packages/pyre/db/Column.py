@@ -91,6 +91,16 @@ class Column(schema.descriptor, algebraic.node):
         return ""
 
 
+    def toSQL(self, instance):
+        """
+        Retrieve my value from {instance} and render it in a manner suitable for an SQL statement
+        """
+        # get the value
+        value = instance._pyre_data[self]
+        # render and return 
+        return self.rep(value)
+
+
     def __get__(self, instance, cls):
         """
         Table attribute access is interpreted as a request for the pair (table, descriptor)

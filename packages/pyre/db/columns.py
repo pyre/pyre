@@ -22,13 +22,18 @@ class Boolean(Column):
 
     type = schema.bool
 
+    def rep(self, value):
+        """SQL compliant rendering of my value"""
+        return 'true' if value else 'false'
+
     def decl(self):
         """SQL compliant rendering of my type name"""
         return "BOOLEAN"
 
     def decldefault(self):
+        """SQL compliant rendering of my default value"""
         if self.default is not None:
-            return " DEFAULT {}".format('true' if self.default else 'false')
+            return " DEFAULT {}".format(self.rep(self.default))
         return ""
 
     
@@ -39,6 +44,10 @@ class Date(Column):
     """
 
     type = schema.date
+
+    def rep(self, value):
+        """SQL compliant rendering of my value"""
+        raise NotImplementedError("NYI!")
 
     def decl(self):
         """SQL compliant rendering of my type name"""
@@ -52,6 +61,10 @@ class Decimal(Column):
     """
 
     type = schema.decimal
+
+    def rep(self, value):
+        """SQL compliant rendering of my value"""
+        return str(value)
 
     def decl(self):
         """SQL compliant rendering of my type name"""
@@ -72,6 +85,10 @@ class Float(Column):
 
     type = schema.float
 
+    def rep(self, value):
+        """SQL compliant rendering of my value"""
+        raise NotImplementedError("NYI!")
+
     def decl(self):
         """SQL compliant rendering of my type name"""
         return "DOUBLE PRECISION"
@@ -88,6 +105,10 @@ class Integer(Column):
     """
 
     type = schema.int
+
+    def rep(self, value):
+        """SQL compliant rendering of my value"""
+        return str(value)
 
     def decl(self):
         """SQL compliant rendering of my type name"""
@@ -106,6 +127,10 @@ class String(Column):
 
     type = schema.int
 
+    def rep(self, value):
+        """SQL compliant rendering of my value"""
+        return "'{}'".format(value)
+
     def decl(self):
         """SQL compliant rendering of my type name"""
         if self.maxlen == None:
@@ -113,11 +138,9 @@ class String(Column):
         return "VARCHAR({})".format(self.maxlen)
 
     def decldefault(self):
-        """
-        Invoked by the SQL mill to create the default value part of the declaration
-        """
+        """SQL compliant rendering of my default value"""
         if self.default is not None:
-            return " DEFAULT '{}'".format(self.default)
+            return " DEFAULT {}".format(self.rep(self.default))
         return ""
 
     def __init__(self, maxlen=None, default='', **kwds):
@@ -133,6 +156,10 @@ class Time(Column):
     """
 
     type = schema.time
+
+    def rep(self, value):
+        """SQL compliant rendering of my value"""
+        raise NotImplementedError("NYI!")
 
     def decl(self):
         """SQL compliant rendering of my type name"""

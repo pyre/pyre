@@ -73,6 +73,14 @@ class Table(metaclass=Schemer):
         return cls
 
 
+    # representations
+    def pyre_toSQL(self):
+        """
+        SQL compliant representation of my values in declaration order
+        """
+        return ", ".join(column.toSQL(self) for column in self.pyre_columns)
+
+
     # meta methods
     def __init__(self, **kwds):
         # build the per instance field cache
