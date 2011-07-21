@@ -23,7 +23,7 @@ class Indenter:
         """
         self._level += 1
         self.leader = self._indenter * self._level
-        return
+        return self
 
 
     def outdent(self):
@@ -32,7 +32,7 @@ class Indenter:
         """
         self._level -= 1
         self.leader = self._indenter * self._level
-        return
+        return self
 
 
     def place(self, line):
