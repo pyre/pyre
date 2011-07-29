@@ -7,7 +7,8 @@
 
 
 """
-Symbolic values for the possible actions to perform when a foreign key is deleted or updated. Consult the SQL standard for their meaning
+Symbolic values for the possible actions to perform when a foreign key is deleted or
+updated. Consult the SQL standard for their meaning
 """
 
 # produce an error indicating that the change would create foreign key constraint violation; if
