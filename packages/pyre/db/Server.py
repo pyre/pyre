@@ -78,6 +78,16 @@ class Server(pyre.component, implements=datastore):
         return self.execute(sql)
         
 
+    def delete(self, table, condition):
+        """
+        Delete all {table} records that match {condition}
+        """
+        # build the sql statements
+        sql = self.sql.deleteRecords(table=table, condition=condition)
+        # and execute
+        return self.execute(sql)
+        
+
     # meta methods
     # context manager support
     def __enter__(self):

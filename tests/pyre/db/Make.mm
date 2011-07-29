@@ -26,5 +26,6 @@ tables:
 	${PYTHON} ./table_references.py
 	${PYTHON} ./table_annotations.py
 	${PYTHON} ./table_insert.py
+	${PYTHON} ./table_delete.py
 
 # end of file 

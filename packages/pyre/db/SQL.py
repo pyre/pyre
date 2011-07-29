@@ -208,6 +208,33 @@ class SQL(Mill):
         return
 
 
+    def deleteRecords(self, table, condition):
+        """
+        Remove all {table} records that match {condition}
+
+        If condition is {None}, this routine will remove all records from the given {table}
+        """
+        # if no condition was specified
+        if condition is None:
+            # delete all records
+            yield self.place("DELETE FROM {};".format(table.pyre_name))
+            # all done
+            return
+
+        # otherwise, initiate the statement
+        yield self.place("DELETE FROM {}".format(table.pyre_name))
+        # indent
+        self.indent()
+        # build the filtering expression
+        predicate = self.expression(root=condition, table=table)
+        # and render it
+        yield self.place("WHERE {};".format(predicate))
+        # outdent
+        self.outdent()
+        # and return
+        return
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
