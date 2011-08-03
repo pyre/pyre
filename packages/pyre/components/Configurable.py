@@ -91,7 +91,7 @@ class Configurable:
 
         The only complexity here is proper shadowing in the presence of inheritance. If you are
         looking for the traits declared in a particular class, use the attribute
-        {cls.pyre_traits} instead.
+        {cls.pyre_localTraits} instead.
         """
         # the full set of my descriptors is prepared by {Requirement} and separated into two
         # piles: my local traits, i.e. traits that were first declared in my class record, and
@@ -102,8 +102,7 @@ class Configurable:
     @classmethod
     def pyre_getTraitDescriptor(cls, alias):
         """
-        Given the name {alias}, locate and return the canonical name, descriptor and base class
-        where the descriptor was declared
+        Given the name {alias}, locate and return the associated descriptor
         """
         # attempt to normalize the given name
         try:
