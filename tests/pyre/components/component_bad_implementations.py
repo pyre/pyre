@@ -8,7 +8,7 @@
 
 
 """
-A more elaborate component declaration
+Verify that the framework detects components that do not implement their obligations correctly
 """
 
 # acccess to the parts

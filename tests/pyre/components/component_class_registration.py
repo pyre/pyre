@@ -55,7 +55,7 @@ def test():
     properties = tuple(map(component.pyre_getTraitDescriptor, ["p1", "p2"]))
     # get the class inventory
     inventory = component.pyre_inventory
-    # loop over behavior sand make sure they are not presentin the inventory
+    # loop over behaviors and make sure they are not present in the inventory
     for trait in behaviors:
         # verify it's not there
         assert trait not in inventory

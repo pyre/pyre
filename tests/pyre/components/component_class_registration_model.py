@@ -8,7 +8,7 @@
 
 
 """
-Exercise component registration
+Verify that component registration interacts correctly with the pyre configurator model
 """
 
 # access
@@ -102,7 +102,6 @@ def test():
     # and check
     assert component.p1 == 'step 1'
     assert component.p2 == 'step 2'
-
 
     return
 

@@ -53,7 +53,7 @@ def test():
     assert c4.value == 5
     
     # and return
-    return c1
+    return c1, c2, c3, c4
 
 
 # main

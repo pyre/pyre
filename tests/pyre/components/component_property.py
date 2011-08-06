@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Check that components with properties have the expected layout
 """
 
 

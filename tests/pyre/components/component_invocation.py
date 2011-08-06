@@ -8,7 +8,7 @@
 
 
 """
-Check that a component's behaviors are callable
+Check that component behaviors are callable
 """
 
 

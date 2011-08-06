@@ -8,7 +8,7 @@
 
 
 """
-A more elaborate component declaration
+Exercise component class configuration in the presence of inheritance
 """
 
 

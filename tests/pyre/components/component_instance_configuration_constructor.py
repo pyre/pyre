@@ -28,15 +28,19 @@ def declare():
 
 
         # meta method
-        def __init__(self, name, **kwds):
-            super().__init__(name=name, **kwds)
+        def __init__(self, **kwds):
+            super().__init__(**kwds)
 
-            # check that configuration setting have been applied after super().__init__ returns
-            # a specially named component...
-            if name == 'c':
+            # check that configuration settings have been applied after super().__init__ returns
+            # for a specially named component...
+            if self.pyre_name == 'c':
                 # has a known configuration applied
                 assert self.p1 == 'p1 - instance'
                 assert self.p2 == 'p2 - instance'
+            # while others have access to the default values
+            else:
+                assert self.p1 == 'sample - p1'
+                assert self.p2 == 'sample - p2'
 
       
     return component
@@ -50,6 +54,12 @@ def test():
     # check that the configuration setting were transferred correctly
     assert c.p1 == "p1 - instance"
     assert c.p2 == "p2 - instance"
+    # now make another with a generic name
+    c = component()
+    # check that it gets the class defaults
+    assert c.p1 == "sample - p1"
+    assert c.p2 == "sample - p2"
+
     # and return the component instance
     return c
     

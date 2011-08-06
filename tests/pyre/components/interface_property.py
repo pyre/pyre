@@ -8,7 +8,7 @@
 
 
 """
-Check that interfaces with properties havethe expected layout
+Check that interfaces with properties have the expected layout
 """
 
 

@@ -8,7 +8,7 @@
 
 
 """
-A more elaborate component declaration
+Verify that component instances get configured correctly
 """
 
 

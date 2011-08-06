@@ -8,7 +8,7 @@
 
 
 """
-A more elaborate component declaration
+Validate component configuration in the presence of inheritance
 """
 
 

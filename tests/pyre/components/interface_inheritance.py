@@ -8,7 +8,7 @@
 
 
 """
-Verify that the inheritnace invariants are respected
+Verify that the inheritance invariants are respected
 """
 
 

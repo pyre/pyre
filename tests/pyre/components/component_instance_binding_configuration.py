@@ -8,7 +8,7 @@
 
 
 """
-Verify that the trait defaults get bound correctly
+Verify that the trait defaults get bound correctly from the configuration store
 """
 
 

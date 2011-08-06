@@ -8,7 +8,7 @@
 
 
 """
-Verify that the trait defaults get bound correctly
+Verify that trait assignments that violate constraints are flagged
 """
 
 
