@@ -36,9 +36,9 @@ interfaces:
 	${PYTHON} ./interface_compatibility_reports.py
 	${PYTHON} ./interface_instantiation.py
 
-components: components-basics component-class component-instance
+components: component-basics component-class component-instance component-multi
 
-components-basics:
+component-basics:
 	${PYTHON} ./component.py
 	${PYTHON} ./component_family.py
 	${PYTHON} ./component_behavior.py
@@ -73,9 +73,11 @@ component-instance:
 	${PYTHON} ./component_instance_binding_implicit.py
 	${PYTHON} ./component_instance_binding_configuration.py
 	${PYTHON} ./component_instance_validation.py
-#
 	${PYTHON} ./component_bad_implementations.py
 	${PYTHON} ./component_aliases.py --functor.μ=0.10 --gaussian.spread=0.10
+
+component-multi:
+	${PYTHON} ./component_slots.py
 
 
 # end of file 

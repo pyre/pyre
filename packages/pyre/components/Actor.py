@@ -102,7 +102,7 @@ class Actor(Requirement):
         # so, the name resolved to a trait
         # build an appropriate locator
         locator = pyre.tracking.here(level=1)
-        # ask the trait descripto to set the value
+        # ask the trait descriptor to set the value
         trait.pyre_setClassTrait(configurable=self, value=value, locator=locator)
         # and return
         return
