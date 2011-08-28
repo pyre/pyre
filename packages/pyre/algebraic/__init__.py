@@ -24,9 +24,13 @@ this. Hence, we have to make do with the bitwise operators {&} and {|}, and awkw
 {not}.
 """
 
-
+# pull in the two important nodes
 from .Node import Node as node
 from .Literal import Literal as literal
+
+# remove the namespace pollution
+del Node
+del Literal
 
 
 # end of file 
