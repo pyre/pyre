@@ -9,7 +9,7 @@
 from .Node import Node
 
 
-class Expression(Node):
+class Operator(Node):
     """
     Base class for all nodes that capture operations
 

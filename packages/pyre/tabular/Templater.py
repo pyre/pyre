@@ -22,7 +22,7 @@ class Templater(AttributeClassifier):
     from .Measure import Measure
     from .Derivation import Derivation
     from ..algebraic.Node import Node
-    from ..algebraic.Expression import Expression
+    from ..algebraic.Operator import Operator
 
 
     # meta methods
@@ -33,8 +33,8 @@ class Templater(AttributeClassifier):
         # harvest the locally declared items
         localItems = []
         for itemName, item in cls.pyre_harvest(attributes, cls.Node):
-            # check whether this item is an Expression
-            if isinstance(item, cls.Expression):
+            # check whether this item is an {Operator} instance
+            if isinstance(item, cls.Operator):
                 # and convert it to a Derivation
                 item = cls.Derivation(expression=item)
             # record the name

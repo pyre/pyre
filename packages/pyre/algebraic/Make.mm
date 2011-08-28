@@ -25,7 +25,6 @@ EXPORT_PYTHON_MODULES = \
     Binary.py \
     Division.py \
     Equal.py \
-    Expression.py \
     FloorDivision.py \
     Greater.py \
     GreaterEqual.py \
@@ -36,6 +35,7 @@ EXPORT_PYTHON_MODULES = \
     Multiplication.py \
     Node.py \
     NotEqual.py \
+    Operator.py \
     Opposite.py \
     Or.py \
     Power.py \
