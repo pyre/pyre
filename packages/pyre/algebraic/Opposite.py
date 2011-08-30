@@ -16,7 +16,7 @@ class Opposite(Unary):
 
 
     # interface
-    def pyre_apply(self, op):
+    def apply(self, op):
         # reverse its sign and return it
         return -op
 

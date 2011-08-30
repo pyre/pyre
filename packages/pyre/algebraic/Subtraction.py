@@ -14,12 +14,13 @@ class Subtraction(Binary):
     A representation of the difference of two operands
     """
 
-    # a representation for my operation
-    symbol = '-'
+
+    # public data
+    symbol = '-' # a representation for my operation
 
 
     # interface
-    def pyre_apply(self, op1, op2):
+    def apply(self, op1, op2):
         # add my two operands
         return op1 - op2
 

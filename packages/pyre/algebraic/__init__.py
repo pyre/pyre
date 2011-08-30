@@ -11,11 +11,11 @@ This package provides the machinery for implementing deferred evaluation in pyth
 
 The strategy is to capture arithmetic operations among a collection of instances as an
 expression graph built out of the operators in this package. Actual evaluation takes place when
-the {pyre_eval} method is called.
+the {eval} method is called.
 
 The classes in this package provide a complete set of overloaded special methods for all the
 arithmetic operations. All you have to do is derive from {Node} for all classes for which you
-want to enable this behavior, and implement {pyre_eval} so the expression can be evaluated.
+want to enable this behavior, and implement {eval} so the expression can be evaluated.
 
 There is also support for the rich comparison operators, and limited support for boolean
 operations. Unfortunately, python does not enable the overloading of {and} and {or}; the

@@ -19,16 +19,16 @@ class Operator(Node):
 
 
     # interface
-    def pyre_patch(self, replacements):
+    def patch(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with
         the indicated nodes.
         """
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'pyre_patch'".format(self))
+            "class {.__class__.__name__!r} must implement 'patch'".format(self))
 
 
-    def pyre_dfs(self, **kwds):
+    def dfs(self, **kwds):
         """
         Traverse an expression graph in depth-first order
         """

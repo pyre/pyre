@@ -47,7 +47,7 @@ class Field(Descriptor, Node):
         return value
 
 
-    def pyre_eval(self, *, data, **kwds):
+    def eval(self, *, data, **kwds):
         """
         Extract my value from {data} and walk it through casting, conversion and validation
         """

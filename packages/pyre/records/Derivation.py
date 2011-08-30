@@ -21,12 +21,12 @@ class Derivation(Node):
 
     # traversal of the nodes in my expression tree
     @property
-    def pyre_dependencies(self):
+    def dependencies(self):
         """
         Traverse my expression tree looking for leaf nodes
         """
         # just return myself
-        return self.expression.pyre_dependencies
+        return self.expression.dependencies
 
 
     # meta methods
@@ -46,18 +46,18 @@ class Derivation(Node):
         return record.pyre_derivationAccessor(index=index, field=self)
 
 
-    def pyre_patch(self, replacements):
+    def patch(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with
         the indicated nodes.
         """
         # patch my expression
-        self.expression.pyre_patch(replacements)
+        self.expression.patch(replacements)
         # and return
         return
 
 
-    def pyre_eval(self, *, cache, **kwds):
+    def eval(self, *, cache, **kwds):
         """
         Compute and return the value of my expression
         """
@@ -66,7 +66,7 @@ class Derivation(Node):
             # yes; return the previously computed value
             return cache[self]
         # nope; compute and return the value of my expression
-        return self.expression.pyre_eval(cache=cache)
+        return self.expression.eval(cache=cache)
         
 
 # end of file 

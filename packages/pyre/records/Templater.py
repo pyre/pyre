@@ -100,13 +100,13 @@ class Templater(AttributeClassifier):
             # loop over the derivations
             for derivation in record.pyre_derivations:
                 # and for every node in the dependency list
-                for item in derivation.pyre_dependencies:
+                for item in derivation.dependencies:
                     # check whether it an actual field
                     if item not in fields: continue
                     # if we have not built a proxy for this one yet, do so
                     if item not in proxies: proxies[item] = cls.FieldProxy(field=item)
                 # patch this derivation
-                derivation.pyre_patch(proxies)
+                derivation.patch(proxies)
             # and store the proxies with the record
             # N.B.: only used for debugging for the time being
             record.pyre_proxies = proxies

@@ -20,7 +20,7 @@ class Division(Binary):
 
 
     # interface
-    def pyre_apply(self, op1, op2):
+    def apply(self, op1, op2):
         # apply
         return op1 / op2
 

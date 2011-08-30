@@ -17,16 +17,16 @@ class Binary(Operator):
 
     # traversal of the nodes in my expression graph
     @property
-    def pyre_dependencies(self):
+    def dependencies(self):
         """
         Traverse my expression graph looking for leaf nodes
         """
         # visit my left operand
-        for node in self.op1.pyre_dependencies:
+        for node in self.op1.dependencies:
             # yield any nodes discovered
             yield node
         # and now my right operand
-        for node in self.op2.pyre_dependencies:
+        for node in self.op2.dependencies:
             # yield any nodes discovered
             yield node
         # all done
@@ -34,7 +34,7 @@ class Binary(Operator):
 
 
     # interface
-    def pyre_patch(self, replacements):
+    def patch(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with
         the indicated nodes.
@@ -46,7 +46,7 @@ class Binary(Operator):
         # otherwise
         else:
             # pass the replacement map down
-            self.op1.pyre_patch(replacements)
+            self.op1.patch(replacements)
 
         # check whether my right operand shows in the map
         if self.op2 in replacements:
@@ -55,33 +55,33 @@ class Binary(Operator):
         # otherwise
         else:
             # pass the replacement map down
-            self.op2.pyre_patch(replacements)
+            self.op2.patch(replacements)
         # all done
         return
 
 
-    def pyre_eval(self, **kwds):
+    def eval(self, **kwds):
         """
         Evaluate my two operands and then apply the operation i represent
         """
         # compute the value of the first operand
-        op1 = self.op1.pyre_eval(**kwds)
+        op1 = self.op1.eval(**kwds)
         # compute the value of the second operand
-        op2 = self.op2.pyre_eval(**kwds)
+        op2 = self.op2.eval(**kwds)
         # and put them together
-        return self.pyre_apply(op1, op2)
+        return self.apply(op1, op2)
 
 
-    def pyre_dfs(self, **kwds):
+    def dfs(self, **kwds):
         """
         Traverse an expression graph in depth-first order
         """
         # traverse my left operand
-        for node in self.op1.pyre_dfs(**kwds):
+        for node in self.op1.dfs(**kwds):
             # return whatever it discovered
             yield node
         # repeat for my right operand
-        for node in self.op2.pyre_dfs(**kwds):
+        for node in self.op2.dfs(**kwds):
             # and return whatever it discovered
             yield node
         # now return myself

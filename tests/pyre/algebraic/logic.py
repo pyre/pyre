@@ -22,32 +22,32 @@ def test():
     one = pyre.algebraic.literal(value=1)
 
     # equality
-    assert (zero == 0).pyre_eval() == True
-    assert (one == 1).pyre_eval() == True
+    assert (zero == 0).eval() == True
+    assert (one == 1).eval() == True
     # but also
-    assert (zero == one - one).pyre_eval() == True
-    assert (zero == one - 1).pyre_eval() == True
+    assert (zero == one - one).eval() == True
+    assert (zero == one - 1).eval() == True
 
     # less-or-equal
-    assert (zero <= 0).pyre_eval() == True
-    assert (one <= 1).pyre_eval() == True
+    assert (zero <= 0).eval() == True
+    assert (one <= 1).eval() == True
     # but also
-    assert (zero <= one).pyre_eval() == True
+    assert (zero <= one).eval() == True
 
     # greater-or-equal
-    assert (zero >= 0).pyre_eval() == True
-    assert (one >= 1).pyre_eval() == True
+    assert (zero >= 0).eval() == True
+    assert (one >= 1).eval() == True
     # but also
-    assert (one >= zero).pyre_eval() == True
+    assert (one >= zero).eval() == True
 
     # less
-    assert (zero < one).pyre_eval() == True
+    assert (zero < one).eval() == True
 
     # greater
-    assert (one > zero).pyre_eval() == True
+    assert (one > zero).eval() == True
 
     # not-equal
-    assert (one != zero).pyre_eval() == True
+    assert (one != zero).eval() == True
 
     return one, zero
 

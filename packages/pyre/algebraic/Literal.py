@@ -17,16 +17,16 @@ class Literal(Node):
 
     # traversal of the nodes in my expression graph
     @property
-    def pyre_dependencies(self):
+    def dependencies(self):
         """
-        Traverse my expression graph looking for leaf nodes
+        Traverse my expression graph looking for nodes i depend on
         """
         # literals don't count as true dependencies
         return []
 
 
     # interface
-    def pyre_eval(self, **kwds):
+    def eval(self, **kwds):
         """
         Compute my value
         """

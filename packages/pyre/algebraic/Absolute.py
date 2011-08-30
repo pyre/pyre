@@ -16,7 +16,7 @@ class Absolute(Unary):
 
 
     # interface
-    def pyre_apply(self, op):
+    def apply(self, op):
         # compute its absolute value and return it
         return abs(op)
 

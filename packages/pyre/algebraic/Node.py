@@ -21,9 +21,9 @@ class Node:
 
     # traversal of the nodes in my expression graph
     @property
-    def pyre_dependencies(self):
+    def dependencies(self):
         """
-        Traverse my expression graph looking for leaf nodes
+        Traverse my expression graph looking for nodes i depend on
         """
         # just return myself
         yield self
@@ -32,15 +32,15 @@ class Node:
 
 
     # interface
-    def pyre_eval(self, **kwds):
+    def eval(self, **kwds):
         """
         Compute the value of my expression graph
         """
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'pyre_eval'".format(self))
+            "class {.__class__.__name__!r} must implement 'eval'".format(self))
 
 
-    def pyre_dfs(self, **kwds):
+    def dfs(self, **kwds):
         """
         Traverse an expression graph in depth-first order
         """
@@ -50,7 +50,7 @@ class Node:
         return
 
 
-    def pyre_patch(self, *args, **kwds):
+    def patch(self, *args, **kwds):
         """
         Sentinel method for node patching in expression graphs
         """
@@ -204,8 +204,8 @@ class Node:
         """
         Build a representation of {>}
         """
-        from .greater import greater
-        return greater(op1, op2)
+        from .Greater import Greater
+        return Greater(op1, op2)
 
 
     # overrides for the python standard methods

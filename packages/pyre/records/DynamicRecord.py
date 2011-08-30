@@ -47,7 +47,7 @@ class DynamicRecord(Record):
         # build the data tuple and return it
         for item in cls.pyre_items:
             # construct the value
-            value = item.pyre_eval(data=source)
+            value = item.eval(data=source)
             # build a calc node for it
             node = pyre.calc.newNode(value=value)
             # and yield it
@@ -69,13 +69,13 @@ class DynamicRecord(Record):
         # build the data tuple
         for item in cls.pyre_items:
             # get the item to compute its value
-            value = item.pyre_eval(data=source, cache=cache)
+            value = item.eval(data=source, cache=cache)
             # if this item is a field, we have to convert the value into a calc node
             if isinstance(item, cls.Field):
                 value = pyre.calc.newNode(value=value)
             # add it to the cache
             cache[item] = value
-            # and yield the value
+            # and yield t       he value
             yield value
         # all done
         return

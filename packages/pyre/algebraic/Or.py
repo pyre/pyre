@@ -20,7 +20,7 @@ class Or(Binary):
 
 
     # interface
-    def pyre_apply(self, op1, op2):
+    def apply(self, op1, op2):
         # compute
         return op1 or op2
 

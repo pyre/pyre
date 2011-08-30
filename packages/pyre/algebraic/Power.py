@@ -14,12 +14,13 @@ class Power(Binary):
     A representation of raising one node to the power of the other
     """
 
-    # a representation of my operation
-    symbol = "**"
+
+    # public data
+    symbol = "**" # a representation of my operation
 
 
     # interface
-    def pyre_apply(self, op1, op2):
+    def apply(self, op1, op2):
         # compute
         return op1 ** op2
 

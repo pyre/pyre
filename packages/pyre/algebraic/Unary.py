@@ -17,12 +17,12 @@ class Unary(Operator):
 
     # traversal of the nodes in my expression graph
     @property
-    def pyre_dependencies(self):
+    def dependencies(self):
         """
         Traverse my expression graph looking for leaf nodes
         """
         # traverse my expression
-        for node in self.op.pyre_dependencies:
+        for node in self.op.dependencies:
             # and yield any nodes discovered
             yield node
         # all done
@@ -30,7 +30,7 @@ class Unary(Operator):
 
 
     # interface
-    def pyre_patch(self, replacements):
+    def patch(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with
         the indicated nodes.
@@ -42,27 +42,27 @@ class Unary(Operator):
         # otherwise
         else:
             # pass the replacement map down
-            self.op.pyre_patch(replacements)
+            self.op.patch(replacements)
         # all done
         return
 
 
-    def pyre_eval(self, **kwds):
+    def eval(self, **kwds):
         """
         Evaluate my operand and then apply the operation i represent
         """
         # compute the value of my operand
-        op = self.op.pyre_eval(**kwds)
+        op = self.op.eval(**kwds)
         # and compute
-        return self.pyre_apply(op)
+        return self.apply(op)
 
 
-    def pyre_dfs(self, **kwds):
+    def dfs(self, **kwds):
         """
         Traverse an expression graph in depth-first order
         """
         # traverse my operand
-        for node in self.op.pyre_dfs(**kwds):
+        for node in self.op.dfs(**kwds):
             # return whatever it discovered
             yield node
         # now return myself

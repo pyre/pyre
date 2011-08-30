@@ -22,11 +22,11 @@ def test():
     one = pyre.algebraic.literal(value=1)
 
     # and
-    assert ((zero == 0) & (one == 1)).pyre_eval() == True
+    assert ((zero == 0) & (one == 1)).eval() == True
 
     # or
-    assert ((zero == 0) | (zero == one)).pyre_eval() == True
-    assert ((zero == one) | (zero == 0)).pyre_eval() == True
+    assert ((zero == 0) | (zero == one)).eval() == True
+    assert ((zero == one) | (zero == 0)).eval() == True
 
     return one, zero
 

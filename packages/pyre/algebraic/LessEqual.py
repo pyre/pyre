@@ -20,7 +20,7 @@ class LessEqual(Binary):
 
 
     # interface
-    def pyre_apply(self, op1, op2):
+    def apply(self, op1, op2):
         # compute
         return op1 <= op2
 
