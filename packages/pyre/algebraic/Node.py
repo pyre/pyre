@@ -57,89 +57,220 @@ class Node:
         return
 
 
-    # algebra; methods are listed in the order they show up in the python documentation
+    # hooks for implementing the expression graph construction
+    # the default implementation provided by this package uses the classes defined here
+    def literal(self, value):
+        """
+        Build a representation of a foreign value
+        """
+        from .Literal import Literal
+        return Literal(value)
+
+
+    # arithmetic
+    # operators are presented in the order the python methods appear in the python
+    # documentation
+    def addition(self, op1, op2):
+        """
+        Build a representation for addition
+        """
+        from .Addition import Addition
+        return Addition(op1, op2)
+
+
+    def subtraction(self, op1, op2):
+        """
+        Build a representation for subtraction
+        """
+        from .Subtraction import Subtraction
+        return Subtraction(op1, op2)
+
+
+    def multiplication(self, op1, op2):
+        """
+        Build a representation for multiplication
+        """
+        from .Multiplication import Multiplication
+        return Multiplication(op1, op2)
+
+
+    def division(self, op1, op2):
+        """
+        Build a representation for true division
+        """
+        from .Division import Division
+        return Division(op1, op2)
+
+
+    def floorDivision(self, op1, op2):
+        """
+        Build a representation for true division
+        """
+        from .FloorDivision import FloorDivision
+        return FloorDivision(op1, op2)
+
+
+    def modulus(self, op1, op2):
+        """
+        Build a representation for mod
+        """
+        from .Modulus import Modulus
+        return Modulus(op1, op2)
+
+
+    def power(self, op1, op2):
+        """
+        Build a representation for power
+        """
+        from .Power import Power
+        return Power(op1, op2)
+
+
+    def opposite(self, op):
+        """
+        Build a representation of unary minus
+        """
+        from .Opposite import Opposite
+        return Opposite(op)
+
+
+    def absolute(self, op):
+        """
+        Build a representation of the absolute value
+        """
+        from .Absolute import Absolute
+        return Absolute(op)
+
+
+    # logical operators
+    def logicalAnd(self, op1, op2):
+        """
+        Build a representation of logical and
+        """
+        from .And import And
+        return And(op1, op2)
+
+
+    def logicalOr(self, op1, op2):
+        """
+        Build a representation of logical and
+        """
+        from .Or import Or
+        return Or(op1, op2)
+
+
+    # comparisons
+    def equal(self, op1, op2):
+        """
+        Build a representation of equality testing
+        """
+        from .Equal import Equal
+        return Equal(op1, op2)
+
+
+    def notEqual(self, op1, op2):
+        """
+        Build a representation of inequality testing
+        """
+        from .NotEqual import NotEqual
+        return NotEqual(op1, op2)
+
+
+    def lessEqual(self, op1, op2):
+        """
+        Build a representation of {<=}
+        """
+        from .LessEqual import LessEqual
+        return LessEqual(op1, op2)
+
+
+    def greaterEqual(self, op1, op2):
+        """
+        Build a representation of {>=}
+        """
+        from .GreaterEqual import GreaterEqual
+        return GreaterEqual(op1, op2)
+
+
+    def less(self, op1, op2):
+        """
+        Build a representation of {<}
+        """
+        from .Less import Less
+        return Less(op1, op2)
+
+
+    def greater(self, op1, op2):
+        """
+        Build a representation of {>}
+        """
+        from .greater import greater
+        return greater(op1, op2)
+
+
+    # overrides for the python standard methods
+    # methods are listed in the order they show up in the python documentation
     def __add__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build an addition representation
-        from .Addition import Addition
-        # and return it
-        return Addition(op1=self, op2=other)
+        return self.addition(op1=self, op2=other)
 
     
     def __sub__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a subtraction representation
-        from .Subtraction import Subtraction
-        # and return it
-        return Subtraction(op1=self, op2=other)
+        return self.subtraction(op1=self, op2=other)
 
     
     def __mul__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation for multiplication
-        from .Multiplication import Multiplication
-        # and return it
-        return Multiplication(op1=self, op2=other)
+        return self.multiplication(op1=self, op2=other)
 
     
     def __truediv__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of division
-        from .Division import Division
-        # and return it
-        return Division(op1=self, op2=other)
+        return self.division(op1=self, op2=other)
 
     
     def __floordiv__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of floor-division 
-        from .FloorDivision import FloorDivision
-        # and return it
-        return FloorDivision(op1=self, op2=other)
+        return self.floorDivision(op1=self, op2=other)
     
 
     def __mod__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a modulus representation
-        from .Modulus import Modulus
-        # and return it
-        return Modulus(op1=self, op2=other)
+        return self.modulus(op1=self, op2=other)
     
 
     def __pow__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of exponentiation
-        from .Power import Power
-        # and return it
-        return Power(op1=self, op2=other)
+        return self.power(op1=self, op2=other)
     
 
     def __pos__(self):
@@ -147,84 +278,61 @@ class Node:
 
     
     def __neg__(self):
-        from .Opposite import Opposite
-        return Opposite(op=self)
+        return self.opposite(op=self)
 
     
     def __abs__(self):
-        from .Absolute import Absolute
-        return Absolute(op=self)
+        return self.absolute(op=self)
 
     
     # reflected ones: one operand was not a node, so it gets promoted through {Literal}
     def __radd__(self, other):
         # {other} is not a node, so promote it
-        from .Literal import Literal
-        other = Literal(value=other)
+        other = self.literal(value=other)
         # build an addition representation
-        from .Addition import Addition
-        # and return it
-        return Addition(op1=other, op2=self)
+        return self.addition(op1=other, op2=self)
 
     
     def __rsub__(self, other):
         # {other} is not a node, so promote it
-        from .Literal import Literal
-        other = Literal(value=other)
+        other = self.literal(value=other)
         # build a subtraction representation
-        from .Subtraction import Subtraction
-        # and return it
-        return Subtraction(op1=other, op2=self)
+        return self.subtraction(op1=other, op2=self)
 
     
     def __rmul__(self, other):
         # {other} is not a node, so promote it
-        from .Literal import Literal
-        other = Literal(value=other)
+        other = self.literal(value=other)
         # build a representation of multiplication
-        from .Multiplication import Multiplication
-        # and return it
-        return Multiplication(op1=other, op2=self)
+        return self.multiplication(op1=other, op2=self)
 
     
     def __rtruediv__(self, other):
         # {other} is not a node, so promote it
-        from .Literal import Literal
-        other = Literal(value=other)
+        other = self.literal(value=other)
         # build a representation of division
-        from .Division import Division
-        # and return it
-        return Division(op1=other, op2=self)
+        return self.division(op1=other, op2=self)
 
     
     def __rfloordiv__(self, other):
         # {other} is not a node, so promote it
-        from .Literal import Literal
-        other = Literal(value=other)
+        other = self.literal(value=other)
         # build a representation of floor-division 
-        from .FloorDivision import FloorDivision
-        # and return it
-        return FloorDivision(op1=other, op2=self)
+        return self.floorDivision(op1=other, op2=self)
     
 
     def __rmod__(self, other):
         # {other} is not a node, so promote it
-        from .Literal import Literal
-        other = Literal(value=other)
+        other = self.literal(value=other)
         # build a modulus representation
-        from .Modulus import Modulus
-        # and return it
-        return Modulus(op1=other, op2=self)
+        return self.modulus(op1=other, op2=self)
 
     
     def __rpow__(self, other):
         # {other} is not a node, so promote it
-        from .Literal import Literal
-        other = Literal(value=other)
+        other = self.literal(value=other)
         # build a representation of exponentiation
-        from .Power import Power
-        # and return it
-        return Power(op1=other, op2=self)
+        return self.power(op1=other, op2=self)
 
 
     # logical operations
@@ -232,24 +340,18 @@ class Node:
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of the equality test
-        from .And import And
-        # and return it
-        return And(op1=self, op2=other)
+        return self.logicalAnd(op1=self, op2=other)
 
 
     def __or__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of the equality test
-        from .Or import Or
-        # and return it
-        return Or(op1=self, op2=other)
+        return self.logicalOr(op1=self, op2=other)
 
 
     # comparisons
@@ -257,12 +359,9 @@ class Node:
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of the equality test
-        from .Equal import Equal
-        # and return it
-        return Equal(op1=self, op2=other)
+        return self.equal(op1=self, op2=other)
 
     # and of course, now that we have overridden __eq__, we must specify this so that {Node}s
     # can be keys of dictionaries and members of sets...
@@ -273,60 +372,45 @@ class Node:
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of the equality test
-        from .NotEqual import NotEqual
-        # and return it
-        return NotEqual(op1=self, op2=other)
+        return self.notEqual(op1=self, op2=other)
 
 
     def __le__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
-        # build a representation of the equality test
-        from .LessEqual import LessEqual
-        # and return it
-        return LessEqual(op1=self, op2=other)
+            other = self.literal(value=other)
+        # build a representation of {<=}
+        return self.lessEqual(op1=self, op2=other)
         
 
     def __ge__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of the equality test
-        from .GreaterEqual import GreaterEqual
-        # and return it
-        return GreaterEqual(op1=self, op2=other)
+        return self.greaterEqual(op1=self, op2=other)
         
 
     def __lt__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of the equality test
-        from .Less import Less
-        # and return it
-        return Less(op1=self, op2=other)
+        return self.less(op1=self, op2=other)
         
 
     def __gt__(self, other):
         # if {other} is not a node
         if not isinstance(other, Node):
             # promote it
-            from .Literal import Literal
-            other = Literal(value=other)
+            other = self.literal(value=other)
         # build a representation of the equality test
-        from .Greater import Greater
-        # and return it
-        return Greater(op1=self, op2=other)
+        return self.greater(op1=self, op2=other)
         
 
 # end of file 
