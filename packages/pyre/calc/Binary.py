@@ -32,7 +32,7 @@ class Binary(Function):
         Patch my domain by replacing {old} with {new}.
 
         This is used by the model during node resolution. Please don't use directly unless you
-        have thought the many and painful implications through
+        have thought through the many and painful implications
         """
         # check op1
         if old == self._op1:
@@ -43,7 +43,9 @@ class Binary(Function):
             self._op2 = new
             return
         # else
-        raise Firewall()
+        import journal
+        firewall = journal.firewall("pyre.calc")
+        raise firewall.log("improper node patching: old={}, new={}".format(old, new))
             
 
     # meta methods

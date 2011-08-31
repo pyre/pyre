@@ -32,7 +32,13 @@ class Unary(Function):
         This is used by the model during node resolution. Please don't use directly unless you
         have thought the many and painful implications through
         """
-        # easy enough since i only have one item in my domain
+        # check that {old} matches my operand
+        if old != self._op:
+            import journal
+            firewall = journal.firewall("pyre.calc")
+            raise firewall.log("improper node patching: old={}, new={}".format(old, new))
+
+        # otherwise, easy enough since i only have one item in my domain
         self._op = new
         # all done
         return
