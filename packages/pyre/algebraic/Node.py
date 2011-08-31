@@ -59,7 +59,8 @@ class Node:
 
     # hooks for implementing the expression graph construction
     # the default implementation provided by this package uses the classes defined here
-    def literal(self, value):
+    @classmethod
+    def literal(cls, value):
         """
         Build a representation of a foreign value
         """
@@ -70,7 +71,8 @@ class Node:
     # arithmetic
     # operators are presented in the order the python methods appear in the python
     # documentation
-    def addition(self, op1, op2):
+    @classmethod
+    def addition(cls, op1, op2):
         """
         Build a representation for addition
         """
@@ -78,7 +80,8 @@ class Node:
         return Addition(op1, op2)
 
 
-    def subtraction(self, op1, op2):
+    @classmethod
+    def subtraction(cls, op1, op2):
         """
         Build a representation for subtraction
         """
@@ -86,7 +89,8 @@ class Node:
         return Subtraction(op1, op2)
 
 
-    def multiplication(self, op1, op2):
+    @classmethod
+    def multiplication(cls, op1, op2):
         """
         Build a representation for multiplication
         """
@@ -94,7 +98,8 @@ class Node:
         return Multiplication(op1, op2)
 
 
-    def division(self, op1, op2):
+    @classmethod
+    def division(cls, op1, op2):
         """
         Build a representation for true division
         """
@@ -102,7 +107,8 @@ class Node:
         return Division(op1, op2)
 
 
-    def floorDivision(self, op1, op2):
+    @classmethod
+    def floorDivision(cls, op1, op2):
         """
         Build a representation for true division
         """
@@ -110,7 +116,8 @@ class Node:
         return FloorDivision(op1, op2)
 
 
-    def modulus(self, op1, op2):
+    @classmethod
+    def modulus(cls, op1, op2):
         """
         Build a representation for mod
         """
@@ -118,7 +125,8 @@ class Node:
         return Modulus(op1, op2)
 
 
-    def power(self, op1, op2):
+    @classmethod
+    def power(cls, op1, op2):
         """
         Build a representation for power
         """
@@ -126,7 +134,8 @@ class Node:
         return Power(op1, op2)
 
 
-    def opposite(self, op):
+    @classmethod
+    def opposite(cls, op):
         """
         Build a representation of unary minus
         """
@@ -134,7 +143,8 @@ class Node:
         return Opposite(op)
 
 
-    def absolute(self, op):
+    @classmethod
+    def absolute(cls, op):
         """
         Build a representation of the absolute value
         """
@@ -143,7 +153,8 @@ class Node:
 
 
     # logical operators
-    def logicalAnd(self, op1, op2):
+    @classmethod
+    def logicalAnd(cls, op1, op2):
         """
         Build a representation of logical and
         """
@@ -151,7 +162,8 @@ class Node:
         return And(op1, op2)
 
 
-    def logicalOr(self, op1, op2):
+    @classmethod
+    def logicalOr(cls, op1, op2):
         """
         Build a representation of logical and
         """
@@ -160,7 +172,8 @@ class Node:
 
 
     # comparisons
-    def equal(self, op1, op2):
+    @classmethod
+    def equal(cls, op1, op2):
         """
         Build a representation of equality testing
         """
@@ -168,7 +181,8 @@ class Node:
         return Equal(op1, op2)
 
 
-    def notEqual(self, op1, op2):
+    @classmethod
+    def notEqual(cls, op1, op2):
         """
         Build a representation of inequality testing
         """
@@ -176,7 +190,8 @@ class Node:
         return NotEqual(op1, op2)
 
 
-    def lessEqual(self, op1, op2):
+    @classmethod
+    def lessEqual(cls, op1, op2):
         """
         Build a representation of {<=}
         """
@@ -184,7 +199,8 @@ class Node:
         return LessEqual(op1, op2)
 
 
-    def greaterEqual(self, op1, op2):
+    @classmethod
+    def greaterEqual(cls, op1, op2):
         """
         Build a representation of {>=}
         """
@@ -192,7 +208,8 @@ class Node:
         return GreaterEqual(op1, op2)
 
 
-    def less(self, op1, op2):
+    @classmethod
+    def less(cls, op1, op2):
         """
         Build a representation of {<}
         """
@@ -200,7 +217,8 @@ class Node:
         return Less(op1, op2)
 
 
-    def greater(self, op1, op2):
+    @classmethod
+    def greater(cls, op1, op2):
         """
         Build a representation of {>}
         """
