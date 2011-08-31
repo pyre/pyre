@@ -30,7 +30,7 @@ class Node(Algebra, Observable, metaclass=_metaclass_Node):
         if self._value is None:
             # get my evaluator to refresh it
             try:
-                self._value = self._evaluator and self._evaluator.compute()
+                self._value = self._evaluator and self._evaluator.eval()
             # leave unresolved node errors alone
             except self.UnresolvedNodeError as error:
                 error.node = self

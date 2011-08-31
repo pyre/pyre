@@ -36,7 +36,7 @@ class Slot(Base):
         # the only case remaining is: null value but non-null evaluator
         # get the evaluator to compute the value
         try:
-            value = evaluator.compute()
+            value = evaluator.eval()
         # re-raise errors associated with unresolved nodes
         except self.UnresolvedNodeError as error:
             error.node = self
@@ -62,7 +62,7 @@ class Slot(Base):
             self._evaluator.initialize(owner=self)
             # try to get it to compute the value
             try:
-                value = self._evaluator.compute()
+                value = self._evaluator.eval()
             # it is not ready yet...
             except self.UnresolvedNodeError as error:
                 value = None

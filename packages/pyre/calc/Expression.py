@@ -90,7 +90,7 @@ class Expression(Function):
         return self._domain.keys()
 
 
-    def compute(self):
+    def eval(self):
         """
         Evaluate my program
         """

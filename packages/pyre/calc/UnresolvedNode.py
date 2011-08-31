@@ -20,7 +20,7 @@ class UnresolvedNode(Error):
 
 
     # interface
-    def compute(self):
+    def eval(self):
         """
         Compute my value
         """

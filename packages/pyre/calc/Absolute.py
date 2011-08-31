@@ -15,7 +15,7 @@ class Absolute(Unary):
     """
 
 
-    def compute(self):
+    def eval(self):
         """
         Compute and return my value
         """

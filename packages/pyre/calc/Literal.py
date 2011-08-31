@@ -19,7 +19,7 @@ class Literal(Evaluator):
     value = None
 
 
-    def compute(self):
+    def eval(self):
         """
         Compute my value
         """

@@ -16,7 +16,7 @@ class Aggregator(Polyadic):
 
 
     # interface
-    def compute(self):
+    def eval(self):
         """
         Invoke the evaluation routines of my descendants to compute my value
         """

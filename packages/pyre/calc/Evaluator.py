@@ -27,12 +27,12 @@ class Evaluator(metaclass=_metaclass_Evaluator):
         return
 
 
-    def compute(self):
+    def eval(self):
         """
         Compute my value
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override 'compute'".format(self))
+            "class {0.__class__.__name__!r} must override 'eval'".format(self))
 
 
     # life cycle management

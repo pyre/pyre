@@ -15,7 +15,7 @@ class Subtraction(Binary):
     """
 
 
-    def compute(self):
+    def eval(self):
         return self._op1.value - self._op2.value
 
 

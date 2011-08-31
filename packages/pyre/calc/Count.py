@@ -15,7 +15,7 @@ class Count(Polyadic):
     """
 
 
-    def compute(self):
+    def eval(self):
         """
         Compute and return my value
         """
