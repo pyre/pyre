@@ -9,9 +9,9 @@
 from .Unary import Unary
 
 
-class Scaling(Unary):
+class Opposite(Unary):
     """
-    Scale the value of another node by a constant
+    Compute the opposite of a node
     """
 
 
@@ -19,14 +19,7 @@ class Scaling(Unary):
         """
         Compute and return my value
         """
-        return self._factor * self._op.value
-
-
-    # meta-methods
-    def __init__(self, factor, **kwds):
-        super().__init__(**kwds)
-        self._factor = factor
-        return
+        return -self._op.value
 
 
 # end of file 

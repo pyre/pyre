@@ -8,9 +8,10 @@
 
 from . import _metaclass_Node
 from ..patterns.Observable import Observable
+from ..algebraic.Node import Node as Algebra
 
 
-class Node(Observable, metaclass=_metaclass_Node):
+class Node(Algebra, Observable, metaclass=_metaclass_Node):
     """
     Base class for objects in evaluation graphs
     """
@@ -18,9 +19,6 @@ class Node(Observable, metaclass=_metaclass_Node):
 
     # access to the evaluator base
     from .Evaluator import Evaluator
-    # and some evaluator factories
-    from .Literal import Literal
-    from .Reference import Reference
 
 
     # interface
@@ -58,7 +56,8 @@ class Node(Observable, metaclass=_metaclass_Node):
         if isinstance(value, self.Evaluator):
             evaluator = value
         else:
-            evaluator = self.Literal(value=value)
+            from .Literal import Literal
+            evaluator = Literal(value=value)
         # initialize it
         evaluator.initialize(owner=self)
         # attach it
@@ -100,7 +99,8 @@ class Node(Observable, metaclass=_metaclass_Node):
         else:
             # build a literal out of the other's value
             # literals don't need to be initialized
-            evaluator = None if value is None else self.Literal(value=other._value)
+            from .Literal import Literal
+            evaluator = None if value is None else Literal(value=other._value)
         # attach the evaluator to me
         self._evaluator = evaluator
 
@@ -177,109 +177,108 @@ class Node(Observable, metaclass=_metaclass_Node):
 
     # evaluator factories
     @classmethod
-    def newLiteral(cls, value, **kwds):
+    def literal(cls, value, **kwds):
         """
         Build a new literal evaluator
         """
-        return cls.Literal(value=value, **kwds)
+        from .Literal import Literal
+        return Node(value=None, evaluator=Literal(value=value, **kwds))
 
 
     def newReference(self, **kwds):
         """
         Build a new reference to me
         """
-        return self.Reference(node=self)
+        from .Reference import Reference
+        return Reference(node=self)
         
+
+    # arithmetic
+    # operators are presented in the order the python methods appear in the python
+    # documentation
+    @classmethod
+    def addition(cls, op1, op2):
+        """
+        Build a representation for addition
+        """
+        from .Addition import Addition
+        return Node(value=None, evaluator=Addition(op1, op2))
+
+
+    @classmethod
+    def subtraction(cls, op1, op2):
+        """
+        Build a representation for subtraction
+        """
+        from .Subtraction import Subtraction
+        return Node(value=None, evaluator=Subtraction(op1, op2))
+
+
+    @classmethod
+    def multiplication(cls, op1, op2):
+        """
+        Build a representation for multiplication
+        """
+        from .Multiplication import Multiplication
+        return Node(value=None, evaluator=Multiplication(op1, op2))
+
+
+    @classmethod
+    def division(cls, op1, op2):
+        """
+        Build a representation for true division
+        """
+        from .Division import Division
+        return Node(value=None, evaluator=Division(op1, op2))
+
+
+    @classmethod
+    def floorDivision(cls, op1, op2):
+        """
+        Build a representation for true division
+        """
+        from .FloorDivision import FloorDivision
+        return Node(value=None, evaluator=FloorDivision(op1, op2))
+
+
+    @classmethod
+    def modulus(cls, op1, op2):
+        """
+        Build a representation for mod
+        """
+        from .Modulus import Modulus
+        return Node(value=None, evaluator=Modulus(op1, op2))
+
+
+    @classmethod
+    def power(cls, op1, op2):
+        """
+        Build a representation for power
+        """
+        from .Power import Power
+        return Node(value=None, evaluator=Power(op1, op2))
+
+
+    @classmethod
+    def opposite(cls, op):
+        """
+        Build a representation of unary minus
+        """
+        from .Opposite import Opposite
+        return Node(value=None, evaluator=Opposite(op))
+
+
+    @classmethod
+    def absolute(cls, op):
+        """
+        Build a representation of the absolute value
+        """
+        from .Absolute import Absolute
+        return Node(value=None, evaluator=Absolute(op))
+
 
     # exceptions
     from .exceptions import CircularReferenceError, EvaluationError, UnresolvedNodeError
-
-
-    # my algebra
-    # the forward ones
-    def __add__(self, other):
-        if isinstance(other, Node):
-            from .Addition import Addition
-            return Node(value=None, evaluator=Addition(op1=self, op2=other))
-                    
-        from .Increment import Increment
-        return Node(value=None, evaluator=Increment(node=self, increment=other))
-
-        
-    def __sub__(self, other):
-        if isinstance(other, Node):
-            from .Subtraction import Subtraction
-            return Node(value=None, evaluator=Subtraction(op1=self, op2=other))
-                    
-        from .Increment import Increment
-        return Node(value=None, evaluator=Increment(node=self, increment=-other))
-
-        
-    def __mul__(self, other):
-        if isinstance(other, Node):
-            from .Multiplication import Multiplication
-            return Node(value=None, evaluator=Multiplication(op1=self, op2=other))
-
-        from .Scaling import Scaling
-        return Node(value=None, evaluator=Scaling(node=self, factor=other))
-
-
-    def __truediv__(self, other):
-        if isinstance(other, Node):
-            from .Division import Division
-            return Node(value=None, evaluator=Division(op1=self, op2=other))
-
-        from .Scaling import Scaling
-        return Node(value=None, evaluator=Scaling(node=self, factor=1/other))
-
-
-    def __pow__(self, other):
-        if isinstance(other, Node):
-            from .Power import Power
-            return Node(value=None, evaluator=Power(op1=self, op2=other))
-
-        from .ScalarPower import ScalarPower
-        return Node(value=None, evaluator=ScalarPower(node=self, exponent=other))
-
-
-    def __pos__(self):
-        return self
-
-
-    def __neg__(self):
-        from .Scaling import Scaling
-        return Node(value=None, evaluator=Scaling(node=self, factor=-1))
-
-
-    def __abs__(self):
-        from .Absolute import Absolute
-        return Node(value=None, evaluator=Absolute(node=self))
-                    
-        
-    # reflections
-    def __radd__(self, scalar):
-        from .Increment import Increment
-        return Node(value=None, evaluator=Increment(node=self, increment=scalar))
-
-
-    def __rsub__(self, scalar):
-        from .ReflectiveDecrement import ReflectiveDecrement
-        return Node(value=None, evaluator=ReflectiveDecrement(node=self, increment=scalar))
-
-
-    def __rmul__(self, scalar):
-        from .Scaling import Scaling
-        return Node(value=None, evaluator=Scaling(node=self, factor=scalar))
-                    
-
-    def __rtruediv__(self, scalar):
-        from .ReflectiveDivision import ReflectiveDivision
-        return Node(value=None, evaluator=ReflectiveDivision(node=self, factor=scalar))
-                    
-
-    def __rpow__(self, scalar):
-        from .ReflectivePower import ReflectivePower
-        return Node(value=None, evaluator=ReflectivePower(node=self, base=scalar))
 
 
     # meta methods

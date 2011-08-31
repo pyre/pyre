@@ -45,7 +45,7 @@ class Function(Evaluator):
         Patch my domain by replacing {old} with {new}.
 
         This is used by the model during node resolution. Please don't use directly unless you
-        have thought the many and painful implications through
+        have thought through the many and painful implications
         """
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must override 'patch'".format(self))

@@ -33,24 +33,19 @@ EXPORT_PYTHON_MODULES = \
     Expression.py \
     Function.py \
     HierarchicalModel.py \
-    Increment.py \
     Literal.py \
     Maximum.py \
     Minimum.py \
     Model.py \
     Multiplication.py \
     Node.py \
+    Opposite.py \
     Polyadic.py \
     Power.py \
     Probe.py \
     Product.py \
     Reductor.py \
     Reference.py \
-    ReflectiveDecrement.py \
-    ReflectiveDivision.py \
-    ReflectivePower.py \
-    ScalarPower.py \
-    Scaling.py \
     Subtraction.py \
     Sum.py \
     Unary.py \
