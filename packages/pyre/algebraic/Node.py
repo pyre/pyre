@@ -58,9 +58,9 @@ class Node(Number, Ordering, Boolean):
         return
 
 
-    def patch(self, *args, **kwds):
+    def substitute(self, *args, **kwds):
         """
-        Sentinel method for node patching in expression graphs
+        Sentinel method for node substitutions in expression graphs
         """
         return
 

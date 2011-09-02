@@ -106,7 +106,7 @@ class Templater(AttributeClassifier):
                     # if we have not built a proxy for this one yet, do so
                     if item not in proxies: proxies[item] = cls.FieldProxy(field=item)
                 # patch this derivation
-                derivation.patch(proxies)
+                derivation.substitute(proxies)
             # and store the proxies with the record
             # N.B.: only used for debugging for the time being
             record.pyre_proxies = proxies

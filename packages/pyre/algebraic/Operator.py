@@ -61,7 +61,7 @@ class Operator(Node):
         return
 
 
-    def patch(self, replacements):
+    def substitute(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with
         the indicated nodes.
@@ -78,7 +78,7 @@ class Operator(Node):
                 # push it
                 operands.append(operand)
                 # and hand it the replacement list
-                operand.patch(replacements)
+                operand.substitute(replacements)
         # install the new operands
         self.operands = tuple(operands)
         # and return

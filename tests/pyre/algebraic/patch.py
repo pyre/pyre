@@ -31,7 +31,7 @@ def test():
     n = n1 + n2
     assert set(n.dependencies) == {n1, n2}
     # patch n3 in
-    n.patch(replacements={n1: n3})
+    n.substitute(replacements={n1: n3})
     # and check that it happened correctly
     assert set(n.dependencies) == {n2, n3}
 
@@ -39,7 +39,7 @@ def test():
     n = (2*(n1**2 - 2*n1*n2 + n2**2)*n3)
     assert set(n.dependencies) == {n1, n2, n3}
     # patch n3 in
-    n.patch(replacements={n1: n3})
+    n.substitute(replacements={n1: n3})
     # and check that it happened correctly
     assert set(n.dependencies) == {n2, n3}
 

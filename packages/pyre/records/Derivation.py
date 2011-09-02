@@ -46,13 +46,13 @@ class Derivation(Node):
         return record.pyre_derivationAccessor(index=index, field=self)
 
 
-    def patch(self, replacements):
+    def substitute(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with
         the indicated nodes.
         """
         # patch my expression
-        self.expression.patch(replacements)
+        self.expression.substitute(replacements)
         # and return
         return
 
