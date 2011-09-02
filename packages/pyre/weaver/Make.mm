@@ -44,7 +44,6 @@ EXPORT_PYTHON_MODULES = \
     TeX.py \
     Weaver.py \
     XML.py \
-    algebraic.py \
     __init__.py
 
 
