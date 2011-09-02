@@ -29,12 +29,15 @@ class Cxx(LineMill, Expression):
     def __init__(self, **kwds):
         super().__init__(comment='//', **kwds)
 
+        # access the {operator} module
+        import operator
         # adjust the symbol table
-        self._symbols[self.algebraic.And] = "&&"
-        self._symbols[self.algebraic.Or] = "||"
+        self._symbols[operator.floordiv] = "/"
+        self._symbols[operator.and_] = "&&"
+        self._symbols[operator.or_] = "||"
 
         # and the rendering strategy table
-        self._renderers[self.algebraic.Power] = self._powerRenderer
+        self._renderers[operator.pow] = self._powerRenderer
 
         return
 
@@ -44,9 +47,12 @@ class Cxx(LineMill, Expression):
         """
         Render {node.op1} raised to the {node.op2} power
         """
+        # get the base and the exponent
+        base = node.operands[0]
+        exponent = node.operands[1]
         # render my operands
-        op1 = self._renderers[node.op1.__class__](node.op1)
-        op2 = self._renderers[node.op2.__class__](node.op2)
+        op1 = self._renderers[type(base)](base)
+        op2 = self._renderers[type(exponent)](exponent)
         # and return my string
         return "pow({},{})".format(op1, op2)
 

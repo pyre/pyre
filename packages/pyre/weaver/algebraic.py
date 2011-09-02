@@ -9,6 +9,7 @@
 # nodes
 from ..algebraic.Node import Node
 from ..algebraic.Literal import Literal
+from ..algebraic.Operato import Literal
 
 # unary operators
 from ..algebraic.Absolute import Absolute

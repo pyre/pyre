@@ -5,6 +5,9 @@
 # (c) 1998-2011 all rights reserved
 #
 
+# access the operator module
+import operator
+
 
 class Expression:
     """
@@ -14,7 +17,7 @@ class Expression:
 
 
     # types
-    from . import algebraic
+    from .. import algebraic
 
 
     # interface
@@ -27,11 +30,16 @@ class Expression:
 
 
     # meta methods
-    def __init__(self, **kwds):
+    def __init__(self, module=None, **kwds):
         super().__init__(**kwds)
 
+        # make sure we can hold of the type hierarchy
+        if module is None:
+            from .. import algebraic as module
+        # build the symbol table
         self._symbols = self._newSymbolTable()
-        self._renderers = self._newRenderingStrategyTable()
+        # initialize the table of renderers
+        self._renderers = self._newRenderingStrategyTable(module=module)
 
         return
 
@@ -47,102 +55,67 @@ class Expression:
         """
         # build the symbol table
         symbols = {
-            self.algebraic.Addition: "+",
-            self.algebraic.And: "and",
-            self.algebraic.Division: "/",
-            self.algebraic.Equal: "==",
-            self.algebraic.FloorDivision: "//",
-            self.algebraic.Greater: ">",
-            self.algebraic.GreaterEqual: ">=",
-            self.algebraic.Less: "<",
-            self.algebraic.LessEqual: "<=",
-            self.algebraic.Modulus: "%",
-            self.algebraic.Multiplication: "*",
-            self.algebraic.NotEqual: "!=",
-            self.algebraic.Or: "or",
-            self.algebraic.Power: "**",
-            self.algebraic.Subtraction: "-",
+            # support for {Number}
+            operator.add: "+",
+            operator.sub: "-",
+            operator.mul: "*",
+            operator.truediv: "/",
+            operator.floordiv: "//",
+            operator.mod: "%",
+            operator.pow: "**",
+            operator.neg: "-",
+            operator.abs: "abs",
+            # support for {Boolean}
+            operator.and_: "and",
+            operator.or_: "or",
+            # support for {Ordering}
+            operator.eq: "==",
+            operator.ne: "!=",
+            operator.le: "<=",
+            operator.ge: ">=",
+            operator.lt: "<",
+            operator.gt: ">",
             }
         # and return it
         return symbols
 
 
-    def _newRenderingStrategyTable(self):
+    def _newRenderingStrategyTable(self, module):
         """
         Build a table that maps {pyre.algebraic} operators to rendering strategies
         """
         # build the symbol table
         handlers = {
             # nodes
-            self.algebraic.Node: self._literalRenderer,
-            self.algebraic.Literal: self._literalRenderer,
-
-            # unary operators
-            self.algebraic.Absolute: self._absoluteRenderer,
-            self.algebraic.Opposite: self._oppositeRenderer,
-
-            # binary operators
-            self.algebraic.Addition: self._binaryOperatorRenderer,
-            self.algebraic.And: self._binaryOperatorRenderer,
-            self.algebraic.Division: self._binaryOperatorRenderer,
-            self.algebraic.Equal: self._binaryOperatorRenderer,
-            self.algebraic.FloorDivision: self._binaryOperatorRenderer,
-            self.algebraic.Greater: self._binaryOperatorRenderer,
-            self.algebraic.GreaterEqual: self._binaryOperatorRenderer,
-            self.algebraic.Less: self._binaryOperatorRenderer,
-            self.algebraic.LessEqual: self._binaryOperatorRenderer,
-            self.algebraic.Modulus: self._binaryOperatorRenderer,
-            self.algebraic.Multiplication: self._binaryOperatorRenderer,
-            self.algebraic.NotEqual: self._binaryOperatorRenderer,
-            self.algebraic.Or: self._binaryOperatorRenderer,
-            self.algebraic.Power: self._binaryOperatorRenderer,
-            self.algebraic.Subtraction: self._binaryOperatorRenderer,
+            module.node: self._literalRenderer,
+            module.literal: self._literalRenderer,
+            module.operation: self._operatorRenderer,
+            # operators
+            # arithmetic
+            operator.add: self._binaryOperatorRenderer,
+            operator.sub: self._binaryOperatorRenderer,
+            operator.mul: self._binaryOperatorRenderer,
+            operator.truediv: self._binaryOperatorRenderer,
+            operator.floordiv: self._binaryOperatorRenderer,
+            operator.mod: self._binaryOperatorRenderer,
+            operator.pow: self._binaryOperatorRenderer,
+            operator.abs: self._absoluteRenderer,
+            operator.neg: self._oppositeRenderer,
+            # comparisons
+            operator.eq: self._binaryOperatorRenderer,
+            operator.ne: self._binaryOperatorRenderer,
+            operator.le: self._binaryOperatorRenderer,
+            operator.ge: self._binaryOperatorRenderer,
+            operator.lt: self._binaryOperatorRenderer,
+            operator.gt: self._binaryOperatorRenderer,
+            # logical
+            operator.and_: self._binaryOperatorRenderer,
+            operator.or_: self._binaryOperatorRenderer,
             }
 
         # and return it
         return handlers
 
-
-    # the actual rendering strategies
-    def _absoluteRenderer(self, node, **kwds):
-        """
-        Render the absolute value of {node}
-        """
-        # render my operand
-        op = self._renderers[node.op.__class__](node=node.op)
-        # and return my string
-        return "abs({})".format(op)
-        
-
-    def _inverseRenderer(self, node, **kwds):
-        """
-        Render the inverse of {node}
-        """
-        # render my operand
-        op = self._renderers[node.op.__class__](node=node.op)
-        # and return my string
-        return "(1/{})".format(op)
-        
-
-    def _oppositeRenderer(self, node, **kwds):
-        """
-        Render the opposite of {node}
-        """
-        # render my operand
-        op = self._renderers[node.op.__class__](node=node.op)
-        # and return my string
-        return "(-{})".format(op)
-        
-
-    def _absoluteRenderer(self, node, **kwds):
-        """
-        Render the absolute value of {node}
-        """
-        # render my operand
-        op = self._renderers[node.op.__class__](node=node.op)
-        # and return my string
-        return "abs({})".format(op)
-        
 
     def _literalRenderer(self, node, **kwds):
         """
@@ -152,18 +125,72 @@ class Expression:
         return str(node)
 
 
+    def _operatorRenderer(self, node, **kwds):
+        """
+        Render {node} assuming it is an operation of some kind
+        """
+        # get the operator
+        op = node.operator
+        # lookup the operator specific handler
+        handler = self._renderers[op]
+        # and invoke it
+        return handler(node, **kwds)
+
+
     def _binaryOperatorRenderer(self, node, **kwds):
         """
-        Render {node} assuming it is a binary operator
+        Render {node} assuming it is an operator
         """
+        # extract the left operand
+        left = node.operands[0]
         # render the left operand
-        op1 = self._renderers[node.op1.__class__](node=node.op1, **kwds)
+        op1 = self._renderers[type(left)](node=left, **kwds)
+        # extract the left operand
+        right = node.operands[1]
         # render the right operand
-        op2 = self._renderers[node.op2.__class__](node=node.op2, **kwds)
+        op2 = self._renderers[type(right)](node=right, **kwds)
         # look up the operator symbol
-        symbol = self._symbols[node.__class__]
+        symbol = self._symbols[node.operator]
         # put it all together
-        return "({} {} {})".format(op1, symbol, op2)
+        return "({}) {} ({})".format(op1, symbol, op2)
+
+
+    def _unaryOperatorRenderer(self, node, **kwds):
+        """
+        Render {node} assuming it is an operator
+        """
+        # get the operand
+        operand = node.operands[0]
+        # render it
+        op = self._renderers[type(operand)](node=operand, **kwds)
+        # look up the operator symbol
+        symbol = self._symbols[node.operator]
+        # put it all together
+        return "{}({})".format(symbol, op)
+
+
+    def _absoluteRenderer(self, node, **kwds):
+        """
+        Render the absolute value of {node}
+        """
+        # get the operand
+        operand = node.operands[0]
+        # render it
+        op = self._renderers[type(operand)](node=operand, **kwds)
+        # decorate and return
+        return "{}({})".format(self._symbols[node.operator], op)
+
+
+    def _oppositeRenderer(self, node, **kwds):
+        """
+        Render the absolute value of {node}
+        """
+        # get the operand
+        operand = node.operands[0]
+        # render it
+        op = self._renderers[type(operand)](node=operand, **kwds)
+        # decorate and return
+        return "-({})".format(op)
 
 
 # end of file 

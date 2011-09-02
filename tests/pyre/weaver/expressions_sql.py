@@ -32,25 +32,25 @@ def test():
     assert mill.expression(zero) == '0'
     assert mill.expression(one) == '1'
 
-    # unary operators
-    assert mill.expression(abs(one)) == '@(1)'
-    assert mill.expression(-one) == '(-1)'
+    # arithmetic
+    assert mill.expression(one + zero) == '(1) + (0)'
+    assert mill.expression(one - zero) == '(1) - (0)'
+    assert mill.expression(one * zero) == '(1) * (0)'
+    assert mill.expression(one / zero) == '(1) / (0)'
+    assert mill.expression(one ** zero) == '(1) ^ (0)'
+    assert mill.expression(one % zero) == '(1) % (0)'
 
-    # binary operators
-    assert mill.expression(one + one) == '(1 + 1)'
-    assert mill.expression(one & one) == '(1 AND 1)'
-    assert mill.expression(one / one) == '(1 / 1)'
-    assert mill.expression(one == one) == '(1 = 1)'
-    assert mill.expression(one > one) == '(1 > 1)'
-    assert mill.expression(one >= one) == '(1 >= 1)'
-    assert mill.expression(one < one) == '(1 < 1)'
-    assert mill.expression(one <= one) == '(1 <= 1)'
-    assert mill.expression(one % one) == '(1 % 1)'
-    assert mill.expression(one * one) == '(1 * 1)'
-    assert mill.expression(one != one) == '(1 <> 1)'
-    assert mill.expression(one | one) == '(1 OR 1)'
-    assert mill.expression(one ** one) == '(1 ^ 1)'
-    assert mill.expression(one - one) == '(1 - 1)'
+    assert mill.expression(abs(one)) == '@(1)'
+    assert mill.expression(-one) == '-(1)'
+    assert mill.expression(one == zero) == '(1) = (0)'
+    assert mill.expression(one != zero) == '(1) <> (0)'
+    assert mill.expression(one <= zero) == '(1) <= (0)'
+    assert mill.expression(one >= zero) == '(1) >= (0)'
+    assert mill.expression(one < zero) == '(1) < (0)'
+    assert mill.expression(one > zero) == '(1) > (0)'
+
+    assert mill.expression(one & zero) == '(1) AND (0)'
+    assert mill.expression(one | zero) == '(1) OR (0)'
     
     # return the configured weaver
     return weaver

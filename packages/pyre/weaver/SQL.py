@@ -29,24 +29,17 @@ class SQL(LineMill, Expression):
     def __init__(self, **kwds):
         super().__init__(comment='--', **kwds)
 
+        # access the {operator} module
+        import operator
         # adjust the symbol table
-        self._symbols[self.algebraic.And] = "AND"
-        self._symbols[self.algebraic.Equal] = "="
-        self._symbols[self.algebraic.NotEqual] = "<>"
-        self._symbols[self.algebraic.Or] = "OR"
-        self._symbols[self.algebraic.Power] = "^"
+        self._symbols[operator.pow] = "^"
+        self._symbols[operator.eq] = "="
+        self._symbols[operator.ne] = "<>"
+        self._symbols[operator.abs] = "@"
+        self._symbols[operator.and_] = "AND"
+        self._symbols[operator.or_] = "OR"
 
         return
 
-
-    def _absoluteRenderer(self, node, **kwds):
-        """
-        Render the absolute value of {node}
-        """
-        # render my operand
-        op = self._renderers[node.op.__class__](node=node.op, **kwds)
-        # and return my string
-        return "@({})".format(op)
-        
 
 # end of file 

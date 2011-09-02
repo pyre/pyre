@@ -25,33 +25,32 @@ def test():
     # build a few nodes
     zero = pyre.algebraic.literal(0)
     one = pyre.algebraic.literal(1)
-    two = pyre.algebraic.literal(2)
 
     # check expression generation
     # the trivial cases
     assert mill.expression(zero) == '0'
     assert mill.expression(one) == '1'
 
-    # unary operators
+    # arithmetic
+    assert mill.expression(one + zero) == '(1) + (0)'
+    assert mill.expression(one - zero) == '(1) - (0)'
+    assert mill.expression(one * zero) == '(1) * (0)'
+    assert mill.expression(one / zero) == '(1) / (0)'
+    assert mill.expression(one // zero) == '(1) // (0)'
+    assert mill.expression(one % zero) == '(1) % (0)'
+    assert mill.expression(one ** zero) == '(1) ** (0)'
+    assert mill.expression(-one) == '-(1)'
     assert mill.expression(abs(one)) == 'abs(1)'
-    assert mill.expression(-one) == '(-1)'
 
-    # binary operators
-    assert mill.expression(one + one) == '(1 + 1)'
-    assert mill.expression(one & one) == '(1 and 1)'
-    assert mill.expression(one / one) == '(1 / 1)'
-    assert mill.expression(one == one) == '(1 == 1)'
-    assert mill.expression(one // one) == '(1 // 1)'
-    assert mill.expression(one > one) == '(1 > 1)'
-    assert mill.expression(one >= one) == '(1 >= 1)'
-    assert mill.expression(one < one) == '(1 < 1)'
-    assert mill.expression(one <= one) == '(1 <= 1)'
-    assert mill.expression(one % one) == '(1 % 1)'
-    assert mill.expression(one * one) == '(1 * 1)'
-    assert mill.expression(one != one) == '(1 != 1)'
-    assert mill.expression(one | one) == '(1 or 1)'
-    assert mill.expression(one ** one) == '(1 ** 1)'
-    assert mill.expression(one - one) == '(1 - 1)'
+    assert mill.expression(one == zero) == '(1) == (0)'
+    assert mill.expression(one != zero) == '(1) != (0)'
+    assert mill.expression(one <= zero) == '(1) <= (0)'
+    assert mill.expression(one >= zero) == '(1) >= (0)'
+    assert mill.expression(one < zero) == '(1) < (0)'
+    assert mill.expression(one > zero) == '(1) > (0)'
+
+    assert mill.expression(one & zero) == '(1) and (0)'
+    assert mill.expression(one | zero) == '(1) or (0)'
     
     # return the configured weaver
     return weaver
