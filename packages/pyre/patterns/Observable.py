@@ -17,9 +17,9 @@ class Observable:
     Observers, i.e. clients of the Observable, register event handlers that will be invoked to
     notify them whenever something interesting happens to the Observable. The nature of what is
     being observed is defined by Observable descendants and their managers. For example,
-    instances of pyre.calc.Node are observable by other nodes whose value depends on them so
-    that the dependents can be notified about value changes and forced to recopute their own
-    value.
+    instances of pyre.calc.Node are observable by the other nodes whose value depends on
+    them. These dependents are notified of value changes and forced to refresh their value
+    cache.
 
     The event handlers are callables that take the observable instance as their single
     argument.
