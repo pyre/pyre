@@ -19,28 +19,12 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Absolute.py \
-    Addition.py \
-    And.py \
-    Binary.py \
-    Division.py \
-    Equal.py \
-    FloorDivision.py \
-    Greater.py \
-    GreaterEqual.py \
-    Less.py \
-    LessEqual.py \
+    Boolean.py \
     Literal.py \
-    Modulus.py \
-    Multiplication.py \
     Node.py \
-    NotEqual.py \
+    Number.py \
     Operator.py \
-    Opposite.py \
-    Or.py \
-    Power.py \
-    Subtraction.py \
-    Unary.py \
+    Ordering.py \
     __init__.py
 
 
