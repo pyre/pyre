@@ -66,8 +66,8 @@ def test():
         "",
         "    PRIMARY KEY (cid),",
         "    UNIQUE (name),",
-        "    CHECK ((balance >= 0)),",
-        "    CHECK ((balance < 10000))",
+        "    CHECK ((balance) >= (0)),",
+        "    CHECK ((balance) < (10000))",
         ");"
         )
 

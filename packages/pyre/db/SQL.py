@@ -228,7 +228,7 @@ class SQL(Mill):
         # build the filtering expression
         predicate = self.expression(root=condition, table=table)
         # and render it
-        yield self.place("WHERE {};".format(predicate))
+        yield self.place("WHERE ({});".format(predicate))
         # outdent
         self.outdent()
         # and return

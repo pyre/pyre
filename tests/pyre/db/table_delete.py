@@ -29,10 +29,9 @@ def test():
 
     # attempt to drop a {Person} record
     stmt = tuple(server.sql.deleteRecords(table=Person, condition=(Person.name=='Bit Twiddle')))
-    # print('\n'.join(stmt))
     assert stmt == (
         "DELETE FROM persons",
-        "    WHERE (name = 'Bit Twiddle');"
+        "    WHERE ((name) = ('Bit Twiddle'));"
         )
 
     # attempt to remove all of them
