@@ -25,15 +25,11 @@ this. Hence, we have to make do with the bitwise operators {&} and {|}, and awkw
 """
 
 
-# pull in the two important nodes
-from .Node import Node as node
-from .Literal import Literal as literal
-from .Operator import Operator as operation
-
+# pull in the node factory
+from .Variable import Variable as var
 
 # remove the namespace pollution
-del Node
-del Literal
+del Variable
 
 
 # end of file 

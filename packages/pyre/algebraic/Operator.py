@@ -19,20 +19,26 @@ class Operator(Node):
 
 
     # public data
-    operator = None
-    operands = None
-
-
-    # traversal of the nodes in my expression graph
     @property
-    def dependencies(self):
+    def value(self):
         """
-        Traverse my expression graph looking for leaf nodes
+        Compute and return my value
+        """
+        # compute the values of my operands
+        values = tuple(op.value for op in self._operands)
+        # apply my operator
+        return self._operator(*values)
+
+
+    @property
+    def variables(self):
+        """
+        Traverse my expression graph and return an iterable with all the variables I depend on
         """
         # traverse my operands
-        for operand in self.operands:
+        for operand in self._operands:
             # and ask them for their dependencies
-            for node in operand.dependencies:
+            for node in operand.variables:
                 # return whatever it discovered
                 yield node
         # and no more
@@ -40,27 +46,6 @@ class Operator(Node):
 
 
     # interface
-    def eval(self, **kwds):
-        values = (op.eval(**kwds) for op in self.operands)
-        return self.operator(*values)
-
-
-    def dfs(self, **kwds):
-        """
-        Traverse an expression graph in depth-first order
-        """
-        # traverse my operands
-        for operand in self.operands:
-            # and ask them for their dependencies
-            for node in operand.dfs(**kwds):
-                # return whatever it discovered
-                yield node
-        # now return myself
-        yield self
-        # and no more
-        return
-
-
     def substitute(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with
@@ -68,7 +53,7 @@ class Operator(Node):
         """
         operands = []
         # look through my operands
-        for operand in self.operands:
+        for operand in self._operands:
             # does this one show up in the replacement map?
             if operand in replacements:
                 # push its replacement to the new operand list
@@ -80,7 +65,7 @@ class Operator(Node):
                 # and hand it the replacement list
                 operand.substitute(replacements)
         # install the new operands
-        self.operands = tuple(operands)
+        self._operands = tuple(operands)
         # and return
         return
                     
@@ -88,9 +73,14 @@ class Operator(Node):
     # meta methods
     def __init__(self, operator, operands, **kwds):
         super().__init__(**kwds)
-        self.operator = operator
-        self.operands = operands
+        self._operator = operator
+        self._operands = operands
         return
+
+
+    # private data
+    _operator = None
+    _operands = None
 
 
 # end of file 

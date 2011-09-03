@@ -18,15 +18,15 @@ import pyre.algebraic
 def test():
 
     # declare a couple of nodes
-    zero = pyre.algebraic.literal(value=0)
-    one = pyre.algebraic.literal(value=1)
+    zero = pyre.algebraic.var(value=0)
+    one = pyre.algebraic.var(value=1)
 
     # and
-    assert ((zero == 0) & (one == 1)).eval() == True
+    assert ((zero == 0) & (one == 1)).value == True
 
     # or
-    assert ((zero == 0) | (zero == one)).eval() == True
-    assert ((zero == one) | (zero == 0)).eval() == True
+    assert ((zero == 0) | (zero == one)).value == True
+    assert ((zero == one) | (zero == 0)).value == True
 
     return one, zero
 

@@ -11,27 +11,23 @@ from .Node import Node
 
 class Literal(Node):
     """
-    Wrapper around foreign values that endows them with {Node} interface
+    Class that encapsulates values encountered in expressions that are not instance of members
+    of the {Node} class hierarchy.
     """
 
 
-    # traversal of the nodes in my expression graph
-    @property
-    def dependencies(self):
-        """
-        Traverse my expression graph looking for nodes i depend on
-        """
-        # literals don't count as true dependencies
-        return []
+    # public data
+    value = None # my value is explicitly set
+    variables = [] # literals have no dependencies
 
 
     # interface
-    def eval(self, **kwds):
+    def substitute(self, replacements):
         """
-        Compute my value
+        Replace variables in my graph that are present in {replacements} with the indicated node
         """
-        # easy enough...
-        return self.value
+        # nothing to do
+        return
 
 
     # meta methods
@@ -39,10 +35,6 @@ class Literal(Node):
         super().__init__(**kwds)
         self.value = value
         return
-
-
-    def __str__(self):
-        return "{.value!r}".format(self)
 
 
 # end of file 

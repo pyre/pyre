@@ -18,27 +18,27 @@ def test():
     import pyre.algebraic
 
     # make a few to use as operands
-    n1 = pyre.algebraic.node()
-    n2 = pyre.algebraic.node()
+    n1 = pyre.algebraic.var()
+    n2 = pyre.algebraic.var()
 
     # check that they have no dependencies
-    assert set(n1.dependencies) == {n1}
-    assert set(n2.dependencies) == {n2}
+    assert set(n1.variables) == {n1}
+    assert set(n2.variables) == {n2}
 
     # an expression involving a unary operator
     n = -n1
-    assert set(n.dependencies) == {n1}
+    assert set(n.variables) == {n1}
     
     # an expression involving a pseudo-unary operator
     n = 2*n1
-    assert set(n.dependencies) == {n1}
+    assert set(n.variables) == {n1}
     
     # an expression involving a binary operator
     n = n1 + n2
-    assert set(n.dependencies) == {n1, n2}
+    assert set(n.variables) == {n1, n2}
     
     # a more complicated example
-    assert set((2*(.5 - n1*n2 + n2**2)*n1).dependencies) == {n1, n2}
+    assert set((2*(.5 - n1*n2 + n2**2)*n1).variables) == {n1, n2}
 
     return
 

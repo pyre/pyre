@@ -18,36 +18,36 @@ import pyre.algebraic
 def test():
 
     # declare a couple of nodes
-    zero = pyre.algebraic.literal(value=0)
-    one = pyre.algebraic.literal(value=1)
+    zero = pyre.algebraic.var(value=0)
+    one = pyre.algebraic.var(value=1)
 
     # equality
-    assert (zero == 0).eval() == True
-    assert (one == 1).eval() == True
+    assert (zero == 0).value == True
+    assert (one == 1).value == True
     # but also
-    assert (zero == one - one).eval() == True
-    assert (zero == one - 1).eval() == True
+    assert (zero == one - one).value == True
+    assert (zero == one - 1).value == True
 
     # less-or-equal
-    assert (zero <= 0).eval() == True
-    assert (one <= 1).eval() == True
+    assert (zero <= 0).value == True
+    assert (one <= 1).value == True
     # but also
-    assert (zero <= one).eval() == True
+    assert (zero <= one).value == True
 
     # greater-or-equal
-    assert (zero >= 0).eval() == True
-    assert (one >= 1).eval() == True
+    assert (zero >= 0).value == True
+    assert (one >= 1).value == True
     # but also
-    assert (one >= zero).eval() == True
+    assert (one >= zero).value == True
 
     # less
-    assert (zero < one).eval() == True
+    assert (zero < one).value == True
 
     # greater
-    assert (one > zero).eval() == True
+    assert (one > zero).value == True
 
     # not-equal
-    assert (one != zero).eval() == True
+    assert (one != zero).value == True
 
     return one, zero
 

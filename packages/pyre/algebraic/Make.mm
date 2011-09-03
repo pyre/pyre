@@ -25,6 +25,7 @@ EXPORT_PYTHON_MODULES = \
     Number.py \
     Operator.py \
     Ordering.py \
+    Variable.py \
     __init__.py
 
 

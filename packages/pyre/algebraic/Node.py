@@ -27,44 +27,7 @@ class Node(Number, Ordering, Boolean):
     """
 
 
-    # traversal of the nodes in my expression graph
-    @property
-    def dependencies(self):
-        """
-        Traverse my expression graph looking for nodes i depend on
-        """
-        # just return myself
-        yield self
-        # and no more
-        return
-
-
-    # interface
-    def eval(self, **kwds):
-        """
-        Compute the value of my expression graph
-        """
-        raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'eval'".format(self))
-
-
-    def dfs(self, **kwds):
-        """
-        Traverse an expression graph in depth-first order
-        """
-        # by default, node instances yield themselves
-        yield self
-        # and no more
-        return
-
-
-    def substitute(self, *args, **kwds):
-        """
-        Sentinel method for node substitutions in expression graphs
-        """
-        return
-
-
+    # types
     # hooks for implementing the expression graph construction
     # the default implementation provided by this package uses the classes defined here
     @property
@@ -78,13 +41,44 @@ class Node(Number, Ordering, Boolean):
 
 
     @property
-    def operation(self):
+    def operator(self):
         """
-        Grant access to the subclass used to encapsulate one of the supported operations
+        Grant access to the subclass used to encapsulate operators
         """
         # important: must return a type, not an instance
         from .Operator import Operator
         return Operator
+
+
+    # public data
+    @property
+    def value(self):
+        """
+        Compute and return my value
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'value'".format(self))
+
+
+    @property
+    def variables(self):
+        """
+        Traverse my expression graph and return an iterable with all the variables I depend on
+
+        Variables are reported as many times as they show up in my graph. Clients that are
+        looking for the set unique dependencies have to prune the results themselves.
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'variables'".format(self))
+
+
+    # interface
+    def substitute(self, replacements):
+        """
+        Replace variables in my graph that are present in {replacements} with the indicated node
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'substitute'".format(self))
 
 
 # end of file 
