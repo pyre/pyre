@@ -30,16 +30,16 @@ class Expression:
 
 
     # meta methods
-    def __init__(self, module=None, **kwds):
+    def __init__(self, nodeType=None, **kwds):
         super().__init__(**kwds)
 
         # make sure we can hold of the type hierarchy
-        if module is None:
-            from .. import algebraic as module
+        if nodeType is None:
+            from ..algebraic.Node import Node as nodeType
         # build the symbol table
         self._symbols = self._newSymbolTable()
         # initialize the table of renderers
-        self._renderers = self._newRenderingStrategyTable(module=module)
+        self._renderers = self._newRenderingStrategyTable(nodeType=nodeType)
 
         return
 
@@ -80,16 +80,21 @@ class Expression:
         return symbols
 
 
-    def _newRenderingStrategyTable(self, module):
+    def _newRenderingStrategyTable(self, nodeType):
         """
         Build a table that maps {pyre.algebraic} operators to rendering strategies
         """
+        # grab the types that handles literal values and operations
+        # pardon the weirdness: {literal} and {operation} are property descriptors in {nodeType}
+        literal = nodeType.literal.fget(None)
+        variable = nodeType.variable.fget(None)
+        operation = nodeType.operator.fget(None)
         # build the symbol table
         handlers = {
             # nodes
-            module.node: self._literalRenderer,
-            module.literal: self._literalRenderer,
-            module.operation: self._operatorRenderer,
+            literal: self._literalRenderer,
+            variable: self._literalRenderer,
+            operation: self._operatorRenderer,
             # operators
             # arithmetic
             operator.add: self._binaryOperatorRenderer,
@@ -122,7 +127,7 @@ class Expression:
         Render {node} as a literal
         """
         # return the literal representation
-        return str(node)
+        return str(node.value)
 
 
     def _operatorRenderer(self, node, **kwds):
@@ -130,7 +135,7 @@ class Expression:
         Render {node} assuming it is an operation of some kind
         """
         # get the operator
-        op = node.operator
+        op = node._operator
         # lookup the operator specific handler
         handler = self._renderers[op]
         # and invoke it
@@ -141,16 +146,14 @@ class Expression:
         """
         Render {node} assuming it is an operator
         """
-        # extract the left operand
-        left = node.operands[0]
+        # extract the operands
+        left, right = node._operands
         # render the left operand
         op1 = self._renderers[type(left)](node=left, **kwds)
-        # extract the left operand
-        right = node.operands[1]
         # render the right operand
         op2 = self._renderers[type(right)](node=right, **kwds)
         # look up the operator symbol
-        symbol = self._symbols[node.operator]
+        symbol = self._symbols[node._operator]
         # put it all together
         return "({}) {} ({})".format(op1, symbol, op2)
 
@@ -159,12 +162,12 @@ class Expression:
         """
         Render {node} assuming it is an operator
         """
-        # get the operand
-        operand = node.operands[0]
+        # get the operand: unpack as a tuple to catch mistakes
+        operand, = node._operands
         # render it
         op = self._renderers[type(operand)](node=operand, **kwds)
         # look up the operator symbol
-        symbol = self._symbols[node.operator]
+        symbol = self._symbols[node._operator]
         # put it all together
         return "{}({})".format(symbol, op)
 
@@ -173,20 +176,20 @@ class Expression:
         """
         Render the absolute value of {node}
         """
-        # get the operand
-        operand = node.operands[0]
+        # get the operand: unpack as a tuple to catch mistakes
+        operand, = node._operands
         # render it
         op = self._renderers[type(operand)](node=operand, **kwds)
         # decorate and return
-        return "{}({})".format(self._symbols[node.operator], op)
+        return "{}({})".format(self._symbols[node._operator], op)
 
 
     def _oppositeRenderer(self, node, **kwds):
         """
         Render the absolute value of {node}
         """
-        # get the operand
-        operand = node.operands[0]
+        # get the operand: unpack as a tuple to catch mistakes
+        operand, = node._operands
         # render it
         op = self._renderers[type(operand)](node=operand, **kwds)
         # decorate and return

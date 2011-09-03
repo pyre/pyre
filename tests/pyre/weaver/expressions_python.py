@@ -23,8 +23,8 @@ def test():
     mill = weaver.language
 
     # build a few nodes
-    zero = pyre.algebraic.literal(0)
-    one = pyre.algebraic.literal(1)
+    zero = pyre.algebraic.var(value=0)
+    one = pyre.algebraic.var(value=1)
 
     # check expression generation
     # the trivial cases

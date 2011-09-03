@@ -48,8 +48,7 @@ class Cxx(LineMill, Expression):
         Render {node.op1} raised to the {node.op2} power
         """
         # get the base and the exponent
-        base = node.operands[0]
-        exponent = node.operands[1]
+        base, exponent = node._operands
         # render my operands
         op1 = self._renderers[type(base)](base)
         op2 = self._renderers[type(exponent)](exponent)

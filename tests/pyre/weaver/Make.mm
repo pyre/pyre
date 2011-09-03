@@ -10,6 +10,7 @@ PROJECT = pyre
 
 #--------------------------------------------------------------------------
 #
+working: expressions
 
 all: test clean
 
