@@ -13,18 +13,18 @@ PROJECT = pyre
 
 all: test
 
-test: sanity algebra logic
+test: sanity algebra structural
 
 sanity:
 	${PYTHON} ./sanity.py
 
 algebra:
-	${PYTHON} ./algebra.py
+	${PYTHON} ./number.py
+	${PYTHON} ./ordering.py
+	${PYTHON} ./boolean.py
+
+structural:
 	${PYTHON} ./dependencies.py
 	${PYTHON} ./patch.py
-
-logic:
-	${PYTHON} ./logic.py
-	${PYTHON} ./boolean.py
 
 # end of file 
