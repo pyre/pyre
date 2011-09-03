@@ -41,6 +41,16 @@ class Node(Number, Ordering, Boolean):
 
 
     @property
+    def variable(self):
+        """
+        Grant access to the subclass used to encapsulate expression nodes
+        """
+        # important: must return a type, not an instance
+        from .Variable import Variable
+        return Variable
+
+
+    @property
     def operator(self):
         """
         Grant access to the subclass used to encapsulate operators
