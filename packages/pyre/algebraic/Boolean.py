@@ -19,7 +19,7 @@ class Boolean:
     the corresponding operators and their operands.
 
     {Boolean} expects its subclasses to define two class methods: {literal} and
-    {operation}. The former is used to encapsulate operands that are not {Boolean}
+    {operator}. The former is used to encapsulate operands that are not {Boolean}
     instances. The latter is used to construct the operator representations
     """
 
@@ -31,7 +31,7 @@ class Boolean:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operation(operator=operator.and_, operands=(self, other))
+        return self.operator(operator=operator.and_, operands=(self, other))
 
 
     def __or__(self, other):
@@ -40,7 +40,7 @@ class Boolean:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operation(operator=operator.or_, operands=(self, other))
+        return self.operator(operator=operator.or_, operands=(self, other))
 
 
 # end of file 
