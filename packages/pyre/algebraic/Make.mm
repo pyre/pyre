@@ -20,6 +20,8 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Boolean.py \
+    Composite.py \
+    Leaf.py \
     Literal.py \
     Node.py \
     Number.py \

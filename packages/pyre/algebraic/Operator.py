@@ -7,14 +7,12 @@
 
 
 from .Node import Node
+from .Composite import Composite
 
 
-class Operator(Node):
+class Operator(Composite, Node):
     """
-    Base class for all nodes that capture operations
-
-    This class is really just a marker in the class hierarchy that enables clients to
-    distinguish between literal nodes and nodes that capture operations.
+    Representation of operations among nodes
     """
 
 
@@ -29,46 +27,6 @@ class Operator(Node):
         # apply my operator
         return self._operator(*values)
 
-
-    @property
-    def variables(self):
-        """
-        Traverse my expression graph and return an iterable with all the variables I depend on
-        """
-        # traverse my operands
-        for operand in self._operands:
-            # and ask them for their dependencies
-            for node in operand.variables:
-                # return whatever it discovered
-                yield node
-        # and no more
-        return
-
-
-    # interface
-    def substitute(self, replacements):
-        """
-        Look through the dictionary {replacements} for any of my operands and replace them with
-        the indicated nodes.
-        """
-        operands = []
-        # look through my operands
-        for operand in self._operands:
-            # does this one show up in the replacement map?
-            if operand in replacements:
-                # push its replacement to the new operand list
-                operands.append(replacements[operand])
-            # otherwise
-            else:
-                # push it
-                operands.append(operand)
-                # and hand it the replacement list
-                operand.substitute(replacements)
-        # install the new operands
-        self._operands = tuple(operands)
-        # and return
-        return
-                    
 
     # meta methods
     def __init__(self, operator, operands, **kwds):
