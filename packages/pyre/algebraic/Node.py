@@ -84,6 +84,17 @@ class Node(Number, Ordering, Boolean):
 
 
     # interface
+    def validate(self, span=None, clean=None):
+        """
+        Make sure that the subgraph rooted at me is free of cycles
+
+        parameters:
+            {span}: the set of nodes previously visited; if i am in this set, there are cycles
+            {clean}: the set of nodes known to be cycle free because they were previously cleared
+        """
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'validate'".format(self))
+
     def substitute(self, replacements):
         """
         Replace variables in my graph that are present in {replacements} with the indicated node

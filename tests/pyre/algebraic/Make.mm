@@ -17,6 +17,7 @@ test: sanity algebra structural
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./exceptions.py
 
 algebra:
 	${PYTHON} ./number.py

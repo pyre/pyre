@@ -16,6 +16,10 @@ class Composite:
     """
 
 
+    # types
+    from .exceptions import CircularReferenceError
+
+
     # public data
     @property
     def variables(self):
@@ -33,6 +37,39 @@ class Composite:
 
 
     # interface
+    def validate(self, span=None, clean=None):
+        """
+        Make sure that the subgraph rooted at me is free of cycles
+
+        parameters:
+            {span}: the set of nodes previously visited; if i am in this set, there are cycles
+            {clean}: the set of nodes known to be cycle free because they were previously cleared
+        """
+        # initialize my optional parameters
+        span = set() if span is None else span
+        clean = set() if clean is None else clean
+        # if i am in the span
+        if self in span:
+            # we have a cycle
+            raise self.CircularReferenceError(node=self, path=span)
+        # if i am clean
+        if self in clean:
+            # go no further
+            return self
+        # so far so good; add me to the span
+        span.add(self)
+        # and visit my operands
+        for operand in self._operands:
+            # ask each one to validate its subgraph
+            operand.validate(span=span, clean=clean)
+        # if i made it this far without an exception being raised, i must be clean
+        # so add myself to the clean pile
+        clean.add(self)
+        # and return
+        return self
+
+
+
     def substitute(self, replacements):
         """
         Look through the dictionary {replacements} for any of my operands and replace them with

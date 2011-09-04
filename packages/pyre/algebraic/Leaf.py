@@ -29,6 +29,22 @@ class Leaf:
 
 
     # interface
+    def validate(self, span=None, clean=None):
+        """
+        Make sure that the subgraph rooted at me is free of cycles
+
+        parameters:
+            {span}: the set of nodes previously visited; if i am in this set, there are cycles
+            {clean}: the set of nodes known to be cycle free because they were previously cleared
+        """
+        # check whether i need to maintain the clean pile
+        if clean is not None:
+            # add myself to the clean set
+            clean.add(self)
+        # and return
+        return self
+
+
     def substitute(self, replacements):
         """
         Replace variables in my graph that are present in {replacements} with the indicated node
