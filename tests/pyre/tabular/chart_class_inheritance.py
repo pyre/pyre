@@ -12,31 +12,28 @@ Verify that the chart metaclass handles inheritance properly
 """
 
 
-import pyre.tabular
-
-
-class sales(pyre.tabular.sheet):
-    """The transaction data"""
-    # layout
-    date = pyre.tabular.str()
-    time = pyre.tabular.str()
-    sku = pyre.tabular.str()
-    quantity = pyre.tabular.float()
-    discount = pyre.tabular.float()
-    sale = pyre.tabular.float()
-
-
-class base(pyre.tabular.chart, sheet=sales):
-    """Aggregate the {sku} information in the {sales} table """
-    sku = pyre.tabular.inferred(sales.sku)
-
-
-class chart(base):
-    """Further aggregation by {date}"""
-    date = pyre.tabular.inferred(base.pyre_Sheet.date)
-
-
 def test():
+    import pyre.tabular
+
+    class sales(pyre.tabular.sheet):
+        """The transaction data"""
+        # layout
+        date = pyre.tabular.str()
+        time = pyre.tabular.str()
+        sku = pyre.tabular.str()
+        quantity = pyre.tabular.float()
+        discount = pyre.tabular.float()
+        sale = pyre.tabular.float()
+
+    class base(pyre.tabular.chart, sheet=sales):
+        """Aggregate the {sku} information in the {sales} table """
+        sku = pyre.tabular.inferred(sales.sku)
+
+    class chart(base):
+        """Further aggregation by {date}"""
+        date = pyre.tabular.inferred(base.pyre_Sheet.date)
+
+
     # base checks
     # check the sheet class
     assert base.pyre_Sheet == sales
@@ -58,6 +55,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

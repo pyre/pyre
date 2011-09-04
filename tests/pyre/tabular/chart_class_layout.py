@@ -12,28 +12,26 @@ Verify that chart class records get built as expected
 """
 
 
-import pyre.tabular
-
-
-class sales(pyre.tabular.sheet):
-    """The transaction data"""
-    # layout
-    date = pyre.tabular.str()
-    time = pyre.tabular.str()
-    sku = pyre.tabular.str()
-    quantity = pyre.tabular.float()
-    discount = pyre.tabular.float()
-    sale = pyre.tabular.float()
-
-
-class chart(pyre.tabular.chart, sheet=sales):
-    """
-    Aggregate the information in the {sales} table
-    """
-    sku = pyre.tabular.inferred(sales.sku)
-
-
 def test():
+    import pyre.tabular
+
+    class sales(pyre.tabular.sheet):
+        """The transaction data"""
+        # layout
+        date = pyre.tabular.str()
+        time = pyre.tabular.str()
+        sku = pyre.tabular.str()
+        quantity = pyre.tabular.float()
+        discount = pyre.tabular.float()
+        sale = pyre.tabular.float()
+
+    class chart(pyre.tabular.chart, sheet=sales):
+        """
+        Aggregate the information in the {sales} table
+        """
+        sku = pyre.tabular.inferred(sales.sku)
+
+
     # check the sheet class
     assert chart.pyre_Sheet == sales
     # check the dimensions
@@ -46,6 +44,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

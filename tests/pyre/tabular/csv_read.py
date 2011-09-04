@@ -8,33 +8,32 @@
 
 
 """
-Build a rudimentary table
+Read a sheet from a csv file
 """
 
 
-import pyre.tabular
-
-
-class pricing(pyre.tabular.sheet):
-    """
-    The sheet layout
-    """
-
-    # layout
-    sku = pyre.tabular.measure()
-    description = pyre.tabular.measure()
-    production = pyre.tabular.measure()
-    overhead = pyre.tabular.measure()
-    shipping = pyre.tabular.measure()
-    margin = pyre.tabular.measure()
-    # type information
-    production.type = pyre.schema.float
-    overhead.type = pyre.schema.float
-    shipping.type = pyre.schema.float
-    margin.type = pyre.schema.float
-
-
 def test():
+    import pyre.tabular
+
+    class pricing(pyre.tabular.sheet):
+        """
+        The sheet layout
+        """
+
+        # layout
+        sku = pyre.tabular.measure()
+        description = pyre.tabular.measure()
+        production = pyre.tabular.measure()
+        overhead = pyre.tabular.measure()
+        shipping = pyre.tabular.measure()
+        margin = pyre.tabular.measure()
+        # type information
+        production.type = pyre.schema.float
+        overhead.type = pyre.schema.float
+        shipping.type = pyre.schema.float
+        margin.type = pyre.schema.float
+
+
     # make a csv reader
     csv = pyre.tabular.csv()
     # make a sheet
@@ -60,6 +59,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

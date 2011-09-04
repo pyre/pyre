@@ -35,6 +35,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

@@ -12,21 +12,22 @@ Build a rudimentary data record
 """
 
 
-import pyre.records
-
-
-class record(pyre.records.dynamicrecord):
-    """
-    A sample record
-    """
-
-
 def test():
+    import pyre.records
+
+    class record(pyre.records.dynamicrecord):
+        """
+        A sample record
+        """
+
     return record
 
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

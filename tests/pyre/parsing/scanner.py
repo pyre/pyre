@@ -11,18 +11,18 @@
 Build and test a simple tokenizer
 """
 
-from pyre.parsing.Scanner import Scanner
-
-COMMENT = r"#"
-SEPARATOR = r":"
-
-class Simple(Scanner):
-    """a simple scanner"""
-    comment = Scanner.token(COMMENT)
-    separator = Scanner.token(SEPARATOR)
-
-
 def test():
+    from pyre.parsing.Scanner import Scanner
+
+    COMMENT = r"#"
+    SEPARATOR = r":"
+
+    class Simple(Scanner):
+        """a simple scanner"""
+        comment = Scanner.token(COMMENT)
+        separator = Scanner.token(SEPARATOR)
+
+
     # access the token base class
     from pyre.parsing.Token import Token
 
@@ -40,6 +40,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

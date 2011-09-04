@@ -12,27 +12,26 @@ Build a rudimentary record
 """
 
 
-import pyre.records
-
-
-class interval(pyre.records.record):
-    """
-    A sample record
-    """
-    # field declarations
-    left = pyre.records.field()
-    right = pyre.records.field()
-
-    # type information
-    left.type = pyre.schema.float
-    right.type = pyre.schema.float
-
-    # constraints
-    left.validators = pyre.constraints.isLess(value=0),
-    right.validators = pyre.constraints.isGreater(value=0),
-
-
 def test():
+    import pyre.records
+
+    class interval(pyre.records.record):
+        """
+        A sample record
+        """
+        # field declarations
+        left = pyre.records.field()
+        right = pyre.records.field()
+
+        # type information
+        left.type = pyre.schema.float
+        right.type = pyre.schema.float
+
+        # constraints
+        left.validators = pyre.constraints.isLess(value=0),
+        right.validators = pyre.constraints.isGreater(value=0),
+
+
     # try to build a record
     try:
         interval(left=1, right=2)
@@ -54,6 +53,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

@@ -12,28 +12,28 @@ Load records from a csv file
 """
 
 
-import pyre.records
-
-# layout the record
-class item(pyre.records.dynamicrecord):
-    # the fields
-    sku = pyre.records.field()
-    description = pyre.records.field()
-    production = pyre.records.field()
-    overhead = pyre.records.field()
-    shipping = pyre.records.field()
-    margin = pyre.records.field()
-    # type information
-    sku.type = pyre.schema.str
-    description.type = pyre.schema.str
-    production.type = pyre.schema.float
-    overhead.type = pyre.schema.float
-    shipping.type = pyre.schema.float
-    margin.type = pyre.schema.float
-    # a derived quantity
-    price = production*(1 + overhead/100 + margin/100) + shipping
-
 def test():
+    import pyre.records
+
+    # layout the record
+    class item(pyre.records.dynamicrecord):
+        # the fields
+        sku = pyre.records.field()
+        description = pyre.records.field()
+        production = pyre.records.field()
+        overhead = pyre.records.field()
+        shipping = pyre.records.field()
+        margin = pyre.records.field()
+        # type information
+        sku.type = pyre.schema.str
+        description.type = pyre.schema.str
+        production.type = pyre.schema.float
+        overhead.type = pyre.schema.float
+        shipping.type = pyre.schema.float
+        margin.type = pyre.schema.float
+        # a derived quantity
+        price = production*(1 + overhead/100 + margin/100) + shipping
+
     # build the target tuple
     target = [
         ("4000", "tomatoes", 2.95, 5, .2, 50, 2.95*(1+.05+.5)+.2),
@@ -57,6 +57,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

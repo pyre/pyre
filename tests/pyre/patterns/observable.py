@@ -12,47 +12,44 @@ Verify that the implementation of Observable works as advertised
 """
 
   
-from pyre.patterns.Observable import Observable
-
-
-class node(Observable):
-    """
-    the Observable
-    """
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        self._value = value
-        self.notifyObservers()
-        return self
-
-    def __init__(self, value, **kwds):
-        super().__init__(**kwds)
-        self._value = value
-        return
-
-
-class probe:
-    """
-    the observer
-    """
-
-    def __init__(self, node, **kwds):
-        super().__init__(**kwds)
-        self.cache = None
-        node.addObserver(self._update)
-        return
-
-    def _update(self, node):
-        self.cache = node.value
-        return
-    
-
 def test():
+    from pyre.patterns.Observable import Observable
+
+    class node(Observable):
+        """
+        the Observable
+        """
+
+        @property
+        def value(self):
+            return self._value
+
+        @value.setter
+        def value(self, value):
+            self._value = value
+            self.notifyObservers()
+            return self
+
+        def __init__(self, value, **kwds):
+            super().__init__(**kwds)
+            self._value = value
+            return
+
+    class probe:
+        """
+        the observer
+        """
+
+        def __init__(self, node, **kwds):
+            super().__init__(**kwds)
+            self.cache = None
+            node.addObserver(self._update)
+            return
+
+        def _update(self, node):
+            self.cache = node.value
+            return
+    
     n = node(0)
     p = probe(n)
     n.value = 3.14159
@@ -64,6 +61,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

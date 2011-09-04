@@ -12,17 +12,16 @@ Verify that extent awareness tracks the extent of classes correctly
 """
     
 
-from pyre.patterns.ExtentAware import ExtentAware
-
-class base(metaclass=ExtentAware):
-    """base"""
-
-class derived(base):
-    """derived"""
-
-
 def create_instances():
     """build some instances"""
+
+    from pyre.patterns.ExtentAware import ExtentAware
+
+    class base(metaclass=ExtentAware):
+        """base"""
+
+    class derived(base):
+        """derived"""
 
     b1 = base()
     b2 = base()
@@ -37,23 +36,27 @@ def create_instances():
     # print({ref for ref in derived._pyre_extent})
     assert set(base._pyre_extent) == { b1, b2, d1, d2 }
 
-    return
+    return base, derived
 
 
 def test():
     # make some instances
-    create_instances()
+    base, derived = create_instances()
 
     # verify that they were destroyed when they went out of scope
     # print(set(base._pyre_extent))
     # print(set(derived._pyre_extent))
     assert set(base._pyre_extent) == set()
+    assert set(derived._pyre_extent) == set()
 
     return base, derived
 
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

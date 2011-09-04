@@ -8,36 +8,35 @@
 
 
 """
-Build a rudimentary table
+Verify columns get indexed properly
 """
 
 
-import pyre.tabular
-
-
-class pricing(pyre.tabular.sheet):
-    """
-    The sheet layout
-    """
-    # layout
-    sku = pyre.tabular.measure()
-    description = pyre.tabular.measure()
-    production = pyre.tabular.measure()
-    shipping = pyre.tabular.measure()
-    margin = pyre.tabular.measure()
-    overhead = pyre.tabular.measure()
-    # index on  skus
-    sku.index = True
-    # type information
-    sku.type = pyre.schema.str
-    description.type = pyre.schema.str
-    production.type = pyre.schema.float
-    overhead.type = pyre.schema.float
-    shipping.type = pyre.schema.float
-    margin.type = pyre.schema.float
-
-
 def test():
+    import pyre.tabular
+
+    class pricing(pyre.tabular.sheet):
+        """
+        The sheet layout
+        """
+        # layout
+        sku = pyre.tabular.measure()
+        description = pyre.tabular.measure()
+        production = pyre.tabular.measure()
+        shipping = pyre.tabular.measure()
+        margin = pyre.tabular.measure()
+        overhead = pyre.tabular.measure()
+        # index on  skus
+        sku.index = True
+        # type information
+        sku.type = pyre.schema.str
+        description.type = pyre.schema.str
+        production.type = pyre.schema.float
+        overhead.type = pyre.schema.float
+        shipping.type = pyre.schema.float
+        margin.type = pyre.schema.float
+
+
     # our data set
     data = [
         ("4000", "tomatoes", 2.95, 5, .2, 50),
@@ -65,6 +64,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

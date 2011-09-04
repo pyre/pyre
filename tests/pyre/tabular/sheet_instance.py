@@ -8,26 +8,25 @@
 
 
 """
-Build a rudimentary table
+Instantiate a simple table
 """
 
 
-import pyre.tabular
-
-
-class pricing(pyre.tabular.sheet):
-    """
-    The sheet layout
-    """
-
-    sku = pyre.tabular.measure()
-    production = pyre.tabular.measure()
-    shipping = pyre.tabular.measure()
-    margin = pyre.tabular.measure()
-    overhead = pyre.tabular.measure()
-
-
 def test():
+    import pyre.tabular
+
+    class pricing(pyre.tabular.sheet):
+        """
+        The sheet layout
+        """
+
+        sku = pyre.tabular.measure()
+        production = pyre.tabular.measure()
+        shipping = pyre.tabular.measure()
+        margin = pyre.tabular.measure()
+        overhead = pyre.tabular.measure()
+
+
     # make a sheet
     p = pricing(name="vegetables")
     # and return it
@@ -36,6 +35,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

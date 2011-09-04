@@ -48,12 +48,10 @@ if __name__ == "__main__":
     import gc
     # request debugging support for the pyre.calc package
     pyre_debug = { "pyre.filesystem" }
-
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
-
-    # shutdown the framework
-    import pyre
-    pyre.shutdown()
 
     # check that the filesystem was destroyed
     from pyre.filesystem.Filesystem import Filesystem

@@ -11,25 +11,22 @@
 Build and test a simple tokenizer
 """
 
-from pyre.parsing.Scanner import Scanner
-
-
-class Simple(Scanner):
-    """a simple scanner"""
-
-    # tokens
-    comment = Scanner.token(r"#.*$")
-    separator = Scanner.token(r":")
-    delimiter = Scanner.token(r",")
-    terminator = Scanner.token(r";")
-    
-    identifier = Scanner.token(r"[_\w]+")
-
-    # constants
-    ignoreWhitespace = True
-
-
 def test():
+    from pyre.parsing.Scanner import Scanner
+
+    class Simple(Scanner):
+        """a simple scanner"""
+
+        # tokens
+        comment = Scanner.token(r"#.*$")
+        separator = Scanner.token(r":")
+        delimiter = Scanner.token(r",")
+        terminator = Scanner.token(r";")
+
+        identifier = Scanner.token(r"[_\w]+")
+
+        # constants
+        ignoreWhitespace = True
 
     # open the input stream
     stream = open("sample.inp")
@@ -60,6 +57,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

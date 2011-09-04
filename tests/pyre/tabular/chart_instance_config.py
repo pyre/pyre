@@ -12,29 +12,27 @@ Instantiate a simple chart
 """
 
 
-import pyre.tabular
-
-
-class sales(pyre.tabular.sheet):
-    """The transaction data"""
-    # layout
-    date = pyre.tabular.str()
-    time = pyre.tabular.str()
-    sku = pyre.tabular.str()
-    quantity = pyre.tabular.float()
-    discount = pyre.tabular.float()
-    sale = pyre.tabular.float()
-
-
-class chart(pyre.tabular.chart, sheet=sales):
-    """
-    Aggregate the information in the {sales} table
-    """
-    sku = pyre.tabular.inferred(sales.sku)
-    quantity = pyre.tabular.interval(measure=sales.quantity, interval=(0, 20), subdivisions=4)
-
-
 def test():
+    import pyre.tabular
+
+    class sales(pyre.tabular.sheet):
+        """The transaction data"""
+        # layout
+        date = pyre.tabular.str()
+        time = pyre.tabular.str()
+        sku = pyre.tabular.str()
+        quantity = pyre.tabular.float()
+        discount = pyre.tabular.float()
+        sale = pyre.tabular.float()
+
+    class chart(pyre.tabular.chart, sheet=sales):
+        """
+        Aggregate the information in the {sales} table
+        """
+        sku = pyre.tabular.inferred(sales.sku)
+        quantity = pyre.tabular.interval(measure=sales.quantity, interval=(0, 20), subdivisions=4)
+
+
     # make a chart instance
     c = chart()
     # check that the instance picked up the expected dimensions
@@ -59,6 +57,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

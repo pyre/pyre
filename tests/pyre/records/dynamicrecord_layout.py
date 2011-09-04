@@ -12,19 +12,18 @@ Build a rudimentary table
 """
 
 
-import pyre.records
-
-
-class record(pyre.records.dynamicrecord):
-    """
-    A sample dynamic record
-    """
-    cost = pyre.records.field()
-    overhead = pyre.records.field()
-    price = 1.25*(cost + overhead/100)
-
-
 def test():
+    import pyre.records
+
+    class record(pyre.records.dynamicrecord):
+        """
+        A sample dynamic record
+        """
+        cost = pyre.records.field()
+        overhead = pyre.records.field()
+        price = 1.25*(cost + overhead/100)
+
+
     # explore the record class
     assert isinstance(record.cost, pyre.records.field)
     assert isinstance(record.overhead, pyre.records.field)
@@ -44,6 +43,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

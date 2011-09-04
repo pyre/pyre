@@ -13,44 +13,44 @@ declarations
 """
 
 
-import pyre.xml
-from pyre.xml.Node import Node
-from pyre.xml.Document import Document
-
-# the document structure
-class Owner(Node):
-    """Handle the owner tag"""
-
-class Permissions(Node):
-    """Handle the permissions tag"""
-
-class File(Node):
-    """Handle the file tag"""
-    elements = ("owner", "permissions")
-    
-class Folder(Node):
-    """Handle the folder tag"""
-    elements = ("owner", "permissions", "file", "folder")
-
-class Filesystem(Folder):
-    """The top level document element"""
-
-class FSD(Document):
-    """Document class"""
-
-    # the top level element
-    root = "filesystem"
-    
-    # the element descriptors
-    owner = pyre.xml.element(tag="owner", handler=Owner)
-    permissions = pyre.xml.element(tag="permissions", handler=Permissions)
-    file = pyre.xml.element(tag="file", handler=File)
-    folder = pyre.xml.element(tag="folder", handler=Folder)
-    filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
-
-
 # make sure it is processed correctly
 def test():
+    import pyre.xml
+    from pyre.xml.Node import Node
+    from pyre.xml.Document import Document
+
+    # the document structure
+    class Owner(Node):
+        """Handle the owner tag"""
+
+    class Permissions(Node):
+        """Handle the permissions tag"""
+
+    class File(Node):
+        """Handle the file tag"""
+        elements = ("owner", "permissions")
+
+    class Folder(Node):
+        """Handle the folder tag"""
+        elements = ("owner", "permissions", "file", "folder")
+
+    class Filesystem(Folder):
+        """The top level document element"""
+
+    class FSD(Document):
+        """Document class"""
+
+        # the top level element
+        root = "filesystem"
+
+        # the element descriptors
+        owner = pyre.xml.element(tag="owner", handler=Owner)
+        permissions = pyre.xml.element(tag="permissions", handler=Permissions)
+        file = pyre.xml.element(tag="file", handler=File)
+        folder = pyre.xml.element(tag="folder", handler=Folder)
+        filesystem = pyre.xml.element(tag="filesystem", handler=Filesystem)
+
+
     # verify that the descriptors were correctly harvested by the metaclass
     assert FSD.dtd == ( FSD.owner, FSD.permissions, FSD.file, FSD.folder , FSD.filesystem )
 
@@ -68,6 +68,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

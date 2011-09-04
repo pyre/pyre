@@ -11,30 +11,30 @@ Read an empty document
 """
 
 
-import pyre.xml
-from pyre.xml.Node import Node
-from pyre.xml.Document import Document
-
-
-class Inventory(Node):
-    """The top level document element"""
-
-    def notify(self, parent, locator):
-        """do nothing"""
-
-    def __init__(self, parent, attributes, locator):
-        """do nothing"""
-
-
-class IDoc(Document):
-    """Document class"""
-    # the top-level
-    root = "inventory"
-    # declare the handler
-    inventory = pyre.xml.element(tag="inventory", handler=Inventory)
-
-
 def test():
+    import pyre.xml
+    from pyre.xml.Node import Node
+    from pyre.xml.Document import Document
+
+
+    class Inventory(Node):
+        """The top level document element"""
+
+        def notify(self, parent, locator):
+            """do nothing"""
+
+        def __init__(self, parent, attributes, locator):
+            """do nothing"""
+
+
+    class IDoc(Document):
+        """Document class"""
+        # the top-level
+        root = "inventory"
+        # declare the handler
+        inventory = pyre.xml.element(tag="inventory", handler=Inventory)
+
+
     # build the trivial document
     document = IDoc()
 
@@ -48,6 +48,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

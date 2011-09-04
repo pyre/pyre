@@ -8,36 +8,32 @@
 
 
 """
-Build a rudimentary table
+Build a hierarchy of tables with multiple inheritance
 """
 
 
-import pyre.tabular
-
-
-class production(pyre.tabular.sheet):
-
-    sku = pyre.tabular.measure()
-    production = pyre.tabular.measure()
-
-
-class shipping(pyre.tabular.sheet):
-
-    shipping = pyre.tabular.measure()
-
-
-class pricing(production, shipping):
-
-    margin = pyre.tabular.measure()
-    overhead = pyre.tabular.measure()
-    discount = pyre.tabular.measure()
-
-    cost = production.production + shipping.shipping
-    msrp = (1 + margin + overhead)*cost
-    price = msrp*(1 - discount)
-
-
 def test():
+    import pyre.tabular
+
+    class production(pyre.tabular.sheet):
+
+        sku = pyre.tabular.measure()
+        production = pyre.tabular.measure()
+
+    class shipping(pyre.tabular.sheet):
+
+        shipping = pyre.tabular.measure()
+
+    class pricing(production, shipping):
+
+        margin = pyre.tabular.measure()
+        overhead = pyre.tabular.measure()
+        discount = pyre.tabular.measure()
+
+        cost = production.production + shipping.shipping
+        msrp = (1 + margin + overhead)*cost
+        price = msrp*(1 - discount)
+
 
     # check the bases
     assert production.pyre_name == "production"
@@ -78,6 +74,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

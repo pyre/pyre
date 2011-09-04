@@ -12,23 +12,22 @@ Build a rudimentary table
 """
 
 
-import pyre.calc
-import pyre.tabular
-import pyre.records
-
-
-class record(pyre.tabular.record):
-    """
-    A sample record
-    """
-    sku = pyre.tabular.measure()
-    description = pyre.tabular.measure()
-    cost = pyre.tabular.measure()
-    overhead = pyre.tabular.measure()
-    price = cost + overhead
-
-
 def test():
+    import pyre.calc
+    import pyre.tabular
+    import pyre.records
+
+    class record(pyre.tabular.record):
+        """
+        A sample record
+        """
+        sku = pyre.tabular.measure()
+        description = pyre.tabular.measure()
+        cost = pyre.tabular.measure()
+        overhead = pyre.tabular.measure()
+        price = cost + overhead
+
+
     # explore the record class
     assert isinstance(record.sku, pyre.tabular.measure)
     assert isinstance(record.description, pyre.tabular.measure)
@@ -61,6 +60,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

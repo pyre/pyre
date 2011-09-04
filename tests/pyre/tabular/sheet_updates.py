@@ -8,31 +8,30 @@
 
 
 """
-Build a rudimentary table
+Verify that data updates work correctly
 """
 
 
-import pyre.tabular
-
-
-class pricing(pyre.tabular.sheet):
-    """
-    The sheet layout
-    """
-    # layout
-    sku = pyre.tabular.str()
-    sku.index = True
-
-    description = pyre.tabular.str()
-    production = pyre.tabular.float()
-    shipping = pyre.tabular.float()
-    margin = pyre.tabular.float()
-    overhead = pyre.tabular.float()
-
-    msrp = (production*(1+margin/100) + shipping)*(1+overhead/100)
-
-
 def test():
+    import pyre.tabular
+
+    class pricing(pyre.tabular.sheet):
+        """
+        The sheet layout
+        """
+        # layout
+        sku = pyre.tabular.str()
+        sku.index = True
+
+        description = pyre.tabular.str()
+        production = pyre.tabular.float()
+        shipping = pyre.tabular.float()
+        margin = pyre.tabular.float()
+        overhead = pyre.tabular.float()
+
+        msrp = (production*(1+margin/100) + shipping)*(1+overhead/100)
+
+
     # our data set
     data = [
         ("4000", "tomatoes", 2.95, 5, .2, 50),
@@ -60,6 +59,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

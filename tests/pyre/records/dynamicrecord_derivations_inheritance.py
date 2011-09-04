@@ -12,31 +12,28 @@ Verify record building in the presence of multiple inheritance
 """
 
 
-import pyre.records
-
-
-class item(pyre.records.dynamicrecord):
-    """
-    A sample record
-    """
-    sku = pyre.records.field()
-    description = pyre.records.field()
-
-
-class production(pyre.records.dynamicrecord):
-    cost = pyre.records.field()
-
-
-class handling(pyre.records.dynamicrecord):
-    overhead = pyre.records.field()
-    margin = pyre.records.field()
-
-
-class pricing(item, production, handling):
-    price = production.cost * (1 + handling.overhead/100 + handling.margin/100)
-
-
 def test():
+    import pyre.records
+
+
+    class item(pyre.records.dynamicrecord):
+        """
+        A sample record
+        """
+        sku = pyre.records.field()
+        description = pyre.records.field()
+
+    class production(pyre.records.dynamicrecord):
+        cost = pyre.records.field()
+
+    class handling(pyre.records.dynamicrecord):
+        overhead = pyre.records.field()
+        margin = pyre.records.field()
+
+    class pricing(item, production, handling):
+        price = production.cost * (1 + handling.overhead/100 + handling.margin/100)
+
+
     # explore the item record
     assert isinstance(item.sku, pyre.records.field)
     assert isinstance(item.description, pyre.records.field)
@@ -119,6 +116,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

@@ -8,34 +8,31 @@
 
 
 """
-Build a rudimentary table
+Build a table hierarchy with single inheritance
 """
 
 
-import pyre.tabular
-
-
-class raw(pyre.tabular.sheet):
-    """
-    The sheet layout
-    """
-
-    sku = pyre.tabular.measure()
-    production = pyre.tabular.measure()
-    shipping = pyre.tabular.measure()
-    margin = pyre.tabular.measure()
-    overhead = pyre.tabular.measure()
-    discount = pyre.tabular.measure()
-
-
-class pricing(raw):
-
-    cost = raw.production + raw.shipping
-    msrp = (1 + raw.margin + raw.overhead)*cost
-    price = msrp*(1 - raw.discount)
-
-
 def test():
+    import pyre.tabular
+
+    class raw(pyre.tabular.sheet):
+        """
+        The sheet layout
+        """
+
+        sku = pyre.tabular.measure()
+        production = pyre.tabular.measure()
+        shipping = pyre.tabular.measure()
+        margin = pyre.tabular.measure()
+        overhead = pyre.tabular.measure()
+        discount = pyre.tabular.measure()
+
+    class pricing(raw):
+
+        cost = raw.production + raw.shipping
+        msrp = (1 + raw.margin + raw.overhead)*cost
+        price = msrp*(1 - raw.discount)
+
 
     # check the base
     assert raw.pyre_name == "raw"
@@ -73,6 +70,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

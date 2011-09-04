@@ -12,24 +12,23 @@ Create a record that has a derived field
 """
 
 
-import pyre.records
-
-
-class item(pyre.records.record):
-    """
-    A sample record
-    """
-    production = pyre.records.field()
-    production.type = pyre.schema.float
-
-    shipping = pyre.records.field()
-    shipping.type = pyre.schema.float
-
-    cost = production + shipping
-    price = 2 * cost
-
-
 def test():
+    import pyre.records
+
+    class item(pyre.records.record):
+        """
+        A sample record
+        """
+        production = pyre.records.field()
+        production.type = pyre.schema.float
+
+        shipping = pyre.records.field()
+        shipping.type = pyre.schema.float
+
+        cost = production + shipping
+        price = 2 * cost
+
+
     # explore the record class
     assert isinstance(item.production, pyre.records.field)
     assert isinstance(item.shipping, pyre.records.field)
@@ -58,6 +57,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

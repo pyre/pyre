@@ -12,29 +12,28 @@ Exercise data conversions
 """
 
 
-import pyre.records
-
-
-class record(pyre.records.record):
-    """
-    A sample record
-    """
-    # field declarations
-    sku = pyre.records.field()
-    description = pyre.records.field()
-    cost = pyre.records.field()
-    overhead = pyre.records.field()
-    price = pyre.records.field()
-
-    # type information
-    sku.type = pyre.schema.str
-    description.type = pyre.schema.str
-    cost.type = pyre.schema.float
-    overhead.type = pyre.schema.float
-    price.type = pyre.schema.float
-
-
 def test():
+    import pyre.records
+
+    class record(pyre.records.record):
+        """
+        A sample record
+        """
+        # field declarations
+        sku = pyre.records.field()
+        description = pyre.records.field()
+        cost = pyre.records.field()
+        overhead = pyre.records.field()
+        price = pyre.records.field()
+
+        # type information
+        sku.type = pyre.schema.str
+        description.type = pyre.schema.str
+        cost.type = pyre.schema.float
+        overhead.type = pyre.schema.float
+        price.type = pyre.schema.float
+
+
     # build a record
     r = record(sku="9-4013", description="organic kiwi", cost=".85", overhead=".15", price="1")
     # check
@@ -49,6 +48,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 
