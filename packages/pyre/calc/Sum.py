@@ -6,17 +6,28 @@
 #
 
 
-from .Aggregator import Aggregator
+from .Node import Node
+from .Dependent import Dependent
 
 
-class Sum(Aggregator):
+class Sum(Dependent, Node):
     """
-    Compute the sum of the nodes in my domain
+    The representation of the sum of nodes
     """
 
 
-    ## the overriden method that performs the actual computation
-    _closure = sum
+    # public data
+    @property
+    def value(self):
+        """
+        Compute and return my value
+        """
+        # if my cached value is invalid
+        if self._value is None:
+            # compute it
+            self._value = sum(operand.value for operand in self._operands)
+        # and return it
+        return self._value
 
 
 # end of file 

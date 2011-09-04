@@ -19,8 +19,8 @@ class UnresolvedNode(Error):
     name = None # the unresolved name
 
 
-    # interface
-    def eval(self):
+    @property
+    def value(self):
         """
         Compute my value
         """

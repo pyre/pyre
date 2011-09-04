@@ -6,26 +6,39 @@
 #
 
 
-from .Evaluator import Evaluator
+from .Node import Node
 
 
-class Literal(Evaluator):
+class Literal(Node):
     """
-    Evaluator that returns a fixed value
+    Class that encapsulates values encountered in expressions that are not instance of members
+    of the {Node} class hierarchy.
     """
 
 
     # public data
-    value = None
+    value = None # my value is explicitly set
+    variables = [] # literals have no dependencies
 
 
-    def eval(self):
+    # interface
+    def substitute(self, replacements):
         """
-        Compute my value
+        Replace variables in my graph that are present in {replacements} with the indicated node
         """
-        return self.value
+        # nothing to do
+        return
 
 
+    def addObserver(self, callback):
+        """
+        Stub so that {Literal} instances can coöperate with the other nodes
+        """
+        # ignore the request
+        return
+
+
+    # meta methods
     def __init__(self, value, **kwds):
         super().__init__(**kwds)
         self.value = value

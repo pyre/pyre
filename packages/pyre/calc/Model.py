@@ -56,7 +56,7 @@ class Model(AbstractModel):
             pass
         # otherwise, build an unresolved node
         from .UnresolvedNode import UnresolvedNode
-        node = self.nodeFactory(value=None, evaluator=UnresolvedNode(name))
+        node = UnresolvedNode(name)
         # print("pyre.calc.Model.resolve: new unresolved node {!r} {}".format(name, node))
         # add it to the pile
         self._nodes[name] = node

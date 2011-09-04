@@ -15,8 +15,8 @@ Exercise node algebra
 def test():
     import pyre.calc
     # declare a couple of nodes
-    n1 = pyre.calc.newNode(value=1)
-    n2 = pyre.calc.newNode(value=2)
+    n1 = pyre.calc.var(value=1)
+    n2 = pyre.calc.var(value=2)
     # unary operators
     assert (- n1).value == -1
     assert (+ n2).value == 2
@@ -53,6 +53,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # run the test
     test()
 
 

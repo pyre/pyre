@@ -11,6 +11,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working:
+	${PYTHON} ./expression.py
+
 all: test
 
 test: sanity evaluators faulty resolution model hierarchical
@@ -23,14 +26,13 @@ sanity:
 evaluators:
 	${PYTHON} ./explicit.py
 	${PYTHON} ./probe.py
-	${PYTHON} ./literal.py
 	${PYTHON} ./reference.py
 	${PYTHON} ./sum.py
 	${PYTHON} ./aggregators.py
 	${PYTHON} ./reductors.py
 	${PYTHON} ./operations.py
-	${PYTHON} ./expression.py
 	${PYTHON} ./algebra.py
+	${PYTHON} ./expression.py
 
 faulty:
 	${PYTHON} ./expression_escaped.py

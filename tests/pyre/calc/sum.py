@@ -19,17 +19,35 @@ def test():
     p = 80.
     s = 20.
     # make the nodes
-    production = pyre.calc.newNode(value=p)
-    shipping = pyre.calc.newNode(value=s)
-    cost = pyre.calc.newNode(value=pyre.calc.sum(production, shipping))
+    production = pyre.calc.var(value=p)
+    shipping = pyre.calc.var(value=s)
+    cost = pyre.calc.sum(production, shipping)
+    clone = cost.reference()
 
-    # gather them up
-    nodes = [production, shipping, cost]
-
-    # check 
+    # check the dependencies
+    assert cost._operands == (production, shipping)
+    assert clone._operands == (cost,)
+    # and the dependents
+    assert set(production.observers) == {cost}
+    assert set(shipping.observers) == {cost}
+    assert set(cost.observers) == {clone}
+    # check the values
     assert production.value == p
     assert shipping.value == s
     assert cost.value == p + s
+    assert clone.value == p + s
+
+    # update the values
+    p = 160.
+    s = 40.
+    production.value = p
+    shipping.value = s
+
+    # check again
+    assert production.value == p
+    assert shipping.value == s
+    assert cost.value == p + s
+    assert clone.value == p + s
 
     return
 
@@ -38,18 +56,15 @@ def test():
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
     pyre_debug = { "pyre.calc" }
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
     # run the test
     test()
-    # destroy the framework parts to make sure there are no excess nodes around
-    import pyre
-    pyre.shutdown()
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
     # print(tuple(Node._pyre_extent))
     assert tuple(Node._pyre_extent) == ()
-    # print(tuple(Node.Evaluator._pyre_extent))
-    assert tuple(Node.Evaluator._pyre_extent) == ()
 
 
 # end of file 

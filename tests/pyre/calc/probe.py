@@ -34,7 +34,7 @@ def test():
 
     # make a node
     v = 80.
-    production = pyre.calc.newNode(value=v)
+    production = pyre.calc.var(value=v)
 
     # insert the probe
     probe.insert(production)
@@ -60,11 +60,10 @@ def test():
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
     pyre_debug = { "pyre.calc" }
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
     # run the test
     test()
-    # destroy the framework parts to make sure there are no excess nodes around
-    import pyre
-    pyre.shutdown()
     # verify reference counts
     from pyre.calc.Node import Node
     # print(tuple(Node._pyre_extent))

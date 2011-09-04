@@ -6,20 +6,30 @@
 #
 
 
-from .Polyadic import Polyadic
+from .Node import Node
+from .Dependent import Dependent
 
 
-class Average(Polyadic):
+class Average(Dependent, Node):
     """
-    Compute the average of the nodes in my domain
+    The representation of the average value of nodes
     """
 
 
-    def eval(self):
+    # public data
+    @property
+    def value(self):
         """
         Compute and return my value
         """
-        return sum(node.value for node in self._domain)/len(self._domain)
+        # if my cached value is invalid
+        if self._value is None:
+            # evaluate my operands
+            values = tuple(operand.value for operand in self._operands)
+            # compute the average
+            self._value = sum(values)/len(values)
+        # and return it
+        return self._value
 
 
 # end of file 

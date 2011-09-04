@@ -7,13 +7,19 @@
 
 
 import re
-from .Function import Function
+from .Node import Node
 
 
-class Expression(Function):
+class Expression(Node):
     """
-    Evalutor that computes arbitrary python expression among nodes referenced by name
+    Support for building evaluation graphs involving nodes that have names registered with an
+    {AbstractModel} instance
     """
+
+
+    # types
+    # exceptions
+    from .exceptions import EmptyExpressionError, ExpressionError
 
 
     # factory
@@ -81,45 +87,38 @@ class Expression(Function):
     formula = None # the expression supplied by the client
 
 
-    # interface
     @property
-    def domain(self):
+    def value(self):
         """
-        Return an iterator over the set of nodes in my domain
+        Compute and return my value
         """
-        return self._domain.keys()
+        # if my cached value is invalid
+        if self._value is None:
+            # evaluate my program
+            self._value = eval(self._program, self._nodes)
+        # and return it
+        return self._value
 
 
-    def eval(self):
+    # interface
+    def flush(self):
         """
-        Evaluate my program
+        Invalidate my cache and notify my observers
         """
-        # evaluate my program and return the result
-        return eval(self._program, self._nodes)
-
-
-    def patch(self, old, new):
-        """
-        Patch my domain by replacing {old} with {new}.
-
-        This is used by the model during node resolution. Please don't use directly unless you
-        have thought through the many and painful implications
-        """
-        # get the canonical name of the {old} node
-        canonical = self._domain[old]
-        # adjust the domain
-        del self._domain[old]
-        self._domain[new] = canonical
-        # adjust the node table
-        self._nodes[canonical] = new
-        # all done
-        return new
+        # N.B.: there is another copy of this method in {Dependent}
+        # bail out if I am already marked as invalid
+        if self._value is None: return
+        # otherwise, invalidate my cache
+        self._value = None
+        # notify my observers
+        self.notifyObservers()
+        # and return
+        return self
 
 
     # meta methods
     def __init__(self, expression, program, domain, nodes, **kwds):
         super().__init__(**kwds)
-        # save a copy of the input
         self.formula = expression
         self._program = program
         self._nodes = nodes
@@ -127,11 +126,8 @@ class Expression(Function):
         return
 
 
-    # exceptions
-    from .exceptions import EmptyExpressionError, ExpressionError
-
-
     # private data
+    _value = None # my value cache
     _program = None # the compiled form of my expression
     _domain = None # the set on nodes i depend on
     _nodes = None # the map from node names to nodes

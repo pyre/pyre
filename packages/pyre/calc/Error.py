@@ -6,12 +6,12 @@
 #
 
 
-from .Evaluator import Evaluator
+from .Node import Node
 
 
-class Error(Evaluator):
+class Error(Node):
     """
-    Base class for evaluators that signal errors
+    Base class for nodes that signal errors
     """
 
 

@@ -6,20 +6,28 @@
 #
 
 
-from .Polyadic import Polyadic
+from .Node import Node
+from .Dependent import Dependent
 
 
-class Count(Polyadic):
+class Count(Dependent, Node):
     """
-    Compute the number of nodes in my domain
+    The representation of the length of a collection of nodes
     """
 
 
-    def eval(self):
+    # public data
+    @property
+    def value(self):
         """
         Compute and return my value
         """
-        return len(self._domain)
+        # if my cached value is invalid
+        if self._value is None:
+            # compute the length
+            self._value = len(self._operands)
+        # and return it
+        return self._value
 
 
 # end of file 

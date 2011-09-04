@@ -9,26 +9,26 @@
 """
 This package provides the implementation of a simple evaluation network.
 
-There are two fundamental abstractions: nodes and evaluators. Nodes hold the values computed by
-the evaluation network, and evaluators are operators attached to nodes that compute their
-node's value by acting on the values of other nodes. These two abstractions provide the
-machinery for representing arbitrary expressions as graphs.
+There are three fundamental abstractions: variables, operators, and literals. Variables hold
+the values computed by the evaluation network, operators compute their values by acting on the
+values of other nodes, and literals encapsulate foreign objects, such as numeric constants.
+These abstractions provide the machinery for representing arbitrary expressions as graphs.
 
 The interesting aspect of this package is that nodal values get updated automatically when the
-values of any of the nodes in their domain change. Nodes keep track of the set of evaluators
-that are interested in their values and send notifications when their values change.
+values of any of the nodes in their domain change. Nodes keep track of the set of dependents
+that are interested in their values and post notifications when their values change.
 
-In addition, this package provides Model, a simple manager for evaluation nodes. Beyond node
-storage, Model enables the naming of nodes and can act as the name resolution context for the
-Expression evaluator, which evaluates strings with arbitrary python expressions that may
+In addition, this package provides {Model}, a simple manager for evaluation nodes. Beyond node
+storage, {Model} enables the naming of nodes and can act as the name resolution context for the
+{Expression} evaluator, which evaluates strings with arbitrary python expressions that may
 involve the values of nodes in the model. The other evaluators provided here operate
-independently of Model. However, it is a good idea to build some kind of container to hold
+independently of {Model}. However, it is a good idea to build some kind of container to hold
 nodes while the evaluation graph is in use.
 
 Simple examples of the use of the ideas in this package are provided in the unit tests. For a
-somewhat more advanced example, take a look at pyre.framework.Evaluator, which is a Model that
-builds an evaluation network out of the traits of pyre components, so that trait settings can
-refer to the values of other traits in the configuration files.
+somewhat more advanced example, take a look at {pyre.config.Configurator}, which is a {Model}
+that builds an evaluation network out of the traits of pyre components, so that trait settings
+can refer to the values of other traits in the configuration files.
 """
 
 
@@ -46,118 +46,90 @@ def newHierarchicalModel(*, name, **kwds):
 
 
 # nodes
-def newNode(value=None, **kwds):
+def var(value=None, **kwds):
     """
     Build a new node.
 
     parameters: 
-        {value}: can be an Evaluator descendant, another Node, or any other python
-                 object that will be interpreted as the literal value of the node
+        {value}: the initial value to assign to the node
     """
-    # build the node
-    from .Node import Node
-    # inspect {value}
-    # first, check whether we were passed an evaluator
-    if isinstance(value, Node.Evaluator):
-        return Node(value=None, evaluator=value, **kwds)
-    # perhaps {value} is another node
-    if isinstance(value, Node):
-        return value.newReference(**kwds)
-    # otherwise, build a literal
-    return Node(value=value, evaluator=None, **kwds)
+    # access the constructor
+    from .Variable import Variable
+    # build the node and return it
+    return Variable(value=value, **kwds)
 
 
-# evaluators
-def average(*args):
+def average(*operands):
     """
-    Create an evaluator that averages the values of the nodes in its domain
+    Compute the average of a collection of nodes
     """
+    # access the constructor
     from .Average import Average
-    return Average(domain=args)
+    # build the node and return it
+    return Average(operands=operands)
 
 
-def count(*args):
+def count(*operands):
     """
-    Create an evaluator that counts the number of nodes in its domain
+    Compute the length of a collection of nodes
     """
+    # access the constructor
     from .Count import Count
-    return Count(domain=args)
+    # build the node and return it
+    return Count(operands=operands)
 
 
-def expression(*, formula, model, **kwds):
+def max(*operands):
     """
-    Build a new expression evaluator, using {formula} as the python expression to evaluate, and
-    {model} as the name resolution context
+    Compute the minimum of a collection of nodes
     """
-    from .Expression import Expression
-    return Expression.parse(expression=formula, model=model, **kwds)
-
-
-def literal(value):
-    """
-    Create an evaluator that always returns the given value
-    """
-    from .Literal import Literal
-    return Literal(value)
-
-
-def max(*args):
-    """
-    Create an evaluator that computes the max of the values of the nodes in its domain
-    """
+    # access the constructor
     from .Maximum import Maximum
-    return Maximum(domain=args)
+    # build the node and return it
+    return Maximum(operands=operands)
 
 
-def min(*args):
+def min(*operands):
     """
-    Create an evaluator that computes the min of the values of the nodes in its domain
+    Compute the minimum of a collection of nodes
     """
+    # access the constructor
     from .Minimum import Minimum
-    return Minimum(domain=args)
+    # build the node and return it
+    return Minimum(operands=operands)
 
 
-def product(*args):
+def product(*operands):
     """
-    Create an evaluator that computes the product of the values of the nodes in its domain
+    Compute the sum of a collection of nodes
     """
+    # access the constructor
     from .Product import Product
-    return Product(domain=args)
+    # build the node and return it
+    return Product(operands=operands)
 
 
-def reference(node):
+def sum(*operands):
     """
-    Create an evaluator that returns the value of the referent node
+    Compute the sum of a collection of nodes
     """
-    from .Reference import Reference
-    return Reference(node=node)
-
-
-def sum(*args):
-    """
-    Create an evaluator that sums the values of the nodes in its domain
-    """
+    # access the constructor
     from .Sum import Sum
-    return Sum(domain=args)
-
-
-from .exceptions import EmptyExpressionError
+    # build the node and return it
+    return Sum(operands=operands)
 
 
 # debugging support
 _metaclass_Node = type
-_metaclass_Evaluator = type
-
 
 def debug():
     """
-    Attach ExtentAware as the metaclass of Node and Evaluator so we can verify that all
-    instances of these classes are properly garbage collected
+    Attach {ExtentAware} as the metaclass of {Node} so we can verify that all instances of
+    this class are properly garbage collected
     """
     from ..patterns.ExtentAware import ExtentAware
-    global _metaclass_Node, _metaclass_Evaluator
+    global _metaclass_Node
     _metaclass_Node = ExtentAware
-    _metaclass_Evaluator = ExtentAware
 
     return
     

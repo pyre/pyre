@@ -12,13 +12,11 @@ Check that the refcount is zero after all nodes have gone out of scope
 """
 
 
-
-
 def test():
 
     import pyre.calc
-    n1 = pyre.calc.newNode()
-    n2 = pyre.calc.newNode()
+    n1 = pyre.calc.var()
+    n2 = pyre.calc.var()
 
     return
 
@@ -27,11 +25,10 @@ def test():
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
     pyre_debug = { "pyre.calc" }
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
     # run the test
     test()
-    # destroy the framework parts to make sure there are no excess nodes around
-    import pyre
-    pyre.shutdown()
     # get access to the Node class
     from pyre.calc.Node import Node
     # verify reference counts

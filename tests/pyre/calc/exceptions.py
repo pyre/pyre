@@ -39,11 +39,11 @@ def test():
     except EvaluationError as error:
         pass
 
-    try:
-        pyre.calc.newNode(value=pyre.calc.expression(formula="2*2", model=None))
-        assert False
-    except EmptyExpressionError as error:
-        pass
+    # try:
+    #     pyre.calc.var(value=pyre.calc.expression(formula="2*2", model=None))
+    #     assert False
+    # except EmptyExpressionError as error:
+    #     pass
 
     try:
         raise ExpressionError(formula=None, error=None)
@@ -60,6 +60,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

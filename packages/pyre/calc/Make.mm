@@ -21,35 +21,22 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     AbstractModel.py \
-    Absolute.py \
-    Addition.py \
-    Aggregator.py \
     Average.py \
-    Binary.py \
     Count.py \
-    Division.py \
-    Error.py \
-    Evaluator.py \
+    Dependent.py \
     Expression.py \
-    Function.py \
-    HierarchicalModel.py \
     Literal.py \
+    HierarchicalModel.py \
     Maximum.py \
     Minimum.py \
     Model.py \
-    Multiplication.py \
     Node.py \
-    Opposite.py \
-    Polyadic.py \
-    Power.py \
+    Operator.py \
     Probe.py \
     Product.py \
-    Reductor.py \
     Reference.py \
-    Subtraction.py \
     Sum.py \
-    Unary.py \
-    UnresolvedNode.py \
+    Variable.py \
     exceptions.py \
     __init__.py
 

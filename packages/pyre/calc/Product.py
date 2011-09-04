@@ -6,18 +6,31 @@
 #
 
 
-from .Reductor import Reductor
+import operator
+import functools
+
+from .Node import Node
+from .Dependent import Dependent
 
 
-class Product(Reductor):
+class Product(Dependent, Node):
     """
-    Compute the product of the nodes in my domain
+    The representation of the product of nodes
     """
 
 
-    ## the overriden method that performs the actual computation
-    import operator
-    _closure = operator.mul
+    # public data
+    @property
+    def value(self):
+        """
+        Compute and return my value
+        """
+        # if my cached value is invalid
+        if self._value is None:
+            # compute it
+            self._value = functools.reduce(operator.mul, (op.value for op in self._operands))
+        # and return it
+        return self._value
 
 
 # end of file 
