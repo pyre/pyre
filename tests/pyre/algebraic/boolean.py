@@ -11,11 +11,10 @@
 Exercise node algebra
 """
 
-# get the package
-import pyre.algebraic
     
-
 def test():
+    # get the package
+    import pyre.algebraic
 
     # declare a couple of nodes
     zero = pyre.algebraic.var(value=0)
@@ -33,6 +32,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 
