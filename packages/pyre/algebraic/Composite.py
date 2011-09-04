@@ -11,8 +11,8 @@ class Composite:
     Mix-in class that provides an implementation of the subset of the interface of {Node} that
     requires traversal of the expression graph rooted at nodes with dependencies.
 
-    This class assumes that its instance provide {_operands}, a container of their dependencies
-    on other nodes
+    This class assumes that its instances provide {_operands}, a tuple of their dependencies on
+    other nodes
     """
 
 
@@ -56,5 +56,8 @@ class Composite:
         # and return
         return
                     
+
+    # private data
+    _operands = ()
 
 # end of file 

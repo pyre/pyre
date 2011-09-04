@@ -38,7 +38,6 @@ class Operator(Composite, Node):
 
     # private data
     _operator = None
-    _operands = None
 
 
 # end of file 
