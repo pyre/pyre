@@ -11,10 +11,11 @@ from .Number import Number
 from .Ordering import Ordering
 from .Boolean import Boolean
 
+
 # declaration
 class Node(Number, Ordering, Boolean):
     """
-    This is the base class for hierarchies that implement the algebraic protocol
+    The base class for hierarchies that implement the algebraic protocol
 
     The base classes {Number}, {Ordering} and {Boolean} overload the methods that are invoked
     by the evaluation of expressions involving python operators. The implementation of these
