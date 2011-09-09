@@ -25,7 +25,7 @@ class CircularReferenceError(NodeError):
     Signal a circular reference in the evaluation graph
     """
     
-    def __init__(self, node, path, **kwds):
+    def __init__(self, node, path=(), **kwds):
         msg = "the evaluation graph has a cycle at {}".format(node)
         super().__init__(description=msg, **kwds)
         self.node = node
