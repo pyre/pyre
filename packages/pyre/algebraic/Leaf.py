@@ -14,10 +14,13 @@ class Leaf:
 
 
     # public data
+    operators = [] # leaves have no dependencies
+
+
     @property
     def variables(self):
         """
-        Traverse my expression graph and return an iterable with all the variables I depend on
+        Traverse my expression graph and return an iterable with all the variables in my graph
 
         Variables are reported as many times as they show up in my graph. Clients that are
         looking for the set unique dependencies have to prune the results themselves.
@@ -29,25 +32,10 @@ class Leaf:
 
 
     # interface
-    def validate(self, span=None, clean=None):
+    def substitute(self, current, replacement):
         """
-        Make sure that the subgraph rooted at me is free of cycles
-
-        parameters:
-            {span}: the set of nodes previously visited; if i am in this set, there are cycles
-            {clean}: the set of nodes known to be cycle free because they were previously cleared
-        """
-        # check whether i need to maintain the clean pile
-        if clean is not None:
-            # add myself to the clean set
-            clean.add(self)
-        # and return
-        return self
-
-
-    def substitute(self, replacements):
-        """
-        Replace variables in my graph that are present in {replacements} with the indicated node
+        Traverse my expression graph and replace all occurrences of node {current} with
+        {replacement}
         """
         # nothing to do
         return

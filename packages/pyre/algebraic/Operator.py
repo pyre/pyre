@@ -32,12 +32,13 @@ class Operator(Composite, Node):
     def __init__(self, operator, operands, **kwds):
         super().__init__(**kwds)
         self._operator = operator
-        self._operands = operands
+        self._operands = list(operands)
         return
 
 
     # private data
     _operator = None
+    _operands = None
 
 
 # end of file 

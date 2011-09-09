@@ -31,6 +31,7 @@ class Node(Number, Ordering, Boolean):
     # types
     # hooks for implementing the expression graph construction
     # the default implementation provided by this package uses the classes defined here
+    # access is provided through properties to hide the {import} of subclasses
     @property
     def literal(self):
         """
@@ -74,7 +75,7 @@ class Node(Number, Ordering, Boolean):
     @property
     def variables(self):
         """
-        Traverse my expression graph and return an iterable with all the variables I depend on
+        Traverse my expression graph and yield all the variables in my graph
 
         Variables are reported as many times as they show up in my graph. Clients that are
         looking for the set unique dependencies have to prune the results themselves.
@@ -83,21 +84,27 @@ class Node(Number, Ordering, Boolean):
             "class {.__class__.__name__!r} must implement 'variables'".format(self))
 
 
-    # interface
-    def validate(self, span=None, clean=None):
+    @property
+    def operators(self):
         """
-        Make sure that the subgraph rooted at me is free of cycles
+        Traverse my expression graph and yield all operators in my graph
 
-        parameters:
-            {span}: the set of nodes previously visited; if i am in this set, there are cycles
-            {clean}: the set of nodes known to be cycle free because they were previously cleared
+        Operators are reported as many times as they show up in my graph. Clients that are
+        looking for unique dependencies have to prune the results themselves.
         """
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'validate'".format(self))
+            "class {.__class__.__name__!r} must implement 'operators'".format(self))
 
-    def substitute(self, replacements):
+
+    # interface
+    def substitute(self, current, replacement):
         """
-        Replace variables in my graph that are present in {replacements} with the indicated node
+        Traverse my expression graph and replace all occurrences of node {current} with
+        {replacement}.
+
+        This method makes it possible to introduce cycles in the expression graph
+        inadvertently. It is the client's responsibility to make sure that the graph remains
+        cycle-free.
         """
         raise NotImplementedError(
             "class {.__class__.__name__!r} must implement 'substitute'".format(self))

@@ -24,7 +24,10 @@ class Composite:
     @property
     def variables(self):
         """
-        Traverse my expression graph and return an iterable with all the variables I depend on
+        Traverse my expression graph and yield all the variables in my graph
+
+        Variables are reported as many times as they show up in my graph. Clients that are
+        looking for the set unique dependencies have to prune the results themselves.
         """
         # traverse my operands
         for operand in self._operands:
@@ -36,65 +39,62 @@ class Composite:
         return
 
 
+    @property
+    def operators(self):
+        """
+        Traverse my expression graph and yield all operators in my graph
+
+        Operators are reported as many times as they show up in my graph. Clients that are
+        looking for unique dependencies have to prune the results themselves.
+        """
+        # i am one
+        yield self
+        # now, traverse my operands
+        for operand in self._operands:
+            # and ask them for their operators
+            for node in operand.operators:
+                # got one
+                yield node
+        # all done
+        return
+
+
     # interface
-    def validate(self, span=None, clean=None):
+    def substitute(self, current, replacement):
         """
-        Make sure that the subgraph rooted at me is free of cycles
+        Traverse my expression graph and replace all occurrences of node {current} with
+        {replacement}.
 
-        parameters:
-            {span}: the set of nodes previously visited; if i am in this set, there are cycles
-            {clean}: the set of nodes known to be cycle free because they were previously cleared
+        This method makes it possible to introduce cycles in the expression graph
+        inadvertently. It is the client's responsibility to make sure that the graph remains
+        cycle-free.
         """
-        # initialize my optional parameters
-        span = set() if span is None else span
-        clean = set() if clean is None else clean
-        # if i am in the span
-        if self in span:
-            # we have a cycle
-            raise self.CircularReferenceError(node=self, path=span)
-        # if i am clean
-        if self in clean:
-            # go no further
-            return self
-        # so far so good; add me to the span
-        span.add(self)
-        # and visit my operands
-        for operand in self._operands:
-            # ask each one to validate its subgraph
-            operand.validate(span=span, clean=clean)
-        # if i made it this far without an exception being raised, i must be clean
-        # so add myself to the clean pile
-        clean.add(self)
-        # and return
-        return self
+        # cycle detection: iterate over the composites in the subgraph of {replacement}
+        for node in replacement.operators:
+            # looking for me
+            if node is self:
+                # in which case, the substitution would create a cycle
+                raise self.CircularReferenceError(node=self)
 
-
-
-    def substitute(self, replacements):
-        """
-        Look through the dictionary {replacements} for any of my operands and replace them with
-        the indicated nodes.
-        """
-        operands = []
-        # look through my operands
-        for operand in self._operands:
-            # does this one show up in the replacement map?
-            if operand in replacements:
-                # push its replacement to the new operand list
-                operands.append(replacements[operand])
-            # otherwise
-            else:
-                # push it
-                operands.append(operand)
-                # and hand it the replacement list
-                operand.substitute(replacements)
-        # install the new operands
-        self._operands = tuple(operands)
-        # and return
+        # marker for nodes that are known not to depend on {replacement}
+        clean = { replacement }
+        # now, iterate over composites in my subgraph
+        for node in self.operators:
+            # if we have visited this guy before
+            if node in clean:
+                # skip it
+                continue
+            # look over their operands
+            for index, operand in enumerate(node._operands):
+                # if one of them is our target
+                if operand is current:
+                    # replace it
+                    node._operands[index] = replacement
+            # mark this node as clean
+            clean.add(node)        
+            
+        # all done
         return
                     
-
-    # private data
-    _operands = ()
 
 # end of file 

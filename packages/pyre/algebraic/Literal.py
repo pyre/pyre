@@ -18,13 +18,15 @@ class Literal(Node):
 
     # public data
     value = None # my value is explicitly set
-    variables = [] # literals have no dependencies
+    variables = [] # literals are not variables and have no dependencies
+    operators = [] # literals are not operators and have no dependencies
 
 
     # interface
-    def substitute(self, replacements):
+    def substitute(self, current, replacement):
         """
-        Replace variables in my graph that are present in {replacements} with the indicated node
+        Traverse my expression graph and replace all occurrences of node {current} with
+        {replacement}
         """
         # nothing to do
         return
