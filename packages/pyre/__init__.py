@@ -169,22 +169,6 @@ def boot():
     return p
 
 
-import atexit
-@atexit.register
-def shutdown():
-    """
-    Attempt to hunt down and destroy all known references to the executive
-    """
-    # access the executive
-    global executive
-    # destroy the copy held by the Pyre singleton
-    if executive: executive.shutdown()
-    # and zero out the global reference
-    executive = None
-    # that should be enough
-    return
-    
-
 # kickstart
 # invoke the debug method in case the user asked for debugging support
 debug()
@@ -204,5 +188,22 @@ from .shells import application
 # the base class of all pyre exceptions
 from .framework.exceptions import PyreError
 
+
+# clean up the executive instance when the interpreter shuts down
+import atexit
+@atexit.register
+def shutdown():
+    """
+    Attempt to hunt down and destroy all known references to the executive
+    """
+    # access the executive
+    global executive
+    # destroy the copy held by the Pyre singleton
+    if executive: executive.shutdown()
+    # and zero out the global reference
+    executive = None
+    # that should be enough
+    return
+    
 
 # end of file 
