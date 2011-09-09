@@ -22,23 +22,37 @@ def test():
     n2 = pyre.algebraic.var()
 
     # check that they have no dependencies
-    assert set(n1.variables) == {n1}
-    assert set(n2.variables) == {n2}
+    assert tuple(id(v) for v in n1.variables) == (id(n1),)
+    assert tuple(id(v) for v in n2.variables) == (id(n2),)
+    assert tuple(id(v) for v in n1.operators) == ()
+    assert tuple(id(v) for v in n2.operators) == ()
 
     # an expression involving a unary operator
     n = -n1
-    assert set(n.variables) == {n1}
+    assert tuple(id(v) for v in n.variables) == (id(n1),)
+    assert tuple(id(o) for o in n.operators) == (id(n),)
     
-    # an expression involving a pseudo-unary operator
+    # an expression involving a literal
     n = 2*n1
-    assert set(n.variables) == {n1}
+    assert tuple(id(v) for v in n.variables) == (id(n1),)
+    assert tuple(id(v) for v in n.operators) == (id(n),)
     
     # an expression involving a binary operator
     n = n1 + n2
-    assert set(n.variables) == {n1, n2}
+    assert tuple(id(v) for v in n.variables) == (id(n1), id(n2))
+    assert tuple(id(v) for v in n.operators) == (id(n),)
+
+    # add another layer
+    m = n + n
+    assert tuple(id(v) for v in n.variables) == (id(n1), id(n2))
+    assert tuple(id(v) for v in m.operators) == (id(m), id(n) ,id(n))
+    # and one more
+    l = m + m
+    assert set(id(v) for v in l.variables) == {id(n1), id(n2)}
+    assert tuple(id(v) for v in l.operators) == (id(l), id(m), id(n), id(n), id(m), id(n), id(n))
     
     # a more complicated example
-    assert set((2*(.5 - n1*n2 + n2**2)*n1).variables) == {n1, n2}
+    assert set(id(v) for v in (2*(.5 - n1*n2 + n2**2)*n1).variables) == {id(n1), id(n2)}
 
     return
 

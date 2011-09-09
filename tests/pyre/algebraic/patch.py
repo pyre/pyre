@@ -21,26 +21,42 @@ def test():
     n2 = pyre.algebraic.var()
     n3 = pyre.algebraic.var()
 
+    # careful with comparisons: do not trigger operator _eq_!
     # check that they have no dependencies
-    assert set(n1.variables) == {n1}
-    assert set(n2.variables) == {n2}
-    assert set(n3.variables) == {n3}
+    assert tuple(id(v) for v in n1.variables) == (id(n1),)
+    assert tuple(id(v) for v in n2.variables) == (id(n2),)
+    assert tuple(id(v) for v in n3.variables) == (id(n3),)
 
     # a simple expression
     n = n1 + n2
-    assert set(n.variables) == {n1, n2}
-    # patch n3 in
-    n.substitute(replacements={n1: n3})
+    assert tuple(id(v) for v in n.variables) == (id(n1), id(n2))
+    # patch {n3} in
+    n.substitute(current=n1, replacement=n3)
     # and check that it happened correctly
-    assert set(n.variables) == {n2, n3}
+    assert tuple(id(v) for v in n.variables) == (id(n3), id(n2))
+
+    # add another layer
+    m = n1 + n2 + n3
+    assert tuple(id(v) for v in m.variables) == (id(n1), id(n2), id(n3))
+    # patch {n} in
+    m.substitute(current=n3, replacement=n)
+    # check
+    assert tuple(id(v) for v in m.variables) == (id(n1), id(n2), id(n3), id(n2))
 
     # a more complicated example
     n = (2*(n1**2 - 2*n1*n2 + n2**2)*n3)
-    assert set(n.variables) == {n1, n2, n3}
-    # patch n3 in
-    n.substitute(replacements={n1: n3})
+    assert set(id(v) for v in n.variables) == {id(n1), id(n2), id(n3)}
+    # patch {n3} in
+    n.substitute(current=n1, replacement=n3)
     # and check that it happened correctly
-    assert set(n.variables) == {n2, n3}
+    assert set(id(v) for v in n.variables) == {id(n2), id(n3)}
+
+    # let's try to make a cycle
+    try:
+        n.substitute(current=n2, replacement=n)
+        assert False
+    except n.CircularReferenceError:
+        pass
 
     return
 
