@@ -46,7 +46,12 @@ def test():
     assert (one > zero).value == True
 
     # not-equal
+    assert (zero != one).value == True
+    assert (zero != 1).value == True
+    assert (zero != 0).value == False
     assert (one != zero).value == True
+    assert (one != 0).value == True
+    assert (one != 1).value == False
 
     return one, zero
 
