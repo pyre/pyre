@@ -60,24 +60,28 @@ class Composite:
 
 
     # interface
-    def substitute(self, current, replacement):
+    def substitute(self, current, replacement, clean=None):
         """
         Traverse my expression graph and replace all occurrences of node {current} with
         {replacement}.
 
-        This method makes it possible to introduce cycles in the expression graph
-        inadvertently. It is the client's responsibility to make sure that the graph remains
-        cycle-free.
+        This method makes it possible to introduce cycles in the expression graph, which causes
+        graph evaluation to not terminate. To prevent this, this method checks that the current
+        node is not in the span of {replacement}.
         """
-        # cycle detection: iterate over the composites in the subgraph of {replacement}
-        for node in replacement.operators:
-            # looking for me
-            if node is self:
-                # in which case, the substitution would create a cycle
-                raise self.CircularReferenceError(node=self)
+        # if this is the original substitution call
+        if clean is None:
+            # cycle detection: look for self in the span of {replacement}; do it carefully so
+            # that we do not trigger a call to the overloaded __eq__, which does not actually
+            # perform the comparison
+            for node in replacement.operators:
+                # match?
+                if node is self:
+                    # the substitution would create a cycle
+                    raise self.CircularReferenceError(node=self)
+            # prime the set of clean nodes
+            clean = { replacement }
 
-        # marker for nodes that are known not to depend on {replacement}
-        clean = { replacement }
         # now, iterate over composites in my subgraph
         for node in self.operators:
             # if we have visited this guy before
