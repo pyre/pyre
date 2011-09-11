@@ -16,7 +16,7 @@ def test():
     import pyre.calc
 
     # set up the model
-    model = pyre.calc.newModel(name="expression")
+    model = pyre.calc.model(name="expression")
 
     # the nodes
     p = 80.
@@ -35,8 +35,8 @@ def test():
     # print("  price:", model["price"])
     assert model["production"] == p
     assert model["shipping"] == s
-    assert model["cost"] == model["production"] + model["shipping"]
-    assert model["price"] == 2*model["cost"]
+    assert model["cost"] == p+s
+    assert model["price"] == 2*(p+s)
 
     # make a change
     p = 100.
@@ -44,14 +44,14 @@ def test():
 
     # check again
     # print("after:")
-    # print("  production:", production.value)
-    # print("  shipping:", shipping.value)
-    # print("  cost:", cost.value)
-    # print("  price:", price.value)
+    # print("  production:", model["production"])
+    # print("  shipping:", model["shipping"])
+    # print("  cost:", model["cost"])
+    # print("  price:", model["price"])
     assert model["production"] == p
     assert model["shipping"] == s
-    assert model["cost"] == model["production"] + model["shipping"]
-    assert model["price"] == 2*model["cost"]
+    assert model["cost"] == p+s
+    assert model["price"] == 2*(p+s)
 
     return
 

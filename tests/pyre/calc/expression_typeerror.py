@@ -17,21 +17,16 @@ def test():
     import pyre.calc
 
     # a model
-    model = pyre.calc.newModel(name="syntax")
+    model = pyre.calc.model(name="syntax")
     # the nodes
-    production = pyre.calc.newNode(value=80.)
-    shipping = pyre.calc.newNode(value=20.)
-    cost = pyre.calc.newNode(
-        value=pyre.calc.expression(formula="{production}&{shipping}", model=model))
-
-    model.register(name="production", node=production)
-    model.register(name="shipping", node=shipping)
-    model.register(name="cost", node=cost)
+    model["production"] = 80.
+    model["shipping"] = 20.
+    model["cost"] = "{production}&{shipping}"
 
     try:
-        cost.value
+        model["cost"]
         assert False
-    except cost.EvaluationError as error:
+    except model.EvaluationError as error:
         pass
 
     return
@@ -41,18 +36,15 @@ def test():
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
     pyre_debug = { "pyre.calc" }
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
     # run the test
     test()
-    # destroy the framework parts to make sure there are no excess nodes around
-    import pyre
-    pyre.shutdown()
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
     # print(tuple(Node._pyre_extent))
     assert tuple(Node._pyre_extent) == ()
-    # print(tuple(Node.Evaluator._pyre_extent))
-    assert tuple(Node.Evaluator._pyre_extent) == ()
 
 
 # end of file 

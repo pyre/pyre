@@ -8,9 +8,10 @@
 
 import re
 from .Node import Node
+from .Dependent import Dependent
 
 
-class Expression(Node):
+class Expression(Dependent, Node):
     """
     Support for building evaluation graphs involving nodes that have names registered with an
     {AbstractModel} instance
@@ -18,8 +19,13 @@ class Expression(Node):
 
 
     # types
+    # nodes
+    from .UnresolvedNode import UnresolvedNode
     # exceptions
-    from .exceptions import EmptyExpressionError, ExpressionError
+    from .exceptions import (
+        CircularReferenceError,
+        EmptyExpressionError, ExpressionSyntaxError, UnresolvedNodeError,
+        EvaluationError )
 
 
     # factory
@@ -44,7 +50,7 @@ class Expression(Node):
             if match.group("esc_close"): return "}"
             # unmatched braces
             if match.group("lone_open") or match.group("lone_closed"):
-                raise cls.ExpressionError(formula=expression, error="unmatched brace")
+                raise cls.ExpressionSyntaxError(formula=expression, error="unmatched brace")
             # only one case left: a valid node reference
             # extract the name from the match
             identifier = match.group('identifier')
@@ -71,16 +77,16 @@ class Expression(Node):
         try:
             program = compile(normalized, filename='expression', mode='eval')
         except SyntaxError as error:
-            raise cls.ExpressionError(formula=expression, error=error) from error
+            raise cls.ExpressionSyntaxError(formula=expression, error=error) from error
         # all is well if we get this far
         # build the domain as a map of nodes to their normalized names
-        domain = { model.resolve(name=used): norm for used, norm in symbols.items() }
-        # print("  domain:", domain)
-        # build the node table as a map of normalized names to nodes
-        nodes = { norm: node for node, norm in domain.items() }
+        operands = { model.resolve(name=used): norm for used, norm in symbols.items() }
+        # print("  operands:", operands)
+        # invert to build the node table as a map of normalized names to nodes
+        nodes = { norm: node for node, norm in operands.items() }
         # print("  nodes:", nodes)
         # we have all the parts; make the evaluator
-        return Expression(expression=expression, program=program, domain=domain, nodes=nodes)
+        return Expression(expression=expression, program=program, operands=operands, nodes=nodes)
 
 
     # public data
@@ -95,41 +101,53 @@ class Expression(Node):
         # if my cached value is invalid
         if self._value is None:
             # evaluate my program
-            self._value = eval(self._program, self._nodes)
+            try:
+                self._value = eval(self._program, self._nodes)
+            except self.UnresolvedNodeError:
+                raise
+            # others are reported as evaluation errors
+            except Exception as error:
+                raise self.EvaluationError(node=self, error=error) from error
+                
         # and return it
         return self._value
 
 
     # interface
-    def flush(self):
+    def _replace(self, index, current, replacement):
         """
-        Invalidate my cache and notify my observers
+        Look through the dictionary {replacements} for any of my operands and replace them with
+        the indicated nodes.
         """
-        # N.B.: there is another copy of this method in {Dependent}
-        # bail out if I am already marked as invalid
-        if self._value is None: return
-        # otherwise, invalidate my cache
-        self._value = None
-        # notify my observers
-        self.notifyObservers()
+        # flush my cache
+        self.flush()
+        # get the normalized name
+        normalized = self.operands[current]
+        # remove the old node
+        del self.operands[current]
+        # add the new one
+        self.operands[replacement] = normalized
+        # adjust the inverse map
+        self._nodes[normalized] = replacement
+        # remove me as an observer of the old node
+        current.removeObserver(self.flush)
+        # and add me to the list of observers of the replacement
+        replacement.addObserver(self.flush)
         # and return
-        return self
+        return
 
 
     # meta methods
-    def __init__(self, expression, program, domain, nodes, **kwds):
+    def __init__(self, expression, program, nodes, **kwds):
         super().__init__(**kwds)
         self.formula = expression
         self._program = program
         self._nodes = nodes
-        self._domain = domain
         return
 
 
     # private data
-    _value = None # my value cache
     _program = None # the compiled form of my expression
-    _domain = None # the set on nodes i depend on
     _nodes = None # the map from node names to nodes
 
     # the expression tokenizer

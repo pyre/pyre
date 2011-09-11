@@ -16,7 +16,7 @@ def test():
     import pyre.calc
 
     # set up the model
-    model = pyre.calc.newModel(name="expression")
+    model = pyre.calc.model(name="expression")
 
     # set up an expression with an unresolved node
     model["price"] = "2*{production}"
@@ -26,23 +26,32 @@ def test():
         model["price"]
         assert False
     except model.UnresolvedNodeError as error:
-        assert error.node == model.resolve(name="price")
+        assert error.node == model.resolve(name="production")
         assert error.name == "production"
 
-    # resovle the node
+    # resolve the node
     p = 80.
     model["production"] = p
 
     # ask for the price again
     assert model["production"] == p
-    assert model["price"] == 2*model["production"]
+    assert model["price"] == 2*p
 
     # make a change
     p = 100.
     model["production"] = p
     # chek again
     assert model["production"] == p
-    assert model["price"] == 2*model["production"]
+    assert model["price"] == 2*p
+
+    # force a node substitution
+    m = 60
+    model["materials"] = m
+    model["production"] = "2*{materials}"
+    # chek again
+    assert model["materials"] == m
+    assert model["production"] == 2*m
+    assert model["price"] == 4*m
 
     return
 
@@ -51,18 +60,15 @@ def test():
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
     pyre_debug = { "pyre.calc" }
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
     # run the test
     test()
-    # destroy the framework parts to make sure there are no excess nodes around
-    import pyre
-    pyre.shutdown()
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
     # print(tuple(Node._pyre_extent))
     assert tuple(Node._pyre_extent) == ()
-    # print(tuple(Node.Evaluator._pyre_extent))
-    assert tuple(Node.Evaluator._pyre_extent) == ()
 
 
 # end of file 

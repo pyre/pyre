@@ -16,29 +16,23 @@ def test():
     import pyre.calc
 
     # a model
-    model = pyre.calc.newModel(name="circular")
+    model = pyre.calc.model(name="circular")
 
     # self reference
-    cost = pyre.calc.newNode(value=pyre.calc.expression(formula="{cost}", model=model))
-    model.register(name="cost", node=cost)
 
     try:
-        model.validate()
+        model["cost"] = "{cost}"
         assert False
     except model.CircularReferenceError:
         pass
 
     # another model
-    model = pyre.calc.newModel(name="circular")
-    # a cycle
-    cost = pyre.calc.newNode(value=pyre.calc.expression(formula="{price}", model=model))
-    price = pyre.calc.newNode(value=pyre.calc.expression(formula="{cost}", model=model))
-    # try to register one of them
-    model.register(name="cost", node=cost)
-    model.register(name="price", node=price)
+    model = pyre.calc.model(name="circular")
     # now validate the graph, expecting the circular reference to raise an exception
     try:
-        model.validate()
+        # a cycle
+        model["cost"] = "{price}"
+        model["price"] = "{cost}"
         assert False
     except model.CircularReferenceError:
         pass
@@ -48,6 +42,8 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
     # run the test
     test()
 

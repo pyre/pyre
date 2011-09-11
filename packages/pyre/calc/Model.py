@@ -6,57 +6,53 @@
 #
 
 
-from .AbstractModel import AbstractModel
+from .SymbolTable import SymbolTable
 
 
-class Model(AbstractModel):
+class Model(SymbolTable):
     """
-    Storage and naming services for calc nodes
+    A {SymbolTable} implementation that uses a dictionary for node storage
     """
 
 
-    # interface
+    # public data
     @property
     def nodes(self):
         """
-        Iterate over the nodes in my graph
+        Build an iterable over the nodes in my graph
+
+        This is expected to return the complete sequence of nodes, regardless of the storage
+        details implemented by AbstractModel descendants
         """
+        # easy enough...
         return self._nodes.values()
 
 
+    # interface
     def register(self, *, name, node):
         """
-        Add {node} into the model and make it accessible through {name}
+        Add {node} into the model and make it accessible under {name}
         """
         # print("pyre.calc.Model.register: name={!r}, node={}".format(name, node))
-        # check whether we already have a node registered nuder this name
-        try:
-            existing = self._nodes[name]
-        except KeyError:
-            # nope, first time
-            # node.dump()
-            self._nodes[name] = node
-            return self
-        # patch the evaluation graph
-        # print("pyre.calc.Model.resolve: patching {!r} {}".format(name, existing))
-        self.patch(keep=existing, discard=node)
+        # add the node to the pile
+        self._nodes[name] = node
         # and return
         return self
 
 
     def resolve(self, name):
         """
-        Find the named node
+        Resolve {name} into a node and return its value
         """
-        # attempt to return the node that is registered under {name}
+        # attempt to find the node that is registered under {name}
         try:
-           return self._nodes[name]
-        # not there...
+            # and return it
+            return self._nodes[name]
+        # otherwise
         except KeyError:
             pass
-        # otherwise, build an unresolved node
-        from .UnresolvedNode import UnresolvedNode
-        node = UnresolvedNode(name)
+        # build an error indicator
+        node = self.unresolved(name)
         # print("pyre.calc.Model.resolve: new unresolved node {!r} {}".format(name, node))
         # add it to the pile
         self._nodes[name] = node
@@ -68,22 +64,6 @@ class Model(AbstractModel):
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self._nodes = {}
-        return
-
-
-    # debugging support
-    def dump(self, pattern=None):
-        """
-        List my contents
-        """
-        # build the node name recognizer
-        import re
-        regex = re.compile(pattern if pattern else '')
-
-        print("model {0!r}:".format(self.name))
-        for name, node in sorted(self._nodes.items()):
-            if regex.match(name):
-                print("    {0!r}: {1!r}".format(name, node.value))
         return
 
 

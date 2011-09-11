@@ -16,26 +16,24 @@ def test():
     import pyre.calc
 
     # build a model
-    model = pyre.calc.newModel(name="expression_escaped")
+    model = pyre.calc.model(name="expression_escaped")
 
     # escaped macro delimiters
     try:
-        pyre.calc.newNode(value=pyre.calc.expression(formula=r"{{production}}", model=model))
+        pyre.calc.expression(formula=r"{{production}}", model=model)
         assert False
     except pyre.calc.EmptyExpressionError:
         pass
 
     # and another
     try:
-        pyre.calc.newNode(
-            value=pyre.calc.expression(formula=r"{{{{cost per unit}}}}", model=model))
+        pyre.calc.expression(formula=r"{{{{cost per unit}}}}", model=model)
         assert False
     except pyre.calc.EmptyExpressionError:
         pass
 
     # finally
-    tricky = pyre.calc.newNode(
-        value=pyre.calc.expression(formula=r"{{{number of items}}}", model=model))
+    tricky = pyre.calc.expression(formula=r"{{{number of items}}}", model=model)
     # check that the escaped delimiters were processed correctly
     try:
         tricky.value
@@ -50,18 +48,15 @@ def test():
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
     pyre_debug = { "pyre.calc" }
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
     # run the test
     test()
-    # destroy the framework parts to make sure there are no excess nodes around
-    import pyre
-    pyre.shutdown()
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
     # print(tuple(Node._pyre_extent))
     assert tuple(Node._pyre_extent) == ()
-    # print(tuple(Node.Evaluator._pyre_extent))
-    assert tuple(Node.Evaluator._pyre_extent) == ()
 
 
 # end of file 
