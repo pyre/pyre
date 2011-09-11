@@ -14,6 +14,10 @@ class Dependent(Composite):
     This class maintains the tuple of nodes that form the dependencies of its instances
     """
 
+
+    # public data
+    operands = ()
+
     
     # interface
     def flush(self, node=None):
@@ -35,11 +39,27 @@ class Dependent(Composite):
     def __init__(self, operands, **kwds):
         super().__init__(**kwds)
         # keep a record of the nodes i depend on
-        self._operands = operands
+        self.operands = operands
         # add me as their observer
         for operand in operands: operand.addObserver(self.flush)
         # all done
         return
+
+
+    # implementation details
+    def _replace(self, index, current, replacement):
+        """
+        Adjust the operands by substituting {replacement} for {current} in the list of operands
+        at position {index}
+        """
+        # flush my cache
+        self.flush()
+        # remove me as an observer of the old node
+        current.removeObserver(self.flush)
+        # and add me to the list of observers of the replacement
+        replacement.addObserver(self.flush)
+        # and ask my superclass to do the rest
+        return super()._replace(index, current, replacement)
 
 
     # private data

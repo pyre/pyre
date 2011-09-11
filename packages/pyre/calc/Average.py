@@ -25,7 +25,7 @@ class Average(Dependent, Node):
         # if my cached value is invalid
         if self._value is None:
             # evaluate my operands
-            values = tuple(operand.value for operand in self._operands)
+            values = tuple(operand.value for operand in self.operands)
             # compute the average
             self._value = sum(values)/len(values)
         # and return it

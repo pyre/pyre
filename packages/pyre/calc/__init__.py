@@ -19,11 +19,11 @@ values of any of the nodes in their domain change. Nodes keep track of the set o
 that are interested in their values and post notifications when their values change.
 
 In addition, this package provides {Model}, a simple manager for evaluation nodes. Beyond node
-storage, {Model} enables the naming of nodes and can act as the name resolution context for the
-{Expression} evaluator, which evaluates strings with arbitrary python expressions that may
-involve the values of nodes in the model. The other evaluators provided here operate
-independently of {Model}. However, it is a good idea to build some kind of container to hold
-nodes while the evaluation graph is in use.
+storage, {Model} enables the naming of nodes and can act as the name resolution context for
+{Expression} nodes, which evaluate strings with arbitrary python expressions that may involve
+the values of other nodes in the model. The other nodes provided here operate independently of
+{Model}. However, it is a good idea to build some kind of container to hold nodes while the
+evaluation graph is in use.
 
 Simple examples of the use of the ideas in this package are provided in the unit tests. For a
 somewhat more advanced example, take a look at {pyre.config.Configurator}, which is a {Model}
@@ -34,7 +34,7 @@ can refer to the values of other traits in the configuration files.
 
 # factories
 # model
-def newModel(*, name, **kwds):
+def model(*, name, **kwds):
     from .Model import Model
     return Model(name=name, **kwds)
 
@@ -57,6 +57,17 @@ def var(value=None, **kwds):
     from .Variable import Variable
     # build the node and return it
     return Variable(value=value, **kwds)
+
+
+def expression(*, formula, model):
+    """
+    Build a new node that evaluates a {formula} that involves the names of other nodes as
+    resolved in the symbol table {model}.
+    """
+    # access the constructor
+    from .Expression import Expression
+    # build the node and return it
+    return Expression.parse(expression=formula, model=model)
 
 
 def average(*operands):
@@ -117,6 +128,10 @@ def sum(*operands):
     from .Sum import Sum
     # build the node and return it
     return Sum(operands=operands)
+
+
+# exceptions
+from .exceptions import EmptyExpressionError
 
 
 # debugging support

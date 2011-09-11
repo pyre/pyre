@@ -11,7 +11,7 @@ from .Error import Error
 
 class UnresolvedNode(Error):
     """
-    An evaluator that raises UnresolvedNodeError
+    A node that raises {UnresolvedNodeError} when its value is read
     """
 
 
@@ -24,7 +24,7 @@ class UnresolvedNode(Error):
         """
         Compute my value
         """
-        raise self.UnresolvedNodeError(name=self.name)
+        raise self.UnresolvedNodeError(node=self, name=self.name)
 
 
     # meta methods

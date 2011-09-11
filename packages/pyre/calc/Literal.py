@@ -19,22 +19,15 @@ class Literal(Node):
     # public data
     value = None # my value is explicitly set
     variables = [] # literals have no dependencies
+    operators = [] # literals have no dependencies
 
 
     # interface
-    def substitute(self, replacements):
+    def substitute(self, current, replacement):
         """
-        Replace variables in my graph that are present in {replacements} with the indicated node
+        Replace occurrences of {current} in my graph with {replacement}
         """
         # nothing to do
-        return
-
-
-    def addObserver(self, callback):
-        """
-        Stub so that {Literal} instances can coöperate with the other nodes
-        """
-        # ignore the request
         return
 
 

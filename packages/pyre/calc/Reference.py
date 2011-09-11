@@ -24,7 +24,7 @@ class Reference(Dependent, Node):
         # if my cached value is invalid
         if self._value is None:
             # get my referent
-            referent, = self._operands
+            referent, = self.operands
             # update my cache
             self._value = referent.value
         # return my value

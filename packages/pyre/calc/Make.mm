@@ -20,13 +20,12 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    AbstractModel.py \
     Average.py \
     Count.py \
     Dependent.py \
+    Error.py \
     Expression.py \
     Literal.py \
-    HierarchicalModel.py \
     Maximum.py \
     Minimum.py \
     Model.py \
@@ -36,6 +35,8 @@ EXPORT_PYTHON_MODULES = \
     Product.py \
     Reference.py \
     Sum.py \
+    SymbolTable.py \
+    UnresolvedNode.py \
     Variable.py \
     exceptions.py \
     __init__.py

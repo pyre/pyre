@@ -25,7 +25,7 @@ class CircularReferenceError(NodeError):
     Signal a circular reference in the evaluation graph
     """
     
-    def __init__(self, node, path, **kwds):
+    def __init__(self, node, path=(), **kwds):
         msg = "the evaluation graph has a cycle at {}".format(node)
         super().__init__(description=msg, **kwds)
         self.node = node
@@ -53,16 +53,21 @@ class EvaluationError(NodeError):
     Base class for node evaluation exceptions
     """
 
-    def __init__(self, evaluator, error, node=None, **kwds):
+    def __init__(self, error, node=None, **kwds):
         msg = "evaluation error: {}".format(error)
         super().__init__(description=msg, **kwds)
         self.node = node
-        self.evaluator = evaluator
         self.error = error
         return
 
 
-class EmptyExpressionError(NodeError):
+class ExpressionError(NodeError):
+    """
+    Base class for expression errors; useful when trapping them as a category
+    """
+
+
+class EmptyExpressionError(ExpressionError):
     """
     Exception raised when the expression factory did not encounter any named references to
     other nodes
@@ -75,7 +80,7 @@ class EmptyExpressionError(NodeError):
         return
 
 
-class ExpressionError(NodeError):
+class ExpressionSyntaxError(ExpressionError):
     """
     Exception raised when the python interpreter encounters a syntax error while compiling the
     expression

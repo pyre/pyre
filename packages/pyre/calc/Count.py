@@ -25,7 +25,7 @@ class Count(Dependent, Node):
         # if my cached value is invalid
         if self._value is None:
             # compute the length
-            self._value = len(self._operands)
+            self._value = len(self.operands)
         # and return it
         return self._value
 
