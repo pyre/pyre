@@ -11,9 +11,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working:
-	${PYTHON} ./expression.py
-
 all: test
 
 test: sanity evaluators faulty resolution model hierarchical
