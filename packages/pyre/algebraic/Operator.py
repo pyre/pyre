@@ -32,10 +32,10 @@ class Operator(Composite, Node):
 
 
     # meta methods
-    def __init__(self, operator, operands, **kwds):
+    def __init__(self, evaluator, operands, **kwds):
         super().__init__(**kwds)
-        self.evaluator = operator
-        self.operands = list(operands)
+        self.evaluator = evaluator
+        self.operands = operands
         return
 
 
