@@ -12,7 +12,7 @@ from .Dependent import Dependent
 
 class Minimum(Dependent, Node):
     """
-    The representation of the maximum value of a collection of nodes
+    The representation of the minimum value of a collection of nodes
     """
 
 
