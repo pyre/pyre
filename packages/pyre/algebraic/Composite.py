@@ -93,12 +93,24 @@ class Composite:
                 # if one of them is our target
                 if operand is current:
                     # replace it
-                    node.operands[index] = replacement
+                    node._replace(index, current, replacement)
             # mark this node as clean
             clean.add(node)        
             
         # all done
         return
-                    
 
+
+    # implementation details
+    def _replace(self, index, current, replacement):
+        """
+        Adjust the operands by substituting {replacement} for {current} in the list of operands
+        at position {index}
+        """
+        # replace
+        self.operands[index] = replacement
+        # and return
+        return self
+        
+        
 # end of file 
