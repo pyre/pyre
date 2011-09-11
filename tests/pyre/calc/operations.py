@@ -33,9 +33,9 @@ def test():
     # print(cost.value, shipping.value, margin.value, price.value, profit.value)
     assert cost.value == c
     assert shipping.value == s
-    assert margin.value == .5*cost.value
-    assert price.value == cost.value + shipping.value + margin.value
-    assert profit.value == price.value - margin.value
+    assert margin.value == .5*c
+    assert price.value == c + s + .5*c
+    assert profit.value == c + s
 
     # make some changes
     c = 200.
@@ -47,9 +47,9 @@ def test():
     # print(cost.value, shipping.value, margin.value, price.value, profit.value)
     assert cost.value == c
     assert shipping.value == s
-    assert margin.value == .5*cost.value
-    assert price.value == cost.value + shipping.value + margin.value
-    assert profit.value == price.value - margin.value
+    assert margin.value == .5*c
+    assert price.value == c + s + .5*c
+    assert profit.value == c + s
 
     return
 

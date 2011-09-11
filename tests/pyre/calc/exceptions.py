@@ -17,7 +17,7 @@ def test():
     import pyre.calc
     from pyre.calc.exceptions import (
         NodeError, CircularReferenceError, DuplicateNodeError, EvaluationError,
-        EmptyExpressionError, ExpressionError, UnresolvedNodeError )
+        ExpressionError, EmptyExpressionError, ExpressionSyntaxError, UnresolvedNodeError )
 
     try:
         raise NodeError(description="generic error")
@@ -35,18 +35,17 @@ def test():
         pass
 
     try:
-        raise EvaluationError(evaluator=None, error=None)
+        raise EvaluationError(node=None, error=None)
     except EvaluationError as error:
         pass
 
-    # try:
-    #     pyre.calc.var(value=pyre.calc.expression(formula="2*2", model=None))
-    #     assert False
-    # except EmptyExpressionError as error:
-    #     pass
+    try:
+        raise EmptyExpressionError(formula=None)
+    except EmptyExpressionError as error:
+        pass
 
     try:
-        raise ExpressionError(formula=None, error=None)
+        raise ExpressionSyntaxError(formula=None, error=None)
     except ExpressionError as error:
         pass
 

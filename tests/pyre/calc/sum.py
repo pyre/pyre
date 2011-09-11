@@ -25,8 +25,8 @@ def test():
     clone = cost.reference()
 
     # check the dependencies
-    assert cost._operands == (production, shipping)
-    assert clone._operands == (cost,)
+    assert cost.operands == (production, shipping)
+    assert clone.operands == (cost,)
     # and the dependents
     assert set(production.observers) == {cost}
     assert set(shipping.observers) == {cost}

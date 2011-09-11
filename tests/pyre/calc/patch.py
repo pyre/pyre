@@ -16,8 +16,8 @@ def test():
     import pyre.calc
 
     # the nodes
-    production = pyre.calc.newNode(value = 80.)
-    shipping = pyre.calc.newNode(value = 20.)
+    production = pyre.calc.var(value = 80.)
+    shipping = pyre.calc.var(value = 20.)
     cost = production + shipping
     margin = .25*cost
     overhead = .45*cost
@@ -27,7 +27,7 @@ def test():
     # check we got the answer right
     assert total.value == 136
     # the poser
-    poser = pyre.calc.newNode(value=180.)
+    poser = pyre.calc.var(value=180.)
 
     # introduce the cast
     # print("production: node@{:#x}".format(id(production)))
@@ -41,15 +41,26 @@ def test():
     # print("     poser: node@{:#x}".format(id(poser)))
 
     # patch cost with the new production node
-    cost.patch(old=production, new=poser)
+    cost.substitute(current=production, replacement=poser)
     # check
-    # assert cost.value == poser.value + shipping.value
-    # assert margin.value == .25*cost.value
-    # assert overhead.value == .45*cost.value
-    # assert price.value  == cost.value + margin.value + overhead.value
-    # assert total.value == price.value*(1.0 - discount)
+    assert cost.value == poser.value + shipping.value
+    assert margin.value == .25*cost.value
+    assert overhead.value == .45*cost.value
+    assert price.value  == cost.value + margin.value + overhead.value
+    assert total.value == price.value*(1.0 - discount)
     # check we got the new answer right
     assert total.value == 272
+
+    # make an adjustment
+    poser.value = 80
+    # check
+    assert cost.value == poser.value + shipping.value
+    assert margin.value == .25*cost.value
+    assert overhead.value == .45*cost.value
+    assert price.value  == cost.value + margin.value + overhead.value
+    assert total.value == price.value*(1.0 - discount)
+    # check we got the answer right
+    assert total.value == 136
 
     return
 
@@ -58,18 +69,15 @@ def test():
 if __name__ == "__main__":
     # request debugging support for the pyre.calc package
     pyre_debug = { "pyre.calc" }
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
     # run the test
     test()
-    # destroy the framework parts to make sure there are no excess nodes around
-    import pyre
-    pyre.shutdown()
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
     # print(tuple(Node._pyre_extent))
     assert tuple(Node._pyre_extent) == ()
-    # print(tuple(Node.Evaluator._pyre_extent))
-    assert tuple(Node.Evaluator._pyre_extent) == ()
 
 
 # end of file 
