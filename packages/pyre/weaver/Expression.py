@@ -135,7 +135,7 @@ class Expression:
         Render {node} assuming it is an operation of some kind
         """
         # get the operator
-        op = node._operator
+        op = node.evaluator
         # lookup the operator specific handler
         handler = self._renderers[op]
         # and invoke it
@@ -147,13 +147,13 @@ class Expression:
         Render {node} assuming it is an operator
         """
         # extract the operands
-        left, right = node._operands
+        left, right = node.operands
         # render the left operand
         op1 = self._renderers[type(left)](node=left, **kwds)
         # render the right operand
         op2 = self._renderers[type(right)](node=right, **kwds)
         # look up the operator symbol
-        symbol = self._symbols[node._operator]
+        symbol = self._symbols[node.evaluator]
         # put it all together
         return "({}) {} ({})".format(op1, symbol, op2)
 
@@ -163,11 +163,11 @@ class Expression:
         Render {node} assuming it is an operator
         """
         # get the operand: unpack as a tuple to catch mistakes
-        operand, = node._operands
+        operand, = node.operands
         # render it
         op = self._renderers[type(operand)](node=operand, **kwds)
         # look up the operator symbol
-        symbol = self._symbols[node._operator]
+        symbol = self._symbols[node.evaluator]
         # put it all together
         return "{}({})".format(symbol, op)
 
@@ -177,11 +177,11 @@ class Expression:
         Render the absolute value of {node}
         """
         # get the operand: unpack as a tuple to catch mistakes
-        operand, = node._operands
+        operand, = node.operands
         # render it
         op = self._renderers[type(operand)](node=operand, **kwds)
         # decorate and return
-        return "{}({})".format(self._symbols[node._operator], op)
+        return "{}({})".format(self._symbols[node.evaluator], op)
 
 
     def _oppositeRenderer(self, node, **kwds):
@@ -189,7 +189,7 @@ class Expression:
         Render the absolute value of {node}
         """
         # get the operand: unpack as a tuple to catch mistakes
-        operand, = node._operands
+        operand, = node.operands
         # render it
         op = self._renderers[type(operand)](node=operand, **kwds)
         # decorate and return

@@ -11,7 +11,7 @@ class Composite:
     Mix-in class that provides an implementation of the subset of the interface of {Node} that
     requires traversal of the expression graph rooted at nodes with dependencies.
 
-    This class assumes that its instances provide {_operands}, a tuple of their dependencies on
+    This class assumes that its instances provide {operands}, a tuple of their dependencies on
     other nodes
     """
 
@@ -30,7 +30,7 @@ class Composite:
         looking for the set unique dependencies have to prune the results themselves.
         """
         # traverse my operands
-        for operand in self._operands:
+        for operand in self.operands:
             # and ask them for their dependencies
             for node in operand.variables:
                 # return whatever it discovered
@@ -50,7 +50,7 @@ class Composite:
         # i am one
         yield self
         # now, traverse my operands
-        for operand in self._operands:
+        for operand in self.operands:
             # and ask them for their operators
             for node in operand.operators:
                 # got one
@@ -85,11 +85,11 @@ class Composite:
                 # skip it
                 continue
             # look over their operands
-            for index, operand in enumerate(node._operands):
+            for index, operand in enumerate(node.operands):
                 # if one of them is our target
                 if operand is current:
                     # replace it
-                    node._operands[index] = replacement
+                    node.operands[index] = replacement
             # mark this node as clean
             clean.add(node)        
             

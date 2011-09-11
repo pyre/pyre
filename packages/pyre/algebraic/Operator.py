@@ -17,28 +17,29 @@ class Operator(Composite, Node):
 
 
     # public data
+    evaluator = None
+    operands = None
+
     @property
     def value(self):
         """
         Compute and return my value
         """
         # compute the values of my operands
-        values = tuple(op.value for op in self._operands)
+        values = tuple(op.value for op in self.operands)
         # apply my operator
-        return self._operator(*values)
+        return self.evaluator(*values)
 
 
     # meta methods
     def __init__(self, operator, operands, **kwds):
         super().__init__(**kwds)
-        self._operator = operator
-        self._operands = list(operands)
+        self.evaluator = operator
+        self.operands = list(operands)
         return
 
 
     # private data
-    _operator = None
-    _operands = None
 
 
 # end of file 

@@ -47,7 +47,7 @@ class C(BlockMill, Expression):
         Render {node.op1} raised to the {node.op2} power
         """
         # get the base and the exponent
-        base, exponent = node._operands
+        base, exponent = node.operands
         # render my operands
         op1 = self._renderers[type(base)](base)
         op2 = self._renderers[type(exponent)](exponent)
