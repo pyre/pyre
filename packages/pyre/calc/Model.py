@@ -29,42 +29,63 @@ class Model(SymbolTable):
 
 
     # interface
-    def register(self, *, name, node):
+    def eval(self, program):
         """
-        Add {node} into the model and make it accessible under {name}
+        Evaluate the compiled object {program} in the context of my registered nodes
         """
-        # print("pyre.calc.Model.register: name={!r}, node={}".format(name, node))
-        # add the node to the pile
-        self._nodes[name] = node
-        # and return
-        return self
-
-
-    def resolve(self, name):
-        """
-        Resolve {name} into a node and return its value
-        """
-        # attempt to find the node that is registered under {name}
-        try:
-            # and return it
-            return self._nodes[name]
-        # otherwise
-        except KeyError:
-            pass
-        # build an error indicator
-        node = self.unresolved(name)
-        # print("pyre.calc.Model.resolve: new unresolved node {!r} {}".format(name, node))
-        # add it to the pile
-        self._nodes[name] = node
-        # and return it
-        return node
+        return eval(program, self._nodes)
 
 
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        self._nodes = {}
+        self._nodes = {} # map of canonical names to registered nodes
+        self._names = {} # map of node names to canonical names
         return
+
+
+    # implementation details
+    def _register(self, *, canonical, node):
+        """
+        Add {node} into the model and make it accessible under {name}
+        """
+        # print("pyre.calc.Model.register: name={!r}, node={}".format(name, node))
+        # add the node to the pile
+        self._nodes[canonical] = node
+        # and return
+        return self
+
+
+    def _resolve(self, name):
+        """
+        Find the named node
+        """
+        # attempt to convert the {name} into its canonical value
+        try:
+            canonical = self._names[name]
+        # if the lookup fails, this is the first request for this name
+        except KeyError:
+            # create a new canonical name
+            canonical = "_{}".format(len(self._names))
+            # register it
+            self._names[name] = canonical
+            # build an error indicator
+            node = self.unresolved(name)
+            # print("pyre.calc.Model.resolve: new unresolved node {!r} {}".format(name, node))
+            # add it to the pile
+            self._nodes[canonical] = node
+        # if it succeeds
+        else:
+            # look up the actual node
+            node = self._nodes[canonical]
+
+        # and return the node and its canonical name
+        return node, canonical
+
+
+    # private data
+    _nodes = None # map of canonical names to registered nodes
+    _names = None # map of node names to python identifiers used in compiling expressions
 
 
 # end of file 

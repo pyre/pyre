@@ -64,10 +64,8 @@ def expression(*, formula, model):
     Build a new node that evaluates a {formula} that involves the names of other nodes as
     resolved in the symbol table {model}.
     """
-    # access the constructor
-    from .Expression import Expression
     # build the node and return it
-    return Expression.parse(expression=formula, model=model)
+    return model.parse(expression=formula)
 
 
 def average(*operands):

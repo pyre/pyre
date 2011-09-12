@@ -18,10 +18,15 @@ def test():
     # build the model
     model = pyre.calc.model(name="sample")
 
+    # make a couple
+    p = 80
+    s = 20
+    production = pyre.calc.var(value=p)
+    shipping = pyre.calc.var(value=s)
     # the nodes
-    model["production"] = 80.
-    model["shipping"] = 20
-    model["cost"] = model.resolve("production") + model.resolve("shipping")
+    model["production"] = production
+    model["shipping"] = shipping
+    model["cost"] = production + shipping
     model["margin"] = ".25*{cost}"
     model["overhead"] = ".45*{cost}"
     model["price"] = "{cost}+{margin}+{overhead}"

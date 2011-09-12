@@ -26,7 +26,8 @@ def test():
         model["price"]
         assert False
     except model.UnresolvedNodeError as error:
-        assert error.node == model.resolve(name="production")
+        unresolved, _ = model._resolve(name="production")
+        assert error.node is unresolved
         assert error.name == "production"
 
     # resolve the node
