@@ -82,11 +82,11 @@ class SymbolTable(Named):
             # extract the name from the match
             identifier = match.group('identifier')
             # resolve it
-            node, canonical = self._resolve(name=identifier)
+            node, identifier = self._resolve(name=identifier)
             # add the node to the operands
             operands.append(node)
             # build and return the matching expression fragment
-            return "(" + canonical + ".value)"
+            return "(" + identifier + ".value)"
 
         # convert node references to legal python identifiers
         # print("Expression.parse: expression={!r}".format(expression))
@@ -146,7 +146,7 @@ class SymbolTable(Named):
         # at this point, either {node} is not {None} and {value} has been converted, or {node}
         # is {None} and the value is raw data
         # resolve the name 
-        existing, canonical = self._resolve(name=name)
+        existing, identifier = self._resolve(name=name)
         # if the existing node is a regular variable and we have a value for it
         if node is None and isinstance(existing, self.var):
             # update it
@@ -158,7 +158,7 @@ class SymbolTable(Named):
         # patch the model
         self._patch(discard=existing, replacement=node)
         # and register the new node
-        return self._register(canonical=canonical, node=node)
+        return self._register(identifier=identifier, node=node)
 
 
     # implementation details
@@ -177,7 +177,7 @@ class SymbolTable(Named):
         return
 
 
-    def _register(self, *, name, canonical, node):
+    def _register(self, *, name, identifier, node):
         """
         Add {node} into the model and make it accessible through {name}
         """

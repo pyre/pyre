@@ -39,19 +39,19 @@ class Model(SymbolTable):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        self._nodes = {} # map of canonical names to registered nodes
-        self._names = {} # map of node names to canonical names
+        self._nodes = {} # map of identifiers to registered nodes
+        self._names = {} # map of node names to identifiers
         return
 
 
     # implementation details
-    def _register(self, *, canonical, node):
+    def _register(self, *, identifier, node):
         """
         Add {node} into the model and make it accessible under {name}
         """
         # print("pyre.calc.Model.register: name={!r}, node={}".format(name, node))
         # add the node to the pile
-        self._nodes[canonical] = node
+        self._nodes[identifier] = node
         # and return
         return self
 
@@ -60,31 +60,31 @@ class Model(SymbolTable):
         """
         Find the named node
         """
-        # attempt to convert the {name} into its canonical value
+        # attempt to map the {name} into an identifier
         try:
-            canonical = self._names[name]
+            identifier = self._names[name]
         # if the lookup fails, this is the first request for this name
         except KeyError:
-            # create a new canonical name
-            canonical = "_{}".format(len(self._names))
+            # create a new identifier
+            identifier = "_{}".format(len(self._names))
             # register it
-            self._names[name] = canonical
+            self._names[name] = identifier
             # build an error indicator
             node = self.unresolved(name)
             # print("pyre.calc.Model.resolve: new unresolved node {!r} {}".format(name, node))
             # add it to the pile
-            self._nodes[canonical] = node
+            self._nodes[identifier] = node
         # if it succeeds
         else:
             # look up the actual node
-            node = self._nodes[canonical]
+            node = self._nodes[identifier]
 
-        # and return the node and its canonical name
-        return node, canonical
+        # and return the node and its identifier
+        return node, identifier
 
 
     # private data
-    _nodes = None # map of canonical names to registered nodes
+    _nodes = None # map of identifiers to registered nodes
     _names = None # map of node names to python identifiers used in compiling expressions
 
 
