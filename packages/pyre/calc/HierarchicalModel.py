@@ -10,11 +10,11 @@
 import re
 import pyre.patterns
 # super-class
-from .AbstractModel import AbstractModel
+from .SymbolTable import SymbolTable
 
 
 # declaration
-class HierarchicalModel(AbstractModel):
+class HierarchicalModel(SymbolTable):
     """
     Storage and naming services for calc nodes
 
@@ -34,7 +34,7 @@ class HierarchicalModel(AbstractModel):
     separator = None
 
 
-    # interface obligations from AbstractModel
+    # interface obligations from SymbolTable
     @property
     def nodes(self):
         """
@@ -45,6 +45,13 @@ class HierarchicalModel(AbstractModel):
 
 
     # interface
+    def eval(self, program):
+        """
+        Evaluate the compiled object {program} in the context of my registered nodes
+        """
+        return eval(program, self._nodes)
+
+
     def select(self, pattern=''):
         """
         Generate a sequence of (name, value) pairs for all nodes in the model whose name
@@ -61,7 +68,7 @@ class HierarchicalModel(AbstractModel):
             # if the name matches the pattern
             if regex.match(name):
                 # yield the fully qualified name and the value of the node
-                yield name, self._nodes[key]
+                yield name, self._nodes[self._identifiers[key]]
         # all done
         return
 
@@ -82,18 +89,20 @@ class HierarchicalModel(AbstractModel):
         # iterate over the unique keys
         for key in unique:
             # print("  looking for:", key)
-            # and extract the name and associated node
+            # extract the identifier
             try:
-                yield key, self._names[key], self._fqnames[key], self._nodes[key]
-            # if not there, it's because the key exists in the model but none of its immediate
-            # children are leaf nodes with associated values. this happens often for
-            # configuration settings to facilities that have not yet been converted into
-            # concrete components; it also happens for configuration settings that are not meant
-            # for components at all, such as journal channel activations
+                identifier = self._identifiers[key]
+            # if not there...
             except KeyError:
-                # skip it, for now. facility settings will be harvested when the associated
-                # component is instantiated and assigned
+                # it's because the key exists in the model but none of its immediate children
+                # are leaf nodes with associated values. this happens often for configuration
+                # settings to facilities that have not yet been converted into concrete
+                # components; it also happens for configuration settings that are not meant for
+                # components at all, such as journal channel activations.
                 continue
+            # extract the required information
+            yield key, identifier, self._names[key], self._fqnames[key], self._nodes[identifier]
+
         # all done
         return
 
@@ -116,84 +125,43 @@ class HierarchicalModel(AbstractModel):
         canonicalKey = canonicalKey if canonicalKey is not None else canonical.split(self.separator)
         # ask the hash to alias the two names and retrieve the corresponding hash keys
         aliasHash, canonicalHash = self._hash.alias(alias=aliasKey, canonical=canonicalKey)
+
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
+
         # look for a preëxisting node under the alias
         try:
-            aliasNode = self._nodes[aliasHash]
+            aliasId = self._identifiers[aliasHash]
+        # if the lookup fails
         except KeyError:
-            # if no node has been previously registered under the alias we are done
-            # if a registration appears, it will be treated as a duplicate by {register}, and
-            # patched appropriately
+            # no node has been previously registered under this alias, so we are done. if a
+            # registration appears, it will be treated as a duplicate and patched appropriately
             return self
         # now, look for the canonical node
         try:
-            canonicalNode = self._nodes[canonicalHash]
+            canonicalId = self._identifiers[canonicalHash]
         # if there was no canonical node
         except KeyError:
             # install the alias as the canonical 
-            self._nodes[canonicalHash] = aliasNode
+            self._identifiers[canonicalHash] = aliasId
             self._names[canonicalHash] = canonicalKey[-1]
             self._fqnames[canonicalHash] = canonical
             # all done
             return
         # either way clean up after the obsolete aliased node
         finally:
-            del self._nodes[aliasHash]
             del self._names[aliasHash]
             del self._fqnames[aliasHash]
         # both preëxisted; the aliased info has been cleared out, the canonical is as
         # it should be. all that remains is to patch the two nodes
-        self.patch(discard=aliasNode, keep=canonicalNode)
+        aliasNode = self._nodes[aliasId]
+        canonicalNode = self._nodes[canonicalId]
+        self._patch(discard=aliasNode, replacement=canonicalNode)
+        # and install the canonical node under the alias identifier
+        self._nodes[aliasId] = canonicalNode
         # all done
         return self
         
-
-    # AbstractModel obligations 
-    def register(self, *, node, name=None, key=None):
-        """
-        Add {node} into the model and make it accessible through {name}
-
-        Either {name} or {key} must be non-nil.
-
-        If the optional argument {key} is provided, it will be used to generate the hash key;
-        otherwise {name} will be split using the model's field separator. If {key} is supplied
-        but {name} is not, an appropriate name will be constructed by splicing together the
-        names in {key} using the model's field separator.
-        """
-        # build the name
-        name = name if name is not None else self.separator.join(key)
-        # build the key
-        # N.B.: when multiple names hash to the same key, the code below does not alter the
-        # name database. this is as it should so that aliases are handled correctly. make sure
-        # to respect this invariant when modifying what follows
-        key = key if key is not None else name.split(self.separator)
-        # hash it
-        hashkey = self._hash.hash(key)
-        # and pass the info to {_register}
-        return self._register(name=key[-1], fqname=name, node=node, hashkey=hashkey)
-            
-            
-    def resolve(self, *, name=None, key=None):
-        """
-        Find the named node
-
-        Either {name} or {key} must be non-nil.
-
-        If the optional argument {key} is provided, it will be used to generate the hash key;
-        otherwise {name} will be split using the model's field separator. If {key} is supplied
-        but {name} is not, an appropriate name will be constructed by splicing together the
-        names in {key} using the model's field separator.
-        """
-        # build the name
-        name = name if name is not None else self.separator.join(key)
-        # build the key
-        key = key if key is not None else name.split(self.separator)
-        # hash it
-        hashkey = self._hash.hash(key)
-        # and pass the info to the support routine
-        return self._resolve(name=key[-1], fqname=name, hashkey=hashkey)
-
 
     # meta methods
     def __init__(self, separator=SEPARATOR, **kwds):
@@ -201,54 +169,69 @@ class HierarchicalModel(AbstractModel):
 
         # the level separator
         self.separator = separator
+        self._tag = 0
 
         # node storage strategy
-        self._nodes = {}
-        self._names = {}
-        self._fqnames = {}
+        self._nodes = {} # maps identifiers to nodes
+        self._names = {} # maps hash keys to node name
+        self._fqnames = {} # maps hash keys to fully qualified node names
+        self._identifiers = {} # maps hash keys to identifiers
         self._hash = pyre.patterns.newPathHash()
         return
 
 
     # implementation details
-    def _register(self, name, fqname, node, hashkey):
+    def _register(self, *, identifier, node):
         """
-        Attach {node} to the model under {hashkey}
+        Add {node} to the model and make it accessible through {identifier}
         """
-        # check whether we have a node registered under this name
-        try:
-            existing = self._nodes[hashkey]
-        except KeyError:
-            # nope, first time
-            self._nodes[hashkey] = node
-            self._names[hashkey] = name
-            self._fqnames[hashkey] = fqname
-            return self
-        # patch the evaluation graph 
-        # {self.patch} decides the best way to handle the replacement and returns the winner
-        # node, which must be reinserted in the model
-        self._nodes[hashkey] = self.patch(keep=existing, discard=node)
+        # add the node to the pile
+        self._nodes[identifier] = node
         # and return
         return self
- 
 
-    def _resolve(self, name, fqname, hashkey):
+
+    def _resolve(self, *, name=None, key=None):
         """
         Find the named node
+
+        Either {name} or {key} must be non-nil.
+
+        If the optional argument {key} is provided, it will be used to generate the hash key;
+        otherwise {name} will be split using the model's field separator. If {key} is supplied
+        but {name} is not, an appropriate name will be constructed by splicing together the
+        names in {key} using the model's field separator.
         """
-        # attempt to return the node that is registered under {name} using the {hashkey}
+        # build the name
+        name = name if name is not None else self.separator.join(key)
+        # build the key
+        key = key if key is not None else name.split(self.separator)
+        # hash it
+        hashkey = self._hash.hash(key)
+        # attempt to map the {hashkey} into an identifier
         try:
-            node = self._nodes[hashkey]
+            identifier = self._identifiers[hashkey]
+        # if the lookup fails, this is the first request for this name
         except KeyError:
-            # otherwise, build an unresolved node
-            from .UnresolvedNode import UnresolvedNode
-            node = UnresolvedNode(fqname)
-            # add it to the pile
-            self._nodes[hashkey] = node
-            self._names[hashkey] = name
-            self._fqnames[hashkey] = fqname
-        # and return it
-        return node
+            # create a new identifier
+            identifier = "_{}".format(self._tag)
+            self._tag += 1
+            # register it
+            self._identifiers[hashkey] = identifier
+            # adjust the name indices
+            self._names[hashkey] = key[-1] # the name of the node
+            self._fqnames[hashkey] = name  # the fqname of the node
+            # build an error indicator
+            node = self.unresolved(name=name) 
+            # install it
+            self._nodes[identifier] = node
+        # if the lookup succeeded
+        else:
+            # look up the node
+            node = self._nodes[identifier]
+
+        # return the node and its identifier
+        return node, identifier
 
 
     # debug support

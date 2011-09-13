@@ -25,6 +25,7 @@ EXPORT_PYTHON_MODULES = \
     Dependent.py \
     Error.py \
     Expression.py \
+    HierarchicalModel.py \
     Literal.py \
     Maximum.py \
     Minimum.py \

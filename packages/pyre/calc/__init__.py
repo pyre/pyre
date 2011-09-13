@@ -40,7 +40,7 @@ def model(*, name, **kwds):
 
 
 # hierarchical model
-def newHierarchicalModel(*, name, **kwds):
+def hierarchicalModel(*, name, **kwds):
     from .HierarchicalModel import HierarchicalModel
     return HierarchicalModel(name=name, **kwds)
 

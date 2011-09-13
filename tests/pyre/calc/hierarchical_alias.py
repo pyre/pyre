@@ -16,7 +16,7 @@ def test():
     import pyre.calc
 
     # create a model
-    model = pyre.calc.newHierarchicalModel(name="sample")
+    model = pyre.calc.hierarchicalModel(name="sample")
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
@@ -45,11 +45,32 @@ def test():
     model.alias(alias="author.name", canonical="user.name")
     assert model["author.name"] == model["user.name"]
 
+    # check the final state
+    assert model["user.name"] == "Michael Aïvázis"
+    assert model["user.email"] == "aivazis@caltech.edu"
+    assert model["user.telephone"] == "+1 626.395.3424"
+    assert model["user.affiliation"] == "California Institute of Technology"
+    assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
+
+    # and again through the aliases
+    assert model["author.name"] == "Michael Aïvázis"
+    try:
+        model["author.email"]
+        assert False
+    except model.UnresolvedNodeError as error:
+        pass
+    assert model["author.telephone"] == "+1 626.395.3424"
+    assert model["author.affiliation"] == "California Institute of Technology"
+    assert model["author.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
+
     return
 
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # run the test
     test()
 
 

@@ -16,13 +16,12 @@ def test():
     import pyre.calc
 
     # create a model
-    model = pyre.calc.newHierarchicalModel(name="sample")
+    model = pyre.calc.hierarchicalModel(name="sample")
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
     model["user.email"] = "aivazis@caltech.edu"
-    model["user.signature"] = pyre.calc.expression(
-        formula="{user.name}+' -- '+{user.email}", model=model)
+    model["user.signature"] = "{user.name}+' -- '+{user.email}"
 
     # check the signature
     assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
@@ -38,6 +37,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # run the test
     test()
 
 

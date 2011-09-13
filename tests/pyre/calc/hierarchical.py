@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Sanity check: instantiate a hierarchical model
 """
 
 
@@ -16,7 +16,7 @@ def test():
     import pyre.calc
 
     # create a model
-    model = pyre.calc.newHierarchicalModel(name="sample")
+    model = pyre.calc.hierarchicalModel(name="sample")
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
@@ -30,6 +30,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # run the test
     test()
 
 
