@@ -47,7 +47,7 @@ class Model(SymbolTable):
     # implementation details
     def _register(self, *, identifier, node):
         """
-        Add {node} into the model and make it accessible under {name}
+        Add {node} to the model and make it accessible through {identifier}
         """
         # print("pyre.calc.Model.register: name={!r}, node={}".format(name, node))
         # add the node to the pile

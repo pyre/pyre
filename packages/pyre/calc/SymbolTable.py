@@ -177,9 +177,9 @@ class SymbolTable(Named):
         return
 
 
-    def _register(self, *, name, identifier, node):
+    def _register(self, *, identifier, node):
         """
-        Add {node} into the model and make it accessible through {name}
+        Add {node} to the model and make it accessible through {identifier}
         """
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must implement '_register'".format(self))
