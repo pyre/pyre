@@ -5,6 +5,11 @@
 # (c) 1998-2011 all rights reserved
 #
 
+- calc:
+
+  - calc nodes cannot inherit from {Ordering} because {Observable} stores the callbacks in a
+    weak key dictionary, which is incompatible with an overloaded __eq__
+
 - framework:
 
   - pyre.patterns.Named has to become a little more sophisticated with its name handling:
@@ -79,9 +84,9 @@
 
   - should this be part of {help}? see below
 
-- journal: make
+- journal:
 
-- weaver: make
+- weaver:
 
   - i want my own rst, and my own sphinx...
 
@@ -99,7 +104,7 @@
 
     - use in opal and fold into the UI for Forms
 
-- db: make
+- db:
 
   - db Query and View as Components 
   
@@ -109,7 +114,7 @@
 
   - Form as Component
 
-- merlin: make
+- merlin:
 
   - while i am dreaming: i want my own coverage tool...
 
