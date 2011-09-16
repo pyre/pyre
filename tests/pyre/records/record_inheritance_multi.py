@@ -33,10 +33,10 @@ def test():
     assert isinstance(item.sku, pyre.records.field)
     assert isinstance(item.description, pyre.records.field)
 
-    assert item.pyre_localItems == (item.sku, item.description)
-    assert item.pyre_items == (item.sku, item.description)
-    assert item.pyre_fields == item.pyre_items
-    assert item.pyre_derivations == ()
+    assert identical(item.pyre_localEntries, (item.sku, item.description))
+    assert identical(item.pyre_entries, (item.sku, item.description))
+    assert identical(item.pyre_fields, item.pyre_entries)
+    assert identical(item.pyre_derivations, ())
 
     assert item.pyre_index[item.sku] == 0
     assert item.pyre_index[item.description] == 1
@@ -45,10 +45,10 @@ def test():
     assert isinstance(production.cost, pyre.records.field)
     assert isinstance(production.overhead, pyre.records.field)
 
-    assert production.pyre_localItems == (production.cost, production.overhead)
-    assert production.pyre_items == (production.cost, production.overhead)
-    assert production.pyre_fields == (production.cost, production.overhead)
-    assert production.pyre_derivations == ()
+    assert identical(production.pyre_localEntries, (production.cost, production.overhead))
+    assert identical(production.pyre_entries, (production.cost, production.overhead))
+    assert identical(production.pyre_fields, (production.cost, production.overhead))
+    assert identical(production.pyre_derivations, ())
 
     assert production.pyre_index[production.cost] == 0
     assert production.pyre_index[production.overhead] == 1
@@ -60,14 +60,14 @@ def test():
     assert isinstance(pricing.overhead, pyre.records.field)
     assert isinstance(pricing.price, pyre.records.field)
 
-    assert pricing.pyre_localItems == (pricing.price,)
-    assert pricing.pyre_items == (
+    assert identical(pricing.pyre_localEntries, (pricing.price,))
+    assert identical(pricing.pyre_entries, (
         pricing.cost, pricing.overhead,
         pricing.sku, pricing.description, 
         pricing.price, 
-        )
-    assert pricing.pyre_fields == pricing.pyre_items
-    assert pricing.pyre_derivations == ()
+        ))
+    assert identical(pricing.pyre_fields, pricing.pyre_entries)
+    assert identical(pricing.pyre_derivations, ())
 
     assert pricing.pyre_index[pricing.cost] == 0
     assert pricing.pyre_index[pricing.overhead] == 1
@@ -76,6 +76,16 @@ def test():
     assert pricing.pyre_index[pricing.price] == 4
 
     return item, production, pricing
+
+
+def identical(s1, s2):
+    """
+    Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
+    we must avoid triggering __eq__
+    """
+    for n1, n2 in zip(s1, s2):
+        if n1 is not n2: return False
+    return True
 
 
 # main

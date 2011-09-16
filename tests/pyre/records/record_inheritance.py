@@ -32,10 +32,10 @@ def test():
     assert isinstance(item.sku, pyre.records.field)
     assert isinstance(item.description, pyre.records.field)
 
-    assert item.pyre_localItems == (item.sku, item.description)
-    assert item.pyre_items == (item.sku, item.description)
-    assert item.pyre_fields == (item.sku, item.description)
-    assert item.pyre_derivations == ()
+    assert identical(item.pyre_localEntries, (item.sku, item.description))
+    assert identical(item.pyre_entries, (item.sku, item.description))
+    assert identical(item.pyre_fields, (item.sku, item.description))
+    assert identical(item.pyre_derivations, ())
 
     assert item.pyre_index[item.sku] == 0
     assert item.pyre_index[item.description] == 1
@@ -47,13 +47,15 @@ def test():
     assert isinstance(pricing.overhead, pyre.records.field)
     assert isinstance(pricing.price, pyre.records.field)
 
-    assert pricing.pyre_localItems == (pricing.cost, pricing.overhead, pricing.price)
-    assert pricing.pyre_items == (
-        pricing.sku, pricing.description,
-        pricing.cost, pricing.overhead, pricing.price, 
-        )
-    assert pricing.pyre_fields == pricing.pyre_items
-    assert pricing.pyre_derivations == ()
+    assert identical(pricing.pyre_localEntries, (pricing.cost, pricing.overhead, pricing.price))
+    assert identical(
+        pricing.pyre_entries, 
+        (
+            pricing.sku, pricing.description,
+            pricing.cost, pricing.overhead, pricing.price, 
+         ))
+    assert identical(pricing.pyre_fields, pricing.pyre_entries)
+    assert identical(pricing.pyre_derivations, ())
 
     assert pricing.pyre_index[pricing.sku] == 0
     assert pricing.pyre_index[pricing.description] == 1
@@ -62,6 +64,16 @@ def test():
     assert pricing.pyre_index[pricing.price] == 4
 
     return item, pricing
+
+
+def identical(s1, s2):
+    """
+    Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
+    we must avoid triggering __eq__
+    """
+    for n1, n2 in zip(s1, s2):
+        if n1 is not n2: return False
+    return True
 
 
 # main

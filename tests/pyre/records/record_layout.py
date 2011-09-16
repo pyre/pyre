@@ -34,11 +34,13 @@ def test():
     assert isinstance(record.overhead, pyre.records.field)
     assert isinstance(record.price, pyre.records.field)
 
-    assert record.pyre_localItems == (
+    assert record.pyre_localEntries == (
         record.sku, record.description, record.cost, record.overhead, record.price)
-    assert record.pyre_items == record.pyre_localItems
-    assert record.pyre_fields == record.pyre_localItems
-    assert record.pyre_derivations == ()
+
+
+    assert identical(record.pyre_entries, record.pyre_localEntries)
+    assert identical(record.pyre_fields, record.pyre_localEntries)
+    assert identical(record.pyre_derivations, ())
 
     assert record.pyre_index[record.sku] == 0
     assert record.pyre_index[record.description] == 1
@@ -48,6 +50,16 @@ def test():
 
     return record
 
+
+def identical(s1, s2):
+    """
+    Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
+    we must avoid triggering __eq__
+    """
+    for n1, n2 in zip(s1, s2):
+        if n1 is not n2: return False
+    return True
+            
 
 # main
 if __name__ == "__main__":

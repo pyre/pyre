@@ -38,10 +38,10 @@ def test():
     assert isinstance(item.sku, pyre.records.field)
     assert isinstance(item.description, pyre.records.field)
 
-    assert item.pyre_localItems == (item.sku, item.description)
-    assert item.pyre_items == (item.sku, item.description)
-    assert item.pyre_fields == (item.sku, item.description)
-    assert item.pyre_derivations == ()
+    assert identical(item.pyre_localEntries, (item.sku, item.description))
+    assert identical(item.pyre_entries, (item.sku, item.description))
+    assert identical(item.pyre_fields, (item.sku, item.description))
+    assert identical(item.pyre_derivations, ())
 
     assert item.pyre_index[item.sku] == 0
     assert item.pyre_index[item.description] == 1
@@ -49,10 +49,10 @@ def test():
     # explore the production record
     assert isinstance(production.cost, pyre.records.field)
 
-    assert production.pyre_localItems == (production.cost,)
-    assert production.pyre_items == (production.cost,)
-    assert production.pyre_fields == (production.cost,)
-    assert production.pyre_derivations == ()
+    assert identical(production.pyre_localEntries, (production.cost,))
+    assert identical(production.pyre_entries, (production.cost,))
+    assert identical(production.pyre_fields, (production.cost,))
+    assert identical(production.pyre_derivations, ())
 
     assert production.pyre_index[production.cost] == 0
 
@@ -60,10 +60,10 @@ def test():
     assert isinstance(handling.overhead, pyre.records.field)
     assert isinstance(handling.margin, pyre.records.field)
 
-    assert handling.pyre_localItems == (handling.overhead, handling.margin)
-    assert handling.pyre_items == (handling.overhead, handling.margin)
-    assert handling.pyre_fields == (handling.overhead, handling.margin)
-    assert handling.pyre_derivations == ()
+    assert identical(handling.pyre_localEntries, (handling.overhead, handling.margin))
+    assert identical(handling.pyre_entries, (handling.overhead, handling.margin))
+    assert identical(handling.pyre_fields, (handling.overhead, handling.margin))
+    assert identical(handling.pyre_derivations, ())
 
     assert handling.pyre_index[handling.overhead] == 0
     assert handling.pyre_index[handling.margin] == 1
@@ -76,19 +76,19 @@ def test():
     assert isinstance(pricing.margin, pyre.records.field)
     assert isinstance(pricing.price, pyre.records.derivation)
 
-    assert pricing.pyre_localItems == (pricing.price,)
-    assert pricing.pyre_items == (
+    assert identical(pricing.pyre_localEntries, (pricing.price,))
+    assert identical(pricing.pyre_entries, (
         pricing.overhead, pricing.margin,
         pricing.cost,
         pricing.sku, pricing.description,
-        pricing.price
-        )
-    assert pricing.pyre_fields == (
+        pricing.price,
+        ))
+    assert identical(pricing.pyre_fields, (
         pricing.overhead, pricing.margin,
         pricing.cost,
         pricing.sku, pricing.description,
-        )
-    assert pricing.pyre_derivations == (pricing.price,)
+        ))
+    assert identical(pricing.pyre_derivations, (pricing.price,))
 
     assert pricing.pyre_index[pricing.overhead] == 0
     assert pricing.pyre_index[pricing.margin] == 1
@@ -108,6 +108,16 @@ def test():
     assert p.price == p.cost*(1.0 + p.overhead/100 + p.margin/100)
 
     return p
+
+
+def identical(s1, s2):
+    """
+    Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
+    we must avoid triggering __eq__
+    """
+    for n1, n2 in zip(s1, s2):
+        if n1 is not n2: return False
+    return True
 
 
 # main
