@@ -21,12 +21,14 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Accessor.py \
-    CSV.py \
     ConstAccessor.py \
     Derivation.py \
     DynamicRecord.py \
+    Entry.py \
     Field.py \
-    FieldProxy.py \
+    Immutable.py \
+    Literal.py \
+    Mutable.py \
     Record.py \
     Templater.py \
     exceptions.py \

@@ -7,66 +7,47 @@
 
 
 # superclasses
-from ..algebraic.Node import Node
+from .Entry import Entry
+from ..algebraic.Composite import Composite
 
 
 # declaration
-# it is important for this class not to derive from .Field: the item filters use isinstance to
-# separate fields from derivations
-class Derivation(Node):
+class Derivation(Composite, Entry):
     """
-    This is the base class for all record items whose value depends on other items
+    The base class for record entries whose values are computed using other record fields
     """
-
-
-    # traversal of the nodes in my expression tree
-    @property
-    def dependencies(self):
-        """
-        Traverse my expression tree looking for leaf nodes
-        """
-        # just return myself
-        return self.expression.dependencies
-
-
-    # meta methods
-    def __init__(self, expression, name=None, **kwds):
-        super().__init__(**kwds)
-        self.name = name
-        self.expression = expression
-        return
 
 
     # interface
-    def pyre_recordFieldAccessor(self, record, index):
+    def evaluate(self, stream, cache):
         """
-        Ask {record} for an accessor factory that it appropriate for derivations and use it to
-        build one that knows my index in the tuple of items of {record} 
+        Compute my value by either returning a previous evaluation or by extracting an item
+        from {stream} and processing it
         """
-        return record.pyre_derivationAccessor(index=index, field=self)
+        # if  have computed my value before
+        try:
+            # retrieve it it
+            value = cache[self]
+        # otherwise
+        except KeyError:
+            # compute the values of my operands
+            values = tuple(op.evaluate(stream, cache) for op in self.operands)
+            # apply my operator
+            value = self.evaluator(*values)
+            # cache it
+            cache[self] = value
 
-
-    def substitute(self, replacements):
-        """
-        Look through the dictionary {replacements} for any of my operands and replace them with
-        the indicated nodes.
-        """
-        # patch my expression
-        self.expression.substitute(replacements)
         # and return
+        return value
+
+        
+    # meta methods
+    def __init__(self, evaluator, operands, **kwds):
+        super().__init__(**kwds)
+        self.evaluator = evaluator
+        self.operands = operands
         return
 
 
-    def eval(self, *, cache, **kwds):
-        """
-        Compute and return the value of my expression
-        """
-        # check whether I have done this before
-        if self in cache:
-            # yes; return the previously computed value
-            return cache[self]
-        # nope; compute and return the value of my expression
-        return self.expression.eval(cache=cache)
-        
 
 # end of file 

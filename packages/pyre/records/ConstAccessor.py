@@ -14,26 +14,26 @@ class ConstAccessor:
 
     # public data
     index = None # the index of my value in the data tuple
-    field = None # the field with the meta data
+    entry = None # the entry with the meta data
 
 
     # meta methods
-    def __init__(self, index, field, **kwds):
+    def __init__(self, index, entry, **kwds):
         super().__init__(**kwds)
         self.index = index
-        self.field = field
+        self.entry = entry
         return
 
 
     # descriptor interface
     def __get__(self, record, cls):
         """
-        Retrieve the value of my field from {record}
+        Retrieve the value of my entry from {record}
         """
         try:
             return record[self.index]
         except TypeError:
-            return self.field
+            return self.entry
 
 
 # end of file 

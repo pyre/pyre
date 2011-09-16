@@ -6,118 +6,88 @@
 #
 
 
+# i an attribute classifier
 from ..patterns.AttributeClassifier import AttributeClassifier
 
 
+# declaration
 class Templater(AttributeClassifier):
     """
-    Metaclass that inspects records and extracts their item descriptors
+    Metaclass that inspects record declarations and endowing their instances with the necessary
+    infrastructure to support
 
-    {Templater} is responsible for adjusting {Record} declarations in order to preserve the
-    information necessary to support
-
-    * named access of record items
+    * named access of the entries in a record
     * composition via inheritance
-    * derivations, i.e. items whose values are computed using the values of other items
+    * derivations, i.e. fields whose values depend on the values of other fields
     """
 
 
     # types
-    from .Field import Field
-    from .FieldProxy import FieldProxy
-    from .Derivation import Derivation
-    from ..algebraic.Node import Node
-    from ..algebraic.Operator import Operator
+    from .Entry import Entry as entry
+    from .Field import Field as field
+    from .Derivation import Derivation as derivation
 
 
     # meta methods
     def __new__(cls, name, bases, attributes, **kwds):
         """
-        Scan through the class attributes and harvest the locally declared items, adjust the
-        attribute dictionary, and build the class record for a new {Record} class
+        Scan through the class attributes and harvest the record entries; adjust the attribute
+        dictionary; build the class record for a new {Record} class
         """
-        # harvest the items
-        localItems = []
-        for itemName, item in cls.pyre_harvest(attributes, cls.Node):
-            # check whether this is an {Operator} instance
-            if isinstance(item, cls.Operator):
-                # convert it into a derivation
-                item = cls.Derivation(name=itemName, expression=item)
-            # otherwise
-            else:
-                # record its name
-                item.name = itemName
-                # if this is a regular {Field}
-                if isinstance(item, cls.Field):
-                    # place its name in the set of its aliases
-                    item.aliases.add(itemName)
+        # initialize the local entry pile
+        localEntries = []
+        # harvest the entries
+        for entryName, entry in cls.pyre_harvest(attributes, cls.entry):
+            # adjust the name
+            entry.name = entryName
+            # update the aliases
+            entry.aliases.add(entryName)
             # and add it to the pile
-            localItems.append(item)
+            localEntries.append(entry)
 
-        # create an attribute to hold the locally declared items
-        attributes["pyre_localItems"] = tuple(localItems)
-                
-        # remove the harvested attributes from the class dictionary, for now
-        # we will replace them with record specific accessors in __init__
-        for item in localItems: del attributes[item.name]
+        # create and attribute to hold the locally declared records entries
+        attributes["pyre_localEntries"] = tuple(localEntries)
+
+        # remove the harvested attributes from the class dictionary; we will replace them with
+        # record accessors in __init__. this can't be done while harvesting since it modifies
+        # the attribute dictionary we are iterating over
+        for entry in localEntries: del attributes[entry.name]
 
         # disable the wasteful __dict__
         attributes["__slots__"] = ()
-        
+
         # build the class record
         record = super().__new__(cls, name, bases, attributes, **kwds)
 
-        # now that the class record is built, we can hunt down inherited items
-        inheritedItems = []
-        # traverse the mro
+        # now that the class record is built, we can hunt down inherited entries
+        # prime the inherited pile
+        inheritedEntries = []
+        # traverse the mro in _reverse_ order
+        # for consistency, we place inherited entries ahead of local ones; derivations are
+        # expressions involving any of the entries accessible at the point of their
+        # declaration, so all of them must have been populated already
         for base in reversed(record.__mro__[1:]):
-            # narrow the search down to my instances, i.e. {Record} subclasses
+            # narrow down to my instances
             if isinstance(base, cls):
-                # add this ancestor's items
-                inheritedItems.extend(base.pyre_localItems)
+                # add entries form this ancestor
+                inheritedEntries.extend(base.pyre_localEntries)
 
-        # build the tuple of all my items
-        record.pyre_items = tuple(inheritedItems + localItems)
-        # build the tuple of my fields
+        # build the tuple of all my entries
+        record.pyre_entries = tuple(inheritedEntries + localEntries)
+        # build the tuple of all my fields
         record.pyre_fields = tuple(
-            item for item in record.pyre_items if isinstance(item, cls.Field))
-        # build the tuple of my derivations
+            entry for entry in record.pyre_entries if isinstance(entry, cls.field))
+        # build the tuple of all my derivations
         record.pyre_derivations = tuple(
-            item for item in record.pyre_items if isinstance(item, cls.Derivation))
+            entry for entry in record.pyre_entries if isinstance(entry, cls.derivation))
 
-        # if the record has no derivations
-        if record.pyre_derivations == ():
-            # use fast processing
-            record.pyre_process = record.pyre_processFields
-        # otherwise
-        else:
-            # use the slower one that enables inter-column data access
-            record.pyre_process = record.pyre_processFieldsAndDerivations
-            # quick access to the record fields
-            fields = set(record.pyre_fields)
-            # the field proxies: the field replacements in the derivation expressions
-            proxies = {}
-            # loop over the derivations
-            for derivation in record.pyre_derivations:
-                # and for every node in the dependency list
-                for item in derivation.dependencies:
-                    # check whether it an actual field
-                    if item not in fields: continue
-                    # if we have not built a proxy for this one yet, do so
-                    if item not in proxies: proxies[item] = cls.FieldProxy(field=item)
-                # patch this derivation
-                derivation.substitute(proxies)
-            # and store the proxies with the record
-            # N.B.: only used for debugging for the time being
-            record.pyre_proxies = proxies
-
-        # return the record
+        # all done
         return record
 
 
     def __init__(self, name, bases, attributes, **kwds):
         """
-        Decorate a newly minted {Record} class
+        Decorate a new minted {Record} subclass
 
         Now that the class record is built, we can hunt down inherited items and build the
         accessors that will convert named access through the descriptors into indexed access
@@ -126,19 +96,18 @@ class Templater(AttributeClassifier):
         # first, get my superclass to do its thing
         super().__init__(name, bases, attributes, **kwds)
 
-        # initialize the item index
+        # initialize the entry index
         subscripts = {}
-        # enumerate my items
-        for index, item in enumerate(self.pyre_items):
-            # record the index of this item
-            subscripts[item] = index
-            # build the data accessor
-            accessor = item.pyre_recordFieldAccessor(record=self, index=index)
+        # enumerate my entries
+        for index, entry in enumerate(self.pyre_entries):
+            # record the index of this entry
+            subscripts[entry] = index
+            # create the data accessor 
+            accessor = self.pyre_accessor(entry=entry, index=index)
             # and attach it
-            setattr(self, item.name, accessor)
+            setattr(self, entry.name, accessor)
         # attach the subscript index
         self.pyre_index = subscripts
-
         # and return
         return
 

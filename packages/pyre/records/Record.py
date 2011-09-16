@@ -6,16 +6,18 @@
 #
 
 
-from .Templater import Templater
+# meta class
+from .Immutable import Immutable
 
 
-class Record(tuple, metaclass=Templater):
+# declaration
+class Record(tuple, metaclass=Immutable):
     """
-    The base class for representing data extracted from persistent stores
+    The base class for representing data extracted from persistent stores.
 
     Records have field descriptors that provide the information necessary to convert data
     between the representation used by the persistent store and the native python object
-    required by the application
+    required by the application.
 
     Records are similar to named tuples: the underlying storage mechanism is a tuple, and the
     fields are descriptors that provide named access to the tuple entries. They are superior to
@@ -24,8 +26,7 @@ class Record(tuple, metaclass=Templater):
 
     Inheritance among {Record} subclasses is interpreted as composition: the set of fields that
     define a record is built out of the descriptors declared both locally and by all of its
-    ancestors. Descriptor composition is subject to name shadowing, a restriction that may be
-    lifted in a future implementation.
+    ancestors. Descriptor composition is subject to name shadowing.
 
     Records support {derivations}: fields whose value is computed using other record
     fields. Such fields are built automatically whenever a field declaration contains any sort
@@ -33,8 +34,8 @@ class Record(tuple, metaclass=Templater):
 
     Details of the current implementation:
 
-    * As mentioned above, {tuple} provides storage for the actual values. This implies that
-      indexed access using integers works as expected and does not require any special handling
+    * Storage for the record values is provided by {tuple}. This implies that indexed access
+      using integers works as expected and does not require any special handling
 
     * Named access is handled through the field descriptors. Supporting composition via
       inheritance complicates the implementation a bit, as the rank of a given field is not
@@ -43,25 +44,20 @@ class Record(tuple, metaclass=Templater):
       corresponding underlying tuple.
     """
 
-
+ 
     # types
-    from .Field import Field
-    from .ConstAccessor import ConstAccessor as pyre_fieldAccessor
-    pyre_derivationAccessor = pyre_fieldAccessor
-
-
+    from .ConstAccessor import ConstAccessor as pyre_accessor
     # exceptions
     from ..constraints.exceptions import ConstraintViolationError
 
 
     # public data
-    pyre_items = () # tuple with all my entries
-    pyre_fields = () # a tuple of only my fields
-    pyre_derivations = () # a tuple with only my derivations
-    pyre_proxies = None # a set with the fields used in derivations
+    pyre_entries = () # a tuple with all my record entries, regardless of type
+    pyre_fields = () # a tuple with all my fields
+    pyre_derivations = () # a tuple with all my derivations
 
     pyre_index = None # the map of descriptors to indices
-    pyre_process = None # the data processing algorithm
+    pyre_processEntries = None # the data processing algorithm
 
 
     # interface
@@ -90,7 +86,9 @@ class Record(tuple, metaclass=Templater):
                     continue
             # error: unable to find a source for this field
             else:
-                raise "Hell"
+                msg = "unable to find a source for field {!r}".format(field.name)
+                import journal
+                raise journal.firewall("pyre.records").log(msg)
         # all done
         return
 
@@ -105,7 +103,7 @@ class Record(tuple, metaclass=Templater):
         return super().__new__(cls, data)
 
     
-    # behavior invoked by the metaclass while assembling the class record 
+    # tuple construction
     @classmethod
     def pyre_processFields(cls, raw, **kwds):
         """
@@ -119,9 +117,9 @@ class Record(tuple, metaclass=Templater):
         # if I were given an explicit tuple, build an iterator over it
         source = iter(raw) if raw is not None else (
             # otherwise, build a generator that extracts values from {kwds}
-            kwds.pop(item.name, item.default) for item in cls.pyre_items)
+            kwds.pop(item.name, item.default) for item in cls.pyre_entries)
         # build the data tuple and return it
-        return (item.eval(data=source) for item in cls.pyre_items)
+        return (item.extract(stream=source) for item in cls.pyre_entries)
 
             
     @classmethod
@@ -136,15 +134,13 @@ class Record(tuple, metaclass=Templater):
         # if I were given an explicit tuple, build an iterator over it
         source = iter(raw) if raw is not None else (
             # otherwise, build a generator that extracts values from {kwds}
-            kwds.pop(item.name, item.default) for item in cls.pyre_items)
+            kwds.pop(item.name, item.default) for item in cls.pyre_entries)
         # prepare my cache
         cache = {}
         # iterate over my items
-        for item in cls.pyre_items:
+        for item in cls.pyre_entries:
             # get the item to compute its value
-            value = item.eval(data=source, cache=cache)
-            # add it to the cache
-            cache[item] = value
+            value = item.evaluate(stream=source, cache=cache)
             # and yield the value
             yield value
         # all done
@@ -157,7 +153,7 @@ class Record(tuple, metaclass=Templater):
         Initialize a record using either the pre-qualified tuple {raw}, or by extracting the
         data from {kwds}
         """
-        return super().__new__(cls, cls.pyre_process(raw, **kwds))
+        return super().__new__(cls, cls.pyre_processEntries(raw, **kwds))
 
 
 # end of file 
