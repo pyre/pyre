@@ -39,7 +39,4 @@ class Operator(Composite, Node):
         return
 
 
-    # private data
-
-
 # end of file 
