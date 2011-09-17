@@ -30,6 +30,7 @@ EXPORT_PYTHON_MODULES = \
     Immutable.py \
     Literal.py \
     Mutable.py \
+    NamedTuple.py \
     Record.py \
     Templater.py \
     exceptions.py \

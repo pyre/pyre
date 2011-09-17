@@ -8,10 +8,12 @@
 
 # meta class
 from .Mutable import Mutable
+# superclass
+from .NamedTuple import NamedTuple
 
 
 # declaration
-class DynamicRecord(tuple, metaclass=Mutable):
+class DynamicRecord(NamedTuple, metaclass=Mutable):
     """
     Base class for records that have mutable fields.
 
@@ -23,8 +25,6 @@ class DynamicRecord(tuple, metaclass=Mutable):
 
     # types
     from .Accessor import Accessor as pyre_accessor
-    # exceptions
-    from ..constraints.exceptions import ConstraintViolationError
 
 
     # tuple formation
