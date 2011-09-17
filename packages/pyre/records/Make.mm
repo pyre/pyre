@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Accessor.py \
+    CSV.py \
     ConstAccessor.py \
     Derivation.py \
     DynamicRecord.py \
