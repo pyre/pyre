@@ -16,6 +16,10 @@ class Literal(Entry):
     """
 
 
+    # types
+    from ..calc.Literal import Literal as node
+
+
     # public data
     value = None # my value is explicitly set
     variables = [] # literals are not variables and have no dependencies
@@ -23,6 +27,14 @@ class Literal(Entry):
 
 
     # interface
+    def buildNode(self, stream, model):
+        """
+        Extract a value from {stream} and use it to build a {pyre.calc} node 
+        """
+        # easy enough
+        return self.node(value=self.value)
+
+
     def evaluate(self, stream, cache):
         """
         Compute my value by either returning the encapsulated constant 

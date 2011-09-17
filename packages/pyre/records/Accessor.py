@@ -41,7 +41,7 @@ class Accessor:
         Store {value} in my {record} entry
         """
         # get the entry to cast, convert and validate
-        value = self.entry.pyre_process(value)
+        value = self.entry.process(value)
         # attach it to the node
         record[self.index].value = value
         # all done

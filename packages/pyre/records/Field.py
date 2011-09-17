@@ -10,6 +10,9 @@
 from .Entry import Entry
 from ..algebraic.Leaf import Leaf
 
+# access to {pyre.calc}
+import pyre.calc
+
 
 # declaration
 class Field(Leaf, Entry):
@@ -18,7 +21,29 @@ class Field(Leaf, Entry):
     """
 
 
+    # types
+    from ..calc.Variable import Variable as node
+
+
     # interface
+    def buildNode(self, stream, model):
+        """
+        Extract a value from {stream} and use it to build a {pyre.calc} node 
+        """
+        # have we done this before?
+        try:
+            # just return the previous node 
+            node = model[self.name]
+        # if not
+        except KeyError:
+            # make the node
+            node = self.node(value=self.extract(stream))
+            # add it to the model
+            model[self.name] = node
+        # and return it
+        return node
+
+
     def extract(self, stream):
         """
         Extract a value from {stream} and walk it through casting, conversion and validation.

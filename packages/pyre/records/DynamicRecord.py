@@ -46,11 +46,12 @@ class DynamicRecord(tuple, metaclass=Mutable):
         model = {}
         # now, iterate over my items
         for entry in cls.pyre_entries:
-            print(entry.name)
             # build an appropriate node
-            pass
-
-        return ()
+            node = entry.buildNode(stream=source, model=model)
+            # and yield it so it gets placed in my tuple
+            yield node
+        # all done
+        return
 
         
     # meta methods
