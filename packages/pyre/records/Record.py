@@ -96,6 +96,16 @@ class Record(NamedTuple, metaclass=Immutable):
         return
 
 
+    # fast but dangerous short-cut to record creation
+    @classmethod
+    def pyre_raw(cls, data):
+        """
+        Bypass casting, conversions and validations for those special clients that know their
+        data is good. Use with caution
+        """
+        return super().__new__(cls, data)
+    
+
     # meta methods
     def __new__(cls, raw=None, **kwds):
         """

@@ -68,7 +68,8 @@ class NamedTuple(tuple):
         Bypass casting, conversions and validations for those special clients that know their
         data is good. Use with caution
         """
-        return super().__new__(cls, data)
+        raise NotImplementedError(
+            "class {.__name__!r} must implement 'pyre_raw'".format(cls))
     
 
 # end of file 

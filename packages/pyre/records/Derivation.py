@@ -34,7 +34,7 @@ class Derivation(Composite, Entry):
         # if not
         except KeyError:
             # make a node for each of my operands
-            operands = (op.buildNode(stream, model) for op in self.operands)
+            operands = tuple(op.buildNode(stream, model) for op in self.operands)
             # make a node for myself
             node = self.node(evaluator=self.evaluator, operands=operands)
             # if I am a named node, i.e. one that shows up in a record declaration
