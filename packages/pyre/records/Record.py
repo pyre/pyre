@@ -117,7 +117,7 @@ class Record(tuple, metaclass=Immutable):
         # if I were given an explicit tuple, build an iterator over it
         source = iter(raw) if raw is not None else (
             # otherwise, build a generator that extracts values from {kwds}
-            kwds.pop(item.name, item.default) for item in cls.pyre_entries)
+            kwds.pop(item.name, item.default) for item in cls.pyre_fields)
         # build the data tuple and return it
         return (item.extract(stream=source) for item in cls.pyre_entries)
 
@@ -134,7 +134,7 @@ class Record(tuple, metaclass=Immutable):
         # if I were given an explicit tuple, build an iterator over it
         source = iter(raw) if raw is not None else (
             # otherwise, build a generator that extracts values from {kwds}
-            kwds.pop(item.name, item.default) for item in cls.pyre_entries)
+            kwds.pop(item.name, item.default) for item in cls.pyre_fields)
         # prepare my cache
         cache = {}
         # iterate over my items
