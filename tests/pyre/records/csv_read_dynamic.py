@@ -50,7 +50,7 @@ def test():
     source = csv.read(layout=item, uri="vegetables.csv")
     # check
     for given, loaded in zip(target, source):
-        assert given == tuple(loaded)
+        assert given == tuple(entry.value for entry in loaded)
 
     return item
 
