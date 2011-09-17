@@ -14,36 +14,36 @@ class Accessor:
 
     # public data
     index = None # the index of my value in the data tuple
-    field = None # the field with the meta data
+    entry = None # the entry with the meta data
 
 
     # meta methods
-    def __init__(self, index, field, **kwds):
+    def __init__(self, index, entry, **kwds):
         super().__init__(**kwds)
         self.index = index
-        self.field = field
+        self.entry = entry
         return
 
 
     # descriptor interface
     def __get__(self, record, cls):
         """
-        Retrieve the value of my field from {record}
+        Retrieve the value of my entry from {record}
         """
         try:
-            return record[self.index]
+            return record[self.index].value
         except TypeError:
-            return self.field
+            return self.entry
 
 
     def __set__(self, record, value):
         """
-        Store {value} in my {record} field
+        Store {value} in my {record} entry
         """
-        # get the field to cast, convert and validate
-        value = self.field.pyre_process(value)
+        # get the entry to cast, convert and validate
+        value = self.entry.pyre_process(value)
         # attach it to the node
-        record[self.index] = value
+        record[self.index].value = value
         # all done
         return
 
