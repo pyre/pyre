@@ -6,124 +6,60 @@
 #
 
 
-# packages
-import pyre.calc
-
-# superclasses
-from .Record import Record
+# meta class
+from .Mutable import Mutable
 
 
 # declaration
-class DynamicRecord(Record):
+class DynamicRecord(tuple, metaclass=Mutable):
     """
-    Another base class for representing data extracted from persistent stores
+    Base class for records that have mutable fields.
 
-    {DynamicRecord} uses a tuple of {pyre.calc} nodes for the value storage. This provides
-    support for fields whose value can be changed. Derivations are setup with evaluators from
-    {pyre.calc}.
+    Dynamic records are implemented in terms of tuples of {pyre.calc} nodes. As a result, the
+    values of their fields may be modified after the initial tuple creation, and all
+    derivations are updated dynamically.
     """
 
 
     # types
-    from .Accessor import Accessor as pyre_fieldAccessor
-    from .ConstAccessor import ConstAccessor as pyre_derivationAccessor
+    from .Accessor import Accessor as pyre_accessor
+    # exceptions
+    from ..constraints.exceptions import ConstraintViolationError
 
 
-    # interface
+    # tuple formation
     @classmethod
-    def pyre_processFields(cls, raw, **kwds):
+    def pyre_processEntries(cls, raw, **kwds):
         """
         Form the tuple that holds my values by extracting information either from {raw} or
-        {kwds}, and walking the data through casting, conversion and validation
+        {kwds}, and walking the data through conversion, casting and validation.
 
-        In the absence of derivations, the data tuple can be constructed by simply asking each
-        field to consume one item from the raw input and convert it. We then build a
-        pyre.calc.node to hold the value and place it in the output tuple
+        Fields get represented as {pyre.calc.var} instances, while derivations become operators
+        on the field nodes.
         """
-        # if I were given an explicit tuple, build an iterator over it
+        # if i were given an explicit tuple, build an iterator over it
         source = iter(raw) if raw is not None else (
             # otherwise, build a generator that extracts values from {kwds}
-            kwds.pop(item.name, item.default) for item in cls.pyre_items)
-        # build the data tuple and return it
-        for item in cls.pyre_items:
-            # construct the value
-            value = item.eval(data=source)
-            # build a calc node for it
-            node = pyre.calc.newNode(value=value)
-            # and yield it
-            yield node
-        # all  done
-        return
+            kwds.pop(item.name, item.default) for item in cls.pyre_fields
+            )
+        # build a model
+        model = {}
+        # now, iterate over my items
+        for entry in cls.pyre_entries:
+            print(entry.name)
+            # build an appropriate node
+            pass
+
+        return ()
+
         
-            
-    @classmethod
-    def pyre_processFieldsAndDerivations(cls, raw, **kwds):
-        """
-        """
-        # if I were given an explicit tuple, build an iterator over it
-        source = iter(raw) if raw is not None else (
-            # otherwise, build a generator that extracts values from {kwds}
-            kwds.pop(item.name, item.default) for item in cls.pyre_items)
-        # initialize the cache
-        cache = {}
-        # build the data tuple
-        for item in cls.pyre_items:
-            # get the item to compute its value
-            value = item.eval(data=source, cache=cache)
-            # if this item is a field, we have to convert the value into a calc node
-            if isinstance(item, cls.Field):
-                value = pyre.calc.newNode(value=value)
-            # add it to the cache
-            cache[item] = value
-            # and yield t       he value
-            yield value
-        # all done
-        return
-            
-
     # meta methods
-    # replace the methods in {tuple} with ones that are aware of the calc node interface
-    def __getitem__(self, index):
+    def __new__(cls, raw=None, **kwds):
         """
-        Indexed read access: get the value of the associated node
+        Initialize a record using either the pre-qualified tuple {raw}, or by extracting the
+        data from {kwds}
         """
-        return super().__getitem__(index).value
-
-
-    def __setitem__(self, index, value):
-        """
-        Indexed write access: set the value of the associated node
-        """
-        super().__getitem__(index).value = value
-        return
-
-
-    def __iter__(self):
-        """
-        Build an iterator over my contents
-        """
-        # get my superclass to iterate over the nodes
-        for node in super().__iter__():
-            # dereference and yield
-            yield node.value
-        # all done
-        return
-
-
-    def __repr__(self):
-        """
-        Derefence my nodes to build a tuple with my values
-        """
-        # convert me into a tuple; this calls self.__iter__ implicitly
-        return tuple(self)
-
-
-    def __str__(self):
-        """
-        Build a string representation of my data
-        """
-        # build the string rep of my value tuple
-        return str(self.__repr__())
+        return super().__new__(cls, cls.pyre_processEntries(raw, **kwds))
 
 
 # end of file 
