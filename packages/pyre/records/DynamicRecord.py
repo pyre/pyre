@@ -23,10 +23,6 @@ class DynamicRecord(NamedTuple, metaclass=Mutable):
     """
 
 
-    # types
-    from .Accessor import Accessor as pyre_accessor
-
-
     # tuple formation
     @classmethod
     def pyre_processEntries(cls, raw, **kwds):

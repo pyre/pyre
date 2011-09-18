@@ -21,4 +21,36 @@ class Mutable(Templater):
     """
 
 
+    # types
+    from .Accessor import Accessor as pyre_accessor
+
+
+    # meta methods
+    def __init__(self, name, bases, attributes, **kwds):
+        """
+        Decorate a new minted {Record} subclass
+
+        Now that the class record is built, we iterate over all entries and build the accessors
+        that will convert named access through the descriptors into indexed access to the
+        underlying tuple
+        """
+        # first, get my superclass to do its thing
+        super().__init__(name, bases, attributes, **kwds)
+
+        # initialize the entry index
+        subscripts = {}
+        # enumerate my entries
+        for index, entry in enumerate(self.pyre_entries):
+            # record the index of this entry
+            subscripts[entry] = index
+            # create the data accessor 
+            accessor = self.pyre_accessor(entry=entry, index=index)
+            # and attach it
+            setattr(self, entry.name, accessor)
+        # attach the subscript index
+        self.pyre_index = subscripts
+        # and return
+        return
+
+
 # end of file 

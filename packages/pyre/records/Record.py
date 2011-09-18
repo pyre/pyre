@@ -47,10 +47,6 @@ class Record(NamedTuple, metaclass=Immutable):
     """
 
  
-    # types
-    from .ConstAccessor import ConstAccessor as pyre_accessor
-
-
     # interface
     # tuple construction
     @classmethod
