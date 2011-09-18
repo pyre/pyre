@@ -23,6 +23,7 @@ class NamedTuple(tuple):
     pyre_entries = () # a tuple with all my record entries, regardless of type
     pyre_fields = () # a tuple with all my fields
     pyre_derivations = () # a tuple with all my derivations
+    pyre_localEntries = () # a tuple with all the record entries that show up in my declaration
 
     pyre_index = None # the map of descriptors to indices
     pyre_processEntries = None # the data processing algorithm
