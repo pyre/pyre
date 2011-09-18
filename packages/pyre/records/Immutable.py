@@ -27,8 +27,8 @@ class Immutable(Templater):
         Scan through the class attributes and harvest the record entries; adjust the attribute
         dictionary; build the class record for a new immutable {Record} class
         """
-        # build the class record
-        record = super().__new__(cls, name, bases, attributes, **kwds)
+        # build the class record; disable the wasteful __dict__
+        record = super().__new__(cls, name, bases, attributes, slots=(), **kwds)
 
         # inspect the record and install an appropriate data processor
         # if there are no derivations present in this record

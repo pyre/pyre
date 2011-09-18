@@ -26,6 +26,15 @@ class Mutable(Templater):
 
 
     # meta methods
+    def __new__(cls, name, bases, attributes, **kwds):
+        """
+        Scan through the class attributes and harvest the record entries; adjust the attribute
+        dictionary; build the class record for a new {Record} class
+        """
+        # disable the wasteful __dict__
+        return super().__new__(cls, name, bases, attributes, slots=(), **kwds)
+
+
     def __init__(self, name, bases, attributes, **kwds):
         """
         Decorate a newly minted mutable record subclass

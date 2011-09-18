@@ -29,7 +29,7 @@ class Templater(AttributeClassifier):
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, **kwds):
+    def __new__(cls, name, bases, attributes, *, slots=None, **kwds):
         """
         Scan through the class attributes and harvest the record entries; adjust the attribute
         dictionary; build the class record for a new {Record} class
@@ -54,7 +54,7 @@ class Templater(AttributeClassifier):
         for entry in localEntries: del attributes[entry.name]
 
         # disable the wasteful __dict__
-        attributes["__slots__"] = ()
+        if slots is not None: attributes["__slots__"] = slots
 
         # build the class record
         record = super().__new__(cls, name, bases, attributes, **kwds)
