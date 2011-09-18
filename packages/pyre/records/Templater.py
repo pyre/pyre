@@ -85,4 +85,22 @@ class Templater(AttributeClassifier):
         return record
 
 
+    def __init__(self, name, bases, attributes, **kwds):
+        """
+        Construct the index that maps descriptors to entry offsets
+        """
+        # first, get my superclass to do its thing
+        super().__init__(name, bases, attributes, **kwds)
+        # initialize the entry index
+        subscripts = {}
+        # enumerate my entries
+        for index, entry in enumerate(self.pyre_entries):
+            # record the index of this entry
+            subscripts[entry] = index
+        # attach the subscript index
+        self.pyre_index = subscripts
+        # and return
+        return
+
+
 # end of file 
