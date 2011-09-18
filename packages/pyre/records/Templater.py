@@ -81,25 +81,38 @@ class Templater(AttributeClassifier):
         record.pyre_derivations = tuple(
             entry for entry in record.pyre_entries if isinstance(entry, cls.derivation))
 
+        # build the map from entries to offsets
+        # initialize the entry index
+        subscripts = {}
+        # enumerate my entries
+        for index, entry in enumerate(record.pyre_entries):
+            # record the index of this entry
+            subscripts[entry] = index
+        # attach the subscript index
+        record.pyre_index = subscripts
+
         # all done
         return record
 
 
     def __init__(self, name, bases, attributes, **kwds):
         """
-        Construct the index that maps descriptors to entry offsets
+        Decorate a newly minted record 
+
+        Now that the class record is built, we iterate over all entries and build the accessors
+        that will convert named access through the descriptors into indexed access to the
+        underlying tuple. Each {Templater} subclass defines {pyre_accessor} to supply whatever
+        descriptor makes sense for the type of record being built
         """
         # first, get my superclass to do its thing
         super().__init__(name, bases, attributes, **kwds)
-        # initialize the entry index
-        subscripts = {}
         # enumerate my entries
         for index, entry in enumerate(self.pyre_entries):
-            # record the index of this entry
-            subscripts[entry] = index
-        # attach the subscript index
-        self.pyre_index = subscripts
-        # and return
+            # create the data accessor 
+            accessor = self.pyre_accessor(entry=entry, index=index)
+            # and attach it
+            setattr(self, entry.name, accessor)
+        # all done
         return
 
 

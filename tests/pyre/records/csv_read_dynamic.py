@@ -50,7 +50,15 @@ def test():
     source = csv.read(layout=item, uri="vegetables.csv")
     # check
     for given, loaded in zip(target, source):
-        assert given == tuple(entry.value for entry in loaded)
+        # check access via both names and indices
+        assert loaded.sku == loaded[0]
+        assert loaded.description == loaded[1]
+        assert loaded.production == loaded[2]
+        assert loaded.overhead == loaded[3]
+        assert loaded.shipping == loaded[4]
+        assert loaded.margin == loaded[5]
+        # and compare with the target data
+        assert given == tuple(loaded)
 
     return item
 

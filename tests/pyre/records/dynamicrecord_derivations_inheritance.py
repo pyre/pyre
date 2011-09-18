@@ -100,16 +100,21 @@ def test():
     # now instantiate one
     p = pricing(sku="4013", description="kiwi", cost=1.0, overhead=20, margin=50)
     # check
-    assert p.sku == "4013"
-    assert p.description == "kiwi"
-    assert p.cost == 1.0
-    assert p.overhead == 20
-    assert p.margin == 50
-    assert p.price == p.cost*(1.0 + p.overhead/100 + p.margin/100)
+    assert (p[0] == p.overhead) and (p.overhead == 20)
+    assert (p[1] == p.margin) and (p.margin == 50)
+    assert (p[2] == p.cost) and (p.cost == 1.0)
+    assert (p[3] == p.sku) and (p.sku == "4013")
+    assert (p[4] == p.description) and (p.description == "kiwi")
+    assert (p[5] == p.price) and (p.price == p.cost*(1.0 + p.overhead/100 + p.margin/100))
+
     # make a change
     p.cost = 2.0
-    assert p.cost == 2.0
-    assert p.price == p.cost*(1.0 + p.overhead/100 + p.margin/100)
+    assert (p[0] == p.overhead) and (p.overhead == 20)
+    assert (p[1] == p.margin) and (p.margin == 50)
+    assert (p[2] == p.cost) and (p.cost == 2.0)
+    assert (p[3] == p.sku) and (p.sku == "4013")
+    assert (p[4] == p.description) and (p.description == "kiwi")
+    assert (p[5] == p.price) and (p.price == p.cost*(1.0 + p.overhead/100 + p.margin/100))
 
     return p
 

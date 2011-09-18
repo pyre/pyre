@@ -59,4 +59,42 @@ class DynamicRecord(NamedTuple, metaclass=Mutable):
         return super().__new__(cls, cls.pyre_processEntries(raw, **kwds))
 
 
+    def __getitem__(self, index):
+        """
+        Retrieve the node at {index} and compute its value
+        """
+        # get the node
+        node = super().__getitem__(index)
+        # retrieve and return its value
+        return node.value
+
+
+    def __setitem__(self, index, value):
+        """
+        Retrieve the node at {index} and compute its value
+        """
+        # find the descriptor responsible for this value
+        descriptor = self.pyre_entries[index]
+        # get it to cast, convert, validate
+        value = descriptor.process(value)
+        # get the relevant node
+        node = super().__getitem__(index)
+        # set its value
+        node.value = value
+        # and return
+        return
+
+
+    def __iter__(self):
+        """
+        Iterate over my nodes, returning their value
+        """
+        # get each of my nodes
+        for node in super().__iter__():
+            # and return its value
+            yield node.value
+        # all done
+        return
+
+
 # end of file 

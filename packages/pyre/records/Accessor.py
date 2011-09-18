@@ -31,7 +31,7 @@ class Accessor:
         Retrieve the value of my entry from {record}
         """
         try:
-            return record[self.index].value
+            return record[self.index]
         except TypeError:
             return self.entry
 
@@ -40,11 +40,10 @@ class Accessor:
         """
         Store {value} in my {record} entry
         """
-        # get the entry to cast, convert and validate
-        value = self.entry.process(value)
-        # attach it to the node
-        record[self.index].value = value
+        # get the {record} to assign the value at the right spot
+        record[self.index] = value
         # all done
         return
+
 
 # end of file 
