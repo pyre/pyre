@@ -52,6 +52,8 @@ class HierarchicalModel(SymbolTable):
         return eval(program, self._nodes)
 
 
+
+    # model traversal
     def select(self, pattern=''):
         """
         Generate a sequence of (name, value) pairs for all nodes in the model whose name
@@ -107,6 +109,7 @@ class HierarchicalModel(SymbolTable):
         return
 
 
+    # alternative node access
     def alias(self, *, alias, canonical):
         """
         Register the name {alias} as an alternate name for {canonical}
@@ -189,13 +192,6 @@ class HierarchicalModel(SymbolTable):
     def _resolve(self, *, name):
         """
         Find the named node
-
-        Either {name} or {key} must be non-nil.
-
-        If the optional argument {key} is provided, it will be used to generate the hash key;
-        otherwise {name} will be split using the model's field separator. If {key} is supplied
-        but {name} is not, an appropriate name will be constructed by splicing together the
-        names in {key} using the model's field separator.
         """
         # build the key
         key = name.split(self.separator)
