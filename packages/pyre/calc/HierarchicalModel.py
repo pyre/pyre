@@ -107,22 +107,13 @@ class HierarchicalModel(SymbolTable):
         return
 
 
-    def alias(self, *, alias, canonical, aliasKey=None, canonicalKey=None):
+    def alias(self, *, alias, canonical):
         """
         Register the name {alias} as an alternate name for {canonical}
-
-        Either {alias} or {aliasKey} must be non-nil. Either {canonical} or {canonicalKey} must
-        be non-nil.
-
-        If the optional arguments {aliasKey} and {canonicalKey} are provided, they will be used
-        to generate the corresponding hash keys; otherwise the matching names will be split
-        using the model's field separator. If the keys are supplied but the names are not,
-        appropriate names will be constructed by splicing together the levels in the
-        corresponding key using the model's field separator.
         """
         # build the multikeys
-        aliasKey = aliasKey if aliasKey is not None else alias.split(self.separator)
-        canonicalKey = canonicalKey if canonicalKey is not None else canonical.split(self.separator)
+        aliasKey = alias.split(self.separator)
+        canonicalKey = canonical.split(self.separator)
         # ask the hash to alias the two names and retrieve the corresponding hash keys
         aliasHash, canonicalHash = self._hash.alias(alias=aliasKey, canonical=canonicalKey)
 
@@ -150,15 +141,19 @@ class HierarchicalModel(SymbolTable):
             return
         # either way clean up after the obsolete aliased node
         finally:
+            # clean up the names, but not the identifiers: they may be in use in some
+            # expression that was compiled before the aliasing took place
             del self._names[aliasHash]
             del self._fqnames[aliasHash]
-        # both preëxisted; the aliased info has been cleared out, the canonical is as
-        # it should be. all that remains is to patch the two nodes
+
+        # if we get this far, both preëxisted; the aliased info has been cleared out, the
+        # canonical is as it should be. all that remains is to patch the two nodes
         aliasNode = self._nodes[aliasId]
         canonicalNode = self._nodes[canonicalId]
         self._patch(discard=aliasNode, replacement=canonicalNode)
         # and install the canonical node under the alias identifier
         self._nodes[aliasId] = canonicalNode
+
         # all done
         return self
         
@@ -191,7 +186,7 @@ class HierarchicalModel(SymbolTable):
         return self
 
 
-    def _resolve(self, *, name=None, key=None):
+    def _resolve(self, *, name):
         """
         Find the named node
 
@@ -202,10 +197,8 @@ class HierarchicalModel(SymbolTable):
         but {name} is not, an appropriate name will be constructed by splicing together the
         names in {key} using the model's field separator.
         """
-        # build the name
-        name = name if name is not None else self.separator.join(key)
         # build the key
-        key = key if key is not None else name.split(self.separator)
+        key = name.split(self.separator)
         # hash it
         hashkey = self._hash.hash(key)
         # attempt to map the {hashkey} into an identifier
