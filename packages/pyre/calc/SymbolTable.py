@@ -28,6 +28,8 @@ class SymbolTable(Named):
     from .Variable import Variable as var
     from .Expression import Expression as expression
     from .UnresolvedNode import UnresolvedNode as unresolved
+    # node factory; subclasses may override
+    from .Variable import Variable as nodeFactory
     # exceptions
     from .exceptions import (
         CircularReferenceError,
@@ -154,7 +156,7 @@ class SymbolTable(Named):
             # and return 
             return
         # otherwise, convert raw data into a new node
-        if node is None: node = self.var(value=value)
+        if node is None: node = self.nodeFactory(value=value)
         # patch the model
         self._patch(discard=existing, replacement=node)
         # and register the new node
