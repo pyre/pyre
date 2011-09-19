@@ -36,10 +36,10 @@ class Index:
 
 
     # meta methods
-    def __init__(self, index, measure, **kwds):
+    def __init__(self, index, entry, **kwds):
         super().__init__(**kwds)
         self.index = index
-        self.measure = measure
+        self.measure = entry
         return
 
 

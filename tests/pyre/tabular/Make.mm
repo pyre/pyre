@@ -13,14 +13,10 @@ PROJECT = pyre
 
 all: test
 
-test: sanity records sheets csv views charts pivots
+test: sanity sheets csv views charts pivots
 
 sanity:
 	${PYTHON} ./sanity.py
-
-records:
-	${PYTHON} ./record.py
-	${PYTHON} ./record_accessors.py
 
 sheets:
 	${PYTHON} ./sheet.py

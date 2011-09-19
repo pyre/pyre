@@ -7,14 +7,11 @@
 
 
 # access to the basic objects in the package
-from .Sheet import Sheet as sheet
-from .Chart import Chart as chart
-from .Pivot import Pivot as pivot
-
-from .Record import Record as record
+from .Sheet import Sheet as sheet # basic data tables
+from .Chart import Chart as chart # coördinate systems
+from .Pivot import Pivot as pivot # pivot tables
+# column descriptors
 from .Measure import Measure as measure
-from .Derivation import Derivation as derivation
-
 # readers/writers
 from .CSV import CSV as csv
 

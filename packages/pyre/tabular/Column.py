@@ -31,10 +31,10 @@ class Column:
 
 
     # meta methods
-    def __init__(self, index, measure, **kwds):
+    def __init__(self, index, entry, **kwds):
         super().__init__(**kwds)
         self.index = index
-        self.measure = measure
+        self.measure = entry
         return
 
 
@@ -47,7 +47,7 @@ class Column:
         if sheet is not None:
             # return the column data selector
             return self.column(sheet)
-        # otherwise,return the descriptor itself
+        # otherwise, return the descriptor itself
         return self.measure
 
 

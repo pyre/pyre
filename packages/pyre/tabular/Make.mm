@@ -34,7 +34,7 @@ EXPORT_PYTHON_MODULES = \
     Record.py \
     Reduction.py \
     Sheet.py \
-    Templater.py \
+    SheetMaker.py \
     View.py \
     exceptions.py \
     __init__.py

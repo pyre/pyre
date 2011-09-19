@@ -20,19 +20,12 @@ def test():
         The sheet layout
         """
         # layout
-        sku = pyre.tabular.measure()
-        description = pyre.tabular.measure()
-        production = pyre.tabular.measure()
-        shipping = pyre.tabular.measure()
-        margin = pyre.tabular.measure()
-        overhead = pyre.tabular.measure()
-        # type information
-        sku.type = pyre.schema.str
-        description.type = pyre.schema.str
-        production.type = pyre.schema.float
-        overhead.type = pyre.schema.float
-        shipping.type = pyre.schema.float
-        margin.type = pyre.schema.float
+        sku = pyre.tabular.str()
+        description = pyre.tabular.str()
+        production = pyre.tabular.float()
+        shipping = pyre.tabular.float()
+        margin = pyre.tabular.float()
+        overhead = pyre.tabular.float()
 
 
     # our data set
@@ -46,10 +39,9 @@ def test():
         ]
     # make a sheet
     p = pricing(name="vegetables")
-    # iterate over the data set
-    for datum in data:
-        # populate the sheet
-        p.append(record=p.pyre_Record(datum))
+    # and populate it
+    p.pyre_populate(data)
+
     # check that all is good
     for expected, actual in zip(data, p):
         assert expected == tuple(actual)

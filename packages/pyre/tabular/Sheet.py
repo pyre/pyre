@@ -7,18 +7,17 @@
 
 
 import itertools
-from .Templater import Templater
+from .SheetMaker import SheetMaker
 
 
-class Sheet(metaclass=Templater):
+class Sheet(metaclass=SheetMaker):
     """
     The base class for worksheets
     """
 
 
     # types
-    from .Index import Index as pyre_indexedAccessor
-    from .Column import Column as pyre_measureAccessor
+    from ..records.DynamicRecord import DynamicRecord as pyre_recordType
 
 
     # public data
@@ -27,12 +26,14 @@ class Sheet(metaclass=Templater):
     pyre_primaries = None # a list of measure accessors that are primary keys
     pyre_keymaps = None # storage for measures that are primary keys
 
-    pyre_items = () # the full set of measures and derivations
-    pyre_localItems = () # the locally declared measures and derivations
+    pyre_entries = () # the full set of measures and derivations
+    pyre_fields = () # a tuple with all my fields
+    pyre_derivations = () # a tuple with all my derivations
+    pyre_localEntries = () # the locally declared measures and derivations
 
 
     # interface
-    def populate(self, data):
+    def pyre_populate(self, data):
         """
         Assume that the layout of the iterable {data} is compatible with my record layout; use
         it to populate my data set
@@ -41,17 +42,19 @@ class Sheet(metaclass=Templater):
         each record is itself an iterable that has as many entries as i have measures.
         """
         # iterate of the reords in {data}
-        for datum in data:
+        for row in data:
             # populate the data set
-            self.append(record=self.pyre_Record(datum))
+            self.pyre_append(data=row)
         # all done
         return self
                         
         
-    def append(self, record):
+    def pyre_append(self, data=None, **kwds):
         """
         Add {record} to my data set
         """
+        # covert {data} into a row
+        row = self.pyre_Record(raw=data, **kwds)
         # the collation number of this record
         rank = len(self.pyre_data)
         # update my indices
@@ -59,12 +62,12 @@ class Sheet(metaclass=Templater):
             # grab the associated keymap
             keymap = self.pyre_keymaps[primary]
             # the key is the value of the indexed column
-            key = record[primary.index]
+            key = row[primary.index]
             # update
             keymap[key] = rank
         # what's the right thing to do when a new record with a key conflict shows up?
         # add the record to the data set
-        self.pyre_data.append(record)
+        self.pyre_data.append(row)
         # return 
         return self
         

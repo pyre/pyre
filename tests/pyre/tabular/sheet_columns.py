@@ -20,21 +20,12 @@ def test():
         The sheet layout
         """
         # layout
-        sku = pyre.tabular.measure()
-        description = pyre.tabular.measure()
-        production = pyre.tabular.measure()
-        shipping = pyre.tabular.measure()
-        margin = pyre.tabular.measure()
-        overhead = pyre.tabular.measure()
-        # index on skus
-        sku.index = True
-        # type information
-        sku.type = pyre.schema.str
-        description.type = pyre.schema.str
-        production.type = pyre.schema.float
-        overhead.type = pyre.schema.float
-        shipping.type = pyre.schema.float
-        margin.type = pyre.schema.float
+        sku = pyre.tabular.str()
+        description = pyre.tabular.str()
+        production = pyre.tabular.float()
+        shipping = pyre.tabular.float()
+        margin = pyre.tabular.float()
+        overhead = pyre.tabular.float()
 
 
     # our data set
@@ -48,13 +39,17 @@ def test():
         ]
     # make a sheet
     p = pricing(name="vegetables")
-    # iterate over the data set
-    for datum in data:
-        # populate the sheet
-        p.append(record=p.pyre_Record(datum))
+    # populate it
+    p.pyre_populate(data)
 
-    # get the list of skus in the data set and check it against the dataset
+    # check the fields in the sheet against the data set
     assert tuple(p.sku) == tuple(record[0] for record in data)
+    assert tuple(p.description) == tuple(record[1] for record in data)
+    assert tuple(p.production) == tuple(record[2] for record in data)
+    assert tuple(p.shipping) == tuple(record[3] for record in data)
+    assert tuple(p.margin) == tuple(record[4] for record in data)
+    assert tuple(p.overhead) == tuple(record[5] for record in data)
+
     # compute the average production cost and check we got it right
     assert pyre.patterns.average(p.production) == sum(entry[2] for entry in data)/len(data)
         

@@ -37,40 +37,50 @@ def test():
 
     # check the bases
     assert production.pyre_name == "production"
-    assert production.pyre_localItems == ( production.sku, production.production )
-    assert production.pyre_items == ( production.sku, production.production )
-    assert production.pyre_measures == ( production.sku, production.production )
+    assert identical(production.pyre_localEntries, ( production.sku, production.production ))
+    assert identical(production.pyre_entries, ( production.sku, production.production ))
+    assert identical(production.pyre_fields, ( production.sku, production.production ))
     assert production.pyre_derivations == ()
 
     assert shipping.pyre_name == "shipping"
-    assert shipping.pyre_localItems == ( shipping.shipping, )
-    assert shipping.pyre_items == ( shipping.shipping, )
-    assert shipping.pyre_measures == ( shipping.shipping, )
+    assert identical(shipping.pyre_localEntries, ( shipping.shipping, ))
+    assert identical(shipping.pyre_entries, ( shipping.shipping, ))
+    assert identical(shipping.pyre_fields, ( shipping.shipping, ))
     assert shipping.pyre_derivations == ()
     
     # check the subclass
     assert pricing.pyre_name == "pricing"
-    assert pricing.pyre_localItems == (
+    assert identical(pricing.pyre_localEntries, (
         pricing.margin, pricing.overhead, pricing.discount,
         pricing.cost, pricing.msrp, pricing.price
-        )
-    assert pricing.pyre_items == (
+        ))
+    assert identical(pricing.pyre_entries, (
         pricing.shipping,
         pricing.sku, pricing.production,
         pricing.margin, pricing.overhead, pricing.discount,
         pricing.cost, pricing.msrp, pricing.price
-        )
-    assert pricing.pyre_measures == (
+        ))
+    assert identical(pricing.pyre_fields, (
         pricing.shipping,
         pricing.sku, pricing.production,
         pricing.margin, pricing.overhead, pricing.discount,
-        )
-    assert pricing.pyre_derivations == (
+        ))
+    assert identical(pricing.pyre_derivations, (
         pricing.cost, pricing.msrp, pricing.price
-        )
+        ))
     
     return pricing, shipping, production
 
+
+def identical(s1, s2):
+    """
+    Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
+    we must avoid triggering __eq__
+    """
+    for n1, n2 in zip(s1, s2):
+        if n1 is not n2: return False
+    return True
+            
 
 # main
 if __name__ == "__main__":

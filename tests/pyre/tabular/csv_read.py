@@ -21,18 +21,12 @@ def test():
         """
 
         # layout
-        sku = pyre.tabular.measure()
-        description = pyre.tabular.measure()
-        production = pyre.tabular.measure()
-        overhead = pyre.tabular.measure()
-        shipping = pyre.tabular.measure()
-        margin = pyre.tabular.measure()
-        # type information
-        production.type = pyre.schema.float
-        overhead.type = pyre.schema.float
-        shipping.type = pyre.schema.float
-        margin.type = pyre.schema.float
-
+        sku = pyre.tabular.str()
+        description = pyre.tabular.str()
+        production = pyre.tabular.float()
+        overhead = pyre.tabular.float()
+        shipping = pyre.tabular.float()
+        margin = pyre.tabular.float()
 
     # make a csv reader
     csv = pyre.tabular.csv()

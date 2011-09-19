@@ -20,22 +20,14 @@ def test():
         The sheet layout
         """
         # layout
-        sku = pyre.tabular.measure()
-        description = pyre.tabular.measure()
-        production = pyre.tabular.measure()
-        shipping = pyre.tabular.measure()
-        margin = pyre.tabular.measure()
-        overhead = pyre.tabular.measure()
+        sku = pyre.tabular.str()
+        description = pyre.tabular.str()
+        production = pyre.tabular.float()
+        shipping = pyre.tabular.float()
+        margin = pyre.tabular.float()
+        overhead = pyre.tabular.float()
         # index on  skus
         sku.index = True
-        # type information
-        sku.type = pyre.schema.str
-        description.type = pyre.schema.str
-        production.type = pyre.schema.float
-        overhead.type = pyre.schema.float
-        shipping.type = pyre.schema.float
-        margin.type = pyre.schema.float
-
 
     # our data set
     data = [
@@ -48,16 +40,16 @@ def test():
         ]
     # make a sheet
     p = pricing(name="vegetables")
-    # iterate over the data set
-    for datum in data:
-        # populate the sheet
-        p.append(record=p.pyre_Record(datum))
+    # populate it
+    p.pyre_populate(data)
 
-    # get the peppers record
-    peppers = p.sku["4001"]
-    # check that we extracted the right record
-    assert data[1] == tuple(peppers)
-        
+    # check that we can read the data correctly
+    for row in data:
+        # get the sku
+        sku = row[0]
+        # check that the data and the sheet match
+        assert row == tuple(p.sku[sku])
+
     # and return the data set
     return p
 

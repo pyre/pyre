@@ -33,9 +33,7 @@ class CSV:
         details.
         """
         # prime the record generator and start reading data
-        for record in self.csv.read(layout=sheet.pyre_Record, **kwds):
-            # store it
-            sheet.append(record)
+        sheet.pyre_populate(data=self.csv.read(layout=sheet.pyre_Record, **kwds))
         # and return the sheet
         return sheet
         

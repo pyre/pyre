@@ -14,6 +14,9 @@ Verify the class record structure
 
 def test():
     import pyre.tabular
+    # save the entry types
+    measure = pyre.tabular.measure
+    from pyre.records.Derivation import Derivation as derivation
 
     class pricing(pyre.tabular.sheet):
         """
@@ -37,17 +40,16 @@ def test():
     record = pricing.pyre_Record
     # verify pedigree
     assert issubclass(record, tuple)
-    assert issubclass(record, pyre.tabular.record)
     # verify the accessors
-    assert isinstance(record.sku, pyre.tabular.measure)
-    assert isinstance(record.production, pyre.tabular.measure)
-    assert isinstance(record.shipping, pyre.tabular.measure)
-    assert isinstance(record.margin, pyre.tabular.measure)
-    assert isinstance(record.overhead, pyre.tabular.measure)
-    assert isinstance(record.discount, pyre.tabular.measure)
-    assert isinstance(record.cost, pyre.tabular.derivation)
-    assert isinstance(record.msrp, pyre.tabular.derivation)
-    assert isinstance(record.price, pyre.tabular.derivation)
+    assert isinstance(record.sku, measure)
+    assert isinstance(record.production, measure)
+    assert isinstance(record.shipping, measure)
+    assert isinstance(record.margin, measure)
+    assert isinstance(record.overhead, measure)
+    assert isinstance(record.discount, measure)
+    assert isinstance(record.cost, derivation)
+    assert isinstance(record.msrp, derivation)
+    assert isinstance(record.price, derivation)
     # and their indices
     assert record.pyre_index[record.sku] == 0
     assert record.pyre_index[record.production] == 1

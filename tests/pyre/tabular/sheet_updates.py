@@ -42,7 +42,7 @@ def test():
         ("4005", "oranges", 0.50, 4, .25, 50),
         ]
     # make a sheet out of the data set
-    p = pricing(name="vegetables").populate(data)
+    p = pricing(name="vegetables").pyre_populate(data)
 
     # grab the kiwi record
     kiwi = p.sku["4003"]

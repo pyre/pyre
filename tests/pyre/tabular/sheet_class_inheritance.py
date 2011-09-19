@@ -36,37 +36,47 @@ def test():
 
     # check the base
     assert raw.pyre_name == "raw"
-    assert raw.pyre_localItems == (
+    assert identical(raw.pyre_localEntries, (
         raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount
-        )
-    assert raw.pyre_items == raw.pyre_localItems
-    assert raw.pyre_measures == (
+        ))
+    assert identical(raw.pyre_entries, raw.pyre_localEntries)
+    assert identical(raw.pyre_fields, (
         raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount
-        )
+        ))
     assert raw.pyre_derivations == ()
 
     
     # check the subclass
     assert pricing.pyre_name == "pricing"
 
-    assert pricing.pyre_localItems == (
+    assert identical(pricing.pyre_localEntries, (
         pricing.cost, pricing.msrp, pricing.price
-        )
-    assert pricing.pyre_items == (
+        ))
+    assert identical(pricing.pyre_entries, (
         pricing.sku, pricing.production, pricing.shipping, pricing.margin,
         pricing.overhead, pricing.discount,
         pricing.cost, pricing.msrp, pricing.price
-        )
-    assert pricing.pyre_measures == (
+        ))
+    assert identical(pricing.pyre_fields, (
         pricing.sku, pricing.production, pricing.shipping, pricing.margin,
         pricing.overhead, pricing.discount,
-        )
-    assert pricing.pyre_derivations == (
+        ))
+    assert identical(pricing.pyre_derivations, (
         pricing.cost, pricing.msrp, pricing.price
-        )
+        ))
 
     return pricing, raw
 
+
+def identical(s1, s2):
+    """
+    Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
+    we must avoid triggering __eq__
+    """
+    for n1, n2 in zip(s1, s2):
+        if n1 is not n2: return False
+    return True
+            
 
 # main
 if __name__ == "__main__":
