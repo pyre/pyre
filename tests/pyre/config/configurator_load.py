@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the configurator factory is accessible
+Exercise loading settings from configuration files
 """
 
 

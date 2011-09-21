@@ -13,11 +13,10 @@ Sanity check: verify that the package is accessible
 
 
 def test():
+    # access the package
     import pyre
-    # build an executive
-    executive = pyre.executive
-    # build a new configurator
-    configurator = executive.configurator
+    # and the configurator
+    configurator = pyre.executive.configurator
 
     # create some assignments
     configurator.bind(

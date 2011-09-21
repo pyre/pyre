@@ -13,9 +13,10 @@ Sanity check: verify that the configurator factory is accessible
 
 
 def test():
+    # access the package
     import pyre
-    import pyre.config
-    return pyre.config.newConfigurator(executive=pyre.executive)
+    # and return the configurator built by the executive
+    return pyre.executive.configurator
 
 
 # main
