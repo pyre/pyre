@@ -6,7 +6,6 @@
 #
 
 
-import collections
 import pyre.tracking
 from .Model import Model
 
@@ -52,7 +51,7 @@ class Configurator(Model):
             # update the counter
             self.counter[priority] += 1
             # and process the event
-            # print("pyre.config.Configurator.configure: event=", event)
+            # print("pyre.config.Configurator.configure:", event)
             event.identify(inspector=self, priority=seq)
         # all done
         return errors
@@ -102,29 +101,6 @@ class Configurator(Model):
         name = name if name is not None else "pyre.configurator"
         super().__init__(name=name, executive=executive, separator=self.TRAIT_SEPARATOR, **kwds)
 
-        # the event priority counter
-        self.counter = collections.Counter()
-
-        return
-
-
-    def __setitem__(self, name, value):
-        """
-        Support for programmatic modification of the configuration store
-        """
-        # get the priority sequence class for explicit settings
-        explicit = self.executive.EXPLICIT_CONFIGURATION
-        # build the event sequence number, which becomes its priority level
-        seq = (explicit, self.counter[explicit])
-        # update the counter
-        self.counter[explicit] += 1
-        # build a slot
-        slot = self.nodeFactory(value=None, evaluator=self.recognize(value=value), priority=seq)
-        # build a locator
-        locator = pyre.tracking.here(level=1)
-        # register the slot
-        self.register(name=name, node=slot)
-        # and return
         return
 
 

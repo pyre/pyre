@@ -18,78 +18,8 @@ class Model(HierarchicalModel):
     """
 
 
-    # types
-    from .Slot import Slot as nodeFactory
-
-
-    # interface obligations from HierarchicalModel
-    def register(self, *, node, name=None, key=None):
-        """
-        Add {node} into the model and make it accessible through {name}
-
-        Either {name} or {key} must be non-nil.
-
-        If the optional argument {key} is provided, it will be used to generate the hash key;
-        otherwise {name} will be split using the model's field separator. If {key} is supplied
-        but {name} is not, an appropriate name will be constructed by splicing together the
-        names in {key} using the model's field separator.
-        """
-        # print("pyre.config.Model.register: name={!r}, key={!r}".format(name, key))
-        # build the name
-        name = name if name is not None else self.separator.join(key)
-        # build the key
-        key = tuple(key) if key is not None else name.split(self.separator)
-        # build the namespace key and name
-        nskey = key[:-1]
-        nsname = self.separator.join(nskey)
-        item = key[-1]
-        # check whether this namespace is known
-        try:
-            component = self.configurables[nsname]
-        # nope: register it as a normal node
-        except KeyError:
-            return super()._register(
-                name=item, fqname=name, node=node, hashkey=self._hash.hash(key))
-        # we have a component: treat the name as a property
-        descriptor = component.pyre_getTraitDescriptor(alias=item)
-        # get the corresponding inventory slot
-        slot = component.pyre_inventory[descriptor]
-        # merge the two
-        slot.merge(other=node)
-        # all done
-        return self
-
-
-    def resolve(self, *, name=None, key=None):
-        """
-        Find the named node
-
-        Either {name} or {key} must be non-nil.
-
-        If the optional argument {key} is provided, it will be used to generate the hash key;
-        otherwise {name} will be split using the model's field separator. If {key} is supplied
-        but {name} is not, an appropriate name will be constructed by splicing together the
-        names in {key} using the model's field separator.
-        """
-        # print("pyre.config.Model.resolve: name={!r}, key={!r}".format(name, key))
-        # build the name
-        name = name if name is not None else self.separator.join(key)
-        # build the key
-        key = key if key is not None else name.split(self.separator)
-        # build the namespace key and name
-        nskey = key[:-1]
-        nsname = self.separator.join(nskey)
-        item = key[-1]
-        # check whether this namespace is known
-        try:
-            component = self.configurables[nsname]
-        # nope: resolve it as a normal node
-        except KeyError:
-            return super()._resolve(name=item, fqname=name, hashkey=self._hash.hash(key))
-        # we have a component: treat the name as a property
-        descriptor = component.pyre_getTraitDescriptor(alias=item)
-        # and return the corresponding inventory slot
-        return component.pyre_inventory[descriptor]
+    # constants
+    DEFAULT_PRIORITY = (-1, -1)
 
 
     # interface for my configurator
@@ -98,16 +28,30 @@ class Model(HierarchicalModel):
         """
         Build a node with the given {priority} to hold {value}, and register it under {key}
         """
+        # dump
         # print("Model.bind:")
-        # print("    key: {!r}".format(key))
-        # print("    value: {!r}".format(value))
-        # print("    priority: {}".format(priority))
-        # print("    locator: {}".format(locator))
-        # build a new node 
-        slot = self.nodeFactory(
-            value=None, evaluator=self.recognize(value=value), priority=priority, locator=locator)
-        # get it registered
-        return self.register(node=slot, key=key)
+        # print("    key={}, value={!r}".format(key, value))
+        # print("    from {}".format(locator))
+        # print("    with priority {}".format(priority))
+        # build the slot name
+        name = self.separator.join(key)
+        # adjust the priority, if necessary
+        if priority is None:
+            # get the priority sequence class for explicit settings
+            explicit = self.executive.EXPLICIT_CONFIGURATION
+            # build the event sequence number, which becomes its priority level
+            priority = (explicit, self.counter[explicit])
+            # update the counter
+            self.counter[explicit] += 1
+        # if the priority of this assignment is less that the current priority
+        if priority <  self.priorities.get(name, self.DEFAULT_PRIORITY):
+            # ignore the request
+            return
+        # otherwise, adjust the priority
+        self.priorities[name] = priority
+        # make the assignment
+        self[name] = value
+        # and return
 
 
     def defer(self, assignment, priority):
@@ -129,7 +73,7 @@ class Model(HierarchicalModel):
             priority=priority, locator=assignment.locator)
 
         # get the deferred event store and add the event and the slot to the pile
-        model = self.deferred[ckey].append( (assignment, slot) )
+        self.deferred[ckey].append( (assignment, slot) )
 
         # all done
         return slot
@@ -158,6 +102,7 @@ class Model(HierarchicalModel):
     # meta methods
     def __init__(self, executive, **kwds):
         super().__init__(**kwds)
+
         # record the executive
         self.executive = weakref.proxy(executive)
         # the list of command requests
@@ -166,6 +111,11 @@ class Model(HierarchicalModel):
         self.deferred = collections.defaultdict(list)
         # the configurables that manage their own namespace
         self.configurables = weakref.WeakValueDictionary()
+        # the priority table
+        self.priorities = {}
+        # the event priority counter
+        self.counter = collections.Counter()
+
         # done
         return
 
