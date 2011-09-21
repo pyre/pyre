@@ -28,8 +28,6 @@ class SymbolTable(Named):
     from .Variable import Variable as var
     from .Expression import Expression as expression
     from .UnresolvedNode import UnresolvedNode as unresolved
-    # node factory; subclasses may override
-    from .Variable import Variable as nodeFactory
     # exceptions
     from .exceptions import (
         CircularReferenceError,
@@ -130,53 +128,61 @@ class SymbolTable(Named):
         """
         Add/update the named node with the given {value}
         """
-        # N.B.: the logic here is tricky; modify carefully
-        # initialize
-        node = None
-        # is value already a node?
-        if isinstance(value, self.node):
-            # save it
-            node = value
-        # is it a string?
-        elif isinstance(value, str):
-            # attempt to convert it to an expression
-            try:
-                node = self.parse(expression=value)
-            # empty expressions are raw data; other errors propagate through
-            except self.EmptyExpressionError:
-                pass
-        # at this point, either {node} is not {None} and {value} has been converted, or {node}
-        # is {None} and the value is raw data
+        # build a node from {value}
+        node = self._recognize(value)
         # resolve the name 
         existing, identifier = self._resolve(name=name)
-        # if the existing node is a regular variable and we have a value for it
-        if node is None and isinstance(existing, self.var):
-            # update it
-            existing.value = value
-            # and return 
-            return
-        # otherwise, convert raw data into a new node
-        if node is None: node = self.nodeFactory(value=value)
+        # register the new node
+        node = self._register(identifier=identifier, node=node)
         # patch the model
         self._patch(discard=existing, replacement=node)
-        # and register the new node
-        return self._register(identifier=identifier, node=node)
+        # and return
+        return
 
 
     # implementation details
     def _patch(self, discard, replacement):
         """
-        Replace {discard} with {replacement}
+        Replace {discard} with {replacement} for {identifier}
 
         N.B.: subclasses must implement this carefully as there are many model invariants that
         must be maintained...
         """
+        # dump
+        # print("pyre.calc.SymbolTable._patch:")
+        # print("    identifier:", identifier)
+        # print("    discard:", discard)
+        # print("    replacement:", replacement)
+        # bail out if {discard} and {replacement} are the same node
+        if discard is replacement: return self
         # iterate over the observers of the discarded node
         for observer in tuple(discard.observers):
             # substitute the discarded node with its replacement
             observer.substitute(current=discard, replacement=replacement)
         # and return
-        return
+        return self
+
+
+    def _recognize(self, value):
+        """
+        Attempt to convert {value} into a {pyre.calc} node
+        """
+        # N.B.: the logic here is tricky; modify carefully
+        # is value already a node?
+        if isinstance(value, self.node):
+            # return it
+            return value
+        # is it a string?
+        if isinstance(value, str):
+            # attempt to convert it to an expression
+            try:
+                return self.parse(expression=value)
+            # empty expressions are raw data; other errors propagate through
+            except self.EmptyExpressionError:
+                # build a node with the string as value
+                return self.var(value=value)
+        # in all other cases, make a node whose value is the raw data
+        return self.var(value=value)
 
 
     def _register(self, *, identifier, node):

@@ -186,7 +186,7 @@ class HierarchicalModel(SymbolTable):
         # add the node to the pile
         self._nodes[identifier] = node
         # and return
-        return self
+        return node
 
 
     def _resolve(self, *, name):
@@ -231,7 +231,11 @@ class HierarchicalModel(SymbolTable):
         print("model {0!r}:".format(self.name))
         print("  nodes:")
         for name, node in self.select(pattern):
-            print("    {!r} <- {!r}".format(name, node.value))
+            try: 
+                value = node.value
+            except self.UnresolvedNodeError:
+                value = "unresolved"
+            print("    {!r} <- {!r}".format(name, value))
         return
 
 

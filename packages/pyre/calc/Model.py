@@ -53,7 +53,7 @@ class Model(SymbolTable):
         # add the node to the pile
         self._nodes[identifier] = node
         # and return
-        return self
+        return node
 
 
     def _resolve(self, name):
