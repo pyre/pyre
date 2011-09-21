@@ -6,10 +6,11 @@
 #
 
 
+from ..algebraic.Leaf import Leaf
 from .Node import Node
 
 
-class Error(Node):
+class Error(Leaf, Node):
     """
     Base class for nodes that signal errors
     """
