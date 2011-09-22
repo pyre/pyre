@@ -8,6 +8,7 @@
 
 # packages
 import re
+import itertools
 import pyre.patterns
 # super-class
 from .SymbolTable import SymbolTable
@@ -167,7 +168,7 @@ class HierarchicalModel(SymbolTable):
 
         # the level separator
         self.separator = separator
-        self._tag = 0
+        self._counter = itertools.count()
 
         # node storage strategy
         self._nodes = {} # maps identifiers to nodes
@@ -203,8 +204,7 @@ class HierarchicalModel(SymbolTable):
         # if the lookup fails, this is the first request for this name
         except KeyError:
             # create a new identifier
-            identifier = "_{}".format(self._tag)
-            self._tag += 1
+            identifier = "_{}".format(next(self._counter))
             # register it
             self._identifiers[hashkey] = identifier
             # adjust the name indices
