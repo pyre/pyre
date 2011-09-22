@@ -54,8 +54,7 @@ class SymbolTable(Named):
         """
         Evaluate the compiled object {program} in the context of my registered nodes
         """
-        raise NotImplementedError(
-            "class {0.__class__.__name__!r} must implement 'eval'".format(self))
+        return eval(program, {'model' : self})
 
 
     def parse(self, expression):
@@ -82,11 +81,11 @@ class SymbolTable(Named):
             # extract the name from the match
             identifier = match.group('identifier')
             # resolve it
-            node, identifier = self._resolve(name=identifier)
+            node, _ = self._resolve(name=identifier)
             # add the node to the operands
             operands.append(node)
             # build and return the matching expression fragment
-            return "(" + identifier + ".value)"
+            return "(model[{!r}])".format(identifier)
 
         # convert node references to legal python identifiers
         # print("Expression.parse: expression={!r}".format(expression))
@@ -130,18 +129,16 @@ class SymbolTable(Named):
         """
         # build a node from {value}
         node = self._recognize(value)
-        # resolve the name 
+        # fetch the node registered under {name}
         existing, identifier = self._resolve(name=name)
-        # register the new node
-        node = self._register(identifier=identifier, node=node)
-        # patch the model
-        self._patch(discard=existing, replacement=node)
+        # update the mode
+        node = self._update(identifier=identifier, existing=existing, replacement=node)
         # and return
         return
 
 
     # implementation details
-    def _patch(self, discard, replacement):
+    def _patch(self, identifier, existing, replacement):
         """
         Replace {discard} with {replacement} for {identifier}
 
@@ -151,14 +148,14 @@ class SymbolTable(Named):
         # dump
         # print("pyre.calc.SymbolTable._patch:")
         # print("    identifier:", identifier)
-        # print("    discard:", discard)
+        # print("    existing:", existing)
         # print("    replacement:", replacement)
-        # bail out if {discard} and {replacement} are the same node
-        if discard is replacement: return self
+        # bail out if {existing} and {replacement} are the same node
+        if existing is replacement: return self
         # iterate over the observers of the discarded node
-        for observer in tuple(discard.observers):
+        for observer in tuple(existing.observers):
             # substitute the discarded node with its replacement
-            observer.substitute(current=discard, replacement=replacement)
+            observer.substitute(current=existing, replacement=replacement)
         # and return
         return self
 
@@ -185,20 +182,21 @@ class SymbolTable(Named):
         return self.var(value=value)
 
 
-    def _register(self, *, identifier, node):
-        """
-        Add {node} to the model and make it accessible through {identifier}
-        """
-        raise NotImplementedError(
-            "class {0.__class__.__name__!r} must implement '_register'".format(self))
-
-
     def _resolve(self, *, name):
         """
         Find the named node
         """
         raise NotImplementedError(
             "class {0.__class__.__name__!r} must implement '_resolve'".format(self))
+
+
+    def _update(self, *, identifier, existing, replacement):
+        """
+        Update the model by resolving the name conflict among the two nodes, {existing} and
+        {replacement}
+        """
+        raise NotImplementedError(
+            "class {0.__class__.__name__!r} must implement '_update'".format(self))
 
 
     # private data

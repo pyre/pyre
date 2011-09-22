@@ -28,64 +28,56 @@ class Model(SymbolTable):
         return self._nodes.values()
 
 
-    # interface
-    def eval(self, program):
-        """
-        Evaluate the compiled object {program} in the context of my registered nodes
-        """
-        return eval(program, self._nodes)
-
-
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        self._nodes = {} # map of identifiers to registered nodes
-        self._names = {} # map of node names to identifiers
+        self._nodes = {} # map of names to registered nodes
         return
 
 
     # implementation details
-    def _register(self, *, identifier, node):
-        """
-        Add {node} to the model and make it accessible through {identifier}
-        """
-        # print("pyre.calc.Model.register: name={!r}, node={}".format(name, node))
-        # add the node to the pile
-        self._nodes[identifier] = node
-        # and return
-        return node
-
-
     def _resolve(self, name):
         """
         Find the named node
         """
-        # attempt to map the {name} into an identifier
+        # attempt to map the {name} into a node
         try:
-            identifier = self._names[name]
+            node = self._nodes[name]
         # if the lookup fails, this is the first request for this name
         except KeyError:
-            # create a new identifier
-            identifier = "_{}".format(len(self._names))
-            # register it
-            self._names[name] = identifier
             # build an error indicator
             node = self.unresolved(name)
             # print("pyre.calc.Model.resolve: new unresolved node {!r} {}".format(name, node))
             # add it to the pile
-            self._nodes[identifier] = node
-        # if it succeeds
-        else:
-            # look up the actual node
-            node = self._nodes[identifier]
+            self._nodes[name] = node
 
         # and return the node and its identifier
-        return node, identifier
+        return node, name
+
+
+    def _update(self, *, identifier, existing, replacement):
+        """
+        Update the model by resolving the name conflict among the two nodes, {existing} and
+        {replacement}
+        """
+        # bail out if the two nodes are identical
+        if existing is replacement: return self
+        # if they are both {var} instances
+        if isinstance(existing, self.var) and isinstance(replacement, self.var):
+            # just transfer the value
+            existing.value = replacement.value
+        # otherwise
+        else:
+            # place the new node in the model
+            self._nodes[identifier] = replacement
+            # patch the node dependencies
+            self._patch(identifier, existing, replacement)
+        # all done
+        return self
 
 
     # private data
-    _nodes = None # map of identifiers to registered nodes
-    _names = None # map of node names to python identifiers used in compiling expressions
+    _nodes = None # map of names to registered nodes
 
 
 # end of file 
