@@ -180,18 +180,18 @@ class HierarchicalModel(SymbolTable):
         """
         Find the named node
         """
+        # build the key
+        key = name.split(self.separator)
         # find the slot
-        slot, identifier = self._retrieveSlot(name=name)
+        slot, identifier = self._retrieveSlot(name=name, key=key)
         # return the node and its identifier
         return slot.node, identifier
 
 
-    def _retrieveSlot(self, name):
+    def _retrieveSlot(self, name, key):
         """
         Retrieve the slot associated with {name}
         """
-        # build the key
-        key = name.split(self.separator)
         # hash it
         hashkey = self._hash.hash(key)
         # attempt to map the {hashkey} into a slot
