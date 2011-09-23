@@ -31,6 +31,14 @@ class HierarchicalModel(SymbolTable):
     # constants
     SEPARATOR = '.'
 
+
+    # types
+    class slot:
+        # public data
+        name = None
+        node = None
+        
+
     # public data
     separator = None
 
@@ -41,19 +49,15 @@ class HierarchicalModel(SymbolTable):
         """
         Iterate over my nodes
         """
-        # return the iterator over the registered nodes
-        return self._nodes.values()
+        # iterate over my slots
+        for slot in self.slots.values():
+            # yield the associated node
+            yield slot.node
+        # all done
+        return
 
 
     # interface
-    def eval(self, program):
-        """
-        Evaluate the compiled object {program} in the context of my registered nodes
-        """
-        return eval(program, self._nodes)
-
-
-
     # model traversal
     def select(self, pattern=''):
         """
@@ -63,15 +67,17 @@ class HierarchicalModel(SymbolTable):
         package
         """
         # check whether i have any nodes
-        if not self._nodes: return
+        if not self.slots: return
         # build the name recognizer
         regex = re.compile(pattern)
-        # iterate over all the fully qualified names in the model
-        for key, name in self._fqnames.items():
-            # if the name matches the pattern
+        # iterate over my slots
+        for slot in self.slots:
+            # get the name of the slot
+            name = slot.name
+            # if the name matches
             if regex.match(name):
-                # yield the fully qualified name and the value of the node
-                yield name, self._nodes[self._identifiers[key]]
+                # yield the name and the node
+                yield name, slot.node
         # all done
         return
 
@@ -92,9 +98,9 @@ class HierarchicalModel(SymbolTable):
         # iterate over the unique keys
         for key in unique:
             # print("  looking for:", key)
-            # extract the identifier
+            # extract the slot
             try:
-                identifier = self._identifiers[key]
+                slot = self.slots[key]
             # if not there...
             except KeyError:
                 # it's because the key exists in the model but none of its immediate children
@@ -104,7 +110,7 @@ class HierarchicalModel(SymbolTable):
                 # components at all, such as journal channel activations.
                 continue
             # extract the required information
-            yield key, identifier, self._names[key], self._fqnames[key], self._nodes[identifier]
+            yield key, slot
 
         # all done
         return
@@ -126,7 +132,7 @@ class HierarchicalModel(SymbolTable):
 
         # look for a preëxisting node under the alias
         try:
-            aliasId = self._identifiers[aliasHash]
+            aliasSlot = self.slots[aliasHash]
         # if the lookup fails
         except KeyError:
             # no node has been previously registered under this alias, so we are done. if a
@@ -134,29 +140,23 @@ class HierarchicalModel(SymbolTable):
             return self
         # now, look for the canonical node
         try:
-            canonicalId = self._identifiers[canonicalHash]
+            canonicalSlot = self.slots[canonicalHash]
         # if there was no canonical node
         except KeyError:
             # install the alias as the canonical 
-            self._identifiers[canonicalHash] = aliasId
-            self._names[canonicalHash] = canonicalKey[-1]
-            self._fqnames[canonicalHash] = canonical
+            self.slots[canonicalHash] = aliasSlot
             # all done
             return
         # either way clean up after the obsolete aliased node
         finally:
-            # clean up the names, but not the identifiers: they may be in use in some
-            # expression that was compiled before the aliasing took place
-            del self._names[aliasHash]
-            del self._fqnames[aliasHash]
+            # nothing could hash to {aliasHash} any more, so clear out the entry
+            del self.slots[aliasHash]
 
         # if we get this far, both preëxisted; the aliased info has been cleared out, the
         # canonical is as it should be. all that remains is to patch the two nodes
-        aliasNode = self._nodes[aliasId]
-        canonicalNode = self._nodes[canonicalId]
-        self._patch(discard=aliasNode, replacement=canonicalNode)
-        # and install the canonical node under the alias identifier
-        self._nodes[aliasId] = canonicalNode
+        aliasNode = aliasSlot.node
+        canonicalNode = canonicalSlot.node
+        self._update(identifier=canonicalHash, existing=aliasNode, replacement=canonicalNode)
 
         # all done
         return self
@@ -168,28 +168,14 @@ class HierarchicalModel(SymbolTable):
 
         # the level separator
         self.separator = separator
-        self._counter = itertools.count()
 
         # node storage strategy
-        self._nodes = {} # maps identifiers to nodes
-        self._names = {} # maps hash keys to node name
-        self._fqnames = {} # maps hash keys to fully qualified node names
-        self._identifiers = {} # maps hash keys to identifiers
+        self.slots = {} # maps hash keys to slots
         self._hash = pyre.patterns.newPathHash()
         return
 
 
     # implementation details
-    def _register(self, *, identifier, node):
-        """
-        Add {node} to the model and make it accessible through {identifier}
-        """
-        # add the node to the pile
-        self._nodes[identifier] = node
-        # and return
-        return node
-
-
     def _resolve(self, *, name):
         """
         Find the named node
@@ -198,29 +184,51 @@ class HierarchicalModel(SymbolTable):
         key = name.split(self.separator)
         # hash it
         hashkey = self._hash.hash(key)
-        # attempt to map the {hashkey} into an identifier
+        # attempt to map the {hashkey} into a slot
         try:
-            identifier = self._identifiers[hashkey]
+            slot = self.slots[hashkey]
         # if the lookup fails, this is the first request for this name
         except KeyError:
-            # create a new identifier
-            identifier = "_{}".format(next(self._counter))
-            # register it
-            self._identifiers[hashkey] = identifier
-            # adjust the name indices
-            self._names[hashkey] = key[-1] # the name of the node
-            self._fqnames[hashkey] = name  # the fqname of the node
+            # create a new slot
+            slot = self.slot()
+            # attach the name
+            slot.name = name
             # build an error indicator
-            node = self.unresolved(name=name) 
+            slot.node = self.unresolved(name=name) 
             # install it
-            self._nodes[identifier] = node
+            self.slots[hashkey] = slot
         # if the lookup succeeded
         else:
             # look up the node
-            node = self._nodes[identifier]
+            slot = self.slots[hashkey]
 
         # return the node and its identifier
-        return node, identifier
+        return slot.node, hashkey
+
+
+    def _update(self, *, identifier, existing, replacement):
+        """
+        Update the model by resolving the name conflict among the two nodes, {existing} and
+        {replacement}
+        """
+        # bail out if the two nodes are identical
+        if existing is replacement: return self
+        # if they are both {var} instances
+        if isinstance(existing, self.var) and isinstance(replacement, self.var):
+            # just transfer the value
+            existing.value = replacement.value
+        # otherwise
+        else:
+            # get the matching slot
+            slot = self.slots[identifier]
+            # check that it is the right one
+            assert slot.node is existing
+            # place the new node in the slot
+            slot.node = replacement
+            # patch the node dependencies
+            self._patch(identifier, existing, replacement)
+        # all done
+        return self
 
 
     # debug support
