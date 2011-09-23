@@ -18,8 +18,10 @@ class Model(HierarchicalModel):
     """
 
 
-    # constants
-    DEFAULT_PRIORITY = (-1, -1)
+    # types
+    class slot(HierarchicalModel.slot):
+        # public data
+        priority = (-1, -1)
 
 
     # interface for my configurator
@@ -43,15 +45,18 @@ class Model(HierarchicalModel):
             priority = (explicit, self.counter[explicit])
             # update the counter
             self.counter[explicit] += 1
+        # locate the slot
+        slot, hashkey = self._retrieveSlot(name=name, key=key)
         # if the priority of this assignment is less that the current priority
-        if priority <  self.priorities.get(name, self.DEFAULT_PRIORITY):
+        if priority < slot.priority:
             # ignore the request
             return
         # otherwise, adjust the priority
-        self.priorities[name] = priority
+        slot.priority = priority
         # make the assignment
         self[name] = value
         # and return
+        return slot
 
 
     def defer(self, assignment, priority):
@@ -111,8 +116,6 @@ class Model(HierarchicalModel):
         self.deferred = collections.defaultdict(list)
         # the configurables that manage their own namespace
         self.configurables = weakref.WeakValueDictionary()
-        # the priority table
-        self.priorities = {}
         # the event priority counter
         self.counter = collections.Counter()
 
