@@ -182,7 +182,7 @@ class SymbolTable(Named):
         return self.var(value=value)
 
 
-    def _resolve(self, *, name):
+    def _resolve(self, name):
         """
         Find the named node
         """
