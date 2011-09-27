@@ -138,7 +138,7 @@ class SymbolTable(Named):
 
 
     # implementation details
-    def _patch(self, identifier, existing, replacement):
+    def _patch(self, existing, replacement):
         """
         Replace {discard} with {replacement} for {identifier}
 

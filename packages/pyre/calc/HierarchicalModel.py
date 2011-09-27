@@ -236,7 +236,7 @@ class HierarchicalModel(SymbolTable):
             # place the new node in the slot
             slot.node = replacement
             # patch the node dependencies
-            self._patch(identifier, existing, replacement)
+            self._patch(existing, replacement)
         # all done
         return self
 

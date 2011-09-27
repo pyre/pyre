@@ -71,7 +71,7 @@ class Model(SymbolTable):
             # place the new node in the model
             self._nodes[identifier] = replacement
             # patch the node dependencies
-            self._patch(identifier, existing, replacement)
+            self._patch(existing, replacement)
         # all done
         return self
 
