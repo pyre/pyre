@@ -32,6 +32,12 @@ can refer to the values of other traits in the configuration files.
 """
 
 
+# implementation note: these factories are functions (rather than a raw import of the
+# corresponding constructor) in order to prevent the secondary {import} from happening when the
+# package itself is first imported. this enables the package to override compile time settings
+# and makes it possible to implement the {debug} capability
+
+
 # factories
 # model
 def model(*, name, **kwds):
