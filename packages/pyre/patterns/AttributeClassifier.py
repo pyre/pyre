@@ -7,7 +7,6 @@
 
 
 import collections
-from .Named import Named
 from .AbstractMetaclass import AbstractMetaclass
 
 
