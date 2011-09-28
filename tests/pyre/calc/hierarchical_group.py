@@ -35,16 +35,18 @@ def test():
         for tag in ("name", "email", "affiliation", "signature", "telephone") }
 
     # get all the subnodes of "user"
-    assert len(names) == len(tuple(model.children(root="pyre.user")))
-    for key, slot in model.children(root="pyre.user"):
+    target = ["pyre", "user"]
+    assert len(names) == len(tuple(model.children(key=target)))
+    for key, slot in model.children(key=target):
         # check that we got the canonical name
         assert slot.name in names
         # and the correct node
         assert model._resolve(name=slot.name) == (slot.node, key)
 
     # repeat with the alias "χρήστης"
-    assert len(names) == len(tuple(model.children(root="χρήστης")))
-    for key, slot in model.children(root="χρήστης"):
+    target = ["χρήστης"]
+    assert len(names) == len(tuple(model.children(key=target)))
+    for key, slot in model.children(key=target):
         # check that we got the canonical name
         assert slot.name in names
         # and the correct node

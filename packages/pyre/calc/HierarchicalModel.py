@@ -71,30 +71,28 @@ class HierarchicalModel(SymbolTable):
         # build the name recognizer
         regex = re.compile(pattern)
         # iterate over my slots
-        for slot in self.slots:
+        for slot in self.slots.values():
             # get the name of the slot
             name = slot.name
             # if the name matches
             if regex.match(name):
                 # yield the name and the node
-                yield name, slot.node
+                yield name, slot
         # all done
         return
 
 
-    def children(self, root=None, rootKey=None):
+    def children(self, key):
         """
-        Given the name {root}, iterate over all the canonical nodes that are its logical
-        children
+        Given the address {key} of a node, iterate over all the canonical nodes that are
+        its logical children
         """
-        # build the root key
-        rootKey = rootKey if rootKey is not None else root.split(self.separator)
-        # hash it
-        # print("HierarchicalModel.children: rootKey={}".format(rootKey))
-        rootKey = self._hash.hash(rootKey)
-        # print("   names: {}".format(rootKey.nodes.items()))
+        # hash the root key
+        # print("HierarchicalModel.children: key={}".format(key))
+        hashkey = self._hash.hash(key)
+        # print("   names: {}".format(key.nodes.items()))
         # extract the unique hash subkeys
-        unique = set(rootKey.nodes.values())
+        unique = set(hashkey.nodes.values())
         # iterate over the unique keys
         for key in unique:
             # print("  looking for:", key)
