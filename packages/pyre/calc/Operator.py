@@ -40,9 +40,6 @@ class Operator(Dependent, Node):
         super().__init__(**kwds)
         self.evaluator = evaluator
         return
-        
-
-    # private data
 
 
 # end of file 

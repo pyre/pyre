@@ -18,7 +18,9 @@ class Probe:
         """
         # if i am not supposed to stay quiet
         if not self._isSilent:
+            # print the value of the node
             print("probe@{:#x}: node@{:#x}: value={2}".format(id(self), id(node), node.value))
+        # and return
         return
 
 

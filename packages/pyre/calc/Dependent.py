@@ -24,7 +24,6 @@ class Dependent(Composite):
         """
         Invalidate my value cache and notify my observers
         """
-        # N.B.: there is another copy of this method in {Expression}
         # bail out if I am already marked as invalid
         if self._value is None: return
         # otherwise, invalidate my cache

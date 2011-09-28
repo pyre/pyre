@@ -67,7 +67,7 @@ class SymbolTable(Named):
         # define the re.sub callback as a local function so it has access to the symbol table
         def handler(match):
             """
-            Callback for re.sub that extracts node references, adds them to my local symbol
+            Callback for {re.sub} that extracts node references, adds them to my local symbol
             table and converts them into legal python identifiers
             """
             # if the pattern matched an escaped opening brace, return it as a literal

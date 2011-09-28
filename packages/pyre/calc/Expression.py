@@ -18,9 +18,6 @@ class Expression(Dependent, Node):
     """
 
 
-    # types
-    # nodes
-    from .UnresolvedNode import UnresolvedNode
     # exceptions
     from .exceptions import (
         CircularReferenceError,
