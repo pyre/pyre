@@ -175,18 +175,20 @@ debug()
 # build the executive
 executive = boot()
 
-# gather the exported names
-# component declaration support
-from . import schema, constraints
-from .components import export, provides
-from .components import property, facility, interface, component
-from .components import properties
+# if the framework booted properly
+if executive:
+    # gather the exported names
+    # component declaration support
+    from . import schema, constraints
+    from .components import export, provides
+    from .components import property, facility, interface, component
+    from .components import properties
 
-# shells
-from .shells import application
+    # shells
+    from .shells import application
 
-# the base class of all pyre exceptions
-from .framework.exceptions import PyreError
+    # the base class of all pyre exceptions
+    from .framework.exceptions import PyreError
 
 
 # clean up the executive instance when the interpreter shuts down
