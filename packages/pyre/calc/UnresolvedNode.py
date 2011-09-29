@@ -38,4 +38,8 @@ class UnresolvedNode(Error):
     from .exceptions import UnresolvedNodeError
 
 
+    # private data
+    _value = None # the cache is permanently dirty
+
+
 # end of file 
