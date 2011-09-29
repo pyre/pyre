@@ -15,10 +15,6 @@ class Dependent(Composite):
     """
 
 
-    # public data
-    operands = ()
-
-    
     # interface
     def flush(self, node=None):
         """
