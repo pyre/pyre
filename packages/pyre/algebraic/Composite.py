@@ -21,6 +21,9 @@ class Composite:
 
 
     # public data
+    operands = ()
+
+
     @property
     def variables(self):
         """
@@ -66,8 +69,8 @@ class Composite:
         {replacement}.
 
         This method makes it possible to introduce cycles in the expression graph, which causes
-        graph evaluation to not terminate. To prevent this, this method checks that the current
-        node is not in the span of {replacement}.
+        graph evaluation to not terminate. To prevent this, this method checks that I am not in
+        the span of {replacement}.
         """
         # if this is the original substitution call
         if clean is None:

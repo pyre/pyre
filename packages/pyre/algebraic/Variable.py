@@ -6,26 +6,27 @@
 #
 
 
-from .Leaf import Leaf
-from .Node import Node
-
-
-class Variable(Leaf, Node):
+class Variable:
     """
-    Encapsulation of expression nodes that can hold a value.
-
-    This is the main class exposed by this package.
+    Mix-in class to encapsulate nodes that can hold a value.
     """
 
 
     # public data
-    value = None
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
+        return
 
 
     # meta methods
     def __init__(self, value=None, **kwds):
         super().__init__(**kwds)
-        self.value = value
+        self._value = value
         return
 
 

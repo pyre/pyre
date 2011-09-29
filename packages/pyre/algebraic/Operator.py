@@ -6,13 +6,9 @@
 #
 
 
-from .Node import Node
-from .Composite import Composite
-
-
-class Operator(Composite, Node):
+class Operator:
     """
-    Representation of operations among nodes
+    Mix-in class that forms the basis of the representation of operations among nodes
     """
 
 

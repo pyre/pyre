@@ -9,27 +9,49 @@
 """
 This package provides the machinery for implementing deferred evaluation in python.
 
-The strategy is to capture arithmetic operations among a collection of instances as an
-expression graph built out of the operators in this package. Actual evaluation takes place when
-the {eval} method is called.
+The strategy is to capture arithmetic operations among a collection of instances and build an
+expression graph using instances of the classes in this package as nodes. Requesting the value
+of some node in the graph triggers the actual evaluation.
 
-The classes in this package provide a complete set of overloaded special methods for all the
-arithmetic operations. All you have to do is derive from {Node} for all classes for which you
-want to enable this behavior, and implement {eval} so the expression can be evaluated.
+There are multiple layers of building blocks provided in this package. The fundamental layer is
+formed by the three classes {Number}, {Ordering} and {Boolean}. The provide overloaded version
+of the various python operators that can be used to form expressions. Their implementations do
+not carry out any evaluations; instead, they access the interface provided by their operands to
+construct the expression graph.
 
-There is also support for the rich comparison operators, and limited support for boolean
-operations. Unfortunately, python does not enable the overloading of {and} and {or}; the
-short-circuiting behavior of boolean expressions appears to be the rationale behind
-this. Hence, we have to make do with the bitwise operators {&} and {|}, and awkward support for
-{not}.
+The base layer is formed by the base class of the expression graph nodes. This class is
+responsible for assembling all the parts necessary to build functioning expression graphs. The
+main challenge is that the node class provided in this package is unlikely to be sufficient for
+your purposes, yet all the higher layer classes must derive from it. This is an instance of a
+general problem with class hierarchies, where some behavior is defined by the base class that
+must be overridden without having to reimplement all the classes that derive from it. This
+package solves this problem requiring your base node class to provide access to all its
+subclasses that participate in the expression graph. Minor trickery is involved, and the idea
+should be fairly clear.
+
+The structural layer is formed by the mix-in classes {Leaf} and {Composite} that provide
+the interface for traversing the expression graph. Each concrete node must derive from one of
+these. If your particular needs require fancier behavior than what is provided, feel free to
+subclass them and use them as bases for your concrete nodes.
+
+The functional layer is formed by the mix-in classes {Literal}, {Variable} and {Operator}.
+Variables are the nodes that you expose to your users to create and operate on; operators are
+the encapsulation of the various operations defined on your variables; and literals are the
+constants that show up in your expressions, such as integers, that are not conceptually part of
+the space of variables.
+
+You are responsible for putting all this together by providing a class that derives from {Node}
+and provides an implementation of the required {AbstractNode} interface. Take a look at {Node}
+for an example of how the simple concrete nodes in this package are assembled
 """
 
 
-# pull in the node factory
-from .Variable import Variable as var
-
-# remove the namespace pollution
-del Variable
+# the base
+from .Node import Node
+# grant users access to the factory of the sample concrete nodes
+var = Node.variable
+# clean up
+del Node
 
 
 # end of file 
