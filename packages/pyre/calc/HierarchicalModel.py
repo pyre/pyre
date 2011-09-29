@@ -37,7 +37,12 @@ class HierarchicalModel(SymbolTable):
         # public data
         name = None
         node = None
-        
+        # meta methods
+        def __init__(self, name):
+            self.name = name
+            self.node = HierarchicalModel.unresolved(name=name)
+            return
+
 
     # public data
     separator = None
@@ -181,36 +186,33 @@ class HierarchicalModel(SymbolTable):
         # build the key
         key = name.split(self.separator)
         # find the slot
-        slot, identifier = self._retrieveSlot(name=name, key=key)
+        slot, identifier = self._retrieveSlot(key=key)
         # return the node and its identifier
         return slot.node, identifier
 
 
-    def _retrieveSlot(self, name, key):
+    def _retrieveSlot(self, key):
         """
         Retrieve the slot associated with {name}
         """
         # hash it
         hashkey = self._hash.hash(key)
-        # attempt to map the {hashkey} into a slot
+        # attempt
         try:
-            slot = self.slots[hashkey]
-        # if the lookup fails, this is the first request for this name
+            # to retrieve and return the slot
+            return self.slots[hashkey], hashkey
+        # if not there
         except KeyError:
-            # create a new slot
-            slot = self.slot()
-            # attach the name
-            slot.name = name
-            # build an error indicator
-            slot.node = self.unresolved(name=name) 
-            # install it
-            self.slots[hashkey] = slot
-        # if the lookup succeeded
-        else:
-            # look up the node
-            slot = self.slots[hashkey]
+            # no worries
+            pass
 
-        # return the node and its identifier
+        # build the name
+        name = self.separator.join(key)
+        # create a new slot
+        slot = self.slot(name=name)
+        # add it to the pile
+        self.slots[hashkey] = slot
+        # and return the node and its identifier
         return slot, hashkey
 
 
