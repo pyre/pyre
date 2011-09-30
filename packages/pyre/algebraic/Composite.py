@@ -121,6 +121,13 @@ class Composite:
         return
 
 
+    # meta methods
+    def __init__(self, operands, **kwds):
+        super().__init__(**kwds)
+        self.operands = operands
+        return
+
+
     # implementation details
     def _replace(self, index, current, replacement):
         """

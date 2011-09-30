@@ -15,6 +15,7 @@ class Leaf:
 
     # public data
     operators = [] # leaves have no dependencies
+    operands = () # leaves have no operands
 
 
     @property
@@ -49,6 +50,13 @@ class Leaf:
         {replacement}
         """
         # nothing to do
+        return
+
+
+    # meta methods
+    def __init__(self, operands=(), **kwds):
+        # swallow {operands} since leaves don't have any
+        super().__init__(**kwds)
         return
 
 

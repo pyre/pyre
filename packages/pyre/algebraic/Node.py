@@ -45,18 +45,18 @@ class Node(AbstractNode, Number, Ordering, Boolean):
 
 
 # variables
-class variable(Node, Node.leaf, Variable):
+class variable(Node, Variable, Node.leaf):
     """
     Concrete class for encapsulating the user accessible nodes
     """
 
 # operators
-class operator(Node, Node.composite, Operator):
+class operator(Node, Operator, Node.composite):
     """
     Concrete class for encapsulating operations among nodes
     """
 
-class expression(Node, Node.composite, Expression):
+class expression(Node, Expression, Node.composite):
     """
     Concrete class for encapsulating macros
     """

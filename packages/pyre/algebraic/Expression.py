@@ -27,7 +27,6 @@ class Expression:
 
     # public data
     formula = None # the expression supplied by the client
-    operands = () # the list of nodes i refer to
 
 
     @property
@@ -53,12 +52,11 @@ class Expression:
 
 
     # meta methods
-    def __init__(self, model, expression, program, operands, **kwds):
+    def __init__(self, model, expression, program, **kwds):
         super().__init__(**kwds)
         self.formula = expression
         self._program = program
         self._model = weakref.proxy(model)
-        self.operands = operands
         return
 
 

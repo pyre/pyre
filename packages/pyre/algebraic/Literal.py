@@ -6,10 +6,11 @@
 #
 
 
+from .Leaf import Leaf
 from .AbstractNode import AbstractNode
 
 
-class Literal(AbstractNode):
+class Literal(AbstractNode, Leaf):
     """
     Class that encapsulates values encountered in expressions that are not instance of members
     of the {Node} class hierarchy.

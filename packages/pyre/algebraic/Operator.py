@@ -14,7 +14,6 @@ class Operator:
 
     # public data
     evaluator = None
-    operands = None
 
     @property
     def value(self):
@@ -28,10 +27,9 @@ class Operator:
 
 
     # meta methods
-    def __init__(self, evaluator, operands, **kwds):
+    def __init__(self, evaluator, **kwds):
         super().__init__(**kwds)
         self.evaluator = evaluator
-        self.operands = operands
         return
 
 
