@@ -18,6 +18,7 @@ class Literal(AbstractNode):
 
     # public data
     value = None # my value is explicitly set
+    span = [] # literals are not proper nodes
     variables = [] # literals are not variables and have no dependencies
     operators = [] # literals are not operators and have no dependencies
 

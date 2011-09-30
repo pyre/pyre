@@ -18,6 +18,17 @@ class Leaf:
 
 
     @property
+    def span(self):
+        """
+        Traverse my graph and yield all nodes in the graph
+        """
+        # just myself
+        yield self
+        # and no more
+        return
+
+
+    @property
     def variables(self):
         """
         Traverse my expression graph and return an iterable with all the variables in my graph

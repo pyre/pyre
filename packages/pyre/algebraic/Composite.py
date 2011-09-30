@@ -25,6 +25,23 @@ class Composite:
 
 
     @property
+    def span(self):
+        """
+        Traverse my graph and yield all nodes in the graph
+        """
+        # i am one
+        yield self
+        # now, traverse my operands
+        for operand in self.operands:
+            # and ask them for their span
+            for node in operand.span:
+                # got one
+                yield node
+        # all done
+        return
+
+
+    @property
     def variables(self):
         """
         Traverse my expression graph and yield all the variables in my graph
