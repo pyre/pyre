@@ -47,7 +47,7 @@ class Node(AbstractNode, Number, Ordering, Boolean):
 
 
 # literals
-class literal(Node, Literal):
+class literal(Node, Literal, Node.leaf):
     """
     Concrete class for representing foreign values
     """
