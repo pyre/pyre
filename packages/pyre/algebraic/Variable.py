@@ -12,13 +12,18 @@ class Variable:
     """
 
 
-    # public data
-    @property
-    def value(self):
+    # interface
+    def getValue(self):
+        """
+        Return my value
+        """
         return self._value
 
-    @value.setter
-    def value(self, value):
+
+    def setValue(self, value):
+        """
+        Set my value
+        """
         self._value = value
         return
 

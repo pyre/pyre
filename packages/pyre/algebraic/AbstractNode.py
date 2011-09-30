@@ -77,4 +77,21 @@ class AbstractNode:
             "class {.__class__.__name__!r} must implement 'operator'".format(self))
 
 
+    # public data
+    @property
+    def value(self):
+        """
+        Compute and return my value
+        """
+        return self.getValue()
+
+
+    @value.setter
+    def value(self, value):
+        """
+        Set my value
+        """
+        return self.setValue(value)
+
+
 # end of file 

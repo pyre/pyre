@@ -29,8 +29,7 @@ class Expression:
     formula = None # the expression supplied by the client
 
 
-    @property
-    def value(self):
+    def getValue(self):
         """
         Compute and return my value
         """

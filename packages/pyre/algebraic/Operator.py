@@ -15,8 +15,9 @@ class Operator:
     # public data
     evaluator = None
 
-    @property
-    def value(self):
+
+    # interface
+    def getValue(self):
         """
         Compute and return my value
         """

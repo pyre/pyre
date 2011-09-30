@@ -21,6 +21,8 @@ from .Variable import Variable
 from .Operator import Operator
 from .Expression import Expression
 from .Unresolved import Unresolved
+# evaluation strategies
+from .Memo import Memo
 
 
 # declaration of the base node
@@ -36,13 +38,19 @@ class Node(AbstractNode, Number, Ordering, Boolean):
     # structural
     leaf = Leaf
     composite = Composite
-    # functional
-    literal = Literal
+    # functional; they will patched below with my subclasses
+    literal = None
     variable = None
     operator = None
     expression = None
-    unresolved = Unresolved
+    unresolved = None
 
+
+# literals
+class literal(Node, Literal):
+    """
+    Concrete class for representing foreign values
+    """
 
 # variables
 class variable(Node, Variable, Node.leaf):
@@ -56,15 +64,24 @@ class operator(Node, Operator, Node.composite):
     Concrete class for encapsulating operations among nodes
     """
 
+# expressions
 class expression(Node, Expression, Node.composite):
     """
     Concrete class for encapsulating macros
     """
 
+# unresolved nodes
+class unresolved(Node, Unresolved, Node.leaf):
+    """
+    Concrete class for representing unknown nodes
+    """
+
 # patch to base class
+Node.literal = literal
 Node.variable = variable
 Node.operator = operator
 Node.expression = expression
+Node.unresolved = unresolved
 
 
 # end of file 

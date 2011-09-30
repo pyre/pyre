@@ -6,10 +6,7 @@
 #
 
 
-from .Leaf import Leaf
-
-
-class Unresolved(Leaf):
+class Unresolved:
     """
     A node that raises {UnresolvedNodeError} when its value is read
     """
@@ -20,7 +17,7 @@ class Unresolved(Leaf):
 
 
     @property
-    def value(self):
+    def getValue(self):
         """
         Compute my value
         """
