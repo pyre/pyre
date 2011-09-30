@@ -22,12 +22,16 @@ EXPORT_PYTHON_MODULES = \
     AbstractNode.py \
     Boolean.py \
     Composite.py \
+    Expression.py \
     Leaf.py \
     Literal.py \
+    Memo.py \
     Node.py \
     Number.py \
     Operator.py \
     Ordering.py \
+    SymbolTable.py \
+    Unresolved.py \
     Variable.py \
     exceptions.py \
     __init__.py

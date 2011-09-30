@@ -46,10 +46,24 @@ for an example of how the simple concrete nodes in this package are assembled
 """
 
 
-# the base
+# the base class of the simple concrete nodes in this package
 from .Node import Node
 # grant users access to the factory of the sample concrete nodes
 var = Node.variable
+
+
+# and expression nodes
+def expression(*, formula, model):
+    """
+    Build a new node that evaluates a {formula} that involves the names of other nodes as
+    resolved in the symbol table {model}
+    """
+    return model.parse(formula)
+
+
+# access to the model factory
+from .SymbolTable import SymbolTable as model
+
 # clean up
 del Node
 

@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity algebra structural
+test: sanity algebra structural expressions
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -27,5 +27,12 @@ algebra:
 structural:
 	${PYTHON} ./dependencies.py
 	${PYTHON} ./patch.py
+
+expressions:
+	${PYTHON} ./expression.py
+	${PYTHON} ./expression_escaped.py
+	${PYTHON} ./expression_circular.py
+	${PYTHON} ./expression_syntaxerror.py
+	${PYTHON} ./expression_typeerror.py
 
 # end of file 

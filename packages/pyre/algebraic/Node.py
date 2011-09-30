@@ -19,6 +19,8 @@ from .Composite import Composite
 from .Literal import Literal
 from .Variable import Variable
 from .Operator import Operator
+from .Expression import Expression
+from .Unresolved import Unresolved
 
 
 # declaration of the base node
@@ -38,6 +40,8 @@ class Node(AbstractNode, Number, Ordering, Boolean):
     literal = Literal
     variable = None
     operator = None
+    expression = None
+    unresolved = Unresolved
 
 
 # variables
@@ -52,9 +56,15 @@ class operator(Node, Node.composite, Operator):
     Concrete class for encapsulating operations among nodes
     """
 
+class expression(Node, Node.composite, Expression):
+    """
+    Concrete class for encapsulating macros
+    """
+
 # patch to base class
 Node.variable = variable
 Node.operator = operator
+Node.expression = expression
 
 
 # end of file 
