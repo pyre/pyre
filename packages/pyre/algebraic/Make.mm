@@ -30,6 +30,7 @@ EXPORT_PYTHON_MODULES = \
     Number.py \
     Operator.py \
     Ordering.py \
+    Reference.py \
     SymbolTable.py \
     Unresolved.py \
     Variable.py \

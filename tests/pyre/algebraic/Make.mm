@@ -25,6 +25,7 @@ algebra:
 	${PYTHON} ./boolean.py
 
 structural:
+	${PYTHON} ./reference.py
 	${PYTHON} ./dependencies.py
 	${PYTHON} ./patch.py
 

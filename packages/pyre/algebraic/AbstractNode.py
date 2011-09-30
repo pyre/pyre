@@ -26,6 +26,7 @@ class AbstractNode:
     # hooks for implementing the expression graph construction
     # the default implementation provided by this package uses the classes defined here
     # access is provided through properties to hide the {import} of subclasses
+    # functional
     @property
     def literal(self):
         """
@@ -57,6 +58,38 @@ class AbstractNode:
             "class {.__class__.__name__!r} must implement 'operator'".format(self))
 
 
+    @property
+    def expression(self):
+        """
+        Grant access to the subclass used to encapsulate strings that contain named references
+        to other nodes. These references get resolved by a symbol table.
+        """
+        # important: must return a type, not an instance
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'expression'".format(self))
+
+
+    @property
+    def reference(self):
+        """
+        Grant access to the subclass used to encapsulate references to other nodes
+        """
+        # important: must return a type, not an instance
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'operator'".format(self))
+
+
+    @property
+    def unresolved(self):
+        """
+        Grant access to the subclass used to encapsulate unresolved nodes
+        """
+        # important: must return a type, not an instance
+        raise NotImplementedError(
+            "class {.__class__.__name__!r} must implement 'unresolved'".format(self))
+
+
+    # structural
     @property
     def leaf(self):
         """
@@ -92,6 +125,14 @@ class AbstractNode:
         Set my value
         """
         return self.setValue(value)
+
+
+    # interface
+    def ref(self):
+        """
+        Build and return a reference to me
+        """
+        return self.reference(node=self)
 
 
 # end of file 

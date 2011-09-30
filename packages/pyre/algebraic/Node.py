@@ -20,6 +20,7 @@ from .Literal import Literal
 from .Variable import Variable
 from .Operator import Operator
 from .Expression import Expression
+from .Reference import Reference
 from .Unresolved import Unresolved
 # evaluation strategies
 from .Memo import Memo
@@ -43,6 +44,7 @@ class Node(AbstractNode, Number, Ordering, Boolean):
     variable = None
     operator = None
     expression = None
+    reference = None
     unresolved = None
 
 
@@ -70,17 +72,25 @@ class expression(Node, Expression, Node.composite):
     Concrete class for encapsulating macros
     """
 
+# references
+class reference(Node, Reference, Node.composite):
+    """
+    Concrete class for encapsulating references to other nodes
+    """
+
 # unresolved nodes
 class unresolved(Node, Unresolved, Node.leaf):
     """
     Concrete class for representing unknown nodes
     """
 
+
 # patch to base class
 Node.literal = literal
 Node.variable = variable
 Node.operator = operator
 Node.expression = expression
+Node.reference = reference
 Node.unresolved = unresolved
 
 
