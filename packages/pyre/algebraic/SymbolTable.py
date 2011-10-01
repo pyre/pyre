@@ -193,7 +193,7 @@ class SymbolTable(Named):
             # if {existing} is a member
             if node is existing:
                 # report the error
-                raise self.CircularReferenceError(node=self)
+                raise self.CircularReferenceError(node=existing)
 
         # if we get this far, just replace the old node
         self._nodes[identifier] = replacement
