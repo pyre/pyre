@@ -8,9 +8,10 @@
 
 # access to my metaclass, as specified in the module initialization file; for debugging
 from . import _metaclass_Node
-# expression support.  N.B.: inheriting from {pyre.algebraic.Node} does not currently work
-# because {Observable} uses a weak key dictionary to store the registered callbacks and there
-# is a conflict with {Ordering.__eq__} that causes an infinite recursion
+# expression support
+#  N.B.: inheriting from {pyre.algebraic.Node} does not currently work because {Observable}
+# uses a weak key dictionary to store the registered callbacks and there is a conflict with
+# {Ordering.__eq__} that causes an infinite recursion
 from ..algebraic.Number import Number as Base
 # dependent notifications
 from ..patterns.Observable import Observable

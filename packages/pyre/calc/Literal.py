@@ -6,35 +6,36 @@
 #
 
 
-from .Node import Node
+from ..algebraic.Literal import Literal as Base
 
 
-class Literal(Node):
+class Literal(Base):
     """
     Class that encapsulates values encountered in expressions that are not instance of members
     of the {Node} class hierarchy.
     """
 
-
     # public data
-    value = None # my value is explicitly set
-    variables = [] # literals have no dependencies
-    operators = [] # literals have no dependencies
+    observers = ()
+
+    
+    @property
+    def value(self):
+        return self._value
 
 
     # interface
-    def substitute(self, current, replacement):
+    def addObserver(self, *args, **kwds):
         """
-        Replace occurrences of {current} in my graph with {replacement}
+        Stub for the observable interface
         """
-        # nothing to do
         return
 
 
-    # meta methods
-    def __init__(self, value, **kwds):
-        super().__init__(**kwds)
-        self.value = value
+    def removeObserver(self, *args, **kwds):
+        """
+        Stub for the observable interface
+        """
         return
 
 

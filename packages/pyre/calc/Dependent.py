@@ -32,9 +32,7 @@ class Dependent(Composite):
 
     # meta methods
     def __init__(self, operands, **kwds):
-        super().__init__(**kwds)
-        # keep a record of the nodes i depend on
-        self.operands = operands
+        super().__init__(operands=operands, **kwds)
         # add me as their observer
         for operand in operands: operand.addObserver(self.flush)
         # all done
