@@ -19,9 +19,9 @@ def test():
     v = 80.
     production = pyre.calc.var(value=v)
     # make a reference
-    clone = production.reference()
+    clone = production.ref()
     # and a reference to the reference
-    clone2 = clone.reference()
+    clone2 = clone.ref()
 
     # check
     assert production.value == v

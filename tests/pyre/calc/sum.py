@@ -22,15 +22,15 @@ def test():
     production = pyre.calc.var(value=p)
     shipping = pyre.calc.var(value=s)
     cost = pyre.calc.sum(production, shipping)
-    clone = cost.reference()
+    clone = cost.ref()
 
     # check the dependencies
-    assert cost.operands == (production, shipping)
-    assert clone.operands == (cost,)
+    assert tuple(cost.operands) == (production, shipping)
+    assert tuple(clone.operands) == (cost,)
     # and the dependents
-    assert set(production.observers) == {cost}
-    assert set(shipping.observers) == {cost}
-    assert set(cost.observers) == {clone}
+    assert set(ref() for ref in production.observers) == {cost}
+    assert set(ref() for ref in shipping.observers) == {cost}
+    assert set(ref() for ref in cost.observers) == {clone}
     # check the values
     assert production.value == p
     assert shipping.value == s
