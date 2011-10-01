@@ -5,116 +5,92 @@
 # (c) 1998-2011 all rights reserved
 #
 
-
-# access to my metaclass, as specified in the module initialization file; for debugging
+# my metaclass: defined in the package initialization file
 from . import _metaclass_Node
-# expression support
-#  N.B.: inheriting from {pyre.algebraic.Node} does not currently work because {Observable}
-# uses a weak key dictionary to store the registered callbacks and there is a conflict with
-# {Ordering.__eq__} that causes an infinite recursion
-from ..algebraic.Number import Number as Base
-# dependent notifications
-from ..patterns.Observable import Observable
+
+# my base class
+from ..algebraic.AbstractNode import AbstractNode
+# access to the node algebra mix-ins
+from ..algebraic.Number import Number
+# access to the structural mix-ins
+from ..algebraic.Leaf import Leaf
+from ..algebraic.Composite import Composite
+# access to the functional mix-ins
+from ..algebraic.Literal import Literal
+from ..algebraic.Variable import Variable
+from ..algebraic.Operator import Operator
+from ..algebraic.Expression import Expression
+from ..algebraic.Reference import Reference
+from ..algebraic.Unresolved import Unresolved
+# evaluation strategies
+from ..algebraic.Memo import Memo
 
 
-# declaration
-class Node(Base, Observable, metaclass=_metaclass_Node):
+# declaration of the base node
+class Node(AbstractNode, Memo, Number, metaclass=_metaclass_Node):
     """
-    This is the base class for the nodes that appear in lazily evaluated expression graphs. See
-    {pyre.algebraic.Node} for a discussion.
-
-    Its main purpose is to override the {variable} and {operator} factories in its base class
-    to provide access to the locally declared classes.
+    The base class for lazily evaluated nodes. It employs the memoized evaluation strategy so
+    that nodes have their values recomputed on demand.
     """
 
 
-    # types
-    @property
-    def literal(self):
-        """
-        Grant access to the subclass used to encapsulate literals
-        """
-        # important: must return a type, not an instance
-        from .Literal import Literal
-        return Literal
+    # types: hooks for implementing the expression graph construction
+    # structural
+    leaf = Leaf
+    composite = Composite
+    # functional; they will be patched below with my subclasses
+    literal = None
+    variable = None
+    operator = None
+    expression = None
+    reference = None
+    unresolved = None
 
 
-    @property
-    def variable(self):
-        """
-        Grant access to the subclass used to encapsulate variables
-        """
-        # important: must return a type, not an instance
-        from .Variable import Variable
-        return Variable
+# literals
+class literal(Node, Literal, Node.leaf):
+    """
+    Concrete class for representing foreign values
+    """
+
+# variables
+class variable(Node, Variable, Node.leaf):
+    """
+    Concrete class for encapsulating the user accessible nodes
+    """
+
+# operators
+class operator(Node, Operator, Node.composite):
+    """
+    Concrete class for encapsulating operations among nodes
+    """
+
+# expressions
+class expression(Node, Expression, Node.composite):
+    """
+    Concrete class for encapsulating macros
+    """
+
+# references
+class reference(Node, Reference, Node.composite):
+    """
+    Concrete class for encapsulating references to other nodes
+    """
+
+# unresolved nodes
+class unresolved(Node, Unresolved, Node.leaf):
+    """
+    Concrete class for representing unknown nodes
+    """
 
 
-    @property
-    def operator(self):
-        """
-        Grant access to the subclass used to encapsulate operators
-        """
-        # important: must return a type, not an instance
-        from .Operator import Operator
-        return Operator
-
-
-    # public data
-    @property
-    def value(self):
-        """
-        Compute and return my value
-        """
-        raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'value'".format(self))
-
-
-    @property
-    def variables(self):
-        """
-        Traverse my expression graph and yield all the variables in my graph
-
-        Variables are reported as many times as they show up in my graph. Clients that are
-        looking for the set unique dependencies have to prune the results themselves.
-        """
-        raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'variables'".format(self))
-
-
-    @property
-    def operators(self):
-        """
-        Traverse my expression graph and yield all operators in my graph
-
-        Operators are reported as many times as they show up in my graph. Clients that are
-        looking for unique dependencies have to prune the results themselves.
-        """
-        raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'operators'".format(self))
-
-
-    # interface
-    def reference(self):
-        """
-        Build and return a reference to me
-        """
-        # access the constructor
-        from .Reference import Reference
-        # make one
-        return Reference(node=self)
-
-
-    def substitute(self, current, replacement):
-        """
-        Traverse my expression graph and replace all occurrences of node {current} with
-        {replacement}.
-
-        This method makes it possible to introduce cycles in the expression graph
-        inadvertently. It is the client's responsibility to make sure that the graph remains
-        cycle-free.
-        """
-        raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'substitute'".format(self))
+# patch to base class
+Node.literal = literal
+Node.variable = variable
+Node.operator = operator
+Node.expression = expression
+Node.reference = reference
+Node.unresolved = unresolved
 
 
 # end of file 

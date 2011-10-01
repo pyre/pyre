@@ -52,17 +52,14 @@ def hierarchicalModel(*, name, **kwds):
 
 
 # nodes
-def var(value=None, **kwds):
+def var(value=None):
     """
-    Build a new node.
-
-    parameters: 
-        {value}: the initial value to assign to the node
+    Build a variable, i.e. a node that can hold an arbitrary value
     """
-    # access the constructor
-    from .Variable import Variable
-    # build the node and return it
-    return Variable(value=value, **kwds)
+    # get the base node
+    from .Node import Node
+    # build a variable and return it
+    return Node.variable(value=value)
 
 
 def expression(*, formula, model):
