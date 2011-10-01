@@ -87,6 +87,23 @@ class Memo:
         return
 
 
+    # implementation details
+    def _replace(self, index, current, replacement):
+        """
+        Adjust the operands by substituting {replacement} for {current} in the list of operands
+        at position {index}
+        """
+        # flush my cache
+        self.flush()
+        # remove me as an observer of the old node
+        current.observers.remove(weakref.ref(self))
+        # and add me to the list of observers of the replacement
+        replacement.observers.add(weakref.ref(self))
+        # and ask my superclass to do the rest
+        return super()._replace(index, current, replacement)
+
+
+
     # private data
     _value = None
 
