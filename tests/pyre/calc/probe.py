@@ -20,7 +20,7 @@ def test():
     from pyre.calc.Probe import Probe
     class Recorder(Probe):
 
-        def activate(self, node):
+        def flush(self, node):
             self.nodes[node] = node.value
             return
 
@@ -35,6 +35,7 @@ def test():
     # make a node
     v = 80.
     production = pyre.calc.var(value=v)
+    assert production.value == v
 
     # insert the probe
     probe.insert(production)
@@ -49,9 +50,6 @@ def test():
     production.value = v
     assert production.value == v
     assert probe.nodes[production] == v
-
-    # shut the probe down
-    probe.finalize()
 
     return
 
