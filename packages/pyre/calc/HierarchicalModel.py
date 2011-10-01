@@ -11,7 +11,7 @@ import re
 import itertools
 import pyre.patterns
 # super-class
-from .SymbolTable import SymbolTable
+from ..algebraic.SymbolTable import SymbolTable
 
 
 # declaration
@@ -33,6 +33,10 @@ class HierarchicalModel(SymbolTable):
 
 
     # types
+    # my node type
+    from .Node import Node
+
+    # my slot type
     class slot:
         # public data
         name = None
@@ -40,7 +44,7 @@ class HierarchicalModel(SymbolTable):
         # meta methods
         def __init__(self, name):
             self.name = name
-            self.node = HierarchicalModel.unresolved(name=name)
+            self.node = HierarchicalModel.Node.unresolved(name=name)
             return
 
 
@@ -167,7 +171,7 @@ class HierarchicalModel(SymbolTable):
 
     # meta methods
     def __init__(self, separator=SEPARATOR, **kwds):
-        super().__init__(**kwds)
+        super().__init__(node=self.Node, **kwds)
 
         # the level separator
         self.separator = separator
@@ -223,20 +227,31 @@ class HierarchicalModel(SymbolTable):
         """
         # bail out if the two nodes are identical
         if existing is replacement: return self
+        # my variable type
+        variable = self.node.variable
         # if they are both {var} instances
-        if isinstance(existing, self.var) and isinstance(replacement, self.var):
+        if isinstance(existing, variable) and isinstance(replacement, variable):
             # just transfer the value
             existing.value = replacement.value
-        # otherwise
-        else:
-            # get the matching slot
-            slot = self.slots[identifier]
-            # check that it is the right one
-            assert slot.node is existing
-            # place the new node in the slot
-            slot.node = replacement
-            # patch the node dependencies
-            self._patch(existing, replacement)
+            # and return
+            return
+
+        # otherwise, verify that the old node is not in the span of its replacement
+        for node in replacement.span:
+            # if {existing} is a member
+            if node is existing:
+                # report the error
+                raise self.CircularReferenceError(node=existing)
+
+        # get the matching slot
+        slot = self.slots[identifier]
+        # check that it is the right one
+        assert slot.node is existing
+        # place the new node in the slot
+        slot.node = replacement
+        # patch the node dependencies
+        replacement.subsume(existing)
+
         # all done
         return self
 
