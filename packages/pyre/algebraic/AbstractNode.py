@@ -132,7 +132,7 @@ class AbstractNode:
         """
         Build and return a reference to me
         """
-        return self.reference(node=self)
+        return self.reference(operands=[self])
 
 
 # end of file 
