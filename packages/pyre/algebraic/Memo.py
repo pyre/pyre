@@ -81,6 +81,28 @@ class Memo:
 
 
     # observer management
+    def subsume(self, obsolete):
+        """
+        Remove {obsolete} from its upstream graph and assume its responsibilities
+        """
+        # iterate over the observers of the {obsolete} node
+        for noderef in obsolete.observers:
+            # get the actual node
+            node = noderef()
+            # if the node is dead
+            if node is None:
+                # get the next one
+                continue
+            # flush the observer
+            node.flush()
+            # add the weak reference to my observers
+            self.observers.add(noderef)
+        # reset
+        obsolete.observers = set()
+        # all done
+        return
+        
+
     def addObserver(self, node):
         """
         Add {node} to the set of nodes that depend on my value
@@ -115,7 +137,7 @@ class Memo:
 
 
     # implementation details
-    def _replace(self, index, current, replacement):
+    def _substitute(self, index, current, replacement):
         """
         Adjust the operands by substituting {replacement} for {current} in the list of operands
         at position {index}
@@ -127,8 +149,7 @@ class Memo:
         # and add me to the list of observers of the replacement
         replacement.observers.add(weakref.ref(self))
         # and ask my superclass to do the rest
-        return super()._replace(index, current, replacement)
-
+        return super()._substitute(index, current, replacement)
 
 
     # private data

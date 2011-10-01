@@ -94,7 +94,7 @@ class Composite:
             # cycle detection: look for self in the span of {replacement}; do it carefully so
             # that we do not trigger a call to the overloaded __eq__, which does not actually
             # perform the comparison
-            for node in replacement.operators:
+            for node in replacement.span:
                 # match?
                 if node is self:
                     # the substitution would create a cycle
@@ -113,7 +113,7 @@ class Composite:
                 # if one of them is our target
                 if operand is current:
                     # replace it
-                    node._replace(index, current, replacement)
+                    node._substitute(index, current, replacement)
             # mark this node as clean
             clean.add(node)        
             
@@ -129,7 +129,7 @@ class Composite:
 
 
     # implementation details
-    def _replace(self, index, current, replacement):
+    def _substitute(self, index, current, replacement):
         """
         Adjust the operands by substituting {replacement} for {current} in the list of operands
         at position {index}
