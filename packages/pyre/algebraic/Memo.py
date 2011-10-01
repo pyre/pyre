@@ -43,6 +43,7 @@ class Memo:
         return
 
 
+    # cache management
     def flush(self):
         """
         Invalidate my cache and notify my observers
@@ -71,6 +72,27 @@ class Memo:
         for ref in dead: self.observers.remove(ref)
 
         # and return
+        return
+
+
+    # observer management
+    def addObserver(self, node):
+        """
+        Add {node} to the set of nodes that depend on my value
+        """
+        # build a weak reference to {node} and add it to the pile
+        self.observers.add(weakref.ref(node))
+        # all done
+        return
+
+
+    def removeObserver(self, node):
+        """
+        Remove {node} from the set of nodes that depend on my value
+        """
+        # build a weak reference to {node} and remove it from the pile
+        self.observers.remove(weakref.ref(node))
+        # all done
         return
 
 
