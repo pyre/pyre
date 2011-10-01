@@ -22,8 +22,6 @@ from .Operator import Operator
 from .Expression import Expression
 from .Reference import Reference
 from .Unresolved import Unresolved
-# evaluation strategies
-from .Memo import Memo
 
 
 # declaration of the base node
@@ -31,7 +29,12 @@ class Node(AbstractNode, Number, Ordering, Boolean):
     """
     The base class for hierarchies that implement the algebraic protocol
 
-    The example nodes in this package use the full set of protocols provided.
+    The example nodes in this package use the full set of protocols provided. The evaluation
+    strategy is direct, i.e. nodes the entire span of a node gets reevaluated whenever its
+    value is requested. In practical terms, this is only useful as an example of the
+    infrastructure provided by this package. Client code should consider deriving from {Memo}
+    as well, which maintains a value cache and recomputes expression graphs only when the cache
+    becomes invalid.
     """
 
 
@@ -39,7 +42,7 @@ class Node(AbstractNode, Number, Ordering, Boolean):
     # structural
     leaf = Leaf
     composite = Composite
-    # functional; they will patched below with my subclasses
+    # functional; they will be patched below with my subclasses
     literal = None
     variable = None
     operator = None
