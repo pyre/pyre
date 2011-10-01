@@ -35,25 +35,31 @@ class Memo:
         """
         Override the value setter to invalidate my cache and notify my observers
         """
-        # invalidate my cache and notify my observers
-        self.flush()
         # update the value
         super().setValue(value=value)
+        # invalidate my cache and notify my observers
+        self.notifyObservers()
         # and return
         return
 
 
     # cache management
-    def flush(self):
+    def flush(self, node=None):
         """
         Invalidate my cache and notify my observers
         """
         # do nothing if my cache is already invalid
         if self._value is None: return
-
         # invalidate the cache
         self._value = None
+        # notify my observers
+        return self.notifyObservers()
+        
 
+    def notifyObservers(self):
+        """
+        Notify the nodes that depend on me that my value has changed
+        """
         # initialize the list of dead references
         dead = []
         # notify my observers
@@ -63,14 +69,13 @@ class Memo:
             # if it is still alive
             if node is not None:
                 # flush it
-                node.flush()
+                node.flush(node=self)
             # otherwise
             else:
                 # put its reference on the discard pile
                 dead.append(noderef)
         # clean up
         for ref in dead: self.observers.remove(ref)
-
         # and return
         return
 
