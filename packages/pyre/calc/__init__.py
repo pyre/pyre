@@ -41,12 +41,20 @@ can refer to the values of other traits in the configuration files.
 # factories
 # model
 def model(*, name, **kwds):
-    from .Model import Model
-    return Model(name=name, **kwds)
+    """
+    Build a node container that gives names to nodes so that they can be resolved by name
+    """
+    from .Node import Node
+    from ..algebraic.SymbolTable import SymbolTable
+    return SymbolTable(name=name, node=Node, **kwds)
 
 
 # hierarchical model
 def hierarchicalModel(*, name, **kwds):
+    """
+    Build a node container that specializes in names that have encoded hierarchical levels,
+    such as file paths or namespaces
+    """
     from .HierarchicalModel import HierarchicalModel
     return HierarchicalModel(name=name, **kwds)
 
