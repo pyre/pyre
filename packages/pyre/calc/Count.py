@@ -6,28 +6,19 @@
 #
 
 
-from .Node import Node
-from .Dependent import Dependent
-
-
-class Count(Dependent, Node):
+class Count:
     """
     The representation of the length of a collection of nodes
     """
 
 
-    # public data
-    @property
-    def value(self):
+    # interface
+    def getValue(self):
         """
         Compute and return my value
         """
-        # if my cached value is invalid
-        if self._value is None:
-            # compute the length
-            self._value = len(self.operands)
-        # and return it
-        return self._value
+        # compute and return my value 
+        return len(self.operands)
 
 
 # end of file 

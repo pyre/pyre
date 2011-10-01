@@ -76,9 +76,9 @@ def average(*operands):
     Compute the average of a collection of nodes
     """
     # access the constructor
-    from .Average import Average
+    from .Node import average
     # build the node and return it
-    return Average(operands=operands)
+    return average(operands=operands)
 
 
 def count(*operands):
@@ -86,9 +86,9 @@ def count(*operands):
     Compute the length of a collection of nodes
     """
     # access the constructor
-    from .Count import Count
+    from .Node import count
     # build the node and return it
-    return Count(operands=operands)
+    return count(operands=operands)
 
 
 def max(*operands):
@@ -96,9 +96,9 @@ def max(*operands):
     Compute the minimum of a collection of nodes
     """
     # access the constructor
-    from .Maximum import Maximum
+    from .Node import max
     # build the node and return it
-    return Maximum(operands=operands)
+    return max(operands=operands)
 
 
 def min(*operands):
@@ -106,9 +106,9 @@ def min(*operands):
     Compute the minimum of a collection of nodes
     """
     # access the constructor
-    from .Minimum import Minimum
+    from .Node import min
     # build the node and return it
-    return Minimum(operands=operands)
+    return min(operands=operands)
 
 
 def product(*operands):
@@ -116,9 +116,9 @@ def product(*operands):
     Compute the sum of a collection of nodes
     """
     # access the constructor
-    from .Product import Product
+    from .Node import product
     # build the node and return it
-    return Product(operands=operands)
+    return product(operands=operands)
 
 
 def sum(*operands):
@@ -126,9 +126,9 @@ def sum(*operands):
     Compute the sum of a collection of nodes
     """
     # access the constructor
-    from .Sum import Sum
+    from .Node import sum
     # build the node and return it
-    return Sum(operands=operands)
+    return sum(operands=list(operands))
 
 
 # exceptions

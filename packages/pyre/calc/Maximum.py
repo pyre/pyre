@@ -6,28 +6,19 @@
 #
 
 
-from .Node import Node
-from .Dependent import Dependent
-
-
-class Maximum(Dependent, Node):
+class Maximum:
     """
     The representation of the maximum value of a collection of nodes
     """
 
 
-    # public data
-    @property
-    def value(self):
+    # interface
+    def getValue(self):
         """
         Compute and return my value
         """
-        # if my cached value is invalid
-        if self._value is None:
-            # compute it
-            self._value = max(operand.value for operand in self.operands)
-        # and return it
-        return self._value
+        # compute and return my value 
+        return max(operand.value for operand in self.operands)
 
 
 # end of file 

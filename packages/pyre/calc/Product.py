@@ -9,28 +9,20 @@
 import operator
 import functools
 
-from .Node import Node
-from .Dependent import Dependent
 
-
-class Product(Dependent, Node):
+class Product:
     """
     The representation of the product of nodes
     """
 
 
-    # public data
-    @property
-    def value(self):
+    # interface
+    def getValue(self):
         """
         Compute and return my value
         """
-        # if my cached value is invalid
-        if self._value is None:
-            # compute it
-            self._value = functools.reduce(operator.mul, (op.value for op in self.operands))
-        # and return it
-        return self._value
+        # compute and return my value
+        return functools.reduce(operator.mul, (op.value for op in self.operands))
 
 
 # end of file 

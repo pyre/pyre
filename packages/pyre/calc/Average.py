@@ -6,30 +6,21 @@
 #
 
 
-from .Node import Node
-from .Dependent import Dependent
-
-
-class Average(Dependent, Node):
+class Average:
     """
-    The representation of the average value of nodes
+    The representation of the average value of a collection of nodes
     """
 
 
-    # public data
-    @property
-    def value(self):
+    # interface
+    def getValue(self):
         """
         Compute and return my value
         """
-        # if my cached value is invalid
-        if self._value is None:
-            # evaluate my operands
-            values = tuple(operand.value for operand in self.operands)
-            # compute the average
-            self._value = sum(values)/len(values)
-        # and return it
-        return self._value
+        # evaluate my operands
+        values = tuple(operand.value for operand in self.operands)
+        # compute and return the average
+        return sum(values)/len(values)
 
 
 # end of file 

@@ -24,6 +24,13 @@ from ..algebraic.Reference import Reference
 from ..algebraic.Unresolved import Unresolved
 # evaluation strategies
 from ..algebraic.Memo import Memo
+# local operators
+from .Average import Average
+from .Count import Count
+from .Maximum import Maximum
+from .Minimum import Minimum
+from .Product import Product
+from .Sum import Sum
 
 
 # declaration of the base node
@@ -83,8 +90,39 @@ class unresolved(Node, Unresolved, Node.leaf):
     Concrete class for representing unknown nodes
     """
 
+# local operators
+class average(Node, Average, Node.composite):
+    """
+    Concrete class for representing the average value of a set of nodes
+    """
 
-# patch to base class
+class count(Node, Count, Node.composite):
+    """
+    Concrete class for representing the count of a set of nodes
+    """
+
+class max(Node, Maximum, Node.composite):
+    """
+    Concrete class for representing the maximum value of a set of nodes
+    """
+
+class min(Node, Minimum, Node.composite):
+    """
+    Concrete class for representing the minimum value of a set of nodes
+    """
+
+class product(Node, Product, Node.composite):
+    """
+    Concrete class for representing the product of nodes
+    """
+
+class sum(Node, Sum, Node.composite):
+    """
+    Concrete class for representing the sum of nodes
+    """
+
+
+# patch the base class
 Node.literal = literal
 Node.variable = variable
 Node.operator = operator

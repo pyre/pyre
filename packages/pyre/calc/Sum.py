@@ -6,28 +6,17 @@
 #
 
 
-from .Node import Node
-from .Dependent import Dependent
-
-
-class Sum(Dependent, Node):
+class Sum:
     """
     The representation of the sum of nodes
     """
 
-
-    # public data
-    @property
-    def value(self):
+    # interface
+    def getValue(self):
         """
         Compute and return my value
         """
-        # if my cached value is invalid
-        if self._value is None:
-            # compute it
-            self._value = sum(operand.value for operand in self.operands)
-        # and return it
-        return self._value
+        return sum(operand.value for operand in self.operands)
 
 
 # end of file 
