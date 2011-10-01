@@ -6,6 +6,11 @@
 #
 
 
+# we build weak references to nodes
+import weakref
+
+
+# class declaration
 class Memo:
     """
     A mix-in class that implements value memoization
@@ -42,10 +47,29 @@ class Memo:
         """
         Invalidate my cache and notify my observers
         """
+        # do nothing if my cache is already invalid
+        if self._value is None: return
+
         # invalidate the cache
         self._value = None
+
+        # initialize the list of dead references
+        dead = []
         # notify my observers
-        # self.notifyObservers()
+        for noderef in self.observers:
+            # get the node
+            node = noderef()
+            # if it is still alive
+            if node is not None:
+                # flush it
+                node.flush()
+            # otherwise
+            else:
+                # put its reference on the discard pile
+                dead.append(noderef)
+        # clean up
+        for ref in dead: self.observers.remove(ref)
+
         # and return
         return
 
@@ -54,9 +78,10 @@ class Memo:
     def __init__(self, operands=(), **kwds):
         super().__init__(operands=operands, **kwds)
 
+        # initialize the set of my observers
+        self.observers = set()
         # add me as an observer to each of my operands
-        # for operand in operands:
-            # operand.addObserver(self.flush)
+        for operand in operands: operand.observers.add(weakref.ref(self))
 
         # and return
         return
