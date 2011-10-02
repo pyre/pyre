@@ -24,7 +24,6 @@ EXPORT_PYTHON_MODULES = \
     CSV.py \
     Chart.py \
     Column.py \
-    Derivation.py \
     Dimension.py \
     Index.py \
     InferredDimension.py \

@@ -6,12 +6,12 @@
 #
 
 
-from ..records.Field import Field
+from ..records.Entry import Entry
 
 
-class Measure(Field):
+class Measure(Entry.variable):
     """
-    The base class for table descriptors
+    The base class for table descriptors whose values are explicitly specified in the data source
     """
 
 
