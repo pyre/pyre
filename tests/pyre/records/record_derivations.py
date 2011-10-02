@@ -19,9 +19,7 @@ def test():
         """
         A sample record
         """
-        cost = pyre.records.field()
-        cost.type = pyre.schema.float
-
+        cost = pyre.records.float()
         price = 1.25 * cost
 
 

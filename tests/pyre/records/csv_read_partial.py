@@ -18,13 +18,9 @@ def test():
     # layout the record
     class item(pyre.records.record):
         # the fields
-        sku = pyre.records.field()
-        margin = pyre.records.field()
-        description = pyre.records.field()
-        # type information
-        sku.type = pyre.schema.str
-        margin.type = pyre.schema.float
-        description.type = pyre.schema.str
+        sku = pyre.records.str()
+        margin = pyre.records.float()
+        description = pyre.records.str()
 
     # build the target tuple
     target = [

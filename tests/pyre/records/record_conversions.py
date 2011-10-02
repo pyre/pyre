@@ -20,19 +20,11 @@ def test():
         A sample record
         """
         # field declarations
-        sku = pyre.records.field()
-        description = pyre.records.field()
-        cost = pyre.records.field()
-        overhead = pyre.records.field()
-        price = pyre.records.field()
-
-        # type information
-        sku.type = pyre.schema.str
-        description.type = pyre.schema.str
-        cost.type = pyre.schema.float
-        overhead.type = pyre.schema.float
-        price.type = pyre.schema.float
-
+        sku = pyre.records.str()
+        description = pyre.records.str()
+        cost = pyre.records.float()
+        overhead = pyre.records.float()
+        price = pyre.records.float()
 
     # build a record
     r = record(sku="9-4013", description="organic kiwi", cost=".85", overhead=".15", price="1")

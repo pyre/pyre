@@ -20,13 +20,8 @@ def test():
         A sample record
         """
         # field declarations
-        left = pyre.records.field()
-        right = pyre.records.field()
-
-        # type information
-        left.type = pyre.schema.float
-        right.type = pyre.schema.float
-
+        left = pyre.records.float()
+        right = pyre.records.float()
         # constraints
         left.validators = pyre.constraints.isLess(value=0),
         right.validators = pyre.constraints.isGreater(value=0),

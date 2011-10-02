@@ -19,12 +19,8 @@ def test():
         """
         A sample record
         """
-        production = pyre.records.field()
-        production.type = pyre.schema.float
-
-        shipping = pyre.records.field()
-        shipping.type = pyre.schema.float
-
+        production = pyre.records.float()
+        shipping = pyre.records.float()
         cost = production + shipping
         price = 2 * cost
 
