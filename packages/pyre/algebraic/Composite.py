@@ -108,7 +108,7 @@ class Composite:
             if node in clean:
                 # skip it
                 continue
-            # look over their operands
+            # look over its operands
             for index, operand in enumerate(node.operands):
                 # if one of them is our target
                 if operand is current:
