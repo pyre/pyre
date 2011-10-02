@@ -71,7 +71,7 @@ class DynamicRecord(NamedTuple, metaclass=Mutable):
 
     def __setitem__(self, index, value):
         """
-        Retrieve the node at {index} and compute its value
+        Retrieve the node at {index} and set its value
         """
         # find the descriptor responsible for this value
         descriptor = self.pyre_entries[index]

@@ -6,23 +6,15 @@
 #
 
 
-# superclasses
-from .Entry import Entry
-from ..algebraic.Leaf import Leaf
-
-# access to {pyre.calc}
-import pyre.calc
-
-
 # declaration
-class Field(Leaf, Entry):
+class Field:
     """
     The base class for record entries
     """
 
 
     # types
-    from ..calc.Variable import Variable as node
+    from ..calc.Node import Node as node
 
 
     # interface
@@ -37,7 +29,7 @@ class Field(Leaf, Entry):
         # if not
         except KeyError:
             # make the node
-            node = self.node(value=self.extract(stream))
+            node = self.node.variable(value=self.extract(stream))
             # add it to the model
             model[self.name] = node
         # and return it
@@ -57,7 +49,7 @@ class Field(Leaf, Entry):
         Compute my value by either returning a previous evaluation or by extracting an item
         from {stream} and processing it
         """
-        # if  have computed my value before
+        # if I have computed my value before
         try:
             # retrieve it it
             value = cache[self]

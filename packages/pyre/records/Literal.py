@@ -6,10 +6,11 @@
 #
 
 
-from .Entry import Entry
+# superclass
+from ..algebraic.Literal import Literal as Base
 
 
-class Literal(Entry):
+class Literal(Base):
     """
     Class that encapsulates values encountered in expressions that are not instance of members
     of the {Entry} class hierarchy.
@@ -17,13 +18,7 @@ class Literal(Entry):
 
 
     # types
-    from ..calc.Literal import Literal as node
-
-
-    # public data
-    value = None # my value is explicitly set
-    variables = [] # literals are not variables and have no dependencies
-    operators = [] # literals are not operators and have no dependencies
+    from ..calc.Node import Node as node
 
 
     # interface
@@ -32,7 +27,7 @@ class Literal(Entry):
         Extract a value from {stream} and use it to build a {pyre.calc} node 
         """
         # easy enough
-        return self.node(value=self.value)
+        return self.node.literal(value=self.value)
 
 
     def evaluate(self, stream, cache):
@@ -49,13 +44,6 @@ class Literal(Entry):
         {replacement}
         """
         # nothing to do
-        return
-
-
-    # meta methods
-    def __init__(self, value, **kwds):
-        super().__init__(**kwds)
-        self.value = value
         return
 
 

@@ -7,12 +7,18 @@
 
 
 # super classes
-from ..algebraic.Node import Node
 from ..schema.Descriptor import Descriptor
+from ..algebraic.AbstractNode import AbstractNode
+from ..algebraic.Number import Number
+
+# my mix-ins
+from .Field import Field
+from .Derivation import Derivation
+from .Literal import Literal
 
 
 # declaration
-class Entry(Descriptor, Node):
+class Entry(Descriptor, AbstractNode, Number):
     """
     The base class for record entries
     """
@@ -20,31 +26,14 @@ class Entry(Descriptor, Node):
 
     # types
     # obligations from {pyre.algebraic} to support nodal algebra 
-    @property
-    def variable(self):
-        """
-        Grant access to the subclass used to encapsulate record fields
-        """
-        from .Field import Field
-        return Field
+    # structural
+    from ..algebraic.Leaf import Leaf as leaf
+    from ..algebraic.Composite import Composite as composite
 
-
-    @property
-    def operator(self):
-        """
-        Grant access to the subclass used encapsulate field operators
-        """
-        from .Derivation import Derivation
-        return Derivation
-
-
-    @property
-    def literal(self):
-        """
-        Grant access to the subclass used encapsulate explicit constants
-        """
-        from .Literal import Literal
-        return Literal
+    # functional
+    variable = None
+    operator = None
+    literal = None
 
 
     # public data
@@ -52,23 +41,6 @@ class Entry(Descriptor, Node):
 
 
     # interface
-    def extract(self, stream):
-        """
-        Extract a value from {stream} and walk it through casting, conversion and validation.
-        """
-        raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'extract'".format(self))
-
-
-    def evaluate(self, stream, cache):
-        """
-        Compute my value by either returning a previous evaluation or by extracting an item
-        from {stream} and processing it
-        """
-        raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'evaluate'".format(self))
-
-
     def process(self, value):
         """
         Convert {value} into an object that is consistent with my type and value requirements
@@ -93,6 +65,23 @@ class Entry(Descriptor, Node):
         self.aliases = set() if aliases is None else aliases
         # all done
         return
+
+
+# literals
+class literal(Entry, Literal, Entry.leaf):
+    """Concrete class for representing foreign values"""
+
+class field(Entry, Field, Entry.leaf):
+    """Concrete class for representing fields"""
+
+class derivation(Entry, Derivation, Entry.composite):
+    """Concrete class for representing derivations"""
+
+
+# patch entry
+Entry.literal = literal
+Entry.variable = field
+Entry.operator = derivation
 
 
 # end of file 

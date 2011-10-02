@@ -6,20 +6,19 @@
 #
 
 
-# superclasses
-from .Entry import Entry
-from ..algebraic.Composite import Composite
+# superclass
+from ..algebraic.Operator import Operator
 
 
 # declaration
-class Derivation(Composite, Entry):
+class Derivation(Operator):
     """
     The base class for record entries whose values are computed using other record fields
     """
 
 
     # types
-    from ..calc.Operator import Operator as node
+    from ..calc.Node import Node as node
 
 
     # interface
@@ -36,7 +35,7 @@ class Derivation(Composite, Entry):
             # make a node for each of my operands
             operands = tuple(op.buildNode(stream, model) for op in self.operands)
             # make a node for myself
-            node = self.node(evaluator=self.evaluator, operands=operands)
+            node = self.node.operator(evaluator=self.evaluator, operands=operands)
             # if I am a named node, i.e. one that shows up in a record declaration
             if self.name is not None:
                 # add my node to the model
@@ -67,13 +66,4 @@ class Derivation(Composite, Entry):
         return value
 
         
-    # meta methods
-    def __init__(self, evaluator, operands, **kwds):
-        super().__init__(**kwds)
-        self.evaluator = evaluator
-        self.operands = operands
-        return
-
-
-
 # end of file 

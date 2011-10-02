@@ -31,14 +31,14 @@ class Immutable(Templater):
         record = super().__new__(cls, name, bases, attributes, slots=(), **kwds)
 
         # inspect the record and install an appropriate data processor
-        # if there are no derivations present in this record
-        if not record.pyre_derivations:
-            # use fast processing
-            record.pyre_processEntries = record.pyre_processFields
-        # otherwise
-        else:
+        # if there are derivations present in this record
+        if record.pyre_derivations:
             # use the slower method that enables inter-column data access
             record.pyre_processEntries = record.pyre_processFieldsAndDerivations
+        # otherwise
+        else:
+            # use fast processing
+            record.pyre_processEntries = record.pyre_processFields
 
         # all done
         return record
