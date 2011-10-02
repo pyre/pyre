@@ -44,7 +44,7 @@ class Memo:
 
 
     # cache management
-    def flush(self, node=None):
+    def pyre_flush(self, node=None):
         """
         Invalidate my cache and notify my observers
         """
@@ -63,17 +63,17 @@ class Memo:
         # initialize the list of dead references
         dead = []
         # notify my observers
-        for noderef in self.observers:
+        for oref in self.observers:
             # get the node
-            node = noderef()
+            observer = oref()
             # if it is still alive
-            if node is not None:
+            if observer is not None:
                 # flush it
-                node.flush(node=self)
+                observer.pyre_flush(node=self)
             # otherwise
             else:
                 # put its reference on the discard pile
-                dead.append(noderef)
+                dead.append(oref)
         # clean up
         for ref in dead: self.observers.remove(ref)
         # and return
@@ -86,17 +86,13 @@ class Memo:
         Remove {obsolete} from its upstream graph and assume its responsibilities
         """
         # iterate over the observers of the {obsolete} node
-        for noderef in tuple(obsolete.observers):
+        for oref in tuple(obsolete.observers):
             # get the actual node
-            node = noderef()
-            # if the node is dead
-            if node is None:
-                # get the next one
-                continue
-            # ask the observer to replace {obsolete} from its dependencies
-            node.substitute(current=obsolete, replacement=self)
-        # reset
-        obsolete.observers = set()
+            observer = oref()
+            # skip dead nodes
+            if observer is None: continue
+            # ask the observer to replace {obsolete} with me
+            observer.pyre_substitute(current=obsolete, replacement=self)
         # all done
         return
         
@@ -141,7 +137,7 @@ class Memo:
         at position {index}
         """
         # flush my cache
-        self.flush()
+        self.pyre_flush()
         # make a weak reference to myself
         selfref = weakref.ref(self)
         # remove me as an observer of the old node

@@ -55,13 +55,6 @@ def test():
     # and no observers
     assert len(s.observers) == 0
 
-    # attempt to create a cycle
-    try:
-        s.substitute(current=n3, replacement=s)
-        assert False
-    except s.CircularReferenceError:
-        pass
-
     return
 
 
