@@ -31,12 +31,12 @@ class Memo:
         return self._value
 
 
-    def setValue(self, value):
+    def setValue(self, value, **kwds):
         """
         Override the value setter to invalidate my cache and notify my observers
         """
         # update the value
-        super().setValue(value=value)
+        super().setValue(value=value, **kwds)
         # invalidate my cache and notify my observers
         self.notifyObservers()
         # and return
@@ -86,17 +86,15 @@ class Memo:
         Remove {obsolete} from its upstream graph and assume its responsibilities
         """
         # iterate over the observers of the {obsolete} node
-        for noderef in obsolete.observers:
+        for noderef in tuple(obsolete.observers):
             # get the actual node
             node = noderef()
             # if the node is dead
             if node is None:
                 # get the next one
                 continue
-            # flush the observer
-            node.flush()
-            # add the weak reference to my observers
-            self.observers.add(noderef)
+            # ask the observer to replace {obsolete} from its dependencies
+            node.substitute(current=obsolete, replacement=self)
         # reset
         obsolete.observers = set()
         # all done
@@ -144,10 +142,12 @@ class Memo:
         """
         # flush my cache
         self.flush()
+        # make a weak reference to myself
+        selfref = weakref.ref(self)
         # remove me as an observer of the old node
-        current.observers.remove(weakref.ref(self))
+        current.observers.remove(selfref)
         # and add me to the list of observers of the replacement
-        replacement.observers.add(weakref.ref(self))
+        replacement.observers.add(selfref)
         # and ask my superclass to do the rest
         return super()._substitute(index, current, replacement)
 

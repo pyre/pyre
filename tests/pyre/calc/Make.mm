@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity evaluators resolution model hierarchical
+test: sanity evaluators structural model hierarchical
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -31,7 +31,9 @@ evaluators:
 	${PYTHON} ./algebra.py
 	${PYTHON} ./expression.py
 
-resolution:
+structural:
+	${PYTHON} ./substitute.py
+	${PYTHON} ./subsume.py
 	${PYTHON} ./patch.py
 
 model:
