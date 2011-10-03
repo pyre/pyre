@@ -31,7 +31,7 @@ def provides(func):
 
 
 # the component registrar factory
-def newRegistar(**kwds):
+def newRegistrar(**kwds):
     from .Registrar import Registrar
     return Registrar(**kwds)
 

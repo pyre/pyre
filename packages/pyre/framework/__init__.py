@@ -45,8 +45,8 @@ def newCommandLineParser(**kwds):
 
 
 def newComponentRegistrar(**kwds):
-    from ..components import newRegistar
-    return newRegistar(**kwds)
+    from ..components import newRegistrar
+    return newRegistrar(**kwds)
 
 
 def newConfigurator(**kwds):
