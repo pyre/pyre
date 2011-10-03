@@ -116,8 +116,8 @@ class Component(Configurable, metaclass=Actor, hidden=True):
 
     # meta methods
     def __init__(self, name=None, **kwds):
-        # component instance registration is done by Actor.__call__,
-        # the metaclass method that # invokes this constructor
+        # component instance registration is done by Actor.__call__, the metaclass method that
+        # invokes this constructor
         super().__init__(**kwds)
         # store my name
         self.pyre_name = name if name is not None else "<component @ {:#x}>".format(id(self))
