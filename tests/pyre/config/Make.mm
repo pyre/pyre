@@ -14,11 +14,17 @@ PROJECT = pyre
 
 all: test
 
-test: sanity configuration configurator commandline
+test: sanity slots configuration configurator commandline
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./exceptions.py
+
+slots:
+	${PYTHON} ./slot.py
+	${PYTHON} ./slot_instance.py
+	${PYTHON} ./slot_algebra.py
+	${PYTHON} ./slot_update.py
 
 configuration:
 	${PYTHON} ./configuration.py

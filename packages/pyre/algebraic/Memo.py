@@ -141,7 +141,9 @@ class Memo:
         # make a weak reference to myself
         selfref = weakref.ref(self)
         # remove me as an observer of the old node
-        current.observers.remove(selfref)
+        # N.B: do it quietly because failure here is not an indication of a problem; i may have
+        # been here before if i show more than once in the list of operands of {current}
+        current.observers.discard(selfref)
         # and add me to the list of observers of the replacement
         replacement.observers.add(selfref)
         # and ask my superclass to do the rest

@@ -46,4 +46,19 @@ def newConfiguration(**kwds):
     return Configuration(**kwds)
 
 
+# debugging support
+_metaclass_Slot = type
+
+def debug():
+    """
+    Attach {ExtentAware} as the metaclass of {Slot} so we can verify that all instances of
+    this class are properly garbage collected
+    """
+    from ..patterns.ExtentAware import ExtentAware
+    global _metaclass_Slot
+    _metaclass_Slot = ExtentAware
+
+    return
+    
+
 # end of file

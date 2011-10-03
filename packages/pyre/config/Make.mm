@@ -40,8 +40,10 @@ EXPORT_PYTHON_MODULES = \
     Configuration.py \
     Configurator.py \
     Model.py \
+    Slot.py \
     events.py \
     exceptions.py \
+    levels.py \
     __init__.py
 
 

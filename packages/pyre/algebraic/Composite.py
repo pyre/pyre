@@ -104,11 +104,9 @@ class Composite:
 
         # now, iterate over composites in my subgraph
         for node in self.operators:
-            # if we have visited this guy before
-            if node in clean:
-                # skip it
-                continue
-            # look over its operands
+            # skip nodes that we have visited before
+            if node in clean: continue
+            # look through its operands
             for index, operand in enumerate(node.operands):
                 # if one of them is our target
                 if operand is current:

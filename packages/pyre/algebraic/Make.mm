@@ -21,6 +21,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     AbstractNode.py \
     Boolean.py \
+    Cast.py \
     Composite.py \
     Expression.py \
     Leaf.py \

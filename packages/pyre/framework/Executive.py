@@ -49,13 +49,14 @@ class Executive:
     # constants
     defaultLocations = ("/pyre/system", "/pyre/user", "/local")
     path = tuple('vfs:' + location for location in defaultLocations)
-
     # priority levels for the various configuration sources
-    DEFAULT_CONFIGURATION = -1 # defaults from the component declarations
-    BOOT_CONFIGURATION = 0 # configuration from the standard pyre boot files
-    PACKAGE_CONFIGURATION = 5 # configuration from package files
-    USER_CONFIGURATION = 10 # configurations supplied by the end user
-    EXPLICIT_CONFIGURATION = 15 # programmatic overrides
+    from ..config.levels import ( 
+        DEFAULT_CONFIGURATION, # defaults from the component declarations
+        BOOT_CONFIGURATION, # configuration from the standard pyre boot files
+        PACKAGE_CONFIGURATION, # configuration from package files
+        USER_CONFIGURATION, # configurations supplied by the end user
+        EXPLICIT_CONFIGURATION, # programmatic overrides
+        )
 
 
     # external interface
