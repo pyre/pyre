@@ -73,10 +73,10 @@ class Actor(Requirement):
 
         # ask each local trait to embed itself
         for trait in self.pyre_localTraits:
-            trait.pyre_embedLocal(component=self)
+            trait.pyre_embedLocalTrait(component=self)
         # repeat with the inherited traits
         for trait in self.pyre_inheritedTraits:
-            trait.pyre_embedInherited(component=self)
+            trait.pyre_embedInheritedTrait(component=self)
 
         # if this component class is not hidden
         if not hidden:

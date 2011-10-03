@@ -77,6 +77,7 @@ class Facility(Property):
         """
         Set this trait of {instance} to value
         """
+        raise NotImplementedError("NYI!")
         # treat the assignment like a property
         value = super().pyre_setInstanceTrait(instance, value, locator)
         # as a side-effect, the value has been coverted into my native type
@@ -107,18 +108,11 @@ class Facility(Property):
 
 
     # framework obligations
-    def pyre_classSlot(self, evaluator):
-        """
-        Create a new slot suitable for placing in a component class inventory
-        """
-        # make a slot with the given {evaluator}
-        return self.Slot(processor=self, value=None, evaluator=evaluator)
-
-        
     def pyre_instanceSlot(self, name, evaluator):
         """
         Create a new slot suitable for placing in a component instance inventory
         """
+        raise NotImplementedError("NYI!")
         # build a value processor
         processor = self.trait()
         # name it

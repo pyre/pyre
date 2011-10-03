@@ -17,10 +17,6 @@ class Property(Trait):
     """
 
 
-    # types
-    from .Slot import Slot
-
-
     # import the packages exposed by properties for convenince
     from .. import schema, constraints
 
@@ -69,29 +65,23 @@ class Property(Trait):
         return self
 
 
-    def pyre_embedLocal(self, component):
+    def pyre_embedLocalTrait(self, component):
         """
         Initialize the inventory of {component}
         """
         # who else?
-        super().pyre_embedLocal(component=component)
-        # build a literal evaluator to hold my default value
-        evaluator = component.pyre_executive.configurator.recognize(value=self.default)
-        # build a slot
-        slot = self.pyre_classSlot(evaluator=evaluator)
-        # attach the slot to the inventory
-        component.pyre_inventory[self] = slot
-        # and return
-        return
+        super().pyre_embedLocalTrait(component=component)
+        # initialize the inventory of {component} with my default value
+        return self.pyre_embedTrait(component=component, value=self.default)
 
 
-    def pyre_embedInherited(self, component):
+    def pyre_embedInheritedTrait(self, component):
         """
         Initialize the {component} inventory by establishing a reference to the nearest
         ancestor that has slot for me
         """
         # who else?
-        super().pyre_embedInherited(component=component)
+        super().pyre_embedInheritedTrait(component=component)
         # loop over my pedigree looking for an ancestor that has a slot for me
         for base in component.pyre_pedigree:
             # if it's here, get the slot and bail out
@@ -107,20 +97,38 @@ class Property(Trait):
             firewall = journal.firewall("pyre.components")
             raise firewall.log("UNREACHABLE")
             
-        # build a reference to the slot
-        evaluator = node.newReference()
-        # make a slot  out of it
-        slot = self.pyre_classSlot(evaluator=evaluator)
-        # attach it to the inventory
+        # build a reference to the ancestral slot
+        reference = slot.ref()
+        # and embed it
+        return self.pyre_embedTrait(component=component, value=reference)
+
+
+    def pyre_embedTrait(self, component, value):
+        """
+        Place value in the inventory of {component}
+        """
+        # get the configurator
+        configurator = component.pyre_executive.configurator
+        # and the family of the component
+        family = component.pyre_family
+
+        # build the key
+        key = family + [self.name] if family else tuple()
+        # get the slot that holds these default values
+        slot = configurator.default(key, value)
+        # attach the slot to the inventory
         component.pyre_inventory[self] = slot
+
         # and return
-        return
+        return self
+
 
 
     def pyre_bindClass(self, configurable):
         """
         Bind this trait to the {configurable} class record
         """
+        raise NotImplementedError("NYI!")
         # get my slot from the {configurable}
         slot = configurable.pyre_inventory[self]
         # get it to compute its value
@@ -131,27 +139,11 @@ class Property(Trait):
         """
         Bind this trait to the {configurable} instance
         """
+        raise NotImplementedError("NYI!")
         # get my slot from the {configurable}
         slot = configurable.pyre_inventory[self]
         # get it to compute its value
         return slot.getValue()
-
-        
-    # slot building
-    def pyre_classSlot(self, evaluator):
-        """
-        Create a new slot suitable for placing in a component class inventory
-        """
-        # make a slot with the given {evaluator}
-        return self.Slot(processor=self, value=None, evaluator=evaluator)
-
-
-    def pyre_instanceSlot(self, name, evaluator):
-        """
-        Create a new slot suitable for placing in a component instance inventory
-        """
-        # make a slot with the given {evaluator}
-        return self.Slot(processor=self, value=None, evaluator=evaluator)
 
 
     # slot value access
@@ -159,6 +151,7 @@ class Property(Trait):
         """
         Set this trait of the class record {configurable} to value
         """
+        raise NotImplementedError("NYI!")
         # grab the slot from the client's inventory
         slot = configurable.pyre_inventory[self]
         # let the configurator build an evaluator for {value}
@@ -173,6 +166,7 @@ class Property(Trait):
         """
         Set this trait of {instance} to value
         """
+        raise NotImplementedError("NYI!")
         # grab the slot from the client's inventory
         slot = instance.pyre_inventory[self]
         # let the configurator build an evaluator for {value}
@@ -186,6 +180,7 @@ class Property(Trait):
         """
         Retrieve the value of this trait
         """
+        raise NotImplementedError("NYI!")
         # find out whose inventory we are supposed to access
         client = instance if instance else cls
         # grab the slot from the client's inventory
@@ -198,6 +193,7 @@ class Property(Trait):
         """
         Set this trait of {instance} to {value}
         """
+        raise NotImplementedError("NYI!")
         # build an appropriate locator
         locator = pyre.tracking.here(level=1)
         # call the instance value setter

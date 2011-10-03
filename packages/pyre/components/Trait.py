@@ -65,14 +65,14 @@ class Trait(Named):
         return self
 
 
-    def pyre_embedLocal(self, component):
+    def pyre_embedLocalTrait(self, component):
         """
         Build an association between this {configurable} and this locally declared trait
         """
         return self
 
 
-    def pyre_embedInherited(self, component):
+    def pyre_embedInheritedTrait(self, component):
         """
         Build an association between this {configurable} and this inherited trait
         """
