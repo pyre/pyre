@@ -92,7 +92,7 @@ class Memo:
             # skip dead nodes
             if observer is None: continue
             # ask the observer to replace {obsolete} with me
-            observer.pyre_substitute(current=obsolete, replacement=self)
+            observer.pyre_substituteDependent(current=obsolete, replacement=self)
         # all done
         return
         

@@ -80,7 +80,7 @@ class Composite:
 
 
     # interface
-    def pyre_substitute(self, current, replacement, clean=None):
+    def pyre_substituteDependent(self, current, replacement, clean=None):
         """
         Traverse my expression graph and replace all occurrences of node {current} with
         {replacement}.
