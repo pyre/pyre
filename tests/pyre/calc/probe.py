@@ -20,7 +20,7 @@ def test():
     from pyre.calc.Probe import Probe
     class Recorder(Probe):
 
-        def pyre_flush(self, node):
+        def pyre_updatedDependent(self, node):
             self.nodes[node] = node.value
             return
 
