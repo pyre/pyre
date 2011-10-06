@@ -6,7 +6,6 @@
 #
 
 
-import pyre.tracking
 from .Model import Model
 
 
@@ -20,22 +19,6 @@ class Configurator(Model):
     """
 
 
-    # constants
-    TRAIT_SEPARATOR = '.'
-
-
-    # exceptions
-    from ..calc.exceptions import (
-        CircularReferenceError, DuplicateNodeError, ExpressionError, NodeError,
-        UnresolvedNodeError)
-    
-
-    # public data
-    counter = None # the event priority counter
-    # build a locator for values that come from trait defaults
-    locator = pyre.tracking.newSimpleLocator(source="<defaults>")
-
-
     # interface
     def configure(self, configuration, priority):
         """
@@ -47,9 +30,7 @@ class Configurator(Model):
         # loop over events
         for event in configuration:
             # build the event sequence number, which becomes its priority level
-            seq = (priority, self.counter[priority])
-            # update the counter
-            self.counter[priority] += 1
+            seq = (priority, next(self.counter[priority]))
             # and process the event
             # print("pyre.config.Configurator.configure:", event)
             event.identify(inspector=self, priority=seq)
@@ -71,7 +52,7 @@ class Configurator(Model):
         # if there is no family name, we are done
         if not ns: return []
         # transfer the configuration under the component's family name
-        errors = self._transferConfigurationSettings(configurable=component, namespace=ns)
+        errors = self._verifyConfigurationSettings(configurable=component, namespace=ns)
         # return the accumulated errors
         return errors
 
@@ -86,7 +67,7 @@ class Configurator(Model):
         # turn it into a key
         ns = name.split(self.separator)
         # transfer the configuration under the component's name
-        errors = self._transferConfigurationSettings(configurable=component, namespace=ns)
+        errors = self._verifyConfigurationSettings(configurable=component, namespace=ns)
         # transfer the deferred configuration
         errors = self._transferConditionalConfigurationSettings(
             registrar=registrar, configurable=component, namespace=ns, errors=errors)
@@ -99,31 +80,42 @@ class Configurator(Model):
     def __init__(self, executive, name=None, **kwds):
         # construct my name
         name = name if name is not None else "pyre.configurator"
-        super().__init__(name=name, executive=executive, separator=self.TRAIT_SEPARATOR, **kwds)
+        super().__init__(name=name, executive=executive, **kwds)
 
         return
 
 
     # implementation details
-    def _transferConfigurationSettings(self, configurable, namespace, errors=None):
+    def _verifyConfigurationSettings(self, configurable, namespace, errors=None):
         """
-        Transfer ownership of the configuration store to {configurable} and apply whatever
-        configuration is available for it in the configuration store
+        Verify that the nodes in the configuration store that belong to the {namespace} owned
+        by {configurable} are consistent with its set of traits.
+
+        This routine is useful for detecting typos on the command line and package
+        configuration files
         """
-        # print("Configurator._transferConfigurationSettings:")
+        # print("Configurator._verifyConfigurationSettings:")
         # print("  configurable={.pyre_name!r}".format(configurable))
         # print("  namespace={!r}".format(namespace))
+
         # initialize the error accumulator
         errors = errors if errors is not None else []
         # get the inventory
         inventory = configurable.pyre_inventory
         # let's see what is known about this instance
         # print("  looking for configuration settings:")
-        for key, name, fqname, node in self.children(rootKey=namespace):
-            # print("    found {!r} <- {.value!r}".format(fqname, node))
-            # print("      with priority: {._priority}".format(node))
-            # find the corresponding descriptor
+
+        # for key, name, fqname, node in self.children(rootKey=namespace):
+        for key, slot in self.children(key=namespace):
+            # print("    found {0.name!r}, with priority: {0.priority}".format(slot))
+            # print("      from: {0.locator}".format(slot))
+
+            # try to find the corresponding descriptor
+            # build its name: its the last portion of its full name
+            name = slot.name.split(self.separator)[-1]
+            # if it is there
             try:
+                # get the descriptor
                 descriptor = configurable.pyre_getTraitDescriptor(alias=name)
                 # print("      matching descriptor: {.name!r}".format(descriptor))
             # found a typo?
@@ -131,21 +123,18 @@ class Configurator(Model):
                 # print("      no matching descriptor")
                 errors.append(error)
                 continue
-            # get the inventory slot
-            slot = inventory[descriptor]
-            # merge the information
-            # print("      before: {0._processor.name!r} <- {0.value!r}".format(slot))
-            self.patch(discard=node, keep=slot)
-            # print("      after: {0._processor.name!r} <- {0.value!r}".format(slot))
-            # patch the model
-            # replace the node with the inventory slot so aliases still work
-            self._nodes[key] = slot
-            # and eliminate the old node from the name stores
-            del self._names[key]
-            del self._fqnames[key]
+            # consistency check: the slot in the inventory should be the same as the slot in
+            # the model; this currently may fail under some aliasing configurations. the
+            # firewall should flush these cases out
+            if slot is not inventory[descriptor]:
+                # get the journal
+                import journal
+                # build a firewall
+                firewall = journal.firewall(name="pyre.config")
+                # and raise it
+                raise firewall.log("slot mismatch for {.name!r}".format(slot))
+        # all done
         # print("  done with {.pyre_name!r}".format(configurable))
-        # establish {component} as the handler of events in its configuration namespace
-        self.configurables[self.separator.join(namespace)] = configurable
         # return the accumulated errors
         return errors
 

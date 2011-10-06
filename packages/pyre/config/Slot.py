@@ -97,34 +97,24 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
     
     # value meta data
     key = None # the hash key used by the configurator to retrieve this slot
+    name = None # the name under which I am registered
     processor = None # the value processor used by {Cast} to normalize my value
     locator = None # the provenance of my value
     priority = (DEFAULT_CONFIGURATION, -1)
 
-
-# slot subclasses that close its algebra
-# variables
-class variable(Slot, Variable, Slot.leaf):
-    """
-    Concrete class for encapsulating the user accessible nodes
-    """
     # interface
     def setValue(self, value):
         """
-        Set my value using {value} if this action has high enough {priority}
+        Set my value using {value} if this action has high enough priority
 
         Assumes that the new value has already been converted into a slot. If both {value} and
         i are variables, i will just update my value and the associated meta data; otherwise, i
         will have {value} take my place in the configuration store.
         """
-        # MGA: this feels unnatural: why shouldn't the client make these checks before
-        # attempting to do damage?
-
         # ignore the assignment if its {priority} is less than mine
         if value.priority < self.priority: return
-
         # if we are both variables
-        if isinstance(value, self.variable):
+        if isinstance(self, self.variable) and isinstance(value, self.variable):
             # transfer the value
             super().setValue(value=value.value)
             # the priority
@@ -133,13 +123,26 @@ class variable(Slot, Variable, Slot.leaf):
             self.locator = value.locator
             # and return
             return self
-
         # otherwise, let {value} subsume me
         value.subsume(self)
         # and return
         return self
-        
 
+    def __init__(self, name=None, key=None, processor=None, locator=None, **kwds):
+        super().__init__(**kwds)
+        self.key = key
+        self.name = name
+        self.locator = locator
+        self.processor = processor
+        return
+
+
+# slot subclasses that close its algebra
+# variables
+class variable(Slot, Variable, Slot.leaf):
+    """
+    Concrete class for encapsulating the user accessible nodes
+    """
 # literals
 class literal(Slot, Literal, Slot.leaf):
     """
@@ -210,10 +213,10 @@ if 0:
         return value
 
 
-    def __init__(self, name="<unknown>",  **kwds):
+    def __init__(self, name="<unknown>", key=None,  **kwds):
         super().__init__(**kwds)
+        self.key = key
         self.name = name
-        self.node = self.unresolved(name=name)
         return
 
 

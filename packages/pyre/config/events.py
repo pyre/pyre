@@ -67,7 +67,7 @@ class Assignment(Event):
     # interface
     def identify(self, inspector, **kwds):
         """Ask {inspector} to process an {Assignment}"""
-        return inspector.bind(key=self.key, value=self.value, locator=self.locator, **kwds)
+        return inspector.assign(key=self.key, value=self.value, locator=self.locator, **kwds)
 
 
     # meta methods

@@ -8,7 +8,8 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Exercise setting configuration values through the interface used during configuration event
+processing
 """
 
 
@@ -19,16 +20,26 @@ def test():
     configurator = pyre.executive.configurator
 
     # create some assignments
-    configurator.bind(
-        key=("sample", "user", "name"), value="Michael Aïvázis")
-    configurator.bind(
-        key=("sample", "user", "name"), value="michael aïvázis")
-    configurator.bind(
-        key=("sample", "user", "email"), value="michael.aivazis@caltech.edu")
-    configurator.bind(
-        key=("sample", "user", "affiliation"), value="california institute of technology")
-    configurator.bind(
-        key=("sample", "user", "alias"), value="{sample.user.name}")
+    configurator.assign(
+        key=("sample", "user", "name"), value="Michael Aïvázis",
+        priority=configurator.collate(), locator=pyre.tracking.here()
+        )
+    configurator.assign(
+        key=("sample", "user", "name"), value="michael aïvázis",
+        priority=configurator.collate(), locator=pyre.tracking.here()
+        )
+    configurator.assign(
+        key=("sample", "user", "email"), value="michael.aivazis@caltech.edu",
+        priority=configurator.collate(), locator=pyre.tracking.here()
+        )
+    configurator.assign(
+        key=("sample", "user", "affiliation"), value="california institute of technology",
+        priority=configurator.collate(), locator=pyre.tracking.here()
+        )
+    configurator.assign(
+        key=("sample", "user", "alias"), value="{sample.user.name}",
+        priority=configurator.collate(), locator=pyre.tracking.here()
+        )
 
     # dump the contents of the model
     # configurator.dump()

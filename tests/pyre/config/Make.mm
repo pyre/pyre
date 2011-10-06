@@ -32,6 +32,7 @@ configuration:
 
 configurator:
 	${PYTHON} ./configurator.py
+	${PYTHON} ./configurator_access.py
 	${PYTHON} ./configurator_assignments.py
 	${PYTHON} ./configurator_load.py
 
