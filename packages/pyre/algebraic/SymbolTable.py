@@ -134,7 +134,7 @@ class SymbolTable(Named):
     # implementation details
     def _recognize(self, value):
         """
-        Attempt to convert {value} into a {pyre.calc} node
+        Attempt to convert {value} into a node
         """
         # N.B.: the logic here is tricky; modify carefully
         # is value already a node?
