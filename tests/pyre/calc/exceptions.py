@@ -16,7 +16,7 @@ def test():
 
     import pyre.calc
     from pyre.calc.exceptions import (
-        NodeError, CircularReferenceError, DuplicateNodeError, EvaluationError,
+        NodeError, CircularReferenceError, EvaluationError,
         ExpressionError, EmptyExpressionError, ExpressionSyntaxError, UnresolvedNodeError )
 
     try:
@@ -27,11 +27,6 @@ def test():
     try:
         raise CircularReferenceError(node=None, path=None)
     except CircularReferenceError as error:
-        pass
-
-    try:
-        raise DuplicateNodeError(model=None, node=None, name=None)
-    except DuplicateNodeError as error:
         pass
 
     try:

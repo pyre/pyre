@@ -12,6 +12,10 @@ class Unresolved:
     """
 
 
+    # exceptions
+    from .exceptions import UnresolvedNodeError
+
+
     # public data
     name = None # the unresolved name
 
@@ -29,10 +33,6 @@ class Unresolved:
         super().__init__(**kwds)
         self.request = request
         return
-
-
-    # exceptions
-    from .exceptions import UnresolvedNodeError
 
 
     # private data
