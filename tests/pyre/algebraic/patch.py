@@ -31,7 +31,7 @@ def test():
     n = n1 + n2
     assert tuple(id(v) for v in n.variables) == (id(n1), id(n2))
     # patch {n3} in
-    n.pyre_substitute(current=n1, replacement=n3)
+    n.pyre_substituteDependent(current=n1, replacement=n3)
     # and check that it happened correctly
     assert tuple(id(v) for v in n.variables) == (id(n3), id(n2))
 
