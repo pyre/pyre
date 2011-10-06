@@ -44,7 +44,7 @@ class HierarchicalModel(SymbolTable):
         # meta methods
         def __init__(self, name):
             self.name = name
-            self.node = HierarchicalModel.Node.unresolved(name=name)
+            self.node = HierarchicalModel.Node.unresolved(request=name)
             return
 
 

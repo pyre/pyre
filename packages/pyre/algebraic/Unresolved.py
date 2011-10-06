@@ -21,13 +21,13 @@ class Unresolved:
         """
         Compute my value
         """
-        raise self.UnresolvedNodeError(node=self, name=self.name)
+        raise self.UnresolvedNodeError(node=self, name=self.request)
 
 
     # meta methods
-    def __init__(self, name, **kwds):
+    def __init__(self, request, **kwds):
         super().__init__(**kwds)
-        self.name = name
+        self.request = request
         return
 
 

@@ -28,7 +28,7 @@ def test():
     except model.UnresolvedNodeError as error:
         unresolved, _ = model._resolve(name="production")
         assert error.node is unresolved
-        assert error.name == "production"
+        assert error.request == "production"
 
     # resolve the node
     p = 80.

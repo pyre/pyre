@@ -167,7 +167,7 @@ class SymbolTable(Named):
             # no worries
             pass
         # make an unresolved node
-        unresolved = self.node.unresolved(name=name)
+        unresolved = self.node.unresolved(request=name)
         # add it to the pile
         self._nodes[name] = unresolved
         # and return it
