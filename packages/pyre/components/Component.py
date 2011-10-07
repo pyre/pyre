@@ -114,6 +114,21 @@ class Component(Configurable, metaclass=Actor, hidden=True):
             "could not find trait {.name!r} in {.pyre_name!r}".format(trait, cls))
 
 
+    # trait observation
+    def pyre_updatedDependent(self, node):
+        """
+        Handler invoked when the value of one of my traits changes
+        """
+        raise NotImplementedError("NYI!")
+
+
+    def pyre_substituteDependent(self, current, replacement, clean=None):
+        """
+        Replace {current} with {replacement} in my inventory
+        """
+        raise NotImplementedError("NYI!")
+
+
     # meta methods
     def __init__(self, name=None, **kwds):
         # component instance registration is done by Actor.__call__, the metaclass method that

@@ -153,6 +153,21 @@ class Actor(Requirement):
         return cls.Role("Interface", tuple(interfaces), dict(), hidden=True)
 
 
+    # trait observation
+    def pyre_updatedDependent(self, node):
+        """
+        Handler invoked when the value of one of my traits changes
+        """
+        raise NotImplementedError("NYI!")
+
+
+    def pyre_substituteDependent(self, current, replacement, clean=None):
+        """
+        Replace {current} with {replacement} in my inventory
+        """
+        raise NotImplementedError("NYI!")
+
+
     # exceptions
     from .exceptions import ImplementationSpecificationError, InterfaceError
 
