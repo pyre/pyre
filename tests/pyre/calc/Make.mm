@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity evaluators structural model hierarchical
+test: sanity evaluators structural model
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -38,12 +38,5 @@ structural:
 
 model:
 	${PYTHON} ./model.py
-
-hierarchical:
-	${PYTHON} ./hierarchical.py
-	${PYTHON} ./hierarchical_patch.py
-	${PYTHON} ./hierarchical_alias.py
-	${PYTHON} ./hierarchical_group.py
-
 
 # end of file 

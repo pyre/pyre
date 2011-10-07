@@ -6,15 +6,19 @@
 #
 
 
+# supporting packages
 import weakref
 import itertools
 import collections
 import pyre.tracking
 import pyre.patterns
-from pyre.algebraic.SymbolTable import SymbolTable
 
 
-class Model(SymbolTable):
+# base class
+from ..algebraic.Hierarchical import Hierarchical
+
+
+class Model(Hierarchical):
     """
     A specialization of a hierarchical model that takes into account that the model nodes have
     priorities attached to them and cannot indiscriminately replace each other
@@ -22,17 +26,16 @@ class Model(SymbolTable):
 
 
     # constants
-    TRAIT_SEPARATOR = '.'
     from .levels import DEFAULT_CONFIGURATION, EXPLICIT_CONFIGURATION
 
 
     # types
-    from .Slot import Slot as slot
+    from .Slot import Slot as node
 
 
     # public data
     counter = None # the event priority counter
-    separator = None # the level separator in the node names
+    separator = '.' # the level separator in the node names
     # build a locator for values that come from trait defaults
     locator = pyre.tracking.newSimpleLocator(source="<defaults>")
 
@@ -68,7 +71,7 @@ class Model(SymbolTable):
         # build the slot name
         name = self.separator.join(key)
         # get the existing slot
-        existing, hashkey = self._retrieveSlot(key=key, name=name)
+        existing, hashkey = self._retrieveNode(key=key, name=name)
 
         # convert the value into a node
         node = self._recognize(value)
@@ -158,11 +161,9 @@ class Model(SymbolTable):
 
 
     # meta methods
-    def __init__(self, executive, separator=TRAIT_SEPARATOR, **kwds):
-        super().__init__(node=self.slot, **kwds)
+    def __init__(self, executive, **kwds):
+        super().__init__(**kwds)
 
-        # the level separator
-        self.separator = separator
         # the event priority counter
         self.counter = collections.defaultdict(itertools.count)
 
@@ -180,16 +181,6 @@ class Model(SymbolTable):
 
         # done
         return
-
-
-    def __getitem__(self, name):
-        """
-        Resolve {name} and return the value of the associated configuration setting
-        """
-        # retrieve the slot
-        slot, _ = self._retrieveSlot(key=name.split(self.separator), name=name)
-        # extract and return its value
-        return slot.getValue()
 
 
     def __setitem__(self, name, value):
@@ -220,17 +211,7 @@ class Model(SymbolTable):
         return node
 
 
-    def _resolve(self, name):
-        """
-        Find the named node
-        """
-        # find the slot
-        slot, identifier = self._retrieveSlot(key=name.split(self.separator), name=name)
-        # return the node and its identifier
-        return slot, identifier
-
-
-    def _retrieveSlot(self, key, name):
+    def _retrii_eveNode(self, key, name):
         """
         Retrieve the slot associated with {name}
         """
@@ -248,13 +229,26 @@ class Model(SymbolTable):
         # build the name
         name = self.separator.join(key)
         # create a new slot
-        slot = self.slot.unresolved(name=name, key=hashkey, request=name)
+        slot = self.node.unresolved(name=name, key=hashkey, request=name)
         # observe it
         slot.addObserver(self)
         # add it to the pile
         self._nodes[hashkey] = slot
         # and return the node and its identifier
         return slot, hashkey
+
+
+    def _buildPlaceholder(self, name, identifier, **kwds):
+        """
+        Build an unresolved node as a place holder for new requests
+        """
+        # make the node
+        node = self.node.unresolved(name=name, key=identifier, request=name)
+        # add me as its observer
+        node.addObserver(self)
+        # and return it
+        return node
+        
 
 
     # debugging support

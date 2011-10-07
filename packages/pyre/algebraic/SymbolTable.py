@@ -23,6 +23,8 @@ class SymbolTable(Named):
 
 
     # types
+    from .Node import Node as node
+
     # exceptions
     from .exceptions import (
         CircularReferenceError,
@@ -91,15 +93,9 @@ class SymbolTable(Named):
 
 
     # meta methods
-    def __init__(self, node=None, **kwds):
+    def __init__(self, **kwds):
         super().__init__(**kwds)
 
-        # if i didn't get a node factory
-        if node is None:
-            # use the one from this package
-            from .Node import Node as node
-        # record the node factory
-        self.node = node
         # initialize the node storage
         self._nodes = {}
         # all done
@@ -167,11 +163,20 @@ class SymbolTable(Named):
             # no worries
             pass
         # make an unresolved node
-        unresolved = self.node.unresolved(request=name)
+        unresolved = self._buildPlaceholder(name=name)
         # add it to the pile
         self._nodes[name] = unresolved
         # and return it
         return unresolved, name
+
+
+    def _buildPlaceholder(self, name, **kwds):
+        """
+        Build a place holder node, typically some type of error node that will raise an
+        exception when its value is requested
+        """
+        return self.node.unresolved(request=name)
+
 
  
     def _update(self, identifier, existing, replacement):

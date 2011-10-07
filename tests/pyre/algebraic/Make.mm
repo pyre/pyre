@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity algebra structural expressions
+test: sanity algebra structural expressions hierarchical
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -35,5 +35,11 @@ expressions:
 	${PYTHON} ./expression_circular.py
 	${PYTHON} ./expression_syntaxerror.py
 	${PYTHON} ./expression_typeerror.py
+
+hierarchical:
+	${PYTHON} ./hierarchical.py
+	${PYTHON} ./hierarchical_patch.py
+	${PYTHON} ./hierarchical_alias.py
+	${PYTHON} ./hierarchical_group.py
 
 # end of file 

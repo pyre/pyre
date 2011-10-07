@@ -8,22 +8,29 @@
 
 
 """
-Sanity check: instantiate a hierarchical model
+Verify that node updates propagate properly
 """
 
 
 def test():
-    import pyre.calc
+    import pyre.algebraic
 
     # create a model
-    model = pyre.calc.hierarchicalModel(name="sample")
+    model = pyre.algebraic.hierarchicalModel(name="sample")
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
     model["user.email"] = "aivazis@caltech.edu"
     model["user.signature"] = "{user.name}+' -- '+{user.email}"
+
     # check the signature
     assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
+
+    # modify one of the nodes
+    model["user.email"] = "michael.aivazis@orthologue.com"
+
+    # check the new signature
+    assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
     return
 

@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     Cast.py \
     Composite.py \
     Expression.py \
+    Hierarchical.py \
     Leaf.py \
     Literal.py \
     Memo.py \

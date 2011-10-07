@@ -63,6 +63,8 @@ def expression(*, formula, model):
 
 # access to the model factory
 from .SymbolTable import SymbolTable as model
+from .Hierarchical import Hierarchical as hierarchicalModel
+
 
 # clean up
 del Node

@@ -8,15 +8,15 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Exercise the aliasing feature of hierarchical models
 """
 
 
 def test():
-    import pyre.calc
+    import pyre.algebraic
 
     # create a model
-    model = pyre.calc.hierarchicalModel(name="sample")
+    model = pyre.algebraic.hierarchicalModel(name="sample")
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"

@@ -163,7 +163,7 @@ def boot():
     # patch Configurable
     from .components.Configurable import Configurable
     Configurable.pyre_executive = weakref.proxy(p)
-    Configurable.pyre_SEPARATOR = p.configurator.TRAIT_SEPARATOR
+    Configurable.pyre_SEPARATOR = p.configurator.separator
 
     # and return the executive
     return p

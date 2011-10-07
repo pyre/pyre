@@ -13,10 +13,10 @@ Sanity check: verify that the package is accessible
 
 
 def test():
-    import pyre.calc
+    import pyre.algebraic
 
     # create a model
-    model = pyre.calc.hierarchicalModel(name="sample")
+    model = pyre.algebraic.hierarchicalModel(name="sample")
 
     # register the nodes
     model["pyre.user.name"] = "Michael Aïvázis"
@@ -37,20 +37,16 @@ def test():
     # get all the subnodes of "user"
     target = ["pyre", "user"]
     assert len(names) == len(tuple(model.children(key=target)))
-    for key, slot in model.children(key=target):
-        # check that we got the canonical name
-        assert slot.name in names
-        # and the correct node
-        assert model._resolve(name=slot.name) == (slot.node, key)
+    for key, node in model.children(key=target):
+        # check that we got the correct node
+        assert model._nodes[key] is node
 
     # repeat with the alias "χρήστης"
     target = ["χρήστης"]
     assert len(names) == len(tuple(model.children(key=target)))
-    for key, slot in model.children(key=target):
-        # check that we got the canonical name
-        assert slot.name in names
-        # and the correct node
-        assert model._resolve(name=slot.name) == (slot.node, key)
+    for key, node in model.children(key=target):
+        # check that we got the correct node
+        assert model._nodes[key] is node
 
     return
 
