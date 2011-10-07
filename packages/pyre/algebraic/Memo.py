@@ -17,6 +17,10 @@ class Memo:
     """
 
 
+    # public data
+    dirty = True
+
+
     # interface
     def getValue(self):
         """
@@ -24,9 +28,11 @@ class Memo:
         to date; otherwise, recompute the value and update the cache
         """
         # if my cache is invalid
-        if self._value is None:
+        if self.dirty:
             # recompute
             self._value = super().getValue()
+            # mark
+            self._dirty = False
         # return the cache contents
         return self._value
 
@@ -49,10 +55,10 @@ class Memo:
         Invalidate my cache and notify my observers
         """
         # do nothing if my cache is already invalid
-        if self._value is None: return
-        # invalidate the cache
-        self._value = None
-        # notify my observers
+        if self.dirty: return
+        # otherwise, invalidate the cache
+        self.dirty = True
+        # and notify my observers
         return self.notifyObservers()
         
 
