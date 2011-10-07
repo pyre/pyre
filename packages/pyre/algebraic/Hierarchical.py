@@ -175,8 +175,10 @@ class Hierarchical(SymbolTable):
         name = self.separator.join(key)
         # create a new node
         node = self._buildPlaceholder(name=name, identifier=hashkey)
-        # add it to the pile
-        self._nodes[hashkey] = node
+        # if the request happened with  a valid key
+        if key:
+            # register the new node
+            self._nodes[hashkey] = node
         # and return the node and its identifier
         return node, hashkey
 
