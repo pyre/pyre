@@ -33,7 +33,7 @@ class Cast:
         # if I have a registered processor
         if self.processor is not None:
             # process it
-            value = self.processor(value)
+            value = self.processor(node=self, value=value)
         # and return it
         return value
 
@@ -46,7 +46,7 @@ class Cast:
         # if I have a registered processor
         if self.processor is not None:
             # process the value
-            value = self.processor(value)
+            value = self.processor(node=self, value=value)
         # and store it
         return super().setValue(value=value, **kwds)
 

@@ -27,6 +27,7 @@ class Property(Trait):
     default = None # my default value
     optional = False # am i allowed to be uninitialized?
     converters = () # the chain of functions that are required to produce my native type
+    normalizers = () # the chain of functions that convert my values to canonical form
     validators = () # the chain of functions that validate my values
 
 
@@ -61,6 +62,16 @@ class Property(Trait):
             else:
                 # make a tuple out of the lone converter
                 self.converters = (self.converters, )
+        # and the normalizers
+        if self.normalizers is not tuple():
+            # if the user placed them in a container
+            if isinstance(self.normalizers, collections.Iterable):
+                # convert it into a tuple
+                self.normalizers = tuple(self.normalizers)
+            # otherwise
+            else:
+                # make a tuple out of the lone normalizer
+                self.normalizers = (self.normalizers, )
         # and return
         return self
 
@@ -86,7 +97,7 @@ class Property(Trait):
         for base in component.pyre_pedigree:
             # if it's here, get the slot and bail out
             try:
-                node = base.pyre_inventory[self]
+                slot = base.pyre_inventory[self]
                 break
             # if not, get the next
             except KeyError:
@@ -114,9 +125,11 @@ class Property(Trait):
 
         # build the key
         key = family + [self.name] if family else tuple()
-        # get the slot that holds these default values
-        slot = configurator.default(key, value)
-        # attach the slot to the inventory
+        # transfer the default value to the configuration store
+        slot = configurator.default(key=key, value=value)
+        # add the component as an observer
+        slot.addObserver(component)
+        # attach the slot to the component inventory
         component.pyre_inventory[self] = slot
 
         # and return
@@ -128,10 +141,13 @@ class Property(Trait):
         """
         Bind this trait to the {configurable} class record
         """
-        raise NotImplementedError("NYI!")
         # get my slot from the {configurable}
         slot = configurable.pyre_inventory[self]
-        # get it to compute its value
+        # attach my value processor
+        slot.processor = self.pyre_cast
+        # mark the slot as dirty
+        slot.dirty = True
+        # to force it to recompute its value
         return slot.getValue()
 
         
@@ -173,6 +189,23 @@ class Property(Trait):
         evaluator = instance.pyre_executive.configurator.recognize(value)
         # set the value of the slot and return it
         return slot.setValue(value=evaluator, locator=locator)
+
+
+    # value transformations
+    def pyre_cast(self, node, value):
+        """
+        Walk {value} through the casting procedure
+        """
+        # {None} is special; leave it alone
+        if value is None: return None
+        # otherwise, convert
+        for converter in self.converters: value = converter(value)
+        # cast
+        value = self.type.pyre_cast(value)
+        # normalize
+        for normalizer in self.normalizers: value = normalizer(value)
+        # and return the new value
+        return value
 
 
     # the descriptor interface

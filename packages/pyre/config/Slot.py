@@ -98,9 +98,10 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
     # value meta data
     key = None # the hash key used by the configurator to retrieve this slot
     name = None # the name under which I am registered
-    processor = None # the value processor used by {Cast} to normalize my value
+    processor = None # the processor used by {Cast} to normalize my value
     locator = None # the provenance of my value
     priority = (DEFAULT_CONFIGURATION, -1)
+
 
     # interface
     def setValue(self, value):
@@ -127,6 +128,7 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
         value.subsume(self)
         # and return
         return self
+
 
     def __init__(self, name=None, key=None, processor=None, locator=None, **kwds):
         super().__init__(**kwds)

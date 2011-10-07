@@ -41,21 +41,22 @@ class Model(Hierarchical):
 
 
     # interface for my configurator
-    def default(self, value):
+    def default(self, key, value):
         """
         Build a new slot with {value}
 
         This is called during the component trait initialization to establish the default value
         of a trait.
         """
-        # build a slot out of {value}
-        slot = self._recognize(value)
-        # adjust the priority
-        slot.priority = self.collate(category=self.DEFAULT_CONFIGURATION)
-        # and the locator
-        slot.locator = self.locator # use the one that says "<defaults>"
-        # hand the new node back to the component without registering it here
-        return slot
+        # node resolution and value assignment have shuffle the node registry, so treat this
+        # request as an assignment
+        hashkey = self.assign(
+            key=key, value=value,
+            priority=self.collate(category=self.DEFAULT_CONFIGURATION),
+            locator=self.locator)
+            
+        # and retrieve the actual slot that was registered
+        return self._nodes[hashkey]
 
 
     # configuration event processing
@@ -77,6 +78,7 @@ class Model(Hierarchical):
         node = self._recognize(value)
         # adjust the meta data
         node.key = hashkey
+        node.name = name
         node.locator = locator
         node.priority = priority
 
@@ -84,7 +86,7 @@ class Model(Hierarchical):
         existing.setValue(value=node)
 
         # all done
-        return 
+        return hashkey
 
 
     def defer(self, assignment, priority):
@@ -209,33 +211,6 @@ class Model(Hierarchical):
         node.addObserver(self)
         # and return it
         return node
-
-
-    def _retrii_eveNode(self, key, name):
-        """
-        Retrieve the slot associated with {name}
-        """
-        # hash it
-        hashkey = self._hash.hash(key)
-        # attempt
-        try:
-            # to retrieve and return the slot
-            return self._nodes[hashkey], hashkey
-        # if not there
-        except KeyError:
-            # no worries
-            pass
-
-        # build the name
-        name = self.separator.join(key)
-        # create a new slot
-        slot = self.node.unresolved(name=name, key=hashkey, request=name)
-        # observe it
-        slot.addObserver(self)
-        # add it to the pile
-        self._nodes[hashkey] = slot
-        # and return the node and its identifier
-        return slot, hashkey
 
 
     def _buildPlaceholder(self, name, identifier, **kwds):
