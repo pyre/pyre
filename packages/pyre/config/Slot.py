@@ -113,7 +113,7 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
         will have {value} take my place in the configuration store.
         """
         # ignore the assignment if its {priority} is less than mine
-        if value.priority < self.priority: return
+        if value.priority < self.priority: return self
         # if we are both variables
         if isinstance(self, self.variable) and isinstance(value, self.variable):
             # transfer the value
@@ -127,7 +127,7 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
         # otherwise, let {value} subsume me
         value.subsume(self)
         # and return
-        return self
+        return value
 
 
     def __init__(self, name=None, key=None, processor=None, locator=None, **kwds):
@@ -178,48 +178,6 @@ Slot.operator = operator
 Slot.expression = expression
 Slot.reference = reference
 Slot.unresolved = unresolved
-
-
-if 0:
-    def bind(self, processor):
-        """
-        Register {processor} as the entity responsible for performing my value coercions
-        """
-        print("Slot.bind: node:", self.node)
-        # attach the processor
-        self.processor = processor
-        # update my cache with the result of walking my current value through coercion
-        self.node.value = self.coerce(self.node.value)
-        # and return
-        return self
-
-
-    def coerce(self, value):
-        """
-        Walk {value} through conversion, coercion, normalization, and validation
-        """
-        # access the value processor
-        processor = self.processor
-        # bail out if {value} is {None} or i don't have a processor
-        if value is None or processor is None: return value
-            
-        # otherwise, convert
-        for convert in processor.converters: value = converter(value)
-        # coerce
-        value = processor.type.pyre_cast(value)
-        # normalize
-        # MGA: NYI
-        # validate
-        for validator in processor.validators: value = validator(value)
-        # and return the new value
-        return value
-
-
-    def __init__(self, name="<unknown>", key=None,  **kwds):
-        super().__init__(**kwds)
-        self.key = key
-        self.name = name
-        return
 
 
 # end of file 
