@@ -175,7 +175,7 @@ class Hierarchical(SymbolTable):
         name = self.separator.join(key)
         # create a new node
         node = self._buildPlaceholder(name=name, identifier=hashkey)
-        # if the request happened with  a valid key
+        # if the request happened with a valid key
         if key:
             # register the new node
             self._nodes[hashkey] = node
