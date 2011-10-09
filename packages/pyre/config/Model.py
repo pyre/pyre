@@ -48,15 +48,11 @@ class Model(Hierarchical):
         This is called during the component trait initialization to establish the default value
         of a trait.
         """
-        # node resolution and value assignment have shuffle the node registry, so treat this
-        # request as an assignment
-        hashkey = self.assign(
+        # build special {priority} and {locator}, and delegate to {assign}
+        return self.assign(
             key=key, value=value,
             priority=self.collate(category=self.DEFAULT_CONFIGURATION),
             locator=self.locator)
-            
-        # and retrieve the actual slot that was registered
-        return self._nodes[hashkey]
 
 
     # configuration event processing
@@ -81,12 +77,15 @@ class Model(Hierarchical):
         node.name = name
         node.locator = locator
         node.priority = priority
+        # if this is one of the nodes I care about
+        if key:
+            # add me as an observer
+            node.addObserver(self)
 
         # adjust the value
-        existing.setValue(value=node)
-
+        node = existing.setValue(value=node)
         # all done
-        return hashkey
+        return node
 
 
     def defer(self, assignment, priority):
@@ -156,8 +155,12 @@ class Model(Hierarchical):
         chash = current.key
         rhash = replacement.key
         assert chash == rhash
-        # replace the existing slot with the new one
-        self._nodes[chash] = replacement
+        
+        # if the current node was registered
+        if chash in self._nodes:
+            # replace the existing slot with the new one
+            self._nodes[chash] = replacement
+
         # and return
         return
 
@@ -201,18 +204,6 @@ class Model(Hierarchical):
 
 
     # implementation details
-    def _recognize(self, value):
-        """
-        Attempt to convert {value} into a slot
-        """
-        # build a node out of {value}
-        node = super()._recognize(value)
-        # add me as an observer
-        node.addObserver(self)
-        # and return it
-        return node
-
-
     def _buildPlaceholder(self, name, identifier, **kwds):
         """
         Build an unresolved node as a place holder for new requests
@@ -225,7 +216,6 @@ class Model(Hierarchical):
         return node
         
 
-
     # debugging support
     def dump(self, pattern=''):
         """
@@ -235,7 +225,7 @@ class Model(Hierarchical):
         print("  nodes:")
         for name, slot in self.select(pattern):
             try: 
-                value = slot.node.value
+                value = slot.value
             except self.UnresolvedNodeError:
                 value = "unresolved"
             print("    {!r} <- {!r}".format(name, value))
@@ -245,6 +235,7 @@ class Model(Hierarchical):
             print("  configurables:")
             for name in self.configurables:
                 print("    {!r}".format(name))
+
         return
 
 
