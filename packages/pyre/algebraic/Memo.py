@@ -143,7 +143,7 @@ class Memo:
         at position {index}
         """
         # flush my cache
-        self.pyre_updatedDependent()
+        self.pyre_updatedDependent(node=self)
         # make a weak reference to myself
         selfref = weakref.ref(self)
         # remove me as an observer of the old node
