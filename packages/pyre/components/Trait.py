@@ -33,7 +33,7 @@ class Trait(Named):
 
     # framework data
     # predicate that indicates whether this trait is subject to runtime configuration
-    pyre_isConfigurable = True
+    isConfigurable = False
 
 
     # wire doc to __doc__ so the bultin help can decorate the attributes properly
@@ -62,20 +62,6 @@ class Trait(Named):
         # update my aliases to include my canonical name
         self.aliases.add(self.name)
         # all done
-        return self
-
-
-    def pyre_embedLocalTrait(self, component):
-        """
-        Build an association between this {configurable} and this locally declared trait
-        """
-        return self
-
-
-    def pyre_embedInheritedTrait(self, component):
-        """
-        Build an association between this {configurable} and this inherited trait
-        """
         return self
 
 

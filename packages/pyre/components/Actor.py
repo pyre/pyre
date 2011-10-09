@@ -70,13 +70,68 @@ class Actor(Requirement):
 
         # record whether I am hidden
         self.pyre_hidden = hidden
+        # and if so, bail out
+        if hidden: return
 
-        # ask each local trait to embed itself
+        # access the configuration store
+        configurator = self.pyre_executive.configurator
+        # cache my family name
+        family = self.pyre_family
+
+        # print("{}: setting up inventory".format(self))
+        # build inventory items for all the local traits
+        # print("  local traits:")
         for trait in self.pyre_localTraits:
-            trait.pyre_embedLocalTrait(component=self)
-        # repeat with the inherited traits
+            # print("    {.name}".format(trait))
+            # check whether to keep this trait in inventory
+            if not trait.isConfigurable: continue
+            # otherwise, build the configurator access key
+            key = family + [trait.name] if family else tuple()
+            # print("      key={!r}".format(key))
+            # transfer the default value of this trait to the configuration store
+            slot = configurator.default(key=key, value=trait.default)
+            # add me as an observer
+            slot.addObserver(self)
+            # and save the slot in my inventory
+            self.pyre_inventory[trait] = slot
+            
+        # repeat with the inherited traits; the trick here is to locate which ancestor to build
+        # a reference to
+        # print("  inherited traits:")
         for trait in self.pyre_inheritedTraits:
-            trait.pyre_embedInheritedTrait(component=self)
+            # print("    {.name}".format(trait))
+            # check whether to keep this trait in inventory
+            if not trait.isConfigurable: continue
+            # otherwise, build the configurator access key
+            key = family + [trait.name] if family else tuple()
+            # search for the closest ancestor that has a slot for this trait
+            for ancestor in self.pyre_pedigree:
+                # if it's here
+                try:
+                    # get the slot and exit the search
+                    anchor = ancestor.pyre_inventory[trait]
+                    break
+                # if it's not here
+                except KeyError:
+                    # no worries, get the next ancestor
+                    continue
+            # if it's not there at all
+            else:
+                # IMPOSSIBLE
+                import journal
+                firewall = journal.firewall("pyre.components")
+                raise firewall.log(
+                    "could not locate ancestor for '{.pyre_name}.{name}'".format(self, trait))
+
+            # we found the slot; build a reference to it
+            ref = anchor.ref()
+            # notify the configuration store; we may get a different slot back, depending on
+            # whether the configuration store has any relevant information on this trait
+            slot = configurator.default(key=key, value=ref)
+            # add me as an observer
+            slot.addObserver(self)
+            # and save the slot in my inventory
+            self.pyre_inventory[trait] = slot
 
         # if this component class is not hidden
         if not hidden:

@@ -30,6 +30,8 @@ class Property(Trait):
     normalizers = () # the chain of functions that convert my values to canonical form
     validators = () # the chain of functions that validate my values
 
+    # framework data
+    isConfigurable = True # properties and subclasses are accessible through {configurator}
 
     # interface
     def pyre_initialize(self):
@@ -74,67 +76,6 @@ class Property(Trait):
                 self.normalizers = (self.normalizers, )
         # and return
         return self
-
-
-    def pyre_embedLocalTrait(self, component):
-        """
-        Initialize the inventory of {component}
-        """
-        # who else?
-        super().pyre_embedLocalTrait(component=component)
-        # initialize the inventory of {component} with my default value
-        return self.pyre_embedTrait(component=component, value=self.default)
-
-
-    def pyre_embedInheritedTrait(self, component):
-        """
-        Initialize the {component} inventory by establishing a reference to the nearest
-        ancestor that has slot for me
-        """
-        # who else?
-        super().pyre_embedInheritedTrait(component=component)
-        # loop over my pedigree looking for an ancestor that has a slot for me
-        for base in component.pyre_pedigree:
-            # if it's here, get the slot and bail out
-            try:
-                slot = base.pyre_inventory[self]
-                break
-            # if not, get the next
-            except KeyError:
-                continue
-        # impossible: couldn't find the slot; what went wrong?
-        else:
-            import journal
-            firewall = journal.firewall("pyre.components")
-            raise firewall.log("UNREACHABLE")
-            
-        # build a reference to the ancestral slot
-        reference = slot.ref()
-        # and embed it
-        return self.pyre_embedTrait(component=component, value=reference)
-
-
-    def pyre_embedTrait(self, component, value):
-        """
-        Place value in the inventory of {component}
-        """
-        # get the configurator
-        configurator = component.pyre_executive.configurator
-        # and the family of the component
-        family = component.pyre_family
-
-        # build the key
-        key = family + [self.name] if family else tuple()
-        # transfer the default value to the configuration store
-        slot = configurator.default(key=key, value=value)
-        # add the component as an observer
-        slot.addObserver(component)
-        # attach the slot to the component inventory
-        component.pyre_inventory[self] = slot
-
-        # and return
-        return self
-
 
 
     def pyre_bindClass(self, configurable):
