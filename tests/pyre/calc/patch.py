@@ -41,7 +41,7 @@ def test():
     # print("     poser: node@{:#x}".format(id(poser)))
 
     # patch cost with the new production node
-    cost.pyre_substituteDependent(current=production, replacement=poser)
+    cost.substitute(current=production, replacement=poser)
     # check
     assert cost.value == poser.value + shipping.value
     assert margin.value == .25*cost.value

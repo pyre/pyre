@@ -31,7 +31,7 @@ def test():
     n = n1 + n2
     assert tuple(id(v) for v in n.variables) == (id(n1), id(n2))
     # patch {n3} in
-    n.pyre_substituteDependent(current=n1, replacement=n3)
+    n.substitute(current=n1, replacement=n3)
     # and check that it happened correctly
     assert tuple(id(v) for v in n.variables) == (id(n3), id(n2))
 
@@ -39,7 +39,7 @@ def test():
     m = n1 + n2 + n3
     assert tuple(id(v) for v in m.variables) == (id(n1), id(n2), id(n3))
     # patch {n} in
-    m.pyre_substituteDependent(current=n3, replacement=n)
+    m.substitute(current=n3, replacement=n)
     # check
     assert tuple(id(v) for v in m.variables) == (id(n1), id(n2), id(n3), id(n2))
 
@@ -47,13 +47,13 @@ def test():
     n = (2*(n1**2 - 2*n1*n2 + n2**2)*n3)
     assert set(id(v) for v in n.variables) == {id(n1), id(n2), id(n3)}
     # patch {n3} in
-    n.pyre_substituteDependent(current=n1, replacement=n3)
+    n.substitute(current=n1, replacement=n3)
     # and check that it happened correctly
     assert set(id(v) for v in n.variables) == {id(n2), id(n3)}
 
     # let's try to make a cycle
     try:
-        n.pyre_substituteDependent(current=n2, replacement=n)
+        n.substitute(current=n2, replacement=n)
         assert False
     except n.CircularReferenceError:
         pass

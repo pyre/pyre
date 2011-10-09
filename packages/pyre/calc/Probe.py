@@ -12,7 +12,7 @@ class Probe:
     """
 
 
-    def pyre_updatedDependent(self, node):
+    def flush(self, node):
         """
         The callback that gets invoked when one of the monitored nodes receives a new value
         """

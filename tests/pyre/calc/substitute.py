@@ -39,7 +39,7 @@ def test():
     assert len(s.observers) == 0
     
     # make a substitution
-    s.pyre_substituteDependent(current=n1, replacement=n3)
+    s.substitute(current=n1, replacement=n3)
     # we expect:
     # n1 to have no observers
     assert len(n1.observers) == 0
@@ -57,7 +57,7 @@ def test():
 
     # attempt to create a cycle
     try:
-        s.pyre_substituteDependent(current=n3, replacement=s)
+        s.substitute(current=n3, replacement=s)
         assert False
     except s.CircularReferenceError:
         pass

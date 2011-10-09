@@ -50,7 +50,7 @@ class Memo:
 
 
     # cache management
-    def pyre_updatedDependent(self, node=None):
+    def flush(self, node=None):
         """
         Invalidate my cache and notify my observers
         """
@@ -75,7 +75,7 @@ class Memo:
             # if it is still alive
             if observer is not None:
                 # flush it
-                observer.pyre_updatedDependent(node=self)
+                observer.flush(node=self)
             # otherwise
             else:
                 # put its reference on the discard pile
@@ -98,7 +98,7 @@ class Memo:
             # skip dead nodes
             if observer is None: continue
             # ask the observer to replace {obsolete} with me
-            observer.pyre_substituteDependent(current=obsolete, replacement=self)
+            observer.substitute(current=obsolete, replacement=self)
         # all done
         return
         
@@ -143,7 +143,7 @@ class Memo:
         at position {index}
         """
         # flush my cache
-        self.pyre_updatedDependent(node=self)
+        self.flush(node=self)
         # make a weak reference to myself
         selfref = weakref.ref(self)
         # remove me as an observer of the old node
