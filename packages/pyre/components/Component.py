@@ -140,23 +140,33 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         self.pyre_name = name if name is not None else "<component @ {:#x}>".format(id(self))
         # access the inventory that belongs to my class record
         classInventory = type(self).pyre_inventory
+        # the executive
+        executive = self.pyre_executive
+        # and its configurator
+        configurator = executive.configurator
 
         # create my inventory
         sep = self.pyre_SEPARATOR
         inventory = {}
 
-        for trait, slot in classInventory.items():
+        # iterate over the items in my class inventory
+        for trait, default in classInventory.items():
             # build the name of the trait
-            tag = sep.join([self.pyre_name, trait.name])
-            # make a slot
-            slot = trait.pyre_instanceSlot(name=tag, evaluator=slot.newReference())
-            # add it to my inventory
+            key = sep.join((name, trait.name)) if name else tuple()
+            # ask the configurator to register the default value
+            slot = configurator.default(key=key, value=default.ref())
+            # record the trait
+            slot.trait = trait
+            # register me as an observer
+            slot.componentInstance = self
+            # and add it to my inventory
             inventory[trait] = slot
-        # and attach it
+
+        # attach my inventory
         self.pyre_inventory = inventory
 
-        # now, register with the executive
-        self.pyre_executive.registerComponentInstance(self)
+        # register with the executive
+        executive.registerComponentInstance(self)
 
         # all done for now
         return

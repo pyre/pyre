@@ -96,10 +96,13 @@ class Property(Trait):
         """
         Bind this trait to the {configurable} instance
         """
-        raise NotImplementedError("NYI!")
         # get my slot from the {configurable}
         slot = configurable.pyre_inventory[self]
-        # get it to compute its value
+        # attach my value processor
+        slot.processor = self.pyre_cast
+        # mark the slot as dirty
+        slot.dirty = True
+        # to force it to recompute its value
         return slot.getValue()
 
 
