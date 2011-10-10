@@ -64,19 +64,19 @@ class Application(pyre.component, metaclass=Director, hidden=True):
     # initialization hooks
     def pyre_mountVirtualFilesystem(self):
         """
-        Gather all standard directories that are relevant for this application family into its
-        own private namespace and register it with the executive file server
+        Gather all standard directories that are relevant for this application into its own
+        private namespace and register it with the executive file server
         """
         # build the top level folder for my stuff
         private = self.executive.fileserver.newFolder()
-        # flatten my family
-        family = self.pyre_SEPARATOR.join(self.pyre_family)
+        # use my name as the top level folder
+        top = self.pyre_name
         # mount it at the right place
-        self.vfs[family] = private
+        self.vfs[top] = private
         # mount the system folder
-        self.pyre_mountFolder(parent=private, folder="system", tag=family)
+        self.pyre_mountFolder(parent=private, folder="system", tag=top)
         # mount the user folder
-        self.pyre_mountFolder(parent=private, folder="user", tag=family)
+        self.pyre_mountFolder(parent=private, folder="user", tag=top)
         # and return the private folder
         return private
 
@@ -144,7 +144,7 @@ class Application(pyre.component, metaclass=Director, hidden=True):
 
     # meta methods
     def __init__(self, name, **kwds):
-        super().__init__(**kwds)
+        super().__init__(name=name, **kwds)
 
         # register the application class as the resolver of its namespace
         self.executive.registerNamespaceResolver(resolver=self, namespace=name)

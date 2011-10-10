@@ -17,11 +17,11 @@ def test():
     import pyre.shells
 
     # declare a trivial application
-    class application(pyre.shells.application, family="sample"):
+    class application(pyre.shells.application):
         """A trivial pyre application"""
 
     # instantiate
-    app = application(name="app")
+    app = application(name="sample")
 
     # verify that the filesystem attribute was set
     assert(app.pyre_filesystem)
