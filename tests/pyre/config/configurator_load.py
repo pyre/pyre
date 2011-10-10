@@ -36,6 +36,7 @@ def test():
     
     # load a configuration file
     pyre.loadConfiguration("sample.pml")
+    # c.dump()
 
     # try again
     assert c["sample.user.name"] == "michael a.g. aïvázis"
