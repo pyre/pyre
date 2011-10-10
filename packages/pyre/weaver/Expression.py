@@ -86,9 +86,9 @@ class Expression:
         """
         # grab the types that handles literal values and operations
         # pardon the weirdness: {literal} and {operation} are property descriptors in {nodeType}
-        literal = nodeType.literal.fget(None)
-        variable = nodeType.variable.fget(None)
-        operation = nodeType.operator.fget(None)
+        literal = nodeType.literal
+        variable = nodeType.variable
+        operation = nodeType.operator
         # build the symbol table
         handlers = {
             # nodes
