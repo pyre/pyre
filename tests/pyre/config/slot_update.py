@@ -38,7 +38,7 @@ def test():
     assert three.value == 3
 
     # now, replace {var} by {three} in {double}
-    double.pyre_substituteDependent(current=var, replacement=three)
+    double.substitute(current=var, replacement=three)
 
     # check all expected invariants
     # operands
