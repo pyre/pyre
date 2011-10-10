@@ -88,7 +88,7 @@ class Model(Hierarchical):
         # hash the component name
         ckey = self._hash.hash(assignment.component)
         # get the deferred event store and add the assignment to the pile
-        self.deferred[ckey].append(assignment)
+        self.deferred[ckey].append((assignment, priority))
         # all done
         return self
 

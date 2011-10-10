@@ -168,17 +168,17 @@ class Configurator(Model):
             return errors
 
         # otherwise, loop over the assignments
-        for assignment in self.deferred[ckey]:
+        for assignment, priority in self.deferred[ckey]:
             # build the trait name
             alias = self.separator.join(assignment.key)
-            # print("    found {!r} <- {.value!r}".format(alias, assignment))
-
+            # print("    found: {!r} <- {.value!r}".format(alias, assignment))
+            # print("      from", assignment.locator)
+            # print("      with priority", priority)
             # make sure all the conditions apply
             match = False
             # print("    conditions:")
             for name, family in assignment.conditions:
                 # print("      name={}, family={}".format(name, family))
-
                 # if the name matches the given {namespace},
                 if name == namespace:
                     # print("      namespace match")
@@ -220,9 +220,14 @@ class Configurator(Model):
                 errors.append(error)
                 continue
 
+            # find the slot
+            slot = configurable.pyre_inventory[descriptor]
+
             # assign the trait value
             # print("    before: {!r} <- {!r}".format(alias, getattr(configurable, alias)))
-            setattr(configurable, alias, assignment.value)
+            self._assign(
+                existing=slot, value=assignment.value,
+                priority=priority, locator=assignment.locator) 
             # print("    before: {!r} <- {!r}".format(alias, getattr(configurable, alias)))
 
         # print("  done with {.pyre_name!r}".format(configurable))
