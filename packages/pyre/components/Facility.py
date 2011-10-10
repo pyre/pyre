@@ -58,6 +58,8 @@ class Facility(Property):
         """
         Convert {value} into a component instance
         """
+        # {None} is special
+        if value is None: return None
         # if {value} is not an actual instance
         if not isinstance(value, self.Component):
             # let my interface have a pass
