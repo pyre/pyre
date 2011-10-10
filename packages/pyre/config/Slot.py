@@ -140,6 +140,18 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
         return
 
 
+    # debugging support
+    def dump(self):
+        print("slot:", self)
+        print("  name: {.name}".format(self))
+        print("  key: {.key}".format(self))
+        print("  trait: {.trait}".format(self))
+        print("  configurator: {.configurator}".format(self))
+        print("  component class: {.componentClass}".format(self))
+        print("  component instance: {.componentInstance}".format(self))
+        print("  observers: {.observers}".format(self))
+
+
 # slot subclasses that close its algebra
 # variables
 class variable(Slot, Variable, Slot.leaf):
