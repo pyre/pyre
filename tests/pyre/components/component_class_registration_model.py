@@ -59,16 +59,10 @@ def test():
     # and a reference to the alias
     model['ref'] = '{p1}'
     # check that they point to the same slot
-    assert model.resolve(name='p1') == model.resolve(name='test.p1')
+    assert model._resolve(name='p1') == model._resolve(name='test.p1')
     # save the nodes
-    ref = model.resolve(name='ref')
-    step_0 = model.resolve(name='test.p1')
-    # print("original node:", step_0)
-    # print("    _value: {._value!r}".format(step_0))
-    # print("    _evaluator: {._evaluator!r}".format(step_0))
-    # print("    _priority: {._priority!r}".format(step_0))
-    # model.dump()
-    # print(" -- done")
+    ref = model._resolve(name='ref')
+    step_0 = model._resolve(name='test.p1')
 
     # now declare the component and its interface
     # print(" -- declaring components")
@@ -79,20 +73,14 @@ def test():
     # grab the component parts
     inventory = component.pyre_inventory
     p1slot = inventory[component.pyre_getTraitDescriptor(alias='p1')]
-    # print("slot: component.p1:", p1slot)
-    # print("    _value: {._value!r}".format(p1slot))
-    # print("    _evaluator: {._evaluator!r}".format(p1slot))
-    # print("    _priority: {._priority!r}".format(p1slot))
     p2slot = inventory[component.pyre_getTraitDescriptor(alias='p2')]
-    # print("slot: component.p2:", p2slot)
-    # print("    _value: {._value!r}".format(p2slot))
-    # print("    _evaluator: {._evaluator!r}".format(p2slot))
-    # print("    _priority: {._priority!r}".format(p2slot))
 
     # check that the model is as we expect
     # model.dump()
-    assert model.resolve(name='test.p1') == p1slot
-    assert model.resolve(name='test.p2') == p2slot
+    p1node,_ = model._resolve(name='test.p1')
+    assert p1node == p1slot
+    p2node,_ = model._resolve(name='test.p2')
+    assert p2node == p2slot
     # how about the alias and the reference?
     assert model['ref'] == component.p1
     assert model['p1'] == component.p1

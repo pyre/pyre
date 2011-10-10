@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity metaclasses interfaces components clean
+test: sanity metaclasses components interfaces clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -60,6 +60,7 @@ component-class:
 	${PYTHON} ./component_class_binding_implicit.py
 	${PYTHON} ./component_class_validation.py
 	${PYTHON} ./component_class_trait_matrix.py
+	${PYTHON} ./component_class_inventory.py
 
 component-instance:
 	${PYTHON} ./component_defaults.py

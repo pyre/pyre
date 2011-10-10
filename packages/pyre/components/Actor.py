@@ -90,8 +90,10 @@ class Actor(Requirement):
             # print("      key={!r}".format(key))
             # transfer the default value of this trait to the configuration store
             slot = configurator.default(key=key, value=trait.default)
+            # record the trait
+            slot.trait = trait
             # add me as an observer
-            slot.addObserver(self)
+            slot.componentClass = self
             # and save the slot in my inventory
             self.pyre_inventory[trait] = slot
             
@@ -128,8 +130,10 @@ class Actor(Requirement):
             # notify the configuration store; we may get a different slot back, depending on
             # whether the configuration store has any relevant information on this trait
             slot = configurator.default(key=key, value=ref)
+            # record the trait
+            slot.trait = trait
             # add me as an observer
-            slot.addObserver(self)
+            slot.componentClass = self
             # and save the slot in my inventory
             self.pyre_inventory[trait] = slot
 
@@ -209,18 +213,22 @@ class Actor(Requirement):
 
 
     # trait observation
-    def pyre_updatedDependent(self, node):
+    def pyre_updatedClassProperty(self, slot):
         """
         Handler invoked when the value of one of my traits changes
         """
-        raise NotImplementedError("NYI!")
+        # ignore it, for now
+        return
 
 
-    def pyre_substituteDependent(self, current, replacement, clean=None):
+    def pyre_replaceClassSlot(self, current, replacement, clean=None):
         """
         Replace {current} with {replacement} in my inventory
         """
-        raise NotImplementedError("NYI!")
+        # adjust my inventory
+        self.pyre_inventory[current.trait] = replacement
+        # and return
+        return
 
 
     # exceptions

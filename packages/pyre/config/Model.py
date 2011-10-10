@@ -69,23 +69,8 @@ class Model(Hierarchical):
         name = self.separator.join(key)
         # get the existing slot
         existing, hashkey = self._retrieveNode(key=key, name=name)
-
-        # convert the value into a node
-        node = self._recognize(value)
-        # adjust the meta data
-        node.key = hashkey
-        node.name = name
-        node.locator = locator
-        node.priority = priority
-        # if this is one of the nodes I care about
-        if key:
-            # add me as an observer
-            node.addObserver(self)
-
-        # adjust the value
-        node = existing.setValue(value=node)
-        # all done
-        return node
+        # perform the assignment
+        return self._assign(existing, value, priority, locator)
 
 
     def defer(self, assignment, priority):
@@ -139,7 +124,7 @@ class Model(Hierarchical):
 
 
     # obligations as an observer of nodes
-    def pyre_updatedDependent(self, node):
+    def updatedProperty(self, slot):
         """
         Handler invoked when one of my dependents changes value
         """
@@ -147,7 +132,7 @@ class Model(Hierarchical):
         return
 
 
-    def pyre_substituteDependent(self, current, replacement, clean=None):
+    def replaceSlot(self, current, replacement, clean=None):
         """
         Replace {current} with {replacement} in my node index
         """
@@ -204,14 +189,41 @@ class Model(Hierarchical):
 
 
     # implementation details
+    def _assign(self, existing, value, priority=None, locator=None):
+        """
+        Low level access to slot value assignment
+        """
+        # convert the value into a node
+        node = self._recognize(value)
+
+        # adjust the meta data
+        node.key = existing.key
+        node.name = existing.name
+        node.trait = existing.trait
+        node.processor = existing.processor
+        node.locator = locator
+        node.priority = priority if priority else self.collate()
+        node.configurator = existing.configurator
+        node.componentClass = existing.componentClass
+        node.componentInstance = existing.componentInstance
+
+        # adjust the value
+        node = existing.setValue(value=node)
+
+        # all done
+        return node
+
+
     def _buildPlaceholder(self, name, identifier, **kwds):
         """
         Build an unresolved node as a place holder for new requests
         """
         # make the node
         node = self.node.unresolved(name=name, key=identifier, request=name)
-        # add me as its observer
-        node.addObserver(self)
+        # if the node is registered with a valid name
+        if name:
+            # add me as its observer
+            node.configurator = self
         # and return it
         return node
         

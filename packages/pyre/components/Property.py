@@ -108,15 +108,20 @@ class Property(Trait):
         """
         Set this trait of the class record {configurable} to value
         """
-        raise NotImplementedError("NYI!")
-        # grab the slot from the client's inventory
-        slot = configurable.pyre_inventory[self]
-        # let the configurator build an evaluator for {value}
-        evaluator = configurable.pyre_executive.configurator.recognize(value)
-        # set the value of the slot
-        slot.setValue(value=evaluator, locator=locator)
-        # and return
-        return
+        # print("Property.pyre_setClassTrait: {.pyre_name}.{.name}".format(configurable, self))
+        # print("    value:", value)
+        # print("    from:", locator)
+              
+        # get the existing slot
+        existing = configurable.pyre_inventory[self]
+        # print("  existing:", existing)
+        # print("    observers:", existing.observers)
+        # print("    class:", existing.componentClass)
+        # print("    instance:", existing.componentInstance)
+        # grab the configurator
+        configurator = configurable.pyre_executive.configurator
+        # and ask it to perform the assignment
+        return configurator._assign(existing=existing, value=value, locator=locator)
 
 
     def pyre_setInstanceTrait(self, instance, value, locator):
@@ -145,6 +150,8 @@ class Property(Trait):
         value = self.type.pyre_cast(value)
         # normalize
         for normalizer in self.normalizers: value = normalizer(value)
+        # validate
+        for validator in self.validators: value = validator(value)
         # and return the new value
         return value
 
@@ -154,7 +161,6 @@ class Property(Trait):
         """
         Retrieve the value of this trait
         """
-        raise NotImplementedError("NYI!")
         # find out whose inventory we are supposed to access
         client = instance if instance else cls
         # grab the slot from the client's inventory

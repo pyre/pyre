@@ -39,6 +39,7 @@ EXPORT_PYTHON_MODULES = \
     CommandLine.py \
     Configuration.py \
     Configurator.py \
+    Memo.py \
     Model.py \
     Slot.py \
     events.py \

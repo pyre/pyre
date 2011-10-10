@@ -22,6 +22,7 @@ def test():
             """the base component"""
             number = pyre.properties.int(default=0)
             number.validators = pyre.constraints.isGreater(value=0)
+        return base
 
     # and another that assigns the validators in an iterable
     def iterable():
@@ -29,6 +30,7 @@ def test():
             """the base component"""
             number = pyre.properties.int(default=0)
             number.validators = (pyre.constraints.isGreater(value=0),)
+        return base
 
     # check the simple case
     try:

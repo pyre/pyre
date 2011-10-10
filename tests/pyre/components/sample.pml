@@ -9,6 +9,9 @@
 
 <config>
 
+  <!-- global settings -->
+  <bind property="sample.file">sample.pml</bind>
+
   <!-- data for component_class_configuration -->
   <component family="sample.configuration">
     <!-- some bindings -->
@@ -26,6 +29,18 @@
     <!-- some bindings -->
     <bind property="extra">derived - extra</bind>
     <bind property="common">derived - common</bind>
+  </component>
+
+  <!-- data for component_class_inventory -->
+  <component family="sample.inventory.base">
+    <!-- some bindings -->
+    <bind property="bprop">1</bind>
+  </component>
+
+  <component family="sample.inventory.derived">
+    <!-- some bindings -->
+    <bind property="bprop">2</bind>
+    <bind property="dprop">Hello world!</bind>
   </component>
 
   <!-- data for component_instance_configuration -->

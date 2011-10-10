@@ -25,7 +25,7 @@ from ..algebraic.Reference import Reference
 from ..algebraic.Unresolved import Unresolved
 # evaluation strategies
 from ..algebraic.Cast import Cast
-from ..algebraic.Memo import Memo
+from .Memo import Memo
 
 # grab the default priority definition
 from .levels import DEFAULT_CONFIGURATION
@@ -98,9 +98,10 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
     # value meta data
     key = None # the hash key used by the configurator to retrieve this slot
     name = None # the name under which I am registered
-    processor = None # the processor used by {Cast} to normalize my value
     locator = None # the provenance of my value
     priority = (DEFAULT_CONFIGURATION, -1)
+    trait = None # the trait descriptor whose value i manage
+    processor = None # the processor used by {Cast} to normalize my value
 
 
     # interface
