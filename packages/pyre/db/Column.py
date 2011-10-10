@@ -10,7 +10,7 @@ from .. import schema
 from .. import algebraic
 
 
-class Column(schema.descriptor, algebraic.node):
+class Column(schema.descriptor, algebraic.var):
     """
     The base class for database table descriptors
 

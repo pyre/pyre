@@ -9,7 +9,7 @@
 from .. import algebraic
 
 
-class ColumnReference(algebraic.node):
+class ColumnReference(algebraic.var):
     """
     A column decorator that encapsulates references to table columns
 
