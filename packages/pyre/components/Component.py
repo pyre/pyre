@@ -104,9 +104,11 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         # look through my ancestry for the value node
         for record in cls.pyre_pedigree:
             try:
-                return record.pyre_inventory[trait].value
+                slot = record.pyre_inventory[trait]
             except KeyError:
-                pass
+                continue
+            else:
+                return slot.value
         # if we got this far, we have a bug; report it
         import journal
         firewall = journal.firewall("pyre.components")
