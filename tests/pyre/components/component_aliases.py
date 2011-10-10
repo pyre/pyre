@@ -42,7 +42,7 @@ def test():
     # cfg = pyre.executive.configurator
     # cfg.dump(pattern="(functor|gaussian)")
     # get the commandline slots
-    # mean = cfg.resolve(name='functor.μ')
+    # mean,_ = cfg._resolve(name='functor.μ')
     # print('functor.μ:')
     # mean.dump()
     # print(" -- done")
