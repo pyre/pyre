@@ -85,7 +85,6 @@ class Expression:
         Build a table that maps {pyre.algebraic} operators to rendering strategies
         """
         # grab the types that handles literal values and operations
-        # pardon the weirdness: {literal} and {operation} are property descriptors in {nodeType}
         literal = nodeType.literal
         variable = nodeType.variable
         operation = nodeType.operator
@@ -127,7 +126,7 @@ class Expression:
         Render {node} as a literal
         """
         # return the literal representation
-        return str(node.value)
+        return repr(node.value)
 
 
     def _operatorRenderer(self, node, **kwds):
