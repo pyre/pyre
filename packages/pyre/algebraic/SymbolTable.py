@@ -175,7 +175,7 @@ class SymbolTable(Named):
         Build a place holder node, typically some type of error node that will raise an
         exception when its value is requested
         """
-        return self.node.unresolved(request=name)
+        return self.node.unresolved(request=name, **kwds)
 
 
  
