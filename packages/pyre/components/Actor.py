@@ -94,8 +94,18 @@ class Actor(Requirement):
             slot.trait = trait
             # add me as an observer
             slot.componentClass = self
-            # and save the slot in my inventory
+            # save the slot in my inventory
             self.pyre_inventory[trait] = slot
+            # if i am registered with the configuration store
+            if key:
+                # iterate over my aliases
+                for alias in trait.aliases:
+                    # avoid duplicate registration
+                    if alias == trait.name: continue
+                    # build the alias key
+                    aliasKey = family + [alias]
+                    # register it
+                    configurator._alias(canonical=key, alias=aliasKey)
             
         # repeat with the inherited traits; the trick here is to locate which ancestor to build
         # a reference to
@@ -136,11 +146,21 @@ class Actor(Requirement):
             slot.componentClass = self
             # and save the slot in my inventory
             self.pyre_inventory[trait] = slot
+            # if i am registered with the configuration store
+            if key:
+                # iterate over my aliases
+                for alias in trait.aliases:
+                    # avoid duplicate registration
+                    if alias == trait.name: continue
+                    # build the alias key
+                    aliasKey = family + [alias]
+                    # register it
+                    configurator._alias(canonical=key, alias=aliasKey)
 
-        # if this component class is not hidden
-        if not hidden:
-            # register it with the executive
-            self.pyre_executive.registerComponentClass(self)
+
+        # register it with the executive
+        self.pyre_executive.registerComponentClass(self)
+
         # all done
         return
 

@@ -168,6 +168,17 @@ class Component(Configurable, metaclass=Actor, hidden=True):
             slot.componentInstance = self
             # and add it to my inventory
             inventory[trait] = slot
+            # if i am registered with the configuration store
+            if traitkey:
+                # iterate over my aliases
+                for alias in trait.aliases:
+                    # avoid duplicate registration
+                    if alias == trait.name: continue
+                    # build the alias key
+                    aliaskey = key + [alias]
+                    # register it
+                    configurator._alias(canonical=traitkey, alias=aliaskey)
+
 
         # attach my inventory
         self.pyre_inventory = inventory

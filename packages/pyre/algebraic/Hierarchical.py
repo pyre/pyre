@@ -98,11 +98,28 @@ class Hierarchical(SymbolTable):
         """
         Register the name {alias} as an alternate name for {canonical}
         """
-        # build the multikeys
+        # build the keys
         aliasKey = alias.split(self.separator)
         canonicalKey = canonical.split(self.separator)
+        # delegate
+        return self._alias(alias=aliasKey, canonical=canonicalKey)
+    # meta methods
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+
+        # name hashing algorithm storage strategy
+        self._hash = pyre.patterns.newPathHash()
+
+        return
+
+
+    # implementation details
+    def _alias(self, *, alias, canonical):
+        """
+        Establish the key {alias} as an alternate to {canonical}
+        """
         # ask the hash to alias the two names and retrieve the corresponding hash keys
-        aliasHash, canonicalHash = self._hash.alias(alias=aliasKey, canonical=canonicalKey)
+        aliasHash, canonicalHash = self._hash.alias(alias=alias, canonical=canonical)
 
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
@@ -131,23 +148,12 @@ class Hierarchical(SymbolTable):
 
         # if we get this far, both preëxisted; the aliased info has been cleared out, the
         # canonical is as it should be. all that remains is to patch the two nodes
-        self._update(identifier=canonicalHash, existing=aliasNode, replacement=canonicalNode)
+        survivor = canonicalNode.setValue(aliasNode)
 
         # all done
-        return self
+        return survivor
         
 
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-
-        # name hashing algorithm storage strategy
-        self._hash = pyre.patterns.newPathHash()
-
-        return
-
-
-    # implementation details
     def _resolve(self, name):
         """
         Find the named node

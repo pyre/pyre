@@ -105,7 +105,7 @@ class Configurator(Model):
         # let's see what is known about this instance
         # print("  looking for configuration settings:")
 
-        # for key, name, fqname, node in self.children(rootKey=namespace):
+        # iterate over all settings that are the logical children of the given {namespace}
         for key, slot in self.children(key=namespace):
             # print("    found {0.name!r}, with priority: {0.priority}".format(slot))
             # print("      from: {0.locator}".format(slot))
@@ -127,6 +127,7 @@ class Configurator(Model):
             # the model; this currently may fail under some aliasing configurations. the
             # firewall should flush these cases out
             if slot is not inventory[descriptor]:
+                # print(" ********* FIREWALL ********* ")
                 # get the journal
                 import journal
                 # build a firewall
