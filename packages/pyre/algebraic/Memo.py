@@ -32,7 +32,7 @@ class Memo:
             # recompute
             self._value = super().getValue()
             # mark
-            self._dirty = False
+            self.dirty = False
         # return the cache contents
         return self._value
 
@@ -44,9 +44,7 @@ class Memo:
         # update the value
         super().setValue(value=value, **kwds)
         # invalidate my cache and notify my observers
-        self.notifyObservers()
-        # and return
-        return
+        return self.notifyObservers()
 
 
     # cache management
@@ -55,7 +53,7 @@ class Memo:
         Invalidate my cache and notify my observers
         """
         # do nothing if my cache is already invalid
-        if self.dirty: return
+        if self.dirty: return self
         # otherwise, invalidate the cache
         self.dirty = True
         # and notify my observers
@@ -83,7 +81,7 @@ class Memo:
         # clean up
         for ref in dead: self.observers.remove(ref)
         # and return
-        return
+        return self
 
 
     # observer management
@@ -100,7 +98,7 @@ class Memo:
             # ask the observer to replace {obsolete} with me
             observer.substitute(current=obsolete, replacement=self)
         # all done
-        return
+        return self
         
 
     def addObserver(self, node):
@@ -110,7 +108,7 @@ class Memo:
         # build a weak reference to {node} and add it to the pile
         self.observers.add(weakref.ref(node))
         # all done
-        return
+        return self
 
 
     def removeObserver(self, node):
@@ -120,7 +118,7 @@ class Memo:
         # build a weak reference to {node} and remove it from the pile
         self.observers.remove(weakref.ref(node))
         # all done
-        return
+        return self
 
 
     # meta methods
