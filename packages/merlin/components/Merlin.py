@@ -14,7 +14,7 @@ import pyre
 MERLIN = "merlin"
 
 
-class Merlin(pyre.application, family=MERLIN):
+class Merlin(pyre.application):
     """
     The merlin executive
     """

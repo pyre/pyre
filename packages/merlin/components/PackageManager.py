@@ -11,7 +11,7 @@ import pyre
 
 
 # declaration
-class PackageManager(pyre.component, family="merlin.packages"):
+class PackageManager(pyre.component):
     """
     The component that manages the package archive
     """
