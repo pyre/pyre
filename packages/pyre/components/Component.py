@@ -117,18 +117,22 @@ class Component(Configurable, metaclass=Actor, hidden=True):
 
 
     # trait observation
-    def pyre_updatedDependent(self, node):
+    def pyre_updatedProperty(self, slot):
         """
         Handler invoked when the value of one of my traits changes
         """
-        raise NotImplementedError("NYI!")
+        # ignore it, for now
+        return
 
 
-    def pyre_substituteDependent(self, current, replacement, clean=None):
+    def pyre_replaceSlot(self, current, replacement, clean=None):
         """
         Replace {current} with {replacement} in my inventory
         """
-        raise NotImplementedError("NYI!")
+        # adjust my inventory
+        self.pyre_inventory[current.trait] = replacement
+        # and return
+        return
 
 
     # meta methods
@@ -149,12 +153,15 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         sep = self.pyre_SEPARATOR
         inventory = {}
 
+        # build my configuration key
+        key = name.split(sep) if name else ()
+
         # iterate over the items in my class inventory
         for trait, default in classInventory.items():
             # build the name of the trait
-            key = sep.join((name, trait.name)) if name else tuple()
+            traitkey = key + [trait.name] if key else tuple()
             # ask the configurator to register the default value
-            slot = configurator.default(key=key, value=default.ref())
+            slot = configurator.default(key=traitkey, value=default.ref())
             # record the trait
             slot.trait = trait
             # register me as an observer

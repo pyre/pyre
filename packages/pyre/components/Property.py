@@ -131,13 +131,16 @@ class Property(Trait):
         """
         Set this trait of {instance} to value
         """
-        raise NotImplementedError("NYI!")
         # grab the slot from the client's inventory
-        slot = instance.pyre_inventory[self]
-        # let the configurator build an evaluator for {value}
-        evaluator = instance.pyre_executive.configurator.recognize(value)
-        # set the value of the slot and return it
-        return slot.setValue(value=evaluator, locator=locator)
+        existing = instance.pyre_inventory[self]
+        # grab the configurator
+        configurator = instance.pyre_executive.configurator
+        # and ask it to perform the assignment
+        slot = configurator._assign(existing=existing, value=value, locator=locator)
+        # force the slot to recompute its value
+        slot.getValue()
+        # and return it
+        return slot
 
 
     # value transformations
@@ -176,7 +179,6 @@ class Property(Trait):
         """
         Set this trait of {instance} to {value}
         """
-        raise NotImplementedError("NYI!")
         # build an appropriate locator
         locator = pyre.tracking.here(level=1)
         # call the instance value setter

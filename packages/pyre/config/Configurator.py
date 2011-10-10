@@ -166,11 +166,12 @@ class Configurator(Model):
         if ckey not in self.deferred: 
             # print("  no deferred configuration")
             return errors
+
         # otherwise, loop over the assignments
-        for assignment, node in self.deferred[ckey]:
+        for assignment in self.deferred[ckey]:
             # build the trait name
             alias = self.separator.join(assignment.key)
-            # print("    found {!r} <- {.value!r}".format(alias, node))
+            # print("    found {!r} <- {.value!r}".format(alias, assignment))
 
             # make sure all the conditions apply
             match = False
@@ -195,10 +196,10 @@ class Configurator(Model):
                         break
                 # bail out if the families don't match
                 if target.pyre_family != family: 
-                    # print("        families don't match")
+                    # print("      families don't match")
                     break
                 # otherwise
-                # print("        families match")
+                # print("      families match")
             # if we didn't exit prematurely, it's a match
             else:
                 match = True
@@ -218,14 +219,11 @@ class Configurator(Model):
                 # print("    no matching descriptor")
                 errors.append(error)
                 continue
-            # get the inventory slot
-            slot = inventory[descriptor]
-            # merge the information
-            # MGA: this is not right: what if you have to re-apply these settings on a second
-            # assignment to the same trait?
-            # print("    before: {0._processor.name!r} <- {0.value!r}".format(slot))
-            self.patch(discard=node, keep=slot)
-            # print("    after: {0._processor.name!r} <- {0.value!r}".format(slot))
+
+            # assign the trait value
+            # print("    before: {!r} <- {!r}".format(alias, getattr(configurable, alias)))
+            setattr(configurable, alias, assignment.value)
+            # print("    before: {!r} <- {!r}".format(alias, getattr(configurable, alias)))
 
         # print("  done with {.pyre_name!r}".format(configurable))
         # return the accumulated errors
