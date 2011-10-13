@@ -28,7 +28,7 @@ class CategoryMismatchError(ComponentError):
 
     def __init__(self, configurable, target, name, **kwds):
         reason = (
-            "category mismatch in trait {0!r} between {1.pyre_name!r} and {2.pyre_name!r}"
+            "category mismatch in trait {!r} between {.pyre_name!r} and {.pyre_name!r}"
             .format(name, configurable, target))
         super().__init__(description=reason, **kwds)
 
@@ -87,7 +87,7 @@ class TraitNotFoundError(ComponentError):
     """
 
     def __init__(self, configurable, name, **kwds):
-        reason = "{0.pyre_name!r} doesn't have a trait named {1!r}".format(configurable, name)
+        reason = "{.pyre_name!r} has no trait named {!r}".format(configurable, name)
         super().__init__(description=reason, **kwds)
 
         self.configurable = configurable

@@ -200,9 +200,17 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         try:
             canonical = self.pyre_getTraitDescriptor(alias=name).name
         except self.TraitNotFoundError as error:
+            # get the component family name
+            family = self.pyre_SEPARATOR.join(self.pyre_family)
+            # if this is a nameless one, just use the class name
+            if not family: family = self.__class__.pyre_name
+            # build the exception
             missing = AttributeError(
-                "{0.__class__.__name__!r} has no attribute {1!r}".format(self, name))
-            raise missing from error
+                "component {.pyre_name!r}, an instance of {!r},"
+                " has no attribute {!r}".format(self, family, name))
+            # and raise it
+            raise missing
+
         # if we got this far, restart the attribute lookup using the canonical name
         # don't be smart here; let getattr do its job, which involves invoking the trait
         # descriptors if necessary
