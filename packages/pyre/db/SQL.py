@@ -12,7 +12,7 @@ import textwrap
 from pyre.weaver.SQL import SQL as Mill
 
 
-class SQL(Mill):
+class SQL(Mill, family="pyre.db.sql"):
     """
     Generate SQL statements
     """
@@ -227,6 +227,53 @@ class SQL(Mill):
         self.indent()
         # build the filtering expression
         predicate = self.expression(root=condition, table=table)
+        # and render it
+        yield self.place("WHERE ({});".format(predicate))
+        # outdent
+        self.outdent()
+        # and return
+        return
+
+
+    def updateRecords(self, template, condition):
+        """
+        Update all table rows that match {condition} using information from {template}, a
+        prototype row of a table. The update operation sets the fields in these rows to their
+        corresponding values in {template}; fields set to {None} in {template} are not
+        affected.
+        """
+        # build the tuple of affected columns and their values
+        names = []
+        values = []
+        # by iterating over all the columns
+        for column in template.pyre_columns:
+            # getting the corresponding name from {template}
+            name = column.name
+            value = getattr(template, name)
+            # skipping the ones set to {None}
+            if value is None: continue
+            # and saving the rest
+            names.append(name)
+            values.append(value)
+
+        # render the names
+        names = "(" + ", ".join(names) + ")"
+        values = tuple(values)
+
+        # initiate the statement
+        yield self.place("UPDATE {}".format(template.pyre_name))
+        # indent
+        self.indent()
+        # the data section
+        yield self.place("SET")
+        # indent
+        self.indent()
+        # render the assignments
+        yield self.place("{} = {!r}".format(names, values))
+        # outdent
+        self.outdent()
+        # build the filtering expression
+        predicate = self.expression(root=condition, table=template.__class__)
         # and render it
         yield self.place("WHERE ({});".format(predicate))
         # outdent

@@ -42,4 +42,18 @@ from .columns import (
     )
 
 
+# templates: table rows with all fields set to None; used to update table entries
+def template(table):
+    # build an instance, bypassing the constructor
+    row = table.__new__(table)
+    # iterate over the table columns
+    for column in table.pyre_localColumns:
+        # set all attributes to {None}
+        setattr(row, column.name, None)
+    # and return the instance
+    return row
+
+    
+
+
 # end of file 
