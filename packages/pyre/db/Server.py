@@ -13,7 +13,7 @@ from . import datastore, sql
 
 
 # declaration
-class Server(pyre.component, implements=datastore):
+class Server(pyre.component, family="pyre.db.server", implements=datastore):
     """
     Abstract component that encapsulates the connection to a database back end
 
