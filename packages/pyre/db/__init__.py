@@ -12,6 +12,21 @@ ends
 """
 
 
+# templates: table rows with all fields set to None; used to update table entries
+def template(table):
+    """
+    Build a row of {table} with all its fields set to {None}.
+    """
+    # build an instance, bypassing the constructor
+    row = table.__new__(table)
+    # iterate over the table columns
+    for column in table.pyre_localColumns:
+        # set all attributes to {None}
+        setattr(row, column.name, None)
+    # and return the instance
+    return row
+
+
 # interfaces
 from .DataStore import DataStore as datastore
 # components
@@ -40,20 +55,6 @@ from .columns import (
     String as str,
     Time as time,
     )
-
-
-# templates: table rows with all fields set to None; used to update table entries
-def template(table):
-    # build an instance, bypassing the constructor
-    row = table.__new__(table)
-    # iterate over the table columns
-    for column in table.pyre_localColumns:
-        # set all attributes to {None}
-        setattr(row, column.name, None)
-    # and return the instance
-    return row
-
-    
 
 
 # end of file 
