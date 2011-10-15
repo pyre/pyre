@@ -87,9 +87,17 @@ class TraitNotFoundError(ComponentError):
     """
 
     def __init__(self, configurable, name, **kwds):
-        reason = "{.pyre_name!r} has no trait named {!r}".format(configurable, name)
+        # get the family name of the {configurable}
+        family = configurable.pyre_SEPARATOR.join(configurable.pyre_family)
+        # build the family clause of the message
+        fclause = ", with family {!r}".format(family) if family else ""
+        # build the reason
+        reason = "the class {.pyre_name!r}{} has no trait named {!r}".format(
+            configurable, fclause, name)
+        # pass it on
         super().__init__(description=reason, **kwds)
 
+        # save the source of the error
         self.configurable = configurable
         self.name = name
 
