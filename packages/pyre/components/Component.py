@@ -198,7 +198,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         """
         # attempt to resolve the attribute name by normalizing it
         try:
-            canonical = self.pyre_getTraitDescriptor(alias=name).name
+            trait = self.pyre_getTraitDescriptor(alias=name)
         except self.TraitNotFoundError as error:
             # get the component family name
             family = self.pyre_SEPARATOR.join(self.pyre_family)
@@ -214,7 +214,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         # if we got this far, restart the attribute lookup using the canonical name
         # don't be smart here; let getattr do its job, which involves invoking the trait
         # descriptors if necessary
-        return getattr(self, canonical)
+        return getattr(self, trait.name)
 
 
     def __setattr__(self, name, value):
