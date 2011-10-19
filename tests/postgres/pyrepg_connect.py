@@ -19,7 +19,7 @@ def test():
     pyrepg.registerExceptions(exceptions)
 
     # make a connection
-    connection = pyrepg.connect("dbname=pyre")
+    connection = pyrepg.connect("dbname=postgres")
     # and return it
     return connection
 

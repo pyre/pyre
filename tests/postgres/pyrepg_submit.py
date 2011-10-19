@@ -25,9 +25,9 @@ def test():
     pyrepg.registerExceptions(exceptions)
 
     # make a connection
-    connection = pyrepg.connect("dbname=pyre")
+    connection = pyrepg.connect("dbname=postgres")
     # execute a command
-    command = "SELECT datname FROM pg_database WHERE datname='pyre'"
+    command = "SELECT datname FROM pg_database WHERE datname='postgres'"
     # submit it for asynchronous processing
     pyrepg.submit(connection, command)
 
@@ -38,7 +38,7 @@ def test():
     # retrieve it
     result = pyrepg.retrieve(connection)
     # check that we got what we expected
-    assert result == (('datname',), ('pyre',))
+    assert result == (('datname',), ('postgres',))
 
     # call retrieve again; this time there should be nothing to get
     result = pyrepg.retrieve(connection)

@@ -19,7 +19,7 @@ def test():
     pyrepg.registerExceptions(exceptions)
 
     # make a connection
-    connection = pyrepg.connect("dbname=pyre")
+    connection = pyrepg.connect("dbname=postgres")
     # execute a command
     try:
         pyrepg.execute(connection, "no-such-command")

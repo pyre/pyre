@@ -24,12 +24,12 @@ def test():
     pyrepg.registerExceptions(exceptions)
 
     # make a connection
-    connection = pyrepg.connect("dbname=pyre")
+    connection = pyrepg.connect("dbname=postgres")
     # execute a command
-    command = "SELECT datname FROM pg_database WHERE datname='pyre'"
+    command = "SELECT datname FROM pg_database WHERE datname='postgres'"
     result = pyrepg.execute(connection, command)
     # check that we got what we expected
-    assert result == (('datname',), ('pyre',))
+    assert result == (('datname',), ('postgres',))
 
     # and return the connection and the resulting tuple
     return connection, result
