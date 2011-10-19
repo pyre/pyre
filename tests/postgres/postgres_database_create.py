@@ -13,18 +13,18 @@ Instantiate the postgres component
 
 
 def test():
-    # import journal
-    # journal.debug("postgres.init").active = True
-    # journal.debug("postgres.execute").active = True
-    # journal.debug("postgres.connection").active = True
-
-    # access the postgres package
+    # access the package
     import postgres
 
     # build a database component
     db = postgres.server()
-    # connect to the default database
+    # verify it is going to attach to the default database that is guaranteed to exist
+    assert db.database == "postgres"
+    # attach
     db.attach()
+
+    # create the pyre database
+    db.createDatabase(name="pyre")
 
     # and return the component
     return db

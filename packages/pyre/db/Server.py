@@ -48,6 +48,26 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
 
 
     # convenience
+    def createDatabase(self, name):
+        """
+        Build and execute the SQL statement to create the database {name}
+        """
+        # build the sql statement
+        sql = self.sql.createDatabase(name=name)
+        # and execute it
+        return self.execute(sql)
+
+
+    def dropDatabase(self, name):
+        """
+        Build and execute the SQL statement to drop the database {name}
+        """
+        # build the sql statement
+        sql = self.sql.dropDatabase(name=name)
+        # and execute it
+        return self.execute(sql)
+
+
     def createTable(self, table):
         """
         Build and execute the SQL statement necessary to create {table}

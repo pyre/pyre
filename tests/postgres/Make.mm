@@ -34,8 +34,10 @@ connections:
 components:
 	${PYTHON} ./postgres_database.py
 	${PYTHON} ./postgres_attach.py
+	${PYTHON} ./postgres_database_create.py
 	${PYTHON} ./postgres_table.py
 	${PYTHON} ./postgres_references.py
+	${PYTHON} ./postgres_database_drop.py
 
 
 # end of file 

@@ -49,6 +49,27 @@ class SQL(Mill, family="pyre.db.sql"):
         return
 
 
+    # database management
+    def createDatabase(self, name):
+        """
+        Generate the SQL statement to create the database {name}
+        """
+        # simple enough
+        yield self.place("CREATE DATABASE {};".format(name))
+        # all done
+        return
+
+
+    def dropDatabase(self, name):
+        """
+        Generate the SQL statement to drop the database {name}
+        """
+        # simple enough
+        yield self.place("DROP DATABASE {};".format(name))
+        # all done
+        return
+
+
     # table management
     def createTable(self, table):
         """
