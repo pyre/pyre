@@ -22,7 +22,7 @@ def test():
     import postgres
 
     # use the high level connection factory
-    connection = postgres.connect(database='pyre', application='connect')
+    connection = postgres.connect(database='postgres', application='connect')
     # make it do something
     command = 'show client_encoding'
     connection.execute(command)
