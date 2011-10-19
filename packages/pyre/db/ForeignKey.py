@@ -32,7 +32,6 @@ class ForeignKey:
         # otherwise, assume {ref} is a table
         else:
             reference = self.ColumnReference(table=ref, column=None)
-        
 
         # record the column reference
         self.reference = reference

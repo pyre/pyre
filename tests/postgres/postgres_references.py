@@ -32,7 +32,7 @@ class Weather(pyre.db.table, id="weather"):
     location = pyre.db.int()
     location.doc = "the location of the measurements"
     location.references(
-        ref=Location, onDelete=Location.actions.setNull, onUpdate=location.actions.setDefault)
+        ref=Location, onDelete=location.actions.setNull, onUpdate=location.actions.setDefault)
 
     date = pyre.db.date()
     date.doc = "the date of the measurement"

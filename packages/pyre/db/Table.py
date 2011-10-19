@@ -17,10 +17,6 @@ class Table(metaclass=Schemer):
     """
 
 
-    # constants
-    from . import actions # the action markers
-
-
     # publicly accessible data in the protected pyre namespace
     pyre_name = None # the name of the table; must match the name in the database
     pyre_localColumns = None # a tuple of the column descriptors that were declared locally
