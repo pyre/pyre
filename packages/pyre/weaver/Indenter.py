@@ -17,20 +17,20 @@ class Indenter:
 
 
     # interface
-    def indent(self):
+    def indent(self, increment=1):
         """
         Increase the indentation level by one
         """
-        self._level += 1
+        self._level += increment
         self.leader = self._indenter * self._level
         return self
 
 
-    def outdent(self):
+    def outdent(self, decrement=1):
         """
         Decrease the indentation level by one
         """
-        self._level -= 1
+        self._level -= decrement
         self.leader = self._indenter * self._level
         return self
 
