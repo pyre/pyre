@@ -106,6 +106,16 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         sql = self.sql.deleteRecords(table=table, condition=condition)
         # and execute
         return self.execute(sql)
+
+
+    def select(self, query):
+        """
+        Execute the given {query} and return the retrieved data
+        """
+        # build the sql statements
+        sql = self.sql.select(query=query)
+        # and execute it
+        return self.execute(sql)
         
 
     # meta methods

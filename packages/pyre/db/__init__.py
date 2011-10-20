@@ -34,6 +34,8 @@ from .SQL import SQL as sql
 from .Server import Server as server
 # the table class
 from .Table import Table as table
+# the base query class
+from .Query import Query as query
 # the data model
 from .. import schema
 from .Column import Column as column

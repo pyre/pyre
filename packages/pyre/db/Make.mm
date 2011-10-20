@@ -23,7 +23,9 @@ EXPORT_PYTHON_MODULES = \
     ColumnReference.py \
     DataStore.py \
     ForeignKey.py \
+    Query.py \
     SQL.py \
+    Selector.py \
     Schemer.py \
     Server.py \
     Table.py \

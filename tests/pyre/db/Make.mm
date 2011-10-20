@@ -11,9 +11,11 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working: queries
+
 all: test
 
-test: sanity tables
+test: sanity tables queries
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -28,5 +30,9 @@ tables:
 	${PYTHON} ./table_insert.py
 	${PYTHON} ./table_delete.py
 	${PYTHON} ./table_update.py
+
+queries:
+	${PYTHON} ./query_star.py
+
 
 # end of file 

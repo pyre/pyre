@@ -19,6 +19,18 @@ class SQL(Mill, family="pyre.db.sql"):
 
 
     # interface
+    # queries
+    def select(self, query):
+        """
+        Generate the SELECT statement described by {query}
+        """
+        # start
+        yield "SELECT"
+        # all done
+        return
+
+
+    # transaction support
     def transaction(self):
         """
         Generate the SQL statement that initiates a transaction block
