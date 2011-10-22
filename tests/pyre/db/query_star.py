@@ -29,22 +29,19 @@ def test():
         high = pyre.db.int()
         precipitation = pyre.db.float()
 
-    # and a matching trivial query
-    class star(pyre.db.query, tables=Weather): pass
-
     # get a server
     server = pyre.db.server()
     # generate the SQL statement
-    stmt = tuple(server.sql.select(star))
-    print('\n'.join(stmt))
+    stmt = tuple(server.sql.select(Weather))
+    # print('\n'.join(stmt))
     assert stmt == (
         "SELECT",
-        "    *",
-        "  FROM weather;"
+        "        *",
+        "    FROM weather;"
         )
 
     # all done
-    return star
+    return Weather
 
 
 # main

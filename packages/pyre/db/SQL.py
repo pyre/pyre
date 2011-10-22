@@ -18,6 +18,12 @@ class SQL(Mill, family="pyre.db.sql"):
     """
 
 
+    # types
+    # the metaclasses for tables and queries
+    from .Schemer import Schemer as schemer
+    from .Selector import Selector as selector
+
+
     # interface
     # queries
     def select(self, query):
@@ -26,6 +32,19 @@ class SQL(Mill, family="pyre.db.sql"):
         """
         # start
         yield "SELECT"
+        # prepare to render the column projection
+        self.indent(increment=2)
+        # if the query is a table specification
+        if isinstance(query, self.schemer):
+            # no projection
+            yield self.place("*")
+            # push out
+            self.outdent()
+            # render the table name
+            yield self.place("FROM {};".format(query.pyre_name))
+            # all done
+            return
+
         # all done
         return
 
@@ -36,7 +55,7 @@ class SQL(Mill, family="pyre.db.sql"):
         Generate the SQL statement that initiates a transaction block
         """
         # simple enough
-        yield "START TRANSACTION;"
+        yield self.place("START TRANSACTION;")
         # all done
         return
 
@@ -46,7 +65,7 @@ class SQL(Mill, family="pyre.db.sql"):
         Generate the SQL statement that closes a transaction block
         """
         # simple enough
-        yield "COMMIT;"
+        yield self.place("COMMIT;")
         # all done
         return
 
@@ -56,7 +75,7 @@ class SQL(Mill, family="pyre.db.sql"):
         Generate the SQL statement that rolls back a transaction
         """
         # simple enough
-        yield "ROLLBACK;"
+        yield self.place("ROLLBACK;")
         # all done
         return
 
