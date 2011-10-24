@@ -42,6 +42,29 @@ class SQL(Mill, family="pyre.db.sql"):
             self.outdent()
             # render the table name
             yield self.place("FROM {};".format(query.pyre_name))
+            # push out
+            self.outdent()
+            # all done
+            return
+
+        # native queries
+        if isinstance(query, self.selector):
+            # figure out how many column references there are
+            columns = len(query.pyre_columns)
+            # build the projection
+            for index, spec in enumerate(query.pyre_columns):
+                # unpack
+                alias, reference = spec
+                # do we need a comma?
+                comma = ',' if index+1 < columns else ''
+                # render this column
+                yield self.place("{} AS {}{}".format(reference, alias, comma))
+            # push out
+            self.outdent()
+            # render the table name
+            yield self.place("FROM {};".format(query.pyre_table.pyre_name))
+            # push out
+            self.outdent()
             # all done
             return
 

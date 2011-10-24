@@ -11,10 +11,15 @@ from .Selector import Selector
 
 
 # declaration
-class Query(metaclass=Selector):
+class Query(metaclass=Selector, hidden=True):
     """
     Base class for describing database queries
     """
+
+
+    # public data
+    pyre_table = None
+    pyre_columns = ()
 
 
 # end of file 

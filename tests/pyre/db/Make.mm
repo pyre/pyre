@@ -33,6 +33,7 @@ tables:
 
 queries:
 	${PYTHON} ./query_star.py
+	${PYTHON} ./query_projection.py
 
 
 # end of file 
