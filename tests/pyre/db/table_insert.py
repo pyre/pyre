@@ -30,7 +30,7 @@ def test():
         """
         # the data fields
         cid = pyre.db.int().primary()
-        pid = pyre.db.int(default=None).references(ref=Person.id)
+        pid = pyre.db.reference(key=Person.id)
         balance = pyre.db.decimal(precision=7, scale=2).setDefault(0)
 
 
