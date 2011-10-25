@@ -87,7 +87,7 @@ class Float(Column):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        raise NotImplementedError("NYI!")
+        raise float(value)
 
     def decl(self):
         """SQL compliant rendering of my type name"""
@@ -116,6 +116,47 @@ class Integer(Column):
 
     def __init__(self, default=0, **kwds):
         super().__init__(default=default, **kwds)
+        return
+
+
+# foreign keys
+class Reference(Column):
+    """
+    Representation of foreign keys
+    """
+
+    def rep(self, value):
+        """SQL compliant rendering of my value"""
+        # delegate to the column to which i refer
+        return self.referent.rep(value)
+
+    def decl(self):
+        """SQL compliant  rendering of my type name"""
+        # delegate to my referent
+        return self.referent.decl()
+
+    def __init__(self, **kwds):
+        super().__init__()
+
+        # set up my foreign key
+        self._foreign = self.ForeignKey(**kwds)
+
+        # get the column reference recorded by the foreign key
+        ref = self._foreign.reference
+        # if the reference mentions a column explicitly
+        if ref.column is not None:
+            # save it
+            column = ref.column
+        # otherwise
+        else:
+            raise NotImplementedError("NYI!")
+
+        # store my referent
+        self.referent = column
+        # and my type
+        self.type = column.type
+
+        # all done
         return
 
 

@@ -54,6 +54,7 @@ from .columns import (
     Decimal as decimal,
     Float as float,
     Integer as int,
+    Reference as reference,
     String as str,
     Time as time,
     )

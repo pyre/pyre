@@ -17,24 +17,24 @@ class ForeignKey:
 
 
     # public data
-    column = None # the column i refer to
     update = None # the specified action to take when the referenced column is updated
     delete = None # the specified action to take when the referenced column is deleted
+    reference = None # the table/column i refer to
 
 
     # meta methods
-    def __init__(self, ref=None, onDelete=None, onUpdate=None, **kwds):
+    def __init__(self, key=None, onDelete=None, onUpdate=None, **kwds):
         super().__init__(**kwds)
 
-        # if {ref} is already a column reference
-        if isinstance(ref, self.ColumnReference):
-            reference = ref
-        # otherwise, assume {ref} is a table
+        # if {key} is already a column reference
+        if isinstance(key, self.ColumnReference):
+            reference = key
+        # otherwise, assume {key} is a table
         else:
-            reference = self.ColumnReference(table=ref, column=None)
+            reference = self.ColumnReference(table=key, column=None)
 
         # record the column reference
-        self.reference = reference
+        self.reference = key
         # and the actions
         self.delete = onDelete
         self.update = onUpdate
