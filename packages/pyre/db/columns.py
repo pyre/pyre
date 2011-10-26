@@ -163,14 +163,14 @@ class Reference(Column):
 # arbitrary length strings
 class String(Column):
     """
-    Representation for arbitrary length string
+    Representation for arbitrary length strings
     """
 
-    type = schema.int
+    type = schema.str
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        return "'{}'".format(value)
+        return "'{}'".format(value.replace("'", "''"))
 
     def decl(self):
         """SQL compliant rendering of my type name"""
