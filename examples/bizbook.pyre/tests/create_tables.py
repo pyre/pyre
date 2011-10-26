@@ -35,6 +35,10 @@ def test():
     db.createTable(bizbook.schema.Publisher)
     db.createTable(bizbook.schema.Address)
     db.createTable(bizbook.schema.ContactMethod)
+    db.createTable(bizbook.schema.Staff)
+    db.createTable(bizbook.schema.Book)
+    db.createTable(bizbook.schema.Author)
+    db.createTable(bizbook.schema.Editor)
 
     # and return the component
     return db

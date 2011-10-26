@@ -56,6 +56,12 @@ class Address(pyre.db.table, id="addresses"):
     person = pyre.db.reference(key=Person.ssn)
     address = pyre.db.reference(key=Location.id)
 
+class Staff(pyre.db.table, id="staff"):
+    """
+    Information about employee roles
+    """
+    person = pyre.db.reference(key=Person.ssn)
+    position = pyre.db.str()
 
 class ContactMethod(pyre.db.table, id="contact_methods"):
     """
@@ -65,5 +71,32 @@ class ContactMethod(pyre.db.table, id="contact_methods"):
     method = pyre.db.str()
     person = pyre.db.reference(key=Person.ssn)
 
+class Book(pyre.db.table, id="books"):
+    """
+    Books
+    """
+    id = pyre.db.str().primary()
+    title = pyre.db.str()
+    category = pyre.db.str()
+    publisher = pyre.db.reference(key=Publisher.id)
+    description = pyre.db.str()
+    date = pyre.db.str()
+
+class Author(pyre.db.table, id="authors"):
+    """
+    Author information
+    """
+    author = pyre.db.reference(key=Person.ssn)
+    book = pyre.db.reference(key=Book.id)
+    ordinal = pyre.db.int()
+    share = pyre.db.decimal(precision=4, scale=3)
+
+class Editor(pyre.db.table, id="editors"):
+    """
+    Editor information
+    """
+    editor = pyre.db.reference(key=Person.ssn)
+    book = pyre.db.reference(key=Book.id)
+    ordinal = pyre.db.int()
 
 # end of file 

@@ -30,6 +30,10 @@ def test():
     import bizbook
 
     # drop the tables
+    db.dropTable(bizbook.schema.Editor)
+    db.dropTable(bizbook.schema.Author)
+    db.dropTable(bizbook.schema.Book)
+    db.dropTable(bizbook.schema.Staff)
     db.dropTable(bizbook.schema.ContactMethod)
     db.dropTable(bizbook.schema.Address)
     db.dropTable(bizbook.schema.Publisher)

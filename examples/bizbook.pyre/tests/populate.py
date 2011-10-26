@@ -228,6 +228,241 @@ def test():
     # add them to their table
     db.insert(*contacts)
 
+    staff = (
+        bizbook.schema.Staff(person="234-88-9720", position="acquisition"),
+        bizbook.schema.Staff(person="321-55-8906", position="project"),
+        bizbook.schema.Staff(person="723-48-9010", position="copy"),
+        bizbook.schema.Staff(person="777-02-9831", position="project"),
+        bizbook.schema.Staff(person="777-66-9902", position="copy"),
+        bizbook.schema.Staff(person="826-11-9034", position="project"),
+        bizbook.schema.Staff(person="885-23-9140", position="project"),
+        bizbook.schema.Staff(person="943-88-7920", position="acquisition"),
+        bizbook.schema.Staff(person="993-86-0420", position="acquisition"),
+        )
+    # add them to their table
+    db.insert(*staff)
+    
+
+    # make some books
+    books = (
+        bizbook.schema.Book(
+            id="BU1032",
+            title="The busy executive's database guide",
+            category="business", publisher="1389", date="1985/06/12",
+            description="""
+            An overview of available database systems with an emphasis on business
+            applications. Illustrated."
+            """),
+        bizbook.schema.Book(
+            id="BU1111",
+            title="Cooking with computers: surreptitious balance sheets",
+            category="business", publisher="1389", date="1985/06/09",
+            description="""
+            Helpful hints on how to use your electronic resource to best advantage
+            """),
+        bizbook.schema.Book(
+            id="BU2075",
+            title="You can combat computer stress",
+            category="business", publisher="0736", date="1985/06/30",
+            description="""
+            The latest medical and psychological techniques for living with the electronic
+            office. Easy to understand explanations.
+            """),
+
+        bizbook.schema.Book(
+            id="BU7832",
+            title="Straight talk about computers",
+            category="business", publisher="1389", date="1985/06/22",
+            description="""
+            Annotated analysis of what computers can do for you: a no-hype guide for the
+            critical user.
+            """),
+        bizbook.schema.Book(
+            id="MC2222",
+            title="Silicon Valley gastronomic treats",
+            category="modern cookbook", publisher="0877", date="1985/06/09",
+            description="""
+            Favorite recipes for quick, easy and elegant meals, tried and tested by people who
+            never have time to eat, let alone cook.
+            """),
+        bizbook.schema.Book(
+            id="MC3021",
+            title="The gourmet microwave",
+            category="modern cookbook", publisher="0877", date="1985/06/18",
+            description="""
+            Traditional French gourmet recipes adapted for modern microwave cooking.
+            """),
+        bizbook.schema.Book(
+            id="MC3026",
+            title="The psychology of computer cooking",
+            publisher="0877"
+            ),
+        bizbook.schema.Book(
+            id="PC1035",
+            title="But is it user-friendly?",
+            category="computing", publisher="1389", date="1985/06/30",
+            description="""
+            A survey of software for the naïve user, focusing on the 'friendliness' of each.
+            """),
+
+        bizbook.schema.Book(
+            id="PC8888",
+            title="Secrets of Silicon Valley",
+            category="computing", publisher="1389", date="1985/06/12",
+            description="""
+            Muckraking reporting by two courageous women on the world's largest computer
+            software and hardware manufacturers.
+            """),
+        bizbook.schema.Book(
+            id="PC9999",
+            title="Net etiquette",
+            category="computing", publisher="1389",
+            description="""
+            A must-read for computer conference debutantes
+            """),
+        bizbook.schema.Book(
+            id="PS1372",
+            title="Computer-phobic and on-phobic individuals: behavior variations",
+            category="psychology", publisher="0736", date="1985/10/21",
+            description="""
+            A must for the specialist, this book examines the difference between those who hate
+            and fear computers and those who think they are swell.
+            """),
+        bizbook.schema.Book(
+            id="PS2091",
+            title="Is anger the enemy?",
+            category="psychology", publisher="0736", date="1985/06/15",
+            description="""
+            Carefully researched study of the effects of strong emotions on the body. Metabolic
+            charts included.
+            """),
+        bizbook.schema.Book(
+            id="PS2106",
+            title="Life without fear",
+            category="psychology", publisher="0736", date="1985/10/05",
+            description="""
+            New exercise, meditation, and nutritional techniques that can reduce the shock of
+            daily interactions. Popular audience. Sample menus included, exercise video
+            available separately.
+            """),
+
+        bizbook.schema.Book(
+            id="PS3333",
+            title="Prolonged data deprivation: four case studies",
+            category="psychology", publisher="0736", date="1985/06/12",
+            description="""
+            What happens when the data runs dry? Searching evaluations of information-shortage
+            effects on heavy users.
+            """),
+        bizbook.schema.Book(
+            id="PS7777",
+            title="Emotional security: a new algorithm",
+            category="psychology", publisher="0736", date="1985/06/12",
+            description="""
+            Protecting yourself and your loved ones from undue emotional stress in the modern
+            world. Use of computer and nutritional aids emphasized.
+            """),
+        bizbook.schema.Book(
+            id="TC3218",
+            title="Onions, leeks and garlic: cooking secrets of the Mediterranean",
+            category="cookbook", publisher="0877", date="1985/10/21",
+            description="""
+            Profusely illustrated in color, this makes a wonderful gift book for a
+            cuisine-oriented friend.
+            """),
+
+        bizbook.schema.Book(
+            id="TC7777",
+            title="Sushi, Anyone?",
+            category="cookbook", publisher="0877", date="1985/06/12",
+            description="""
+            Detailed instructions on improving your position in life by learning how to make
+            authentic Japanese sushi in your spare time. 5-10% increase in number of friends
+            per recipe reported from beta test.
+            """),
+        bizbook.schema.Book(
+            id="TC4203",
+            title="Fifty years in Buckingham Palace kitchens",
+            category="cookbook", publisher="0877", date="1985/06/12",
+            description="""
+            More anecdotes from the Queen's favorite cook describing life among English
+            royalty. Recipes, techniques, tender vignettes.
+            """),
+        )
+    # add them to their table
+    db.insert(*books)
+
+    # authors
+    authors = (
+        bizbook.schema.Author(author="173-32-1176", book="PS3333", ordinal=1, share=1.0),
+        bizbook.schema.Author(author="213-46-8915", book="BU1032", ordinal=2, share=0.4),
+        bizbook.schema.Author(author="213-46-8915", book="BU2075", ordinal=1, share=1.0),
+        bizbook.schema.Author(author="238-95-7766", book="PC1035", ordinal=1, share=1.0),
+        bizbook.schema.Author(author="267-41-2394", book="BU1111", ordinal=2, share=0.4),
+        bizbook.schema.Author(author="267-41-2394", book="TC7777", ordinal=2, share=0.3),
+        bizbook.schema.Author(author="274-80-9391", book="BU7832", ordinal=1, share=1.0),
+        bizbook.schema.Author(author="409-56-7008", book="BU1032", ordinal=1, share=0.6),
+        bizbook.schema.Author(author="427-17-2319", book="PC8888", ordinal=1, share=0.5),
+        bizbook.schema.Author(author="472-27-2349", book="TC7777", ordinal=3, share=0.3),
+        bizbook.schema.Author(author="486-29-1786", book="PC9999", ordinal=1, share=1.0),
+        bizbook.schema.Author(author="486-29-1786", book="PS7777", ordinal=1, share=1.0),
+        bizbook.schema.Author(author="648-92-1872", book="TC4203", ordinal=1, share=1.0),
+        bizbook.schema.Author(author="672-71-3249", book="TC7777", ordinal=1, share=0.4),
+        bizbook.schema.Author(author="712-45-1867", book="MC2222", ordinal=1, share=1.0),
+        bizbook.schema.Author(author="722-51-5454", book="MC3021", ordinal=1, share=0.75),
+        bizbook.schema.Author(author="724-80-9391", book="BU1111", ordinal=1, share=0.6),
+        bizbook.schema.Author(author="724-80-9391", book="PS1372", ordinal=2, share=0.25),
+        bizbook.schema.Author(author="756-30-7391", book="PS1372", ordinal=1, share=0.75),
+        bizbook.schema.Author(author="807-91-6654", book="TC3218", ordinal=1, share=1.0),
+        bizbook.schema.Author(author="846-92-7186", book="PC8888", ordinal=2, share=0.5),
+        bizbook.schema.Author(author="899-46-2035", book="MC3021", ordinal=2, share=0.25),
+        bizbook.schema.Author(author="899-46-2035", book="PS2091", ordinal=2, share=0.5),
+        bizbook.schema.Author(author="998-72-3567", book="PS2091", ordinal=1, share=0.5),
+        bizbook.schema.Author(author="998-72-3567", book="PS2106", ordinal=1, share=1.0),
+        )
+    # add them to their table
+    db.insert(*authors)
+
+    editors = (
+        bizbook.schema.Editor(editor="321-55-8906", book="BU1032", ordinal=2),
+        bizbook.schema.Editor(editor="321-55-8906", book="BU1111", ordinal=2),
+        bizbook.schema.Editor(editor="321-55-8906", book="BU2075", ordinal=3),
+        bizbook.schema.Editor(editor="321-55-8906", book="BU7832", ordinal=2),
+        bizbook.schema.Editor(editor="321-55-8906", book="PC1035", ordinal=2),
+        bizbook.schema.Editor(editor="321-55-8906", book="PC8888", ordinal=2),
+        bizbook.schema.Editor(editor="777-02-9831", book="PC1035", ordinal=3),
+        bizbook.schema.Editor(editor="777-02-9831", book="PC8888", ordinal=3),
+        bizbook.schema.Editor(editor="826-11-9034", book="BU2075", ordinal=2),
+        bizbook.schema.Editor(editor="826-11-9034", book="PS1372", ordinal=2),
+        bizbook.schema.Editor(editor="826-11-9034", book="PS2091", ordinal=2),
+        bizbook.schema.Editor(editor="826-11-9034", book="PS2106", ordinal=2),
+        bizbook.schema.Editor(editor="826-11-9034", book="PS3333", ordinal=2),
+        bizbook.schema.Editor(editor="826-11-9034", book="PS7777", ordinal=2),
+        bizbook.schema.Editor(editor="885-23-9140", book="MC2222", ordinal=2),
+        bizbook.schema.Editor(editor="885-23-9140", book="MC3021", ordinal=2),
+        bizbook.schema.Editor(editor="885-23-9140", book="TC3218", ordinal=2),
+        bizbook.schema.Editor(editor="885-23-9140", book="TC4203", ordinal=2),
+        bizbook.schema.Editor(editor="885-23-9140", book="TC7777", ordinal=2),
+        bizbook.schema.Editor(editor="943-88-7920", book="BU1032", ordinal=1),
+        bizbook.schema.Editor(editor="943-88-7920", book="BU1111", ordinal=1),
+        bizbook.schema.Editor(editor="943-88-7920", book="BU2075", ordinal=1),
+        bizbook.schema.Editor(editor="943-88-7920", book="BU7832", ordinal=1),
+        bizbook.schema.Editor(editor="943-88-7920", book="PC1035", ordinal=1),
+        bizbook.schema.Editor(editor="943-88-7920", book="PC8888", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="MC2222", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="MC3021", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="PS1372", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="PS2091", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="PS2106", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="PS3333", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="PS7777", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="TC3218", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="TC4203", ordinal=1),
+        bizbook.schema.Editor(editor="993-86-0420", book="TC7777", ordinal=1),
+        )
+    # add them to their table
+    db.insert(*editors)
+    
     # and return the component
     return db
 
