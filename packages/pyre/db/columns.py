@@ -125,6 +125,26 @@ class Reference(Column):
     Representation of foreign keys
     """
 
+    def onDelete(self, action):
+        """
+        Set the action to perform when the target record is deleted. See {pyre.db.actions} for
+        details
+        """
+        # mark
+        self._foreign.delete = action
+        # and return
+        return
+
+    def onUpdate(self, action):
+        """
+        Set the action to perform when the target record is updated. See {pyre.db.actions} for
+        details
+        """
+        # mark
+        self._foreign.update = action
+        # and return
+        return
+
     def rep(self, value):
         """SQL compliant rendering of my value"""
         # delegate to the column to which i refer

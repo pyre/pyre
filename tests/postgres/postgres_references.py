@@ -16,9 +16,8 @@ import pyre.db
 
 class Location(pyre.db.table, id="location"):
 
-    id = pyre.db.int()
+    id = pyre.db.int().primary()
     id.doc = "the unique key that identifies a location"
-    id.primary()
 
     latitude = pyre.db.float()
     latitude.doc = "the latitude of the location"
@@ -29,10 +28,9 @@ class Location(pyre.db.table, id="location"):
 
 class Weather(pyre.db.table, id="weather"):
 
-    location = pyre.db.int()
+    location = pyre.db.reference(
+        key=Location.id, onDelete=pyre.db.setNull, onUpdate=pyre.db.setDefault)
     location.doc = "the location of the measurements"
-    location.references(
-        ref=Location, onDelete=location.actions.setNull, onUpdate=location.actions.setDefault)
 
     date = pyre.db.date()
     date.doc = "the date of the measurement"
