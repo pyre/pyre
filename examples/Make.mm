@@ -10,6 +10,7 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
+    bizbook.pyre \
     contacts.pyre \
     gauss.pyre
 
