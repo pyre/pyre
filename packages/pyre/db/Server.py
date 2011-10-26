@@ -93,7 +93,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         Insert {items} into the database
         """
         # build the sql statements
-        sql = self.sql.insertRecords(records)
+        sql = self.sql.insertRecords(*records)
         # and execute
         return self.execute(sql)
         
