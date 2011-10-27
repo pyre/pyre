@@ -22,7 +22,7 @@ import pyre.db
 
 class Location(pyre.db.table, id="locations"):
     """
-    The table of addresses
+    The table of locations
     """
     id = pyre.db.str().primary()
     address = pyre.db.str()
@@ -79,8 +79,10 @@ class Book(pyre.db.table, id="books"):
     title = pyre.db.str()
     category = pyre.db.str()
     publisher = pyre.db.reference(key=Publisher.id)
-    description = pyre.db.str()
     date = pyre.db.str()
+    price = pyre.db.decimal(precision=11, scale=2)
+    advance = pyre.db.decimal(precision=8, scale=2)
+    description = pyre.db.str()
 
 class Author(pyre.db.table, id="authors"):
     """
@@ -98,5 +100,25 @@ class Editor(pyre.db.table, id="editors"):
     editor = pyre.db.reference(key=Person.ssn)
     book = pyre.db.reference(key=Book.id)
     ordinal = pyre.db.int()
+
+class Invoice(pyre.db.table, id="invoices"):
+    """
+    Invoices
+    """
+    id = pyre.db.str().primary()
+    client = pyre.db.str()
+    po = pyre.db.str()
+    date = pyre.db.str()
+
+class InvoiceItem(pyre.db.table, id="invoice_item"):
+    """
+    Invoice line items
+    """
+    invoice = pyre.db.reference(key=Invoice.id)
+    book = pyre.db.reference(key=Book.id)
+    ordered = pyre.db.int()
+    shipped = pyre.db.int()
+    date = pyre.db.str()
+
 
 # end of file 
