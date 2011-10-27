@@ -19,21 +19,52 @@ class Selector(AttributeClassifier):
 
 
     # types
-    from .ColumnReference import ColumnReference
+    from .Schemer import Schemer as pyre_Schemer
+    from .ColumnReference import ColumnReference as pyre_ColumnReference
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, table=None, hidden=False, **kwds):
+    @classmethod
+    def __prepare__(cls, name, bases, hidden=False, **kwds):
+        """
+        Build an attribute table that contains the local table aliases
+        """
+        # delegate to my superclasses
+        attributes = super().__prepare__(name, bases)
+        # leave early if this is an internal class
+        if hidden: return attributes
+
+        # the table aliases
+        aliases = set()
+
+        # look through {kwds} for table aliases
+        for name, value in kwds.items():
+            # if {value} is a table
+            if isinstance(value, cls.pyre_Schemer):
+                # derive a class from it
+                alias = cls.pyre_Schemer(name, (value,), {}, alias=value.pyre_name)
+                # add it to the pile
+                aliases.add(alias)
+                # and make it accessible as an attribute
+                attributes[name] = alias
+
+        # prime the table aliases
+        attributes["pyre_tables"] = aliases
+                
+        # return the attribute container
+        return attributes
+
+        
+    def __new__(cls, name, bases, attributes, hidden=False, **kwds):
         # chain to my ancestor
         query = super().__new__(cls, name, bases, attributes, **kwds)
         # leave early if this is a pyre internal class
         if hidden: return query
 
-        # attach the meta data
-        query.pyre_table = table
-
         # extract the column references
-        query.pyre_columns = tuple(cls.pyre_harvest(attributes, cls.ColumnReference))
+        query.pyre_columns = tuple(cls.pyre_harvest(attributes, cls.pyre_ColumnReference))
+        # and add the tables references to the query pile
+        query.pyre_tables |= set(ref.table for name, ref in query.pyre_columns)
 
         # return the query class record
         return query

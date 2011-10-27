@@ -55,6 +55,8 @@ class SQL(Mill, family="pyre.db.sql"):
 
         # native queries
         if isinstance(query, self.selector):
+            # do we have other clauses following the {FROM} section
+            otherClauses = False
             # figure out how many column references there are
             columns = len(query.pyre_columns)
             # build the projection
@@ -67,10 +69,38 @@ class SQL(Mill, family="pyre.db.sql"):
                 yield self.place("{} AS {}{}".format(reference, alias, comma))
             # push out
             self.outdent()
-            # render the table name
-            yield self.place("FROM {};".format(query.pyre_table.pyre_name))
+            # render the {FROM} section
+            yield self.place("FROM")
+            # push in
+            self.indent()
+            # figure out how many table references there are
+            tables = len(query.pyre_tables)
+            # render the tables
+            for index, table in enumerate(query.pyre_tables):
+                # do we need a terminator?
+                # if we have more tables
+                if index + 1 < tables: 
+                    # make it a comma
+                    terminator = ','
+                # if there are no other clauses in the query
+                elif not otherClauses:
+                    terminator = ';'
+                # otherwise
+                else:
+                    # leave blank
+                    terminator = ''
+                # do we need to rename the table?
+                if table.pyre_alias == table.pyre_name:
+                    # no
+                    yield self.place("{}{}".format(table.pyre_alias, terminator))
+                # otherwise
+                else:
+                    # build a local alias for the table name
+                    yield self.place("{} AS {}{}".format(
+                            table.pyre_alias, table.pyre_name, terminator))
+
             # push out
-            self.outdent()
+            self.outdent(decrement=2)
             # all done
             return
 

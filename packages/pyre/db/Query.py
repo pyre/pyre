@@ -18,8 +18,8 @@ class Query(metaclass=Selector, hidden=True):
 
 
     # public data
-    pyre_table = None
     pyre_columns = ()
+    pyre_tables = set()
 
 
 # end of file 

@@ -23,12 +23,13 @@ class Schemer(AttributeClassifier):
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, id=None, **kwds):
+    def __new__(cls, name, bases, attributes, id=None, alias=None, **kwds):
         # chain to my ancestor
         table = super().__new__(cls, name, bases, attributes, **kwds)
 
         # set up the table name
         table.pyre_name = name if id is None else id
+        table.pyre_alias = table.pyre_name if alias is None else alias
         # harvest the locally declared columns
         local = []
         for columnName, column in cls.pyre_harvest(attributes, cls.Column):

@@ -11,8 +11,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working: queries
-
 all: test
 
 test: sanity tables queries
@@ -34,6 +32,7 @@ tables:
 queries:
 	${PYTHON} ./query_star.py
 	${PYTHON} ./query_projection.py
+	${PYTHON} ./query_projection_multitable.py
 
 
 # end of file 
