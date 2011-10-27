@@ -18,10 +18,16 @@ class SQL(Mill, family="pyre.db.sql"):
     """
 
 
+    # constants
+    INDENTER = " "*2
+
     # types
     # the metaclasses for tables and queries
     from .Schemer import Schemer as schemer
     from .Selector import Selector as selector
+    # the base classes for tables and queries
+    from .Table import Table as table
+    from .Query import Query as query
 
 
     # interface
@@ -260,11 +266,12 @@ class SQL(Mill, family="pyre.db.sql"):
                 # initiate the statement
                 yield self.place("INSERT INTO {}".format(record.pyre_name))
                 # indent
-                self.indent()
+                self.indent(increment=2)
                 # the column names in declaration order
                 yield self.place("({})".format(
                         ", ".join(column.name for column in record.pyre_columns)))
                 # start the section with the record values
+                self.outdent()
                 yield self.place("VALUES")
                 # further in
                 self.indent()
@@ -278,7 +285,7 @@ class SQL(Mill, family="pyre.db.sql"):
         # render any left overs
         yield self.place(dangling + ';')
         # bounce out to top level
-        self.outdent().outdent()
+        self.outdent(decrement=2)
         # all done
         return
 

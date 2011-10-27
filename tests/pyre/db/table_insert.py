@@ -51,14 +51,14 @@ def test():
     assert stmt == (
         "INSERT INTO persons",
         "    (id, name, phone)",
-        "    VALUES",
-        "        (107, 'Bit Twiddle', '+1 800 555 1114'),",
-        "        (108, 'Eva Lu Ator', '+1 800 555 7687');",
+        "  VALUES",
+        "    (107, 'Bit Twiddle', '+1 800 555 1114'),",
+        "    (108, 'Eva Lu Ator', '+1 800 555 7687');",
         "INSERT INTO customers",
         "    (cid, pid, balance)",
-        "    VALUES",
-        "        (1023, 107, 1000),",
-        "        (1024, 108, 50);",
+        "  VALUES",
+        "    (1023, 107, 1000),",
+        "    (1024, 108, 50);",
         )
 
     return

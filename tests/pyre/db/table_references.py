@@ -48,16 +48,16 @@ def test():
     # print('\n'.join(stmt))
     assert stmt == (
         "CREATE TABLE weather",
-        "    --",
-        "    -- The sample table from the postgres tutorial",
-        "    --",
+        "  --",
+        "  -- The sample table from the postgres tutorial",
+        "  --",
         "(",
-        "    city INTEGER",
-        "        REFERENCES cities (id),",
-        "    date DATE,",
-        "    low INTEGER DEFAULT 0,",
-        "    high INTEGER DEFAULT 0,",
-        "    precipitation DOUBLE PRECISION DEFAULT 0.0",
+        "  city INTEGER",
+        "    REFERENCES cities (id),",
+        "  date DATE,",
+        "  low INTEGER DEFAULT 0,",
+        "  high INTEGER DEFAULT 0,",
+        "  precipitation DOUBLE PRECISION DEFAULT 0.0",
         ");"
         )
     # all done

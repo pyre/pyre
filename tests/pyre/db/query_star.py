@@ -36,8 +36,8 @@ def test():
     # print('\n'.join(stmt))
     assert stmt == (
         "SELECT",
-        "        *",
-        "    FROM weather;"
+        "    *",
+        "  FROM weather;"
         )
 
     # all done

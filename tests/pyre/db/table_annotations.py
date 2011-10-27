@@ -51,23 +51,23 @@ def test():
 
     # generate the SQL statement that creates the customer table
     stmt = tuple(server.sql.createTable(table=Customer))
-    # print('\n'.join(stmt))
+    #print('\n'.join(stmt))
     assert stmt == (
         "CREATE TABLE customers",
-        "    --",
-        "    -- Simple customer table",
-        "    --",
+        "  --",
+        "  -- Simple customer table",
+        "  --",
         "(",
-        "    cid INTEGER, -- the customer id",
-        "    name TEXT DEFAULT ''",
-        "        NOT NULL,",
-        "    phone VARCHAR(10) DEFAULT '',",
-        "    balance DECIMAL(7, 2) DEFAULT 0,",
+        "  cid INTEGER, -- the customer id",
+        "  name TEXT DEFAULT ''",
+        "    NOT NULL,",
+        "  phone VARCHAR(10) DEFAULT '',",
+        "  balance DECIMAL(7, 2) DEFAULT 0,",
         "",
-        "    PRIMARY KEY (cid),",
-        "    UNIQUE (name),",
-        "    CHECK ((balance) >= (0)),",
-        "    CHECK ((balance) < (10000))",
+        "  PRIMARY KEY (cid),",
+        "  UNIQUE (name),",
+        "  CHECK ((balance) >= (0)),",
+        "  CHECK ((balance) < (10000))",
         ");"
         )
 
@@ -76,15 +76,15 @@ def test():
     # print('\n'.join(stmt))
     assert stmt == (
         "CREATE TABLE orders",
-        "    --",
-        "    -- Trivial order table",
-        "    --",
+        "  --",
+        "  -- Trivial order table",
+        "  --",
         "(",
-        "    oid INTEGER",
-        "        PRIMARY KEY,",
-        "    cid INTEGER,",
+        "  oid INTEGER",
+        "    PRIMARY KEY,",
+        "  cid INTEGER,",
         "",
-        "    FOREIGN KEY (cid) REFERENCES customers (cid)",
+        "  FOREIGN KEY (cid) REFERENCES customers (cid)",
         ");"
         )
 

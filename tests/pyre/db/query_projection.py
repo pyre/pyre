@@ -21,7 +21,6 @@ def test():
         """
         The sample table from the postgres tutorial
         """
-
         # the fields
         city = pyre.db.str()
         date = pyre.db.date()
@@ -42,9 +41,9 @@ def test():
     #print('\n'.join(stmt))
     assert stmt == (
         "SELECT",
-        "        weather.city AS city,",
-        "        weather.date AS date",
-        "    FROM weather;"
+        "    weather.city AS city,",
+        "    weather.date AS date",
+        "  FROM weather;"
         )
 
     # all done

@@ -37,9 +37,9 @@ def test():
     # print('\n'.join(stmt))
     assert stmt == (
         "UPDATE persons",
-        "    SET",
-        "        (phone, birthday) = ('1 800 555 7687', '1930/10/28')",
-        "    WHERE ((name) = ('Eva Lu Ator'));"
+        "  SET",
+        "    (phone, birthday) = ('1 800 555 7687', '1930/10/28')",
+        "  WHERE ((name) = ('Eva Lu Ator'));"
         )
 
     return
