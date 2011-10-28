@@ -47,7 +47,7 @@ class Postgres(pyre.db.server, family="postgres.server"):
         return self
 
 
-    def execute(self, sql):
+    def execute(self, *sql):
         """
         Execute the sequence of SQL statements in {sql} as a single command
         """
@@ -68,7 +68,7 @@ class Postgres(pyre.db.server, family="postgres.server"):
         """
         Hook invoked when the context manager is entered
         """
-        status = self.execute(self.sql.transaction())
+        status = self.execute(*self.sql.transaction())
         return self
 
 
@@ -77,9 +77,9 @@ class Postgres(pyre.db.server, family="postgres.server"):
         Hook invoked when the context manager's block exits
         """
         if exc_type is None:
-            status = self.execute(self.sql.commit())
+            status = self.execute(*self.sql.commit())
         else:
-            status = self.execute(self.sql.rollback())
+            status = self.execute(*self.sql.rollback())
 
         # re-raise any exception that occurred while executing the body of the with statement
         return False

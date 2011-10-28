@@ -47,9 +47,7 @@ def queryForTable(db, table):
     Interrogate the table of tables looking for {table}
     """
     # build the statement
-    sql = [
-        "SELECT tablename FROM pg_tables WHERE tablename='{}'".format(table.pyre_name)
-        ]
+    sql = "SELECT tablename FROM pg_tables WHERE tablename='{}'".format(table.pyre_name)
     # execute it and return the result
     return db.execute(sql)
 

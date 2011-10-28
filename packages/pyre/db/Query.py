@@ -19,6 +19,7 @@ class Query(metaclass=Selector, hidden=True):
 
     # public data
     pyre_fields = ()
+    pyre_derivations = ()
     pyre_tables = set()
 
 

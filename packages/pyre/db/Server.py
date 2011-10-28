@@ -39,7 +39,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
 
 
     @pyre.export
-    def execute(self, sql):
+    def execute(self, *sql):
         """
         Execute the sequence of SQL statements in {sql} as a single command
         """
@@ -55,7 +55,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         # build the sql statement
         sql = self.sql.createDatabase(name=name)
         # and execute it
-        return self.execute(sql)
+        return self.execute(*sql)
 
 
     def dropDatabase(self, name):
@@ -65,7 +65,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         # build the sql statement
         sql = self.sql.dropDatabase(name=name)
         # and execute it
-        return self.execute(sql)
+        return self.execute(*sql)
 
 
     def createTable(self, table):
@@ -75,7 +75,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         # build the sql statement
         sql = self.sql.createTable(table)
         # and execute it
-        return self.execute(sql)
+        return self.execute(*sql)
 
 
     def dropTable(self, table):
@@ -85,7 +85,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         # build the sql statement
         sql = self.sql.dropTable(table)
         # and execute it
-        return self.execute(sql)
+        return self.execute(*sql)
 
 
     def insert(self, *records):
@@ -95,7 +95,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         # build the sql statements
         sql = self.sql.insertRecords(*records)
         # and execute
-        return self.execute(sql)
+        return self.execute(*sql)
         
 
     def delete(self, table, condition):
@@ -105,7 +105,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         # build the sql statements
         sql = self.sql.deleteRecords(table=table, condition=condition)
         # and execute
-        return self.execute(sql)
+        return self.execute(*sql)
 
 
     def select(self, query):
@@ -115,7 +115,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         # build the sql statements
         sql = self.sql.select(query=query)
         # and execute it
-        return self.execute(sql)
+        return self.execute(*sql)
         
 
     # meta methods
