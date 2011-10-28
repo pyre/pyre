@@ -60,13 +60,11 @@ class SQL(Mill, family="pyre.db.sql"):
             # figure out how many column references there are
             columns = len(query.pyre_columns)
             # build the projection
-            for index, spec in enumerate(query.pyre_columns):
-                # unpack
-                alias, reference = spec
+            for index, (alias, expr) in enumerate(query.pyre_columns):
                 # do we need a comma?
                 comma = ',' if index+1 < columns else ''
                 # render this column
-                yield self.place("{} AS {}{}".format(reference, alias, comma))
+                yield self.place("{} AS {}{}".format(self.expression(expr), alias, comma))
             # push out
             self.outdent()
             # render the {FROM} section
@@ -408,12 +406,12 @@ class SQL(Mill, family="pyre.db.sql"):
 
 
     # implementation details
-    def _columnReference(self, node, table, **kwds):
+    def _columnReference(self, node, table=None, **kwds):
         """
         Render {node} as reference to a column
         """
         # if the reference is to a column in {table}
-        if node.table == table:
+        if table is not None and node.table == table:
             # skip the table name
             return node.column.name
         # otherwise, build a fully qualified reference
