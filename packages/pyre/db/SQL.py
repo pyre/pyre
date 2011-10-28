@@ -76,7 +76,7 @@ class SQL(Mill, family="pyre.db.sql"):
             # figure out how many table references there are
             tables = len(query.pyre_tables)
             # render the tables
-            for index, table in enumerate(query.pyre_tables):
+            for index, table in enumerate(sorted(query.pyre_tables, key=lambda x: x.pyre_name)):
                 # do we need a terminator?
                 # if we have more tables
                 if index + 1 < tables: 
