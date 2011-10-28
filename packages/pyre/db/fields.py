@@ -8,14 +8,14 @@
 
 # access to the type descriptors
 from .. import schema
-# the base class for column descriptors
-from .Column import Column
+# the base class for field descriptors
+from .Field import Field
 # other necessary packages
 import decimal
 
 
 # booleans
-class Boolean(Column):
+class Boolean(Field):
     """
     Representation for booleans
     """
@@ -38,7 +38,7 @@ class Boolean(Column):
 
     
 # dates
-class Date(Column):
+class Date(Field):
     """
     Representation for dates
     """
@@ -55,7 +55,7 @@ class Date(Column):
 
 
 # fixed precision arithmetic
-class Decimal(Column):
+class Decimal(Field):
     """
     Representation of fixed precision numbers
     """
@@ -78,7 +78,7 @@ class Decimal(Column):
 
 
 # floating point numbers
-class Float(Column):
+class Float(Field):
     """
     Representation of floating point numbers
     """
@@ -99,7 +99,7 @@ class Float(Column):
 
 
 # integers
-class Integer(Column):
+class Integer(Field):
     """
     Representation for integers
     """
@@ -120,7 +120,7 @@ class Integer(Column):
 
 
 # foreign keys
-class Reference(Column):
+class Reference(Field):
     """
     Representation of foreign keys
     """
@@ -147,7 +147,7 @@ class Reference(Column):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        # delegate to the column to which i refer
+        # delegate to the field to which i refer
         return self.referent.rep(value)
 
     def decl(self):
@@ -161,27 +161,27 @@ class Reference(Column):
         # set up my foreign key
         self._foreign = self.ForeignKey(**kwds)
 
-        # get the column reference recorded by the foreign key
+        # get the field reference recorded by the foreign key
         ref = self._foreign.reference
-        # if the reference mentions a column explicitly
-        if ref.column is not None:
+        # if the reference mentions a field explicitly
+        if ref.field is not None:
             # save it
-            column = ref.column
+            field = ref.field
         # otherwise
         else:
             raise NotImplementedError("NYI!")
 
         # store my referent
-        self.referent = column
+        self.referent = field
         # and my type
-        self.type = column.type
+        self.type = field.type
 
         # all done
         return
 
 
 # arbitrary length strings
-class String(Column):
+class String(Field):
     """
     Representation for arbitrary length strings
     """
@@ -211,7 +211,7 @@ class String(Column):
 
 
 # timestamps
-class Time(Column):
+class Time(Field):
     """
     Representation for time stamps
     """

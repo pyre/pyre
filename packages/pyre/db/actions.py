@@ -19,13 +19,13 @@ noAction = "NO ACTION"
 restrict = "RESTRICT"
 
 # on delete, delete all rows that reference the deleted row; on update, change the value of the
-# referencing column to the new value of the foreign key
+# referencing field to the new value of the foreign key
 cascade = "CASCADE"
 
-# set the referencing column to NULL
+# set the referencing field to NULL
 setNull = "SET NULL"
 
-# set the referencing column to its default value
+# set the referencing field to its default value
 setDefault = "SET DEFAULT"
 
 

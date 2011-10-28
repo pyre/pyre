@@ -19,10 +19,10 @@ def template(table):
     """
     # build an instance, bypassing the constructor
     row = table.__new__(table)
-    # iterate over the table columns
-    for column in table.pyre_localColumns:
+    # iterate over the table fields
+    for field in table.pyre_localFields:
         # set all attributes to {None}
-        setattr(row, column.name, None)
+        setattr(row, field.name, None)
     # and return the instance
     return row
 
@@ -38,7 +38,7 @@ from .Table import Table as table
 from .Query import Query as query
 # the data model
 from .. import schema
-from .Column import Column as column
+from .Field import Field as field
 
 
 # the representation of NULL
@@ -48,7 +48,7 @@ default = object()
 
 
 # descriptor factories
-from .columns import (
+from .fields import (
     Boolean as bool,
     Date as date,
     Decimal as decimal,

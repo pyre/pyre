@@ -41,19 +41,19 @@ def test():
     # check the name
     assert Weather.pyre_name == "weather"
     # make sure we harvested all the descriptors (and in the right order)
-    assert Weather.pyre_localColumns == tuple(
-        value.column for value in (
+    assert Weather.pyre_localFields == tuple(
+        value.field for value in (
             Weather.city, Weather.date, Weather.low, Weather.high, Weather.precipitation
             ))
 
     # no inheritance here, so these should match
-    assert Weather.pyre_localColumns == Weather.pyre_columns
+    assert Weather.pyre_localFields == Weather.pyre_fields
 
-    # make sure all the column descriptors report Weather as their table
-    for column in Weather.pyre_columns:
-        ref = getattr(Weather, column.name)
+    # make sure all the field descriptors report Weather as their table
+    for field in Weather.pyre_fields:
+        ref = getattr(Weather, field.name)
         assert ref.table == Weather
-        assert ref.column == column
+        assert ref.field == field
 
     # all done
     return Weather

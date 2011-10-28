@@ -19,9 +19,10 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Column.py \
-    ColumnReference.py \
     DataStore.py \
+    Entry.py \
+    Field.py \
+    FieldReference.py \
     ForeignKey.py \
     Query.py \
     SQL.py \
@@ -31,7 +32,7 @@ EXPORT_PYTHON_MODULES = \
     Table.py \
     View.py \
     actions.py \
-    columns.py \
+    fields.py \
     exceptions.py \
     __init__.py
 

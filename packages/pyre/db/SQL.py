@@ -38,7 +38,7 @@ class SQL(Mill, family="pyre.db.sql"):
         """
         # start
         yield "SELECT"
-        # prepare to render the column projection
+        # prepare to render the field projection
         self.indent(increment=2)
         # if the query is a table specification
         if isinstance(query, self.schemer):
@@ -57,13 +57,13 @@ class SQL(Mill, family="pyre.db.sql"):
         if isinstance(query, self.selector):
             # do we have other clauses following the {FROM} section
             otherClauses = False
-            # figure out how many column references there are
-            columns = len(query.pyre_columns)
+            # figure out how many field references there are
+            fields = len(query.pyre_fields)
             # build the projection
-            for index, (alias, expr) in enumerate(query.pyre_columns):
+            for index, (alias, expr) in enumerate(query.pyre_fields):
                 # do we need a comma?
-                comma = ',' if index+1 < columns else ''
-                # render this column
+                comma = ',' if index+1 < fields else ''
+                # render this field
                 yield self.place("{} AS {}{}".format(self.expression(expr), alias, comma))
             # push out
             self.outdent()
@@ -163,20 +163,20 @@ class SQL(Mill, family="pyre.db.sql"):
         """
         Generate the SQL statement to create a database table given its description.
 
-        The description in {table} is expected to be a subclass of {Table}, with the column
-        information provided in the decorated column descriptors.
+        The description in {table} is expected to be a subclass of {Table}, with the field
+        information provided in the decorated field descriptors.
         """
-        # check that the table has columns
-        if not table.pyre_columns:
+        # check that the table has fields
+        if not table.pyre_fields:
             import journal
             error = journal.error("pyre.db.sql")
-            error.log("table {!r} has no column information".format(table.pyre_name))
+            error.log("table {!r} has no field information".format(table.pyre_name))
             return
 
-        # does this table declaration have annotations past the column declarations?
+        # does this table declaration have annotations past the field declarations?
         annotations = len(tuple(filter(None, [
             len(table._pyre_primaryKeys), len(table._pyre_foreignKeys),
-            len(table._pyre_uniqueColumns), len(table._pyre_constraints) ])))
+            len(table._pyre_uniqueFields), len(table._pyre_constraints) ])))
 
         # if there is a docstring
         if table.__doc__:
@@ -194,16 +194,16 @@ class SQL(Mill, family="pyre.db.sql"):
             # put it all on one line
             yield self.place("CREATE TABLE " + table.pyre_name + " (")
 
-        # the column declarations
+        # the field declarations
         self.indent()
         # how many?
-        nColumns = len(table.pyre_columns)
-        # iterate over the columns except the last one
-        for index, column in enumerate(table.pyre_columns):
+        nFields = len(table.pyre_fields)
+        # iterate over the fields except the last one
+        for index, field in enumerate(table.pyre_fields):
             # do we need a comma
-            comma = (annotations > 0) or (index+1 < nColumns)
+            comma = (annotations > 0) or (index+1 < nFields)
             # some declarations span multiple lines
-            for line in self._columnDeclaration(column, comma):
+            for line in self._fieldDeclaration(field, comma):
                 yield self.place(line)
 
         # if there are any table annotations
@@ -214,14 +214,14 @@ class SQL(Mill, family="pyre.db.sql"):
             if len(table._pyre_primaryKeys):
                 annotations -= 1
                 yield self.place("PRIMARY KEY ({}){}".format(
-                    ','.join(column.name for column in table._pyre_primaryKeys),
+                    ','.join(field.name for field in table._pyre_primaryKeys),
                     ',' if annotations else ''
                     ))
             # the unique constraints
-            if len(table._pyre_uniqueColumns):
+            if len(table._pyre_uniqueFields):
                 annotations -= 1
                 yield self.place("UNIQUE ({}){}".format(
-                    ','.join(column.name for column in table._pyre_uniqueColumns),
+                    ','.join(field.name for field in table._pyre_uniqueFields),
                     ',' if annotations else ''
                     ))
             # the foreign keys
@@ -235,7 +235,7 @@ class SQL(Mill, family="pyre.db.sql"):
                     fkeys -= 1
                     # build the declaration
                     yield self.place("FOREIGN KEY ({}) REFERENCES {} ({}){}".format(
-                        local.column.name, foreign.table.pyre_name, foreign.column.name,
+                        local.field.name, foreign.table.pyre_name, foreign.field.name,
                         ',' if fkeys or annotations else ''
                         ))
 
@@ -295,9 +295,9 @@ class SQL(Mill, family="pyre.db.sql"):
                 yield self.place("INSERT INTO {}".format(record.pyre_name))
                 # indent
                 self.indent(increment=2)
-                # the column names in declaration order
+                # the field names in declaration order
                 yield self.place("({})".format(
-                        ", ".join(column.name for column in record.pyre_columns)))
+                        ", ".join(field.name for field in record.pyre_fields)))
                 # start the section with the record values
                 self.outdent()
                 yield self.place("VALUES")
@@ -352,13 +352,13 @@ class SQL(Mill, family="pyre.db.sql"):
         corresponding values in {template}; fields set to {None} in {template} are not
         affected.
         """
-        # build the tuple of affected columns and their values
+        # build the tuple of affected fields and their values
         names = []
         values = []
-        # by iterating over all the columns
-        for column in template.pyre_columns:
+        # by iterating over all the fields
+        for field in template.pyre_fields:
             # getting the corresponding name from {template}
-            name = column.name
+            name = field.name
             value = getattr(template, name)
             # skipping the ones set to {None}
             if value is None: continue
@@ -397,55 +397,55 @@ class SQL(Mill, family="pyre.db.sql"):
         super().__init__(**kwds)
 
         # i get to render these as part of expressions
-        from .ColumnReference import ColumnReference 
+        from .FieldReference import FieldReference 
         # adjust the rendering strategy table
-        self._renderers[ColumnReference] = self._columnReference
+        self._renderers[FieldReference] = self._fieldReference
 
         # and return
         return
 
 
     # implementation details
-    def _columnReference(self, node, table=None, **kwds):
+    def _fieldReference(self, node, table=None, **kwds):
         """
-        Render {node} as reference to a column
+        Render {node} as reference to a field
         """
-        # if the reference is to a column in {table}
+        # if the reference is to a field in {table}
         if table is not None and node.table == table:
             # skip the table name
-            return node.column.name
+            return node.field.name
         # otherwise, build a fully qualified reference
-        return "{0.table.pyre_name}.{0.column.name}".format(node)
+        return "{0.table.pyre_name}.{0.field.name}".format(node)
 
 
-    def _columnDeclaration(self, column, comma):
+    def _fieldDeclaration(self, field, comma):
         """
-        Build the declaration lines for a given table column
+        Build the declaration lines for a given table field
         """
-        # the column name
-        name = column.name
-        # the column type
-        typedecl = column.decl()
+        # the field name
+        name = field.name
+        # the field type
+        typedecl = field.decl()
         # default value if any
-        default = column.decldefault()
+        default = field.decldefault()
         # compute the annotations
         annotations = []
         # a primary key
-        if column._primary: annotations.append("PRIMARY KEY")
+        if field._primary: annotations.append("PRIMARY KEY")
         # not null
-        if column._notNull: annotations.append("NOT NULL")
+        if field._notNull: annotations.append("NOT NULL")
         # unique
-        if column._unique: annotations.append("UNIQUE")
+        if field._unique: annotations.append("UNIQUE")
         # assemble them
         annotations = " ".join(annotations)
 
         # is this a single line declaration
-        oneLiner = not (annotations or column._foreign)
-        # a column is "decorated" if it has annotations or is a foreign key declaration
+        oneLiner = not (annotations or field._foreign)
+        # a field is "decorated" if it has annotations or is a foreign key declaration
         separator = ',' if (comma and oneLiner) else ''
         # is there a comment
-        if column.doc:
-            comment = ' ' + self.comment + ' ' + column.doc
+        if field.doc:
+            comment = ' ' + self.comment + ' ' + field.doc
         else:
             comment = ''
 
@@ -457,11 +457,11 @@ class SQL(Mill, family="pyre.db.sql"):
         # annotations
         if annotations:
             # comma?
-            separator = ',' if (comma and not column._foreign) else ''
+            separator = ',' if (comma and not field._foreign) else ''
             yield annotations + separator
         # foreign keys
-        if column._foreign:
-            for line in self._referenceDeclaration(column._foreign, comma):
+        if field._foreign:
+            for line in self._referenceDeclaration(field._foreign, comma):
                 yield line
 
         # all done
@@ -474,15 +474,15 @@ class SQL(Mill, family="pyre.db.sql"):
         Build a declaration for a foreign key
         """
         table = foreign.reference.table
-        column = foreign.reference.column
+        field = foreign.reference.field
 
         # comma?
         separator = ',' if comma and not (foreign.update or foreign.delete) else ''
         # build the reference line
-        if column is None:
+        if field is None:
             yield "REFERENCES {.pyre_name}{}".format(table, separator)
         else:
-            yield "REFERENCES {.pyre_name} ({.name}){}".format(table, column, separator)
+            yield "REFERENCES {.pyre_name} ({.name}){}".format(table, field, separator)
 
         # if there is nothing further to do
         if foreign.update is None and foreign.delete is None:

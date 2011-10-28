@@ -20,7 +20,7 @@ class Selector(AttributeClassifier):
 
     # types
     from .Schemer import Schemer as pyre_Schemer
-    from .ColumnReference import ColumnReference as pyre_ColumnReference
+    from .Entry import Entry as pyre_Entry
 
 
     # meta methods
@@ -61,10 +61,10 @@ class Selector(AttributeClassifier):
         # leave early if this is a pyre internal class
         if hidden: return query
 
-        # extract the column references
-        query.pyre_columns = tuple(cls.pyre_harvest(attributes, cls.pyre_ColumnReference))
+        # extract the field references
+        query.pyre_fields = tuple(cls.pyre_harvest(attributes, cls.pyre_Entry))
         # and add the tables references to the query pile
-        query.pyre_tables |= set(ref.table for name, ref in query.pyre_columns)
+        query.pyre_tables |= set(ref.table for name, ref in query.pyre_fields)
 
         # return the query class record
         return query

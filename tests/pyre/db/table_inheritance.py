@@ -35,17 +35,17 @@ def test():
     # check the name
     assert Measurement.pyre_name == "measurement"
     # make sure we harvested all the descriptors (and in the right order)
-    assert Measurement.pyre_localColumns == tuple(
-        value.column for value in (
+    assert Measurement.pyre_localFields == tuple(
+        value.field for value in (
             Measurement.low, Measurement.high, Measurement.precipitation ))
     # no inheritance here, so these should match
-    assert Measurement.pyre_localColumns == Measurement.pyre_columns
+    assert Measurement.pyre_localFields == Measurement.pyre_fields
 
-    # make sure all the column descriptors know Measurement as their table
-    for column in Measurement.pyre_columns:
-        ref = getattr(Measurement, column.name)
+    # make sure all the field descriptors know Measurement as their table
+    for field in Measurement.pyre_fields:
+        ref = getattr(Measurement, field.name)
         assert ref.table == Measurement
-        assert ref.column == column
+        assert ref.field == field
 
     # now the table with the location info
     class Location(pyre.db.table, id="location"):
@@ -62,16 +62,16 @@ def test():
     # check the name
     assert Location.pyre_name == "location"
     # make sure we harvested all the descriptors (and in the right order)
-    assert Location.pyre_localColumns == tuple(
-        value.column for value in (Location.city, Location.state))
+    assert Location.pyre_localFields == tuple(
+        value.field for value in (Location.city, Location.state))
     # no inheritance here, so these should match
-    assert Location.pyre_localColumns == Location.pyre_columns
+    assert Location.pyre_localFields == Location.pyre_fields
 
-    # make sure all the column descriptors know Location as their table
-    for column in Location.pyre_columns:
-        ref = getattr(Location, column.name)
+    # make sure all the field descriptors know Location as their table
+    for field in Location.pyre_fields:
+        ref = getattr(Location, field.name)
         assert ref.table == Location
-        assert ref.column == column
+        assert ref.field == field
 
     # now put it all together
     class Weather(Location, Measurement, id="weather"):
@@ -82,11 +82,11 @@ def test():
     # check the name
     assert Weather.pyre_name == "weather"
     # make sure we harvested all the descriptors (and in the right order)
-    assert Weather.pyre_localColumns == (Weather.date.column,)
-    # print(Weather.pyre_columns)
-    # print(tuple(column.name for column in Weather.pyre_columns))
-    assert Weather.pyre_columns == tuple(
-        value.column for value in (
+    assert Weather.pyre_localFields == (Weather.date.field,)
+    # print(Weather.pyre_fields)
+    # print(tuple(field.name for field in Weather.pyre_fields))
+    assert Weather.pyre_fields == tuple(
+        value.field for value in (
             Weather.date,
             Weather.city, Weather.state,
             Weather.low, Weather.high, Weather.precipitation))

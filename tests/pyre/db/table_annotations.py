@@ -44,7 +44,7 @@ def test():
         cid = pyre.db.int(default=None)
 
     # mark {cid} as a foreign key
-    Order.pyre_foreignKey(column=Order.cid, foreign=Customer.cid)
+    Order.pyre_foreignKey(field=Order.cid, foreign=Customer.cid)
 
     # get a server
     server = pyre.db.server(name="test")
