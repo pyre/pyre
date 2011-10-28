@@ -6,14 +6,11 @@
 #
 
 
-from .. import algebraic
+from ..algebraic.Node import Node
 
 
 # the base class for database entries
-class Entry(algebraic.var):
-    """
-    This is the base class for all database entries
-    """
+Entry = Node
 
 
 # end of file 

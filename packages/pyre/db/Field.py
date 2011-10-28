@@ -10,7 +10,7 @@ from .Entry import Entry
 from .. import schema
 
 
-class Field(schema.descriptor, Entry):
+class Field(schema.descriptor, Entry.variable):
     """
     The base class for database table descriptors
 

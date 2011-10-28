@@ -9,7 +9,7 @@
 from .Entry import Entry
 
 
-class FieldReference(Entry):
+class FieldReference(Entry.variable):
     """
     A field decorator that encapsulates references to table fields
 

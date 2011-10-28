@@ -39,12 +39,12 @@ def test():
     server = pyre.db.server()
     # generate the SQL statement
     stmt = tuple(server.sql.select(measurements))
-    print('\n'.join(stmt))
+    #print('\n'.join(stmt))
     assert stmt == (
         "SELECT",
         "    weather.city AS city,",
         "    weather.date AS date,",
-        "    ((weather.high) - (weather.low))/2 AS average",
+        "    ((weather.high) - (weather.low)) / (2) AS average",
         "  FROM",
         "    weather;"
         )
