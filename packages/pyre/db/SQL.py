@@ -60,10 +60,9 @@ class SQL(Mill, family="pyre.db.sql"):
             # do we have other clauses following the {FROM} section
             otherClauses = False
             # figure out how many field references there are
-            fields = len(query.pyre_fields) + len(query.pyre_derivations)
+            fields = len(query.pyre_fields)
             # build the projection
-            for index, (alias, expr) in enumerate(
-                itertools.chain(query.pyre_fields, query.pyre_derivations)):
+            for index, (alias, expr) in enumerate(query.pyre_fields):
                 # do we need a comma?
                 comma = ',' if index+1 < fields else ''
                 # render this field

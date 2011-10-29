@@ -6,6 +6,8 @@
 #
 
 
+# access to {OrderedDict}
+import collections
 # the base class that triggers descriptor sniffing
 from ..patterns.AttributeClassifier import AttributeClassifier
 
@@ -19,9 +21,13 @@ class Selector(AttributeClassifier):
 
 
     # types
+    # local
+    from .Entry import Entry as pyre_Entry
     from .Schemer import Schemer as pyre_Schemer
     from .FieldReference import FieldReference as pyre_FieldReference
-    pyre_Derivation = pyre_FieldReference.operator
+    # borrowed
+    from ..records import record as pyre_Record
+    from ..records import field as pyre_RecordDescriptor
 
 
     # meta methods
@@ -62,12 +68,47 @@ class Selector(AttributeClassifier):
         # leave early if this is a pyre internal class
         if hidden: return query
 
-        # extract the field references
-        query.pyre_fields = tuple(cls.pyre_harvest(attributes, cls.pyre_FieldReference))
-        query.pyre_derivations = tuple(cls.pyre_harvest(attributes, cls.pyre_Derivation))
+        # prime the pile of fields
+        fields = []
+        # the set of referenced tables
+        tables = set()
+        # and the field descriptors
+        descriptors = collections.OrderedDict()
+        # iterate over the important attributes
+        for name, entry in cls.pyre_harvest(attributes, cls.pyre_Entry):
+            # add the field to the pile
+            fields.append((name, entry))
+            # if the entry is a field reference
+            if isinstance(entry, cls.pyre_FieldReference):
+                # add the referenced table to the pile
+                tables.add(entry.table)
 
+            # figure out the type of the entry so we can cast it properly
+            types = set()
+            # iterate over the leaf nodes and collect their types
+            for node in entry.variables: types.add(node.type)
+            # if there is only one type
+            if len(types) == 1:
+                # get it
+                converter = types.pop()
+            # otherwise
+            else:
+                # type promotions
+                raise NotImplementedError("NYI: Selector.__new__: type promotions")
+
+            # make a record field descriptor
+            descriptor = cls.pyre_RecordDescriptor()
+            # attach its type
+            descriptor.type = converter
+            # and add it to the pile
+            descriptors[name] = descriptor
+
+        # extract the field references
+        query.pyre_fields = tuple(fields)
         # add the tables references to the query pile
-        query.pyre_tables |= set(ref.table for name, ref in query.pyre_fields)
+        query.pyre_tables |= tables
+        # build the record type
+        query.pyre_Record = type(name + "_pyreRecord", (cls.pyre_Record,), descriptors)
 
         # return the query class record
         return query
