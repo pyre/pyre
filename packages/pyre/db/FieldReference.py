@@ -24,6 +24,15 @@ class FieldReference(Entry.variable):
     field = None # the field descriptor
 
 
+    @property
+    def type(self):
+        """
+        Return the type of the field i refer to
+        """
+        # my referent knows...
+        return self.field.type
+
+
     # interface
     def project(self, table):
         """
