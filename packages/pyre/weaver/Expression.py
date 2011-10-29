@@ -11,8 +11,10 @@ import operator
 
 class Expression:
     """
-    This mill mix-in builds textual representations of expression trees built out of
-    {pyre.algebraic.Node} subclasses
+    This mill mix-in builds textual representations of expression trees built out of node
+    hierarchies that conform to the {pyre.algebraic} protocols. The base class of the node
+    hierarchy must be supplied as a constructor argument; the implementation falls back to
+    {pyre.algebraic.Node} if no alternative is provided.
     """
 
 
@@ -26,16 +28,16 @@ class Expression:
         Build a representation of {node}, assumed to be an instance of a {pyre.algebraic.Node}
         subclass
         """
-        return self._renderers[root.__class__](root, **kwds)
+        return self._renderers[type(root)](root, **kwds)
 
 
     # meta methods
     def __init__(self, nodeType=None, **kwds):
         super().__init__(**kwds)
 
-        # make sure we can hold of the type hierarchy
-        if nodeType is None:
-            from ..algebraic.Node import Node as nodeType
+        # fall back to {algebraic} nodes
+        if nodeType is None: from ..algebraic.Node import Node as nodeType
+
         # build the symbol table
         self._symbols = self._newSymbolTable()
         # initialize the table of renderers
