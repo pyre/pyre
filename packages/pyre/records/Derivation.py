@@ -44,7 +44,7 @@ class Derivation(Operator):
         return node
 
 
-    def evaluate(self, stream, cache):
+    def extract(self, stream, cache):
         """
         Compute my value by either returning a previous evaluation or by extracting an item
         from {stream} and processing it
@@ -56,7 +56,7 @@ class Derivation(Operator):
         # otherwise
         except KeyError:
             # compute the values of my operands
-            values = tuple(op.evaluate(stream, cache) for op in self.operands)
+            values = tuple(op.extract(stream, cache) for op in self.operands)
             # apply my operator
             value = self.evaluator(*values)
             # cache it

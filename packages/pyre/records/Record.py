@@ -64,7 +64,7 @@ class Record(NamedTuple, metaclass=Immutable):
             # otherwise, build a generator that extracts values from {kwds}
             kwds.pop(item.name, item.default) for item in cls.pyre_fields)
         # build the data tuple and return it
-        return (item.extract(stream=source) for item in cls.pyre_entries)
+        return (item.process(value=next(source)) for item in cls.pyre_entries)
 
             
     @classmethod
@@ -84,8 +84,8 @@ class Record(NamedTuple, metaclass=Immutable):
         cache = {}
         # iterate over my items
         for item in cls.pyre_entries:
-            # get the item to compute its value
-            value = item.evaluate(stream=source, cache=cache)
+            # get the item to extract its value, either from the {cache} or the actual {source}
+            value = item.extract(stream=source, cache=cache)
             # and yield the value
             yield value
         # all done

@@ -29,22 +29,14 @@ class Field:
         # if not
         except KeyError:
             # make the node
-            node = self.node.variable(value=self.extract(stream))
+            node = self.node.variable(value=self.process(value=next(stream)))
             # add it to the model
             model[self.name] = node
         # and return it
         return node
 
 
-    def extract(self, stream):
-        """
-        Extract a value from {stream} and walk it through casting, conversion and validation.
-        """
-        # get the value from the {stream}, process it and return it
-        return self.process(value=next(stream))
-
-
-    def evaluate(self, stream, cache):
+    def extract(self, stream, cache):
         """
         Compute my value by either returning a previous evaluation or by extracting an item
         from {stream} and processing it
@@ -56,7 +48,7 @@ class Field:
         # otherwise
         except KeyError:
             # compute it
-            value = self.extract(stream=stream)
+            value = self.process(value = next(stream))
             # cache it
             cache[self] = value
 

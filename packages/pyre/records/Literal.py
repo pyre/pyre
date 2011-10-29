@@ -30,21 +30,12 @@ class Literal(Base):
         return self.node.literal(value=self.value)
 
 
-    def evaluate(self, stream, cache):
+    def extract(self, stream, cache):
         """
-        Compute my value by either returning the encapsulated constant 
+        Compute my value by returning the encapsulated constant 
         """
         # easy enough...
         return self.value
 
         
-    def substitute(self, current, replacement):
-        """
-        Traverse my expression graph and replace all occurrences of node {current} with
-        {replacement}
-        """
-        # nothing to do
-        return
-
-
 # end of file 
