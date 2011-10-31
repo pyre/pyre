@@ -36,6 +36,7 @@ components:
 	${PYTHON} ./postgres_attach.py
 	${PYTHON} ./postgres_database_create.py
 	${PYTHON} ./postgres_table.py
+	${PYTHON} ./postgres_reserved.py
 	${PYTHON} ./postgres_references.py
 	${PYTHON} ./postgres_database_drop.py
 
