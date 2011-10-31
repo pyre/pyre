@@ -6,6 +6,9 @@
 #
 
 
+# access the decimal package
+import decimal
+# and my superclass
 from .Type import Type
 
 
@@ -21,11 +24,8 @@ class Decimal(Type):
         """
         Attempt to convert {value} into a decimal
         """
-        # get the interpreter to evaluate simple expressions
-        if isinstance(value, str):
-            value = eval(value)
         # attempt to cast {value} into a decimal
-        raise NotImplementedError("class {.__name__!r} must implement 'cast'".format(cls))
+        return decimal.Decimal(value)
 
 
 # end of file 
