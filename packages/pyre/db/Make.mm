@@ -19,6 +19,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Collation.py \
     DataStore.py \
     Entry.py \
     Field.py \

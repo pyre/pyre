@@ -26,6 +26,7 @@ create:
 queries:
 	${PYTHON} ./projections.py
 	${PYTHON} ./restrictions.py
+	${PYTHON} ./collations.py
 
 destroy:
 	${PYTHON} ./drop_tables.py

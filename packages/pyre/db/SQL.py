@@ -110,12 +110,25 @@ class SQL(Mill, family="pyre.db.sql"):
                 self.outdent()
                 # build the filtering expression
                 predicate = self.expression(root=query.where)
-                # render the {WHERE} section
+                # render the {WHERE} marker
                 yield self.place("WHERE")
                 # push in
                 self.indent()
                 # and render the expression
                 yield self.place("({}){}".format(predicate, terminator))
+
+            # render the {ORDER BY} clause
+            if query.order is not None:
+                # push out
+                self.outdent()
+                # render the {ORDER BY} marker
+                yield self.place("ORDER BY")
+                # push in
+                self.indent()
+                # build the collation expression
+                collation = ", ".join(self.expression(spec) for spec in query.order)
+                # and render it
+                yield self.place("{};".format(collation))
 
             # push out
             self.outdent(decrement=2)
@@ -418,7 +431,9 @@ class SQL(Mill, family="pyre.db.sql"):
 
         # i get to render these as part of expressions
         from .FieldReference import FieldReference 
+        from .Collation import Collation
         # adjust the rendering strategy table
+        self._renderers[Collation] = self._collation
         self._renderers[FieldReference] = self._fieldReference
 
         # and return
@@ -426,6 +441,14 @@ class SQL(Mill, family="pyre.db.sql"):
 
 
     # implementation details
+    def _collation(self, order, **kwds):
+        """
+        Render the collation order specification
+        """
+        # get the column reference and decorate it
+        return "{} {}".format(self._fieldReference(order.field), order.collation)
+
+
     def _fieldReference(self, node, table=None, **kwds):
         """
         Render {node} as reference to a field

@@ -35,6 +35,8 @@ queries:
 	${PYTHON} ./query_projection_expressions.py
 	${PYTHON} ./query_projection_multitable.py
 	${PYTHON} ./query_restriction.py
+	${PYTHON} ./query_collation.py
+	${PYTHON} ./query_collation_explicit.py
 
 
 # end of file 

@@ -62,5 +62,21 @@ from .fields import (
 # cascade action markers for foreign keys
 from .actions import noAction, restrict, cascade, setNull, setDefault
 
+# orderings
+from .Collation import Collation as collation
+
+def ascending(field):
+    """
+    Build a clause for the {ORDER} expression that marks {field} as sorted in ascending order
+    """
+    return collation(field=field, collation="ASC")
+
+
+def descending(field):
+    """
+    Build a clause for the {ORDER} expression that marks {field} as sorted in descending order
+    """
+    return collation(field=field, collation="DESC")
+
 
 # end of file 
