@@ -288,7 +288,7 @@ def test():
         bizbook.schema.Book(
             id="MC2222",
             title="Silicon Valley gastronomic treats",
-            category="modern cookbook", publisher="0877", date="1985/06/09",
+            category="cookbook", publisher="0877", date="1985/06/09",
             price=19.99, advance=0,
             description="""
             Favorite recipes for quick, easy and elegant meals, tried and tested by people who
@@ -297,7 +297,7 @@ def test():
         bizbook.schema.Book(
             id="MC3021",
             title="The gourmet microwave",
-            category="modern cookbook", publisher="0877", date="1985/06/18",
+            category="cookbook", publisher="0877", date="1985/06/18",
             price=2.99, advance=15000,
             description="""
             Traditional French gourmet recipes adapted for modern microwave cooking.
