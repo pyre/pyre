@@ -24,6 +24,9 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
 
 
     # types
+    # exceptions
+    from . import exceptions
+    # access to query results
     from .Selection import Selection as selection
 
 
