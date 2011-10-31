@@ -28,6 +28,7 @@ EXPORT_PYTHON_MODULES = \
     SQL.py \
     Selector.py \
     Schemer.py \
+    Selection.py \
     Server.py \
     Table.py \
     View.py \

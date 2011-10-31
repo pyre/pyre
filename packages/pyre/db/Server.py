@@ -23,6 +23,10 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
     """
 
 
+    # types
+    from .Selection import Selection as selection
+
+
     # traits
     sql = pyre.properties.facility(interface=pyre.weaver.language, default=sql)
     sql.doc = "the generator of the SQL statements"
@@ -115,7 +119,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         # build the sql statements
         sql = self.sql.select(query=query)
         # and execute it
-        return self.execute(*sql)
+        return self.selection(query=query, results=iter(self.execute(*sql)))
         
 
     # meta methods
