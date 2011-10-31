@@ -13,16 +13,14 @@ Verify that decimal conversions work as  expected
 
 
 def test():
+    import decimal
     import pyre.schema
 
     # create a descriptor
     descriptor = pyre.schema.decimal
 
-    # casts are not implemented yet
-    try:
-        descriptor.pyre_cast(None)
-    except NotImplementedError:
-        pass
+    # check
+    assert descriptor.pyre_cast("1.20") == decimal.Decimal("1.20")
 
     return
 

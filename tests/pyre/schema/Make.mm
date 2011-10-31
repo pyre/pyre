@@ -24,11 +24,11 @@ types:
 	${PYTHON} ./array.py
 	${PYTHON} ./boolean.py
 	${PYTHON} ./date.py
-	${PYTHON} ./decimal.py
 	${PYTHON} ./dimensional.py
 	${PYTHON} ./dtime.py
 	${PYTHON} ./float.py
 	${PYTHON} ./int.py
+	${PYTHON} ./numeric.py
 	${PYTHON} ./str.py
 
 
