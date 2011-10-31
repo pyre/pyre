@@ -17,6 +17,10 @@ class Query(metaclass=Selector, hidden=True):
     """
 
 
+    # types
+    pyre_Record = None
+
+
     # public data
     pyre_fields = ()
     pyre_tables = set()
