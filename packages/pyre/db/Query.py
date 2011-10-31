@@ -22,8 +22,13 @@ class Query(metaclass=Selector, hidden=True):
 
 
     # public data
-    pyre_fields = ()
-    pyre_tables = set()
+    where = None # retrieve only rows that satisfy this expression
+    order = None # control over the sorting order of the results
+    group = None # aggregate the results using the distinct values of this column
+
+    # metaclass decorations; treat as read-only
+    pyre_fields = () # the query fields
+    pyre_tables = set() # the set of tables referenced by the query
 
 
 # end of file 

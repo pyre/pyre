@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity create qeries destroy
+test: sanity create queries destroy
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -25,6 +25,7 @@ create:
 
 queries:
 	${PYTHON} ./projections.py
+	${PYTHON} ./restrictions.py
 
 destroy:
 	${PYTHON} ./drop_tables.py

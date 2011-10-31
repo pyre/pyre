@@ -34,6 +34,7 @@ queries:
 	${PYTHON} ./query_projection.py
 	${PYTHON} ./query_projection_expressions.py
 	${PYTHON} ./query_projection_multitable.py
+	${PYTHON} ./query_restriction.py
 
 
 # end of file 

@@ -30,6 +30,10 @@ class Selector(AttributeClassifier):
     from ..records import field as pyre_RecordDescriptor
 
 
+    # data
+    pyre_reserved = {"where", "group", "order"}
+
+
     # meta methods
     @classmethod
     def __prepare__(cls, name, bases, hidden=False, **kwds):
@@ -76,6 +80,8 @@ class Selector(AttributeClassifier):
         descriptors = collections.OrderedDict()
         # iterate over the important attributes
         for name, entry in cls.pyre_harvest(attributes, cls.pyre_Entry):
+            # skip the special attributes
+            if name in cls.pyre_reserved: continue
             # add the field to the pile
             fields.append((name, entry))
             # if the entry is a field reference

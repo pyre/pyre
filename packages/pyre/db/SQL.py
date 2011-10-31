@@ -56,9 +56,7 @@ class SQL(Mill, family="pyre.db.sql"):
             return
 
         # native queries
-        if isinstance(query, self.selector):
-            # do we have other clauses following the {FROM} section
-            otherClauses = False
+        if isinstance(query, self.selector) or instance(query, self.query):
             # figure out how many field references there are
             fields = len(query.pyre_fields)
             # build the projection
@@ -69,8 +67,11 @@ class SQL(Mill, family="pyre.db.sql"):
                 yield self.place("{} AS {}{}".format(self.expression(expr), alias, comma))
             # push out
             self.outdent()
+
             # render the {FROM} section
             yield self.place("FROM")
+            # do we have other clauses following the {FROM} section
+            otherClauses = query.where or query.order or query.group
             # push in
             self.indent()
             # figure out how many table references there are
@@ -98,6 +99,23 @@ class SQL(Mill, family="pyre.db.sql"):
                     # build a local alias for the table name
                     yield self.place("{} AS {}{}".format(
                             table.pyre_alias, table.pyre_name, terminator))
+
+            # render the {WHERE} clause
+            if query.where is not None:
+                # do we have other clauses following the {FROM} section
+                otherClauses = query.order or query.group
+                # build a terminator
+                terminator = '' if otherClauses else ';'
+                # push out
+                self.outdent()
+                # build the filtering expression
+                predicate = self.expression(root=query.where)
+                # render the {WHERE} section
+                yield self.place("WHERE")
+                # push in
+                self.indent()
+                # and render the expression
+                yield self.place("({}){}".format(predicate, terminator))
 
             # push out
             self.outdent(decrement=2)
