@@ -46,6 +46,24 @@ for an example of how the simple concrete nodes in this package are assembled
 """
 
 
+# access to the building blocks in this package
+from .AbstractNode import AbstractNode
+# access to the node algebra mix-ins
+from .Number import Number
+from .Ordering import Ordering
+from .Boolean import Boolean
+# access to the structural mix-ins
+from .Leaf import Leaf
+from .Composite import Composite
+# access to the functional mix-ins
+from .Literal import Literal
+from .Variable import Variable
+from .Operator import Operator
+from .Expression import Expression
+from .Reference import Reference
+from .Unresolved import Unresolved
+
+
 # the base class of the simple concrete nodes in this package
 from .Node import Node
 # grant users access to the factory of the sample concrete nodes
