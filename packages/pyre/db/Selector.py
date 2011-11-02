@@ -82,8 +82,10 @@ class Selector(AttributeClassifier):
         for name, entry in cls.pyre_harvest(attributes, cls.pyre_Entry):
             # skip the special attributes
             if name in cls.pyre_reserved: continue
-            # add the field to the pile
-            fields.append((name, entry))
+            # decorate the entry with its name
+            entry.name = name
+            # add it to the pile
+            fields.append(entry)
             # if the entry is a field reference
             if isinstance(entry, cls.pyre_FieldReference):
                 # add the referenced table to the pile

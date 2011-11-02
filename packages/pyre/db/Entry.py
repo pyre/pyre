@@ -50,6 +50,14 @@ class operator(Entry, Operator, Entry.composite):
     Concrete class for representing operations among fields and their references
     """
 
+    # public data
+    name = None # instances that appear in user code, e.g. query declarations, are named
+
+    # meta methods
+    def __str__(self):
+        """Render my name"""
+        return self.name
+
 
 # patch {Entry}
 Entry.literal = literal

@@ -25,4 +25,9 @@ class Collation:
         return
 
 
+    def __str__(self):
+        # render the collation specification
+        return "{} {}".format(str(self.field), self.collation)
+
+
 # end of file 

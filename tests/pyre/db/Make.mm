@@ -37,6 +37,7 @@ queries:
 	${PYTHON} ./query_restriction.py
 	${PYTHON} ./query_collation.py
 	${PYTHON} ./query_collation_explicit.py
+	${PYTHON} ./query_collation_expression.py
 
 
 # end of file 

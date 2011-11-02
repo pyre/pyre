@@ -60,11 +60,11 @@ class SQL(Mill, family="pyre.db.sql"):
             # figure out how many field references there are
             fields = len(query.pyre_fields)
             # build the projection
-            for index, (alias, expr) in enumerate(query.pyre_fields):
+            for index, entry in enumerate(query.pyre_fields):
                 # do we need a comma?
                 comma = ',' if index+1 < fields else ''
                 # render this field
-                yield self.place("{} AS {}{}".format(self.expression(expr), alias, comma))
+                yield self.place("{} AS {}{}".format(self.expression(entry), entry.name, comma))
             # push out
             self.outdent()
 
@@ -126,7 +126,7 @@ class SQL(Mill, family="pyre.db.sql"):
                 # push in
                 self.indent()
                 # build the collation expression
-                collation = ", ".join(self.expression(spec) for spec in query.order)
+                collation = ", ".join(str(spec) for spec in query.order)
                 # and render it
                 yield self.place("{};".format(collation))
 
