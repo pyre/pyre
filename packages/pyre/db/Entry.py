@@ -6,11 +6,55 @@
 #
 
 
-from ..algebraic.Node import Node
+from ..algebraic import (
+    AbstractNode, Number, Ordering, Boolean,
+    Leaf, Composite,
+    Literal, Variable, Operator
+)
 
 
-# the base class for database entries
-Entry = Node
+# class declaration
+class Entry(AbstractNode, Number, Ordering, Boolean):
+    """
+    Base class for representing table fields and their algebra
+    """
+
+
+    # types
+    # structural
+    leaf = Leaf
+    composite = Composite
+    # functional; they will patched below with my subclasses
+    literal = None
+    variable = None
+    operator = None
+
+
+# literals
+class literal(Entry, Literal, Entry.leaf):
+    """
+    Concrete class for representing foreign values
+    """
+
+
+# fields
+class variable(Entry, Variable, Entry.leaf):
+    """
+    Concrete class for representing fields and their references
+    """
+
+
+# algebraic operations
+class operator(Entry, Operator, Entry.composite):
+    """
+    Concrete class for representing operations among fields and their references
+    """
+
+
+# patch {Entry}
+Entry.literal = literal
+Entry.variable = variable
+Entry.operator = operator
 
 
 # end of file 

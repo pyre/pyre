@@ -427,7 +427,9 @@ class SQL(Mill, family="pyre.db.sql"):
 
     # meta methods
     def __init__(self, **kwds):
-        super().__init__(**kwds)
+        # access the base class for the field algebra
+        from .Entry import Entry
+        super().__init__(nodeType=Entry, **kwds)
 
         # i get to render these as part of expressions
         from .FieldReference import FieldReference 

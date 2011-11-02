@@ -22,6 +22,7 @@ class FieldReference(Entry.variable):
     # public data
     table = None # the table class
     field = None # the field descriptor
+    name = None # some are top level objects, e.g. in queries, so they are named
 
 
     @property
