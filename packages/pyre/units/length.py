@@ -40,6 +40,7 @@ foot = 12 * inch
 yard = 3 * foot
 mile = 5280 * foot
 
+mil = 1e-3 * inch
 fathom = 6 * foot
 nautical_mile = 1852 * meter
 
