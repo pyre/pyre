@@ -6,10 +6,13 @@
 #
 
 
+# access to weak references
 import weakref
+# my superclass
+from .AbstractMetaclass import AbstractMetaclass
 
 
-class ExtentAware(type):
+class ExtentAware(AbstractMetaclass):
     """
     Metaclass that endows its instances with awareness of their extent.
 
@@ -27,7 +30,7 @@ class ExtentAware(type):
 
 
     # class methods
-    def __new__(cls, name, bases, attributes):
+    def __new__(cls, name, bases, attributes, pyre_extentRoot=False, **kwds):
         """
         Intercept the class record creation and install a replacement constructor that records
         the number of instances of this class
@@ -40,17 +43,19 @@ class ExtentAware(type):
         # ExtentAware as a metaclass, and all descendants are counted by that class
 
         # build the class record
-        record = super().__new__(cls, name, bases, attributes)
-        # add the weakset attribute that maintains the extent, if it is not already there
-        # this has the effect of storing the class extent at the root class in a hierarchy
-        # which makes it easy to check that descendants have been garbage collected as well
-        if not hasattr(record, "_pyre_extent"): 
+        record = super().__new__(cls, name, bases, attributes, **kwds)
+        # add the weakset attribute that maintains the extent, if it is not already there this
+        # has the effect of storing the class extent at the root class in a hierarchy which
+        # makes it easy to check that descendants have been garbage collected as well. if you
+        # want to keep track of the extent at some other point in a class hierarchy, declare
+        # that class with {pyre_extentRoot} set to {True}
+        if pyre_extentRoot or not hasattr(record, "_pyre_extent"): 
             record._pyre_extent = weakref.WeakSet()
         # and return it
         return record
 
 
-    def __call__(cls, *args, **kwds):
+    def __call__(self, *args, **kwds):
         """
         Intercept the call to the client constructor, build the instance and keep a weak
         reference to it
@@ -58,7 +63,7 @@ class ExtentAware(type):
         # build the instance
         instance = super().__call__(*args, **kwds)
         # add it to the class extent
-        instance.__class__._pyre_extent.add(instance)
+        self._pyre_extent.add(instance)
         # and return it
         return instance
         
