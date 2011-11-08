@@ -17,6 +17,7 @@ class Director(Actor):
     framework
     """
 
+
     # meta methods
     def __init__(self, name, bases, attributes, **kwds):
         """
@@ -29,6 +30,18 @@ class Director(Actor):
 
         # all done
         return
+
+
+    def __call__(self, *args, **kwds):
+        """
+        Instantiate one of my classes
+        """
+        # delegate
+        shell = super().__call__(**kwds)
+        # invoke the application behavior
+        status = shell.run(*args, **kwds)
+        # and return the status
+        return status
 
 
 # end of file 
