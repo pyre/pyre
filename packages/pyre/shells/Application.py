@@ -9,12 +9,9 @@
 # access to the framework
 import pyre
 
-# access to my metaclass
-from .Director import Director
-
 
 # declaration
-class Application(pyre.component, metaclass=Director, hidden=True):
+class Application(pyre.component, hidden=True):
     """
     Base class for top-level application components
 
