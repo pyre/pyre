@@ -20,7 +20,11 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Application.py \
+    Daemon.py \
     Director.py \
+    Script.py \
+    Service.py \
+    Shell.py \
     __init__.py
 
 
