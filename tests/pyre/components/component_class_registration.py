@@ -43,11 +43,11 @@ def test():
     import pyre
     registrar = pyre.executive.registrar
 
-    # check that the interface is corectly registered
-    assert registrar.interfaces == {interface}
+    # check that the interface is correctly registered
+    assert interface in registrar.interfaces
     # check that the component is correctly registered
-    assert set(registrar.components.keys()) == {component}
-    # check that the set of interface implementors is correct
+    assert component in registrar.components
+    # check that the set of {interface} implementors is correct
     assert registrar.implementors[interface] == {component}
 
     # now examine the component inventory
