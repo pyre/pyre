@@ -227,6 +227,10 @@ class Actor(Requirement):
             if isinstance(base, cls) and base.pyre_implements is not None ]
         # bail out if we didn't manage to find eny interfaces
         if not interfaces: return None
+        # if there is only one interface on my pile
+        if len(interfaces) == 1:
+            # use it directly
+            return interfaces[0]
         # otherwise, derive an interface from the harvested ones and return it as the
         # implementation specification
         return cls.Role("Interface", tuple(interfaces), dict(), hidden=True)
