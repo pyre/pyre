@@ -17,7 +17,7 @@ class Shape(object):
         Predicate that checks whether {point} falls on my interior
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} should implement 'interior'".format(self))
+            "class {.__name__!r} should implement 'interior'".format(type(self)))
 
 
 # end of file 

@@ -93,7 +93,7 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
         """
         # disable this for now
         raise NotImplementedError(
-            "class {.__class__.__name__!r} does not permit explicit value setting".format(self))
+            "class {.__name__!r} does not permit explicit value setting".format(type(self)))
     
     # value meta data
     key = None # the hash key used by the configurator to retrieve this slot

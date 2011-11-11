@@ -64,9 +64,9 @@ class base(object, metaclass=meta, arg1=True, arg2=False):
 
     # print("declaring the class constructor")
     def __init__(self, **kwds):
-        # print("{0.__class__.__name__!r}.__init__".format(self))
+        # print("{.__name__!r}.__init__".format(type(self)))
         # print(dir(self))
-        assert self.__class__.__name__ == 'base'
+        assert type(self).__name__ == 'base'
         assert kwds == {}
         return
     # print("done declaring the class constructor")

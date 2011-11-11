@@ -42,7 +42,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         Connect to the database back end
         """
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must override 'attach'".format(self))
+            "class {.__name__!r} must override 'attach'".format(type(self)))
 
 
     @pyre.export
@@ -51,7 +51,7 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
         Execute the sequence of SQL statements in {sql} as a single command
         """
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must override 'execute'".format(self))
+            "class {.__name__!r} must override 'execute'".format(type(self)))
 
 
     # convenience

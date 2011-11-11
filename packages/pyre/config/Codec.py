@@ -28,7 +28,7 @@ class Codec:
         Build a representation of {item} in the current encoding and inject it into {stream}
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override 'encode'".format(self))
+            "class {.__name__!r} must override 'encode'".format(type(self)))
     
 
     def decode(self, client, scheme, source, locator=None):
@@ -36,7 +36,7 @@ class Codec:
         Ingest {source} and return the decoded contents
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override 'decode'".format(self))
+            "class {.__name__!r} must override 'decode'".format(type(self)))
 
 
     def shelfSearchPath(self, client, context):
@@ -44,7 +44,7 @@ class Codec:
         Build a sequence of locations to look for {context} appropriate shelves
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override 'shelfSearchPath'".format(self))
+            "class {.__name__!r} must override 'shelfSearchPath'".format(type(self)))
 
 
     # implemented interface

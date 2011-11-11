@@ -166,7 +166,7 @@ class Configurable:
                 # otherwise move on to the next trait
                 continue
             # are the two traits instances of compatible classes?
-            if not issubclass(mine.__class__, hers.__class__):
+            if not issubclass(type(mine), type(hers)):
                 # build an error description
                 error = this.CategoryMismatchError(configurable=this, target=other, name=hers.name)
                 # add it to the report

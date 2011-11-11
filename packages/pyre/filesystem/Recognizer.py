@@ -18,7 +18,7 @@ class Recognizer:
         and decorate it with all the metadata available.
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} must implement 'recognize'".format(self))
+            "class {.__name__!r} must implement 'recognize'".format(type(self)))
 
 
 # end of file 

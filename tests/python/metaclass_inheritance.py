@@ -56,7 +56,7 @@ class base(object, metaclass=meta, arg1=True, arg2=False):
 
 
     def __init__(self, **kwds):
-        assert self.__class__.__name__ == 'base'
+        assert type(self).__name__ == 'base'
         assert kwds == {}
         return
 
@@ -65,7 +65,7 @@ class derived(base, arg1=False, arg2=True):
 
 
     def __init__(self, **kwds):
-        assert self.__class__.__name__ == 'derived'
+        assert type(self).__name__ == 'derived'
         assert kwds == {}
         return
 

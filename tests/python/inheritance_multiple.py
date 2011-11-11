@@ -49,7 +49,7 @@ def test():
             return ['D'] + super().m(**kwds)
 
     d = D()
-    mro = [ kls.__name__ for kls in d.__class__.__mro__ ]
+    mro = [ kls.__name__ for kls in type(d).__mro__ ]
     assert d.m() == mro
 
     return

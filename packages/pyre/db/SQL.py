@@ -315,7 +315,7 @@ class SQL(Mill, family="pyre.db.sql"):
         # iterate over the records
         for record in records:
             # check whether this record is from the table we are processing, if any
-            if record.__class__ is not targetTable:
+            if type(record) is not targetTable:
                 # if we are in the middle of a statement
                 if targetTable is not None:
                     # terminate the statement
@@ -323,7 +323,7 @@ class SQL(Mill, family="pyre.db.sql"):
                     # outdent
                     self.outdent().outdent()
                 # in any case, save the target table
-                targetTable = record.__class__
+                targetTable = type(record)
                 # initiate the statement
                 yield self.place("INSERT INTO {}".format(record.pyre_name))
                 # indent
@@ -416,7 +416,7 @@ class SQL(Mill, family="pyre.db.sql"):
         # outdent
         self.outdent()
         # build the filtering expression
-        predicate = self.expression(root=condition, table=template.__class__)
+        predicate = self.expression(root=condition, table=type(template))
         # and render it
         yield self.place("WHERE ({});".format(predicate))
         # outdent

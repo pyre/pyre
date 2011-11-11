@@ -34,9 +34,9 @@ class Token:
     def __str__(self):
         # if there is a lexeme, print it
         if self.lexeme:
-            return "{{{0.__class__.__name__}: {0.lexeme!r}}}".format(self)
+            return "{{{.__name__}: {.lexeme!r}}}".format(type(self), self)
         # otherwise, just note the token class
-        return "{{{0.__class__.__name__}}}".format(self)
+        return "{{{.__name__}}}".format(type(self))
 
 
     # narrow down the footprint a bit

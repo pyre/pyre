@@ -203,7 +203,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
             # get the component family name
             family = self.pyre_SEPARATOR.join(self.pyre_family)
             # if this is a nameless one, just use the class name
-            if not family: family = self.__class__.pyre_name
+            if not family: family = type(self).pyre_name
             # build the exception
             missing = AttributeError(
                 "component {.pyre_name!r}, an instance of {!r},"
@@ -238,7 +238,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         # spit out my name
         print("{.pyre_name}: configuration".format(self))
         # spit out my class
-        print("  instance of {0.pyre_name!r} from {0}".format(self.__class__))
+        print("  instance of {0.pyre_name!r} from {0}".format(type(self)))
         # print out my family
         print("  family: {!r}".format(self.pyre_SEPARATOR.join(self.pyre_family)))
         # print out my interfaces

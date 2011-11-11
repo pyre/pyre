@@ -80,13 +80,13 @@ class Registrar:
         # Actor, the component metaclass, guarantees that component classes get registered
         # before any of their instances, so the lookup for the class should never fail
         try:
-            self.components[component.__class__].add(component)
+            self.components[type(component)].add(component)
         except KeyError:
             import journal
             firewall = journal.firewall("pyre.components")
             raise firewall.log(
-                "pyre.components.Registrar: unregistered class {0.__class__.__name__!r} "
-                "of component {0.pyre_name!r}".format(component))
+                "pyre.components.Registrar: unregistered class {.__name__!r} "
+                "of component {.pyre_name!r}".format(type(component), component))
         # and return the instance back to the caller
         return component
 

@@ -34,7 +34,7 @@ class AbstractNode:
         """
         # important: must return a type, not an instance
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'literal'".format(self))
+            "class {.__name__!r} must implement 'literal'".format(type(self)))
 
 
     @property
@@ -45,7 +45,7 @@ class AbstractNode:
         # important: must return a type, not an instance
         # important: must return a type, not an instance
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'variable'".format(self))
+            "class {.__name__!r} must implement 'variable'".format(type(self)))
 
 
     @property
@@ -55,7 +55,7 @@ class AbstractNode:
         """
         # important: must return a type, not an instance
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'operator'".format(self))
+            "class {.__name__!r} must implement 'operator'".format(type(self)))
 
 
     @property
@@ -66,7 +66,7 @@ class AbstractNode:
         """
         # important: must return a type, not an instance
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'expression'".format(self))
+            "class {.__name__!r} must implement 'expression'".format(type(self)))
 
 
     @property
@@ -76,7 +76,7 @@ class AbstractNode:
         """
         # important: must return a type, not an instance
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'operator'".format(self))
+            "class {.__name__!r} must implement 'operator'".format(type(self)))
 
 
     @property
@@ -86,7 +86,7 @@ class AbstractNode:
         """
         # important: must return a type, not an instance
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'unresolved'".format(self))
+            "class {.__name__!r} must implement 'unresolved'".format(type(self)))
 
 
     # structural
@@ -96,8 +96,7 @@ class AbstractNode:
         Grant access to the mix-in class used to build leaf nodes
         """
         # important: must return a type, not an instance
-        raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'leaf'".format(self))
+        raise NotImplementedError("class {.__name__!r} must implement 'leaf'".format(type(self)))
 
 
     @property
@@ -107,7 +106,7 @@ class AbstractNode:
         """
         # important: must return a type, not an instance
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'operator'".format(self))
+            "class {.__name__!r} must implement 'operator'".format(type(self)))
 
 
     # public data

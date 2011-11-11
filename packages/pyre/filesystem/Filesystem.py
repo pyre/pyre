@@ -26,7 +26,7 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
         Open the file
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override 'open'".format(self))
+            "class {.__name__!r} must override 'open'".format(type(self)))
 
 
     def info(self, node, **kwds):
@@ -34,7 +34,7 @@ class Filesystem(Folder, metaclass=_metaclass_Filesystem):
         Open the file
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override 'info'".format(self))
+            "class {.__name__!r} must override 'info'".format(type(self)))
 
 
     def discover(self, **kwds):

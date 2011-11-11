@@ -20,27 +20,27 @@ class AbstractTimer(Named):
     # interface
     def start(self):
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'start'".format(self))
+            "class {.__name__!r} must implement 'start'".format(type(self)))
 
 
     def stop(self):
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'stop'".format(self))
+            "class {.__name__!r} must implement 'stop'".format(type(self)))
 
 
     def reset(self):
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'reset'".format(self))
+            "class {.__name__!r} must implement 'reset'".format(type(self)))
 
 
     def read(self):
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'read'".format(self))
+            "class {.__name__!r} must implement 'read'".format(type(self)))
 
 
     def lap(self):
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'lap'".format(self))
+            "class {.__name__!r} must implement 'lap'".format(type(self)))
 
 
 # end of file 

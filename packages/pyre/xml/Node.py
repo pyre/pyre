@@ -94,7 +94,7 @@ class Node:
         The handler that is invoked when the parser encounters my closing tag 
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} must override 'notify'".format(self))
+            "class {.__name__!r} must override 'notify'".format(type(self)))
 
 
     # pull in the locator converter

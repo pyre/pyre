@@ -17,7 +17,7 @@ class Functor(object):
         Evaluate the function at the supplied points
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} should implement 'eval'".format(self))
+            "class {.__name__!r} should implement 'eval'".format(type(self)))
 
 
 # end of file 

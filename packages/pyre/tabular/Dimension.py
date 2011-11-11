@@ -23,7 +23,7 @@ class Dimension:
         Build a bin handler for a newly built {chart}
         """
         raise NotImplementedError(
-            "class {.__class__.__name__!r} must implement 'pyre_register'".format(self))
+            "class {.__name__!r} must implement 'pyre_register'".format(type(self)))
 
 
     # meta methods
@@ -45,7 +45,7 @@ class Dimension:
         import journal
         firewall = journal.firewall("pyre.tabular")
         return firewall.log(
-            "{.__class__.__name__!r}: chart {} is not initialized properly".format(self, instance))
+            "{.__name__!r}: chart {} is not initialized properly".format(type(self), instance))
 
 
 # end of file 

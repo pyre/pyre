@@ -19,7 +19,7 @@ class Shape(object):
         interior or not
         """
         raise NotImplementedError(
-            "class {0.__class__.__name__!r} should implement 'interior'".format(self))
+            "class {.__name__!r} should implement 'interior'".format(type(self)))
 
 
 # end of file 
