@@ -20,10 +20,10 @@ class Integrator(pyre.interface, family="gauss.integrators"):
     from ..functors.Functor import Functor
 
     # public state
-    region = pyre.properties.facility(interface=Shape)
+    region = pyre.facility(interface=Shape)
     region.doc = "the region of integration"
 
-    integrand = pyre.properties.facility(interface=Functor)
+    integrand = pyre.facility(interface=Functor)
     integrand.doc = "the functor to integrate"
 
 

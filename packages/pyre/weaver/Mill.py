@@ -28,7 +28,7 @@ class Mill(pyre.component, Indenter, implements=Language):
 
 
     # traits
-    stationery = pyre.properties.facility(interface=Stationery, default=Stationery.default())
+    stationery = pyre.facility(interface=Stationery, default=Stationery.default())
     stationery.doc = "the overall layout of the document"
 
     languageMarker = pyre.properties.str()

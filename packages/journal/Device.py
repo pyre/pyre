@@ -22,7 +22,8 @@ class Device(pyre.interface, family="journal.devices"):
 
 
     # public state
-    renderer = pyre.properties.facility(interface=Renderer)
+    renderer = pyre.facility(interface=Renderer)
+    renderer.doc = "the formatting strategy"
 
 
     # interface

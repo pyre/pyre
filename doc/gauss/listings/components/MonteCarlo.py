@@ -23,20 +23,20 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implemen
     """
 
     # public state
-    box = pyre.properties.facility(interface=Shape)
+    box = pyre.facility(interface=Shape)
     box.doc = "the bounding box of my cloud of points"
 
     samples = pyre.properties.int(default=10**5)
     samples.doc = "the number of evaluations of the integrand"
 
     # my requirements
-    region = pyre.properties.facility(interface=Shape)
+    region = pyre.facility(interface=Shape)
     region.doc = "the region of integration"
     
-    integrand = pyre.properties.facility(interface=Functor)
+    integrand = pyre.facility(interface=Functor)
     integrand.doc = "the functor to integrate"
 
-    mesh = pyre.properties.facility(interface=PointCloud)
+    mesh = pyre.facility(interface=PointCloud)
     mesh.doc = "the cloud of function evaluation points"
 
     

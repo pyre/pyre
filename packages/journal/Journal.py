@@ -23,8 +23,8 @@ class Journal(pyre.component, family="journal.executive"):
 
 
     # class public data
-    device = pyre.properties.facility(interface=Device, default=Console)
-    device.doc = "the component responsible for handling journal entries"
+    device = pyre.facility(interface=Device, default=Console)
+    device.doc = "the component responsible for recording journal entries"
 
 
     # interface

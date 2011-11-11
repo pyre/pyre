@@ -16,10 +16,9 @@ class Weaver(pyre.component, family="pyre.weaver", resolver=True):
 
     # types
     from .Language import Language
-    from .Stationery import Stationery
 
     # traits
-    language = pyre.properties.facility(interface=Language, default=None)
+    language = pyre.facility(interface=Language, default=None)
     language.doc = "the desired output language"
 
 

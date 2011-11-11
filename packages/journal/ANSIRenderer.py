@@ -32,7 +32,7 @@ class ANSIRenderer(pyre.component, family="journal.renderers.ansi", implements=R
     body = pyre.properties.str(default="--")
     body.doc = "the marker to use while rendering the diagnostic body"
 
-    scheme = pyre.properties.facility(interface=schemes.colors, default=schemes.light)
+    scheme = pyre.facility(interface=schemes.colors, default=schemes.light)
     scheme.doc = "the set of colors to use when rendering diagnostics"
 
 
