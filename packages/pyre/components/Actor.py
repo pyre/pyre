@@ -129,11 +129,14 @@ class Actor(Requirement):
                     continue
             # if it's not there at all
             else:
-                # IMPOSSIBLE
+                # INCONSISTENT: there is an inherited trait but no registered superclass that
+                # declares it. one possibility is that this component derives from a hidden
+                # one, which means the user is messing with the protocol internals
                 import journal
                 firewall = journal.firewall("pyre.components")
                 raise firewall.log(
-                    "could not locate ancestor for '{.pyre_name}.{name}'".format(self, trait))
+                    "could not locate a registered ancestor for '{.pyre_name}.{.name}'"
+                    .format(self, trait))
 
             # we found the slot; build a reference to it
             ref = anchor.ref()
