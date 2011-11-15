@@ -88,7 +88,7 @@ class TraitNotFoundError(ComponentError):
 
     def __init__(self, configurable, name, **kwds):
         # get the family name of the {configurable}
-        family = configurable.pyre_SEPARATOR.join(configurable.pyre_family)
+        family = configurable.pyre_getFamilyName()
         # build the family clause of the message
         fclause = ", with family {!r}".format(family) if family else ""
         # build the reason

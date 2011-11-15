@@ -58,7 +58,7 @@ class Registrar:
         # register it under its family name
         if component.pyre_family:
             # turn the family iterable into a single string
-            family = component.pyre_SEPARATOR.join(component.pyre_family)
+            family = component.pyre_getFamilyName()
             # and add it to the weak dictionary
             self.families[family] = component
         # prime the component extent

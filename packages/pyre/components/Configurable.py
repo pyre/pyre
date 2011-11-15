@@ -85,6 +85,15 @@ class Configurable:
 
 
     @classmethod
+    def pyre_getFamilyName(cls):
+        """
+        Build the family name of the configurable
+        """
+        # put it back together
+        return cls.pyre_SEPARATOR.join(cls.pyre_family)
+
+
+    @classmethod
     def pyre_getTraitDescriptors(cls):
         """
         Generate a sequence of all my trait descriptors

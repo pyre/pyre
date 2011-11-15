@@ -150,12 +150,9 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         configurator = executive.configurator
 
         # create my inventory
-        sep = self.pyre_SEPARATOR
         inventory = {}
-
         # build my configuration key
-        key = name.split(sep) if name else ()
-
+        key = name.split(self.pyre_SEPARATOR) if name else ()
         # iterate over the items in my class inventory
         for trait, default in classInventory.items():
             # build the name of the trait
@@ -179,7 +176,6 @@ class Component(Configurable, metaclass=Actor, hidden=True):
                     # register it
                     configurator._alias(canonical=traitkey, alias=aliaskey)
 
-
         # attach my inventory
         self.pyre_inventory = inventory
 
@@ -201,7 +197,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
             trait = self.pyre_getTraitDescriptor(alias=name)
         except self.TraitNotFoundError as error:
             # get the component family name
-            family = self.pyre_SEPARATOR.join(self.pyre_family)
+            family = self.pyre_getFamilyName()
             # if this is a nameless one, just use the class name
             if not family: family = type(self).pyre_name
             # build the exception
@@ -240,7 +236,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         # spit out my class
         print("  instance of {0.pyre_name!r} from {0}".format(type(self)))
         # print out my family
-        print("  family: {!r}".format(self.pyre_SEPARATOR.join(self.pyre_family)))
+        print("  family: {!r}".format(self.pyre_getFamilyName()))
         # print out my interfaces
         print("  implements:", self.pyre_implements)
         # configuration section
