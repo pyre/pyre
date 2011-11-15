@@ -29,7 +29,7 @@ def test():
         '--vtf.nodes=1024',
         '--vtf.(solid,fluid)=solvers',
         '--vtf.(solid,fluid,other).nodes={vtf.nodes}',
-        '--journal.device=file',
+        # '--journal.device=file',
         '--journal.debug.main=on',
         '--',
         '--funky-filename',
@@ -49,7 +49,7 @@ def test():
     assert configurator["vtf.fluid"] == "solvers"
     assert configurator["vtf.solid.nodes"] == "1024"
     assert configurator["vtf.fluid.nodes"] == "1024"
-    assert configurator["journal.device"] == "file"
+    # assert configurator["journal.device"] == "file"
     assert configurator["journal.debug.main"] == "on"
 
     # and return the managers
