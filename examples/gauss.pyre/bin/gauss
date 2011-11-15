@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2011 all rights reserved
+#
+
+
+# access to the framework
+import pyre
+
+# declare the gauss application
+class Gauss(pyre.application):
+    """
+    Builds and invokes an integrator
+    """
+
+    # types
+    from gauss.interfaces import integrator
+    from gauss.integrators import montecarlo
+
+    # public state
+    integrator = pyre.facility(interface=integrator, default=montecarlo)
+
+    # interface
+    @pyre.export
+    def main(self):
+        """
+        Invoke my {integrator} to perform some integral
+        """
+        # carry out the integration and print out the result
+        print(self.integrator.integrate())
+        # return with success
+        return 0
+
+
+# main
+if __name__ == "__main__":
+    # get the name of the application
+    name = pyre.executive.configurator.get(name="name")
+    # instantiate
+    app = Gauss(name=name)
+    # print out the application configuration
+    integrator = app.integrator
+    print("application {!r}".format(app.pyre_name))
+    print("  integrator: {!r}".format(integrator.pyre_getFamilyName()))
+    print("  region: {!r}".format(integrator.region.pyre_getFamilyName()))
+    print("  integrand: {!r}".format(integrator.integrand.pyre_getFamilyName()))
+    # invoke
+    status = app.main()
+    # return the status to the os
+    import sys
+    sys.exit(status)
+    
+
+# end of file 
