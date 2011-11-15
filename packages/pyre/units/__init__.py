@@ -14,29 +14,18 @@ support for units from other systems
 
 
 # factories
-def dimensional(**kwds):
-    """
-    Create and return an instance of a Dimensional.
 
-    This factory grants access to the low level interface, useful for building dimensional
-    objects directly from their representation. However, manipulating one of the predefined
-    unit objects should be sufficient for most uses. Please let me know if you find something
-    that cannot be done any other way and you find yourself resorting to building dimensional
-    quantities directly.
-    """
-    from .Dimensional import Dimensional
-    return Dimensional(**kwds)
+# this factory grants access to the low level interface, useful for building dimensional
+# objects directly from their representation. However, manipulating one of the predefined unit
+# objects should be sufficient for most uses. Please let me know if you find something that
+# cannot be done any other way and you find yourself resorting to building dimensional
+# quantities directly.
+from .Dimensional import Dimensional as dimensional
 
 
-def parser(**kwds):
-    """
-    Return the unit parser singleton
-
-    The unit parser converts string representations of dimensional quantities into instances of
-    Dimensional
-    """
-    from .Parser import Parser
-    return Parser(**kwds)
+# the unit parser converts string representations of dimensional quantities into instances of
+# Dimensional
+from .Parser import Parser as parser
 
 
 def modules():
