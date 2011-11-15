@@ -11,11 +11,11 @@
 Exercise component registration
 """
 
+# access the framework
+import pyre
+
 
 def test():
-    # access
-    import pyre
-
     # declare an interface
     class interface(pyre.interface):
         """an interface"""
@@ -40,7 +40,6 @@ def test():
             return "component"
 
     # fetch the registrar
-    import pyre
     registrar = pyre.executive.registrar
 
     # check that the interface is correctly registered
@@ -69,12 +68,10 @@ def test():
 
 # main
 if __name__ == "__main__":
-    test()
-    # now check that the components were destroyed when they went out of scope
-    import pyre
-    registrar = pyre.executive.registrar
-    for cls, extent in registrar.components.items():
-        assert set(extent) == set()
+    # run the test
+    component = test()
+    # verify that all instances of {component} have been destroyed
+    assert tuple(pyre.executive.registrar.components[component]) == ()
 
 
 # end of file 
