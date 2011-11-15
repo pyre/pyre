@@ -43,6 +43,22 @@ class SymbolTable(Named):
 
 
     # interface
+    def get(self, name, default=None):
+        """
+        Attempt to resolve {name} and return its value; if {name} is not in the symbol table,
+        bind it to {default} and return this new value
+        """
+        # attempt to evaluate
+        try:
+            return self[name]
+        # if it failed
+        except self.UnresolvedNodeError:
+            # bind it to {default}
+            self[name] = default
+        # evaluate and return
+        return self[name]
+
+
     def parse(self, expression):
         """
         Examine the input string {expression} and attempt to convert it into an {Expression}
