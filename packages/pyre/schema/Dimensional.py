@@ -6,14 +6,23 @@
 #
 
 
+# my superclass
 from .Type import Type
-from ..units import parser as parserFactory
 
 
+# declaration
 class Dimensional(Type):
     """
     A type declarator for quantities with units
     """
+
+
+    # types
+    from ..units import parser as parserFactory, dimensional
+
+
+    # public data
+    parser = parserFactory()
 
 
     # interface
@@ -26,15 +35,11 @@ class Dimensional(Type):
         if isinstance(value, str):
             return cls.parser.parse(value)
         # dimensionals go right through
-        if isinstance(value, Dimensional):
+        if isinstance(value, cls.dimensional):
             return value
         # everything else is an error
         msg="could not convert {!r} into a dimensional quantity".format(value)
         raise cls.CastingError(value=value, description=msg)
         
-
-    # public data
-    parser = parserFactory()
-
 
 # end of file 
