@@ -13,9 +13,11 @@ import pyre
 # declaration
 class Application(pyre.component, hidden=True):
     """
-    Base class for top-level application components
+    Abstract base class for top-level application components
 
-    Application streamlines the interaction with the pyre framework
+    {Application} streamlines the interaction with the pyre framework. It is responsible for
+    staging an application process, i.e. establishing the process namespace and virtual
+    filesystem, configuring the help system, and supplying the main behavior.
     """
 
 
@@ -95,7 +97,7 @@ class Application(pyre.component, hidden=True):
         folders may be explored by default in a future release.
 
         Mounting an empty folder is a consistency guarantee: applications can access the folder
-        and retrieve its contents without having to first test for its existence
+        and retrieve its contents without first having to test for its existence
         """
         # cache the file server
         fileserver = self.vfs
@@ -143,14 +145,13 @@ class Application(pyre.component, hidden=True):
     def __init__(self, name, **kwds):
         super().__init__(name=name, **kwds)
 
-        # register the application class as the resolver of its namespace
+        # register the application class as the resolver of its namespace; this will cause
+        # {pyre_translateSymbol} to be invoked when an application trait is assigned a value
         self.executive.registerNamespaceResolver(resolver=self, namespace=name)
-
         # build the private file space
         self.pyre_filesystem = self.pyre_mountVirtualFilesystem()
         # and mount any additional application-specific directories
         self.pyre_mountApplicationFolders()
-
 
         # all done
         return
