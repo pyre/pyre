@@ -13,9 +13,9 @@ PROJ_CLEAN = shells.log
 #--------------------------------------------------------------------------
 #
 
-all: test clean
+all: test
 
-test: sanity application script daemon
+test: sanity application script daemon clean
 
 sanity:
 	${PYTHON} ./sanity.py
