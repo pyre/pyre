@@ -6,12 +6,14 @@
 #
 
 
+# access to the framework
+import pyre
 # my superclass
 from .Daemon import Daemon
 
 
 # declaration
-class Service(Daemon):
+class Service(Daemon, family="pyre.shells.service"):
     """
     A shell that turns a process into a service harness, i.e. a process that is part of a
     distributed application
@@ -19,12 +21,11 @@ class Service(Daemon):
 
     
     # interface
-    def execute(self, *args, **kwds):
+    @pyre.export
+    def run(self, *args, **kwds):
         """
         Invoke the application behavior
         """
-        # NYI! delegate, for now
-        return super().execute(*args, **kwds)
 
 
 # end of file 

@@ -6,22 +6,34 @@
 #
 
 
-from .Shell import Shell
+# access to the framework
+import pyre
+# my base class
+from .Executive import Executive
 
 
-class Script(Shell):
+class Script(Executive, family="pyre.shells.script"):
     """
     A shell that invokes the main application behavior and then exits
     """
-    
+
+
+    # public data
+    application = None
+
 
     # interface
-    def execute(self, *args, **kwds):
+    @pyre.export
+    def run(self, *args, **kwds):
         """
         Invoke the application behavior
         """
-        # NYI! delegate, for now
-        return super().execute(*args, **kwds)
+        # if i am bound to an application
+        if self.application:
+            # launch it
+            return self.application.main(*args, **kwds)
+        # otherwise, just return
+        return 0
 
 
 # end of file 
