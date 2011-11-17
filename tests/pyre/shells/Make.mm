@@ -8,12 +8,14 @@
 
 PROJECT = pyre
 
+PROJ_CLEAN = shells.log
+
 #--------------------------------------------------------------------------
 #
 
-all: test
+all: test clean
 
-test: sanity application
+test: sanity application script daemon
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -22,5 +24,13 @@ application:
 	${PYTHON} ./application-sanity.py
 	${PYTHON} ./application-instantiation.py
 	${PYTHON} ./application-namespace.py
+
+script:
+	${PYTHON} ./script-sanity.py
+	${PYTHON} ./script-instantiation.py
+
+daemon:
+	${PYTHON} ./daemon-sanity.py
+	${PYTHON} ./daemon-instantiation.py
 
 # end of file 
