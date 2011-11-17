@@ -185,7 +185,7 @@ if executive:
     from .components import properties
 
     # shells
-    from .shells import application
+    from .shells import application, script, daemon
 
     # the base class of all pyre exceptions
     from .framework.exceptions import PyreError
