@@ -87,7 +87,7 @@ class Selector(Scheduler):
             # check for indefinite block
             self._debug.line("    checking for indefinite block")
             if not iwtd and not owtd and not ewtd and timeout is None:
-                self._debug.log("    no registered handlers left; exiting")
+                self._debug.log("** no registered handlers left; exiting")
                 return
 
             # wait for an event
@@ -126,13 +126,18 @@ class Selector(Scheduler):
         # iterate over the active entities
         for active in entities:
             # and over the registered handlers
-            for handler in index[active]:
+            for handler in tuple(index[active]):
                 # invoke the handler
                 status = handler(selector=self, descriptor=active)
                 # if the handler returns {False}
                 if not status:
                     # remove it from the pile
                     index[active].discard(handler)
+            # if {active} has no handlers left
+            if not index[active]:
+                # remove it
+                del index[active]
+             
         # all done
         return
 
