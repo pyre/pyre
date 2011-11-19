@@ -60,6 +60,9 @@ class Diagnostic:
         # record
         self.device.record(page=self.text, metadata=meta)
 
+        # clean up
+        self.text = []
+
         # and return
         return self
 
