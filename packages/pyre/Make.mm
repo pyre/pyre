@@ -19,6 +19,7 @@ RECURSE_DIRS = \
     db \
     filesystem \
     framework \
+    ipc \
     parsing \
     patterns \
     records \
