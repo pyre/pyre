@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the scheduler factory is accessible
+Sanity check: verify that schedulers can be instantiated
 """
 
 

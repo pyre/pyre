@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the schedulr factory is accessible
+Verify the selector can raise alarms
 """
 
 
@@ -18,7 +18,7 @@ def test():
     # journal.debug("pyre.ipc.selector").active = True
     # access the package
     import pyre.ipc
-    # instantiate a scheduler
+    # instantiate a selector
     s = pyre.ipc.selector()
     
     # get time
@@ -50,7 +50,7 @@ def test():
     # verify that all alarms fired
     assert next(counter) == alarms
 
-    # and return the scheduler
+    # and return the selector
     return s
 
 

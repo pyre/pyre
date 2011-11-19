@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the selector factory is accessible
+Sanity check: verify that selectors can be instantiated
 """
 
 
