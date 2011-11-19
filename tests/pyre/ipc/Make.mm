@@ -27,5 +27,6 @@ selector:
 	${PYTHON} ./selector.py
 	${PYTHON} ./selector-instantiation.py
 	${PYTHON} ./selector-alarms.py
+	${PYTHON} ./selector-fds.py
 
 # end of file 
