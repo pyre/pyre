@@ -29,7 +29,7 @@ class Selector(Scheduler):
         Add {handler} to the list of routines to call when {fd} is ready to be read
         """
         # add it to the pile
-        self._input[fd].add(handler)
+        self._input[fd].append(handler)
         # and return
 
 
@@ -38,7 +38,7 @@ class Selector(Scheduler):
         Add {handler} to the list of routines to call when {fd} is ready to be written
         """
         # add it to the pile
-        self._output[fd].add(handler)
+        self._output[fd].append(handler)
         # and return
 
 
@@ -48,16 +48,7 @@ class Selector(Scheduler):
         to {fd}
         """
         # add it to the pile
-        self._exception[fd].add(handler)
-        # and return
-
-
-    def notifyOnReadReady(self, fd, handler):
-        """
-        Add {handler} to the list of routines to call when {fd} is ready to be read
-        """
-        # add it to the pile
-        self._input[fd].add(handler)
+        self._exception[fd].append(handler)
         # and return
 
 
@@ -125,19 +116,16 @@ class Selector(Scheduler):
         """
         # iterate over the active entities
         for active in entities:
-            # and over the registered handlers
-            for handler in tuple(index[active]):
-                # invoke the handler
-                status = handler(selector=self, descriptor=active)
-                # if the handler returns {False}
-                if not status:
-                    # remove it from the pile
-                    index[active].discard(handler)
-            # if {active} has no handlers left
-            if not index[active]:
-                # remove it
+            # invoke the handlers and save the ones that return {True}
+            handlers = list(
+                handler for handler in index[active] if handler(selector=self, descriptor=active))
+            # if no handlers requested to be rescheduled
+            if not handlers:
+                # remove the descriptor from the index
                 del index[active]
-             
+            # otherwise
+            else:
+                index[active] = handlers
         # all done
         return
 
@@ -158,9 +146,9 @@ class Selector(Scheduler):
         super().__init__(**kwds)
 
         # my file descriptor event indices
-        self._input = collections.defaultdict(set)
-        self._output = collections.defaultdict(set)
-        self._exception = collections.defaultdict(set)
+        self._input = collections.defaultdict(list)
+        self._output = collections.defaultdict(list)
+        self._exception = collections.defaultdict(list)
 
         # all done
         return
