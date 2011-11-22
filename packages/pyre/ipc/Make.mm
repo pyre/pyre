@@ -19,8 +19,11 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Channel.py \
+    Pipe.py \
     Scheduler.py \
     Selector.py \
+    Socket.py \
     __init__.py
 
 
