@@ -10,9 +10,20 @@ PROJECT = pyre
 
 RECURSE_DIRS = \
     journal \
-    mpi \
-    postgres \
     timers
+
+# the optional packages
+# mpi
+MPI_DIR= # overriden by the the environment
+ifneq ($(strip $(MPI_DIR)),)
+  RECURSE_DIRS += mpi
+endif
+
+# postgres
+LIBPQ_DIR= # overriden by the the environment
+ifneq ($(strip $(LIBPQ_DIR)),)
+  RECURSE_DIRS += postgres
+endif
 
 #--------------------------------------------------------------------------
 #
