@@ -41,7 +41,7 @@ goodbye = "goodbye"
 def onParent(marshaller, pipe):
     """Send a simple message and wait for the response"""
     # send a message
-    marshaller.send(pipe, hello)
+    marshaller.send(hello, pipe)
     # get the response
     response = marshaller.recv(pipe)
     # check it
@@ -57,7 +57,7 @@ def onChild(marshaller, pipe):
     # check it
     assert message == hello
     # send the response
-    marshaller.send(pipe, goodbye)
+    marshaller.send(goodbye, pipe)
     # and return
     return
     

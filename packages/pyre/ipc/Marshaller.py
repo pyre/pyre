@@ -27,7 +27,7 @@ class Marshaller(pyre.interface, family="pyre.ipc.marshallers"):
 
 
     @pyre.provides
-    def send(self, channel, item):
+    def send(self, item, channel):
         """
         Pack and ship {item} over {channel}
         """

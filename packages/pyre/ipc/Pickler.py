@@ -33,22 +33,24 @@ class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=
 
     # interface
     @pyre.export
-    def send(self, channel, item):
+    def send(self, item, channel):
         """
-        Pack and ship {item} over my channel
+        Pack and ship {item} over {channel}
         """
         # pickle the item
         body = pickle.dumps(item)
         # build its header
         header = struct.pack(self.packing, len(body))
+        # put it together
+        message = header + body
         # send it off
-        return channel.write(bstr=header+body)
+        return channel.write(bstr=message)
 
 
     @pyre.export
     def recv(self, channel):
         """
-        Extract and return a single item from my channel
+        Extract and return a single item from {channel}
         """
         # get the length
         header = channel.read(struct.calcsize(self.packing))
