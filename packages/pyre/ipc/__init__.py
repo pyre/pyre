@@ -6,6 +6,12 @@
 #
 
 
+# channel access
+from .Pipe import Pipe as pipe
+
+# marshaller access
+from .Pickler import Pickler as pickler
+
 # access to the scheduler
 from .Scheduler import Scheduler as scheduler
 # access to the selector

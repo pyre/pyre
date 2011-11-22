@@ -20,6 +20,8 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Channel.py \
+    Marshaller.py \
+    Pickler.py \
     Pipe.py \
     Scheduler.py \
     Selector.py \
