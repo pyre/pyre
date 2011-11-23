@@ -67,16 +67,11 @@ def newLocator(saxlocator):
         line=saxlocator.getLineNumber(), column=saxlocator.getColumnNumber())
 
 
-# tag descriptors
-def element(**kwds):
-    """
-    Declare a descriptor that corresponds to a valid tag in the XML document.
-
-    Descriptors provide the connection between the name of the tag and the Node descendant that
-    knows how to handle the contained information
-    """
-    from .ElementDescriptor import ElementDescriptor
-    return ElementDescriptor(**kwds)
+# support for document descriptors
+from .Node import Node as node
+from .Ignorable import Ignorable as ignorable
+from .Document import Document as document
+from .ElementDescriptor import ElementDescriptor as element
 
 
 # package constants

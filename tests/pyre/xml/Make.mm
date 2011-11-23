@@ -29,6 +29,7 @@ documents:
 	${PYTHON} ./fs.py
 	${PYTHON} ./fs_namespaces.py
 	${PYTHON} ./fs_schema.py
+	${PYTHON} ./fs_extra.py
 
 
 # end of file 

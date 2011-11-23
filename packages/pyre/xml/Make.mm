@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     Descriptor.py \
     Document.py \
     ElementDescriptor.py \
+    Ignorable.py \
     Node.py \
     Reader.py \
     exceptions.py \

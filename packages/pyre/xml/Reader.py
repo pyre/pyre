@@ -16,6 +16,11 @@ class Reader(xml.sax.ContentHandler):
     """
 
 
+    # types
+    # exceptions
+    from .exceptions import DTDError, ParsingError, ProcessingError, UnsupportedFeatureError
+
+
     # public data
     ignoreWhitespace = False
 
@@ -41,10 +46,10 @@ class Reader(xml.sax.ContentHandler):
                         (feature, value) pairs; for more details, see the built in package
                         xml.sax or your parser's documentation
 
-        The Reader attempts to normalize the exceptions that may be generated while attempting
-        to understand the XML document using the exception classes in this package. This
+        The {Reader} attempts to normalize the exceptions generated while parsing the XML
+        document by converting them to one of the exception classes in this package. This
         mechanism fails if you supply your own parser, so you must be ready to catch any
-        exceptions it may generate
+        exceptions it may generate.
         """
 
         # attach the document
@@ -121,10 +126,12 @@ class Reader(xml.sax.ContentHandler):
             error.locator = newLocator(self._locator)
             raise
 
-        # push the current node on the stack
-        self._nodeStack.append(self._currentNode)
-        # and make the new node the focus of attention
-        self._currentNode = node
+        # if the current node created a valid child
+        if node is not None:
+            # push the current node on the stack
+            self._nodeStack.append(self._currentNode)
+            # and make the new node the focus of attention
+            self._currentNode = node
 
         return
 
@@ -225,15 +232,17 @@ class Reader(xml.sax.ContentHandler):
         node = self._currentNode
         self._currentNode = self._nodeStack.pop()
 
-        # let the parent node know we reached an element end
+        # attempt to
         try:
+            # let the parent node know we reached an element end
             node.notify(parent=self._currentNode, locator=self._locator)
-        except self.ParsingError:
-            # leave our own exception alone
-            raise
+        # leave our own exception alone
+        except self.ParsingError: raise
+        # convert everything else to a ProcessingError
         except Exception as error:
-            # convert everything else to a ProcessingError
+            # the reason
             msg = "error while calling the method 'notify' of {}".format(self._currentNode)
+            # the error
             raise self.ProcessingError(
                 parser=self, document=self._document,
                 description=msg, saxlocator=self._locator) from error
@@ -267,10 +276,6 @@ class Reader(xml.sax.ContentHandler):
         self._currentNode = None
 
         return
-
-
-    # exceptions
-    from .exceptions import DTDError, ParsingError, ProcessingError, UnsupportedFeatureError
 
 
 # end of file 
