@@ -20,6 +20,23 @@ class Channel(pyre.interface, family="pyre.ipc.channels"):
 
 
     # interface
+    # channel life cycle management
+    @pyre.provides
+    @classmethod
+    def open(cls, **kwds):
+        """
+        Channel factory
+        """
+
+
+    @pyre.provides
+    def close(self):
+        """
+        Shutdown the channel
+        """
+
+
+    # operations
     @pyre.provides
     def read(self, count):
         """

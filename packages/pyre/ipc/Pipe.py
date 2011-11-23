@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
+# michael a.g. aïvázis, leif strand
 # california institute of technology
 # (c) 1998-2011 all rights reserved
 #
@@ -21,8 +21,10 @@ class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=Channel):
 
 
     # interface
+    # life cycle management
+    @pyre.export
     @classmethod
-    def open(cls):
+    def open(cls, **kwds):
         """
         Build a pair of pipes that are suitable for bidirectional communication between two
         processes
@@ -31,12 +33,25 @@ class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=Channel):
         from_child, to_parent = os.pipe()
         from_parent, to_child = os.pipe()
         # dress them up as {Pipe} instances 
-        parent = cls(infd=from_child, outfd=to_child)
-        child = cls(infd=from_parent, outfd=to_parent)
+        parent = cls(infd=from_child, outfd=to_child, **kwds)
+        child = cls(infd=from_parent, outfd=to_parent, **kwds)
         # and return them
         return parent, child
 
 
+    @pyre.export
+    def close(self):
+        """
+        Shut down this channel
+        """
+        # close my descriptors
+        os.close(self.infd)
+        os.close(self.outfd)
+        # and return
+        return
+
+
+    # input/output
     @pyre.export
     def read(self, count):
         """
