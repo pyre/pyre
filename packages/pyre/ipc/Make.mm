@@ -26,6 +26,7 @@ EXPORT_PYTHON_MODULES = \
     Scheduler.py \
     Selector.py \
     Socket.py \
+    sockaddr.py \
     __init__.py
 
 

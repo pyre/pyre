@@ -8,6 +8,7 @@
 
 # channel access
 from .Pipe import Pipe as pipe
+from .Socket import Socket as socket
 
 # marshaller access
 from .Pickler import Pickler as pickler

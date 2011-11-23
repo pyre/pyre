@@ -17,10 +17,11 @@ test: sanity channels scheduler selector
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./pickler.py
+	${PYTHON} ./pipe.py
+	${PYTHON} ./sockt.py # avoid import collision with the python module
 
 channels:
-	${PYTHON} ./pipe.py
-	${PYTHON} ./pickler.py
 	${PYTHON} ./pickler_over_pipe.py
 
 scheduler:
