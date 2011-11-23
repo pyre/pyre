@@ -54,16 +54,10 @@ class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=
         """
         # get the length
         header = channel.read(struct.calcsize(self.packing))
-        # if i got nothing, bail out
-        if not header: return None
         # unpack it
         length, = struct.unpack(self.packing, header)
         # get the body
         body = channel.read(length)
-        # in as many attempts as it takes
-        while len(body) < length:
-            # keep accumulating
-            body += self.read(length - len(body))
         # extract the object and return it
         return pickle.loads(body) 
                              
