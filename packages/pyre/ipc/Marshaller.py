@@ -18,6 +18,13 @@ class Marshaller(pyre.interface, family="pyre.ipc.marshallers"):
     """
 
 
+    # factory for my default implementation
+    @classmethod
+    def defaultMarshaller(cls):
+        from .Pickler import Pickler
+        return Pickler
+
+
     # interface
     @pyre.provides
     def recv(self, channel):
