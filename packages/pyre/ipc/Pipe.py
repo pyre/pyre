@@ -10,11 +10,11 @@
 import os
 import pyre
 
-from .Channel import Channel
+from .interfaces import channel
 
 
 # declaration
-class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=Channel):
+class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=channel):
     """
     A channel that uses pipes as the communication mechanism
     """

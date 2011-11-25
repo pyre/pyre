@@ -11,10 +11,10 @@ import pyre
 import pickle
 import struct
 
-from .Marshaller import Marshaller
+from .interfaces import marshaller
 
 
-class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=Marshaller):
+class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=marshaller):
     """
     A marshaller that uses the native python services in {pickle} to serialize python objects
     for transmission to other processes.

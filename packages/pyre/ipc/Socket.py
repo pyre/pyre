@@ -10,11 +10,11 @@
 import pyre
 import socket
 # my interface
-from .Channel import Channel
+from .interfaces import channel
 
 
 # declaration
-class Socket(pyre.component, famliy="pyre.ipc.channels.socket", implements=Channel):
+class Socket(pyre.component, family="pyre.ipc.channels.socket", implements=channel):
     """
     A channel that uses sockets as the communication mechanism
     """
