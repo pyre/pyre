@@ -13,8 +13,6 @@ Exercise a selector watching over file descriptors
 
 # externals
 import os
-import struct
-import pickle
 import pyre.ipc
 
 # if necessary
