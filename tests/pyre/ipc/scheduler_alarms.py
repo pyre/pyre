@@ -28,9 +28,9 @@ def test():
     import itertools
     counter = itertools.count()
     # build a handler
-    def handler(scheduler, time):
+    def handler(scheduler, timestamp):
         n = next(counter)
-        # print("n={}, time={}".format(n, time))
+        # print("n={}, time={}".format(n, timestamp))
         return
 
     # setup some alarms
