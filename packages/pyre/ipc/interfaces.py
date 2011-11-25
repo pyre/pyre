@@ -7,6 +7,7 @@
 
 
 from .Channel import Channel as channel
+from .Dispatcher import Dispatcher as dispatcher
 from .Marshaller import Marshaller as marshaller
 
 

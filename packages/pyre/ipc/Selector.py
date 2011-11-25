@@ -7,14 +7,17 @@
 
 
 # externals
+import pyre
 import select
 import collections
+# my interface
+from .interfaces import dispatcher
 # my base class
 from .Scheduler import Scheduler
 
 
 # declaration
-class Selector(Scheduler):
+class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dispatcher):
     """
     The manager of a set of file descriptors and the registered handlers for the events they
     generate. File descriptors can generate read, write and exception events that correspond to
@@ -24,6 +27,7 @@ class Selector(Scheduler):
 
 
     # interface
+    @pyre.export
     def notifyOnReadReady(self, fd, handler):
         """
         Add {handler} to the list of routines to call when {fd} is ready to be read
@@ -33,6 +37,7 @@ class Selector(Scheduler):
         # and return
 
 
+    @pyre.export
     def notifyOnWriteReady(self, fd, handler):
         """
         Add {handler} to the list of routines to call when {fd} is ready to be written
@@ -42,6 +47,7 @@ class Selector(Scheduler):
         # and return
 
 
+    @pyre.export
     def notifyOnException(self, fd, handler):
         """
         Add {handler} to the list of routines to call when something exceptional has happened
@@ -52,6 +58,18 @@ class Selector(Scheduler):
         # and return
 
 
+    @pyre.export
+    def stop(self):
+        """
+        Request the selector to stop watching for further events
+        """
+        # adjust my state
+        self._watching = False
+        # and return
+        return
+
+
+    @pyre.export
     def watch(self):
         """
         Enter an indefinite loop of monitoring all registered event sources and invoking the
@@ -127,16 +145,6 @@ class Selector(Scheduler):
             else:
                 index[active] = handlers
         # all done
-        return
-
-
-    def stop(self):
-        """
-        Request the selector to stop watching for further events
-        """
-        # adjust my state
-        self._watching = False
-        # and return
         return
 
 

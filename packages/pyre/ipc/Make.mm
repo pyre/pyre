@@ -20,6 +20,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Channel.py \
+    Dispatcher.py \
     Marshaller.py \
     Pickler.py \
     Pipe.py \

@@ -7,19 +7,24 @@
 
 
 # externals
+import pyre
 import operator
 from time import time as now
-from pyre.units.SI import second
 
 
 # declaration
-class Scheduler:
+class Scheduler(pyre.component):
     """
     Support for invoking event handlers at specified times
     """
 
 
+    # constants
+    from pyre.units.SI import second
+
+
     # interface
+    @pyre.export
     def alarm(self, interval, handler):
         """
         Schedule {handler} to be invoked after {interval} elapses. 
@@ -31,7 +36,7 @@ class Scheduler:
                        invoked the handler, and the current time
         """
         # create a new alarm instance
-        alarm = self._alarm(time=now()+interval/second, handler=handler)
+        alarm = self._alarm(time=now()+interval/self.second, handler=handler)
         # add it to my list
         self._alarms.append(alarm)
         # sort 
