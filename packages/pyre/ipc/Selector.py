@@ -89,7 +89,7 @@ class Selector(Scheduler):
             # call is interrupted and raises a {select.error}
             except select.error as error:
                 # unpack
-                errno, msg = error
+                errno, msg = error.args
                 # log
                 self._debug.log("    signal received: errno={}: {}".format(errno, msg))
                 # keep going
