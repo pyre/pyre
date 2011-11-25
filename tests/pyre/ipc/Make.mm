@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity channels scheduler selector
+test: sanity channels scheduler selector nodes clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -35,6 +35,10 @@ selector:
 	${PYTHON} ./selector_alarms.py
 	${PYTHON} ./selector_fds.py
 	${PYTHON} ./selector_pickler_over_pipe.py
+
+nodes:
+	${PYTHON} ./node.py
+	${PYTHON} ./node_instantiation.py
 
 
 # end of file 
