@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
+# michael a.g. aïvázis, leif strand
 # california institute of technology
 # (c) 1998-2011 all rights reserved
 #

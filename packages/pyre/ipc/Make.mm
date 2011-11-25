@@ -22,6 +22,7 @@ EXPORT_PYTHON_MODULES = \
     Channel.py \
     Dispatcher.py \
     Marshaller.py \
+    Node.py \
     Pickler.py \
     Pipe.py \
     Scheduler.py \
