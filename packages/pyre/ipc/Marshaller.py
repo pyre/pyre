@@ -20,7 +20,7 @@ class Marshaller(pyre.interface, family="pyre.ipc.marshallers"):
 
     # factory for my default implementation
     @classmethod
-    def defaultMarshaller(cls):
+    def default(cls):
         from .Pickler import Pickler
         return Pickler
 
