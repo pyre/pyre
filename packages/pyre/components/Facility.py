@@ -65,7 +65,7 @@ class Facility(Property):
             # let my interface have a pass
             value = self.pyre_cast(node=node, value=value)
             # instantiate it
-            value = value(name=node.name)
+            value = value(name=node.name if node.name else None)
         # and return it
         return value
 
