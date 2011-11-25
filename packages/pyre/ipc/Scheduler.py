@@ -85,7 +85,7 @@ class Scheduler:
                 # no need to look any further
                 break
             # otherwise, this alarm is overdue; invoke the handler
-            alarm.handler(scheduler=self, time=time)
+            alarm.handler(scheduler=self, timestamp=time)
 
         # all done
         return
