@@ -15,6 +15,17 @@ class PointCloud(pyre.interface, family="gauss.meshes"):
     """
 
 
+    # my default implementation
+    @classmethod
+    def default(cls):
+        """
+        The default {PointCloud} implementation
+        """
+        # use the built in random number generator
+        from .Mersenne import Mersenne
+        return Mersenne
+
+
     # interface
     @pyre.provides
     def points(self, count, box):

@@ -15,6 +15,16 @@ class Functor(pyre.interface, family="gauss.functors"):
     """
 
 
+    # the suggested default implementation
+    @classmethod
+    def default(cls):
+        """
+        The default implementation of the {Functor} interface
+        """
+        from .One import One
+        return One
+
+
     # interface
     @pyre.provides
     def eval(self, points):

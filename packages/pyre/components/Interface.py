@@ -26,6 +26,16 @@ class Interface(Configurable, metaclass=Role, hidden=True):
     pyre_pedigree = None # a tuple of ancestors that are themselves configurables
 
 
+    @classmethod
+    def default(cls):
+        """
+        The preferred implementation of this interface, in case the user has not provided an
+        alternative
+        """
+        # actual interfaces should override
+        return None
+
+
     # interface
     @classmethod
     def pyre_cast(cls, value):

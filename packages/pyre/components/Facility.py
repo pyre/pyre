@@ -108,7 +108,7 @@ class Facility(Property):
     def __init__(self, interface, default=None, **kwds):
         super().__init__(**kwds)
         self.type = interface
-        self.default = default
+        self.default = default if default is not None else interface.default()
         return
 
 

@@ -22,7 +22,7 @@ class Console(pyre.component, family="journal.devices.console", implements=Devic
 
 
     # public state
-    renderer = pyre.facility(interface=Device.Renderer, default=Device.defaultRenderer())
+    renderer = pyre.facility(interface=Device.Renderer)
     renderer.doc = "the formatting strategy for journal entries"
 
 

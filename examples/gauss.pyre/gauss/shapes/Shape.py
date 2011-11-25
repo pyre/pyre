@@ -15,6 +15,17 @@ class Shape(pyre.interface, family="gauss.shapes"):
     """
 
 
+    # my default implementation
+    @classmethod
+    def default(cls):
+        """
+        The default {Shape} implementation
+        """
+        # use {Ball}
+        from .Ball import Ball
+        return Ball
+
+
     # interface
     @pyre.provides
     def measure(self):
