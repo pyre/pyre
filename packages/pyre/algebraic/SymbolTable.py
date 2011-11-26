@@ -143,6 +143,14 @@ class SymbolTable(Named):
         return
 
 
+    def __contains__(self, name):
+        """
+        Check whether {name} is present in the table without modifying the table as a side-effect
+        """
+        # direct look up
+        return name in self._nodes
+
+
     # implementation details
     def _recognize(self, value):
         """

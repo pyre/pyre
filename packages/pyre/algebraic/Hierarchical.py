@@ -103,6 +103,8 @@ class Hierarchical(SymbolTable):
         canonicalKey = canonical.split(self.separator)
         # delegate
         return self._alias(alias=aliasKey, canonical=canonicalKey)
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -111,6 +113,18 @@ class Hierarchical(SymbolTable):
         self._hash = pyre.patterns.newPathHash()
 
         return
+
+
+    def __contains__(self, name):
+        """
+        Check whether {name} is present in the table without modifying the table as a side-effect
+        """
+        # build the key
+        key = name.split(self.separator)
+        # hash it
+        hashkey = self._hash.hash(key)
+        # and check whether it is already present in my node index
+        return hashkey in self._nodes
 
 
     # implementation details
