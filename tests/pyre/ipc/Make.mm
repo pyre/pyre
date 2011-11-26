@@ -39,6 +39,7 @@ selector:
 nodes:
 	${PYTHON} ./node.py
 	${PYTHON} ./node_instantiation.py
+	${PYTHON} ./node_signals.py
 
 
 # end of file 
