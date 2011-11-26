@@ -42,5 +42,6 @@ test:
 	${PYTHON} ./expressions.py
 	${PYTHON} ./arithmetic.py
 	${PYTHON} ./algebra.py
+	${PYTHON} ./execv.py
 
 # end of file 
