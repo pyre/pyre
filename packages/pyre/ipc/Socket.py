@@ -21,7 +21,7 @@ class Socket(pyre.component, family="pyre.ipc.channels.socket", implements=chann
 
 
     # types
-    from .sockaddr import (
+    from ..schema.INet import (
         Address as address,
         IPv4 as ipv4,
         Unix as unix

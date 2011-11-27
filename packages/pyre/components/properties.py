@@ -65,6 +65,16 @@ def float(default=0):
     return descriptor
 
 
+def inet(default=schema.inet.any):
+    """
+    Build a internet address descriptor
+    """
+    descriptor = Property()
+    descriptor.type = schema.inet
+    descriptor.default = default
+    return descriptor
+
+
 def int(default=0):
     """
     Build an integer property descriptor

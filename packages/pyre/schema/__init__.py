@@ -13,6 +13,7 @@ from .Date import Date as date
 from .Decimal import Decimal as decimal
 from .Dimensional import Dimensional as dimensional
 from .Float import Float as float
+from .INet import INet as inet
 from .Integer import Integer as int
 from .Object import Object as object
 from .String import String as str

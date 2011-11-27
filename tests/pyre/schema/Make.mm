@@ -21,12 +21,13 @@ sanity:
 	${PYTHON} ./exceptions.py
 
 types:
-	${PYTHON} ./array.py
+	${PYTHON} ./arry.py
 	${PYTHON} ./boolean.py
 	${PYTHON} ./date.py
 	${PYTHON} ./dimensional.py
 	${PYTHON} ./dtime.py
 	${PYTHON} ./float.py
+	${PYTHON} ./inet.py
 	${PYTHON} ./int.py
 	${PYTHON} ./numeric.py
 	${PYTHON} ./str.py

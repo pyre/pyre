@@ -27,6 +27,7 @@ EXPORT_PYTHON_MODULES = \
     Dimensional.py \
     Descriptor.py \
     Float.py \
+    INet.py \
     Integer.py \
     Object.py \
     String.py \
