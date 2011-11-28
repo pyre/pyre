@@ -27,9 +27,9 @@ EXPORT_PYTHON_MODULES = \
     Pipe.py \
     Scheduler.py \
     Selector.py \
+    Server.py \
     Socket.py \
     interfaces.py \
-    sockaddr.py \
     __init__.py
 
 
