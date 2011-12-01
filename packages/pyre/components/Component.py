@@ -116,6 +116,39 @@ class Component(Configurable, metaclass=Actor, hidden=True):
             "could not find trait {.name!r} in {.pyre_name!r}".format(trait, cls))
 
 
+    @classmethod
+    def pyre_buildInventory(cls, key, traits):
+        """
+        Build a map from traits to inventory slots
+        """
+        # access the configurator
+        configurator = cls.pyre_executive.configurator
+        # initialize
+        inventory = {}
+        # iterate over the pairs in {traits}
+        for trait, default in traits:
+            # build the name of the trait
+            traitKey = key + [trait.name] if key else tuple()
+            # ask the configurator to register the default value and build a slot
+            slot = configurator.default(key=traitKey, value=default)
+            # record the trait
+            slot.trait = trait
+            # add it to the inventory
+            inventory[trait] = slot
+            # if I am registered with the configuration store
+            if traitKey:
+                # iterate over my aliases
+                for alias in trait.aliases:
+                    # skip my canonical name to avoid duplicate registration
+                    if alias == trait.name: continue
+                    # build the alias key
+                    aliasKey = key + [alias]
+                    # register it
+                    configurator._alias(canonical=traitKey, alias=aliasKey)
+        # return the inventory
+        return inventory
+
+
     # trait observation
     def pyre_updatedProperty(self, slot):
         """
@@ -142,47 +175,22 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         super().__init__(**kwds)
         # store my name
         self.pyre_name = name if name is not None else "<component @ {:#x}>".format(id(self))
+
         # access the inventory that belongs to my class record
         classInventory = type(self).pyre_inventory
-        # the executive
-        executive = self.pyre_executive
-        # and its configurator
-        configurator = executive.configurator
-
-        # create my inventory
-        inventory = {}
+        # build a list of (trait, default value) pairs
+        traits = [ (trait, slot.ref()) for trait, slot in classInventory.items() ]
         # build my configuration key
         key = name.split(self.pyre_SEPARATOR) if name else ()
-        # iterate over the items in my class inventory
-        for trait, default in classInventory.items():
-            # build the name of the trait
-            traitkey = key + [trait.name] if key else tuple()
-            # ask the configurator to register the default value
-            slot = configurator.default(key=traitkey, value=default.ref())
-            # record the trait
-            slot.trait = trait
-            # register me as an observer
-            slot.componentInstance = self
-            # and add it to my inventory
-            inventory[trait] = slot
-            # if i am registered with the configuration store
-            if traitkey:
-                # iterate over my aliases
-                for alias in trait.aliases:
-                    # avoid duplicate registration
-                    if alias == trait.name: continue
-                    # build the alias key
-                    aliaskey = key + [alias]
-                    # register it
-                    configurator._alias(canonical=traitkey, alias=aliaskey)
-
+        # create my inventory
+        inventory = self.pyre_buildInventory(key=key, traits=traits)
+        # register me as an observer of all slot values
+        for slot in inventory.values(): slot.componentInstance = self
         # attach my inventory
         self.pyre_inventory = inventory
-
         # register with the executive
-        executive.registerComponentInstance(self)
-
-        # all done for now
+        self.pyre_executive.registerComponentInstance(self)
+        # all done
         return
 
 

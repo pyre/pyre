@@ -87,38 +87,11 @@ class Actor(Requirement):
             (trait, self.pyre_buildTraitReference(trait))
             for trait in self.pyre_inheritedTraits if trait.isConfigurable
             )
-
-        # access the configuration store
-        configurator = self.pyre_executive.configurator
-        # cache my family name
-        family = self.pyre_family
-
-        # print("{}: setting up inventory".format(self))
-        # build inventory items for all the local traits
-        for trait, defaultValue in defaults:
-            # otherwise, build the configurator access key
-            key = family + [trait.name] if family else tuple()
-            # print("      key={!r}".format(key))
-            # transfer the default value of this trait to the configuration store
-            slot = configurator.default(key=key, value=defaultValue)
-            # record the trait
-            slot.trait = trait
-            # add me as an observer
-            slot.componentClass = self
-            # save the slot in my inventory
-            self.pyre_inventory[trait] = slot
-            # if i am registered with the configuration store
-            if key:
-                # iterate over my aliases
-                for alias in trait.aliases:
-                    # avoid duplicate registration
-                    if alias == trait.name: continue
-                    # build the alias key
-                    aliasKey = family + [alias]
-                    # register it
-                    configurator._alias(canonical=key, alias=aliasKey)
-
-        # register it with the executive
+        # create my inventory
+        self.pyre_inventory = self.pyre_buildInventory(key=self.pyre_family, traits=defaults)
+        # register me as an observer of all slots
+        for slot in self.pyre_inventory.values(): slot.componentClass = self
+        # register with the executive
         self.pyre_executive.registerComponentClass(self)
         # all done
         return
