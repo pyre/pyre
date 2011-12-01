@@ -94,21 +94,6 @@ class Configurable:
 
 
     @classmethod
-    def pyre_getTraitDescriptors(cls):
-        """
-        Generate a sequence of all my trait descriptors
-
-        The only complexity here is proper shadowing in the presence of inheritance. If you are
-        looking for the traits declared in a particular class, use the attribute
-        {cls.pyre_localTraits} instead.
-        """
-        # the full set of my descriptors is prepared by {Requirement} and separated into two
-        # piles: my local traits, i.e. traits that were first declared in my class record, and
-        # traits that i inherited
-        return itertools.chain(cls.pyre_localTraits, cls.pyre_inheritedTraits)
-
-
-    @classmethod
     def pyre_getTraitDescriptor(cls, alias):
         """
         Given the name {alias}, locate and return the associated descriptor
@@ -131,6 +116,52 @@ class Configurable:
         import journal
         firewall = journal.firewall("pyre.components")
         raise firewall.log("UNREACHABLE")
+
+
+    @classmethod
+    def pyre_getTraitDescriptors(cls):
+        """
+        Generate a sequence of all my trait descriptors
+
+        The only complexity here is proper shadowing in the presence of inheritance. If you are
+        looking for the traits declared in a particular class, use the attribute
+        {cls.pyre_localTraits} instead.
+        """
+        # the full set of my descriptors is prepared by {Requirement} and separated into two
+        # piles: my local traits, i.e. traits that were first declared in my class record, and
+        # traits that i inherited
+        return itertools.chain(cls.pyre_localTraits, cls.pyre_inheritedTraits)
+
+
+    @classmethod
+    def pyre_buildTraitReference(cls, trait):
+        """
+        Construct a reference to the {trait} slot in my nearest ancestor
+        """
+        # search for the closest ancestor that has a slot for this trait
+        for ancestor in cls.pyre_pedigree:
+            # if it's here
+            try:
+                # get the slot and exit the search
+                anchor = ancestor.pyre_inventory[trait]
+                break
+            # if it's not here
+            except KeyError:
+                # no worries, get the next ancestor
+                continue
+        # if it's not there at all
+        else:
+            # INCONSISTENT: there is an inherited trait but no registered superclass that
+            # declares it. one possibility is that this component derives from a hidden
+            # one, which means the user is messing with the protocol internals
+            import journal
+            firewall = journal.firewall("pyre.components")
+            raise firewall.log(
+                "could not locate a registered ancestor for '{.pyre_name}.{.name}'"
+                .format(cls, trait))
+
+        # we found the slot; build a reference to it and return it
+        return anchor.ref()
 
 
     def pyre_getTraitFullName(self, name):

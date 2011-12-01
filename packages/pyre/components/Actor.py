@@ -34,14 +34,18 @@ class Actor(Requirement):
             {family}: the public name of this component class; used to configure it
             {implements}: the tuple of interfaces that this component is known to implement
         """
-        # build the interface specification
+        # attempt to
         try:
+            # build the interface specification
             interface = cls.pyre_buildImplementationSpecification(bases, implements)
+        # if it fails
         except cls.ImplementationSpecificationError as error:
+            # decorate the exception
             error.name = name
             error.description = "{}: {}".format(name, error.description)
+            # and raise it again
             raise
-        # and add it to the attributes
+        # otherwise, add the interface specification to the attributes
         attributes["pyre_implements"] = interface
         # create storage for the configurable state
         attributes["pyre_inventory"] = {}
@@ -73,6 +77,17 @@ class Actor(Requirement):
         # and if so, bail out
         if hidden: return
 
+        # build a list of (trait, default value) pairs from the locally defined traits
+        defaults = [
+            (trait, trait.default)
+            for trait in self.pyre_localTraits if trait.isConfigurable
+            ]
+        # extend it with (trait, reference to an ancestor) pairs for the inherited traits
+        defaults.extend(
+            (trait, self.pyre_buildTraitReference(trait))
+            for trait in self.pyre_inheritedTraits if trait.isConfigurable
+            )
+
         # access the configuration store
         configurator = self.pyre_executive.configurator
         # cache my family name
@@ -80,16 +95,12 @@ class Actor(Requirement):
 
         # print("{}: setting up inventory".format(self))
         # build inventory items for all the local traits
-        # print("  local traits:")
-        for trait in self.pyre_localTraits:
-            # print("    {.name}".format(trait))
-            # check whether to keep this trait in inventory
-            if not trait.isConfigurable: continue
+        for trait, defaultValue in defaults:
             # otherwise, build the configurator access key
             key = family + [trait.name] if family else tuple()
             # print("      key={!r}".format(key))
             # transfer the default value of this trait to the configuration store
-            slot = configurator.default(key=key, value=trait.default)
+            slot = configurator.default(key=key, value=defaultValue)
             # record the trait
             slot.trait = trait
             # add me as an observer
@@ -106,67 +117,12 @@ class Actor(Requirement):
                     aliasKey = family + [alias]
                     # register it
                     configurator._alias(canonical=key, alias=aliasKey)
-            
-        # repeat with the inherited traits; the trick here is to locate which ancestor to build
-        # a reference to
-        # print("  inherited traits:")
-        for trait in self.pyre_inheritedTraits:
-            # print("    {.name}".format(trait))
-            # check whether to keep this trait in inventory
-            if not trait.isConfigurable: continue
-            # otherwise, build the configurator access key
-            key = family + [trait.name] if family else tuple()
-            # search for the closest ancestor that has a slot for this trait
-            for ancestor in self.pyre_pedigree:
-                # if it's here
-                try:
-                    # get the slot and exit the search
-                    anchor = ancestor.pyre_inventory[trait]
-                    break
-                # if it's not here
-                except KeyError:
-                    # no worries, get the next ancestor
-                    continue
-            # if it's not there at all
-            else:
-                # INCONSISTENT: there is an inherited trait but no registered superclass that
-                # declares it. one possibility is that this component derives from a hidden
-                # one, which means the user is messing with the protocol internals
-                import journal
-                firewall = journal.firewall("pyre.components")
-                raise firewall.log(
-                    "could not locate a registered ancestor for '{.pyre_name}.{.name}'"
-                    .format(self, trait))
-
-            # we found the slot; build a reference to it
-            ref = anchor.ref()
-            # notify the configuration store; we may get a different slot back, depending on
-            # whether the configuration store has any relevant information on this trait
-            slot = configurator.default(key=key, value=ref)
-            # record the trait
-            slot.trait = trait
-            # add me as an observer
-            slot.componentClass = self
-            # and save the slot in my inventory
-            self.pyre_inventory[trait] = slot
-            # if i am registered with the configuration store
-            if key:
-                # iterate over my aliases
-                for alias in trait.aliases:
-                    # avoid duplicate registration
-                    if alias == trait.name: continue
-                    # build the alias key
-                    aliasKey = family + [alias]
-                    # register it
-                    configurator._alias(canonical=key, alias=aliasKey)
-
 
         # register it with the executive
         self.pyre_executive.registerComponentClass(self)
-
         # all done
         return
-
+            
 
     def __setattr__(self, name, value):
         """
