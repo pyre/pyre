@@ -52,8 +52,6 @@ class Requirement(AttributeClassifier):
         attributes["pyre_localTraits"] = localTraits = []
         # the inherited traits
         attributes["pyre_inheritedTraits"] = inheritedTraits = []
-        # and the list of ancestors that are themselves configurables
-        attributes["pyre_pedigree"] = pedigree = []
 
         # extract the descriptors
         for traitname, trait in cls.pyre_harvest(attributes, cls.Trait):
@@ -68,8 +66,6 @@ class Requirement(AttributeClassifier):
         # harvest the inherited traits: this must be done from scratch for every new
         # configurable class, since multiple inheritance messes with the __mro__ in
         # unpredictable ways
-        # the code fragment appends directly to the local variable that points to the same list
-        # as the configurable attribute
         # initialize the set of known names so we shadow them properly
         known = set(attributes)
         # iterate over the configurable's ancestors
@@ -87,17 +83,18 @@ class Requirement(AttributeClassifier):
             
         # extract the ancestors in the configurable's mro that are themeselves configurable
         # n.b.: since {Requirement} is not the direct metaclass of any class, the chain here
-        # stops at either Component or Interface, depending on whether {Actor} or {Role} is the
-        # actual metaclass
-        for base in configurable.__mro__:
-            if isinstance(base, cls): pedigree.append(base)
+        # stops at either {Component} or {Interface}, depending on whether {Actor} or {Role} is
+        # the actual metaclass
+        configurable.pyre_pedigree = [
+            base for base in configurable.__mro__ if isinstance(base, cls)
+            ]
 
         # initialize the locally declared descriptors
-        for descriptor in localTraits:
-            descriptor.pyre_initialize()
+        for descriptor in localTraits: descriptor.pyre_initialize()
+
         # fix the namemap
         for trait in configurable.pyre_getTraitDescriptors():
-            # update the name map with all the aliases of each trait
+            # by updating it with all aliases of each trait
             configurable.pyre_namemap.update({alias: trait.name for alias in trait.aliases})
 
         # return the record to the caller
