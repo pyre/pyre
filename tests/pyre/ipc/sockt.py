@@ -16,7 +16,7 @@ def test():
     # get the package
     import pyre.ipc
     # build an address
-    server = pyre.ipc.socket.ipv4(host="pyre.caltech.edu", port=80)
+    server = pyre.ipc.socket.ipv4(host="localhost", port=22)
     # make a socket
     return pyre.ipc.socket.open(address=server)
 
