@@ -57,6 +57,7 @@ component-class:
 	${PYTHON} ./component_class_registration_model.py
 	${PYTHON} ./component_class_configuration.py
 	${PYTHON} ./component_class_configuration_inheritance.py
+	${PYTHON} ./component_class_configuration_inheritance_multi.py
 	${PYTHON} ./component_class_binding.py
 	${PYTHON} ./component_class_binding_implicit.py
 	${PYTHON} ./component_class_validation.py
@@ -71,6 +72,7 @@ component-instance:
 	${PYTHON} ./component_instance_configuration.py
 	${PYTHON} ./component_instance_configuration_constructor.py
 	${PYTHON} ./component_instance_configuration_inheritance.py
+	${PYTHON} ./component_instance_configuration_inheritance_multi.py
 	${PYTHON} ./component_instance_binding.py
 	${PYTHON} ./component_instance_binding_implicit.py
 	${PYTHON} ./component_instance_binding_configuration.py

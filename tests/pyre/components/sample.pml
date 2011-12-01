@@ -25,10 +25,37 @@
     <bind property="common">base - common</bind>
   </component>
 
+  <component family="sample.a2">
+    <!-- some bindings -->
+    <bind property="common">a2 - common</bind>
+  </component>
+
   <component family="sample.derived">
     <!-- some bindings -->
     <bind property="extra">derived - extra</bind>
     <bind property="common">derived - common</bind>
+  </component>
+
+  <!-- data for component_class_configuration_inheritance_multi -->
+  <component family="sample.base.multi">
+    <!-- some bindings -->
+    <bind property="common">base - common</bind>
+  </component>
+
+  <component family="sample.a1.multi">
+    <!-- some bindings -->
+    <bind property="common">a1 - common</bind>
+    <bind property="middle">a1 - middle</bind>
+  </component>
+
+  <component family="sample.a2.multi">
+    <!-- some bindings -->
+    <bind property="common">a2 - common</bind>
+  </component>
+
+  <component family="sample.derived.multi">
+    <!-- some bindings -->
+    <bind property="extra">derived - extra</bind>
   </component>
 
   <!-- data for component_class_inventory -->
@@ -56,6 +83,12 @@
     <bind property="extra">d - extra</bind>
     <bind property="middle">d - middle</bind>
     <bind property="common">d - common</bind>
+  </component>
+
+  <!-- data for component_instance_configuration_inheritance_multi -->
+  <component name="d" family="sample.derived.multi">
+    <!-- some bindings -->
+    <bind property="extra">d - extra</bind>
   </component>
 
   <!-- data for component_instance_binding_configuration -->
