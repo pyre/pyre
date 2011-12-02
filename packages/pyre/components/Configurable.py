@@ -171,6 +171,14 @@ class Configurable:
         return self.pyre_SEPARATOR.join(filter(None, [self.pyre_name, name]))
 
 
+    @classmethod
+    def pyre_split(cls, name):
+        """
+        Split {name} into its {pyre_SEPARATOR} delimited parts
+        """
+        return name.split(cls.pyre_SEPARATOR)
+
+
     # compatibility check
     @classmethod
     def pyre_isCompatible(this, other, fast=False):
