@@ -42,7 +42,7 @@ def test():
     event = events[2]
     assert isinstance(event, Assignment)
     assert event.key == ["gauss", "mc", "integrand"]
-    assert event.value == "import:gauss.fuctors.#gaussian"
+    assert event.value == "import:gauss.fuctors.gaussian"
 
     event = events[3]
     assert isinstance(event, Assignment)

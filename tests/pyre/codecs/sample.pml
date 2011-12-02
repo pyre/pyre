@@ -14,7 +14,7 @@
 
     <component name="mc">
       <bind property="samples">10**6</bind>
-      <bind property="integrand">import:gauss.fuctors.#gaussian</bind>
+      <bind property="integrand">import:gauss.fuctors.gaussian</bind>
     
       <component name="box">
         <bind property="diagonal">((-1,-1), (1,1))</bind>
