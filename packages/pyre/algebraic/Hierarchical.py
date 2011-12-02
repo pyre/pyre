@@ -70,7 +70,7 @@ class Hierarchical(SymbolTable):
         # print("HierarchicalModel.children: key={}".format(key))
         hashkey = self._hash.hash(key)
         # print("   names: {}".format(key.nodes.items()))
-        # extract the unique hash subkeys
+        # extract the unique hashed keys (to avoid double counting aliases)
         unique = set(hashkey.nodes.values())
         # iterate over the unique keys
         for key in unique:
