@@ -37,10 +37,11 @@ def newRegistrar(**kwds):
 
 
 # access to the component and interface classes
-from .Component import Component as component
-from .Facility import Facility as facility
 from .Interface import Interface as interface
+from .Component import Component as component
 from .Property import Property as property
+from .Facility import Facility as facility
+from .Catalog import Catalog as catalog
 
 
 # end of file 

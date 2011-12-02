@@ -22,6 +22,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Actor.py \
     Behavior.py \
+    Catalog.py \
     CompatibilityReport.py \
     Component.py \
     Configurable.py \

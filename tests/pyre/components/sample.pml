@@ -110,6 +110,28 @@
     <bind property="σ">σ</bind>
   </component>
 
+  <!-- data for component_catalog -->
+  <component name="catalog_container">
+    <!-- put some components in the catalog -->
+    <component name="catalog">
+      <bind property="cat1">import:component_catalog.comp</bind>
+      <bind property="cat2">import:component_catalog.comp</bind>
+      <bind property="cat3">import:component_catalog.comp</bind>
+    </component>
+  </component>
+
+  <component name="cat1">
+      <bind property="tag">cat1</bind>
+  </component>
+
+  <component name="cat2">
+      <bind property="tag">cat2</bind>
+  </component>
+
+  <component name="cat3">
+      <bind property="tag">cat3</bind>
+  </component>
+
 </config>
 
 
