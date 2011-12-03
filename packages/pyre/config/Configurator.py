@@ -229,7 +229,7 @@ class Configurator(Model):
             self._assign(
                 existing=slot, value=assignment.value,
                 priority=priority, locator=assignment.locator) 
-            # print("    before: {!r} <- {!r}".format(alias, getattr(configurable, alias)))
+            # print("    after: {!r} <- {!r}".format(alias, getattr(configurable, alias)))
 
         # print("  done with {.pyre_name!r}".format(configurable))
         # return the accumulated errors
