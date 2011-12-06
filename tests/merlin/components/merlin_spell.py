@@ -8,22 +8,21 @@
 
 
 """
-Sanity check: verify that the merlin shell is accessible
+Verify that the spell book can locate spells
 """
 
 
 def test():
     # access to the merlin executive
     from merlin import merlin
+    # get the spellbook
+    spellbook = merlin.spellbook
 
-    # get the curator
-    packages = merlin.packages
-
-    # check the name
-    assert packages
+    # ask it to find a spell
+    spell = spellbook.findSpell(name="test")
 
     # and return
-    return packages
+    return spell
 
 
 # main

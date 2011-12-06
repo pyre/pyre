@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the merlin shell is accessible
+Verify that the curator can save and load project files
 """
 
 

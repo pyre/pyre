@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the merlin shell is accessible
+Verify that the merlin shell is accessible
 """
 
 

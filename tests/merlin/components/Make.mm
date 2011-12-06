@@ -22,9 +22,9 @@ sanity:
 	${PYTHON} ./sanity.py
 
 merlin:
-	${PYTHON} ./merlin-shell.py
-	${PYTHON} ./merlin-spell.py
-	${PYTHON} ./merlin-curator.py
-	${PYTHON} ./merlin-packages.py
+	${PYTHON} ./merlin_shell.py
+	${PYTHON} ./merlin_spell.py
+	${PYTHON} ./merlin_curator.py
+	${PYTHON} ./merlin_packages.py
 
 # end of file 
