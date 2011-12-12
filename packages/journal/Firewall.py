@@ -18,7 +18,7 @@ from .Diagnostic import Diagnostic
 # declaration
 class Firewall(Diagnostic, Channel):
     """
-    This class is the implementation of the debug channel
+    This class is the implementation of the firewall channel
     """
 
 

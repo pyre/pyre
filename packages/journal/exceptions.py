@@ -22,4 +22,20 @@ class FirewallError(Exception):
         return "firewall breached; aborting..."
 
 
+class ApplicationError(Exception):
+    """
+    Exception raised whenever an application error is encountered
+    """
+
+
+    def __init__(self, error, **kwds):
+        super().__init__(**kwds)
+        self.error = error
+        return
+
+
+    def __str__(self):
+        return "the application encountered a non-recoverable error; aborting..."
+
+
 # end of file 
