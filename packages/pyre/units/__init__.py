@@ -20,7 +20,7 @@ support for units from other systems
 # objects should be sufficient for most uses. Please let me know if you find something that
 # cannot be done any other way and you find yourself resorting to building dimensional
 # quantities directly.
-from .Dimensional import Dimensional as dimensional
+from .Dimensional import Dimensional as dimensional, zero, one
 
 
 # the unit parser converts string representations of dimensional quantities into instances of

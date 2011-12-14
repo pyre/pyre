@@ -15,12 +15,40 @@ class Dimensional:
     """
 
 
+    # exceptions
+    from .exceptions import CompatibilityError, ConversionError
+            
+
+    # public data
+    # representational choices
+    fundamental = ('kg', 'm', 's', 'A', 'K', 'mol', 'cd') # the SI fundamental units
+    zero = (0,) * len(fundamental)
+    # default values
+    value = 0
+    derivation = zero
+
+
+    # interface
+    def isCompatible(self, other):
+        """
+        Predicate that checks whether {other} has the same derivation as I do
+        """
+        # attempt to
+        try:
+            # check for matching derivations
+            return self.derivation == other.derivation
+        # if {other} is not a dimensional
+        except AttributeError:
+            # return false
+            return False
+
+
     # meta methods
     def __init__(self, value, derivation):
         """
         Constructor:
             {value}: the magnitude
-            {derivation}: a tuple of the exponents of the seven fundamental SI units
+            {derivation}: a tuple with the exponents of the fundamental SI units
         """
         self.value = value
         self.derivation = derivation
@@ -32,11 +60,19 @@ class Dimensional:
         """
         Addition
         """
-        # check compatibility
+        # if {other} is not dimensional
+        if not isinstance(other, Dimensional):
+            # describe the error
+            msg = "unsupported operand types for +: {.__name__!r} and {.__name__!r}".format(
+                type(self), type(other))
+            # report it
+            raise TypeError(msg)
+        # if the two quantities are not compatible
         if not self.derivation == other.derivation:
-            raise self.IncompatibleUnits("add")
-        # otherwise build one and return it
-        return Dimensional(self.value + other.value, self.derivation)
+            # report an error
+            raise self.CompatibilityError(operation="addition", op1=self, op2=other)
+        # otherwise compute the result and return it
+        return Dimensional(value=self.value+other.value, derivation=self.derivation)
 
 
     # subtraction
@@ -44,15 +80,19 @@ class Dimensional:
         """
         Subtraction
         """
-        # check compatibility
+        # if {other} is not dimensional
+        if not isinstance(other, Dimensional):
+            # describe the error
+            msg = "unsupported operand types for -: {.__name__!r} and {.__name__!r}".format(
+                type(self), type(other))
+            # report it
+            raise TypeError(msg)
+        # if the two quantities are not compatible
         if not self.derivation == other.derivation:
-            raise self.IncompatibleUnits("subtract")
-        # compute the value
-        value = self.value - other.value
-        # if it is zero, return a float
-        if value == 0: return 0
-        # otherwise build one and return it
-        return Dimensional(self.value - other.value, self.derivation)
+            # report an error
+            raise self.CompatibilityError(operation="addition", op1=self, op2=other)
+        # otherwise compute the result and return it
+        return Dimensional(value=self.value-other.value, derivation=self.derivation)
 
 
     # multiplication
@@ -60,20 +100,26 @@ class Dimensional:
         """
         Multiplication
         """
-        # bail out quickly if {other} is 0
-        if other == 0: return 0
-
+        # get my value
+        value = self.value
         # attempt to interpret {other} as a dimensional
         try:
-            value = self.value * other.value
+            value *= other.value
         except AttributeError:
             # the only legal alternative is that {other} is a numeric type
+            try:
+                # multiply
+                value *= other
+            # and if this fails too
+            except TypeError:
+                # report an error
+                raise self.CompatibilityError(operation="multiplication", op1=self, op2=other)
             # scale the magnitude and return the new dimensional
-            return Dimensional(other*self.value, self.derivation)
+            return Dimensional(value=value, derivation=self.derivation)
         # otherwise, compute the units
         derivation = tuple(map(operator.add, self.derivation, other.derivation))
-        # if the units canceled out, return a float
-        if derivation == self._zero: return value
+        # check whether the units canceled
+        if derivation == self.zero: return value
         # otherwise build a new one and return it
         return Dimensional(value, derivation)
 
@@ -83,18 +129,28 @@ class Dimensional:
         """
         True division
         """
+        # get my value
+        value = self.value
         # attempt to interpret {other} as a dimensional
         try:
-            value = self.value / other.value
+            value /= other.value
         except AttributeError:
             # the only legal alternative is that {other} is a numaric type
-            return Dimensional(self.value/other, self.derivation)
+            try:
+                # divide
+                value /= other
+            # if this fails too
+            except TypeError:
+                # report an error
+                raise self.CompatibilityError(operation="division", op1=self, op2=other)
+            # otherwise, build a dimensional and return it
+            return Dimensional(value=value, derivation=self.derivation)
         # otherwise compute the units
         derivation = tuple(map(operator.sub, self.derivation, other.derivation))
         # check whether the units canceled
-        if derivation == self._zero: return value
+        if derivation == self.zero: return value
         # and return a new dimensional
-        return Dimensional(value, derivation)
+        return Dimensional(value=value, derivation=derivation)
 
 
     # exponentiation
@@ -102,14 +158,12 @@ class Dimensional:
         """
         Exponentiation
         """
-        # if the exponent is zero, return unit
-        if other == 0: return 1 
-        # otherwise compute magnitude
+        # compute the magnitude
         value = self.value ** other
-        # and dimensions
+        # compute the dimensions
         derivation = tuple(map(operator.mul, [other]*7, self.derivation))
         # build a new dimensional and return it
-        return Dimensional(value, derivation)
+        return Dimensional(value=value, derivation=derivation)
         
 
     # unary plus
@@ -127,7 +181,7 @@ class Dimensional:
         Unary minus
         """
         # return a new one with the value sign reversed
-        return Dimensional(-self.value, self.derivation)
+        return Dimensional(value=-self.value, derivation=self.derivation)
 
 
     # absolute value
@@ -136,20 +190,7 @@ class Dimensional:
         Absolute value
         """
         # build a new one with positive value
-        return Dimensional(abs(self.value), self.derivation)
-
-
-    # inversion
-    def __invert__(self):
-        """
-        Inversion
-        """
-        # compute the value
-        value = 1/self.value
-        # and the dimensions
-        derivation = tuple(map(operator.mul, self._negativeOne, self.derivation))
-        # build a new one and return it
-        return Dimensional(value, derivation)
+        return Dimensional(value=abs(self.value), derivation=self.derivation)
 
 
     # right multiplication
@@ -157,10 +198,10 @@ class Dimensional:
         """
         Right multiplication
         """
-        # if the left operand was a zero, return a zero
-        if other == 0: return 0
+        # interpret {other} as a numeric type
+        value = self.value * other
         # build a new one and return it
-        return Dimensional(other*self.value, self.derivation)
+        return Dimensional(value=value, derivation=self.derivation)
 
 
     # right division
@@ -168,12 +209,10 @@ class Dimensional:
         """
         Right division
         """
-        # if the left operand was a zero, return a zero
-        if other == 0: return 0
-        # otherwise compute the value
-        value = other/self.value
-        # and the dimensions
-        derivation = tuple(map(operator.mul, self._negativeOne, self.derivation))
+        # interpret {other} as a numeric type
+        value = other / self.value
+        # compute the dimensions
+        derivation = tuple(map(operator.neg, self.derivation))
         # build a new one and return it
         return Dimensional(value, derivation)
 
@@ -184,11 +223,11 @@ class Dimensional:
         Conversion to float
         """
         # if i happen to be a disguised float, convert me
-        if self.derivation == self._zero:
+        if self.derivation == self.zero:
             # must cast explicitly because an actual float is expected
             return float(self.value)
         # otherwise
-        raise self.InvalidConversion(self)
+        raise self.ConversionError(operand=self)
 
 
     # ordering
@@ -196,80 +235,103 @@ class Dimensional:
         """
         Ordering: less than
         """
-        # if the dimensions match
-        if self.derivation == other.derivation:
-            # check
-            return self.value < other.value
-        # otherwise the operartion is illegal
-        raise self.IncompatibleUnits("compare")
+        # assuming {other} is dimensional
+        try:
+            # check the dimensions
+            if self.derivation == other.derivation:
+                # and the values
+                return self.value < other.value
+        # if not
+        except AttributeError: pass
+        # the operation is illegal
+        raise self.CompatibilityError(operand="<", op1=self, op2=other)
+
 
     def __le__(self, other):
         """
         Ordering: less than or equal to
         """
-        if self.derivation == other.derivation:
-            # check
-            return self.value <= other.value
-        # otherwise the operartion is illegal
-        raise self.IncompatibleUnits("compare")
+        # assuming {other} is dimensional
+        try:
+            # check the dimensions
+            if self.derivation == other.derivation:
+                # and the values
+                return self.value <= other.value
+        # if not
+        except AttributeError: pass
+        # the operation is illegal
+        raise self.CompatibilityError(operand="<=", op1=self, op2=other)
+
 
     def __eq__(self, other):
         """
         Ordering: equality
         """
-        # check whether {other} is zero
-        if other == 0: 
-            # must be false since i convert dimensional to floats whenever possible
-            # if this fails, it's a bug...
-            # NYI: firewall this
-            return False
+        # assuming {other} is dimensional
+        try:
+            # check the dimensions
+            if self.derivation == other.derivation:
+                # and the values
+                return self.value == other.value
+        # if not
+        except AttributeError: pass
+        # the operation is illegal
+        raise self.CompatibilityError(operand="==", op1=self, op2=other)
 
-        # if the dimensions match
-        if self.derivation == other.derivation:
-            # check
-            return self.value == other.value
-        # otherwise the operartion is illegal
-        raise self.IncompatibleUnits("compare")
 
     def __ne__(self, other):
         """
         Ordering: not equal to
         """
-        # if the dimensions match
-        if self.derivation == other.derivation:
-            # check
-            return self.value != other.value
-        # otherwise the operartion is illegal
-        raise self.IncompatibleUnits("compare")
+        # assuming {other} is dimensional
+        try:
+            # check the dimensions
+            if self.derivation == other.derivation:
+                # and the values
+                return self.value != other.value
+        # if not
+        except AttributeError: pass
+        # the operation is illegal
+        raise self.CompatibilityError(operand="!=", op1=self, op2=other)
+
 
     def __gt__(self, other):
         """
         Ordering: greater than
         """
-        # if the dimensions match
-        if self.derivation == other.derivation:
-            # check
-            return self.value > other.value
-        # otherwise the operartion is illegal
-        raise self.IncompatibleUnits("compare")
+        # assuming {other} is dimensional
+        try:
+            # check the dimensions
+            if self.derivation == other.derivation:
+                # and the values
+                return self.value > other.value
+        # if not
+        except AttributeError: pass
+        # the operation is illegal
+        raise self.CompatibilityError(operand=">", op1=self, op2=other)
+
 
     def __ge__(self, other):
         """
         Ordering: greater than or equal to
         """
-        # if the dimensions match
-        if self.derivation == other.derivation:
-            # check
-            return self.value >= other.value
-        # otherwise the operartion is illegal
-        raise self.IncompatibleUnits("compare")
+        # assuming {other} is dimensional
+        try:
+            # check the dimensions
+            if self.derivation == other.derivation:
+                # and the values
+                return self.value >= other.value
+        # if not
+        except AttributeError: pass
+        # the operation is illegal
+        raise self.CompatibilityError(operand=">=", op1=self, op2=other)
 
 
     def __str__(self):
         """
         Conversion to str
         """
-        return str(self.value) + ' ' + self._strDerivation()
+        return str(self.value) + '*' + self._strDerivation()
 
 
     def __format__(self, code):
@@ -289,18 +351,23 @@ class Dimensional:
             >>> "{accel:value=.2f,base={scale},label=g}".format(accel=100*m/s**2, scale=g)
             '10.2 g'
         """
-        # spit out the code
         # establish the formatting defaults
         fields = {
             'value': '',
             'base': Dimensional(value=1, derivation=self.derivation),
-            'label': self._strDerivation()
+            'label': self._strDerivation(),
             }
         # if the user supplied a format specifier
         if code:
+            # assume pretty output
+            pretty = True
             # update the formatting fields
             fields.update(field.split('=') for field in code.split(','))
-        # show what we have so far
+        # otherwise
+        else:
+            # render in a way recognizable by the parser
+            pretty = False
+
         # get the fields
         value = fields['value']
         base = fields['base']
@@ -313,11 +380,10 @@ class Dimensional:
             p = parser()
             # make the conversion
             base = p.parse(base)
+        # decide which representation of multiplication to use
+        op = ' ' if pretty else '*'
         # build the string and return it
-        try:
-            return format(self/base, value) + ' ' + label
-        except TypeError as error:
-            raise
+        return format(self/base, value) + op + label
 
 
     # implementation details
@@ -331,26 +397,12 @@ class Dimensional:
         """
         return '*'.join(
             "{}**{}".format(label,exponent) if exponent != 1 else label
-            for label, exponent in zip(self._fundamental, self.derivation) if exponent)
+            for label, exponent in zip(self.fundamental, self.derivation) if exponent)
               
 
-    # exceptions
-    from .exceptions import IncompatibleUnits, InvalidConversion
-            
-
-    # private data
-    _fundamental = ('kg', 'm', 's', 'A', 'K', 'mol', 'cd') # the SI fundamental units
-    _zero = (0,) * len(_fundamental)
-    _negativeOne = (-1, ) * len(_fundamental)
-
-
-    # public data: default values
-    value = 0
-    derivation = _zero
-
-
 # instances
-one = dimensionless = Dimensional(1, Dimensional._zero)
+zero = dimensionless = Dimensional(0, Dimensional.zero)
+one = dimensionless = Dimensional(1, Dimensional.zero)
 
 
 # end of file 

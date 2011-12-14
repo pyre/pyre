@@ -14,22 +14,22 @@ Tests for all the exceptions raised by this package
 def test():
 
     from pyre.units.exceptions import (
-        UnitError, InvalidConversion, IncompatibleUnits
+        UnitError, ConversionError, CompatibilityError
         )
 
     try:
-        raise UnitError(description=None, operand=None)
+        raise UnitError(description=None)
     except UnitError as error:
         pass
 
     try:
-        raise InvalidConversion(operand=None)
-    except InvalidConversion as error:
+        raise ConversionError(operand=None)
+    except ConversionError as error:
         pass
 
     try:
-        raise IncompatibleUnits(operand=None)
-    except IncompatibleUnits as error:
+        raise CompatibilityError(operation=None, op1=None, op2=None)
+    except CompatibilityError as error:
         pass
 
     return

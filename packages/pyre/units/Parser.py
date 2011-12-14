@@ -21,8 +21,6 @@ class Parser(metaclass=Singleton):
         """
         Convert the string representation in {text} into a dimensional quantity
         """
-        # assume that spaces are multiplication operators
-        text = "*".join(text.split())
         # evaluate the expression and return the result
         return eval(text, self.context)
 
