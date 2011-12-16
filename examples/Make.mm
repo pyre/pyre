@@ -10,9 +10,18 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
-    bizbook.pyre \
-    contacts.pyre \
     gauss.pyre
+
+# add these if the corresponding support has been built
+# postgres
+LIBPQ_DIR= # overriden by the the environment
+ifneq ($(strip $(LIBPQ_DIR)),)
+
+  RECURSE_DIRS += \
+      bizbook.pyre \
+      contacts.pyre
+
+endif
 
 #--------------------------------------------------------------------------
 #

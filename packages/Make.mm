@@ -15,8 +15,19 @@ PACKAGES = \
     pyre \
     journal \
     merlin \
-    mpi \
-    postgres \
+
+# the optional packages
+# mpi
+MPI_DIR= # overriden by the the environment
+ifneq ($(strip $(MPI_DIR)),)
+  PACKAGES += mpi
+endif
+
+# postgres
+LIBPQ_DIR= # overriden by the the environment
+ifneq ($(strip $(LIBPQ_DIR)),)
+  PACKAGES += postgres
+endif
 
 #--------------------------------------------------------------------------
 #
