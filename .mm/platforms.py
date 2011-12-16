@@ -67,11 +67,11 @@ def platform(builder):
             'GSL_INCDIR': os.path.join(systemdir, 'include'),
             }
         # fix libpq
-        libpqVersion = '8.4'
+        libpqVersion = '9.1'
         builder.requirements['libpq'].environ = {
             'LIBPQ_DIR': systemdir,
             'LIBPQ_INCDIR': os.path.join(systemdir, 'include', 'postgresql'),
-            'LIBPQ_LIBDIR': os.path.join(systemdir, 'lib', 'postgresql', libpqVersion, 'lib'),
+            'LIBPQ_LIBDIR': os.path.join(systemdir, 'lib'),
             }
         # fix mpi
         mpiVersion = 'openmpi'
