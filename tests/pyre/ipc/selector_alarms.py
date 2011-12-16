@@ -35,7 +35,7 @@ def test():
         return
 
     # setup some alarms
-    s.alarm(interval=0, handler=handler)
+    s.alarm(interval=0*second, handler=handler)
     s.alarm(interval=1*second, handler=handler)
     s.alarm(interval=0.5*second, handler=handler)
     s.alarm(interval=0.25*second, handler=handler)

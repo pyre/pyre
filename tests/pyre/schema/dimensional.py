@@ -22,7 +22,7 @@ def test():
     # casts
     # successful
     assert m == descriptor.pyre_cast("meter")
-    assert 9.81*kg*m/s**2 == descriptor.pyre_cast("9.81 kg*m/s**2")
+    assert 9.81*kg*m/s**2 == descriptor.pyre_cast("9.81*kg*m/s**2")
 
     # failures
     try:
