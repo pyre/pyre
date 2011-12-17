@@ -21,20 +21,20 @@ def platform(builder):
     if platform == 'Darwin':
         # assume macports
         systemdir = '/opt/local'
-        # fix {gsl}
+        # set up {gsl}
         builder.requirements['gsl'].environ = {
             'GSL_DIR': systemdir,
             'GSL_LIBDIR': os.path.join(systemdir, 'lib'),
             'GSL_INCDIR': os.path.join(systemdir, 'include'),
             }
-        # fix libpq
+        # set up {libpq}
         libpqVersion = 'postgresql90'
         builder.requirements['libpq'].environ = {
             'LIBPQ_DIR': systemdir,
             'LIBPQ_LIBDIR': os.path.join(systemdir, 'lib', libpqVersion),
             'LIBPQ_INCDIR': os.path.join(systemdir, 'include', libpqVersion),
             }
-        # fix mpi
+        # set up {mpi}
         mpiVersion = 'openmpi'
         builder.requirements['mpi'].environ = {
             'MPI_VERSION': mpiVersion,
@@ -43,7 +43,7 @@ def platform(builder):
             'MPI_INCDIR': os.path.join(systemdir, 'include', mpiVersion),
             'MPI_EXECUTIVE': 'openmpirun',
             }
-        # fix python
+        # set up {python}
         pythonVersion = '3.2'
         python = 'python' + pythonVersion
         builder.requirements['python'].environ = {
@@ -60,20 +60,20 @@ def platform(builder):
     if platform == 'Linux':
         # on normal distributions
         systemdir = '/usr'
-        # fix {gsl}
+        # set up {gsl}
         builder.requirements['gsl'].environ = {
             'GSL_DIR': systemdir,
             'GSL_LIBDIR': os.path.join(systemdir, 'lib'),
             'GSL_INCDIR': os.path.join(systemdir, 'include'),
             }
-        # fix libpq
+        # set up {libpq}
         libpqVersion = '9.1'
         builder.requirements['libpq'].environ = {
             'LIBPQ_DIR': systemdir,
             'LIBPQ_INCDIR': os.path.join(systemdir, 'include', 'postgresql'),
             'LIBPQ_LIBDIR': os.path.join(systemdir, 'lib'),
             }
-        # fix mpi
+        # set up {mpi}
         mpiVersion = 'openmpi'
         builder.requirements['mpi'].environ = {
             'MPI_VERSION': mpiVersion,
@@ -82,7 +82,7 @@ def platform(builder):
             'MPI_INCDIR': os.path.join(systemdir, 'include', mpiVersion),
             'MPI_EXECUTIVE': 'mpirun',
             }
-        # fix python
+        # set up {python}
         pythonVersion = '3.2'
         python = 'python' + pythonVersion
         builder.requirements['python'].environ = {
