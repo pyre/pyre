@@ -38,15 +38,18 @@ class Importer(Codec):
         shelfLocator = pyre.tracking.newSimpleLocator(source=source)
         # adjust the locator
         locator = pyre.tracking.chain(this=shelfLocator, next=locator) if locator else shelfLocator
+
         # import the module
         try:
             module = __import__(source)
-        # if anything goes wrong
-        except Exception as error:
+        # if {source} does not describe an actual module
+        except ImportError as error:
             # report it as a decoding error
             raise self.DecodingError(
                 codec=self, uri=source, locator=locator, description=str(error)) from error
-        # now look it up in the list of modules and return it dressed up as a shelf
+        # other exceptions are probably related to the contents of the module, so let them
+        # through to the user; on success, look up the {module} in the global list of modules
+        # and return it dressed up as a shelf
         return self.Shelf(module=sys.modules[source], locator=locator)
 
 

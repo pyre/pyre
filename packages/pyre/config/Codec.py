@@ -72,9 +72,11 @@ class Codec:
         package, symbol = self.parseAddress(specification)
         # print("        package: {!r}".format(package))
         # print("        symbol: {!r}".format(symbol))
+
         # give registered namespace handlers an opportunity to adjust the extracted {symbol}
         symbol = client.translateSymbol(symbol=symbol, context=namespace)
         # print("        translated symbol: {!r}".format(symbol))
+
         # iterate over the locations in {specification}
         # print("      locating a shelf:")
         for shelf in self.locateShelves(

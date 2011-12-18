@@ -33,6 +33,7 @@ framework:
 	${PYTHON} ./executive_retrieveComponentDescriptor.py
 	${PYTHON} ./executive_retrieveComponentDescriptor_duplicate.py
 	${PYTHON} ./executive_retrieveComponentDescriptor_badImport.py
+	${PYTHON} ./executive_retrieveComponentDescriptor_syntaxError.py
 
 
 # end of file 

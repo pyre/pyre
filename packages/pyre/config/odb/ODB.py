@@ -53,17 +53,9 @@ class ODB(Codec):
         contents = stream.read()
         # build a new shelf
         shelf = self.Shelf(locator=locator)
-        # invoke the interpreter to parse its contents
-        try:
-            exec(contents, shelf)
-        # if anything goes wrong
-        except Exception as error:
-            # report it as a decoding error
-            raise self.DecodingError(
-                codec=self, uri=locator.source, description=str(error),
-                locator=locator) from error
-        # at this point we have opened the shelf and processed its contents successfully
-        # return the shelf
+        # invoke the interpreter to parse its contents and place them in the {shelf}
+        exec(contents, shelf)
+        # return the {shelf}
         return shelf
 
 

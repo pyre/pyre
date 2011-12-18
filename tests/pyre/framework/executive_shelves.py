@@ -31,7 +31,7 @@ def test():
 
     # request a non-existent python module
     try:
-        shelf = executive.loadShelf(uri="import:sample_syntaxerror")
+        shelf = executive.loadShelf(uri="import:nomodule.nosymbol")
         assert False
     except executive.FrameworkError as error:
         pass
@@ -52,7 +52,7 @@ def test():
     try:
         shelf = executive.loadShelf(uri="file:sample_syntaxerror.py")
         assert False
-    except executive.FrameworkError as error:
+    except SyntaxError as error:
         pass
 
     # request the same file through vfs
