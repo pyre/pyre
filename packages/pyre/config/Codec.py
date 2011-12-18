@@ -55,16 +55,32 @@ class Codec:
         {context} to form candidates until one results in a loadable shelf that can resolve the
         {specification}
         """
+        # print("----------------------------------------")
+        # print(" ** Codec.locateSymbol:")
+        # print("      input:")
+        # print("        scheme: {!r}".format(scheme))
+        # print("        specification: {!r}".format(specification))
+        # print("        context: {!r}".format(context))
+        # print("        locator: {}".format(locator))
         # convert the context into a namespace
+        # print("      derived:")
         namespace = context.pyre_family if context else ()
+        # print("        namespace: {!r}".format(namespace))
         # {specification} should have two parts: a {package} and a {symbol}; the {symbol}
         # corresponds to the component factory we are looking for, the {package} is the
         # namespace to which it belongs
         package, symbol = self.parseAddress(specification)
+        # print("        package: {!r}".format(package))
+        # print("        symbol: {!r}".format(symbol))
         # give registered namespace handlers an opportunity to adjust the extracted {symbol}
         symbol = client.translateSymbol(symbol=symbol, context=namespace)
+        # print("        translated symbol: {!r}".format(symbol))
         # iterate over the locations in {specification}
-        for shelf in self.locateShelves(client, scheme, package, namespace, locator):
+        # print("      locating a shelf:")
+        for shelf in self.locateShelves(
+            client=client, scheme=scheme, address=package, context=namespace, locator=locator):
+            # got one
+            # print("        shelf: {}".format(shelf.locator))
             # attempt to look for our {symbol}
             try:
                 descriptor = shelf.retrieveSymbol(symbol)
@@ -73,11 +89,15 @@ class Codec:
                 # move on to the next candidate
                 continue
             # otherwise, success!
+            # print("        SUCCESS: descriptor: {!r} from {}".format(descriptor, shelf.locator))
             yield descriptor
 
         # now, for my next trick: attempt to interpret the symbol itself as a shelf
+        # print("        no luck")
+        # print("      symbol as shelf:")
         try:
             shelf = self.decode(client=client, scheme=scheme, source=symbol, locator=locator)
+            # print("        SUCCESS: shelf: {!r}".format(shelf))
         # if that fails
         except self.DecodingError:
             pass
@@ -88,6 +108,7 @@ class Codec:
                 # for the one whose package name matches our symbol
                 if implementor.pyre_getPackageName() == symbol:
                     yield implementor
+        # print("        no luck")
         
         # out of ideas....
         return

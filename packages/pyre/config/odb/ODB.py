@@ -31,7 +31,8 @@ class ODB(Codec):
     # interface
     def decode(self, client, scheme, source, locator):
         """
-        Interpret {source} as an open stream, execute it, and place its contents into a shelf
+        Interpret {source} as a filename that the client's fileserver can convert into a file
+        object; open it, execute it, and place its contents into a shelf
         """
         # build a locator for this request
         shelfLocator = pyre.tracking.newSimpleLocator(source=source)

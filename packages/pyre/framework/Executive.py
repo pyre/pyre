@@ -175,7 +175,6 @@ class Executive:
         the components in the package.
         
         This behavior is triggered by the first encountered component from each package, and it
-
         is done only once.
         """
         # if none were provided, there is no file-based configuration
