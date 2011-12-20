@@ -43,7 +43,7 @@ def test():
     # dump the state
     # configurator.dump()
     # and check that the assignments took place
-    assert configurator["help"] == None
+    assert configurator["help"] == ""
     assert configurator["vtf.nodes"] == "1024"
     assert configurator["vtf.solid"] == "solvers"
     assert configurator["vtf.fluid"] == "solvers"

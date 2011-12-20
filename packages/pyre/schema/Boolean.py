@@ -32,18 +32,19 @@ class Boolean(Type):
 
 
     _strmap = {
-        "1": True,
-        "y" : True,
-        "yes" : True,
-        "on" : True,
-        "t" : True,
-        "true" : True,
-        "0": False,
-        "n" : False,
-        "no" : False,
-        "off" : False,
-        "f" : False,
-        "false" : False,
+        '1': True,
+        'y' : True,
+        'yes' : True,
+        'on' : True,
+        't' : True,
+        'true' : True,
+        '0': False,
+        'n' : False,
+        'no' : False,
+        'off' : False,
+        'f' : False,
+        'false' : False,
+        '': True, # mere presence is considered true
         }
 
 
