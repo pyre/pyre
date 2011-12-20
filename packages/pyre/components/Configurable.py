@@ -134,6 +134,14 @@ class Configurable:
 
 
     @classmethod
+    def pyre_getConfigurableTraitDescriptors(cls):
+        """
+        Generate a sequence of all my trait descriptors that are marked as configurable.
+        """
+        return filter(lambda x: x.isConfigurable, cls.pyre_getTraitDescriptors())
+
+
+    @classmethod
     def pyre_buildTraitReference(cls, trait):
         """
         Construct a reference to the {trait} slot in my nearest ancestor
