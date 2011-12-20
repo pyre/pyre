@@ -64,7 +64,7 @@ class Merlin(pyre.application):
         # if it is a merlin actor
         if isinstance(actor, pyre.component):
             # ask it to process the user request
-            actor.main(*args)
+            return actor.main(*args)
 
         # all done
         return self
@@ -86,6 +86,30 @@ class Merlin(pyre.application):
         return self
 
 
+    # support
+    def locateProjectRoot(self, folder=None):
+        """
+        Check whether {folder} is contained within a {merlin} project
+        """
+        # access to the path utilities
+        import os
+        # default to checking staring with the current directory
+        folder = os.path.abspath(folder) if folder else os.getcwd()
+        # loop until we reach the root of the filesystem
+        while folder != os.path.sep:
+            # form the path to the {.merlin} subdirectory
+            metadir = os.path.join(folder, self.merlinFolder)
+            # if it exists
+            if os.path.isdir(metadir):
+                # got it
+                return folder, metadir
+            # otherwise, split the path and try again
+            folder, _ = os.path.split(folder)
+        # if the loop exited normally, we ran up to the root without success; return
+        # empty-handed
+        return None, None
+
+
     # schema factories
     def newProject(self, name):
         """
@@ -100,66 +124,39 @@ class Merlin(pyre.application):
         
 
     # application initialization hooks
-    def pyre_mountApplicationFolders(cls):
+    def pyre_mountApplicationFolders(self):
         """
-        Mount the project directory by walking up from {cwd} to the directory that contains the
-        {.merlin} folder
+        Mount the project directories by walking up from {cwd} to the directory that contains
+        the {.merlin} folder
         """
         # access the file server
-        fileserver = cls.pyre_executive.fileserver
-        # build the address where the project .merlin directory will be mounted
+        fileserver = self.pyre_executive.fileserver
+        # build the address where the project {.merlin} directory will be mounted
         vpath = fileserver.join(MERLIN, "project")
         # is it already there?
         try:
             folder = fileserver[vpath]
-        # if not, go looking for it
+        # if not
         except fileserver.NotFoundError:
+            # no worries; we'll go hunting
             pass
         # otherwise, it is already mounted
         else:
             # print("Merlin.pyre_mountApplicationFolders: already mounted")
             return
-        # go file hunting
-        # for path related arithmetic
-        import os
-        # access the filesystem rooted at the application current directory
-        local = fileserver['/local']
-        # access the filesystem's recognizer
-        recognizer = local.recognizer
-        # start with the current directory
-        curdir = os.path.abspath(local.mountpoint)
-        # loop until we find the {.merlin} directory or run up to the root
-        while 1:
-            # form the candidate path
-            candidate = os.path.join(curdir, cls.merlinFolder)
 
-            try:
-                # get the file server's recognizer to tell us what this is
-                node = recognizer.recognize(candidate)
-            except OSError:
-                # the file doesn't exist; move on
-                pass
-            else:
-                # if it is a directory, we are done
-                if node.isDirectory(): break
-            # if we got this far, the current guess for the {.merlin} directory was no good
-            # save this path
-            olddir = curdir
-            # try the parent
-            curdir = os.path.abspath(os.path.join(curdir, os.pardir))
-            # if the parent directory is identical with the current directory, we are at the root
-            if olddir == curdir:
-                # which means that there is no appropriate {.merlin}, so return empty-handed
-                return
-        # got it
-        # print(" ** project directory at {!r}".format(node.uri))
-        # access the filesystem package
+        # check whether we are within a project
+        root, metadir = self.locateProjectRoot()
+        # if not, we are done
+        if not root: return
+        # otherwise
+        print(" ** project root directory at {!r}".format(root))
         import pyre.filesystem
-        # create a local file system
-        project = pyre.filesystem.newLocalFilesystem(root=node.uri).discover()
-        # mount it as /merlin/project
-        fileserver[vpath] = project
-        # and return it
+        # first, mount the project root as {/project}
+        fileserver['/project'] = pyre.filesystem.newLocalFilesystem(root=root)
+        # next, mount the {merlin} meta-data directory as {/merlin/project}
+        fileserver[vpath] = pyre.filesystem.newLocalFilesystem(root=metadir).discover()
+        # and return
         return
 
 
