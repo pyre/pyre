@@ -20,6 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    AssetManager.py \
     Copyright.py \
     Initializer.py \
     License.py \
