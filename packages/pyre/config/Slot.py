@@ -125,7 +125,13 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
             self.locator = value.locator
             # and return
             return self
-        # otherwise, let {value} subsume me
+
+        # otherwise, transfer my meta-data
+        value.key = self.key
+        value.name = self.name
+        value.trait = self.trait
+        value.processor = self.processor
+        # let {value} take on all my configurational responsibilities
         value.subsume(self)
         # and return
         return value

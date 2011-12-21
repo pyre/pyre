@@ -123,28 +123,34 @@ class Memo(Base):
         """
         # print("Memo.subsume: node:", self, ", obsolete:", obsolete)
         # access my configurator
-        configurator = self.configurator
+        configurator = obsolete.configurator
         # if I have one
         if configurator: 
             # notify
             # print("  updating configuration store", configurator)
             configurator.replaceSlot(current=obsolete, replacement=self)
+            # consistency check
+            if self.configurator: assert self.configurator == configurator
 
         # access my component class
-        componentClass = self.componentClass
+        componentClass = obsolete.componentClass
         # if I have one
         if componentClass:
             # notify
             # print("  updating component class", componentClass)
             componentClass.pyre_replaceClassSlot(current=obsolete, replacement=self)
+            # consistency check
+            if self.componentClass: assert self.componentClass == componentClass
 
         # access my component instance
-        componentInstance = self.componentInstance
+        componentInstance = obsolete.componentInstance
         # if I have one
         if componentInstance:
             # notify
             # print("  updating component instance", componentInstance)
             componentInstance.pyre_replaceSlot(current=obsolete, replacement=self)
+            # consistency check
+            if self.componentInstance: assert self.componentInstance == componentInstance
 
         # notify my peer nodes
         return super().subsume(obsolete=obsolete)

@@ -133,8 +133,6 @@ class Component(Configurable, metaclass=Actor, hidden=True):
             slot = configurator.default(key=traitKey, value=default)
             # record the trait
             slot.trait = trait
-            # add it to the inventory
-            inventory[trait] = slot
             # if I am registered with the configuration store
             if traitKey:
                 # iterate over my aliases
@@ -144,7 +142,9 @@ class Component(Configurable, metaclass=Actor, hidden=True):
                     # build the alias key
                     aliasKey = key + [alias]
                     # register it
-                    configurator._alias(canonical=traitKey, alias=aliasKey)
+                    slot = configurator._alias(canonical=traitKey, alias=aliasKey)
+            # now that we know the survivor, add it to the inventory
+            inventory[trait] = slot
         # return the inventory
         return inventory
 

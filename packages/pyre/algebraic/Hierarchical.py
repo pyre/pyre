@@ -132,41 +132,46 @@ class Hierarchical(SymbolTable):
         """
         Establish the key {alias} as an alternate to {canonical}
         """
+        # print(" * algebraic.Hierarchical._alias")
+        # print("     canonical: {}".format(canonical))
+        # print("     alias: {}".format(alias))
         # ask the hash to alias the two names and retrieve the corresponding hash keys
         aliasHash, canonicalHash = self._hash.alias(alias=alias, canonical=canonical)
 
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
 
-        # look for a preëxisting node under the alias
-        try:
-            aliasNode = self._nodes[aliasHash]
-        # if the lookup fails
-        except KeyError:
-            # no node has been previously registered under this alias, so we are done. if a
-            # registration appears, it will be treated as a duplicate and patched appropriately
-            return self
-        # now, look for the canonical node
-        try:
-            canonicalNode = self._nodes[canonicalHash]
-        # if there was no canonical node
-        except KeyError:
-            # install the alias as the canonical 
+        # look for a preëxisting node under the canonical hash
+        canonicalNode = self._nodes.get(canonicalHash)
+        # and one under the alias
+        aliasNode = self._nodes.get(aliasHash)
+        # print(" ++  canonical node: {}".format(canonicalNode))
+        # canonicalNode.dump()
+        # print(" ++  alias node: {}".format(aliasNode))
+        # aliasNode.dump()
+
+        # if there is no node that has been previously registered under this alias, we are
+        # done. if a registration appears, it will be treated as a duplicate and patched
+        # appropriately
+        if aliasNode is None:
+            # return the canonical node, whether it exists or not; the latter case corresponds
+            # to aliasing among names that do not yet have a configuration node built, which is
+            # currently doable only programmatically
+            return canonicalNode
+        # clean up after the obsolete node
+        del self._nodes[aliasHash]
+        # if there is no node under the canonical name
+        if canonicalNode is None:
+            # install the alias node as the canonical
             self._nodes[canonicalHash] = aliasNode
-            # all done
-            return
-        # either way clean up after the obsolete aliased node
-        finally:
-            # nothing could hash to {aliasHash} any more, so clear out the entry
-            del self._nodes[aliasHash]
+            # and return the alias node
+            return aliasNode
 
         # if we get this far, both preëxisted; the aliased info has been cleared out, the
-        # canonical is as it should be. all that remains is to patch the two nodes
-        survivor = canonicalNode.setValue(aliasNode)
+        # canonical is as it should be. all that remains is to patch the two nodes and return
+        # the survivor
+        return canonicalNode.setValue(value=aliasNode)
 
-        # all done
-        return survivor
-        
 
     def _resolve(self, name):
         """

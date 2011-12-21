@@ -94,9 +94,9 @@ class Configurator(Model):
         This routine is useful for detecting typos on the command line and package
         configuration files
         """
-        # print("Configurator._verifyConfigurationSettings:")
-        # print("  configurable={.pyre_name!r}".format(configurable))
-        # print("  namespace={!r}".format(namespace))
+        # print(" * Configurator._verifyConfigurationSettings:")
+        # print("     configurable={.pyre_name!r}".format(configurable))
+        # print("     namespace={!r}".format(namespace))
 
         # initialize the error accumulator
         errors = errors if errors is not None else []
@@ -107,8 +107,8 @@ class Configurator(Model):
 
         # iterate over all settings that are the logical children of the given {namespace}
         for key, slot in self.children(key=namespace):
-            # print("    found {0.name!r}, with priority: {0.priority}".format(slot))
-            # print("      from: {0.locator}".format(slot))
+            # print("        found {0.name!r}, with priority: {0.priority}".format(slot))
+            # print("          from: {0.locator}".format(slot))
 
             # try to find the corresponding descriptor
             # build its name: its the last portion of its full name
@@ -117,10 +117,10 @@ class Configurator(Model):
             try:
                 # get the descriptor
                 descriptor = configurable.pyre_getTraitDescriptor(alias=name)
-                # print("      matching descriptor: {.name!r}".format(descriptor))
+                # print("          matching descriptor: {.name!r}".format(descriptor))
             # found a typo?
             except configurable.TraitNotFoundError as error:
-                # print("      no matching descriptor")
+                # print("          no matching descriptor")
                 errors.append(error)
                 continue
             # consistency check: the slot in the inventory should be the same as the slot in
@@ -128,6 +128,12 @@ class Configurator(Model):
             # firewall should flush these cases out
             if slot is not inventory[descriptor]:
                 # print(" ********* FIREWALL ********* ")
+                # print(" configurable: {}".format(configurable))
+                # print(" inventory: {}".format(inventory))
+                # print(" ++ slot in the configuration store:")
+                # slot.dump()
+                # print(" ++ slot in inventory:")
+                # inventory[descriptor].dump()
                 # get the journal
                 import journal
                 # build a firewall
@@ -135,7 +141,7 @@ class Configurator(Model):
                 # and raise it
                 raise firewall.log("slot mismatch for {.name!r}".format(slot))
         # all done
-        # print("  done with {.pyre_name!r}".format(configurable))
+        # print("      done with {.pyre_name!r}".format(configurable))
         # return the accumulated errors
         return errors
 

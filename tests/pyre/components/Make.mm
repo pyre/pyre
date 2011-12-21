@@ -79,7 +79,7 @@ component-instance:
 	${PYTHON} ./component_instance_validation.py
 	${PYTHON} ./component_bad_implementations.py
 	${PYTHON} ./component_catalog.py
-	${PYTHON} ./component_aliases.py --functor.μ=0.10 --gaussian.spread=0.10
+	${PYTHON} ./component_aliases.py --functor.μ=0.10 --gaussian.σ=0.10
 
 component-multi:
 	${PYTHON} ./component_slots.py
