@@ -56,7 +56,7 @@ class SQL(Mill, family="pyre.db.sql"):
             return
 
         # native queries
-        if isinstance(query, self.selector) or instance(query, self.query):
+        if isinstance(query, self.selector) or isinstance(query, self.query):
             # figure out how many field references there are
             fields = len(query.pyre_fields)
             # build the projection
