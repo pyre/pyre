@@ -117,7 +117,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
 
 
     @classmethod
-    def pyre_buildInventory(cls, key, traits):
+    def pyre_buildInventory(cls, key, traits, globalAliases=False):
         """
         Build a map from traits to inventory slots
         """
@@ -131,6 +131,10 @@ class Component(Configurable, metaclass=Actor, hidden=True):
             traitKey = key + [trait.name] if key else tuple()
             # ask the configurator to register the default value and build a slot
             slot = configurator.default(key=traitKey, value=default)
+            # if we are stealing settings from global scope
+            if globalAliases:
+                # build an alias at global scope
+                slot = configurator._alias(canonical=traitKey, alias=[trait.name])
             # record the trait
             slot.trait = trait
             # if I am registered with the configuration store
@@ -143,6 +147,10 @@ class Component(Configurable, metaclass=Actor, hidden=True):
                     aliasKey = key + [alias]
                     # register it
                     slot = configurator._alias(canonical=traitKey, alias=aliasKey)
+                    # if we are stealing settings from global scope
+                    if globalAliases:
+                        # build an alias at global scope
+                        slot = configurator._alias(canonical=traitKey, alias=[alias])
             # now that we know the survivor, add it to the inventory
             inventory[trait] = slot
         # return the inventory
@@ -169,7 +177,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
 
 
     # meta methods
-    def __init__(self, name=None, **kwds):
+    def __init__(self, name=None, globalAliases=False, **kwds):
         # component instance registration is done by Actor.__call__, the metaclass method that
         # invokes this constructor
         super().__init__(**kwds)
@@ -183,7 +191,7 @@ class Component(Configurable, metaclass=Actor, hidden=True):
         # build my configuration key
         key = name.split(self.pyre_SEPARATOR) if name else ()
         # create my inventory
-        inventory = self.pyre_buildInventory(key=key, traits=traits)
+        inventory = self.pyre_buildInventory(key=key, traits=traits, globalAliases=globalAliases)
         # register me as an observer of all slot values
         for slot in inventory.values(): slot.componentInstance = self
         # attach my inventory
