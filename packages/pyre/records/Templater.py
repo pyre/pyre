@@ -69,7 +69,7 @@ class Templater(AttributeClassifier):
         for base in reversed(record.__mro__[1:]):
             # narrow down to my instances
             if isinstance(base, cls):
-                # add entries form this ancestor
+                # add entries from this ancestor
                 inheritedEntries.extend(base.pyre_localEntries)
 
         # build the tuple of all my entries
