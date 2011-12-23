@@ -34,6 +34,7 @@ EXPORT_PYTHON_MODULES = \
     TextRenderer.py \
     Warning.py \
     exceptions.py \
+    interfaces.py \
     proxies.py \
     schemes.py \
     __init__.py

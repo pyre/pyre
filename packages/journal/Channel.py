@@ -84,7 +84,7 @@ class Channel(Named):
     # shared among channel instances is managed. when the C++ extension is not available at
     # runtime, this package defaults to a pure python implementation that uses a {defaultdict};
     # this implies that we need access to factories that build instances with the correct
-    # default activation state, hence the two nested class declarations below their names
+    # default activation state, hence the two nested class declarations below. their names
     # reflect their default state, in the absence of any configuration instructions by the
     # user. when the state is False, the channel does not produce any output; when device is
     # {None}, the default device is used instead
