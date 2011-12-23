@@ -20,11 +20,13 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    ANSIRenderer.py \
     Curator.py \
     Merlin.py \
     PackageManager.py \
     Spell.py \
     Spellbook.py \
+    TextRenderer.py \
     exceptions.py \
     __init__.py
 

@@ -149,8 +149,8 @@ class Merlin(pyre.application):
         root, metadir = self.locateProjectRoot()
         # if not, we are done
         if not root: return
+
         # otherwise
-        print(" ** project root directory at {!r}".format(root))
         import pyre.filesystem
         # first, mount the project root as {/project}
         fileserver['/project'] = pyre.filesystem.newLocalFilesystem(root=root)

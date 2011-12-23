@@ -9,9 +9,12 @@
 
 <config>
 
-    <!-- spellbook configuration -->
-    <component name="merlin.spellbook">
-    </component>
+  <!-- journal configuration -->
+  <bind property="journal.device.renderer">import:merlin.renderer</bind>
+
+  <!-- spellbook configuration -->
+  <component name="merlin.spellbook">
+  </component>
 
 </config>
 

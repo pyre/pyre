@@ -125,7 +125,6 @@ _merlin_license = _merlin_header + """
 
 # load the framework
 from pyre import export
-from .spells.Spell import Spell as spell
 
 
 # bootstrapping
@@ -143,6 +142,37 @@ def boot():
 
 # the singleton
 merlin = boot()
+
+# factories
+# for spells
+from .spells.Spell import Spell as spell
+# for renderers
+from .components.ANSIRenderer import ANSIRenderer as ansi
+from .components.TextRenderer import TextRenderer as text
+def renderer():
+    """
+    Decide which renderer to use based on the  terminal capabilities
+    """
+    # externals
+    import sys
+    # the list of know terminal types
+    ansiCompatible = {'ansi', 'vt102', 'vt220', 'vt320', 'vt420', 'xterm', 'xterm-color'}
+    # attempt
+    try:
+        # to check whether {stdout} is connected to a terminal
+        if sys.stdout.isatty():
+            # figure out the terminal type
+            import os
+            term = os.environ.get('TERM', 'unknown').lower()
+            # if it is ANSI compatible
+            if term in ansiCompatible:
+                # the default is colored
+                return ansi
+    # some devices don't support isatty
+    except AttributeError:
+        pass
+    # plain text, by default
+    return text
 
 
 # end of file 
