@@ -26,7 +26,6 @@ def test():
     # connect to the default database
     db.attach()
 
-
     # get the bizbook schema
     import bizbook
 

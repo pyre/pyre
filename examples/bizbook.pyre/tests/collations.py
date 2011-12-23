@@ -16,28 +16,38 @@ def test():
     # access the packages
     import pyre.db
     import bizbook
-
-    # access the Book declaration
-    Book = bizbook.schema.Book
+    import operator
 
     # build a simple projection
-    class titles(pyre.db.query):
+    class titles(pyre.db.query, book=bizbook.schema.Book):
         """A short query on the book table"""
-        id = Book.id
-        title = Book.title
-        category = Book.category
-        price = Book.price
+        id = book.id
+        title = book.title
+        category = book.category
+        price = book.price
+
+    class collated(titles):
+        """Extend the 'titles' query with a collation order"""
         # collation
-        order = (category, pyre.db.descending(price))
+        order = (titles.category, pyre.db.descending(titles.price), titles.title)
 
     # build datastore
     db = bizbook.pg()
 
     # run the query
-    for record in db.select(titles):
-        print("{}: {!r}, {}, {}".format(*record))
+    report = list(db.select(collated()))
+    # for record in report: print(record)
+    # here is what we expect
+    correct = sorted(
+        sorted(
+            sorted(db.select(titles), key=operator.attrgetter('title')),
+            key=operator.attrgetter('price'), reverse=True),
+        key=operator.attrgetter('category'))
+    # check
+    assert report == correct
 
-    return
+    # grant access to the test parts
+    return db, titles
 
 
 # main

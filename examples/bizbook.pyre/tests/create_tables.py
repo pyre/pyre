@@ -29,6 +29,8 @@ def test():
     # get the bizbook schema
     import bizbook
 
+    db.execute("SET client_min_messages = warning;")
+
     # build the tables
     db.createTable(bizbook.schema.Location)
     db.createTable(bizbook.schema.Person)

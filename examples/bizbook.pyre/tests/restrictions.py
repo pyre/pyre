@@ -17,28 +17,29 @@ def test():
     import pyre.db
     import bizbook
 
-    # access the Book declaration
-    Book = bizbook.schema.Book
-
     # build a simple projection
-    class titles(pyre.db.query):
+    class titles(pyre.db.query, book=bizbook.schema.Book):
         """A short query on the book table"""
-        id = Book.id
-        title = Book.title
-        category = Book.category
-        price = Book.price
-
+        id = book.id
+        title = book.title
+        category = book.category
+        price = book.price
         # restrict the results
-        where = Book.category == "cookbook"
+        where = book.category == "cookbook"
 
     # build datastore
     db = bizbook.pg()
 
     # run the query
-    for record in db.select(titles):
-        print("{}: {!r}, {}, {}".format(*record))
+    result = tuple(db.select(titles))
+    # check
+    # there are five cookbooks in the dataset
+    assert len(result) == 5
+    # make sure that only cookbooks got through
+    for record in result:
+        assert record.category == 'cookbook'
 
-    return
+    return db, titles
 
 
 # main
