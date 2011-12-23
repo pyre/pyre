@@ -66,6 +66,8 @@ def test():
     # configuration file
     db = postgres.server(name="test").attach()
 
+    # ask {libpq}  to be quiet
+    db.execute("SET client_min_messages = warning;")
     # in a transaction block
     with db:
         # create the location table
