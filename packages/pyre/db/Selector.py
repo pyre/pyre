@@ -52,7 +52,7 @@ class Selector(AttributeClassifier):
         for name, value in kwds.items():
             # if {value} is a table
             if isinstance(value, cls.pyre_Schemer):
-                # derive a class from it
+                # derive a new class from it so we can change the table name to the local alias
                 alias = cls.pyre_Schemer(name, (value,), {}, alias=value.pyre_name)
                 # add it to the pile
                 aliases.add(alias)
@@ -78,6 +78,7 @@ class Selector(AttributeClassifier):
         tables = set()
         # and the field descriptors
         descriptors = collections.OrderedDict()
+
         # iterate over the important attributes
         for name, entry in cls.pyre_harvest(attributes, cls.pyre_Entry):
             # skip the special attributes
@@ -92,9 +93,7 @@ class Selector(AttributeClassifier):
                 tables.add(entry.table)
 
             # figure out the type of the entry so we can cast it properly
-            types = set()
-            # iterate over the leaf nodes and collect their types
-            for node in entry.variables: types.add(node.type)
+            types = { variable.type for variable in entry.variables }
             # if there is only one type
             if len(types) == 1:
                 # get it
@@ -111,7 +110,30 @@ class Selector(AttributeClassifier):
             # and add it to the pile
             descriptors[name] = descriptor
 
-        # extract the field references
+        # record the field references
+        query.pyre_localFields = tuple(fields)
+        # and the associated descriptors
+        query.pyre_localDescriptors = descriptors
+
+        # interpret inheritance as composition; the only trickiness arises when subclasses
+        # shadow names from their base classes. the treatment here is consistent with
+        # {pyre.records.Templater}, which creates record slots in the order that they are
+        # encountered in the mro, regardless of whether the names are shadowed
+
+        # initialize the set of fields
+        fields = []
+        # and the field descriptors
+        descriptors = collections.OrderedDict()
+        # iterate over the base classes
+        for base in reversed(query.__mro__):
+            # narrow down to my instances
+            if not isinstance(base, cls): continue
+            # collect entries from this ancestor
+            fields += list(base.pyre_localFields)
+            tables |= base.pyre_tables
+            descriptors.update(base.pyre_localDescriptors)
+
+        # record the field references
         query.pyre_fields = tuple(fields)
         # add the tables references to the query pile
         query.pyre_tables |= tables

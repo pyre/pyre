@@ -38,6 +38,7 @@ queries:
 	${PYTHON} ./query_collation.py
 	${PYTHON} ./query_collation_explicit.py
 	${PYTHON} ./query_collation_expression.py
+	${PYTHON} ./query_inheritance.py
 
 
 # end of file 
