@@ -32,8 +32,8 @@ class Spellbook(pyre.component, family="merlin.spells"):
         executive = self.pyre_executive
         # ask the executive to locate the spell factory
         factory = executive.retrieveComponentDescriptor(uri=name, context=self)
-        # instantiate it
-        spell = factory(name=name)
+        # instantiate it and alias its traits at global scope
+        spell = factory(name=name, globalAliases=True)
         # and return it
         return spell
 
