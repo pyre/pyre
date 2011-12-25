@@ -6,28 +6,34 @@
 #
 
 
+# externals
 import os
 
 
+# class declaration
 class DirectoryWalker:
     """
     Class that encapsulates listing the contents of a local directory
     """
 
 
+    # exceptions
+    from .exceptions import DirectoryListingError
+
+
+    # interface
     def walk(self, path):
         """
         Assume {path} is a directory, get the names of its contents and iterate over them
         """
-        # get the contents
+        # attempt
         try:
+            # to get the contents
             return os.listdir(path)
+        # if this fails
         except os.error as error:
+            # raise a package specific exception
             raise self.DirectoryListingError(path=path, error=error.strerror)
-
-
-    # exceptions
-    from .exceptions import DirectoryListingError
 
 
 # end of file 

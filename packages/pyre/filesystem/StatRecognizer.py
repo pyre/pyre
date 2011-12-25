@@ -6,19 +6,16 @@
 #
 
 
+# externals
 import os
 import stat
 
+
+# my base class
 from .Recognizer import Recognizer
 
-from .BlockDevice import BlockDevice
-from .CharacterDevice import CharacterDevice
-from .Directory import Directory
-from .File import File
-from .NamedPipe import NamedPipe
-from .Socket import Socket
 
-
+# class declaration
 class StatRecognizer(Recognizer):
     """
     This class provides support for sorting out filesystem entries based on the lowest level of
@@ -27,6 +24,16 @@ class StatRecognizer(Recognizer):
     This recognizer uses os.stat for discovering the entries in a given directory. Therefore,
     it handles symbolic links transparently.
     """
+
+
+    # types
+    # the various file types
+    from .BlockDevice import BlockDevice
+    from .CharacterDevice import CharacterDevice
+    from .Directory import Directory
+    from .File import File
+    from .NamedPipe import NamedPipe
+    from .Socket import Socket
 
 
     # interface
@@ -42,20 +49,20 @@ class StatRecognizer(Recognizer):
 
         # walk through the cases
         if stat.S_ISREG(mode):
-            return File(uri=entry, info=meta)
+            return self.File(uri=entry, info=meta)
         elif stat.S_ISDIR(mode):
-            return Directory(uri=entry, info=meta)
+            return self.Directory(uri=entry, info=meta)
         elif stat.S_ISSOCK(mode):
-            return Socket(uri=entry, info=meta)
+            return self.Socket(uri=entry, info=meta)
         elif stat.S_ISBLK(mode):
-            return BlockDevice(uri=entry, info=meta)
+            return self.BlockDevice(uri=entry, info=meta)
         elif stat.S_ISCHR(mode):
-            return CharacterDevice(uri=entry, info=meta)
+            return self.CharacterDevice(uri=entry, info=meta)
         elif stat.S_ISFIFO(mode):
-            return NamedPipe(uri=entry, info=meta)
+            return self.NamedPipe(uri=entry, info=meta)
 
         import journal
-        msg = "unknown file type: mode={0}".format(mode)
+        msg = "{!r}: unknown file type: mode={}".format(entry, mode)
         return journal.firewall("pyre.filesystem").log(msg)
 
 

@@ -138,7 +138,7 @@ def newVirtualFilesystem(root='/', **kwds):
     resources
 
     Virtual filesystems are useful as abstract namespaces that decouple the physical location
-    of resources from the identifiers that application use to refer to them
+    of resources from the identifiers that applications use to refer to them
     """
     from .Filesystem import Filesystem
     return Filesystem(root=root, **kwds)

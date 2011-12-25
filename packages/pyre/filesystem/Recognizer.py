@@ -6,12 +6,14 @@
 #
 
 
+# class declaration
 class Recognizer:
     """
     Abstract base class for filesystem entry recognition.
     """
 
 
+    # interface
     def recognize(self, entry):
         """
         The most basic file recognition: convert the name of a file into a File descendant
