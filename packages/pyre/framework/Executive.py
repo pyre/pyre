@@ -275,6 +275,7 @@ class Executive:
 
         # iterate over the encoding possibilities
         for scheme in schemes:
+            # print("          attempting {!r}".format(scheme))
             # build a codec for this candidate scheme
             codec = self.codex.newCodec(encoding=scheme)
             # attempt to locate a component descriptor

@@ -95,6 +95,8 @@ class FileServer(Filesystem):
         import pyre
         import pyre.filesystem
 
+        # print("pyre.FileServer:")
+
         # first, mount the system directory
         # there are two possibilities
         #  - it is an actual location on the disk
@@ -104,20 +106,28 @@ class FileServer(Filesystem):
         try:
             # so invoke it to build the filesystem for us
             self.prefixfs = pyre.filesystem.local(pyre.prefix()).discover(levels=1)
+        # if this failed
         except self.GenericError:
-            # if this failed, just create a new empty folder
+            # just create a new empty folder
             system = self.newFolder()
+        # otherwise
         else:
+            # attempt to
             try:
                 # hunt down the depository subdirectory
                 system = self.prefixfs["depository"]
+            # if this failed
             except self.NotFoundError:
                 # hmm... why is this directory missing from the distribution?
                 print(" ** warning: could not find system depository")
                 # moving on...
                 system = self.newFolder()
-       # mount the system directory
-        self["pyre/system"] = system.discover(levels=1)
+            # if successful
+            else:
+                # populate it with the disk contents
+                system.discover(levels=1)
+        # mount the system directory
+        self["pyre/system"] = system
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
@@ -138,6 +148,12 @@ class FileServer(Filesystem):
             self.localfs = self.newFolder()
        # mount this directory as /local
         self["local"] = self.localfs
+
+        # print("  prefix: {!r}".format(self.prefixfs.uri))
+        # print("  system: {!r}".format(system.uri))
+        # print("  user: {!r}".format(self.userfs.uri))
+        # print("  local: {!r}".format(self.localfs.uri))
+        # self.dump()
 
         return
 

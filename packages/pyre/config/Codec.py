@@ -123,13 +123,24 @@ class Codec:
         {context} to form plausible candidates. Returns an iterable of successfully loaded
         shelves
         """
+        # print("----------------------------------------")
+        # print(" ** Codec.locateShelves:")
+        # print("  input:")
+        # print("    client: {!r}".format(client))
+        # print("    scheme: {!r}".format(scheme))
+        # print("    address: {!r}".format(address))
+        # print("    context: {!r}".format(context))
+        # print("    locator: {!r}".format(locator))
         # if the address contained a valid {package}, use it; otherwise build a sequence
         # of candidate locations out of the given {context}
         candidates = [address] if address else self.shelfSearchPath(client=client, context=context)
+        # print("  derived:")
         # now, iterate over the candidates
         for uri in candidates:
+            # print("      candidate: {!r}".format(uri))
             # normalize the address
             source = self.normalizeURI(scheme=scheme, address=uri)
+            # print("      source: {!r}".format(source))
             # attempt to retrieve a previously loaded shelf using the normalized uri
             try:
                 shelf = client.shelves[source]

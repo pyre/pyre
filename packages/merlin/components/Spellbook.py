@@ -27,13 +27,14 @@ class Spellbook(pyre.component, family="merlin.spells"):
         Look through the registered spell locations for a spell shelf that contains the given
         spell {name}.
         """
-        # print("Spellbook.findSpell: looking for {!r}".format(name))
+        # print(" ** Spellbook.findSpell: looking for {!r}".format(name))
         # access to the pyre executive
         executive = self.pyre_executive
         # ask the executive to locate the spell factory
         factory = executive.retrieveComponentDescriptor(uri=name, context=self)
         # instantiate it and alias its traits at global scope
         spell = factory(name=name, globalAliases=True)
+        # print("    found: {}".format(spell))
         # and return it
         return spell
 
