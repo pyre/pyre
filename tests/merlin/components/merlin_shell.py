@@ -19,7 +19,7 @@ def test():
     # mount the project directory
     project = merlin.vfs['/merlin/project']
     # check the project directory
-    assert project.mountpoint == os.path.join(os.getcwd(), '.merlin')
+    assert project.uri == os.path.join(os.getcwd(), '.merlin')
 
     # debug: show me the vfs layout
     # merlin.vfs.dump()

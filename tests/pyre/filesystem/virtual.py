@@ -8,18 +8,26 @@
 
 
 """
-Create and dump a local filesystem
+Create and dump a virtual filesystem
 """
 
 
 def test(interactive=False): # change to True to see the dump
+    # access the package
     import pyre.filesystem
+    # create a virtual filesystem
+    fs = pyre.filesystem.virtual()
+    # create a few nodes and insert them into the filesystem
+    fs["/home/users/mga/tools/bin/hello"] = fs.node()
+    fs["/home/users/mga/tools/bin/goodbye"] = fs.node()
+    fs["/home/users/mga/tools/lib/libhello.a"] = fs.node()
+    fs["/home/users/mga/tools/lib/libgoodbye.a"] = fs.node()
+    fs["/home/users/mga/dv/pyre-1.0/packages/pyre/__init__.py"] = fs.node()
+    fs["/home/users/mga/dv/pyre-1.0/packages/journal/__init__.py"] = fs.node()
+    # dump
+    fs.dump(interactive) # change to True to see the dump
 
-    home = pyre.filesystem.local(root="../..")
-    home.discover()
-    home.dump(interactive) # change to True to see the dump
-
-    return home
+    return fs
 
 
 # main

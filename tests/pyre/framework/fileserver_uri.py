@@ -47,7 +47,7 @@ def test():
         assert False
     except f.NotFoundError as error:
         assert error.filesystem == f
-        assert error.path == 'not-there.odb'
+        assert error.uri == 'not-there.odb'
         assert error.fragment == 'file'
 
     # missing logical file
@@ -56,7 +56,7 @@ def test():
         assert False
     except f.NotFoundError as error:
         assert error.filesystem == f
-        assert error.path == '/local/not-there.odb'
+        assert error.uri == '/local/not-there.odb'
         assert error.fragment == 'not-there.odb'
 
     # missing logical directory
@@ -65,7 +65,7 @@ def test():
         assert False
     except f.NotFoundError as error:
         assert error.filesystem == f
-        assert error.path == '/oops/not-there.odb'
+        assert error.uri == '/oops/not-there.odb'
         assert error.fragment == 'oops'
 
     # return the file server

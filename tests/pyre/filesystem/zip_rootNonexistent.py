@@ -16,7 +16,7 @@ def test():
     import pyre.filesystem
 
     try:
-        pyre.filesystem.newZipFilesystem(root="/@")
+        pyre.filesystem.zip(root="/@")
         assert False
     except pyre.filesystem.MountPointError as error:
         assert str(error) == "error while mounting '/@': mount point is not a zipfile"

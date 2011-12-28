@@ -16,14 +16,18 @@ def test():
     import pyre.filesystem
 
     # make a filesystem
-    fs = pyre.filesystem.newVirtualFilesystem()
-    # create a couple of nodes and insert them into the filesystem
-    fs["/home/users/mga/dv/tools/bin/hello"] = fs.newNode()
-    fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.newNode()
+    fs = pyre.filesystem.virtual()
+    # create a few nodes and insert them into the filesystem
+    fs["/home/users/mga/tools/bin/hello"] = fs.node()
+    fs["/home/users/mga/tools/bin/goodbye"] = fs.node()
+    fs["/home/users/mga/tools/lib/libhello.a"] = fs.node()
+    fs["/home/users/mga/tools/lib/libgoodbye.a"] = fs.node()
+    fs["/home/users/mga/dv/pyre-1.0/packages/pyre/__init__.py"] = fs.node()
 
     # explore
-    explorer = pyre.filesystem.newTreeExplorer()
-    contents = explorer.explore(fs)
+    explorer = pyre.filesystem.treeExplorer()
+    contents = list(explorer.explore(node=fs, label='/'))
+    # for line in contents: print(line)
 
     # check
     assert contents == [
@@ -31,12 +35,18 @@ def test():
         " `- home (d)",
         "    `- users (d)",
         "       `- mga (d)",
-        "          `- dv (d)",
-        "             `- tools (d)",
-        "                +- bin (d)",
-        "                |  `- hello (f)",
-        "                `- lib (d)",
-        "                   `- libhello.a (f)",
+        "          +- dv (d)",
+        "          |  `- pyre-1.0 (d)",
+        "          |     `- packages (d)",
+        "          |        `- pyre (d)",
+        "          |           `- __init__.py (f)",
+        "          `- tools (d)",
+        "             +- bin (d)",
+        "             |  +- goodbye (f)",
+        "             |  `- hello (f)",
+        "             `- lib (d)",
+        "                +- libgoodbye.a (f)",
+        "                `- libhello.a (f)",
         ]
 
     return fs, explorer

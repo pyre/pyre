@@ -6,36 +6,25 @@
 #
 
 
+# externals
 import stat
 
+# superclass
+from .Info import Info
 
-class File:
+
+# class declaration
+class File(Info):
     """
     The base class for local filesystem entries
     """
 
-    # public data
-    uri = None # the actual address of the file
-    owner = None # the owner of the node
-    uid = gid = None # the user and group ids of the current owner
-    size = None # the actual size of the file
-    permissions = None # NYI
-    syncTime = None # the last time this vnode was compared against reality
-
-    # time stamps as reported by the underlying filesystem
-    accessTime = None # the time of last access
-    creationTime = None # the creation time
-    modificationTime = None # the time this file was last modified
+    # constants
+    marker = 'f'
+    isDirectory = False
 
 
     # interface
-    def isDirectory(self):
-        """
-        Quick check of whether this node represents a folder or not
-        """
-        return False
-
-
     def identify(self, explorer, **kwds):
         """
         Tell {explorer} that it is visiting a file
@@ -47,7 +36,6 @@ class File:
         """
         Extract useful file metadata from a stat-compatible data structure
         """
-
         self.uid = info.st_uid
         self.gid = info.st_gid
         self.size = info.st_size
@@ -79,19 +67,27 @@ class File:
 
 
     # meta methods
-    def __init__(self, uri, info=None, **kwds):
+    def __init__(self, info=None, **kwds):
         super().__init__(**kwds)
-
-        # attach my uri
-        self.uri = uri
         # extract the file metadata from info
         info and self.decorate(info)
-
+        # all done
         return
 
 
-    # constant
-    marker = 'f'
+    # implementation details
+    __slots__ = (
+        'owner', # the owner of the node
+        'uid', 'gid', # the user and group ids of the current owner
+        'size', # the actual size of the file
+        'permissions', # NYI
+        #
+        'syncTime', # the last time this vnode was compared against reality
+        # time stamps as reported by the underlying filesystem
+        'accessTime', # the time of last access
+        'creationTime', # the creation time
+        'modificationTime', # the time this file was last modified
+        )
 
     
 # end of file 

@@ -15,16 +15,12 @@ class Socket(File):
     """
 
 
-    # interface
-    def identify(self, explorer, **kwds):
-        """
-        Tell {explorer} that it is visiting a socket
-        """
-        return explorer.onSocket(self, **kwds)
-
-
     # constant
     marker = 's'
+
+
+    # implementation details
+    __slots__ = ()
 
     
 # end of file 

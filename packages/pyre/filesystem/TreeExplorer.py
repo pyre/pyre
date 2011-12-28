@@ -6,69 +6,70 @@
 #
 
 
-from .SimpleExplorer import SimpleExplorer
+# superclass
+from .Explorer import Explorer
 
-class TreeExplorer(SimpleExplorer):
+
+# class declaration
+class TreeExplorer(Explorer):
     """
     A visitor that creates a tree representation with the name and node type of the contents of
     a folder
     """
 
 
-    def onFolder(self, folder, name, **kwds):
+    # interface
+    def explore(self, node, label):
         """
-        Handler for generic folders
+        Traverse the filesystem and print out its contents
         """
-        # print out the directory`
-        self._render(name=name, node=folder, code="d")
+        # build a representation of the current node
+        yield self.render(name=label, node=node)
 
-        # get the directory contents
-        nodes = list(folder.contents.items())
-        # if the directory is empty, return
-        if not nodes:
-            return
+        # if {node} is not a directory, we are done
+        if not node.isFolder: return
 
-        # update the indentation level
-        self._indent += 1
+        # otherwise, grab the folder contents
+        children = tuple(sorted(node.contents.items()))
+        # if the folder is empty, we are done
+        if not children: return
 
-        # save graphics
-        filler = self._filler
+        # save the old graphics
+        margin = self._margin
         graphic = self._graphic
-
         # update them
-        self._filler = filler + " | "
-        self._graphic = filler + " +-"
-
-        # do all but the last one
-        for name, entry in nodes[:-1]:
-            entry.identify(self, name=name)
-        name, entry = nodes[-1]
-        # because it has special graphics
-        self._graphic = filler + " `-"
-        self._filler = filler + "   "
-        entry.identify(self, name=name)
-
-        # restore graphics
-        self._filler = filler
+        self._margin = margin + ' | '
+        self._graphic = margin + ' +-'
+        # iterate over the folder contents, except the last one
+        for name, child in children[:-1]:
+            # generate the content report
+            for description in self.explore(node=child, label=name): yield description
+        # grab the last entry
+        name, child = children[-1]
+        # which gets a special graphic
+        self._margin = margin + '   '
+        self._graphic = margin + ' `-'
+        # and explore it
+        for description in self.explore(node=child, label=name): yield description
+        # restore the graphics
+        self._margin = margin
         self._graphic = graphic
 
+        # all done
         return
 
 
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        self._filler = ''
-        self._graphic = ''
+        self._graphic = '' # the marker that goes in front of a rendered entry
+        self._margin = '' # the leading string that encodes the structure of the tree
         return
 
 
     # implementation details
-    def _render(self, name, node, code):
-        self.printout.append(
-            "{0} {2} ({1})".format(self._graphic, code, name)
-            )
-        return
+    def render(self, name, node):
+        return "{} {} ({})".format(self._graphic, name, node.marker)
 
 
 # end of file 

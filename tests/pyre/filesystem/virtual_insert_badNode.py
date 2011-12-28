@@ -13,25 +13,19 @@ Verify that node insertion fails when an intermediate path component is not a fo
 
 
 def test():
-    from pyre.filesystem.Node import Node
-    from pyre.filesystem.Folder import Folder
-
-    # fake a filesystem
-    class filesystem: pass
-    # build a fake filesystem
-    fs = filesystem()
+    import pyre.filesystem
 
     # build a folder
-    root = Folder(filesystem=fs)
+    root = pyre.filesystem.virtual()
     # and a node
-    mga = Node(fs)
+    mga = root.node()
     # add it to the folder
-    root._insert(path="/home/users/mga", node=mga)
+    root._insert(uri="/home/users/mga", node=mga)
     # now create another node
-    tmp = Node(fs)
+    tmp = root.node()
     # and attempt to add it to mga
     try:
-        root._insert(path="/home/users/mga/tmp", node=tmp)
+        root._insert(uri="/home/users/mga/tmp", node=tmp)
         assert False
     except root.FolderInsertionError as error:
         assert (

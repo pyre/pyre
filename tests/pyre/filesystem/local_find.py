@@ -13,13 +13,16 @@ Verify searching through folders for named nodes
 
 
 def test():
+    import os
     import pyre.filesystem
     # build a filesystem
-    home = pyre.filesystem.newLocalFilesystem(root="..").discover()
+    tests = pyre.filesystem.local(root="..").discover()
     # look for this file
-    this = home["filesystem/local_find.py"]
+    this = tests["filesystem/local_find.py"]
     # make sure we got it
     assert this is not None
+    # and that it is the right uri
+    assert this.uri == os.path.abspath(__file__)
     # all done
     return this
 

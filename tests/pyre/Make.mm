@@ -12,6 +12,7 @@ RECURSE_DIRS = \
     patterns \
     tracking \
     parsing \
+    filesystem \
     xml \
     algebraic \
     units \
@@ -20,7 +21,6 @@ RECURSE_DIRS = \
     calc \
     records \
     tabular \
-    filesystem \
     codecs \
     config \
     framework \

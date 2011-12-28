@@ -17,7 +17,7 @@ def test():
 
     dummy = "./local_rootNotDirectory.py"
     try:
-        pyre.filesystem.newZipFilesystem(root=dummy)
+        pyre.filesystem.zip(root=dummy)
         assert False
     except pyre.filesystem.MountPointError as error:
         import os

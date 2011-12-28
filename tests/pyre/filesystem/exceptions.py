@@ -24,12 +24,12 @@ def test():
         pass
 
     try:
-        raise DirectoryListingError(path=None, error=None)
+        raise DirectoryListingError(uri=None, error=None)
     except DirectoryListingError as error:
         pass
 
     try:
-        raise MountPointError(path=None, error=None)
+        raise MountPointError(uri=None, error=None)
     except MountPointError as error:
         pass
 
@@ -39,12 +39,12 @@ def test():
         pass
 
     try:
-        raise NotFoundError(path=None, fragment=None, filesystem=None, node=None)
+        raise NotFoundError(uri=None, fragment=None, filesystem=None, node=None)
     except NotFoundError as error:
         pass
 
     try:
-        raise FolderInsertionError(path=None, target=None, filesystem=None, node=None)
+        raise FolderInsertionError(uri=None, target=None, filesystem=None, node=None)
     except FolderInsertionError as error:
         pass
 

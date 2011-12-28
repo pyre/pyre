@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Sanity check: exercise the utility {join} 
 """
 
 
@@ -17,15 +17,15 @@ def test():
 
     # check that a pair of names can be joined correctly
     paths = ["a", "b"]
-    assert pyre.filesystem.join(*paths) == pyre.filesystem.PATH_SEPARATOR.join(paths)
+    assert pyre.filesystem.join(*paths) == pyre.filesystem.separator.join(paths)
 
     # a few more
     paths = ["a", "b", "c", "d"]
-    assert pyre.filesystem.join(*paths) == pyre.filesystem.PATH_SEPARATOR.join(paths)
+    assert pyre.filesystem.join(*paths) == pyre.filesystem.separator.join(paths)
 
     # check that absolute paths discard previous fragments
     paths = ["a", "b", "/c", "d"]
-    assert pyre.filesystem.join(*paths) == pyre.filesystem.PATH_SEPARATOR.join(["/c", "d"])
+    assert pyre.filesystem.join(*paths) == pyre.filesystem.separator.join(["/c", "d"])
 
     return
 

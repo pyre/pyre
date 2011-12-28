@@ -13,8 +13,7 @@ Check that folders can be instantiated and that their limited interface works as
 
 
 def test():
-    from pyre.filesystem.Node import Node
-    from pyre.filesystem.Folder import Folder
+    import pyre.filesystem
 
     # fake a filesystem
     class filesystem: pass
@@ -22,21 +21,18 @@ def test():
     fs = filesystem()
 
     # build a folder
-    folder = Folder(filesystem=fs)
+    folder = pyre.filesystem.folder(filesystem=fs)
     # and some nodes
-    usr = Node(fs)
-    tmp = Node(fs)
-    home = Node(fs)
+    usr = folder.node()
+    tmp = folder.node()
+    home = folder.node()
     # add them to the folder
     folder.contents["usr"] = usr
     folder.contents["tmp"] = tmp
     folder.contents["home"] = home
 
     # count the children
-    children = 0
-    for child in folder.contents:
-        children += 1
-    assert children == 3
+    assert len(folder.contents) == 3
 
     # access the individual nodes
     assert usr == folder.contents["usr"]

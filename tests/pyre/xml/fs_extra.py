@@ -19,39 +19,32 @@ def test():
     class File(pyre.xml.node):
         """Handle the file tag"""
 
-        def notify(self, parent, locator):
-            return parent.addEntry(self)
+        def notify(self, parent, locator): return
 
         def __init__(self, parent, attributes, locator):
             self.name = attributes['name']
-            self.fsnode = parent.fsnode.newNode()
+            self.node = parent.node.folder()
+            parent.addEntry(self)
 
 
-    class Folder(pyre.xml.node):
+    class Folder(File):
         """Handle the folder tag"""
 
         elements = ("file", "folder", "metadata")
 
-        def notify(self, parent, locator):
-            return parent.addEntry(self)
-
         def addEntry(self, entry):
             """Add a file to my contents"""
-            self.fsnode[entry.name] = entry.fsnode
-
-        def __init__(self, parent, attributes, locator):
-            self.name = attributes['name']
-            self.fsnode = parent.fsnode.newFolder()
+            self.node[entry.name] = entry.node
 
 
     class Filesystem(Folder):
         """The top level document element"""
 
         def notify(self, parent, locator):
-            parent.dom = self.fsnode
+            parent.dom = self.node
 
         def __init__(self, parent, attributes, locator):
-            self.fsnode = pyre.filesystem.newVirtualFilesystem()
+            self.node = pyre.filesystem.virtual()
 
 
     class FSD(pyre.xml.document):

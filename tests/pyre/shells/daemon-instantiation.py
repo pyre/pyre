@@ -21,7 +21,7 @@ def test():
     # launch it
     d.run()
     pid = os.getpid()
-    print("{}: waiting for children to exit".format(pid))
+    # print("{}: waiting for children to exit".format(pid))
 
     # collect the return codes
     while 1:
@@ -33,14 +33,15 @@ def test():
             # because there are no more children
             if error.errno == 10:
                 # say so
-                print("{}: no children".format(pid))
+                # print("{}: no children".format(pid))
                 # and bail out
                 break
             # otherwise, report the exception
             raise
         # otherwise, report the child pid and the exit code
         else:
-            print("{}: child {}: status={}".format(pid, child, status))
+            # print("{}: child {}: status={}".format(pid, child, status))
+            pass
 
     # all done
     return

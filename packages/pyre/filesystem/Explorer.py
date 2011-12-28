@@ -12,18 +12,17 @@ class Explorer:
     """
 
 
-    def onNode(self, node, **kwds):
-        """
-        Handler for generic nodes
-        """
-        return
+    # constants
+    from . import separator
 
 
-    def onFolder(self, folder, **kwds):
+    # interface
+    def explore(self, node, **kwds):
         """
-        Handler for generic folders
+        Traverse the tree rooted at {node}
         """
-        return
+        raise NotImplementedError(
+            "class {.__name__!r} must implement 'explore'".format(type(self)))
 
 
 # end of file 

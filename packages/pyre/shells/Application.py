@@ -67,7 +67,7 @@ class Application(pyre.component, hidden=True):
         private namespace and register it with the executive file server
         """
         # build the top level folder for my stuff
-        private = self.executive.fileserver.newFolder()
+        private = self.executive.fileserver.folder()
         # use my name as the top level folder
         top = self.pyre_name
         # mount it at the right place
@@ -109,7 +109,7 @@ class Application(pyre.component, hidden=True):
         # if not there
         except fileserver.NotFoundError:
             # create an empty folder
-            target = fileserver.newFolder()
+            target = fileserver.folder()
         # if it is there
         else:
             # fill it up with its contents

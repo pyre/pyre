@@ -11,7 +11,7 @@ import os
 
 
 # class declaration
-class DirectoryWalker:
+class Walker:
     """
     Class that encapsulates listing the contents of a local directory
     """
@@ -33,7 +33,7 @@ class DirectoryWalker:
         # if this fails
         except os.error as error:
             # raise a package specific exception
-            raise self.DirectoryListingError(path=path, error=error.strerror)
+            raise self.DirectoryListingError(uri=path, error=error.strerror)
 
 
 # end of file 

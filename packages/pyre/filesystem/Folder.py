@@ -6,24 +6,23 @@
 #
 
 
+# base class
 from .Node import Node
 
 
+# declaration
 class Folder(Node):
     """
-    The base class for containers of Nodes
+    The base class for filesystem entries that are containers of other entries
+
+    {Node} and {Folder} are the leaf and container types for the composite that enables the
+    representation of the hierarchical structure of filesystems.
     """
 
-    # public data
-    # data members
-    contents = None # the container that assigns names to my contents
 
-    @property
-    def mountpoint(self):
-        """
-        My location
-        """
-        return self._filesystem().info(self).uri
+    # constants
+    marker = 'd'
+    isFolder = True
 
 
     # types
@@ -32,183 +31,160 @@ class Folder(Node):
 
 
     # interface
-    def discover(self, **kwds):
+    # searching for specific contents
+    def find(self, pattern=None):
         """
-        Fill my contents
-        """
-        # get the filesystem to do the work
-        self._filesystem().discover(root=self, **kwds)
-        # and return
-        return self
+        Generate pairs ({node}, {name}) that match the given pattern
 
-
-    def find(self, **kwds):
+        By default, {find} will create a generator that visits the entire contents of the tree
+        rooted at this folder. In order to restrict the set of matching names, provide a
+        regular expression as the optional argument {pattern}
         """
-        Generate the list of names that match the given {pattern}
-
-        By default, find will create a generator that visits the entire contents of the tree
-        rooted at this folder. Use the optional arguments to restrict the set of matching
-        names. For details about supported filters, see pyre.filesystem.Finder.
-        """
-        # get the finder factory
-        from . import newFinder
-        # build one 
-        finder = newFinder()
-        # get it to find what the user wants
-        for (node, path) in finder.explore(folder=self, **kwds):
-            yield (node, path)
-        # all done
-        return
+        # access the finder factory
+        from . import finder
+        # to build one
+        f = finder()
+        # and start the search
+        return f.explore(folder=self, pattern=pattern)
         
 
     # populating filesystems
-    def mount(self, name, filesystem):
+    def discover(self, **kwds):
         """
-        Make the root of {filesystem} available as {name} through my contents
-
-        parameters:
-            {name}: a string specifying the new name of the filesystem
-            {filesystem}: the filesystem object whose root is being made available
+        Fill my contents by querying whatever external resource my filesystem represents
         """
-        # add the root node to my contents under the given name
-        self.contents[name] = filesystem
-        # and return it
-        return self
+        # punt to the implementation in my filesystem
+        return self.filesystem().discover(root=self, **kwds)
 
 
-    # content factories
-    def newFolder(self):
+    # making entire filesystems available through me
+    def mount(self, uri, filesystem):
         """
-        Create a new folder
+        Make the root of {filesystem} available as {uri} within my filesystem
         """
-        # create the node
-        return Folder(filesystem=self._filesystem())
+        # easy enough: just insert {filesystem} at {uri}
+        return self._insert(uri=uri, node=filesystem)
 
 
-    def newNode(self):
+    # node factories
+    def node(self):
         """
-        Create a new node
+        Build a new node within my filesystem
         """
-        # create the node
-        return Node(filesystem=self._filesystem())
+        # easy enough
+        return Node(filesystem=self.filesystem())
 
 
-    # explorer support
-    def identify(self, explorer, **kwds):
+    def folder(self):
         """
-        Tell {explorer} that it is visiting a folder
+        Build a new folder within my filesystem
         """
-        return explorer.onFolder(self, **kwds)
+        # also easy
+        return Folder(filesystem=self.filesystem())
 
 
     # meta methods
     def __init__(self, **kwds):
+        """
+        Build a folder. See {pyre.filesystem.Node} for construction parameters
+        """
+        # chain up
         super().__init__(**kwds)
-        self.contents = dict()
+        # initialize my contents
+        self.contents = {}
+        # and return
         return
+        
+
+    def __getitem__(self, uri):
+        """
+        Retrieve a node given its {uri} as the subscript
+        """
+        # invoke the implementation and return the result
+        return self._find(uri)
+
+
+    def __setitem__(self, uri, node):
+        """
+        Attach {node} at {uri}
+        """
+        # invoke the implementation and return the result
+        return self._insert(node=node, uri=uri)
 
 
     # implementation details
-    def _insert(self, node, path):
+    def _find(self, uri):
         """
-        Insert {node} at the location pointed to by {path}, creating all necessary
-        intermediate directories
+        Locate the entry with address {uri}
         """
-        # extract the list of path names
-        names = tuple(filter(None, path.split(self.PATH_SEPARATOR)))
-
-        # we need to be careful here because one of the components of path may exist but not be
-        # a folder, so we need to traverse the path once before we make any changes to the
-        # folder layout
-
-        # start out using myself as the target
-        current = self
-        # visit all folders in {path} and verify that the insertion will succeed
-        for name in names[:-1]:
-            # attempt to get the node pointed to by name
-            try:
-                current = current.contents[name]
-            except KeyError:
-                # it's ok for this to fail; we just have some nodes to make
-                break
-            # raise an exception if the current node is not a folder
-            if not isinstance(current, Folder):
-                raise self.FolderInsertionError(
-                    filesystem=self._filesystem(), node=self, path=path, target=name)
-
-        # if we get this far, all existing named nodes were folders
-        # re-initialize the lookup chain
-        current = self
-        # find the  target node
-        for name in names[:-1]:
-            try:
-                current = current.contents[name]
-            except KeyError:
-                folder = current.newFolder()
-                current.contents[name] = folder
-                current = folder
-        # add the node to the last directory
-        current.contents[names[-1]] = node
-        # and return it
-        return node
-
-
-    def _find(self, path):
-        """
-        Locate the entry with address {path}
-
-        parameters:
-            {path}: a PATH_SEPARATOR delimited chain of node names
-
-        Note: this method is the workhorse behind subscripted access to the folder contents and
-        should probably not be used directly
-        """
-        # extract the list of path names
-        names = filter(None, path.split(self.PATH_SEPARATOR))
-        # initialize the lookup chain
+        # take {uri} apart
+        names = filter(None, uri.split(self.separator))
+        # starting with me
         node = self
-        # find the target node
+        # attempt to
         try:
-            for name in names:
-                node = node.contents[name]
+            # hunt down the target node
+            for name in names: node = node.contents[name]
+        # if any of the folder lookups fail
         except KeyError:
+            # notify the caller
             raise self.NotFoundError(
-                filesystem=self._filesystem(), node=self, path=path, fragment=name)
+                filesystem=self.filesystem(), node=self, uri=uri, fragment=name)
+        # otherwise, return the target node
+        return node
+
+
+    def _insert(self, node, uri, metadata=None):
+        """
+        Attach {node} at the address {uri}, creating all necessary intermediate folders.
+        """
+        # build the list of node names
+        names = tuple(filter(None, uri.split(self.separator)))
+        # keep track of the path fragment we have visited
+        path = [self.uri]
+        # starting with me
+        current = self
+        # visit all folders in {uri}
+        for name in names[:-1]:
+            # add {name} to the {path}
+            path.append(name)
+            # attempt to 
+            try:
+                # get the node pointed to by {name}
+                current = current.contents[name]
+            # if not there
+            except KeyError:
+                # no problem; let's make a folder
+                folder = current.folder()
+                # attach it
+                current.contents[name] = folder
+                # notify the filesystem
+                self.filesystem().attach(node=folder, uri=self.join(*path))
+                # and make it the current node
+                current = folder
+            # if it is there
+            else:
+                # check that it is a folder 
+                if not current.isFolder:
+                    # if not, raise an error
+                    raise self.FolderInsertionError(
+                        filesystem=self.filesystem(), node=self, uri=uri, target=name)
+
+        # at this point, all intermediate folders have been processed
+        # get the name of the node
+        name = names[-1]
+        # update the path
+        path.append(name)
+        # attach the node to its folder
+        current.contents[names[-1]] = node
+        # build the path of the node
+        self.filesystem().attach(node=node, uri=self.join(*path), metadata=metadata)
         # and return it
         return node
 
 
-    # access through subscripts
-    def __getitem__(self, path):
-        """
-        Enable the syntax folder[{path}]
-        """
-        return self._find(path)
-
-
-    def __setitem__(self, path, node):
-        """
-        Enable the syntax folder[{path}] = node
-        """
-        return self._insert(path=path, node=node)
-
-
-    # debugging support
-    def dump(self, interactive=True):
-        """
-        Print out my contents using a tree explorer
-        """
-        # build the explorer
-        from . import newTreeExplorer
-        explorer = newTreeExplorer()
-        # get the representation of my contents
-        printout = explorer.explore(self)
-        # dump it out
-        if interactive:
-            for line in printout:
-                print(line)
-        # and return the explorer to the caller
-        return explorer
+    # private data
+    __slots__ = 'contents',
 
 
 # end of file 

@@ -153,9 +153,9 @@ class Merlin(pyre.application):
         # otherwise
         import pyre.filesystem
         # first, mount the project root as {/project}
-        fileserver['/project'] = pyre.filesystem.newLocalFilesystem(root=root)
+        fileserver['/project'] = pyre.filesystem.local(root=root)
         # next, mount the {merlin} meta-data directory as {/merlin/project}
-        fileserver[vpath] = pyre.filesystem.newLocalFilesystem(root=metadir).discover()
+        fileserver[vpath] = pyre.filesystem.local(root=metadir).discover()
         # and return
         return
 

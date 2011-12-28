@@ -14,7 +14,7 @@ Sanity check: verify that directory walkers can be instantiated
 
 def test():
     import pyre.filesystem
-    return pyre.filesystem.newDirectoryWalker()
+    return pyre.filesystem.walker()
 
 
 # main

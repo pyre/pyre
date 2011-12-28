@@ -74,7 +74,7 @@ class Daemon(Script, family="pyre.shells.daemon"):
         The behavior at the master process
         """
         status = pickle.loads(os.read(self.pread, 1024))
-        print("master: child reported pid={}".format(status))
+        # print("master: child reported pid={}".format(status))
         # just return the process id of the child
         return pid
 

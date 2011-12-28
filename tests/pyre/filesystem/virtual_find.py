@@ -13,27 +13,21 @@ Verify searching through folders for named nodes
 
 
 def test():
-    from pyre.filesystem.Node import Node
-    from pyre.filesystem.Folder import Folder
-
-    # fake a filesystem
-    class filesystem: pass
-    # build a fake filesystem
-    fs = filesystem()
+    import pyre.filesystem
 
     # build a folder
-    root = Folder(filesystem=fs)
+    root = pyre.filesystem.virtual()
     # and a node
-    mga = Node(fs)
+    mga = root.node()
 
     # add it to the folder
-    root._insert(path="home/users/mga", node=mga)
+    root._insert(uri="home/users/mga", node=mga)
 
     # now retrieve it
-    target = root._find("/home/users/mga")
+    target = root._find(uri="/home/users/mga")
    
     # make sure it is the same node
-    assert mga == target
+    assert mga is target
 
     # all done
     return root

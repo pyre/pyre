@@ -6,9 +6,11 @@
 #
 
 
+# my superclass
 from .Explorer import Explorer
 
 
+# class declaration
 class SimpleExplorer(Explorer):
     """
     A visitor that creates an indented list of the name and node type of the contents of a
@@ -17,61 +19,43 @@ class SimpleExplorer(Explorer):
 
 
     # interface
-    def explore(self, folder):
+    def explore(self, node, label):
         """
         Traverse the filesystem and print out its contents
         """
-        self.printout = []
-        folder.identify(self, name=folder.mountpoint)
-        return self.printout
+        # build a representation of the current node
+        yield self.render(name=label, node=node)
 
+        # if {node} is not a directory, we are done
+        if not node.isFolder: return
 
-    # handlers for the various types of nodes
-    def onNode(self, node, name, **kwds):
-        """
-        Handler for generic nodes
-        """
-        self._render(name=name, node=node, code='f')
-        return
-
-
-    def onFolder(self, folder, name, **kwds):
-        """
-        Handler for generic folders
-        """
-        self._render(name=name, node=folder, code='d')
-        # up the indentation level
+        # otherwise, increase the indentation level
         self._indent += 1
-        # explore the directory contents
-        for name, node in folder.contents.items():
-            node.identify(explorer=self, name=name)
-        # decrease the indentation level
+        # iterate over the folder contents
+        for name, child in sorted(node.contents.items()):
+            # generate the content report
+            for description in self.explore(node=child, label=name): yield description
+        # decrease the indentation level back
         self._indent -= 1
-        # and we are done
+
+        # all done
         return
 
 
     # meta methods
-    def __init__(self, **kwds):
+    def __init__(self, indent=0, **kwds):
         super().__init__(**kwds)
-        self._indent = 0
+        self._indent = indent
         return
 
 
     # implementation details
-    def _render(self, name, node, code):
-        self.printout.append(
-            "{0}({1}) {2}".format(self.INDENT*self._indent, code, name)
-            )
-        return
+    def render(self, name, node):
+        return "{0}({1}) {2}".format(self.INDENT*self._indent, node.marker, name)
 
 
     # constants
     INDENT = ' '*2
-
-
-    # private data
-    printout = None
 
 
 # end of file 

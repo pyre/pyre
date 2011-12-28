@@ -17,23 +17,17 @@ is as expected
 
 
 def test():
-    from pyre.filesystem.Node import Node
-    from pyre.filesystem.Folder import Folder
-
-    # fake a filesystem
-    class filesystem: pass
-    # build a fake filesystem
-    fs = filesystem()
+    import pyre.filesystem
 
     # build a folder
-    root = Folder(filesystem=fs)
+    root = pyre.filesystem.virtual()
     # and a couple of nodes
-    mga = Node(filesystem=fs)
-    users = Folder(filesystem=fs)
+    mga = root.node()
+    users = root.folder()
 
     # add them to the folder
-    root._insert(node=users, path="/home/users")
-    root._insert(node=mga, path="/home/users/mga")
+    root._insert(node=users, uri="/home/users")
+    root._insert(node=mga, uri="/home/users/mga")
 
     # check that it was done correctly
     assert len(root.contents) == 1
@@ -47,7 +41,7 @@ def test():
     assert len(users.contents) == 1
     assert "mga" in users.contents
 
-    assert users.contents["mga"] == mga
+    assert users.contents["mga"] is mga
 
     # all done
     return root

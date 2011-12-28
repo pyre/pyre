@@ -77,7 +77,7 @@ class Curator(pyre.component, family="merlin.curator"):
             # FIXME - FILESERVER: this steps outside the file server abstraction, since file
             # creation is not supported yet
             # build the path to the file
-            path = folder.join(folder.mountpoint, vname)
+            path = folder.join(folder.uri, vname)
             # and open it in write-binary mode
             store = open(path, mode="wb")
         # pickle the item

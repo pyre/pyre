@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2011 all rights reserved
+# (c) 1998-2012 all rights reserved
 #
 
 """
@@ -25,10 +25,10 @@ class DirectoryListingError(GenericError):
     Exception raised when something goes wrong with listing the contents of a local directory
     """
 
-    def __init__(self, path, error, **kwds):
-        msg = "error while accessing {0!r}: {1}".format(path, error)
+    def __init__(self, uri, error, **kwds):
+        msg = "error while accessing {!r}: {}".format(uri, error)
         super().__init__(description=msg, **kwds)
-        self.path = path
+        self.uri = uri
         return
 
 
@@ -37,10 +37,10 @@ class MountPointError(GenericError):
     Exception generated when the root of a filesystem is invalid
     """
 
-    def __init__(self, path, error):
-        msg = "error while mounting {0!r}: {1}".format(path, error)
+    def __init__(self, uri, error):
+        msg = "error while mounting {!r}: {}".format(uri, error)
         super().__init__(description=msg)
-        self.path = path
+        self.uri = uri
         return
 
 
@@ -63,10 +63,10 @@ class NotFoundError(FilesystemError):
     Exception raised when attempting to find a node and the supplied URI does not exist
     """
 
-    def __init__(self, path, fragment, **kwds):
-        msg = "while looking for {0!r}: {1!r} not found".format(path, fragment)
+    def __init__(self, uri, fragment, **kwds):
+        msg = "while looking for {!r}: {!r} not found".format(uri, fragment)
         super().__init__(description=msg, **kwds)
-        self.path = path
+        self.uri = uri
         self.fragment = fragment
         return
 
@@ -77,10 +77,10 @@ class FolderInsertionError(FilesystemError):
     a folder
     """
 
-    def __init__(self, path, target, **kwds):
-        msg = "error while inserting {0!r}: {1!r} is not a folder".format(path, target)
+    def __init__(self, uri, target, **kwds):
+        msg = "error while inserting {!r}: {!r} is not a folder".format(uri, target)
         super().__init__(description=msg, **kwds)
-        self.path = path
+        self.uri = uri
         self.target = target
         return
 

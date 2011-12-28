@@ -16,14 +16,15 @@ def test():
     import pyre.filesystem
 
     # make a filesystem
-    fs = pyre.filesystem.newVirtualFilesystem()
+    fs = pyre.filesystem.virtual()
     # create a couple of nodes and insert them into the filesystem
-    fs["/home/users/mga/dv/tools/bin/hello"] = fs.newNode()
-    fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.newNode()
+    fs["/home/users/mga/dv/tools/bin/hello"] = fs.node()
+    fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.node()
 
     # explore
-    explorer = pyre.filesystem.newSimpleExplorer()
-    contents = explorer.explore(fs)
+    explorer = pyre.filesystem.simpleExplorer()
+    contents = list(explorer.explore(node=fs, label='/'))
+    # for line in contents: print(line)
     
     # check
     assert contents == [

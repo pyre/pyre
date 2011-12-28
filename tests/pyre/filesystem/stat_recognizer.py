@@ -14,7 +14,7 @@ Sanity check: verify that stat recognizers can be instantiated
 
 def test():
     import pyre.filesystem
-    return pyre.filesystem.newStatRecognizer()
+    return pyre.filesystem.stat()
 
 
 # main

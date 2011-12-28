@@ -8,40 +8,37 @@
 
 
 """
-Verify node insertion in folders
+Verify node access in folders using the subscript notation
 """
 
 
 def test():
-    from pyre.filesystem.Node import Node
-    from pyre.filesystem.Folder import Folder
-
-    # fake a filesystem
-    class filesystem: pass
-    # build a fake filesystem
-    fs = filesystem()
+    import pyre.filesystem
 
     # build a folder
-    root = Folder(filesystem=fs)
+    root = pyre.filesystem.virtual()
     # and a node
-    mga = Node(fs)
+    mga = root.node()
 
     # add it to the folder
-    root._insert(path="/home/users/mga", node=mga)
+    root["/home/users/mga"] = mga
 
     # check that it was done correctly
     assert len(root.contents) == 1
     assert "home" in root.contents
 
-    home = root.contents["home"] 
+    home = root["home"] 
     assert len(home.contents) == 1
     assert "users" in home.contents
 
-    users = home.contents["users"] 
+    users = home["users"] 
     assert len(users.contents) == 1
     assert "mga" in users.contents
 
-    assert users.contents["mga"] == mga
+    assert users["mga"] is mga
+
+    # now look for it and make sure we got the same node
+    assert root["/home/users/mga"] is mga
 
     # all done
     return root

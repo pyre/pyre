@@ -16,7 +16,7 @@ def test():
     import pyre.filesystem
 
     try:
-        pyre.filesystem.newLocalFilesystem(root="/@")
+        pyre.filesystem.local(root="/@")
         assert False
     except pyre.filesystem.MountPointError as error:
         assert str(error) == "error while mounting '/@': mount point not found"

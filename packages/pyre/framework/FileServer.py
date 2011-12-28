@@ -62,7 +62,7 @@ class FileServer(Filesystem):
             try:
                 return encoding, open(address, **kwds)
             except IOError as error:
-                raise self.NotFoundError(filesystem=self, node=None, path=address, fragment='file')
+                raise self.NotFoundError(filesystem=self, node=None, uri=address, fragment='file')
 
         # if {scheme} is 'vfs', assume {address} is from our virtual filesystem
         if scheme == "vfs":
@@ -83,7 +83,7 @@ class FileServer(Filesystem):
         # adjust the extension
         extension = '.' + extension if extension else ""
         # piece the parts together
-        return "{}{}{}{}".format(path, self.PATH_SEPARATOR, address, extension) 
+        return "{}{}{}{}".format(path, self.separator, address, extension) 
 
 
     # lower level interface
@@ -100,10 +100,10 @@ class FileServer(Filesystem):
         #  - it is an actual location on the disk
         #  - it is inside a zip file
         # the way to tell is by checking whether pyre.prefix() points to an actual directory
-        # both are handled correctly by the pyre.filesystem.newFilesystem factory
+        # both are handled correctly by the {pyre.filesystem.local} factory
         try:
             # so invoke it to build the filesystem for us
-            self.prefixfs = pyre.filesystem.newFilesystem(pyre.prefix()).discover(levels=1)
+            self.prefixfs = pyre.filesystem.local(pyre.prefix()).discover(levels=1)
         except self.GenericError:
             # if this failed, just create a new empty folder
             system = self.newFolder()
@@ -124,7 +124,7 @@ class FileServer(Filesystem):
         userdir = os.path.expanduser(self.DOT_PYRE) 
         try:
             # make filesystem out of the preference directory
-            self.userfs = pyre.filesystem.newFilesystem(userdir).discover(levels=1)
+            self.userfs = pyre.filesystem.local(userdir).discover(levels=1)
         except self.GenericError:
             self.userfs = self.newFolder()
        # mount this directory as /pyre/user
@@ -133,7 +133,7 @@ class FileServer(Filesystem):
         # finally, mount the current working directory
         try:
             # make filesystem out of the preference directory
-            self.localfs = pyre.filesystem.newFilesystem(".").discover(levels=1)
+            self.localfs = pyre.filesystem.local(".").discover(levels=1)
         except self.GenericError:
             self.localfs = self.newFolder()
        # mount this directory as /local

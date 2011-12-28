@@ -23,44 +23,35 @@ def test():
         """Base class for my nodes"""
         namespace = "http://pyre.caltech.edu/releases/1.0/schema/fs.html"
 
-
-    class File(Node):
-        """Handle the file tag"""
-        # storage for my attributes
-        name = ""
-
-        def notify(self, parent, locator):
-            return parent.addEntry(self)
+        def notify(self, parent, locator): return
 
         def __init__(self, parent, attributes, locator):
             self.name = attributes['name']
-            self.fsnode = parent.fsnode.newNode()
+            self.node = parent.node.folder()
+            parent.addEntry(self)
+
+
+    class File(Node):
+        """Handle the file tag"""
 
 
     class Folder(Node):
         """Handle the folder tag"""
         elements = ("file", "folder")
 
-        def notify(self, parent, locator):
-            return parent.addEntry(self)
-
         def addEntry(self, entry):
             """Add a file to my contents"""
-            self.fsnode[entry.name] = entry.fsnode
-
-        def __init__(self, parent, attributes, locator):
-            self.name = attributes['name']
-            self.fsnode = parent.fsnode.newFolder()
+            self.node[entry.name] = entry.node
 
 
     class Filesystem(Folder):
         """The top level document element"""
 
         def notify(self, parent, locator):
-            parent.dom = self.fsnode
+            parent.dom = self.node
 
         def __init__(self, parent, attributes, locator):
-            self.fsnode = pyre.filesystem.newVirtualFilesystem()
+            self.node = pyre.filesystem.virtual()
 
 
     class FSD(Document):

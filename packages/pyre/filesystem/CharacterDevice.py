@@ -15,16 +15,12 @@ class CharacterDevice(File):
     """
 
 
-    # interface
-    def identify(self, explorer, **kwds):
-        """
-        Tell {explorer} that it is visiting a character device
-        """
-        return explorer.onCharacterDevice(self, **kwds)
-
-
     # constant
     marker = 'c'
+
+    
+    # implementation details
+    __slots__ = ()
 
     
 # end of file 

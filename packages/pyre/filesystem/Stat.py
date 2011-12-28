@@ -16,12 +16,12 @@ from .Recognizer import Recognizer
 
 
 # class declaration
-class StatRecognizer(Recognizer):
+class Stat(Recognizer):
     """
-    This class provides support for sorting out filesystem entries based on the lowest level of
-    metadata available: the actual representation on the hard disk.
+    This class provides support for sorting out local filesystem entries based on the lowest
+    level of metadata available: the actual representation on the hard disk.
 
-    This recognizer uses os.stat for discovering the entries in a given directory. Therefore,
+    This recognizer uses {os.stat} for discovering the entries in a given directory. Therefore,
     it handles symbolic links transparently.
     """
 
@@ -60,7 +60,7 @@ class StatRecognizer(Recognizer):
             return self.CharacterDevice(uri=entry, info=meta)
         elif stat.S_ISFIFO(mode):
             return self.NamedPipe(uri=entry, info=meta)
-
+        # otherwise
         import journal
         msg = "{!r}: unknown file type: mode={}".format(entry, mode)
         return journal.firewall("pyre.filesystem").log(msg)

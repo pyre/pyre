@@ -16,17 +16,19 @@ def test():
     import pyre.filesystem
 
     # make a filesystem
-    fs = pyre.filesystem.newVirtualFilesystem()
+    fs = pyre.filesystem.virtual()
     # create a couple of nodes and insert them into the filesystem
-    fs["/home/users/mga/dv/tools/bin/hello"] = fs.newNode()
-    fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.newNode()
+    fs["/home/users/mga/dv/tools/bin/hello"] = fs.node()
+    fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.node()
 
     # explore
-    finder = pyre.filesystem.newFinder()
-    contents = [ path for node,path in finder.explore(fs) ]
+    finder = pyre.filesystem.finder()
+    contents = list(path for node,path in finder.explore(fs))
+    # for line in contents: print(line)
     
     # check
     assert contents == [
+        "", # the root, which is nameless
         "home",
         "home/users",
         "home/users/mga",

@@ -16,18 +16,18 @@ def test():
     import pyre.filesystem
 
     # make a filesystem
-    fs = pyre.filesystem.newVirtualFilesystem()
+    fs = pyre.filesystem.virtual()
     # create a couple of nodes and insert them into the filesystem
-    fs["/home/users/mga/dv/tools/bin/hello"] = fs.newNode()
-    fs["/home/users/mga/dv/tools/src/hello.c"] = fs.newNode()
-    fs["/home/users/mga/dv/tools/src/hello.h"] = fs.newNode()
-    fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.newNode()
+    fs["/home/users/mga/dv/tools/bin/hello"] = fs.node()
+    fs["/home/users/mga/dv/tools/src/hello.c"] = fs.node()
+    fs["/home/users/mga/dv/tools/src/hello.h"] = fs.node()
+    fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.node()
     
     # dump the contents
     fs.dump(False) # switch to True to see the dump
 
     # explore
-    finder = pyre.filesystem.newFinder()
+    finder = pyre.filesystem.finder()
     contents = [ path for node, path in finder.explore(folder=fs, pattern=r".*\.h")]
     
     # check

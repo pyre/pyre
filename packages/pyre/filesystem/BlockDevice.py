@@ -14,16 +14,13 @@ class BlockDevice(File):
     Representation of block devices, a type of unix device driver
     """
 
-    # interface
-    def identify(self, explorer, **kwds):
-        """
-        Tell {explorer} that it is visiting a block device
-        """
-        return explorer.onBlockDevice(self, **kwds)
-
 
     # constant
     marker = 'b'
+
+    
+    # implementation details
+    __slots__ = ()
 
     
 # end of file 

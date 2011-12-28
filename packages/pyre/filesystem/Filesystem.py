@@ -6,53 +6,75 @@
 #
 
 
+# externals
+import weakref # for {vnodes}, the weak key dictionary
+# base class
 from .Folder import Folder
-from . import _metaclass_Filesystem
 
 
-class Filesystem(Folder, metaclass=_metaclass_Filesystem):
+# declaration
+class Filesystem(Folder):
     """
     The base class for representing filesystems
+
+    A filesystem is a special {Folder} that maintains an association between the {Nodes} it
+    contains and {Info} objects that are dependent on the specific filesystem type and capture
+    what the filesystem knows about them.
     """
 
 
-    # public data
-    mountpoint = "/"
+    # types
+    from .Info import Info as metadata
 
 
     # interface
+    def info(self, node):
+        """
+        Look up and return the available metadata associated with {node}
+        """
+        # let the exceptions through, for now
+        return self.vnodes[node]
+
+
     def open(self, node, **kwds):
         """
-        Open the file
+        Open the file associated with {node}
         """
+        # i don't know how to do it
         raise NotImplementedError(
-            "class {.__name__!r} must override 'open'".format(type(self)))
+            "class {.__name__!r} must implement 'open'".format(type(self)))
 
 
-    def info(self, node, **kwds):
+    # implementation details
+    def attach(self, node, uri, metadata=None, **kwds):
         """
-        Open the file
+        Maintenance for the {vnode} table. Filesystems that maintain more elaborate metadata
+        about their nodes must override to build their info structures.
         """
-        raise NotImplementedError(
-            "class {.__name__!r} must override 'info'".format(type(self)))
-
-
-    def discover(self, **kwds):
-        """
-        Populate the filesystem by reading the external source it represents
-        """
-        return self
+        # build an {info} structure if necessary
+        meta = metadata if metadata is not None else self.metadata(uri=uri, **kwds)
+        # attach it to my vnode table
+        self.vnodes[node] = meta
+        # and return the info node
+        return meta
 
 
     # meta methods
-    def __init__(self, root='/', **kwds):
+    def __init__(self, metadata=None, **kwds):
+        # chain up to make me a valid node with me as the filesystem
         super().__init__(filesystem=self, **kwds)
-        self.root = root
+        # my vnode table: a map from nodes to info structures
+        self.vnodes = weakref.WeakKeyDictionary()
+        # build an info structure for myself
+        metadata = metadata if metadata is not None else self.metadata(uri='/')
+        # add it to my vnode table
+        self.vnodes[self] = metadata
+        # all done
         return
 
 
-    # exceptions
-    from .exceptions import GenericError
-        
+    # implementation details
+    __slots__ = ('vnodes')
+
 
 # end of file 

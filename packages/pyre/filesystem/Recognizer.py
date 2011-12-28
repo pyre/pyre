@@ -16,8 +16,8 @@ class Recognizer:
     # interface
     def recognize(self, entry):
         """
-        The most basic file recognition: convert the name of a file into a File descendant
-        and decorate it with all the metadata available.
+        Given a filesystem {entry}, build a filesystem specific structure and decorate it with
+        the available metadata
         """
         raise NotImplementedError(
             "class {.__name__!r} must implement 'recognize'".format(type(self)))

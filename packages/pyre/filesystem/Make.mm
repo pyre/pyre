@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2011 all rights reserved
+# (c) 1998-2012 all rights reserved
 #
 
 
@@ -23,21 +23,23 @@ EXPORT_PYTHON_MODULES = \
     BlockDevice.py \
     CharacterDevice.py \
     Directory.py \
-    DirectoryWalker.py \
     Explorer.py \
-    Folder.py \
     File.py \
     Filesystem.py \
     Finder.py \
-    LocalFilesystem.py \
+    Folder.py \
+    HDF5.py \
+    Info.py \
+    Local.py \
     NamedPipe.py \
     Node.py \
     Recognizer.py \
     SimpleExplorer.py \
     Socket.py \
-    StatRecognizer.py \
+    Stat.py \
     TreeExplorer.py \
-    ZipFilesystem.py \
+    Walker.py \
+    Zip.py \
     exceptions.py \
     __init__.py
 

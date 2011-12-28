@@ -8,37 +8,38 @@
 
 
 """
-Sanity check: verify that we can create filesystem instances
+Sanity check: verify that we can create virtual filesystem instances
 """
 
 
-def test():
-    from pyre.filesystem.Filesystem import Filesystem
+def test(interactive=False): # switch to True to see the dumps
+    # access the package
+    import pyre.filesystem
 
-    # create a filesystem
-    fs =  Filesystem()
+    # create a virtual filesystem
+    fs = pyre.filesystem.virtual()
 
     # create a folder a few levels down from the root
     mpath = "/home/users/mga"
-    mga = fs.newFolder()
+    mga = fs.folder()
     fs[mpath] = mga
     # check that we can retrieve it
     assert mga == fs[mpath]
 
     # add a subfolder
-    tpath = '/dv/tools'
-    tools = fs.newFolder()
-    fs[mpath + tpath] = tools
+    tpath = 'dv/tools'
+    tools = fs.folder()
+    fs[fs.join(mpath, tpath)] = tools
 
     # and retrieve it
-    assert fs[mpath+tpath] == mga[tpath]
+    assert fs[fs.join(mpath, tpath)] == mga[tpath]
 
     # add a node
-    hello = fs.newNode()
+    hello = fs.node()
     tools["hello.py"] = hello
 
     # dump the contents
-    fs.dump(interactive=False) # switch to True to see the dump
+    fs.dump(interactive)
     
     return fs
 
@@ -53,12 +54,7 @@ if __name__ == "__main__":
     # do...
     test()
 
-    # check that the filesystem was destroyed
-    from pyre.filesystem.Filesystem import Filesystem
-    # print("Filesystem extent:", len(Filesystem._pyre_extent))
-    assert len(Filesystem._pyre_extent) == 0
-
-    # now check that the nodes were all destroyed
+    # check that the nodes were all destroyed
     from pyre.filesystem.Node import Node
     # print("Node extent:", len(Node._pyre_extent))
     assert len(Node._pyre_extent) == 0

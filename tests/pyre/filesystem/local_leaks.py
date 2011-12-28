@@ -8,32 +8,23 @@
 
 
 """
-Verify creation of filesystems based on zipfiles
+Verify that clearing the contents of filesystems destroys the nodes
 """
 
 
-def test(interactive=False): # set to True to see the dump
+def test(interactive=False):
     import os
-    import zipfile
     import pyre.filesystem
+    # build a filesystem and populate it
+    tests = pyre.filesystem.local(root="../..").discover()
+    tests.dump(interactive)
+    # now clear its contents explicitly
+    tests.contents = {}
+    # verify that all the nodes except the filesystem itself were destroyed 
+    assert len(tests._pyre_extent) == 1
 
-
-    # the name of the zipfile
-    archive = "/tmp/sample.zip"
-    # build the archive
-    target = zipfile.ZipFile(file=archive, mode="w", compression=zipfile.ZIP_DEFLATED)
-    with target:
-        for filename in os.listdir('.'): target.write(filename)
-    
-    # open it as a filesystem
-    home = pyre.filesystem.zip(root=archive)
-    home.discover()
-    home.dump(interactive)
-
-    # remove the zipfile
-    # os.unlink(archive)
-
-    return home
+    # all done
+    return tests
 
 
 # main
@@ -49,6 +40,5 @@ if __name__ == "__main__":
     from pyre.filesystem.Node import Node
     # print("Node extent:", len(Node._pyre_extent))
     assert len(Node._pyre_extent) == 0
-
 
 # end of file 
