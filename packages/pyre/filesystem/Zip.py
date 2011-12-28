@@ -19,6 +19,10 @@ class Zip(Filesystem):
     """
 
 
+    # node metadata
+    from .metadata import ZipNode, ZipFolder
+
+
     # interface
     def open(self, node, **kwds):
         """
@@ -28,7 +32,7 @@ class Zip(Filesystem):
         metadata = self.vnodes[node]
         # and call the {zipfile} file factory, which accepts {ZipInfo} instances as well as
         # archive data members
-        return self.zipfile.open(metadata, **kwds)
+        return self.zipfile.open(metadata.zipinfo, **kwds)
 
 
     def discover(self, **kwds):
@@ -44,9 +48,14 @@ class Zip(Filesystem):
         for name, info in zip(self.zipfile.namelist(), self.zipfile.infolist()):
             # recognize the type of entry: directories end with a slash, everything else is a
             # file
-            node = self.folder() if name[-1] == '/' else self.node()
+            if name[-1] == '/':
+                node = self.folder()
+                metadata = self.ZipFolder(uri=name, info=info)
+            else: 
+                node = self.node()
+                metadata = self.ZipNode(uri=name, zipinfo=info)
             # insert the node
-            self._insert(node=node, uri=name, metadata=info)
+            self._insert(node=node, uri=name, metadata=metadata)
         # all done
         return self
 

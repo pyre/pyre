@@ -24,7 +24,7 @@ def test():
     root._insert(uri="home/users/mga", node=mga)
 
     # now retrieve it
-    target = root._find(uri="/home/users/mga")
+    target = root._retrieve(uri="/home/users/mga")
    
     # make sure it is the same node
     assert mga is target

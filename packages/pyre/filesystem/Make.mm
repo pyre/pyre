@@ -29,7 +29,6 @@ EXPORT_PYTHON_MODULES = \
     Finder.py \
     Folder.py \
     HDF5.py \
-    Info.py \
     Local.py \
     NamedPipe.py \
     Node.py \
@@ -41,6 +40,7 @@ EXPORT_PYTHON_MODULES = \
     Walker.py \
     Zip.py \
     exceptions.py \
+    metadata.py \
     __init__.py
 
 

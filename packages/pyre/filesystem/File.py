@@ -10,7 +10,7 @@
 import stat
 
 # superclass
-from .Info import Info
+from .metadata import Info
 
 
 # class declaration

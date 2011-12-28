@@ -23,10 +23,6 @@ class Filesystem(Folder):
     """
 
 
-    # types
-    from .Info import Info as metadata
-
-
     # interface
     def info(self, node):
         """
@@ -51,12 +47,18 @@ class Filesystem(Folder):
         Maintenance for the {vnode} table. Filesystems that maintain more elaborate metadata
         about their nodes must override to build their info structures.
         """
-        # build an {info} structure if necessary
-        meta = metadata if metadata is not None else self.metadata(uri=uri, **kwds)
+        # if we were not handed any node metadata
+        if metadata is None:
+            # build a node specific {info} structure
+            metadata = node.metadata(uri=uri, **kwds)
+        # otherwise
+        else:
+            # decorate the given structure
+            metadata.uri = uri
         # attach it to my vnode table
-        self.vnodes[node] = meta
-        # and return the info node
-        return meta
+        self.vnodes[node] = metadata
+        # and return it
+        return metadata
 
 
     # meta methods

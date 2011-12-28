@@ -21,11 +21,12 @@ class Folder(Node):
 
 
     # constants
-    marker = 'd'
     isFolder = True
 
 
     # types
+    # my metadata
+    from .metadata import FolderInfo as metadata
     # exceptions
     from .exceptions import FolderInsertionError, NotFoundError
 
@@ -101,7 +102,7 @@ class Folder(Node):
         Retrieve a node given its {uri} as the subscript
         """
         # invoke the implementation and return the result
-        return self._find(uri)
+        return self._retrieve(uri)
 
 
     def __setitem__(self, uri, node):
@@ -113,7 +114,7 @@ class Folder(Node):
 
 
     # implementation details
-    def _find(self, uri):
+    def _retrieve(self, uri):
         """
         Locate the entry with address {uri}
         """

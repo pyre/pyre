@@ -23,12 +23,13 @@ class Node(metaclass=_metaclass_Node):
 
 
     # constants
-    marker = 'f'
     isFolder = False
     from . import separator
 
 
     # types
+    # my metadata
+    from .metadata import NodeInfo as metadata
     # exceptions
     from .exceptions import GenericError
 
@@ -41,6 +42,15 @@ class Node(metaclass=_metaclass_Node):
         """
         # this much is guaranteed to exist for all well-formed filesystems
         return self.filesystem().info(node=self).uri
+
+
+    @property
+    def marker(self):
+        """
+        Return my distinguishing mark used by explorers to decorate their reports
+        """
+        # this much is guaranteed to exist for all well-formed filesystems
+        return self.filesystem().info(node=self).marker
 
 
     # interface
