@@ -45,6 +45,11 @@ class Local(Filesystem):
         Traverse the local filesystem starting with {root} and refresh my contents so that they
         match the underlying filesystem
         """
+        # print(" ** pyre.filesystem.Local")
+        # print("  input:")
+        # print("    root: {!r}".format(root))
+        # print("    levels: {!r}".format(levels))
+        # print("  visiting:")
         # create a timestamp
         timestamp = time.gmtime()
         # use the supplied traversal support, if available
@@ -52,12 +57,14 @@ class Local(Filesystem):
         recognizer = recognizer if recognizer is not None else self.recognizer
         # establish the starting point
         root = root if root is not None else self
+        # print("    root uri: {!r}".format(root.uri))
         # make sure {root} is a folder
         if not root.isFolder:
             # otherwise complain
             raise self.DirectoryListingError(uri=root.uri, error='not a directory')
         # clear out the contents of {root}
         root.contents = {}
+        # print("    before uri: {!r}".format(self.vnodes[root].uri))
         # initialize the traversal
         todo = [ (root, 0) ]
         # start walking and recognizing
@@ -66,6 +73,7 @@ class Local(Filesystem):
             if levels is not None and level >= levels: continue
             # compute the actual location of this directory
             location = self.vnodes[folder].uri
+            # print("    uri: {!r}".format(location))
             # walk through the contents
             for entry in walker.walk(location):
                 # build the absolute path of the entry
@@ -89,7 +97,8 @@ class Local(Filesystem):
                 # and update my vnode table
                 self.vnodes[node] = meta
         # all done
-        return self
+        # print("    after uri: {!r}".format(self.vnodes[root].uri))
+        return root
 
 
     # meta methods
