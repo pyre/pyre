@@ -15,23 +15,6 @@ import re # for the uri recognizer
 separator = '/'
 
 
-# node types
-def node(**kwds):
-    """
-    Build a generic filesystem node
-    """
-    from .Node import Node
-    return Node(**kwds)
-
-
-def folder(**kwds):
-    """
-    Build a generic filesystem folder
-    """
-    from .Folder import Folder
-    return Folder(**kwds)
-
-
 # factories
 # filesystems
 def virtual(**kwds):

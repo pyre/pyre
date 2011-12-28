@@ -14,16 +14,13 @@ Check that nodes can be instantiated and that their limited interface works as a
 
 def test():
     # get hold of the constructor
-    import pyre.filesystem
+    from pyre.filesystem.Node import Node as node
 
     # fake a filesystem
     class filesystem: pass
 
-    # build a node
-    n = pyre.filesystem.node(filesystem=filesystem())
-
-    # and return it
-    return n
+    # build a node and return it
+    return node(filesystem=filesystem())
 
 
 # main
