@@ -20,6 +20,14 @@ class Spell(pyre.component, implements=spell):
     merlin = None # patched by the merlin boot sequence
 
 
+    @property
+    def vfs(self):
+        """
+        Access to my file server
+        """
+        return self.merlin.vfs
+
+
     # interface
     @pyre.export
     def main(self, **kwds):
