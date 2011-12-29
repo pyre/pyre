@@ -50,7 +50,7 @@ class Zip(Filesystem):
             # file
             if name[-1] == '/':
                 node = self.folder()
-                metadata = self.ZipFolder(uri=name, info=info)
+                metadata = self.ZipFolder(uri=name, zipinfo=info)
             else: 
                 node = self.node()
                 metadata = self.ZipNode(uri=name, zipinfo=info)
