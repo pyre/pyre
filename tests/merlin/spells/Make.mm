@@ -8,26 +8,22 @@
 
 PROJECT = pyre
 
-RECURSE_DIRS = \
-    components \
-    spells \
+PROJ_CLEAN += \
+    .merlin \
+    deep \
+    shallow \
+
+MERLIN = ${EXPORT_BINDIR}/merlin
 
 #--------------------------------------------------------------------------
 #
 
 all: test
 
-test::
-	BLD_ACTION="test" $(MM) recurse
+test: init clean
 
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
-
-clean::
-	BLD_ACTION="clean" $(MM) recurse
-
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
-
+init:
+	${MERLIN} init shallow
+	${MERLIN} init --create-prefix deep/ly/burried
 
 # end of file 
