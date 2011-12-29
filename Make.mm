@@ -13,9 +13,9 @@ RECURSE_DIRS = \
     packages \
     extensions \
     depository \
-    tests \
     bin \
     schema \
+    tests \
     examples \
 
 #--------------------------------------------------------------------------

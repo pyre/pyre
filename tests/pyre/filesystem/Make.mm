@@ -7,15 +7,15 @@
 
 
 PROJECT = pyre
+PROJ_CLEAN += \
+    local-make
 
 #--------------------------------------------------------------------------
 #
 
-working: all
-
 all: test
 
-test: sanity virtual local zip explorers
+test: sanity virtual local zip explorers clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -45,6 +45,7 @@ local:
 	${PYTHON} ./local_open.py
 	${PYTHON} ./local_rootNonexistent.py
 	${PYTHON} ./local_rootNotDirectory.py
+	${PYTHON} ./local_make.py
 
 zip:
 	${PYTHON} ./zip.py
