@@ -86,6 +86,27 @@ class FileServer(Filesystem):
         return "{}{}{}{}".format(path, self.separator, address, extension) 
 
 
+    # convenient access to the filesystem factories
+    def local(self, **kwds):
+        """
+        Build a local filesystem
+        """
+        # access the factory
+        from ..filesystem import local
+        # invoke it
+        return local(**kwds)
+
+
+    def virtual(self, **kwds):
+        """
+        Build a virtual filesystem
+        """
+        # access the factory
+        from ..filesystem import virtual
+        # invoke it
+        return virtual(**kwds)
+
+
     # lower level interface
     # meta methods
     def __init__(self, **kwds):
