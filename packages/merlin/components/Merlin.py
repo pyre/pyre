@@ -58,8 +58,9 @@ class Merlin(pyre.application):
         try:
             actor = self.spellbook.findSpell(name=spell)
         except self.FrameworkError:
-            print("merlin: spell {!r} not found".format(spell))
-            return self
+            import journal
+            msg = "spell {!r} not found".format(spell)
+            return journal.error('merlin').log(msg)
 
         # if it is a merlin actor
         if isinstance(actor, pyre.component):
