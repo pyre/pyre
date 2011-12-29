@@ -31,7 +31,7 @@ def test(interactive=False): # set to True to see the dump
     home.dump(interactive)
 
     # remove the zipfile
-    # os.unlink(archive)
+    os.unlink(archive)
 
     return home
 
