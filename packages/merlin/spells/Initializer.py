@@ -75,23 +75,26 @@ class Initializer(Spell):
                     msg = "could not create folder {!r}".format(folder)
                     return journal.error("merlin.init").log(msg)
 
-        # now, put together the paths to the metadata directories
-        metadir = os.path.join(folder, merlin.merlinFolder)
-        spelldir = os.path.join(metadir, 'spells')
-        dirlist = [ metadir, spelldir ]
-        # try
+        # now that it's there, build a local filesystem around it
+        pfs = self.vfs.local(root=folder)
+
+        # build a virtual filesystem so we can record the directory layout
+        mfs = self.vfs.virtual()
+        # here is the directory structure
+        mfs['spells'] = mfs.folder()
+
+        # attempt to
         try:
-            # to create all these
-            for directory in dirlist: os.mkdir(directory)
-        # if that fails
-        except OSError:
+            # realize the layout
+            pfs.make(name=merlin.merlinFolder, tree=mfs)
+        # if it fails
+        except OSError as error:
             # complain
             import journal
-            msg = "could not create folder {!r} for the merlin metadata".format(directory)
-            return journal.error("merlin.init").log(msg)
+            return journal.error("merlin.init").log(str(error))
 
         # all done
-        return
+        return self
 
 
     @pyre.export
