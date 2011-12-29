@@ -40,6 +40,53 @@ class Local(Filesystem):
         return open(uri, **kwds)
 
 
+    def make(self, name, tree, root=None, **kwds):
+        """
+        Duplicate the hierarchical structure in {tree} within my context
+        """
+        # print(" ** pyre.filesystem.Local.make:")
+        # create a timestamp
+        timestamp = time.gmtime()
+        # adjust the location of the new branch
+        root = root if root is not None else self
+        # print(" ++ input:")
+        # print("      root: {}".format(root))
+        # print("      uri: {!r}".format(root.uri))
+        # print("      tree: {!r}".format(tree.uri))
+
+        # initialize the worklist
+        todo = [ (root, name, tree) ]
+        # print(" ++ adding:")
+        # as long as there is more to do
+        for parent, name, source in todo:
+            # build the folder
+            folder = parent.folder()
+            # assemble the folder uri
+            uri = self.join(parent.uri, name)
+            # print("      {!r}".format(uri))
+
+            # create the folder
+            os.mkdir(uri)
+            # build the node meta data
+            meta = self.recognizer.recognize(uri)
+            # insert the new node in the parent folder
+            parent.contents[name] = folder
+            # and update my vnode table
+            self.vnodes[folder] = meta
+
+            # add the children to my work list
+            todo.extend( 
+                (folder, name, child)
+                for name, child in source.contents.items()
+                # NYI: don't know how to handle regular files just yet; must take into account
+                # the meta data associated with {node} in whatever filesystem {tree} came from,
+                # just in case I am ever asked to build pipes and sockets and stuff... skip for
+                # now.
+                if child.isFolder )
+
+        return tree
+
+
     def discover(self, root=None, walker=None, recognizer=None, levels=None):
         """
         Traverse the local filesystem starting with {root} and refresh my contents so that they
