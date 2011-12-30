@@ -3,7 +3,7 @@
 !
 ! michael a.g. aïvázis
 ! california institute of technology
-! (c) 1998-2011  all rights reserved
+! (c) 1998-2012  all rights reserved
 !
 -->
 
@@ -19,7 +19,7 @@
 
   <!-- banner settings -->
   <component name="pyre.weaver.banner">
-    <bind property="copyright">(c) 1998-2011 All Rights Reserved</bind>
+    <bind property="copyright">(c) 1998-2012 All Rights Reserved</bind>
     <bind property="footer">end of file</bind>
   </component>
 

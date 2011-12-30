@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2011 all rights reserved
+# (c) 1998-2012 all rights reserved
 #
 
 
@@ -46,7 +46,7 @@ def version():
 # license
 _gauss_version = "1.0"
 
-_gauss_copyright = "gauss: Copyright (c) 1998-2011 Michael A.G. Aïvázis"
+_gauss_copyright = "gauss: Copyright (c) 1998-2012 Michael A.G. Aïvázis"
 
 _gauss_license = (
     """

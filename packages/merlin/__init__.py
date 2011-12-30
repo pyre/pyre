@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2011 all rights reserved
+# (c) 1998-2012 all rights reserved
 #
 
 
@@ -65,11 +65,11 @@ def license(**kwds):
 # NYI: add localized versions of all this
 _merlin_version = (1, 0, 0)
 
-_merlin_copyright = "merlin: Copyright (c) 1998-2011 Michael A.G. Aïvázis"
+_merlin_copyright = "merlin: Copyright (c) 1998-2012 Michael A.G. Aïvázis"
 
 _merlin_header = """
     merlin {}.{}.{}
-    Copyright (c) 1998-2011 Michael A.G. Aïvázis
+    Copyright (c) 1998-2012 Michael A.G. Aïvázis
     All rights reserved
     """.format(*_merlin_version)
 

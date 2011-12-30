@@ -2,7 +2,7 @@
 // 
 // michael a.g. aïvázis
 // california institute of technology
-// (c) 1998-2011 all rights reserved
+// (c) 1998-2012 all rights reserved
 // 
 
 #include <portinfo>
@@ -24,7 +24,7 @@ PyObject *
 pyre::extensions::journal::
 copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "journal: (c) 1998-2011 Michael A.G. Aïvázis";
+    const char * const copyright_note = "journal: (c) 1998-2012 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
 }
     

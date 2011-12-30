@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2011 all rights reserved
+# (c) 1998-2012 all rights reserved
 #
 
 
@@ -30,8 +30,9 @@ class AssetManager(Spell):
         This is the action of the spell
         """
         # the first argument is supposed to be a subdirectory of the current directory
-        folder = args[0] if args else '.'
-        print('target folder: {!r}'.format(folder))
+        target = args[0] if args else '.'
+        self.info.log('target: {!r}'.format(target))
+        
         # all done
         return
 
