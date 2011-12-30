@@ -16,6 +16,11 @@ class Spell(pyre.component, implements=spell):
     """
 
 
+    # public state
+    dry = pyre.properties.bool(default=False)
+    dry.doc = 'show what would be done without actually doing anything'
+
+
     # access to the merlin executive
     merlin = None # patched by the merlin boot sequence
 
