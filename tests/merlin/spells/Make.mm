@@ -6,14 +6,15 @@
 #
 
 
-PROJECT = pyre
+PROJECT = merlin-tests
+
+TEST_DIR = /tmp
 
 PROJ_CLEAN += \
-    .merlin \
-    deep \
-    shallow \
+    $(TEST_DIR)/deep \
+    $(TEST_DIR)/shallow \
 
-MERLIN = ${EXPORT_BINDIR}/merlin
+MERLIN = $(EXPORT_BINDIR)/merlin
 
 #--------------------------------------------------------------------------
 #
@@ -23,7 +24,7 @@ all: test
 test: init clean
 
 init:
-	${MERLIN} init shallow
-	${MERLIN} init --create-prefix deep/ly/burried
+	$(MERLIN) init $(TEST_DIR)/shallow
+	$(MERLIN) init --create-prefix $(TEST_DIR)/deep/ly/burried
 
 # end of file 
