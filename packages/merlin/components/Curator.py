@@ -15,7 +15,7 @@ import pickle
 
 
 # declaration
-class Curator(pyre.component, family="merlin.curator"):
+class Curator(pyre.component, family="merlin.components.curator"):
     """
     The component that manages the project persistent store
     """
