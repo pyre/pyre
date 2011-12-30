@@ -50,15 +50,12 @@ class Initializer(merlin.spell):
         # if it is
         if root and not self.force:
             # complain
-            import journal
-            msg = '{!r} is already within an existing project'.format(folder)
-            return journal.error('merlin.init').log(msg)
+            return self.error.log('{!r} is already within an existing project'.format(folder))
 
         # if the directory does not exist
         if not os.path.isdir(folder):
-            import journal
-            msg = 'target folder {!r} does not exist; creating'.format(folder)
-            journal.info('merlin.init').log(msg)
+            # notify the user
+            self.info.log('target folder {!r} does not exist; creating'.format(folder))
             # were we asked to build all parent directories?
             if self.createPrefix:
                 # yes, do it
@@ -72,9 +69,7 @@ class Initializer(merlin.spell):
                 # if that fails
                 except OSError:
                     # complain
-                    import journal
-                    msg = 'could not create folder {!r}'.format(folder)
-                    return journal.error('merlin.init').log(msg)
+                    return self.error.log('could not create folder {!r}'.format(folder))
 
         # now that it's there, build a local filesystem around it
         pfs = self.vfs.local(root=folder)
@@ -91,8 +86,7 @@ class Initializer(merlin.spell):
         # if it fails
         except OSError as error:
             # complain
-            import journal
-            return journal.error('merlin.init').log(str(error))
+            return self.error.log(str(error))
 
         # mount it
         self.vfs['/project'] = pfs

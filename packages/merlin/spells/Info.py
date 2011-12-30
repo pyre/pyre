@@ -48,40 +48,39 @@ class Info(merlin.spell):
             # if that fails
             except vfs.NotFoundError:
                 # no worries
-                import journal
-                journal.warning('merlin.info').log('no project information found')
+                self.warning.log('no project information found')
             # otherwise
             else:
                 # print
-                print('project:')
-                print('  name: {}'.format(project.name))
-                print('  root: {}'.format(vfs['/project'].uri))
-                print('  merlin configuration: {}'.format(vfs['/merlin/project'].uri))
+                self.info.line('project:')
+                self.info.line('  name: {}'.format(project.name))
+                self.info.line('  root: {}'.format(vfs['/project'].uri))
+                self.info.log('  merlin configuration: {}'.format(vfs['/merlin/project'].uri))
 
         # user information
         if self.user or self.all:
             # access the user metadata
             user = self.merlin.user
             # print
-            print('user:')
-            print('  name: {}'.format(user.name))
-            print('  email: {}'.format(user.email))
-            print('  affiliation: {}'.format(user.affiliation))
-            print('  uid: {}'.format(user.uid))
-            print('  username: {}'.format(user.username))
-            print('  home: {}'.format(user.home))
-            print('  merlin configuration: {}'.format(vfs['/merlin/user'].uri))
+            self.info.line('user:')
+            self.info.line('  name: {}'.format(user.name))
+            self.info.line('  email: {}'.format(user.email))
+            self.info.line('  affiliation: {}'.format(user.affiliation))
+            self.info.line('  uid: {}'.format(user.uid))
+            self.info.line('  username: {}'.format(user.username))
+            self.info.line('  home: {}'.format(user.home))
+            self.info.log('  merlin configuration: {}'.format(vfs['/merlin/user'].uri))
 
         # host information
         if self.host or self.all:
             # access the host metadata
             host = self.merlin.host
             # print
-            print('host:')
-            print('  name: {}'.format(host.name))
-            print('  system: {}'.format(host.system))
-            print('  release: {}'.format(host.release))
-            print('  architecture: {}'.format(host.architecture))
+            self.info.line('host:')
+            self.info.line('  name: {}'.format(host.name))
+            self.info.line('  system: {}'.format(host.system))
+            self.info.line('  release: {}'.format(host.release))
+            self.info.log('  architecture: {}'.format(host.architecture))
 
         # all done
         return
