@@ -226,7 +226,7 @@ class Merlin(pyre.application):
         self.user = User(name=name+'.user')
         # the package manager
         from .PackageManager import PackageManager
-        self.packages = PackageManager(name=name+'.packages')
+        self.packages = PackageManager(name=name+'.package-manager')
         # the spell book
         from .Spellbook import Spellbook
         self.spellbook = Spellbook(name=name+".spellbook")
