@@ -28,7 +28,7 @@ class Folder(Node):
     # my metadata
     from .metadata import FolderInfo as metadata
     # exceptions
-    from .exceptions import FolderInsertionError, NotFoundError
+    from .exceptions import FolderInsertionError, FolderError, NotFoundError
 
 
     # interface
@@ -113,6 +113,26 @@ class Folder(Node):
         return self._insert(node=node, uri=uri)
 
 
+    def __contains__(self, uri):
+        """
+        Check whether {uri} is one of my children
+        """
+        # take the {uri} apart
+        names = filter(None, uri.split(self.separator))
+        # starting with me
+        node = self
+        # attempt to
+        try:
+            # iterate over the names
+            for name in names: node = node.contents[name]
+        # if node is not a folder, report failure
+        except AttributeError: return False
+        # if {name} is not among the contents of node, report failure
+        except KeyError: return False
+        # if we get this far, report success
+        return True
+
+
     # implementation details
     def _retrieve(self, uri):
         """
@@ -131,6 +151,11 @@ class Folder(Node):
             # notify the caller
             raise self.NotFoundError(
                 filesystem=self.filesystem(), node=self, uri=uri, fragment=name)
+        # if one of the intermediate nodes is not a folder
+        except AttributeError:
+            # notify the caller
+            raise self.FolderError(
+                filesystem=self.filesystem(), node=self, uri=uri, fragment=node.uri)
         # otherwise, return the target node
         return node
 

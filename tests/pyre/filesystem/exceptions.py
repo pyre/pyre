@@ -14,8 +14,8 @@ Tests for all the exceptions raised by this package
 def test():
 
     from pyre.filesystem.exceptions import (
-        GenericError, DirectoryListingError, MountPointError, FilesystemError, NotFoundError,
-        FolderInsertionError, URISpecificationError
+        GenericError, DirectoryListingError, MountPointError, FilesystemError,
+        FolderError, NotFoundError, FolderInsertionError, URISpecificationError
         )
 
     try:
@@ -36,6 +36,11 @@ def test():
     try:
         raise FilesystemError(filesystem=None, node=None, description=None)
     except FilesystemError as error:
+        pass
+
+    try:
+        raise FolderError(uri=None, fragment=None, filesystem=None, node=None)
+    except FolderError as error:
         pass
 
     try:

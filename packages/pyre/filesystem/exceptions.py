@@ -71,6 +71,19 @@ class NotFoundError(FilesystemError):
         return
 
 
+class FolderError(FilesystemError):
+    """
+    Exception raised when a request is made for the contents of a node that is not a folder
+    """
+
+    def __init__(self, uri, fragment, **kwds):
+        msg = "while looking for {!r}: {!r} is not a folder".format(uri, fragment)
+        super().__init__(description=msg, **kwds)
+        self.uri = uri
+        self.fragment = fragment
+        return
+
+
 class FolderInsertionError(FilesystemError):
     """
     Exception raised when attempting to insert a node in a filsystem and the target node is not
