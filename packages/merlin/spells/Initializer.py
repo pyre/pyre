@@ -8,29 +8,30 @@
 
 # externals
 import os
-import pyre
-
-
-# superclasses
-from .Spell import Spell
+import merlin
 
 
 # declaration
-class Initializer(Spell):
+class Initializer(merlin.spell):
     """
     Create a new merlin project rooted at the given directory
     """
 
 
     # public state
-    createPrefix = pyre.properties.bool(default=False)
-    createPrefix.aliases.add('create-prefix')
-    createPrefix.doc = "create all directories leading up to the specified target"
+    project = merlin.properties.str(default=None)
+    project.doc = 'the name of the project'
 
+    createPrefix = merlin.properties.bool(default=False)
+    createPrefix.aliases.add('create-prefix')
+    createPrefix.doc = 'create all directories leading up to the specified target'
+
+    force = merlin.properties.bool(default=False)
+    force.doc = 'initialize the target folder regardless of whether is it already part of a project'
 
     # class interface
     # interface
-    @pyre.export
+    @merlin.export
     def main(self, *args, **kwds):
         """
         Make {folder} the root of a new merlin project. The target {folder} is given as an
@@ -41,17 +42,17 @@ class Initializer(Spell):
         # access my executive
         merlin = self.merlin
 
-        # the first argument is supposed to be a subdirectory of the current directory
+        # the first argument is supposed to be the target folder that will hold the new project
         folder = args[0] if args else os.curdir
 
         # first check whether this directory is already part of a merlin project
         root, metadir = merlin.locateProjectRoot(folder=folder)
         # if it is
-        if root:
+        if root and not self.force:
             # complain
             import journal
-            msg = "{!r} is already within an existing project".format(folder)
-            return journal.error("merlin.init").log(msg)
+            msg = '{!r} is already within an existing project'.format(folder)
+            return journal.error('merlin.init').log(msg)
 
         # if the directory does not exist
         if not os.path.isdir(folder):
@@ -72,8 +73,8 @@ class Initializer(Spell):
                 except OSError:
                     # complain
                     import journal
-                    msg = "could not create folder {!r}".format(folder)
-                    return journal.error("merlin.init").log(msg)
+                    msg = 'could not create folder {!r}'.format(folder)
+                    return journal.error('merlin.init').log(msg)
 
         # now that it's there, build a local filesystem around it
         pfs = self.vfs.local(root=folder)
@@ -91,13 +92,27 @@ class Initializer(Spell):
         except OSError as error:
             # complain
             import journal
-            return journal.error("merlin.init").log(str(error))
+            return journal.error('merlin.init').log(str(error))
+
+        # mount it
+        self.vfs['/project'] = pfs
+        self.vfs['/merlin/project'] = pfs[merlin.merlinFolder]
+
+        # if a name was not specified
+        if self.project is None:
+            # use the last portion of the target folder
+            _, self.project = os.path.split(os.path.abspath(folder))
+
+        # build a new project description
+        project = merlin.curator.newProject(name=self.project)
+        # and save it
+        merlin.curator.saveProject(project=project)
 
         # all done
         return self
 
 
-    @pyre.export
+    @merlin.export
     def help(self, **kwds):
         """
         Generate the help screen associated with this spell
