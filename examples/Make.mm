@@ -19,7 +19,6 @@ ifneq ($(strip $(LIBPQ_DIR)),)
 
   RECURSE_DIRS += \
       bizbook.pyre \
-      contacts.pyre
 
 endif
 
