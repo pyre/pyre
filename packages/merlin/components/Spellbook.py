@@ -40,6 +40,8 @@ class Spellbook(pyre.component, family="merlin.spells"):
         executive = self.pyre_executive
         # ask the executive to locate the spell factory
         factory = executive.retrieveComponentDescriptor(uri=name, context=self)
+        # place the name in the merlin namespace
+        name = 'merlin.' + name
         # instantiate it and alias its traits at global scope
         spell = factory(name=name, globalAliases=True)
         # print("    found: {}".format(spell))
