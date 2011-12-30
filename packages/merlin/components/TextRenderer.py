@@ -28,8 +28,14 @@ class TextRenderer(pyre.component, family="merlin.renderers.text",
         # extract the information from the metadata
         channel = metadata['channel']
         severity = metadata['severity']
-        # build the message
-        yield "{}: {}: {}".format(channel, severity.upper(), ';'.join(page))
+
+        # make an iterator over the message contents
+        lines = iter(page)
+        # build the first line of the message
+        yield "{}: {}: {}".format(channel, severity, next(lines))
+        # and render the rest
+        for line in lines: yield line
+
         # all done
         return
 

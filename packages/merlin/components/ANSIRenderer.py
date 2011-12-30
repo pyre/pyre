@@ -32,8 +32,14 @@ class ANSIRenderer(pyre.component, family="merlin.renderers.ansi",
         # extract the information from the metadata
         channel = '{}{}{}'.format(blue, metadata['channel'], normal)
         severity = '{}{}{}'.format(marker, metadata['severity'].upper(), normal)
-        # build the message
-        yield "{}: {}: {}".format(channel, severity, ';'.join(page))
+
+        # make an iterator over the message contents
+        lines = iter(page)
+        # build the first line of the message
+        yield "{}: {}: {}".format(channel, severity, next(lines))
+        # and render the rest
+        for line in lines: yield line
+            
         # all done
         return
 
