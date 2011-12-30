@@ -25,16 +25,16 @@ class Merlin(pyre.application):
 
 
     # types
-    from .Curator import Curator
-    from .PackageManager import PackageManager
-    from .Spellbook import Spellbook
     # exceptions
     from .exceptions import MerlinError
 
 
     # my subcomponents; built at construction time
+    user = None # information about the current user
+    host = None # information about the host we are running on
     curator = None # the manager of the project persistent store
     spellbook = None # the manager of the installed spells
+    packages = None # the package manager
 
 
     # interface
@@ -46,29 +46,15 @@ class Merlin(pyre.application):
         # extract the non-configurational parts of the command line
         request = tuple(c for _,c,_ in self.executive.configurator.commands) 
         # show the default help screen if there was nothing useful on the command line
-        if request == (): 
-            return self.help()
+        if request == (): return self.help()
 
         # interpret the request as the name of one of my actors, followed by an argument tuple
         # for the actor's main entry point
         spell = request[0]
         args = request[1:]
 
-        # instantiate the component
-        try:
-            actor = self.spellbook.findSpell(name=spell)
-        except self.FrameworkError:
-            import journal
-            msg = "spell {!r} not found".format(spell)
-            return journal.error('merlin').log(msg)
-
-        # if it is a merlin actor
-        if isinstance(actor, pyre.component):
-            # ask it to process the user request
-            return actor.main(*args)
-
-        # all done
-        return self
+        # and cast it
+        return self.cast(name=spell, args=args)
 
 
     @pyre.export
@@ -87,6 +73,26 @@ class Merlin(pyre.application):
         return self
 
 
+    # interface
+    def cast(self, name, args=()):
+        """
+        Retrieve a spell by the given {name} and cast it
+        """
+        # try to
+        try:
+            # locate the spell
+            spell = self.spellbook.findSpell(name=name)
+        # if that failed
+        except self.FrameworkError:
+            # complain
+            import journal
+            msg = "spell {!r} not found".format(name)
+            return journal.error('merlin').log(msg)
+
+        # otherwise, cast it
+        return spell.main(*args)
+
+
     # support
     def locateProjectRoot(self, folder=None):
         """
@@ -94,7 +100,7 @@ class Merlin(pyre.application):
         """
         # access to the path utilities
         import os
-        # default to checking staring with the current directory
+        # default to checking starting with the current directory
         folder = os.path.abspath(folder) if folder else os.getcwd()
         # loop until we reach the root of the filesystem
         while folder != os.path.sep:
@@ -212,12 +218,21 @@ class Merlin(pyre.application):
     def __init__(self, name=MERLIN, **kwds):
         super().__init__(name=name, **kwds)
 
-        # create and bind the package manager
-        self.packages = self.PackageManager(name=name+'.packages')
-        # create and bind the spell book
-        self.spellbook = self.Spellbook(name=name+".spellbook")
-        # create and bind the curator
-        self.curator = self.Curator(name=name+".curator")
+        # the host
+        from .Host import Host
+        self.host = Host(name=name+'.host')
+        # the user
+        from .User import User
+        self.user = User(name=name+'.user')
+        # the package manager
+        from .PackageManager import PackageManager
+        self.packages = PackageManager(name=name+'.packages')
+        # the spell book
+        from .Spellbook import Spellbook
+        self.spellbook = Spellbook(name=name+".spellbook")
+        # the curator
+        from .Curator import Curator
+        self.curator = Curator(name=name+".curator")
 
         # register the components that explore my vfs looking for configuration choices
         self.categories = {

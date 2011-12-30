@@ -7,6 +7,7 @@
 
 
 # meta activities
+from merlin.spells.Info import Info as info
 from merlin.spells.Initializer import Initializer as init
 from merlin.spells.AssetManager import AssetManager as add
 
