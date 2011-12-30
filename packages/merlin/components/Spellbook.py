@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import re
 # access to the framework
 import pyre
 
@@ -19,6 +21,12 @@ class Spellbook(pyre.component, family="merlin.spells"):
 
     # exceptions
     from .exceptions import SpellNotFoundError
+
+
+    # public data
+    recognizer = re.compile(
+        r'^.+\.py$'
+        )
 
 
     # utilities
@@ -45,10 +53,12 @@ class Spellbook(pyre.component, family="merlin.spells"):
         """
         # go through the entire contents
         for shelf in folder.contents:
-            # everybody is a candidate, for now
+            # skip unrecognizable files
+            if not self.recognizer.match(shelf): continue
+            # everybody else is a candidate, for now
             yield folder.join(name, shelf)
         # all done
         return
 
 
-# end of file 
+# end of file
