@@ -124,8 +124,7 @@ _merlin_license = _merlin_header + """
 
 
 # load the framework
-from pyre import export
-
+from pyre import export, properties, component, interface
 
 # bootstrapping
 def boot():

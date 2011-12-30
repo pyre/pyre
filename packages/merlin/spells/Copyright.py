@@ -6,16 +6,12 @@
 #
 
 
-# packages
-import pyre
-
-
-# superclasses
-from .Spell import Spell
+# externals
+import merlin
 
 
 # declaration
-class Copyright(Spell):
+class Copyright(merlin.spell):
     """
     Print out the merlin copyright note
     """
@@ -23,20 +19,18 @@ class Copyright(Spell):
 
     # class interface
     # interface
-    @pyre.export
+    @merlin.export
     def main(self, **kwds):
         """
         Print the copyright note of the merlin package
         """
-        # access to the merlin package
-        import merlin
         # invoke the package function
         merlin.copyright()
         # all done
         return
 
 
-    @pyre.export
+    @merlin.export
     def help(self, **kwds):
         """
         Generate the help screen associated with this spell

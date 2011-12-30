@@ -6,16 +6,12 @@
 #
 
 
-# packages
-import pyre
-
-
-# superclasses
-from .Spell import Spell
+# externals
+import merlin
 
 
 # declaration
-class Version(Spell):
+class Version(merlin.spell):
     """
     Print out the version of the merlin package
     """
@@ -23,20 +19,18 @@ class Version(Spell):
 
     # class interface
     # interface
-    @pyre.export
+    @merlin.export
     def main(self, **kwds):
         """
         Print the version of the merlin package
         """
-        # access to the merlin package
-        import merlin
         # invoke the package function
         merlin.version()
         # all done
         return
 
 
-    @pyre.export
+    @merlin.export
     def help(self, **kwds):
         """
         Generate the help screen associated with this spell

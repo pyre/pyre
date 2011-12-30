@@ -6,16 +6,12 @@
 #
 
 
-# packages
-import pyre
-
-
-# superclasses
-from .Spell import Spell
+# externals
+import merlin
 
 
 # declaration
-class License(Spell):
+class License(merlin.spell):
     """
     Print out the license and terms of use of the merlin package
     """
@@ -23,20 +19,18 @@ class License(Spell):
 
     # class interface
     # interface
-    @pyre.export
+    @merlin.export
     def main(self, **kwds):
         """
         Print out the license and terms of use of the merlin package
         """
-        # access to the merlin package
-        import merlin
         # invoke the package function
         merlin.license()
         # all done
         return
 
 
-    @pyre.export
+    @merlin.export
     def help(self, **kwds):
         """
         Generate the help screen associated with this spell
