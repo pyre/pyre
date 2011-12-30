@@ -22,6 +22,16 @@ class Curator(pyre.component, family="merlin.curator"):
 
 
     # interface
+    def newProject(self, name):
+        """
+        Build a new project description structure
+        """
+        # access the factory
+        from ..schema import project
+        # build one and return it
+        return project(name=name)
+
+
     def loadProject(self):
         """
         Retrieve the project configuration information from the archive

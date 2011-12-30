@@ -6,4 +6,8 @@
 #
 
 
+# factories
+from .Project import Project as project
+
+
 # end of file 
