@@ -107,7 +107,7 @@ class Node(metaclass=_metaclass_Node):
 
 
     # debugging support
-    def dump(self, interactive=True):
+    def dump(self, interactive=True, indent=''):
         """
         Print out my contents using a tree explorer
         """
@@ -118,7 +118,7 @@ class Node(metaclass=_metaclass_Node):
         from . import treeExplorer
         explorer = treeExplorer()
         # get the representation of my contents and dump it out
-        for line in explorer.explore(node=self, label=self.uri): print(line)
+        for line in explorer.explore(node=self, label=self.uri): print(indent, line)
         # all done
         return self
 
