@@ -29,13 +29,18 @@ class TextRenderer(pyre.component, family="merlin.renderers.text",
         channel = metadata['channel']
         severity = metadata['severity']
 
-        # make an iterator over the message contents
-        lines = iter(page)
-        # build the first line of the message
-        yield "{}: {}: {}".format(channel, severity, next(lines))
-        # and render the rest
-        for line in lines: yield line
+        # if the message has only one line
+        if len(page) == 1:
+            # construct the one liner
+            yield "{}: {}: {}".format(channel, severity, page[0])
+            # all done
+            return
 
+        # otherwise, build the first line of the message
+        yield "{}: {}:".format(channel, severity)
+        # and render the rest
+        for line in page: yield line
+            
         # all done
         return
 

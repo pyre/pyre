@@ -33,12 +33,17 @@ class ANSIRenderer(pyre.component, family="merlin.renderers.ansi",
         channel = '{}{}{}'.format(blue, metadata['channel'], normal)
         severity = '{}{}{}'.format(marker, metadata['severity'].upper(), normal)
 
-        # make an iterator over the message contents
-        lines = iter(page)
-        # build the first line of the message
-        yield "{}: {}: {}".format(channel, severity, next(lines))
+        # if the message has only one line
+        if len(page) == 1:
+            # construct the one liner
+            yield "{}: {}: {}".format(channel, severity, page[0])
+            # all done
+            return
+
+        # otherwise, build the first line of the message
+        yield "{}: {}:".format(channel, severity)
         # and render the rest
-        for line in lines: yield line
+        for line in page: yield line
             
         # all done
         return
