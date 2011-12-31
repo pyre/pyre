@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.2
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -16,14 +16,12 @@ def listdir():
     import os
     import pyre.filesystem
 
-    finder = pyre.filesystem.newFinder()
-    cwd = pyre.filesystem.newLocalFilesystem(root=".").discover()
+    explorer = pyre.filesystem.treeExplorer()
+    cwd = pyre.filesystem.local(root='.').discover()
 
     me = os.path.normpath(__file__)
-    for node,path in finder.explore(cwd):
-        if path == me:
-            continue
-        print(path)
+    for line in explorer.explore(node=cwd, label='.'):
+        print(line)
 
     return cwd
 
