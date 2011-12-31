@@ -56,7 +56,6 @@ class File(Info):
         import time
         print("node {}".format(self))
         print("  uri:", self.uri)
-        print("  owner:", self.owner)
         print("  uid:", self.uid)
         print("  gid:", self.gid)
         print("  size:", self.size)
@@ -77,7 +76,6 @@ class File(Info):
 
     # implementation details
     __slots__ = (
-        'owner', # the owner of the node
         'uid', 'gid', # the user and group ids of the current owner
         'size', # the actual size of the file
         'permissions', # NYI
