@@ -6,16 +6,13 @@
 #
 
 
-# access to the framework
-import pyre
-
-
-# other packages
+# externals
 import pickle
+import merlin
 
 
 # declaration
-class Curator(pyre.component, family="merlin.components.curator"):
+class Curator(merlin.component, family="merlin.components.curator"):
     """
     The component that manages the project persistent store
     """

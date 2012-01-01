@@ -8,12 +8,11 @@
 
 # externals
 import re
-# access to the framework
-import pyre
+import merlin
 
 
 # declaration
-class Spellbook(pyre.component, family="merlin.spells"):
+class Spellbook(merlin.component, family="merlin.spells"):
     """
     This is a sample documentation string for Spellbook
     """

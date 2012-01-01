@@ -7,12 +7,12 @@
 
 
 # externals
-import pyre
+import merlin
 import platform
 
 
 # declaration
-class Host(pyre.component):
+class Host(merlin.component):
     """
     Encapsulation of host specific information
     """
@@ -20,7 +20,7 @@ class Host(pyre.component):
 
     # public data
     # defaults from the current environment
-    (system, name, release, version, processor, architecture) = platform.uname()
+    (system, name, release, version, architecture, processor) = platform.uname()
 
 
 # end of file 

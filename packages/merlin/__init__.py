@@ -122,19 +122,22 @@ _merlin_license = _merlin_header + """
     POSSIBILITY OF SUCH DAMAGE.
     """
 
-
-# load the framework
-from pyre import export, properties, component, interface
+# the framework entities
+from .components import export, properties, component, interface
 
 # bootstrapping
 def boot():
+    # externals
+    import weakref
     # access the executive factory
     from .components.Merlin import Merlin
     # build one and return it
     executive = Merlin()
+    # patch components with access to this executive
+    component.merlin = weakref.proxy(executive)
     # patch spells with access to this executive
     from .spells.Spell import Spell
-    Spell.merlin = executive
+    Spell.merlin = weakref.proxy(executive)
     # and return it
     return executive
     

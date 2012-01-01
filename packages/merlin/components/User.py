@@ -8,20 +8,20 @@
 
 # externals
 import os
-import pyre
+import merlin
 
 
 # declaration
-class User(pyre.component, family='pyre.user'):
+class User(merlin.component, family='pyre.user'):
     """
     Encapsulation of user specific information
     """
 
 
     # public data
-    name = pyre.properties.str()
-    email = pyre.properties.str()
-    affiliation = pyre.properties.str()
+    name = merlin.properties.str()
+    email = merlin.properties.str()
+    affiliation = merlin.properties.str()
 
     uid = os.getuid()
     home = os.path.expanduser('~')

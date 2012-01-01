@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     ANSIRenderer.py \
+    Component.py \
     Curator.py \
     Host.py \
     Merlin.py \

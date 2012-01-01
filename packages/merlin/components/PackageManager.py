@@ -6,19 +6,19 @@
 #
 
 
-# access to the framework
-import pyre
+# externals
+import merlin
 
 
 # declaration
-class PackageManager(pyre.component, family='merlin.component.package-manager'):
+class PackageManager(merlin.component, family='merlin.component.package-manager'):
     """
     The component that manages the package archive
     """
 
 
     # properties
-    hostname = pyre.properties.str()
+    hostname = merlin.properties.str()
     hostname.doc = "the name of this machine"
 
 
