@@ -18,6 +18,9 @@ class Info(merlin.spell):
     all = merlin.properties.bool(default=False) 
     all.doc = 'display all available information'
 
+    assets = merlin.properties.bool(default=False) 
+    assets.doc = 'controls whether to display asset information'
+
     project = merlin.properties.bool(default=True) 
     project.doc = 'controls whether to display project information'
 
@@ -81,6 +84,21 @@ class Info(merlin.spell):
             self.info.line('  system: {}'.format(host.system))
             self.info.line('  release: {}'.format(host.release))
             self.info.log('  architecture: {}'.format(host.architecture))
+
+        # asset information
+        if self.assets or self.all:
+            # access the asset folder
+            assets = vfs["/merlin/project/assets"]
+            # print
+            self.info.line('assets:')
+            # grab each asset pickle
+            for name, node in assets.contents.items():
+                # load it
+                asset = merlin.curator.load(node)
+                # print a marker
+                self.info.line('  {}: {}'.format(asset.name, asset.category))
+            # no more assets    
+            self.info.log()
 
         # all done
         return
