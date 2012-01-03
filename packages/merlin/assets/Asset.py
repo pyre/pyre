@@ -12,6 +12,10 @@ class Asset:
     """
 
 
+    # constants
+    category = "asset"
+
+
     # meta methods
     def __init__(self, name, uri, **kwds):
         super().__init__(**kwds)

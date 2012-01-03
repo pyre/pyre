@@ -15,6 +15,10 @@ class PythonPackage(AssetContainer):
     """
 
 
+    # constants
+    category = "python package"
+
+
     # implementation details
     __slots__ = ()
 

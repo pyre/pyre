@@ -15,6 +15,10 @@ class PythonModule(Asset):
     """
 
 
+    # constants
+    category = "python module"
+
+
     # implementation details
     __slots__ = ()
 
