@@ -12,7 +12,7 @@ import merlin
 
 
 # declaration
-class Spellbook(merlin.component, family="merlin.spells"):
+class Spellbook(merlin.component, family="merlin.components.spellbook"):
     """
     This is a sample documentation string for Spellbook
     """
