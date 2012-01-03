@@ -78,6 +78,7 @@ class Initializer(merlin.spell):
         mfs = self.vfs.virtual()
         # here is the directory structure
         mfs['spells'] = mfs.folder()
+        mfs['assets'] = mfs.folder()
 
         # attempt to
         try:
@@ -98,7 +99,7 @@ class Initializer(merlin.spell):
             _, self.project = os.path.split(os.path.abspath(folder))
 
         # build a new project description
-        project = merlin.curator.newProject(name=self.project)
+        project = merlin.newProject(name=self.project)
         # and save it
         merlin.curator.saveProject(project=project)
 
