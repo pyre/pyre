@@ -23,8 +23,12 @@ class Curator(merlin.component, family="merlin.components.curator"):
         """
         Retrieve the project configuration information from the archive
         """
+        # the fileserver
+        vfs = self.vfs
+        # get the project pickle
+        project = vfs[vfs.join("/merlin/project", "project.pickle")]
         # retrieve the project instance from the file
-        return self._load(tag="project")
+        return self.load(node=project)
 
 
     def saveProject(self, project):
@@ -32,7 +36,7 @@ class Curator(merlin.component, family="merlin.components.curator"):
         Save the given project configuration to the archive
         """
         # pickle the project information into the associated file
-        self._save(tag="project", item=project)
+        self.save(tag="project", item=project)
         # and return
         return self
 
@@ -44,37 +48,31 @@ class Curator(merlin.component, family="merlin.components.curator"):
         # compute the asset tag
         tag = self.vfs.join('assets', asset.name)
         # pickle the project information into the associated file
-        self._save(tag=tag, item=asset)
+        self.save(tag=tag, item=asset)
         # and return
         return self
 
 
     # implementation details
-    def _load(self, tag):
+    def load(self, node):
         """
         Retrieve an object from the merlin file identified by {tag}
         """
-        # access the file server
-        fileserver = self.pyre_executive.fileserver
-        # derive the filename from {tag}
-        vname = "/merlin/project/{}.pickle".format(tag)
         # open the associated file; the caller is responsible for catching any exceptions
-        store = fileserver[vname].open(mode="rb")
+        store = node.open(mode="rb")
         # retrieve the object from the store
         item = pickle.load(store)
         # and return it
         return item
 
 
-    def _save(self, tag, item):
+    def save(self, tag, item):
         """
         Pickle {item} into the merlin file indicated by {tag}
         """
-        # access the file server
-        fileserver = self.pyre_executive.fileserver
         # verify that the project directory exists and is mounted; the caller is responsible
         # for catching any exceptions
-        folder = fileserver["/merlin/project"]
+        folder = self.vfs["/merlin/project"]
         # build the filename associated with {tag}
         vname = "{}.pickle".format(tag)
         # look for the file
@@ -93,7 +91,6 @@ class Curator(merlin.component, family="merlin.components.curator"):
         pickle.dump(item, store)
         # and return
         return
-        
 
 
 # end of file 
