@@ -21,6 +21,15 @@ class Component(pyre.component, hidden=True):
     merlin = None # access to the merlin executive
 
 
+    @property
+    def vfs(self):
+        """
+        Convenient access to the application fileserver
+        """
+        # merlin knows
+        return self.merlin.vfs
+
+
     # meta methods`
     def __init__(self, name, **kwds):
         super().__init__(name=name, **kwds)
