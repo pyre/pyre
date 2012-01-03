@@ -234,6 +234,12 @@ class Merlin(pyre.application):
         from .Curator import Curator
         self.curator = Curator(name=name+".curator")
 
+        # the asset classifiers
+        from .PythonClassifier import PythonClassifier
+        self.assetClassifiers = [
+            PythonClassifier(name=name+'.python')
+            ]
+
         # register the components that explore my vfs looking for configuration choices
         self.categories = {
             "spells": self.spellbook,

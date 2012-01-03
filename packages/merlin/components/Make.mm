@@ -26,6 +26,7 @@ EXPORT_PYTHON_MODULES = \
     Host.py \
     Merlin.py \
     PackageManager.py \
+    PythonClassifier.py \
     Spell.py \
     Spellbook.py \
     TextRenderer.py \

@@ -19,16 +19,6 @@ class Curator(merlin.component, family="merlin.components.curator"):
 
 
     # interface
-    def newProject(self, name):
-        """
-        Build a new project description structure
-        """
-        # access the factory
-        from ..schema import project
-        # build one and return it
-        return project(name=name)
-
-
     def loadProject(self):
         """
         Retrieve the project configuration information from the archive
@@ -43,6 +33,18 @@ class Curator(merlin.component, family="merlin.components.curator"):
         """
         # pickle the project information into the associated file
         self._save(tag="project", item=project)
+        # and return
+        return self
+
+
+    def saveAsset(self, asset):
+        """
+        Save the given asset to the archive
+        """
+        # compute the asset tag
+        tag = self.vfs.join('assets', asset.name)
+        # pickle the project information into the associated file
+        self._save(tag=tag, item=asset)
         # and return
         return self
 
