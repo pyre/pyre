@@ -9,7 +9,7 @@
 import pyre
 
 
-class Spell(pyre.interface, familly="merlin.spells"):
+class Spell(pyre.interface, family="merlin.spells"):
     """
     Interface declaration for merlin spells
     """

@@ -22,6 +22,10 @@ class Spellbook(merlin.component, family="merlin.spells"):
     from .exceptions import SpellNotFoundError
 
 
+    # types
+    from .Spell import Spell as spell
+
+
     # public data
     recognizer = re.compile(
         r'^.+\.py$'
@@ -35,16 +39,12 @@ class Spellbook(merlin.component, family="merlin.spells"):
         spell {name}.
         """
         # print(" ** Spellbook.findSpell: looking for {!r}".format(name))
-        # access to the pyre executive
-        executive = self.pyre_executive
-        # ask the executive to locate the spell factory
-        factory = executive.retrieveComponentDescriptor(uri=name, context=self)
-        # place the name in the merlin namespace
-        name = 'merlin.' + name
-        # instantiate it and alias its traits at global scope
-        spell = factory(name=name, globalAliases=True)
+        # ask the spell interface to convert the name into a spell factory
+        factory = self.spell.pyre_cast(value=name)
+        # place the spell name in the merlin namespace and alias its traits at global scope
+        spell = factory(name='merlin.'+name, globalAliases=True)
         # print("    found: {}".format(spell))
-        # and return it
+        # return the spell instance
         return spell
 
 

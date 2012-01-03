@@ -10,7 +10,6 @@ PROJECT = pyre
 PACKAGE = depository/merlin
 
 RECURSE_DIRS = \
-    spells \
 
 #--------------------------------------------------------------------------
 #
