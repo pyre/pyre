@@ -15,4 +15,8 @@ class PythonModule(Asset):
     """
 
 
+    # implementation details
+    __slots__ = ()
+
+
 # end of file 

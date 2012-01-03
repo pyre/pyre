@@ -6,4 +6,8 @@
 #
 
 
+from .PythonModule import PythonModule as pythonmodule
+from .PythonPackage import PythonPackage as pythonpackage
+
+
 # end of file 

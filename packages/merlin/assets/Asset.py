@@ -12,8 +12,24 @@ class Asset:
     """
 
 
-    # public data
-    vnode = None # the filesystem node associated with this asset
+    # meta methods
+    def __init__(self, name, uri, **kwds):
+        super().__init__(**kwds)
+
+        self.name = name # my name
+        self.uri = uri # the path relative to the relevant top level asset container
+        
+        return
+
+
+    # implementation details
+    __slots__ = 'name', 'uri'
+
+
+    # debugging support
+    def dump(self, indent=''):
+        print('{}{}'.format(indent, self.name))
+        return
 
 
 # end of file 

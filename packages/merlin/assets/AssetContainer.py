@@ -15,4 +15,22 @@ class AssetContainer(Asset):
     """
 
 
+    # meta methods
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+        self.contents = {}
+        return
+
+
+    # implementation details
+    __slots__ = 'contents',
+
+
+    # debugging support
+    def dump(self, indent=''):
+        super().dump(indent)
+        for asset in self.contents.values(): asset.dump(indent=indent+'  ')
+        return
+
+
 # end of file 

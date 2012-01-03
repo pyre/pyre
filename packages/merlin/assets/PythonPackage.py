@@ -15,4 +15,8 @@ class PythonPackage(AssetContainer):
     """
 
 
+    # implementation details
+    __slots__ = ()
+
+
 # end of file 
