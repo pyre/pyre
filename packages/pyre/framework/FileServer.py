@@ -130,7 +130,7 @@ class FileServer(Filesystem):
         # if this failed
         except self.GenericError:
             # just create a new empty folder
-            system = self.newFolder()
+            system = self.folder()
         # otherwise
         else:
             # attempt to
@@ -142,7 +142,7 @@ class FileServer(Filesystem):
                 # hmm... why is this directory missing from the distribution?
                 print(" ** warning: could not find system depository")
                 # moving on...
-                system = self.newFolder()
+                system = self.folder()
             # if successful
             else:
                 # populate it with the disk contents
@@ -157,7 +157,7 @@ class FileServer(Filesystem):
             # make filesystem out of the preference directory
             self.userfs = pyre.filesystem.local(userdir).discover(levels=1)
         except self.GenericError:
-            self.userfs = self.newFolder()
+            self.userfs = self.folder()
        # mount this directory as /pyre/user
         self["pyre/user"] = self.userfs
 
@@ -166,7 +166,7 @@ class FileServer(Filesystem):
             # make filesystem out of the preference directory
             self.localfs = pyre.filesystem.local(".").discover(levels=1)
         except self.GenericError:
-            self.localfs = self.newFolder()
+            self.localfs = self.folder()
        # mount this directory as /local
         self["local"] = self.localfs
 
