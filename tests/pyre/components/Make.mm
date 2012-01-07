@@ -76,6 +76,7 @@ component-instance:
 	${PYTHON} ./component_instance_binding.py
 	${PYTHON} ./component_instance_binding_implicit.py
 	${PYTHON} ./component_instance_binding_configuration.py
+	${PYTHON} ./component_instance_binding_existing.py
 	${PYTHON} ./component_instance_validation.py
 	${PYTHON} ./component_bad_implementations.py
 	${PYTHON} ./component_catalog.py
