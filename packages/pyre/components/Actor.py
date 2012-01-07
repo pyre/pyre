@@ -20,6 +20,7 @@ class Actor(Requirement):
 
     # types
     from .Role import Role
+    from .Configurable import Configurable
 
 
     # meta methods

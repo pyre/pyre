@@ -47,6 +47,10 @@ class Interface(Configurable, metaclass=Role, hidden=True):
             # get the executive to convert the string in {value} into a {Component} subclass
             value = cls.pyre_executive.retrieveComponentDescriptor(
                 uri=value, context=cls, locator=None)
+            # if the executive converted the string to an actual component instance
+            if isinstance(value, Actor.Configurable):
+                # just return it
+                return value
         # if value is not a {Component}, attempt to interpret it as a factory
         if not isinstance(value, Actor):
             # invoke it

@@ -260,14 +260,9 @@ class Executive:
         # print("        shelves: {!r}".format(tuple(self.shelves.keys())))
         # make sure {context} is iterable
         context = context if context is not None else ()
-        # attempt to parse the {uri}
-        try:
-            # pull out only, the currently supported parts
-            scheme, _, address, _, name = self.parseURI(uri)
-        # if parsing failed, it is a badly formed request
-        except self.BadResourceLocatorError as error:
-            # just give up
-            raise self.ComponentNotFoundError(uri=uri) from error
+        # pull out only, the currently supported parts; if parsing fails, it is a badly formed
+        # request and an exception will get raised
+        scheme, _, address, _, name = self.parseURI(uri)
 
         # if {uri} contains a scheme, use it; otherwise, try all the options
         schemes = [scheme] if scheme else ["vfs", "import"]
@@ -276,18 +271,33 @@ class Executive:
         # iterate over the encoding possibilities
         for scheme in schemes:
             # print("          attempting {!r}".format(scheme))
-            # build a codec for this candidate scheme
-            codec = self.codex.newCodec(encoding=scheme)
+            # attempt to
+            try:
+                # build a codec for this candidate scheme
+                codec = self.codex.newCodec(encoding=scheme)
+            # if the scheme is not known
+            except KeyError:
+                # construct the reason
+                reason = "unknown scheme {!r}".format(scheme)
+                # complain
+                raise self.BadResourceLocatorError(uri=uri, reason=reason, locator=locator)
+
             # attempt to locate a component descriptor
             for descriptor in codec.locateSymbol(
                 client=self,
                 scheme=scheme, specification=address, context=context, locator=locator):
                 # if there was no component name specified, return the descriptor
                 if name is None: return descriptor
-                # otherwise, try to build a component instance and return it
-                return descriptor(name=name)
+                # try to lookup a component by this name
+                try:
+                    return self.registrar.names[name]
+                # if no such name has been registered
+                except KeyError:
+                    # build a component instance and return it
+                    return descriptor(name=name)
+                
         # if we get this far, everything we could try has failed
-        raise self.ComponentNotFoundError(uri=uri)
+        raise self.ComponentNotFoundError(uri=uri, locator=locator)
 
 
     # registration of configurables

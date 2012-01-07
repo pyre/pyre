@@ -64,8 +64,10 @@ class Facility(Property):
         if not isinstance(value, self.Component):
             # let my interface have a pass
             value = self.pyre_cast(node=node, value=value)
-            # instantiate it
-            value = value(name=node.name if node.name else None)
+            # if i got a component class record
+            if not isinstance(value, self.Component) and issubclass(value, self.Component):
+                # instantiate it
+                value = value(name=node.name if node.name else None)
         # and return it
         return value
 
