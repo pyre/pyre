@@ -11,12 +11,18 @@ class PyreError(Exception):
     Base class for all pyre related errors
     """
 
-    def __init__(self, description, **kwds):
+    def __init__(self, description, locator=None, **kwds):
         super().__init__(**kwds)
         self.description = description
+        self.locator = locator
         return
 
     def __str__(self):
+        # if we have a locator
+        if self.locator:
+            # give it a chance to pinpoint the error
+            return "{}: {}".format(self.locator, self.description)
+        # otherwise
         return self.description
 
 
