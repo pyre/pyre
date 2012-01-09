@@ -18,6 +18,7 @@ from .Integer import Integer as int
 from .Object import Object as object
 from .String import String as str
 from .Time import Time as time
+from .Tuple import Tuple as tuple
 
 
 # the descriptor base class

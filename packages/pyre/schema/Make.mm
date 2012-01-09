@@ -32,6 +32,7 @@ EXPORT_PYTHON_MODULES = \
     Object.py \
     String.py \
     Time.py \
+    Tuple.py \
     Type.py \
     exceptions.py \
     __init__.py

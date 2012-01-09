@@ -10,9 +10,9 @@ import collections
 from .Type import Type
 
 
-class Array(Type):
+class Tuple(Type):
     """
-    The array type declarator
+    The tuple type declarator
     """
 
 
@@ -24,7 +24,14 @@ class Array(Type):
         """
         # evaluate the string
         if isinstance(value, str):
-            value = eval(value)
+            # strip opening and closing delimiters
+            if value and value[0] in '[(': value = value[1:]
+            if value and value[-1] in '])': value = value[:-1]
+            # if there is nothing left
+            if not value: return ()
+            # otherwise, use comma as the separator
+            value = tuple(entry.strip() for entry in value.split(','))
+
         # if {value} is an iterable, convert it to a tuple and return it
         if  isinstance(value, collections.Iterable):
             return tuple(value)

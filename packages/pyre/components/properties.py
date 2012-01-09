@@ -116,4 +116,14 @@ def str(default=""):
     return descriptor
 
 
+def tuple(default=()):
+    """
+    Build an integer property descriptor
+    """
+    descriptor = Property()
+    descriptor.type = schema.tuple
+    descriptor.default = default
+    return descriptor
+
+
 # end of file 

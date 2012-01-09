@@ -31,6 +31,7 @@ types:
 	${PYTHON} ./int.py
 	${PYTHON} ./numeric.py
 	${PYTHON} ./str.py
+	${PYTHON} ./tuple.py
 
 
 # end of file 
