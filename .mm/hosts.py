@@ -7,6 +7,7 @@
 
 # externals
 import os
+import re
 
 
 # the builder decorator
@@ -86,7 +87,42 @@ def host(builder):
         # all done
         return builder
         
-
+    # on fram.gps.caltech.edu
+    if re.match(r"login-[0-9]-[0-9].local", name):
+        # set up {gsl}
+        gslHome = '/usr'
+        builder.requirements['gsl'].environ = {
+            'GSL_DIR': gslHome,
+            'GSL_LIBDIR': os.path.join(gslHome, 'lib'),
+            'GSL_INCDIR': os.path.join(gslHome, 'include'),
+            }
+        # no {libpq}
+        builder.requirements['libpq'].environ = {}
+        # set up {mpi}
+        mpiVersion = 'openmpi'
+        mpiHome = '/opt/mpi/gcc46/openmpi-1.5.4'
+        builder.requirements['mpi'].environ = {
+            'MPI_VERSION': mpiVersion,
+            'MPI_DIR': mpiHome,
+            'MPI_BINDIR': os.path.join(mpiHome, 'bin'),
+            'MPI_LIBDIR': os.path.join(mpiHome, 'lib64'),
+            'MPI_INCDIR': os.path.join(mpiHome, 'include'),
+            'MPI_EXECUTIVE': 'mpirun',
+            }
+        # set up {python}
+        pythonVersion = '3.2'
+        python = 'python' + pythonVersion
+        pythonHome = '/opt/python'
+        builder.requirements['python'].environ = {
+            'PYTHON': python,
+            'PYTHON_PYCFLAGS': '-b',
+            'PYTHON_DIR': pythonHome,
+            'PYTHON_LIBDIR': os.path.join(pythonHome, 'lib'),
+            'PYTHON_INCDIR': os.path.join(pythonHome, 'include', python+'m'),
+            }
+        # all done
+        return builder
+        
     # for all other hosts
     return builder
 
