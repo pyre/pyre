@@ -96,4 +96,5 @@ class Socket(pyre.component, family="pyre.ipc.channels.socket", implements=chann
     # private data
     socket = None
 
+
 # end of file 

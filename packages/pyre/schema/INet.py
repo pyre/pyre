@@ -46,7 +46,7 @@ class IPv4(Address):
         return (self.host, self.port)
 
     # meta methods
-    def __init__(self, host, port, **kwds):
+    def __init__(self, host='', port=None, **kwds):
         # don't chain up; there are keys in {kwds} that are not meant for me
         self.host = host
         self.port = int(port) if port is not None else 0
@@ -137,7 +137,10 @@ class INet(Type):
     any = IPv4(host='', port=0)
 
     # types
-    ipv4 = IPv4
+    # the address base class 
+    address = Address
+    # the more specialized types
+    ipv4 = IPv4 
     unix = Unix
 
     # interface
@@ -151,7 +154,7 @@ class INet(Type):
             return value
         # use the address parser to convert strings
         if isinstance(value, str):
-            return Parserr.parse(value)
+            return Parser.parse(value)
         # everything else is an error
         msg="could not convert {!r} into an internet address".format(value)
         raise cls.CastingError(value=value, description=msg)
