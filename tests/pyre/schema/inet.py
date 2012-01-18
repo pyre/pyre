@@ -28,7 +28,7 @@ def test():
     assert address.value == ("pyre.caltech.edu", 50000)
 
     # ip4 with no family
-    address = parser.parse("ip4:pyre.caltech.edu:50000")
+    address = parser.parse("pyre.caltech.edu:50000")
     assert address.family == ipv4.family
     assert address.host == "pyre.caltech.edu"
     assert address.port == 50000
@@ -64,6 +64,9 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

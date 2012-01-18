@@ -86,6 +86,10 @@ class Parser:
     # types
     from .exceptions import CastingError
 
+    # the known address types
+    ip = ip4 = IPv4
+    unix = local = Unix
+
 
     # interface
     @classmethod
@@ -93,6 +97,10 @@ class Parser:
         """
         Convert {value}, expected to be a string, into an inet address
         """
+        # interpret an empty {value}
+        if not value:
+            # as an ip4 address, on the local host at some random port
+            return cls.ip4()
         # attempt to match against my regex
         match = cls.regex.match(value)
         # if it failed
@@ -103,8 +111,12 @@ class Parser:
             raise cls.CastingError(value=value, description=msg)
         # we have a match; get the address family
         family = match.group('ip') or match.group('unix')
-        # use it to find the appropriate factory to build an return an address
-        return cls.index[family](**match.groupdict())
+        # if no family were specified
+        if family is None:
+            # build an ipv4 address
+            return cls.ip4(**match.groupdict())
+        # otherwise, use it to find the appropriate factory to build an return an address
+        return getattr(cls, family)(**match.groupdict())
 
 
     # private data
@@ -114,14 +126,6 @@ class Parser:
         r"(?:(?P<ip>ip|ip4|ip6):)?(?P<host>[^:]+)(?::(?P<port>[0-9]+))?"
         )
 
-    index = {
-        None: IPv4,
-        "ip": IPv4,
-        "ip4": IPv4,
-        "unix": Unix,
-        "local": Unix,
-        }
-    
 
 # the schema type superclass
 from .Type import Type
@@ -142,6 +146,8 @@ class INet(Type):
     # the more specialized types
     ipv4 = IPv4 
     unix = Unix
+    # my parser
+    parser = Parser
 
     # interface
     @classmethod
@@ -154,7 +160,7 @@ class INet(Type):
             return value
         # use the address parser to convert strings
         if isinstance(value, str):
-            return Parser.parse(value)
+            return cls.parser.parse(value)
         # everything else is an error
         msg="could not convert {!r} into an internet address".format(value)
         raise cls.CastingError(value=value, description=msg)

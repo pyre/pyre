@@ -23,6 +23,7 @@ sanity:
 
 channels:
 	${PYTHON} ./pickler_over_pipe.py
+	${PYTHON} ./pickler_over_socket.py
 
 scheduler:
 	${PYTHON} ./scheduler.py

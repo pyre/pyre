@@ -51,7 +51,7 @@ def onServer(marshaller, pipe):
     """Send a simple message and wait for the response"""
 
     # build an address
-    address = pyre.ipc.socket.ipv4()
+    address = pyre.ipc.socket.address()
 
     # build my socket
     import socket
@@ -62,17 +62,17 @@ def onServer(marshaller, pipe):
     # find out what it was bound to
     host, port = l.getsockname()
     # print it
-    print("server: port={}".format(port))
+    # print("server: port={}".format(port))
     # send it in a message to the client
     marshaller.send(item=port, channel=pipe)
     # and wait for an incoming connection
     incoming, peer = l.accept()
-    # convert it to channel
+    # convert it to a channel
     sock = pyre.ipc.socket(socket=incoming)
 
     # get the message
     message = marshaller.recv(channel=sock)
-    print("server: message={!r}".format(message))
+    # print("server: message={!r}".format(message))
     # check it
     assert message == hello
     # say goodbye
@@ -90,16 +90,16 @@ def onClient(marshaller, pipe):
     # get the port number
     port = marshaller.recv(channel=pipe)
     # print it
-    print("client: port={}".format(port))
+    # print("client: port={}".format(port))
     # convert it into an address
-    address = pyre.ipc.socket.ipv4(port=port)
+    address = pyre.ipc.socket.address("ip4:localhost:{}".format(port))
     # make a channel
     sock = pyre.ipc.socket.open(address)
     # send a message
     marshaller.send(item=hello, channel=sock)
     # get the response
     response = marshaller.recv(channel=sock)
-    print("client: response={!r}".format(response))
+    # print("client: response={!r}".format(response))
     # check it
     assert response == goodbye
 

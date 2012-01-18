@@ -21,14 +21,17 @@ class Socket(pyre.component, family="pyre.ipc.channels.socket", implements=chann
 
 
     # types
-    from ..schema.INet import (
-        Address as address,
-        IPv4 as ipv4,
-        Unix as unix
-        )
+    from ..schema.INet import INet as inet
 
 
     # interface
+    # address factory
+    @classmethod
+    def address(cls, spec=''):
+        # let the {inet.parser} figure it out
+        return cls.inet.parser.parse(spec)
+
+
     # life cycle management
     @pyre.export
     @classmethod
@@ -36,9 +39,10 @@ class Socket(pyre.component, family="pyre.ipc.channels.socket", implements=chann
         """
         Create a socket channel
         """
-        # recognize the address
-        if not isinstance(address, cls.address):
-            raise NotImplementedError("NYI: convert string to a socket address")
+        # if {address} is a string
+        if isinstance(address, str):
+            # get the inet parser to convert it to an actual address
+            address = cls.inet.parser.parse(address)
 
         # make a low level socket
         s = socket.socket(address.family)

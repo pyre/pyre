@@ -15,10 +15,8 @@ Sanity check: verify that the socket factory is accessible
 def test():
     # get the package
     import pyre.ipc
-    # build an address
-    server = pyre.ipc.socket.ipv4(host="localhost", port=22)
     # make a socket
-    return pyre.ipc.socket.open(address=server)
+    return pyre.ipc.socket.open(address='ip4:localhost:22')
 
 
 # main
