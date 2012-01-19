@@ -151,7 +151,7 @@ class INet(Type):
 
     # interface
     @classmethod
-    def pyre_cast(cls, value, **kwds):
+    def pyre_cast(cls, value='', **kwds):
         """
         Attempt to convert {value} into a internet address
         """
