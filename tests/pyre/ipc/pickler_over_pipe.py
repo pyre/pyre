@@ -21,7 +21,7 @@ def test():
     # make a pickler
     m = pyre.ipc.pickler()
     # and a pair of pipes
-    parent, child = pyre.ipc.pipe.open()
+    parent, child = pyre.ipc.pipe()
 
     # fork
     pid = os.fork()

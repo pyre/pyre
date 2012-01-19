@@ -36,13 +36,13 @@ def test():
         infd = int(config["infd"])
         outfd = int(config["outfd"])
         # convert them into a channel
-        channel = pyre.ipc.pipe(infd=infd, outfd=outfd)
+        channel = pyre.ipc.pipe(descriptors=(infd, outfd))
         # invoke the child behavior
         return onChild(channel=channel)
 
     # otherwise, set the parent/child process context
     # build the communication channels
-    parent, child = pyre.ipc.pipe.open()
+    parent, child = pyre.ipc.pipe()
 
     # fork
     pid = os.fork()

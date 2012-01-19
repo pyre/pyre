@@ -16,7 +16,7 @@ def test():
     # get the package
     import pyre.ipc
     # make a pair of pipes
-    return pyre.ipc.pipe.open()
+    return pyre.ipc.pipe()
 
 
 # main

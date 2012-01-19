@@ -29,7 +29,7 @@ def test():
     # build the marshaller
     m = pyre.ipc.pickler()
     # and the communication channels
-    parent, child = pyre.ipc.pipe.open()
+    parent, child = pyre.ipc.pipe()
     
     # fork
     pid = os.fork()

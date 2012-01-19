@@ -19,11 +19,11 @@ sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./pickler.py
 	${PYTHON} ./pipe.py
-	${PYTHON} ./sockt.py # avoid import collision with the python module
+	${PYTHON} ./tcp.py
 
 channels:
 	${PYTHON} ./pickler_over_pipe.py
-	${PYTHON} ./pickler_over_socket.py
+	${PYTHON} ./pickler_over_tcp.py
 
 scheduler:
 	${PYTHON} ./scheduler.py

@@ -30,7 +30,7 @@ def test():
     # make a pickler
     m = pyre.ipc.pickler()
     # and a pair of pipes
-    parent, child = pyre.ipc.pipe.open()
+    parent, child = pyre.ipc.pipe()
 
     # fork
     pid = os.fork()
@@ -51,9 +51,9 @@ def onServer(marshaller, pipe):
     """Send a simple message and wait for the response"""
 
     # build an address
-    address = pyre.ipc.socket.address()
+    address = pyre.ipc.inet()
 
-    # build my socket
+    # build my listener
     import socket
     l = socket.socket(address.family, socket.SOCK_STREAM)
     l.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -68,7 +68,7 @@ def onServer(marshaller, pipe):
     # and wait for an incoming connection
     incoming, peer = l.accept()
     # convert it to a channel
-    sock = pyre.ipc.socket(socket=incoming)
+    sock = pyre.ipc.tcp(connection=incoming)
 
     # get the message
     message = marshaller.recv(channel=sock)
@@ -91,10 +91,8 @@ def onClient(marshaller, pipe):
     port = marshaller.recv(channel=pipe)
     # print it
     # print("client: port={}".format(port))
-    # convert it into an address
-    address = pyre.ipc.socket.address("ip4:localhost:{}".format(port))
     # make a channel
-    sock = pyre.ipc.socket.open(address)
+    sock = pyre.ipc.tcp(address='localhost:{}'.format(port))
     # send a message
     marshaller.send(item=hello, channel=sock)
     # get the response

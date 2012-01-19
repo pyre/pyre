@@ -82,6 +82,5 @@ class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=channel):
     infd = None
     outfd = None
         
-    
 
 # end of file 

@@ -14,9 +14,9 @@ from .interfaces import channel
 
 
 # declaration
-class Socket(pyre.component, family="pyre.ipc.channels.socket", implements=channel):
+class SocketTCP(pyre.component, family="pyre.ipc.channels.tcp", implements=channel):
     """
-    A channel that uses sockets as the communication mechanism
+    A channel that uses TCP sockets as the communication mechanism
     """
 
 
@@ -24,26 +24,22 @@ class Socket(pyre.component, family="pyre.ipc.channels.socket", implements=chann
     from ..schema.INet import INet as inet
 
 
-    # interface
-    # address factory
-    @classmethod
-    def address(cls, spec=''):
-        # let the {inet.parser} figure it out
-        return cls.inet.parser.parse(spec)
-
-
     # life cycle management
     @pyre.export
     @classmethod
-    def open(cls, address, **kwds):
+    def open(cls, existing=None, address=None, **kwds):
         """
         Create a socket channel
         """
+        # if an already connected {socket} was given
+        if existing is not None:
+            # just wrap and return
+            return cls(socket=existing, **kwds)
+
         # if {address} is a string
         if isinstance(address, str):
             # get the inet parser to convert it to an actual address
             address = cls.inet.parser.parse(address)
-
         # make a low level socket
         s = socket.socket(address.family)
         # connect
