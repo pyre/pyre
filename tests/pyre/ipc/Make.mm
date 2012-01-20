@@ -36,6 +36,7 @@ selector:
 	${PYTHON} ./selector_alarms.py
 	${PYTHON} ./selector_fds.py
 	${PYTHON} ./selector_pickler_over_pipe.py
+	${PYTHON} ./selector_pickler_over_tcp.py
 
 nodes:
 	${PYTHON} ./node.py

@@ -22,8 +22,6 @@ parentdbg = journal.debug("selector.parent")
 childdbg = journal.debug("selector.child")
 # childdbg.active = True
 
-# the packing format
-fmt = "<L"
 
 def test():
     # build the marshaller
