@@ -61,6 +61,28 @@ class SocketTCP(pyre.component, family="pyre.ipc.channels.tcp", implements=chann
         return
 
 
+    # access to the individual channel end points
+    @pyre.export
+    @property
+    def inbound(self):
+        """
+        Retrieve the channel end point that can be read
+        """
+        # easy enough
+        return self.socket
+
+
+    @pyre.export
+    @property
+    def outbound(self):
+        """
+        Retrieve the channel end point that can be written
+        """
+        # easy enough
+        return self.socket
+
+
+    # input/output
     @pyre.export
     def read(self, count):
         """
@@ -74,7 +96,6 @@ class SocketTCP(pyre.component, family="pyre.ipc.channels.tcp", implements=chann
         return bstr
 
 
-    # input/output
     @pyre.export
     def write(self, bstr):
         """

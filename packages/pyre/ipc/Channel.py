@@ -35,8 +35,22 @@ class Channel(pyre.interface, family="pyre.ipc.channels"):
         Shutdown the channel
         """
 
+    # access to the individual channel end points
+    @pyre.provides
+    @property
+    def inbound(self):
+        """
+        Retrieve the channel end point that can be read
+        """
 
-    # operations
+    @pyre.provides
+    @property
+    def outbound(self):
+        """
+        Retrieve the channel end point that can be written
+        """
+
+    # input/output
     @pyre.provides
     def read(self, count):
         """
