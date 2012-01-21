@@ -40,7 +40,7 @@ class Scheduler(pyre.component):
         # add it to my list
         self._alarms.append(alarm)
         # sort 
-        self._alarms.sort(key=operator.attrgetter("time"), reverse=True)
+        self._alarms.sort(key=operator.attrgetter('time'), reverse=True)
         # and return
         return
 
@@ -79,16 +79,14 @@ class Scheduler(pyre.component):
             try:
                 # to grab one
                 alarm = alarms.pop()
-            # if none are left
-            except IndexError:
-                # all done
-                return
+            # if none are left, we are all done
+            except IndexError: return
             # if this alarm is not due yet
             if time < alarm.time:
                 # put it back at the end of the list
                 alarms.append(alarm)
                 # no need to look any further
-                break
+                return
             # otherwise, this alarm is overdue; invoke the handler
             alarm.handler(scheduler=self, timestamp=time)
 
@@ -99,10 +97,10 @@ class Scheduler(pyre.component):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-
-        # alarms are stored in a list that is always sorted in descending order on alarm time
+        # the list alarms; kept sorted in descending order by alarm time, i.e. with the next
+        # alarm to go off at the end of the list
         self._alarms = []
-
+        # all done
         return
 
 
@@ -116,7 +114,7 @@ class Scheduler(pyre.component):
             self.handler = handler
             return
 
-        __slots__ = ("time", "handler")
+        __slots__ = ('time', 'handler')
 
 
     # private data

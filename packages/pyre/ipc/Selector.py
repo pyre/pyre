@@ -17,45 +17,51 @@ from .Scheduler import Scheduler
 
 
 # declaration
-class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dispatcher):
+class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dispatcher):
     """
-    The manager of a set of file descriptors and the registered handlers for the events they
-    generate. File descriptors can generate read, write and exception events that correspond to
-    changes in their state. Processes that hold instances of {Selector} call {watch} to enter
-    an idle state until some event wakes up the process and its handler is invoked.
+    An event demultiplexer implemented using the {select} system call.
+
+    In addition to supporting alarms via its {Scheduler} base class, {Selector} monitors
+    changes in the state of channels. Processes that hold {Selector} instances can go to sleep
+    until either an alarm rings or a channel is ready for IO, at which point {Selector} invokes
+    whatever handler is associated with the event.
     """
 
 
     # interface
     @pyre.export
-    def notifyOnReadReady(self, fd, handler):
+    def notifyOnReadReady(self, channel, handler):
         """
-        Add {handler} to the list of routines to call when {fd} is ready to be read
+        Add {handler} to the list of routines to call when {channel} is ready to be read
         """
         # add it to the pile
-        self._input[fd].append(handler)
+        self._read[channel.inbound].append(self._event(channel=channel, handler=handler))
         # and return
+        return
 
 
     @pyre.export
-    def notifyOnWriteReady(self, fd, handler):
+    def notifyOnWriteReady(self, channel, handler):
         """
-        Add {handler} to the list of routines to call when {fd} is ready to be written
+        Add {handler} to the list of routines to call when {channel} is ready to be written
         """
         # add it to the pile
-        self._output[fd].append(handler)
+        self._write[channel.outbound].append(self._event(channel=channel, handler=handler))
         # and return
+        return
 
 
     @pyre.export
-    def notifyOnException(self, fd, handler):
+    def notifyOnException(self, channel, handler):
         """
         Add {handler} to the list of routines to call when something exceptional has happened
-        to {fd}
+        to {channel}
         """
-        # add it to the pile
-        self._exception[fd].append(handler)
+        # add both endpoints to the pile
+        self._exception[channel.inbound].append(self._event(channel=channel, handler=handler))
+        self._exception[channel.outbound].append(self._event(channel=channel, handler=handler))
         # and return
+        return
 
 
     @pyre.export
@@ -79,29 +85,29 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         self._watching = True
         # until someone says otherwise
         while self._watching:
-            self._debug.line("watching:")
+            self._debug.line('watching:')
             # compute how long i am allowed to be asleep
-            self._debug.line("    computing the allowed sleep interval")
+            self._debug.line('    computing the allowed sleep interval')
             timeout = self.poll()
 
             # construct the descriptor containers
-            self._debug.line("    collecting the event sources")
-            iwtd = self._input.keys()
-            owtd = self._output.keys()
+            self._debug.line('    collecting the event sources')
+            iwtd = self._read.keys()
+            owtd = self._write.keys()
             ewtd = self._exception.keys()
-            self._debug.line("      input: {}".format(iwtd))
-            self._debug.line("      output: {}".format(owtd))
-            self._debug.line("      exception: {}".format(ewtd))
+            self._debug.line('      read: {}'.format(iwtd))
+            self._debug.line('      write: {}'.format(owtd))
+            self._debug.line('      exception: {}'.format(ewtd))
 
             # check for indefinite block
-            self._debug.line("    checking for indefinite block")
+            self._debug.line('    checking for indefinite block')
             if not iwtd and not owtd and not ewtd and timeout is None:
-                self._debug.log("** no registered handlers left; exiting")
+                self._debug.log('** no registered handlers left; exiting')
                 return
 
             # wait for an event
             try:
-                self._debug.line("    calling select; timeout={!r}".format(timeout))
+                self._debug.line('    calling select; timeout={!r}'.format(timeout))
                 reads, writes, excepts = select.select(iwtd, owtd, ewtd, timeout)
             # when a signal is delivered to a handler registered by the application, the select
             # call is interrupted and raises a {select.error}
@@ -109,18 +115,18 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
                 # unpack
                 errno, msg = error.args
                 # log
-                self._debug.log("    signal received: errno={}: {}".format(errno, msg))
+                self._debug.log('    signal received: errno={}: {}'.format(errno, msg))
                 # keep going
                 continue
 
             # dispatch to the handlers of file events
-            self._debug.line("    dispatching to handlers")
+            self._debug.line('    dispatching to handlers')
             self.dispatch(self._exception, excepts)
-            self.dispatch(self._output, writes)
-            self.dispatch(self._input, reads)
+            self.dispatch(self._write, writes)
+            self.dispatch(self._read, reads)
 
             # raise the overdue alarms
-            self._debug.log("    raising the alarms")
+            self._debug.log('    raising the alarms')
             self.awaken()
             
         # all done
@@ -134,16 +140,19 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         """
         # iterate over the active entities
         for active in entities:
-            # invoke the handlers and save the ones that return {True}
-            handlers = list(
-                handler for handler in index[active] if handler(selector=self, descriptor=active))
+            # invoke the event handlers and save the events whose handlers return {True}
+            events = list(
+                event for event in index[active] 
+                if event.handler(selector=self, channel=event.channel)
+                )
             # if no handlers requested to be rescheduled
-            if not handlers:
+            if not events:
                 # remove the descriptor from the index
                 del index[active]
             # otherwise
             else:
-                index[active] = handlers
+                # reschedule them
+                index[active] = events
         # all done
         return
 
@@ -154,19 +163,32 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         super().__init__(**kwds)
 
         # my file descriptor event indices
-        self._input = collections.defaultdict(list)
-        self._output = collections.defaultdict(list)
+        self._read = collections.defaultdict(list)
+        self._write = collections.defaultdict(list)
         self._exception = collections.defaultdict(list)
 
         # all done
         return
 
 
+    # implementation details
+    # private types
+    class _event:
+        """Encapsulate a channel and the associated call-back"""
+
+        def __init__(self, channel, handler):
+            self.channel = channel
+            self.handler = handler
+            return
+
+        __slots__ = ('channel', 'handler')
+
     # private data
     _watching = True # controls whether to continue monitoring the event sources
+
     # my debug aspect
     import journal
-    _debug = journal.debug("pyre.ipc.selector")
+    _debug = journal.debug('pyre.ipc.selector')
     del journal
 
 

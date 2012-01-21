@@ -56,29 +56,32 @@ def onServer(clientPid, marshaller, pipe):
     l.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     l.bind(address.value)
     l.listen(socket.SOMAXCONN)
+    # convert it into a channel
+    listener = pyre.ipc.tcp(connection=l)
     # find out what it was bound to
     host, port = l.getsockname()
     serverdbg.log("server: host={!r}, port={}".format(host, port))
 
-    def getMessage(selector, descriptor, **kwds):
-        tcp = pyre.ipc.tcp(connection=descriptor)
-        message = marshaller.recv(tcp)
+    def getMessage(selector, channel, **kwds):
+        message = marshaller.recv(channel)
         serverdbg.log("server: received {!r}".format(message)) 
         # check it
         assert message == "Hello from {}".format(clientPid)
         return False
 
-    def sendPortNumber(selector, **kwds):
+    def sendPortNumber(selector, channel, **kwds):
         serverdbg.log("server: sending port {!r}".format(port))
-        marshaller.send(channel=pipe, item=port)
+        marshaller.send(channel=channel, item=port)
         serverdbg.log("server: done sending port")
         return False
 
-    def connectionAttempt(selector, descriptor, **kwds):
-        incoming, peer = descriptor.accept()
+    def connectionAttempt(selector, channel, **kwds):
+        incoming, peer = channel.socket.accept()
         serverdbg.log("server: connection attempt from {!r}".format(peer))
+        # convert the connection into a channel
+        connection = pyre.ipc.tcp(connection=incoming)
         # schedule the receiving of the message
-        selector.notifyOnReadReady(incoming, getMessage)
+        selector.notifyOnReadReady(channel=connection, handler=getMessage)
         # and stop waiting for any further connections
         return False
 
@@ -87,9 +90,9 @@ def onServer(clientPid, marshaller, pipe):
     s = pyre.ipc.selector()
     # let me know when the pipe to the client is ready for writing so i can send my port
     serverdbg.log("server: registering the port notification routine")
-    s.notifyOnWriteReady(fd=pipe.outfd, handler=sendPortNumber)
+    s.notifyOnWriteReady(channel=pipe, handler=sendPortNumber)
     serverdbg.log("server: registering the connection routine")
-    s.notifyOnReadReady(fd=l, handler=connectionAttempt)
+    s.notifyOnReadReady(channel=listener, handler=connectionAttempt)
 
     # invoke the selector
     serverdbg.log("server: entering watch")
@@ -105,10 +108,10 @@ def onClient(clientPid, marshaller, pipe):
     # journal.debug("pyre.ipc.selector").active = True
 
     # the port notification routine
-    def recvPortNumber(selector, **kwds):
+    def recvPortNumber(selector, channel, **kwds):
         # get the port
         clientdbg.log("client: receiving port number")
-        port = marshaller.recv(pipe)
+        port = marshaller.recv(channel)
         clientdbg.log("client: port={!r}".format(port))
         
         # make a connection
@@ -125,7 +128,7 @@ def onClient(clientPid, marshaller, pipe):
     s = pyre.ipc.selector()
     # let me know when the pipe to the client is ready for writing so i can send my port
     clientdbg.log("client: registering the port notification routine")
-    s.notifyOnReadReady(fd=pipe.infd, handler=recvPortNumber)
+    s.notifyOnReadReady(channel=pipe, handler=recvPortNumber)
 
     # invoke the selector
     clientdbg.log("client: entering watch")

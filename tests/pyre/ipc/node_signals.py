@@ -81,7 +81,7 @@ def onParent(childpid, channel):
     # subclass Node
     class node(Node):
 
-        def recvReady(self, **unused):
+        def recvReady(self, *uargs, **ukwds):
             # log
             pdbg.log("receiving message from child")
             # receive
@@ -90,14 +90,14 @@ def onParent(childpid, channel):
             pdbg.log("child said {!r}".format(message))
             assert message == 'ready'
             # register the handler for the response to 'reload'
-            self.dispatcher.notifyOnReadReady(fd=self.channel.infd, handler=self.recvReloaded)
+            self.dispatcher.notifyOnReadReady(channel=self.channel, handler=self.recvReloaded)
             # issue the 'reload' signal
             os.kill(childpid, signal.SIGHUP)
             
             # don't reschedule this handler
             return False
 
-        def recvReloaded(self, **unused):
+        def recvReloaded(self, *uargs, **ukwds):
             """check the response to 'reload' and send 'terminate'"""
             # log
             pdbg.log("receiving message from child")
@@ -118,7 +118,7 @@ def onParent(childpid, channel):
             self.channel = channel
             
             pdbg.log("registering 'recvReady'")
-            self.dispatcher.notifyOnReadReady(fd=channel.infd, handler=self.recvReady)
+            self.dispatcher.notifyOnReadReady(channel=channel, handler=self.recvReady)
             return
 
     # create a node
@@ -164,7 +164,7 @@ def onChild(channel):
     # subclass Node
     class node(Node):
 
-        def sendReady(self, **unused):
+        def sendReady(self, *uargs, **ukwds):
             # log
             cdbg.log("sending 'ready'")
             # get it
@@ -172,31 +172,31 @@ def onChild(channel):
             # don't reschedule this handler
             return False
             
-        def sendReloaded(self, selector, descriptor):
+        def sendReloaded(self, *uargs, **ukwds):
             # send a message to the parent
             cdbg.log("sending 'reloaded' to my parent")
             self.marshaller.send(item="reloaded", channel=self.channel)
             # don't reschedule
             return False
 
-        def alarm(self, **kwds):
+        def alarm(self, *uargs, **kwds):
             cdbg.log("  timeout")
             self.dispatcher.alarm(interval=10*self.dispatcher.second, handler=self.alarm)
             return
 
-        def onReload(self, *unused):
+        def onReload(self, *uargs, **ukwds):
             # schedule to send a message to the parent
             cdbg.log("schedule 'sendReloaded'")
-            self.dispatcher.notifyOnWriteReady(fd=self.channel.outfd, handler=self.sendReloaded)
+            self.dispatcher.notifyOnWriteReady(channel=self.channel, handler=self.sendReloaded)
             # all done
             return
 
-        def onTerminate(self, *unused):
+        def onTerminate(self, *uargs, **ukwds):
             cdbg.log("marking clean exit and stopping the dispatcher")
             # mark me
             self.cleanExit = True
             # delegate
-            return super().onTerminate(*unused)
+            return super().onTerminate(*uargs, **ukwds)
 
         def __init__(self, channel, **kwds):
             super().__init__(**kwds)
@@ -207,7 +207,7 @@ def onChild(channel):
             # set up an alarm to keep the process alive
             self.dispatcher.alarm(interval=10*self.dispatcher.second, handler=self.alarm)
             # let my parent know I am ready
-            self.dispatcher.notifyOnWriteReady(fd=channel.outfd, handler=self.sendReady)
+            self.dispatcher.notifyOnWriteReady(channel=channel, handler=self.sendReady)
             # all done 
             return
 
