@@ -9,45 +9,46 @@
 # externals
 import socket
 # my interface
-from .Socket import Socket
+from .Channel import Channel
 
 
 # declaration
-class SocketTCP(Socket):
+class Socket(Channel):
     """
     A channel that uses TCP sockets as the communication mechanism
     """
 
 
-    # types
-    from ..schema.INet import INet as inet
-
-
-    # life cycle management
-    @classmethod
-    def open(cls, existing=None, address=None, **kwds):
+    # interface
+    def close(self):
         """
-        Create a socket channel
+        Shutdown my channel
         """
-        # if an already connected {socket} was given
-        if existing is not None:
-            # just wrap and return
-            return cls(socket=existing, **kwds)
+        # shutdown the connection
+        self.socket.shutdown(socket.SHUT_RDWR)
+        # release the associated resources
+        self.socket.close()
+        # and return
+        return
 
-        # if {address} is a string
-        if isinstance(address, str):
-            # get the inet parser to convert it to an actual address
-            address = cls.inet.parser.parse(address)
-        # make a low level socket
-        s = socket.socket(address.family)
-        # connect
-        s.connect(address.value)
-        # wrap it up
-        channel = cls(socket=s, **kwds)
-        # attach the address
-        channel.address = address
-        # and return it
-        return channel
+
+    # access to the individual channel end points
+    @property
+    def inbound(self):
+        """
+        Retrieve the channel end point that can be read
+        """
+        # easy enough
+        return self.socket
+
+
+    @property
+    def outbound(self):
+        """
+        Retrieve the channel end point that can be written
+        """
+        # easy enough
+        return self.socket
 
 
     # input/output
@@ -71,6 +72,17 @@ class SocketTCP(Socket):
         self.socket.sendall(bstr)
         # and return the number of bytes sent
         return len(bstr)
+
+
+    # meta methods
+    def __init__(self, socket, **kwds):
+        super().__init__(**kwds)
+        self.socket = socket
+        return
+
+
+    # private data
+    socket = None
 
 
 # end of file 

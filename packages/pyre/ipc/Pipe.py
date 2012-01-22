@@ -10,11 +10,11 @@
 import os
 import pyre
 
-from .interfaces import channel
+from .Channel import Channel
 
 
 # declaration
-class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=channel):
+class Pipe(Channel):
     """
     A channel that uses pipes as the communication mechanism
     """
@@ -22,7 +22,6 @@ class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=channel):
 
     # interface
     # life cycle management
-    @pyre.export
     @classmethod
     def open(cls, **kwds):
         """
@@ -39,7 +38,6 @@ class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=channel):
         return parent, child
 
 
-    @pyre.export
     def close(self):
         """
         Shut down this channel
@@ -52,7 +50,6 @@ class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=channel):
 
 
     # access to the individual channel end points
-    @pyre.export
     @property
     def inbound(self):
         """
@@ -62,7 +59,6 @@ class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=channel):
         return self.infd
 
 
-    @pyre.export
     @property
     def outbound(self):
         """
@@ -73,7 +69,6 @@ class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=channel):
 
 
     # input/output
-    @pyre.export
     def read(self, count):
         """
         Read {count} bytes from my input channel
@@ -82,7 +77,6 @@ class Pipe(pyre.component, family="pyre.ipc.channels.pipe", implements=channel):
         return os.read(self.infd, count)
 
 
-    @pyre.export
     def write(self, bstr):
         """
         Write the bytes in {bstr} to my output channel

@@ -28,6 +28,7 @@ EXPORT_PYTHON_MODULES = \
     Scheduler.py \
     Selector.py \
     Server.py \
+    Socket.py \
     SocketTCP.py \
     interfaces.py \
     __init__.py
