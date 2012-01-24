@@ -50,36 +50,26 @@ goodbye = "goodbye"
 def onServer(marshaller, pipe):
     """Send a simple message and wait for the response"""
 
-    # build an address
-    address = pyre.ipc.inet()
-
-    # build my listener
-    import socket
-    l = socket.socket(address.family, socket.SOCK_STREAM)
-    l.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    l.bind(address.value)
-    l.listen(socket.SOMAXCONN)
-    # find out what it was bound to
-    host, port = l.getsockname()
-    # print it
-    # print("server: port={}".format(port))
+    # build a port
+    port = pyre.ipc.port(address='localhost:0')
+    # print what it was bound to
+    # print("server: established port at {!r}:{}".format(*port.address.value))
     # send it in a message to the client
-    marshaller.send(item=port, channel=pipe)
+    marshaller.send(item=port.address.port, channel=pipe)
     # and wait for an incoming connection
-    incoming, peer = l.accept()
-    # convert it to a channel
-    sock = pyre.ipc.tcp(connection=incoming)
+    peer, address = port.accept()
+    # print("server: connection from {!r}:{}".format(*address.value))
 
     # get the message
-    message = marshaller.recv(channel=sock)
+    message = marshaller.recv(channel=peer)
     # print("server: message={!r}".format(message))
     # check it
     assert message == hello
     # say goodbye
-    marshaller.send(item=goodbye, channel=sock)
+    marshaller.send(item=goodbye, channel=peer)
 
     # shut everything down
-    l.close()
+    port.close()
 
     # all done
     return
@@ -92,11 +82,11 @@ def onClient(marshaller, pipe):
     # print it
     # print("client: port={}".format(port))
     # make a channel
-    sock = pyre.ipc.tcp(address='localhost:{}'.format(port))
+    peer = pyre.ipc.tcp(address='localhost:{}'.format(port))
     # send a message
-    marshaller.send(item=hello, channel=sock)
+    marshaller.send(item=hello, channel=peer)
     # get the response
-    response = marshaller.recv(channel=sock)
+    response = marshaller.recv(channel=peer)
     # print("client: response={!r}".format(response))
     # check it
     assert response == goodbye

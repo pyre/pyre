@@ -25,6 +25,8 @@ EXPORT_PYTHON_MODULES = \
     Node.py \
     Pickler.py \
     Pipe.py \
+    Port.py \
+    PortTCP.py \
     Scheduler.py \
     Selector.py \
     Server.py \

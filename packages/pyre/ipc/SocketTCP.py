@@ -20,34 +20,9 @@ class SocketTCP(Socket):
 
 
     # types
-    from ..schema.INet import INet as inet
-
-
-    # life cycle management
-    @classmethod
-    def open(cls, existing=None, address=None, **kwds):
-        """
-        Create a socket channel
-        """
-        # if an already connected {socket} was given
-        if existing is not None:
-            # just wrap and return
-            return cls(socket=existing, **kwds)
-
-        # if {address} is a string
-        if isinstance(address, str):
-            # get the inet parser to convert it to an actual address
-            address = cls.inet.parser.parse(address)
-        # make a low level socket
-        s = socket.socket(address.family)
-        # connect
-        s.connect(address.value)
-        # wrap it up
-        channel = cls(socket=s, **kwds)
-        # attach the address
-        channel.address = address
-        # and return it
-        return channel
+    from ..schema import inet
+    # constants
+    type = socket.SOCK_STREAM
 
 
     # input/output

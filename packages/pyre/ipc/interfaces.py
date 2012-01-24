@@ -6,7 +6,6 @@
 #
 
 
-from .Bell import Bell as bell
 from .Dispatcher import Dispatcher as dispatcher
 from .Marshaller import Marshaller as marshaller
 

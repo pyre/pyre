@@ -27,19 +27,27 @@ def pipe(descriptors=None, **kwds):
     return Pipe.open(**kwds)
 
 
-def tcp(address=None, connection=None):
+def tcp(address):
     """
     Builds a channel over a TCP connection to a server
 
-    If {connection} is not {None}, it is expected to be a valid and already connected socket,
-    in which case this routine just wraps a channel around this existing connection.
-    Otherwise, {address} is expected to be convertible to a {pyre.schema.inet} compatible
+    The parameter {address} is expected to be convertible to a {pyre.schema.inet} compatible
     address.
     """
     # access the channel
-    from .SocketTCP import SocketTCP
+    from .PortTCP import PortTCP
     # get it to build the channel
-    return SocketTCP.open(address=address, existing=connection)
+    return PortTCP.open(address=address)
+
+
+def port(address):
+    """
+    Establishes a port at {address}
+    """
+    # access the channel
+    from .PortTCP import PortTCP
+    # get it installed at {address}
+    return PortTCP.install(address=address)
 
 
 # convenient access to the inet parser that builds addresses

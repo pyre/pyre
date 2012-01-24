@@ -48,19 +48,9 @@ def onServer(clientPid, marshaller, pipe):
     # journal.debug("pyre.ipc.selector").active = True
 
     # establish a network presence
-    # build an address
-    address = pyre.ipc.inet()
-    # build my listener
-    import socket
-    l = socket.socket(address.family, socket.SOCK_STREAM)
-    l.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    l.bind(address.value)
-    l.listen(socket.SOMAXCONN)
-    # convert it into a channel
-    listener = pyre.ipc.tcp(connection=l)
-    # find out what it was bound to
-    host, port = l.getsockname()
-    serverdbg.log("server: host={!r}, port={}".format(host, port))
+    port = pyre.ipc.port(address='localhost:0')
+    # report what it was bound to
+    serverdbg.log("server: host={!r}, port={}".format(*port.address.value))
 
     def getMessage(selector, channel, **kwds):
         message = marshaller.recv(channel)
@@ -71,17 +61,15 @@ def onServer(clientPid, marshaller, pipe):
 
     def sendPortNumber(selector, channel, **kwds):
         serverdbg.log("server: sending port {!r}".format(port))
-        marshaller.send(channel=channel, item=port)
+        marshaller.send(channel=channel, item=port.address.port)
         serverdbg.log("server: done sending port")
         return False
 
     def connectionAttempt(selector, channel, **kwds):
-        incoming, peer = channel.socket.accept()
-        serverdbg.log("server: connection attempt from {!r}".format(peer))
-        # convert the connection into a channel
-        connection = pyre.ipc.tcp(connection=incoming)
+        peer, address = port.accept()
+        serverdbg.log("server: connection attempt from {!r}:{}".format(*address.value))
         # schedule the receiving of the message
-        selector.notifyOnReadReady(channel=connection, handler=getMessage)
+        selector.notifyOnReadReady(channel=peer, handler=getMessage)
         # and stop waiting for any further connections
         return False
 
@@ -92,7 +80,7 @@ def onServer(clientPid, marshaller, pipe):
     serverdbg.log("server: registering the port notification routine")
     s.notifyOnWriteReady(channel=pipe, handler=sendPortNumber)
     serverdbg.log("server: registering the connection routine")
-    s.notifyOnReadReady(channel=listener, handler=connectionAttempt)
+    s.notifyOnReadReady(channel=port.channel, handler=connectionAttempt)
 
     # invoke the selector
     serverdbg.log("server: entering watch")
