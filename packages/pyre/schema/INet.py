@@ -164,6 +164,27 @@ class INet(Type):
         # everything else is an error
         msg="could not convert {!r} into an internet address".format(value)
         raise cls.CastingError(value=value, description=msg)
-        
+
+
+    @classmethod
+    def pyre_recognize(cls, family, address):
+        """
+        Return an appropriate address type based on the socket family
+        """
+        # ipv4
+        if family == socket.AF_INET:
+            # unpack the raw address
+            host, port = address
+            # return an ipv4 addres
+            return cls.ipv4(host=host, port=port)
+
+        # unix
+        if family == socket.AF_UNIX:
+            # return a unix addres
+            return cls.unix(path=address)
+
+        # otherwise
+        raise NotImplementedError("unsupported socket family: {}".format(family))
+
 
 # end of file 
