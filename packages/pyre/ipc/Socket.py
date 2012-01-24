@@ -13,7 +13,7 @@ from .Channel import Channel
 
 
 # declaration
-class Socket(Channel):
+class Socket(socket.socket, Channel):
     """
     A channel that uses sockets as the communication mechanism
 
@@ -23,17 +23,6 @@ class Socket(Channel):
     """
 
 
-    # interface
-    def close(self):
-        """
-        Shutdown my channel
-        """
-        # release the socket
-        self.socket.close()
-        # and return
-        return
-
-
     # access to the individual channel end points
     @property
     def inbound(self):
@@ -41,7 +30,7 @@ class Socket(Channel):
         Retrieve the channel end point that can be read
         """
         # easy enough
-        return self.socket
+        return self
 
 
     @property
@@ -50,18 +39,29 @@ class Socket(Channel):
         Retrieve the channel end point that can be written
         """
         # easy enough
-        return self.socket
+        return self
 
 
-    # meta methods
-    def __init__(self, socket, **kwds):
-        super().__init__(**kwds)
-        self.socket = socket
-        return
+    # interface
+    def accept(self):
+        """
+        Wait for a connection attempt, build a channel around the socket to the peer, and
+        return it along with the address of the remote process
+        """
+        # bypass the socket interface because it calls the wrong constructor explicitly
+        fd, address = self._accept()
+        # build the channel
+        channel = type(self)(self.family, self.type, self.proto, fileno=fd)
+        # build the address
+        address = self.inet.pyre_recognize(family=self.family, address=address)
+        # adjust the socket flags; see {socket.py} in the standard library for more details
+        if socket.getdefaulttimeout() is None and self.gettimeout(): channel.setblocking(True)
+        # return the channel to and the address of the peer process
+        return channel, address
 
 
-    # private data
-    socket = None
+    # implementation details
+    __slots__ = () # socket has it, so why not...
 
 
 # end of file 

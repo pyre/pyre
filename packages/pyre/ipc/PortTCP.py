@@ -39,12 +39,10 @@ class PortTCP(Port):
         """
         # normalize the address
         address = cls.inet.pyre_cast(value=address)
-        # create a socket
-        s = socket.socket(address.family, cls.type)
-        # connect
-        s.connect(address.value)
-        # wrap it up
-        channel = cls.tcp(socket=s, **kwds)
+        # create a channel
+        channel = cls.tcp(address.family, cls.type, **kwds)
+        # establish a connection
+        channel.connect(address.value)
         # and return it
         return channel
 
@@ -57,7 +55,7 @@ class PortTCP(Port):
         # normalize the address
         address = cls.inet.pyre_cast(value=address)
         # create the socket
-        listener = socket.socket(address.family, cls.type)
+        listener = cls.tcp(address.family, cls.type)
         # no need for the socket to linger in TIME_WAIT after we are done with it
         listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -81,7 +79,7 @@ class PortTCP(Port):
         listener.listen(socket.SOMAXCONN)
         
         # wrap the socket up
-        port = cls(socket=listener, address=address)
+        port = cls(channel=listener, address=address)
         # and return it
         return port
 
@@ -100,24 +98,16 @@ class PortTCP(Port):
         Wait until a peer process attempts to open the port and build a communication channel
         with it
         """
-        # get the underlying socket
-        s = self.channel.inbound
-        # build a socket to the peer
-        socket, (host, port) = s.accept()
-        # wrap up the socket
-        channel = self.tcp(socket=socket)
-        # wrap up the address
-        address = type(self.address)(host=host, port=port)
-        # and return them
-        return channel, address
+        # delegate
+        return self.channel.accept()
 
 
     # meta methods
-    def __init__(self, socket, address, **kwds):
+    def __init__(self, channel, address, **kwds):
         super().__init__(**kwds)
 
         self.address = address
-        self.channel = self.tcp(socket=socket)
+        self.channel = channel
 
         return
 

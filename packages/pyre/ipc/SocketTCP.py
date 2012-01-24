@@ -31,9 +31,9 @@ class SocketTCP(Socket):
         Read {count} bytes from my input channel
         """
         # read bytes
-        bstr = self.socket.recv(count)
+        bstr = self.recv(count)
         # in as many attempts as it takes
-        while len(bstr) < count: bstr += self.socket.recv(count-len(bstr))
+        while len(bstr) < count: bstr += self.recv(count-len(bstr))
         # and return them
         return bstr
 
@@ -43,9 +43,13 @@ class SocketTCP(Socket):
         Write the bytes in {bstr} to my output channel
         """
         # make sure the entire byte string is delivered
-        self.socket.sendall(bstr)
+        self.sendall(bstr)
         # and return the number of bytes sent
         return len(bstr)
+
+
+    # implementation details
+    __slots__ = () # socket has it, so why not...
 
 
 # end of file 
