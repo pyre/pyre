@@ -52,6 +52,9 @@ class IPv4(Address):
         self.port = int(port) if port is not None else 0
         return
 
+    def __str__(self):
+        return "{!r}:{}".format(self.host, self.port)
+
 
 class Unix(Address):
     """
@@ -74,6 +77,9 @@ class Unix(Address):
         # don't chain up; there are keys in {kwds} that are not meant for me
         self.path = path
         return
+
+    def __str__(self):
+        return self.path
 
 
 class Parser:
