@@ -40,7 +40,7 @@ def tcp(address):
     return PortTCP.open(address=address)
 
 
-def port(address):
+def port(address=None):
     """
     Establishes a port at {address}
     """

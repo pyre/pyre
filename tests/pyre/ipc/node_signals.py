@@ -109,8 +109,11 @@ def onParent(childpid, channel):
             # now, send a 'terminate' to my child
             pdbg.log("sending 'terminate'")
             os.kill(childpid, signal.SIGTERM)
-            # don't reschedule this handler
+            # and stop my dispatcher
+            self.dispatcher.stop()
             pdbg.log("all good")
+            
+            # don't reschedule this handler
             return False
 
         def __init__(self, channel, **kwds):

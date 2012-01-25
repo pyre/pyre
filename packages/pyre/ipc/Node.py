@@ -17,6 +17,7 @@ class Node(pyre.component):
 
 
     # public state
+    address = pyre.properties.inet() # just one, for now
     marshaller = pyre.facility(interface=interfaces.marshaller)
     dispatcher = pyre.facility(interface=interfaces.dispatcher)
 
@@ -36,7 +37,7 @@ class Node(pyre.component):
         return
 
 
-    def onReload(self, *unused):
+    def onReload(self, *uargs, **ukwds):
         """
         Reload the nodal configuration for a distributed application
         """
@@ -47,7 +48,7 @@ class Node(pyre.component):
         return
 
 
-    def onTerminate(self, *unused):
+    def onTerminate(self, *uargs, **ukwds):
         """
         Terminate the event processing loop
         """
@@ -59,6 +60,16 @@ class Node(pyre.component):
         return
 
 
+    def onConnectionAttempt(self, channel, **kwds):
+        """
+        A peer has attempted to connect to my port
+        """
+        # log the request
+        self.info.log("received 'connection' request from {}".format(channel.address))
+        # reschedule this handler
+        return True
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -66,8 +77,26 @@ class Node(pyre.component):
         # register my signal handlers
         self.registerSignalHandlers()
 
+        # build my port
+        self.port = self.newPort()
+        # register it with my dispatcher
+        self.dispatcher.notifyOnReadReady(channel=self.port, handler=self.onConnectionAttempt)
+
         # all done
         return
+
+
+    # implementation details
+    def newPort(self):
+        """
+        Build and install a port that listens to my address for incoming connections
+        """
+        # access the port factory
+        from .PortTCP import PortTCP
+        # make one
+        port = PortTCP.install(address=self.address)
+        # and return it
+        return port
 
 
     # private data

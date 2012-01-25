@@ -8,12 +8,13 @@
 
 # externals
 import socket
-# my interface
+# my base classes
 from .Port import Port
+from .Channel import Channel
 
 
 # class declaration
-class PortTCP(Port):
+class PortTCP(Port, Channel):
     """
     An implementation of a process bell using a TCP port
     """
@@ -48,12 +49,12 @@ class PortTCP(Port):
 
 
     @classmethod
-    def install(cls, address):
+    def install(cls, address=None):
         """
         Attempt to acquire a port and start listening for connections
         """
         # normalize the address
-        address = cls.inet.pyre_cast(value=address)
+        address = cls.inet.any if address is None else cls.inet.pyre_cast(value=address)
         # create the socket
         listener = cls.tcp(address.family, cls.type)
         # no need for the socket to linger in TIME_WAIT after we are done with it
@@ -85,6 +86,17 @@ class PortTCP(Port):
 
 
     # interface
+    @property
+    def inbound(self):
+        """
+        Retrieve the input endpoint of the channel.
+
+        {PortTCP} only implements the portion of the {Channel} interface that is required for
+        detecting incoming connections.
+        """
+        return self.channel
+
+
     def close(self):
         """
         Close the port

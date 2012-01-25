@@ -16,7 +16,7 @@ connects to this port and the two exchange a couple of simple messages.
 In order to inform the client about the port number, and to avoid other synchronization
 problems, the test case builds a pipe between the client and the server. The client waits for
 data to come over its end of the pipe. The server acquires a port, and then communicates the
-port number to the client through the pipe. The client sends a simple message, whic the server
+port number to the client through the pipe. The client sends a simple message, which the server
 receives and validates. It responds with a simple message of its own and shuts down its socket
 and its pipe. The client receives its message, validates and exits.
 """
@@ -51,14 +51,14 @@ def onServer(marshaller, pipe):
     """Send a simple message and wait for the response"""
 
     # build a port
-    port = pyre.ipc.port(address='localhost:0')
+    port = pyre.ipc.port()
     # print what it was bound to
     # print("server: established port at {!r}:{}".format(*port.address.value))
     # send it in a message to the client
-    marshaller.send(item=port.address.port, channel=pipe)
+    marshaller.send(item=port.address, channel=pipe)
     # and wait for an incoming connection
     peer, address = port.accept()
-    # print("server: connection from {!r}:{}".format(*address.value))
+    # print("server: connection from {}".format(address))
 
     # get the message
     message = marshaller.recv(channel=peer)
@@ -78,11 +78,11 @@ def onServer(marshaller, pipe):
 def onClient(marshaller, pipe):
     """Wait for a message and send a response"""
     # get the port number
-    port = marshaller.recv(channel=pipe)
+    address = marshaller.recv(channel=pipe)
     # print it
-    # print("client: port={}".format(port))
+    # print("client: address={}".format(address))
     # make a channel
-    peer = pyre.ipc.tcp(address='localhost:{}'.format(port))
+    peer = pyre.ipc.tcp(address=address)
     # send a message
     marshaller.send(item=hello, channel=peer)
     # get the response
