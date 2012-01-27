@@ -115,21 +115,25 @@
     <!-- put some components in the catalog -->
     <component name="catalog">
       <bind property="cat1">import:component_catalog.comp</bind>
-      <bind property="cat2">import:component_catalog.comp</bind>
+      <bind property="cat2">import:component_catalog.comp#foo</bind>
       <bind property="cat3">import:component_catalog.comp</bind>
     </component>
   </component>
 
-  <component name="cat1">
+  <component name="catalog_container.catalog.cat1" family="sample.ifac.comp">
       <bind property="tag">cat1</bind>
   </component>
 
-  <component name="cat2">
+  <component name="catalog_container.catalog.cat2" family="sample.ifac.comp">
       <bind property="tag">cat2</bind>
   </component>
 
-  <component name="cat3">
+  <component name="catalog_container.catalog.cat3" family="sample.ifac.comp">
       <bind property="tag">cat3</bind>
+  </component>
+
+  <component name="foo" family="sample.ifac.comp">
+      <bind property="tag">cat2</bind>
   </component>
 
 </config>

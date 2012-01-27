@@ -35,12 +35,18 @@ class Catalog(Facility):
         configurator = client.pyre_executive.configurator
         # get my configuration information
         for _, slot in configurator.children(basekey):
-            # get my interface to retrieve the component descriptor
-            factory = self.type.pyre_cast(slot.getValue())
             # build the instance name
             cname = client.pyre_split(slot.name)[-1]
-            # instantiate
-            instance = factory(name=cname)
+            # get my interface to retrieve the component descriptor
+            factory = self.type.pyre_cast(slot.getValue())
+            # if I did not get a component instance
+            if not isinstance(factory, self.Component):
+                # assume it is an instance factory and use it to instantiate the actual component
+                instance = factory(name=slot.name)
+            # otherwise
+            else:
+                # i already have an instance
+                instance = factory
             # store in the index
             index[cname] = instance
         # return the index so that it can be attached as the trait value for this instance    

@@ -25,9 +25,11 @@ def test():
     # build the shell
     s = container(name="catalog_container")
     # verify that the catalog has three members
+    # print(len(s.catalog))
     assert len(s.catalog) == 3
     # and that the contents were configured properly
     for name, instance in s.catalog.items():
+        # print("tag: {!r}, name: {!r}".format(instance.tag, name))
         assert instance.tag == name
 
     return s
