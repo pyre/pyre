@@ -26,7 +26,7 @@ def loadConfiguration(uri):
     # build a locator for these settings
     import pyre.tracking
     here = pyre.tracking.here(level=1)
-    # getthe executive to do its thing
+    # get the executive to do its thing
     return executive.loadConfiguration(uri=uri, locator=here)
 
 

@@ -64,6 +64,10 @@ class CodecManager:
         index[ODB.encoding] = index["vfs"] = index["file"] = ODB
 
 
+        # the cfg file handler
+        from .cfg import cfg
+        index[cfg.encoding] = cfg
+
         # the pml file handler
         from .pml.PML import PML
         index[PML.encoding] = PML
