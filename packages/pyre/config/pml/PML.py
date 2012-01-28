@@ -21,7 +21,7 @@ class PML(Codec):
 
 
     # interface
-    def decode(self, source, locator=None):
+    def decode(self, uri, source, locator):
         """
         Parse {source} and return its contents
         """
@@ -41,7 +41,6 @@ class PML(Codec):
                 loc = pyre.tracking.chain(this=error.locator, next=locator)
             else:
                 loc = error.locator
-            uri = error.locator.source
             msg = "decoding error in {}: {}".format(loc, error.description)
             # convert the parsing error into a decoding error and raise it
             raise self.DecodingError(

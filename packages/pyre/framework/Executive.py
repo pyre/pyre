@@ -72,7 +72,7 @@ class Executive:
         # instantiate the requested reader
         reader = self.codex.newCodec(encoding)
         # extract the configuration setting from the source
-        configuration = reader.decode(source=source, locator=locator)
+        configuration = reader.decode(uri=uri, source=source, locator=locator)
         # update the evaluation model
         errors = self.configurator.configure(configuration=configuration, priority=priority)
         # add any errors to the pile

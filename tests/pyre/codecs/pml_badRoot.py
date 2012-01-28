@@ -19,11 +19,13 @@ def test():
     m = pyre.config.newCodecManager()
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
+    # the configuration file
+    uri = "sample-badRoot.pml"
     # open a stream with an error
-    sample = open("sample-badRoot.pml")
+    sample = open(uri)
     # read the contents
     try:
-        reader.decode(source=sample)
+        reader.decode(uri=uri, source=sample, locator=None)
         assert False
     except reader.DecodingError as error:
         assert str(error) == (

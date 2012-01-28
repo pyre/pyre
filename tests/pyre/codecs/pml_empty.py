@@ -19,10 +19,12 @@ def test():
     m = pyre.config.newCodecManager()
     # ask for a pml codec
     reader = m.newCodec(encoding="pml")
+    # the configuration file
+    uri = "sample-empty.pml"
     # open a stream
-    sample = open("sample-empty.pml")
+    sample = open(uri)
     # read the contents
-    events = reader.decode(source=sample)
+    events = reader.decode(uri=uri, source=sample, locator=None)
     # check that we got a real instance back
     assert events == []
 
