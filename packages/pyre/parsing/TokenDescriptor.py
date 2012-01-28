@@ -19,7 +19,7 @@ class TokenDescriptor:
 
 
     # meta methods
-    def __init__(self, pattern, **kwds):
+    def __init__(self, pattern='', **kwds):
         super().__init__(**kwds)
         self.pattern = pattern
         return

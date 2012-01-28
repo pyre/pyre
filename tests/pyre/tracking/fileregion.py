@@ -15,10 +15,10 @@ Verify that the file region locator returns the correct location tag
 def test():
     import pyre.tracking
 
-    start = pyre.tracking.newFileLocator(source="script.py", line=16, column=2)
-    end = pyre.tracking.newFileLocator(source="script.py", line=17, column=52)
+    start = pyre.tracking.file(source="script.py", line=16, column=2)
+    end = pyre.tracking.file(source="script.py", line=17, column=52)
 
-    region = pyre.tracking.newFileRegionLocator(start=start, end=end)
+    region = pyre.tracking.region(start=start, end=end)
 
     assert str(region) == "file='script.py', from (line=16, column=2) to (line=17, column=52)"
 

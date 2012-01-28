@@ -8,8 +8,9 @@
 
 class Script:
     """
-    Locator that records information relevant to python scripts. This information is typically
-    extracted from stack traces so it contains whatever can be harvested by introspection
+    A locator that records information relevant to python scripts. This information is
+    typically extracted from stack traces so it contains whatever can be harvested by
+    introspection
     """
 
 
@@ -20,7 +21,7 @@ class Script:
 
 
     # meta methods
-    def __init__(self, source, line, function, **kwds):
+    def __init__(self, source, line=None, function=None, **kwds):
         super().__init__(**kwds)
 
         self.source = source

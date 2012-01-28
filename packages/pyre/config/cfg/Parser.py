@@ -59,7 +59,7 @@ class Parser:
             # if it didn't match
             if match is None:
                 # build a locator
-                uriloc = pyre.tracking.newFileLocator(source=uri, line=lineno)
+                uriloc = pyre.tracking.file(source=uri, line=lineno)
                 # if i were handed a locator
                 if locator:
                     # adjust it
@@ -89,14 +89,14 @@ class Parser:
                         component=name,
                         condition=(name, family),
                         key=key, value=value, 
-                        locator=pyre.tracking.newFileLocator(source=uri, line=lineno))
+                        locator=pyre.tracking.file(source=uri, line=lineno))
                 # otherwise
                 else:
                     # build a simple assignment event
                     event = self.Assignment(
                         key=tuple(family + [key]),
                         value=value, 
-                        locator=pyre.tracking.newFileLocator(source=uri, line=lineno))
+                        locator=pyre.tracking.file(source=uri, line=lineno))
                 # add it to the pile
                 configuration.append(event)
                 # grab the next line

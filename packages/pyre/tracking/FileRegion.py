@@ -8,7 +8,7 @@
 
 class FileRegion:
     """
-    Locator that records information about a region of a file
+    A locator that records information about a region of a file
     """
 
 

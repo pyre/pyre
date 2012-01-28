@@ -16,7 +16,7 @@ class Scanner(metaclass=Lexer):
     """
 
     # pull the token descriptor factory
-    from . import token
+    from .TokenDescriptor import TokenDescriptor as token
 
     # the default tokens: the scanner always generates this
     start = token()
@@ -37,8 +37,7 @@ class Scanner(metaclass=Lexer):
 
     @property
     def locator(self):
-        from pyre.tracking.File import File
-        return File(source=self.filename, line=self.line, column=self.column)
+        return pyre.tracking.file(source=self.filename, line=self.line, column=self.column)
 
 
     # interface
@@ -83,7 +82,8 @@ class Scanner(metaclass=Lexer):
         self._tokenCache = []
         return
 
-    # interface
+
+    # implementation details
     def _tokenize(self, stream):
         # iterate over the contents of the stream
         for line in stream:

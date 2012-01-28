@@ -6,9 +6,11 @@
 #
 
 
+# externals
 import collections
 
 
+# class declaration
 class Tracker:
     """
     Record the values a key has taken

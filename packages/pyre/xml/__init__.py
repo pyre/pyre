@@ -47,6 +47,9 @@ highlights all the important steps for creating handlers/decorators for converti
 into live data structures.
 """
 
+# externals
+import pyre.tracking
+
 
 # factories
 def newReader(**kwds):
@@ -61,8 +64,7 @@ def newLocator(saxlocator):
     """
     Convert a locator from the SAX parser to a pyre.tracking.FileLocator 
     """
-    import pyre.tracking
-    return pyre.tracking.newFileLocator(
+    return pyre.tracking.file(
         source=saxlocator.getSystemId(), 
         line=saxlocator.getLineNumber(), column=saxlocator.getColumnNumber())
 

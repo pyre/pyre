@@ -15,7 +15,7 @@ Verify that the simple locator returns the correct location tag
 def script():
     import pyre.tracking
 
-    locator = pyre.tracking.newSimpleLocator(source="simple")
+    locator = pyre.tracking.simple(source="simple")
 
     assert str(locator) == "simple"
 

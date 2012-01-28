@@ -37,7 +37,7 @@ class Model(Hierarchical):
     counter = None # the event priority counter
     separator = '.' # the level separator in the node names
     # build a locator for values that come from trait defaults
-    locator = pyre.tracking.newSimpleLocator(source="<defaults>")
+    locator = pyre.tracking.simple(source="<defaults>")
 
 
     # interface for my configurator

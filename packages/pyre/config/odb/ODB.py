@@ -35,7 +35,7 @@ class ODB(Codec):
         object; open it, execute it, and place its contents into a shelf
         """
         # build a locator for this request
-        shelfLocator = pyre.tracking.newSimpleLocator(source=source)
+        shelfLocator = pyre.tracking.simple(source=source)
         # adjust the locator
         locator = pyre.tracking.chain(this=shelfLocator, next=locator) if locator else shelfLocator
         # get the fileserver from the executive

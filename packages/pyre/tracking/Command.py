@@ -8,7 +8,7 @@
 
 class Command:
     """
-    Locator that records the position of a command line argument
+    A locator that records the position of a command line argument 
     """
 
 

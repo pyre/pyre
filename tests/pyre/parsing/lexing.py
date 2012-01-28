@@ -23,7 +23,7 @@ def test():
         delimiter = Scanner.token(r",")
         terminator = Scanner.token(r";")
 
-        identifier = Scanner.token(r"[_\w]+")
+        identifier = Scanner.token(r"[\w]+")
 
         # constants
         ignoreWhitespace = True

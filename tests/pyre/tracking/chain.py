@@ -15,8 +15,8 @@ Verify that locators can be chained correctly
 def script():
     import pyre.tracking
 
-    first = pyre.tracking.newSimpleLocator(source="first")
-    second = pyre.tracking.newSimpleLocator(source="second")
+    first = pyre.tracking.simple(source="first")
+    second = pyre.tracking.simple(source="second")
     chain = pyre.tracking.chain(this=first, next=second)
 
     assert str(chain) == "first via second"

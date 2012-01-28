@@ -8,7 +8,7 @@
 
 class File:
     """
-    Locator that records information relevant to file sources
+    A locator that records a position within a file
     """
 
 
@@ -19,7 +19,7 @@ class File:
 
 
     # meta methods
-    def __init__(self, source, line, column, **kwds):
+    def __init__(self, source, line=None, column=None, **kwds):
         super().__init__(**kwds)
 
         self.source = source

@@ -35,7 +35,7 @@ class Importer(Codec):
         Interpret {source} as a module to be imported
         """
         # build a locator for this request
-        shelfLocator = pyre.tracking.newSimpleLocator(source=source)
+        shelfLocator = pyre.tracking.simple(source=source)
         # adjust the locator
         locator = pyre.tracking.chain(this=shelfLocator, next=locator) if locator else shelfLocator
 

@@ -54,7 +54,7 @@ class CommandLine:
 
     handlers = None # the special handlers of command line arguments
     assignmentScanner = None
-    locator = staticmethod(pyre.tracking.newCommandLocator)
+    locator = staticmethod(pyre.tracking.command)
 
 
     # types

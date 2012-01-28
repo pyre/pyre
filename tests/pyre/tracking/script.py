@@ -15,7 +15,7 @@ Verify that the script locator returns the correct location tag
 def script():
     import pyre.tracking
 
-    locator = pyre.tracking.newScriptLocator(source="script.py", function="script", line=16)
+    locator = pyre.tracking.script(source="script.py", function="script", line=16)
     assert str(locator) == "file='script.py', line=16, function='script'"
 
     return locator

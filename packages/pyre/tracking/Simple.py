@@ -8,7 +8,7 @@
 
 class Simple:
     """
-    Locator that records a simple named source with no further details
+    A locator that records a simple named source with no further details
     """
 
 

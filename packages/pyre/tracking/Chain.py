@@ -8,7 +8,8 @@
 
 class Chain:
     """
-    Locator that ties two others together
+    A locator that ties together two others in order to express that something in {next}
+    caused {this} to be recorded
     """
 
 
