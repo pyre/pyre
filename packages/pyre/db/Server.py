@@ -13,7 +13,7 @@ from . import datastore, sql
 
 
 # declaration
-class Server(pyre.component, family="pyre.db.server", implements=datastore):
+class Server(pyre.component, implements=datastore):
     """
     Abstract component that encapsulates the connection to a database back end
 
@@ -38,6 +38,14 @@ class Server(pyre.component, family="pyre.db.server", implements=datastore):
     # required interface
     @pyre.export
     def attach(self):
+        """
+        Connect to the database back end
+        """
+        raise NotImplementedError(
+            "class {.__name__!r} must override 'attach'".format(type(self)))
+
+    @pyre.export
+    def detach(self):
         """
         Connect to the database back end
         """

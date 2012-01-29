@@ -21,7 +21,19 @@ class DataStore(pyre.interface, family="pyre.db.server"):
     @pyre.provides
     def attach(self):
         """
-        Establish a connection to the indicated data store
+        Establish a connection to the data store
+        """
+
+    @pyre.provides
+    def detach(self):
+        """
+        Close a connection to the data store
+        """
+
+    @pyre.provides
+    def execute(self, *sql):
+        """
+        Execute the sequence of SQL statements in {sql} as a single command
         """
 
 
