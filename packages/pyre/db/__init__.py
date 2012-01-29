@@ -40,6 +40,8 @@ from .Query import Query as query
 from .. import schema
 from .Field import Field as field
 
+# supported servers
+from .Postgres import Postgres as postgres
 
 # the representation of NULL
 null = object()

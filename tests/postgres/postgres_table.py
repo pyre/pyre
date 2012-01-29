@@ -42,12 +42,9 @@ def test():
     # this is the SQL statement that looks for a table by a given name
     sql = "SELECT tablename FROM pg_tables WHERE tablename='{}'".format(Weather.pyre_name)
 
-    # access the postgres package
-    import postgres
-
     # build a database component and connect to the database specified in the local
     # configuration file
-    db = postgres.server(name="test").attach()
+    db = pyre.db.postgres(name="test").attach()
 
     # in a transaction block
     with db:

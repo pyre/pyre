@@ -13,7 +13,7 @@ Make a connection to a database using the low level interface from the extension
 
 
 def test():
-    from postgres import postgres as pyrepg
+    from pyre.extensions import postgres as pyrepg
     # initialize the module exceptions
     import pyre.db.exceptions as exceptions
     pyrepg.registerExceptions(exceptions)

@@ -14,10 +14,10 @@ Instantiate the postgres component
 
 def test():
     # access the package
-    import postgres
+    import pyre.db
 
     # build a database component
-    db = postgres.server()
+    db = pyre.db.postgres()
     # verify it is going to attach to the default database that is guaranteed to exist
     assert db.database == "postgres"
     # attach

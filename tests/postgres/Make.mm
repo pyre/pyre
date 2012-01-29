@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity pyrepg connections components
+test: sanity pyrepg components
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -25,11 +25,6 @@ pyrepg:
 	${PYTHON} ./pyrepg_execute.py
 	${PYTHON} ./pyrepg_execute_badCommand.py
 	${PYTHON} ./pyrepg_submit.py
-
-connections:
-	${PYTHON} ./connect.py
-	${PYTHON} ./disconnect.py
-	${PYTHON} ./execute.py
 
 components:
 	${PYTHON} ./postgres_database.py

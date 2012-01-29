@@ -59,12 +59,9 @@ def test():
     # journal.debug("postgres.connection").active = True
     journal.debug("postgres.transactions").active = True
 
-    # access the postgres package
-    import postgres
-
     # build a database component and connect to the database specified in the local
     # configuration file
-    db = postgres.server(name="test").attach()
+    db = pyre.db.postgres(name="test").attach()
 
     # ask {libpq}  to be quiet
     db.execute("SET client_min_messages = warning;")

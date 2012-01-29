@@ -8,12 +8,12 @@
 
 
 """
-Sanity check: verify that the module is accessible
+Sanity check: verify that the extension module is accessible
 """
 
 
 def test():
-    from postgres import postgres
+    from pyre.extensions import postgres
     return
 
 

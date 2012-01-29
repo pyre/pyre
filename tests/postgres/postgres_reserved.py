@@ -18,10 +18,8 @@ import pyre.db
 
 def test():
 
-    # access the postgres package
-    import postgres
     # connect to the test database
-    db = postgres.server(name="test").attach()
+    db = pyre.db.postgres(name="test").attach()
 
     # order
     class invalid(pyre.db.table):

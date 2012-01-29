@@ -19,10 +19,10 @@ def test():
     # journal.debug("postgres.connection").active = True
 
     # access the postgres package
-    import postgres
+    import pyre.db
 
     # build a database component
-    db = postgres.server(name="bizbook")
+    db = pyre.db.postgres(name="bizbook")
     # connect to the default database
     db.attach()
 

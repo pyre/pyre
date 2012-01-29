@@ -18,7 +18,7 @@ def test():
     # journal.debug("postgres.connection").active = True
     # journal.debug("postgres.execution").active = True
 
-    from postgres import postgres as pyrepg
+    from pyre.extensions import postgres as pyrepg
     # initialize the module exceptions
     import pyre.db.exceptions as exceptions
     pyrepg.registerExceptions(exceptions)

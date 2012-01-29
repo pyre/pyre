@@ -18,17 +18,11 @@ def test():
     # journal.debug("postgres.execute").active = True
     # journal.debug("postgres.connection").active = True
 
-    # access the postgres package
-    import postgres
-
-    # build a database component
-    db = postgres.server(name="bizbook")
-    # connect to the default database
-    db.attach()
-
-    # get the bizbook schema
+    # access the bizbook package
     import bizbook
 
+    # build a database component
+    db = bizbook.pg()
     db.execute("SET client_min_messages = warning;")
 
     # build the tables

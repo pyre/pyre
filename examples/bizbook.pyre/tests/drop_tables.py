@@ -18,16 +18,11 @@ def test():
     # journal.debug("postgres.execute").active = True
     # journal.debug("postgres.connection").active = True
 
-    # access the postgres package
-    import postgres
+    # access bizbook
+    import bizbook
 
     # build a database component
-    db = postgres.server(name="bizbook")
-    # connect to the default database
-    db.attach()
-
-    # get the bizbook schema
-    import bizbook
+    db = bizbook.pg()
 
     # drop the tables
     db.dropTable(bizbook.schema.InvoiceItem)
