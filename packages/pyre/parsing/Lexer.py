@@ -6,97 +6,91 @@
 #
 
 
+# externals
 import re
 import collections
-from .Token import Token
-from .TokenDescriptor import TokenDescriptor
+# my super class
+from pyre.patterns.AttributeClassifier import AttributeClassifier
 
 
-class Lexer(type):
+class Lexer(AttributeClassifier):
     """
-    Metaclass that looks through a Scanner class record to convert TokenDescriptors into Token
-    classes and build the Scanner's regular expression engine
+    Metaclass that enables its instances to convert input sources into token streams
     """
 
 
-    # constants
-    pyre_TOKEN_INDEX = "pyre_tokens"
+    # types
+    from .Token import Token as token
+    from .Descriptor import Descriptor as descriptor
 
 
     # meta methods
-    @classmethod
-    def __prepare__(cls, name, bases, **kwds):
-        """
-        Build an attribute table that maintains a category index for attribute descriptors
-        """
-        return collections.OrderedDict()
-
-
     def __new__(cls, name, bases, attributes, **kwds):
         """
-        Build the document class record
+        Build the scanner class record
         """
-        # initialize the list of descriptors
-        harvest = []
-        # loop over the attributes
-        for attrname, attribute in attributes.items():
-            # for attributes that are descriptors
-            if isinstance(attribute, TokenDescriptor) or (
-                isinstance(attribute, type) and issubclass(attribute, Token)):
-                # set their name
-                attribute.name = attrname
-                # add them to the pile
-                harvest.append(attribute)
-        # save the descriptor tuple as a class attribute
-        attributes[cls.pyre_TOKEN_INDEX] = tuple(harvest)
-        # let type build the class record
-        record = super().__new__(cls, name, bases, attributes, **kwds)
-        # initialize the list of tokens
+        # print('Lexer.__new__: processing {!r}'.format(name))
+        # initialize the token class list
         tokens = []
-        # initialize the list of recognizers harvested from the token declarations
-        recognizers = []
-        # visit each one of them
-        for descriptor in harvest:
-            # extract descriptor info: the name of the class and the pattern
-            tag = descriptor.name
-            pattern = descriptor.pattern
-            # build the recognizer
-            recognizer = re.compile(pattern) if pattern else None
-            # handle TokenDescriptor instances
-            if isinstance(descriptor, TokenDescriptor):
-                # build the default attribute list
-                fields = {
-                    "pattern": pattern,
-                    "recognizer": recognizer,
-                    "__slots__": (),
-                    }
-                # build a class that derives from Token out of the information in the
-                # TokenDescriptor
-                tokenClass = type(tag, (Token,), fields)
-                # attach it to the scanner
-                setattr(record, tag, tokenClass)
-            # handle Token descendants
-            elif issubclass(descriptor, Token):
-                tokenClass = descriptor
-                tokenClass.recognizer = recognizer
-            # otherwise, a hit a firewall
-            else:
-                import journal
-                journal.firewall("pyre.parsing").log("unknown token descriptor type")
+        patterns = []
+        # harvest the token descriptors
+        for name, descriptor in cls.pyre_harvest(attributes, cls.descriptor):
+            # print('    {}: "{}"'.format(name, descriptor.pattern))
+            # initialize the attributes of the token class
+            fields = {
+                'name': name,
+                'head': descriptor.head,
+                'pattern': descriptor.pattern,
+                'tail': descriptor.tail,
+                '__slots__': (),
+                }
+            # build it
+            token = type(name, (cls.token,), fields)
+            # add it to the pile
+            tokens.append(token)
 
-            # save the token class record in the list of tokens
-            tokens.append(tokenClass)
-            # if this token has a recognizer
-            if descriptor.pattern:
-                # add it to the pile
-                recognizers.append(r"(?P<{0}>{1})".format(tag, pattern))
+        # attribute adjustments
+        # replace the descriptors with the new token classes
+        for token in tokens: attributes[token.name] = token
+        # add the list of tokens
+        attributes["pyre_tokens"] = tokens
 
-        # replace the token index
-        setattr(record, cls.pyre_TOKEN_INDEX, tokens)
-        # assemble and attach the regular expression
-        setattr(record, "recognizer", re.compile("|".join(recognizers)))
-        # return the new class record
-        return record
+        # build the scanner class record
+        scanner = super().__new__(cls, name, bases, attributes, **kwds)
+
+        # initialize the collection of token patterns
+        patterns = []
+        # and the known token names
+        names = set()
+        # iterate over all ancestors to build the recognizer
+        for base in scanner.__mro__:
+            # for classes that are {Lexer} instances
+            if isinstance(base, cls):
+                # for every token
+                for token in base.pyre_tokens:
+                    # get the token name
+                    name = token.name
+                    # skip shadowed tokens
+                    if name in names: continue
+                    # get the token pattern
+                    pattern = token.pattern
+                    # skip tokens with no patterns
+                    if not pattern: continue
+                    # for the rest, get the remaining pattern parts
+                    head = token.head
+                    tail = token.tail
+                    # assemble the regular expression
+                    regex = '{}(?P<{}>{}){}'.format(head, name, pattern, tail)
+                    # add it to the pattern pile
+                    patterns.append(regex)
+            # in any case, add all the local names to the known pile
+            names.update(base.__dict__)
+                    
+        # attach the recognizer
+        scanner.pyre_recognizer = re.compile('|'.join(patterns))
+        # return the scanner record
+        # print('  done')
+        return scanner
 
 
 # end of file 

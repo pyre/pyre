@@ -21,7 +21,6 @@ sanity:
 
 lexing:
 	${PYTHON} ./scanner.py
-	${PYTHON} ./scanner_classes.py
 	${PYTHON} ./lexing.py
 	${PYTHON} ./lexing_tokenizationError.py
 

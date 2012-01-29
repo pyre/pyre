@@ -19,11 +19,11 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Descriptor.py \
     Lexer.py \
     Parser.py \
     Scanner.py \
     Token.py \
-    TokenDescriptor.py \
     exceptions.py \
     __init__.py
 

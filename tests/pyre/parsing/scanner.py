@@ -12,15 +12,15 @@ Build and test a simple tokenizer
 """
 
 def test():
-    from pyre.parsing.Scanner import Scanner
+    import pyre.parsing
 
     COMMENT = r"#"
     SEPARATOR = r":"
 
-    class Simple(Scanner):
+    class Simple(pyre.parsing.scanner):
         """a simple scanner"""
-        comment = Scanner.token(COMMENT)
-        separator = Scanner.token(SEPARATOR)
+        comment = pyre.parsing.token(COMMENT)
+        separator = pyre.parsing.token(SEPARATOR)
 
 
     # access the token base class
@@ -29,10 +29,12 @@ def test():
     # check that the token descriptors have been turned into subclasses of Token
     assert issubclass(Simple.comment, Token)
     assert issubclass(Simple.separator, Token)
-    # check that the token index reflects the transmutation
-    assert getattr(Simple, Simple.pyre_TOKEN_INDEX) == [Simple.comment, Simple.separator]
     # check that the recognizer was built correctly
-    assert Simple.recognizer.pattern == "(?P<comment>#)|(?P<separator>:)"
+    assert Simple.pyre_recognizer.pattern == '|'.join([
+        "(?P<comment>#)",
+        "(?P<separator>:)",
+        "(?P<whitespace>\s+)",
+        ])
     
     # and return the class record
     return Simple

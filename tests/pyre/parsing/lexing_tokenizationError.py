@@ -12,22 +12,20 @@ Build and test a simple tokenizer
 """
 
 def test():
-    from pyre.parsing.Scanner import Scanner
+    import pyre.parsing
 
 
-    class Simple(Scanner):
+    class Simple(pyre.parsing.scanner):
         """a simple scanner"""
 
         # tokens
-        comment = Scanner.token(r"#.*$")
-        separator = Scanner.token(r":")
-        delimiter = Scanner.token(r",")
-        terminator = Scanner.token(r";")
+        comment = pyre.parsing.token(r"#.*$")
+        separator = pyre.parsing.token(r":")
+        delimiter = pyre.parsing.token(r",")
+        terminator = pyre.parsing.token(r";")
 
-        identifier = Scanner.token(r"[_\w]+")
+        identifier = pyre.parsing.token(r"[_\w]+")
 
-        # constants
-        ignoreWhitespace = True
 
     filename = "sample-bad.inp"
     # open the input stream
@@ -37,7 +35,7 @@ def test():
 
     # tokenize
     try:
-        list(scanner.tokenize(stream))
+        list(scanner.pyre_tokenize(uri=filename, stream=stream))
         assert False
     except scanner.TokenizationError as error:
         assert error.locator.source == filename

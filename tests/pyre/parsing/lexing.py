@@ -12,44 +12,50 @@ Build and test a simple tokenizer
 """
 
 def test():
-    from pyre.parsing.Scanner import Scanner
+    import pyre.parsing
 
-    class Simple(Scanner):
+    class Simple(pyre.parsing.scanner):
         """a simple scanner"""
 
         # tokens
-        comment = Scanner.token(r"#.*$")
-        separator = Scanner.token(r":")
-        delimiter = Scanner.token(r",")
-        terminator = Scanner.token(r";")
+        comment = pyre.parsing.token(r"#.*$")
+        separator = pyre.parsing.token(r":")
+        delimiter = pyre.parsing.token(r",")
+        terminator = pyre.parsing.token(r";")
+        identifier = pyre.parsing.token(r"[\w]+")
 
-        identifier = Scanner.token(r"[\w]+")
-
-        # constants
-        ignoreWhitespace = True
 
     # open the input stream
-    stream = open("sample.inp")
+    uri = 'sample.inp'
+    stream = open(uri)
     # create a scanner
     scanner = Simple()
 
     # tokenize
-    actual = list(scanner.tokenize(stream))
+    actual = list(scanner.pyre_tokenize(uri=uri, stream=stream))
+    # for token in actual: print(token)
 
     # check
     expected = (
         Simple.start,
-        Simple.comment, Simple.comment, Simple.comment, Simple.comment, Simple.comment,
-        Simple.identifier, Simple.separator, 
-        Simple.identifier, Simple.delimiter,
-        Simple.identifier, Simple.delimiter,
-        Simple.identifier,
-        Simple.terminator,
+        Simple.comment, Simple.whitespace,
+        Simple.comment, Simple.whitespace,
+        Simple.comment, Simple.whitespace,
+        Simple.comment, Simple.whitespace,
+        Simple.comment, Simple.whitespace,
+        Simple.whitespace,
+        Simple.whitespace, Simple.identifier, Simple.separator, 
+        Simple.whitespace, Simple.identifier, Simple.delimiter,
+        Simple.whitespace, Simple.identifier, Simple.delimiter,
+        Simple.whitespace, Simple.identifier, Simple.terminator, Simple.whitespace,
+        Simple.whitespace,
         Simple.comment,
+        Simple.whitespace,
         Simple.finish,
         )
 
     for token, klass in zip(actual, expected):
+        # print(token)
         assert isinstance(token, klass)
 
     return

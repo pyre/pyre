@@ -12,7 +12,7 @@ This package provides support for writing simple parsers
 
 
 # factories
-from .TokenDescriptor import TokenDescriptor as token
+from .Descriptor import Descriptor as token
 from .Scanner import Scanner as scanner
 
 

@@ -6,7 +6,9 @@
 #
 
 
+# externals
 import pyre.tracking
+# my superclass
 from .Lexer import Lexer
 
 
@@ -15,113 +17,98 @@ class Scanner(metaclass=Lexer):
     The input stream tokenizer
     """
 
-    # pull the token descriptor factory
-    from .TokenDescriptor import TokenDescriptor as token
 
-    # the default tokens: the scanner always generates this
-    start = token()
-    finish = token()
-    whitespace = token(r"\s+")
-
-
-    # constants
-    ignoreWhitespace = True
-
-
-    # public data
-    stream = None
-    tokens = None
-    line = 0
-    column = 0
-    filename = ""
-
-    @property
-    def locator(self):
-        return pyre.tracking.file(source=self.filename, line=self.line, column=self.column)
+    # types
+    # exceptions 
+    from .exceptions import TokenizationError
+    # the descriptor factory
+    from .Descriptor import Descriptor as pyre_token
+    # the default tokens; all scanners have these
+    start = pyre_token()
+    finish = pyre_token()
+    whitespace = pyre_token(pattern=r'\s+')
 
 
     # interface
-    def tokenize(self, stream):
+    def pyre_tokenize(self, uri, stream):
+        """
+        Convert the input {stream} into tokens
+        """
         # clear out the token cache
-        self.tokens = []
-        # clear out my location in the stream
-        self.line = 0
-        self.column = 0
-        # record the name of the stream
-        try:
-            self.filename = stream.name
-        except AttributeError:
-            self.filename = "{unknown}"
-        # indicate the beginning of tokenization 
-        yield self.start(locator=self.locator)
+        self.pyre_cache = []
         # tokenize the stream
-        for token in self._tokenize(stream):
-            # first, empty out any tokens that may have been pushed back
-            for cached in self._tokenCache:
-                yield cached
-            # when that's done, return the current token
+        for token in self._pyre_tokenize(uri=uri, stream=stream):
+            # first empty out the token cache
+            for cached in self.pyre_cache: yield cached
+            # then send the current token
             yield token
-        # indicate the end of the tokenization stream
-        self.column = 0
-        yield self.finish(locator=self.locator)
-        # and terminate the iteration
+        # all done
         return
 
 
-    def pushback(self, token):
+    def pyre_pushback(self, token):
         """
         Push a token back into the token stream
         """
-        self._tokenCache.append(token)
-        return self
+        # do it
+        self.pyre_cache.append(token)
+        # all done
+        return
 
 
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        self._tokenCache = []
+        self.pyre_cache = []
         return
 
 
     # implementation details
-    def _tokenize(self, stream):
+    def _pyre_tokenize(self, uri, stream):
+        """
+        Convert the contents of the input source into a token stream
+        """
+        # the locator factory
+        locator = pyre.tracking.file
+        # send a {start} token
+        yield self.start(locator=locator(source=uri, line=0, column=0))
+
         # iterate over the contents of the stream
-        for line in stream:
-            # reset the column position
-            self.column = 0
-            # skip whitespace
-            while self.column != len(line):
-                # skip whitespace
-                if self.ignoreWhitespace:
-                    match = self.whitespace.recognizer.match(line, self.column)
-                    if match:
-                        self.column = match.end()
-                        if self.column == len(line):
-                            break
+        for line, text in enumerate(stream):
+            # reset the column
+            column = 0
+            # scan until the end of the line
+            while column != len(text):
                 # attempt to recognize the contents of the line
-                match = self.recognizer.match(line, self.column)
+                match = self.pyre_recognizer.match(text, pos=column)
+                # if it failed
                 if not match:
-                    raise self.TokenizationError(locator=self.locator, text=line[self.column:])
-                # we got one
-                matches = match.groupdict()
-                # figure out what it was by looking for a non-empty group that matches the
-                # token class names
-                for token in self.pyre_tokens:
-                    text = matches[token.__name__]
-                    if text:
-                        yield token(lexeme=text, locator=self.locator)
-                        break
+                    # nothing more to do...
+                    raise self.TokenizationError(
+                        text=text[column:], locator=locator(source=uri, line=line, column=column))
+                # we have a match; find the name of the matching token
+                name = match.lastgroup
+                # get the token class
+                token = getattr(self, name)
+                # make a token and toss it back
+                yield token(
+                    lexeme = match.group(name),
+                    locator = locator(source=uri, line=line, column=column)
+                    )
                 # update the column counter
-                self.column = match.end()
-            # update the line counter
-            self.line += 1
-            
-        # done with the file
+                column = match.end()
+
+        # send a {finish} token
+        yield self.finish(locator=locator(source=uri, line=line+1, column=0))
+        # all done
         return
 
 
-    # exceptions
-    from .exceptions import TokenizationError
+    # private data
+    pyre_cache = [] # the list of tokens that have been pushed back
+    # set by {Lexer}
+    pyre_tokens = None # a list of my tokens
+    pyre_recognizer = None # the compiled regex constructed out the patterns of my tokens
 
 
 # end of file 

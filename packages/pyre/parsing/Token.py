@@ -11,16 +11,16 @@ class Token:
     Base class for tokens, the atomic units of recognizable text in a stream
     """
 
-    # public data
-    name = None
 
-    # constants
-    pattern = None
-    recognizer = None
+    # constants; set at compile time
+    name = '' # the name of the token
+    head = '' # a pattern for text required for a match but not part of the lexeme
+    tail = '' # a pattern for text required for a match but not part of the lexeme
+    pattern = '' # the regular expression that extracts the lexeme
 
 
     # meta methods
-    def __init__(self, *, lexeme="", locator=None, **kwds):
+    def __init__(self, lexeme='', locator=None, **kwds):
         super().__init__(**kwds)
         self.lexeme = lexeme
         self.locator = locator
@@ -28,23 +28,28 @@ class Token:
 
 
     def __len__(self):
+        """
+        Compute the length of the lexeme
+
+        N.B.: this is not the same as the footprint of the token in the input stream, which
+        includes the {head} and {tail} of the token
+        """
         return len(self.lexeme)
 
 
     def __str__(self):
-        # if there is a lexeme, print it
-        if self.lexeme:
-            return "{{{.__name__}: {.lexeme!r}}}".format(type(self), self)
-        # otherwise, just note the token class
-        return "{{{.__name__}}}".format(type(self))
+        """
+        Textual representation, mostly for debugging purposes
+        """
+        # render the lexeme
+        return "{{{0.name}: {0.lexeme!r}}}".format(self)
 
-
-    # narrow down the footprint a bit
-    __slots__ = ("lexeme", "locator")
-
-
-    # meta data
-    _pyre_category = "tokens" # for the AttributeClassifier
-
+    
+    # implementation details
+    __slots__ = (
+        'lexeme', # the body of the token
+        'locator', # marks the location of the lexeme in the input stream
+        )
+    
 
 # end of file 
