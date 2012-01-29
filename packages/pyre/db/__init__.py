@@ -41,6 +41,7 @@ from .. import schema
 from .Field import Field as field
 
 # supported servers
+from .SQLite import SQLite as sqlite
 from .Postgres import Postgres as postgres
 
 # the representation of NULL
@@ -64,6 +65,7 @@ from .fields import (
 # cascade action markers for foreign keys
 from .actions import noAction, restrict, cascade, setNull, setDefault
 
+
 # orderings
 from .Collation import Collation as collation
 
@@ -72,7 +74,6 @@ def ascending(field):
     Build a clause for the {ORDER} expression that marks {field} as sorted in ascending order
     """
     return collation(field=field, collation="ASC")
-
 
 def descending(field):
     """

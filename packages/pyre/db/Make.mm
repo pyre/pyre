@@ -28,6 +28,7 @@ EXPORT_PYTHON_MODULES = \
     Postgres.py \
     Query.py \
     SQL.py \
+    SQLite.py \
     Selector.py \
     Schemer.py \
     Selection.py \
