@@ -7,7 +7,7 @@
 
 
 # access to the extension
-from . import timers
+from ..extensions import timers
 
 
 # superclasses

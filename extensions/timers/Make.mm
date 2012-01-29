@@ -8,7 +8,7 @@
 include clock/default.def
 
 PROJECT = pyre
-PACKAGE = timers
+PACKAGE = extensions
 MODULE = timers
 
 include std-pythonmodule.def
