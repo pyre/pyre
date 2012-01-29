@@ -76,7 +76,12 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         to all objects that may retain a reference to the connection being closed. Any
         uncommitted changes will be lost
         """
-        return self.postgres.disconnect(self.connection)
+        # close the connection
+        status = self.postgres.disconnect(self.connection)
+        # invalidate the member
+        self.connection = None
+        # and return the status
+        return status
 
 
     @pyre.export
@@ -92,9 +97,6 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         super().__init__(**kwds)
         # initialize the extension module, if necessary
         if type(self).postgres is None: type(self).postgres = initializeExtension()
-        # my private state
-        self.connection = None
-
         return
 
 
@@ -122,6 +124,7 @@ class Postgres(Server, family="pyre.db.server.postgres"):
 
     # implementation details
     postgres = None # the handle to the extension module
+    connection = None # the handle to the session with the back-end
 
 
 # end of file 
