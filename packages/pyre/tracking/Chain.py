@@ -27,7 +27,10 @@ class Chain:
 
 
     def __str__(self):
-        return "{0.this} via {0.next}".format(self)
+        # if {next} is non-trivial, show the chain
+        if self.next: return "{0.this} via {0.next}".format(self)
+        # otherwise don't
+        return "{0.this}".format(self)
 
 
 # end of file 
