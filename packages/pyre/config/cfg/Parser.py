@@ -7,12 +7,12 @@
 
 
 # externals
-import re
+import pyre.parsing
 import pyre.tracking
 
 
-# class declaration
-class Parser:
+# the parser
+class Parser(pyre.parsing.parser):
     """
     A simple parser for {cfg} files
 
@@ -21,24 +21,10 @@ class Parser:
     """
 
 
-    # constants
-    # the supported forms
-    comment = r"\s*;.*$"
-    blankline = "\s*$"
-    section = r"\s*\[\s*(?P<section>(?P<family>[^\]\s#]+)(\s*#\s*(?P<name>[^\]\s]+))?)\s*\]" 
-    assignment = r"\s*(?P<assignment>(?P<key>[^=\s\[\]]+)\s*(=\s*(?P<value>[^;]*))?)"
-
-    # combine the patterns and compile them
-    scanner = re.compile('|'.join([
-                blankline,
-                comment,
-                section,
-                assignment,
-                ]))
-
     # types
     from .exceptions import ParsingError
     from ..events import Assignment, ConditionalAssignment
+    from .Scanner import Scanner as lexer # my superclass uses this to instantiate my scanner
 
 
     # interface
@@ -46,73 +32,146 @@ class Parser:
         """
         Harvest the configuration events in {stream}
         """
-        # initialize the component name
-        name = ''
-        # initialize the component family
-        family = []
-        # initialize the event list
-        configuration = []
-        # examine {stream}
-        for lineno, line in enumerate(stream):
-            # attempt to match the contents
-            match = self.scanner.match(line)
-            # if it didn't match
-            if match is None:
-                # build a locator
-                uriloc = pyre.tracking.file(source=uri, line=lineno)
-                # if i were handed a locator
-                if locator:
-                    # adjust it
-                    locator = pyre.tracking.chain(this=uriloc, next=locator)
-                # otherwise
-                else:
-                    # just use the new one
-                    locator = uriloc
-
-                # build the message
-                msg = "syntax error"
-                # we have a problem
-                raise self.ParsingError(description=msg, locator=locator)
-            # we have a match
-            groups = match.groupdict()
-
-            # is it an assignment?
-            if groups['assignment']:
-                # extract the key and value
-                key = groups['key'].strip()
-                value = groups['value'].strip()
-
-                # if we have an explicit component name
-                if name:
-                    # build a conditional assignment event
-                    event = self.ConditionalAssignment(
-                        component=name,
-                        condition=(name, family),
-                        key=key, value=value, 
-                        locator=pyre.tracking.file(source=uri, line=lineno))
-                # otherwise
-                else:
-                    # build a simple assignment event
-                    event = self.Assignment(
-                        key=tuple(family + [key]),
-                        value=value, 
-                        locator=pyre.tracking.file(source=uri, line=lineno))
-                # add it to the pile
-                configuration.append(event)
-                # grab the next line
-                continue
-
-            # is it a section?
-            if groups['section']:
-                # extract the family name
-                family = groups['family'].strip().split('.')
-                # extract the component name
-                name = groups.get('name', '')
-                # grab the next line
-                continue
-
-        # return the event list
-        return configuration
+        # tokenize the {stream}
+        tokens = self.scanner.pyre_tokenize(uri=uri, stream=stream)
+        # process the tokens
+        for token in tokens:
+            # look up the relevant production based on this terminal
+            production = self.productions[type(token)]
+            # and invoke it
+            production(current=token, rest=tokens)
+        # all done
+        # for event in self.configuration: print(event)
+        return self.configuration
 
 
-# end of file 
+    # meta methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # initialize the list of harvested configuration events
+        self.configuration = []
+        # the production table
+        self.productions = {
+            # the ignorables
+            self.scanner.start: self.ignore,
+            self.scanner.comment: self.ignore,
+            self.scanner.whitespace: self.ignore,
+            self.scanner.finish: self.ignore,
+
+            # context specifier
+            self.scanner.secbeg: self.context,
+            # assignment
+            self.scanner.key: self.assignment
+            }
+        # all done
+        return
+
+
+    # implementation details
+    def ignore(self, **kwds):
+        """
+        Do nothing
+        """
+        return
+
+
+    def context(self, current, rest):
+        """
+        Process a section fragment and use it to specify the assignment context
+        """
+        # current is guaranteed to be a '['; get the next one
+        current = next(rest)
+        # if it is not a {key}
+        if type(current) is not self.scanner.key:
+            # we have an error
+            msg = "expected an identifier; got {}".format(current)
+            raise self.ParsingError(description=msg, locator=current.locator)
+        # set the family to the lexeme
+        self.family = current.lexeme.split('.')
+
+        # get the next token
+        current = next(rest)
+
+        # if it is a {secend} marker
+        if type(current) is self.lexer.secend:
+            # clear the component name
+            self.name = ()
+            # and we are done
+            return
+
+        # if it is not a name marker
+        if type(current) is not self.scanner.marker:
+            # we have an error
+            msg = "expected a '#'; got {}".format(current)
+            raise self.ParsingError(description=msg, locator=current.locator)
+
+        # get the next token
+        current = next(rest)
+        # if it is not a key
+        if type(current) is not self.scanner.key:
+            # we have an error
+            msg = "expected an identifier; got {}".format(current)
+            raise self.ParsingError(description=msg, locator=current.locator)
+        # set the name to the lexeme
+        self.name = current.lexeme.split('.')
+
+        # get the next token
+        current = next(rest)
+        # if it is not a {secend} marker
+        if type(current) is not self.lexer.secend:
+            # we have an error
+            msg = "expected a ']'; got {}".format(current)
+            raise self.ParsingError(description=msg, locator=current.locator)
+
+        # all done
+        return
+
+   
+    def assignment(self, current, rest):
+        """
+        Process a key assignment
+        """
+        # get the key
+        key = current.lexeme.split('.')
+        # save its locator
+        locator = current.locator
+        # grab the next token
+        current = next(rest)
+        # if it is a value
+        if type(current) is self.scanner.value:
+            # extract it
+            value = current.lexeme.strip()
+        # otherwise
+        else:
+            # push it back
+            self.scanner.pyre_pushback(current)
+            # build an empty value
+            value = None
+
+        # time to build an assignment; if the component name is not empty
+        if self.name:
+            # build a conditional assignment
+            event = self.ConditionalAssignment(
+                component = self.name,
+                condition = (self.name, self.family),
+                key = key, value = value,
+                locator = locator)
+        # otherwise
+        else:
+            # build an unconditional assignment 
+            event = self.Assignment(key = self.family + key, value = value, locator = locator)
+        # in any case, add it to the pile
+        self.configuration.append(event)
+        # and return
+        return
+
+
+    # private data
+    name = () # context: the current component name
+    family = () # context: the current component family
+    productions = None # the table of token handlers
+    configuration = None # the list of configuration events harvested from the input source
+
+
+# end of file

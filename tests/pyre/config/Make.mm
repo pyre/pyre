@@ -12,9 +12,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working:
-	${PYTHON} ./configurator_load_cfg.py
-
 all: test
 
 test: sanity slots configuration configurator commandline
@@ -38,6 +35,7 @@ configurator:
 	${PYTHON} ./configurator_access.py
 	${PYTHON} ./configurator_assignments.py
 	${PYTHON} ./configurator_load_pml.py
+	${PYTHON} ./configurator_load_cfg.py
 
 commandline:
 	${PYTHON} ./command.py

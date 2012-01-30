@@ -22,6 +22,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Config.py \
     Parser.py \
+    Scanner.py \
     exceptions.py \
     __init__.py
 
