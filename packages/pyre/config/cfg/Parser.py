@@ -32,6 +32,9 @@ class Parser(pyre.parsing.parser):
         """
         Harvest the configuration events in {stream}
         """
+        # initialize my context
+        self.name = []
+        self.family = []
         # tokenize the {stream}
         tokens = self.scanner.pyre_tokenize(uri=uri, stream=stream)
         # process the tokens
