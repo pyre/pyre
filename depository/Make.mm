@@ -33,8 +33,8 @@ distclean::
 
 EXPORT_ETCDIR = $(EXPORT_ROOT)
 EXPORT_ETC = \
-    merlin.pml \
-    pyre.pml
+    merlin.cfg \
+    pyre.cfg
 
 
 export:: export-etc
