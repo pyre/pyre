@@ -28,9 +28,9 @@ def test():
 
     # check that they were created and inserted correctly
     assert list(map(str, configuration)) == [
-        "{None: pyre.user.name <- michael aïvázis}",
-        "{None: pyre.user.email <- michael.aivazis@orthologue.com}",
-        "{None: pyre.user.affiliation <- caltech}",
+        "{None: ('pyre', 'user', 'name') <- michael aïvázis}",
+        "{None: ('pyre', 'user', 'email') <- michael.aivazis@orthologue.com}",
+        "{None: ('pyre', 'user', 'affiliation') <- caltech}",
         ]
 
 
