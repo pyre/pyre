@@ -91,9 +91,8 @@ class Facility(Property):
         # configuration process
         if registration == component.pyre_name:
             # and there is nothing further to do
-            return value
-        # otherwise
-        # get the configurator
+            return component
+        # otherwise, get the configurator
         cfg = instance.pyre_executive.configurator
         # get the registrar
         registrar = instance.pyre_executive.registrar
@@ -103,7 +102,7 @@ class Facility(Property):
         errors = cfg._transferConditionalConfigurationSettings(
             registrar=registrar, configurable=component, namespace=namespace)
         # and return the freshly configured instance
-        return value
+        return component
 
 
      # meta methods
