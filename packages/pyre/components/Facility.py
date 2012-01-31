@@ -40,6 +40,23 @@ class Facility(Property):
 
 
     # property overrides
+    def pyre_bindClass(self, configurable):
+        """
+        Bind this trait to the {configurable} class record
+        """
+        # get my slot from the {configurable}
+        slot = configurable.pyre_inventory[self]
+        # attach my value processor
+        slot.processor = self.pyre_cast
+        # mark the slot as dirty
+        slot.dirty = True
+        # to force it to recompute its value at some later point; it is important to not
+        # attempt to resolve the value during binding because doing so causes an infinite
+        # recursion while class records are still being formed. any errors will get caught when
+        # the class is instantiated.
+        return slot
+
+        
     def pyre_bindInstance(self, configurable):
         """
         Bind this facility to the {configurable} instance
