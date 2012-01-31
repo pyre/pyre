@@ -34,6 +34,7 @@ class ODB(Codec):
         Interpret {source} as a filename that the client's fileserver can convert into a file
         object; open it, execute it, and place its contents into a shelf
         """
+        # print(" ** ODB.decode: {!r}".format(self))
         # build a locator for this request
         shelfLocator = pyre.tracking.simple(source=source)
         # adjust the locator
@@ -42,20 +43,26 @@ class ODB(Codec):
         fileserver = client.fileserver
         # ask it to open the file
         try:
+            # print("      opening {}:{}".format(scheme, source))
             _, stream = fileserver.open(scheme=scheme, address=source)
+            # print("        ok!")
         # if this fails
         except fileserver.GenericError as error:
+            # print("        NOT ok!")
             # report it as a decoding error
             raise self.DecodingError(
                 codec=self, uri=locator.source, description=str(error),
                 locator=locator) from error
         # read the contents
+        # print("      reading")
         contents = stream.read()
         # build a new shelf
         shelf = self.Shelf(locator=locator)
         # invoke the interpreter to parse its contents and place them in the {shelf}
+        # print("      parsing")
         exec(contents, shelf)
         # return the {shelf}
+        # print("      shelving")
         return shelf
 
 

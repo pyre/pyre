@@ -56,7 +56,7 @@ class Codec:
         {specification}
         """
         # print("----------------------------------------")
-        # print(" ** Codec.locateSymbol:")
+        # print(" ** Codec.locateSymbol: {!r}".format(self))
         # print("      input:")
         # print("        scheme: {!r}".format(scheme))
         # print("        specification: {!r}".format(specification))
@@ -124,7 +124,7 @@ class Codec:
         shelves
         """
         # print("----------------------------------------")
-        # print(" ** Codec.locateShelves:")
+        # print(" ** Codec.locateShelves: {!r}".format(self))
         # print("  input:")
         # print("    client: {!r}".format(client))
         # print("    scheme: {!r}".format(scheme))
@@ -143,19 +143,27 @@ class Codec:
             # print("      source: {!r}".format(source))
             # attempt to retrieve a previously loaded shelf using the normalized uri
             try:
+                # print("      is it a known shelf?")
                 shelf = client.shelves[source]
+                # print("        yes!")
             # if not there
             except KeyError:
+                # print("        no!")
                 # attempt to create a new shelf by decoding the contents of {uri}
                 try:
+                    # print("          attempt to load it")
+                    # attempt to create a new shelf by decoding the contents of {uri}
                     shelf = self.decode(client=client, scheme=scheme, source=uri, locator=locator)
                 # and if it fails
                 except self.DecodingError:
+                    # print(" **         decoding error!")
                     # move on
                     continue
                 # we got a shelf; first register it with the client
+                # print("            shelf loaded successfully!")
                 client.registerShelf(shelf=shelf, source=source)
             # and return it to my caller
+            # print("      shelf: {}".format(shelf))
             yield shelf
         # no more candidates
         return
