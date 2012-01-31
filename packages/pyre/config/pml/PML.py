@@ -46,6 +46,7 @@ class PML(Codec):
             raise self.DecodingError(
                 codec=self, uri=uri, locator=loc, description=msg) from error
         # all done; return the harvested events
+        # for event in configuration: print(event)
         return configuration
 
 

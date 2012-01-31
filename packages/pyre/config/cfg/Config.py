@@ -41,6 +41,7 @@ class Config(Codec):
             raise self.DecodingError(codec=self, uri=uri, locator=error.locator, description=msg)
 
         # return the harvested configuration events
+        # for event in configuration: print(event)
         return configuration
 
 

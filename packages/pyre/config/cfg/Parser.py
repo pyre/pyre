@@ -44,7 +44,6 @@ class Parser(pyre.parsing.parser):
             # and invoke it
             production(current=token, rest=tokens)
         # all done
-        # for event in self.configuration: print(event)
         return self.configuration
 
 
@@ -156,9 +155,9 @@ class Parser(pyre.parsing.parser):
         if self.name:
             # build a conditional assignment
             event = self.ConditionalAssignment(
-                component = self.name,
+                component = self.name + key[:-1],
                 condition = (self.name, self.family),
-                key = key, value = value,
+                key = key[-1:], value = value,
                 locator = locator)
         # otherwise
         else:

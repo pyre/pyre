@@ -79,7 +79,7 @@ class Assignment(Event):
 
 
     def __str__(self):
-        return "{{{}: {} <- {}}}".format(self.locator, ".".join(self.key), self.value)
+        return "{{{}: {} <- {}}}".format(self.locator, self.key, self.value)
 
 
 class ConditionalAssignment(Assignment):
@@ -106,11 +106,13 @@ class ConditionalAssignment(Assignment):
 
     def __str__(self):
         msg = [
-            "{{{0.locator}: {1} <- {0.value}".format(self, self.key),
+            "{{{.locator}:".format(self),
+            "  {0.component}: {0.key} <- {0.value}".format(self),
             "  subject to:"
             ]
         for name, family in self.conditions:
             msg.append("    name={}, family={}".format(name, family))
+        msg.append("}")
 
         return "\n".join(msg)
 
