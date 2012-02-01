@@ -23,6 +23,9 @@ def test():
 
     # build a database component
     db = bizbook.pg()
+    # check that we are connected to the right database
+    assert db.database == 'bizbook'
+    # tell postgres to shut up
     db.execute("SET client_min_messages = warning;")
 
     # build the tables

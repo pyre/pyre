@@ -33,6 +33,8 @@ def test():
 
     # build datastore
     db = bizbook.pg()
+    # check that we are connected to the right database
+    assert db.database == 'bizbook'
 
     # run the query
     report = list(db.select(collated()))

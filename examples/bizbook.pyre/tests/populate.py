@@ -21,9 +21,11 @@ def test():
     # access the postgres package
     import pyre.db
 
-    # build a database component
+    # build a database component 
     db = pyre.db.postgres(name="bizbook")
-    # connect to the default database
+    # check that we are connected to the right database
+    assert db.database == 'bizbook'
+    # connect to the bizbook database
     db.attach()
 
     # get the bizbook schema
