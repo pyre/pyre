@@ -1,15 +1,9 @@
 // -*- C++ -*-
-//
-//  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//                              Michael A.G. Aivazis
-//                        California Institute of Technology
-//                        (C) 1998-2005 All Rights Reserved
-//
-// <LicenseText>
-//
-//  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2012 all rights reserved
+// 
 
 #include <portinfo>
 #include <Python.h>
@@ -146,6 +140,5 @@ receiveString(PyObject *, PyObject * args)
     // return
     return value;
 }
-
 
 // end of file

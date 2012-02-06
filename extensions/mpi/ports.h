@@ -1,15 +1,9 @@
 // -*- C++ -*-
-//
-//  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//                              Michael A.G. Aivazis
-//                        California Institute of Technology
-//                        (C) 1998-2005 All Rights Reserved
-//
-// <LicenseText>
-//
-//  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
+// 
+// michael a.g. aïvázis
+// california institute of technology
+// (c) 1998-2012 all rights reserved
+// 
 
 #if !defined(pyre_extensions_mpi_ports_h)
 #define pyre_extensions_mpi_ports_h
