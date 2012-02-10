@@ -14,7 +14,7 @@
 
 namespace pyre {
     namespace algebra {
-        template <size_t scale, typename precision_t=long> class BCD;
+        template <size_t scale, typename precision_t=size_t> class BCD;
     }
 }
 
