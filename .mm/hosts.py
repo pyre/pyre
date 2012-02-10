@@ -88,7 +88,8 @@ def host(builder):
         return builder
         
     # on fram.gps.caltech.edu
-    if re.match(r"login-[0-9]-[0-9].local", name):
+    if re.match(r"(login|compute)-[0-9]+-[0-9]+.local", name):
+        print("fram.gps.caltech.edu")
         # set up {gsl}
         gslHome = '/usr'
         builder.requirements['gsl'].environ = {
