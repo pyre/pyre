@@ -24,8 +24,8 @@ class User(merlin.component, family='pyre.user'):
     affiliation = merlin.properties.str()
 
     uid = os.getuid()
-    home = os.path.expanduser('~')
-    username = os.getlogin()
+    home = os.environ['HOME']
+    username = os.environ['LOGNAME']
 
 
 # end of file 
