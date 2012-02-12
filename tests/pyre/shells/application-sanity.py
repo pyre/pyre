@@ -14,10 +14,10 @@ Sanity check: verify that the application component is accessible
 
 def test():
     # get access to the framework
-    import pyre.shells
+    import pyre
 
     # declare a trivial application
-    class application(pyre.shells.application, family="sample"):
+    class application(pyre.application, family="sample"):
         """A trivial pyre application"""
 
     return

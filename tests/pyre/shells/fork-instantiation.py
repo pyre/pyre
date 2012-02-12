@@ -8,13 +8,15 @@
 
 
 """
-Sanity check: verify that the script factory is accessible
+Instantiate a script
 """
 
 
 def test():
-    from pyre.shells import script
-    return
+    # access the package
+    import pyre.shells
+    # build a fork and return it
+    return pyre.shells.fork(name="test")
 
 
 # main

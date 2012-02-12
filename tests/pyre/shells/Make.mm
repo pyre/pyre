@@ -15,22 +15,24 @@ PROJ_CLEAN = shells.log
 
 all: test
 
-test: sanity application script daemon clean
+test: sanity launching clean
 
 sanity:
 	${PYTHON} ./sanity.py
-
-application:
 	${PYTHON} ./application-sanity.py
 	${PYTHON} ./application-instantiation.py
 	${PYTHON} ./application-namespace.py
-
-script:
 	${PYTHON} ./script-sanity.py
 	${PYTHON} ./script-instantiation.py
-
-daemon:
+	${PYTHON} ./fork-sanity.py
+	${PYTHON} ./fork-instantiation.py
 	${PYTHON} ./daemon-sanity.py
 	${PYTHON} ./daemon-instantiation.py
+
+launching:
+	${PYTHON} ./script-launching.py
+	${PYTHON} ./fork-launching.py
+	${PYTHON} ./daemon-launching.py
+
 
 # end of file 

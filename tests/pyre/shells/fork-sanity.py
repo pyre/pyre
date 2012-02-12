@@ -13,7 +13,7 @@ Sanity check: verify that the script factory is accessible
 
 
 def test():
-    from pyre.shells import script
+    from pyre.shells import fork
     return
 
 

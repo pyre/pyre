@@ -18,22 +18,14 @@ class Script(Executive, family="pyre.shells.script"):
     """
 
 
-    # public data
-    application = None
-
-
     # interface
     @pyre.export
-    def run(self, *args, **kwds):
+    def launch(self, application, *args, **kwds):
         """
         Invoke the application behavior
         """
-        # if i am bound to an application
-        if self.application:
-            # launch it
-            return self.application.main(*args, **kwds)
-        # otherwise, just return
-        return 0
+        # launch the application
+        return application.main(*args, **kwds)
 
 
 # end of file 

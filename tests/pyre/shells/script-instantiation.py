@@ -15,20 +15,9 @@ Instantiate a script
 def test():
     
     # access to the package
-    import pyre
-
-    # declare a trivial application
-    class application(pyre.application):
-        """a sample application"""
-
-        @pyre.export
-        def main(self): return 0
-
-    # build a script
-    script = pyre.script(name="test")#, application=application)
-
-    #
-    return
+    import pyre.shells
+    # instantiate a script and return it
+    return pyre.shells.script(name="test")
 
 
 # main

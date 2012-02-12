@@ -6,8 +6,9 @@
 #
 
 
-# access to the framework
-import pyre
+# external
+import pyre # access the framework
+import journal # logging
 # my interface
 from .Shell import Shell as shell
 
@@ -46,12 +47,19 @@ class Executive(pyre.component, implements=shell):
 
     # interface
     @pyre.export
-    def run(self, *args, **kwds):
+    def launch(self, application, *args, **kwds):
         """
         Invoke the application behavior
         """
         # {Executive} is abstract
-        raise NotImplementedError("class {.__name__} must implement 'run'".format(type(self)))
+        raise NotImplementedError("class {.__name__} must implement 'launch'".format(type(self)))
+
+
+    # debugging
+    _info = journal.info('pyre.shells')
+    _warning = journal.warning('pyre.shells')
+    _error = journal.error('pyre.shells')
+    _debug = journal.debug('pyre.shells')
 
 
 # end of file 

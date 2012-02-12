@@ -36,8 +36,8 @@ running concurrent applications using {MPI}.
 
 # the hosting strategies
 from .Script import Script as script
+from .Fork import Fork as fork
 from .Daemon import Daemon as daemon
-from .Service import Service as service
 
 
 # the base application component

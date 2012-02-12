@@ -13,7 +13,7 @@ Sanity check: verify that the daemon factory is accessible
 
 
 def test():
-    from pyre import daemon
+    from pyre.shells import daemon
     return
 
 

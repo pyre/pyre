@@ -8,10 +8,12 @@
 
 # access to the framework
 import pyre
+# access to the shell interface
+from .Shell import Shell
 
 
 # declaration
-class Application(pyre.component, hidden=True):
+class Application(pyre.component):
     """
     Abstract base class for top-level application components
 
@@ -20,9 +22,12 @@ class Application(pyre.component, hidden=True):
     filesystem, configuring the help system, and supplying the main behavior.
     """
 
+    # public state
+    shell = pyre.facility(interface=Shell)
+
 
     # per-instance public data
-    pyre_filesystem = None # the root of my private filesystem
+    pfs = None # the root of my private filesystem
 
 
     @property
@@ -60,6 +65,31 @@ class Application(pyre.component, hidden=True):
             "application {.pyre_name!r} must implement 'help'".format(self))
         
 
+    # meta methods
+    def __init__(self, name, **kwds):
+        super().__init__(name=name, **kwds)
+
+        # register the application class as the resolver of its namespace; this will cause
+        # {pyre_translateSymbol} to be invoked when an application trait is assigned a value
+        self.executive.registerNamespaceResolver(resolver=self, namespace=name)
+        # build the private file space
+        self.pfs = self.pyre_mountVirtualFilesystem()
+        # and mount any additional application-specific directories
+        self.pyre_mountApplicationFolders()
+
+        # all done
+        return
+
+
+    # implementation details
+    def run(self, *args, **kwds):
+        """
+        Ask my shell to launch me
+        """
+        # easy enough
+        return self.shell.launch(application=self, *args, **kwds)
+
+
     # initialization hooks
     def pyre_mountVirtualFilesystem(self):
         """
@@ -67,7 +97,7 @@ class Application(pyre.component, hidden=True):
         private namespace and register it with the executive file server
         """
         # build the top level folder for my stuff
-        private = self.executive.fileserver.folder()
+        private = self.vfs.folder()
         # use my name as the top level folder
         top = self.pyre_name
         # mount it at the right place
@@ -139,22 +169,6 @@ class Application(pyre.component, hidden=True):
         """
         # nothing from me
         return []
-
-
-    # meta methods
-    def __init__(self, name, **kwds):
-        super().__init__(name=name, **kwds)
-
-        # register the application class as the resolver of its namespace; this will cause
-        # {pyre_translateSymbol} to be invoked when an application trait is assigned a value
-        self.executive.registerNamespaceResolver(resolver=self, namespace=name)
-        # build the private file space
-        self.pyre_filesystem = self.pyre_mountVirtualFilesystem()
-        # and mount any additional application-specific directories
-        self.pyre_mountApplicationFolders()
-
-        # all done
-        return
 
 
 # end of file 

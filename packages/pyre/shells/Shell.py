@@ -22,9 +22,20 @@ class Shell(pyre.interface, family="pyre.shells"):
     home.doc = "the process home directory"
 
 
+    # my default implementation
+    @classmethod
+    def default(cls):
+        """
+        The default shell implementation
+        """
+        # use {Script}
+        from .Script import Script
+        return Script
+
+
     # interface
     @pyre.provides
-    def run(self, *args, **kwds):
+    def launch(self, application, *args, **kwds):
         """
         Launch the application
         """

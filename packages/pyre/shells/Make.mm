@@ -23,10 +23,9 @@ EXPORT_PYTHON_MODULES = \
     Daemon.py \
     Director.py \
     Executive.py \
+    Fork.py \
     Script.py \
-    Service.py \
     Shell.py \
-    proc.py \
     __init__.py
 
 

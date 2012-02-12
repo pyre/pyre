@@ -14,19 +14,19 @@ Sanity check: verify that the application namespace is built properly
 
 def test():
     # get access to the framework
-    import pyre.shells
+    import pyre
 
     # declare a trivial application
-    class application(pyre.shells.application):
+    class application(pyre.application):
         """A trivial pyre application"""
 
     # instantiate
     app = application(name="sample")
 
     # verify that the filesystem attribute was set
-    assert(app.pyre_filesystem)
+    assert(app.pfs)
     # and that it is correctly mounted
-    assert(app.pyre_filesystem == app.vfs["/sample"])
+    assert(app.pfs == app.vfs["/sample"])
 
     # check the namespace
     assert(app.vfs["/sample/system"])
