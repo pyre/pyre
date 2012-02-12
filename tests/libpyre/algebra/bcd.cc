@@ -15,7 +15,7 @@
 #include <pyre/algebra/BCD.h>
 
 // make short alias for the BCD type we are testing
-typedef pyre::algebra::BCD<10, int> bcd;
+typedef pyre::algebra::BCD<10> bcd;
 
 
 // main program
