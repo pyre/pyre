@@ -39,7 +39,7 @@ class Merlin(pyre.application):
 
     # interface
     @pyre.export
-    def main(self):
+    def main(self, *args, **kwds):
         """
         The main entry point for merlin
         """

@@ -20,7 +20,7 @@ def main():
     There are other possible ways to invoke merlin. See the package documentation.
     """
     # let the executive do its thing
-    return merlin.main()
+    return merlin.run()
 
 
 # administrative
