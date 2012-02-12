@@ -14,7 +14,7 @@ PROJ_TIDY = __pycache__
 
 all: test
 
-test: sanity metaclasses components interfaces clean
+test: sanity metaclasses components interfaces configurations clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -84,6 +84,9 @@ component-instance:
 
 component-multi:
 	${PYTHON} ./component_slots.py
+
+configurations:
+	${PYTHON} ./quad.py
 
 
 # end of file 
