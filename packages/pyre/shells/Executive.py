@@ -8,7 +8,6 @@
 
 # external
 import pyre # the framework
-import journal # logging
 # my interface
 from .Shell import Shell as shell
 
@@ -53,13 +52,6 @@ class Executive(pyre.component, implements=shell):
         """
         # {Executive} is abstract
         raise NotImplementedError("class {.__name__} must implement 'launch'".format(type(self)))
-
-
-    # debugging
-    _info = journal.info('pyre.shells')
-    _warning = journal.warning('pyre.shells')
-    _error = journal.error('pyre.shells')
-    _debug = journal.debug('pyre.shells')
 
 
 # end of file 

@@ -32,12 +32,8 @@ class Fork(Executive, family='pyre.shells.fork'):
         corresponding to {stdout} and {stderr} of the child, with the write end of the channels
         both connected to the child's {stdin}
         """
-        # if we are in debug mode
-        if self.debug:
-            # warn the user
-            self._info.log("fork: {.pyre_name}: in debug mode".format(self))
-            # launch the application
-            return application.main(*args, **kwds)
+        # if we are in debug mode, launch the application
+        if self.debug: return application.main(*args, **kwds)
 
         # build the three pipes
         channels = self.channels()
