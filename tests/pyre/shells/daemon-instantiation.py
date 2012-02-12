@@ -13,7 +13,6 @@ Exercise the spawning of daemons
 
 
 def test():
-    import os
     # access the framework
     import pyre
     # instantiate a daemon and return it

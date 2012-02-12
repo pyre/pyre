@@ -15,7 +15,7 @@ Instantiate a script
 def test():
     
     # access to the package
-    import pyre.shells
+    import pyre
     # instantiate a script and return it
     return pyre.shells.script(name="test")
 

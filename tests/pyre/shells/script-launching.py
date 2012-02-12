@@ -13,8 +13,7 @@ Instantiate a script
 
 
 def test():
-    
-    # access to the package
+    # access the framework
     import pyre
 
     # declare a trivial application

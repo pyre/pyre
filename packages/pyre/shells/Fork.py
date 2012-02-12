@@ -8,7 +8,6 @@
 
 # externals
 import os
-import sys # access to {exit}
 import pyre # the framework
 from .Executive import Executive # my superclass 
 

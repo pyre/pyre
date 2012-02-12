@@ -21,9 +21,7 @@ def test():
         """A trivial pyre application"""
     
     # instantiate
-    app = application(name="app")
-
-    return
+    return application(name="app")
 
 
 # main

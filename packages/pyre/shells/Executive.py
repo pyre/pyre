@@ -7,7 +7,7 @@
 
 
 # external
-import pyre # access the framework
+import pyre # the framework
 import journal # logging
 # my interface
 from .Shell import Shell as shell

@@ -13,7 +13,6 @@ Instantiate a script
 
 
 def test():
-    
     # externals
     import pyre # access the framework
 
@@ -45,7 +44,7 @@ def test():
     stdout, stderr = app.run()
 
     # make sure we can read its output correctly
-    assert stdout.read(100) == b"Hello\n"
+    assert stdout.read(10) == b"Hello\n"
 
     # and return the app
     return app

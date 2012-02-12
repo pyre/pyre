@@ -14,7 +14,7 @@ Instantiate a script
 
 def test():
     # access the package
-    import pyre.shells
+    import pyre
     # build a fork and return it
     return pyre.shells.fork(name="test")
 

@@ -32,7 +32,7 @@ def test():
     assert(app.vfs["/sample/system"])
     assert(app.vfs["/sample/user"])
 
-    return
+    return app
 
 
 # main

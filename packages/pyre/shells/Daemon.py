@@ -8,7 +8,6 @@
 
 # externals
 import os # access to os services
-import sys # access to {exit}
 import pyre # access the framework
 from .Fork import Fork # my superclass
 
