@@ -73,7 +73,6 @@ _mpi_license = """
 # bootstrapping
 # attempt to load the mpi extension
 try:
-
     # the current default builds of openmpi on linux do not link their pluggins against libmpi
     # so they all report unresolved symbols; the temporary fix is to change the way python
     # dlopens our extension module so the mpi symbols go to the global namespace, where the
@@ -110,5 +109,7 @@ else:
     # attach the constants
     group.undefined = mpi.undefined
 
+    # the default shell
+    from .Launcher import Launcher as mpirun
 
 # end of file 

@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity package
+test: sanity package launch
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -27,6 +27,9 @@ package:
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_include.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_exclude.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_setops.py
+
+launch:
+	${PYTHON} ./launch.py
 
 
 # end of file 

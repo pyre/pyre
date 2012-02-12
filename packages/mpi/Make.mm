@@ -22,6 +22,7 @@ EXPORT_PYTHON_MODULES = \
     Cartesian.py \
     Communicator.py \
     Group.py \
+    Launcher.py \
     Object.py \
     Port.py \
     TrivialCommunicator.py \
