@@ -22,10 +22,6 @@ class AbstractNode:
     """
 
 
-    # types
-    # exceptions
-    from .exceptions import UnresolvedNodeError
-
     # hooks for implementing the expression graph construction
     # the default implementation provided by this package uses the classes defined here
     # access is provided through properties to hide the {import} of subclasses
@@ -70,6 +66,17 @@ class AbstractNode:
         # important: must return a type, not an instance
         raise NotImplementedError(
             "class {.__name__!r} must implement 'expression'".format(type(self)))
+
+
+    @property
+    def interpolation(self):
+        """
+        Grant access to the subclass used to encapsulate strings that contain named references
+        to other nodes. These references get resolved by a symbol table.
+        """
+        # important: must return a type, not an instance
+        raise NotImplementedError(
+            "class {.__name__!r} must implement 'interpolation'".format(type(self)))
 
 
     @property
