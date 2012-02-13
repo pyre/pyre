@@ -32,7 +32,7 @@ def test():
     except c.UnresolvedNodeError:
         pass
     # so define it
-    c["sample.user.byline"] = "{sample.user.name}+' -- '+{sample.user.email}"
+    c["sample.user.byline"] = "{sample.user.name} -- {sample.user.email}"
     
     # load a configuration file
     pyre.loadConfiguration("sample.pml")
@@ -45,7 +45,15 @@ def test():
     # and the local one
     assert c["sample.user.byline"] == "michael a.g. aïvázis -- aivazis@caltech.edu"
 
-    return
+    # make a change
+    c["sample.user.affiliation"] = "orthologue"
+    c["sample.user.email"] = "michael.aivazis@orthologue.com"
+    # check
+    assert c["sample.user.affiliation"] == "orthologue"
+    assert c["sample.user.byline"] == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
+
+    # all good
+    return c
 
 
 # main

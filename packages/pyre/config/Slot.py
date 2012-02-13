@@ -21,6 +21,7 @@ from ..algebraic.Literal import Literal
 from ..algebraic.Variable import Variable
 from ..algebraic.Operator import Operator
 from ..algebraic.Expression import Expression
+from ..algebraic.Interpolation import Interpolation
 from ..algebraic.Reference import Reference
 from ..algebraic.Unresolved import Unresolved
 # evaluation strategies
@@ -74,6 +75,7 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
     variable = None
     operator = None
     expression = None
+    interpolation = None
     reference = None
     unresolved = None
     
@@ -179,6 +181,11 @@ class expression(Slot, Expression, Slot.composite):
     """
     Concrete class for encapsulating macros
     """
+# interpolations
+class interpolation(Slot, Interpolation, Slot.composite):
+    """
+    Concrete class for encapsulating macros
+    """
 # references
 class reference(Slot, Reference, Slot.composite):
     """
@@ -195,6 +202,7 @@ Slot.literal = literal
 Slot.variable = variable
 Slot.operator = operator
 Slot.expression = expression
+Slot.interpolation = interpolation
 Slot.reference = reference
 Slot.unresolved = unresolved
 

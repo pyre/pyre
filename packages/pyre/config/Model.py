@@ -226,6 +226,23 @@ class Model(Hierarchical):
             node.configurator = self
         # and return it
         return node
+
+
+    def _recognize(self, value):
+        """
+        Attempt to convert {value} into a node
+        """
+        # N.B.: the logic here is tricky; modify carefully
+        # is value already a node?
+        if isinstance(value, self.node):
+            # return it
+            return value
+        # is it a string?
+        if isinstance(value, str):
+            # convert it to an interpolation
+            return self.interpolation(expression=value)
+        # in all other cases, make a node whose value is the raw data
+        return self.node.variable(value=value)
         
 
     # debugging support
