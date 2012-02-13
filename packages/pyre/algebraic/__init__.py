@@ -70,13 +70,19 @@ from .Node import Node
 var = Node.variable
 
 
-# and expression nodes
+# expression nodes
 def expression(*, formula, model):
     """
-    Build a new node that evaluates a {formula} that involves the names of other nodes as
-    resolved in the symbol table {model}
+    Build a new node that evaluates a {formula} that involves nodes in the {model}
     """
-    return model.parse(formula)
+    return model.expression(formula)
+
+
+def interpolation(*, text, model):
+    """
+    Build a new node that builds a string out of the values of other nodes in the {model}
+    """
+    return model.interpolation(text)
 
 
 # access to the model factory

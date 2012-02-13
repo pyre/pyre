@@ -25,6 +25,7 @@ EXPORT_PYTHON_MODULES = \
     Composite.py \
     Expression.py \
     Hierarchical.py \
+    Interpolation.py \
     Leaf.py \
     Literal.py \
     Memo.py \

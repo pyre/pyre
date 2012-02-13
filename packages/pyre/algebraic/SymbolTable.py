@@ -6,9 +6,11 @@
 #
 
 
-# regular expressions
-import re
-# access to the base class
+# externals
+import re # regular expressions
+import operator # for {add}
+import functools # for {reduce}
+# my base class
 from ..patterns.Named import Named
 
 
@@ -59,14 +61,14 @@ class SymbolTable(Named):
         return self[name]
 
 
-    def parse(self, expression):
+    def expression(self, expression):
         """
         Examine the input string {expression} and attempt to convert it into an {Expression}
         node. Resolve all named references to other nodes against my symbol table.
         """
         # initialize the symbol table
         operands = []
-        # define the re.sub callback as a local function so it has access to the symbol table
+        # define the {re.sub} callback as a local function so it has access to the symbol table
         def handler(match):
             """
             Callback for {re.sub} that extracts node references, adds them to my local symbol
@@ -93,7 +95,7 @@ class SymbolTable(Named):
         # print("Expression.parse: expression={!r}".format(expression))
         normalized = self._scanner.sub(handler, expression)
         # print("  normalized: {!r}".format(normalized))
-        # print("  symbols:", symbols)
+        # print("  operands:", operands)
         # raise an exception if there were no symbols
         if not operands:
             raise self.EmptyExpressionError(formula=expression)
@@ -106,6 +108,56 @@ class SymbolTable(Named):
         # all is well if we get this far
         return self.node.expression(
             model=self, expression=expression, program=program, operands=operands)
+
+
+    def interpolation(self, expression):
+        """
+        Examine the input string {expression} and attempt to convert it into an {Interpolation}
+        node. Resolve all named references to other nodes against my symbol table
+        """
+        # initialize the offset into the expression
+        pos = 0
+        # storage for the generated nodes
+        nodes = []
+        # initial portion of the expression
+        fragment = ''
+        # iterate over all the matches
+        for match in self._scanner.finditer(expression):
+            # get the extent of the match
+            start, end = match.span()
+            # save the current string fragment
+            fragment += expression[pos:start]
+            # if this is an escaped '{'
+            if match.group('esc_open'):
+                # add a single '{' to the fragment
+                fragment += '{'
+            # if this is an escaped '}'
+            elif match.group('esc_close'):
+                # add a single '}' to the fragment
+                fragment += '}'
+            # unmatched braces
+            elif match.group("lone_open") or match.group("lone_closed"):
+                raise self.ExpressionSyntaxError(formula=expression, error="unmatched brace")
+            # otherwise
+            else:
+                # it must be an identifier
+                identifier = match.group('identifier')
+                # if the current fragment is not empty, turn it into a literal node
+                if fragment: nodes.append(self.node.literal(value=fragment))
+                # reset the fragment
+                fragment = ''
+                # build a reference
+                reference, _ = self._resolve(identifier)
+                # add it to the pile
+                nodes.append(reference)
+            # update the location in {expression}
+            pos = end
+        # store the trailing part of the expression
+        fragment += expression[pos:]    
+        # and if it's not empty, turn it into a literal
+        if fragment: nodes.append(self.node.literal(value=fragment))
+        # sum over the nodes and return the resulting node
+        return functools.reduce(operator.add, nodes)
 
 
     # meta methods
@@ -165,7 +217,7 @@ class SymbolTable(Named):
         if isinstance(value, str):
             # attempt to convert it to an expression
             try:
-                return self.parse(expression=value)
+                return self.expression(expression=value)
             # empty expressions are raw data; other errors propagate through
             except self.EmptyExpressionError:
                 # build a node with the string as value
@@ -243,6 +295,10 @@ class SymbolTable(Named):
         r"(?P<lone_open>{)"
         r"|"
         r"(?P<lone_closed>})"
+        )
+    
+    _interpolator = re.compile( # the interpolation tokenizer
+        r"(?<!{){(?P<identifier>[^}{]+)}(?!})"
         )
     
 

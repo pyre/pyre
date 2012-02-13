@@ -20,6 +20,7 @@ from .Literal import Literal
 from .Variable import Variable
 from .Operator import Operator
 from .Expression import Expression
+from .Interpolation import Interpolation
 from .Reference import Reference
 from .Unresolved import Unresolved
 
@@ -47,6 +48,7 @@ class Node(AbstractNode, Number, Ordering, Boolean):
     variable = None
     operator = None
     expression = None
+    interpolation = None
     reference = None
     unresolved = None
 
@@ -75,6 +77,12 @@ class expression(Node, Expression, Node.composite):
     Concrete class for encapsulating macros
     """
 
+# interpolations
+class interpolation(Node, Interpolation, Node.composite):
+    """
+    Concrete class for encapsulating simple string interpolation
+    """
+
 # references
 class reference(Node, Reference, Node.composite):
     """
@@ -93,6 +101,7 @@ Node.literal = literal
 Node.variable = variable
 Node.operator = operator
 Node.expression = expression
+Node.interpolation = interpolation
 Node.reference = reference
 Node.unresolved = unresolved
 
