@@ -13,8 +13,12 @@ class Interpolation:
     """
 
 
+    # types
+    from .exceptions import CircularReferenceError, UnresolvedNodeError
+
+
     # public data
-    formula = None # the expression supplied by the client
+    expression = None # the expression supplied by the client
 
 
     # interface
@@ -22,15 +26,20 @@ class Interpolation:
         """
         Compute and return my value
         """
+        # easy enough
+        return self.node.getValue()
 
 
     # meta methods
-    def __init__(self, **kwds):
+    def __init__(self, expression, node, **kwds):
         super().__init__(**kwds)
+        self.node = node
+        self.expression = expression
         return
 
 
     # private data
+    node = None # my evaluation node
 
 
 # end of file

@@ -119,6 +119,7 @@ class SymbolTable(Named):
         pos = 0
         # storage for the generated nodes
         nodes = []
+        operands = []
         # initial portion of the expression
         fragment = ''
         # iterate over all the matches
@@ -148,7 +149,9 @@ class SymbolTable(Named):
                 fragment = ''
                 # build a reference
                 reference, _ = self._resolve(identifier)
-                # add it to the pile
+                # add it to my operands
+                operands.append(reference)
+                # and to the pile needed to assemble my value
                 nodes.append(reference)
             # update the location in {expression}
             pos = end
@@ -156,8 +159,23 @@ class SymbolTable(Named):
         fragment += expression[pos:]    
         # and if it's not empty, turn it into a literal
         if fragment: nodes.append(self.node.literal(value=fragment))
-        # sum over the nodes and return the resulting node
-        return functools.reduce(operator.add, nodes)
+        
+        # if we have no operands
+        if not operands:
+            # then it must be true that there is only one node
+            if len(nodes) != 1:
+                # build a description of the problem
+                msg = 'while building an interpolation: {!r}: no operands, but multiple nodes'
+                # complain
+                import journal
+                raise journal.firewall('pyre.algebraic').log(msg)
+            # return it
+            return nodes[0]
+
+        # otherwise, build a node that assembles the resulting expression
+        node = functools.reduce(operator.add, nodes)
+        # build an interpolation and return it
+        return self.node.interpolation(expression=expression, node=node, operands=operands)
 
 
     # meta methods
@@ -295,10 +313,6 @@ class SymbolTable(Named):
         r"(?P<lone_open>{)"
         r"|"
         r"(?P<lone_closed>})"
-        )
-    
-    _interpolator = re.compile( # the interpolation tokenizer
-        r"(?<!{){(?P<identifier>[^}{]+)}(?!})"
         )
     
 
