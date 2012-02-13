@@ -115,6 +115,9 @@ class SymbolTable(Named):
         Examine the input string {expression} and attempt to convert it into an {Interpolation}
         node. Resolve all named references to other nodes against my symbol table
         """
+        # if {expression} is empty, build a variable to hold the value
+        if not expression: return self.node.variable(value=expression)
+
         # initialize the offset into the expression
         pos = 0
         # storage for the generated nodes
@@ -143,8 +146,8 @@ class SymbolTable(Named):
             else:
                 # it must be an identifier
                 identifier = match.group('identifier')
-                # if the current fragment is not empty, turn it into a literal node
-                if fragment: nodes.append(self.node.literal(value=fragment))
+                # if the current fragment is not empty, turn it into a variable node
+                if fragment: nodes.append(self.node.variable(value=fragment))
                 # reset the fragment
                 fragment = ''
                 # build a reference
@@ -157,21 +160,26 @@ class SymbolTable(Named):
             pos = end
         # store the trailing part of the expression
         fragment += expression[pos:]    
-        # and if it's not empty, turn it into a literal
-        if fragment: nodes.append(self.node.literal(value=fragment))
+        # and if it's not empty, turn it into a variable
+        if fragment: nodes.append(self.node.variable(value=fragment))
         
+        # summarize
+        # print(" ** SymbolTable.interpolation:")
+        # print("    expression:", expression)
+        # print("    nodes:", nodes)
+        # print("    operands:", operands)
+
         # if we have no operands
         if not operands:
             # then it must be true that there is only one node
             if len(nodes) != 1:
                 # build a description of the problem
-                msg = 'while building an interpolation: {!r}: no operands, but multiple nodes'
+                msg = 'interpolation: {!r}: no operands, but multiple nodes'.format(expression)
                 # complain
                 import journal
                 raise journal.firewall('pyre.algebraic').log(msg)
             # return it
             return nodes[0]
-
         # otherwise, build a node that assembles the resulting expression
         node = functools.reduce(operator.add, nodes)
         # build an interpolation and return it
@@ -238,9 +246,11 @@ class SymbolTable(Named):
                 return self.expression(expression=value)
             # empty expressions are raw data; other errors propagate through
             except self.EmptyExpressionError:
+                # print(" ** SymbolTable._recognize: empty: {!r}".format(value))
                 # build a node with the string as value
                 return self.node.variable(value=value)
         # in all other cases, make a node whose value is the raw data
+        # print(" ** SymbolTable._recognize: raw: {!r}".format(value))
         return self.node.variable(value=value)
 
 
