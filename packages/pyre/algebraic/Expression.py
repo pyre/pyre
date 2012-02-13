@@ -14,7 +14,7 @@ import weakref
 class Expression:
     """
     Support for building evaluation graphs involving nodes that have names registered with an
-    {AbstractModel} instance
+    {SymbolTable} instance
     """
 
 
@@ -36,7 +36,7 @@ class Expression:
         # attempt
         try:
             # to evaluate my program
-            return eval(self._program, {'model' : self._model })
+            value = eval(self._program, {'model' : self._model })
         # if i run into unresolved nodes
         except self.UnresolvedNodeError:
             # report it
@@ -45,9 +45,8 @@ class Expression:
         except Exception as error: 
             # are reported as evaluation errors
             raise self.EvaluationError(node=self, error=error) from error
-                
-        # UNREACHABLE
-        return
+        # otherwise, just return the value
+        return value
 
 
     # meta methods
