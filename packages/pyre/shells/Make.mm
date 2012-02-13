@@ -24,8 +24,10 @@ EXPORT_PYTHON_MODULES = \
     Director.py \
     Executive.py \
     Fork.py \
+    Host.py \
     Script.py \
     Shell.py \
+    User.py \
     __init__.py
 
 
