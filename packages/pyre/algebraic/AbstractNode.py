@@ -23,6 +23,9 @@ class AbstractNode:
 
 
     # types
+    # exceptions
+    from .exceptions import UnresolvedNodeError
+
     # hooks for implementing the expression graph construction
     # the default implementation provided by this package uses the classes defined here
     # access is provided through properties to hide the {import} of subclasses
