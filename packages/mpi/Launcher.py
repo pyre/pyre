@@ -36,9 +36,9 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
         """
 
         # check whether the mpi tasks have already been spawned
-        if self.pyre_executive.configurator.get('worker', False):
+        if self.pyre_executive.configurator.get('with-mpi', False):
             # launch the application
-            status = application.main(*args, **kwds)
+            status = application.main_mpi(*args, **kwds)
             # and exit
             return sys.exit(status)
 
@@ -51,7 +51,7 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
             '-np', str(self.tasks),
             sys.executable,
             __main__.__file__,
-            '--worker=true',
+            '--with-mpi=true',
             ]
         # the options
         options = {
@@ -68,6 +68,6 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
             status = child.wait()
         # and return its status
         return status
-            
 
-# end of file 
+
+# end of file

@@ -14,7 +14,6 @@ Launch an mpi application
 
 def test():
     import sys
-    import mpi
     import pyre # access the framework
 
     # declare a trivial application
@@ -22,7 +21,9 @@ def test():
         """a sample application"""
 
         @pyre.export
-        def main(self, **kwds):
+        def main_mpi(self, **kwds):
+            # access the package
+            import mpi
             # get the world communicator
             world = mpi.world
             # print("Hello from {0.rank} of {0.size}".format(world)) 
