@@ -79,9 +79,11 @@ try:
     # pluggins will be able to find them. hopefully, the openmpi people will fix this soon
     import sys
     if sys.platform == 'linux2':
+        # that's where the stupid flag value lives...
         import ctypes
+        # adjust the {dlopen} flags
         sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
-
+    # try to load the extension
     from . import mpi
 
 # if it fails for any reason
@@ -111,5 +113,6 @@ else:
 
     # the default shell
     from .Launcher import Launcher as mpirun
+
 
 # end of file 
