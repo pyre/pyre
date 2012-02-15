@@ -16,6 +16,12 @@ RECURSE_DIRS = \
     merlin \
 
 # the optional packages
+# gsl
+GSL_DIR= # overriden by the the environment
+ifneq ($(strip $(GSL_DIR)),)
+  RECURSE_DIRS += gsl
+endif
+
 # mpi
 MPI_DIR= # overriden by the the environment
 ifneq ($(strip $(MPI_DIR)),)
