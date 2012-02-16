@@ -15,12 +15,14 @@ Sanity check: verify that the vector object is accessible
 def test():
     # package access
     import gsl
-    # make a vector
-    v = gsl.vector(size=100)
-    # zero it out
-    v.zero()
-    # verify it happened
-    for e in v: assert e == 0
+    # make a couple of vectors and initialize them
+    v = gsl.vector(size=100).fill(value=1)
+    # check
+    for e in v: assert e == 1
+    # add them and store the result in v1
+    v += 1
+    # check
+    for e in v: assert e == 2
     # all done
     return v
 

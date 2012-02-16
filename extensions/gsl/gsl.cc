@@ -17,7 +17,6 @@
 
 #include "vector.h"
 
-
 // put everything in my private namespace
 namespace gsl {
         
@@ -31,9 +30,23 @@ namespace gsl {
         // the version
         { version__name__, version, METH_VARARGS, version__doc__ },
 
-        // vector
+        // vectors
         { vector::allocate__name__, vector::allocate, METH_VARARGS, vector::allocate__doc__},
-        { vector::set_zero__name__, vector::set_zero, METH_VARARGS, vector::set_zero__doc__},
+        { vector::zero__name__, vector::zero, METH_VARARGS, vector::zero__doc__},
+        { vector::fill__name__, vector::fill, METH_VARARGS, vector::fill__doc__},
+        { vector::basis__name__, vector::basis, METH_VARARGS, vector::basis__doc__},
+
+        { vector::get__name__, vector::get, METH_VARARGS, vector::get__doc__},
+        { vector::set__name__, vector::set, METH_VARARGS, vector::set__doc__},
+
+        { vector::contains__name__, vector::contains, METH_VARARGS, vector::contains__doc__},
+
+        { vector::add__name__, vector::add, METH_VARARGS, vector::add__doc__},
+        { vector::sub__name__, vector::sub, METH_VARARGS, vector::sub__doc__},
+        { vector::mul__name__, vector::mul, METH_VARARGS, vector::mul__doc__},
+        { vector::div__name__, vector::div, METH_VARARGS, vector::div__doc__},
+        { vector::shift__name__, vector::shift, METH_VARARGS, vector::shift__doc__},
+        { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__},
 
         // sentinel
         {0, 0, 0, 0}

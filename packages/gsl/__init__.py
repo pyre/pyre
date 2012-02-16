@@ -6,6 +6,21 @@
 #
 
 
+# interface
+def zero(entity):
+    """
+    Zero out the content of {entity}
+    """
+    return entity.zero()
+
+
+def fill(entity, value):
+    """
+    Set all entries in {entity} to {value}
+    """
+    return entity.fill(value)
+
+
 # attempt to
 try:
     # load the extension module

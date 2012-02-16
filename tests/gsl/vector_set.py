@@ -17,10 +17,10 @@ def test():
     import gsl
     # make a vector
     v = gsl.vector(size=100)
-    # zero it out
-    v.zero()
+    # set an element to some value
+    v[50] = 10
     # verify it happened
-    for e in v: assert e == 0
+    assert v[50] == 10
     # all done
     return v
 
