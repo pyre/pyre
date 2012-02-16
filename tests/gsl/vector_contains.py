@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the vector object is accessible
+Verify that we can find specific values in a vector
 """
 
 
@@ -21,6 +21,8 @@ def test():
     v[50] = 10
     # verify it happened
     assert v[50] == 10
+    # check that it can be found
+    assert 10 in v
     # all done
     return v
 

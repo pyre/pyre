@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the vector object is accessible
+Exercise in-place, element by element vector addition
 """
 
 

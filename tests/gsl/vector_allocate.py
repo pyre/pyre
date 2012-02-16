@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the vector object is accessible
+Make a vector of a given size
 """
 
 

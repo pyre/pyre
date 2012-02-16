@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the vector object is accessible
+Fill a vector with a constant value
 """
 
 

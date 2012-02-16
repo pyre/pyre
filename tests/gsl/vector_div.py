@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the vector object is accessible
+Exercise in-place, element by element division among vectors
 """
 
 
@@ -21,7 +21,7 @@ def test():
     # check
     for e in v1: assert e == 1
     for e in v2: assert e == 2
-    # add them and store the result in v1
+    # divide and store the result in v1
     v1 /= v2
     # check
     for e in v1: assert e == .5

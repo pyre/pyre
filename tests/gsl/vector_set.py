@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the vector object is accessible
+Exercising setting and getting individual vector elements
 """
 
 

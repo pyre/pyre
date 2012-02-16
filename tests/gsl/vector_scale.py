@@ -8,18 +8,18 @@
 
 
 """
-Sanity check: verify that the vector object is accessible
+Exercise multiplying every vector element by a constant
 """
 
 
 def test():
     # package access
     import gsl
-    # make a couple of vectors and initialize them
+    # make a vectors and initialize it
     v = gsl.vector(shape=100).fill(value=1)
     # check
     for e in v: assert e == 1
-    # add them and store the result in v1
+    # scale it
     v *= 2
     # check
     for e in v: assert e == 2
