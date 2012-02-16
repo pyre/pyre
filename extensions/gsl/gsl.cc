@@ -32,7 +32,7 @@ namespace gsl {
         { version__name__, version, METH_VARARGS, version__doc__ },
 
         // matrices
-        { matrix::allocate__name__, matrix::allocate, METH_VARARGS, matrix::allocate__doc__},
+        { matrix::alloc__name__, matrix::alloc, METH_VARARGS, matrix::alloc__doc__},
         { matrix::zero__name__, matrix::zero, METH_VARARGS, matrix::zero__doc__},
         { matrix::fill__name__, matrix::fill, METH_VARARGS, matrix::fill__doc__},
         { matrix::identity__name__, matrix::identity, METH_VARARGS, matrix::identity__doc__},
@@ -54,7 +54,7 @@ namespace gsl {
         { matrix::scale__name__, matrix::scale, METH_VARARGS, matrix::scale__doc__},
 
         // vectors
-        { vector::allocate__name__, vector::allocate, METH_VARARGS, vector::allocate__doc__},
+        { vector::alloc__name__, vector::alloc, METH_VARARGS, vector::alloc__doc__},
         { vector::zero__name__, vector::zero, METH_VARARGS, vector::zero__doc__},
         { vector::fill__name__, vector::fill, METH_VARARGS, vector::fill__doc__},
         { vector::basis__name__, vector::basis, METH_VARARGS, vector::basis__doc__},

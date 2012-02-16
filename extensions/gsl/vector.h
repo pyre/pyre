@@ -13,10 +13,10 @@
 namespace gsl {
     namespace vector {
 
-        // allocate
-        extern const char * const allocate__name__;
-        extern const char * const allocate__doc__;
-        PyObject * allocate(PyObject *, PyObject *);
+        // alloc
+        extern const char * const alloc__name__;
+        extern const char * const alloc__doc__;
+        PyObject * alloc(PyObject *, PyObject *);
 
         // set_zero
         extern const char * const zero__name__;

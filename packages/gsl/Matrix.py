@@ -79,7 +79,7 @@ class Matrix:
     def __init__(self, shape, **kwds):
         super().__init__(**kwds)
         self.shape = shape
-        self.data = gsl.matrix_allocate(shape)
+        self.data = gsl.matrix_alloc(shape)
         return
 
 

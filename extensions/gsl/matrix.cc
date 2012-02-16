@@ -22,15 +22,15 @@ static const char * capsule_t = "gsl.matrix";
 
 
 // construction
-const char * const gsl::matrix::allocate__name__ = "matrix_allocate";
-const char * const gsl::matrix::allocate__doc__ = "allocate a matrix";
+const char * const gsl::matrix::alloc__name__ = "matrix_alloc";
+const char * const gsl::matrix::alloc__doc__ = "allocate a matrix";
 
 PyObject * 
-gsl::matrix::allocate(PyObject *, PyObject * args) {
+gsl::matrix::alloc(PyObject *, PyObject * args) {
     // place holders for the python arguments
     size_t s0, s1;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "(kk):matrix_allocate", &s0, &s1);
+    int status = PyArg_ParseTuple(args, "(kk):matrix_alloc", &s0, &s1);
     // if something went wrong
     if (!status) return 0;
 

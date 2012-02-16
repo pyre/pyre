@@ -78,7 +78,7 @@ class Vector:
     def __init__(self, shape, **kwds):
         super().__init__(**kwds)
         self.shape = shape
-        self.data = gsl.vector_allocate(shape)
+        self.data = gsl.vector_alloc(shape)
         return
 
 

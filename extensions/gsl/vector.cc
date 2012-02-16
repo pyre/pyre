@@ -22,15 +22,15 @@ static const char * capsule_t = "gsl.vector";
 
 
 // construction
-const char * const gsl::vector::allocate__name__ = "vector_allocate";
-const char * const gsl::vector::allocate__doc__ = "allocate a vector";
+const char * const gsl::vector::alloc__name__ = "vector_alloc";
+const char * const gsl::vector::alloc__doc__ = "allocate a vector";
 
 PyObject * 
-gsl::vector::allocate(PyObject *, PyObject * args) {
+gsl::vector::alloc(PyObject *, PyObject * args) {
     // place holders for the python arguments
     size_t shape;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "k:vector_allocate", &shape);
+    int status = PyArg_ParseTuple(args, "k:vector_alloc", &shape);
     // if something went wrong
     if (!status) return 0;
 

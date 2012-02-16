@@ -20,6 +20,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Matrix.py \
+    RNG.py \
     Vector.py \
     __init__.py
 

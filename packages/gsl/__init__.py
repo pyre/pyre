@@ -45,5 +45,8 @@ def license() : print(gsl.license())
 from .Matrix import Matrix as matrix
 from .Vector import Vector as vector
 
+# random numbers
+from .RNG import RNG as rng
+
 
 # end of file 
