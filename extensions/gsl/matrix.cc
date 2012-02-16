@@ -52,7 +52,7 @@ gsl::matrix::zero(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    int status = PyArg_ParseTuple(args, "O!:matrix_zero", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -82,7 +82,7 @@ gsl::matrix::fill(PyObject *, PyObject * args) {
     double value;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d", &PyCapsule_Type, &capsule, &value);
+    int status = PyArg_ParseTuple(args, "O!d:matrix_fill", &PyCapsule_Type, &capsule, &value);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -112,7 +112,7 @@ gsl::matrix::identity(PyObject *, PyObject * args) {
     size_t index;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!k", &PyCapsule_Type, &capsule, &index);
+    int status = PyArg_ParseTuple(args, "O!k:matrix_identity", &PyCapsule_Type, &capsule, &index);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -143,7 +143,9 @@ gsl::matrix::get(PyObject *, PyObject * args) {
     PyObject * capsule;
     size_t index0, index1;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!kk", &PyCapsule_Type, &capsule, &index0, &index1);
+    int status = PyArg_ParseTuple(
+                                  args, "O!kk:matrix_get",
+                                  &PyCapsule_Type, &capsule, &index0, &index1);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -176,7 +178,7 @@ gsl::matrix::set(PyObject *, PyObject * args) {
     size_t index0, index1;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!kkd",
+                                  args, "O!kkd:matrix_set",
                                   &PyCapsule_Type, &capsule, &index0, &index1, &value);
     // if something went wrong
     if (!status) return 0;
@@ -209,7 +211,7 @@ gsl::matrix::contains(PyObject *, PyObject * args) {
     double value;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d", &PyCapsule_Type, &capsule, &value);
+    int status = PyArg_ParseTuple(args, "O!d:matrix_contains", &PyCapsule_Type, &capsule, &value);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -255,7 +257,7 @@ gsl::matrix::max(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    int status = PyArg_ParseTuple(args, "O!:matrix_max", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -282,7 +284,7 @@ gsl::matrix::min(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    int status = PyArg_ParseTuple(args, "O!:matrix_min", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -310,7 +312,7 @@ gsl::matrix::minmax(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    int status = PyArg_ParseTuple(args, "O!:matrix_minmax", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -346,7 +348,9 @@ gsl::matrix::add(PyObject *, PyObject * args) {
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O!", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:matrix_add",
+                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -377,7 +381,9 @@ gsl::matrix::sub(PyObject *, PyObject * args) {
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O!", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:matrix_sub",
+                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -408,7 +414,9 @@ gsl::matrix::mul(PyObject *, PyObject * args) {
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O!", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:matrix_mul",
+                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -439,7 +447,9 @@ gsl::matrix::div(PyObject *, PyObject * args) {
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O!", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:matrix_div",
+                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -470,7 +480,9 @@ gsl::matrix::shift(PyObject *, PyObject * args) {
     double value;
     PyObject * self;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d", &PyCapsule_Type, &self, &value);
+    int status = PyArg_ParseTuple(
+                                  args, "O!d:matrix_shift",
+                                  &PyCapsule_Type, &self, &value);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -500,7 +512,9 @@ gsl::matrix::scale(PyObject *, PyObject * args) {
     double value;
     PyObject * self;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d", &PyCapsule_Type, &self, &value);
+    int status = PyArg_ParseTuple(
+                                  args, "O!d:matrix_scale",
+                                  &PyCapsule_Type, &self, &value);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
