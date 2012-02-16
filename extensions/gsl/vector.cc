@@ -28,15 +28,15 @@ const char * const gsl::vector::allocate__doc__ = "allocate a vector";
 PyObject * 
 gsl::vector::allocate(PyObject *, PyObject * args) {
     // place holders for the python arguments
-    size_t length;
+    size_t shape;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "k:vector_allocate", &length);
+    int status = PyArg_ParseTuple(args, "k:vector_allocate", &shape);
     // if something went wrong
     if (!status) return 0;
 
     // allocate a vector
-    gsl_vector * v = gsl_vector_alloc(length);
-    // std::cout << " gsl.vector_allocate: vector@" << v << ", size=" << length << std::endl;
+    gsl_vector * v = gsl_vector_alloc(shape);
+    // std::cout << " gsl.vector_allocate: vector@" << v << ", size=" << shape << std::endl;
 
     // wrap it in a capsule and return it
     return PyCapsule_New(v, capsule_t, free);

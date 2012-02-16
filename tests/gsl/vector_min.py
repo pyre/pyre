@@ -16,9 +16,9 @@ def test():
     # package access
     import gsl
     # make a couple of vectors and initialize them
-    v = gsl.vector(size=100)
+    v = gsl.vector(shape=100)
     # prime
-    for index in range(v.size): v[index] = 2*index+1
+    for index in range(v.shape): v[index] = 2*index+1
     # find the min
     small = v.min()
     # check it

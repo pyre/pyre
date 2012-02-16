@@ -16,7 +16,7 @@ def test():
     # package access
     import gsl
     # make a couple of vectors and initialize them
-    v = gsl.vector(size=100).fill(value=1)
+    v = gsl.vector(shape=100).fill(value=1)
     # check
     for e in v: assert e == 1
     # add them and store the result in v1

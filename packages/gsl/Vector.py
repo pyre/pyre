@@ -75,20 +75,20 @@ class Vector:
 
 
     # meta methods
-    def __init__(self, size, **kwds):
+    def __init__(self, shape, **kwds):
         super().__init__(**kwds)
-        self.size = size
-        self.data = gsl.vector_allocate(size)
+        self.shape = shape
+        self.data = gsl.vector_allocate(shape)
         return
 
 
     # container support
-    def __len__(self): return self.size
+    def __len__(self): return self.shape
 
 
     def __iter__(self):
         # for each valid value of the index
-        for index in range(self.size):
+        for index in range(self.shape):
             # produce the corresponding element
             yield gsl.vector_get(self.data, index)
         # no more
@@ -102,9 +102,9 @@ class Vector:
 
     def __getitem__(self, index):
         # reflect negative indices around the end of the vector
-        if index < 0: index = self.size - index
+        if index < 0: index = self.shape - index
         # bounds check
-        if index < 0 or index >= self.size:
+        if index < 0 or index >= self.shape:
             # and complain
             raise IndexError('vector index {} out of range'.format(index))
         # get and return the element
@@ -113,12 +113,12 @@ class Vector:
 
     def __setitem__(self, index, value):
         # reflect negative indices around the end of the vector
-        if index < 0: index = self.size - index
+        if index < 0: index = self.shape - index
         # bounds check
-        if index < 0 or index >= self.size:
+        if index < 0 or index >= self.shape:
             # and complain
             raise IndexError('vector index {} out of range'.format(index))
-        # set the element to the rquested value
+        # set the element to the requested value
         gsl.vector_set(self.data, int(index), value)
         # and return
         return self

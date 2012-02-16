@@ -16,7 +16,7 @@ def test():
     # package access
     import gsl
     # make a vector
-    v = gsl.vector(size=100)
+    v = gsl.vector(shape=100)
     # set it to some value
     v.fill(value=2)
     # verify it happened

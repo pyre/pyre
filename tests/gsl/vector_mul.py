@@ -16,8 +16,8 @@ def test():
     # package access
     import gsl
     # make a couple of vectors and initialize them
-    v1 = gsl.vector(size=100).fill(value=2)
-    v2 = gsl.vector(size=100).fill(value=2)
+    v1 = gsl.vector(shape=100).fill(value=2)
+    v2 = gsl.vector(shape=100).fill(value=2)
     # check
     for e in v1: assert e == 2
     for e in v2: assert e == 2
