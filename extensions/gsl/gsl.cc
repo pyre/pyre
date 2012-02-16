@@ -15,8 +15,9 @@
 #include "exceptions.h"
 #include "metadata.h"
 
-#include "matrix.h"
-#include "vector.h"
+#include "matrix.h" // matrices
+#include "vector.h" // vectors
+#include "rng.h" // random numbers
 
 // put everything in my private namespace
 namespace gsl {
@@ -30,6 +31,28 @@ namespace gsl {
         { license__name__, license, METH_VARARGS, license__doc__ },
         // the version
         { version__name__, version, METH_VARARGS, version__doc__ },
+
+        // vectors
+        { vector::alloc__name__, vector::alloc, METH_VARARGS, vector::alloc__doc__},
+        { vector::zero__name__, vector::zero, METH_VARARGS, vector::zero__doc__},
+        { vector::fill__name__, vector::fill, METH_VARARGS, vector::fill__doc__},
+        { vector::basis__name__, vector::basis, METH_VARARGS, vector::basis__doc__},
+
+        { vector::get__name__, vector::get, METH_VARARGS, vector::get__doc__},
+        { vector::set__name__, vector::set, METH_VARARGS, vector::set__doc__},
+
+        { vector::contains__name__, vector::contains, METH_VARARGS, vector::contains__doc__},
+
+        { vector::max__name__, vector::max, METH_VARARGS, vector::max__doc__},
+        { vector::min__name__, vector::min, METH_VARARGS, vector::min__doc__},
+        { vector::minmax__name__, vector::minmax, METH_VARARGS, vector::minmax__doc__},
+
+        { vector::add__name__, vector::add, METH_VARARGS, vector::add__doc__},
+        { vector::sub__name__, vector::sub, METH_VARARGS, vector::sub__doc__},
+        { vector::mul__name__, vector::mul, METH_VARARGS, vector::mul__doc__},
+        { vector::div__name__, vector::div, METH_VARARGS, vector::div__doc__},
+        { vector::shift__name__, vector::shift, METH_VARARGS, vector::shift__doc__},
+        { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__},
 
         // matrices
         { matrix::alloc__name__, matrix::alloc, METH_VARARGS, matrix::alloc__doc__},
@@ -53,27 +76,11 @@ namespace gsl {
         { matrix::shift__name__, matrix::shift, METH_VARARGS, matrix::shift__doc__},
         { matrix::scale__name__, matrix::scale, METH_VARARGS, matrix::scale__doc__},
 
-        // vectors
-        { vector::alloc__name__, vector::alloc, METH_VARARGS, vector::alloc__doc__},
-        { vector::zero__name__, vector::zero, METH_VARARGS, vector::zero__doc__},
-        { vector::fill__name__, vector::fill, METH_VARARGS, vector::fill__doc__},
-        { vector::basis__name__, vector::basis, METH_VARARGS, vector::basis__doc__},
-
-        { vector::get__name__, vector::get, METH_VARARGS, vector::get__doc__},
-        { vector::set__name__, vector::set, METH_VARARGS, vector::set__doc__},
-
-        { vector::contains__name__, vector::contains, METH_VARARGS, vector::contains__doc__},
-
-        { vector::max__name__, vector::max, METH_VARARGS, vector::max__doc__},
-        { vector::min__name__, vector::min, METH_VARARGS, vector::min__doc__},
-        { vector::minmax__name__, vector::minmax, METH_VARARGS, vector::minmax__doc__},
-
-        { vector::add__name__, vector::add, METH_VARARGS, vector::add__doc__},
-        { vector::sub__name__, vector::sub, METH_VARARGS, vector::sub__doc__},
-        { vector::mul__name__, vector::mul, METH_VARARGS, vector::mul__doc__},
-        { vector::div__name__, vector::div, METH_VARARGS, vector::div__doc__},
-        { vector::shift__name__, vector::shift, METH_VARARGS, vector::shift__doc__},
-        { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__},
+        // random numbers
+        { rng::alloc__name__, rng::alloc, METH_VARARGS, rng::alloc__doc__},
+        { rng::set__name__, rng::set, METH_VARARGS, rng::set__doc__},
+        { rng::name__name__, rng::name, METH_VARARGS, rng::name__doc__},
+        { rng::avail__name__, rng::avail, METH_VARARGS, rng::avail__doc__},
 
         // sentinel
         {0, 0, 0, 0}
@@ -110,6 +117,9 @@ PyInit_gsl()
         return 0;
     }
     // otherwise, we have an initialized module
+    // initialize the table of known random number generators
+    gsl::rng::initialize();
+
     // return the newly created module
     return module;
 }

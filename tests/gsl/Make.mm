@@ -17,8 +17,13 @@ test: sanity vectors matrices
 
 sanity:
 	${PYTHON} ./sanity.py
+	${PYTHON} ./rng.py
 	${PYTHON} ./vector.py
 	${PYTHON} ./matrix.py
+
+rng:
+	${PYTHON} ./rng_available.py
+	${PYTHON} ./rng_allocate.py
 
 vectors:
 	${PYTHON} ./vector_allocate.py
