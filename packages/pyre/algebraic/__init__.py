@@ -48,6 +48,8 @@ for an example of how the simple concrete nodes in this package are assembled
 
 # access to the building blocks in this package
 from .AbstractNode import AbstractNode
+from .Memo import Memo
+from .Cast import Cast
 # access to the node algebra mix-ins
 from .Number import Number
 from .Ordering import Ordering
