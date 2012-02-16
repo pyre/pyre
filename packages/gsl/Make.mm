@@ -19,6 +19,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Matrix.py \
     Vector.py \
     __init__.py
 

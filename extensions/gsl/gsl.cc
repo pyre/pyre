@@ -15,6 +15,7 @@
 #include "exceptions.h"
 #include "metadata.h"
 
+#include "matrix.h"
 #include "vector.h"
 
 // put everything in my private namespace
@@ -29,6 +30,28 @@ namespace gsl {
         { license__name__, license, METH_VARARGS, license__doc__ },
         // the version
         { version__name__, version, METH_VARARGS, version__doc__ },
+
+        // matrices
+        { matrix::allocate__name__, matrix::allocate, METH_VARARGS, matrix::allocate__doc__},
+        { matrix::zero__name__, matrix::zero, METH_VARARGS, matrix::zero__doc__},
+        { matrix::fill__name__, matrix::fill, METH_VARARGS, matrix::fill__doc__},
+        { matrix::identity__name__, matrix::identity, METH_VARARGS, matrix::identity__doc__},
+
+        { matrix::get__name__, matrix::get, METH_VARARGS, matrix::get__doc__},
+        { matrix::set__name__, matrix::set, METH_VARARGS, matrix::set__doc__},
+
+        { matrix::contains__name__, matrix::contains, METH_VARARGS, matrix::contains__doc__},
+
+        { matrix::max__name__, matrix::max, METH_VARARGS, matrix::max__doc__},
+        { matrix::min__name__, matrix::min, METH_VARARGS, matrix::min__doc__},
+        { matrix::minmax__name__, matrix::minmax, METH_VARARGS, matrix::minmax__doc__},
+
+        { matrix::add__name__, matrix::add, METH_VARARGS, matrix::add__doc__},
+        { matrix::sub__name__, matrix::sub, METH_VARARGS, matrix::sub__doc__},
+        { matrix::mul__name__, matrix::mul, METH_VARARGS, matrix::mul__doc__},
+        { matrix::div__name__, matrix::div, METH_VARARGS, matrix::div__doc__},
+        { matrix::shift__name__, matrix::shift, METH_VARARGS, matrix::shift__doc__},
+        { matrix::scale__name__, matrix::scale, METH_VARARGS, matrix::scale__doc__},
 
         // vectors
         { vector::allocate__name__, vector::allocate, METH_VARARGS, vector::allocate__doc__},

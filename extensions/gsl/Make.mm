@@ -18,6 +18,7 @@ EXTERNAL_LIBS += -ljournal
 
 PROJ_SRCS = \
     exceptions.cc \
+    matrix.cc \
     metadata.cc \
     vector.cc \
 

@@ -42,6 +42,7 @@ def license() : print(gsl.license())
 
 
 # linear algebra
+from .Matrix import Matrix as matrix
 from .Vector import Vector as vector
 
 

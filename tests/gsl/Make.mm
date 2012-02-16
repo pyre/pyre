@@ -13,11 +13,12 @@ PROJECT = gsl
 
 all: test
 
-test: sanity vectors
+test: sanity vectors matrices
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./vector.py
+	${PYTHON} ./matrix.py
 
 vectors:
 	${PYTHON} ./vector_allocate.py
@@ -34,6 +35,22 @@ vectors:
 	${PYTHON} ./vector_max.py
 	${PYTHON} ./vector_min.py
 	${PYTHON} ./vector_minmax.py
+
+matrices:
+	${PYTHON} ./matrix_allocate.py
+	${PYTHON} ./matrix_zero.py
+	${PYTHON} ./matrix_fill.py
+	${PYTHON} ./matrix_set.py
+	${PYTHON} ./matrix_contains.py
+	${PYTHON} ./matrix_add.py
+	${PYTHON} ./matrix_sub.py
+	${PYTHON} ./matrix_mul.py
+	${PYTHON} ./matrix_div.py
+	${PYTHON} ./matrix_shift.py
+	${PYTHON} ./matrix_scale.py
+	${PYTHON} ./matrix_max.py
+	${PYTHON} ./matrix_min.py
+	${PYTHON} ./matrix_minmax.py
 
 
 # end of file 
