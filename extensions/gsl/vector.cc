@@ -52,7 +52,7 @@ gsl::vector::zero(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    int status = PyArg_ParseTuple(args, "O!:vector_zero", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -82,7 +82,7 @@ gsl::vector::fill(PyObject *, PyObject * args) {
     double value;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d", &PyCapsule_Type, &capsule, &value);
+    int status = PyArg_ParseTuple(args, "O!d:vector_fill", &PyCapsule_Type, &capsule, &value);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -112,7 +112,7 @@ gsl::vector::basis(PyObject *, PyObject * args) {
     size_t index;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!k", &PyCapsule_Type, &capsule, &index);
+    int status = PyArg_ParseTuple(args, "O!k:vector_basis", &PyCapsule_Type, &capsule, &index);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -143,7 +143,7 @@ gsl::vector::get(PyObject *, PyObject * args) {
     size_t index;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!k", &PyCapsule_Type, &capsule, &index);
+    int status = PyArg_ParseTuple(args, "O!k:vector_get", &PyCapsule_Type, &capsule, &index);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -175,7 +175,9 @@ gsl::vector::set(PyObject *, PyObject * args) {
     double value;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!kd", &PyCapsule_Type, &capsule, &index, &value);
+    int status = PyArg_ParseTuple(
+                                  args, "O!kd:vector_set",
+                                  &PyCapsule_Type, &capsule, &index, &value);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -207,7 +209,7 @@ gsl::vector::contains(PyObject *, PyObject * args) {
     double value;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d", &PyCapsule_Type, &capsule, &value);
+    int status = PyArg_ParseTuple(args, "O!d:vector_contains", &PyCapsule_Type, &capsule, &value);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -251,7 +253,7 @@ gsl::vector::max(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    int status = PyArg_ParseTuple(args, "O!:vector_max", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -278,7 +280,7 @@ gsl::vector::min(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    int status = PyArg_ParseTuple(args, "O!:vector_min", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -306,7 +308,7 @@ gsl::vector::minmax(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    int status = PyArg_ParseTuple(args, "O!:vector_minmax", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -342,7 +344,9 @@ gsl::vector::add(PyObject *, PyObject * args) {
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O!", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:vector_add",
+                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -373,7 +377,9 @@ gsl::vector::sub(PyObject *, PyObject * args) {
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O!", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:vector_sub", 
+                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -404,7 +410,9 @@ gsl::vector::mul(PyObject *, PyObject * args) {
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O!", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:vector_mul",
+                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -435,7 +443,9 @@ gsl::vector::div(PyObject *, PyObject * args) {
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!O!", &PyCapsule_Type, &self, &PyCapsule_Type, &other);
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:vector_div",
+                                  &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -466,7 +476,7 @@ gsl::vector::shift(PyObject *, PyObject * args) {
     double value;
     PyObject * self;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d", &PyCapsule_Type, &self, &value);
+    int status = PyArg_ParseTuple(args, "O!d:vector_shift", &PyCapsule_Type, &self, &value);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
@@ -496,7 +506,7 @@ gsl::vector::scale(PyObject *, PyObject * args) {
     double value;
     PyObject * self;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!d", &PyCapsule_Type, &self, &value);
+    int status = PyArg_ParseTuple(args, "O!d:vector_scale", &PyCapsule_Type, &self, &value);
     // if something went wrong
     if (!status) return 0;
     // bail out if the two capsules are not valid
