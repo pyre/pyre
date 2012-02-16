@@ -31,6 +31,9 @@ vectors:
 	${PYTHON} ./vector_div.py
 	${PYTHON} ./vector_shift.py
 	${PYTHON} ./vector_scale.py
+	${PYTHON} ./vector_max.py
+	${PYTHON} ./vector_min.py
+	${PYTHON} ./vector_minmax.py
 
 
 # end of file 

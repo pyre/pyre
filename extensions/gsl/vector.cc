@@ -242,6 +242,96 @@ gsl::vector::contains(PyObject *, PyObject * args) {
 }
 
 
+// minima and maxima
+const char * const gsl::vector::max__name__ = "vector_max";
+const char * const gsl::vector::max__doc__ = "find the largest value contained";
+
+PyObject * 
+gsl::vector::max(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    double value = gsl_vector_max(v);
+    // std::cout << " gsl.vector_max: vector@" << v << ", value=" << value << std::endl;
+
+    // return the value
+    return PyFloat_FromDouble(value);
+}
+
+
+const char * const gsl::vector::min__name__ = "vector_min";
+const char * const gsl::vector::min__doc__ = "find the smallest value contained";
+
+PyObject * 
+gsl::vector::min(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    double value = gsl_vector_min(v);
+    // std::cout << " gsl.vector_max: vector@" << v << ", value=" << value << std::endl;
+
+    // return the value
+    return PyFloat_FromDouble(value);
+}
+
+
+const char * const gsl::vector::minmax__name__ = "vector_minmax";
+const char * const gsl::vector::minmax__doc__ = 
+    "find both the smallest and the largest value contained";
+
+PyObject * 
+gsl::vector::minmax(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    double small, large;
+    gsl_vector_minmax(v, &small, &large);
+    // std::cout 
+        // << " gsl.vector_max: vector@" << v << ", min=" << small << ", max=" << large 
+        // << std::endl;
+
+    // build the answer
+    PyObject * answer = PyTuple_New(2);
+    PyTuple_SET_ITEM(answer, 0, PyFloat_FromDouble(small));
+    PyTuple_SET_ITEM(answer, 1, PyFloat_FromDouble(large));
+    // and return
+    return answer;
+}
+
+
 // in-place operations
 const char * const gsl::vector::add__name__ = "vector_add";
 const char * const gsl::vector::add__doc__ = "in-place addition of two vectors";

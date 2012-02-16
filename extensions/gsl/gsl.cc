@@ -41,6 +41,10 @@ namespace gsl {
 
         { vector::contains__name__, vector::contains, METH_VARARGS, vector::contains__doc__},
 
+        { vector::max__name__, vector::max, METH_VARARGS, vector::max__doc__},
+        { vector::min__name__, vector::min, METH_VARARGS, vector::min__doc__},
+        { vector::minmax__name__, vector::minmax, METH_VARARGS, vector::minmax__doc__},
+
         { vector::add__name__, vector::add, METH_VARARGS, vector::add__doc__},
         { vector::sub__name__, vector::sub, METH_VARARGS, vector::sub__doc__},
         { vector::mul__name__, vector::mul, METH_VARARGS, vector::mul__doc__},

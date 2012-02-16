@@ -49,6 +49,31 @@ class Vector:
         return self
 
 
+    # maxima and minima
+    def max(self):
+        """
+        Compute my maximum value
+        """
+        # easy enough
+        return gsl.vector_max(self.data)
+
+
+    def min(self):
+        """
+        Compute my maximum value
+        """
+        # easy enough
+        return gsl.vector_min(self.data)
+
+
+    def minmax(self):
+        """
+        Compute my minimum and maximum values
+        """
+        # easy enough
+        return gsl.vector_minmax(self.data)
+
+
     # meta methods
     def __init__(self, size, **kwds):
         super().__init__(**kwds)

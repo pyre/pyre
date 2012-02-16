@@ -48,6 +48,21 @@ namespace gsl {
         extern const char * const contains__doc__;
         PyObject * contains(PyObject *, PyObject *);
 
+        // vector_max
+        extern const char * const max__name__;
+        extern const char * const max__doc__;
+        PyObject * max(PyObject *, PyObject *);
+
+        // vector_min
+        extern const char * const min__name__;
+        extern const char * const min__doc__;
+        PyObject * min(PyObject *, PyObject *);
+
+        // vector_minmax
+        extern const char * const minmax__name__;
+        extern const char * const minmax__doc__;
+        PyObject * minmax(PyObject *, PyObject *);
+
         // vector_add
         extern const char * const add__name__;
         extern const char * const add__doc__;
