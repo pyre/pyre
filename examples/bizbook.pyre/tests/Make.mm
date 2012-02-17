@@ -6,31 +6,28 @@
 #
 
 
-PROJECT = pyre
+PROJECT = bizbook
+
+RECURSE_DIRS = \
+    postgres \
+    sqlite \
 
 #--------------------------------------------------------------------------
 #
 
 all: test
 
-test: sanity create queries destroy
+test::
+	BLD_ACTION="test" $(MM) recurse
 
-sanity:
-	${PYTHON} ./sanity.py
+tidy::
+	BLD_ACTION="tidy" $(MM) recurse
 
-create:
-	${PYTHON} ./create_database.py
-	${PYTHON} ./create_tables.py
-	${PYTHON} ./populate.py
+clean::
+	BLD_ACTION="clean" $(MM) recurse
 
-queries:
-	${PYTHON} ./projections.py
-	${PYTHON} ./restrictions.py
-	${PYTHON} ./collations.py
-
-destroy:
-	${PYTHON} ./drop_tables.py
-	${PYTHON} ./drop_database.py
+distclean::
+	BLD_ACTION="distclean" $(MM) recurse
 
 
 # end of file 

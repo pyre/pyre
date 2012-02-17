@@ -19,4 +19,14 @@ def pg():
     return db
 
 
+# connect to the bizbook database under sqlite
+def sqlite():
+    # access the package
+    import pyre.db
+    # make a data store and connect to it
+    db = pyre.db.sqlite(name="bizbook").attach()
+    # and return it
+    return db
+
+
 # end of file 
