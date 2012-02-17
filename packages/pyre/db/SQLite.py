@@ -11,6 +11,7 @@ import pyre
 import sqlite3
 # superclass
 from .Server import Server
+from .Selection import Selection
 
 
 # declaration
@@ -18,6 +19,24 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
     """
     Component that manages the connection to a sqlite database
     """
+
+
+    # types
+    class selection(Selection):
+        """override {__iter__}: sqlite does not return headers"""
+
+        def __iter__(self):
+            """
+            Wrap each result tuple as record as return it
+            """
+            # iterate over the result set
+            for result in self.results:
+                # build and instance of the query embedded record type
+                record = self.query.pyre_Record(raw=result)
+                # return it to the caller
+                yield record
+            # all done
+            return
 
 
     # public state
