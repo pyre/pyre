@@ -51,7 +51,7 @@ def test():
     assert identical((ref() for ref in n3.observers), [s])
     # s to have two operands: n1 and n2
     assert len(s.operands) == 2
-    assert identical(tuple(s.operands), {n3, n2})
+    assert identical(tuple(s.operands), (n3, n2))
     # and no observers
     assert len(s.observers) == 0
 
