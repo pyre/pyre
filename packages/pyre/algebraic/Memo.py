@@ -43,7 +43,9 @@ class Memo:
         """
         # update the value
         super().setValue(value=value, **kwds)
-        # invalidate my cache and notify my observers
+        # mark me as clean
+        self.dirty = False
+        # notify my observers
         return self.notifyObservers()
 
 
@@ -127,8 +129,12 @@ class Memo:
 
         # initialize the set of my observers
         self.observers = set()
-        # add me as an observer to each of my operands
-        for operand in operands: operand.observers.add(weakref.ref(self))
+        # visit my operands
+        for operand in operands:
+            # skip the ones that are not instances of my type
+            if not isinstance(operand, Memo): continue
+            # add me as an observer to the rest
+            operand.observers.add(weakref.ref(self))
 
         # and return
         return
