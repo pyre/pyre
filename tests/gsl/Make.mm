@@ -11,6 +11,8 @@ PROJECT = gsl
 #--------------------------------------------------------------------------
 #
 
+working: rng
+
 all: test
 
 test: sanity vectors matrices
@@ -24,6 +26,9 @@ sanity:
 rng:
 	${PYTHON} ./rng_available.py
 	${PYTHON} ./rng_allocate.py
+	${PYTHON} ./rng_range.py
+	${PYTHON} ./rng_int.py
+	${PYTHON} ./rng_float.py
 
 vectors:
 	${PYTHON} ./vector_allocate.py

@@ -30,6 +30,33 @@ static void free(PyObject *);
 static const char * capsule_t = "gsl.rng";
 
 
+// get the name of all the generators known to GSL
+const char * const gsl::rng::avail__name__ = "rng_avail";
+const char * const gsl::rng::avail__doc__ = "return the set of all known generators";
+
+PyObject * 
+gsl::rng::avail(PyObject *, PyObject * args) {
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, ":rng_avail");
+    // if something went wrong
+    if (!status) return 0;
+
+    // make a frozen set to hold the names
+    PyObject *names = PyFrozenSet_New(0);
+    // iterate over the registered names
+    for (
+         gsl::rng::map_t::const_iterator i= gsl::rng::generators.begin();
+         i != gsl::rng::generators.end();
+         i++ ) {
+        // add the name to the set
+        PySet_Add(names, PyUnicode_FromString(i->first.c_str()));
+    }
+
+    // return the names
+    return names;
+}
+
+
 // construction
 const char * const gsl::rng::alloc__name__ = "rng_alloc";
 const char * const gsl::rng::alloc__doc__ = "allocate a rng";
@@ -119,30 +146,92 @@ gsl::rng::name(PyObject *, PyObject * args) {
 }
 
 
-// get the name of all the generators known to GSL
-const char * const gsl::rng::avail__name__ = "rng_avail";
-const char * const gsl::rng::avail__doc__ = "return the set of all known generators";
+// get the range of generated values 
+const char * const gsl::rng::range__name__ = "rng_range";
+const char * const gsl::rng::range__doc__ = 
+    "return a tuple (min, max) describing the range of values generated";
 
 PyObject * 
-gsl::rng::avail(PyObject *, PyObject * args) {
+gsl::rng::range(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, ":rng_avail");
+    int status = PyArg_ParseTuple(args, "O!:rng_name", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
-
-    // make a frozen set to hold the names
-    PyObject *names = PyFrozenSet_New(0);
-    // iterate over the registered names
-    for (
-         gsl::rng::map_t::const_iterator i= gsl::rng::generators.begin();
-         i != gsl::rng::generators.end();
-         i++ ) {
-        // add the name to the set
-        PySet_Add(names, PyUnicode_FromString(i->first.c_str()));
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
     }
 
-    // return the names
-    return names;
+    // get the rng
+    gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // std::cout << " gsl.rng_range: rng@" << r << std::endl;
+
+    // build the range
+    PyObject * range = PyTuple_New(2);
+    PyTuple_SET_ITEM(range, 0, PyLong_FromUnsignedLong(gsl_rng_min(r)));
+    PyTuple_SET_ITEM(range, 1, PyLong_FromUnsignedLong(gsl_rng_max(r)));
+
+    // return the range
+    return range;
+}
+
+
+// get the next random integer
+const char * const gsl::rng::get__name__ = "rng_get";
+const char * const gsl::rng::get__doc__ = 
+    "return the next random integer with the range of the generator";
+
+PyObject * 
+gsl::rng::get(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!:rng_get", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+
+    // get the rng
+    gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // std::cout << " gsl.rng_range: rng@" << r << std::endl;
+
+    // return a value
+    return PyLong_FromUnsignedLong(gsl_rng_get(r));
+}
+
+
+// a random double in [0,1)
+const char * const gsl::rng::uniform__name__ = "rng_uniform";
+const char * const gsl::rng::uniform__doc__ = 
+    "return the next random integer with the range of the generator";
+
+PyObject * 
+gsl::rng::uniform(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!:rng_uniform", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+
+    // get the rng
+    gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // std::cout << " gsl.rng_range: rng@" << r << std::endl;
+
+    // return a value
+    return PyFloat_FromDouble(gsl_rng_uniform(r));
 }
 
 
