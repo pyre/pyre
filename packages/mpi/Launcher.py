@@ -21,8 +21,11 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
 
 
     # public state
-    command = pyre.properties.str(default='mpirun')
-    command.doc = 'the path to the mpi launcher'
+    launcher = pyre.properties.str(default='mpirun')
+    launcher.doc = 'the path to the mpi launcher'
+
+    python = pyre.properties.str(default=sys.executable)
+    python.doc = 'the path to the interpreter'
 
     tasks = pyre.properties.int()
     tasks.doc = 'the number of mpi tasks'
@@ -47,21 +50,24 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
 
         # build the command line
         argv = [
-            self.command,
+            self.launcher,
             '-np', str(self.tasks),
-            sys.executable,
-            __main__.__file__,
+            self.python ] + sys.argv + [
             '--with-mpi=true',
             ]
-        # the options
+        # set the subprocess options
         options = {
             'args': argv,
-            'executable': self.command,
+            'executable': self.launcher,
             # 'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
             }
 
+        # display the options
+        # import pyre.tracking
+        # print(' * {}: mpi.Launcher: subprocess options:'.format(pyre.tracking.here()))
+        # for key,value in options.items(): print('    {} = {!r}'.format(key, value))
         # make a pipe
         with subprocess.Popen(**options) as child:
             # wait for it to finish
