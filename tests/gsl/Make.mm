@@ -31,6 +31,7 @@ rng:
 
 pdf:
 	${PYTHON} ./pdf_uniform.py
+	${PYTHON} ./pdf_gaussian.py
 
 vectors:
 	${PYTHON} ./vector_allocate.py

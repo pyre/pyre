@@ -24,6 +24,20 @@ namespace gsl {
             extern const char * const density__doc__;
             PyObject * density(PyObject *, PyObject *);
         } // of namespace uniform
+
+        // the gaussian distribution
+        namespace gaussian {
+            // sample
+            extern const char * const sample__name__;
+            extern const char * const sample__doc__;
+            PyObject * sample(PyObject *, PyObject *);
+
+            // density
+            extern const char * const density__name__;
+            extern const char * const density__doc__;
+            PyObject * density(PyObject *, PyObject *);
+        } // of namespace gaussian
+
     } // of namespace pdf
 } // of namespace gsl
 

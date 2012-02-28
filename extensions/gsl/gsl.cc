@@ -85,6 +85,11 @@ namespace gsl {
         { pdf::uniform::density__name__, pdf::uniform::density, METH_VARARGS,
           pdf::uniform::density__doc__ },
 
+        { pdf::gaussian::sample__name__, pdf::gaussian::sample, METH_VARARGS,
+          pdf::gaussian::sample__doc__ },
+        { pdf::gaussian::density__name__, pdf::gaussian::density, METH_VARARGS,
+          pdf::gaussian::density__doc__ },
+
         // sentinel
         {0, 0, 0, 0}
     };

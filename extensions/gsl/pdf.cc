@@ -62,4 +62,49 @@ gsl::pdf::uniform::density(PyObject *, PyObject * args) {
 }
 
 
+// gaussian::sample
+const char * const gsl::pdf::gaussian::sample__name__ = "gaussian_sample";
+const char * const gsl::pdf::gaussian::sample__doc__ = 
+    "return a sample from the gaussian distribution";
+
+PyObject * 
+gsl::pdf::gaussian::sample(PyObject *, PyObject * args) {
+    // the arguments
+    double sigma;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "dO!:gaussian_sample",
+                                  &sigma, &PyCapsule_Type, &capsule);
+    // bail out if something went wrong with the argument unpacking
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, gsl::rng::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+    // get the rng
+    gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, gsl::rng::capsule_t));
+    // sample the distribution and return the value
+    return PyFloat_FromDouble(gsl_ran_gaussian(r, sigma));
+}
+
+
+// gaussian::density
+const char * const gsl::pdf::gaussian::density__name__ = "gaussian_density";
+const char * const gsl::pdf::gaussian::density__doc__ = "return the gaussian distribution density";
+
+PyObject * 
+gsl::pdf::gaussian::density(PyObject *, PyObject * args) {
+    // the arguments
+    double x, sigma;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "dd:gaussian_density", &sigma, &x);
+    // bail out if something went wrong with the argument unpacking
+    if (!status) return 0;
+    // compute the density and return the value
+    return PyFloat_FromDouble(gsl_ran_gaussian_pdf(x, sigma));
+}
+
+
 // end of file
