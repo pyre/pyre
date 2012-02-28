@@ -37,6 +37,7 @@ vectors:
 	${PYTHON} ./vector_allocate.py
 	${PYTHON} ./vector_zero.py
 	${PYTHON} ./vector_fill.py
+	${PYTHON} ./vector_random.py
 	${PYTHON} ./vector_set.py
 	${PYTHON} ./vector_contains.py
 	${PYTHON} ./vector_add.py
@@ -53,6 +54,7 @@ matrices:
 	${PYTHON} ./matrix_allocate.py
 	${PYTHON} ./matrix_zero.py
 	${PYTHON} ./matrix_fill.py
+	${PYTHON} ./matrix_random.py
 	${PYTHON} ./matrix_set.py
 	${PYTHON} ./matrix_contains.py
 	${PYTHON} ./matrix_add.py

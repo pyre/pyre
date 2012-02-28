@@ -23,15 +23,25 @@ def test():
     # build a random number generator
     rng = gsl.rng()
     # build a gaussian distribution
-    gaussian = gsl.pdf.gaussian(σ)
+    gaussian = gsl.pdf.gaussian(sigma=σ, rng=rng)
 
     # sample it
-    sample = gaussian.sample(rng)
+    sample = gaussian.sample()
 
     # compute the density
     x = 0
     density = gaussian.density(x)
     assert density == 1/sqrt(2*pi*σ**2) * exp(-x**2/ (2*σ**2))
+
+    # make a vector
+    v = gsl.vector(1000)
+    # fill it with random numbers
+    gaussian.vector(vector=v)
+
+    # make a matrix
+    m = gsl.matrix(shape=(50, 200))
+    # fill it with random numbers
+    gaussian.matrix(matrix=m)
 
     return gaussian
 

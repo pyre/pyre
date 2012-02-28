@@ -18,12 +18,12 @@ class uniform:
 
 
     # interface
-    def sample(self, rng):
+    def sample(self):
         """
         Sample the uniform distribution using a random value from {rng}
         """
         # get the value
-        return gsl.uniform_sample(self.support, rng.rng)
+        return gsl.uniform_sample(self.support, self.rng.rng)
 
 
     def density(self, x):
@@ -34,9 +34,25 @@ class uniform:
         return gsl.uniform_density(self.support, x)
 
 
+    # higher level support
+    def vector(self, vector):
+        """
+        Fill {vector} with random values
+        """
+        return gsl.uniform_vector(self.support, self.rng.rng, vector.data)
+
+
+    def matrix(self, matrix):
+        """
+        Fill {matrix} with random values
+        """
+        return gsl.uniform_matrix(self.support, self.rng.rng, matrix.data)
+
+
     # meta methods
-    def __init__(self, support, **kwds):
+    def __init__(self, support, rng, **kwds):
         super().__init__(**kwds)
+        self.rng = rng
         self.support = support
         return
 
@@ -53,12 +69,12 @@ class gaussian:
 
 
     # interface
-    def sample(self, rng):
+    def sample(self):
         """
         Sample the gaussian distribution using a random value from {rng}
         """
         # get the value
-        return gsl.gaussian_sample(self.sigma, rng.rng)
+        return gsl.gaussian_sample(self.sigma, self.rng.rng)
 
 
     def density(self, x):
@@ -69,15 +85,31 @@ class gaussian:
         return gsl.gaussian_density(self.sigma, x)
 
 
+    # higher level support
+    def vector(self, vector):
+        """
+        Fill {vector} with random values
+        """
+        return gsl.gaussian_vector(self.sigma, self.rng.rng, vector.data)
+
+
+    def matrix(self, matrix):
+        """
+        Fill {matrix} with random values
+        """
+        return gsl.gaussian_matrix(self.sigma, self.rng.rng, matrix.data)
+
+
     # meta methods
-    def __init__(self, sigma, **kwds):
+    def __init__(self, sigma, rng, **kwds):
         super().__init__(**kwds)
+        self.rng = rng
         self.sigma = sigma
         return
 
 
     # implementation details
-    support = None
+    sigma = None
 
 
 # end of file 

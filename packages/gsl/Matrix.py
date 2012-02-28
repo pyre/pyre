@@ -50,6 +50,14 @@ class Matrix:
         return self
 
 
+    def random(self, pdf):
+        """
+        Fill me with random numbers using the probability distribution {pdf}
+        """
+        # the {pdf} knows how to do this
+        return pdf.matrix(matrix=self)
+
+
     # maxima and minima
     def max(self):
         """
