@@ -10,8 +10,7 @@
 from . import gsl # the extension
 
 
-# the class declaration:w
-
+# the class declaration
 class RNG:
     """
     Encapsulation of the pseudo-random number generators in GSL
@@ -49,18 +48,14 @@ class RNG:
         return gsl.rng_get(self.rng)
 
 
-    # higher level requests
-
-
     # meta methods
-    def __init__(self, algorithm=None, seed=0, **kwds):
+    def __init__(self, algorithm='ranlxs2', seed=0, **kwds):
         super().__init__(**kwds)
-
         # build the RNG
         self.rng = gsl.rng_alloc(algorithm)
         # and seed it
         gsl.rng_set(self.rng, int(seed))
-
+        # all done
         return
 
 
