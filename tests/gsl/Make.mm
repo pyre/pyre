@@ -11,11 +11,9 @@ PROJECT = gsl
 #--------------------------------------------------------------------------
 #
 
-working: rng
-
 all: test
 
-test: sanity vectors matrices
+test: sanity rng vectors matrices
 
 sanity:
 	${PYTHON} ./sanity.py

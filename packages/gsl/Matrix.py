@@ -90,7 +90,7 @@ class Matrix:
         # iterate over all the elements
         for i in range(index0):
             for j in range(index1):
-                yield gsl.matrix_get(self.data, i, j)
+                yield gsl.matrix_get(self.data, (i, j))
         # all done
         return
 
@@ -101,45 +101,13 @@ class Matrix:
 
 
     def __getitem__(self, index):
-        # unpack the index
-        index0, index1 = index
-        # unpack the shape
-        size0, size1 = self.shape
-        # reflect negative indices around the end of the matrix
-        if index0 < 0: index0 = size0 - index0
-        if index1 < 0: index1 = size1 - index1
-        # bounds check index0
-        if index0 < 0 or index0 >= size0:
-            # and complain
-            raise IndexError('matrix index {} out of range'.format(index0))
-        # bounds check index1
-        if index1 < 0 or index1 >= size1:
-            # and complain
-            raise IndexError('matrix index {} out of range'.format(index1))
         # get and return the element
-        return gsl.matrix_get(self.data, index0, index1)
+        return gsl.matrix_get(self.data, index)
 
 
     def __setitem__(self, index, value):
-        # unpack the index
-        index0, index1 = index
-        # unpack the shape
-        size0, size1 = self.shape
-        # reflect negative indices around the end of the matrix
-        if index0 < 0: index0 = size0 - index0
-        if index1 < 0: index1 = size1 - index1
-        # bounds check index0
-        if index0 < 0 or index0 >= size0:
-            # and complain
-            raise IndexError('matrix index {} out of range'.format(index0))
-        # bounds check index1
-        if index1 < 0 or index1 >= size1:
-            # and complain
-            raise IndexError('matrix index {} out of range'.format(index1))
         # set the element to the requested value
-        gsl.matrix_set(self.data, int(index0), int(index1), value)
-        # and return
-        return self
+        return gsl.matrix_set(self.data, index, value)
 
 
     # in-place arithmetic

@@ -8,13 +8,14 @@
 
 #include <portinfo>
 #include <Python.h>
+#include <sstream>
 
 // turn on GSL inlining
 #define HAVE_INLINE
 #include <gsl/gsl_matrix.h>
 #include "matrix.h"
 
-#include <iostream>
+// #include <iostream>
 
 // local
 static void free(PyObject *);
@@ -141,12 +142,12 @@ PyObject *
 gsl::matrix::get(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
-    size_t index0, index1;
+    long index1, index2;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!kk:matrix_get",
-                                  &PyCapsule_Type, &capsule, &index0, &index1);
-    // if something went wrong
+                                  args, "O!(ll):matrix_get",
+                                  &PyCapsule_Type, &capsule, &index1, &index2);
+    // bail out if something went wrong during argument unpacking
     if (!status) return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
@@ -156,8 +157,37 @@ gsl::matrix::get(PyObject *, PyObject * args) {
 
     // get the matrix
     gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // reflect negative indices about the end of the matrix
+    if (index1 < 0 ) index1 += v->size1;
+    if (index2 < 0 ) index2 += v->size2;
+
+    // convert to unsigned values
+    size_t i1 = index1;
+    size_t i2 = index2;
+    // bounds check index 1
+    if (i1 < 0 || i1 >= v->size1) {
+        // build an error message
+        std::stringstream msg;
+        msg << "matrix index " << index1 << " out of range";
+        // register the error
+        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
+        // and raise the exception
+        return 0;
+    }
+    // bounds check index 2
+    if (i2 < 0 || i2 >= v->size2) {
+        // build an error message
+        std::stringstream msg;
+        msg << "matrix index " << index2 << " out of range";
+        // register the error
+        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
+        // and raise the exception
+        return 0;
+    }
+
     // get the value
-    double value = gsl_matrix_get(v, index0, index1);
+    double value = gsl_matrix_get(v, i1, i2);
     // std::cout
         // << " gsl.matrix_get: matrix@" << v << ", index=" << index << ", value=" << value 
         // << std::endl;
@@ -175,12 +205,12 @@ gsl::matrix::set(PyObject *, PyObject * args) {
     // the arguments
     double value;
     PyObject * capsule;
-    size_t index0, index1;
+    long index1, index2;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!kkd:matrix_set",
-                                  &PyCapsule_Type, &capsule, &index0, &index1, &value);
-    // if something went wrong
+                                  args, "O!(ll)d:matrix_set",
+                                  &PyCapsule_Type, &capsule, &index1, &index2, &value);
+    // bail out if something went wrong during argument unpacking
     if (!status) return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
@@ -193,8 +223,37 @@ gsl::matrix::set(PyObject *, PyObject * args) {
     // std::cout
         // << " gsl.matrix_set: matrix@" << v << ", index=" << index << ", value=" << value 
         // << std::endl;
+
+    // reflect negative indices about the end of the matrix
+    if (index1 < 0 ) index1 += v->size1;
+    if (index2 < 0 ) index2 += v->size2;
+
+    // convert to unsigned values
+    size_t i1 = index1;
+    size_t i2 = index2;
+    // bounds check index 1
+    if (i1 < 0 || i1 >= v->size1) {
+        // build an error message
+        std::stringstream msg;
+        msg << "matrix index " << index1 << " out of range";
+        // register the error
+        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
+        // and raise the exception
+        return 0;
+    }
+    // bounds check index 2
+    if (i2 < 0 || i2 >= v->size2) {
+        // build an error message
+        std::stringstream msg;
+        msg << "matrix index " << index2 << " out of range";
+        // register the error
+        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
+        // and raise the exception
+        return 0;
+    }
+
     // set the value
-    gsl_matrix_set(v, index0, index1, value);
+    gsl_matrix_set(v, index1, index2, value);
 
     // return None
     Py_INCREF(Py_None);
