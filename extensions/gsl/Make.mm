@@ -20,6 +20,7 @@ PROJ_SRCS = \
     exceptions.cc \
     matrix.cc \
     metadata.cc \
+    pdf.cc \
     rng.cc \
     vector.cc \
 

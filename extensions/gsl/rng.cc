@@ -14,6 +14,7 @@
 #define HAVE_INLINE
 #include <gsl/gsl_rng.h>
 #include "rng.h"
+#include "capsules.h"
 
 #include <iostream>
 
@@ -27,7 +28,6 @@ namespace gsl {
 
 // local
 static void free(PyObject *);
-static const char * capsule_t = "gsl.rng";
 
 
 // get the name of all the generators known to GSL
@@ -261,9 +261,9 @@ gsl::rng::initialize()
 void free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) return;
+    if (!PyCapsule_IsValid(capsule, gsl::rng::capsule_t)) return;
     // get the rng
-    gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, gsl::rng::capsule_t));
     // std::cout << " gsl.rng_free: rng@" << r << std::endl;
     // deallocate
     gsl_rng_free(r);

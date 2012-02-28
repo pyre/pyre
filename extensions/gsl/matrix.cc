@@ -14,12 +14,12 @@
 #define HAVE_INLINE
 #include <gsl/gsl_matrix.h>
 #include "matrix.h"
+#include "capsules.h"
 
 // #include <iostream>
 
 // local
 static void free(PyObject *);
-static const char * capsule_t = "gsl.matrix";
 
 
 // construction
@@ -598,9 +598,10 @@ gsl::matrix::scale(PyObject *, PyObject * args) {
 void free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) return;
+    if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) return;
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * v = 
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
     // std::cout << " gsl.matrix_free: matrix@" << v << std::endl;
     // deallocate
     gsl_matrix_free(v);

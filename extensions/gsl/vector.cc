@@ -13,12 +13,12 @@
 #define HAVE_INLINE
 #include <gsl/gsl_vector.h>
 #include "vector.h"
+#include "capsules.h"
 
 #include <iostream>
 
 // local
 static void free(PyObject *);
-static const char * capsule_t = "gsl.vector";
 
 
 // construction
@@ -178,7 +178,7 @@ gsl::vector::set(PyObject *, PyObject * args) {
     int status = PyArg_ParseTuple(
                                   args, "O!kd:vector_set",
                                   &PyCapsule_Type, &capsule, &index, &value);
-    // if something went wrong
+    // bail out if something went wrong with the argument unpacking
     if (!status) return 0;
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
@@ -531,9 +531,10 @@ gsl::vector::scale(PyObject *, PyObject * args) {
 void free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(capsule, capsule_t)) return;
+    if (!PyCapsule_IsValid(capsule, gsl::vector::capsule_t)) return;
     // get the vector
-    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_vector * v = 
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, gsl::vector::capsule_t));
     // std::cout << " gsl.vector_free: vector@" << v << std::endl;
     // deallocate
     gsl_vector_free(v);

@@ -13,11 +13,12 @@ PROJECT = gsl
 
 all: test
 
-test: sanity rng vectors matrices
+test: sanity rng pdf vectors matrices
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./rng.py
+	${PYTHON} ./pdf.py
 	${PYTHON} ./vector.py
 	${PYTHON} ./matrix.py
 
@@ -27,6 +28,9 @@ rng:
 	${PYTHON} ./rng_range.py
 	${PYTHON} ./rng_int.py
 	${PYTHON} ./rng_float.py
+
+pdf:
+	${PYTHON} ./pdf_uniform.py
 
 vectors:
 	${PYTHON} ./vector_allocate.py

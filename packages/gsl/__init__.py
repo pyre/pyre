@@ -47,6 +47,7 @@ from .Vector import Vector as vector
 
 # random numbers
 from .RNG import RNG as rng
+from . import pdf
 
 
 # end of file 
