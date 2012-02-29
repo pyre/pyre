@@ -146,7 +146,7 @@ gsl::matrix::copy(PyObject *, PyObject * args) {
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O:matrix_copy", 
+                                  args, "O!O!:matrix_copy", 
                                   &PyCapsule_Type, &destinationCapsule,
                                   &PyCapsule_Type, &sourceCapsule
                                   );
@@ -436,6 +436,48 @@ gsl::matrix::minmax(PyObject *, PyObject * args) {
     PyTuple_SET_ITEM(answer, 0, PyFloat_FromDouble(small));
     PyTuple_SET_ITEM(answer, 1, PyFloat_FromDouble(large));
     // and return
+    return answer;
+}
+
+
+// equal
+const char * const gsl::matrix::equal__name__ = "matrix_equal";
+const char * const gsl::matrix::equal__doc__ = "check two matrices for equality";
+
+PyObject * 
+gsl::matrix::equal(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * leftCapsule;
+    PyObject * rightCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:matrix_equal", 
+                                  &PyCapsule_Type, &rightCapsule,
+                                  &PyCapsule_Type, &leftCapsule
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the left capsule is not valid
+    if (!PyCapsule_IsValid(leftCapsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for the left operand");
+        return 0;
+    }
+    // bail out if the right capsule is not valid
+    if (!PyCapsule_IsValid(rightCapsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for right operand");
+        return 0;
+    }
+
+    // get the matrices
+    gsl_matrix * left =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(leftCapsule, capsule_t));
+    gsl_matrix * right =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(rightCapsule, capsule_t));
+
+    // the answer
+    PyObject * answer = gsl_matrix_equal(left, right) ? Py_True : Py_False;
+    // return 
+    Py_INCREF(answer);
     return answer;
 }
 

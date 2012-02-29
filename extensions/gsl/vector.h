@@ -68,6 +68,11 @@ namespace gsl {
         extern const char * const minmax__doc__;
         PyObject * minmax(PyObject *, PyObject *);
 
+        // vector_equal
+        extern const char * const equal__name__;
+        extern const char * const equal__doc__;
+        PyObject * equal(PyObject *, PyObject *);
+
         // vector_add
         extern const char * const add__name__;
         extern const char * const add__doc__;

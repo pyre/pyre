@@ -145,7 +145,7 @@ gsl::vector::copy(PyObject *, PyObject * args) {
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O:vector_copy", 
+                                  args, "O!O!:vector_copy", 
                                   &PyCapsule_Type, &destinationCapsule,
                                   &PyCapsule_Type, &sourceCapsule
                                   );
@@ -373,6 +373,48 @@ gsl::vector::minmax(PyObject *, PyObject * args) {
     PyTuple_SET_ITEM(answer, 0, PyFloat_FromDouble(small));
     PyTuple_SET_ITEM(answer, 1, PyFloat_FromDouble(large));
     // and return
+    return answer;
+}
+
+
+// equality
+const char * const gsl::vector::equal__name__ = "vector_equal";
+const char * const gsl::vector::equal__doc__ = "check two vectors for equality";
+
+PyObject * 
+gsl::vector::equal(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * leftCapsule;
+    PyObject * rightCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:vector_equal", 
+                                  &PyCapsule_Type, &rightCapsule,
+                                  &PyCapsule_Type, &leftCapsule
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the left capsule is not valid
+    if (!PyCapsule_IsValid(leftCapsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for the left operand");
+        return 0;
+    }
+    // bail out if the right capsule is not valid
+    if (!PyCapsule_IsValid(rightCapsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for the right operand");
+        return 0;
+    }
+
+    // get the vectors
+    gsl_vector * left =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(leftCapsule, capsule_t));
+    gsl_vector * right =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(rightCapsule, capsule_t));
+
+    // the answer
+    PyObject * answer = gsl_vector_equal(left, right) ? Py_True : Py_False;
+    // return 
+    Py_INCREF(answer);
     return answer;
 }
 

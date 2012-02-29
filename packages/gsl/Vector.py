@@ -144,6 +144,18 @@ class Vector:
         return self
 
 
+    # comparisons
+    def __eq__(self, other):
+        # type check
+        if type(self) is not type(other): return NotImplemented
+        # hand the request off to the extension module
+        return gsl.vector_equal(self.data, other.data)
+
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
     # in-place arithmetic
     def __iadd__(self, other):
         """
