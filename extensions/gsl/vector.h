@@ -28,10 +28,15 @@ namespace gsl {
         extern const char * const fill__doc__;
         PyObject * fill(PyObject *, PyObject *);
 
-        // set_basis
+        // vector_basis
         extern const char * const basis__name__;
         extern const char * const basis__doc__;
         PyObject * basis(PyObject *, PyObject *);
+
+        // vector_copy
+        extern const char * const copy__name__;
+        extern const char * const copy__doc__;
+        PyObject * copy(PyObject *, PyObject *);
 
         // vector_get
         extern const char * const get__name__;

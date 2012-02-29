@@ -58,6 +58,18 @@ class Matrix:
         return pdf.matrix(matrix=self)
 
 
+    def clone(self):
+        """
+        Allocate a new matrix and initialize it using my values
+        """
+        # build the clone
+        clone = type(self)(shape=self.shape)
+        # have the extension initialize the clone
+        gsl.matrix_copy(clone.data, self.data)
+        # and return it
+        return clone
+
+
     # maxima and minima
     def max(self):
         """

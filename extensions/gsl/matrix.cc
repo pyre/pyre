@@ -104,6 +104,7 @@ gsl::matrix::fill(PyObject *, PyObject * args) {
 }
 
 
+// matrix_identity
 const char * const gsl::matrix::identity__name__ = "matrix_identity";
 const char * const gsl::matrix::identity__doc__ = "build an identity matrix";
 
@@ -127,6 +128,48 @@ gsl::matrix::identity(PyObject *, PyObject * args) {
     // std::cout << " gsl.matrix_identity: matrix@" << v << ", index=" << index << std::endl;
     // fill it out
     gsl_matrix_set_identity(v);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// copy
+const char * const gsl::matrix::copy__name__ = "matrix_copy";
+const char * const gsl::matrix::copy__doc__ = "build a copy of a matrix";
+
+PyObject * 
+gsl::matrix::copy(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * sourceCapsule;
+    PyObject * destinationCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O:matrix_copy", 
+                                  &PyCapsule_Type, &destinationCapsule,
+                                  &PyCapsule_Type, &sourceCapsule
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the source capsule is not valid
+    if (!PyCapsule_IsValid(sourceCapsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
+        return 0;
+    }
+    // bail out if the destination capsule is not valid
+    if (!PyCapsule_IsValid(destinationCapsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for destination");
+        return 0;
+    }
+
+    // get the matrices
+    gsl_matrix * source =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
+    gsl_matrix * destination =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
+    // copy the data
+    gsl_matrix_memcpy(destination, source);
 
     // return None
     Py_INCREF(Py_None);

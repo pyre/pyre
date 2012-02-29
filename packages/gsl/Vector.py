@@ -57,6 +57,18 @@ class Vector:
         return pdf.vector(vector=self)
 
 
+    def clone(self):
+        """
+        Allocate a new vector and initialize it using my values
+        """
+        # build the clone
+        clone = type(self)(shape=self.shape)
+        # have the extension initialize the clone
+        gsl.vector_copy(clone.data, self.data)
+        # and return it
+        return clone
+
+
     # maxima and minima
     def max(self):
         """

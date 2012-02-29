@@ -33,6 +33,11 @@ namespace gsl {
         extern const char * const identity__doc__;
         PyObject * identity(PyObject *, PyObject *);
 
+        // copy
+        extern const char * const copy__name__;
+        extern const char * const copy__doc__;
+        PyObject * copy(PyObject *, PyObject *);
+
         // matrix_get
         extern const char * const get__name__;
         extern const char * const get__doc__;

@@ -103,6 +103,7 @@ gsl::vector::fill(PyObject *, PyObject * args) {
 }
 
 
+// basis
 const char * const gsl::vector::basis__name__ = "vector_basis";
 const char * const gsl::vector::basis__doc__ = "build a basis vector";
 
@@ -126,6 +127,48 @@ gsl::vector::basis(PyObject *, PyObject * args) {
     // std::cout << " gsl.vector_basis: vector@" << v << ", index=" << index << std::endl;
     // fill it out
     gsl_vector_set_basis(v, index);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// copy
+const char * const gsl::vector::copy__name__ = "vector_copy";
+const char * const gsl::vector::copy__doc__ = "build a copy of a vector";
+
+PyObject * 
+gsl::vector::copy(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * sourceCapsule;
+    PyObject * destinationCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O:vector_copy", 
+                                  &PyCapsule_Type, &destinationCapsule,
+                                  &PyCapsule_Type, &sourceCapsule
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the source capsule is not valid
+    if (!PyCapsule_IsValid(sourceCapsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
+        return 0;
+    }
+    // bail out if the destination capsule is not valid
+    if (!PyCapsule_IsValid(destinationCapsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for destination");
+        return 0;
+    }
+
+    // get the vectors
+    gsl_vector * source =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
+    gsl_vector * destination =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
+    // copy the data
+    gsl_vector_memcpy(destination, source);
 
     // return None
     Py_INCREF(Py_None);
