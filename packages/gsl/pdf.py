@@ -40,7 +40,9 @@ class uniform:
         Fill {vector} with random values
         """
         # fill the vector
-        return gsl.uniform_vector(self.support, self.rng.rng, vector.data)
+        gsl.uniform_vector(self.support, self.rng.rng, vector.data)
+        # and return it
+        return vector
 
 
     def matrix(self, matrix):
@@ -48,7 +50,9 @@ class uniform:
         Fill {matrix} with random values
         """
         # fill the matrix
-        return gsl.uniform_matrix(self.support, self.rng.rng, matrix.data)
+        gsl.uniform_matrix(self.support, self.rng.rng, matrix.data)
+        # and return it
+        return matrix
 
 
     # meta methods
@@ -93,7 +97,9 @@ class gaussian:
         Fill {vector} with random values
         """
         # fill the vector
-        return gsl.gaussian_vector(self.sigma, self.rng.rng, vector.data)
+        gsl.gaussian_vector(self.sigma, self.rng.rng, vector.data)
+        # and return it
+        return vector
 
 
     def matrix(self, matrix):
@@ -101,7 +107,9 @@ class gaussian:
         Fill {matrix} with random values
         """
         # fill the matrix
-        return gsl.gaussian_matrix(self.sigma, self.rng.rng, matrix.data)
+        gsl.gaussian_matrix(self.sigma, self.rng.rng, matrix.data)
+        # and return it
+        return matrix
 
 
     # meta methods
