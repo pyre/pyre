@@ -17,6 +17,7 @@
 #include "metadata.h"
 
 #include "blas.h" // blas
+#include "linalg.h" // linear algebra
 #include "matrix.h" // matrices
 #include "pdf.h" // probability distribution functions
 #include "permutation.h" // permutations
@@ -41,6 +42,13 @@ namespace gsl {
         { blas::dnrm2__name__, blas::dnrm2, METH_VARARGS, blas::dnrm2__doc__ },
         { blas::dasum__name__, blas::dasum, METH_VARARGS, blas::dasum__doc__ },
         { blas::daxpy__name__, blas::daxpy, METH_VARARGS, blas::daxpy__doc__ },
+
+        // linalg
+        { linalg::LU_decomp__name__, linalg::LU_decomp, METH_VARARGS, linalg::LU_decomp__doc__ },
+        { linalg::LU_invert__name__, linalg::LU_invert, METH_VARARGS, linalg::LU_invert__doc__ },
+        { linalg::LU_det__name__, linalg::LU_det, METH_VARARGS, linalg::LU_det__doc__ },
+        { linalg::cholesky_decomp__name__, linalg::cholesky_decomp, METH_VARARGS,
+          linalg::cholesky_decomp__doc__ },
 
         // matrices
         { matrix::alloc__name__, matrix::alloc, METH_VARARGS, matrix::alloc__doc__ },

@@ -13,10 +13,6 @@
 namespace gsl {
     namespace linalg {
 
-        extern const char * const cholesky_decomp__name__;
-        extern const char * const cholesky_decomp__doc__;
-        PyObject * cholesky_decomp(PyObject *, PyObject *);
-
         extern const char * const LU_decomp__name__;
         extern const char * const LU_decomp__doc__;
         PyObject * LU_decomp(PyObject *, PyObject *);
@@ -28,6 +24,10 @@ namespace gsl {
         extern const char * const LU_det__name__;
         extern const char * const LU_det__doc__;
         PyObject * LU_det(PyObject *, PyObject *);
+
+        extern const char * const cholesky_decomp__name__;
+        extern const char * const cholesky_decomp__doc__;
+        PyObject * cholesky_decomp(PyObject *, PyObject *);
 
     } // of namespace linalg
 } // of namespace gsl

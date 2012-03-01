@@ -107,10 +107,9 @@ const char * const gsl::matrix::identity__doc__ = "build an identity matrix";
 PyObject * 
 gsl::matrix::identity(PyObject *, PyObject * args) {
     // the arguments
-    size_t index;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!k:matrix_identity", &PyCapsule_Type, &capsule, &index);
+    int status = PyArg_ParseTuple(args, "O!:matrix_identity", &PyCapsule_Type, &capsule);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid

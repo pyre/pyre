@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     RNG.py \
     Vector.py \
     blas.py \
+    linalg.py \
     pdf.py \
     __init__.py
 

@@ -11,7 +11,7 @@ PROJECT = gsl
 #--------------------------------------------------------------------------
 #
 
-working: permutations
+working: linalg
 
 all: test
 
@@ -25,6 +25,7 @@ sanity:
 	${PYTHON} ./vector.py
 	${PYTHON} ./matrix.py
 	${PYTHON} ./blas.py
+	${PYTHON} ./linalg.py
 
 rng:
 	${PYTHON} ./rng_available.py
@@ -84,5 +85,8 @@ blas:
 	${PYTHON} ./blas_dnrm2.py
 	${PYTHON} ./blas_dasum.py
 	${PYTHON} ./blas_daxpy.py
+
+linalg:
+	${PYTHON} ./linalg_LU.py
 
 # end of file 

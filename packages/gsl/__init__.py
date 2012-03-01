@@ -47,8 +47,8 @@ from .Permutation import Permutation as permutation
 from .RNG import RNG as rng
 from .Vector import Vector as vector
 
-# other interface
-from . import blas, pdf
+# other interfaces
+from . import blas, pdf, linalg
 
 
 # end of file 

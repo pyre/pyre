@@ -66,7 +66,7 @@ class Permutation:
 
     def prev(self):
         """
-        Compute the next permutation in my sequence
+        Compute the prev permutation in my sequence
         """
         # easy enough
         return gsl.permutation_prev(self.data)
