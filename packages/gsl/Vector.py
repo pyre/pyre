@@ -95,10 +95,10 @@ class Vector:
 
 
     # meta methods
-    def __init__(self, shape, **kwds):
+    def __init__(self, shape, data=None, **kwds):
         super().__init__(**kwds)
         self.shape = shape
-        self.data = gsl.vector_alloc(shape)
+        self.data = gsl.vector_alloc(shape) if data is None else data
         return
 
 
@@ -237,6 +237,7 @@ class Vector:
         raise NotImplemented
 
 
+    # implementation details
     # private data
     data = None
 

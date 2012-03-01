@@ -26,9 +26,6 @@ namespace gsl {
     }
 }
 
-// local
-static void free(PyObject *);
-
 
 // get the name of all the generators known to GSL
 const char * const gsl::rng::avail__name__ = "rng_avail";
@@ -258,7 +255,8 @@ gsl::rng::initialize()
 
 
 // destructor
-void free(PyObject * capsule)
+void 
+gsl::rng::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::rng::capsule_t)) return;

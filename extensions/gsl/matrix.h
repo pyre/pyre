@@ -48,6 +48,26 @@ namespace gsl {
         extern const char * const set__doc__;
         PyObject * set(PyObject *, PyObject *);
 
+        // matrix_get_col
+        extern const char * const get_col__name__;
+        extern const char * const get_col__doc__;
+        PyObject * get_col(PyObject *, PyObject *);
+
+        // matrix_get_row
+        extern const char * const get_row__name__;
+        extern const char * const get_row__doc__;
+        PyObject * get_row(PyObject *, PyObject *);
+
+        // matrix_set_col
+        extern const char * const set_col__name__;
+        extern const char * const set_col__doc__;
+        PyObject * set_col(PyObject *, PyObject *);
+
+        // matrix_set_row
+        extern const char * const set_row__name__;
+        extern const char * const set_row__doc__;
+        PyObject * set_row(PyObject *, PyObject *);
+
         // matrix_contains
         extern const char * const contains__name__;
         extern const char * const contains__doc__;

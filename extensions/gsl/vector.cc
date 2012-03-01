@@ -17,9 +17,6 @@
 
 #include <iostream>
 
-// local
-static void free(PyObject *);
-
 
 // construction
 const char * const gsl::vector::alloc__name__ = "vector_alloc";
@@ -613,7 +610,8 @@ gsl::vector::scale(PyObject *, PyObject * args) {
 
 
 // destructor
-void free(PyObject * capsule)
+void 
+gsl::vector::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::vector::capsule_t)) return;

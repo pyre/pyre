@@ -12,12 +12,22 @@
 namespace gsl {
 
     // vectors
-    namespace vector { const char * const capsule_t = "gsl.vector"; }
+    namespace vector { 
+        const char * const capsule_t = "gsl.vector";
+        void free(PyObject *);
+    }
     // matrix
-    namespace matrix { const char * const capsule_t = "gsl.matrix"; }
+    namespace matrix { 
+        const char * const capsule_t = "gsl.matrix"; 
+        void free(PyObject *);
+    }
     // rng
-    namespace rng { const char * const capsule_t = "gsl.rng"; }
+    namespace rng {
+        const char * const capsule_t = "gsl.rng"; 
+        void free(PyObject *);
+    }
 }
+// local
 
 #endif
 

@@ -9,17 +9,13 @@
 #include <portinfo>
 #include <Python.h>
 #include <sstream>
+// #include <iostream>
 
 // turn on GSL inlining
 #define HAVE_INLINE
 #include <gsl/gsl_matrix.h>
 #include "matrix.h"
 #include "capsules.h"
-
-// #include <iostream>
-
-// local
-static void free(PyObject *);
 
 
 // construction
@@ -36,11 +32,11 @@ gsl::matrix::alloc(PyObject *, PyObject * args) {
     if (!status) return 0;
 
     // allocate a matrix
-    gsl_matrix * v = gsl_matrix_alloc(s0, s1);
-    // std::cout << " gsl.matrix_allocate: matrix@" << v << ", size=" << length << std::endl;
+    gsl_matrix * m = gsl_matrix_alloc(s0, s1);
+    // std::cout << " gsl.matrix_allocate: matrix@" << m << ", size=" << length << std::endl;
 
     // wrap it in a capsule and return it
-    return PyCapsule_New(v, capsule_t, free);
+    return PyCapsule_New(m, capsule_t, free);
 }
 
 
@@ -63,10 +59,10 @@ gsl::matrix::zero(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // std::cout << " gsl.matrix_zero: matrix@" << v << std::endl;
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // std::cout << " gsl.matrix_zero: matrix@" << m << std::endl;
     // zero it out
-    gsl_matrix_set_zero(v);
+    gsl_matrix_set_zero(m);
 
     // return None
     Py_INCREF(Py_None);
@@ -93,10 +89,10 @@ gsl::matrix::fill(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // std::cout << " gsl.matrix_fill: matrix@" << v << ", value=" << value << std::endl;
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // std::cout << " gsl.matrix_fill: matrix@" << m << ", value=" << value << std::endl;
     // fill it out
-    gsl_matrix_set_all(v, value);
+    gsl_matrix_set_all(m, value);
 
     // return None
     Py_INCREF(Py_None);
@@ -124,10 +120,10 @@ gsl::matrix::identity(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // std::cout << " gsl.matrix_identity: matrix@" << v << ", index=" << index << std::endl;
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // std::cout << " gsl.matrix_identity: matrix@" << m << ", index=" << index << std::endl;
     // fill it out
-    gsl_matrix_set_identity(v);
+    gsl_matrix_set_identity(m);
 
     // return None
     Py_INCREF(Py_None);
@@ -199,17 +195,17 @@ gsl::matrix::get(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // reflect negative indices about the end of the matrix
-    if (index1 < 0 ) index1 += v->size1;
-    if (index2 < 0 ) index2 += v->size2;
+    if (index1 < 0 ) index1 += m->size1;
+    if (index2 < 0 ) index2 += m->size2;
 
     // convert to unsigned values
     size_t i1 = index1;
     size_t i2 = index2;
     // bounds check index 1
-    if (i1 < 0 || i1 >= v->size1) {
+    if (i1 < 0 || i1 >= m->size1) {
         // build an error message
         std::stringstream msg;
         msg << "matrix index " << index1 << " out of range";
@@ -219,7 +215,7 @@ gsl::matrix::get(PyObject *, PyObject * args) {
         return 0;
     }
     // bounds check index 2
-    if (i2 < 0 || i2 >= v->size2) {
+    if (i2 < 0 || i2 >= m->size2) {
         // build an error message
         std::stringstream msg;
         msg << "matrix index " << index2 << " out of range";
@@ -230,9 +226,9 @@ gsl::matrix::get(PyObject *, PyObject * args) {
     }
 
     // get the value
-    double value = gsl_matrix_get(v, i1, i2);
+    double value = gsl_matrix_get(m, i1, i2);
     // std::cout
-        // << " gsl.matrix_get: matrix@" << v << ", index=" << index << ", value=" << value 
+        // << " gsl.matrix_get: matrix@" << m << ", index=" << index << ", value=" << value 
         // << std::endl;
 
     // return the value
@@ -262,20 +258,20 @@ gsl::matrix::set(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout
-        // << " gsl.matrix_set: matrix@" << v << ", index=" << index << ", value=" << value 
+        // << " gsl.matrix_set: matrix@" << m << ", index=" << index << ", value=" << value 
         // << std::endl;
 
     // reflect negative indices about the end of the matrix
-    if (index1 < 0 ) index1 += v->size1;
-    if (index2 < 0 ) index2 += v->size2;
+    if (index1 < 0 ) index1 += m->size1;
+    if (index2 < 0 ) index2 += m->size2;
 
     // convert to unsigned values
     size_t i1 = index1;
     size_t i2 = index2;
     // bounds check index 1
-    if (i1 < 0 || i1 >= v->size1) {
+    if (i1 < 0 || i1 >= m->size1) {
         // build an error message
         std::stringstream msg;
         msg << "matrix index " << index1 << " out of range";
@@ -285,7 +281,7 @@ gsl::matrix::set(PyObject *, PyObject * args) {
         return 0;
     }
     // bounds check index 2
-    if (i2 < 0 || i2 >= v->size2) {
+    if (i2 < 0 || i2 >= m->size2) {
         // build an error message
         std::stringstream msg;
         msg << "matrix index " << index2 << " out of range";
@@ -296,7 +292,7 @@ gsl::matrix::set(PyObject *, PyObject * args) {
     }
 
     // set the value
-    gsl_matrix_set(v, index1, index2, value);
+    gsl_matrix_set(m, index1, index2, value);
 
     // return None
     Py_INCREF(Py_None);
@@ -304,6 +300,107 @@ gsl::matrix::set(PyObject *, PyObject * args) {
 }
 
 
+// slicing: get_col
+const char * const gsl::matrix::get_col__name__ = "matrix_get_col";
+const char * const gsl::matrix::get_col__doc__ = "return a column of a matrix";
+
+PyObject * 
+gsl::matrix::get_col(PyObject *, PyObject * args) {
+    // the arguments
+    long index;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!l:matrix_get_col",
+                                  &PyCapsule_Type, &capsule, &index);
+    // bail out if something went wrong during argument unpacking
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
+        return 0;
+    }
+
+    // get the matrix
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // reflect negative indices about the end of the matrix
+    if (index < 0 ) index += m->size2;
+
+    // convert to unsigned values
+    size_t i = index;
+    // bounds check index
+    if (i < 0 || i >= m->size2) {
+        // build an error message
+        std::stringstream msg;
+        msg << "matrix column index " << index << " out of range";
+        // register the error
+        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
+        // and raise the exception
+        return 0;
+    }
+
+    // create a vector to hold the column
+    gsl_vector * v = gsl_vector_alloc(m->size1);
+    // get the column
+    gsl_matrix_get_col(v, m, i);
+
+    // wrap the column in a capsule and return it
+    return PyCapsule_New(v, gsl::vector::capsule_t, gsl::vector::free);
+}
+
+
+// slicing: get_row
+const char * const gsl::matrix::get_row__name__ = "matrix_get_row";
+const char * const gsl::matrix::get_row__doc__ = "return a row of a matrix";
+
+PyObject * 
+gsl::matrix::get_row(PyObject *, PyObject * args) {
+    // the arguments
+    long index;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!l:matrix_get_row",
+                                  &PyCapsule_Type, &capsule, &index);
+    // bail out if something went wrong during argument unpacking
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
+        return 0;
+    }
+
+    // get the matrix
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // reflect negative indices about the end of the matrix
+    if (index < 0 ) index += m->size1;
+
+    // convert to unsigned values
+    size_t i = index;
+    // bounds check index
+    if (i < 0 || i >= m->size1) {
+        // build an error message
+        std::stringstream msg;
+        msg << "matrix row index " << index << " out of range";
+        // register the error
+        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
+        // and raise the exception
+        return 0;
+    }
+
+    // create a vector to hold the row
+    gsl_vector * v = gsl_vector_alloc(m->size2);
+    // get the row
+    gsl_matrix_get_row(v, m, i);
+
+    // wrap the column in a capsule and return it
+    return PyCapsule_New(v, gsl::vector::capsule_t, gsl::vector::free);
+}
+
+
+// contains
 const char * const gsl::matrix::contains__name__ = "matrix_contains";
 const char * const gsl::matrix::contains__doc__ = "check whether a given value appears in matrix";
 
@@ -323,19 +420,19 @@ gsl::matrix::contains(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout
-        // << " gsl.matrix_contains: matrix@" << v << ", index=" << index << ", value=" << value 
+        // << " gsl.matrix_contains: matrix@" << m << ", index=" << index << ", value=" << value 
         // << std::endl;
 
     // the answer
     PyObject * result = Py_False;
 
     // loop over the elements
-    for (size_t index0=0; index0 < v->size1; index0++) {
-        for (size_t index1=0; index1 < v->size2; index1++) {
+    for (size_t index0=0; index0 < m->size1; index0++) {
+        for (size_t index1=0; index1 < m->size2; index1++) {
             // if i have a match
-            if (value == gsl_matrix_get(v, index0, index1)) {
+            if (value == gsl_matrix_get(m, index0, index1)) {
                 // update the answer
                 result = Py_True;
                 // and bail
@@ -369,9 +466,9 @@ gsl::matrix::max(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
-    double value = gsl_matrix_max(v);
-    // std::cout << " gsl.matrix_max: matrix@" << v << ", value=" << value << std::endl;
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    double value = gsl_matrix_max(m);
+    // std::cout << " gsl.matrix_max: matrix@" << m << ", value=" << value << std::endl;
 
     // return the value
     return PyFloat_FromDouble(value);
@@ -396,9 +493,9 @@ gsl::matrix::min(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
-    double value = gsl_matrix_min(v);
-    // std::cout << " gsl.matrix_max: matrix@" << v << ", value=" << value << std::endl;
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    double value = gsl_matrix_min(m);
+    // std::cout << " gsl.matrix_max: matrix@" << m << ", value=" << value << std::endl;
 
     // return the value
     return PyFloat_FromDouble(value);
@@ -424,11 +521,11 @@ gsl::matrix::minmax(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     double small, large;
-    gsl_matrix_minmax(v, &small, &large);
+    gsl_matrix_minmax(m, &small, &large);
     // std::cout 
-        // << " gsl.matrix_max: matrix@" << v << ", min=" << small << ", max=" << large 
+        // << " gsl.matrix_max: matrix@" << m << ", min=" << small << ", max=" << large 
         // << std::endl;
 
     // build the answer
@@ -504,11 +601,11 @@ gsl::matrix::add(PyObject *, PyObject * args) {
     }
 
     // get the two matrices
-    gsl_matrix * v1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
-    gsl_matrix * v2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
-    // std::cout << " gsl.matrix_add: matrix@" << v1 << ", matrix@" << v2 << std::endl;
+    gsl_matrix * m1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
+    gsl_matrix * m2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
+    // std::cout << " gsl.matrix_add: matrix@" << m1 << ", matrix@" << m2 << std::endl;
     // perform the addition
-    gsl_matrix_add(v1, v2);
+    gsl_matrix_add(m1, m2);
 
     // return None
     Py_INCREF(Py_None);
@@ -537,11 +634,11 @@ gsl::matrix::sub(PyObject *, PyObject * args) {
     }
 
     // get the two matrices
-    gsl_matrix * v1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
-    gsl_matrix * v2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
-    // std::cout << " gsl.matrix_sub: matrix@" << v1 << ", matrix@" << v2 << std::endl;
+    gsl_matrix * m1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
+    gsl_matrix * m2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
+    // std::cout << " gsl.matrix_sub: matrix@" << m1 << ", matrix@" << m2 << std::endl;
     // perform the subtraction
-    gsl_matrix_sub(v1, v2);
+    gsl_matrix_sub(m1, m2);
 
     // return None
     Py_INCREF(Py_None);
@@ -570,11 +667,11 @@ gsl::matrix::mul(PyObject *, PyObject * args) {
     }
 
     // get the two matrices
-    gsl_matrix * v1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
-    gsl_matrix * v2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
-    // std::cout << " gsl.matrix_mul: matrix@" << v1 << ", matrix@" << v2 << std::endl;
+    gsl_matrix * m1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
+    gsl_matrix * m2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
+    // std::cout << " gsl.matrix_mul: matrix@" << m1 << ", matrix@" << m2 << std::endl;
     // perform the multiplication
-    gsl_matrix_mul_elements(v1, v2);
+    gsl_matrix_mul_elements(m1, m2);
 
     // return None
     Py_INCREF(Py_None);
@@ -603,11 +700,11 @@ gsl::matrix::div(PyObject *, PyObject * args) {
     }
 
     // get the two matrices
-    gsl_matrix * v1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
-    gsl_matrix * v2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
-    // std::cout << " gsl.matrix_div: matrix@" << v1 << ", matrix@" << v2 << std::endl;
+    gsl_matrix * m1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
+    gsl_matrix * m2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
+    // std::cout << " gsl.matrix_div: matrix@" << m1 << ", matrix@" << m2 << std::endl;
     // perform the division
-    gsl_matrix_div_elements(v1, v2);
+    gsl_matrix_div_elements(m1, m2);
 
     // return None
     Py_INCREF(Py_None);
@@ -636,10 +733,10 @@ gsl::matrix::shift(PyObject *, PyObject * args) {
     }
 
     // get the two matrices
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
-    // std::cout << " gsl.matrix_shift: matrix@" << v << ", value=" << value << std::endl;
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
+    // std::cout << " gsl.matrix_shift: matrix@" << m << ", value=" << value << std::endl;
     // perform the shift
-    gsl_matrix_add_constant(v, value);
+    gsl_matrix_add_constant(m, value);
 
     // return None
     Py_INCREF(Py_None);
@@ -668,10 +765,10 @@ gsl::matrix::scale(PyObject *, PyObject * args) {
     }
 
     // get the two matrices
-    gsl_matrix * v = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
-    // std::cout << " gsl.matrix_scale: matrix@" << v << ", value=" << value << std::endl;
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
+    // std::cout << " gsl.matrix_scale: matrix@" << m << ", value=" << value << std::endl;
     // perform the scale
-    gsl_matrix_scale(v, value);
+    gsl_matrix_scale(m, value);
 
     // return None
     Py_INCREF(Py_None);
@@ -680,16 +777,17 @@ gsl::matrix::scale(PyObject *, PyObject * args) {
 
 
 // destructor
-void free(PyObject * capsule)
+void 
+gsl::matrix::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) return;
     // get the matrix
-    gsl_matrix * v = 
+    gsl_matrix * m = 
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
-    // std::cout << " gsl.matrix_free: matrix@" << v << std::endl;
+    // std::cout << " gsl.matrix_free: matrix@" << m << std::endl;
     // deallocate
-    gsl_matrix_free(v);
+    gsl_matrix_free(m);
     // and return
     return;
 }

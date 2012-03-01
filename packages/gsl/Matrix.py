@@ -17,6 +17,25 @@ class Matrix:
     A wrapper over a gsl matrix
     """
 
+    # types
+    from .Vector import Vector as vector
+
+
+    # public data
+    @property
+    def columns(self):
+        """
+        Get the number of columns
+        """
+        return self.shape[1]
+
+    @property
+    def rows(self):
+        """
+        Get the number of rows
+        """
+        return self.shape[0]
+
 
     # initialization
     def zero(self):
@@ -68,6 +87,27 @@ class Matrix:
         gsl.matrix_copy(clone.data, self.data)
         # and return it
         return clone
+
+
+    # slicing
+    def getRow(self, index):
+        """
+        Return a view to the requested row
+        """
+        # let the extension do its thing
+        capsule = gsl.matrix_get_row(self.data, index)
+        # build a vector and return it
+        return self.vector(shape=self.columns, data=capsule)
+
+
+    def getColumn(self, index):
+        """
+        Return a view to the requested column
+        """
+        # let the extension do its thing
+        capsule = gsl.matrix_get_col(self.data, index)
+        # build a vector and return it
+        return self.vector(shape=self.rows, data=capsule)
 
 
     # maxima and minima

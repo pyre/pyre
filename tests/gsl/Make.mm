@@ -58,6 +58,7 @@ matrices:
 	${PYTHON} ./matrix_random.py
 	${PYTHON} ./matrix_clone.py
 	${PYTHON} ./matrix_set.py
+	${PYTHON} ./matrix_slices.py
 	${PYTHON} ./matrix_contains.py
 	${PYTHON} ./matrix_add.py
 	${PYTHON} ./matrix_sub.py
