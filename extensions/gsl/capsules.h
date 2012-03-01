@@ -21,6 +21,11 @@ namespace gsl {
         const char * const capsule_t = "gsl.matrix"; 
         void free(PyObject *);
     }
+    // permutations
+    namespace permutation {
+        const char * const capsule_t = "gsl.permutation"; 
+        void free(PyObject *);
+    }
     // rng
     namespace rng {
         const char * const capsule_t = "gsl.rng"; 

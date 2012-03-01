@@ -8,14 +8,13 @@
 
 #include <portinfo>
 #include <Python.h>
+// #include <iostream>
 
 // turn on GSL inlining
 #define HAVE_INLINE
 #include <gsl/gsl_vector.h>
 #include "vector.h"
 #include "capsules.h"
-
-#include <iostream>
 
 
 // construction

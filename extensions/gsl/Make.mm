@@ -23,6 +23,7 @@ PROJ_SRCS = \
     matrix.cc \
     metadata.cc \
     pdf.cc \
+    permutation.cc \
     rng.cc \
     vector.cc \
 

@@ -41,12 +41,11 @@ copyright = gsl.copyright
 def license() : print(gsl.license())
 
 
-# linear algebra
+# wrappers
 from .Matrix import Matrix as matrix
-from .Vector import Vector as vector
-
-# random numbers
+from .Permutation import Permutation as permutation
 from .RNG import RNG as rng
+from .Vector import Vector as vector
 
 # other interface
 from . import blas, pdf

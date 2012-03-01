@@ -20,6 +20,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Matrix.py \
+    Permutation.py \
     RNG.py \
     Vector.py \
     blas.py \

@@ -11,6 +11,8 @@ PROJECT = gsl
 #--------------------------------------------------------------------------
 #
 
+working: permutations
+
 all: test
 
 test: sanity rng pdf vectors matrices blas
@@ -19,6 +21,7 @@ sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./rng.py
 	${PYTHON} ./pdf.py
+	${PYTHON} ./permutation.py
 	${PYTHON} ./vector.py
 	${PYTHON} ./matrix.py
 	${PYTHON} ./blas.py
@@ -33,6 +36,11 @@ rng:
 pdf:
 	${PYTHON} ./pdf_uniform.py
 	${PYTHON} ./pdf_gaussian.py
+
+permutations:
+	${PYTHON} ./permutation_allocate.py
+	${PYTHON} ./permutation_copy.py
+	${PYTHON} ./permutation_get.py
 
 vectors:
 	${PYTHON} ./vector_allocate.py

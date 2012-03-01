@@ -1,15 +1,16 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // california institute of technology
 // (c) 1998-2012 all rights reserved
-// 
+//
 
 // for the build system
 #include <portinfo>
 // external dependencies
 #include <string>
 #include <Python.h>
+#include <gsl/gsl_errno.h>
 
 // the module method declarations
 #include "exceptions.h"
@@ -17,13 +18,14 @@
 
 #include "blas.h" // blas
 #include "matrix.h" // matrices
-#include "vector.h" // vectors
-#include "rng.h" // random numbers
 #include "pdf.h" // probability distribution functions
+#include "permutation.h" // permutations
+#include "rng.h" // random numbers
+#include "vector.h" // vectors
 
 // put everything in my private namespace
 namespace gsl {
-        
+
     // the module method table
     PyMethodDef module_methods[] = {
         // module metadata
@@ -63,6 +65,21 @@ namespace gsl {
         { matrix::div__name__, matrix::div, METH_VARARGS, matrix::div__doc__ },
         { matrix::shift__name__, matrix::shift, METH_VARARGS, matrix::shift__doc__ },
         { matrix::scale__name__, matrix::scale, METH_VARARGS, matrix::scale__doc__ },
+
+        // permutations
+        { permutation::alloc__name__, permutation::alloc, METH_VARARGS, permutation::alloc__doc__ },
+        { permutation::init__name__, permutation::init, METH_VARARGS, permutation::init__doc__ },
+        { permutation::copy__name__, permutation::copy, METH_VARARGS, permutation::copy__doc__ },
+        { permutation::get__name__, permutation::get, METH_VARARGS, permutation::get__doc__ },
+        { permutation::swap__name__, permutation::swap, METH_VARARGS, permutation::swap__doc__ },
+        { permutation::size__name__, permutation::size, METH_VARARGS, permutation::size__doc__ },
+        { permutation::valid__name__, permutation::valid, METH_VARARGS, permutation::valid__doc__ },
+        { permutation::reverse__name__, permutation::reverse, METH_VARARGS,
+          permutation::reverse__doc__ },
+        { permutation::inverse__name__, permutation::inverse, METH_VARARGS,
+          permutation::inverse__doc__ },
+        { permutation::next__name__, permutation::next, METH_VARARGS, permutation::next__doc__ },
+        { permutation::prev__name__, permutation::prev, METH_VARARGS, permutation::prev__doc__ },
 
         // probability distribution functions
         { pdf::uniform::sample__name__, pdf::uniform::sample, METH_VARARGS,
@@ -123,7 +140,7 @@ namespace gsl {
         // header
         PyModuleDef_HEAD_INIT,
         // the name of the module
-        "gsl", 
+        "gsl",
         // the module documentation string
         __doc__,
         // size of the per-interpreter state of the module; -1 if this state is global
@@ -132,6 +149,13 @@ namespace gsl {
         module_methods
     };
 } // of namespace gsl
+
+
+// my error handler
+static void errorHandler(const char * reason, const char * file, int line, int gsl_errno) {
+    // throw an exception
+    return;
+}
 
 
 // initialization function for the module
@@ -146,6 +170,8 @@ PyInit_gsl()
         return 0;
     }
     // otherwise, we have an initialized module
+    // set the error handler
+    gsl_set_error_handler(&errorHandler);
     // initialize the table of known random number generators
     gsl::rng::initialize();
 
