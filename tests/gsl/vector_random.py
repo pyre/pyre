@@ -8,7 +8,7 @@
 
 
 """
-Fill a vector with a constant value
+Fill a vector with random values
 """
 
 
@@ -17,7 +17,7 @@ def test():
     import gsl
     # make a vector
     v = gsl.vector(shape=100)
-    # set it to some value
+    # set it to random values
     v.random(pdf=gsl.pdf.uniform(support=(-1,1), rng=gsl.rng()))
     # all done
     return v
