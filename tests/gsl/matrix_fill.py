@@ -15,7 +15,7 @@ Make a matrix and fill it with a constant
 def test():
     # package access
     import gsl
-    # make a vector
+    # make a matrix
     m = gsl.matrix(shape=(100,100))
     # set it to some value
     m.fill(value=2)

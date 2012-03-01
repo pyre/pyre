@@ -8,14 +8,14 @@
 
 
 """
-Sanity check: verify that the vector object is accessible
+Allocate a matrix of a given shape
 """
 
 
 def test():
     # package access
     import gsl
-    # make a vector
+    # make a matrix
     m = gsl.matrix(shape=(100,100))
     # all done
     return m

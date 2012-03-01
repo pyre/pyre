@@ -15,7 +15,7 @@ Exercise element-wise, in-place matrix division
 def test():
     # package access
     import gsl
-    # make a couple of vectors and initialize them
+    # make a couple of matrices and initialize them
     m1 = gsl.matrix(shape=(100,100)).fill(value=1)
     m2 = gsl.matrix(shape=(100,100)).fill(value=2)
     # check

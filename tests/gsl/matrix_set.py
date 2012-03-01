@@ -15,7 +15,7 @@ Set a matrix element to some value and verify it can be retrieved correctly
 def test():
     # package access
     import gsl
-    # make a vector
+    # make a matrix
     m = gsl.matrix(shape=(100, 100))
     # fill it with zeroes
     m.fill(0)

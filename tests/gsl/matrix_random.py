@@ -8,16 +8,16 @@
 
 
 """
-Make a matrix and fill it with a constant
+Make a matrix and fill it with random values
 """
 
 
 def test():
     # package access
     import gsl
-    # make a vector
+    # make a matrix
     m = gsl.matrix(shape=(100,50))
-    # set it to some value
+    # set it to random values
     m.random(pdf=gsl.pdf.gaussian(sigma=2, rng=gsl.rng()))
     # all done
     return m

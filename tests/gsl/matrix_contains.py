@@ -15,8 +15,8 @@ Verify that we can hunt down values in matrices
 def test():
     # package access
     import gsl
-    # make a vector
-    m = gsl.matrix(shape=(100,100))
+    # make a matrix
+    m = gsl.matrix(shape=(100,100)).fill(1)
     # set an element to some value
     m[50,50] = 10
     # verify it happened
