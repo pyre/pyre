@@ -13,7 +13,7 @@ PROJECT = gsl
 
 all: test
 
-test: sanity rng pdf vectors matrices
+test: sanity rng pdf vectors matrices blas
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -21,6 +21,7 @@ sanity:
 	${PYTHON} ./pdf.py
 	${PYTHON} ./vector.py
 	${PYTHON} ./matrix.py
+	${PYTHON} ./blas.py
 
 rng:
 	${PYTHON} ./rng_available.py
@@ -70,5 +71,10 @@ matrices:
 	${PYTHON} ./matrix_min.py
 	${PYTHON} ./matrix_minmax.py
 
+blas:
+	${PYTHON} ./blas_ddot.py
+	${PYTHON} ./blas_dnrm2.py
+	${PYTHON} ./blas_dasum.py
+	${PYTHON} ./blas_daxpy.py
 
 # end of file 

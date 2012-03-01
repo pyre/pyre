@@ -15,6 +15,7 @@
 #include "exceptions.h"
 #include "metadata.h"
 
+#include "blas.h" // blas
 #include "matrix.h" // matrices
 #include "vector.h" // vectors
 #include "rng.h" // random numbers
@@ -33,25 +34,11 @@ namespace gsl {
         // the version
         { version__name__, version, METH_VARARGS, version__doc__ },
 
-        // vectors
-        { vector::alloc__name__, vector::alloc, METH_VARARGS, vector::alloc__doc__ },
-        { vector::zero__name__, vector::zero, METH_VARARGS, vector::zero__doc__ },
-        { vector::fill__name__, vector::fill, METH_VARARGS, vector::fill__doc__ },
-        { vector::basis__name__, vector::basis, METH_VARARGS, vector::basis__doc__ },
-        { vector::copy__name__, vector::copy, METH_VARARGS, vector::copy__doc__ },
-        { vector::get__name__, vector::get, METH_VARARGS, vector::get__doc__ },
-        { vector::set__name__, vector::set, METH_VARARGS, vector::set__doc__ },
-        { vector::contains__name__, vector::contains, METH_VARARGS, vector::contains__doc__ },
-        { vector::max__name__, vector::max, METH_VARARGS, vector::max__doc__ },
-        { vector::min__name__, vector::min, METH_VARARGS, vector::min__doc__ },
-        { vector::minmax__name__, vector::minmax, METH_VARARGS, vector::minmax__doc__ },
-        { vector::equal__name__, vector::equal, METH_VARARGS, vector::equal__doc__ },
-        { vector::add__name__, vector::add, METH_VARARGS, vector::add__doc__ },
-        { vector::sub__name__, vector::sub, METH_VARARGS, vector::sub__doc__ },
-        { vector::mul__name__, vector::mul, METH_VARARGS, vector::mul__doc__ },
-        { vector::div__name__, vector::div, METH_VARARGS, vector::div__doc__ },
-        { vector::shift__name__, vector::shift, METH_VARARGS, vector::shift__doc__ },
-        { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__ },
+        // blas
+        { blas::ddot__name__, blas::ddot, METH_VARARGS, blas::ddot__doc__ },
+        { blas::dnrm2__name__, blas::dnrm2, METH_VARARGS, blas::dnrm2__doc__ },
+        { blas::dasum__name__, blas::dasum, METH_VARARGS, blas::dasum__doc__ },
+        { blas::daxpy__name__, blas::daxpy, METH_VARARGS, blas::daxpy__doc__ },
 
         // matrices
         { matrix::alloc__name__, matrix::alloc, METH_VARARGS, matrix::alloc__doc__ },
@@ -77,16 +64,6 @@ namespace gsl {
         { matrix::shift__name__, matrix::shift, METH_VARARGS, matrix::shift__doc__ },
         { matrix::scale__name__, matrix::scale, METH_VARARGS, matrix::scale__doc__ },
 
-        // random numbers
-        { rng::avail__name__, rng::avail, METH_VARARGS, rng::avail__doc__ },
-        { rng::alloc__name__, rng::alloc, METH_VARARGS, rng::alloc__doc__ },
-        { rng::set__name__, rng::set, METH_VARARGS, rng::set__doc__ },
-        { rng::name__name__, rng::name, METH_VARARGS, rng::name__doc__ },
-        { rng::range__name__, rng::range, METH_VARARGS, rng::range__doc__ },
-
-        { rng::get__name__, rng::get, METH_VARARGS, rng::get__doc__ },
-        { rng::uniform__name__, rng::uniform, METH_VARARGS, rng::uniform__doc__ },
-
         // probability distribution functions
         { pdf::uniform::sample__name__, pdf::uniform::sample, METH_VARARGS,
           pdf::uniform::sample__doc__ },
@@ -96,7 +73,6 @@ namespace gsl {
           pdf::uniform::vector__doc__ },
         { pdf::uniform::matrix__name__, pdf::uniform::matrix, METH_VARARGS,
           pdf::uniform::matrix__doc__ },
-
         { pdf::gaussian::sample__name__, pdf::gaussian::sample, METH_VARARGS,
           pdf::gaussian::sample__doc__ },
         { pdf::gaussian::density__name__, pdf::gaussian::density, METH_VARARGS,
@@ -105,6 +81,35 @@ namespace gsl {
           pdf::gaussian::vector__doc__ },
         { pdf::gaussian::matrix__name__, pdf::gaussian::matrix, METH_VARARGS,
           pdf::gaussian::matrix__doc__ },
+
+        // random numbers
+        { rng::avail__name__, rng::avail, METH_VARARGS, rng::avail__doc__ },
+        { rng::alloc__name__, rng::alloc, METH_VARARGS, rng::alloc__doc__ },
+        { rng::get__name__, rng::get, METH_VARARGS, rng::get__doc__ },
+        { rng::name__name__, rng::name, METH_VARARGS, rng::name__doc__ },
+        { rng::range__name__, rng::range, METH_VARARGS, rng::range__doc__ },
+        { rng::set__name__, rng::set, METH_VARARGS, rng::set__doc__ },
+        { rng::uniform__name__, rng::uniform, METH_VARARGS, rng::uniform__doc__ },
+
+        // vectors
+        { vector::alloc__name__, vector::alloc, METH_VARARGS, vector::alloc__doc__ },
+        { vector::zero__name__, vector::zero, METH_VARARGS, vector::zero__doc__ },
+        { vector::fill__name__, vector::fill, METH_VARARGS, vector::fill__doc__ },
+        { vector::basis__name__, vector::basis, METH_VARARGS, vector::basis__doc__ },
+        { vector::copy__name__, vector::copy, METH_VARARGS, vector::copy__doc__ },
+        { vector::get__name__, vector::get, METH_VARARGS, vector::get__doc__ },
+        { vector::set__name__, vector::set, METH_VARARGS, vector::set__doc__ },
+        { vector::contains__name__, vector::contains, METH_VARARGS, vector::contains__doc__ },
+        { vector::max__name__, vector::max, METH_VARARGS, vector::max__doc__ },
+        { vector::min__name__, vector::min, METH_VARARGS, vector::min__doc__ },
+        { vector::minmax__name__, vector::minmax, METH_VARARGS, vector::minmax__doc__ },
+        { vector::equal__name__, vector::equal, METH_VARARGS, vector::equal__doc__ },
+        { vector::add__name__, vector::add, METH_VARARGS, vector::add__doc__ },
+        { vector::sub__name__, vector::sub, METH_VARARGS, vector::sub__doc__ },
+        { vector::mul__name__, vector::mul, METH_VARARGS, vector::mul__doc__ },
+        { vector::div__name__, vector::div, METH_VARARGS, vector::div__doc__ },
+        { vector::shift__name__, vector::shift, METH_VARARGS, vector::shift__doc__ },
+        { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__ },
 
         // sentinel
         {0, 0, 0, 0}

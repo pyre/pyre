@@ -22,6 +22,7 @@ EXPORT_PYTHON_MODULES = \
     Matrix.py \
     RNG.py \
     Vector.py \
+    blas.py \
     pdf.py \
     __init__.py
 
