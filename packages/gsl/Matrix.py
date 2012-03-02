@@ -20,6 +20,10 @@ class Matrix:
     # types
     from .Vector import Vector as vector
 
+    # constants
+    upperTriangular = 1
+    lowerTriangular = 0
+
 
     # public data
     @property

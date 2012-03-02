@@ -13,6 +13,7 @@ from . import gsl
 
 
 # the interface for doubles
+# level 1
 def ddot(x, y):
     """
     Compute the scalar product {x^T y}
@@ -44,6 +45,17 @@ def daxpy(α, x, y):
     # compute
     gsl.blas_daxpy(α, x.data, y.data)
     # and return the result {y}
+    return y
+
+
+# level 2
+def dsymv(uplo, α, A, x, β, y):
+    """
+    Compute {y = α A x + β y}
+    """
+    # compute
+    gsl.blas_dsymv(uplo, α, A.data, x.data, β, y.data)
+    # and return the result in {y}
     return y
 
 
