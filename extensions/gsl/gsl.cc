@@ -48,6 +48,7 @@ namespace gsl {
         { linalg::LU_decomp__name__, linalg::LU_decomp, METH_VARARGS, linalg::LU_decomp__doc__ },
         { linalg::LU_invert__name__, linalg::LU_invert, METH_VARARGS, linalg::LU_invert__doc__ },
         { linalg::LU_det__name__, linalg::LU_det, METH_VARARGS, linalg::LU_det__doc__ },
+        { linalg::LU_lndet__name__, linalg::LU_lndet, METH_VARARGS, linalg::LU_lndet__doc__ },
         { linalg::cholesky_decomp__name__, linalg::cholesky_decomp, METH_VARARGS,
           linalg::cholesky_decomp__doc__ },
 

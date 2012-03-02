@@ -25,6 +25,10 @@ namespace gsl {
         extern const char * const LU_det__doc__;
         PyObject * LU_det(PyObject *, PyObject *);
 
+        extern const char * const LU_lndet__name__;
+        extern const char * const LU_lndet__doc__;
+        PyObject * LU_lndet(PyObject *, PyObject *);
+
         extern const char * const cholesky_decomp__name__;
         extern const char * const cholesky_decomp__doc__;
         PyObject * cholesky_decomp(PyObject *, PyObject *);

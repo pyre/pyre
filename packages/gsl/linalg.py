@@ -45,6 +45,14 @@ def LU_det(matrix, permutation, sign):
     return gsl.linalg_LU_det(matrix.data, sign)
 
 
+def LU_lndet(matrix, permutation, sign):
+    """
+    Compute the determinant of {matrix} given its LU decomposition
+    """
+    # easy enough
+    return gsl.linalg_LU_lndet(matrix.data)
+
+
 # Cholesky
 def cholesky_decomposition(matrix):
     """

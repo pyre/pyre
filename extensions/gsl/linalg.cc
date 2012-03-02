@@ -130,6 +130,32 @@ gsl::linalg::LU_det(PyObject *, PyObject * args) {
 }
 
 
+// LU_lndet
+const char * const gsl::linalg::LU_lndet__name__ = "linalg_LU_lndet";
+const char * const gsl::linalg::LU_lndet__doc__ = 
+    "compute the determinant of a matrix from its LU decomposition";
+
+PyObject * 
+gsl::linalg::LU_lndet(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!:linalg_LU_lndet", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a matrix");
+        return 0;
+    }
+    // get the matrix
+    gsl_matrix * m = 
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
+    // compute the determinant and return
+    return PyFloat_FromDouble(gsl_linalg_LU_lndet(m));
+}
+
+
 // linalg::cholesky_decomp
 const char * const gsl::linalg::cholesky_decomp__name__ = "linalg_cholesky_decomp";
 const char * const gsl::linalg::cholesky_decomp__doc__ = 
