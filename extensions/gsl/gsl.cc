@@ -137,6 +137,12 @@ namespace gsl {
         { vector::div__name__, vector::div, METH_VARARGS, vector::div__doc__ },
         { vector::shift__name__, vector::shift, METH_VARARGS, vector::shift__doc__ },
         { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__ },
+        // statistics
+        { vector::sort__name__, vector::sort, METH_VARARGS, vector::sort__doc__ },
+        { vector::mean__name__, vector::mean, METH_VARARGS, vector::mean__doc__ },
+        { vector::median__name__, vector::median, METH_VARARGS, vector::median__doc__ },
+        { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
+        { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
 
         // sentinel
         {0, 0, 0, 0}

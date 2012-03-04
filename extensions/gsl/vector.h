@@ -103,6 +103,32 @@ namespace gsl {
         extern const char * const scale__doc__;
         PyObject * scale(PyObject *, PyObject *);
 
+        // statistics
+        // vector_sort
+        extern const char * const sort__name__;
+        extern const char * const sort__doc__;
+        PyObject * sort(PyObject *, PyObject *);
+
+        // vector_mean
+        extern const char * const mean__name__;
+        extern const char * const mean__doc__;
+        PyObject * mean(PyObject *, PyObject *);
+
+        // vector_median
+        extern const char * const median__name__;
+        extern const char * const median__doc__;
+        PyObject * median(PyObject *, PyObject *);
+
+        // vector_variance
+        extern const char * const variance__name__;
+        extern const char * const variance__doc__;
+        PyObject * variance(PyObject *, PyObject *);
+
+        // vector_sdev
+        extern const char * const sdev__name__;
+        extern const char * const sdev__doc__;
+        PyObject * sdev(PyObject *, PyObject *);
+
     } // of namespace vector
 } // of namespace gsl
 

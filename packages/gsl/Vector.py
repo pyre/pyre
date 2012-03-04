@@ -94,6 +94,51 @@ class Vector:
         return gsl.vector_minmax(self.data)
 
 
+    # statistics
+    def sort(self):
+        """
+        In-place sort of the elements of a vector
+        """
+        # sort
+        gsl.vector_sort(self.data)
+        # and return myself
+        return self
+
+
+    def mean(self):
+        """
+        Compute the mean value of my elements
+        """
+        # easy enough
+        return gsl.vector_mean(self.data)
+
+
+    def median(self):
+        """
+        Compute the median value of my elements; only works on previously sorted vectors
+        """
+        # easy enough
+        return gsl.vector_median(self.data)
+
+
+    def variance(self, mean=None):
+        """
+        Compute the variance of my elements with respect to {mean}. If {mean} is {None}, it is
+        computed on the fly
+        """
+        # easy enough
+        return gsl.vector_variance(self.data, float(mean) if mean is not None else None)
+
+
+    def sdev(self, mean=None):
+        """
+        Compute the mean value of my elements with respect to {mean}. If {mean} is {None}, it
+        is computed on the fly
+        """
+        # easy enough
+        return gsl.vector_sdev(self.data, float(mean) if mean is not None else None)
+
+
     # meta methods
     def __init__(self, shape, data=None, **kwds):
         super().__init__(**kwds)

@@ -13,6 +13,8 @@
 // turn on GSL inlining
 #define HAVE_INLINE
 #include <gsl/gsl_vector.h>
+#include <gsl/gsl_sort_vector.h>
+#include <gsl/gsl_statistics_double.h>
 #include "vector.h"
 #include "capsules.h"
 
@@ -605,6 +607,177 @@ gsl::vector::scale(PyObject *, PyObject * args) {
     // return None
     Py_INCREF(Py_None);
     return Py_None;
+}
+
+
+// statistics
+// sort
+const char * const gsl::vector::sort__name__ = "vector_sort";
+const char * const gsl::vector::sort__doc__ = "in-place sort the elements of a vector";
+
+PyObject * 
+gsl::vector::sort(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!:vector_sort", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // sort it
+    gsl_sort_vector(v);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// mean
+const char * const gsl::vector::mean__name__ = "vector_mean";
+const char * const gsl::vector::mean__doc__ = "compute the mean of the elements of a vector";
+
+PyObject * 
+gsl::vector::mean(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!:vector_mean", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // compute the mean
+    double mean = gsl_stats_mean(v->data, v->stride, v->size);
+    // and return it
+    return PyFloat_FromDouble(mean);
+}
+
+
+// median
+const char * const gsl::vector::median__name__ = "vector_median";
+const char * const gsl::vector::median__doc__ = 
+    "compute the median of the elements of a pre-sorted vector";
+
+PyObject * 
+gsl::vector::median(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!:vector_median", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // compute the median
+    double median = gsl_stats_median_from_sorted_data(v->data, v->stride, v->size);
+    // and return it
+    return PyFloat_FromDouble(median);
+}
+
+
+// variance
+const char * const gsl::vector::variance__name__ = "vector_variance";
+const char * const gsl::vector::variance__doc__ =
+    "compute the variance of the elements of a vector";
+
+PyObject * 
+gsl::vector::variance(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * mean;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!O:vector_variance", &PyCapsule_Type, &capsule, &mean);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // the answer
+    double variance;
+    // three cases
+    if (mean == Py_None) {
+        // {mean} is {None}: compute the mean on the fly
+        variance = gsl_stats_variance(v->data, v->stride, v->size);
+    } else if (PyFloat_Check(mean)) {
+        // {mean} is a float: use it
+        variance = gsl_stats_variance_m(v->data, v->stride, v->size, PyFloat_AsDouble(mean));
+    } else {
+        // {mean} is anything else: raise an exception
+        PyErr_SetString(PyExc_TypeError, "{mean} must be a float");
+        return 0;
+    }
+    // and return the variance
+    return PyFloat_FromDouble(variance);
+}
+
+
+// sdev
+const char * const gsl::vector::sdev__name__ = "vector_sdev";
+const char * const gsl::vector::sdev__doc__ =
+    "compute the standard deviation of the elements of a vector";
+
+PyObject * 
+gsl::vector::sdev(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * mean;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!O:vector_sdev", &PyCapsule_Type, &capsule, &mean);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // the answer
+    double sdev;
+    // three cases
+    if (mean == Py_None) {
+        // {mean} is {None}: compute the mean on the fly
+        sdev = gsl_stats_sd(v->data, v->stride, v->size);
+    } else if (PyFloat_Check(mean)) {
+        // {mean} is a float: use it
+        sdev = gsl_stats_sd_m(v->data, v->stride, v->size, PyFloat_AsDouble(mean));
+    } else {
+        // {mean} is anything else: raise an exception
+        PyErr_SetString(PyExc_TypeError, "{mean} must be a float");
+        return 0;
+    }
+    // and return the sdev
+    return PyFloat_FromDouble(sdev);
 }
 
 
