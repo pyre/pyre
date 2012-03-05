@@ -8,10 +8,8 @@
 
 #include <portinfo>
 #include <Python.h>
-
-// turn on GSL inlining
-#define HAVE_INLINE
 #include <gsl/gsl_permutation.h>
+
 #include "permutation.h"
 #include "capsules.h"
 

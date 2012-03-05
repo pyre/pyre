@@ -9,10 +9,8 @@
 #include <portinfo>
 #include <Python.h>
 #include <map>
-
-// turn on GSL inlining
-#define HAVE_INLINE
 #include <gsl/gsl_rng.h>
+
 #include "rng.h"
 #include "capsules.h"
 

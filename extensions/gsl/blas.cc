@@ -8,9 +8,6 @@
 
 #include <portinfo>
 #include <Python.h>
-#include <map>
-// turn on GSL inlining
-#define HAVE_INLINE
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>

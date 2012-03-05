@@ -9,10 +9,7 @@
 #include <portinfo>
 #include <Python.h>
 #include <sstream>
-// #include <iostream>
 
-// turn on GSL inlining
-#define HAVE_INLINE
 #include <gsl/gsl_matrix.h>
 #include "matrix.h"
 #include "capsules.h"
