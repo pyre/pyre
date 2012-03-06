@@ -59,4 +59,14 @@ def dsymv(uplo, α, A, x, β, y):
     return y
 
 
+def dsyr(uplo, α, x, A):
+    """
+    Compute {A = α x x^T + A}
+    """
+    # compute
+    gsl.blas_dsyr(uplo, α, x.data, A.data)
+    # and return the result in {A}
+    return A
+
+
 # end of file 

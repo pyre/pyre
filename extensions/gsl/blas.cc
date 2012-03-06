@@ -198,4 +198,48 @@ gsl::blas::dsymv(PyObject *, PyObject * args) {
 }
 
 
+// blas::dsyr
+const char * const gsl::blas::dsyr__name__ = "blas_dsyr";
+const char * const gsl::blas::dsyr__doc__ = "compute A = a x x^T + A";
+
+PyObject * 
+gsl::blas::dsyr(PyObject *, PyObject * args) {
+    // the arguments
+    int uplo;
+    double a;
+    PyObject * xc;
+    PyObject * Ac;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "idO!O!:blas_dsyr",
+                                  &uplo,
+                                  &a,
+                                  &PyCapsule_Type, &xc,
+                                  &PyCapsule_Type, &Ac);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the third argument must be a vector");
+        return 0;
+    }
+
+    // decode the enum
+    CBLAS_UPLO_t cuplo = uplo ? CblasUpper : CblasLower;
+    // get the two vectors
+    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
+    // get the matrix
+    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
+    // compute the form
+    gsl_blas_dsyr(cuplo, a, x, A);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
 // end of file

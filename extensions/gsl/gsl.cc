@@ -43,6 +43,7 @@ namespace gsl {
         { blas::dasum__name__, blas::dasum, METH_VARARGS, blas::dasum__doc__ },
         { blas::daxpy__name__, blas::daxpy, METH_VARARGS, blas::daxpy__doc__ },
         { blas::dsymv__name__, blas::dsymv, METH_VARARGS, blas::dsymv__doc__ },
+        { blas::dsyr__name__, blas::dsyr, METH_VARARGS, blas::dsyr__doc__ },
 
         // linalg
         { linalg::LU_decomp__name__, linalg::LU_decomp, METH_VARARGS, linalg::LU_decomp__doc__ },

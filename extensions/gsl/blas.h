@@ -33,6 +33,10 @@ namespace gsl {
         extern const char * const dsymv__doc__;
         PyObject * dsymv(PyObject *, PyObject *);
 
+        extern const char * const dsyr__name__;
+        extern const char * const dsyr__doc__;
+        PyObject * dsyr(PyObject *, PyObject *);
+
     } // of namespace blas
 } // of namespace gsl
 
