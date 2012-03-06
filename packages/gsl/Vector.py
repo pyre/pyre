@@ -105,12 +105,12 @@ class Vector:
         return self
 
 
-    def mean(self):
+    def mean(self, weights=None):
         """
-        Compute the mean value of my elements
+        Compute the mean value of my elements, weighted by the optional {weights}
         """
         # easy enough
-        return gsl.vector_mean(self.data)
+        return gsl.vector_mean(self.data, weights.data if weights is not None else None)
 
 
     def median(self):

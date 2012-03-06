@@ -645,8 +645,11 @@ PyObject *
 gsl::vector::mean(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
+    PyObject * weights;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!:vector_mean", &PyCapsule_Type, &capsule);
+    int status = PyArg_ParseTuple(
+                                  args, "O!O:vector_mean",
+                                  &PyCapsule_Type, &capsule, &weights);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -658,8 +661,18 @@ gsl::vector::mean(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
 
-    // compute the mean
-    double mean = gsl_stats_mean(v->data, v->stride, v->size);
+    // the answer
+    double mean;
+    // if no weights were given
+    if (weights == Py_None) {
+        // compute the mean
+        mean = gsl_stats_mean(v->data, v->stride, v->size);
+    } else {
+        // otherwise, extract the  vector of weights
+        gsl_vector * w = static_cast<gsl_vector *>(PyCapsule_GetPointer(weights, capsule_t));
+        // compute the weighted mean
+        mean = gsl_stats_wmean(w->data, w->stride, v->data, v->stride, v->size);
+    }
     // and return it
     return PyFloat_FromDouble(mean);
 }
