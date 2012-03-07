@@ -92,6 +92,26 @@ class Matrix:
         # and return it
         return clone
 
+    # matrix operations
+    def transpose(self, destination=None):
+        """
+        Compute the transpose of a matrix. 
+
+        If {destination} is {None} and the matrix is square, the operation happens
+        in-place. Otherwise, the transpose is stored in {destination}, which is assumed to be
+        shaped correctly.
+        """
+        # if we have a {destination}
+        if destination is not None:
+            # do the transpose
+            gsl.matrix_transpose(self.data, destination.data)
+            # and return the destination matrix
+            return destination
+        # otherwise
+        gsl.matrix_transpose(self.data, None)
+        # and return myself
+        return self
+
 
     # slicing
     def getRow(self, index):

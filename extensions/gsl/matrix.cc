@@ -169,6 +169,61 @@ gsl::matrix::copy(PyObject *, PyObject * args) {
 }
 
 
+// transpose
+const char * const gsl::matrix::transpose__name__ = "matrix_transpose";
+const char * const gsl::matrix::transpose__doc__ = "build a transpose of a matrix";
+
+PyObject * 
+gsl::matrix::transpose(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * sourceCapsule;
+    PyObject * destinationCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O:matrix_transpose", 
+                                  &PyCapsule_Type, &sourceCapsule,
+                                  &destinationCapsule
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the source capsule is not valid
+    if (!PyCapsule_IsValid(sourceCapsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
+        return 0;
+    }
+    // get the source matrix
+    gsl_matrix * source =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
+
+    // check the destination object
+    if (destinationCapsule == Py_None) {
+        // we are doing this in place, assuming a square matrix
+        gsl_matrix_transpose(source);
+        // return None
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
+    // otherwise, destinationCapsule must also be a valid matrix capsule
+    if (
+        !PyCapsule_CheckExact(destinationCapsule) ||
+        !PyCapsule_IsValid(destinationCapsule, capsule_t)
+        ) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for destination");
+        return 0;
+    }
+
+    gsl_matrix * destination =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
+    // transpose the data
+    gsl_matrix_transpose_memcpy(destination, source);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
 // access
 const char * const gsl::matrix::get__name__ = "matrix_get";
 const char * const gsl::matrix::get__doc__ = "get the value of a matrix element";

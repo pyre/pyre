@@ -59,6 +59,7 @@ namespace gsl {
         { matrix::fill__name__, matrix::fill, METH_VARARGS, matrix::fill__doc__ },
         { matrix::identity__name__, matrix::identity, METH_VARARGS, matrix::identity__doc__ },
         { matrix::copy__name__, matrix::copy, METH_VARARGS, matrix::copy__doc__ },
+        { matrix::transpose__name__, matrix::transpose, METH_VARARGS, matrix::transpose__doc__ },
         { matrix::get__name__, matrix::get, METH_VARARGS, matrix::get__doc__ },
         { matrix::set__name__, matrix::set, METH_VARARGS, matrix::set__doc__ },
         { matrix::get_col__name__, matrix::get_col, METH_VARARGS, matrix::get_col__doc__ },
