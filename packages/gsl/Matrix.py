@@ -220,7 +220,7 @@ class Matrix:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do constant addition
-            gsl.matrix_shift(self.data, other)
+            gsl.matrix_shift(self.data, float(other))
             # and return
             return self
         # otherwise, let the interpreter know
@@ -240,7 +240,7 @@ class Matrix:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do constant subtraction
-            gsl.matrix_shift(self.data, -other)
+            gsl.matrix_shift(self.data, -float(other))
             # and return
             return self
         # otherwise, let the interpreter know
@@ -260,7 +260,7 @@ class Matrix:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do scaling by constant
-            gsl.matrix_scale(self.data, other)
+            gsl.matrix_scale(self.data, float(other))
             # and return
             return self
         # otherwise, let the interpreter know
@@ -280,7 +280,7 @@ class Matrix:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do scaling by constant
-            gsl.matrix_scale(self.data, 1/other)
+            gsl.matrix_scale(self.data, 1/float(other))
             # and return
             return self
         # otherwise, let the interpreter know

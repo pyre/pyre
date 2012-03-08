@@ -215,7 +215,7 @@ class Vector:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do constant addition
-            gsl.vector_shift(self.data, other)
+            gsl.vector_shift(self.data, float(other))
             # and return
             return self
         # otherwise, let the interpreter know
@@ -235,7 +235,7 @@ class Vector:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do constant subtraction
-            gsl.vector_shift(self.data, -other)
+            gsl.vector_shift(self.data, -float(other))
             # and return
             return self
         # otherwise, let the interpreter know
@@ -255,7 +255,7 @@ class Vector:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do scaling by constant
-            gsl.vector_scale(self.data, other)
+            gsl.vector_scale(self.data, float(other))
             # and return
             return self
         # otherwise, let the interpreter know
@@ -275,7 +275,7 @@ class Vector:
         # if other is a number
         if isinstance(other, numbers.Number):
             # do scaling by constant
-            gsl.vector_scale(self.data, 1/other)
+            gsl.vector_scale(self.data, 1/float(other))
             # and return
             return self
         # otherwise, let the interpreter know
