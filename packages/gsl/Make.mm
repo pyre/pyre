@@ -19,6 +19,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Histogram.py \
     Matrix.py \
     Permutation.py \
     RNG.py \

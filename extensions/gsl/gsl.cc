@@ -17,6 +17,7 @@
 #include "metadata.h"
 
 #include "blas.h" // blas
+#include "histogram.h" // histograms
 #include "linalg.h" // linear algebra
 #include "matrix.h" // matrices
 #include "pdf.h" // probability distribution functions
@@ -45,13 +46,31 @@ namespace gsl {
         { blas::dsymv__name__, blas::dsymv, METH_VARARGS, blas::dsymv__doc__ },
         { blas::dsyr__name__, blas::dsyr, METH_VARARGS, blas::dsyr__doc__ },
 
-        // linalg
-        { linalg::LU_decomp__name__, linalg::LU_decomp, METH_VARARGS, linalg::LU_decomp__doc__ },
-        { linalg::LU_invert__name__, linalg::LU_invert, METH_VARARGS, linalg::LU_invert__doc__ },
-        { linalg::LU_det__name__, linalg::LU_det, METH_VARARGS, linalg::LU_det__doc__ },
-        { linalg::LU_lndet__name__, linalg::LU_lndet, METH_VARARGS, linalg::LU_lndet__doc__ },
-        { linalg::cholesky_decomp__name__, linalg::cholesky_decomp, METH_VARARGS,
-          linalg::cholesky_decomp__doc__ },
+        // vectors
+        { vector::alloc__name__, vector::alloc, METH_VARARGS, vector::alloc__doc__ },
+        { vector::zero__name__, vector::zero, METH_VARARGS, vector::zero__doc__ },
+        { vector::fill__name__, vector::fill, METH_VARARGS, vector::fill__doc__ },
+        { vector::basis__name__, vector::basis, METH_VARARGS, vector::basis__doc__ },
+        { vector::copy__name__, vector::copy, METH_VARARGS, vector::copy__doc__ },
+        { vector::get__name__, vector::get, METH_VARARGS, vector::get__doc__ },
+        { vector::set__name__, vector::set, METH_VARARGS, vector::set__doc__ },
+        { vector::contains__name__, vector::contains, METH_VARARGS, vector::contains__doc__ },
+        { vector::max__name__, vector::max, METH_VARARGS, vector::max__doc__ },
+        { vector::min__name__, vector::min, METH_VARARGS, vector::min__doc__ },
+        { vector::minmax__name__, vector::minmax, METH_VARARGS, vector::minmax__doc__ },
+        { vector::equal__name__, vector::equal, METH_VARARGS, vector::equal__doc__ },
+        { vector::add__name__, vector::add, METH_VARARGS, vector::add__doc__ },
+        { vector::sub__name__, vector::sub, METH_VARARGS, vector::sub__doc__ },
+        { vector::mul__name__, vector::mul, METH_VARARGS, vector::mul__doc__ },
+        { vector::div__name__, vector::div, METH_VARARGS, vector::div__doc__ },
+        { vector::shift__name__, vector::shift, METH_VARARGS, vector::shift__doc__ },
+        { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__ },
+        // statistics
+        { vector::sort__name__, vector::sort, METH_VARARGS, vector::sort__doc__ },
+        { vector::mean__name__, vector::mean, METH_VARARGS, vector::mean__doc__ },
+        { vector::median__name__, vector::median, METH_VARARGS, vector::median__doc__ },
+        { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
+        { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
 
         // matrices
         { matrix::alloc__name__, matrix::alloc, METH_VARARGS, matrix::alloc__doc__ },

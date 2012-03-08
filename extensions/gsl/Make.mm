@@ -19,6 +19,7 @@ EXTERNAL_LIBS += -ljournal
 PROJ_SRCS = \
     blas.cc \
     exceptions.cc \
+    histogram.cc \
     linalg.cc \
     matrix.cc \
     metadata.cc \

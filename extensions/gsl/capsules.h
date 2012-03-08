@@ -11,9 +11,9 @@
 // capsules
 namespace gsl {
 
-    // vectors
-    namespace vector { 
-        const char * const capsule_t = "gsl.vector";
+    // histogram
+    namespace histogram {
+        const char * const capsule_t = "gsl.histogram"; 
         void free(PyObject *);
     }
     // matrix
@@ -21,14 +21,19 @@ namespace gsl {
         const char * const capsule_t = "gsl.matrix"; 
         void free(PyObject *);
     }
+    // rng
+    namespace rng {
+        const char * const capsule_t = "gsl.rng"; 
+        void free(PyObject *);
+    }
     // permutations
     namespace permutation {
         const char * const capsule_t = "gsl.permutation"; 
         void free(PyObject *);
     }
-    // rng
-    namespace rng {
-        const char * const capsule_t = "gsl.rng"; 
+    // vectors
+    namespace vector { 
+        const char * const capsule_t = "gsl.vector";
         void free(PyObject *);
     }
 }
