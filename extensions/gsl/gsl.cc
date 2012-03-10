@@ -55,6 +55,7 @@ namespace gsl {
           histogram::increment__doc__ },
         { histogram::accumulate__name__, histogram::accumulate, METH_VARARGS,
           histogram::accumulate__doc__ },
+        { histogram::fill__name__, histogram::fill, METH_VARARGS, histogram::fill__doc__ },
         { histogram::clone__name__, histogram::clone, METH_VARARGS, histogram::clone__doc__ },
         { histogram::copy__name__, histogram::copy, METH_VARARGS, histogram::copy__doc__ },
         { histogram::find__name__, histogram::find, METH_VARARGS, histogram::find__doc__ },

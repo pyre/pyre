@@ -42,6 +42,7 @@ def license() : print(gsl.license())
 
 
 # wrappers
+from .Histogram import Histogram as histogram
 from .Matrix import Matrix as matrix
 from .Permutation import Permutation as permutation
 from .RNG import RNG as rng

@@ -8,6 +8,7 @@
 
 #include <portinfo>
 #include <Python.h>
+#include <gsl/gsl_vector.h>
 #include <gsl/gsl_histogram.h>
 
 #include "histogram.h"
@@ -210,6 +211,53 @@ gsl::histogram::accumulate(PyObject *, PyObject * args) {
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
     // fill it out
     gsl_histogram_accumulate(h, x, weight);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// fill
+const char * const gsl::histogram::fill__name__ = "histogram_fill";
+const char * const gsl::histogram::fill__doc__ = 
+    "increment my frequency counts using values for the given vector";
+
+PyObject * 
+gsl::histogram::fill(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    PyObject * vCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:histogram_fill", 
+                                  &PyCapsule_Type, &capsule,
+                                  &PyCapsule_Type, &vCapsule
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the histogram capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
+        return 0;
+    }
+    // bail out if the value vector capsule is not valid
+    if (!PyCapsule_IsValid(vCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the histogram
+    gsl_histogram * h = 
+        static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // get the values
+    gsl_vector * v =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
+
+    // fill it out
+    for (size_t i=0; i < v->size; i++) {
+        gsl_histogram_increment(h, gsl_vector_get(v, i));
+    }
 
     // return None
     Py_INCREF(Py_None);

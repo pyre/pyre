@@ -43,6 +43,11 @@ namespace gsl {
         extern const char * const accumulate__doc__;
         PyObject * accumulate(PyObject *, PyObject *);
 
+        // fill
+        extern const char * const fill__name__;
+        extern const char * const fill__doc__;
+        PyObject * fill(PyObject *, PyObject *);
+
         // clone
         extern const char * const clone__name__;
         extern const char * const clone__doc__;

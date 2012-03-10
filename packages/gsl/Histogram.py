@@ -30,7 +30,7 @@ class Histogram:
         """
         # adjust the bins
         gsl.histogram_uniform(self.data, lower, upper)
-        # and return 
+        # and return
         return self
 
 
@@ -43,7 +43,7 @@ class Histogram:
         """
         # adjust the bins
         gsl.histogram_ranges(self.data, tuple(points))
-        # and return 
+        # and return
         return self
 
 
@@ -63,7 +63,9 @@ class Histogram:
         Increment by one the bin whose range contains {x}
         """
         # do it
-        return gsl.histogram_increment(self.data, x)
+        gsl.histogram_increment(self.data, x)
+        # and return
+        return self
 
 
     def accumulate(self, x, weight):
@@ -71,7 +73,19 @@ class Histogram:
         Add {weight} to the bin whose range contains {x}
         """
         # do it
-        return gsl.histogram_accumulate(self.data, x, weight)
+        gsl.histogram_accumulate(self.data, x, weight)
+        # and return
+        return self
+
+
+    def fill(self, values):
+        """
+        Increment my frequency counts using the contents of the vector {values}
+        """
+        # we have a function for that
+        gsl.histogram_fill(self.data, values.data)
+        # and return
+        return self
 
 
     # copying
@@ -103,7 +117,7 @@ class Histogram:
         """
         # easy enough
         return gsl.histogram_find(self.data, x)
-        
+
 
     def max(self):
         """
@@ -136,7 +150,7 @@ class Histogram:
         """
         # easy enough
         return gsl.histgram_max_bin(self.data)
-        
+
 
     def max_value(self):
         """
@@ -144,7 +158,7 @@ class Histogram:
         """
         # easy enough
         return gsl.histgram_max_value(self.data)
-        
+
 
     def min_bin(self):
         """
@@ -152,7 +166,7 @@ class Histogram:
         """
         # easy enough
         return gsl.histgram_min_bin(self.data)
-        
+
 
     def min_value(self):
         """
@@ -160,7 +174,7 @@ class Histogram:
         """
         # easy enough
         return gsl.histgram_min_value(self.data)
-        
+
 
     def mean(self):
         """
@@ -168,7 +182,7 @@ class Histogram:
         """
         # easy enough
         return gsl.histgram_mean(self.data)
-        
+
 
     def sdev(self):
         """
@@ -176,7 +190,7 @@ class Histogram:
         """
         # easy enough
         return gsl.histgram_sdev(self.data)
-        
+
 
     def sum(self):
         """
@@ -184,7 +198,7 @@ class Histogram:
         """
         # easy enough
         return gsl.histgram_sum(self.data)
-        
+
 
     # meta methods
     def __init__(self, bins, data=None, **kwds):
@@ -298,4 +312,4 @@ class Histogram:
     data = None
 
 
-# end of file 
+# end of file
