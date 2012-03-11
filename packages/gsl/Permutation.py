@@ -40,12 +40,34 @@ class Permutation:
         return clone
 
 
+    def reverse(self):
+        """
+        Reverse me
+        """
+        # reverse
+        gsl.permutation_reverse(self.data)
+        # and return
+        return self
+
+
+    def inverse(self):
+        """
+        Reverse me
+        """
+        # inverse
+        gsl.permutation_invverse(self.data)
+        # and return
+        return self
+
+
     def swap(self, other):
         """
         Swap me with {other}
         """
-        # easy enough
-        return gsl.permutation_swap(self.data, other.data)
+        # perform the swap
+        gsl.permutation_swap(self.data, other.data)
+        # and return me
+        return self
 
 
     def size(self):
