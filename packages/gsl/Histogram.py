@@ -17,6 +17,10 @@ class Histogram:
     """
 
 
+    # types
+    from .Vector import Vector as vector
+
+
     # public data
     bins = 0
 
@@ -108,6 +112,21 @@ class Histogram:
         gsl.histogram_copy(self.data, other.data)
         # and return it
         return clone
+
+
+    def values(self):
+        """
+        Return a vector that contains the values from each of my bins. This is equivalent to
+
+          v = gsl.vector.alloc(shape=self.bins)
+          for i in range(self.bins):
+              v[i] = self[i]
+          return v
+        """
+        # fill the vector data
+        data = gsl.histogram_vector(self.data)
+        # allocate the vector and return it
+        return self.vector(shape=self.bins, data=data) 
 
 
     # operations

@@ -58,6 +58,7 @@ namespace gsl {
         { histogram::fill__name__, histogram::fill, METH_VARARGS, histogram::fill__doc__ },
         { histogram::clone__name__, histogram::clone, METH_VARARGS, histogram::clone__doc__ },
         { histogram::copy__name__, histogram::copy, METH_VARARGS, histogram::copy__doc__ },
+        { histogram::vector__name__, histogram::vector, METH_VARARGS, histogram::vector__doc__ },
         { histogram::find__name__, histogram::find, METH_VARARGS, histogram::find__doc__ },
         { histogram::max__name__, histogram::max, METH_VARARGS, histogram::max__doc__ },
         { histogram::min__name__, histogram::min, METH_VARARGS, histogram::min__doc__ },
@@ -173,6 +174,7 @@ namespace gsl {
         { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__ },
         // statistics
         { vector::sort__name__, vector::sort, METH_VARARGS, vector::sort__doc__ },
+        { vector::sortIndex__name__, vector::sortIndex, METH_VARARGS, vector::sortIndex__doc__ },
         { vector::mean__name__, vector::mean, METH_VARARGS, vector::mean__doc__ },
         { vector::median__name__, vector::median, METH_VARARGS, vector::median__doc__ },
         { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },

@@ -17,6 +17,11 @@ class Vector:
     A wrapper over a gsl vector
     """
 
+
+    # types
+    from .Permutation import Permutation as permutation
+
+
     # initialization
     def zero(self):
         """
@@ -103,6 +108,16 @@ class Vector:
         gsl.vector_sort(self.data)
         # and return myself
         return self
+
+
+    def sortIndirect(self):
+        """
+        Construct the permutation that would sort me in ascending order
+        """
+        # get the permutation capsule
+        pdata = gsl.vector_sortIndex(self.data)
+        # build a permutation object and return it
+        return self.permutation(shape=self.shape, data=pdata)
 
 
     def mean(self, weights=None):

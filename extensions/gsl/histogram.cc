@@ -339,6 +339,41 @@ gsl::histogram::copy(PyObject *, PyObject * args) {
 }
 
 
+// vector
+const char * const gsl::histogram::vector__name__ = "histogram_vector";
+const char * const gsl::histogram::vector__doc__ = 
+    "increment my frequency counts using values for the given vector";
+
+PyObject * 
+gsl::histogram::vector(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!:histogram_vector", &PyCapsule_Type, &capsule);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the histogram capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid histogram capsule");
+        return 0;
+    }
+
+    // get the histogram
+    gsl_histogram * h = 
+        static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // build the vector
+    gsl_vector * v = gsl_vector_alloc(h->n);
+    // copy the data
+    for (size_t i=0; i < h->n; i++) {
+        gsl_vector_set(v, i, gsl_histogram_get(h, i));
+    }
+
+    // return a capsule with the vector data
+    return PyCapsule_New(v, gsl::vector::capsule_t, gsl::vector::free);
+}
+
+
 // find
 const char * const gsl::histogram::find__name__ = "histogram_find";
 const char * const gsl::histogram::find__doc__ = 

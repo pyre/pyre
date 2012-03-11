@@ -109,6 +109,11 @@ namespace gsl {
         extern const char * const sort__doc__;
         PyObject * sort(PyObject *, PyObject *);
 
+        // vector_sortIndex
+        extern const char * const sortIndex__name__;
+        extern const char * const sortIndex__doc__;
+        PyObject * sortIndex(PyObject *, PyObject *);
+
         // vector_mean
         extern const char * const mean__name__;
         extern const char * const mean__doc__;
