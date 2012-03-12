@@ -8,6 +8,8 @@
 
 #include <portinfo>
 #include <Python.h>
+#include <sstream>
+
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_permutation.h>
 #include <gsl/gsl_sort_vector.h>
@@ -179,10 +181,10 @@ const char * const gsl::vector::get__doc__ = "get the value of a vector element"
 PyObject * 
 gsl::vector::get(PyObject *, PyObject * args) {
     // the arguments
-    size_t index;
+    long index;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "O!k:vector_get", &PyCapsule_Type, &capsule, &index);
+    int status = PyArg_ParseTuple(args, "O!l:vector_get", &PyCapsule_Type, &capsule, &index);
     // if something went wrong
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -193,8 +195,22 @@ gsl::vector::get(PyObject *, PyObject * args) {
 
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // reflect negative indices about the end of the vector
+    if (index < 0) index += v->size;
+    // convert to an unsigned value
+    size_t i = index;
+    // bounds check index 1
+    if (i < 0 || i >= v->size) {
+        // build an error message
+        std::stringstream msg;
+        msg << "vector index " << index << " out of range";
+        // register the error
+        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
+        // and raise the exception
+        return 0;
+    }
     // get the value
-    double value = gsl_vector_get(v, index);
+    double value = gsl_vector_get(v, i);
     // std::cout
         // << " gsl.vector_get: vector@" << v << ", index=" << index << ", value=" << value 
         // << std::endl;
@@ -210,12 +226,12 @@ const char * const gsl::vector::set__doc__ = "set the value of a vector element"
 PyObject * 
 gsl::vector::set(PyObject *, PyObject * args) {
     // the arguments
-    size_t index;
+    long index;
     double value;
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!kd:vector_set",
+                                  args, "O!ld:vector_set",
                                   &PyCapsule_Type, &capsule, &index, &value);
     // bail out if something went wrong with the argument unpacking
     if (!status) return 0;
@@ -230,8 +246,23 @@ gsl::vector::set(PyObject *, PyObject * args) {
     // std::cout
         // << " gsl.vector_set: vector@" << v << ", index=" << index << ", value=" << value 
         // << std::endl;
+
+    // reflect negative indices about the end of the vector
+    if (index < 0) index += v->size;
+    // convert to an unsigned value
+    size_t i = index;
+    // bounds check index 1
+    if (i < 0 || i >= v->size) {
+        // build an error message
+        std::stringstream msg;
+        msg << "vector index " << index << " out of range";
+        // register the error
+        PyErr_SetString(PyExc_IndexError, msg.str().c_str());
+        // and raise the exception
+        return 0;
+    }
     // set the value
-    gsl_vector_set(v, index, value);
+    gsl_vector_set(v, i, value);
 
     // return None
     Py_INCREF(Py_None);

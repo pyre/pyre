@@ -249,8 +249,8 @@ gsl::matrix::get(PyObject *, PyObject * args) {
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // reflect negative indices about the end of the matrix
-    if (index1 < 0 ) index1 += m->size1;
-    if (index2 < 0 ) index2 += m->size2;
+    if (index1 < 0) index1 += m->size1;
+    if (index2 < 0) index2 += m->size2;
 
     // convert to unsigned values
     size_t i1 = index1;
@@ -315,8 +315,8 @@ gsl::matrix::set(PyObject *, PyObject * args) {
         // << std::endl;
 
     // reflect negative indices about the end of the matrix
-    if (index1 < 0 ) index1 += m->size1;
-    if (index2 < 0 ) index2 += m->size2;
+    if (index1 < 0) index1 += m->size1;
+    if (index2 < 0) index2 += m->size2;
 
     // convert to unsigned values
     size_t i1 = index1;

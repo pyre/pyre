@@ -181,27 +181,44 @@ class Vector:
 
 
     def __getitem__(self, index):
-        # reflect negative indices around the end of the vector
-        if index < 0: index = self.shape - index
-        # bounds check
-        if index < 0 or index >= self.shape:
-            # and complain
-            raise IndexError('vector index {} out of range'.format(index))
-        # get and return the element
-        return gsl.vector_get(self.data, index)
+        # assuming {index} is convertible into an integer, attempt to
+        try:
+            # get and return the element
+            return gsl.vector_get(self.data, int(index))
+        # if this fails
+        except TypeError:
+            # check whether {index} is a slice
+            if type(index) is not slice:
+                # if not, we are out of ideas
+                raise TypeError(
+                    'vector indices must be integers, not {.__name__}'.format(type(index)))
+        # we have a slice, so return an appropriate value generator
+        return self._slice(index)
 
 
     def __setitem__(self, index, value):
-        # reflect negative indices around the end of the vector
-        if index < 0: index = self.shape - index
-        # bounds check
-        if index < 0 or index >= self.shape:
-            # and complain
-            raise IndexError('vector index {} out of range'.format(index))
-        # set the element to the requested value
-        gsl.vector_set(self.data, int(index), value)
-        # and return
-        return self
+        # assuming {index} is convertible into an integer, attempt to
+        try:
+            # set the corresponding element to the provided value
+            return gsl.vector_set(self.data, int(index), value)
+        # if this fails
+        except TypeError:
+            # check whether {index} is a slice
+            if type(index) is not slice:
+                # if not, we are out of ideas
+                raise TypeError(
+                    'vector indices must be integers, not {.__name__}'.format(type(index)))
+        # we have a slice; assume {value} is a compatible iterable
+        try:
+            # iterate over the slice and the values
+            for i,v in zip(range(*index.indices(self.shape)), value):    
+                # and set the corresponding vector element
+                gsl.vector_set(self.data, i, v)
+        except TypeError:
+            raise TypeError('can only assign an iterable')
+
+        # all done
+        return
 
 
     # comparisons
@@ -298,6 +315,18 @@ class Vector:
 
 
     # implementation details
+    def _slice(self, index):
+        """
+        Build a generator that yields the values described in the {index}
+        """
+        # iterate over the indices
+        for i in range(*index.indices(self.shape)):
+            # yield the corresponding value
+            yield gsl.vector_get(self.data, i)
+        # all done
+        return
+
+
     # private data
     data = None
 

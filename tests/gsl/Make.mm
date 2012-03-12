@@ -48,6 +48,7 @@ vectors:
 	${PYTHON} ./vector_random.py
 	${PYTHON} ./vector_clone.py
 	${PYTHON} ./vector_set.py
+	${PYTHON} ./vector_slices.py
 	${PYTHON} ./vector_contains.py
 	${PYTHON} ./vector_add.py
 	${PYTHON} ./vector_sub.py

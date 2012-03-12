@@ -8,7 +8,7 @@
 
 
 """
-Exercising setting and getting individual vector elements
+Exercise setting and getting individual vector elements
 """
 
 
@@ -17,10 +17,14 @@ def test():
     import gsl
     # make a vector
     v = gsl.vector(shape=100)
-    # set an element to some value
-    v[50] = 10
+    # fill with a test pattern
+    for i in range(len(v)): v[i] = i
     # verify it happened
-    assert v[50] == 10
+    assert v[50] == 50
+
+    # access through reflection
+    v[-99] == v[1]
+
     # all done
     return v
 
