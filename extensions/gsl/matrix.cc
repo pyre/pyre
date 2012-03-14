@@ -451,6 +451,98 @@ gsl::matrix::get_row(PyObject *, PyObject * args) {
 }
 
 
+// slicing: set_col
+const char * const gsl::matrix::set_col__name__ = "matrix_set_col";
+const char * const gsl::matrix::set_col__doc__ = "set a col of a matrix to the given vector";
+
+PyObject * 
+gsl::matrix::set_col(PyObject *, PyObject * args) {
+    // the arguments
+    size_t index;
+    PyObject * capsule;
+    PyObject * vCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!k:matrix_set_col",
+                                  &PyCapsule_Type, &capsule,
+                                  &index,
+                                  &PyCapsule_Type, &vCapsule
+                                  );
+    // bail out if something went wrong during argument unpacking
+    if (!status) return 0;
+    // bail out if the matrix capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
+        return 0;
+    }
+    // bail out if the vector capsule is not valid
+    if (!PyCapsule_IsValid(capsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the matrix
+    gsl_matrix * m = 
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // get the vector
+    gsl_vector * v = 
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
+
+    // set the col
+    gsl_matrix_set_col(m, index, v);
+
+    // return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// slicing: set_row
+const char * const gsl::matrix::set_row__name__ = "matrix_set_row";
+const char * const gsl::matrix::set_row__doc__ = "set a row of a matrix to the given vector";
+
+PyObject * 
+gsl::matrix::set_row(PyObject *, PyObject * args) {
+    // the arguments
+    size_t index;
+    PyObject * capsule;
+    PyObject * vCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!k:matrix_set_row",
+                                  &PyCapsule_Type, &capsule,
+                                  &index,
+                                  &PyCapsule_Type, &vCapsule
+                                  );
+    // bail out if something went wrong during argument unpacking
+    if (!status) return 0;
+    // bail out if the matrix capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
+        return 0;
+    }
+    // bail out if the vector capsule is not valid
+    if (!PyCapsule_IsValid(capsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the matrix
+    gsl_matrix * m = 
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // get the vector
+    gsl_vector * v = 
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
+
+    // set the row
+    gsl_matrix_set_row(m, index, v);
+
+    // return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
 // contains
 const char * const gsl::matrix::contains__name__ = "matrix_contains";
 const char * const gsl::matrix::contains__doc__ = "check whether a given value appears in matrix";

@@ -134,6 +134,26 @@ class Matrix:
         return self.vector(shape=self.rows, data=capsule)
 
 
+    def setRow(self, index, v):
+        """
+        Set the row at {index} to the contents of the given vector {v}
+        """
+        # let the extension do its thing
+        gsl.matrix_set_row(self.data, index, v.data)
+        # and return
+        return self
+
+
+    def setColumn(self, index):
+        """
+        Set the column at {index} to the contents of the given vector {v}
+        """
+        # let the extension do its thing
+        gsl.matrix_set_col(self.data, index, v.data)
+        # and return
+        return self
+
+
     # maxima and minima
     def max(self):
         """
