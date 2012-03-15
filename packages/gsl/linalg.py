@@ -58,9 +58,10 @@ def cholesky_decomposition(matrix):
     """
     Compute the Cholesky decomposition of a symmetric positive definite matrix
     """
-    # the result is stored in place and also returned to the caller
-    return gsl.linalg_cholesky_decomp(matrix.data)
-
+    # compute the decomposition
+    gsl.linalg_cholesky_decomp(matrix.data)
+    # and return the matrix
+    return matrix
 
 
 # end of file 
