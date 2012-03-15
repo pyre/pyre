@@ -49,6 +49,16 @@ def daxpy(α, x, y):
 
 
 # level 2
+def dtrmv(uplo, transpose, diagonal, A, x):
+    """
+    Compute {x = op(A) x}
+    """
+    # compute
+    gsl.blas_dtrmv(uplo, transpose, diagonal, A.data, x.data)
+    # and return the result
+    return x
+
+
 def dsymv(uplo, α, A, x, β, y):
     """
     Compute {y = α A x + β y}

@@ -43,6 +43,7 @@ namespace gsl {
         { blas::dnrm2__name__, blas::dnrm2, METH_VARARGS, blas::dnrm2__doc__ },
         { blas::dasum__name__, blas::dasum, METH_VARARGS, blas::dasum__doc__ },
         { blas::daxpy__name__, blas::daxpy, METH_VARARGS, blas::daxpy__doc__ },
+        { blas::dtrmv__name__, blas::dtrmv, METH_VARARGS, blas::dtrmv__doc__ },
         { blas::dsymv__name__, blas::dsymv, METH_VARARGS, blas::dsymv__doc__ },
         { blas::dsyr__name__, blas::dsyr, METH_VARARGS, blas::dsyr__doc__ },
 
@@ -143,6 +144,14 @@ namespace gsl {
           pdf::gaussian::vector__doc__ },
         { pdf::gaussian::matrix__name__, pdf::gaussian::matrix, METH_VARARGS,
           pdf::gaussian::matrix__doc__ },
+        { pdf::ugaussian::sample__name__, pdf::ugaussian::sample, METH_VARARGS,
+          pdf::ugaussian::sample__doc__ },
+        { pdf::ugaussian::density__name__, pdf::ugaussian::density, METH_VARARGS,
+          pdf::ugaussian::density__doc__ },
+        { pdf::ugaussian::vector__name__, pdf::ugaussian::vector, METH_VARARGS,
+          pdf::ugaussian::vector__doc__ },
+        { pdf::ugaussian::matrix__name__, pdf::ugaussian::matrix, METH_VARARGS,
+          pdf::ugaussian::matrix__doc__ },
 
         // random numbers
         { rng::avail__name__, rng::avail, METH_VARARGS, rng::avail__doc__ },

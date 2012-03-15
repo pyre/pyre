@@ -124,4 +124,56 @@ class gaussian:
     sigma = None
 
 
+# the unit gaussian probability distribution
+class ugaussian:
+    """
+    Encapsulation of the unit gaussian probability distribution
+    """
+
+
+    # interface
+    def sample(self):
+        """
+        Sample the gaussian distribution using a random value from {rng}
+        """
+        # get the value
+        return gsl.ugaussian_sample(self.rng.rng)
+
+
+    def density(self, x):
+        """
+        Compute the probability density of the gaussian distribution at {x}
+        """
+        # get the value
+        return gsl.ugaussian_density(x)
+
+
+    # higher level support
+    def vector(self, vector):
+        """
+        Fill {vector} with random values
+        """
+        # fill the vector
+        gsl.ugaussian_vector(self.rng.rng, vector.data)
+        # and return it
+        return vector
+
+
+    def matrix(self, matrix):
+        """
+        Fill {matrix} with random values
+        """
+        # fill the matrix
+        gsl.ugaussian_matrix(self.rng.rng, matrix.data)
+        # and return it
+        return matrix
+
+
+    # meta methods
+    def __init__(self, rng, **kwds):
+        super().__init__(**kwds)
+        self.rng = rng
+        return
+
+
 # end of file 

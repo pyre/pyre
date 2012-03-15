@@ -146,6 +146,62 @@ gsl::blas::daxpy(PyObject *, PyObject * args) {
 }
 
 
+// blas::dtrmv
+const char * const gsl::blas::dtrmv__name__ = "blas_dtrmv";
+const char * const gsl::blas::dtrmv__doc__ = "compute y = a A x + b y";
+
+PyObject * 
+gsl::blas::dtrmv(PyObject *, PyObject * args) {
+    // the arguments
+    int uplo, op, unitDiag;
+    PyObject * xc;
+    PyObject * Ac;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "iiiO!O!:blas_dtrmv",
+                                  &uplo, &op, &unitDiag,
+                                  &PyCapsule_Type, &Ac,
+                                  &PyCapsule_Type, &xc);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the third argument must be a matrix");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a vector");
+        return 0;
+    }
+
+    // decode the enums
+    CBLAS_UPLO_t cuplo = uplo ? CblasUpper : CblasLower;
+    CBLAS_DIAG_t cdiag = unitDiag ? CblasUnit : CblasNonUnit;
+    CBLAS_TRANSPOSE_t ctran;
+    switch(op) {
+    case 0:
+        ctran = CblasNoTrans; break;
+    case 1:
+        ctran = CblasTrans; break;
+    case 2:
+        ctran = CblasConjTrans; break;
+    default:
+        PyErr_SetString(PyExc_TypeError, "bad operation flag");
+        return 0;
+    }
+
+    // get the two vectors
+    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
+    // get the matrix
+    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
+    // compute the form
+    gsl_blas_dtrmv(cuplo, ctran, cdiag, A, x);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
 // blas::dsymv
 const char * const gsl::blas::dsymv__name__ = "blas_dsymv";
 const char * const gsl::blas::dsymv__doc__ = "compute y = a A x + b y";

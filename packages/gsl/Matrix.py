@@ -24,6 +24,13 @@ class Matrix:
     upperTriangular = 1
     lowerTriangular = 0
 
+    unitDiagonal = 1
+    nonUnitDiagonal = 0
+
+    opNoTrans = 0
+    opTrans = 1
+    opConjTrans = 2
+
 
     # public data
     @property

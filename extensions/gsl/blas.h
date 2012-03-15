@@ -29,6 +29,10 @@ namespace gsl {
         extern const char * const daxpy__doc__;
         PyObject * daxpy(PyObject *, PyObject *);
 
+        extern const char * const dtrmv__name__;
+        extern const char * const dtrmv__doc__;
+        PyObject * dtrmv(PyObject *, PyObject *);
+
         extern const char * const dsymv__name__;
         extern const char * const dsymv__doc__;
         PyObject * dsymv(PyObject *, PyObject *);
