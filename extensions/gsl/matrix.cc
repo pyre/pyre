@@ -463,7 +463,7 @@ gsl::matrix::set_col(PyObject *, PyObject * args) {
     PyObject * vCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!k:matrix_set_col",
+                                  args, "O!kO!:matrix_set_col",
                                   &PyCapsule_Type, &capsule,
                                   &index,
                                   &PyCapsule_Type, &vCapsule
@@ -476,7 +476,7 @@ gsl::matrix::set_col(PyObject *, PyObject * args) {
         return 0;
     }
     // bail out if the vector capsule is not valid
-    if (!PyCapsule_IsValid(capsule, gsl::vector::capsule_t)) {
+    if (!PyCapsule_IsValid(vCapsule, gsl::vector::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
         return 0;
     }
@@ -509,7 +509,7 @@ gsl::matrix::set_row(PyObject *, PyObject * args) {
     PyObject * vCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!k:matrix_set_row",
+                                  args, "O!kO!:matrix_set_row",
                                   &PyCapsule_Type, &capsule,
                                   &index,
                                   &PyCapsule_Type, &vCapsule
@@ -522,7 +522,7 @@ gsl::matrix::set_row(PyObject *, PyObject * args) {
         return 0;
     }
     // bail out if the vector capsule is not valid
-    if (!PyCapsule_IsValid(capsule, gsl::vector::capsule_t)) {
+    if (!PyCapsule_IsValid(vCapsule, gsl::vector::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
         return 0;
     }

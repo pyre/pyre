@@ -166,11 +166,11 @@ gsl::blas::dtrmv(PyObject *, PyObject * args) {
     if (!status) return 0;
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the third argument must be a matrix");
+        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
         return 0;
     }
     if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a vector");
+        PyErr_SetString(PyExc_TypeError, "the fifth argument must be a vector");
         return 0;
     }
 
