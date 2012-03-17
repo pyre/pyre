@@ -8,6 +8,7 @@
 // for the build system
 #include <portinfo>
 // external dependencies
+#include <iostream>
 #include <string>
 #include <Python.h>
 #include <gsl/gsl_errno.h>
@@ -214,6 +215,8 @@ namespace gsl {
 
 // my error handler
 static void errorHandler(const char * reason, const char * file, int line, int gsl_errno) {
+    // for now, just print the reason for the error
+    std::cerr << " ** ** ** GSL error: " << reason << std::endl;
     // throw an exception
     return;
 }
