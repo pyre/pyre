@@ -8,7 +8,7 @@
 
 
 """
-Exercise an XML weaver
+Exercise an SVG weaver
 """
 
 
@@ -17,7 +17,7 @@ def test():
     import pyre.weaver
     # instantiate a weaver
     weaver = pyre.weaver.newWeaver(name="sanity")
-    weaver.language = "xml"
+    weaver.language = "svg"
 
     text = list(weaver.weave())
     assert text == [
@@ -30,6 +30,10 @@ def test():
         ' ! ',
         ' -->',
         '',
+        '<svg version="1.1" xmlns="http://www.w3.org/2000/svg">',
+        '',
+        '',
+        '</svg>',
         '',
         '<!-- end of file -->'
         ]

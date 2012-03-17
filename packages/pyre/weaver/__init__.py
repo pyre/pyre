@@ -30,6 +30,7 @@ from .Make import Make as make
 from .Perl import Perl as perl
 from .Python import Python as python
 from .SQL import SQL as sql
+from .SVG import SVG as svg
 from .Sh import Sh as sh
 from .TeX import TeX as tex
 from .XML import XML as xml

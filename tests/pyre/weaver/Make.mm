@@ -34,6 +34,7 @@ documents:
 	${PYTHON} ./document_python.py
 	${PYTHON} ./document_sh.py
 	${PYTHON} ./document_sql.py
+	${PYTHON} ./document_svg.py
 	${PYTHON} ./document_tex.py
 	${PYTHON} ./document_xml.py
 

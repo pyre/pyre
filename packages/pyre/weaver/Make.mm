@@ -39,6 +39,7 @@ EXPORT_PYTHON_MODULES = \
     Perl.py \
     Python.py \
     SQL.py \
+    SVG.py \
     Sh.py \
     Stationery.py \
     TeX.py \
