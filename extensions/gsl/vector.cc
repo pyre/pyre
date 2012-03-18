@@ -731,7 +731,12 @@ gsl::vector::mean(PyObject *, PyObject * args) {
         // compute the mean
         mean = gsl_stats_mean(v->data, v->stride, v->size);
     } else {
-        // otherwise, extract the  vector of weights
+        // otherwise, check that {weights} is a vector capsule
+        if (!PyCapsule_IsValid(weights, capsule_t)) {
+            PyErr_SetString(PyExc_TypeError, "invalid vector capsule for the weights");
+            return 0;
+        }
+        // extract the  vector of weights
         gsl_vector * w = static_cast<gsl_vector *>(PyCapsule_GetPointer(weights, capsule_t));
         // compute the weighted mean
         mean = gsl_stats_wmean(w->data, w->stride, v->data, v->stride, v->size);
