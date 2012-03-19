@@ -74,6 +74,26 @@ class Vector:
         return clone
 
 
+    def read(self, filename):
+        """
+        Read my values from {filename}
+        """
+        # read
+        gsl.vector_read(self.data, filename)
+        # and return
+        return self
+
+
+    def write(self, filename):
+        """
+        Write my values to {filename}
+        """
+        # write
+        gsl.vector_write(self.data, filename)
+        # and return
+        return self
+
+
     # maxima and minima
     def max(self):
         """

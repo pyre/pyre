@@ -69,6 +69,26 @@ class Matrix:
         return self
 
 
+    def read(self, filename):
+        """
+        Read my values from {filename}
+        """
+        # read
+        gsl.matrix_read(self.data, filename)
+        # and return
+        return self
+
+
+    def write(self, filename):
+        """
+        Write my values to {filename}
+        """
+        # write
+        gsl.matrix_write(self.data, filename)
+        # and return
+        return self
+
+
     def identity(self):
         """
         Initialize me as an identity matrix: all elements are set to zero except along the

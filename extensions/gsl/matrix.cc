@@ -9,6 +9,7 @@
 #include <portinfo>
 #include <Python.h>
 #include <sstream>
+#include <cstdio>
 
 #include <gsl/gsl_matrix.h>
 #include "matrix.h"
@@ -162,6 +163,92 @@ gsl::matrix::copy(PyObject *, PyObject * args) {
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
     // copy the data
     gsl_matrix_memcpy(destination, source);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// read
+const char * const gsl::matrix::read__name__ = "matrix_read";
+const char * const gsl::matrix::read__doc__ = "read the values of a matrix from a file";
+
+PyObject * 
+gsl::matrix::read(PyObject *, PyObject * args) {
+    // the arguments
+    char * filename;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!s:matrix_read", &PyCapsule_Type, &capsule, &filename);
+
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the source capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
+        return 0;
+    }
+
+    // attempt to open the stream
+    std::FILE * stream = std::fopen(filename, "rb");
+    // bail out if something went wrong
+    if (!stream) {
+        PyErr_SetString(PyExc_IOError, "could not open file for reading");
+        return 0;
+    }
+
+    // get the matrix
+    gsl_matrix * m =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // read the data
+    gsl_matrix_fread(stream, m);
+
+    // close the file
+    std::fclose(stream);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// write
+const char * const gsl::matrix::write__name__ = "matrix_write";
+const char * const gsl::matrix::write__doc__ = "write the values of a matrix to a file";
+
+PyObject * 
+gsl::matrix::write(PyObject *, PyObject * args) {
+    // the arguments
+    char * filename;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!s:matrix_write", &PyCapsule_Type, &capsule, &filename);
+
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the source capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
+        return 0;
+    }
+
+    // attempt to open the stream
+    FILE * stream = std::fopen(filename, "wb");
+    // bail out if something went wrong
+    if (!stream) {
+        PyErr_SetString(PyExc_IOError, "could not open file for writing");
+        return 0;
+    }
+
+    // get the matrix
+    gsl_matrix * m =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // write the data
+    gsl_matrix_fwrite(stream, m);
+
+    // close the file
+    std::fclose(stream);
 
     // return None
     Py_INCREF(Py_None);

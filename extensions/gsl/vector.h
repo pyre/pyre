@@ -38,6 +38,16 @@ namespace gsl {
         extern const char * const copy__doc__;
         PyObject * copy(PyObject *, PyObject *);
 
+        // vector_read
+        extern const char * const read__name__;
+        extern const char * const read__doc__;
+        PyObject * read(PyObject *, PyObject *);
+
+        // vector_write
+        extern const char * const write__name__;
+        extern const char * const write__doc__;
+        PyObject * write(PyObject *, PyObject *);
+
         // vector_get
         extern const char * const get__name__;
         extern const char * const get__doc__;
