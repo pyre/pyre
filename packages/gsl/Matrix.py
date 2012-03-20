@@ -24,12 +24,20 @@ class Matrix:
     upperTriangular = 1
     lowerTriangular = 0
 
+    # flag that controls whether the diagonal entries are assumed to be unity
     unitDiagonal = 1
     nonUnitDiagonal = 0
 
+    # operation flags for some of the blas primitives
     opNoTrans = 0
     opTrans = 1
     opConjTrans = 2
+
+    # sort type for eigensystems
+    sortValueAscending = 0
+    sortValueDescending = 1
+    sortMagnitudeAscending = 2
+    sortMagnitudeDescending = 3
 
 
     # public data
@@ -204,6 +212,20 @@ class Matrix:
         """
         # easy enough
         return gsl.matrix_minmax(self.data)
+
+
+    # eigensystems
+    def symmetricEigensystem(self, order=sortValueAscending):
+        """
+        Computed my eigenvalues and eigenvectors assuming i am a real symmetric matrix
+        """
+        # compute the eigenvalues and eigenvectors
+        values, vectors = gsl.matrix_eigen_symmetric(self.data, order)
+        # dress up the results
+        λ = self.vector(shape=self.rows, data=values)
+        x = type(self)(shape=self.shape, data=vectors)
+        # and return
+        return λ, x
 
 
     # meta methods

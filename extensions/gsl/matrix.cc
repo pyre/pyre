@@ -12,6 +12,7 @@
 #include <cstdio>
 
 #include <gsl/gsl_matrix.h>
+#include <gsl/gsl_eigen.h>
 #include "matrix.h"
 #include "capsules.h"
 
@@ -962,7 +963,7 @@ gsl::matrix::shift(PyObject *, PyObject * args) {
         return 0;
     }
 
-    // get the two matrices
+    // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
     // std::cout << " gsl.matrix_shift: matrix@" << m << ", value=" << value << std::endl;
     // perform the shift
@@ -994,7 +995,7 @@ gsl::matrix::scale(PyObject *, PyObject * args) {
         return 0;
     }
 
-    // get the two matrices
+    // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
     // std::cout << " gsl.matrix_scale: matrix@" << m << ", value=" << value << std::endl;
     // perform the scale
@@ -1003,6 +1004,82 @@ gsl::matrix::scale(PyObject *, PyObject * args) {
     // return None
     Py_INCREF(Py_None);
     return Py_None;
+}
+
+
+// matrix_eigen_symmetric
+const char * const gsl::matrix::eigen_symmetric__name__ = "matrix_eigen_symmetric";
+const char * const gsl::matrix::eigen_symmetric__doc__ =
+    "compute the eigenvalues and eigenvectors of a real symmetric matrix";
+
+PyObject * 
+gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
+    // the arguments
+    size_t sort;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!k:matrix_eigen_symmetric",
+                                  &PyCapsule_Type, &capsule, &sort);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
+        return 0;
+    }
+    // decode the sort type
+    gsl_eigen_sort_t ordering;
+    switch (sort) {
+    case 0:
+        ordering = GSL_EIGEN_SORT_VAL_ASC;
+        break;
+    case 1:
+        ordering = GSL_EIGEN_SORT_VAL_DESC;
+        break;
+    case 2:
+        ordering = GSL_EIGEN_SORT_ABS_ASC;
+        break;
+    case 3:
+        ordering = GSL_EIGEN_SORT_ABS_DESC;
+        break;
+
+    default:
+        PyErr_SetString(PyExc_TypeError, "invalid sort type");
+        return 0;
+    }
+
+    // get the matrix
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // allocate the clone and make a copy of the data so we don't destroy the original
+    gsl_matrix * A = gsl_matrix_alloc(m->size1, m->size2);
+    gsl_matrix_memcpy(A, m);
+
+    // allocate the vector of eigenvalues
+    gsl_vector * eigenvalues = gsl_vector_alloc(m->size1);
+    // and the matrix of eigenvectors
+    gsl_matrix * eigenvectors = gsl_matrix_alloc(m->size1, m->size2);
+    // allocate the working space for the eigensolver
+    gsl_eigen_symmv_workspace * w = gsl_eigen_symmv_alloc(m->size1);
+
+    // compute the eigensystem
+    gsl_eigen_symmv(A, eigenvalues, eigenvectors, w);
+    // sort it
+    gsl_eigen_symmv_sort(eigenvalues, eigenvectors, ordering);
+
+    // clean up
+    gsl_matrix_free(A);
+    gsl_eigen_symmv_free(w);
+
+    // build the return value
+    PyObject * answer = PyTuple_New(2);
+    PyObject * vCapsule = PyCapsule_New(eigenvalues, gsl::vector::capsule_t, gsl::vector::free);
+    PyObject * mCapsule = PyCapsule_New(eigenvectors, gsl::matrix::capsule_t, gsl::matrix::free);
+    PyTuple_SET_ITEM(answer, 0, vCapsule);
+    PyTuple_SET_ITEM(answer, 1, mCapsule);
+    // and return
+    return answer;
 }
 
 

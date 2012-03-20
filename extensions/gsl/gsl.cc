@@ -114,6 +114,8 @@ namespace gsl {
         { matrix::div__name__, matrix::div, METH_VARARGS, matrix::div__doc__ },
         { matrix::shift__name__, matrix::shift, METH_VARARGS, matrix::shift__doc__ },
         { matrix::scale__name__, matrix::scale, METH_VARARGS, matrix::scale__doc__ },
+        { matrix::eigen_symmetric__name__, matrix::eigen_symmetric, METH_VARARGS,
+          matrix::eigen_symmetric__doc__ },
 
         // permutations
         { permutation::alloc__name__, permutation::alloc, METH_VARARGS, permutation::alloc__doc__ },

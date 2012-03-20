@@ -138,6 +138,11 @@ namespace gsl {
         extern const char * const scale__doc__;
         PyObject * scale(PyObject *, PyObject *);
 
+        // matrix_eigen_symmetric
+        extern const char * const eigen_symmetric__name__;
+        extern const char * const eigen_symmetric__doc__;
+        PyObject * eigen_symmetric(PyObject *, PyObject *);
+
     } // of namespace matrix
 } // of namespace gsl
 
