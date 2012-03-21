@@ -94,6 +94,20 @@ class Vector:
         return self
 
 
+    def print(self, format='{:+12.5e}', width=100, indent=''):
+        """
+        Print my values using the given {format}
+        """
+        # print the left margin
+        print('{} ['.format(indent), end=' ')
+        # the values
+        for value in self: print(format.format(value), end=' ')
+        # the right margin
+        print(']')
+        # all done
+        return
+
+
     # maxima and minima
     def max(self):
         """

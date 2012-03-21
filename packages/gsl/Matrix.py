@@ -97,6 +97,23 @@ class Matrix:
         return self
 
 
+    def print(self, format='{:+12.5e}', width=100, indent=''):
+        """
+        Print my values using the given {format}
+        """
+        # for each row
+        for i in range(self.rows):
+            # print the left margin: a '[[' on the first row, nothing on the others
+            print('{}{}'.format(indent, '[[' if i==0 else '  '), end=' ')
+            # the row entries
+            for j in range(self.columns):
+                print(format.format(self[i,j]), end=' ')
+            # the right margin
+            print('{}'.format(']]' if i==self.rows-1 else '  '))
+        # all done
+        return
+
+
     def identity(self):
         """
         Initialize me as an identity matrix: all elements are set to zero except along the
