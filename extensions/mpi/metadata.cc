@@ -12,11 +12,9 @@
 
 
 // copyright
-const char * const pyre::extensions::mpi::copyright__name__ = "copyright";
-const char * const pyre::extensions::mpi::copyright__doc__ = "the module copyright string";
-PyObject * 
-pyre::extensions::mpi::
-copyright(PyObject *, PyObject *)
+const char * const mpi::copyright__name__ = "copyright";
+const char * const mpi::copyright__doc__ = "the module copyright string";
+PyObject * mpi::copyright(PyObject *, PyObject *)
 {
     const char * const copyright_note = "mpi: (c) 1998-2012 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
@@ -24,11 +22,9 @@ copyright(PyObject *, PyObject *)
     
 
 // version
-const char * const pyre::extensions::mpi::version__name__ = "version";
-const char * const pyre::extensions::mpi::version__doc__ = "the module version string";
-PyObject * 
-pyre::extensions::mpi::
-version(PyObject *, PyObject *)
+const char * const mpi::version__name__ = "version";
+const char * const mpi::version__doc__ = "the module version string";
+PyObject * mpi::version(PyObject *, PyObject *)
 {
     const char * const version_string = "0.0";
     return Py_BuildValue("s", version_string);

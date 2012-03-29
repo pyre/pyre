@@ -9,23 +9,21 @@
 #define pyre_extensions_mpi_ports_h
 
 // place everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace mpi {
+namespace mpi {
+    namespace port {
 
-            // send a string
-            extern const char * const sendString__name__;
-            extern const char * const sendString__doc__;
-            PyObject * sendString(PyObject *, PyObject *);
+        // send a string
+        extern const char * const sendString__name__;
+        extern const char * const sendString__doc__;
+        PyObject * sendString(PyObject *, PyObject *);
 
-            // receive a string
-            extern const char * const receiveString__name__;
-            extern const char * const receiveString__doc__;
-            PyObject * receiveString(PyObject *, PyObject *);
+        // receive a string
+        extern const char * const receiveString__name__;
+        extern const char * const receiveString__doc__;
+        PyObject * receiveString(PyObject *, PyObject *);
 
-        } // of namespace mpi
-    } // of namespace extensions
-} // of namespace pyre
+    } // of namespace port
+} // of namespace mpi
 
 #endif
 

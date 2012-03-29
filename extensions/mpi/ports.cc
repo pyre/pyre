@@ -11,22 +11,15 @@
 
 #include <pyre/journal.h>
 
-#include "constants.h"
+#include "capsules.h"
 #include "ports.h"
 #include "exceptions.h"
 
 // send a string
-const char * const
-pyre::extensions::mpi::
-sendString__name__ = "sendString";
+const char * const mpi::port::sendString__name__ = "sendString";
+const char * const mpi::port::sendString__doc__ = "send a string to another process";
 
-const char * const
-pyre::extensions::mpi::
-sendString__doc__ = "send a string to another process";
-
-PyObject * 
-pyre::extensions::mpi::
-sendString(PyObject *, PyObject * args)
+PyObject * mpi::port::sendString(PyObject *, PyObject * args)
 {
     // placeholder for the arguments
     int tag;
@@ -46,14 +39,15 @@ sendString(PyObject *, PyObject * args)
     }
 
     // check that we were handed the correct kind of communicator capsule
-    if (!PyCapsule_IsValid(py_comm, communicatorCapsuleName)) {
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
         return 0;
     }
 
     // convert into the pyre::mpi object
-    communicator_t * comm = 
-        static_cast<communicator_t *>(PyCapsule_GetPointer(py_comm, communicatorCapsuleName));
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
     // dump arguments
     pyre::journal::debug_t info("mpi.ports");
@@ -77,17 +71,10 @@ sendString(PyObject *, PyObject * args)
 
 
 // receive a string
-const char * const
-pyre::extensions::mpi::
-receiveString__doc__ = "";
+const char * const mpi::port::receiveString__doc__ = "";
+const char * const mpi::port::receiveString__name__ = "receiveString";
 
-const char * const
-pyre::extensions::mpi::
-receiveString__name__ = "receiveString";
-
-PyObject *
-pyre::extensions::mpi::
-receiveString(PyObject *, PyObject * args)
+PyObject * mpi::port::receiveString(PyObject *, PyObject * args)
 {
     // placeholders for the arguments
     int tag;
@@ -104,14 +91,15 @@ receiveString(PyObject *, PyObject * args)
     }
 
     // check that we were handed the correct kind of communicator capsule
-    if (!PyCapsule_IsValid(py_comm, communicatorCapsuleName)) {
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
         return 0;
     }
 
     // convert into the pyre::mpi object
-    communicator_t * comm = 
-        static_cast<communicator_t *>(PyCapsule_GetPointer(py_comm, communicatorCapsuleName));
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
     // receive the length
     int len;

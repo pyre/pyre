@@ -15,17 +15,10 @@
 
 
 // initialize
-const char * const 
-pyre::extensions::mpi::
-initialize__name__ = "initialize";
+const char * const mpi::initialize__name__ = "initialize";
+const char * const mpi::initialize__doc__ = "initialize MPI";
 
-const char * const 
-pyre::extensions::mpi::
-initialize__doc__ = "initialize MPI";
-
-PyObject *
-pyre::extensions::mpi::
-initialize(PyObject *, PyObject *)
+PyObject * mpi::initialize(PyObject *, PyObject *)
 {
     // check whether MPI is already intialized
     int isInitialized = 0;
@@ -59,17 +52,10 @@ initialize(PyObject *, PyObject *)
 }
 
 // finalize
-const char * const
-pyre::extensions::mpi::
- finalize__name__ = "finalize";
+const char * const mpi::finalize__name__ = "finalize";
+const char * const mpi::finalize__doc__ = "shut down MPI";
 
-const char * const 
-pyre::extensions::mpi::
-finalize__doc__ = "shut down MPI";
-
-PyObject *
-pyre::extensions::mpi::
-finalize(PyObject *, PyObject *)
+PyObject * mpi::finalize(PyObject *, PyObject *)
 {
     // check whether MPI is already intialized
     int isInitialized = 0;

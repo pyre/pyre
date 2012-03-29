@@ -11,49 +11,46 @@
 
 
 // place everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace mpi {
+namespace mpi {
+    namespace communicator {
 
-            // the predefined communicators
-            extern PyObject * worldCommunicator;
+        // the predefined communicators
+        extern PyObject * world;
 
-            // destructors
-            void deleteCommunicator(PyObject *);
+        // create a communicator (MPI_Comm_create)
+        extern const char * const create__name__;
+        extern const char * const create__doc__;
+        PyObject * create(PyObject *, PyObject *);
 
-            // create a communicator (MPI_Comm_create)
-            extern const char * const communicatorCreate__name__;
-            extern const char * const communicatorCreate__doc__;
-            PyObject * communicatorCreate(PyObject *, PyObject *);
+        // return the communicator size (MPI_Comm_size)
+        extern const char * const size__name__;
+        extern const char * const size__doc__;
+        PyObject * size(PyObject *, PyObject *);
 
-            // return the communicator size (MPI_Comm_size)
-            extern const char * const communicatorSize__name__;
-            extern const char * const communicatorSize__doc__;
-            PyObject * communicatorSize(PyObject *, PyObject *);
+        // return the process rank in a given communicator (MPI_Comm_rank)
+        extern const char * const rank__name__;
+        extern const char * const rank__doc__;
+        PyObject * rank(PyObject *, PyObject *);
 
-            // return the process rank in a given communicator (MPI_Comm_rank)
-            extern const char * const communicatorRank__name__;
-            extern const char * const communicatorRank__doc__;
-            PyObject * communicatorRank(PyObject *, PyObject *);
+        // set a communicator barrier (MPI_Barrier)
+        extern const char * const barrier__name__;
+        extern const char * const barrier__doc__;
+        PyObject * barrier(PyObject *, PyObject *);
+    } // of namespace communicator
 
-            // set a communicator barrier (MPI_Barrier)
-            extern const char * const communicatorBarrier__name__;
-            extern const char * const communicatorBarrier__doc__;
-            PyObject * communicatorBarrier(PyObject *, PyObject *);
+    namespace cartesian {
+        // create a cartesian communicator (MPI_Cart_create)
+        extern const char * const create__name__;
+        extern const char * const create__doc__;
+        PyObject * create(PyObject *, PyObject *);
 
-            // create a cartesian communicator (MPI_Cart_create)
-            extern const char * const communicatorCreateCartesian__name__;
-            extern const char * const communicatorCreateCartesian__doc__;
-            PyObject * communicatorCreateCartesian(PyObject *, PyObject *);
+        // return the coordinates of the process in the cartesian communicator (MPI_Cart_coords)
+        extern const char * const coordinates__name__;
+        extern const char * const coordinates__doc__;
+        PyObject * coordinates(PyObject *, PyObject *);
+    } // of namespace cartesian
 
-            // return the coordinates of the process in the cartesian communicator (MPI_Cart_coords)
-            extern const char * const communicatorCartesianCoordinates__name__;
-            extern const char * const communicatorCartesianCoordinates__doc__;
-            PyObject * communicatorCartesianCoordinates(PyObject *, PyObject *);
-
-        } // of namespace mpi
-    } // of namespace extensions
-} // of namespace pyre
+} // of namespace mpi
 
 #endif
 

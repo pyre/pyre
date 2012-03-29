@@ -12,7 +12,6 @@
 #include <pyre/mpi.h>
 
 // the module method declarations
-#include "constants.h"
 #include "communicators.h"
 #include "exceptions.h"
 #include "groups.h"
@@ -22,81 +21,73 @@
 
 
 // put everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace mpi {
+namespace mpi {
 
-            // the module method table
-            PyMethodDef module_methods[] = {
-                // module metadata
-                // the copyright method
-                { copyright__name__, copyright, METH_VARARGS, copyright__doc__ },
-                // the version
-                { version__name__, version, METH_VARARGS, version__doc__ },
+    // the module method table
+    PyMethodDef module_methods[] = {
+        // module metadata
+        // the copyright method
+        { copyright__name__, copyright, METH_VARARGS, copyright__doc__ },
+        // the version
+        { version__name__, version, METH_VARARGS, version__doc__ },
 
-                // init-fini
-                { initialize__name__, initialize, METH_VARARGS, initialize__doc__ },
-                { finalize__name__, finalize, METH_VARARGS, finalize__doc__ },
+        // init-fini
+        { initialize__name__, initialize, METH_VARARGS, initialize__doc__ },
+        { finalize__name__, finalize, METH_VARARGS, finalize__doc__ },
         
-                // communicators
-                { communicatorCreate__name__, 
-                  communicatorCreate, METH_VARARGS, communicatorCreate__doc__ },
-                { communicatorSize__name__, 
-                  communicatorSize, METH_VARARGS, communicatorSize__doc__ },
-                { communicatorRank__name__, 
-                  communicatorRank, METH_VARARGS, communicatorRank__doc__ },
-                { communicatorBarrier__name__, 
-                  communicatorBarrier, METH_VARARGS, communicatorBarrier__doc__ },
-                { communicatorCreateCartesian__name__, 
-                  communicatorCreateCartesian, METH_VARARGS, communicatorCreateCartesian__doc__ },
-                { communicatorCartesianCoordinates__name__, 
-                  communicatorCartesianCoordinates, METH_VARARGS, 
-                  communicatorCartesianCoordinates__doc__ },
+        // communicators
+        { communicator::create__name__, 
+          communicator::create, METH_VARARGS, communicator::create__doc__ },
+        { communicator::size__name__, 
+          communicator::size, METH_VARARGS, communicator::size__doc__ },
+        { communicator::rank__name__, 
+          communicator::rank, METH_VARARGS, communicator::rank__doc__ },
+        { communicator::barrier__name__, 
+          communicator::barrier, METH_VARARGS, communicator::barrier__doc__ },
 
-                // groups
-                { groupIsEmpty__name__, groupIsEmpty, METH_VARARGS, groupIsEmpty__doc__ },
-                { groupCreate__name__, groupCreate, METH_VARARGS, groupCreate__doc__ },
-                { groupSize__name__, groupSize, METH_VARARGS, groupSize__doc__ },
-                { groupRank__name__, groupRank, METH_VARARGS, groupRank__doc__ },
-                { groupInclude__name__, groupInclude, METH_VARARGS, groupInclude__doc__ },
-                { groupExclude__name__, groupExclude, METH_VARARGS, groupExclude__doc__ },
+        { cartesian::create__name__, cartesian::create, METH_VARARGS, cartesian::create__doc__ },
+        { cartesian::coordinates__name__, cartesian::coordinates, METH_VARARGS, 
+          cartesian::coordinates__doc__ },
+        
+        // groups
+        { group::isEmpty__name__, group::isEmpty, METH_VARARGS, group::isEmpty__doc__ },
+        { group::create__name__, group::create, METH_VARARGS, group::create__doc__ },
+        { group::size__name__, group::size, METH_VARARGS, group::size__doc__ },
+        { group::rank__name__, group::rank, METH_VARARGS, group::rank__doc__ },
+        { group::include__name__, group::include, METH_VARARGS, group::include__doc__ },
+        { group::exclude__name__, group::exclude, METH_VARARGS, group::exclude__doc__ },
+        { group::add__name__, group::add, METH_VARARGS, group::add__doc__ },
+        { group::subtract__name__, group::subtract, METH_VARARGS, group::subtract__doc__ },
+        { group::intersect__name__, group::intersect, METH_VARARGS, group::intersect__doc__ },
+        
+        // ports
+        { port::sendString__name__, port::sendString, METH_VARARGS, port::sendString__doc__ },
+        { port::receiveString__name__, port::receiveString, METH_VARARGS,
+          port::receiveString__doc__ },
+        
+        // sentinel
+        {0, 0, 0, 0}
+    };
+    
+    // the module documentation string
+    const char * const __doc__ = "access to the MPI interface";
 
-                { groupUnion__name__, groupUnion, METH_VARARGS, groupUnion__doc__ },
-                { groupIntersection__name__, 
-                  groupIntersection, METH_VARARGS, groupIntersection__doc__ },
-                { groupDifference__name__, groupDifference, METH_VARARGS, groupDifference__doc__ },
+    // the module definition structure
+    PyModuleDef module_definition = {
+        // header
+        PyModuleDef_HEAD_INIT,
+        // the name of the module
+        "mpi", 
+        // the module documentation string
+        __doc__,
+        // size of the per-interpreter state of the module; -1 if this state is global
+        -1,
+        // the methods defined in this module
+        module_methods
+    };
 
-                // ports
-                { sendString__name__, sendString, METH_VARARGS, sendString__doc__ },
-                { receiveString__name__, receiveString, METH_VARARGS, receiveString__doc__ },
+} // of namespace mpi
 
-                // sentinel
-                {0, 0, 0, 0}
-            };
-
-            // the module documentation string
-            const char * const __doc__ = "sample module documentation string";
-
-            // the module definition structure
-            PyModuleDef module_definition = {
-                // header
-                PyModuleDef_HEAD_INIT,
-                // the name of the module
-                "mpi", 
-                // the module documentation string
-                __doc__,
-                // size of the per-interpreter state of the module; -1 if this state is global
-                -1,
-                // the methods defined in this module
-                module_methods
-            };
-
-        } // of namespace mpi
-    } // of namespace extensions
-} // of namespace pyre
-
-
-using namespace pyre::extensions::mpi;
 
 // initialization function for the module
 // *must* be called PyInit_mpi
@@ -104,22 +95,21 @@ PyMODINIT_FUNC
 PyInit_mpi()
 {
     // create the module
-    PyObject * module = PyModule_Create(&pyre::extensions::mpi::module_definition);
+    PyObject * module = PyModule_Create(&mpi::module_definition);
     // check whether module creation succeeded and raise an exception if not
     if (!module) {
         return 0;
     }
     // otherwise, we have an initialized module
-    pyre::extensions::mpi::registerExceptionHierarchy(module);
+    mpi::registerExceptionHierarchy(module);
 
     // initialize MPI
-    if (!pyre::extensions::mpi::initialize(0, 0)) {
+    if (!mpi::initialize(0, 0)) {
         return 0;
     }
 
     // add the world communicator
-    PyModule_AddObject(module, "world", worldCommunicator);
-
+    PyModule_AddObject(module, "world", mpi::communicator::world);
     // constants
     PyModule_AddObject(module, "undefined", PyLong_FromLong(MPI_UNDEFINED));
 

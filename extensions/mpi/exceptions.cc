@@ -15,13 +15,11 @@
 
 
 // the definition of the exception class
-PyObject * pyre::extensions::mpi::Error = 0;
-const char * const pyre::extensions::mpi::Error__name__ = "Error";
+PyObject * mpi::Error = 0;
+const char * const mpi::Error__name__ = "Error";
 
 // exception registration
-PyObject * 
-pyre::extensions::mpi::
-registerExceptionHierarchy(PyObject * module) {
+PyObject * mpi::registerExceptionHierarchy(PyObject * module) {
 
     std::string stem = "mpi.";
 

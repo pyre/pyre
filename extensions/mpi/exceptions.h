@@ -10,20 +10,16 @@
 
 
 // place everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace mpi {
+namespace mpi {
 
-            // exception registration
-            PyObject * registerExceptionHierarchy(PyObject *);
+    // exception registration
+    PyObject * registerExceptionHierarchy(PyObject *);
 
-            // base class for mpi errors
-            extern PyObject * Error;
-            extern const char * const Error__name__;
+    // base class for mpi errors
+    extern PyObject * Error;
+    extern const char * const Error__name__;
 
-        } // of namespace mpi
-    } // of namespace extensions
-} // of namespace pyre
+} // of namespace mpi
 
 #endif
 

@@ -10,23 +10,19 @@
 
 
 // place everything in my private namespace
-namespace pyre {
-    namespace extensions {
-        namespace mpi {
+namespace mpi {
 
-            // copyright note
-            extern const char * const copyright__name__;
-            extern const char * const copyright__doc__;
-            PyObject * copyright(PyObject *, PyObject *);
+    // copyright note
+    extern const char * const copyright__name__;
+    extern const char * const copyright__doc__;
+    PyObject * copyright(PyObject *, PyObject *);
 
-            // version
-            extern const char * const version__name__;
-            extern const char * const version__doc__;
-            PyObject * version(PyObject *, PyObject *);
+    // version
+    extern const char * const version__name__;
+    extern const char * const version__doc__;
+    PyObject * version(PyObject *, PyObject *);
 
-        } // of namespace mpi
-    } // of namespace extensions
-} // of namespace pyre
+} // of namespace mpi
 
 #endif
 
