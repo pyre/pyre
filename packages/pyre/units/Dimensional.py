@@ -331,7 +331,14 @@ class Dimensional:
         """
         Conversion to str
         """
-        return str(self.value) + '*' + self._strDerivation()
+        # render my derivation
+        derivation = self._strDerivation()
+        # if I have units
+        if derivation:
+            # render my value and my derivation
+            return str(self.value) + '*' + self._strDerivation()
+        # otherwise, I am dimensionless do just render my value
+        return str(self.value)
 
 
     def __format__(self, code):
@@ -380,7 +387,11 @@ class Dimensional:
             p = parser()
             # make the conversion
             base = p.parse(base)
-        # decide which representation of multiplication to use
+        # if the dimensions label is empty
+        if not label:
+            # render my value
+            return format(self/base, value)
+        # otherwise, decide which representation of multiplication to use
         op = ' ' if pretty else '*'
         # build the string and return it
         return format(self/base, value) + op + label
