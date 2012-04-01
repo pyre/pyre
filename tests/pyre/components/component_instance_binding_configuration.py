@@ -49,13 +49,12 @@ def test():
     # instantiate the worker
     w = worker(name="w")
     assert w.host == "pyre.caltech.edu"
-    # bind the two, which should cause some extra configuration of {w}
-    # now that it is bound to {c.task}
+    # bind the two; verify that that {w} retained its configuration as a result of the assignment
     c.gopher = w
-    # check that the binding caused the transfer of configuration settings
+    # check that the binding left {w} untouched
     assert c.gopher == w
     assert c.gopher.pyre_name == "w"
-    assert c.gopher.host == "foxtrot.caltech.edu"
+    assert c.gopher.host == "pyre.caltech.edu"
 
     return c
 
