@@ -77,6 +77,7 @@ try:
     # so they all report unresolved symbols; the temporary fix is to change the way python
     # dlopens our extension module so the mpi symbols go to the global namespace, where the
     # pluggins will be able to find them. hopefully, the openmpi people will fix this soon
+    # LAST CHECKED: 20110525, revision 747
     import sys
     if sys.platform == 'linux2':
         # that's where the stupid flag value lives...
@@ -99,20 +100,20 @@ else:
     import atexit
     atexit.register(mpi.finalize)
 
-    # access the communicator wrapper
+    # provide access to the extension through the base mpi object
+    from .Object import Object
+    Object.mpi = mpi
+    # the communicator factory
     from .Communicator import Communicator as communicator
-    # build world
-    world = communicator(mpi.world)
-    # set the number of processes
-    processes = world.size
-
-    # access the group wrapper
+    # the group factory
     from .Group import Group as group
-    # attach the constants
-    group.undefined = mpi.undefined
+    # the port factory
+    from .Port import Port as port
 
     # the default shell
     from .Launcher import Launcher as mpirun
 
+    # build the world communicator
+    world = communicator(mpi.world)
 
 # end of file 

@@ -61,9 +61,10 @@ namespace mpi {
         { group::intersect__name__, group::intersect, METH_VARARGS, group::intersect__doc__ },
         
         // ports
+        { port::sendBytes__name__, port::sendBytes, METH_VARARGS, port::sendBytes__doc__ },
+        { port::recvBytes__name__, port::recvBytes, METH_VARARGS, port::recvBytes__doc__ },
         { port::sendString__name__, port::sendString, METH_VARARGS, port::sendString__doc__ },
-        { port::receiveString__name__, port::receiveString, METH_VARARGS,
-          port::receiveString__doc__ },
+        { port::recvString__name__, port::recvString, METH_VARARGS, port::recvString__doc__ },
         
         // sentinel
         {0, 0, 0, 0}
@@ -110,8 +111,11 @@ PyInit_mpi()
 
     // add the world communicator
     PyModule_AddObject(module, "world", mpi::communicator::world);
-    // constants
+
+    // add some constants
     PyModule_AddObject(module, "undefined", PyLong_FromLong(MPI_UNDEFINED));
+    PyModule_AddObject(module, "any_tag", PyLong_FromLong(MPI_ANY_TAG));
+    PyModule_AddObject(module, "any_source", PyLong_FromLong(MPI_ANY_SOURCE));
 
     // and return the newly created module
     return module;

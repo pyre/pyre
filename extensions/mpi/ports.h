@@ -12,15 +12,25 @@
 namespace mpi {
     namespace port {
 
+        // send bytes
+        extern const char * const sendBytes__name__;
+        extern const char * const sendBytes__doc__;
+        PyObject * sendBytes(PyObject *, PyObject *);
+
+        // receive bytes
+        extern const char * const recvBytes__name__;
+        extern const char * const recvBytes__doc__;
+        PyObject * recvBytes(PyObject *, PyObject *);
+
         // send a string
         extern const char * const sendString__name__;
         extern const char * const sendString__doc__;
         PyObject * sendString(PyObject *, PyObject *);
 
         // receive a string
-        extern const char * const receiveString__name__;
-        extern const char * const receiveString__doc__;
-        PyObject * receiveString(PyObject *, PyObject *);
+        extern const char * const recvString__name__;
+        extern const char * const recvString__doc__;
+        PyObject * recvString(PyObject *, PyObject *);
 
     } // of namespace port
 } // of namespace mpi

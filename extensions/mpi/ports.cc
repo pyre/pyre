@@ -6,6 +6,7 @@
 // 
 
 #include <portinfo>
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <pyre/mpi.h>
 
@@ -15,17 +16,130 @@
 #include "ports.h"
 #include "exceptions.h"
 
+// send bytes
+const char * const mpi::port::sendBytes__name__ = "sendBytes";
+const char * const mpi::port::sendBytes__doc__ = "send bytes to a peer";
+
+PyObject * mpi::port::sendBytes(PyObject *, PyObject * args)
+{
+    // placeholder for the arguments
+    int tag;
+    int peer;
+    char * str;
+    Py_ssize_t len;
+    PyObject * py_comm;
+
+    // extract the arguments from the tuple
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iiy#:sendBytes",
+                          &PyCapsule_Type, &py_comm,
+                          &peer, &tag,
+                          &str, &len)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of communicator capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+
+    // convert into the pyre::mpi object
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // dump arguments
+    pyre::journal::debug_t info("mpi.ports");
+    info
+        << pyre::journal::at(__HERE__)
+        << "peer={" << peer
+        << "}, tag={" << tag
+        << "}, bytes={" << len << "} at " << (void *)str
+        << pyre::journal::endl;
+
+    // send the data
+    MPI_Send(str, len, MPI_BYTE, peer, tag, comm->handle());
+
+    // return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// receive bytes
+const char * const mpi::port::recvBytes__name__ = "recvBytes";
+const char * const mpi::port::recvBytes__doc__ = "receive bytes from a peer";
+
+PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
+{
+    // placeholders for the arguments
+    int tag;
+    int peer;
+    PyObject * py_comm;
+
+    // extract the arguments from the tuple
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!ii:recvBytes",
+                          &PyCapsule_Type, &py_comm,
+                          &peer, &tag)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of communicator capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+
+    // convert into the pyre::mpi object
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // block until an appropriate message has arrived
+    MPI_Status status;
+    MPI_Probe(peer, tag, comm->handle(), &status);
+    // get the size of the message, including the terminating null
+    int len;
+    MPI_Get_count(&status, MPI_BYTE, &len);
+    // allocate a buffer
+    char * str = new char[len];
+    // receive the data
+    MPI_Recv(str, len, MPI_BYTE, peer, tag, comm->handle(), &status);
+
+    // dump message
+    pyre::journal::debug_t info("mpi.ports");
+    info
+        << pyre::journal::at(__HERE__)
+        << "peer={" << peer
+        << "}, tag={" << tag
+        << "}, bytes={" << len << "} at " << (void *)str
+        << pyre::journal::endl;
+
+    // build the return value
+    PyObject * value = Py_BuildValue("y#", str, len);
+
+    // clean up
+    delete [] str;
+
+    // return
+    return value;
+}
+
 // send a string
 const char * const mpi::port::sendString__name__ = "sendString";
-const char * const mpi::port::sendString__doc__ = "send a string to another process";
+const char * const mpi::port::sendString__doc__ = "send a string to a peer";
 
 PyObject * mpi::port::sendString(PyObject *, PyObject * args)
 {
     // placeholder for the arguments
     int tag;
-    int len;
     int peer;
     char * str;
+    Py_ssize_t len;
     PyObject * py_comm;
 
     // extract the arguments from the tuple
@@ -58,11 +172,8 @@ PyObject * mpi::port::sendString(PyObject *, PyObject * args)
         << "}, string={" << str << "}@" << len
         << pyre::journal::endl;
 
-    // send the length of the string
-    int status = MPI_Send(&len, 1, MPI_INT, peer, tag, comm->handle());
-
     // send the data (along with the terminating null)
-    status = MPI_Send(str, len+1, MPI_CHAR, peer, tag, comm->handle());
+    MPI_Send(str, len+1, MPI_CHAR, peer, tag, comm->handle());
 
     // return
     Py_INCREF(Py_None);
@@ -71,10 +182,10 @@ PyObject * mpi::port::sendString(PyObject *, PyObject * args)
 
 
 // receive a string
-const char * const mpi::port::receiveString__doc__ = "";
-const char * const mpi::port::receiveString__name__ = "receiveString";
+const char * const mpi::port::recvString__name__ = "recvString";
+const char * const mpi::port::recvString__doc__ = "receive a string from a peer";
 
-PyObject * mpi::port::receiveString(PyObject *, PyObject * args)
+PyObject * mpi::port::recvString(PyObject *, PyObject * args)
 {
     // placeholders for the arguments
     int tag;
@@ -84,7 +195,7 @@ PyObject * mpi::port::receiveString(PyObject *, PyObject * args)
     // extract the arguments from the tuple
     if (!PyArg_ParseTuple(
                           args,
-                          "O!ii:receiveString",
+                          "O!ii:recvString",
                           &PyCapsule_Type, &py_comm,
                           &peer, &tag)) {
         return 0;
@@ -101,14 +212,16 @@ PyObject * mpi::port::receiveString(PyObject *, PyObject * args)
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
-    // receive the length
-    int len;
+    // block until an appropriate message has arrived
     MPI_Status status;
-    MPI_Recv(&len, 1, MPI_INT, peer, tag, comm->handle(), &status);
-
+    MPI_Probe(peer, tag, comm->handle(), &status);
+    // get the size of the message, including the terminating null
+    int len;
+    MPI_Get_count(&status, MPI_CHAR, &len);
+    // allocate a buffer
+    char * str = new char[len];
     // receive the data
-    char * str = new char[len+1];
-    MPI_Recv(str, len+1, MPI_CHAR, peer, tag, comm->handle(), &status);
+    MPI_Recv(str, len, MPI_CHAR, peer, tag, comm->handle(), &status);
 
     // dump message
     pyre::journal::debug_t info("mpi.ports");

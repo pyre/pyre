@@ -24,19 +24,19 @@ class Cartesian(Communicator):
 
 
     # meta methods
-    def __init__(self, handle, axes, periods, reorder, **kwds):
-        # build the handle of the Cartesian communicator
-        cartesian = self.mpi.communicatorCreateCartesian(handle, reorder, axes, periods)
+    def __init__(self, capsule, axes, periods, reorder, **kwds):
+        # build the capsule of the Cartesian communicator
+        cartesian = self.mpi.communicatorCreateCartesian(capsule, reorder, axes, periods)
 
         # chain to my ancestors
-        super().__init__(handle=cartesian, **kwds)
+        super().__init__(capsule=cartesian, **kwds)
 
         # save the rest
         self.axes = axes
         self.periods = periods
         # get my coördinates
         self.coordinates = self.mpi.communicatorCartesianCoordinates(
-            self._handle, self.rank, len(axes))
+            self.capsule, self.rank, len(axes))
 
         # all done
         return

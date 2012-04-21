@@ -17,6 +17,10 @@ class Communicator(Object):
     """
 
 
+    # types 
+    from .Port import Port
+
+
     # per-instance public data
     rank = 0
     size = 1
@@ -31,12 +35,12 @@ class Communicator(Object):
         mine = self.group()
         # create a new group out of {processes}
         group = mine.include(tuple(processes))
-        # use it to build a new communicator handle
-        handle = self.mpi.communicatorCreate(self._handle, group._handle)
+        # use it to build a new communicator capsule
+        capsule = self.mpi.communicatorCreate(self.capsule, group.capsule)
         # if successful
-        if handle is not None:
+        if capsule is not None:
             # wrap it and return it
-            return Communicator(handle=handle)
+            return Communicator(capsule=capsule)
         # otherwise
         return None
         
@@ -47,12 +51,12 @@ class Communicator(Object):
         """
         # create a new group out of the processes not in {processes}
         group = self.group().exclude(tuple(processes))
-        # use it to build a new communicator handle
-        handle = self.mpi.communicatorCreate(self._handle, group._handle)
+        # use it to build a new communicator capsule
+        capsule = self.mpi.communicatorCreate(self.capsule, group.capsule)
         # if successful
-        if handle is not None:
+        if capsule is not None:
             # wrap it and return it
-            return Communicator(handle=handle)
+            return Communicator(capsule=capsule)
         # otherwise
         return None
 
@@ -64,7 +68,7 @@ class Communicator(Object):
         # access the factory
         from .Cartesian import Cartesian
         # build one and return it
-        return Cartesian(handle=self._handle, axes=axes, periods=periods, reorder=reorder)
+        return Cartesian(capsule=self.capsule, axes=axes, periods=periods, reorder=reorder)
         
 
     # interface
@@ -74,33 +78,31 @@ class Communicator(Object):
         method, and they all block until the last one makes the call
         """
         # invoke the low level routine
-        return self.mpi.communicatorBarrier(self._handle)
+        return self.mpi.communicatorBarrier(self.capsule)
 
 
     def group(self):
         """
         Build a group that contains all my processes
         """
-        # create a new group handle out of my processes
-        handle = self.mpi.groupCreate(self._handle)
+        # create a new group capsule out of my processes
+        capsule = self.mpi.groupCreate(self.capsule)
         # wrap it up and return it
         from .Group import Group
-        return Group(handle)
+        return Group(capsule)
 
 
-    def port(self, peer, tag):
+    def port(self, peer, tag=Port.tag):
         """
         Establish a point-to-point communication conduit with {peer}; all messages sent through
         this port will be tagged with {tag}
         """
-        # access the factory
-        from .Port import Port
         # make a port and return it
-        return Port(communicator=self, peer=peer, tag=tag)
+        return self.Port(peer=peer, tag=tag, communicator=self)
 
 
     # meta methods
-    def __init__(self, handle, **kwds):
+    def __init__(self, capsule, **kwds):
         """
         This constructor is not public, and it is unlikely to be useful to you. To make
         communicators, access the predefined {world} communicator in the {mpi} package and use
@@ -110,16 +112,16 @@ class Communicator(Object):
         super().__init__(**kwds)
 
         # set the per-instance variables
-        self._handle = handle
-        self.rank = self.mpi.communicatorRank(handle)
-        self.size = self.mpi.communicatorSize(handle)
+        self.capsule = capsule
+        self.rank = self.mpi.communicatorRank(capsule)
+        self.size = self.mpi.communicatorSize(capsule)
 
         # all done
         return
 
 
     # implementation details
-    _handle = None
+    capsule = None
 
 
 # end of file 

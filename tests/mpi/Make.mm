@@ -27,6 +27,7 @@ package:
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_include.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_exclude.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_setops.py
+	${MPI_EXECUTIVE} -np 2 ${PYTHON} ./port.py
 
 launch:
 	${PYTHON} ./launch.py

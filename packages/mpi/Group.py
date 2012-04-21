@@ -17,7 +17,7 @@ class Group(Object):
     """
 
     # class level public data
-    undefined = None # patched by the bootstrapping code with the value from the extension module
+    undefined = Object.mpi.undefined
 
 
     # per-instance public data
@@ -30,7 +30,7 @@ class Group(Object):
         """
         Check whether i am an empty group
         """
-        return self.mpi.groupIsEmpty(self._handle)
+        return self.mpi.groupIsEmpty(self.capsule)
 
 
     # building groups using explicit ranklists
@@ -38,12 +38,12 @@ class Group(Object):
         """
         Build a group out of the processes in {included}
         """
-        # build a new group handle
-        handle = self.mpi.groupInclude(self._handle, tuple(included))
+        # build a new group capsule
+        capsule = self.mpi.groupInclude(self.capsule, tuple(included))
         # check whether it is a valid group
-        if handle:
+        if capsule:
             # wrap it and return it
-            return Group(handle=handle)
+            return Group(capsule=capsule)
         # otherwise return an invalid group
         return None
 
@@ -52,12 +52,12 @@ class Group(Object):
         """
         Build a group out of all processes except those in {excluded}
         """
-        # build a new group handle
-        handle = self.mpi.groupExclude(self._handle, tuple(excluded))
+        # build a new group capsule
+        capsule = self.mpi.groupExclude(self.capsule, tuple(excluded))
         # check whether it is a valid group
-        if handle:
+        if capsule:
             # wrap it and return it
-            return Group(handle=handle)
+            return Group(capsule=capsule)
         # otherwise return an invalid group
         return None
 
@@ -67,12 +67,12 @@ class Group(Object):
         """
         Build a new group whose processes are the union of mine and {g}'s
         """
-        # build the new group handle
-        handle = self.mpi.groupUnion(self._handle, g._handle)
+        # build the new group capsule
+        capsule = self.mpi.groupUnion(self.capsule, g.capsule)
         # check whether it is a valid group
-        if handle:
+        if capsule:
             # wrap it and return it
-            return Group(handle=handle)
+            return Group(capsule=capsule)
         # otherwise
         return None
 
@@ -81,12 +81,12 @@ class Group(Object):
         """
         Build a new group whose processes are the intersection of mine and {g}'s
         """
-        # build the new group handle
-        handle = self.mpi.groupIntersection(self._handle, g._handle)
+        # build the new group capsule
+        capsule = self.mpi.groupIntersection(self.capsule, g.capsule)
         # check whether it is a valid group
-        if handle:
+        if capsule:
             # wrap it and return it
-            return Group(handle=handle)
+            return Group(capsule=capsule)
         # otherwise
         return None
 
@@ -95,33 +95,33 @@ class Group(Object):
         """
         Build a new group whose processes are the difference of mine and {g}'s
         """
-        # build the new group handle
-        handle = self.mpi.groupDifference(self._handle, g._handle)
+        # build the new group capsule
+        capsule = self.mpi.groupDifference(self.capsule, g.capsule)
         # check whether it is a valid group
-        if handle:
+        if capsule:
             # wrap it and return it
-            return Group(handle=handle)
+            return Group(capsule=capsule)
         # otherwise
         return None
 
 
     # meta methods
-    def __init__(self, handle, **kwds):
+    def __init__(self, capsule, **kwds):
         # chain to my ancestors
         super().__init__(**kwds)
 
         # store my attributes
-        self._handle = handle
+        self.capsule = capsule
         # and precompute my rank and size
-        self.rank = self.mpi.groupRank(handle)
-        self.size = self.mpi.groupSize(handle)
+        self.rank = self.mpi.groupRank(capsule)
+        self.size = self.mpi.groupSize(capsule)
 
         # all done
         return
 
 
     # implementation details
-    _handle = None
+    capsule = None
 
 
 # end of file 

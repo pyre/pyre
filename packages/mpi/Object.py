@@ -13,7 +13,7 @@ class Object:
     """
 
     # per-class public data
-    from . import mpi # access to the extension module
+    mpi = None # access to the extension module; patched by the package bootstrapping code
 
 
 # end of file 
