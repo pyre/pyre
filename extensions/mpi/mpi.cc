@@ -44,6 +44,8 @@ namespace mpi {
           communicator::rank, METH_VARARGS, communicator::rank__doc__ },
         { communicator::barrier__name__, 
           communicator::barrier, METH_VARARGS, communicator::barrier__doc__ },
+        { communicator::bcast__name__, 
+          communicator::bcast, METH_VARARGS, communicator::bcast__doc__ },
 
         { cartesian::create__name__, cartesian::create, METH_VARARGS, cartesian::create__doc__ },
         { cartesian::coordinates__name__, cartesian::coordinates, METH_VARARGS, 

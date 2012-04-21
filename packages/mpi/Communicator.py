@@ -6,6 +6,9 @@
 #
 
 
+# externals
+import pickle
+
 # base classes
 from .Object import Object
 
@@ -99,6 +102,19 @@ class Communicator(Object):
         """
         # make a port and return it
         return self.Port(peer=peer, tag=tag, communicator=self)
+
+
+    # communications
+    def bcast(self, item=None, root=0):
+        """
+        Broadcast {item} from {root} to every task; only {root} has to pass an {item}
+        """
+        # if I am the root, pickle the {item}
+        data = pickle.dumps(item) if self.rank == root else bytes()
+        # broadcast the data buffer
+        data = self.mpi.bcast(self.capsule, self.rank, root, data)
+        # extract the item and return it
+        return pickle.loads(data)
 
 
     # meta methods

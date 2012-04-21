@@ -6,6 +6,7 @@
 //
 
 #include <portinfo>
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 #include <pyre/mpi.h>
@@ -316,6 +317,70 @@ PyObject * mpi::cartesian::coordinates(PyObject *, PyObject * args)
     }
 
     // and return
+    return value;
+}
+
+
+// broadcast a python object to all tasks
+const char * const
+mpi::communicator::
+bcast__name__ = "bcast";
+
+const char * const 
+mpi::communicator::
+bcast__doc__ = "broadcast a python object to all tasks";
+
+PyObject * mpi::communicator::bcast(PyObject *, PyObject * args)
+{
+    // place holders
+    int rank, root;
+    char * data;
+    Py_ssize_t len;
+    PyObject * py_comm;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iiy#:bcast",
+                          &PyCapsule_Type, &py_comm,
+                          &rank, &root,
+                          &data, &len)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+
+    // trying to stay Py_ssize_t clean...
+    int size = len;
+    // broadcast the length of the data buffer
+    MPI_Bcast(&size, 1, MPI_INT, root, comm->handle());
+    // trying to stay Py_ssize_t clean...
+    len = size;
+    // everybody except {root}
+    if (rank != root) {
+        // must allocate space to receive the data
+        data = new char[len];
+    }
+    // broadcast the data
+    MPI_Bcast(data, len, MPI_BYTE, root, comm->handle());
+
+    // build the return value
+    PyObject * value = Py_BuildValue("y#", data, len);
+    // everybody except {root}
+    if (rank != root) {
+        // must clean up
+        delete [] data;
+    }
+    // all done
     return value;
 }
 

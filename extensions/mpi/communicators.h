@@ -36,6 +36,12 @@ namespace mpi {
         extern const char * const barrier__name__;
         extern const char * const barrier__doc__;
         PyObject * barrier(PyObject *, PyObject *);
+
+        // broadcast a python object to all tasks
+        extern const char * const bcast__name__;
+        extern const char * const bcast__doc__;
+        PyObject * bcast(PyObject *, PyObject *);
+
     } // of namespace communicator
 
     namespace cartesian {

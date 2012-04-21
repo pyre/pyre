@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity package launch
+test: sanity groups communications launch
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -22,11 +22,14 @@ sanity:
 	${PYTHON} ./world.py
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./world.py
 
-package:
+groups:
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./group.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_include.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_exclude.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_setops.py
+
+communications:
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./bcast.py
 	${MPI_EXECUTIVE} -np 2 ${PYTHON} ./port.py
 
 launch:
