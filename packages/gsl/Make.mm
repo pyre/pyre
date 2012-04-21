@@ -27,6 +27,7 @@ EXPORT_PYTHON_MODULES = \
     blas.py \
     linalg.py \
     pdf.py \
+    exceptions.py \
     __init__.py
 
 
