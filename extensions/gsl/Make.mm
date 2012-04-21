@@ -12,6 +12,7 @@ MODULE = gsl
 include gsl/default.def
 include std-pythonmodule.def
 
+PROJ_INCDIR = $(BLD_INCDIR)/pyre/$(PROJECT)
 PROJ_TMPDIR = $(BLD_TMPDIR)/extensions/$(PROJECT)
 PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
 EXTERNAL_LIBS += -ljournal
@@ -27,5 +28,11 @@ PROJ_SRCS = \
     permutation.cc \
     rng.cc \
     vector.cc \
+
+
+export:: export-headers
+
+EXPORT_HEADERS = \
+    capsules.h
 
 # end of file

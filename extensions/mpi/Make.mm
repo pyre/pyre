@@ -11,6 +11,7 @@ MODULE = mpi
 
 include std-pythonmodule.def
 
+PROJ_INCDIR = $(BLD_INCDIR)/pyre/$(PROJECT)
 PROJ_TMPDIR = $(BLD_TMPDIR)/extensions/$(PROJECT)
 PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
 EXTERNAL_LIBS += -ljournal
@@ -22,5 +23,10 @@ PROJ_SRCS = \
     metadata.cc \
     ports.cc \
     startup.cc
+
+export:: export-headers
+
+EXPORT_HEADERS = \
+    capsules.h
 
 # end of file
