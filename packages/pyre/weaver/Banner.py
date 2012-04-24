@@ -14,7 +14,7 @@ import pyre
 from .Stationery import Stationery
 
 
-class Banner(pyre.component, family="pyre.weaver.banner", implements=Stationery):
+class Banner(pyre.component, family="pyre.weaver.layouts.banner", implements=Stationery):
     """
     The base component for content generation
     """

@@ -36,6 +36,7 @@ class Stationery(pyre.interface, family="pyre.weaver.layouts"):
     footer = pyre.properties.str()
     footer.doc = "the marker to drop at the bottom of the document"
 
+
     # utilities
     @classmethod
     def default(cls):
