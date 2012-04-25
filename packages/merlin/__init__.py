@@ -127,6 +127,15 @@ from .components import export, properties, component, interface
 
 # bootstrapping
 def boot():
+    # check whether the user has indicated we should skip booting
+    try:
+        import __main__
+        if __main__.merlin_noboot: return None
+    # if anything goes wrong
+    except:
+        # just ignore it and carry on
+        pass
+
     # externals
     import weakref
     # access the executive factory
@@ -141,9 +150,6 @@ def boot():
     # and return it
     return executive
     
-
-# the singleton
-merlin = boot()
 
 # factories
 # for spells
@@ -176,5 +182,8 @@ def renderer():
     # plain text, by default
     return text
 
+
+# the singleton
+merlin = boot()
 
 # end of file 
