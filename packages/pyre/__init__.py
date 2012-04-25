@@ -146,10 +146,13 @@ def boot():
     if major < 3 and minor < 1:
         raise PyreError(description="pyre needs python 3.1 or newer")
 
-    import __main__
+    # check whether the user has indicated we should skip booting
     try:
+        import __main__
         if __main__.pyre_noboot: return None
+    # if anything goes wrong
     except:
+        # just ignore it and carry on
         pass
 
     # force the creation of the executive singleton
