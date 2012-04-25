@@ -8,12 +8,14 @@
 
 # access to the framework
 import pyre
-# access to the shell interface
+# my metaclass
+from .Director import Director
+# access to the local interfaces
 from .Shell import Shell
 
 
 # declaration
-class Application(pyre.component):
+class Application(pyre.component, metaclass=Director):
     """
     Abstract base class for top-level application components
 
@@ -22,21 +24,26 @@ class Application(pyre.component):
     filesystem, configuring the help system, and supplying the main behavior.
     """
 
+
+    # constants 
+    # the default name for pyre applications; subclasses are expected to provide a more
+    # reasonable value, which gets used to load per-instance configuration right before the
+    # application itself is instantiated
+    applicationName = 'pyreapp' 
+
     # public state
     shell = pyre.facility(interface=Shell)
-
 
     # per-instance public data
     pfs = None # the root of my private filesystem
 
-
+    # properties
     @property
     def executive(self):
         """
         Provide access to the pyre executive
         """
         return self.pyre_executive
-
 
     @property
     def vfs(self):

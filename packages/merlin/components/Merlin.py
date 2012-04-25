@@ -10,10 +10,6 @@
 import pyre
 
 
-# constants
-MERLIN = "merlin"
-
-
 class Merlin(pyre.application):
     """
     The merlin executive
@@ -21,7 +17,8 @@ class Merlin(pyre.application):
 
 
     # constants
-    merlinFolder = "." + MERLIN
+    applicationName = "merlin"
+    merlinFolder = "." + applicationName
 
 
     # types
@@ -139,7 +136,7 @@ class Merlin(pyre.application):
         # access the file server
         fileserver = self.pyre_executive.fileserver
         # build the address where the project {.merlin} directory will be mounted
-        vpath = fileserver.join(MERLIN, "project")
+        vpath = fileserver.join(self.applicationName, "project")
         # is it already there?
         try:
             folder = fileserver[vpath]
@@ -173,11 +170,12 @@ class Merlin(pyre.application):
         """
         Hook invoked during the resolution of component names into descriptors.
 
-        merlin iterates through the each of the standard places, asking a {context} specific
+        Merlin iterates through each of the standard places, asking a {context} specific
         sub-component for assistance in retrieving candidate shelves from the filesystem.
         """
+        print("Merlin.pyre_componentSearchPath: context={}".format(context))
         # the first part is my tag
-        assert context[0] == MERLIN
+        assert context[0] == self.applicationName
         # if there is only one fragment
         if len(context) == 1:
             # there is nothing to do
@@ -196,7 +194,7 @@ class Merlin(pyre.application):
         vfs = self.vfs
         # iterate over the standard locations
         for root in self.configpath:
-            # form the name of category sub folder
+            # form the name of category sub-folder
             location = vfs.join(root, category)
             # and look for it
             try:
@@ -215,7 +213,7 @@ class Merlin(pyre.application):
 
 
     # meta methods
-    def __init__(self, name=MERLIN, **kwds):
+    def __init__(self, name, **kwds):
         super().__init__(name=name, **kwds)
 
         # the host

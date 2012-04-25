@@ -32,16 +32,16 @@ class Director(Actor):
         return
 
 
-    def __call__(self, *args, **kwds):
+    def __call__(self, name=None, **kwds):
         """
         Instantiate one of my classes
         """
-        # delegate
-        shell = super().__call__(**kwds)
-        # invoke the application behavior
-        status = shell.run(*args, **kwds)
-        # and return the status
-        return status
+        # build the application name
+        name = name if name is not None else self.applicationName
+        # ask the executive to hunt down the application INSTANCE configuration file
+        self.pyre_executive.configurePackage(package=name)
+        # delegate the creation of the instance and return it
+        return super().__call__(name=name, **kwds)
 
 
 # end of file 

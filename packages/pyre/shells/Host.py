@@ -8,13 +8,38 @@
 
 # externals
 import pyre
+import platform
 
 
 # declaration
-class Host(pyre.component, family='pyre.host'):
+class Host(pyre.interface, family='pyre.hosts'):
     """
     Encapsulation of host specific information
     """
+
+
+    # public state
+    # packages = pyre.catalog(interface=???)
+
+
+    # class interface
+    @classmethod
+    def default(cls):
+        """
+        Build the preferred host implementation
+        """
+        print("Host.default")
+        print("    platform: {}".format(platform.uname()))
+        return None
+
+
+    @classmethod
+    def pyre_cast(cls, value):
+        """
+        Convert {value} into a configured host instance
+        """
+        print("Host.pyre_cast: value={!r}".format(value))
+        return super().pyre_cast(value)
 
 
 # end of file 
