@@ -167,12 +167,12 @@ class Executive:
     # support for the various internal requests
     def configurePackage(self, package):
         """
-        Locate and load the configuration files for the package to which {component} belongs
+        Locate and load the configuration files for the given {package}
 
-        If the package to which {component} belongs can be deduced from its family name, this
-        method will locate and load the package configuration files. These files are meant to
-        allow site managers and end users to override the class wide defaults for the traits of
-        the components in the package.
+        Typically, the package to which a component belongs can be deduced from its family
+        name. This method will locate and load the package configuration files. These files are
+        meant to allow site managers and end users to override the class wide defaults for the
+        traits of the components in the package.
         
         This behavior is triggered by the first encountered component from each package, and it
         is done only once.
