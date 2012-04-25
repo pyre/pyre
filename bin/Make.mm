@@ -19,7 +19,8 @@ all: export
 # export
 
 EXPORT_BINS = \
-    merlin
+    merlin \
+    pyre
 
 export:: export-binaries
 

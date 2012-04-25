@@ -1,0 +1,46 @@
+#!/usr/bin/env python -i
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2012 all rights reserved
+#
+
+
+# settings for interactive use of python
+# attempt to enable readline
+print("enabling readline")
+try:
+    import readline
+
+# not there; bail out
+except ImportError:
+    print("    readline not available")
+
+# success!
+else:
+    # turn on completion
+    import rlcompleter
+    # check which interface is available and do the right thing
+    if 'libedit' in readline.__doc__:
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        readline.parse_and_bind("tab: complete")
+    # form the path to the history file
+    import os
+    history = os.path.join(os.path.expanduser('~'), '.python-history')
+    # attempt to read it
+    try:
+        readline.read_history_file(history)
+    except IOError:
+        pass
+    # and make sure it gets saved
+    import atexit
+    atexit.register(readline.write_history_file, history)
+
+
+# framework access
+import pyre
+
+
+# end of file 
