@@ -60,31 +60,6 @@ class Catalog(Facility):
             # in any case, store the instance in the index
             index[trait] = value
 
-        # all done
-        return index
-
-        # get my configuration information
-        for _, slot in configurator.children(basekey):
-            # get my interface to retrieve the component descriptor
-            factory = self.type.pyre_cast(slot.getValue())
-            # if I did not get a component instance
-            if not isinstance(factory, self.Component):
-                # assume it is an instance factory and use it to instantiate the actual component
-                instance = factory(name=slot.name)
-            # otherwise
-            else:
-                # i already have an instance
-                instance = factory
-            # build the instance name
-            cname = client.pyre_split(slot.name)[-1]
-            # store in the index
-            index[cname] = instance
-
-        # if I have deferred configuration settings
-        for trait, assignment, priority in configurator._retrieveDeferredAssignments(
-            registrar=registrar, ns=basekey):
-            print(trait, assignment, priority)
-
         # return the index so that it can be attached as the trait value for this instance    
         return index
 
