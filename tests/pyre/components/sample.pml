@@ -136,6 +136,16 @@
       <bind property="tag">cat2</bind>
   </component>
 
+  <!-- data for component_map -->
+  <component name="map_container">
+    <!-- put some components in the catalog -->
+    <component name="map">
+      <bind property="jim">value(jim)</bind>
+      <bind property="bob">value(bob)</bind>
+      <bind property="fred">value(fred)</bind>
+    </component>
+  </component>
+
 </config>
 
 

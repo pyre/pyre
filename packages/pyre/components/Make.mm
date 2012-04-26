@@ -28,6 +28,7 @@ EXPORT_PYTHON_MODULES = \
     Configurable.py \
     Facility.py \
     Interface.py \
+    Map.py \
     OutputFile.py \
     Property.py \
     Registrar.py \

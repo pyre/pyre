@@ -184,7 +184,7 @@ if executive:
     # component declaration support
     from . import schema, constraints
     from .components import export, provides
-    from .components import property, facility, catalog, interface, component
+    from .components import property, facility, catalog, map, interface, component
     from .components import properties
 
     # application

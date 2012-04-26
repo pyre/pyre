@@ -42,6 +42,7 @@ from .Component import Component as component
 from .Property import Property as property
 from .Facility import Facility as facility
 from .Catalog import Catalog as catalog
+from .Map import Map as map
 
 
 # end of file 
