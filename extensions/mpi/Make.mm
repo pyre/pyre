@@ -9,6 +9,7 @@ PROJECT = mpi
 PACKAGE = 
 MODULE = mpi
 
+include MPI/default.def
 include std-pythonmodule.def
 
 PROJ_INCDIR = $(BLD_INCDIR)/pyre/$(PROJECT)

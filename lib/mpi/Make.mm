@@ -6,6 +6,8 @@
 # (c) 1998-2012 all rights reserved
 #
 
+include MPI/default.def
+
 PROJECT = pyre
 PACKAGE = mpi
 
