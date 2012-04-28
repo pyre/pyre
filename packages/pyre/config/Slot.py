@@ -105,6 +105,14 @@ class Slot(AbstractNode, Memo, Cast, Number, metaclass=_metaclass_Slot):
     trait = None # the trait descriptor whose value i manage
     processor = None # the processor used by {Cast} to normalize my value
 
+    # derived properties
+    @property
+    def localname(self):
+        """
+        Extract my canonical name in my local namespace
+        """
+        return self.name.split(self.configurator.separator)[-1]
+
 
     # interface
     def setValue(self, value):
