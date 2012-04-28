@@ -20,12 +20,12 @@ class Map(Facility):
         Attach a component catalog to my trait slot in the client component
         """
         # print(" ** Catalog.pyre_instantiate: node={}, value={!r}".format(node, value))
-        # initialize the index we will leave behind; a {dict} for now
-        index = {}
         # get the client
         client = node.componentInstance
         # and its name
         name = client.pyre_name
+        # initialize the index we will leave behind; a {dict} for now
+        index = {}
         # if it is nameless
         if not name:
             # nothing to configure...
@@ -58,10 +58,24 @@ class Map(Facility):
         return index
 
 
+    def pyre_setClassTrait(self, configurable, value, locator):
+        """
+        Set this trait of the class record {configurable} to value
+        """
+        raise NotImplementedError('NYI!')
+
+
+    def pyre_setInstanceTrait(self, instance, value, locator):
+        """
+        Set this trait of {instance} to value
+        """
+        raise NotImplementedError('NYI!')
+
+
      # meta methods
     def __init__(self, cast, **kwds):
         descriptor = cast()
-        super().__init__(interface=descriptor.type, default=descriptor.default, **kwds)
+        super().__init__(interface=descriptor.type, default={}, **kwds)
         return
 
 
