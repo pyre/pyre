@@ -10,27 +10,26 @@
 import re
 import sys
 import pyre # the framework
+import operator
 import platform
 # my interface
 from .Shell import Shell as shell
 
 
 # declaration
-class Executive(pyre.component, implements=shell):
+class Executive(pyre.component, family='pyre.shells', implements=shell):
     """
     The base class for hosting strategies
     """
 
 
+    # constants
+    # the key under which users can specify nicknames for known hosts
+    hostmapkey = ['pyre', 'hostmap']
+
     # user configurable state
     home = pyre.properties.str(default=None)
     home.doc = "the process home directory"
-
-    hostmap = pyre.map(cast=pyre.properties.str)
-    hostmap.doc = """
-        a mapping of host nicknames to regular expressions that match against the formal
-        machine name as returned by platform.uname()
-        """
 
     # public data
     system = None # the type of host on which this process is running
@@ -40,8 +39,28 @@ class Executive(pyre.component, implements=shell):
     processor = None # the CPU type
 
     hostname = None # the name of the host on which this process is running
-    nickname = None # the nickname of the host on which this process is running
     platform = None # the OS type on which this process is running
+
+
+    @property
+    def nickname(self, hostname=None):
+        """
+        Attempt to retrieve the user's assigned nickname for a {host}
+        """
+        # use my hostname if not host was given
+        hostname = self.hostname if hostname is None else hostname
+        # get the configuration slots
+        slots = [ slot for _,slot in self.pyre_executive.configurator.children(self.hostmapkey) ]
+        # go through each one in priority order
+        for slot in sorted(slots, key=operator.attrgetter('priority')):
+            # get the recognizer
+            regex = slot.value
+            # if my hostname matches
+            if re.match(regex, hostname):
+                # return the slot local name as the nickname
+                return slot.localname
+        # not known; return the original
+        return hostname
 
 
     # interface
@@ -54,35 +73,19 @@ class Executive(pyre.component, implements=shell):
         raise NotImplementedError("class {.__name__} must implement 'launch'".format(type(self)))
 
 
-    def loadHostConfiguration(self, name=None):
-        """
-        Load the configuration files for the named host
-        """
-
-
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
 
         # host discovery
         (system, name, release, version, architecture, processor) = platform.uname()
-        self.hostname = self.nickname = name
+        self.hostname = name
         self.system = system
         self.release = release
         self.version = version
         self.architecture = architecture
         self.processor = processor
-        
         self.platform = sys.platform
-
-        # check whether we know this host by a nickname by looking through my {hostmap}
-        for nickname, regex in self.hostmap.items():
-            # if the hostname matches
-            if re.match(regex, name):
-                # set the nickname
-                self.nickname = nickname
-                # all done
-                break
 
         # all done
         return
