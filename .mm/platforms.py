@@ -28,7 +28,7 @@ def platform(builder):
             'GSL_INCDIR': os.path.join(systemdir, 'include'),
             }
         # set up {libpq}
-        libpqVersion = 'postgresql90'
+        libpqVersion = 'postgresql91'
         builder.requirements['libpq'].environ = {
             'LIBPQ_DIR': systemdir,
             'LIBPQ_LIBDIR': os.path.join(systemdir, 'lib', libpqVersion),
