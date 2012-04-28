@@ -173,7 +173,6 @@ class Merlin(pyre.application):
         Merlin iterates through each of the standard places, asking a {context} specific
         sub-component for assistance in retrieving candidate shelves from the filesystem.
         """
-        print("Merlin.pyre_componentSearchPath: context={}".format(context))
         # the first part is my tag
         assert context[0] == self.applicationName
         # if there is only one fragment
