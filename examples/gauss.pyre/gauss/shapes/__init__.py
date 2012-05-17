@@ -12,7 +12,7 @@ Package that contains definitions of geometrical shapes
 
 
 # the interfaces
-from .Shape import Shape
+from .Shape import Shape as shape
 
 
 # the components

@@ -8,6 +8,7 @@
 
 import pyre
 import random
+import itertools
 from .PointCloud import PointCloud
 
 
@@ -21,21 +22,21 @@ class Mersenne(pyre.component, family="gauss.meshes.mersenne", implements=PointC
     @pyre.export
     def points(self, count, box):
         """
-        Return {count} random points chosen from the interior of {box}
+        Generate {count} random points chosen from the interior of {box}
         """
         # unpack the bounding box to form its extent along each of the coördinate axes
         intervals = tuple(box.intervals())
         # our random number generator
         generator = random.uniform
+        # get starmap from itertools
+        starmap = itertools.starmap
         # loop {count} times
-        while count:
+        while count > 0:
             # decrement the counter
             count -= 1
             # build a point by calling the random number generator as many times as there are
-            # dimensions in the box specification
-            p = tuple(generator(left, right) for left,right in intervals)
-            # send it along
-            yield p
+            # dimensions in the box specification and send it along
+            yield tuple(starmap(generator, intervals))
         # all done
         return
 

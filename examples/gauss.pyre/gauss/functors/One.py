@@ -22,9 +22,8 @@ class One(pyre.component, family="gauss.functors.one", implements=Functor):
         """
         Compute the value of the function on the supplied points
         """
-        # loop over the points
-        for point in points:
-            yield 1
+        # loop over the points and return 1 regardless
+        for point in points: yield 1
         # all done
         return
 

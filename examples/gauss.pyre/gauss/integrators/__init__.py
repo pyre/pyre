@@ -11,7 +11,7 @@ Package with integrator implementations
 
 
 # the interface
-from .Integrator import Integrator
+from .Integrator import Integrator as integrator
 
 
 # the component

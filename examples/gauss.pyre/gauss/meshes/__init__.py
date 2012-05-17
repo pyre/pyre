@@ -11,7 +11,7 @@ Package that contains the implemenations of point clouds
 
 
 # the interfaces
-from .PointCloud import PointCloud
+from .PointCloud import PointCloud as cloud
 
 # the components
 from .Mersenne import Mersenne as mersenne

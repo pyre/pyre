@@ -12,7 +12,7 @@ Package with functor definitions
 
 
 # the interface
-from .Functor import Functor
+from .Functor import Functor as functor
 
 
 # the components

@@ -30,7 +30,10 @@ class PointCloud(pyre.interface, family="gauss.meshes"):
     @pyre.provides
     def points(self, count, box):
         """
-        Build and return {count} random points from the interior of {box}
+        Generate {count} random points on the interior of {box}
+        parameters: 
+            {count}: the number of points to generate
+            {box}: a shape that defines the computational domain
         """
 
 

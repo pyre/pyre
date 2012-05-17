@@ -29,9 +29,8 @@ class Constant(pyre.component, family="gauss.functors.constant", implements=Func
         """
         # local cache of the constant
         value = self.value
-        # loop over the points
-        for point in points:
-            yield value
+        # loop over the points and return my value regardless
+        for point in points: yield value
         # all done
         return
 

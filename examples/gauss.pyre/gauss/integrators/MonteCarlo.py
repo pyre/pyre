@@ -10,15 +10,9 @@ import pyre
 
 # interfaces
 from .Integrator import Integrator
-from ..shapes.Shape import Shape
-from ..functors.Functor import Functor
-from ..meshes.PointCloud import PointCloud
-
-# components
-from ..shapes.Box import Box
-from ..shapes.Ball import Ball
-from ..functors.One import One
-from ..meshes.Mersenne import Mersenne
+from ..functors import functor
+from ..meshes import cloud
+from ..shapes import shape, box, ball
 
 
 class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implements=Integrator):
@@ -30,16 +24,16 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implemen
     samples = pyre.properties.int(default=10**5)
     samples.doc = "the number of integrand evaluations"
 
-    box = pyre.facility(interface=Shape, default=Box)
+    box = pyre.facility(interface=shape, default=box)
     box.doc = "the bounding box for my mesh"
 
-    mesh = pyre.facility(interface=PointCloud, default=Mersenne)
+    mesh = pyre.facility(interface=cloud)
     mesh.doc = "the generator of points at which to evaluate the integrand"
 
-    region = pyre.facility(interface=Shape, default=Ball)
+    region = pyre.facility(interface=shape, default=ball)
     region.doc = "the shape that defines the region of integration"
 
-    integrand = pyre.facility(interface=Functor, default=One)
+    integrand = pyre.facility(interface=functor)
     integrand.doc = "the functor to integrate"
 
 
@@ -49,12 +43,14 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implemen
         """
         Compute the integral as specified by my public state
         """
+        # compute the normalization
+        normalization = self.box.measure()/self.samples
         # get the set of points
         points = self.mesh.points(count=self.samples, box=self.box)
         # narrow the set down to the ones interior to the region of integration
         interior = self.region.contains(points)
         # sum up and scale the integrand contributions
-        integral = self.box.measure()/self.samples * sum(self.integrand.eval(interior))
+        integral = normalization * sum(self.integrand.eval(interior))
         # and return the value
         return integral
 
