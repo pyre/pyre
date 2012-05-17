@@ -36,7 +36,6 @@ distclean::
 # export
 
 EXPORT_PYTHON_MODULES = \
-    interfaces.py \
     __init__.py
 
 
