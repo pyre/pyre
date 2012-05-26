@@ -160,13 +160,13 @@ def boot():
     p = framework.executive(managers=framework)
 
     # patch Requirement
-    from .components.Requirement import Requirement
-    Requirement.pyre_executive = weakref.proxy(p)
+    from .components import requirement
+    requirement.pyre_executive = weakref.proxy(p)
 
     # patch Configurable
-    from .components.Configurable import Configurable
-    Configurable.pyre_executive = weakref.proxy(p)
-    Configurable.pyre_SEPARATOR = p.configurator.separator
+    from .components import configurable
+    configurable.pyre_executive = weakref.proxy(p)
+    configurable.pyre_SEPARATOR = p.configurator.separator
 
     # and return the executive
     return p
@@ -184,6 +184,7 @@ if executive:
     # component declaration support
     from . import schema, constraints
     from .components import export, provides
+    from .components import actor, role
     from .components import property, facility, catalog, map, interface, component
     from .components import properties
 

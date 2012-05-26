@@ -6,10 +6,12 @@
 #
 
 
-from ..components.Actor import Actor
+# framework access
+import pyre
 
 
-class Director(Actor):
+# declaration
+class Director(pyre.actor):
     """
     The metaclass of applications
 

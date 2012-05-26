@@ -37,6 +37,10 @@ def newRegistrar(**kwds):
 
 
 # access to the component and interface classes
+from .Configurable import Configurable as configurable
+from .Requirement import Requirement as requirement
+from .Role import Role as role
+from .Actor import Actor as actor
 from .Interface import Interface as interface
 from .Component import Component as component
 from .Property import Property as property
