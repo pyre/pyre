@@ -92,6 +92,60 @@
 	<array>
 		<dict>
 			<key>Class</key>
+			<string>LineGraphic</string>
+			<key>Head</key>
+			<dict>
+				<key>ID</key>
+				<integer>3</integer>
+			</dict>
+			<key>ID</key>
+			<integer>269</integer>
+			<key>OrthogonalBarAutomatic</key>
+			<true/>
+			<key>OrthogonalBarPoint</key>
+			<string>{0, 0}</string>
+			<key>OrthogonalBarPosition</key>
+			<real>-1</real>
+			<key>Points</key>
+			<array>
+				<string>{85, 18}</string>
+				<string>{51, 18}</string>
+			</array>
+			<key>Style</key>
+			<dict>
+				<key>stroke</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0.627451</string>
+						<key>g</key>
+						<string>0.627451</string>
+						<key>r</key>
+						<string>0.627451</string>
+					</dict>
+					<key>HeadArrow</key>
+					<string>FilledArrow</string>
+					<key>HeadScale</key>
+					<real>1.5</real>
+					<key>LineType</key>
+					<integer>2</integer>
+					<key>TailArrow</key>
+					<string>0</string>
+					<key>Width</key>
+					<real>0.25</real>
+				</dict>
+			</dict>
+			<key>Tail</key>
+			<dict>
+				<key>ID</key>
+				<integer>5</integer>
+				<key>Info</key>
+				<integer>8</integer>
+			</dict>
+		</dict>
+		<dict>
+			<key>Class</key>
 			<string>Group</string>
 			<key>Graphics</key>
 			<array>
@@ -430,26 +484,23 @@ Executive}</string>
 						hIQITlNPYmplY3QAhZKEhIQITlNT
 						dHJpbmcBlIQBKxJweXJlLnNoZWxs
 						cy5kYWVtb26GhAJpSQESkoSEhAxO
-						U0RpY3Rpb25hcnkAlIQBaQSShJaW
-						EE5TUGFyYWdyYXBoU3R5bGWGkoSE
-						hBdOU011dGFibGVQYXJhZ3JhcGhT
-						dHlsZQCEhBBOU1BhcmFncmFwaFN0
-						eWxlAJSEBENDQFMAAISEhA5OU011
-						dGFibGVBcnJheQCEhAdOU0FycmF5
-						AJSZDJKEhIQJTlNUZXh0VGFiAJSE
-						AkNmAByGkoShoAA4hpKEoaAAVIaS
-						hKGgAHCGkoShoACBjACGkoShoACB
-						qACGkoShoACBxACGkoShoACB4ACG
-						koShoACB/ACGkoShoACBGAGGkoSh
-						oACBNAGGkoShoACBUAGGhgCGkoSW
-						lg5OU09yaWdpbmFsRm9udIaShISE
-						Bk5TRm9udB6UmSiEBVs0MGNdBgAA
-						AB4AAAD//kcAZQBvAHIAZwBpAGEA
-						LQBJAHQAYQBsAGkAYwAAAIQBZgWE
-						AWMApAGkAKQAhpKElpYGTlNGb250
-						hpKukoSWlgdOU0NvbG9yhpKEhIQH
-						TlNDb2xvcgCUpAWEBWZmZmZmg0II
-						QT+DhBCCPgAAAYaGhg==
+						U0RpY3Rpb25hcnkAlIQBaQOShJaW
+						B05TQ29sb3KGkoSEhAdOU0NvbG9y
+						AJSEAWMFhAVmZmZmZoNCCEE/g4QQ
+						gj4AAAGGkoSWlhBOU1BhcmFncmFw
+						aFN0eWxlhpKEhIQQTlNQYXJhZ3Jh
+						cGhTdHlsZQCUhARDQ0BTAACEhIQH
+						TlNBcnJheQCUmQyShISECU5TVGV4
+						dFRhYgCUhAJDZgAchpKEoqEAOIaS
+						hKKhAFSGkoSioQBwhpKEoqEAgYwA
+						hpKEoqEAgagAhpKEoqEAgcQAhpKE
+						oqEAgeAAhpKEoqEAgfwAhpKEoqEA
+						gRgBhpKEoqEAgTQBhpKEoqEAgVAB
+						hoYAhpKElpYGTlNGb250hpKEhIQG
+						TlNGb250HpSZKIQFWzQwY10GAAAA
+						HgAAAP/+RwBlAG8AcgBnAGkAYQAt
+						AEkAdABhAGwAaQBjAAAAhAFmBZsA
+						mwGbAJsAhoaG
 						</data>
 						<key>Text</key>
 						<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf470
@@ -699,26 +750,23 @@ Daemon}</string>
 						hIQITlNPYmplY3QAhZKEhIQITlNT
 						dHJpbmcBlIQBKxBweXJlLnNoZWxs
 						cy5mb3JrhoQCaUkBEJKEhIQMTlNE
-						aWN0aW9uYXJ5AJSEAWkEkoSWlhBO
-						U1BhcmFncmFwaFN0eWxlhpKEhIQX
-						TlNNdXRhYmxlUGFyYWdyYXBoU3R5
-						bGUAhIQQTlNQYXJhZ3JhcGhTdHls
-						ZQCUhARDQ0BTAACEhIQOTlNNdXRh
-						YmxlQXJyYXkAhIQHTlNBcnJheQCU
-						mQyShISECU5TVGV4dFRhYgCUhAJD
-						ZgAchpKEoaAAOIaShKGgAFSGkoSh
-						oABwhpKEoaAAgYwAhpKEoaAAgagA
-						hpKEoaAAgcQAhpKEoaAAgeAAhpKE
-						oaAAgfwAhpKEoaAAgRgBhpKEoaAA
-						gTQBhpKEoaAAgVABhoYAhpKElpYO
-						TlNPcmlnaW5hbEZvbnSGkoSEhAZO
-						U0ZvbnQelJkohAVbNDBjXQYAAAAe
-						AAAA//5HAGUAbwByAGcAaQBhAC0A
-						SQB0AGEAbABpAGMAAACEAWYFhAFj
-						AKQBpACkAIaShJaWBk5TRm9udIaS
-						rpKElpYHTlNDb2xvcoaShISEB05T
-						Q29sb3IAlKQFhAVmZmZmZoNCCEE/
-						g4QQgj4AAAGGhoY=
+						aWN0aW9uYXJ5AJSEAWkDkoSWlgdO
+						U0NvbG9yhpKEhIQHTlNDb2xvcgCU
+						hAFjBYQFZmZmZmaDQghBP4OEEII+
+						AAABhpKElpYQTlNQYXJhZ3JhcGhT
+						dHlsZYaShISEEE5TUGFyYWdyYXBo
+						U3R5bGUAlIQEQ0NAUwAAhISEB05T
+						QXJyYXkAlJkMkoSEhAlOU1RleHRU
+						YWIAlIQCQ2YAHIaShKKhADiGkoSi
+						oQBUhpKEoqEAcIaShKKhAIGMAIaS
+						hKKhAIGoAIaShKKhAIHEAIaShKKh
+						AIHgAIaShKKhAIH8AIaShKKhAIEY
+						AYaShKKhAIE0AYaShKKhAIFQAYaG
+						AIaShJaWBk5TRm9udIaShISEBk5T
+						Rm9udB6UmSiEBVs0MGNdBgAAAB4A
+						AAD//kcAZQBvAHIAZwBpAGEALQBJ
+						AHQAYQBsAGkAYwAAAIQBZgWbAJsB
+						mwCbAIaGhg==
 						</data>
 						<key>Text</key>
 						<string>{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf470
@@ -1112,7 +1160,7 @@ Script}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{122, 58.5}, {26, 9}}</string>
+			<string>{{127.5, 59}, {16, 9}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -1185,6 +1233,8 @@ Script}</string>
 			</dict>
 			<key>Text</key>
 			<dict>
+				<key>Pad</key>
+				<integer>0</integer>
 				<key>RTFD</key>
 				<data>
 				BAtzdHJlYW10eXBlZIHoA4QBQISEhBJOU0F0dHJpYnV0
@@ -1243,11 +1293,11 @@ Script}</string>
 					<key>Color</key>
 					<dict>
 						<key>b</key>
-						<string>0.25098</string>
+						<string>0.627451</string>
 						<key>g</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 						<key>r</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 					</dict>
 					<key>HeadArrow</key>
 					<string>Arrow</string>
@@ -1295,11 +1345,11 @@ Script}</string>
 					<key>Color</key>
 					<dict>
 						<key>b</key>
-						<string>0.25098</string>
+						<string>0.627451</string>
 						<key>g</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 						<key>r</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 					</dict>
 					<key>HeadArrow</key>
 					<string>Arrow</string>
@@ -1349,11 +1399,11 @@ Script}</string>
 					<key>Color</key>
 					<dict>
 						<key>b</key>
-						<string>0.25098</string>
+						<string>0.627451</string>
 						<key>g</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 						<key>r</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 					</dict>
 					<key>HeadArrow</key>
 					<string>Arrow</string>
@@ -1405,11 +1455,11 @@ Script}</string>
 					<key>Color</key>
 					<dict>
 						<key>b</key>
-						<string>0.25098</string>
+						<string>0.627451</string>
 						<key>g</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 						<key>r</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 					</dict>
 					<key>HeadArrow</key>
 					<string>Arrow</string>
@@ -1461,11 +1511,11 @@ Script}</string>
 					<key>Color</key>
 					<dict>
 						<key>b</key>
-						<string>0.25098</string>
+						<string>0.627451</string>
 						<key>g</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 						<key>r</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 					</dict>
 					<key>HeadArrow</key>
 					<string>Arrow</string>
@@ -1511,11 +1561,11 @@ Script}</string>
 					<key>Color</key>
 					<dict>
 						<key>b</key>
-						<string>0.25098</string>
+						<string>0.627451</string>
 						<key>g</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 						<key>r</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 					</dict>
 					<key>HeadArrow</key>
 					<string>FilledBall</string>
@@ -1567,11 +1617,11 @@ Script}</string>
 					<key>Color</key>
 					<dict>
 						<key>b</key>
-						<string>0.25098</string>
+						<string>0.627451</string>
 						<key>g</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 						<key>r</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 					</dict>
 					<key>HeadArrow</key>
 					<string>UML2Socket</string>
@@ -1623,11 +1673,11 @@ Script}</string>
 					<key>Color</key>
 					<dict>
 						<key>b</key>
-						<string>0.25098</string>
+						<string>0.627451</string>
 						<key>g</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 						<key>r</key>
-						<string>0.376471</string>
+						<string>0.627451</string>
 					</dict>
 					<key>HeadArrow</key>
 					<string>FilledArrow</string>
@@ -2013,7 +2063,7 @@ Script}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2012-05-28 00:43:26 +0000</string>
+	<string>2012-05-29 23:20:21 +0000</string>
 	<key>Modifier</key>
 	<string>Michael Aivazis</string>
 	<key>NotesVisible</key>
@@ -2094,7 +2144,7 @@ Script}</string>
 			</dict>
 		</array>
 		<key>Frame</key>
-		<string>{{780, 860}, {936, 514}}</string>
+		<string>{{468, 394}, {1336, 995}}</string>
 		<key>ListView</key>
 		<true/>
 		<key>OutlineWidth</key>
@@ -2108,15 +2158,15 @@ Script}</string>
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{-56, -17}, {400.5, 179.5}}</string>
+		<string>{{-6, -33}, {300.25, 210}}</string>
 		<key>Zoom</key>
-		<real>2</real>
+		<real>4</real>
 		<key>ZoomValues</key>
 		<array>
 			<array>
 				<string>Canvas 1</string>
-				<real>2</real>
 				<real>4</real>
+				<real>2</real>
 			</array>
 		</array>
 	</dict>
