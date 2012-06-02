@@ -180,7 +180,7 @@ class Property(Trait):
         Set this trait of {instance} to {value}
         """
         # build an appropriate locator
-        locator = pyre.tracking.here(level=1)
+        locator = pyre.tracking.here(level=2)
         # call the instance value setter
         return self.pyre_setInstanceTrait(instance=instance, value=value, locator=locator)
 

@@ -17,7 +17,7 @@ from .Shell import Shell as shell
 
 
 # declaration
-class Executive(pyre.component, family='pyre.shells', implements=shell):
+class Executive(pyre.component, family='pyre.shells.executive', implements=shell):
     """
     The base class for hosting strategies
     """
@@ -47,7 +47,7 @@ class Executive(pyre.component, family='pyre.shells', implements=shell):
         """
         Attempt to retrieve the user's assigned nickname for a {host}
         """
-        # use my hostname if not host was given
+        # use my hostname if no host was given
         hostname = self.hostname if hostname is None else hostname
         # get the configuration slots
         slots = [ slot for _,slot in self.pyre_executive.configurator.children(self.hostmapkey) ]

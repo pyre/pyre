@@ -180,7 +180,7 @@ class Executive:
         # if none were provided, there is no file-based configuration
         if not package: return package
         # also, bail out if this package has been configured previously
-        if package in self.packages: return
+        if package in self.packages: return package
         # we have a package name
         # print("Executive.configurePackage: configuring package {!r}".format(package))
         # form all possible filenames for the configuration files
