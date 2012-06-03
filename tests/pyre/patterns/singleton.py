@@ -8,7 +8,7 @@
 
 
 """
-Verify that thepyre implementation of the Singleton pattern works as advertised
+Verify that the pyre implementation of the Singleton pattern works as advertised
 """
 
   

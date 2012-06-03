@@ -15,7 +15,7 @@ Verify that a sample configuration file can be ingested correctly
 def test():
     import pyre.framework
     # build the executive
-    executive = pyre.framework.executive()
+    executive = pyre.framework.executive(managers=pyre.framework)
     # verify the right parts were built
     assert executive.codex is not None
     assert executive.fileserver is not None

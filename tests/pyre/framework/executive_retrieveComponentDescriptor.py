@@ -14,7 +14,7 @@ Verify that the binder can retrieve components from odb files
 
 def test():
     import pyre.framework
-    executive = pyre.framework.executive()
+    executive = pyre.framework.executive(managers=pyre.framework)
 
     # retrieve a component descriptor from the python path
     base = executive.retrieveComponentDescriptor(uri="import:pyre.component")

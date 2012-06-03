@@ -6,11 +6,12 @@
 #
 
 
+# superclass
 from .Executive import Executive
-from ..patterns.Singleton import Singleton
 
 
-class Pyre(Executive, metaclass=Singleton):
+# my declaration
+class Pyre(Executive):
     """
     The framework executive singleton
     """
@@ -51,16 +52,6 @@ class Pyre(Executive, metaclass=Singleton):
         parser.handlers["config"] = self._configurationLoader
         # return the parser
         return parser
-
-
-    # clean up
-    @classmethod
-    def shutdown(cls):
-        """
-        Remove the reference to me held by the singleton
-        """
-        cls._pyre_singletonInstance = None
-        return
 
 
     # meta methods

@@ -14,7 +14,7 @@ Exercise URI parsing by the executive
 
 def test():
     import pyre.framework
-    executive = pyre.framework.executive()
+    executive = pyre.framework.executive(managers=pyre.framework)
 
     # the canonical case
     parts = executive.parseURI("scheme://authority/address?query#fragment")

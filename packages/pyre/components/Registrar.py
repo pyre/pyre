@@ -27,7 +27,7 @@ class Registrar:
 
     # public state
     names = None # the known component names
-    families = # the known component family names
+    families = None # the known component family names
     interfaces = None # the set of all registered interfaces
     components = None # a map of component classes to their instances
     implementors = None # a map of interfaces to component classes that implement them

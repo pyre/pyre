@@ -8,7 +8,7 @@
 
 
 """
-Verify that thepyre implementation of the Singleton pattern works as advertised
+Exercise the {named} pattern
 """
 
   

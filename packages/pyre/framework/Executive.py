@@ -43,6 +43,7 @@ class Executive:
     resolvers = None
 
     # book keeping
+    shelves = None
     packages = None
     errors = None
 

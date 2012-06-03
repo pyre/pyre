@@ -15,7 +15,7 @@ Exercise file opening by the file server
 def test():
     import os
     import pyre.framework
-    f = pyre.framework.executive().fileserver
+    f = pyre.framework.executive(managers=pyre.framework).fileserver
 
     # a simple case that looks for a file in the current directory
     encoding, stream = f.open(scheme="file", address="sample.odb")
