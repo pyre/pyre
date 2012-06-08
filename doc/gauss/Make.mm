@@ -29,50 +29,18 @@ INCLUDES = \
 
 SECTIONS = \
     $(DOCUMENT).tex \
-    sec_introduction.tex \
-    sec_montecarlo.tex \
-    sec_simple.tex \
-    sec_classes.tex \
-    sec_components.tex \
-    sec_pyreapp.tex \
-    sec_epilogue.tex \
+    sec_*.tex \
 
 FIGURES = \
-    figures/gaussian.pdf \
-    figures/quadrant.pdf \
+    figures/*.pdf \
 
 LISTINGS = \
     listings/simple/gauss.py \
     listings/simple/gauss.cc \
-    listings/classes/Disk.py \
-    listings/classes/PointCloud.py \
-    listings/classes/Shape.py \
-    listings/classes/Mersenne.py \
-    listings/classes/gauss.py \
-    listings/containers/Disk.py \
-    listings/containers/PointCloud.py \
-    listings/containers/Shape.py \
-    listings/containers/Mersenne.py \
-    listings/containers/gauss.py \
-    listings/generators/Constant.py \
-    listings/generators/Disk.py \
-    listings/generators/Functor.py \
-    listings/generators/Gaussian.py \
-    listings/generators/Mersenne.py \
-    listings/generators/PointCloud.py \
-    listings/generators/Shape.py \
-    listings/generators/gauss.py \
-    listings/generators/gauss-mc.py \
-    listings/components/Ball.py \
-    listings/components/Box.py \
-    listings/components/Constant.py \
-    listings/components/Functor.py \
-    listings/components/Gaussian.py \
-    listings/components/Integrator.py \
-    listings/components/Mersenne.py \
-    listings/components/MonteCarlo.py \
-    listings/components/PointCloud.py \
-    listings/components/Shape.py \
+    listings/classes/*.py \
+    listings/containers/*.py \
+    listings/generators/*.py \
+    listings/components/*.py \
 
 #--------------------------------------------------------------------------
 #

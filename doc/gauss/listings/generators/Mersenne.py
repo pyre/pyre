@@ -24,7 +24,7 @@ class MersenneTwister(PointCloud):
         intervals = tuple(zip(*box))
         # loop over the sample size
         while n > 0:
-            p = [ random.uniform(left, right) for left,right in intervals ]
+            p = [ random.uniform(*interval) for interval in intervals ]
             yield p #@\label{line:mt:generators:yield}@
             n -= 1
                 

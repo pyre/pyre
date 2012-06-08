@@ -17,7 +17,7 @@ int main(int, char*[]) {
     // create the random number generator
     gsl_rng * generator = gsl_rng_alloc(gsl_rng_ranlxs2);
     // integrate by sampling some number of times
-    for (int i=0; i<N; ++i) {
+    for (int i=0; i<N; i++) {
         // create a random point
         double x = gsl_rng_uniform(generator);
         double y = gsl_rng_uniform(generator);

@@ -39,20 +39,20 @@ as short-hand for the volume of the associated region. More details can be found
 \citep{hammersley,ueberhuber}; see \cite{weinzierl} for an excellent pedagogical
 introduction to the subject.
 
-One can show that the error in the estimate descreases as $1/\sqrt{N}$. The initial reaction to
-this fact is that the convergence rate is rather slow. As a result, there are implementations
-that address this by being smart about how the region of integration is sampled; see
-\cite{lepage-78,lepage-80,press}. On the bright side, the convergence rate is {\em independent}
-of the dimensionality of the integral, making this method very well suited for
-multi-dimensional integrals. Further, it is rather straightforward to write a parallel
-implementation and compensate for the slow convergence by computing on a large machine.
+One can show that the error in the estimate descreases as $1/\sqrt{N}$, a convergence rate that
+is rather slow. It is possible to improve on this by being smart about how the region of
+integration is sampled; see \cite{lepage-78,lepage-80,press}. On the bright side, the
+convergence rate is {\em independent} of the dimensionality of the integral, making this method
+very well suited for multi-dimensional integrals. Further, it is rather straightforward to
+write a parallel implementation and compensate for the slow convergence by computing on a large
+machine.
 
-Implementations on computers employ pseudo-random generators to create the sample set. Most
+We are ready to recast \eqref{mc-estimate} in a form better suited for a computer
+implementation, where we use pseudo-random number generators to create the sample set. Most
 generators produce numbers between $0$ and $1$, so actual calculations require finding a box
 $B_{\Omega}$ that contains $\Omega$, and building $n$-dimensional sampling points $x$ by
-stretching and translating the unit interval to match the dimensions of $B$. The integration is
-then restricted to $\Omega$ by introducing a function $\Theta_{\Omega}$ that takes the value $1$
-inside $\Omega$ and vanishes identically outside:
+stretching and translating the unit interval to match the dimensions of $B_{\Omega}$. The
+integration is then restricted to $\Omega$ by introducing a function
 %
 \begin{equation}
   \Theta_{\Omega}(x)
@@ -66,7 +66,8 @@ inside $\Omega$ and vanishes identically outside:
 \label{eq:theta}
 \end{equation}
 %
-\eqref{integral} becomes:
+that takes the value $1$ inside $\Omega$ and vanishes identically outside. We can now recast
+\eqref{integral} as
 %
 \begin{equation}
   I_{\Omega} (f)

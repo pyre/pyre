@@ -28,11 +28,15 @@ estimate for $\pi/4$ by computing the area of the upper right quadrant of the un
 as shown in \figref{pie}. This will require generating points in the unit square and
 counting the fraction that fall in the shaded region.
 
-The implementation strategy is very simple. Let $N$ be the total number of points we would
-like to generate. We will set up two counters, $t$ for the total number of points and $i$
-for the points that fall inside the unit circle, and iterate $N$ times building random
-point in the unit square, checking whether each point falls inside the unit circle and
-updating our counters appropriately, as shown in \algref{pi}.
+The implementation strategy is very simple. Let $N$ be the total number of points we would like
+to generate. We will set up two counters, $t$ for the total number of points and $i$ for the
+points that fall inside the unit circle, and iterate $N$ times building random points in the
+unit square, checking whether each point falls inside the unit circle and updating our counters
+appropriately, as shown in \algref{pi}.  Integration has been reduced to placing points in two
+bins. Note that $\Theta(\Omega)$ in \eqref{mc} corresponds to the conditional in
+\alglineref{pi:check}, and the dimensionality of the integrand is reflected in the number of
+calls to the random number generator it takes to build a point. Further, our sampling box $B$
+has unit area, so there is no need for any extra normalization of the result.
 % 
 \begin{algorithm}
 \caption{$\pi_{N}$: the Monte Carlo estimate of $\pi$ \label{alg:pi}}
@@ -53,11 +57,6 @@ $t \leftarrow 0$ \;
 $\pi_{N} = 4 i/N \;$ %\frac{i}{t}$ \;
 \end{algorithm}
 %
-Integration has been reduced to placing points in two bins. Note that $\Theta(\Omega)$ in
-\eqref{mc} corresponds to the conditional in \alglineref{pi:check}, and the dimensionality of
-the integrand is reflected in the number of calls to the random number generator per
-iteration. Further, our sampling box $B$ has unit area, so there is no need for any extra
-normalization of the result.
 
 It is straightforward to generalize this procedure to compute integrals of non-trivial
 integrands over higher dimensional regions. Perhaps you can already see that computing the
@@ -73,7 +72,8 @@ with an implementation of the Mersenne Twister\supercite{mersenne-twister} rando
 generator. Two minutes of typing produce:
 %
 \python{
-  firstline=9,lastline=25,
+  % firstnumber=9,
+  linerange={9-25},
   label={lst:simple:python},
   caption={\srcfile{simple/gauss.py}: Estimating $\pi$ in python},
 }{listings/simple/gauss.py}
@@ -85,17 +85,16 @@ Also, note that we did not have to convert our integer counters to floats before
 computation of the area fraction, since division of integers results in floating point numbers
 whenever necessary, a behavior that is standard since version 3.0 of the python interpreter.
 
-There are two obvious questions to answer: how accurate and how fast is this calculation?
-To answer these questions, we can perform some experiments where we vary the total number
-of points $N$ and record the result and the time it took. \tabref{simple-python} shows the
-results of a series of such experiments.
+There are two obvious questions to answer: how accurate and how fast is this calculation?  To
+answer these questions, we can perform some experiments where we vary the total number of
+points $N$ and record the result and the time it took, as shown in \tabref{simple-python}.
 %
 \begin{table}
 \centering
 \[
-\begin{array}{r|d{8}cd{4}}
+\begin{array}{rd{8}cd{4}}
 % headersep
-  \multicolumn{1}{c|}{N} & 
+  \multicolumn{1}{c}{N} & 
   \multicolumn{1}{c}{\pi_{N}} & 
   \multicolumn{1}{c}{\Delta} & 
   \multicolumn{1}{c}{t \mbox{(sec)}} \\
@@ -122,9 +121,8 @@ attaching it to a command line argument, but there is no reason to go through al
 point. We will see a better way to get this kind of flexibility in \secref{pyreapp}.
 
 As estimators of $\pi$ go, this is not a good one: it converges rather slowly and it is rather
-expensive. Sample sets larger than $10^{8}$ are not practical in pure python. A major
-consideration when using Monte Carlo methods is the quality of the random number generator. How
-much better can we do by switching over to a lower level language, such as \cpp?
+expensive. Sample sets larger than $10^{8}$ are not practical in pure python. How much better
+can we do by switching over to a lower level language, such as \cpp?
 
 \subsection{The ten-minute \cpp\ program}
 \label{sec:simple:c}
@@ -143,24 +141,24 @@ compilers. For now, here is what a simple translation of the pseudocode of \algr
 like:
 %
 \C++{
-  firstline=9,lastline=35,
+  % firstnumber=9,
+  linerange={9-35},
   label={lst:simple:cpp},
   caption={\srcfile{simple/gauss.cc}: Estimating $\pi$ in \cpp},
 }{listings/simple/gauss.cc}
 %
-The accuracy and cost of the \cpp\ implementation is shown in \tabref{simple-c}. It is very
-clear that the \cpp\ implementation is almost an order of magnitude faster. However, the cost
-of making the necessary changes to the value of $N$ is a little higher for the \cpp\ program,
-since the cycle involves the additional steps of compiling and linking. Again, a flexible
-program would expose this variable to the end user; we will address this issue in
-\secref{pyreapp}.
+whose accuracy and cost is shown in \tabref{simple-c}. It is clear that the
+\cpp\ implementation is almost an order of magnitude faster. However, the cost of making the
+necessary changes to the value of $N$ is a little higher for the \cpp\ program, since the cycle
+involves the additional steps of compiling and linking. Again, a flexible program would expose
+this variable to the end user; we will address this issue in \secref{pyreapp}.
 %
 \begin{table}
 \centering
 \[
-\begin{array}{r|d{8}cd{4}}
+\begin{array}{rd{8}cd{4}}
 % headers
-  \multicolumn{1}{c|}{N} & 
+  \multicolumn{1}{c}{N} & 
   \multicolumn{1}{c}{\pi_{N}} & 
   \multicolumn{1}{c}{\Delta} & 
   \multicolumn{1}{c}{t \mbox{(sec)}} \\

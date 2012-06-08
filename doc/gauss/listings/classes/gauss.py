@@ -22,16 +22,14 @@ def gauss():
     disk = Disk(center=(0,0), radius=1)
 
     # the integration algorithm
-    total = 0
     interior = 0
-    while total < N:
+    for i in range(N):
         point = cloud.point(box)
         if disk.interior(point):
             interior += 1
-        total += 1
 
     # print out the estimate of #@$\pi$@
-    print("pi: {0:.8f}".format(4*interior/N))
+    print("pi: {:.8f}".format(4*interior/N))
     return
 
 

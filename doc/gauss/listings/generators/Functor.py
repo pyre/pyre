@@ -6,7 +6,7 @@
 #
 
 
-class Functor(object):
+class Functor:
     """
     The abstract base class for function objects
     """

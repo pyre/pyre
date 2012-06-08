@@ -15,7 +15,7 @@ def gauss():
     from MersenneTwister import MersenneTwister
 
     # inputs
-    N = 10**5
+    N = 10**6
     box = [(0,0), (1,1)]
     # the point cloud generator
     generator = MersenneTwister()
@@ -29,7 +29,7 @@ def gauss():
     interior = count(disk.interior(sample))
 
     # print out the estimate of #@$\pi$@
-    print("pi: {0:.8f}".format(4*interior/N))
+    print("pi: {:.8f}".format(4*interior/N))
     return
 
 

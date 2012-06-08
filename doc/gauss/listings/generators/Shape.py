@@ -6,7 +6,7 @@
 #
 
 
-class Shape(object):
+class Shape:
     """
     The abstract base class for representations of geometrical regions
     """

@@ -23,7 +23,7 @@ class Disk(Shape):
         x0, y0 = self.center
         # initialize the container of interior points
         keep = []
-        # iterate over the given points and save the interior ones
+        # iterate over the given points, save the interior ones
         for point in points:
             x, y = point
             dx = x - x0

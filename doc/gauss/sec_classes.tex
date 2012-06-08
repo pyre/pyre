@@ -16,21 +16,21 @@ advantages: the code is easy to understand, changing it does not require underst
 complicated interactions between unfamiliar pieces of code, and it is likely to have very good
 performance characteristics. Unfortunately, even minor attempts at generalization will require
 extensive surgery. That's not to say that the time spent in constructing these prototypes is
-wasted: it takes foresight that comes with extensive experience to be able to see the general
-solution without visiting a few dead ends. As they stand, our two implementations will serve as
-benchmarks against which we will judge the next evolutionary steps, and in particular their
-performance, so that we can gauge the flexibility trade-off.
+wasted: seeing the general solution without visiting dead ends requires foresight that only
+comes with experience. As they stand, our two implementations will serve as benchmarks against
+which we will judge the next evolutionary steps so that we can gauge the flexibility
+vs.~performance trade-off.
 
 There is a variety of approaches one could take to generalize our na\"ive implementation. One
-particular paradigm, object oriented programming\supercite{meyer-97}, has proved effective and is
-currently very popular. Developers raised on procedural programming, i.e.~the kind of
+particular paradigm, object oriented programming\supercite{meyer-97}, has proved effective and
+is currently very popular. Developers raised on procedural programming, i.e.~the kind of
 programming you do in \cc\ or \fortran, typically face a bit of a challenge as they try to shed
 inappropriate habits. Those who have managed to climb the learning curve report an increased
 awareness of the role of process in software engineering, and overall improvement in the
 quality of code they write. However, typical goals such as reuse and flexibility are hard to
 attain regardless of the programming paradigm. On one hand, the problem itself has to
-co\"operate by belonging to the class of problems that are reducible to fairly orthogonal and
-well characterized pieces. On the other, one has to be able to identify these pieces and turn
+co\"operate by being reducible to fairly orthogonal and well characterized pieces, a rather
+special class of problems. On the other, one has to be able to identify these pieces and turn
 them into high quality, maintainable code. Much of the time, these form a string of low
 probability events that require a significant intellectual investment. Fortunately, the example
 at hand is rather well behaved in this regard.
@@ -41,35 +41,36 @@ at hand is rather well behaved in this regard.
 The first candidate for generalization is the random number generator. We should be able to
 choose among many different ones so that we can compare them. In order to take advantage of the
 object oriented machinery in languages like python and \cpp, we must identify an appropriate
-base class that encapsulates the role the random number generators plays in our integration
+base class that encapsulates the role the random number generators play in our integration
 algorithm. A moment's reflection should convince you that this role is to provide the cloud of
-points that are candidates for evaluating our integrand. The abstract class \class{PointCloud}
-will fit this bill very nicely, and its specialization \class{Mersenne} will create point
-clouds using the Mersenne Twister random number generator we used in \secref{simple:python}. 
+sampling points for evaluating our integrand. The abstract class \class{PointCloud}, shown in
+\lstref{classes:pointcloud}, will fit this bill very nicely, and its specialization
+\class{Mersenne}, shown in \lstref{classes:mersenne}, will create point clouds using the
+Mersenne Twister random number generator we used in \secref{simple:python}.
 
 Abstract base classes are typically used to anchor class hierarchies. They define the interface
-to which derived classes should adhere, but they themselves are not instantiated directly, so
-they are not supposed to have any data members and all of their methods should generate
-exceptions. We will use \class{PointCloud} to derive classes that hide the implementation
-particulars and conform to a standard interface that we will specify.  This idea is that when
-we run into another random number generator that we would like to use, the effort necessary to
-incorporate it into our program is {\em isolated} to a small subset of the overall code, so
-that the likelihood of introducing a bug into the code is minimized.  Ideally, we should need
-to do little more than create a new class that derives from \class{PointCloud} and implement
-the standard interface using the new generator.
+to which derived classes should adhere, but they themselves are not meant to be instantiated
+directly. Typically, they are not supposed to have any data members, and all of their methods
+should generate exceptions. We will use \class{PointCloud} to derive classes that hide the
+implementation particulars and conform to a standard interface that we will specify.  The idea
+is that when we want to use another random number generator, the effort necessary to
+incorporate it into our program should be {\em isolated} to a small subset of the overall code,
+so that the likelihood of introducing a bug into the code is minimized.  Ideally, we should
+need to do little more than create a new class that derives from \class{PointCloud} and
+implement the standard interface using the new generator.
 
 Having identified such a candidate is half the battle; but now a universe of possibilities
-opens up. What should its interface be, i.e. what is the list of its class methods? What
-arguments should these methods accept? Should there be any data members associated with
-instances of this class and its subclasses? A good way to navigate through the possibilities is
-to do as little as possible at every step. Rather than trying to anticipate all the possible
-uses of \class{PointCloud} and its derivatives, we can focus on endowing it with just enough
-interface to solve our problem. We need a sample $X_{N}$ of $N$ random points $x$ that fall
-inside a box $B$, so let's create a method \method{point} that takes a suitable representation
-of $B$ and returns such a point:
+opens up. What should its interface be? What arguments should these methods accept? Should
+there be any data members associated with instances of this class and its subclasses? A good
+way to navigate through the possibilities is to do as little as possible at every step. Rather
+than trying to anticipate all the possible uses of \class{PointCloud} and its derivatives, we
+can focus on endowing it with just enough interface to solve our problem. We need a sample
+$X_{N}$ of $N$ random points $x$ that fall inside a box $B$, so let's create a method
+\method{point} that takes a suitable representation of $B$ and returns one.
 %
 \python{
-  firstline=9,lastline=24,
+  % firstnumber=9,
+  linerange={9-23},
   label={lst:classes:pointcloud},
   caption={\srcfile{classes/PointCloud.py}: The abstract base class for representing
     points in the integration region},
@@ -97,12 +98,11 @@ Object oriented programs re-shuffle complexity into the interactions of class in
 Developers are notoriously wrong about what to optimize even in the simplest procedural
 routines; it is considerably more difficult to anticipate the performance characteristics of an
 object oriented program. The only way to get a clear understanding of which sections of an
-application would benefit from further optimization efforts is to use a profiler, a tool
-dedicated to analyzing code performance. Despite all the advances in software engineering
-technology, it is still very hard to profile a design without an actual implementation. This
-deals a rather strong blow to the proponents of formal design practices\supercite{uml} and
-makes {\em agile programming}\supercite{agile} a much more attractive methodology for
-scientific programming.
+application would benefit from further optimization is to use a profiler, a tool dedicated to
+analyzing code performance. Despite all the advances in software engineering technology, it is
+still very hard to profile a design without an actual implementation. This deals a rather
+strong blow to the proponents of formal design practices\supercite{uml} and makes {\em agile
+  programming}\supercite{agile} a much more attractive methodology for scientific programming.
 
 One thing is clear: the performance cost of variable accesses and function calls has the
 potential to dominate the execution profile of a code in an insidious way. The program may be
@@ -126,8 +126,9 @@ by \mbox{\tt [[0,0], [1,1]]}, while the unit box in three dimensions would be gi
 iterable container with the structure shown will do.
 %
 \python{
-  firstline=9,lastline=29,
-  label={lst:classes:wh},
+  % firstnumber=9,
+  linerange={9-29},
+  label={lst:classes:mersenne},
   caption={\srcfile{classes/Mersenne.py}: Encapsulating the standard python generator},
 }{listings/classes/Mersenne.py}
 %
@@ -161,7 +162,8 @@ Designing with simplicity in mind would suggest an abstract base class \class{Sh
 single method:
 %
 \python{
-  firstline=9,lastline=20,
+  % firstnumber=9,
+  linerange={9-20},
   label={lst:classes:shape},
   caption={\srcfile{classes/Shape.py}: The base class for the representation of the
     region of integration},
@@ -174,7 +176,8 @@ attributes will be represented as data members of the class that are provided at
 time, and so they become arguments of the constructor of the class.
 %
 \python{
-  firstline=9,lastline=36,
+  % firstnumber=9,
+  linerange={9-36},
   label={lst:classes:disk},
   caption={\srcfile{classes/Disk.py}: Representing the interior of a circle},
 }{listings/classes/Disk.py}
@@ -200,7 +203,8 @@ note that we are still assuming that the sampling box is the unit square. Conseq
 overall normalization necessary to account for the sampling box volume is not shown explicitly.
 %
 \python{
-  firstline=9,lastline=35,
+  % firstnumber=9,
+  linerange={9-33},
   label=lst:classes:driver,
   caption={\srcfile{classes/gauss.py}: The driver for the objected oriented solution},
 }{listings/classes/gauss.py}
@@ -212,7 +216,7 @@ of work still left to do.
 \begin{table}
 \centering
 \[
-\begin{array}{r|d{3}d{3}d{3}d{3}d{3}}
+\begin{array}{rd{3}d{3}d{3}d{3}d{3}}
 % headersep
   & 
   \multicolumn{1}{c}{\cpp} &
@@ -221,7 +225,7 @@ of work still left to do.
   \multicolumn{1}{c}{\mbox{\rm containers}} &
   \multicolumn{1}{c}{\mbox{\rm generators}} \\
 % second row
-  \multicolumn{1}{c|}{N} &
+  \multicolumn{1}{c}{N} &
   \multicolumn{1}{c}{t \mbox{(sec)}} &
   \multicolumn{1}{c}{t \mbox{(sec)}}  &
   \multicolumn{1}{c}{t \mbox{(sec)}}  &
@@ -248,34 +252,30 @@ of work still left to do.
 The object solution is an order of magnitude slower than our previous python implementation,
 and almost two orders of magnitude slower than the \cpp\ implementation. 
 
-\TODO{
-\item add sentence excusing not going past $10^{8}$
-}
-
 \subsection{Improving performance}
 \label{sec:classes:improved-performane}
 
 The lackluster performance numbers are not very hard to understand. Taking a closer look at
 \lstref{classes:driver} we see that the body of the loop contains two function calls, one to
-\method{cloud.point} and another to \method{disk.interior}. Each of these calls is going to get
-executed $N$ times and we will have to pay the cost associated with looking up the method name
-and calling the associated python functions every time. Furthermore, if you look at the body of
-these two functions in \lstref{classes:wh} and \lstref{classes:disk}, you will find quite a bit
-of code associated with initializing local variables that have the same value every time these
-methods are invoked. That's another cost that we are paying once for each sample point. It
-may looks simple enough, but it quickly adds up.
+\method{cloud.point} and another to \method{disk.interior}. Each of these calls is executed $N$
+times, and each time we pay the cost associated with looking up the method names and calling
+the associated python functions. Furthermore, if you look at the body of these two functions in
+\lstref{classes:mersenne} and \lstref{classes:disk}, you will find quite a bit of code
+associated with initializing local variables that have the same value every time these methods
+are invoked. That's another cost that we are paying once for each sample point. It may not look
+like much, but it quickly adds up.
 
 \subsubsection{Containers: trading memory for speed}
 \label{sec:classes:containers}
 
 Perhaps we can amortize these costs over the sample set. One approach is to call the random
 number generator once and have it build a container with all the points in the sample set. The
-representation of the region of integration can act as a {\em filter} by building a container
-with the subset of points that fall on its interior. It is important to resist the temptation
-to have \class{Shape} just count the points for us so we can avoid the extra container. This
-would pollute the design by over-specializing \class{Shape} and would hinder reuse. Further, we
-will eventually need to know which points are interior to the \class{Shape} so we can evaluate
-our integrand $f$ there.
+representation of the region of integration can be cast as a {\em filter} that builds another
+container with the subset of points that fall on its interior. It is important to resist the
+temptation to have \class{Shape} just count the points for us so we can avoid the extra
+container. This would pollute the design by over-specializing \class{Shape} and would hinder
+reuse. Further, we will eventually need to know which points are interior to the \class{Shape}
+so we can evaluate our integrand $f$ there.
 
 Turning to the implementation in \lstref{classes:pointcloud:containers}, the class
 \class{PointCloud} gets a method \method{points} that expects two arguments: \identifier{n} is
@@ -283,7 +283,8 @@ the number of points in our sample, and \identifier{box} is the bounding box rep
 before.
 %
 \python{
-  firstline=9,lastline=25,
+  % firstnumber=9,
+  linerange={9-24},
   label={lst:classes:pointcloud:containers},
   caption={\srcfile{containers/PointCloud.py}: An improved class for representing the
     evaluation points},
@@ -294,22 +295,26 @@ The new implementation of the subclass \class{Mersenne} is shown in
 container of \identifier{n} random points. The trade off, of course, is that now we must pay
 the cost of managing this container. Since $n$ is potentially a large number we must be very
 careful inside the \keyword{while} loop. In particular it is important to use \order{1}
-operations while building the sample container. Fortunately, \method{append} is very well
-behaved in this regard: python lists are implemented in such a way that the interpreter can add
-elements at the tail in essentially constant time.
+operations while building the sample container. According to the python documentation,
+\method{append} is supposed to be well behaved in this regard: lists are implemented in
+such a way that the interpreter can add elements at the tail in essentially constant time.
 %
 \python{
-  firstline=9,lastline=33,
+  % firstnumber=9,
+  linerange={9-33},
   label={lst:classes:mt:containers},
   caption={\srcfile{containers/Mersenne.py}: Filling a container with random points},
 }{listings/containers/Mersenne.py}
 %
 
 The abstract class \class{Shape} doesn't require any significant changes. We merely reinterpret
-the dummy argument as a container of points and adjust its name accordingly.
+the dummy argument \identifier{points} of the method \method{interior} as a container of
+points, adjust its name accordingly, and update the comments to indicate that the value
+returned is a filtered container.
 %
 \python{
-  firstline=9,lastline=22,
+  % firstnumber=9,
+  linerange={9-21},
   label={lst:classes:shape:containers},
   caption={\srcfile{containers/Shape.py}: The base class \class{Shape} requires little
     change},
@@ -320,7 +325,8 @@ more complicated than \lstref{classes:disk}. We initialize a container \identifi
 populate with the interior points.
 %
 \python{
-  firstline=9,lastline=40,
+  % firstnumber=9,
+  linerange={9-40},
   label={lst:classes:disk:containers},
   caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} as a filter},
 }{listings/containers/Disk.py}
@@ -332,7 +338,8 @@ counter updates. Instead, we just use the function \function{len} to compute the
 interior points.
 %
 \python{
-  firstline=9,lastline=33,
+  % firstnumber=9,
+  linerange={10-33},
   label=lst:classes:driver:containers,
   caption={\srcfile{containers/gauss.py}: The driver for the container based solution},
 }{listings/containers/gauss.py}
@@ -371,7 +378,8 @@ from the version of \class{PointCloud} shown in \lstref{classes:pointcloud:conta
 implementation of \class{Mersenne} is shown in \lstref{generators:mt}.
 %
 \python{
-  firstline=9,lastline=31,
+  % firstnumber=9,
+  linerange={9-31},
   label={lst:generators:mt},
   caption={\srcfile{containers/Mersenne.py}: The generator based implementation},
 }{listings/generators/Mersenne.py}
@@ -383,28 +391,29 @@ as we did before, and proceed to loop over the desired sample size, generating r
 Rather than storing \identifier{p}, we \keyword{yield} it to our caller. This statement
 suspends the execution of \method{points} but saves everything that we have done so far,
 including the values of all the local variables, such as the loop counter \identifier{n}. The
-caller doesn't actually get \identifier{p}, but a type of iterator that executes this code and
-returns \identifier{p} when asked for its current value. The magical part is that when the
-iterator is asked to advance to advance to the its next item, it will resume evaluating the
-method \method{points} at whatever statement follows the \keyword{yield} statement on
-\lstlineref{mt:generators:yield} that suspended it. In our case it means that the counter will
-get decremented and the loop will execute another iteration until the next time the
-\keyword{yield} statement is reached. This process continues until the loop is exhausted, at
-which point we run into the \keyword{return} statement on
+magical part is that when the iterator is asked to advance to advance to the its next item, it
+will resume evaluating the method \method{points} at whatever statement follows the
+\keyword{yield} statement on \lstlineref{mt:generators:yield} that suspended it. In our case it
+means that the counter will get decremented and the loop will execute another iteration until
+the next time the \keyword{yield} statement is reached. This process continues until the loop
+is exhausted, at which point we run into the \keyword{return} statement on
 \lstlineref{mt:generators:return}. According to generator rules, \keyword{return} causes a
 \class{StopIteration} exception to be raised, signalling to the caller that we are done
 generating values from our virtual container. The \keyword{for} loop quietly handles this
-exception and completes the iteration.
+exception and completes the iteration. 
 
-If this is making your head hurt, do not worry. It will all make sense pretty soon. Later I
-will make your head {\em explode} when we touch on {\em metaclasses}; it seems that some of the
-more advanced constructs in python have strange physiological
-effects\supercite{guido-metaclasses}.
+This sequence of steps is set in motion by the first call to \method{points}. The caller gets a
+type of iterator that executes this code and yields points at \lstlineref{mt:generators:yield}
+every time it is asked to advance.  If this is making your head hurt, do not worry. It will all
+make sense pretty soon. Later I will make your head {\em explode} when we touch on {\em
+  metaclasses}; it seems that some of the more advanced constructs in python have strange
+physiological effects\supercite{guido-metaclasses}.
 
 Let's see what happens to \class{Disk}:
 %
 \python{
-  firstline=9,lastline=39,
+  % firstnumber=9,
+  linerange={9-39},
   label={lst:generators:disk},
   caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} with a generator},
 }{listings/generators/Disk.py}
@@ -413,7 +422,7 @@ The method \method{contains} still accepts some kind of iterable object \identif
 goes about the business of deciding whether the contents are interior or not. We set up a loop
 over \identifier{points} on \lstlineref{disk:generators:loop}, but rather than storing the
 result in \identifier{keep} as we did in \lstref{classes:disk:containers}, we \keyword{yield}
-the interior point on\lstlineref{disk:generators:yield}.  When our loops exhausts
+the interior point on\lstlineref{disk:generators:yield}.  When our loop exhausts
 \identifier{points} we reach the \keyword{return} statement on
 \lstlineref{disk:generators:return}, which raises a \class{StopIteration} exception and
 terminates our generator.
@@ -427,7 +436,8 @@ contents is driving the generators to produce the associated values without payi
 computational expense to set up the function or manage a container for the intermediate values.
 %
 \python{
-  firstline=10,lastline=43,
+  % firstnumber=10,
+  linerange={10-43},
   label={lst:generators:driver},
   caption={\srcfile{generators/gauss.py}: The driver for the implementation based on generators},
 }{listings/generators/gauss.py}
@@ -475,13 +485,13 @@ we moved the representation to a \identifier{numpy} container? Have we locked ou
 using the python built in random number generator because we cannot feed it a \cc\ array?
 Thanks to the fact that interface, rather than type, is what python checks, we can make all
 these solutions inter-operate. The generator \identifier{Disk.contains} in
-\lstref{generators:disk} does not know or care whether the point container it is
+\lstref{generators:disk} neither knows nor cares whether the point container it is
 iterating over is real or virtual, a python list or a \identifier{numpy} array. All that
 matters is that \identifier{points} is iterable and that each iteration produces a pair of
 floats. This lets us keep the object oriented structure and explore various strategies that
 trade off between complexity, memory and performance. Better yet, in \secref{components} and
 \secref{pyreapp} I will show you how you can let your users assume final responsibility by
-postponing making these decisions for as long as possible.
+postponing these decisions for as long as possible.
 
 \subsection{Functors}
 \label{sec:classes:functors}
@@ -497,13 +507,14 @@ indistinguishable from normal functions. We'll skip this step since we are not i
 syntactic sugar at this point of the design; we can always add this later.
 %
 \python{
-  firstline=10,lastline=20,
+  % firstnumber=9,
+  linerange={9-20},
   label={lst:generators:functor},
   caption={\srcfile{generators/Functor.py}: The abstract base class for functional forms},
 }{listings/generators/Functor.py}
 %
 The method \method{eval} is intended to iterate over the container \identifier{points} and
-yield the value of the function at each point. This sounds very sensible at first; there is no
+yield the value of the function at each one. This sounds very sensible at first; there is no
 other information about the encapsulated functional form available at the level of the
 abstract base class. Then, the part of your brain that has been traumatized by traditional
 programming kicks in and raises the question: what about the ``extra'' arguments that functions
@@ -530,7 +541,8 @@ implementation of the normal distribution as a functor shown in \lstref{generato
 a much better solution.
 %
 \python{
-  firstline=10,lastline=43,
+  % firstnumber=10,
+  linerange={9-43},
   label={lst:generators:gaussian},
   caption={\srcfile{generators/Gaussian.py}: Implementation of the normal distribution as a
     functor},
@@ -548,7 +560,8 @@ simpler functor \class{Constant} that represents a constant function. Instantiat
 reproduce the results of the previous sections.
 %
 \python{
-  firstline=10,lastline=31,
+  % firstnumber=9,
+  linerange={9-31},
   label={lst:generators:constant},
   caption={\srcfile{generators/Constant.py}: Implementation of constant functions},
 }{listings/generators/Constant.py}
@@ -582,8 +595,8 @@ a two dimensional version of \eqref{gaussian} is integrated over the unit circle
 %
 There are two distinct sections in this script. The top part contains mostly configuration
 options while the last few lines are the implementation of the integration algorithm. Computing
-an integral over a different region or of a different integrand should be just a matter of
-instantiating different objects to hand out to the integration algorithm. At this point, this
+an integral over a different region or a different integrand should be just a matter of
+instantiating different objects to hand to the integration algorithm. At this point, this
 involves editing the script and rerunning it; in the next section, I will show you how \pyre\
 makes it possible to have the end user make these choices without touching the source code to
 our application script.

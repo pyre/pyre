@@ -6,7 +6,7 @@
 #
 
 
-class Shape(object):
+class Shape:
     """
     The abstract base class for representations of geometrical regions
     """
@@ -15,8 +15,7 @@ class Shape(object):
     # interface
     def interior(self, points):
         """
-        Examine each point in {points} and return a list of booleans indicating whether it is
-        interior or not
+        Discard {points} that are on my exterior
         """
         raise NotImplementedError(
             "class {.__name__!r} should implement 'interior'".format(type(self)))

@@ -6,7 +6,7 @@
 #
 
 
-class PointCloud(object):
+class PointCloud:
     """
     The abstract base class for point generators
     """
@@ -18,8 +18,7 @@ class PointCloud(object):
         
         parameters: 
             {n}: the number of points to generate
-            {box}: a pair of points on the plane that specify the major diagonal of the
-                   rectangular region
+            {box}: a pair of points that specify the computational domain
         """
         raise NotImplementedError(
             "class {.__name__!r} should implement 'points'".format(type(self)))

@@ -22,6 +22,6 @@ for i in range(N):
         # update the interior point counter
         interior += 1
 # print the result:
-print("pi: {0:.8f}".format(4*interior/N))
+print("pi: {:.8f}".format(4*interior/N))
 
 # end of file 

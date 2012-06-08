@@ -26,7 +26,7 @@ class MersenneTwister(PointCloud):
         sample = []
         # loop over the sample size
         while n > 0:
-            p = [ random.uniform(left, right) for left,right in intervals ]
+            p = [ random.uniform(*interval) for interval in intervals ]
             sample.append(p)
             n -= 1
                 

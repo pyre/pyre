@@ -18,7 +18,7 @@ def gauss():
     from MersenneTwister import MersenneTwister
 
     # inputs
-    N = 10**7
+    N = 10**6
     box = [(-1,-1), (1,1)]
     B = functools.reduce(operator.mul, ((right-left) for left,right in zip(*box)))#@\label{line:mc:volume}@
     # the point cloud generator
@@ -37,7 +37,7 @@ def gauss():
     integral = B/N * sum(gaussian.eval(interior))#@\label{line:mc:integral}@
 
     # print out the estimate of the integral
-    print("integral: {0:.8f}".format(integral))
+    print("integral: {:.8f}".format(integral))
     return
 
 
