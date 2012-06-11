@@ -9,7 +9,7 @@
 import random
 from PointCloud import PointCloud
 
-class MersenneTwister(PointCloud):
+class Mersenne(PointCloud):
     """
     A point generator implemented using the Mersenne Twister random number generator that is
     available as part of the python standard library

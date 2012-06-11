@@ -15,14 +15,14 @@ def gauss():
     """
     from Disk import Disk
     from Gaussian import Gaussian
-    from MersenneTwister import MersenneTwister
+    from Mersenne import Mersenne
 
     # inputs
-    N = 10**6
+    N = 10**5
     box = [(-1,-1), (1,1)]
     B = functools.reduce(operator.mul, ((right-left) for left,right in zip(*box)))#@\label{line:mc:volume}@
     # the point cloud generator
-    generator = MersenneTwister()
+    generator = Mersenne()
     # the region of integration
     disk = Disk(center=(0,0), radius=1)
     # the integrand

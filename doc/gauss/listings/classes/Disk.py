@@ -12,6 +12,10 @@ class Disk(Shape):
     """
     A representation of a circular disk
     """
+
+    # public data
+    radius = 1 # by default, a unit circle
+    center = (0,0) # centered at the origin
     
     # interface
     def interior(self, point):
@@ -23,14 +27,14 @@ class Disk(Shape):
         x, y = point
         dx = x - x0
         dy = y - y0
-
+        # check whether the point is exterior
         if dx*dx + dy*dy > r2:
             return False
-
+        # otherwise, it is interior
         return True
 
     # meta methods
-    def __init__(self, radius=1.0, center=(0.0, 0.0)): #@\label{line:disk:constructor}@
+    def __init__(self, radius=radius, center=center): #@\label{line:disk:constructor}@
         self.radius = radius
         self.center = center
         return

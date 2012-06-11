@@ -8,10 +8,12 @@
 PROJECT = pyre
 PACKAGE = doc/gauss/classes
 
+PROJ_TIDY += __pycache__
+
 #--------------------------------------------------------------------------
 #
 
-all: tidy
+all: test clean
 
 test:
 	${PYTHON} ./gauss.py

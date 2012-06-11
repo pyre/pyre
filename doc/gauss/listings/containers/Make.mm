@@ -9,10 +9,12 @@
 PROJECT = pyre
 PACKAGE = doc/gauss/containers
 
+PROJ_TIDY += __pycache__
+
 #--------------------------------------------------------------------------
 #
 
-all: tidy
+all: test clean
 
 test:
 	${PYTHON} ./gauss.py

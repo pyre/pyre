@@ -14,6 +14,11 @@
 \usepackage{url}
 
 \usepackage{hyperref}
+% the hyperlink colors
+\definecolor{linkcolor}{rgb}{.15,.20,0.75}
+\definecolor{citecolor}{rgb}{.15,.40,0.75}
+\definecolor{filecolor}{rgb}{.15,.40,0.75}
+\definecolor{urlcolor}{rgb}{.15,.40,0.75}
 \hypersetup{
     pdftitle={Building scientific applications using pyre},
     pdfauthor={Michael A.G. A\"iv\'azis},
@@ -27,10 +32,10 @@
     pdffitwindow=true,      % page fit to window when opened
     pdfnewwindow=true,      % links in new window
     colorlinks=true,        % false: boxed links; true: colored links
-    linkcolor=blue,         % color of internal links
-    citecolor=blue,         % color of links to bibliography
-    filecolor=blue,         % color of file links
-    urlcolor=blue           % color of external links
+    linkcolor=linkcolor,    % color of internal links
+    citecolor=citecolor,    % color of links to bibliography
+    filecolor=filecolor,    % color of file links
+    urlcolor=urlcolor       % color of external links
 }
 
 % dimensions

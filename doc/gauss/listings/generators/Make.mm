@@ -9,12 +9,15 @@
 PROJECT = pyre
 PACKAGE = doc/gauss/generators
 
+PROJ_TIDY += __pycache__
+
 #--------------------------------------------------------------------------
 #
 
-all: tidy
+all: test clean
 
 test:
 	${PYTHON} ./gauss.py
+	${PYTHON} ./gauss-mc.py
 
 # end of file

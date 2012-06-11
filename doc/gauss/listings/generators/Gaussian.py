@@ -13,6 +13,10 @@ class Gaussian(Functor):
     An implementation of the normal distribution with mean #@$\mu$@ and variance #@$\sigma^2$@
     """
 
+    # public data
+    mean = 0
+    spread = 1
+
     # interface
     def eval(self, points):
         """
@@ -37,7 +41,7 @@ class Gaussian(Functor):
         return
 
     # meta methods
-    def __init__(self, mean, spread):
+    def __init__(self, mean=mean, spread=spread):
         self.mean = mean
         self.spread = spread
         return

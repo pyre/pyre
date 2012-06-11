@@ -13,8 +13,6 @@ RECURSE_DIRS = \
    figures \
    listings \
 
-OTHERS = \
-
 #--------------------------------------------------------------------------
 #
 
@@ -45,8 +43,7 @@ LISTINGS = \
 #--------------------------------------------------------------------------
 #
 
-all: $(DOCUMENT).pdf clean
-	BLD_ACTION="all" $(MM) recurse
+all: $(DOCUMENT).pdf
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -56,6 +53,9 @@ clean::
 
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
+
+test:
+	BLD_ACTION="all" $(MM) recurse
 
 
 #--------------------------------------------------------------------------

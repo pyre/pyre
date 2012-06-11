@@ -9,15 +9,14 @@
 PROJECT = pyre
 PACKAGE = doc/gauss/simple
 
-PROJ_TIDY += gauss
-PROJ_CLEAN += gauss.dSYM
+PROJ_TIDY += gauss gauss.dSYM __pycache__
 
 include gsl/default.def
 
 #--------------------------------------------------------------------------
 #
 
-all: gauss
+all: gauss test clean
 
 gauss: gauss.cc
 	$(CXX) $(CXXFLAGS) -o $@ gauss.cc $(LCXXFLAGS) $(EXTERNAL_LIBS)

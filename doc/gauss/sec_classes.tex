@@ -113,16 +113,16 @@ templates. Still, much of the code in modern scientific applications deals with 
 the computational environment; it is these parts that stand to benefit the most from the
 complexity management that object oriented techniques bring to the table.
 
-Returning to the problem at hand, we can now derive a class \class{Mersenne} that
-encapsulates the random number generator from the standard python library that we used in
+Returning to the problem at hand, we can now derive a class \class{Mersenne} that encapsulates
+the random number generator from the standard python library that we used in
 \secref{simple:python}. We require that \identifier{box} has enough structure so that we can
 deduce the dimensionality of the requested point, as well as build the set of transformations
-that map from the unit line interval to the corresponding side of the box. The vector diagonal
-of the bounding box fits this bill perfectly: we specify that \identifier{box} is to be a pair
-of $d$-tuples specifying the coordinates of the point of the box closest to the origin and the
+that map the unit line interval to the corresponding side of the box. The vector diagonal of
+the bounding box fits this bill perfectly: we specify that \identifier{box} is to be a pair of
+$d$-tuples specifying the coordinates of the point of the box closest to the origin and the
 point diagonally across from it. For example, the unit square on the plane might be represented
-by \mbox{\tt [[0,0], [1,1]]}, while the unit box in three dimensions would be given by
-\mbox{\tt [[0,0,0], [1,1,1]]}.  We only use iterators to access \identifier{box}, so any
+by \literal{[[0,0], [1,1]]}, while the unit box in three dimensions would be given by
+\literal{[[0,0,0], [1,1,1]]}.  We only use iterators to access \identifier{box}, so any
 iterable container with the structure shown will do.
 %
 \python{
@@ -132,13 +132,14 @@ iterable container with the structure shown will do.
   caption={\srcfile{classes/Mersenne.py}: Encapsulating the standard python generator},
 }{listings/classes/Mersenne.py}
 %
-We have unpacked the two corners of the bounding box in the assignment on
-\lstlineref{mt:unpack}. On \lstlineref{mt:zip}, we have used \function{zip} to build a tuple of
-the co\"ordinate intervals along each axis, over which we iterate in the list comprehension on
-\lstlineref{mt:list} in order to provide the arguments to \function{uniform}. The function
-\function{uniform} performs the necessary transformations to return a random number between
-\identifier{left} and \identifier{right} along each of the axes. The net effect is
-a $d$-dimensional random point from the interior of \identifier{box}.
+
+The assignment on \lstlineref{mt:unpack} unpacks the two corners of the bounding box. The call
+to \function{zip} on \lstlineref{mt:zip} builds a tuple of the co\"ordinate intervals along
+each axis, over which we iterate in the list comprehension on \lstlineref{mt:list} in order to
+provide the arguments to \function{uniform}. The function \function{uniform} performs the
+necessary transformations to return a random number between \identifier{left} and
+\identifier{right} along each of the axes. The net effect is a $d$-dimensional random point
+from the interior of \identifier{box}.
 
 The class \class{PointCloud} and its subclasses should be generally useful to us and are good
 candidates for reuse. The interface should be broadened a bit, by adding a means to seed the
@@ -169,21 +170,21 @@ single method:
     region of integration},
 }{listings/classes/Shape.py}
 %
-from which we derive a class \class{Disk} that represents the interior of a circle.
-Completing this representation involves two steps: providing an implementation for
-\method{interior} and endowing instances of \class{Disk} with location and size. These two
-attributes will be represented as data members of the class that are provided at construction
-time, and so they become arguments of the constructor of the class.
+from which we derive a class \class{Disk} that represents the interior of a circle.  Completing
+this representation involves two steps: providing an implementation for \method{interior}, and
+endowing instances of \class{Disk} with location and size. We require that these two attributes
+are provided at construction time, and store them as data members.
 %
 \python{
   % firstnumber=9,
-  linerange={9-36},
+  linerange={9-40},
   label={lst:classes:disk},
   caption={\srcfile{classes/Disk.py}: Representing the interior of a circle},
 }{listings/classes/Disk.py}
 %
 For convenience, the constructor on \lstlineref{disk:constructor} accepts default values for
-the radius and the center of the disk. It is best to keep such practices to a minimum because
+the radius and the center of the disk that are read from the class attributes of the same name,
+a very useful python idiom. Normally, it is best to keep such practices to a minimum because
 the implicit passing of information between caller and callee makes the code harder to read and
 understand, and they expose users of the class \class{Disk} to the risk that the default values
 of the arguments may change in the future. In this case there is a {\em natural} choice for
@@ -204,7 +205,7 @@ overall normalization necessary to account for the sampling box volume is not sh
 %
 \python{
   % firstnumber=9,
-  linerange={9-33},
+  linerange={9-36},
   label=lst:classes:driver,
   caption={\srcfile{classes/gauss.py}: The driver for the objected oriented solution},
 }{listings/classes/gauss.py}
@@ -320,13 +321,13 @@ returned is a filtered container.
     change},
 }{listings/containers/Shape.py}
 %
-The implementation of \class{Disk}, shown in \lstref{classes:disk:containers}, is only slightly
-more complicated than \lstref{classes:disk}. We initialize a container \identifier{keep} and
-populate with the interior points.
+The implementation of \class{Disk} in \lstref{classes:disk:containers} is only slightly more
+complicated than \lstref{classes:disk}. We initialize a container \identifier{keep} on
+\lstlineref{disk:keep}, and populate it with the interior points on \lstlineref{disk:populate}.
 %
 \python{
   % firstnumber=9,
-  linerange={9-40},
+  linerange={9-44},
   label={lst:classes:disk:containers},
   caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} as a filter},
 }{listings/containers/Disk.py}
@@ -391,16 +392,16 @@ as we did before, and proceed to loop over the desired sample size, generating r
 Rather than storing \identifier{p}, we \keyword{yield} it to our caller. This statement
 suspends the execution of \method{points} but saves everything that we have done so far,
 including the values of all the local variables, such as the loop counter \identifier{n}. The
-magical part is that when the iterator is asked to advance to advance to the its next item, it
-will resume evaluating the method \method{points} at whatever statement follows the
-\keyword{yield} statement on \lstlineref{mt:generators:yield} that suspended it. In our case it
-means that the counter will get decremented and the loop will execute another iteration until
-the next time the \keyword{yield} statement is reached. This process continues until the loop
-is exhausted, at which point we run into the \keyword{return} statement on
+magical part is that when the iterator is asked to advance to the its next item, it will resume
+evaluating the method \method{points} at whatever statement follows the \keyword{yield}
+statement on \lstlineref{mt:generators:yield} that suspended it. In our case it means that the
+counter will get decremented and the loop will execute another iteration until the next time
+the \keyword{yield} statement is reached. This process continues until the loop is exhausted,
+at which point we run into the \keyword{return} statement on
 \lstlineref{mt:generators:return}. According to generator rules, \keyword{return} causes a
 \class{StopIteration} exception to be raised, signalling to the caller that we are done
 generating values from our virtual container. The \keyword{for} loop quietly handles this
-exception and completes the iteration. 
+exception and completes the iteration.
 
 This sequence of steps is set in motion by the first call to \method{points}. The caller gets a
 type of iterator that executes this code and yields points at \lstlineref{mt:generators:yield}
@@ -541,8 +542,8 @@ implementation of the normal distribution as a functor shown in \lstref{generato
 a much better solution.
 %
 \python{
-  % firstnumber=10,
-  linerange={9-43},
+  % firstnumber=9,
+  linerange={9-47},
   label={lst:generators:gaussian},
   caption={\srcfile{generators/Gaussian.py}: Implementation of the normal distribution as a
     functor},
@@ -552,7 +553,9 @@ The two parameters that determine the properties of the distribution become argu
 constructor of the functor, and so become attributes of the instance that we will use to
 represent the integrand. Note that the implementation shown works regardless of the
 dimensionality of the domain, thanks to the careful use of functions that operate on
-containers. 
+containers. The only obvious improvement is supporting non-trivial covariance among the
+components of \identifier{point}, but that requires changes to \eqref{gaussian} that involve
+matrix algebra and we are not ready to tackle this just yet.
 
 In a similar vein, \lstref{generators:constant} shows the implementation of the somewhat
 simpler functor \class{Constant} that represents a constant function. Instantiating

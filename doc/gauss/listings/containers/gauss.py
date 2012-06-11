@@ -12,13 +12,13 @@ def gauss():
     The driver for the container based implementation
     """
     from Disk import Disk
-    from MersenneTwister import MersenneTwister
+    from Mersenne import Mersenne
 
     # inputs
-    N = 10**6
+    N = 10**5
     box = [(0,0), (1,1)]
     # the point cloud generator
-    generator = MersenneTwister()
+    generator = Mersenne()
     # the region of integration
     disk = Disk(center=(0,0), radius=1)
 
@@ -34,8 +34,8 @@ def gauss():
 
 
 def testMT():
-    from MersenneTwister import MersenneTwister
-    mt = MersenneTwister()
+    from Mersenne import Mersenne
+    mt = Mersenne()
 
     sample = mt.generateSample(2, [(0, 1),(1, 2)])
 

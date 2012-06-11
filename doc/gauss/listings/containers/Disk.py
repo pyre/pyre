@@ -13,6 +13,10 @@ class Disk(Shape):
     A representation of a circular disk
     """
 
+    # public data
+    radius = 1 # by default, a unit circle
+    center = (0,0) # centered at the origin
+    
     # interface
     def interior(self, points):
         """
@@ -22,19 +26,19 @@ class Disk(Shape):
         r2 = self.radius**2
         x0, y0 = self.center
         # initialize the container of interior points
-        keep = []
+        keep = [] #@\label{line:disk:keep}@
         # iterate over the given points, save the interior ones
         for point in points:
             x, y = point
             dx = x - x0
             dy = y - y0
             if dx*dx + dy*dy <= r2:
-                keep.append(point)
+                keep.append(point) #@\label{line:disk:populate}@
         # and return them to the caller
         return keep
 
     # meta methods
-    def __init__(self, radius=1.0, center=(0.0, 0.0)):
+    def __init__(self, radius=radius, center=center):
         self.radius = radius
         self.center = center
         return

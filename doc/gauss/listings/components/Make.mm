@@ -9,6 +9,8 @@
 PROJECT = pyre
 PACKAGE = doc/gauss/components
 
+PROJ_TIDY += __pycache__
+
 #--------------------------------------------------------------------------
 #
 
