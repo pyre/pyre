@@ -140,7 +140,7 @@ class FileServer(Filesystem):
             # if this failed
             except self.NotFoundError:
                 # hmm... why is this directory missing from the distribution?
-                print(" ** warning: could not find system depository")
+                # print(" ** warning: could not find system depository")
                 # moving on...
                 system = self.folder()
             # if successful
