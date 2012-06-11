@@ -42,6 +42,11 @@ namespace mpi {
         extern const char * const bcast__doc__;
         PyObject * bcast(PyObject *, PyObject *);
 
+        // sum reduction
+        extern const char * const sum__name__;
+        extern const char * const sum__doc__;
+        PyObject * sum(PyObject *, PyObject *);
+
     } // of namespace communicator
 
     namespace cartesian {

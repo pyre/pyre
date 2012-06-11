@@ -8,7 +8,7 @@
 
 
 """
-Exercise message ports
+Exercise broadcast operations
 """
 
 class message:

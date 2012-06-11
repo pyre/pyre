@@ -46,6 +46,8 @@ namespace mpi {
           communicator::barrier, METH_VARARGS, communicator::barrier__doc__ },
         { communicator::bcast__name__, 
           communicator::bcast, METH_VARARGS, communicator::bcast__doc__ },
+        { communicator::sum__name__, 
+          communicator::sum, METH_VARARGS, communicator::sum__doc__ },
 
         { cartesian::create__name__, cartesian::create, METH_VARARGS, cartesian::create__doc__ },
         { cartesian::coordinates__name__, cartesian::coordinates, METH_VARARGS, 

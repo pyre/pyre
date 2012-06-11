@@ -358,7 +358,6 @@ PyObject * mpi::communicator::bcast(PyObject *, PyObject * args)
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
-
     // trying to stay Py_ssize_t clean...
     int size = len;
     // broadcast the length of the data buffer
@@ -382,6 +381,52 @@ PyObject * mpi::communicator::bcast(PyObject *, PyObject * args)
     }
     // all done
     return value;
+}
+
+
+// perform a sum reduction
+const char * const
+mpi::communicator::
+sum__name__ = "sum";
+
+const char * const 
+mpi::communicator::
+sum__doc__ = "perform a sum reduction";
+
+PyObject * mpi::communicator::sum(PyObject *, PyObject * args)
+{
+    // place holders
+    double number;
+    int rank, root;
+    PyObject * py_comm;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iid:sum",
+                          &PyCapsule_Type, &py_comm,
+                          &rank, &root,
+                          &number)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // space for the result
+    double total;
+    // compute the total
+    MPI_Reduce(&number, &total, 1, MPI_DOUBLE, MPI_SUM, root, comm->handle());
+
+    // and return it
+    return PyFloat_FromDouble(total);
 }
 
 

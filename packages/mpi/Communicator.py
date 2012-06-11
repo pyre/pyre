@@ -117,6 +117,14 @@ class Communicator(Object):
         return pickle.loads(data)
 
 
+    def sum(self, item, root):
+        """
+        Perform a sum reduction of {item}
+        """
+        # pass it on
+        return self.mpi.sum(self.capsule, self.rank, root, item)
+
+
     # meta methods
     def __init__(self, capsule, **kwds):
         """

@@ -30,6 +30,7 @@ groups:
 
 communications:
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./bcast.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./sum.py
 	${MPI_EXECUTIVE} -np 2 ${PYTHON} ./port.py
 
 launch:
