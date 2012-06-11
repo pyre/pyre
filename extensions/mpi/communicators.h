@@ -47,6 +47,21 @@ namespace mpi {
         extern const char * const sum__doc__;
         PyObject * sum(PyObject *, PyObject *);
 
+        // product reduction
+        extern const char * const product__name__;
+        extern const char * const product__doc__;
+        PyObject * product(PyObject *, PyObject *);
+
+        // max reduction
+        extern const char * const max__name__;
+        extern const char * const max__doc__;
+        PyObject * max(PyObject *, PyObject *);
+
+        // min reduction
+        extern const char * const min__name__;
+        extern const char * const min__doc__;
+        PyObject * min(PyObject *, PyObject *);
+
     } // of namespace communicator
 
     namespace cartesian {

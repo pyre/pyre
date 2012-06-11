@@ -125,6 +125,30 @@ class Communicator(Object):
         return self.mpi.sum(self.capsule, self.rank, root, item)
 
 
+    def product(self, item, root):
+        """
+        Perform a product reduction of {item}
+        """
+        # pass it on
+        return self.mpi.product(self.capsule, self.rank, root, item)
+
+
+    def max(self, item, root):
+        """
+        Perform a max reduction of {item}
+        """
+        # pass it on
+        return self.mpi.max(self.capsule, self.rank, root, item)
+
+
+    def min(self, item, root):
+        """
+        Perform a min reduction of {item}
+        """
+        # pass it on
+        return self.mpi.min(self.capsule, self.rank, root, item)
+
+
     # meta methods
     def __init__(self, capsule, **kwds):
         """

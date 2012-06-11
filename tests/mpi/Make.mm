@@ -31,10 +31,12 @@ groups:
 communications:
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./bcast.py
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./sum.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./product.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./max.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./min.py
 	${MPI_EXECUTIVE} -np 2 ${PYTHON} ./port.py
 
 launch:
 	${PYTHON} ./launch.py
-
 
 # end of file 

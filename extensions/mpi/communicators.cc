@@ -430,6 +430,144 @@ PyObject * mpi::communicator::sum(PyObject *, PyObject * args)
 }
 
 
+// perform a product reduction
+const char * const
+mpi::communicator::
+product__name__ = "product";
+
+const char * const 
+mpi::communicator::
+product__doc__ = "perform a product reduction";
+
+PyObject * mpi::communicator::product(PyObject *, PyObject * args)
+{
+    // place holders
+    double number;
+    int rank, root;
+    PyObject * py_comm;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iid:product",
+                          &PyCapsule_Type, &py_comm,
+                          &rank, &root,
+                          &number)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // space for the result
+    double product = 0;
+    // compute the product
+    MPI_Reduce(&number, &product, 1, MPI_DOUBLE, MPI_PROD, root, comm->handle());
+
+    // and return it
+    return PyFloat_FromDouble(product);
+}
+
+
+// perform a max reduction
+const char * const
+mpi::communicator::
+max__name__ = "max";
+
+const char * const 
+mpi::communicator::
+max__doc__ = "perform a max reduction";
+
+PyObject * mpi::communicator::max(PyObject *, PyObject * args)
+{
+    // place holders
+    double number;
+    int rank, root;
+    PyObject * py_comm;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iid:max",
+                          &PyCapsule_Type, &py_comm,
+                          &rank, &root,
+                          &number)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // space for the result
+    double largest = 0;
+    // compute the total
+    MPI_Reduce(&number, &largest, 1, MPI_DOUBLE, MPI_MAX, root, comm->handle());
+
+    // and return it
+    return PyFloat_FromDouble(largest);
+}
+
+
+// perform a min reduction
+const char * const
+mpi::communicator::
+min__name__ = "min";
+
+const char * const 
+mpi::communicator::
+min__doc__ = "perform a min reduction";
+
+PyObject * mpi::communicator::min(PyObject *, PyObject * args)
+{
+    // place holders
+    double number;
+    int rank, root;
+    PyObject * py_comm;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iid:min",
+                          &PyCapsule_Type, &py_comm,
+                          &rank, &root,
+                          &number)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // space for the result
+    double smallest = 0;
+    // compute the smallest
+    MPI_Reduce(&number, &smallest, 1, MPI_DOUBLE, MPI_MIN, root, comm->handle());
+
+    // and return it
+    return PyFloat_FromDouble(smallest);
+}
+
+
 // helpers
 void
 mpi::communicator::

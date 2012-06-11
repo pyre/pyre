@@ -48,6 +48,12 @@ namespace mpi {
           communicator::bcast, METH_VARARGS, communicator::bcast__doc__ },
         { communicator::sum__name__, 
           communicator::sum, METH_VARARGS, communicator::sum__doc__ },
+        { communicator::product__name__, 
+          communicator::product, METH_VARARGS, communicator::product__doc__ },
+        { communicator::max__name__, 
+          communicator::max, METH_VARARGS, communicator::max__doc__ },
+        { communicator::min__name__, 
+          communicator::min, METH_VARARGS, communicator::min__doc__ },
 
         { cartesian::create__name__, cartesian::create, METH_VARARGS, cartesian::create__doc__ },
         { cartesian::coordinates__name__, cartesian::coordinates, METH_VARARGS, 
