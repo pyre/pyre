@@ -22,8 +22,7 @@ class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=
     The {send} protocol pickles an object into the payload byte stream, and builds a header
     with the length of the payload. Similarly, {read} first extracts the length of the byte
     string and uses that information to pull the object representation from the input
-    channel. This is necessary because pickle reads aggressively from input streams and
-    discards any unused information, leading to stream corruption.
+    channel. This is necessary to simplify interacting with buffered streams.
     """ 
 
 

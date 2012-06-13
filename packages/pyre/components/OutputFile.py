@@ -23,7 +23,7 @@ class OutputFile(Property):
     # interface
     def pyre_cast(self, value, **kwds):
         """
-        Attempt to convert {value} into a float
+        Attempt to convert {value} into a file
         """
         # if the value is a string
         if isinstance(value, str):

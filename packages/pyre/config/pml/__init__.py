@@ -23,8 +23,7 @@ As a simple example,
        <bind property="pyre.version">1.0</bind>
    </config>
 
-assign the value "1.0" to the property "pyre.version". This is equivalent to
-supplying
+assign the value "1.0" to the property "pyre.version". This is equivalent to supplying
 
    --pyre.version=1.0
 
@@ -45,7 +44,7 @@ can nest arbitrarily deeply, with each level adding further qualifications to it
 namespace.
 
 A more common use of pml files is to store component configuration settings. Such settings use
-<bind> tags nested inside <component> tags and take various forms. To begin with, you can
+<bind> tags nested inside <component> tags, and take various forms. To begin with, you can
 configure the defaults that are applied to all instances of a given component class. For
 example, consider the package {gauss} from the examples directory. It contains a sub-package
 {functors} with representations of a few functions that help illustrate the kind of flexibility
@@ -117,13 +116,13 @@ to this configuration setting.
 Many components use other components to carry out part of their responsibilities. For example,
 the Monte Carlo integrator in the {gauss} package uses four separate components to completely
 specify the integral to perform. Let's try to configure an instance named {mc} to use 10^6
-samples to integrate the functor {Gaussian}, with all other setting left at their defaults:
+samples to integrate the functor {Gaussian}, with all other settings left at their defaults:
 
    <?xml version="1.0" encoding="utf-8"?>
    <config>
        <component name="mc">
            <bind property="samples">10**6</bind>
-           <bind property="integrand">import:gauss.fuctors.#gaussian</bind>
+           <bind property="integrand">import:gauss.fuctors.gaussian</bind>
        </component>
    </config>
 
@@ -134,7 +133,7 @@ component configuration
    <config>
        <component name="mc">
            <bind property="samples">10**6</bind>
-           <bind property="integrand">import:gauss.fuctors.#gaussian</bind>
+           <bind property="integrand">import:gauss.fuctors.gaussian</bind>
 
            <component name="box">
                <bind property="diagonal">((-1,-1), (1,1))</bind>
@@ -143,13 +142,14 @@ component configuration
        </component>
    </config>
 
-At this point, you might be tempted to also add some configuration settings for the integrand by doing something like
+At this point, you might be tempted to add some configuration settings for the integrand by
+doing something like
 
    <?xml version="1.0" encoding="utf-8"?>
    <config>
        <component name="mc">
            <bind property="samples">10**6</bind>
-           <bind property="integrand">import:gauss.fuctors.#gaussian</bind>
+           <bind property="integrand">import:gauss.fuctors.gaussian</bind>
 
            <component name="box">
                <bind property="diagonal">((-1,-1), (1,1))</bind>
@@ -163,14 +163,16 @@ At this point, you might be tempted to also add some configuration settings for 
    </config>
 
 There is a problem with this approach, however: suppose that you later override your choice of
-integrand by specifying a different functor on the command line. The framework will attempt to
-set the attributes {μ} and {σ} to the values specified above, almost certainly not what you expected. The solution is once again to specify the type of the component along its name so that configuration settings are applied only when appropriate.
+integrand by specifying a different functor on the command line. The framework will still
+attempt to set the attributes {μ} and {σ} to the values specified above, almost certainly not
+what you expected. The solution is once again to specify the type of the component along its
+name so that configuration settings are applied only when appropriate.
 
    <?xml version="1.0" encoding="utf-8"?>
    <config>
        <component name="mc">
            <bind property="samples">10**6</bind>
-           <bind property="integrand">import:gauss.fuctors.#gaussian</bind>
+           <bind property="integrand">import:gauss.fuctors.gaussian</bind>
 
            <component name="box">
                <bind property="diagonal">((-1,-1), (1,1))</bind>
