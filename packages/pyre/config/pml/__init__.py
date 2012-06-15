@@ -55,7 +55,7 @@ to 0 you would create a file {gauss.pml} with the following contents:
    <?xml version="1.0" encoding="utf-8"?>
    <config>
        <component family="gauss.functors.constant">
-           <bind property="version">1.0</bind>
+           <bind property="value">0</bind>
        </component>
    </config>
 
@@ -69,7 +69,7 @@ could restructure this file as follows:
    <config>
        <package name="gauss">
            <component family="functors.constant">
-               <bind property="version">1.0</bind>
+               <bind property="value">0</bind>
            </component>
        </package>
    </config>
@@ -122,7 +122,7 @@ samples to integrate the functor {Gaussian}, with all other settings left at the
    <config>
        <component name="mc">
            <bind property="samples">10**6</bind>
-           <bind property="integrand">import:gauss.fuctors.gaussian</bind>
+           <bind property="integrand">import:gauss.functors.gaussian</bind>
        </component>
    </config>
 
@@ -133,7 +133,7 @@ component configuration
    <config>
        <component name="mc">
            <bind property="samples">10**6</bind>
-           <bind property="integrand">import:gauss.fuctors.gaussian</bind>
+           <bind property="integrand">import:gauss.functors.gaussian</bind>
 
            <component name="box">
                <bind property="diagonal">((-1,-1), (1,1))</bind>
@@ -149,7 +149,7 @@ doing something like
    <config>
        <component name="mc">
            <bind property="samples">10**6</bind>
-           <bind property="integrand">import:gauss.fuctors.gaussian</bind>
+           <bind property="integrand">import:gauss.functors.gaussian</bind>
 
            <component name="box">
                <bind property="diagonal">((-1,-1), (1,1))</bind>
@@ -172,7 +172,7 @@ name so that configuration settings are applied only when appropriate.
    <config>
        <component name="mc">
            <bind property="samples">10**6</bind>
-           <bind property="integrand">import:gauss.fuctors.gaussian</bind>
+           <bind property="integrand">import:gauss.functors.gaussian</bind>
 
            <component name="box">
                <bind property="diagonal">((-1,-1), (1,1))</bind>
