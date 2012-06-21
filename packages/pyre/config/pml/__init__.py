@@ -187,4 +187,9 @@ name so that configuration settings are applied only when appropriate.
 
 """
 
+
+# pull the codec
+from .PML import PML as pml
+
+
 # end of file

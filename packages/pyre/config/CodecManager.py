@@ -60,8 +60,8 @@ class CodecManager:
         index = collections.OrderedDict()
 
         # the odb file handler
-        from .odb.ODB import ODB
-        index[ODB.encoding] = index["vfs"] = index["file"] = ODB
+        from .odb import odb
+        index[odb.encoding] = index["vfs"] = index["file"] = odb
 
 
         # the cfg file handler
@@ -69,16 +69,16 @@ class CodecManager:
         index[cfg.encoding] = cfg
 
         # the pml file handler
-        from .pml.PML import PML
-        index[PML.encoding] = PML
+        from .pml import pml
+        index[pml.encoding] = pml
 
         # the pcs file handler
-        from .pcs.PCS import PCS
-        index[PCS.encoding] = PCS
+        from .pcs import pcs
+        index[pcs.encoding] = pcs
 
         # importing from packages on the python path
-        from .native.Importer import Importer
-        index[Importer.encoding] = Importer
+        from .native import native
+        index[native.encoding] = native
 
         # all done
         return index

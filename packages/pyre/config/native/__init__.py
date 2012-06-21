@@ -11,4 +11,8 @@ This package contains the implementation of the native importer
 """
 
 
+# pull in the codec
+from .Importer import Importer as native
+
+
 # end of file

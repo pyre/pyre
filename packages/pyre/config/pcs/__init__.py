@@ -11,4 +11,8 @@ This package contains the implementation of the pcs reader and writer
 """
 
 
+# pull in the codec
+from .PCS import PCS as pcs
+
+
 # end of file

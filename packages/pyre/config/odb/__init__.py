@@ -11,4 +11,8 @@ This package contains the implementation of the odb importer
 """
 
 
+# pull in the symbol
+from .ODB import ODB as odb
+
+
 # end of file
