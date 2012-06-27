@@ -8,7 +8,7 @@
 
 
 """
-Exercise the group manipulation interface. This test assumes 4 or more processes
+Verify that communicator groups are accessible
 """
 
 

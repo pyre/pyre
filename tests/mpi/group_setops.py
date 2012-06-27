@@ -8,7 +8,7 @@
 
 
 """
-Exercise the group manipulation interface. This test assumes 4 or more processes
+Exercise the group manipulation interface. 
 """
 
 
@@ -17,7 +17,7 @@ def test():
     import mpi
     # grab the world communicator
     world = mpi.world
-    # build a 4 process communicator out of world
+    # access the world process group
     whole = world.group()
     # build a tuple of the even ranks
     ranks = tuple(rank for rank in range(world.size) if (rank % 2 == 0))

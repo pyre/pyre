@@ -30,6 +30,21 @@ class Communicator(Object):
 
 
     # communicator factories
+    def restrict(self, group):
+        """
+        Build a new communicator with the process in {group}, which is expected to be a
+        communicator group
+        """
+        # build the new communicator
+        new = self.mpi.communicatorCreate(self.capsule, group.capsule)
+        # if successful
+        if new is not None:
+            # wrap it and return
+            return Communicator(capsule=new)
+        # otherwise
+        return None
+
+
     def include(self, processes):
         """
         Build a new communicator with the processes in the iterable {processes} as its members

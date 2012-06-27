@@ -27,6 +27,7 @@ groups:
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_include.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_exclude.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./group_setops.py
+	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./restrict.py
 
 communications:
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./bcast.py
@@ -34,7 +35,7 @@ communications:
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./product.py
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./max.py
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./min.py
-	${MPI_EXECUTIVE} -np 2 ${PYTHON} ./port.py
+	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./port.py
 
 launch:
 	${PYTHON} ./launch.py

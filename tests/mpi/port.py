@@ -8,7 +8,7 @@
 
 
 """
-Exercise message ports
+Exercise message ports: place processors on a ring and exchange messages
 """
 
 
@@ -17,42 +17,31 @@ def test():
     import mpi
     # get the world communicator
     world = mpi.world
-
-    # check that the world has at least two tasks
-    assert world.size > 1
-    # get my rank
+    # its size
+    size = world.size
+    # and my rank
     rank = world.rank
 
-    # if my rank is greater than 1
-    if rank > 1: 
-        # nothing for me to do
-        return
+    # check that the world has at least two tasks
+    if size < 2: return
 
-    # establish a port between rank 0 and 1
-    port = world.port(peer=(rank+1) % 2)
+    # the source of the message i will receive
+    source = world.port(peer=(rank-1)%size)
+    # the destination of the message I will send
+    destination = world.port(peer=(rank+1)%size)
 
-    # the root
-    if rank == 0:
-        # sends
-        port.sendString("Hello {}!".format(port.peer))
-    # the peer
-    else:
-        # receives
-        message = port.recvString()
-        # and checks
-        assert message == "Hello {}!".format(rank)
+    # send my message to the guy to my right
+    destination.sendString("Hello {}!".format(destination.peer))
+    # and receive a message from the guy to my left
+    message = source.recvString()
+    # and check its contents
+    assert message == "Hello {}!".format(rank)
 
-    # repeat in reverse by sending the message as a pickled object
-    # the peer
-    if rank == 1:
-        # sends
-        port.send("Hello {}!".format(port.peer))
-    # the root
-    else:
-        # receives
-        message = port.recv()
-        # and checks
-        assert message == "Hello {}!".format(rank)
+    # repeat by exchanging pickled objects
+    destination.send("Hello {}!".format(destination.peer))
+    message = source.recv()
+    # checks
+    assert message == "Hello {}!".format(rank)
     
     # all done
     return
