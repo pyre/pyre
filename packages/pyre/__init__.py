@@ -110,10 +110,15 @@ _pyre_license = """
     """
 
 
-# put these steps inside a function so there is no namespace pollution
+# put these steps inside functions so we can have better control over their execution context
+# and namespace pollution
 def debug():
     """
-    Enable debugging of pyre modules
+    Enable debugging of pyre modules.
+
+    Modules that support debugging must provide a {debug} method and do as little as possible
+    during their initialization. The fundamental constraints are provided by the python import
+    algorithm that only give you one chance to import a module.
 
     This must be done very early, before pyre itself starts importing its packages. One way to
     request debugging is to create a variable {pyre_debug} in the __main__ module that contains
@@ -142,9 +147,10 @@ def boot():
     """
     # check the version of python
     import sys
-    major, minor, micro, level, serial = sys.version_info
-    if major < 3 and minor < 1:
-        raise PyreError(description="pyre needs python 3.1 or newer")
+    major, minor, micro, _, _ = sys.version_info
+    if major < 3 or (major == 3 and minor < 2):
+        from .framework.exceptions import PyreError
+        raise PyreError(description="pyre needs python 3.2 or newer")
 
     # check whether the user has indicated we should skip booting
     try:
