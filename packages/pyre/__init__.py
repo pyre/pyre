@@ -15,8 +15,6 @@ For terms of use, see pyre.license()
 
 # imported symbols
 import os
-import weakref
-
 
 # convenience
 def loadConfiguration(uri):
@@ -161,21 +159,9 @@ def boot():
         # just ignore it and carry on
         pass
 
-    # force the creation of the executive singleton
+    # build and return the executive
     from . import framework
-    p = framework.executive(managers=framework)
-
-    # patch Requirement
-    from .components import requirement
-    requirement.pyre_executive = weakref.proxy(p)
-
-    # patch Configurable
-    from .components import configurable
-    configurable.pyre_executive = weakref.proxy(p)
-    configurable.pyre_SEPARATOR = p.configurator.separator
-
-    # and return the executive
-    return p
+    return framework.executive()
 
 
 # kickstart

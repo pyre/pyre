@@ -13,8 +13,8 @@ Sanity check: verify that the property binder can be instantiated
 
 
 def test():
-    import pyre.framework
-    return pyre.framework.newBinder()
+    from pyre.framework.Binder import Binder
+    return Binder()
 
 
 # main

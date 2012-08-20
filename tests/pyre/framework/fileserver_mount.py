@@ -16,7 +16,7 @@ def test():
     import pyre.framework
     import pyre.filesystem
     # build the executive
-    executive = pyre.framework.executive(managers=pyre.framework)
+    executive = pyre.framework.executive()
     # access the fileserver
     fs = executive.fileserver
 

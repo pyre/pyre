@@ -22,6 +22,40 @@ class Pyre(Executive):
         """
         Perform all the default initialization steps
         """
+        # attach my managers
+
+        # the timer manager
+        from ..timers import newTimerRegistrar
+        self.timekeeper = newTimerRegistrar()
+        # build and start a timer
+        self.timer = self.timekeeper.timer(name="pyre").start()
+
+        # the manager of the component interdependencies
+        from .Binder import Binder
+        self.binder = Binder()
+        # my codec manager
+        from ..config import newCodecManager
+        self.codex = newCodecManager()
+        # my configuration manager
+        from ..config import newConfigurator
+        self.configurator = newConfigurator(executive=self)
+        # the manager of my virtual filesystem
+        from .FileServer import FileServer
+        self.fileserver = FileServer()
+        # the component registrar
+        from ..components import newRegistrar
+        self.registrar = newRegistrar()
+
+        # patch the component infrastructure
+        import weakref
+        # patch Requirement
+        from ..components import requirement
+        requirement.pyre_executive = weakref.proxy(self)
+        # patch Configurable
+        from ..components import configurable
+        configurable.pyre_executive = weakref.proxy(self)
+        configurable.pyre_SEPARATOR = self.configurator.separator
+
         # process the command line
         import sys
         # build a command line parser
@@ -45,7 +79,7 @@ class Pyre(Executive):
         Build and initialize a new command line parser
         """
         # access the factory
-        from . import newCommandLineParser
+        from ..config import newCommandLineParser
         # build the parser
         parser = newCommandLineParser()
         # register the local handlers

@@ -14,7 +14,7 @@ Sanity check: verify that the executive can be instantiated
 
 def test():
     import pyre.framework
-    executive = pyre.framework.executive(managers=pyre.framework)
+    executive = pyre.framework.executive()
     return executive
 
 

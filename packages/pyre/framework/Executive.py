@@ -210,7 +210,7 @@ class Executive:
         Interpret {uri} as a component descriptor and attempt to resolve it
 
         {uri} encodes the descriptor using the URI specification 
-            scheme://authority/address#namme
+            scheme://authority/address#name
         where 
             {scheme}: the resolution mechanism
             {authority}: the process that will perform the resolution
@@ -424,26 +424,8 @@ class Executive:
 
 
     # meta methods
-    def __init__(self, managers, **kwds):
+    def __init__(self, **kwds):
         super().__init__(**kwds)
-
-        # the timer manager
-        self.timekeeper = managers.newTimerRegistrar()
-        # build and start a timer
-        self.timer = self.timekeeper.timer(name="pyre").start()
-
-        # the manager of the component interdependencies
-        self.binder = managers.newBinder()
-        # my codec manager
-        self.codex = managers.newCodecManager()
-        # my configuration manager
-        self.configurator = managers.newConfigurator(executive=self)
-        # the manager of my virtual filesystem
-        self.fileserver = managers.newFileServer()
-        # the component registrar
-        self.registrar = managers.newComponentRegistrar()
-        # the map of namespaces to the entities that resolve name requests
-        self.resolvers = {}
 
         # prime the configuration folder list
         self.configpath = list(self.path)
@@ -456,6 +438,9 @@ class Executive:
 
         # initialize the set of known configuration sources
         self.shelves = {}
+
+        # the map of namespaces to the entities that resolve name requests
+        self.resolvers = {}
 
         # all done
         return

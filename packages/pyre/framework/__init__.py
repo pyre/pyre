@@ -28,40 +28,4 @@ def executive(**kwds):
     return Pyre(**kwds)
 
 
-# the factories of the various managers
-def newBinder(**kwds):
-    from .Binder import Binder
-    return Binder(**kwds)
-
-
-def newCodecManager(**kwds):
-    from ..config import newCodecManager
-    return newCodecManager(**kwds)
-
-
-def newCommandLineParser(**kwds):
-    from ..config import newCommandLineParser
-    return newCommandLineParser(**kwds)
-
-
-def newComponentRegistrar(**kwds):
-    from ..components import newRegistrar
-    return newRegistrar(**kwds)
-
-
-def newConfigurator(**kwds):
-    from ..config import newConfigurator
-    return newConfigurator(**kwds)
-
-
-def newFileServer(**kwds):
-    from .FileServer import FileServer
-    return FileServer(**kwds)
-
-
-def newTimerRegistrar(**kwds):
-    from ..timers import newTimerRegistrar
-    return newTimerRegistrar(**kwds)
-
-
 # end of file 

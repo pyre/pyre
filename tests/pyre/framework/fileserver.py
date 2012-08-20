@@ -15,7 +15,7 @@ Exercises the fileserver
 def test():
     import pyre.framework
     # build the executive
-    executive = pyre.framework.executive(managers=pyre.framework)
+    executive = pyre.framework.executive()
 
     # access the fileserver
     fs = executive.fileserver

@@ -15,7 +15,7 @@ Exercises the component registrar
 def test():
     import pyre.framework
     # build the executive
-    executive = pyre.framework.executive(managers=pyre.framework)
+    executive = pyre.framework.executive()
 
     # access the component registrar
     reg = executive.registrar
