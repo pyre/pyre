@@ -207,7 +207,8 @@ class Model(Hierarchical):
         node.componentClass = existing.componentClass
         node.componentInstance = existing.componentInstance
 
-        # adjust the value
+        # adjust the value; {setValue} triggers the logic that compares the priorities of the
+        # two nodes and returns the survivor
         node = existing.setValue(value=node)
 
         # all done

@@ -22,7 +22,7 @@ class Hierarchical(SymbolTable):
     are expected to be given as tuples of strings that specify the names of the "folders" at
     each level.
 
-    HierarchicalModel provides support for links, entries that are alternate names for other
+    Hierarchical provides support for links, entries that are alternate names for other
     folders.
     """
 
@@ -109,7 +109,7 @@ class Hierarchical(SymbolTable):
     def __init__(self, **kwds):
         super().__init__(**kwds)
 
-        # name hashing algorithm storage strategy
+        # the name hashing algorithm
         self._hash = pyre.patterns.newPathHash()
 
         return

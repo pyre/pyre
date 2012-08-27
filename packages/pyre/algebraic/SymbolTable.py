@@ -18,10 +18,12 @@ from ..patterns.Named import Named
 class SymbolTable(Named):
     """
     The base class for node evaluation contexts
-
-    {SymbolTable} provides the interface for managing nodes. The storage mechanism is delegated
-    to subclasses.
     """
+
+    # implementation notes
+
+    #   _nodes cannot be a defaultdict since the Unresolved constructor records the name that
+    #   caused the node to be created in order to be able to build a nice error message
 
 
     # types
