@@ -126,7 +126,10 @@ class Local(Filesystem):
                 # build the absolute path of the entry
                 address = os.path.join(location, entry)
                 # recognize the file
-                meta = recognizer.recognize(address)
+                try:
+                    meta = recognizer.recognize(address)
+                except OSError:
+                    continue
                 # time stamp it
                 meta.syncTime = timestamp
                 # if this is a directory
