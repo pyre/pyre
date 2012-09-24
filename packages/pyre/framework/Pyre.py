@@ -48,9 +48,6 @@ class Pyre(Executive):
 
         # patch the component infrastructure
         import weakref
-        # patch Requirement
-        from ..components import requirement
-        requirement.pyre_executive = weakref.proxy(self)
         # patch Configurable
         from ..components import configurable
         configurable.pyre_executive = weakref.proxy(self)

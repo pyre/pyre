@@ -30,10 +30,6 @@ class Requirement(AttributeClassifier):
     # types
     from .Trait import Trait
 
-    # framework data
-    # access to the framework executive; patched by the bootstrapping code in pyre/__init__.py
-    pyre_executive = None
-
 
     # meta methods
     def __new__(cls, name, bases, attributes, *, family=None, **kwds):
