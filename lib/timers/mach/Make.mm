@@ -14,6 +14,7 @@ all: export
 
 export:: export-package-headers
 
+release:: release-package-headers
 
 EXPORT_PKG_HEADERS = \
     Clock.h Clock.icc

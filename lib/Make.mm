@@ -37,5 +37,11 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+export::
+	BLD_ACTION="export" $(MM) recurse
+
+release::
+	BLD_ACTION="release" $(MM) recurse
+
 
 # end of file 

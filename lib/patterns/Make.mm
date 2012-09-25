@@ -17,6 +17,8 @@ all: export
 
 export:: export-package-headers
 
+release:: release-package-headers
+
 EXPORT_PKG_HEADERS = \
     Registrar.h Registrar.icc
 

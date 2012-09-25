@@ -20,6 +20,7 @@ all: export
 
 export:: export-headers export-package-headers
 
+release:: release-headers release-package-headers
 
 EXPORT_HEADERS = \
     mpi.h \

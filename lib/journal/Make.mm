@@ -33,8 +33,10 @@ all: $(PROJ_DLL) export
 
 export:: export-headers export-package-headers export-libraries
 
-EXPORT_LIBS = $(PROJ_DLL)
+release:: release-headers release-package-headers release-libraries
 
+
+EXPORT_LIBS = $(PROJ_DLL)
 
 EXPORT_HEADERS = \
     journal.h

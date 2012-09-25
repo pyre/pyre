@@ -48,6 +48,9 @@ distclean::
 export:: export-headers export-package-headers export-libraries
 	BLD_ACTION="export" $(MM) recurse
 
+release:: release-headers release-package-headers release-libraries
+	BLD_ACTION="release" $(MM) recurse
+
 EXPORT_LIBS = $(PROJ_DLL)
 
 EXPORT_HEADERS = \
