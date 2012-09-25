@@ -23,5 +23,7 @@ EXPORT_ETC = \
 
 export:: export-etc
 
+release:: release-etc
+
 
 # end of file 

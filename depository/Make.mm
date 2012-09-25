@@ -40,5 +40,8 @@ EXPORT_ETC = \
 export:: export-etc
 	BLD_ACTION="export" $(MM) recurse
 
+release:: release-etc
+	BLD_ACTION="release" $(MM) recurse
+
 
 # end of file 
