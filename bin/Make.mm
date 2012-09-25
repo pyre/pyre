@@ -24,5 +24,7 @@ EXPORT_BINS = \
 
 export:: export-binaries
 
+release:: release-binaries
+
 
 # end of file 
