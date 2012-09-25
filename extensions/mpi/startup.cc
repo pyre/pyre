@@ -63,7 +63,7 @@ PyObject * mpi::finalize(PyObject *, PyObject *)
 
     if (status != MPI_SUCCESS) {
         PyErr_SetString(PyExc_ImportError, "MPI_Initialized failed");
-        return false;
+        return 0;
     }
 
     /// shut it down
