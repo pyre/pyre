@@ -39,22 +39,24 @@ distclean::
 .PHONY: doc lib extensions packages tests
 
 doc:
-	(cd doc; mm)
+	(cd doc; $(MM))
 
 lib:
-	(cd lib; mm)
+	(cd lib; $(MM))
 
 depository:
-	(cd depository; mm)
+	(cd depository; $(MM))
 
 extensions:
-	(cd extensions; mm)
+	(cd extensions; $(MM))
 
 packages:
-	(cd packages; mm)
+	(cd packages; $(MM))
 
 tests:
-	(cd tests; mm)
+	(cd tests; $(MM))
+
+build: lib extensions packages depository
 
 
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-1.0.zip
