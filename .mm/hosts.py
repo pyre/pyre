@@ -91,7 +91,8 @@ def host(builder):
     if re.match(r"(login|compute)-[0-9]+-[0-9]+.local", name):
         print("fram.gps.caltech.edu")
         # set up {gsl}
-        gslHome = '/usr'
+        gslVersion = '1.15'
+        gslHome = os.path.join('/opt/gsl', gslVersion)
         builder.requirements['gsl'].environ = {
             'GSL_DIR': gslHome,
             'GSL_LIBDIR': os.path.join(gslHome, 'lib'),
