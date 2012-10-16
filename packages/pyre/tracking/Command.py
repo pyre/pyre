@@ -6,25 +6,29 @@
 #
 
 
+# declaration
 class Command:
     """
     A locator that records the position of a command line argument 
     """
 
 
-    # public data
-    source = 'command line, arg {}'
+    # constant
+    source = 'command line: {!r}'
 
 
     # meta methods
-    def __init__(self, arg, **kwds):
-        super().__init__(**kwds)
+    def __init__(self, arg):
         self.arg = arg
         return
 
 
     def __str__(self):
         return self.source.format(self.arg)
+
+
+    # implementation details
+    __slots__ = 'arg',
 
 
 # end of file 

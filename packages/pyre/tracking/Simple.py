@@ -12,19 +12,18 @@ class Simple:
     """
 
 
-    # public data
-    source = None
-
-
     # meta methods
-    def __init__(self, source, **kwds):
-        super().__init__(**kwds)
+    def __init__(self, source):
         self.source = source
         return
 
 
     def __str__(self):
-        return self.source
+        return str(self.source)
 
 
-# end of file 
+    # implementation details
+    __slots__ = "source",
+
+
+# end of file

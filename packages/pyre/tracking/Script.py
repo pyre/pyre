@@ -6,6 +6,11 @@
 #
 
 
+# externals
+import os
+
+
+# declaration
 class Script:
     """
     A locator that records information relevant to python scripts. This information is
@@ -14,33 +19,28 @@ class Script:
     """
 
 
-    # public data
-    source = None
-    line = None
-    function = None
-
-
     # meta methods
-    def __init__(self, source, line=None, function=None, **kwds):
-        super().__init__(**kwds)
-
-        self.source = source
+    def __init__(self, source, line=None, function=None):
+        self.source = os.path.abspath(source)
         self.line = line
         self.function = function
-
         return
 
 
     def __str__(self):
         text = [
-            "file={0.source!r}".format(self)
+            "file={!r}".format(str(self.source))
             ]
         if self.line:
-            text.append("line={0.line!r}".format(self))
+            text.append("line={.line!r}".format(self))
         if self.function:
-            text.append("function={0.function!r}".format(self))
+            text.append("function={.function!r}".format(self))
 
         return ", ".join(text)
+
+
+    # implementation details
+    __slots__ = "source", "line", "function"
 
 
 # end of file 

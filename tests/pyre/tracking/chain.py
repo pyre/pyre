@@ -19,7 +19,7 @@ def script():
     second = pyre.tracking.simple(source="second")
     chain = pyre.tracking.chain(this=first, next=second)
 
-    assert str(chain) == "first via second"
+    assert str(chain) == "first, second"
 
     return chain
 

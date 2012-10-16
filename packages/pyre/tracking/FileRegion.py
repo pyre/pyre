@@ -6,24 +6,17 @@
 #
 
 
+# declaration
 class FileRegion:
     """
     A locator that records information about a region of a file
     """
 
 
-    # public data
-    start = None
-    end = None
-
-
     # meta methods
-    def __init__(self, start, end, **kwds):
-        super().__init__(**kwds)
-
+    def __init__(self, start, end):
         self.start = start
         self.end = end
-
         return
 
 
@@ -31,22 +24,26 @@ class FileRegion:
         # start of the region
         start = []
         if self.start.line:
-            start.append("line={0.line!r}".format(self.start))
+            start.append("line={.line!r}".format(self.start))
         if self.start.column:
-            start.append("column={0.column!r}".format(self.start))
+            start.append("column={.column!r}".format(self.start))
         start = ", ".join(start)
 
         # end of the region
         end = []
         if self.end.line:
-            end.append("line={0.line!r}".format(self.end))
+            end.append("line={.line!r}".format(self.end))
         if self.end.column:
-            end.append("column={0.column!r}".format(self.end))
+            end.append("column={.column!r}".format(self.end))
         end = ", ".join(end)
 
-        text = "file={0!r}, from ({1}) to ({2})".format(self.start.source, start, end)
+        text = "file={!r}, from ({}) to ({})".format(str(self.start.source), start, end)
 
         return text
+
+
+    # implementation details
+    __slots__ = "start", "end"
 
 
 # end of file 
