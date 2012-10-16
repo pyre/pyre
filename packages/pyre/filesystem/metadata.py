@@ -6,10 +6,6 @@
 #
 
 
-# externals
-import zipfile
-
-
 # class declarations
 class Info:
     """

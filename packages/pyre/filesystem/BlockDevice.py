@@ -6,18 +6,18 @@
 #
 
 
+# superclass
 from .File import File
 
 
+# class declaration
 class BlockDevice(File):
     """
     Representation of block devices, a type of unix device driver
     """
 
-
     # constant
     marker = 'b'
-
     
     # implementation details
     __slots__ = ()

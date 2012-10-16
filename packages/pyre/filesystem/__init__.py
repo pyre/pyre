@@ -6,9 +6,9 @@
 #
 
 
-# externals
-import os # for the path utilities
-import re # for the uri recognizer
+# external
+import os
+import re
 
 
 # constants
@@ -36,9 +36,9 @@ def local(root, listdir=None, recognizer=None, **kwds):
         {recognizer}: the mechanism that identifies the types of files
     """
     # build a walker if necessary
-    listdir = listdir if listdir is not None else walker()
+    listdir = walker() if listdir is None else listdir
     # build a recognizer
-    recognizer = recognizer if recognizer is not None else stat()
+    recognizer = stat() if recognizer is None else recognizer
 
     # ensure that {root} is an absolute path so that we can protect the filesystem
     # representation in case the application manipulates the current working directory of the
@@ -133,16 +133,16 @@ def walker(**kwds):
     return Walker(**kwds)
 
 
+# exceptions thrown by the factories
+from .exceptions import MountPointError
+
+
 # utilities
 def join(*fragments):
     """
     """
     from .Node import Node
     return Node.join(*fragments)
-
-
-# exceptions thrown by the factories
-from .exceptions import MountPointError
 
 
 # debugging support: 
@@ -153,9 +153,11 @@ _metaclass_Node = type
 
 def debug():
     """
-    Attach ExtentAware as the metaclass of Node and Filesystem so we can verify that all
-    instances of these classes are properly garbage collected
+    Support for debugging the filesystem package
     """
+    # print(" ++ debugging 'pyre.filesystem'")
+    # Attach ExtentAware as the metaclass of Node and Filesystem so we can verify that all
+    # instances of these classes are properly garbage collected
     from ..patterns.ExtentAware import ExtentAware
     global _metaclass_Node
     _metaclass_Node = ExtentAware

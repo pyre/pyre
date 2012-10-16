@@ -6,7 +6,7 @@
 #
 
 
-# base class
+# superclass
 from .Filesystem import Filesystem
 
 

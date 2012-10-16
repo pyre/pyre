@@ -8,7 +8,6 @@
 
 # externals
 import stat
-
 # superclass
 from .metadata import Info
 

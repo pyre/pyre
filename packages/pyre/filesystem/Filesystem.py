@@ -23,6 +23,10 @@ class Filesystem(Folder):
     """
 
 
+    # exceptions
+    from .exceptions import NotFoundError, SourceNotFoundError, URISpecificationError
+
+
     # interface
     def info(self, node):
         """
@@ -68,7 +72,7 @@ class Filesystem(Folder):
         # my vnode table: a map from nodes to info structures
         self.vnodes = weakref.WeakKeyDictionary()
         # build an info structure for myself
-        metadata = metadata if metadata is not None else self.metadata(uri='/')
+        metadata = self.metadata(uri='/') if metadata is None else metadata
         # add it to my vnode table
         self.vnodes[self] = metadata
         # all done

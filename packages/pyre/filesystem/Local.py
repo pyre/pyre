@@ -48,7 +48,7 @@ class Local(Filesystem):
         # create a timestamp
         timestamp = time.gmtime()
         # adjust the location of the new branch
-        root = root if root is not None else self
+        root = self if root is None else root
         # print(" ++ input:")
         # print("      root: {}".format(root))
         # print("      uri: {!r}".format(root.uri))
@@ -100,10 +100,10 @@ class Local(Filesystem):
         # create a timestamp
         timestamp = time.gmtime()
         # use the supplied traversal support, if available
-        walker = walker if walker is not None else self.walker
-        recognizer = recognizer if recognizer is not None else self.recognizer
+        walker = self.walker if walker is None else walker
+        recognizer = self.recognizer if recognizer is None else recognizer
         # establish the starting point
-        root = root if root is not None else self
+        root = self if root is None else root
         # print("    root uri: {!r}".format(root.uri))
         # make sure {root} is a folder
         if not root.isFolder:
@@ -125,12 +125,17 @@ class Local(Filesystem):
             for entry in walker.walk(location):
                 # build the absolute path of the entry
                 address = os.path.join(location, entry)
-                # recognize the file
+                # attempt to
                 try:
+                    # recognize the file
                     meta = recognizer.recognize(address)
+                # it is possible to have entries in a directory that are not real files: the
+                # walker can find them, but the recognizer fails; emacs autosave files on sox
+                # are such an example. so, if the recognizer failed
                 except OSError:
+                    # ignore this entry
                     continue
-                # time stamp it
+                # otherwise, time stamp it
                 meta.syncTime = timestamp
                 # if this is a directory
                 if meta.isDirectory:

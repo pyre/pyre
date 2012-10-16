@@ -6,19 +6,18 @@
 #
 
 
+# superclass
 from .File import File
 
-
+# class declaration
 class Directory(File):
     """
     Representation of local filesystem folders
     """
 
-
     # constants
     marker = 'd'
     isDirectory = True
-
     
     # implementation details
     __slots__ = ()
