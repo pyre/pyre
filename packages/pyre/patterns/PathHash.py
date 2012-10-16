@@ -24,36 +24,30 @@ class PathHash:
     """
 
 
-    def hash(self, key):
+    def hash(self, items):
         """
-        Retrieve the node given by {key}, assumed to be an iterable of address segments
+        Hash {item}, assumed to be an iterable of address segments, and return its key
         """
-        # find the right spot
+        # starting with me
         node = self
-        for part in key:
+        # go through the entries in {items}
+        for part in items:
+            # find the right spot
             node = node.nodes[part]
         # and return it
         return node
 
 
-    def alias(self, alias, canonical):
+    def alias(self, target, alias):
         """
-        Establish {alias} as an alternative to {canonical}
-
-        Each parameter is expected to be an iterable of level names relative to this node.
+        Make the node {target} accessible through the node {base} under the name {alias}
         """
-        # find the node that corresponds to the canonical key
-        base = self.hash(canonical)
-        # retrieve the hash key of the parent node where the alias is to be registered
-        parent = self.hash(key=alias[:-1])
-        # the new name is the last fragment of the alias path
-        newname = alias[-1]
-        # save the original key for the alias
-        original = parent.nodes[newname]
-        # create an entry for it that points to the original
-        parent.nodes[newname] = base
-        # and return the original node
-        return original, base
+        # save the current hash key of {alias}
+        original = self[alias]
+        # establish the alias by replacing it with the new {target} node
+        self[alias] = target
+        # and return the pair
+        return original
 
 
     def dump(self, graphic=''):
@@ -69,6 +63,24 @@ class PathHash:
     # meta methods
     def __init__(self):
         self.nodes = collections.defaultdict(PathHash)
+        return
+
+
+    def __getitem__(self, key):
+        """
+        Hash {key}
+        """
+        # easy enough
+        return self.nodes[key]
+
+
+    def __setitem__(self, name, key):
+        """
+        Make {name} hash to {key}
+        """
+        # easy enough
+        self.nodes[name] = key
+        # all done
         return
 
 

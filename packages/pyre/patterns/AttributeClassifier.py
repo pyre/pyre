@@ -6,10 +6,13 @@
 #
 
 
+# externals
 import collections
+# superclass
 from .AbstractMetaclass import AbstractMetaclass
 
 
+# class declaration
 class AttributeClassifier(AbstractMetaclass):
     """
     A base metaclass that enables attribute categorization.
@@ -34,6 +37,7 @@ class AttributeClassifier(AbstractMetaclass):
         """
         Build an attribute table that maintains a category index for attribute descriptors
         """
+        # use an ordered dictionary
         return collections.OrderedDict()
 
 

@@ -16,6 +16,7 @@ class Named:
     name = None
 
 
+    # meta-methods
     def __init__(self, *, name=None, **kwds):
         super().__init__(**kwds)
         self.name = name

@@ -23,22 +23,24 @@ def test():
     klassName = moduleName + ["PathHash"]
 
     # now hash the matching nodes
-    module = pathhash.hash(key=moduleName)
-    klass = pathhash.hash(key=klassName)
+    module = pathhash.hash(moduleName)
+    klass = pathhash.hash(items=klassName)
     # check that i get the same node the second time i retrieve it 
-    assert module == pathhash.hash(key=moduleName)
-    assert klass == pathhash.hash(key=klassName)
+    assert module == pathhash.hash(items=moduleName)
+    assert klass == pathhash.hash(items=klassName)
     # check that i can retrieve the class from within the module
-    assert klass == module.hash(key=["PathHash"])
+    assert klass == module.hash(items=["PathHash"])
 
     # build an alias for the module
-    alias = "pyre.pathhash".split(separator)
-    original = "pyre.patterns.PathHash".split(separator)
-    pathhash.alias(alias=alias, canonical=original)
+    base = pathhash.hash(items=['pyre'])
+    alias = "pathhash"
+    original = pathhash.hash(items="pyre.patterns.PathHash".split(separator))
+
+    base.alias(alias=alias, target=original)
     # check that the alias points where it should
-    assert module == pathhash.hash(key=alias)
+    assert module == pathhash.hash(items="pyre.pathhash".split(separator))
     # and that both contain the same class
-    assert klass == pathhash.hash(key=alias+["PathHash"])
+    assert klass == pathhash.hash(items="pyre.pathhash.PathHash".split(separator))
 
     # dump out the contents of the hash
     # pathhash.dump()
