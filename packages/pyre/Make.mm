@@ -16,19 +16,13 @@ RECURSE_DIRS = \
     components \
     config \
     constraints \
-    extensions \
-    db \
     filesystem \
     framework \
-    ipc \
     parsing \
     patterns \
-    records \
     schema \
-    shells \
-    tabular \
-    timers \
     tracking \
+    traits \
     units \
     weaver \
     xml \

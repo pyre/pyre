@@ -5,6 +5,7 @@
 # (c) 1998-2012 all rights reserved
 #
 
+
 """
 pyre is a framework for building flexible applications
 
@@ -66,6 +67,22 @@ def version():
     return _pyre_version
 
 
+# component introspection
+def where(configurable, attribute=None):
+    """
+    Retrieve the location where the {attribute} of {configurable} got its value; if no
+    {attribute} is specified, retrieve information about the {configurable} itself
+    """
+    # if no attribute name is given, return the locator of the configurable
+    if attribute is None: return configurable.pyre_locator
+    # retrieve the trait descriptor
+    trait = configurable.pyre_trait(alias=attribute)
+    # find the slot where the attribute is stored
+    slot = trait.getSlot(configurable=configurable)
+    # and return its locator
+    return slot.locator
+
+
 # license
 _pyre_version = (1, 0, 0)
 
@@ -108,8 +125,33 @@ _pyre_license = """
     """
 
 
-# put these steps inside functions so we can have better control over their execution context
-# and namespace pollution
+# put the following start-up steps inside functions so we can have better control over their
+# execution context and namespace pollution
+def boot():
+    """
+    Perform all the initialization steps necessary to bootstrap the framework
+    """
+    # check the version of python
+    import sys
+    major, minor, micro, _, _ = sys.version_info
+    if major < 3 or (major == 3 and minor < 2):
+        from .framework.exceptions import PyreError
+        raise PyreError(description="pyre needs python 3.2 or newer")
+
+    # check whether the user has indicated we should skip booting
+    try:
+        import __main__
+        if __main__.pyre_noboot: return None
+    # if anything goes wrong
+    except:
+        # just ignore it and carry on
+        pass
+
+    # build, initialize and return the executive
+    from . import framework
+    return framework.executive().boot()
+
+
 def debug():
     """
     Enable debugging of pyre modules.
@@ -139,52 +181,28 @@ def debug():
     return
 
 
-def boot():
-    """
-    Perform all the initialization steps necessary to bootstrap the framework
-    """
-    # check the version of python
-    import sys
-    major, minor, micro, _, _ = sys.version_info
-    if major < 3 or (major == 3 and minor < 2):
-        from .framework.exceptions import PyreError
-        raise PyreError(description="pyre needs python 3.2 or newer")
-
-    # check whether the user has indicated we should skip booting
-    try:
-        import __main__
-        if __main__.pyre_noboot: return None
-    # if anything goes wrong
-    except:
-        # just ignore it and carry on
-        pass
-
-    # build and return the executive
-    from . import framework
-    return framework.executive()
-
-
 # kickstart
 # invoke the debug method in case the user asked for debugging support
 debug()
 # build the executive
 executive = boot()
 
-# if the framework booted properly
-if executive:
-    # gather the exported names
-    # component declaration support
-    from . import schema, constraints
-    from .components import export, provides
-    from .components import actor, role
-    from .components import property, facility, catalog, map, interface, component
-    from .components import properties
-
-    # application
-    from .shells import application
-
-    # the base class of all pyre exceptions
-    from .framework.exceptions import PyreError
+# for convenience
+# configurables and their support
+from .components.Actor import Actor as actor
+from .components.Role import Role as role
+from .components.Protocol import Protocol as protocol
+from .components.Component import Component as component
+# traits
+from .traits import properties
+from .traits.Behavior import Behavior as export
+from .traits.Behavior import Behavior as provides
+from .traits.Property import Property as property
+from .traits.Facility import Facility as facility
+from .traits.Map import Map as map
+from .traits.Catalog import Catalog as catalog
+# constraints
+from . import constraints
 
 
 # clean up the executive instance when the interpreter shuts down
