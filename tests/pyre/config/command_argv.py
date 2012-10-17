@@ -18,8 +18,10 @@ def test():
     # get the executive instance
     import pyre
     executive = pyre.executive
-    # pull the configutor
+    # pull the configurator
     configurator = executive.configurator
+    # the nameserver
+    nameserver = executive.nameserver
     # and a command line parser
     parser = pyre.config.newCommandLineParser()
 
@@ -37,20 +39,22 @@ def test():
         ]
 
     # get the parser to populate the configurator
-    configuration = parser.decode(commandline)
+    events = parser.parse(commandline)
     # and transfer the events to the configurator
-    configurator.configure(configuration=configuration, priority=executive.USER_CONFIGURATION)
+    configurator.processEvents(
+        executive=executive, events=events, priority=executive.priority.user)
+
     # dump the state
-    # configurator.dump()
+    # nameserver.dump()
     # and check that the assignments took place
-    assert configurator["help"] == ""
-    assert configurator["vtf.nodes"] == "1024"
-    assert configurator["vtf.solid"] == "solvers"
-    assert configurator["vtf.fluid"] == "solvers"
-    assert configurator["vtf.solid.nodes"] == "1024"
-    assert configurator["vtf.fluid.nodes"] == "1024"
-    # assert configurator["journal.device"] == "file"
-    assert configurator["journal.debug.main"] == "on"
+    assert nameserver["help"] == ""
+    assert nameserver["vtf.nodes"] == "1024"
+    assert nameserver["vtf.solid"] == "solvers"
+    assert nameserver["vtf.fluid"] == "solvers"
+    assert nameserver["vtf.solid.nodes"] == "1024"
+    assert nameserver["vtf.fluid.nodes"] == "1024"
+    # assert nameserver["journal.device"] == "file"
+    assert nameserver["journal.debug.main"] == "on"
 
     # and return the managers
     return executive, parser

@@ -15,44 +15,58 @@ Exercise loading settings from configuration files
 def test():
     import pyre
     
+    # get the pyre executive
+    executive = pyre.executive
     # gain access to the configurator
-    c = pyre.executive.configurator
+    c = executive.configurator
+    # and the nameserver
+    ns = executive.nameserver
 
     # attempt to request a node that doesn't exist yet
     try:
-        c["sample.user.name"]
+        ns["sample.user.name"]
         assert False
-    except c.UnresolvedNodeError:
+    except ns.UnresolvedNodeError:
         pass
 
     # this is the node that we build out of the configuration
     try:
-        c["sample.user.byline"]
+        ns["sample.user.byline"]
         assert False
-    except c.UnresolvedNodeError:
+    except ns.UnresolvedNodeError:
         pass
     # so define it
-    c["sample.user.byline"] = "{sample.user.name} -- {sample.user.email}"
+    ns["sample.user.byline"] = "{sample.user.name} -- {sample.user.email}"
     
     # load a configuration file
     pyre.loadConfiguration("sample.cfg")
 
+    # report any errors
+    errors = executive.errors
+    if errors and executive.verbose:
+        count = len(errors)
+        s = '' if count == 1 else 's'
+        print(' ** during configuration: {} error{}:'.format(len(errors), s))
+        for error in errors:
+            print(' -- {}'.format(error))
+    # ns.dump()
+
     # try again
-    assert c["sample.user.name"] == "michael a.g. aïvázis"
-    assert c["sample.user.email"] == "aivazis@caltech.edu"
-    assert c["sample.user.affiliation"] == "california institute of technology"
+    assert ns["sample.user.name"] == "michael a.g. aïvázis"
+    assert ns["sample.user.email"] == "aivazis@caltech.edu"
+    assert ns["sample.user.affiliation"] == "california institute of technology"
     # and the local one
-    assert c["sample.user.byline"] == "michael a.g. aïvázis -- aivazis@caltech.edu"
+    assert ns["sample.user.byline"] == "michael a.g. aïvázis -- aivazis@caltech.edu"
 
     # make a change
-    c["sample.user.affiliation"] = "orthologue"
-    c["sample.user.email"] = "michael.aivazis@orthologue.com"
+    ns["sample.user.affiliation"] = "orthologue"
+    ns["sample.user.email"] = "michael.aivazis@orthologue.com"
     # check
-    assert c["sample.user.affiliation"] == "orthologue"
-    assert c["sample.user.byline"] == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
+    assert ns["sample.user.affiliation"] == "orthologue"
+    assert ns["sample.user.byline"] == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
 
     # all good
-    return c
+    return executive
 
 
 # main

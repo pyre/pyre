@@ -9,56 +9,28 @@
 """
 This package contains the implementation of the readers and writers of the various
 configuration file formats supported by pyre.
-
 """
 
 
 # factories
-def newCodecManager(**kwds):
-    """
-    Factory for the manager of installed codecs
-    """
-    from .CodecManager import CodecManager
-    return CodecManager(**kwds)
-
-
 def newCommandLineParser(**kwds):
     """
-    Factory for the command line processor
+    Build a new parser of command line arguments
     """
-    from .CommandLine import CommandLine
-    return CommandLine(**kwds)
+    # access the factory
+    from .CommandLineParser import CommandLineParser
+    # build one and return it
+    return CommandLineParser(**kwds)
 
 
 def newConfigurator(**kwds):
     """
-    Factory for the model that holds the frameowrk configuration state
+    Build a new processor of configuration information
     """
+    # access the factory
     from .Configurator import Configurator
+    # build one and return it
     return Configurator(**kwds)
 
 
-def newConfiguration(**kwds):
-    """
-    Factory for the temporary holding place for configuration information
-    """
-    from .Configuration import Configuration
-    return Configuration(**kwds)
-
-
-# debugging support
-_metaclass_Slot = type
-
-def debug():
-    """
-    Attach {ExtentAware} as the metaclass of {Slot} so we can verify that all instances of
-    this class are properly garbage collected
-    """
-    from ..patterns.ExtentAware import ExtentAware
-    global _metaclass_Slot
-    _metaclass_Slot = ExtentAware
-
-    return
-    
-
-# end of file
+# end of file 

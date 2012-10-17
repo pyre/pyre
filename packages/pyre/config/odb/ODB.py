@@ -7,71 +7,89 @@
 
 
 # access to the locator factories
-import pyre.tracking
-
+from ... import tracking
 # and my ancestors
-from ..Codec import Codec
+from ..Loader import Loader
 
 
-class ODB(Codec):
+class ODB(Loader):
     """
-    This package contains the implementation of the native importer
+    This component codec recognizes uris of the form
+
+        vfs:/path/module.py/factory#name
+        file:/path/module.py/factory#name
+
+    which is interpreted as a request to import the file {module.py} from the indicated path,
+    look for the symbol {factory}, and optionally instantiate whatever component class is
+    recovered using {name}
     """
 
     
     # type
-    from .Shelf import Shelf
+    from .Shelf import Shelf as shelf
 
 
     # constants
-    encoding = "odb"
     separator = '/'
+    schemes = ('vfs', 'file')
 
 
     # interface
-    def decode(self, client, scheme, source, locator):
+    @classmethod
+    def load(cls, executive, uri, **kwds):
         """
-        Interpret {source} as a filename that the client's fileserver can convert into a file
-        object; open it, execute it, and place its contents into a shelf
+        Interpret {uri} as a shelf to be loaded
         """
-        # print(" ** ODB.decode: {!r}".format(self))
-        # build a locator for this request
-        shelfLocator = pyre.tracking.simple(source=source)
-        # adjust the locator
-        locator = pyre.tracking.chain(this=shelfLocator, next=locator) if locator else shelfLocator
-        # get the fileserver from the executive
-        fileserver = client.fileserver
-        # ask it to open the file
+        # get the fileserver
+        fs = executive.fileserver
+        # ask it to
         try:
-            # print("      opening {}:{}".format(scheme, source))
-            _, stream = fileserver.open(scheme=scheme, address=source)
-            # print("        ok!")
-        # if this fails
-        except fileserver.GenericError as error:
-            # print("        NOT ok!")
-            # report it as a decoding error
-            raise self.DecodingError(
-                codec=self, uri=locator.source, description=str(error),
-                locator=locator) from error
-        # read the contents
-        # print("      reading")
+            # open the {uri}
+            stream = fs.open(uri=uri)
+        # if anything goes wrong
+        except fs.GenericError as error:
+            # report it as a loading error
+            raise cls.LoadingError(codec=cls, uri=uri) from error
+        # now, read the contents
         contents = stream.read()
         # build a new shelf
-        shelf = self.Shelf(locator=locator)
-        # invoke the interpreter to parse its contents and place them in the {shelf}
-        # print("      parsing")
+        shelf = cls.shelf(uri=uri, locator=tracking.file(source=str(uri)))
+        # invoke the interpreter to parse its contents and place them in the shelf
         exec(contents, shelf)
-        # return the {shelf}
-        # print("      shelving")
+        # return the shelf
         return shelf
 
 
-    def shelfSearchPath(self, client, context):
+    @classmethod
+    def register(cls, index):
         """
-        Build a sequence of locations to look for {context} appropriate shelves
+        Register my schemes with the {index}
         """
-        # my client knows...
-        return client.componentSearchPath(context=context)
-                    
+        # update the index with my schemes
+        index.update((scheme, cls) for scheme in cls.schemes)
+        # all done
+        return
+
+
+    @classmethod
+    def locateShelves(cls, facility, uri, **kwds):
+        """
+        Locate candidate shelves from the given {uri}
+        """
+        # try the given {uri} first
+        yield uri
+        # if the uri scheme was 'file'
+        if uri.scheme == 'file':
+            # there is nothing else to try
+            return
+        # otherwise, if there is a valid facility
+        if facility:
+            # get it to provide some candidates from the virtual filesystem
+            for uri in facility.find(uri=uri):
+                # whatever she said
+                yield uri
+        # no more ideas
+        return
+        
 
 # end of file

@@ -6,21 +6,98 @@
 #
 
 
-from .Model import Model
+# externals
+import os # for path
+import collections # for defaultdict and OrderedDict
+from .. import schema
+from .. import tracking
 
 
-class Configurator(Model):
+# class declaration
+class Configurator:
     """
-    The keeper of all configurable values maintained by the framework
-
-    This class is a pyre.calc.AbstractModel that maintains the global configuration state of
-    the framework. All configuration events encountered are processed by a Configurator
-    instance held by the pyre executive and become nodes in the configuration model.
+    The manager of the configuration store
     """
+
+
+    # types
+    from . import events
+    from . import exceptions
+
+
+    # defaults
+    locator = tracking.simple('during pyre startup')
+    configpath = ['vfs:/pyre/system', 'vfs:/pyre/user', 'vfs:/pyre/startup']
+
+
+    # public data
+    codecs = None
 
 
     # interface
-    def configure(self, configuration, priority):
+    def loadConfiguration(self, executive, uri, source, locator, priority):
+        """
+        Use {uri} to find a codec that can process {source} into a stream of configuration
+        events
+        """
+        # initialize the pile of encountered errors
+        errors = []
+
+        # extract the file extension
+        _, extension = os.path.splitext(uri.address)
+        # deduce the encoding
+        encoding = extension[1:]
+        # attempt to
+        try:
+            # find the appropriate reader
+            reader = self.codecs[encoding]
+        # if not there
+        except KeyError:
+            # build an error indicator
+            error = self.exceptions.UnknownEncodingError(
+                uri=uri, encoding=encoding, locator=locator)
+            # add it to my pile
+            errors.append(error)
+            # and get out of here
+            return errors
+
+        # convert the input source into a stream of events
+        events = self.codecs[encoding].decode(uri, source, locator)
+        # process it
+        errors.extend(self.processEvents(executive=executive, events=events, priority=priority))
+        # and return the errors
+        return errors
+
+
+    # access to codecs
+    def codec(self, encoding):
+        """
+        Retrieve the codec associated with the given {encoding}
+        """
+        # easy enough
+        return self.codecs[encoding]
+
+    
+    def register(self, codec):
+        """
+        Add {codec} to my registry
+        """
+        # easy enough
+        self.codecs[codec.encoding] = codec
+        # all done
+        return
+
+
+    def encodings(self):
+        """
+        Return the registered encodings
+        """
+        # easy enough
+        return self.codecs.keys()
+
+
+    # event processing
+    def processEvents(self, executive, events, priority):
         """
         Iterate over the {configuration} events and insert them into the model at the given
         {priority} level
@@ -28,249 +105,190 @@ class Configurator(Model):
         # error accumulator
         errors = []
         # loop over events
-        for event in configuration:
-            # build the event sequence number, which becomes its priority level
-            seq = (priority, next(self.counter[priority]))
-            # and process the event
+        for event in events:
+            # process the event
             # print("pyre.config.Configurator.configure:", event)
-            event.identify(inspector=self, priority=seq)
+            event.identify(inspector=self, executive=executive, priority=priority)
         # all done
         return errors
- 
 
-    # support for the pyre executive
-    def configureComponentClass(self, registrar, component):
+
+    def assign(self, executive, assignment, priority):
         """
-        Adjust the model for the presence of a component
-
-        Look through the model for settings that correspond to {component} and transfer them to
-        its inventory. Register {component} as the handler of future configuration events in
-        its namespace
+        Process {assignment} by building a slot and placing it in {model}
         """
-        # get the class family
-        ns = component.pyre_family
-        # if there is no family name, we are done
-        if not ns: return []
-        # transfer the configuration under the component's family name
-        errors = self._verifyConfigurationSettings(configurable=component, namespace=ns)
-        # return the accumulated errors
-        return errors
+        # get the nameserver
+        model = executive.nameserver
+        # unpack the value
+        value = assignment.value
+        # get the locator
+        locator = assignment.locator
+        # hash the assignment key
+        key = model._hash.hash(items=assignment.key)
+        # ask the nameserver to make a slot for me
+        slot = model.buildNode(key=key, value=value, priority=priority(), locator=locator)
+        # add it to the model and return the (key, slot) pair; note that the slot returned is
+        # the survivor of the priority context, hence not necessarily the slot we made here
+        return model.insert(name=model.join(*assignment.key), key=key, node=slot)
 
 
-    def configureComponentInstance(self, registrar, component, name=None):
+    def defer(self, executive, assignment, priority):
         """
-        Initialize the component instance inventory by making the descriptors point to the
-        evaluation nodes
+        Process a conditional assignment
         """
-        # print(" ** Configurator.configureComponentInstance:")
-        # print("      configuring {.pyre_name!r} as {!r}".format(component, name))
-        # build the namespace
-        name = name if name is not None else component.pyre_name
-        # turn it into a key
-        ns = name.split(self.separator)
-        # transfer the configuration under the component's name
-        errors = self._verifyConfigurationSettings(configurable=component, namespace=ns)
-        # transfer the deferred configuration
-        errors = self._transferConditionalConfigurationSettings(
-            registrar=registrar, configurable=component, namespace=ns, errors=errors)
+        # build the key
+        key = executive.nameserver.hash(name=assignment.component)
+        # compute the priority
+        priority = priority()
+        # add it to the pile
+        self.deferred[key].append((assignment, priority))
 
+        # dump
+        # print("Configurator.defer:")
+        # print("    component={0.component}".format(assignment))
+        # print("    conditions={0.conditions}".format(assignment))
+        # print("    key={0.key}, value={0.value!r}".format(assignment))
+        # print("    from {0.locator}".format(assignment))
+        # print("    with priority {}".format(priority))
+
+        # all done
+        return self
+
+
+    def execute(self, executive, command, priority):
+        """
+        Record a request to execute a command
+        """
+        # record the command and its context
+        self.commands.append((priority(), command))
+        # all done
+        return self
+
+
+    def load(self, executive, request, priority):
+        """
+        Ask the pyre {executive} to load the configuration settings in {source}
+        """
+        # extract the source
+        source = request.source
+        # extract the locator
+        locator = request.locator
+        # get the executive to kick start the configuration loading
+        executive.loadConfiguration(uri=source, locator=locator, priority=priority)
         # and return
-        # print(" --   done configuring {.pyre_name!r} as {!r}".format(component, name))
-        return errors
+        return self
 
 
-    # meta methods
-    def __init__(self, executive, name=None, **kwds):
-        # construct my name
-        name = name if name is not None else "pyre.configurator"
-        super().__init__(name=name, executive=executive, **kwds)
+    # implementation details for component configuration
+    def configureComponentClass(self, component):
+        """
+        The last step in the configuration of a component class
+        """
+        # not much to do 
+        return component
 
+
+    def configureComponentInstance(self, instance):
+        """
+        The last step in the configuration of a component instance
+        """
+        # go through all deferred assignment that were meant for {instance}
+        for assignment, priority in self.retrieveDeferredAssignments(instance=instance):
+            # find the trait
+            trait = instance.pyre_trait(assignment.key[0])
+            # ask it to set the value
+            trait.setInstanceTrait(
+                configurable=instance, value=assignment.value,
+                priority=priority, locator=assignment.locator)
+        # all done
+        return instance
+
+
+    def retrieveDeferredAssignments(self, instance):
+        """
+        Locate the deferred assignments that are relevant to {instance}
+        """
+        # get the executive
+        executive = instance.pyre_executive
+        # and the nameserver
+        nameserver = executive.nameserver
+        # ask the {instance} for its registration key
+        key = instance.pyre_key
+        # go through all deferred assignment that were meant for {instance}
+        for assignment, priority in self.deferred[key]:
+            # check all the conditions
+            for name, family in assignment.conditions:
+                # hash the conditions
+                name = nameserver.hash(name)
+                family = nameserver.hash(family)
+                # compute the intended instance safely: avoid the infinite recursion caused by
+                # asking the nameserver for the value of the slot whose value we are in the
+                # middle of building...
+                target = instance if name is key else nameserver[name]
+                # check the family
+                if target.pyre_familyKey is not family: break
+            # this is executed iff all assignment conditions are true
+            else:
+                # hand this assignment to the caller
+                yield assignment, priority
+        # all done
+        return
+
+
+    # bootstrapping
+    def initializeNamespace(self, nameserver):
+        """
+        Place my default settings in the global namespace
+        """
+        # the name of the configuration path slot
+        name = 'pyre.configpath'
+        # make its key
+        key = nameserver.hash(name)
+        # build the configuration path slot
+        slot = nameserver.variable(
+            key=key,
+            value=self.configpath, 
+            converter=schema.list(schema.uri).coerce, 
+            priority=nameserver.priority.defaults(), locator=self.locator)
+        # place it in the model
+        nameserver.insert(name=name, key=key, node=slot)
+        # all done
+        return
+
+
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # initialize my codecs
+        self.codecs = self._indexDefaultCodecs()
+
+        # configuration events
+        self.commands = []
+        self.deferred = collections.defaultdict(list)
+
+        # all done
         return
 
 
     # implementation details
-    def _verifyConfigurationSettings(self, configurable, namespace, errors=None):
+    def _indexDefaultCodecs(self):
         """
-        Verify that the nodes in the configuration store that belong to the {namespace} owned
-        by {configurable} are consistent with its set of traits.
-
-        This routine is useful for detecting typos on the command line and package
-        configuration files
+        Initialize the codec index
         """
-        # print(" * Configurator._verifyConfigurationSettings:")
-        # print("     configurable={.pyre_name!r}".format(configurable))
-        # print("     namespace={!r}".format(namespace))
+        # make an empty index
+        index = collections.OrderedDict()
 
-        # initialize the error accumulator
-        errors = errors if errors is not None else []
-        # get the inventory
-        inventory = configurable.pyre_inventory
-        # let's see what is known about this instance
-        # print("  looking for configuration settings:")
+        # add the {cfg} codec
+        from .cfg import cfg
+        index[cfg.encoding] = cfg
 
-        # iterate over all settings that are the logical children of the given {namespace}
-        for key, slot in self.children(key=namespace):
-            # print("        found {0.name!r}, with priority: {0.priority}".format(slot))
-            # print("          from: {0.locator}".format(slot))
-            # try to find the corresponding descriptor
-            # build its name: its the last portion of its full name
-            name = slot.name.split(self.separator)[-1]
-            # if it is there
-            try:
-                # get the descriptor
-                descriptor = configurable.pyre_getTraitDescriptor(alias=name)
-                # print("          matching descriptor: {.name!r}".format(descriptor))
-            # found a typo?
-            except configurable.TraitNotFoundError as error:
-                # print("          no matching descriptor")
-                errors.append(error)
-                continue
-            # consistency check: the slot in the inventory should be the same as the slot in
-            # the model; this currently may fail under some aliasing configurations. the
-            # firewall should flush these cases out
-            if slot is not inventory[descriptor]:
-                # print(" ********* FIREWALL ********* ")
-                # print(" configurable: {}".format(configurable))
-                # print(" inventory: {}".format(inventory))
-                # print(" ++ slot in the configuration store:")
-                # slot.dump()
-                # print(" ++ slot in inventory:")
-                # inventory[descriptor].dump()
-                # get the journal
-                import journal
-                # build a firewall
-                firewall = journal.firewall(name="pyre.config")
-                # and raise it
-                raise firewall.log("slot mismatch for {.name!r}".format(slot))
+        # add the {pml} codec
+        from .pml import pml
+        index[pml.encoding] = pml
+
         # all done
-        # print("      done with {.pyre_name!r}".format(configurable))
-        # return the accumulated errors
-        return errors
-
-
-    def _transferConditionalConfigurationSettings(
-           self,
-           registrar, configurable, namespace, errors=None):
-        """
-        Apply whatever deferred configuration settings are available in the configuration store
-        under {namespace}
-        """
-        # print(" ** Configurator._transferConditionalConfigurationSettings:")
-        # print("      configurable={.pyre_name!r}".format(configurable))
-        # print("      namespace={!r}".format(namespace))
-        # initialize the error pile
-        errors = errors if errors is not None else []
-        # get the family name
-        family = configurable.pyre_family
-        # print("      family={!r}".format(family))
-        # if there isn't one, we are all done
-        if not family: 
-            # print("      no family, bailing out")
-            return errors
-
-        # for each deferred assignment
-        # print("      making the deferred assignments")
-        for trait, assignment, priority in self._retrieveDeferredAssignments(
-            registrar=registrar, ns=namespace):
-
-            # print("        attempting: {.pyre_name}.{} <- {}".format(
-                    # configurable, trait, assignment.value))
-            # look for the corresponding descriptor
-            try:
-                descriptor = configurable.pyre_getTraitDescriptor(alias=trait)
-                # print("        matching descriptor: {.name!r}".format(descriptor))
-            # found a typo?
-            except configurable.TraitNotFoundError as error:
-                # print("        no matching descriptor")
-                errors.append(error)
-                continue
-
-            # find the slot
-            slot = configurable.pyre_inventory[descriptor]
-
-            # assign the trait value
-            # print("        before: {!r} <- {!r}".format(trait, getattr(configurable, trait)))
-            self._assign(
-                existing=slot, value=assignment.value,
-                priority=priority, locator=assignment.locator) 
-            # print("        after: {!r} <- {!r}".format(trait, getattr(configurable, trait)))
-        # all done
-        return errors
-
-
-    def _retrieveDeferredAssignments(self, registrar, ns):
-        """
-        Retrieve and prioritize deferred assignments for the namespace {ns}
-        """
-        # print("      retrieving deferred assignments...")
-        # hash the namespace
-        key = self._hash.hash(ns)
-        # initialize the trait assignment table
-        table = {}
-        # hunt down all deferred assignments for this namespace
-        for assignment, priority in self.deferred[key]:
-            # build the trait name
-            traitName = self.separator.join(assignment.key)
-            # print(" **     found: {!r} <- {.value!r}".format(traitName, assignment))
-            # print("          from", assignment.locator)
-            # print("          with priority", priority)
-
-            # check the assignment conditions
-            # print("          checking conditions")
-            # if any of the specified conditions is not satisfied
-            if not self._verifyConditions(registrar=registrar, conditions=assignment.conditions):
-                # get the next deferred assignment
-                # print("            FAILED")
-                continue
-            # print("            PASSED")
-
-            # otherwise, attempt to
-            try:
-                # retrieve the priority of a previous assignment
-                _, previous = table[traitName]
-            # if there wasn't one
-            except KeyError:
-                # place this one in the table
-                table[traitName] = (assignment, priority)
-            # otherwise
-            else:
-                # replace what's there, if the new one is higher priority
-                if priority > previous: table[traitName] = (assignment, priority)
-        # at this point, {table} has one (assignment, priority) pair for each encountered trait
-        for trait, (assignment, priority) in table.items():
-            # hand each one to the caller
-            yield trait, assignment, priority
-        
-        # all done
-        return
-
-
-    def _verifyConditions(self, registrar, conditions):
-        """
-        Check whether the constraints specified in {conditions} are true
-        """
-        # for each constraint
-        for name, family in conditions:
-            # print("            name={}, family={}".format(name, family))
-            # attempt to 
-            try:
-                # lookup the specified component by name
-                # print("            looking up the component")
-                component = registrar.names[self.separator.join(name)]
-            # if not there
-            except KeyError:
-                # we are done
-                # print("              component {!r} not found".format(self.separator.join(name)))
-                return False
-            # print("              got it; comparing family names")
-            # if the families do not match
-            if component.pyre_family != family:
-                # we are done
-                # print("              family mismatch: {}".format(component.pyre_family))
-                return False
-            # print("            all good")
-        # if we got this far, all is good
-        return True
+        return index
 
 
 # end of file 

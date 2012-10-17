@@ -11,7 +11,7 @@ Definitions for all the exceptions raised by this package
 """
 
 
-from ..framework.exceptions import FrameworkError
+from ..framework.exceptions import FrameworkError, BadResourceLocatorError
 
 
 class ConfigurationError(FrameworkError):
@@ -36,6 +36,18 @@ class CodecError(ConfigurationError):
         return self.description
 
 
+class UnknownEncodingError(CodecError):
+    """
+    A request for an unknown codec was made
+    """
+
+    def __init__(self, uri, encoding, **kwds):
+        description = '{!r}: unknown encoding {!r}'.format(str(uri), encoding)
+        super().__init__(codec=None, uri=uri, description=description, **kwds)
+        self.encoding = encoding
+        return
+
+
 class DecodingError(CodecError):
     """
     Exception raised by codecs when they encounter errors in their input streams
@@ -44,10 +56,16 @@ class DecodingError(CodecError):
     
 class EncodingError(CodecError):
     """
-    Exception raised by codecs when they fail to inject an iterm in a stream
+    Exception raised by codecs when they fail to inject an item in a stream
     """
 
 
+class LoadingError(CodecError):
+    """
+    Exception raised by codecs when they encounter errors in their input streams
+    """
+
+    
 class ShelfError(ConfigurationError):
 
     def __init__(self, shelf, **kwds):

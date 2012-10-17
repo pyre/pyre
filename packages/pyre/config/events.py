@@ -18,10 +18,8 @@ global framework configuration data structures with partial input from invalid s
 class Event:
     """The base class for all configuration events"""
 
-
     # public data
     locator = None
-
 
     # meta methods
     def __init__(self, locator, **kwds):
@@ -33,23 +31,19 @@ class Event:
 class Command(Event):
     """A command"""
 
-
     # public data
     command = None
-
 
     # interface
     def identify(self, inspector, **kwds):
         """Ask {inspector} to process a {Command}"""
-        return inspector.execute(command=self.command, locator=self.locator, **kwds)
-
+        return inspector.execute(command=self, **kwds)
 
     # meta methods
     def __init__(self, command, **kwds):
         super().__init__(**kwds)
         self.command = command
         return
-
 
     def __str__(self):
         return "{{{}: {}}}".format(self.locator, self.command)
@@ -58,17 +52,14 @@ class Command(Event):
 class Assignment(Event):
     """A request to bind a {key} to a {value}"""
 
-
     # public data
     key = None
     value = None
 
-
     # interface
     def identify(self, inspector, **kwds):
         """Ask {inspector} to process an {Assignment}"""
-        return inspector.assign(key=self.key, value=self.value, locator=self.locator, **kwds)
-
+        return inspector.assign(assignment=self, **kwds)
 
     # meta methods
     def __init__(self, key, value, **kwds):
@@ -77,7 +68,6 @@ class Assignment(Event):
         self.value = value
         return
 
-
     def __str__(self):
         return "{{{}: {} <- {}}}".format(self.locator, self.key, self.value)
 
@@ -85,17 +75,14 @@ class Assignment(Event):
 class ConditionalAssignment(Assignment):
     """A request to bind a {key} to a {value} subject to a condition"""
 
-
     # public data
     component = None
     conditions = None
-
 
     # interface
     def identify(self, inspector, **kwds):
         """Ask {inspector} to process a {ConditionalAssignment}"""
         return inspector.defer(assignment=self, **kwds)
-
 
     # meta methods
     def __init__(self, component, condition, **kwds):
@@ -107,7 +94,7 @@ class ConditionalAssignment(Assignment):
     def __str__(self):
         msg = [
             "{{{.locator}:".format(self),
-            "  {0.component}: {0.key} <- {0.value}".format(self),
+            "  {0.component}: {0.key} <- {0.value!r}".format(self),
             "  subject to:"
             ]
         for name, family in self.conditions:
@@ -120,23 +107,19 @@ class ConditionalAssignment(Assignment):
 class Source(Event):
     """A request to load configuration settings from a named source"""
 
-
     # public data
     source = None
-
 
     # interface
     def identify(self, inspector, **kwds):
         """Ask {inspector} to process a {Source} event"""
-        return inspector.load(source=self.source, locator=self.locator, **kwds)
-
+        return inspector.load(request=self, **kwds)
 
     # meta methods
     def __init__(self, source, **kwds):
         super().__init__(**kwds)
         self.source = source
         return
-
 
     def __str__(self):
         return "{{{0.locator}: loading {0.source}}".format(self)

@@ -6,6 +6,10 @@
 #
 
 
+# externals
+from ... import tracking
+
+
 # declaration
 class Shelf:
     """
@@ -18,7 +22,9 @@ class Shelf:
 
 
     # public data
+    uri = None
     module = None
+    locator = None
 
     @property
     def source(self):
@@ -38,12 +44,17 @@ class Shelf:
         except AttributeError as error:
             raise self.SymbolNotFoundError(shelf=self, symbol=symbol) from error
 
+        # unreachable
+        import journal
+        raise journal.firewall('pyre.config.native').log("UNREACHABLE")
+
 
     # meta methods
-    def __init__(self, module, locator,  **kwds):
+    def __init__(self, module, uri, locator,  **kwds):
         super().__init__(**kwds)
         self.module = module
-        self.locator = locator
+        self.uri = uri
+        self.locator = tracking.chain(this=tracking.file(source=module.__file__), next=locator)
         return
 
 

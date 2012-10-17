@@ -22,7 +22,8 @@ class Config(Codec):
 
 
     # interface
-    def decode(self, uri, source, locator):
+    @classmethod
+    def decode(cls, uri, source, locator):
         """
         Parse {source} and return the configuration events it contains
         """
@@ -38,7 +39,7 @@ class Config(Codec):
             # build the error message parts
             msg = "decoding error in {}: {}".format(error.locator, error.description)
             # convert the parsing error into a decoding error and raise it
-            raise self.DecodingError(codec=self, uri=uri, locator=error.locator, description=msg)
+            raise cls.DecodingError(codec=cls, uri=uri, locator=error.locator, description=msg)
 
         # return the harvested configuration events
         # for event in configuration: print(event)

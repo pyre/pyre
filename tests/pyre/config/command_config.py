@@ -17,7 +17,9 @@ def test():
     # get the executive instance
     executive = pyre.executive
     # pull the configutor
-    configurator = executive.configurator
+    cfg = executive.configurator
+    # the nameserver
+    ns = executive.nameserver
     # and build a command line parser
     parser = executive.newCommandLineParser()
     # build an argument list
@@ -25,12 +27,12 @@ def test():
         '--config=sample.pml',
         ]
     # get the parser to populate the configurator
-    configuration = parser.decode(commandline)
+    events = parser.parse(commandline)
     # and transfer the events to the configurator
-    configurator.configure(configuration=configuration, priority=executive.USER_CONFIGURATION)
+    cfg.processEvents(executive=executive, events=events, priority=executive.priority.user)
     # now, check that the assignments took place
-    assert configurator["sample.user.name"] == "michael a.g. aïvázis"
-    assert configurator["sample.user.email"] == "aivazis@caltech.edu"
+    assert ns["sample.user.name"] == "michael a.g. aïvázis"
+    assert ns["sample.user.email"] == "aivazis@caltech.edu"
     # and return the managers
     return parser
 

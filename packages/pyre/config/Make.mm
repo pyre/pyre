@@ -15,7 +15,6 @@ RECURSE_DIRS = \
     native \
     odb \
     pml \
-    pcs \
 
 #--------------------------------------------------------------------------
 #
@@ -36,16 +35,11 @@ distclean::
 
 EXPORT_PYTHON_MODULES = \
     Codec.py \
-    CodecManager.py \
-    CommandLine.py \
-    Configuration.py \
+    CommandLineParser.py \
     Configurator.py \
-    Memo.py \
-    Model.py \
-    Slot.py \
+    Loader.py \
     events.py \
     exceptions.py \
-    levels.py \
     __init__.py
 
 

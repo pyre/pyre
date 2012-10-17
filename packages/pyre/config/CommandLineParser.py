@@ -6,11 +6,13 @@
 #
 
 
+# externals
 import itertools
 import pyre.tracking
 
 
-class CommandLine:
+# class declaration
+class CommandLineParser:
     """
     Support for parsing the application command line
 
@@ -62,16 +64,14 @@ class CommandLine:
 
 
     # interface
-    def decode(self, source, locator=None):
+    def parse(self, argv):
         """
         Harvest the configuration events in {argv} and store them in a {configuration}
 
         parameters:
-            {source}: a container of strings of the form "--key=value"
+            {argv}: a container of strings of the form "--key=value"
             {locator}: an optional locator; not used by this decoder
         """
-        # the source is really an iterable of strings
-        argv = source
         # build a configuration object to store the processed command line
         configuration = []
         # run through the command line
@@ -85,7 +85,8 @@ class CommandLine:
                 value = match.group("value") or ''
                 if key:
                     # if a key were specified
-                    self._processAssignments(configuration, key,value, self.locator(arg=index))
+                    self._processAssignments(
+                        configuration, key,value, self.locator(arg=match.string))
                 else:
                     # we ran in to a '-' or '--' that signals the end of configuration options
                     index += 1
@@ -132,7 +133,7 @@ class CommandLine:
         # build the scanners
         self.buildScanners()
         # the list of registered handlers of command line events
-        self.handlers = handlers if handlers is not None else {}
+        self.handlers = {} if handlers is None else handlers
         # all done
         return
 
@@ -179,7 +180,7 @@ class CommandLine:
         # iterate over the command line arguments that were handed to me
         for arg in args:
             # build a command request
-            event = self.Command(command=arg, locator=self.locator(arg=index))
+            event = self.Command(command=arg, locator=self.locator(arg=arg))
             # add it to the pile
             configuration.append(event)
             # update the index

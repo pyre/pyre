@@ -14,44 +14,46 @@ processing
 
 
 def test():
-    # access the package
+    # access the framework
     import pyre
-    # and the configurator
-    configurator = pyre.executive.configurator
+    # and its managers
+    executive = pyre.executive
+    ns = pyre.executive.nameserver
+    cfg = pyre.executive.configurator
 
-    # create some assignments
-    configurator.assign(
-        key=("sample", "user", "name"), value="Michael Aïvázis",
-        priority=configurator.collate(), locator=pyre.tracking.here()
-        )
-    configurator.assign(
-        key=("sample", "user", "name"), value="michael aïvázis",
-        priority=configurator.collate(), locator=pyre.tracking.here()
-        )
-    configurator.assign(
-        key=("sample", "user", "email"), value="michael.aivazis@caltech.edu",
-        priority=configurator.collate(), locator=pyre.tracking.here()
-        )
-    configurator.assign(
-        key=("sample", "user", "affiliation"), value="california institute of technology",
-        priority=configurator.collate(), locator=pyre.tracking.here()
-        )
-    configurator.assign(
-        key=("sample", "user", "alias"), value="{sample.user.name}",
-        priority=configurator.collate(), locator=pyre.tracking.here()
-        )
+    # the priority category for this test
+    priority = executive.priority.user
+
+    # make some events
+    events = [
+        cfg.events.Assignment(
+            key=("sample", "user", "name"), value="michael aïvázis",
+            locator=pyre.tracking.here()),
+        cfg.events.Assignment(
+            key=("sample", "user", "affiliation"), value="california institute of technology",
+            locator=pyre.tracking.here()),
+        cfg.events.Assignment(
+            key=("sample", "user", "email"), value="michael.aivazis@caltech.edu",
+            locator=pyre.tracking.here()),
+        cfg.events.Assignment(
+            key=("sample", "user", "alias"), value="{sample.user.name}",
+            locator=pyre.tracking.here())
+        ]
+
+    # process them
+    cfg.processEvents(executive=executive, events=events, priority=priority)
 
     # dump the contents of the model
-    # configurator.dump()
+    # ns.dump()
 
     # check the variable bindings
-    assert configurator["sample.user.name"] == "michael aïvázis"
-    assert configurator["sample.user.email"] == "michael.aivazis@caltech.edu"
-    assert configurator["sample.user.affiliation"] == "california institute of technology"
-    assert configurator["sample.user.alias"] == configurator["sample.user.name"]
+    assert ns["sample.user.name"] == "michael aïvázis"
+    assert ns["sample.user.email"] == "michael.aivazis@caltech.edu"
+    assert ns["sample.user.affiliation"] == "california institute of technology"
+    assert ns["sample.user.alias"] == ns["sample.user.name"]
 
-    # and return the managers
-    return configurator
+    # and return the manager
+    return executive
 
 
 # main

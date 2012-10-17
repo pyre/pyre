@@ -21,7 +21,8 @@ class PML(Codec):
 
 
     # interface
-    def decode(self, uri, source, locator):
+    @classmethod
+    def decode(cls, uri, source, locator):
         """
         Parse {source} and return its contents
         """
@@ -43,8 +44,8 @@ class PML(Codec):
                 loc = error.locator
             msg = "decoding error in {}: {}".format(loc, error.description)
             # convert the parsing error into a decoding error and raise it
-            raise self.DecodingError(
-                codec=self, uri=uri, locator=loc, description=msg) from error
+            raise cls.DecodingError(
+                codec=cls, uri=uri, locator=loc, description=msg) from error
         # all done; return the harvested events
         # for event in configuration: print(event)
         return configuration

@@ -6,6 +6,11 @@
 #
 
 
+# externals
+from ... import tracking
+
+
+# declaration
 class Shelf(dict):
     """
     Shelves are symbol tables that map component record factories to their names.
@@ -44,10 +49,15 @@ class Shelf(dict):
         except KeyError as error:
             raise self.SymbolNotFoundError(shelf=self, symbol=symbol) from error
 
+        # unreachable
+        import journal
+        raise journal.firewall('pyre.config.native').log("UNREACHABLE")
+
 
     # meta methods
-    def __init__(self, locator, **kwds):
+    def __init__(self, uri, locator, **kwds):
         super().__init__(**kwds)
+        self.uri = uri
         self.locator = locator
         return
 
