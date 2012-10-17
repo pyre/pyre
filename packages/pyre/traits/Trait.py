@@ -6,10 +6,12 @@
 #
 
 
-from ..patterns.Named import Named
+# superclass
+from .Descriptor import Descriptor
 
 
-class Trait(Named):
+# class declaration
+class Trait(Descriptor):
     """
     This is the base class for component features that form their public interface
 
@@ -26,64 +28,38 @@ class Trait(Named):
     """
 
 
-    # public data
-    name = None # my canonical name; set at construction time or binding name
-    aliases = None # the set of alternative names by which I am accessible
-    tip = None # a short description of my purpose and constraints; see doc below
-
     # framework data
     # predicate that indicates whether this trait is subject to runtime configuration
     isConfigurable = False
 
 
-    # wire doc to __doc__ so the bultin help can decorate the attributes properly
-    @property
-    def doc(self):
+    # setting values
+    def setClassTrait(self, **kwds):
         """
-        Return my  documentation string
+        Set the value of this trait for a configurable class
         """
-        return self.__doc__
-
-    @doc.setter
-    def doc(self, text):
-        """
-        Store text as my documentation string
-        """
-        self.__doc__ = text
-        return
+        raise NotImplementedError(
+            "class {.__name__!r} does not implement 'setClassTrait'".format(type(self)))
 
 
-    # interface 
-    def pyre_initialize(self):
+    def setInstanceTrait(self, **kwds):
+        """
+        Set the value of this trait for a configurable class
+        """
+        raise NotImplementedError(
+            "class {.__name__!r} does not implement 'setInstanceTrait'".format(type(self)))
+
+
+    # framework support
+    def initialize(self, configurable):
         """
         Look through the metadata harvested from the class declaration and perform any
         necessary cleanup
         """
-        # update my aliases to include my canonical name
+        # update my aliases to include my name
         self.aliases.add(self.name)
         # all done
         return self
-
-
-    def pyre_bindClass(self, configurable):
-        """
-        Resolve and convert the current value of this trait of {configurable} into my native type
-        """
-        return configurable
-
-
-    def pyre_bindInstance(self, configurable):
-        """
-        Resolve and convert the current value of this trait of {configurable} into my native type
-        """
-        return configurable
-
-
-    # meta methods
-    def __init__(self, name=None, **kwds):
-        super().__init__(name=name, **kwds)
-        self.aliases = set()
-        return
 
 
 # end of file 

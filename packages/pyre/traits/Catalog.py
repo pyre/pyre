@@ -6,62 +6,81 @@
 #
 
 
+# superclass
 from .Facility import Facility
 
 
+# declaration
 class Catalog(Facility):
     """
     A component container
     """
 
 
-    def pyre_instantiate(self, node, value):
+    # value coercion
+    def instantiate(self, node, value, **kwds):
         """
-        Attach a component catalog to my trait slot in the client component
+        Attach a component catalog as my trait value
         """
-        # print(" ** Catalog.pyre_instantiate: node={}, value={!r}".format(node, value))
-        # initialize the index we will leave behind; a {dict} for now
-        index = {}
-        # get the client
-        client = node.componentInstance
-        # and its name
-        name = client.pyre_name
-        # if it is nameless
-        if not name:
-            # nothing to configure...
+        # initialize the component index, a {dict} for now; it's not useful to remember the
+        # order in which these settings were encountered, because what you really want is a
+        # container sorted by the priorities of the settings
+        index = dict()
+        # get my target key
+        key = node.key
+        # if it is unregistered
+        if not key:
+            # nothing to do
             return index
-        # otherwise, build my configuration access key
-        basekey = client.pyre_split(name) + [self.name]
-        # access the configurator
-        configurator = client.pyre_executive.configurator
-        # and the component registrar
-        registrar = client.pyre_executive.registrar
 
-        # get the explicit configuration information
-        for _, slot in configurator.children(basekey):
-            # instantiate the value
-            instance = super().pyre_instantiate(node=slot, value=slot.getValue())
-            # build the instance name
-            cname = client.pyre_split(slot.name)[-1]
-            # store it in the index
-            index[cname] = instance
+        # get my protocol
+        protocol = self.schema
+        # use it to get the executive
+        executive = protocol.pyre_executive
+        # the nameserver
+        nameserver = executive.nameserver
+        # and the configurator
+        configurator = executive.configurator
+        # get the full name of my slot
+        _, slotName = nameserver.lookup(node.key)
 
-        # now the deferred configuration
-        for trait, assignment, priority in configurator._retrieveDeferredAssignments(
-            registrar=registrar, ns=basekey):
-            # cast the assignment rhs
-            value = self.type.pyre_cast(assignment.value)
-            # if i got a component class record
-            if not isinstance(value, self.Component) and issubclass(value, self.Component):
-                # construct its name
-                traitName = client.pyre_SEPARATOR.join([name, self.name, trait])
-                # instantiate it
-                value = value(name=traitName)
-            # in any case, store the instance in the index
-            index[trait] = value
+        # go through the children of this key
+        for childKey, childNode in nameserver.children(key):
+            # look up the name of the node
+            _, childName = nameserver.lookup(childKey)
+            # take it apart and keep the trailing part
+            tag = nameserver.split(childName)[-1]
+            # store the (tag, value) pair in my index
+            index[tag] = super().instantiate(node=childNode, value=childNode.value)
 
-        # return the index so that it can be attached as the trait value for this instance    
+        # now, for the deferred assignments
+        for assignment, priority in configurator.deferred[key]:
+            # for each condition
+            for name, family in assignment.conditions:
+                # hash them
+                name = nameserver.hash(name)
+                family = nameserver.hash(family)
+                # verify
+                if nameserver[name].pyre_familyKey is not family: break
+            # if they all passed
+            else:
+                # get the name of this entry
+                tag = nameserver.join(*assignment.key)
+                # for each candidate
+                for entry in self.resolve(value=assignment.value, locator=assignment.locator):
+                    # if is assignment compatible with my protocol
+                    if entry.pyre_isCompatible(protocol):
+                        # if it's a component class
+                        if isinstance(entry, self.actor):
+                            # build its name
+                            name = nameserver.join(slotName, tag)
+                            # instantiate it
+                            entry = entry(name=name, locator=assignment.locator)
+                        # place it in the index
+                        index[tag] = entry
+
+        # store the index as my value
         return index
-
+    
 
 # end of file 

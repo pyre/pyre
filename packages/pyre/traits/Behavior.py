@@ -6,30 +6,25 @@
 #
 
 
+# superclass
 from .Trait import Trait
 
 
+# declaration
 class Behavior(Trait):
     """
     The base class for component methods that are part of its external interface
     """
 
     
-    # public data; inherited from Trait but repeated here for clarity
-    name = None # my canonical name; set at construction time or binding name
-    aliases = None # the set of alternative names by which I am accessible
-    tip = None # a short description of my purpose and constraints
-    # additional state
+    # public data
     method = None # the actual callable in the component declaration
-    # predicate that indicates whether this trait is subject to runtime configuration
-    pyre_isConfigurable = False
 
 
-    # meta methods
+    # meta-methods
     def __init__(self, method, **kwds):
-        super().__init__(**kwds)
+        super().__init__(doc=method.__doc__, **kwds)
         self.method = method
-        self.__doc__ = method.__doc__
         return
 
 

@@ -6,76 +6,100 @@
 #
 
 
+# superclass
 from .Facility import Facility
 
 
+# declaration
 class Map(Facility):
     """
-    A dictionary
+    Dictionary of properties
     """
 
 
-    def pyre_instantiate(self, node, value):
+    # value coercion
+    def coerce(self, node, value, **kwds):
         """
-        Attach a component catalog to my trait slot in the client component
+        A no-op to get around the class inventory constraints
         """
-        # print(" ** Catalog.pyre_instantiate: node={}, value={!r}".format(node, value))
-        # get the client
-        client = node.componentInstance
-        # and its name
-        name = client.pyre_name
-        # initialize the index we will leave behind; a {dict} for now
-        index = {}
-        # if it is nameless
-        if not name:
-            # nothing to configure...
+        return value
+
+
+    def instantiate(self, node, value, **kwds):
+        """
+        Attach a component catalog as my trait value
+        """
+        # initialize the component index, a {dict} for now; it's not useful to remember the
+        # order in which these settings were encountered, because what you really want is a
+        # container sorted by the priorities of the settings
+        index = dict()
+        # get my target key
+        key = node.key
+        # if it unregistered
+        if not key:
+            # nothing to do
             return index
-        # otherwise, build my configuration access key
-        basekey = client.pyre_split(name) + [self.name]
-        # access the configurator
-        configurator = client.pyre_executive.configurator
-        # and the component registrar
-        registrar = client.pyre_executive.registrar
 
-        # get the explicit configuration information
-        for _, slot in configurator.children(basekey):
-            # build the key
-            key = client.pyre_split(slot.name)[-1]
-            # and the value
-            value = self.type.pyre_cast(slot.getValue())
-            # store it in the index
-            index[key] = value
+        # the executive
+        executive = self.executive
+        # the nameserver
+        nameserver = executive.nameserver
+        # and the configurator
+        configurator = executive.configurator
 
-        # now the deferred configuration
-        for trait, assignment, priority in configurator._retrieveDeferredAssignments(
-            registrar=registrar, ns=basekey):
-            # cast the assignment rhs
-            value = self.type.pyre_cast(assignment.value)
-            # store in the index
-            index[trait] = value
+        _, slotName = nameserver.lookup(node.key)
 
-        # return the index so that it can be attached as the trait value for this instance    
+        # go through the children of this key
+        for childKey, childNode in nameserver.children(key):
+            # look up the name of the node
+            _, childName = nameserver.lookup(childKey)
+            # take it apart and keep the trailing part
+            tag = nameserver.split(childName)[-1]
+            # store the (tag, value) pair in my index
+            index[tag] = self.schema.coerce(value=childNode.value)
+
+        # now, for the deferred assignments
+        for assignment, priority in configurator.deferred[key]:
+            # for each condition
+            for name, family in assignment.conditions:
+                # hash them
+                name = nameserver.hash(name)
+                family = nameserver.hash(family)
+                # verify
+                if nameserver[name].pyre_familyKey is not family: break
+            # if they all passed
+            else:
+                # get the name of this entry
+                tag = nameserver.join(*assignment.key)
+                # place it in the index
+                index[tag] = self.schema.coerce(value=assignment.value)
+
+        # store the index as my value
         return index
 
 
-    def pyre_setClassTrait(self, configurable, value, locator):
-        """
-        Set this trait of the class record {configurable} to value
-        """
-        raise NotImplementedError('NYI!')
+    # framework support
+    def initialize(self, configurable, **kwds):
+        # chain up
+        super().initialize(configurable=configurable, **kwds)
+        # all i care about is access to the executive
+        self.executive = configurable.pyre_executive
+        # all done
+        return
 
 
-    def pyre_setInstanceTrait(self, instance, value, locator):
+    # support for constructing instance slots
+    def macro(self, model):
         """
-        Set this trait of {instance} to value
+        Return my choice of macro evaluator so the caller can build appropriate slots
         """
-        raise NotImplementedError('NYI!')
+        # my schema knows...
+        return self.schema.macro(model=model)
 
 
-     # meta methods
-    def __init__(self, cast, **kwds):
-        descriptor = cast()
-        super().__init__(interface=descriptor.type, default={}, **kwds)
+    # meta-methods
+    def __init__(self, schema, **kwds):
+        super().__init__(protocol=schema(), default=schema.default, **kwds)
         return
 
 

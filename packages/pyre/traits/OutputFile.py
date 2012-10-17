@@ -6,9 +6,13 @@
 #
 
 
+# externals
+import weakref
+# superclass
 from .Property import Property
 
 
+# declaration
 class OutputFile(Property):
     """
     A class declarator for output files
@@ -20,11 +24,22 @@ class OutputFile(Property):
     default = "stdout"
 
 
+    # framework support
+    def macro(self, model):
+        """
+        Return my preferred macro converter
+        """
+        # build interpolations
+        return model.interpolation
+
+
     # interface
-    def pyre_cast(self, value, **kwds):
+    def coerce(self, value):
         """
         Attempt to convert {value} into a file
         """
+        # N.B.: no chaining upwards here: output files are their own schema, which would cause
+        # infinite recursion...
         # if the value is a string
         if isinstance(value, str):
             # check whether it is one of the special names
@@ -38,6 +53,33 @@ class OutputFile(Property):
             return open(value, mode=self.mode)
         # if not, just pass it through
         return value
+
+
+    # framework support
+    def initialize(self, executive, **kwds):
+        """
+        Attach the meta-data harvested from {configurable}
+        """
+        # chain up
+        super().initialize(executive=executive, **kwds)
+        # i need access to the file server
+        self.fileserver = weakref.proxy(executive.fileserver)
+        # all done
+        return
+        
+
+    # meta-methods
+    def __init__(self, mode=mode, default=default, **kwds):
+        # chain up
+        super().__init__(schema=self, default=default, **kwds)
+        # save my mode
+        self.mode = mode
+        # all done
+        return
+
+
+    # implementation details
+    fileserver = None
 
 
 # end of file 

@@ -6,23 +6,22 @@
 #
 
 
-from .Property import Property
+# externals
+import itertools
+import collections
+from .. import tracking
+# superclass
+from .Slotted import Slotted
 
 
-class Facility(Property):
+# declaration
+class Facility(Slotted):
     """
     The base class for traits that must conform to a given interface
     """
 
-    # public data; look in Property for inherited attributes
-    type = None # my type; must be an Interface class record (an instance of Role)
-    optional = False # facilities must be given values
 
-
-    # types
-    from .Component import Component
-
-    # Facility is faced with the following problem: the expected result of casting are
+    # Facility is faced with the following problem: the expected results of coercing are
     # different depending on whether the object whose trait is being processed is a component
     # class or a component instance. In the latter case, we want to cast the trait value into
     # an actual component instance that is compatible with the facility requirements; in the
@@ -33,105 +32,197 @@ class Facility(Property):
 
     # Normally, conversions of configuration settings to appropriate inventory values is
     # handled by a trait's type. For facilities, this is normally a subclass of
-    # {Interface}. {Interface.pyre_cast} solves the first half of the problem: converting a
+    # {Protocol}. {Protocol.pyre_cast} solves the first half of the problem: converting a
     # value in to a component class record. In order to solve the second half, {Facility}
     # registers its {pyre_instantiate} as the slot value processor for traits bound to
     # component instances.
 
 
-    # property overrides
-    def pyre_bindClass(self, configurable):
-        """
-        Bind this trait to the {configurable} class record
-        """
-        # get my slot from the {configurable}
-        slot = configurable.pyre_inventory[self]
-        # attach my value processor
-        slot.processor = self.pyre_cast
-        # mark the slot as dirty
-        slot.dirty = True
-        # to force it to recompute its value at some later point; it is important to not
-        # attempt to resolve the value during binding because doing so causes an infinite
-        # recursion while class records are still being formed. any errors will get caught when
-        # the class is instantiated.
-        return slot
-
-        
-    def pyre_bindInstance(self, configurable):
-        """
-        Bind this facility to the {configurable} instance
-        """
-        # get my slot from the {configurable}
-        slot = configurable.pyre_inventory[self]
-        # attach my value processor
-        slot.processor = self.pyre_instantiate
-        # mark the slot as dirty
-        slot.dirty = True
-        # to force it to recompute its value
-        return slot.getValue()
+    # types
+    from ..schema import uri
+    from ..components.Actor import Actor as actor
+    from ..components.Component import Component as component
+    # exceptions
+    from ..schema.exceptions import CastingError
 
 
-    def pyre_instantiate(self, node, value):
-        """
-        Convert {value} into a component instance
-        """
-        # {None} is special
-        if value is None: return None
-        # if {value} is not an actual instance
-        if not isinstance(value, self.Component):
-            # let my interface have a pass
-            value = self.pyre_cast(node=node, value=value)
-            # if i got a component class record
-            if not isinstance(value, self.Component) and issubclass(value, self.Component):
-                # instantiate it
-                value = value(name=node.name if node.name else None)
-        # and return it
-        return value
+    # public data
+    converters = ()
+    # framework data
+    isConfigurable = True
 
 
-    def pyre_setInstanceTrait(self, instance, value, locator):
+    # interface
+    def coerce(self, value, node, **kwds):
         """
-        Set this trait of {instance} to value
+        Convert {value} into a component class
         """
-        # treat the assignment like a property
-        slot = super().pyre_setInstanceTrait(instance, value, locator)
-        # as a side-effect, the value of the slot has been converted into my native type
-        component = slot.value
-        # if, for any reason, that didn't go through
-        if not isinstance(component, self.Component):
-            # bail
-            return component
-        # otherwise
-        # look up the registration name
-        registration = slot.name
-        # if the two names match, this is an instance that was auto-created by the
-        # configuration process
-        if registration == component.pyre_name:
-            # and there is nothing further to do
-            return component
-        # otherwise, get the configurator
-        cfg = instance.pyre_executive.configurator
-        # get the registrar
-        registrar = instance.pyre_executive.registrar
-        # build the namespace
-        namespace = registration.split(cfg.separator)
-        # transfer any deferred configuration settings
-        errors = cfg._transferConditionalConfigurationSettings(
-            registrar=registrar, configurable=component, namespace=namespace)
-        # and return the freshly configured instance
-        return component
+        # {None} is special, leave it alone
+        if value is None: return value
+
+        # get my protocol
+        protocol = self.schema
+
+        # for each attempt to resolve {value} into something useful
+        for candidate in self.resolve(value=value, locator=node.locator):
+            # check that the candidate is compatible with my protocol
+            if candidate.pyre_isCompatible(protocol):
+                # we are done
+                return candidate
+
+        # otherwise, we are out of ideas; complain
+        msg = "could not convert {!r} into a component".format(value)
+        raise self.CastingError(value=value, description=msg)
 
 
-     # meta methods
-    def __init__(self, interface, default=None, **kwds):
-        super().__init__(**kwds)
-        self.type = interface
-        self.default = default if default is not None else interface.default()
+    def instantiate(self, value, node, **kwds):
+        """
+        Force the instantiation of {value}
+        """
+        # run the {value} through coercion
+        value = self.coerce(value=value, node=node, **kwds)
+        # {None} is special, leave it alone
+        if value is None: return value
+        # if what I got back is a component instance, we are all done
+        if isinstance(value, self.component): return value
+        # otherwise, instantiate and return it
+        return value(key=node.key, name=None, locator=node.locator)
+
+
+    def find(self, uri):
+        """
+        Participate in the search for suitable shelves described by {uri}
+        """
+        # get my protocol
+        protocol = self.schema
+        # its family name
+        family = protocol.pyre_family()
+        # the executive
+        executive = self.schema.pyre_executive
+        # the name server
+        ns = executive.nameserver
+        # and the file server
+        fs = executive.fileserver
+        # the name server knows the search path, already a list of uris
+        searchpath = ns['pyre.configpath']
+        # deduce my context path
+        contextpath = [''] if not family else ns.split(family)
+
+        # the choices of leading segments
+        roots = (p.address for p in reversed(searchpath))
+        # sub-folders built out progressively shorter leading portions of the family name
+        folders = (
+            fs.join(*contextpath[:marker])
+            for marker in reversed(range(0,len(contextpath)+1)))
+        # and the address specification from the {uri}
+        address = [uri.address]
+        # with all possible combinations of these three sequences
+        for address in itertools.product(roots, folders, address):
+            # build a uri and return it
+            yield self.uri(scheme='vfs', address=fs.join(*address))
+
+        # any other ideas?
         return
 
 
-    # exceptions
-    from .exceptions import FacilitySpecificationError
+    def initialize(self, **kwds):
+        """
+        Attach any metadata harvested by the requirement metaclass
+
+        This gets called by {Requirement}, the metaclass of all configurables, as part of the
+        process that constructs the class record.
+        """
+        # chain up
+        super().initialize(**kwds)
+        # adjust the converters
+        if self.converters is not tuple():
+            # if the user placed them in a container
+            if isinstance(self.converters, collections.Iterable):
+                # convert it into a tuple
+                self.converters = tuple(self.converters)
+            # otherwise
+            else:
+                # make a tuple out of the lone converter
+                self.converters = (self.converters, )
+        # all done
+        return self
+
+
+    def resolve(self, value, locator):
+        """
+        Attempt to convert {value} to a component
+        """
+        # the actor type
+        actor = self.actor
+        # and the component type
+        component = self.component
+
+        # first, give {value} a try
+        if isinstance(value, actor) or isinstance(value, component): yield value
+
+        # if that didn't work and {value} is not a string, i am out of ideas
+        if not isinstance(value, str): return
+
+        # otherwise, convert it to a uri
+        uri = self.uri.coerce(value)
+        # extract the fragment, which we use as the instance name; it's ok if it's {None}
+        instanceName = uri.fragment
+        # get my protocol
+        protocol = self.schema
+        # get the executive; my protocol has access
+        executive = protocol.pyre_executive
+        # the nameserver
+        nameserver = executive.nameserver
+
+        # for each potential resolution of {value} by the executive
+        for dscr in executive.retrieveComponentDescriptor(uri=uri, facility=self):
+            # if it's neither a component class not a component instance
+            if not (isinstance(dscr, actor) or isinstance(dscr, component)):
+                # it must be a callable that returns one
+                dscr = dscr()
+                # if not
+                if not (isinstance(dscr, actor) or isinstance(dscr, component)):
+                    # it's no good; move on
+                    continue
+            # if it is a class and we have a request to instantiate
+            if instanceName and isinstance(dscr, actor):
+                # make a locator
+                this = tracking.simple('while resolving {!r}'.format(uri.uri))
+                locator = tracking.chain(this=this, next=locator)
+                # build it
+                dscr = dscr(name=instanceName, locator=locator)
+            # give this a try
+            yield dscr
+
+        # out of ideas
+        return
+
+    
+    # support for constructing instance slots
+    def instanceSlot(self, model):
+        """
+        Hook registered with the nameserver that informs it of my macro preference and the
+        correct converter to attach to new slots for component classes
+        """
+        return (self.macro(model=model), self.instantiate)
+
+
+    def macro(self, model):
+        """
+        Return my choice of macro processor so the caller can build appropriate slots
+        """
+        # build interpolations
+        return model.interpolation
+
+
+    # meta methods
+    def __init__(self, protocol, default=None, **kwds):
+        # reset the default value, if necessary
+        default = protocol.pyre_default() if default is None else default
+        # chain up
+        super().__init__(default=default, schema=protocol, **kwds)
+        # all done
+        return
 
 
 # end of file 
