@@ -76,22 +76,4 @@ class Descriptor:
         return
 
 
-    def __get__(self, instance, cls):
-        """
-        Retrieve the value of this descriptor from the client
-        """
-        # don't know what to do
-        raise NotImplementedError(
-            "descriptor {.__name__!r} does not support '__get__'".format(type(self)))
-
-
-    def __set__(self, client, value):
-        """
-        Set the value of this descriptor for a configurable instance 
-        """
-        # don't know what to do
-        raise NotImplementedError(
-            "descriptor {.__name__!r} does not support '__set__'".format(type(self)))
-
-
 # end of file 
