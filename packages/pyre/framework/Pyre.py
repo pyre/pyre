@@ -6,105 +6,82 @@
 #
 
 
+# externals
+from .. import tracking, schema
 # superclass
 from .Executive import Executive
 
 
-# my declaration
+# declaration
 class Pyre(Executive):
     """
-    The framework executive singleton
+    The default framework executive.
+
+    This class is responsible for the actual instantiation of the providers of the framework
+    services.
     """
 
 
-    # the startup sequence
-    def boot(self):
+    # constants
+    locator = tracking.simple('during pyre startup')
+
+    # public data
+    from . import _verbose as verbose
+
+
+    # interface
+    def boot(self, **kwds):
         """
-        Perform all the default initialization steps
+        Initialize the providers of the runtime services
         """
-        # attach my managers
+        # chain up to my base class
+        super().boot(**kwds)
 
-        # the timer manager
-        from ..timers import newTimerRegistrar
-        self.timekeeper = newTimerRegistrar()
-        # build and start a timer
-        self.timer = self.timekeeper.timer(name="pyre").start()
+        # local names for my managers
+        nameserver = self.nameserver
+        configurator = self.configurator
 
-        # the manager of the component interdependencies
-        from .Binder import Binder
-        self.binder = Binder()
-        # my codec manager
-        from ..config import newCodecManager
-        self.codex = newCodecManager()
-        # my configuration manager
-        from ..config import newConfigurator
-        self.configurator = newConfigurator(executive=self)
-        # the manager of my virtual filesystem
-        from .FileServer import FileServer
-        self.fileserver = FileServer()
-        # the component registrar
-        from ..components import newRegistrar
-        self.registrar = newRegistrar()
-
-        # patch the component infrastructure
-        import weakref
-        # patch Configurable
-        from ..components import configurable
-        configurable.pyre_executive = weakref.proxy(self)
-        configurable.pyre_SEPARATOR = self.configurator.separator
-
-        # process the command line
+        # access the command line
         import sys
-        # build a command line parser
-        parser = self.newCommandLineParser()
-        # parse the command line
-        commandline = parser.decode(sys.argv[1:])
-        # get the configurator to update my configuration
-        self.configurator.configure(configuration=commandline, priority=self.USER_CONFIGURATION)
+        # parse it
+        events = self.commandlineParser.parse(argv=sys.argv[1:])
+        # ask my configurator to process the configuration events
+        configurator.processEvents(executive=self, events=events, priority=self.priority.user)
 
-        # read and apply settings from the default configuration files
-        for package in self.defaultPackages:
-            self.configurePackage(package)
+        # force the loading of the global configuration options
+        nameserver.package(executive=self, name="pyre", locator=self.locator)
 
-        # ready to go
+        # report the boot time errors
+        if self.verbose and self.errors:
+            print(' ** pyre: the following errors were encountered while booting:')
+            for error in self.errors:
+                print(' ++   {}'.format(error))
+
+        # all done
         return self
 
 
-    # factories and initializers of framework objects
-    def newCommandLineParser(self):
-        """
-        Build and initialize a new command line parser
-        """
-        # access the factory
-        from ..config import newCommandLineParser
-        # build the parser
-        parser = newCommandLineParser()
-        # register the local handlers
-        parser.handlers["config"] = self._configurationLoader
-        # return the parser
-        return parser
-
-
-    # meta methods
+    # meta-methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
-        # initialize
-        self.boot()
+
+        # instantiate the non-configurable managers
+        # my nameserver
+        self.nameserver = self.newNameServer()
+        # my fileserver
+        self.fileserver = self.newFileServer()
+        # component bookkeeping
+        self.registrar = self.newComponentRegistrar()
+        # handler of configuration events
+        self.configurator = self.newConfigurator()
+        # component linker
+        self.linker = self.newLinker()
+        # command line processor
+        self.commandlineParser = self.newCommandLineParser()
+
+        # all done
         return
-
-
-    # implementation details
-    def _configurationLoader(self, key, value, locator):
-        """
-        Handler for the {config} command line argument
-        """
-        # load the configuration
-        self.loadConfiguration(uri=value, locator=locator, priority=self.USER_CONFIGURATION)
-        # and return
-        return
-
-    # constants
-    defaultPackages = ("pyre",)
 
 
 # end of file 

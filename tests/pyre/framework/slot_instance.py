@@ -12,8 +12,20 @@ Sanity check: make sure we can instantiate variable slots
 """
 
 def test():
-    from pyre.config.Slot import Slot
-    return Slot.variable()
+    # for the locator
+    import pyre.tracking
+    # get the slot class
+    from pyre.framework.Slot import Slot
+
+    # make a value
+    value = 4
+    # build a locator and a priority
+    key = None
+    locator = pyre.tracking.here()
+    priority = Slot.priorities.explicit()
+    
+    # make a slot
+    return Slot.variable(key=key, value=value, locator=locator, priority=priority)
 
 
 # main

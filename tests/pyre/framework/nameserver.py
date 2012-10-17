@@ -8,7 +8,7 @@
 
 
 """
-Exercises the component registrar
+Exercises the fileserver
 """
 
 
@@ -17,9 +17,12 @@ def test():
     # build the executive
     executive = pyre.framework.executive()
 
-    # access the component registrar
-    reg = executive.registrar
-    assert reg is not None
+    # access the name server
+    ns = executive.nameserver
+    assert ns is not None
+
+    # dump the namespace
+    # ns.dump()
 
     # all done
     return executive

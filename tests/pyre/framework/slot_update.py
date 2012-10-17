@@ -12,12 +12,16 @@ Exercise value updates for slots
 """
 
 def test():
+    # for the locators
+    import pyre.tracking
     # get the constructor
-    from pyre.config.Slot import Slot
+    from pyre.framework.Slot import Slot
+    # the priority factory
+    explicit = Slot.priorities.explicit
     # build a few slots
-    one = Slot.variable(value=1)
-    two = Slot.variable(value=2)
-    var = Slot.variable()
+    var = Slot.variable(key=None, value=None, priority=explicit(), locator=pyre.tracking.here())
+    one = Slot.variable(key=None, value=1, priority=explicit(), locator=pyre.tracking.here())
+    two = Slot.variable(key=None, value=2, priority=explicit(), locator=pyre.tracking.here())
 
     three = one + two
     double = var + var
@@ -25,9 +29,8 @@ def test():
     # check that {var} has no value
     assert var.value is None
     # set it to {two)
-    var.setValue(two)
-    # this is supposed to happen via simple value transfer
-    # so check that the cache has the right value
+    var.value = two.value
+    # check that the cache has the right value
     assert var._value == 2
     # and that {var} knows it
     assert var.value == 2

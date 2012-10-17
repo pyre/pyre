@@ -42,7 +42,7 @@ class BadResourceLocatorError(FrameworkError):
     def __init__(self, uri, reason, **kwds):
         self.uri = uri
         self.reason = reason
-        super().__init__(description="{0.uri}: {0.reason}".format(self), **kwds)
+        super().__init__(description="{!r}: {}".format(str(self.uri), self.reason), **kwds)
         return
 
 
@@ -50,26 +50,8 @@ class ComponentNotFoundError(FrameworkError):
 
     def __init__(self, uri, **kwds):
         self.uri = uri
-        msg = "could not resolve {.uri!r} into a component".format(self)
+        msg = "could not resolve {!r} into a component".format(str(self.uri))
         super().__init__(description=msg, **kwds)
-        return
-                 
-
-class ShelfNotFoundError(FrameworkError):
-
-    def __init__(self, uri, **kwds):
-        self.uri = uri
-        msg = "could not resolve {.uri!r} into a shelf".format(self)
-        super().__init__(description=msg, **kwds)
-        return
-                 
-
-class SymbolNotFoundError(FrameworkError):
-
-    def __init__(self, symbol, **kwds):
-        msg = "symbol {!r} not found".format(symbol)
-        super().__init__(description=msg, **kwds)
-        self.symbol = symbol
         return
                  
 

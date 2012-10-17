@@ -18,7 +18,7 @@ def test():
 
     # retrieve a component descriptor from the python path
     try:
-        executive.retrieveComponentDescriptor(uri="file:sample_syntaxerror.py/factory")
+        a, = executive.retrieveComponentDescriptor(uri="file:sample_syntaxerror.py/factory")
         assert False
     except SyntaxError as error:
         pass

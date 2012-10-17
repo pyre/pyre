@@ -8,18 +8,19 @@
 
 
 """
-Sanity check: verify that the executive can be instantiated
+Sanity check: make sure we can instantiate an executive
 """
-
 
 def test():
     import pyre.framework
-    executive = pyre.framework.executive()
-    return executive
+    return pyre.framework.executive()
 
 
 # main
 if __name__ == "__main__":
+    # skip pyre initialization since we don't rely on the executive
+    pyre_noboot = True
+    # do...
     test()
 
 

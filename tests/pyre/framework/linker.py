@@ -8,20 +8,18 @@
 
 
 """
-Verify that bad component descriptors raise the correct exceptions
+Verify the linker is accessible through the executive
 """
 
 
 def test():
     import pyre.framework
+    # build the executive
     executive = pyre.framework.executive()
 
-    # attempt to retrieve a non-existent component descriptor from the python path
-    try:
-        unkown, = executive.retrieveComponentDescriptor(uri="import:not-there/unknown")
-        assert False
-    except ValueError:
-        pass
+    # access the linker
+    assert executive.linker is not None
+
     # all done
     return executive
 

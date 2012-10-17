@@ -6,206 +6,91 @@
 #
 
 
-import os
-import re
-import itertools
+# externals
+import weakref
+import itertools # for product
+from .. import tracking
 
 
+#  the class declaration
 class Executive:
     """
-    The top level framework object
-
-    This class maintains a suite of managers that are responsible for the various mechanisms
-    and policies that enable pyre applications. The Executive orchestrates their interactions
-    and provides the top level interface of the framework.
-
-    The actual executive is an instance of the class Pyre, also in this package. Pyre is a
-    singleton that is accessible as pyre.executive. For more details, see Pyre.py and
-    __init__.py in this package.
+    The specification of the obligations of the various managers of framework services
     """
 
 
     # exceptions
-    from .exceptions import FrameworkError, BadResourceLocatorError
-    from .exceptions import ComponentNotFoundError, ShelfNotFoundError, SymbolNotFoundError
-    from ..config.exceptions import DecodingError
+    from .exceptions import PyreError, ComponentNotFoundError
+
+    # types
+    from ..schema.URI import URI as uri
+    from .Priority import Priority as priority
 
 
     # public data
-    configpath = ()
-    # managers
-    binder = None
-    codex = None
-    configurator = None
-    fileserver = None
-    registrar = None
-    timekeeper = None
-    resolvers = None
-
-    # book keeping
-    shelves = None
-    packages = None
-    errors = None
-
-    # constants
-    defaultLocations = ("/pyre/system", "/pyre/user", "/local")
-    path = tuple('vfs:' + location for location in defaultLocations)
-    # priority levels for the various configuration sources
-    from ..config.levels import ( 
-        DEFAULT_CONFIGURATION, # defaults from the component declarations
-        BOOT_CONFIGURATION, # configuration from the standard pyre boot files
-        PACKAGE_CONFIGURATION, # configuration from package files
-        USER_CONFIGURATION, # configurations supplied by the end user
-        EXPLICIT_CONFIGURATION, # programmatic overrides
-        )
+    # the managers
+    configurator = None # configuration sources and events
+    linker = None # the plug-in manager
+    nameserver = None # entities accessible by name
+    registrar = None # protocol and component bookkeeping
+    # bookkeeping
+    errors = None # the pile of exceptions raised during booting and configuration
 
 
-    # external interface
-    def loadConfiguration(self, uri, priority=USER_CONFIGURATION, locator=None):
+    # high level interface
+    def loadConfiguration(self, uri, locator=None, priority=priority.user):
         """
         Load configuration settings from {uri} and insert them in the configuration database
         with the given {priority}.
         """
-        # decode the uri
-        scheme, authority, address, query, fragment = self.parseURI(uri)
-        # get the fileserver to  deduce the encoding and produce the input stream
-        encoding, source = self.fileserver.open(scheme, address=address)
-        # instantiate the requested reader
-        reader = self.codex.newCodec(encoding)
-        # extract the configuration setting from the source
-        configuration = reader.decode(uri=uri, source=source, locator=locator)
-        # update the evaluation model
-        errors = self.configurator.configure(configuration=configuration, priority=priority)
-        # add any errors to the pile
+        # parse the {uri}
+        uri = self.uri.coerce(uri)
+        # attempt to
+        try:
+            # ask the file server for the input stream
+            source = self.fileserver.open(uri=uri)
+        # if that fails
+        except self.PyreError as error:
+            # save it
+            self.errors.append(error)
+            # and bail out
+            return
+        # ask the configurator to process the stream
+        errors = self.configurator.loadConfiguration(
+            executive=self, uri=uri, source=source, locator=locator, priority=priority)
+        # add any errors to my pile
         self.errors.extend(errors)
         # all done
-        return self
-
-
-    # other facilities
-    def newTimer(self, **kwds):
-        """
-        Build and return a timer
-        """
-        # let the timer registry do its thing
-        return self.timekeeper.timer(**kwds)
-
-
-    def registerNamespaceResolver(self, resolver, namespace):
-        """
-        Add {resolver} to the table of entities that get notified when an unqualified component
-        resolution request is made
-
-        For example, {pyre.shells.Director} registers an application class as a resolver of
-        requests within the namespace specified by the application family. This way,
-        unqualified requests for facility bindings can be resolved in an application specific
-        manner. Look at {Executive.retrieveComponentDescriptor} for more details
-        """
-        # register the {resolver} under the key {namespace}
-        self.resolvers[namespace] = resolver
-        # and return
         return
 
 
-    def translateSymbol(self, symbol, context):
-        """
-        Give registered namespace resolvers an opportunity to translate {symbol}
-        """
-        # check whether there is a registered resolver for this namespace
-        resolver = self.locateNamespaceResolver(context)
-        # if one has been registered
-        if resolver:
-            # let it translate the symbol
-            return resolver.pyre_translateSymbol(symbol=symbol, context=context)
-        # otherwise,  return the {symbol} as is
-        return symbol
-
-
-    def componentSearchPath(self, context):
-        """
-        Build a sequence of locations where component descriptors from {context} may be found
-        """
-        # check whether there is a registered resolver for this namespace
-        resolver = self.locateNamespaceResolver(context)
-        # if one has been registered
-        if resolver:
-            # let it provide appropriate locations
-            for location in resolver.pyre_componentSearchPath(context):
-                # to hand to our client
-                yield location
-
-        # now, go through the standard locations, in reverse order
-        for location in reversed(self.defaultLocations):
-            # starting with the full context path and shrinking
-            for marker in reversed(range(1, len(context)+1)):
-                # build and present a filename
-                yield self.fileserver.join(location, *context[:marker])+'.py'
-
-        # no more
-        return
-
-
-    def locateNamespaceResolver(self, context):
-        """
-        Attempt to locate a registered resolver for {context} namespaces
-        """
-        # print(" ** Executive.locateNamespaceResolver: context={!r}".format(context))
-        # use the {context} to find the namespace resolver, starting with the full
-        # {context} and progressively shrinking it
-        for count in reversed(range(1, len(context)+1)):
-            try:
-                candidate = ".".join(context[:count])
-                # print("    candidate: {!r}".format(candidate))
-                return self.resolvers[candidate]
-            # if there isn't one registered for this package
-            except KeyError:
-                # move on
-                continue
-        # otherwise
-        return None
-
-
-    # support for the various internal requests
-    def configurePackage(self, package):
+    # support for internal requests
+    def configurePackage(self, package, locator):
         """
         Locate and load the configuration files for the given {package}
-
-        Typically, the package to which a component belongs can be deduced from its family
-        name. This method will locate and load the package configuration files. These files are
-        meant to allow site managers and end users to override the class wide defaults for the
-        traits of the components in the package.
-        
-        This behavior is triggered by the first encountered component from each package, and it
-        is done only once.
         """
-        # if none were provided, there is no file-based configuration
-        if not package: return package
-        # also, bail out if this package has been configured previously
-        if package in self.packages: return package
-        # we have a package name
-        # print("Executive.configurePackage: configuring package {!r}".format(package))
-        # form all possible filenames for the configuration files
-        scope = itertools.product(self.configpath, [package], self.codex.getEncodings())
-        # attempt to load the configuration settings
+        # print("Executive.configurePackage: {} {}".format(package, locator))
+        # get the name of the package
+        name = package.name
+        # access the fileserver
+        fs = self.fileserver
+        # access the configurator
+        cfg = self.configurator
+        # the priority for package configuration
+        priority = self.priority.package
+        # form all possible combinations of filename fragments for the configuration sources
+        scope = itertools.product(cfg.configpath, [name], cfg.encodings())
+        # look for each one
         for path, filename, extension in scope:
-            # construct the actual filename
-            source = self.fileserver.splice(path, filename, extension)
-            # print("Executive.configurePackage: loading {!r}".format(source))
-            # and try to load the configuration
-            try:
-                self.loadConfiguration(uri=source, priority=self.PACKAGE_CONFIGURATION)
-            except self.fileserver.NotFoundError as error:
-                continue
-            # print("Executive.configurePackage: loaded {!r}".format(source))
-        # in any case, this is the best that can be done for this package
-        # update the set of known packages
-        self.packages.add(package)
-        # print("Executive.configurePackage: done; packages={}".format(self.packages))
+            # build the uri
+            uri = fs.splice(path, filename, extension)
+            # load the settings from the associated file
+            self.loadConfiguration(uri=uri, priority=priority, locator=locator)
         # all done
-        return package
+        return
+            
 
-
-    def retrieveComponentDescriptor(self, uri, context=None, locator=None):
+    def retrieveComponentDescriptor(self, uri, facility=None):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
 
@@ -225,11 +110,11 @@ class Executive:
         uses the interpreter to import the symbol {symbol} using {address} to access the
         containing module. For example, the {uri}
 
-            import:package.subpackage.module.myFactory
+            import:gauss.shapes.box
 
         is treated as if the following statement had been issued to the interpreter
 
-            from package.subpackage.module import myFactory
+            from gauss.shapes import box
 
         See below for the requirements myFactory must satisfy
 
@@ -240,222 +125,205 @@ class Executive:
         and that it contains executable python code that provides the definition of the
         required symbol.  For example, the {uri}
 
-            vfs:/local/sample.odb/myFactory
+            vfs:/local/shapes.odb/box
 
-        expects that the fileserver can resolve the address local/sample.odb into a valid file
+        expects that the fileserver can resolve the address local/shapes.odb into a valid file
         within the virtual filesystem that forms the application namespace.
 
         The symbol referenced by the {symbol} fragment must be a callable that can produce
-        component class records when called. For example
+        component class records when called. For example, the file shapes.odb might contain
 
-            def myFactory():
+            import pyre
+            class box(pyre.components): pass
+
+        which exposes a component {box} that has the right name and whose constructor can be
+        invoked to produce component instances. If you prefer to place such declarations inside
+        functions, e.g. to avoid certain name collisions, you can use constructs such as
+
+            def box():
                 import pyre
-                class mine(pyre.component): pass
-                return mine
-
-        would be valid contents for an accessible module or an odb file.
+                class box(pyre.component): pass
+                return box
         """
-        # print(" ** Executive.retrieveComponentDescriptor:")
-        # print("        uri: {!r}".format(uri))
-        # print("        context: {!r}".format(context))
-        # print("        shelves: {!r}".format(tuple(self.shelves.keys())))
-        # make sure {context} is iterable
-        context = context if context is not None else ()
-        # pull out only, the currently supported parts; if parsing fails, it is a badly formed
-        # request and an exception will get raised
-        scheme, _, address, _, name = self.parseURI(uri)
-
-        # if {uri} contains a scheme, use it; otherwise, try all the options
-        schemes = [scheme] if scheme else ["vfs", "import"]
-        # print("        schemes: {!r}".format(schemes))
-
-        # iterate over the encoding possibilities
-        for scheme in schemes:
-            # print("          attempting {!r}".format(scheme))
-            # attempt to
+        # force a uri
+        uri = self.uri.coerce(uri)
+        # if the {uri} specifies a fragment, treat it as the name of the component
+        if uri.fragment:
+            # do we have a component by that name?
             try:
-                # build a codec for this candidate scheme
-                codec = self.codex.newCodec(encoding=scheme)
-            # if the scheme is not known
-            except KeyError:
-                # construct the reason
-                reason = "unknown scheme {!r}".format(scheme)
-                # complain
-                raise self.BadResourceLocatorError(uri=uri, reason=reason, locator=locator)
+                # return it
+                yield self.nameserver[uri.fragment]
+            # if not
+            except self.nameserver.UnresolvedNodeError:
+                # no worries
+                pass
 
-            # attempt to locate a component descriptor
-            for descriptor in codec.locateSymbol(
-                client=self,
-                scheme=scheme, specification=address, context=context, locator=locator):
-                # if there was no component name specified, return the descriptor
-                if name is None: return descriptor
-                # try to lookup a component by this name
-                try:
-                    return self.registrar.names[name]
-                # if no such name has been registered
-                except KeyError:
-                    # build a component instance and return it
-                    return descriptor(name=name)
-                
-        # if we get this far, everything we could try has failed
-        raise self.ComponentNotFoundError(uri=uri, locator=locator)
-
-
-    # registration of configurables
-    def registerComponentClass(self, component):
-        """
-        Register the {component} class record
-        """
-        # register the component
-        self.registrar.registerComponentClass(component)
-        # invoke the registration hook
-        component.pyre_registerClass(executive=self)
-        # load the package configuration; must do this before configuring the class
-        self.configurePackage(package=component.pyre_getPackageName())
-        # populate the class defaults with the configuration information
-        errors = self.configurator.configureComponentClass(self.registrar, component)
-        # add any errors encountered to the pile
-        self.errors.extend(errors)
-        # invoke the configuration hook
-        component.pyre_configureClass(executive=self)
-        # bind the component
-        self.binder.bindComponentClass(component)
-        # invoke the initialization hook
-        component.pyre_initializeClass(executive=self)
-        # and hand back the class record
-        return component
-
-
-    def registerComponentInstance(self, component):
-        """
-        Register the {component} instance
-        """
-        # register the component instance
-        self.registrar.registerComponentInstance(component)
-        # invoke the registration hook
-        component.pyre_register(executive=self)
-        # configure it
-        errors = self.configurator.configureComponentInstance(self.registrar, component)
-        # add any errors encountered to the pile
-        self.errors.extend(errors)
-        # invoke the configuration hook
-        component.pyre_configure(executive=self)
-        # bind the component
-        self.binder.bindComponentInstance(component)
-        # invoke the binding hook
-        component.pyre_bind(executive=self)
-        # invoke the initialization hook
-        component.pyre_initialize(executive=self)
-        # and hand the instance back to the caller
-        return component
-
-
-    def registerInterfaceClass(self, interface):
-        """
-        Register the {interface} class record
-        """
-        # register the interface
-        self.registrar.registerInterfaceClass(interface)
-        # invoke the registration hook
-        interface.pyre_registerClass(executive=self)
-        # and hand back the class record
-        return interface
-
-
-    # access to the shelf registry
-    def registerShelf(self, shelf, source):
-        """
-        Record the {source} that corresponds to the given {shelf}
-        """
-        # add {source} to the dictionary with the loaded shelves
-        self.shelves[source] = shelf
-        # and return
-        return self
-
-
-    def loadShelf(self, uri, locator=None):
-        """
-        Load the contents of the shelf pointed to by {uri}
-
-        {uri} encodes the descriptor using the URI specification 
-            scheme://authority/address
-        where
-             scheme: one of import, file, vfs
-             authority: currently not used; you may leave blank
-             address: a scheme dependent specification of the location of the shelf
-        """
-        # parse the {uri}
-        scheme, authority, address, query, symbol = self.parseURI(uri)
-        # adjust the scheme, if necessary
-        scheme = scheme.strip().lower() if scheme else 'file'
-        # use the {scheme} to build a codec
-        codec = self.codex.newCodec(encoding=scheme)
-        # get it to hunt down candidates
-        for shelf in codec.locateShelves(
-            client=self, scheme=scheme, address=address, context=(), locator=locator):
-            # i am only interested in the first hit
-            return shelf
-        # if no appropriate candidate was found
-        raise self.ShelfNotFoundError(uri=uri)
-
-
-    # utilities
-    def parseURI(self, uri):
-        """
-        Extract the scheme, address and fragment from {uri}.
-        """
-        # run uri through the recognizer
-        match = self._uriRecognizer.match(uri)
-        # if it fails to match, it must be malformed (or my regex is bad...)
-        if match is None:
-            raise self.BadResourceLocatorError(uri=uri, reason="unrecognizable")
-        # extract the scheme
-        scheme = match.group("scheme")
-        # extract the authority
-        authority = match.group("authority")
-        # extract the address
-        address = match.group("address")
-        # extract the query
-        query = match.group("query")
-        # extract the fragment
-        fragment = match.group("fragment")
-        # and return the triplet
-        return scheme, authority, address, query, fragment
-
-
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-
-        # prime the configuration folder list
-        self.configpath = list(self.path)
-
-        # initialize the set of known packages
-        self.packages = set()
-
-        # initialize the list of errors encountered during configuration
-        self.errors = []
-
-        # initialize the set of known configuration sources
-        self.shelves = {}
-
-        # the map of namespaces to the entities that resolve name requests
-        self.resolvers = {}
+        # get the linker to find descriptors
+        for descriptor in self.linker.retrieveComponentDescriptor(
+            executive=self, facility=facility, uri=uri):
+            # and see if they work
+            yield descriptor
 
         # all done
         return
 
 
-    # private data
-    _uriRecognizer = re.compile(
-        "".join(( # adapted from http://regexlib.com/Search.aspx?k=URL
-                r"^(?=[^&])", # disallow '&' at the beginning of uri
-                r"(?:(?P<scheme>[^:/?#]+):)?", # grab the scheme
-                r"(?://(?P<authority>[^/?#]*))?", # grab the authority
-                r"(?P<address>[^?#]*)", # grab the address, typically a path
-                r"(?:\?(?P<query>[^#]*))?", # grab the query, i.e. the ?key=value&... chunks
-                r"(?:#(?P<fragment>.*))?"
-                )))
+    # registration interface for framework objects
+    def registerProtocolClass(self, protocol, family, locator):
+        """
+        Register a freshly minted protocol class
+        """
+        # make a locator
+        pkgloc = tracking.simple('while registering protocol {!r}'.format(family))
+        # get the associated package
+        package = self.nameserver.package(executive=self, name=family, locator=pkgloc)
+        # associate the protocol with its package
+        package.protocols.add(protocol)
+        # insert it into the model
+        key = self.nameserver.configurable(name=family, configurable=protocol, locator=locator)
+        # and return the nameserver registration key
+        return key
+
+
+    def registerComponentClass(self, component, family, locator):
+        """
+        Register a freshly minted component class
+        """
+        # make a locator
+        pkgloc = tracking.simple('while registering component {!r}'.format(family))
+        # get the associated package
+        package = self.nameserver.package(executive=self, name=family, locator=pkgloc)
+        # associate the component with its package
+        package.components.add(component)
+        # insert the component into the model
+        key = self.nameserver.configurable(name=family, configurable=component, locator=locator)
+        # return the key
+        return key
+
+
+    def registerComponentInstance(self, component, name, locator):
+        """
+        Register a freshly minted component instance
+        """
+        # insert the component instance into the model
+        key = self.nameserver.configurable(name=name, configurable=component, locator=locator)
+        # return the key
+        return key
+
+
+    # the default factories of all my parts
+    def newNameServer(self, **kwds):
+        """
+        Build a new name server
+        """
+        # access the factory
+        from .NameServer import NameServer
+        # build one and return it
+        return NameServer(**kwds)
+
+
+    def newFileServer(self, **kwds):
+        """
+        Build a new file server
+        """
+        # access the factory
+        from .FileServer import FileServer
+        # build one and return it
+        return FileServer(**kwds)
+
+
+    def newComponentRegistrar(self, **kwds):
+        """
+        Build a new component registrar
+        """
+        # access the factory
+        from ..components.Registrar import Registrar
+        # build one and return it
+        return Registrar(**kwds)
+
+
+    def newConfigurator(self, **kwds):
+        """
+        Build a new configuration event processor
+        """
+        # access the factory
+        from ..config.Configurator import Configurator
+        # build one and return it
+        return Configurator(**kwds)
+
+
+    def newLinker(self, **kwds):
+        """
+        Build a new configuration event processor
+        """
+        # access the factory
+        from .Linker import Linker
+        # build one and return it
+        return Linker(**kwds)
+
+
+    def newCommandLineParser(self, **kwds):
+        """
+        Build a new parser of command line arguments
+        """
+        # access the factory
+        from ..config.CommandLineParser import CommandLineParser
+        # build one
+        parser = CommandLineParser(**kwds)
+        # register the local handlers 
+        parser.handlers['config'] = self._configurationLoader
+        # and return the parser
+        return parser
+
+
+    # meta-methods
+    def __init__(self, **kwds):
+        #chain up
+        super().__init__(**kwds)
+
+        # the pile of errors encountered
+        self.errors = []
+
+        # critical step: attach this instance to {Configurable} to enable components and
+        # interfaces
+        from ..components.Configurable import Configurable
+        Configurable.pyre_executive = weakref.proxy(self)
+
+        # all done
+        return
+
+
+    # implementation details
+    def boot(self):
+        """
+        Perform the final framework initialization step
+        """
+        # initialize my namespace
+        self.initializeNamespace()
+        # all done
+        return self
+
+
+    def initializeNamespace(self):
+        """
+        Create and initialize the default namespace entries
+        """
+        # ask my configurator for its defaults
+        self.configurator.initializeNamespace(nameserver=self.nameserver)
+
+        # all done
+        return self
+
+
+    # helpers and other details not normally useful to end users
+    def _configurationLoader(self, key, value, locator):
+        """
+        Handler for the {config} command line argument
+        """
+        # load the configuration
+        self.loadConfiguration(uri=value, locator=locator, priority=self.priority.user)
+        # and return
+        return
 
 
 # end of file 

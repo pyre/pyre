@@ -20,13 +20,16 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Binder.py \
     Executive.py \
     FileServer.py \
+    Linker.py \
+    NameServer.py \
+    Package.py \
+    Priority.py \
     Pyre.py \
+    Slot.py \
     exceptions.py \
     __init__.py
-
 
 export:: export-package-python-modules
 

@@ -8,21 +8,20 @@
 
 
 """
-Sanity check: verify that the codec manager can be instantiated
+Exercise the linker
 """
 
 
 def test():
     import pyre.framework
-    # build the executive
-    executive = pyre.framework.executive()
+    # get the linker
+    linker = pyre.framework.executive().linker
 
-    # access the codec manager
-    codex = executive.codex
-    assert codex is not None
+    # check the registered codecs
+    assert tuple(linker.codecs.keys()) == ('import', 'vfs', 'file')
 
     # all done
-    return executive
+    return linker
 
 
 # main

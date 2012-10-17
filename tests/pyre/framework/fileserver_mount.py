@@ -8,24 +8,23 @@
 
 
 """
-Exercises the fileserver
+Verify that the file server can mount arbitrary locations 
 """
 
 
 def test():
     import pyre.framework
-    import pyre.filesystem
     # build the executive
     executive = pyre.framework.executive()
-    # access the fileserver
+    # access the file server
     fs = executive.fileserver
 
     # build a file system for the current directory
-    local = pyre.filesystem.local('.').discover()
+    local = fs.local(root='.').discover(levels=1)
     # and mount it
-    fs['local'] = local
+    fs['cwd'] = local
     # check that this file is there
-    assert fs['local/fileserver_mount.py']
+    assert fs['cwd/fileserver_mount.py']
     # dump the filesystem
     fs.dump(False) # switch to True to see the dump
 

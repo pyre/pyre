@@ -12,7 +12,7 @@ Sanity check: make sure we can access the slot base class
 """
 
 def test():
-    from pyre.config.Slot import Slot
+    from pyre.framework.Slot import Slot
     return Slot
 
 

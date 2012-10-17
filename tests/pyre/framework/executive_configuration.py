@@ -17,17 +17,20 @@ def test():
     # build the executive
     executive = pyre.framework.executive()
     # verify the right parts were built
-    assert executive.codex is not None
+    assert executive.linker is not None
+    assert executive.nameserver is not None
     assert executive.fileserver is not None
     assert executive.configurator is not None
     # load a configuration file
-    executive.loadConfiguration(uri="sample.pml", priority=executive.USER_CONFIGURATION)
+    executive.loadConfiguration(uri="sample.pml", priority=executive.priority.user)
+    # get the nameserver
+    ns = executive.nameserver
     # check that all is as expected
-    assert executive.configurator["package.home"] == "home"
-    assert executive.configurator["package.prefix"] == "prefix"
-    assert executive.configurator["package.user.name"] == "michael a.g. aïvázis"
-    assert executive.configurator["package.user.email"] == "aivazis@caltech.edu"
-    assert executive.configurator["package.user.affiliation"] == "california institute of technology"
+    assert ns["package.home"] == "home"
+    assert ns["package.prefix"] == "prefix"
+    assert ns["package.user.name"] == "michael a.g. aïvázis"
+    assert ns["package.user.email"] == "aivazis@caltech.edu"
+    assert ns["package.user.affiliation"] == "california institute of technology"
 
     # all done
     return executive

@@ -13,22 +13,37 @@ PROJECT = pyre
 
 all: test clean
 
-test: sanity framework
+test: sanity slots nameserver fileserver registrar linker executive
 
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./exceptions.py
-	${PYTHON} ./fileserver.py
-	${PYTHON} ./binder.py
-	${PYTHON} ./executive.py
 
-framework:
+slots:
+	${PYTHON} ./slot.py
+	${PYTHON} ./slot_instance.py
+	${PYTHON} ./slot_algebra.py
+	${PYTHON} ./slot_update.py
+
+nameserver:
+	${PYTHON} ./nameserver.py
+	${PYTHON} ./nameserver_access.py
+
+fileserver:
+	${PYTHON} ./fileserver.py
 	${PYTHON} ./fileserver_uri.py
 	${PYTHON} ./fileserver_mount.py
-	${PYTHON} ./executive_registrar.py
-	${PYTHON} ./executive_uri.py
-	${PYTHON} ./executive_codecs.py
-	${PYTHON} ./executive_shelves.py
+
+registrar:
+	${PYTHON} ./registrar.py
+
+linker:
+	${PYTHON} ./linker.py
+	${PYTHON} ./linker_codecs.py
+	${PYTHON} ./linker_shelves.py
+
+executive:
+	${PYTHON} ./executive.py
 	${PYTHON} ./executive_configuration.py
 	${PYTHON} ./executive_retrieveComponentDescriptor.py
 	${PYTHON} ./executive_retrieveComponentDescriptor_duplicate.py

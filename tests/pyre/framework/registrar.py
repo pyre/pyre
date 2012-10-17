@@ -8,20 +8,18 @@
 
 
 """
-Verify that bad component descriptors raise the correct exceptions
+Exercises the component registrar
 """
 
 
 def test():
     import pyre.framework
+    # build the executive
     executive = pyre.framework.executive()
 
-    # attempt to retrieve a non-existent component descriptor from the python path
-    try:
-        unkown, = executive.retrieveComponentDescriptor(uri="import:not-there/unknown")
-        assert False
-    except ValueError:
-        pass
+    # access the component registrar
+    assert executive.registrar is not None
+
     # all done
     return executive
 
