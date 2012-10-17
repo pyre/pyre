@@ -12,7 +12,7 @@ import pyre
 
 # my ancestors
 from .Indenter import Indenter
-# my interface
+# my protocol
 from .Language import Language
 
 
@@ -24,11 +24,12 @@ class Mill(pyre.component, Indenter, implements=Language):
 
 
     # types
+    # the protocols of my traits
     from .Stationery import Stationery
 
 
     # traits
-    stationery = pyre.facility(interface=Stationery)
+    stationery = Stationery()
     stationery.doc = "the overall layout of the document"
 
     languageMarker = pyre.properties.str()

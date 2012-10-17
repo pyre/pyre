@@ -6,14 +6,14 @@
 #
 
 
-# packages
+# externals
 import pyre
 
 
 # declaration
-class Stationery(pyre.interface, family="pyre.weaver.layouts"):
+class Stationery(pyre.protocol, family="pyre.weaver.layouts"):
     """
-    The interface that layout strategies must implement
+    The protocol that layout strategies must implement
     """
 
 
@@ -39,7 +39,7 @@ class Stationery(pyre.interface, family="pyre.weaver.layouts"):
 
     # utilities
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         """
         Choose a layout as the default
         """

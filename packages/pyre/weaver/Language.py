@@ -6,14 +6,14 @@
 #
 
 
-# packages
+# externals
 import pyre
 
 
 # declaration
-class Language(pyre.interface, family="pyre.weaver.languages"):
+class Language(pyre.protocol, family="pyre.weaver.languages"):
     """
-    The interface specification for output languages
+    The protocol specification for output languages
     """
 
 
