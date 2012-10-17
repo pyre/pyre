@@ -11,7 +11,7 @@ class NamedTuple(tuple):
     Base class for the two record types declared in this package.
 
     This class is used to establish the common layout of records. Its instances are not
-    directly useful, so please do instantiate.
+    directly useful, so please do not instantiate.
     """
 
 

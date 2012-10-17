@@ -6,12 +6,8 @@
 #
 
 
-# superclass
-from ..algebraic.Operator import Operator
-
-
 # declaration
-class Derivation(Operator):
+class Derivation:
     """
     The base class for record entries whose values are computed using other record fields
     """

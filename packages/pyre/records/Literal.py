@@ -6,11 +6,7 @@
 #
 
 
-# superclass
-from ..algebraic.Literal import Literal as Base
-
-
-class Literal(Base):
+class Literal:
     """
     Class that encapsulates values encountered in expressions that are not instance of members
     of the {Entry} class hierarchy.

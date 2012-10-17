@@ -25,21 +25,21 @@ import pyre.schema
 
 def float(default=0, **kwds):
     descriptor = field(**kwds)
-    descriptor.type = pyre.schema.float
+    descriptor.schema = pyre.schema.float
     descriptor.default = default
     return descriptor
 
 
 def int(default=0, **kwds):
     descriptor = field(**kwds)
-    descriptor.type = pyre.schema.int
+    descriptor.schema = pyre.schema.int
     descriptor.default = default
     return descriptor
 
 
 def str(default="", **kwds):
     descriptor = field(**kwds)
-    descriptor.type = pyre.schema.str
+    descriptor.schema = pyre.schema.str
     descriptor.default = default
     return descriptor
 

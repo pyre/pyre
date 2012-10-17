@@ -7,9 +7,8 @@
 
 
 # super classes
-from ..schema.Descriptor import Descriptor
-from ..algebraic.AbstractNode import AbstractNode
-from ..algebraic.Number import Number
+from .. import algebraic
+from ..traits.Descriptor import Descriptor
 
 # my mix-ins
 from .Field import Field
@@ -18,7 +17,7 @@ from .Literal import Literal
 
 
 # declaration
-class Entry(Descriptor, AbstractNode, Number):
+class Entry(Descriptor, algebraic.AbstractNode, algebraic.Arithmetic):
     """
     The base class for record entries
     """
@@ -27,17 +26,18 @@ class Entry(Descriptor, AbstractNode, Number):
     # types
     # obligations from {pyre.algebraic} to support nodal algebra 
     # structural
-    from ..algebraic.Leaf import Leaf as leaf
-    from ..algebraic.Composite import Composite as composite
+    leaf = algebraic.Leaf
+    composite = algebraic.Composite
 
     # functional
+    literal = None
     variable = None
     operator = None
-    literal = None
 
 
     # public data
-    aliases = None # the set of names by which I am accessible
+    validators = () # the chain of functions that inspect and validate my value
+    converters = () # the chain of transformations necessary to produce a value in my native type
 
 
     # interface
@@ -46,7 +46,7 @@ class Entry(Descriptor, AbstractNode, Number):
         Convert {value} into an object that is consistent with my type and value requirements
         """
         # cast it
-        value = self.type.pyre_cast(value)
+        value = self.schema.coerce(value)
         # convert it
         for converter in self.converters:
             value = converter(value)
@@ -57,24 +57,14 @@ class Entry(Descriptor, AbstractNode, Number):
         return value
 
         
-    # meta methods
-    def __init__(self, aliases=None, **kwds):
-        # chain to my ancestors
-        super().__init__(**kwds)
-        # initialize my aliases
-        self.aliases = set() if aliases is None else aliases
-        # all done
-        return
-
-
 # literals
-class literal(Entry, Literal, Entry.leaf):
+class literal(Literal, algebraic.Const, algebraic.Literal, Entry):
     """Concrete class for representing foreign values"""
 
-class field(Entry, Field, Entry.leaf):
+class field(Field, algebraic.Variable, Entry.leaf, Entry):
     """Concrete class for representing fields"""
 
-class derivation(Entry, Derivation, Entry.composite):
+class derivation(Derivation, algebraic.Operator, Entry.composite, Entry):
     """Concrete class for representing derivations"""
 
 
