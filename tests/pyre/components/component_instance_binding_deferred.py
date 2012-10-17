@@ -9,8 +9,10 @@
 
 import pyre
 
-class ifac(pyre.interface, family="deferred.ifac"):
-    """sample interface"""
+class ifac(pyre.protocol, family="deferred.ifac"):
+    """sample protocol"""
+    @classmethod
+    def pyre_default(cls): return comp
 
 class comp(pyre.component, family="deferred.ifac.comp", implements=ifac):
     """an implementation"""
@@ -18,13 +20,13 @@ class comp(pyre.component, family="deferred.ifac.comp", implements=ifac):
 
 class user(pyre.component, family="deferred.user"):
     """a component user"""
-    comp = pyre.facility(interface=ifac)
+    comp = pyre.facility(protocol=ifac)
 
 class container(pyre.component, family="deferred.container"):
     """a component container"""
     name = pyre.properties.str(default=None)
-    comp = pyre.facility(interface=ifac)
-    catalog = pyre.catalog(interface=ifac)
+    comp = ifac()
+    catalog = pyre.catalog(protocol=ifac)
 
 
 def test():
@@ -38,7 +40,6 @@ def test():
     assert len(s.catalog) == 3
     # and that the contents were configured properly
     for name, instance in s.catalog.items():
-        # print("tag: {!r}, name: {!r}".format(instance.tag, name))
         assert instance.tag == name
 
     return s

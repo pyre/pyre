@@ -15,24 +15,28 @@ Verify that facilities get bound correctly when specified implicitly
 def test():
     import pyre
 
-    # declare an interface
-    class job(pyre.interface):
-        """an interface"""
+    # the job name converter
+    def converter(name): return "relax"
+
+    # declare a protocol
+    class task(pyre.protocol):
+        """a protocol"""
         @pyre.provides
         def do(self):
             """do something"""
 
     # declare a component
-    class component(pyre.component):
+    class worker(pyre.component):
         """a component"""
-        task = pyre.facility(interface=job, default="import:sample.worker")
+        job = task(default="import:sample.whatever")
+        job.converters = [ converter ]
 
     # check that task was bound according to our expectations from sample.py
-    assert issubclass(component.task, pyre.component)
-    assert component.task.pyre_name == "worker"
-    assert job.pyre_isCompatible(component.task)
+    assert issubclass(worker.job, pyre.component)
+    assert worker.job.__name__ == "relax"
+    assert task.pyre_isCompatible(worker.job)
 
-    return component, job
+    return worker, task
 
 
 # main

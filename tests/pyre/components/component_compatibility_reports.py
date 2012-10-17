@@ -45,13 +45,13 @@ def test():
             """method, not property"""
 
     # collect the traits
-    base_common = base.pyre_getTraitDescriptor("common")
-    derived_common = derived.pyre_getTraitDescriptor("common")
-    derived_extra = derived.pyre_getTraitDescriptor("extra")
-    ok_common = ok.pyre_getTraitDescriptor("common")
-    notok_what = notok.pyre_getTraitDescriptor("what")
-    badtype_common = badtype.pyre_getTraitDescriptor("common")
-    shadow_common = shadow.pyre_getTraitDescriptor("common")
+    base_common = base.pyre_trait("common")
+    derived_common = derived.pyre_trait("common")
+    derived_extra = derived.pyre_trait("extra")
+    ok_common = ok.pyre_trait("common")
+    notok_what = notok.pyre_trait("what")
+    badtype_common = badtype.pyre_trait("common")
+    shadow_common = shadow.pyre_trait("common")
 
     # compatibility checks
     # these ones should succeed

@@ -28,7 +28,7 @@ class CategoryMismatchError(ComponentError):
 
     def __init__(self, configurable, target, name, **kwds):
         reason = (
-            "category mismatch in trait {!r} between {.pyre_name!r} and {.pyre_name!r}"
+            "category mismatch in trait {!r} between {} and {}"
             .format(name, configurable, target))
         super().__init__(description=reason, **kwds)
 
@@ -42,11 +42,12 @@ class CategoryMismatchError(ComponentError):
 class ImplementationSpecificationError(ComponentError):
     """
     Exception raised when the {implements} specification of a component declaration contains
-    errors, e.g. classes that don't derive from Interface
+    errors, e.g. classes that don't derive from Protocol
     """
 
-    def __init__(self, name=None, errors=[], **kwds):
-        super().__init__(description="poorly formed implementation specification", **kwds)
+    def __init__(self, name, errors, **kwds):
+        msg = '{}: poorly formed implementation specification'.format(name)
+        super().__init__(description=msg, **kwds)
 
         self.name = name
         self.errors = errors
@@ -54,28 +55,28 @@ class ImplementationSpecificationError(ComponentError):
         return
 
 
-class InterfaceError(ComponentError):
+class ProtocolError(ComponentError):
     """
-    Exception raised when a component does not implement correctly the interfaces in its
+    Exception raised when a component does not implement correctly the protocols in its
     implementation specification
     """
 
-    def __init__(self, component, interface, report, **kwds):
-        # extract the actual interfaces, skipping {object}
-        interfaces = tuple(
-            "{!r}".format(base.pyre_name)
-            for base in interface.__mro__[:-1] if not base.pyre_hidden )
+    def __init__(self, component, protocol, report, **kwds):
+        # extract the actual protocols, skipping {object}
+        protocols = tuple(
+            str(base)
+            for base in protocol.__mro__[:-1] if not base.pyre_internal )
         # support for singular/plural
-        s = '' if len(interfaces) == 1 else 's'
+        s = '' if len(protocols) == 1 else 's'
         # here is the error description
         reason = (
-            "component {.pyre_name!r} does not implement correctly the following interface{}: {}"
-            .format(component, s, ", ".join(interfaces)))
+            "{} does not implement correctly the following protocol{}: {}"
+            .format(component, s, ", ".join(protocols)))
         # pass this information along to my superclass
         super().__init__(description=reason, **kwds)
         # and record the error conditions for whomever may be catching this exception
         self.component = component
-        self.interface = interface
+        self.protocol = protocol
         self.report = report
         
         return
@@ -88,11 +89,11 @@ class TraitNotFoundError(ComponentError):
 
     def __init__(self, configurable, name, **kwds):
         # get the family name of the {configurable}
-        family = configurable.pyre_getFamilyName()
+        family = configurable.pyre_family()
         # build the family clause of the message
         fclause = ", with family {!r}".format(family) if family else ""
         # build the reason
-        reason = "the class {.pyre_name!r}{} has no trait named {!r}".format(
+        reason = "{}{} has no trait named {!r}".format(
             configurable, fclause, name)
         # pass it on
         super().__init__(description=reason, **kwds)
@@ -110,7 +111,7 @@ class FacilitySpecificationError(ComponentError):
     """
 
     def __init__(self, configurable, trait, value, **kwds):
-        reason = "{.pyre_name}.{.name}: could not instantiate {!r}".format(configurable,trait,value)
+        reason = "{.__name__}.{.name}: could not instantiate {!r}".format(configurable,trait,value)
         super().__init__(description=reason, **kwds)
 
         self.configurable = configurable

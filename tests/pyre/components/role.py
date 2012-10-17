@@ -14,15 +14,14 @@ Verify that the Role metaclass decorates class records properly
 
 def test():
     # access
-    from pyre.components.Configurable import Configurable
-    from pyre.components.Role import Role
+    import pyre
 
     # declare a class
-    class base(Configurable, metaclass=Role):
+    class base(pyre.protocol):
         """test class"""
 
     # did my ancestor list get built properly
-    assert base.pyre_pedigree == [base]
+    assert base.pyre_pedigree == (base, pyre.protocol)
         
     return base
 

@@ -8,31 +8,31 @@
 
 
 """
-Verify that compatibility among interfaces is detected correctly
+Verify that compatibility among protocols is detected correctly
 """
 
 
 def test():
     import pyre
 
-    # declare a couple of interfaces
-    class base(pyre.interface):
-        """the base interface"""
+    # declare a couple of protocols
+    class base(pyre.protocol):
+        """the base protocol"""
         common = pyre.property()
 
     class derived(base):
         """a derived one, so automatically compatible"""
         extra = pyre.property()
 
-    class ok(pyre.interface):
-        """one that doesn't derive but has the right public interface"""
+    class ok(pyre.protocol):
+        """one that doesn't derive but has the right public protocol"""
         common = pyre.property()
         
-    class notok(pyre.interface):
-        """one that doesn't provide the right public interface"""
+    class notok(pyre.protocol):
+        """one that doesn't provide the right public protocol"""
         what = pyre.property()
         
-    class badtype(pyre.interface):
+    class badtype(pyre.protocol):
         """one that has the right trait but of the wrong type"""
         @pyre.provides
         def common(self):

@@ -16,24 +16,24 @@ def test():
     import pyre
 
     # declare a protocol
-    class job(pyre.protocol):
+    class task(pyre.protocol, family='a.very.long.family.name'):
         """a protocol"""
         @pyre.provides
         def do(self):
             """do something"""
 
     # declare a component
-    class component(pyre.component):
+    class worker(pyre.component):
         """a component"""
-        task = job(default="import:sample.relax")
+        # job = task(default="vfs:/pyre/startup/sample.py/relax")
+        job = task(default="sample.py/relax")
 
-    # instantiate
-    c = component(name="c")
-    # check
-    assert isinstance(c.task, pyre.component)
-    assert c.task.pyre_name == "c.task"
+    # check that task was bound according to our expectations from sample.py
+    assert issubclass(worker.job, pyre.component)
+    assert worker.job.__name__ == "relax"
+    assert task.pyre_isCompatible(worker.job)
 
-    return c, component, job
+    return worker, task
 
 
 # main

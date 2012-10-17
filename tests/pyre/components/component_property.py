@@ -23,19 +23,19 @@ def test():
     assert component.__name__ == "component"
     assert component.__bases__ == (pyre.component,)
     # check the layout
-    assert component.pyre_name == "component"
+    assert component.pyre_key is None
+    assert component.pyre_family() is None
     assert component.pyre_namemap == {'p': 'p'}
-    assert component.pyre_pedigree == [component, pyre.component]
-    assert component.pyre_family == []
+    assert component.pyre_pedigree == (component, pyre.component)
     assert component.pyre_implements == None
     # traits
     localNames = ['p']
-    localTraits = list(map(component.pyre_getTraitDescriptor, localNames))
+    localTraits = tuple(map(component.pyre_trait, localNames))
     assert component.pyre_localTraits == localTraits
-    assert component.pyre_inheritedTraits == []
+    assert component.pyre_inheritedTraits == ()
     allNames = localNames + []
-    allTraits = list(map(component.pyre_getTraitDescriptor, allNames))
-    assert list(component.pyre_getTraitDescriptors()) == allTraits
+    allTraits = list(map(component.pyre_trait, allNames))
+    assert list(component.pyre_traits()) == allTraits
 
     return component
 

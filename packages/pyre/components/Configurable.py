@@ -6,9 +6,11 @@
 #
 
 
+# externals
 import itertools
 
 
+# class declaration
 class Configurable:
     """
     The base class for components and interfaces
@@ -17,114 +19,82 @@ class Configurable:
     common to both components and interfaces
     """
 
-
     # types
-    # exceptions
     from .exceptions import FrameworkError, CategoryMismatchError, TraitNotFoundError
 
 
-    # constant
-    pyre_SEPARATOR = '.'
-
-
-    # access to the framework executive; patched during framework boot
+    # access to the framework executive; patched during framework boot; shared by all
     pyre_executive = None
+    # framework data; every class record gets a fresh set of these values
+    pyre_key = None # the hash key issued by the nameserver
+    pyre_pedigree = None # my ancestors that are configurables, in mro
+    pyre_localTraits = None # the traits explicitly specified in my declaration
+    pyre_inheritedTraits = None # the traits inherited from my superclasses
+    pyre_namemap = None # the map of trait aliases to their canonical names
+    pyre_traitmap = None # the map of trait names to trait descriptors
+    pyre_locator = None # the location of the configurable declaration
+    pyre_internal = True # mark this configurable as not visible to end users
 
-    # framework data; patched up by metaclasses and the framework bootstrapping
-    pyre_name = None # my public id
-    pyre_family = () # the user-visible name of my class
-    pyre_namemap = None # a map of descriptor aliases to their canonical names
-    pyre_localTraits = None # a tuple of all the traits in my declaration
-    pyre_inheritedTraits = None # a tuple of all the traits inherited from my superclasses
-    pyre_pedigree = None # a tuple of ancestors that are themselves configurables
-    pyre_hidden = True # true
 
-
-    # framework notifications
-    @classmethod
-    def pyre_registerClass(cls, executive):
+    # introspection
+    @property
+    def pyre_name(self):
         """
-        Hook that gets invoked by the framework after the class record has been registered but
-        before any configuration events
+        Look up my name
         """
-        return
-
-
-    @classmethod
-    def pyre_configureClass(cls, executive):
-        """
-        Hook that gets invoked by the framework after the class record has been configured,
-        before any instances have been created
-        """
-        return
-
-
-    @classmethod
-    def pyre_initializeClass(cls, executive):
-        """
-        Hook that gets invoked by the framework after the class record has been initialized,
-        before any instances have been created
-        """
-        return
-
-
-    # introspection interface
-    @classmethod
-    def pyre_getPackageName(cls):
-        """
-        Extract the name of the package to which this configurable belongs
-
-        The current implementation returns the first fragment of {pyre_family}
-        """
-        # attempt to extract and return the leading fragment of my {pyre_family}
-        try:
-            return cls.pyre_family[0]
-        except IndexError:
-            # otherwise
+        # if i don't have a registration key
+        if self.pyre_key is None:
+            # then, i don't have a name
             return None
+        # otherwise, ask the nameserver
+        _, name = self.pyre_executive.nameserver.lookup(self.pyre_key)
+        # and return the registration name
+        return name
+
+
+    @property
+    def pyre_familyKey(self):
+        """
+        Get my class registration key
+        """
+        return self.__class__.pyre_key
 
 
     @classmethod
-    def pyre_getFamilyName(cls):
+    def pyre_family(cls):
         """
-        Build the family name of the configurable
+        Look up my family name
         """
-        # put it back together
-        return cls.pyre_SEPARATOR.join(cls.pyre_family)
+        # if i don't have a key, i don't have a family
+        if cls.pyre_key is None: return None
+        # otherwise, ask the nameserver
+        _, family = cls.pyre_executive.nameserver.lookup(cls.pyre_key)
+        # and return the family name
+        return family
 
 
     @classmethod
-    def pyre_getTraitDescriptor(cls, alias):
+    def pyre_package(cls):
         """
-        Given the name {alias}, locate and return the associated descriptor
+        Deduce my package name
         """
-        # attempt to normalize the given name
-        try:
-            canonical = cls.pyre_namemap[alias]
-        # not one of my traits
-        except KeyError:
-            raise cls.TraitNotFoundError(configurable=cls, name=alias)
-        # got it; look through my ancestors' dictionaries for the descriptor
-        for base in cls.pyre_pedigree:
-            # attempt to look it up in this base
-            try:
-                return base.__dict__[canonical]
-            # not here; move on
-            except KeyError:
-                pass
-        # impossible
-        import journal
-        firewall = journal.firewall("pyre.components")
-        raise firewall.log("UNREACHABLE")
+        # get the name server
+        ns = cls.pyre_executive.nameserver
+        # if i don't have a key, i don't have a package
+        if cls.pyre_key is None: return None
+        # otherwise, ask the nameserver
+        _, family = ns.lookup(cls.pyre_key)
+        # split the family name apart; the package name is the zeroth entry
+        pkgName = family.split(ns.separator)[0]
+        # use it to look up the package
+        return ns[pkgName]
 
 
     @classmethod
-    def pyre_getTraitDescriptors(cls):
+    def pyre_traits(cls):
         """
-        Generate a sequence of all my trait descriptors
-
-        The only complexity here is proper shadowing in the presence of inheritance. If you are
-        looking for the traits declared in a particular class, use the attribute
+        Generate a sequence of all my trait descriptors, both locally declared and inherited.
+        If you are looking for the traits declared in a particular class, use the attribute
         {cls.pyre_localTraits} instead.
         """
         # the full set of my descriptors is prepared by {Requirement} and separated into two
@@ -134,57 +104,69 @@ class Configurable:
 
 
     @classmethod
-    def pyre_getConfigurableTraitDescriptors(cls):
+    def pyre_configurables(cls):
         """
         Generate a sequence of all my trait descriptors that are marked as configurable.
         """
-        return filter(lambda x: x.isConfigurable, cls.pyre_getTraitDescriptors())
+        return filter(lambda trait: trait.isConfigurable, cls.pyre_traits())
 
 
     @classmethod
-    def pyre_buildTraitReference(cls, trait):
+    def pyre_trait(cls, alias):
         """
-        Construct a reference to the {trait} slot in my nearest ancestor
+        Given the name {alias}, locate and return the associated descriptor
         """
-        # search for the closest ancestor that has a slot for this trait
-        for ancestor in cls.pyre_pedigree:
-            # if it's here
-            try:
-                # get the slot and exit the search
-                anchor = ancestor.pyre_inventory[trait]
-                break
-            # if it's not here
-            except KeyError:
-                # no worries, get the next ancestor
-                continue
-        # if it's not there at all
-        else:
-            # INCONSISTENT: there is an inherited trait but no registered superclass that
-            # declares it. one possibility is that this component derives from a hidden
-            # one, which means the user is messing with the protocol internals
+        # attempt to normalize the given name
+        try:
+            canonical = cls.pyre_namemap[alias]
+        # not one of my traits
+        except KeyError:
+            # complain
+            raise cls.TraitNotFoundError(configurable=cls, name=alias)
+        # got it; look through my trait map for the descriptor
+        try:
+            # if there, get the accessor
+            trait = cls.pyre_traitmap[canonical]
+        # if not there
+        except KeyError:
+            # we have a bug
             import journal
             firewall = journal.firewall("pyre.components")
-            raise firewall.log(
-                "could not locate a registered ancestor for '{.pyre_name}.{.name}'"
-                .format(cls, trait))
+            raise firewall.log("UNREACHABLE")
 
-        # we found the slot; build a reference to it and return it
-        return anchor.ref()
+        # return the trait
+        return trait
 
 
-    def pyre_getTraitFullName(self, name):
+    # framework notifications
+    @classmethod
+    def pyre_classRegistered(cls):
         """
-        Build the full name of the given trait
+        Hook that gets invoked by the framework after the class record has been registered but
+        before any configuration events
         """
-        return self.pyre_SEPARATOR.join(filter(None, [self.pyre_name, name]))
+        # do nothing
+        return cls
 
 
     @classmethod
-    def pyre_split(cls, name):
+    def pyre_classConfigured(cls):
         """
-        Split {name} into its {pyre_SEPARATOR} delimited parts
+        Hook that gets invoked by the framework after the class record has been configured,
+        before any instances have been created
         """
-        return name.split(cls.pyre_SEPARATOR)
+        # do nothing
+        return cls
+
+
+    @classmethod
+    def pyre_classInitialized(cls):
+        """
+        Hook that gets invoked by the framework after the class record has been initialized,
+        before any instances have been created
+        """
+        # do nothing
+        return cls
 
 
     # compatibility check
@@ -203,14 +185,12 @@ class Configurable:
         from .CompatibilityReport import CompatibilityReport
         # build an empty one
         report = CompatibilityReport(this, other)
-        # collect my traits
-        myTraits = { trait.name: trait for trait in this.pyre_getTraitDescriptors() }
         # iterate over the traits of {other}
-        for hers in other.pyre_getTraitDescriptors():
+        for hers in other.pyre_traits():
             # check existence
             try:
                 # here is mine
-                mine = myTraits[hers.name]
+                mine = this.pyre_traitmap[hers.name]
             # oops
             except KeyError:
                 # build an error description

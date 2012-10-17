@@ -22,7 +22,7 @@ def declare():
         p2 = pyre.properties.str(default="p2")
 
         # behaviors
-        @pyre.components.export
+        @pyre.export
         def do(self):
             """behave"""
 

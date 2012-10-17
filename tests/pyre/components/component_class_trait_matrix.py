@@ -43,10 +43,10 @@ def test():
     assert c3.value == 5
 
     # build one with no family name and a reference to another node
-    # get the framework configurator
-    config = pyre.executive.configurator
+    # get the framework nameserver
+    ns = pyre.executive.nameserver
     # build a node
-    config["value"] = "5"
+    ns["value"] = "5"
     # now build the component
     c4 = declare(default="{value}")
     # check that it got what we expect

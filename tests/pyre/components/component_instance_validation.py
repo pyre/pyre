@@ -28,15 +28,18 @@ def test():
     # instantiate
     b = base(name="b")
     # make an assignment that violates the constraint
+    b.positive = -1
+    # read the value
     try:
-        b.positive = -1
+        b.positive
         assert False
     except b.ConstraintViolationError:
         pass
 
     # and another
+    b.interval = 1
     try:
-        b.interval = 1
+        b.interval
         assert False
     except b.ConstraintViolationError:
         pass

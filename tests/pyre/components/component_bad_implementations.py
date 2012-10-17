@@ -13,14 +13,10 @@ Verify that the framework detects components that do not implement their obligat
 
 # acccess to the parts
 import pyre
-import pyre.components.exceptions
-from pyre.components.Component import Component
-from pyre.components.Interface import Interface
-from pyre.components.Property import Property
 
 # declare an interface
-class interface(pyre.interface):
-    """a simple interface"""
+class protocol(pyre.protocol):
+    """a simple protocol"""
     # properties
     name = pyre.properties.str(default="my name")
     # behaviors
@@ -32,12 +28,12 @@ class interface(pyre.interface):
 
 def badImplementationSpec():
     class badspec(pyre.component, implements=1):
-        """bad implementation specification: not an Interface subclass"""
+        """bad implementation specification: not an Protocol subclass"""
     return badspec
 
 
 def missingProperty():
-    class missing(pyre.component, implements=interface):
+    class missing(pyre.component, implements=protocol):
         """missing property: doesn't have {name}"""
     # properties
     oops = pyre.properties.str(default="my name")
@@ -50,7 +46,7 @@ def missingProperty():
 
 
 def missingBehavior():
-    class missing(pyre.component, implements=interface):
+    class missing(pyre.component, implements=protocol):
         """missing behavior: doesn't have {do}"""
     # properties
     name = pyre.properties.str(default="my name")
@@ -63,7 +59,7 @@ def missingBehavior():
 
 
 def noExport():
-    class missing(pyre.component, implements=interface):
+    class missing(pyre.component, implements=protocol):
         """missing behavior decorator"""
     # properties
     name = pyre.properties.str(default="my name")
@@ -86,24 +82,24 @@ def test():
     try:
         missingProperty()
         assert False
-    except pyre.components.exceptions.InterfaceError:
+    except pyre.components.exceptions.ProtocolError:
         pass
 
     # check that we catch missing behaviors
     try:
         missingBehavior()
         assert False
-    except pyre.components.exceptions.InterfaceError:
+    except pyre.components.exceptions.ProtocolError:
         pass
 
     # check that we catch missing exports
     try:
         noExport()
         assert False
-    except pyre.components.exceptions.InterfaceError:
+    except pyre.components.exceptions.ProtocolError:
         pass
 
-    return interface
+    return protocol
 
 
 # main

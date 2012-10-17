@@ -11,7 +11,7 @@ import collections
 
 class CompatibilityReport:
     """
-    Class that holds the assignment incompatibilities between to configurables
+    Class that holds the assignment incompatibilities among configurables
     """
 
 

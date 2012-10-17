@@ -21,7 +21,7 @@ def test():
         """test class"""
 
     # did my ancestor list get built properly
-    assert base.pyre_pedigree == [base, pyre.component]
+    assert base.pyre_pedigree == (base, pyre.component)
         
     return base
 

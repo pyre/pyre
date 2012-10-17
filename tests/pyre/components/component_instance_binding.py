@@ -15,14 +15,14 @@ Verify that the trait defaults get bound correctly
 def test():
     import pyre
 
-    # declare an interface
-    class job(pyre.interface):
-        """an interface"""
+    # declare a protocol
+    class job(pyre.protocol):
+        """a protocol"""
         @pyre.provides
         def do(self):
             """do something"""
 
-    # declare a component the implements this interface
+    # declare a component the implements this protocol
     class worker(pyre.component, implements=job):
         """an implementation"""
         @pyre.export
@@ -33,7 +33,7 @@ def test():
     class base(pyre.component):
         """the base component"""
         number = pyre.properties.int(default=1)
-        task = pyre.facility(interface=job, default=worker)
+        task = job(default=worker)
         @pyre.export
         def say(self):
             """say something"""

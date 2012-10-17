@@ -11,10 +11,7 @@
 Verify that manipulating the default and instance trait values has no cross-talk
 """
 
-
 import pyre
-
-
 
 class gaussian(pyre.component):
     """a representation of a gaussian function"""

@@ -61,13 +61,13 @@
   <!-- data for component_class_inventory -->
   <component family="sample.inventory.base">
     <!-- some bindings -->
-    <bind property="bprop">1</bind>
+    <bind property="b">1</bind>
   </component>
 
   <component family="sample.inventory.derived">
     <!-- some bindings -->
-    <bind property="bprop">2</bind>
-    <bind property="dprop">Hello world!</bind>
+    <bind property="b">2</bind>
+    <bind property="d">Hello world!</bind>
   </component>
 
   <!-- data for component_instance_configuration -->

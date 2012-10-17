@@ -8,31 +8,31 @@
 
 
 """
-Verify that checking compatibility among interfaces produces the correct reports
+Verify that checking compatibility among protocols produces the correct reports
 """
 
 
 def test():
     import pyre
 
-    # declare a couple of interfaces
-    class base(pyre.interface):
-        """the base interface"""
+    # declare a couple of protocols
+    class base(pyre.protocol):
+        """the base protocol"""
         common = pyre.property()
 
     class derived(base):
         """a derived one, so automatically compatible"""
         extra = pyre.property()
 
-    class ok(pyre.interface):
-        """one that doesn't derive but has the right public interface"""
+    class ok(pyre.protocol):
+        """one that doesn't derive but has the right public protocol"""
         common = pyre.property()
         
-    class notok(pyre.interface):
-        """one that doesn't provide the right public interface"""
+    class notok(pyre.protocol):
+        """one that doesn't provide the right public protocol"""
         what = pyre.property()
         
-    class badtype(pyre.interface):
+    class badtype(pyre.protocol):
         """one that has the right trait but of the wrong type"""
         @pyre.provides
         def common(self):
@@ -45,13 +45,13 @@ def test():
             """method, not property"""
 
     # collect the traits
-    base_common = base.pyre_getTraitDescriptor("common")
-    derived_common = derived.pyre_getTraitDescriptor("common")
-    derived_extra = derived.pyre_getTraitDescriptor("extra")
-    ok_common = ok.pyre_getTraitDescriptor("common")
-    notok_what = notok.pyre_getTraitDescriptor("what")
-    badtype_common = badtype.pyre_getTraitDescriptor("common")
-    shadow_common = shadow.pyre_getTraitDescriptor("common")
+    base_common = base.pyre_trait("common")
+    derived_common = derived.pyre_trait("common")
+    derived_extra = derived.pyre_trait("extra")
+    ok_common = ok.pyre_trait("common")
+    notok_what = notok.pyre_trait("what")
+    badtype_common = badtype.pyre_trait("common")
+    shadow_common = shadow.pyre_trait("common")
 
     # compatibility checks
     # these ones should succeed

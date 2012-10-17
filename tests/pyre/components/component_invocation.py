@@ -19,7 +19,7 @@ def test():
     class component(pyre.component):
         """a test component"""
         # behavior
-        @pyre.components.export
+        @pyre.export
         def do(self):
             """behave"""
             return True

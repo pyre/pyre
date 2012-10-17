@@ -11,14 +11,16 @@ import pyre
 
 class container(pyre.component, family="sample.map"):
     """a component container"""
-    map = pyre.map(cast=pyre.properties.str)
+    map = pyre.map(schema=pyre.properties.str)
 
 
 def test():
     # build the shell
     s = container(name="map_container")
+    # s.pyre_executive.nameserver.dump('map_container')
+
     # verify that the catalog has three members
-    # print(len(s.catalog))
+    # print(len(s.map))
     assert len(s.map) == 3
     # and that the contents were configured properly
     for name, instance in s.map.items():

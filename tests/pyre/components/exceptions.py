@@ -15,11 +15,11 @@ def test():
     import pyre
     from pyre.components.exceptions import (
         ComponentError, 
-        CategoryMismatchError, ImplementationSpecificationError, InterfaceError,
+        CategoryMismatchError, ImplementationSpecificationError, ProtocolError,
         TraitNotFoundError)
 
     class component(pyre.component): pass
-    class interface(pyre.interface): pass
+    class protocol(pyre.protocol): pass
 
     c1 = component(name="c1")
     c2 = component(name="c2")
@@ -40,8 +40,8 @@ def test():
         pass
 
     try:
-        raise InterfaceError(component=c1, interface=interface, report=None)
-    except InterfaceError as error:
+        raise ProtocolError(component=c1, protocol=protocol, report=None)
+    except ProtocolError as error:
         pass
 
     try:

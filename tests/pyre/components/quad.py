@@ -15,8 +15,8 @@ Verify various configuration methods
 # externals
 import pyre
 
-# the interfaces
-class functor(pyre.interface, family="quad.functors"):
+# the protocols
+class functor(pyre.protocol, family="quad.functors"):
     @pyre.provides
     def eval(self, z):
         """evaluate a function at the given argument {z}"""
@@ -38,7 +38,7 @@ class line(pyre.component, family="quad.functors.line"):
 
 
 class integrator(pyre.component, family="quad.integrator"):
-    integrand = pyre.facility(interface=functor, default=const)
+    integrand = functor(default=const)
 
 
 # the tests
@@ -46,7 +46,7 @@ def test():
 
     # print the configuration
     # pyre.executive.configurator.dump(pattern='quad')
-    if pyre.executive.errors: print(pyre.executive.errors)
+    # for error in pyre.executive.errors: print(error)
 
     # check the class defaults from the configuration file
     # const
@@ -55,8 +55,7 @@ def test():
     assert line.α == 1.0
     assert line.β == 2.0
     # integrator
-    assert integrator.integrand.pyre_family == line.pyre_family
-
+    assert integrator.integrand.pyre_family() == line.pyre_family()
 
     # instantiations
     zero = const(name='zero')
@@ -70,7 +69,7 @@ def test():
     assert nameless.pyre_name == 'nameless'
     assert nameless.pyre_family == integrator.pyre_family
     assert nameless.integrand.pyre_name == 'nameless.integrand'
-    assert nameless.integrand.pyre_family == line.pyre_family
+    assert nameless.integrand.pyre_family() == line.pyre_family()
     assert nameless.integrand.α == line.α
     assert nameless.integrand.β == line.β
 
@@ -79,7 +78,7 @@ def test():
     assert special.pyre_name == 'special'
     assert special.pyre_family == integrator.pyre_family
     assert special.integrand.pyre_name == 'special.integrand'
-    assert special.integrand.pyre_family == const.pyre_family
+    assert special.integrand.pyre_family() == const.pyre_family()
     assert special.integrand.c == 3.0
 
     # another named one
@@ -87,7 +86,7 @@ def test():
     assert qualified.pyre_name == 'qualified'
     assert qualified.pyre_family == integrator.pyre_family
     assert qualified.integrand.pyre_name == 'qualified.integrand'
-    assert qualified.integrand.pyre_family == line.pyre_family
+    assert qualified.integrand.pyre_family() == line.pyre_family()
     assert qualified.integrand.α == 0.5
     assert qualified.integrand.β == 1.5
 
@@ -99,8 +98,8 @@ def test():
     assert explicit.integrand.pyre_family == const.pyre_family
     assert explicit.integrand.c == 2.0
 
-
     # all done
+    return
         
 
 # main

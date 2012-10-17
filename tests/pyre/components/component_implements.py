@@ -8,16 +8,16 @@
 
 
 """
-Check explicit and implicit interface compatibility
+Check explicit and implicit protocol compatibility
 """
 
 
 def test():
     import pyre
 
-    # declare an interface
-    class interface(pyre.interface):
-        """a simple interface"""
+    # declare a protocol
+    class protocol(pyre.protocol):
+        """a simple protocol"""
         # properties
         name = pyre.property()
         name.default = "my name"
@@ -26,8 +26,8 @@ def test():
         def say(self):
             """say my name"""
 
-    # declare a component that claims to implement this interface explicitly
-    class explicit(pyre.component, family="tests.explicit", implements=interface):
+    # declare a component that claims to implement this protocol explicitly
+    class explicit(pyre.component, family="tests.explicit", implements=protocol):
         """a simple component"""
         # properties
         name = pyre.property()
@@ -38,7 +38,7 @@ def test():
             """say my name"""
             return self.name
 
-    # declare a component that implements this interface implicitly
+    # declare a component that implements this protocol implicitly
     class implicit(pyre.component, family="tests.implicit"):
         """a simple component"""
         # properties
@@ -50,11 +50,11 @@ def test():
             """say my name"""
             return self.name
 
-    # check interface compatibility
-    assert explicit.pyre_isCompatible(interface)
-    assert implicit.pyre_isCompatible(interface)
+    # check protocol compatibility
+    assert explicit.pyre_isCompatible(protocol)
+    assert implicit.pyre_isCompatible(protocol)
 
-    return explicit, implicit, interface
+    return explicit, implicit, protocol
 
 
 # main

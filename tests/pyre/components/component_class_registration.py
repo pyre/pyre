@@ -16,9 +16,9 @@ import pyre
 
 
 def test():
-    # declare an interface
-    class interface(pyre.interface):
-        """an interface"""
+    # declare a protocol
+    class protocol(pyre.protocol):
+        """a protocol"""
         # properties
         p1 = pyre.properties.str()
         p2 = pyre.properties.str()
@@ -28,7 +28,7 @@ def test():
             """behave"""
         
     # declare a component
-    class component(pyre.component, family="test", implements=interface):
+    class component(pyre.component, family="test", implements=protocol):
         """a component"""
         # traits
         p1 = pyre.properties.str(default="p1")
@@ -42,26 +42,12 @@ def test():
     # fetch the registrar
     registrar = pyre.executive.registrar
 
-    # check that the interface is correctly registered
-    assert interface in registrar.interfaces
+    # check that the protocol is correctly registered
+    assert protocol in registrar.protocols
     # check that the component is correctly registered
     assert component in registrar.components
-    # check that the set of {interface} implementors is correct
-    assert registrar.implementors[interface] == {component}
-
-    # now examine the component inventory
-    behaviors = tuple(map(component.pyre_getTraitDescriptor, ["do"]))
-    properties = tuple(map(component.pyre_getTraitDescriptor, ["p1", "p2"]))
-    # get the class inventory
-    inventory = component.pyre_inventory
-    # loop over behaviors and make sure they are not present in the inventory
-    for trait in behaviors:
-        # verify it's not there
-        assert trait not in inventory
-    # loop over the properties and verify they are represented in the inventory
-    for trait in properties:
-        # verify existence
-        assert trait in inventory
+    # check that the set of {protocol} implementors is correct
+    assert registrar.implementors[protocol] == {component}
 
     return component
      

@@ -20,12 +20,11 @@ def declare(baseFamily=None, baseDefault=0, derivedFamily=None, derivedDefault="
     # the declaration
     class base(pyre.component, family=baseFamily):
         """a component"""
-        bprop = pyre.properties.int(default=baseDefault)
-
+        b = pyre.properties.int(default=baseDefault)
 
     class derived(base, family=derivedFamily):
         """a derived component"""
-        dprop = pyre.properties.str(default=derivedDefault)
+        d = pyre.properties.str(default=derivedDefault)
 
     # return the pair to the caller
     return base, derived
@@ -36,37 +35,37 @@ def test():
     # build a pair without family names
     base, derived = declare()
     # check
-    assert base.bprop == 0
-    assert derived.bprop == 0
-    assert derived.dprop == ""
+    assert base.b == 0
+    assert derived.b == 0
+    assert derived.d == ""
 
     # now modify the base class property
-    base.bprop = 1
+    base.b = 1
     # check again
-    assert base.bprop == 1
-    assert derived.bprop == 1
-    assert derived.dprop == "" # no cross-talk
+    assert base.b == 1
+    assert derived.b == 1
+    assert derived.d == "" # no cross-talk
 
     # build a pair with family names that match the sample configuration file
     base, derived = declare(
         baseFamily="sample.inventory.base",
         derivedFamily="sample.inventory.derived")
     # check
-    assert base.bprop == 1
-    assert derived.bprop == 2
-    assert derived.dprop == "Hello world!"
+    assert base.b == 1
+    assert derived.b == 2
+    assert derived.d == "Hello world!"
 
     # modify the base class property
-    base.bprop = 0
+    base.b = 0
     # check
-    assert base.bprop == 0
-    assert derived.bprop == 2
-    assert derived.dprop == "Hello world!"
+    assert base.b == 0
+    assert derived.b == 2
+    assert derived.d == "Hello world!"
 
     # adjust the string property
-    derived.dprop = "{sample.file}"
+    derived.d = "{sample.file}"
     # and check
-    assert derived.dprop == "sample.pml"
+    assert derived.d == "sample.pml"
 
     return declare
 

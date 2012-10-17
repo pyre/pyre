@@ -8,38 +8,43 @@
 
 
 """
-Verify that the trait defaults get bound correctly
+Verify that trait defaults get bound correctly
 """
 
 
 def test():
     import pyre
 
-    # declare an interface
-    class job(pyre.interface):
-        """an interface"""
+    # declare a protocol
+    class task(pyre.protocol):
+        """a protocol"""
         @pyre.provides
         def do(self):
             """do something"""
 
-    # declare a component the implements this interface
-    class worker(pyre.component, implements=job):
+        @classmethod
+        def pyre_default(cls):
+            """the default task"""
+            return relax
+
+    # declare a component that implements this protocol
+    class relax(pyre.component, implements=task):
         """an implementation"""
         @pyre.export
         def do(self):
-            """do something"""
+            """do nothing"""
 
     # declare a component
-    class base(pyre.component):
+    class worker(pyre.component):
         """the base component"""
-        number = pyre.properties.int(default=1)
-        task = pyre.facility(interface=job, default=worker)
+        uid = pyre.properties.int(default=1)
+        duties = task()
 
     # check the default values
-    assert base.number == 1
-    assert base.task == worker
+    assert worker.uid == 1
+    assert worker.duties == relax
 
-    return base
+    return worker
 
 
 # main

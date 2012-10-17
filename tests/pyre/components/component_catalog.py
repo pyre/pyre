@@ -9,8 +9,8 @@
 
 import pyre
 
-class ifac(pyre.interface, family="sample.ifac"):
-    """sample interface"""
+class ifac(pyre.protocol, family="sample.ifac"):
+    """sample protocol"""
 
 class comp(pyre.component, family="sample.ifac.comp", implements=ifac):
     """an implementation"""
@@ -18,7 +18,7 @@ class comp(pyre.component, family="sample.ifac.comp", implements=ifac):
 
 class container(pyre.component, family="sample.container"):
     """a component container"""
-    catalog = pyre.catalog(interface=ifac)
+    catalog = pyre.catalog(protocol=ifac)
 
 
 def test():

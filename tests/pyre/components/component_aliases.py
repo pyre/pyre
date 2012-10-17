@@ -28,7 +28,7 @@ def declare():
         spread.aliases.add("σ")
        
         # behaviors
-        @pyre.components.export
+        @pyre.export
         def eval(self, x):
             return x
       
@@ -37,40 +37,38 @@ def declare():
 
 def test():
 
+    ns = pyre.executive.nameserver
     # print the store before the declaration
     # print(" -- at startup:")
-    # cfg = pyre.executive.configurator
-    # cfg.dump(pattern="(functor|gaussian)")
+    # ns.dump(pattern="(functor|gaussian)")
     # get the commandline slots
-    # mean,_ = cfg._resolve(name='functor.μ')
-    # print('functor.μ:')
-    # mean.dump()
+    # mean,_ = ns.lookup(key=ns.hash('functor.μ'))
+    # mean.dump(name='functor.μ')
     # print(" -- done")
 
-    gaussian = declare()
+    functor = declare()
     # check that the aliases were properly registered
-    assert gaussian.pyre_getTraitDescriptor("mean") == gaussian.pyre_getTraitDescriptor("μ")
-    assert gaussian.pyre_getTraitDescriptor("spread") == gaussian.pyre_getTraitDescriptor("σ")
+    assert functor.pyre_trait("mean") == functor.pyre_trait("μ")
+    assert functor.pyre_trait("spread") == functor.pyre_trait("σ")
     # print out the configuration state
     # print(" -- after the declaration:")
-    # print("gaussian: defaults: mean={0.mean!r}, spread={0.spread!r}".format(gaussian))
-    # cfg.dump(pattern="(functor|gaussian)")
-    # cfg._hash.dump()
+    # print("functor: defaults: mean={0.mean!r}, spread={0.spread!r}".format(functor))
+    # ns.dump(pattern="(functor|gaussian)")
     # print(" -- done")
 
     # check the class defaults
     # the values come from the defaults, functor.pml in this directory, and the command line
-    assert gaussian.mean == 0.1
-    assert gaussian.spread == 0.54
+    assert functor.mean == 0.1
+    assert functor.spread == 0.54
     # reset them to something meaningful
-    gaussian.μ = 0.0
-    gaussian.σ = 1.0
+    functor.μ = 0.0
+    functor.σ = 1.0
     # verify the change
-    assert gaussian.mean == 0.0
-    assert gaussian.spread == 1.0
+    assert functor.mean == 0.0
+    assert functor.spread == 1.0
 
     # instantiate one
-    g = gaussian(name="gaussian")
+    g = functor(name="gaussian")
     # make sure the defaults were transferred correctly
     assert g.mean == 0.56
     assert g.spread == 0.10
@@ -89,9 +87,9 @@ def test():
 
     # check the properties
     # print("g: mean={0.mean!r}, spread={0.spread!r}".format(g))
-    # cfg.dump(pattern="(functor|gaussian)")
+    # ns.dump(pattern="(functor|gaussian)")
 
-    return gaussian
+    return functor
 
 
 # main

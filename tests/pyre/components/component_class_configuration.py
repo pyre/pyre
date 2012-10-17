@@ -22,7 +22,7 @@ def declare():
         p2 = pyre.properties.str(default="p2")
 
         # behaviors
-        @pyre.components.export
+        @pyre.export
         def do(self):
             """behave"""
       
@@ -35,7 +35,8 @@ def test():
 
     # print out the configuration 
     # import pyre
-    # pyre.executive.configurator.dump()
+    # for error in pyre.executive.errors: print(error)
+    # pyre.executive.nameserver.dump(pattern='sample')
     # print("component.p1 = {.p1!r}".format(component))
     # print("component.p2 = {.p2!r}".format(component))
 

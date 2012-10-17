@@ -16,11 +16,11 @@ import pyre
 
 # FOR: component_class_binding_implicit.py
 # declare a component that implements the job interface
-class worker(pyre.component):
+class relax(pyre.component):
     """an implementation"""
     @pyre.export
     def do(self):
-        """do something"""
+        """do nothing"""
 
 
 # end of file 

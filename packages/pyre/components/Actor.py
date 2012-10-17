@@ -6,10 +6,13 @@
 #
 
 
-import pyre.tracking
+# externals
+from .. import tracking
+# superclass
 from .Requirement import Requirement
 
 
+# class declaration
 class Actor(Requirement):
     """
     The metaclass of components
@@ -18,85 +21,97 @@ class Actor(Requirement):
     configurable entity that coöperates fully with the framework
     """
 
+
     # types
     from .Role import Role
-    from .Configurable import Configurable
+    from .exceptions import ImplementationSpecificationError, ProtocolError
 
 
-    # meta methods
-    def __new__(cls, name, bases, attributes,
-                *, family=None, implements=None, resolver=False, **kwds):
+    # meta-methods
+    def __new__(cls, name, bases, attributes, *, family=None, implements=None, **kwds):
         """
-        Build a new component class record
+        Build a new component record
 
         parameters:
             {cls}: the metaclass invoked; guaranteed to be a descendant of {Actor}
             {name}, {bases}, {attributes}: the usual class specification
-            {family}: the public name of this component class; used to configure it
-            {implements}: the tuple of interfaces that this component is known to implement
+            {implements}: the tuple of protocols that this component is known to implement
         """
-        # attempt to
-        try:
-            # build the interface specification
-            interface = cls.pyre_buildImplementationSpecification(bases, implements)
-        # if it fails
-        except cls.ImplementationSpecificationError as error:
-            # decorate the exception
-            error.name = name
-            error.description = "{}: {}".format(name, error.description)
-            # and raise it again
-            raise
-        # otherwise, add the interface specification to the attributes
-        attributes["pyre_implements"] = interface
-        # create storage for the configurable state
-        attributes["pyre_inventory"] = {}
+        # build the protocol specification
+        protocol = cls.pyre_buildProtocol(name, bases, implements)
+
+        # build and add the protocol specification to the attributes
+        attributes["pyre_implements"] = protocol
+        # save the location of the component declaration
+        attributes["pyre_locator"] = tracking.here(1)
+        
         # get my ancestors to build the class record
-        component = super().__new__(cls, name, bases, attributes, family=family, **kwds)
-        # if an interface spec was derivable from the declaration, check interface compatibility 
-        if interface:
+        component = super().__new__(cls, name, bases, attributes, **kwds)
+
+        # if a protocol spec was derivable from the declaration, check protocol compatibility 
+        if protocol:
             # check whether the requirements were implemented correctly
-            check = component.pyre_isCompatible(interface)
+            check = component.pyre_isCompatible(protocol)
+            # if not
             if not check:
-                raise cls.InterfaceError(component, interface, check)
-        # if the component wants to intercept descriptor retrieval from its namespace
-        if resolver:
-            # register it with the executive
-            component.pyre_executive.registerNamespaceResolver(resolver=component, namespace=family)
+                # complain
+                raise cls.ProtocolError(component, protocol, check)
+
         # and pass the component on
         return component
 
 
-    def __init__(self, name, bases, attributes, hidden=False, **kwds):
+    def __init__(self, name, bases, attributes, *, family=None, **kwds):
         """
         Initialize a new component class record
         """
         # initialize the record
         super().__init__(name, bases, attributes, **kwds)
 
-        # record whether I am hidden
-        self.pyre_hidden = hidden
-        # and if so, bail out
-        if hidden: return
+        # get the executive
+        executive = self.pyre_executive
 
-        # build a list of (trait, default value) pairs from the locally defined traits
-        defaults = [
-            (trait, trait.default)
-            for trait in self.pyre_localTraits if trait.isConfigurable
-            ]
-        # extend it with (trait, reference to an ancestor) pairs for the inherited traits
-        defaults.extend(
-            (trait, self.pyre_buildTraitReference(trait))
-            for trait in self.pyre_inheritedTraits if trait.isConfigurable
-            )
-        # create my inventory
-        self.pyre_inventory = self.pyre_buildInventory(key=self.pyre_family, traits=defaults)
-        # register me as an observer of all slots
-        for slot in self.pyre_inventory.values(): slot.componentClass = self
-        # register with the executive
-        self.pyre_executive.registerComponentClass(self)
+        # if this is an internal component, there is nothing further to do
+        if self.pyre_internal: return
+
+        # if the component author specified a family name
+        if family:
+            #  register the component class with the executive
+            self.pyre_key = executive.registerComponentClass(
+                family=family, component=self, locator=self.pyre_locator)
+        # otherwise
+        else:
+            # i have no registration key
+            self.pyre_key = None
+        # register with the component registrar
+        executive.registrar.registerComponentClass(component=self)
+        # invoke the registration hook
+        self.pyre_classRegistered()
+
+        # build the component class inventory
+        self.pyre_inventory = self.pyre_buildClassInventory()
+        # if i have a registration key
+        if self.pyre_key:
+            # hand me to the configurator
+            executive.configurator.configureComponentClass(component=self)
+        # invoke the configuration hook
+        self.pyre_classConfigured()
+
         # all done
         return
             
+
+    def __call__(self, locator=None, **kwds):
+        """
+        Build an instance of one of my classes
+        """
+        # record the caller's location
+        locator = tracking.here(1) if locator is None else locator
+        # build the instance
+        instance = super().__call__(locator=locator, **kwds)
+        # and return it
+        return instance
+
 
     def __setattr__(self, name, value):
         """
@@ -104,92 +119,85 @@ class Actor(Requirement):
         value using the natural syntax
         """
         # print("Actor.__setattr__: {!r}<-{!r}".format(name, value))
-        # check whether the name corresponds to a trait
+        # recognize internal attributes
+        if name.startswith('pyre_'):
+            # and process them normally
+            return super().__setattr__(name, value)
+        # for the rest, try to
         try:
-            trait = self.pyre_getTraitDescriptor(alias=name)
-        # if it doesn't, bypass
+            # locate the trait 
+            trait = self.pyre_trait(alias=name)
+        # if it doesn't
         except self.TraitNotFoundError as error:
-            super().__setattr__(name, value)
-            return
-        # so, the name resolved to a trait
-        # build an appropriate locator
-        locator = pyre.tracking.here(level=1)
-        # ask the trait descriptor to set the value
-        trait.pyre_setClassTrait(configurable=self, value=value, locator=locator)
+            # treat as a normal assignment
+            return super().__setattr__(name, value)
+        # the name refers to one of my traits; build an appropriate locator
+        locator = tracking.here(level=1)
+        # set the priority
+        priority = self.pyre_executive.priority.explicit()
+        # ask it to set the value
+        trait.setClassTrait(configurable=self, value=value, locator=locator, priority=priority)
         # and return
         return
 
 
+    def __str__(self):
+        # get my family name
+        family = self.pyre_family()
+        # if i gave one, use it
+        if family: return 'component {!r}'.format(family)
+        # otherwise, use my class name
+        return 'component {.__name__!r}'.format(self)
+
+
     # implementation details
     @classmethod
-    def pyre_buildImplementationSpecification(cls, bases, implements):
+    def pyre_buildProtocol(cls, name, bases, implements):
         """
         Build a class that describes the implementation requirements imposed on this
-        {component}, given its class record and the list of interfaces it {implements}
+        {component}, given its class record and the list of protocols it {implements}
         """
-        # initialize the list of interfaces
-        interfaces = []
+        # initialize the list of protocols
+        protocols = []
+
         # try to understand what the component author specified
         if implements is not None:
-            # accumulator for the interfaces {component} doesn't implement correctly
+            # accumulator for the protocols {component} doesn't implement correctly
             errors = []
-            # if {implements} is a single interface, add it to the pile
-            if isinstance(implements, cls.Role):
-                interfaces.append(implements)
-            # the only legal alternative is an iterable of Interface subclasses
+            # if {implements} is a single protocol, add it to the pile
+            if isinstance(implements, cls.Role): protocols.append(implements)
+            # the only legal alternative is an iterable of {Protocol} subclasses
             else:
                 try:
-                    for interface in implements:
-                        # if it's an actual Interface subclass
-                        if isinstance(interface, cls.Role):
+                    for protocol in implements:
+                        # if it's an actual {Protocol} subclass
+                        if isinstance(protocol, cls.Role):
                             # add it to the pile
-                            interfaces.append(interface)
+                            protocols.append(protocol)
                         # otherwise, place it in the error bin
                         else:
-                            errors.append(interface)
+                            errors.append(protocol)
                 # if {implemenents} is not iterable
                 except TypeError as error:
                     # put it in the error bin
                     errors.append(implements)
             # report the errors we encountered
-            if errors:
-                raise cls.ImplementationSpecificationError(errors=errors)
+            if errors: raise cls.ImplementationSpecificationError(name=name, errors=errors)
+
         # now, add the commitments made by my immediate ancestors
-        interfaces += [
+        protocols += [
             base.pyre_implements for base in bases
             if isinstance(base, cls) and base.pyre_implements is not None ]
-        # bail out if we didn't manage to find eny interfaces
-        if not interfaces: return None
-        # if there is only one interface on my pile
-        if len(interfaces) == 1:
+
+        # bail out if we didn't manage to find any protocols
+        if not protocols: return None
+        # if there is only one protocol on my pile
+        if len(protocols) == 1:
             # use it directly
-            return interfaces[0]
-        # otherwise, derive an interface from the harvested ones and return it as the
+            return protocols[0]
+        # otherwise, derive an protocol from the harvested ones and return it as the
         # implementation specification
-        return cls.Role("Interface", tuple(interfaces), dict(), hidden=True)
-
-
-    # trait observation
-    def pyre_updatedClassProperty(self, slot):
-        """
-        Handler invoked when the value of one of my traits changes
-        """
-        # ignore it, for now
-        return
-
-
-    def pyre_replaceClassSlot(self, current, replacement, clean=None):
-        """
-        Replace {current} with {replacement} in my inventory
-        """
-        # adjust my inventory
-        self.pyre_inventory[current.trait] = replacement
-        # and return
-        return
-
-
-    # exceptions
-    from .exceptions import ImplementationSpecificationError, InterfaceError
+        return cls.Role("protocol".format(name), tuple(protocols), dict(), internal=True)
 
 
 # end of file 

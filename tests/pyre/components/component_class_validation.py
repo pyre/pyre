@@ -15,33 +15,28 @@ Verify that the trait defaults get validated properly
 def test():
     import pyre
 
-    # tuck this in a function so we can generate the exception at will
-    def simple():
-        # declare a component
-        class base(pyre.component):
-            """the base component"""
-            number = pyre.properties.int(default=0)
-            number.validators = pyre.constraints.isGreater(value=0)
-        return base
+    # declare a component
+    class raw(pyre.component):
+        """the base component"""
+        number = pyre.properties.int(default=0)
+        number.validators = pyre.constraints.isGreater(value=0)
 
     # and another that assigns the validators in an iterable
-    def iterable():
-        class base(pyre.component):
-            """the base component"""
-            number = pyre.properties.int(default=0)
-            number.validators = (pyre.constraints.isGreater(value=0),)
-        return base
+    class canonical(pyre.component):
+        """the base component"""
+        number = pyre.properties.int(default=0)
+        number.validators = (pyre.constraints.isGreater(value=0),)
 
     # check the simple case
     try:
-        simple()
+        raw.number
         assert False
     except pyre.component.ConstraintViolationError:
         pass
 
     # check the iterable case
     try:
-        iterable()
+        canonical.number()
         assert False
     except pyre.component.ConstraintViolationError:
         pass

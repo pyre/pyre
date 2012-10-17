@@ -8,7 +8,7 @@
 
 
 """
-Verify that facilities get bound correctly to existing instances
+Verify that facilities get bound correctly when specified implicitly
 """
 
 
@@ -16,28 +16,23 @@ def test():
     import pyre
 
     # declare a protocol
-    class job(pyre.protocol):
+    class task(pyre.protocol):
         """a protocol"""
         @pyre.provides
         def do(self):
             """do something"""
 
     # declare a component
-    class component(pyre.component):
+    class worker(pyre.component):
         """a component"""
-        w1 = job()
-        w2 = job()
+        job = task(default="import:sample.relax")
 
-    # instantiate
-    c = component(name="c")
-    # bind {w1} and {w2}
-    c.w1 = "import:sample.relax#worker"
-    c.w2 = "import:sample.relax#worker"
-    # check
-    assert c.w1 is c.w2
-    assert c.w1.pyre_name == 'worker'
+    # check that task was bound according to our expectations from sample.py
+    assert issubclass(worker.job, pyre.component)
+    assert worker.job.__name__ == "relax"
+    assert task.pyre_isCompatible(worker.job)
 
-    return c, component, job
+    return worker, task
 
 
 # main

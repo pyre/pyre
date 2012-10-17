@@ -19,9 +19,9 @@ import pyre
 
 def declare():
 
-    # declare an interface
-    class interface(pyre.interface):
-        """an interface"""
+    # declare a protocol
+    class protocol(pyre.protocol):
+        """a protocol"""
         # properties
         p1 = pyre.properties.str()
         p2 = pyre.properties.str()
@@ -31,7 +31,7 @@ def declare():
             """behave"""
         
     # declare a component
-    class component(pyre.component, family="test", implements=interface):
+    class component(pyre.component, family="test", implements=protocol):
         """a component"""
         # traits
         p1 = pyre.properties.str(default="p1")
@@ -48,45 +48,42 @@ def declare():
 def test():
 
     # and the model
-    model = pyre.executive.configurator
-    # model.dump()
+    model = pyre.executive.nameserver
+    # model.dump(pattern='test')
 
     # print(" -- making some configuration changes")
     # add an assignment
     model['test.p1'] = 'step 1'
     # an alias
-    model.alias(alias='p1', canonical='test.p1')
+    model.alias(alias='p1', target='test.p1')
     # and a reference to the alias
     model['ref'] = '{p1}'
     # check that they point to the same slot
-    assert model._resolve(name='p1') == model._resolve(name='test.p1')
+    assert model.retrieve(name='p1') == model.retrieve(name='test.p1')
     # save the nodes
-    ref = model._resolve(name='ref')
-    step_0 = model._resolve(name='test.p1')
+    ref = model.retrieve(name='ref')
+    step_0 = model.retrieve(name='test.p1')
 
-    # now declare the component and its interface
+    # now declare the component and its protocol
     # print(" -- declaring components")
     component = declare()
     # print(" -- done")
+
+    # model.dump(pattern='')
     assert component.p1 == 'step 1'
     assert component.p2 == 'p2'
-    # grab the component parts
-    inventory = component.pyre_inventory
-    p1slot = inventory[component.pyre_getTraitDescriptor(alias='p1')]
-    p2slot = inventory[component.pyre_getTraitDescriptor(alias='p2')]
 
     # check that the model is as we expect
     # model.dump()
-    p1node,_ = model._resolve(name='test.p1')
-    assert p1node == p1slot
-    p2node,_ = model._resolve(name='test.p2')
-    assert p2node == p2slot
+    assert model['test.p1'] == component.p1
+    assert model['test.p2'] == component.p2
     # how about the alias and the reference?
     assert model['ref'] == component.p1
     assert model['p1'] == component.p1
 
-    # finally, make a late registration to what is now the component trait
+    # make a late registration to what is now the component trait
     model['test.p2'] = 'step 2'
+    # model.dump(pattern='test')
     # and check
     assert component.p1 == 'step 1'
     assert component.p2 == 'step 2'

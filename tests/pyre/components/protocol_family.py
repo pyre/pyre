@@ -8,27 +8,27 @@
 
 
 """
-Verify that component family names are recorded correctly
+Verify that protocol family names are recorded correctly
 """
 
 
 def test():
     import pyre
 
-    class component(pyre.component, family="test.components.trivial"):
-        """a trivial component"""
+    class protocol(pyre.protocol, family="test.protocols.trivial"):
+        """a trivial protocol"""
 
     # check the family
-    assert component.pyre_family() == "test.components.trivial"
+    assert protocol.pyre_family() == "test.protocols.trivial"
     # get the package
-    package = component.pyre_package()
+    package = protocol.pyre_package()
     # check the package name
     assert package.name == "test"
     # verify that the protocol is registered
-    assert component in package.components
+    assert protocol in package.protocols
 
     # all done
-    return component
+    return protocol
 
 
 # main

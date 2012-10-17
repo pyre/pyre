@@ -14,7 +14,7 @@ PROJ_TIDY += __pycache__
 
 all: test
 
-test: sanity metaclasses components interfaces configurations clean
+test: sanity metaclasses protocols components configurations clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -25,17 +25,17 @@ metaclasses:
 	${PYTHON} ./role.py
 	${PYTHON} ./actor.py
 
-interfaces:
-	${PYTHON} ./interface.py
-	${PYTHON} ./interface_family.py
-	${PYTHON} ./interface_behavior.py
-	${PYTHON} ./interface_property.py
-	${PYTHON} ./interface_inheritance.py
-	${PYTHON} ./interface_shadow.py
-	${PYTHON} ./interface_inheritance_multi.py
-	${PYTHON} ./interface_compatibility.py
-	${PYTHON} ./interface_compatibility_reports.py
-	${PYTHON} ./interface_instantiation.py
+protocols:
+	${PYTHON} ./protocol.py
+	${PYTHON} ./protocol_family.py
+	${PYTHON} ./protocol_behavior.py
+	${PYTHON} ./protocol_property.py
+	${PYTHON} ./protocol_inheritance.py
+	${PYTHON} ./protocol_shadow.py
+	${PYTHON} ./protocol_inheritance_multi.py
+	${PYTHON} ./protocol_compatibility.py
+	${PYTHON} ./protocol_compatibility_reports.py
+	${PYTHON} ./protocol_instantiation.py
 
 components: component-basics component-class component-instance component-multi
 
@@ -54,12 +54,15 @@ component-basics:
 
 component-class:
 	${PYTHON} ./component_class_registration.py
+	${PYTHON} ./component_class_registration_inventory.py
 	${PYTHON} ./component_class_registration_model.py
 	${PYTHON} ./component_class_configuration.py
 	${PYTHON} ./component_class_configuration_inheritance.py
 	${PYTHON} ./component_class_configuration_inheritance_multi.py
 	${PYTHON} ./component_class_binding.py
-	${PYTHON} ./component_class_binding_implicit.py
+	${PYTHON} ./component_class_binding_import.py
+	${PYTHON} ./component_class_binding_vfs.py
+	${PYTHON} ./component_class_binding_conversions.py
 	${PYTHON} ./component_class_validation.py
 	${PYTHON} ./component_class_trait_matrix.py
 	${PYTHON} ./component_class_inventory.py
