@@ -20,9 +20,12 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     AbstractNode.py \
+    Arithmetic.py \
+    AutoNode.py \
     Boolean.py \
-    Cast.py \
+    Converter.py \
     Composite.py \
+    Const.py \
     Expression.py \
     Hierarchical.py \
     Interpolation.py \
@@ -30,7 +33,8 @@ EXPORT_PYTHON_MODULES = \
     Literal.py \
     Memo.py \
     Node.py \
-    Number.py \
+    Observable.py \
+    Observer.py \
     Operator.py \
     Ordering.py \
     Reference.py \

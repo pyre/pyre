@@ -16,25 +16,25 @@ def test():
     import pyre.algebraic
 
     # build a model
-    model = pyre.algebraic.model(name="expression_syntaxerror")
+    model = pyre.algebraic.model()
 
     # unbalanced open brace
     try:
-        pyre.algebraic.expression(formula="{production", model=model)
+        pyre.algebraic.expression(value="{production", model=model)
         assert False
     except model.ExpressionSyntaxError:
         pass
 
     # unbalanced open brace
     try:
-        pyre.algebraic.expression(formula="production}", model=model)
+        pyre.algebraic.expression(value="production}", model=model)
         assert False
     except model.ExpressionSyntaxError:
         pass
 
     # unbalanced parenthesis
     try:
-        pyre.algebraic.expression(formula="{production}({shipping}", model=model)
+        pyre.algebraic.expression(value="{production}({shipping}", model=model)
         assert False
     except model.ExpressionSyntaxError:
         pass

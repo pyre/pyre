@@ -17,7 +17,7 @@ def test():
     import pyre.algebraic
 
     # set up the model
-    model = pyre.algebraic.model(name="interpolation")
+    model = pyre.algebraic.model()
 
     home = '/opt/local'
     model["tools"] = home
@@ -27,25 +27,10 @@ def test():
 
     # check the values
     # print("before:")
-    # print("  tools:", model["tools"])
-    # print("  bin:", model["bin"])
-    # print("  lib:", model["lib"])
-    # print("  include:", model["include"])
-    assert model["tools"] == home
-    assert model["bin"] == os.path.join(home, 'bin')
-    assert model["lib"] == os.path.join(home, 'lib')
-    assert model["include"] == os.path.join(home, 'include')
-
-    # make a change
-    home = '/Users/mga/tools'
-    model["tools"] = home
-
-    # check again
-    # print("after:")
-    # print("  tools:", model["tools"])
-    # print("  bin:", model["bin"])
-    # print("  lib:", model["lib"])
-    # print("  include:", model["include"])
+    # print("  tools: {!r}".format(model["tools"]))
+    # print("  bin: {!r}".format(model["bin"]))
+    # print("  lib: {!r}".format(model["lib"]))
+    # print("  include: {!r}".format(model["include"]))
     assert model["tools"] == home
     assert model["bin"] == os.path.join(home, 'bin')
     assert model["lib"] == os.path.join(home, 'lib')

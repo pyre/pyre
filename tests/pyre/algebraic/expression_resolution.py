@@ -16,7 +16,7 @@ def test():
     import pyre.algebraic
 
     # set up the model
-    model = pyre.algebraic.model(name="expression")
+    model = pyre.algebraic.model()
 
     # set up an expression with an unresolved node
     model["price"] = "2*{production}"

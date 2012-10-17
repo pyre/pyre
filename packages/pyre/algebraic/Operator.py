@@ -22,12 +22,12 @@ class Operator:
         Compute and return my value
         """
         # compute the values of my operands
-        values = tuple(op.value for op in self.operands)
+        values = (op.value for op in self.operands)
         # apply my operator
         return self.evaluator(*values)
 
 
-    # meta methods
+    # meta-methods
     def __init__(self, evaluator, **kwds):
         super().__init__(**kwds)
         self.evaluator = evaluator

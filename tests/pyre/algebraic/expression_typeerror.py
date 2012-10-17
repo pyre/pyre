@@ -17,11 +17,11 @@ def test():
     import pyre.algebraic
 
     # a model
-    model = pyre.algebraic.model(name="syntax")
+    model = pyre.algebraic.model()
     # the nodes
     model["production"] = 80.
     model["shipping"] = 20.
-    model["cost"] = "{production}&{shipping}"
+    model["cost"] = model.expression("{production}&{shipping}")
 
     try:
         model["cost"]

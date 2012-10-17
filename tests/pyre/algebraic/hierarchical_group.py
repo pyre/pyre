@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Verify we can extract all names under a given level in the hierarchy
 """
 
 
@@ -16,7 +16,7 @@ def test():
     import pyre.algebraic
 
     # create a model
-    model = pyre.algebraic.hierarchicalModel(name="sample")
+    model = pyre.algebraic.hierarchicalModel()
 
     # register the nodes
     model["pyre.user.name"] = "Michael Aïvázis"
@@ -26,8 +26,8 @@ def test():
     model["pyre.user.telephone"] = "+1 626.395.3424"
 
     # and some aliases
-    model.alias(alias="χρήστης", canonical="pyre.user")
-    model.alias(alias="χρήστης.όνομα", canonical="pyre.user.name")
+    model.alias(alias="χρήστης", target="pyre.user")
+    model.alias(base="χρήστης", alias="όνομα", target="pyre.user.name")
 
     # here are the canonical names
     names = { 
@@ -35,19 +35,21 @@ def test():
         for tag in ("name", "email", "affiliation", "signature", "telephone") }
 
     # get all the subnodes of "user"
-    target = ["pyre", "user"]
+    target = "pyre.user"
     assert len(names) == len(tuple(model.children(key=target)))
     for key, node in model.children(key=target):
         # check that we got the correct node
         assert model._nodes[key] is node
 
     # repeat with the alias "χρήστης"
-    target = ["χρήστης"]
+    target = "χρήστης"
     assert len(names) == len(tuple(model.children(key=target)))
     for key, node in model.children(key=target):
         # check that we got the correct node
         assert model._nodes[key] is node
-
+        
+    # visual check
+    # model.dump()
     return
 
 

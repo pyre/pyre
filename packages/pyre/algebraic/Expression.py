@@ -6,6 +6,8 @@
 #
 
 
+# used by the formula compiler
+import re
 # so I can hold on to my model without making cycles
 import weakref
 
@@ -26,9 +28,10 @@ class Expression:
 
 
     # public data
-    formula = None # the expression supplied by the client
+    expression = None # the expression supplied by the client
 
 
+    # support for value access
     def getValue(self):
         """
         Compute and return my value
@@ -49,18 +52,94 @@ class Expression:
         return value
 
 
-    # meta methods
-    def __init__(self, model, expression, program, **kwds):
-        super().__init__(**kwds)
-        self.formula = expression
+    def setValue(self, value):
+        """
+        Use the new {value} as my formula
+        """
+        # interpret {value} as my new formula
+        program, operands = self.compile(model=self._model, expression=value)
+        # adjust my state
+        self.expression = value
+        self.operands = operands
         self._program = program
+        # all done
+        return self
+
+
+    # meta-methods
+    def __init__(self, model, expression, program, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # build the local state
+        self.expression = expression
         self._model = weakref.proxy(model)
+        self._program = program
         return
+
+
+    # implementation details
+    @classmethod
+    def compile(cls, model, expression):
+        """
+        Compile {expression} and build an evaluator that resolves named references to other
+        nodes against {model}.
+        """
+        # initialize the symbol table
+        operands = []
+        # define the {re.sub} callback as a local function so it has access to the symbol table
+        def handler(match):
+            """
+            Callback for {re.sub} that extracts node references, adds them to my local symbol
+            table and converts them into legal python identifiers
+            """
+            # if the pattern matched an escaped opening brace, return it as a literal
+            if match.group("esc_open"): return "{"
+            # if the pattern matched an escaped closing brace, return it as a literal
+            if match.group("esc_close"): return "}"
+            # unmatched braces
+            if match.group("lone_open") or match.group("lone_closed"):
+                raise cls.ExpressionSyntaxError(formula=expression, error="unmatched brace")
+            # only one case left: a valid node reference
+            # extract the name from the match
+            identifier = match.group('identifier')
+            # resolve it
+            node = model.retrieve(name=identifier)
+            # add the node to the operands
+            operands.append(node)
+            # build and return the matching expression fragment
+            return "(model[{!r}])".format(identifier)
+
+        # convert node references to legal python identifiers
+        # print("Expression.parse: expression={!r}".format(expression))
+        normalized = cls._scanner.sub(handler, expression)
+        # print("  normalized: {!r}".format(normalized))
+        # print("  operands:", operands)
+        # raise an exception if there were no symbols
+        if not operands:
+            raise cls.EmptyExpressionError(formula=expression)
+        # now, attempt to compile the expression
+        try:
+            program = compile(normalized, filename='expression', mode='eval')
+        except SyntaxError as error:
+            raise cls.ExpressionSyntaxError(formula=expression, error=error) from error
+        # all is well
+        return program, operands
 
 
     # private data
     _model = None # my symbol table
     _program = None # the compiled form of my expression
+    _scanner = re.compile( # the expression tokenizer
+        r"(?P<esc_open>{{)"
+        r"|"
+        r"(?P<esc_close>}})"
+        r"|"
+        r"{(?P<identifier>[^}{]+)}"
+        r"|"
+        r"(?P<lone_open>{)"
+        r"|"
+        r"(?P<lone_closed>})"
+        )
 
 
 # end of file 

@@ -6,31 +6,19 @@
 #
 
 
-# externals
-import re # regular expressions
-import operator # for {add}
-import functools # for {reduce}
-# my base class
-from ..patterns.Named import Named
-
-
 # declaration
-class SymbolTable(Named):
+class SymbolTable:
     """
-    The base class for node evaluation contexts
+    Storage and naming services for algebraic nodes
     """
-
-    # implementation notes
-
-    #   _nodes cannot be a defaultdict since the Unresolved constructor records the name that
-    #   caused the node to be created in order to be able to build a nice error message
 
 
     # types
     from .Node import Node as node
 
-    # exceptions
+    # exceptions; included here for client convenience
     from .exceptions import (
+        NodeError,
         CircularReferenceError,
         EmptyExpressionError, ExpressionSyntaxError, EvaluationError,
         UnresolvedNodeError
@@ -41,291 +29,145 @@ class SymbolTable(Named):
     @property
     def nodes(self):
         """
-        Create an iterable over the nodes in my graph.
+        Build an iterator over my registered nodes
         """
+        # delegate to my map
         return self._nodes.values()
 
 
-    # interface
-    def get(self, name, default=None):
+    # convenience: node constructors
+    def expression(self, value, **kwds):
         """
-        Attempt to resolve {name} and return its value; if {name} is not in the symbol table,
-        bind it to {default} and return this new value
+        Build an expression node
         """
-        # attempt to evaluate
+        # if the value is already a node
+        if isinstance(value, self.node):
+            # just return it
+            return value
+        # if it is not a string
+        if not isinstance(value, str):
+            # just make a variable
+            return self.variable(value=value, **kwds)
+        # otherwise, attempt to
         try:
-            return self[name]
-        # if it failed
-        except self.UnresolvedNodeError:
-            # bind it to {default}
-            self[name] = default
-        # evaluate and return
-        return self[name]
-
-
-    def expression(self, expression):
-        """
-        Examine the input string {expression} and attempt to convert it into an {Expression}
-        node. Resolve all named references to other nodes against my symbol table.
-        """
-        # initialize the symbol table
-        operands = []
-        # define the {re.sub} callback as a local function so it has access to the symbol table
-        def handler(match):
-            """
-            Callback for {re.sub} that extracts node references, adds them to my local symbol
-            table and converts them into legal python identifiers
-            """
-            # if the pattern matched an escaped opening brace, return it as a literal
-            if match.group("esc_open"): return "{"
-            # if the pattern matched an escaped closing brace, return it as a literal
-            if match.group("esc_close"): return "}"
-            # unmatched braces
-            if match.group("lone_open") or match.group("lone_closed"):
-                raise self.ExpressionSyntaxError(formula=expression, error="unmatched brace")
-            # only one case left: a valid node reference
-            # extract the name from the match
-            identifier = match.group('identifier')
-            # resolve it
-            node, _ = self._resolve(name=identifier)
-            # add the node to the operands
-            operands.append(node)
-            # build and return the matching expression fragment
-            return "(model[{!r}])".format(identifier)
-
-        # convert node references to legal python identifiers
-        # print("Expression.parse: expression={!r}".format(expression))
-        normalized = self._scanner.sub(handler, expression)
-        # print("  normalized: {!r}".format(normalized))
-        # print("  operands:", operands)
-        # raise an exception if there were no symbols
-        if not operands:
-            raise self.EmptyExpressionError(formula=expression)
-        # now, attempt to compile the expression
-        try:
-            program = compile(normalized, filename='expression', mode='eval')
-        except SyntaxError as error:
-            raise self.ExpressionSyntaxError(formula=expression, error=error) from error
-
-        # all is well if we get this far
+            # compile the {value}
+            program, operands = self.node.expression.compile(model=self, expression=value)
+        # if this fails
+        except self.node.EmptyExpressionError:
+            # make a variable instead
+            return self.variable(value=value, **kwds)
+        # otherwise, build an expression
         return self.node.expression(
-            model=self, expression=expression, program=program, operands=operands)
+            model=self, expression=value, program=program, operands=operands, **kwds)
+            
 
-
-    def interpolation(self, expression):
+    def interpolation(self, value, **kwds):
         """
-        Examine the input string {expression} and attempt to convert it into an {Interpolation}
-        node. Resolve all named references to other nodes against my symbol table
+        Build an interpolation node
         """
-        # if {expression} is empty, build a variable to hold the value
-        if not expression: return self.node.variable(value=expression)
-
-        # initialize the offset into the expression
-        pos = 0
-        # storage for the generated nodes
-        nodes = []
-        operands = []
-        # initial portion of the expression
-        fragment = ''
-        # iterate over all the matches
-        for match in self._scanner.finditer(expression):
-            # get the extent of the match
-            start, end = match.span()
-            # save the current string fragment
-            fragment += expression[pos:start]
-            # if this is an escaped '{'
-            if match.group('esc_open'):
-                # add a single '{' to the fragment
-                fragment += '{'
-            # if this is an escaped '}'
-            elif match.group('esc_close'):
-                # add a single '}' to the fragment
-                fragment += '}'
-            # unmatched braces
-            elif match.group("lone_open") or match.group("lone_closed"):
-                raise self.ExpressionSyntaxError(formula=expression, error="unmatched brace")
-            # otherwise
-            else:
-                # it must be an identifier
-                identifier = match.group('identifier')
-                # if the current fragment is not empty, turn it into a variable node
-                if fragment: nodes.append(self.node.variable(value=fragment))
-                # reset the fragment
-                fragment = ''
-                # build a reference
-                reference, _ = self._resolve(identifier)
-                # add it to my operands
-                operands.append(reference)
-                # and to the pile needed to assemble my value
-                nodes.append(reference)
-            # update the location in {expression}
-            pos = end
-        # store the trailing part of the expression
-        fragment += expression[pos:]    
-        # and if it's not empty, turn it into a variable
-        if fragment: nodes.append(self.node.variable(value=fragment))
-        
-        # summarize
-        # print(" ** SymbolTable.interpolation:")
-        # print("    expression:", expression)
-        # print("    nodes:", nodes)
-        # print("    operands:", operands)
-
-        # if we have no operands
-        if not operands:
-            # then it must be true that there is only one node
-            if len(nodes) != 1:
-                # build a description of the problem
-                msg = 'interpolation: {!r}: no operands, but multiple nodes'.format(expression)
-                # complain
-                import journal
-                raise journal.firewall('pyre.algebraic').log(msg)
-            # return it
-            return nodes[0]
-        # otherwise, build a node that assembles the resulting expression
-        node = functools.reduce(operator.add, nodes)
-        # build an interpolation and return it
-        return self.node.interpolation(expression=expression, node=node, operands=operands)
+        # if the value is already a slot
+        if isinstance(value, self.node):
+            # just return it
+            return value
+        # if it is not a string
+        if not isinstance(value, str):
+            # just make a variable
+            return self.variable(value=value, **kwds)
+        # otherwise, attempt to
+        try:
+            # compile the {value}
+            operands = self.node.interpolation.compile(model=self, expression=value)
+        # if this fails
+        except self.node.EmptyExpressionError:
+            # make a variable instead
+            return self.variable(value=value, **kwds)
+        # otherwise, build an interpolation
+        return self.node.interpolation(model=self, expression=value, operands=operands, **kwds)
 
 
-    # meta methods
+    def variable(self, **kwds):
+        """
+        Build a variable
+        """
+        # easy enough
+        return self.node.variable(**kwds)
+
+            
+    def literal(self, **kwds):
+        """
+        Build a literal node
+        """
+        # easy enough
+        return self.node.literal(**kwds)
+
+
+    # interface
+    def retrieve(self, name):
+        """
+        Retrieve the node registered under {name}. If no such node exists, an error marker will
+        be built, stored in the symbol table under {name}, and returned.
+        """
+        # if a node is already registered under {name}
+        try:
+            # grab it
+            node = self._nodes[name]
+        # otherwise
+        except KeyError:
+            # build an error marker
+            node = self.node.unresolved(request=name)
+            # add it to the pile
+            self._nodes[name] = node
+        # and return it
+        return node
+
+
+    # meta-methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-
-        # initialize the node storage
+        # initialize my node map
         self._nodes = {}
         # all done
         return
 
 
-    # subscripted access to the model
+    def __contains__(self, name):
+        """
+        Check whether {name} is present in the symbol table
+        """
+        # check whether it is present in my node index
+        return name in self._nodes
+
+
     def __getitem__(self, name):
         """
-        Resolve {name} into a node and return its value
+        Look up the node registered under {name} and return its value
         """
-        # delegate
-        node,_ = self._resolve(name=name)
-        # compute the value and return it
+        # get the node
+        node = self.retrieve(name)
+        # compute and return its value
         return node.value
 
 
     def __setitem__(self, name, value):
         """
-        Add/update the named node with the given {value}
+        Add or update the named node with the given {value}
         """
-        # build a node from {value}
-        replacement = self._recognize(value)
-        # fetch the node already registered under {name}
-        existing, identifier = self._resolve(name)
+        # convert {value} into an appropriate node
+        new = self.interpolation(value=value)
+        # find the existing node
+        old = self._nodes.get(name)
+        # if it's there
+        if old:
+            # choose the survivor
+            new = self.node.select(model=self, existing=old, replacement=new)
         # update the model
-        self._update(identifier=identifier, existing=existing, replacement=replacement)
+        self._nodes[name] = new
         # and return
         return
 
-
-    def __contains__(self, name):
-        """
-        Check whether {name} is present in the table without modifying the table as a side-effect
-        """
-        # direct look up
-        return name in self._nodes
-
-
-    # implementation details
-    def _recognize(self, value):
-        """
-        Attempt to convert {value} into a node
-        """
-        # N.B.: the logic here is tricky; modify carefully
-        # is value already a node?
-        if isinstance(value, self.node):
-            # return it
-            return value
-        # is it a string?
-        if isinstance(value, str):
-            # attempt to convert it to an expression
-            try:
-                return self.expression(expression=value)
-            # empty expressions are raw data; other errors propagate through
-            except self.EmptyExpressionError:
-                # print(" ** SymbolTable._recognize: empty: {!r}".format(value))
-                # build a node with the string as value
-                return self.node.variable(value=value)
-        # in all other cases, make a node whose value is the raw data
-        # print(" ** SymbolTable._recognize: raw: {!r}".format(value))
-        return self.node.variable(value=value)
-
-
-    def _resolve(self, name):
-        """
-        Find the named node
-        """
-        # attempt
-        try:
-            # to look it up and return it
-            return self._nodes[name], name
-        # if that fails
-        except KeyError:
-            # no worries
-            pass
-        # make an unresolved node
-        unresolved = self._buildPlaceholder(name=name)
-        # add it to the pile
-        self._nodes[name] = unresolved
-        # and return it
-        return unresolved, name
-
-
-    def _buildPlaceholder(self, name, **kwds):
-        """
-        Build a place holder node, typically some type of error node that will raise an
-        exception when its value is requested
-        """
-        # allow the broader interface, but ignore it
-        return self.node.unresolved(request=name)
-
-
- 
-    def _update(self, identifier, existing, replacement):
-        """
-        Update the model by resolving the name conflict among the two nodes, {existing} and
-        {replacement}
-        """
-        # my variable type
-        variable = self.node.variable
-        # if both nodes are variables
-        if isinstance(existing, variable) and isinstance(replacement, variable):
-            # just transfer the value
-            existing.value = replacement.value
-            # and return
-            return self
-        # otherwise, verify that the old node is not in the span of the new node
-        # by iterating over all nodes
-        for node in replacement.span:
-            # if {existing} is a member
-            if node is existing:
-                # report the error
-                raise self.CircularReferenceError(node=existing)
-
-        # if we get this far, just replace the old node
-        self._nodes[identifier] = replacement
-        # and return
-        return
-        
 
     # private data
-    _nodes = None # node storage
-    _scanner = re.compile( # the expression tokenizer
-        r"(?P<esc_open>{{)"
-        r"|"
-        r"(?P<esc_close>}})"
-        r"|"
-        r"{(?P<identifier>[^}{]+)}"
-        r"|"
-        r"(?P<lone_open>{)"
-        r"|"
-        r"(?P<lone_closed>})"
-        )
-    
+    _nodes = None
+
 
 # end of file 

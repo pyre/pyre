@@ -6,15 +6,26 @@
 #
 
 
+# externals
+import re # for the formula compiler
+import weakref # to keep a reference to my model
+import operator # for the computation of my value
+import functools # for the computation of my value
+
+
+# my declaration
 class Interpolation:
     """
     Support for building evaluation graphs involving the values of nodes registered with a
-    {SymbolTable} instance
+    {SymbolTable} instance. {Interpolation} builds its value by splicing together strings.
     """
 
 
     # types
-    from .exceptions import CircularReferenceError, UnresolvedNodeError
+    from .exceptions import (
+        CircularReferenceError,
+        EmptyExpressionError, ExpressionSyntaxError, UnresolvedNodeError,
+        EvaluationError )
 
 
     # public data
@@ -26,20 +37,115 @@ class Interpolation:
         """
         Compute and return my value
         """
-        # easy enough
-        return self.node.getValue()
+        # compute the values of my operands
+        values = (op.value for op in self.operands)
+        # apply my operator
+        return functools.reduce(operator.add, values)
 
 
-    # meta methods
-    def __init__(self, expression, node, **kwds):
+    def setValue(self, value):
+        """
+        Use the new {value} as my formula
+        """
+        # adjust my state
+        self.expression = value
+        self.operands = tuple(self.compile(model=self._model, expression=value))
+        # all done
+        return self
+
+
+    # meta-methods
+    def __init__(self, model, expression, **kwds):
+        # chain up
         super().__init__(**kwds)
-        self.node = node
+        # initialize my local state
         self.expression = expression
+        self._model = weakref.proxy(model)
+        # all done
         return
+
+
+    # implementation details
+    @classmethod
+    def compile(cls, model, expression):
+        """
+        Compile {expression} and build an evaluator that resolves named references to other
+        nodes against {model}.
+        """
+        # if {expression} is empty
+        if not expression: 
+            # complain
+            raise cls.EmptyExpressionError(formula=expression)
+
+        # initialize the offset into the expression
+        pos = 0
+        # storage for my operands
+        operands = []
+        # initial portion of the expression
+        fragment = ''
+        # iterate over all the matches
+        for match in cls._scanner.finditer(expression):
+            # get the extent of the match
+            start, end = match.span()
+            # save the current string fragment
+            fragment += expression[pos:start]
+            # if this is an escaped '{'
+            if match.group('esc_open'):
+                # add a single '{' to the fragment
+                fragment += '{'
+            # if this is an escaped '}'
+            elif match.group('esc_close'):
+                # add a single '}' to the fragment
+                fragment += '}'
+            # unmatched braces
+            elif match.group("lone_open") or match.group("lone_closed"):
+                raise cls.ExpressionSyntaxError(formula=expression, error="unmatched brace")
+            # otherwise
+            else:
+                # it must be an identifier
+                identifier = match.group('identifier')
+                # if the current fragment is not empty, turn it into a variable node
+                if fragment: operands.append(model.literal(value=fragment))
+                # reset the fragment
+                fragment = ''
+                # use the identifier to locate the associated node
+                reference = model.retrieve(identifier)
+                # add it to my operands
+                operands.append(reference)
+            # update the location in {expression}
+            pos = end
+
+        # if there were no matches, the expression had no node evaluations
+        if not operands:
+            # complain
+            raise cls.EmptyExpressionError(formula=expression)
+
+        # store the trailing part of the expression
+        fragment += expression[pos:]    
+        # and if it's not empty, turn it into a variable
+        if fragment: operands.append(model.literal(value=fragment))
+        
+        # summarize
+        # print(" ** SymbolTable.interpolation:")
+        # print("    expression:", expression)
+        # print("    operands:", operands)
+
+        # all done
+        return operands
 
 
     # private data
     node = None # my evaluation node
-
+    _scanner = re.compile( # the expression tokenizer
+        r"(?P<esc_open>{{)"
+        r"|"
+        r"(?P<esc_close>}})"
+        r"|"
+        r"{(?P<identifier>[^}{]+)}"
+        r"|"
+        r"(?P<lone_open>{)"
+        r"|"
+        r"(?P<lone_closed>})"
+        )
 
 # end of file

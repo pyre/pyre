@@ -16,19 +16,23 @@ def test():
     import pyre.algebraic
 
     # build a model
-    model = pyre.algebraic.model(name='interpolation_escaped')
+    model = pyre.algebraic.model()
 
     # escaped macro delimiters
     node = model.interpolation('{{production}}')
-    assert node.value == '{production}'
+    # verify it made a variable
+    assert type(node) is model.node.variable
 
     # and another
     node = model.interpolation('{{{{cost per unit}}}}')
-    assert node.value == '{{cost per unit}}'
+    # verify it made a variable
+    assert type(node) is model.node.variable
 
     # finally
     tricky = model.interpolation('{{{number of items}}}')
-    # check that the escaped delimiters were processed correctly
+    # verify it made a variable
+    assert type(tricky) is model.node.interpolation
+    # with an unresolved node
     try:
         tricky.value
         assert False

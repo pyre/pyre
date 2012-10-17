@@ -119,7 +119,7 @@ class Composite:
         return
 
 
-    # meta methods
+    # meta-methods
     def __init__(self, operands, **kwds):
         super().__init__(**kwds)
         self.operands = operands

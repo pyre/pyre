@@ -16,25 +16,23 @@ def test():
     import pyre.algebraic
 
     # build a model
-    model = pyre.algebraic.model(name="expression_escaped")
+    model = pyre.algebraic.model()
 
     # escaped macro delimiters
-    try:
-        pyre.algebraic.expression(formula=r"{{production}}", model=model)
-        assert False
-    except model.EmptyExpressionError:
-        pass
+    node = model.expression("{{production}}")
+    # it should have made a variable
+    assert type(node) is model.node.variable
 
     # and another
-    try:
-        pyre.algebraic.expression(formula=r"{{{{cost per unit}}}}", model=model)
-        assert False
-    except model.EmptyExpressionError:
-        pass
+    node = model.expression("{{{{cost per unit}}}}")
+    # it should have made a variable
+    assert type(node) is model.node.variable
 
     # finally
-    tricky = pyre.algebraic.expression(formula=r"{{{number of items}}}", model=model)
-    # check that the escaped delimiters were processed correctly
+    tricky = model.expression("{{{number of items}}}")
+    # it should have made an expression
+    assert type(tricky) is model.node.expression
+    # with an unresolved reference
     try:
         tricky.value
         assert False

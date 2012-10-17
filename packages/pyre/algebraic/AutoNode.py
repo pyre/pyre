@@ -24,22 +24,24 @@ from .Expression import Expression
 from .Interpolation import Interpolation
 from .Reference import Reference
 from .Unresolved import Unresolved
+# evaluation strategy
+from .Memo import Memo
+from .Observer import Observer
+from .Observable import Observable
 
 
-# declaration of the base node
-class Node(AbstractNode, Arithmetic, Ordering, Boolean):
-    """
-    The base class for hierarchies that implement the algebraic protocol
-    """
+# the auto node
+class AutoNode(AbstractNode, Arithmetic, Ordering, Boolean):
 
-
-    # types: hooks for implementing the expression graph construction
-    # structural
+    # the mix-ins
     leaf = Leaf
     literal = Literal
     composite = Composite
-    # functional; they will be patched below with my subclasses
     const = Const
+    memo = Memo
+    observer = Observer
+    observable = Observable
+    # the functional; they will be patched below with my subclasses
     variable = None
     operator = None
     expression = None
@@ -49,56 +51,56 @@ class Node(AbstractNode, Arithmetic, Ordering, Boolean):
 
 
 # literals
-class literal(Node.const, Node.literal, Node):
+class literal(AutoNode.const, AutoNode.literal, AutoNode):
     """
     Concrete class for representing foreign values
     """
 
 # variables
-class variable(Variable, Node.leaf, Node):
+class variable(AutoNode.observable, Variable, AutoNode.leaf, AutoNode):
     """
     Concrete class for encapsulating the user accessible nodes
     """
 
 # operators
-class operator(Operator, Node.composite, Node):
+class operator(AutoNode.memo, AutoNode.observer, Operator, AutoNode.composite, AutoNode):
     """
     Concrete class for encapsulating operations among nodes
     """
 
 # expressions
-class expression(Expression, Node.composite, Node):
+class expression(AutoNode.memo, AutoNode.observer, Expression, AutoNode.composite, AutoNode):
     """
     Concrete class for encapsulating macros
     """
 
 # interpolations
-class interpolation(Interpolation, Node.composite, Node):
+class interpolation(AutoNode.memo, AutoNode.observer, Interpolation, AutoNode.composite, AutoNode):
     """
     Concrete class for encapsulating simple string interpolation
     """
 
 # references
-class reference(Reference, Node.composite, Node):
+class reference(AutoNode.memo, AutoNode.observer, Reference, AutoNode.composite, AutoNode):
     """
     Concrete class for encapsulating references to other nodes
     """
 
 # unresolved nodes
-class unresolved(Unresolved, Node.leaf, Node):
+class unresolved(AutoNode.observable, Unresolved, AutoNode.leaf, AutoNode):
     """
     Concrete class for representing unknown nodes
     """
 
 
 # patch base class
-Node.literal = literal
-Node.variable = variable
-Node.operator = operator
-Node.expression = expression
-Node.interpolation = interpolation
-Node.reference = reference
-Node.unresolved = unresolved
+AutoNode.literal = literal
+AutoNode.variable = variable
+AutoNode.operator = operator
+AutoNode.expression = expression
+AutoNode.interpolation = interpolation
+AutoNode.reference = reference
+AutoNode.unresolved = unresolved
 
 
 # end of file 

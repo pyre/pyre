@@ -16,7 +16,7 @@ def test():
     import pyre.algebraic
 
     # set up the model
-    model = pyre.algebraic.model(name="expression")
+    model = pyre.algebraic.model()
 
     # the nodes
     p = 80.
@@ -24,8 +24,8 @@ def test():
     # register the nodes
     model["production"] = p
     model["shipping"] = s
-    model["cost"] = "{production}+{shipping}"
-    model["price"] = "2*{cost}"
+    model["cost"] = model.expression("{production}+{shipping}")
+    model["price"] = model.expression("2*{cost}")
 
     # check the values
     # print("before:")
@@ -37,6 +37,9 @@ def test():
     assert model["shipping"] == s
     assert model["cost"] == p+s
     assert model["price"] == 2*(p+s)
+
+    # thanks to the indirect references to their operands, expressions get updated values when
+    # their dependents change; this is a side effect of the current implementation
 
     # make a change
     p = 100.

@@ -16,23 +16,22 @@ def test():
     import pyre.algebraic
 
     # a model
-    model = pyre.algebraic.model(name="circular")
+    model = pyre.algebraic.model()
 
     # self reference
-
     try:
-        model["cost"] = "{cost}"
+        model["cost"] = model.expression("{cost}")
         assert False
     except model.CircularReferenceError:
         pass
 
     # another model
-    model = pyre.algebraic.model(name="circular")
+    model = pyre.algebraic.model()
     # now validate the graph, expecting the circular reference to raise an exception
     try:
         # a cycle
-        model["cost"] = "{price}"
-        model["price"] = "{cost}"
+        model["cost"] = model.expression("{price}")
+        model["price"] = model.expression("{cost}")
         assert False
     except model.CircularReferenceError:
         pass

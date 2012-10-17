@@ -14,10 +14,10 @@ expression graph using instances of the classes in this package as nodes. Reques
 of some node in the graph triggers the actual evaluation.
 
 There are multiple layers of building blocks provided in this package. The fundamental layer is
-formed by the three classes {Number}, {Ordering} and {Boolean}. The provide overloaded version
-of the various python operators that can be used to form expressions. Their implementations do
-not carry out any evaluations; instead, they access the interface provided by their operands to
-construct the expression graph.
+formed by the three classes {Arithmetic}, {Ordering} and {Boolean}. The provide overloaded
+version of the various python operators that can be used to form expressions. Their
+implementations do not carry out any evaluations; instead, they access the interface provided
+by their operands to construct the expression graph.
 
 The base layer is formed by the base class of the expression graph nodes. This class is
 responsible for assembling all the parts necessary to build functioning expression graphs. The
@@ -49,51 +49,51 @@ for an example of how the simple concrete nodes in this package are assembled
 # access to the building blocks in this package
 from .AbstractNode import AbstractNode
 from .Memo import Memo
-from .Cast import Cast
+from .Converter import Converter
+from .Observer import Observer
+from .Observable import Observable
 # access to the node algebra mix-ins
-from .Number import Number
+from .Arithmetic import Arithmetic
 from .Ordering import Ordering
 from .Boolean import Boolean
 # access to the structural mix-ins
-from .Leaf import Leaf
 from .Composite import Composite
-# access to the functional mix-ins
+from .Leaf import Leaf
 from .Literal import Literal
+# access to the functional mix-ins
+from .Const import Const
 from .Variable import Variable
 from .Operator import Operator
 from .Expression import Expression
+from .Interpolation import Interpolation
 from .Reference import Reference
 from .Unresolved import Unresolved
 
+# access to the model factories
+from .SymbolTable import SymbolTable as model
+from .Hierarchical import Hierarchical as hierarchicalModel
 
-# the base class of the simple concrete nodes in this package
+# the base classes of the concrete nodes in this package
 from .Node import Node
-# grant users access to the factory of the sample concrete nodes
+from .AutoNode import AutoNode
+
+# grant users access to the factory of the default concrete nodes
 var = Node.variable
 
 
 # expression nodes
-def expression(*, formula, model):
+def expression(model, **kwds):
     """
-    Build a new node that evaluates a {formula} that involves nodes in the {model}
+    Build a new node that evaluates a formula that involves nodes in the {model}
     """
-    return model.expression(formula)
+    return model.expression(**kwds)
 
 
-def interpolation(*, text, model):
+def interpolation(model, **kwds):
     """
     Build a new node that builds a string out of the values of other nodes in the {model}
     """
-    return model.interpolation(text)
-
-
-# access to the model factory
-from .SymbolTable import SymbolTable as model
-from .Hierarchical import Hierarchical as hierarchicalModel
-
-
-# clean up
-del Node
+    return model.interpolation(**kwds)
 
 
 # end of file 

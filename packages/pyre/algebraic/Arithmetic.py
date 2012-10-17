@@ -11,17 +11,17 @@ import operator
 
 
 # declaration
-class Number:
+class Arithmetic:
     """
     This is a mix-in class that traps the arithmetic operators relevant for numeric types
 
-    The point is to redirect arithmetic among instances of subclasses of {Number} to methods
-    defined in these subclasses. These methods then build and return representations of the
-    corresponding operators and their operands.
+    The point is to redirect arithmetic among instances of subclasses of {Arithmetic} to
+    methods defined in these subclasses. These methods then build and return representations of
+    the corresponding operators and their operands.
 
-    {Number} expects its subclasses to define two class methods: {literal} and {operator}. The
-    former is used to encapsulate operands that are not {Number} instances. The latter is used
-    to construct the operator representations
+    {Arithmetic} expects its subclasses to define two class methods: {literal} and
+    {operator}. The former is used to encapsulate operands that are not {Arithmetic}
+    instances. The latter is used to construct the operator representations
     """
 
 
@@ -29,7 +29,7 @@ class Number:
     # methods are listed in the order they show up in the python documentation
     def __add__(self, other):
         # if {other} is not a node
-        if not isinstance(other, Number):
+        if not isinstance(other, Arithmetic):
             # promote it
             other = self.literal(value=other)
         # build an addition representation
@@ -38,7 +38,7 @@ class Number:
     
     def __sub__(self, other):
         # if {other} is not a node
-        if not isinstance(other, Number):
+        if not isinstance(other, Arithmetic):
             # promote it
             other = self.literal(value=other)
         # build a subtraction representation
@@ -47,7 +47,7 @@ class Number:
     
     def __mul__(self, other):
         # if {other} is not a node
-        if not isinstance(other, Number):
+        if not isinstance(other, Arithmetic):
             # promote it
             other = self.literal(value=other)
         # build a representation for multiplication
@@ -56,7 +56,7 @@ class Number:
     
     def __truediv__(self, other):
         # if {other} is not a node
-        if not isinstance(other, Number):
+        if not isinstance(other, Arithmetic):
             # promote it
             other = self.literal(value=other)
         # build a representation of division
@@ -65,7 +65,7 @@ class Number:
     
     def __floordiv__(self, other):
         # if {other} is not a node
-        if not isinstance(other, Number):
+        if not isinstance(other, Arithmetic):
             # promote it
             other = self.literal(value=other)
         # build a representation of floor-division 
@@ -74,7 +74,7 @@ class Number:
 
     def __mod__(self, other):
         # if {other} is not a node
-        if not isinstance(other, Number):
+        if not isinstance(other, Arithmetic):
             # promote it
             other = self.literal(value=other)
         # build a modulus representation
@@ -83,7 +83,7 @@ class Number:
 
     def __pow__(self, other):
         # if {other} is not a node
-        if not isinstance(other, Number):
+        if not isinstance(other, Arithmetic):
             # promote it
             other = self.literal(value=other)
         # build a representation of exponentiation

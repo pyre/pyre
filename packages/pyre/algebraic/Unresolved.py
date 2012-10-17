@@ -17,7 +17,7 @@ class Unresolved:
 
 
     # public data
-    name = None # the unresolved name
+    request = None # the unresolved name
 
 
     @property
@@ -35,8 +35,14 @@ class Unresolved:
         return
 
 
-    # private data
-    _value = None # the cache is permanently dirty
+    def __str__(self):
+        return self.request
 
+
+    # debugging support
+    def dump(self, name, indent):
+        print('{}{}: <unresolved>'.format(indent, name))
+        return self
+        
 
 # end of file 

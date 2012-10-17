@@ -14,14 +14,14 @@ class Leaf:
 
 
     # public data
-    operators = [] # leaves have no dependencies
     operands = () # leaves have no operands
+    operators = () # leaves have no dependencies
 
 
     @property
     def span(self):
         """
-        Traverse my graph and yield all nodes in the graph
+        Traverse my subgraph and yield all its nodes
         """
         # just myself
         yield self
@@ -32,7 +32,7 @@ class Leaf:
     @property
     def variables(self):
         """
-        Traverse my expression graph and return an iterable with all the variables in my graph
+        Traverse my subgraph and return an iterable with all the variables in my graph
 
         Variables are reported as many times as they show up in my graph. Clients that are
         looking for the set unique dependencies have to prune the results themselves.
@@ -40,23 +40,6 @@ class Leaf:
         # just myself
         yield self
         # and no one else
-        return
-
-
-    # interface
-    def substitute(self, current, replacement):
-        """
-        Traverse my expression graph and replace all occurrences of node {current} with
-        {replacement}
-        """
-        # nothing to do
-        return
-
-
-    # meta methods
-    def __init__(self, operands=(), **kwds):
-        # swallow {operands} since leaves don't have any
-        super().__init__(**kwds)
         return
 
 

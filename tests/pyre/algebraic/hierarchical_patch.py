@@ -16,12 +16,12 @@ def test():
     import pyre.algebraic
 
     # create a model
-    model = pyre.algebraic.hierarchicalModel(name="sample")
+    model = pyre.algebraic.hierarchicalModel()
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
     model["user.email"] = "aivazis@caltech.edu"
-    model["user.signature"] = "{user.name}+' -- '+{user.email}"
+    model["user.signature"] = model.expression("{user.name}+' -- '+{user.email}")
 
     # check the signature
     assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"

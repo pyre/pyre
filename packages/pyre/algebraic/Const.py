@@ -6,32 +6,30 @@
 #
 
 
-class Variable:
+class Const:
     """
-    Mix-in class to encapsulate nodes that can hold a value.
+    Mix-in class that serves a read-only value that must be set during construction
     """
-
 
     # interface
     def getValue(self):
         """
         Return my value
         """
+        # easy enough
         return self._value
 
 
     def setValue(self, value):
         """
-        Set my value
+        Disable value setting
         """
-        # store the value
-        self._value = value
-        # all done
-        return self
+        # disabled
+        raise NotImplementedError("const nodes do not support 'setValue'")
 
 
-    # meta methods
-    def __init__(self, value=None, **kwds):
+    # meta-methods
+    def __init__(self, value, **kwds):
         super().__init__(**kwds)
         self._value = value
         return

@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: instantiate a hierarchical model
+Verify that __contains__ is implemented correctly
 """
 
 
@@ -18,13 +18,19 @@ def test():
     # create a model
     model = pyre.algebraic.hierarchicalModel()
 
-    # register the nodes
-    model["user.name"] = "Michael Aïvázis"
-    model["user.email"] = "aivazis@caltech.edu"
-    model["user.signature"] = model.interpolation("{user.name} -- {user.email}")
-    # check the signature
-    assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
+    # the name of the test node
+    name = "user.name"
+    # register it
+    model[name] = "Michael Aïvázis"
 
+    # is the node accessible as a string?
+    assert name in model
+    # split it and check whether it is accessible as a tuple
+    assert tuple(model.split(name)) in model
+    # hash it and check whether it is accessible as a key
+    assert model.hash(name) in model
+    
+    # all done
     return
 
 
