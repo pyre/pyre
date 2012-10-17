@@ -40,13 +40,13 @@ can refer to the values of other traits in the configuration files.
 
 # factories
 # model
-def model(*, name, **kwds):
+def model(**kwds):
     """
     Build a node container that specializes in names that have encoded hierarchical levels,
     such as file paths or namespaces
     """
     from .HierarchicalModel import HierarchicalModel
-    return HierarchicalModel(name=name, **kwds)
+    return HierarchicalModel(**kwds)
 
 
 # nodes
@@ -66,7 +66,7 @@ def expression(*, formula, model):
     resolved in the symbol table {model}.
     """
     # build the node and return it
-    return model.parse(expression=formula)
+    return model.expression(expression=formula)
 
 
 def average(*operands):
@@ -138,9 +138,11 @@ _metaclass_Node = type
 
 def debug():
     """
-    Attach {ExtentAware} as the metaclass of {Node} so we can verify that all instances of
-    this class are properly garbage collected
+    Support for debugging the calc package
     """
+    # print(" ++ debugging 'pyre.calc'")
+    # Attach {ExtentAware} as the metaclass of {Node} so we can verify that all instances of
+    # this class are properly garbage collected
     from ..patterns.ExtentAware import ExtentAware
     global _metaclass_Node
     _metaclass_Node = ExtentAware

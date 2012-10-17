@@ -33,7 +33,7 @@ evaluators:
 
 structural:
 	${PYTHON} ./substitute.py
-	${PYTHON} ./subsume.py
+	${PYTHON} ./replace.py
 	${PYTHON} ./patch.py
 
 model:

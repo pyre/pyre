@@ -16,7 +16,7 @@ def test():
     import pyre.calc
 
     # build the model
-    model = pyre.calc.model(name="sample")
+    model = pyre.calc.model()
 
     # make a couple
     p = 80
@@ -27,11 +27,11 @@ def test():
     model["production"] = production
     model["shipping"] = shipping
     model["cost"] = production + shipping
-    model["margin"] = ".25*{cost}"
-    model["overhead"] = ".45*{cost}"
-    model["price"] = "{cost}+{margin}+{overhead}"
+    model["margin"] = model.expression(".25*{cost}")
+    model["overhead"] = model.expression(".45*{cost}")
+    model["price"] = model.expression("{cost}+{margin}+{overhead}")
     model["discount"] = .2
-    model["total"] = "{price}*(1.0 - {discount})"
+    model["total"] = model.expression("{price}*(1.0 - {discount})")
 
     # check
     assert model["production"] == 80

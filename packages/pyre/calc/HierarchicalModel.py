@@ -6,11 +6,7 @@
 #
 
 
-# packages
-import re
-import itertools
-import pyre.patterns
-# super-class
+# superclass
 from ..algebraic.Hierarchical import Hierarchical as Model
 
 

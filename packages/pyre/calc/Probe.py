@@ -12,14 +12,15 @@ class Probe:
     """
 
 
-    def flush(self, node):
+    def flush(self, observable):
         """
         The callback that gets invoked when one of the monitored nodes receives a new value
         """
         # if i am not supposed to stay quiet
         if not self._isSilent:
             # print the value of the node
-            print("probe@{:#x}: node@{:#x}: value={}".format(id(self), id(node), node.value))
+            print("probe@{:#x}: node@{:#x}: value={}".format(
+                    id(self), id(observable), observable.value))
         # and return
         return
 

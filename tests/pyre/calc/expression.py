@@ -16,7 +16,7 @@ def test():
     import pyre.calc
 
     # set up the model
-    model = pyre.calc.model(name="expression")
+    model = pyre.calc.model()
 
     # the nodes
     p = 80.
@@ -24,8 +24,8 @@ def test():
     # register the nodes
     model["production"] = p
     model["shipping"] = s
-    model["cost"] = "{production}+{shipping}"
-    model["price"] = "2*{cost}"
+    model["cost"] = model.expression("{production}+{shipping}")
+    model["price"] = model.expression("2*{cost}")
 
     # check the values
     # print("before:")

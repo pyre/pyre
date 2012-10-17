@@ -5,25 +5,9 @@
 # (c) 1998-2012 all rights reserved
 #
 
-# my metaclass: defined in the package initialization file
-from . import _metaclass_Node
 
-# my base class
-from ..algebraic.AbstractNode import AbstractNode
-# access to the node algebra mix-ins
-from ..algebraic.Number import Number
-# access to the structural mix-ins
-from ..algebraic.Leaf import Leaf
-from ..algebraic.Composite import Composite
-# access to the functional mix-ins
-from ..algebraic.Literal import Literal
-from ..algebraic.Variable import Variable
-from ..algebraic.Operator import Operator
-from ..algebraic.Expression import Expression
-from ..algebraic.Reference import Reference
-from ..algebraic.Unresolved import Unresolved
-# evaluation strategies
-from ..algebraic.Memo import Memo
+# externals
+import pyre.algebraic
 # local operators
 from .Average import Average
 from .Count import Count
@@ -32,9 +16,12 @@ from .Minimum import Minimum
 from .Product import Product
 from .Sum import Sum
 
+# my metaclass: defined in the package initialization file
+from . import _metaclass_Node
+
 
 # declaration of the base node
-class Node(AbstractNode, Memo, Number, metaclass=_metaclass_Node):
+class Node(pyre.algebraic.AbstractNode, pyre.algebraic.Arithmetic, metaclass=_metaclass_Node):
     """
     The base class for lazily evaluated nodes. It employs the memoized evaluation strategy so
     that nodes have their values recomputed on demand.
@@ -42,81 +29,92 @@ class Node(AbstractNode, Memo, Number, metaclass=_metaclass_Node):
 
 
     # types: hooks for implementing the expression graph construction
-    # structural
-    leaf = Leaf
-    composite = Composite
-    # functional; they will be patched below with my subclasses
-    literal = None
+    # the mix-ins
+    leaf = pyre.algebraic.Leaf
+    literal = pyre.algebraic.Literal
+    composite = pyre.algebraic.Composite
+    const = pyre.algebraic.Const
+    memo = pyre.algebraic.Memo
+    observer = pyre.algebraic.Observer
+    observable = pyre.algebraic.Observable
+    # the functional; they will be patched below with my subclasses
     variable = None
     operator = None
     expression = None
+    interpolation = None
     reference = None
     unresolved = None
 
 
 # literals
-class literal(Node, Literal, Node.leaf):
+class literal(Node.const, Node.literal, Node):
     """
     Concrete class for representing foreign values
     """
 
 # variables
-class variable(Node, Variable, Node.leaf):
+class variable(Node.observable, pyre.algebraic.Variable, Node.leaf, Node):
     """
     Concrete class for encapsulating the user accessible nodes
     """
 
 # operators
-class operator(Node, Operator, Node.composite):
+class operator(Node.memo, Node.observer, pyre.algebraic.Operator, Node.composite, Node):
     """
     Concrete class for encapsulating operations among nodes
     """
 
 # expressions
-class expression(Node, Expression, Node.composite):
+class expression(Node.memo, Node.observer, pyre.algebraic.Expression, Node.composite, Node):
     """
     Concrete class for encapsulating macros
     """
 
+# interpolations
+class interpolation(Node.memo, Node.observer, pyre.algebraic.Interpolation, Node.composite, Node):
+    """
+    Concrete class for encapsulating simple string interpolation
+    """
+
 # references
-class reference(Node, Reference, Node.composite):
+class reference(Node.observer, pyre.algebraic.Reference, Node.composite, Node):
     """
     Concrete class for encapsulating references to other nodes
     """
 
 # unresolved nodes
-class unresolved(Node, Unresolved, Node.leaf):
+class unresolved(Node.observable, pyre.algebraic.Unresolved, Node.leaf, Node):
     """
     Concrete class for representing unknown nodes
     """
 
 # local operators
-class average(Node, Average, Node.composite):
+class average(Node.memo, Node.observer, Average, Node.composite, Node):
     """
     Concrete class for representing the average value of a set of nodes
     """
 
-class count(Node, Count, Node.composite):
+class count(Node.memo, Node.observer, Count, Node.composite, Node):
     """
     Concrete class for representing the count of a set of nodes
     """
 
-class max(Node, Maximum, Node.composite):
+class max(Node.memo, Node.observer, Maximum, Node.composite, Node):
     """
     Concrete class for representing the maximum value of a set of nodes
     """
 
-class min(Node, Minimum, Node.composite):
+class min(Node.memo, Node.observer, Minimum, Node.composite, Node):
     """
     Concrete class for representing the minimum value of a set of nodes
     """
 
-class product(Node, Product, Node.composite):
+class product(Node.memo, Node.observer, Product, Node.composite, Node):
     """
     Concrete class for representing the product of nodes
     """
 
-class sum(Node, Sum, Node.composite):
+class sum(Node.memo, Node.observer, Sum, Node.composite, Node):
     """
     Concrete class for representing the sum of nodes
     """

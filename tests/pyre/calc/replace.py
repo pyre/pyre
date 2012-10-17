@@ -8,7 +8,7 @@
 
 
 """
-Verify that {subsume} respects the expression graph invariants
+Verify that {replace} respects the expression graph invariants
 """
 
 
@@ -38,8 +38,8 @@ def test():
     # and no observers
     assert len(s.observers) == 0
     
-    # let n3 subsume n1
-    n3.subsume(n1)
+    # let n3 replace n1
+    n3.replace(n1)
     # we expect:
     # n1 to have no observers
     assert len(n1.observers) == 0
