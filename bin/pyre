@@ -23,6 +23,7 @@ else:
     import rlcompleter
     # check which interface is available and do the right thing
     if 'libedit' in readline.__doc__:
+        readline.parse_and_bind("bind -v")
         readline.parse_and_bind("bind ^I rl_complete")
     else:
         readline.parse_and_bind("tab: complete")
@@ -38,7 +39,13 @@ else:
     import atexit
     atexit.register(readline.write_history_file, history)
 
+# import the sys package
+import sys
+# add the current directory to the path
+sys.path = [''] + sys.path
 
+# turn on debugging in packages that support it
+# pyre_debug = { "pyre.framework", "pyre.filesystem", "pyre.calc" }
 # framework access
 import pyre
 
