@@ -20,7 +20,7 @@ class Boolean(Field):
     Representation for booleans
     """
 
-    type = schema.bool
+    schema = schema.bool
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -43,7 +43,7 @@ class Date(Field):
     Representation for dates
     """
 
-    type = schema.date
+    schema = schema.date
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -60,7 +60,7 @@ class Decimal(Field):
     Representation of fixed precision numbers
     """
 
-    type = schema.decimal
+    schema = schema.decimal
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -83,7 +83,7 @@ class Float(Field):
     Representation of floating point numbers
     """
 
-    type = schema.float
+    schema = schema.float
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -104,7 +104,7 @@ class Integer(Field):
     Representation for integers
     """
 
-    type = schema.int
+    schema = schema.int
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -174,7 +174,7 @@ class Reference(Field):
         # store my referent
         self.referent = field
         # and my type
-        self.type = field.type
+        self.schema = field.schema
 
         # all done
         return
@@ -186,7 +186,7 @@ class String(Field):
     Representation for arbitrary length strings
     """
 
-    type = schema.str
+    schema = schema.str
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -216,7 +216,7 @@ class Time(Field):
     Representation for time stamps
     """
 
-    type = schema.time
+    schema = schema.time
 
     def rep(self, value):
         """SQL compliant rendering of my value"""

@@ -6,15 +6,12 @@
 #
 
 
-from ..algebraic import (
-    AbstractNode, Number, Ordering, Boolean,
-    Leaf, Composite,
-    Literal, Variable, Operator
-)
+# externals
+from .. import algebraic
 
 
 # class declaration
-class Entry(AbstractNode, Number, Ordering, Boolean):
+class Entry(algebraic.AbstractNode, algebraic.Arithmetic, algebraic.Ordering, algebraic.Boolean):
     """
     Base class for representing table fields and their algebra
     """
@@ -22,8 +19,8 @@ class Entry(AbstractNode, Number, Ordering, Boolean):
 
     # types
     # structural
-    leaf = Leaf
-    composite = Composite
+    leaf = algebraic.Leaf
+    composite = algebraic.Composite
     # functional; they will patched below with my subclasses
     literal = None
     variable = None
@@ -31,21 +28,21 @@ class Entry(AbstractNode, Number, Ordering, Boolean):
 
 
 # literals
-class literal(Entry, Literal, Entry.leaf):
+class literal(algebraic.Const, algebraic.Literal, Entry):
     """
     Concrete class for representing foreign values
     """
 
 
 # fields
-class variable(Entry, Variable, Entry.leaf):
+class variable(algebraic.Variable, Entry.leaf, Entry):
     """
     Concrete class for representing fields and their references
     """
 
 
 # algebraic operations
-class operator(Entry, Operator, Entry.composite):
+class operator(algebraic.Operator, Entry.composite, Entry):
     """
     Concrete class for representing operations among fields and their references
     """

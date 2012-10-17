@@ -6,11 +6,14 @@
 #
 
 
+# externals
+from .. import traits
+# superclass
 from .Entry import Entry
-from .. import schema
 
 
-class Field(schema.descriptor, Entry.variable):
+# declaration
+class Field(traits.descriptor, Entry.variable):
     """
     The base class for database table descriptors
 
@@ -111,7 +114,6 @@ class Field(schema.descriptor, Entry.variable):
             return self.FieldReference(table=cls, field=self)
         # otherwise, look my value up in the instance cache
         return instance._pyre_data[self]
-
 
 
     # private data

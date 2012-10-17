@@ -26,12 +26,12 @@ class FieldReference(Entry.variable):
 
 
     @property
-    def type(self):
+    def schema(self):
         """
         Return the type of the field i refer to
         """
         # my referent knows...
-        return self.field.type
+        return self.field.schema
 
 
     # interface

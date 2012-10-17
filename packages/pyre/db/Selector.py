@@ -93,7 +93,7 @@ class Selector(AttributeClassifier):
                 tables.add(entry.table)
 
             # figure out the type of the entry so we can cast it properly
-            types = { variable.type for variable in entry.variables }
+            types = { variable.schema for variable in entry.variables }
             # if there is only one type
             if len(types) == 1:
                 # get it
@@ -106,7 +106,7 @@ class Selector(AttributeClassifier):
             # make a record field descriptor
             descriptor = cls.pyre_RecordDescriptor()
             # attach its type
-            descriptor.type = converter
+            descriptor.schema = converter
             # and add it to the pile
             descriptors[name] = descriptor
 

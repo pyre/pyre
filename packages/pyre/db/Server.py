@@ -31,7 +31,7 @@ class Server(pyre.component, implements=datastore):
 
 
     # traits
-    sql = pyre.facility(interface=pyre.weaver.language, default=sql)
+    sql = pyre.weaver.language(default=sql)
     sql.doc = "the generator of the SQL statements"
 
 
