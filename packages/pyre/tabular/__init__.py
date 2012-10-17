@@ -28,7 +28,7 @@ def dimensional(default=0, **kwds):
     Legal assignments are constrained to have units compatible with the default value
     """
     m = measure(**kwds)
-    m.type = schema.dimensional
+    m.schema = schema.dimensional
     m.default = default
     return m
 
@@ -38,7 +38,7 @@ def float(default=0, **kwds):
     Build a float measure
     """
     m = measure(**kwds)
-    m.type = schema.float
+    m.schema = schema.float
     m.default = default
     return m
 
@@ -48,7 +48,7 @@ def int(default=0, **kwds):
     Build an integer measure
     """
     m = measure(**kwds)
-    m.type = schema.int
+    m.schema = schema.int
     m.default = default
     return m
 
@@ -58,7 +58,7 @@ def str(default="", **kwds):
     Build a string measure
     """
     m = measure(**kwds)
-    m.type = schema.str
+    m.schema = schema.str
     m.default = default
     return m
 

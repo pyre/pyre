@@ -11,6 +11,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working:
+	${PYTHON} ./csv_read.py
+
 all: test
 
 test: sanity sheets csv views charts pivots
