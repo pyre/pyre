@@ -17,9 +17,9 @@ def test():
     import pyre.config
     from pyre.config.events import Assignment, ConditionalAssignment
     # get the codec manager
-    m = pyre.config.newCodecManager()
+    m = pyre.config.newConfigurator()
     # ask for a pml codec
-    reader = m.newCodec(encoding="pml")
+    reader = m.codec(encoding="pml")
     # the configuration file
     uri = "sample.pml"
     # open a stream

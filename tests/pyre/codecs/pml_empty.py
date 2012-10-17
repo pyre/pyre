@@ -16,9 +16,9 @@ def test():
     # package access
     import pyre.config
     # get the codec manager
-    m = pyre.config.newCodecManager()
+    m = pyre.config.newConfigurator()
     # ask for a pml codec
-    reader = m.newCodec(encoding="pml")
+    reader = m.codec(encoding="pml")
     # the configuration file
     uri = "sample-empty.pml"
     # open a stream

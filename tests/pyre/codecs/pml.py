@@ -16,9 +16,9 @@ def test():
     import pyre.config
 
     # get the codec manager
-    m = pyre.config.newCodecManager()
+    m = pyre.config.newConfigurator()
     # ask for a pml codec
-    reader = m.newCodec(encoding="pml")
+    reader = m.codec(encoding="pml")
     # and return the manager and the reader
     return m, reader
 
