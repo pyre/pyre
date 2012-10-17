@@ -18,7 +18,7 @@ class Array(Type):
 
     # interface
     @classmethod
-    def pyre_cast(cls, value, **kwds):
+    def coerce(cls, value, **kwds):
         """
         Convert {value} into a tuple
         """

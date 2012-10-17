@@ -16,30 +16,30 @@ def test():
     import pyre.schema
 
     # create a descriptor
-    descriptor = pyre.schema.tuple
+    descriptor = pyre.schema.tuple(schema=pyre.schema.str)
 
     # casts
     # successful
-    assert () == descriptor.pyre_cast(())
-    assert () == descriptor.pyre_cast([])
-    assert () == descriptor.pyre_cast("()")
-    assert () == descriptor.pyre_cast("[]")
+    assert () == descriptor.coerce(())
+    assert () == descriptor.coerce([])
+    assert () == descriptor.coerce("()")
+    assert () == descriptor.coerce("[]")
 
-    assert ("one",) == descriptor.pyre_cast(("one",))
-    assert ("one",) == descriptor.pyre_cast(["one"])
-    assert ("one",) == descriptor.pyre_cast("[one]")
-    assert ("one",) == descriptor.pyre_cast("(one)")
+    assert ("one",) == descriptor.coerce(("one",))
+    assert ("one",) == descriptor.coerce(["one"])
+    assert ("one",) == descriptor.coerce("[one]")
+    assert ("one",) == descriptor.coerce("(one)")
 
-    assert ("one", "two") == descriptor.pyre_cast(("one", "two"))
-    assert ("one", "two") == descriptor.pyre_cast(["one", "two"])
-    assert ("one", "two") == descriptor.pyre_cast("(one,two)")
-    assert ("one", "two") == descriptor.pyre_cast("[one,two]")
-    assert ("one", "two") == descriptor.pyre_cast("(one, two)")
-    assert ("one", "two") == descriptor.pyre_cast("[one, two]")
+    assert ("one", "two") == descriptor.coerce(("one", "two"))
+    assert ("one", "two") == descriptor.coerce(["one", "two"])
+    assert ("one", "two") == descriptor.coerce("(one,two)")
+    assert ("one", "two") == descriptor.coerce("[one,two]")
+    assert ("one", "two") == descriptor.coerce("(one, two)")
+    assert ("one", "two") == descriptor.coerce("[one, two]")
 
     # failures
     try:
-        descriptor.pyre_cast(test)
+        descriptor.coerce(test)
         assert False
     except descriptor.CastingError as error:
         pass

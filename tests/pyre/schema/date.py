@@ -20,7 +20,7 @@ def test():
 
     # casts are not implemented yet
     try:
-        descriptor.pyre_cast(None)
+        descriptor.coerce(None)
     except NotImplementedError:
         pass
 

@@ -17,7 +17,7 @@ class Object(Type):
 
     # interface
     @classmethod
-    def pyre_cast(cls, value, **kwds):
+    def coerce(cls, value, **kwds):
         """
         Convert the given value into a python native object
         """

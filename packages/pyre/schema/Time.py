@@ -17,7 +17,7 @@ class Time(Type):
 
     # interface
     @classmethod
-    def pyre_cast(cls, value, **kwds):
+    def coerce(cls, value, **kwds):
         """
         Attempt to convert {value} into a timestamp
         """

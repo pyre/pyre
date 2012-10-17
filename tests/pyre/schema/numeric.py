@@ -20,7 +20,7 @@ def test():
     descriptor = pyre.schema.decimal
 
     # check
-    assert descriptor.pyre_cast("1.20") == decimal.Decimal("1.20")
+    assert descriptor.coerce("1.20") == decimal.Decimal("1.20")
 
     return
 

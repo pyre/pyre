@@ -6,24 +6,35 @@
 #
 
 
+# declaration
 class Type:
     """
     The base class for type declarators
     """
 
 
+    # exception
+    from .exceptions import CastingError
+
+
     # interface
     @classmethod
-    def pyre_cast(cls, *args, **kwds):
+    def coerce(cls, *args, **kwds):
         """
         Convert the given value into the native type i represent
         """
         raise NotImplementedError(
             "class {.__name__!r} must implement 'cast'".format(cls))
+
+
+    # support for building nodes
+    @classmethod
+    def macro(cls, model):
+        """
+        Return my preferred macro factory
+        """
+        # by default, we build expressions
+        return model.expression
     
-
-    # exception
-    from .exceptions import CastingError
-
 
 # end of file 

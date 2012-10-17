@@ -21,7 +21,7 @@ sanity:
 	${PYTHON} ./exceptions.py
 
 types:
-	${PYTHON} ./arry.py
+	${PYTHON} ./array.py
 	${PYTHON} ./boolean.py
 	${PYTHON} ./date.py
 	${PYTHON} ./dimensional.py
@@ -29,9 +29,11 @@ types:
 	${PYTHON} ./float.py
 	${PYTHON} ./inet.py
 	${PYTHON} ./int.py
+	${PYTHON} ./list.py
 	${PYTHON} ./numeric.py
 	${PYTHON} ./str.py
 	${PYTHON} ./tuple.py
+	${PYTHON} ./uri.py
 
 
 # end of file 

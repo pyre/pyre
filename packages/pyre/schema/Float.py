@@ -17,7 +17,7 @@ class Float(Type):
 
     # interface
     @classmethod
-    def pyre_cast(cls, value, **kwds):
+    def coerce(cls, value, **kwds):
         """
         Attempt to convert {value} into a float
         """
@@ -27,9 +27,7 @@ class Float(Type):
         # attempt to cast {value} into a float
         try:
             return float(value)
-        except TypeError as error:
-            raise cls.CastingError(value=value, description=str(error)) from error
-        except ValueError as error:
+        except (TypeError, ValueError) as error:
             raise cls.CastingError(value=value, description=str(error)) from error
 
 

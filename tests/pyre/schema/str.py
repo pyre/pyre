@@ -19,7 +19,7 @@ def test():
     descriptor = pyre.schema.str
 
     # casts
-    assert "hello" == descriptor.pyre_cast("hello")
+    assert "hello" == descriptor.coerce("hello")
 
     return
 

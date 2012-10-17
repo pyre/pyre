@@ -10,21 +10,20 @@
 from .Container import Container
 
 
-# declaration
-class Tuple(Container):
+class List(Container):
     """
-    The tuple type declarator
+    The list type declarator
     """
 
 
     # interface
     def coerce(cls, value, **kwds):
         """
-        Convert {value} into a tuple
+        Convert {value} into a list
         """
         # easy enough; resist the temptation to optimize this by skipping the call to super: we
         # have to coerce every item in the container!
-        return tuple(super().coerce(value, **kwds))
+        return list(super().coerce(value, **kwds))
 
 
 # end of file 

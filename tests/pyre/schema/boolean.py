@@ -20,27 +20,27 @@ def test():
 
     # casts
     # successful
-    assert True == descriptor.pyre_cast(True)
-    assert True == descriptor.pyre_cast("y")
-    assert True == descriptor.pyre_cast("on")
-    assert True == descriptor.pyre_cast("ON")
-    assert True == descriptor.pyre_cast("yes")
-    assert True == descriptor.pyre_cast("YES")
-    assert True == descriptor.pyre_cast("true")
-    assert True == descriptor.pyre_cast("TRUE")
+    assert True == descriptor.coerce(True)
+    assert True == descriptor.coerce("y")
+    assert True == descriptor.coerce("on")
+    assert True == descriptor.coerce("ON")
+    assert True == descriptor.coerce("yes")
+    assert True == descriptor.coerce("YES")
+    assert True == descriptor.coerce("true")
+    assert True == descriptor.coerce("TRUE")
 
-    assert False == descriptor.pyre_cast(False)
-    assert False == descriptor.pyre_cast("n")
-    assert False == descriptor.pyre_cast("off")
-    assert False == descriptor.pyre_cast("OFF")
-    assert False == descriptor.pyre_cast("no")
-    assert False == descriptor.pyre_cast("NO")
-    assert False == descriptor.pyre_cast("false")
-    assert False == descriptor.pyre_cast("FALSE")
+    assert False == descriptor.coerce(False)
+    assert False == descriptor.coerce("n")
+    assert False == descriptor.coerce("off")
+    assert False == descriptor.coerce("OFF")
+    assert False == descriptor.coerce("no")
+    assert False == descriptor.coerce("NO")
+    assert False == descriptor.coerce("false")
+    assert False == descriptor.coerce("FALSE")
 
     # failures
     try:
-        descriptor.pyre_cast(test)
+        descriptor.coerce(test)
         assert False
     except descriptor.CastingError as error:
         assert str(error) == "could not cast to bool"

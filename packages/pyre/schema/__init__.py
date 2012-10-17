@@ -15,14 +15,12 @@ from .Dimensional import Dimensional as dimensional
 from .Float import Float as float
 from .INet import INet as inet
 from .Integer import Integer as int
-from .Object import Object as object
+from .List import List as list
+from .Object import Object as identity
 from .String import String as str
 from .Time import Time as time
 from .Tuple import Tuple as tuple
-
-
-# the descriptor base class
-from .Descriptor import Descriptor as descriptor
+from .URI import URI as uri
 
 
 # end of file 

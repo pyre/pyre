@@ -49,7 +49,7 @@ class IPv4(Address):
     def __init__(self, host='', port=None, **kwds):
         # don't chain up; there are keys in {kwds} that are not meant for me
         self.host = host
-        self.port = int(port) if port is not None else 0
+        self.port = 0 if port is None else int(port)
         return
 
     def __str__(self):
@@ -82,57 +82,6 @@ class Unix(Address):
         return self.path
 
 
-class Parser:
-    """
-    Class responsible for converting string representations of internet addresses into instances of
-    the appropriate subclass of {pyre.ipc.Address}
-    """
-
-
-    # types
-    from .exceptions import CastingError
-
-    # the known address types
-    ip = ip4 = IPv4
-    unix = local = Unix
-
-
-    # interface
-    @classmethod
-    def parse(cls, value):
-        """
-        Convert {value}, expected to be a string, into an inet address
-        """
-        # interpret an empty {value}
-        if not value:
-            # as an ip4 address, on the local host at some random port
-            return cls.ip4()
-        # attempt to match against my regex
-        match = cls.regex.match(value)
-        # if it failed
-        if not match:
-            # describe the problem
-            msg = "could not convert {!r} into an internet address".format(value)
-            # bail out
-            raise cls.CastingError(value=value, description=msg)
-        # we have a match; get the address family
-        family = match.group('ip') or match.group('unix')
-        # if no family were specified
-        if family is None:
-            # build an ipv4 address
-            return cls.ip4(**match.groupdict())
-        # otherwise, use it to find the appropriate factory to build an return an address
-        return getattr(cls, family)(**match.groupdict())
-
-
-    # private data
-    regex = re.compile(
-        r"(?P<unix>unix|local):(?P<path>.+)"
-        r"|"
-        r"(?:(?P<ip>ip|ip4|ip6):)?(?P<host>[^:]+)(?::(?P<port>[0-9]+))?"
-        )
-
-
 # the schema type superclass
 from .Type import Type
 
@@ -143,21 +92,22 @@ class INet(Type):
     A type declarator for internet addresses
     """
 
-    # constants
-    any = IPv4(host='', port=0)
-
     # types
+    from .exceptions import CastingError
     # the address base class 
     address = Address
     # the more specialized types
-    ipv4 = IPv4 
-    unix = Unix
-    # my parser
-    parser = Parser
+    ip = ip4 = ipv4 = IPv4 
+    unix = local = Unix
+
+
+    # constants
+    any = ip(host='', port=0)
+
 
     # interface
     @classmethod
-    def pyre_cast(cls, value='', **kwds):
+    def coerce(cls, value, **kwds):
         """
         Attempt to convert {value} into a internet address
         """
@@ -166,14 +116,14 @@ class INet(Type):
             return value
         # use the address parser to convert strings
         if isinstance(value, str):
-            return cls.parser.parse(value)
+            return cls.parse(value)
         # everything else is an error
         msg="could not convert {!r} into an internet address".format(value)
         raise cls.CastingError(value=value, description=msg)
 
 
     @classmethod
-    def pyre_recognize(cls, family, address):
+    def recognize(cls, family, address):
         """
         Return an appropriate address type based on the socket family
         """
@@ -191,6 +141,51 @@ class INet(Type):
 
         # otherwise
         raise NotImplementedError("unsupported socket family: {}".format(family))
+
+
+    @classmethod
+    def parse(cls, value):
+        """
+        Convert {value}, expected to be a string, into an inet address
+        """
+        # interpret an empty {value}
+        if not value:
+            # as an ip4 address, on the local host at some random port
+            return cls.ipv4()
+        # attempt to match against my regex
+        match = cls.regex.match(value)
+        # if it failed
+        if not match:
+            # describe the problem
+            msg = "could not convert {!r} into an internet address".format(value)
+            # bail out
+            raise cls.CastingError(value=value, description=msg)
+        # we have a match; get the address family
+        family = match.group('ip') or match.group('unix')
+        # if no family were specified
+        if family is None:
+            # build an ipv4 address
+            return cls.ipv4(**match.groupdict())
+        # otherwise, use it to find the appropriate factory to build and return an address
+        return getattr(cls, family)(**match.groupdict())
+
+
+    # support for building nodes
+    @classmethod
+    def macro(cls, model):
+        """
+        Return my preferred macro factory
+        """
+        # by default, i build interpolations
+        return model.interpolation
+    
+
+    # private data
+    regex = re.compile(
+        r"(?P<unix>unix|local):(?P<path>.+)"
+        r"|"
+        r"(?:(?P<ip>ip|ip4|ip6|ipv4|ipv6):)?(?P<host>[^:]+)(?::(?P<port>[0-9]+))?"
+        )
 
 
 # end of file 

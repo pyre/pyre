@@ -17,7 +17,7 @@ class String(Type):
 
     # interface
     @classmethod
-    def pyre_cast(cls, value, **kwds):
+    def coerce(cls, value, **kwds):
         """
         Attempt to convert {value} into a string
         """
@@ -26,5 +26,15 @@ class String(Type):
         except Exception as error:
             raise cls.CastingError(value=value, description=str(error)) from error
 
+
+    # support for building nodes
+    @classmethod
+    def macro(cls, model):
+        """
+        Return my preferred macro factory
+        """
+        # by default, i build interpolations
+        return model.interpolation
+    
 
 # end of file 
