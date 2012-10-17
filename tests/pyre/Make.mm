@@ -15,10 +15,10 @@ RECURSE_DIRS = \
     filesystem \
     xml \
     algebraic \
-    units \
-    schema \
-    constraints \
     calc \
+    schema \
+    units \
+    constraints \
     records \
     tabular \
     codecs \
