@@ -16,11 +16,18 @@ RECURSE_DIRS = \
     components \
     config \
     constraints \
+    db \
+    extensions \
     filesystem \
     framework \
+    ipc \
     parsing \
     patterns \
+    records \
     schema \
+    shells \
+    tabular \
+    timers \
     tracking \
     traits \
     units \
