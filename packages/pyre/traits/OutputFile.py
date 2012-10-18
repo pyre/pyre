@@ -56,14 +56,14 @@ class OutputFile(Property):
 
 
     # framework support
-    def initialize(self, executive, **kwds):
+    def initialize(self, configurable, **kwds):
         """
         Attach the meta-data harvested from {configurable}
         """
         # chain up
-        super().initialize(executive=executive, **kwds)
+        super().initialize(configurable=configurable, **kwds)
         # i need access to the file server
-        self.fileserver = weakref.proxy(executive.fileserver)
+        self.fileserver = weakref.proxy(configurable.pyre_executive.fileserver)
         # all done
         return
         
