@@ -11,9 +11,9 @@ import pyre
 
 
 # declaration
-class Shell(pyre.interface, family="pyre.shells"):
+class Shell(pyre.protocol, family="pyre.shells"):
     """
-    The interface implemented by the pyre application hosting strategies
+    The protocol implemented by the pyre application hosting strategies
     """
 
 
@@ -24,7 +24,7 @@ class Shell(pyre.interface, family="pyre.shells"):
 
     # my default implementation
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         """
         The default shell implementation
         """

@@ -32,7 +32,7 @@ class Application(pyre.component, metaclass=Director):
     applicationName = 'pyreapp' 
 
     # public state
-    shell = pyre.facility(interface=Shell)
+    shell = Shell()
 
     # per-instance public data
     pfs = None # the root of my private filesystem
@@ -78,7 +78,10 @@ class Application(pyre.component, metaclass=Director):
 
         # register the application class as the resolver of its namespace; this will cause
         # {pyre_translateSymbol} to be invoked when an application trait is assigned a value
-        self.executive.registerNamespaceResolver(resolver=self, namespace=name)
+        # N.B.: this is disabled, since this functionality is not supported by the refactored
+        # {Executive}; alternatives under investigation
+        # self.executive.registerNamespaceResolver(resolver=self, namespace=name)
+
         # build the private file space
         self.pfs = self.pyre_mountVirtualFilesystem()
         # and mount any additional application-specific directories

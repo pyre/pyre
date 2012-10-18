@@ -187,22 +187,28 @@ debug()
 # build the executive
 executive = boot()
 
-# for convenience
-# configurables and their support
-from .components.Actor import Actor as actor
-from .components.Role import Role as role
-from .components.Protocol import Protocol as protocol
-from .components.Component import Component as component
-# traits
-from .traits import properties
-from .traits.Behavior import Behavior as export
-from .traits.Behavior import Behavior as provides
-from .traits.Property import Property as property
-from .traits.Facility import Facility as facility
-from .traits.Map import Map as map
-from .traits.Catalog import Catalog as catalog
-# constraints
-from . import constraints
+# if the framework booted properly
+if executive:
+    # for convenience
+    # configurables and their support
+    from .components.Actor import Actor as actor
+    from .components.Role import Role as role
+    from .components.Protocol import Protocol as protocol
+    from .components.Component import Component as component
+    # traits
+    from .traits import properties
+    from .traits.Behavior import Behavior as export
+    from .traits.Behavior import Behavior as provides
+    from .traits.Property import Property as property
+    from .traits.Facility import Facility as facility
+    from .traits.Map import Map as map
+    from .traits.Catalog import Catalog as catalog
+    # constraints
+    from . import constraints
+    # application
+    from .shells import application
+    # the base class of all pyre exceptions
+    from .framework.exceptions import PyreError
 
 
 # clean up the executive instance when the interpreter shuts down

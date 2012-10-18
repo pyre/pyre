@@ -12,19 +12,19 @@ import platform
 
 
 # declaration
-class Host(pyre.interface, family='pyre.hosts'):
+class Host(pyre.protocol, family='pyre.hosts'):
     """
     Encapsulation of host specific information
     """
 
 
     # public state
-    # packages = pyre.catalog(interface=???)
+    # packages = pyre.catalog(protocol=???)
 
 
     # class interface
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         """
         Build the preferred host implementation
         """
