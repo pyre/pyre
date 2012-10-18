@@ -8,12 +8,12 @@
 
 # externals
 import pyre
-import journal.interfaces
+import journal.protocols
 
 
 # the component declaration
 class ANSIRenderer(pyre.component, family="merlin.renderers.ansi", 
-                   implements=journal.interfaces.renderer):
+                   implements=journal.protocols.renderer):
     """
     Custom replacement for the {journal} renderer
     """

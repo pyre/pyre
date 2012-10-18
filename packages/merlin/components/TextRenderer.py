@@ -8,12 +8,12 @@
 
 # externals
 import pyre
-import journal.interfaces
+import journal.protocols
 
 
 # the component declaration
 class TextRenderer(pyre.component, family="merlin.renderers.text",
-                   implements=journal.interfaces.renderer):
+                   implements=journal.protocols.renderer):
     """
     Custom replacement for the {journal} renderer
     """

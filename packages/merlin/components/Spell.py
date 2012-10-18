@@ -9,9 +9,9 @@
 import pyre
 
 
-class Spell(pyre.interface, family="merlin.spells"):
+class Spell(pyre.protocol, family="merlin.spells"):
     """
-    Interface declaration for merlin spells
+    Protocol declaration for merlin spells
     """
 
 

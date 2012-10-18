@@ -7,7 +7,7 @@
 
 
 # load the framework
-from pyre import export, properties, interface
+from pyre import export, properties, protocol
 # the locally enhanced component base class
 from .Component import Component as component
 # the spell interface

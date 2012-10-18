@@ -123,7 +123,7 @@ _merlin_license = _merlin_header + """
     """
 
 # the framework entities
-from .components import export, properties, component, interface
+from .components import export, properties, component, protocol
 
 # bootstrapping
 def boot():
