@@ -179,7 +179,8 @@ class interpolation(
     """
 
 # references
-class reference(Slot.converter, Slot.observer, algebraic.Reference, Slot.composite, Slot):
+class reference(
+    Slot.memo, Slot.converter, Slot.observer, algebraic.Reference, Slot.composite, Slot):
     """
     Concrete class for encapsulating references to other nodes
     """
