@@ -261,6 +261,8 @@ class Component(Configurable, metaclass=Actor, internal=True):
         priority = ns.priority.defaults
         # the traits i am looking for
         traits = set(trait for trait in cls.pyre_inheritedTraits if trait.isConfigurable)
+        # if i don't have any, bail out
+        if not traits: return
         # go through each of my ancestors
         for ancestor in cls.pyre_pedigree[1:]:
             # and all its configurable traits
