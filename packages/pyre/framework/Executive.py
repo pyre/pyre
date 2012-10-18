@@ -29,10 +29,14 @@ class Executive:
 
     # public data
     # the managers
+    nameserver = None # entities accessible by name
+    fileserver = None # the URI resolver
+    registrar = None # protocol and component bookkeeping
     configurator = None # configuration sources and events
     linker = None # the plug-in manager
-    nameserver = None # entities accessible by name
-    registrar = None # protocol and component bookkeeping
+    commandlineParser = None # the parser of command line configuration events
+    timekeeper = None # the timer registry
+
     # bookkeeping
     errors = None # the pile of exceptions raised during booting and configuration
 
@@ -62,6 +66,15 @@ class Executive:
         self.errors.extend(errors)
         # all done
         return
+
+
+    # other facilities
+    def newTimer(self, **kwds):
+        """
+        Build an return a timer
+        """
+        # let the timer registry do its thing
+        return self.timekeeper.timer(**kwds)
 
 
     # support for internal requests
@@ -275,6 +288,15 @@ class Executive:
         # and return the parser
         return parser
 
+
+    def newTimerRegistry(self, **kwds):
+        """
+        Build a new time registrar
+        """
+        # access the factory
+        from ..timers.Registrar import Registrar
+        # build one and return it
+        return Registrar(**kwds)
 
     # meta-methods
     def __init__(self, **kwds):

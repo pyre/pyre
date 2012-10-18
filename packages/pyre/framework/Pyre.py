@@ -66,7 +66,6 @@ class Pyre(Executive):
         # chain up
         super().__init__(**kwds)
 
-        # instantiate the non-configurable managers
         # my nameserver
         self.nameserver = self.newNameServer()
         # my fileserver
@@ -79,6 +78,8 @@ class Pyre(Executive):
         self.linker = self.newLinker()
         # command line processor
         self.commandlineParser = self.newCommandLineParser()
+        # the timer registry
+        self.timekeeper = self.newTimerRegistry()
 
         # all done
         return
