@@ -9,7 +9,8 @@
 # externals
 import pyre
 import journal
-from . import interfaces
+# my protocols
+from . import protocols
 
 
 # declaration
@@ -18,8 +19,8 @@ class Node(pyre.component):
 
     # public state
     address = pyre.properties.inet() # just one, for now
-    marshaller = pyre.facility(interface=interfaces.marshaller)
-    dispatcher = pyre.facility(interface=interfaces.dispatcher)
+    marshaller = protocols.marshaller()
+    dispatcher = protocols.dispatcher()
 
 
     # interface

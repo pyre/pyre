@@ -11,7 +11,7 @@ import pyre
 import pickle
 import struct
 
-from .interfaces import marshaller
+from .protocols import marshaller
 
 
 class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=marshaller):

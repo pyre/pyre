@@ -58,7 +58,7 @@ def inet(spec=''):
     # access the type
     from ..schema import inet
     # get it to cast the value
-    return inet.pyre_cast(value=spec)
+    return inet.coerce(value=spec)
 
 
 # marshaller access

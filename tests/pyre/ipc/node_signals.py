@@ -25,16 +25,16 @@ def test():
     # testing the delivery of signals is a bit tricky. {fork} is not sufficient: there must be
     # an {exec} as well, otherwise signals do get delivered properly
 
-    # grab the configuration store
-    config = pyre.executive.configurator
+    # grab the nameserver
+    ns = pyre.executive.nameserver
 
     # if this is the fork/exec child
-    if 'child' in config:
+    if 'child' in ns:
         # spit out the command line
         # print("child:", sys.argv)
         # grab the file descriptors
-        infd = int(config["infd"])
-        outfd = int(config["outfd"])
+        infd = int(ns["infd"])
+        outfd = int(ns["outfd"])
         # convert them into a channel
         channel = pyre.ipc.pipe(descriptors=(infd, outfd))
         # invoke the child behavior
@@ -68,7 +68,7 @@ def onParent(childpid, channel):
     The parent waits until the pipe to the child is ready for writing and then sends a SIGHUP
     to the child. The child is supposed to respond by writing 'reloaded' to the pipe, so the
     parent schedules a handler to receive the message and respond by issuing a SIGTERM, which
-    kills the child. The parent harvest the exit status, checks it and terminates.
+    kills the child. The parent harvests the exit status, checks it and terminates.
     """
 
     # debug
@@ -159,8 +159,9 @@ def onChild(channel):
     
     # debug
     cdbg = journal.debug("child")
+    journal.debug("pyre.ipc.selector").active = False
     # log
-    cdbg.log("in the child process")
+    cdbg.log("in the child process: channel={}".format(channel))
 
     # base class
     from pyre.ipc.Node import Node
@@ -203,6 +204,8 @@ def onChild(channel):
 
         def __init__(self, channel, **kwds):
             super().__init__(**kwds)
+
+            cdbg.log("dispatcher: {}".format(self.dispatcher))
             # my communication channel
             self.channel = channel
             # marker that my {onTerminate} was called

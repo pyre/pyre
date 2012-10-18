@@ -11,7 +11,7 @@ import pyre
 import select
 import collections
 # my interface
-from .interfaces import dispatcher
+from .protocols import dispatcher
 # my base class
 from .Scheduler import Scheduler
 
@@ -89,6 +89,7 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
             # compute how long i am allowed to be asleep
             self._debug.line('    computing the allowed sleep interval')
             timeout = self.poll()
+            self._debug.line('    max sleep: {}'.format(timeout))
 
             # construct the descriptor containers
             self._debug.line('    collecting the event sources')

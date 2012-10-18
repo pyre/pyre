@@ -11,18 +11,18 @@ import pyre
 
 
 # declaration
-class Dispatcher(pyre.interface, family="pyre.ipc.dispatchers"):
+class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
     """
-    Interface definition for components that monitor communication channels and invoke handlers
+    Protocol definition for components that monitor communication channels and invoke handlers
     when activity is detected
     """ 
 
 
     # default implementation
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         """
-        The suggested implementation of the {Dispatcher} interface
+        The suggested implementation of the {Dispatcher} protocol
         """
         # {Selector} is the only choice currently
         from .Selector import Selector

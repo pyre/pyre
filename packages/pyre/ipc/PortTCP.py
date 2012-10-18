@@ -39,7 +39,7 @@ class PortTCP(Port, Channel):
         Establish a connection to the remote process at {address}
         """
         # normalize the address
-        address = cls.inet.pyre_cast(value=address)
+        address = cls.inet.coerce(value=address)
         # create a channel
         channel = cls.tcp(address.family, cls.type, **kwds)
         # establish a connection
@@ -54,7 +54,7 @@ class PortTCP(Port, Channel):
         Attempt to acquire a port and start listening for connections
         """
         # normalize the address
-        address = cls.inet.any if address is None else cls.inet.pyre_cast(value=address)
+        address = cls.inet.any if address is None else cls.inet.coerce(value=address)
         # create the socket
         listener = cls.tcp(address.family, cls.type)
         # no need for the socket to linger in TIME_WAIT after we are done with it

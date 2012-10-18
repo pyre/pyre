@@ -13,7 +13,7 @@ from time import time as now
 
 
 # declaration
-class Scheduler(pyre.component):
+class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
     """
     Support for invoking event handlers at specified times
     """
@@ -55,11 +55,14 @@ class Scheduler(pyre.component):
         # the necessary information is in the last entry in my {_alarms}, since they are
         # always in descending order; try to grab it
         try:
-            due = self._alarms[-1].time
+            alarm = self._alarms[-1]
         # if this raised an {IndexError}
         except IndexError:
             # no scheduled alarms
             return None
+        # if it succeeded
+        else:
+            due = alarm.time
         # bound from below and return the number of seconds
         return max(0, due - now())
 
@@ -97,7 +100,7 @@ class Scheduler(pyre.component):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        # the list alarms; kept sorted in descending order by alarm time, i.e. with the next
+        # the list of alarms; kept sorted in descending order by alarm time, i.e. with the next
         # alarm to go off at the end of the list
         self._alarms = []
         # all done
@@ -113,6 +116,8 @@ class Scheduler(pyre.component):
             self.time = time
             self.handler = handler
             return
+
+        def __str__(self): return "alarm: {.time}".format(self)
 
         __slots__ = ('time', 'handler')
 

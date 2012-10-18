@@ -53,7 +53,7 @@ class Socket(socket.socket, Channel):
         # build the channel
         channel = type(self)(self.family, self.type, self.proto, fileno=fd)
         # build the address
-        address = self.inet.pyre_recognize(family=self.family, address=address)
+        address = self.inet.recognize(family=self.family, address=address)
         # adjust the socket flags; see {socket.py} in the standard library for more details
         if socket.getdefaulttimeout() is None and self.gettimeout(): channel.setblocking(True)
         # return the channel to and the address of the peer process

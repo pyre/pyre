@@ -32,7 +32,7 @@ EXPORT_PYTHON_MODULES = \
     Server.py \
     Socket.py \
     SocketTCP.py \
-    interfaces.py \
+    protocols.py \
     __init__.py
 
 
