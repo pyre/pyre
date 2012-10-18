@@ -11,8 +11,6 @@ import pyre
 
 # access the requirements
 from .Device import Device
-# and their defaults
-from .Console import Console
 
 
 # declaration
@@ -23,7 +21,7 @@ class Journal(pyre.component, family="journal.executive"):
 
 
     # class public data
-    device = pyre.facility(interface=Device)
+    device = Device()
     device.doc = "the component responsible for recording journal entries"
 
 
@@ -33,26 +31,28 @@ class Journal(pyre.component, family="journal.executive"):
         Extract channel information from the configuration store for each of the given
         {categories}
         """
-        # access the configuration store
-        config = self.pyre_executive.configurator
+        # access the nameserver
+        ns = self.pyre_executive.nameserver
         # access the type converters
         import pyre.schema
+        # pick the one for booleans
+        schema = pyre.schema.bool
         # and iterate over {categories}, updating their indices with the contents of the pyre
-        # configuration store in {config}
+        # configuration store
         for category in categories:
             # build the key prefix
             prefix = "journal\." + category.severity
             # identify the relevant keys
-            for name, node in config.select(pattern=prefix):
+            for name, node in ns.find(pattern=prefix):
                 # get the value
                 value = node.value
                 # if it's {None}, it probably came from the command line without an assignment
                 if value is None: value = True
                 # attempt to cast to a bool
                 try:
-                    value = pyre.schema.bool.pyre_cast(value)
+                    value = schema.coerce(value)
                 # if this fails
-                except pyre.schema.bool.CastingError:
+                except schema.CastingError:
                     # ignore it and move on
                     continue
                 # extract the category name

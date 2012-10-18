@@ -11,9 +11,9 @@ import pyre
 
 
 # declaration
-class Device(pyre.interface, family="journal.devices"):
+class Device(pyre.protocol, family="journal.devices"):
     """
-    The interface that devices must implement
+    The protocol that devices must implement
     """
 
 
@@ -22,7 +22,7 @@ class Device(pyre.interface, family="journal.devices"):
 
 
     # public state
-    renderer = pyre.facility(interface=Renderer)
+    renderer = Renderer()
     renderer.doc = "the formatting strategy"
 
 

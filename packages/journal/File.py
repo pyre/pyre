@@ -29,7 +29,7 @@ class File(pyre.component, family="journal.devices.file", implements=Device):
     log = pyre.properties.outputfile()
     log.doc = "the file in which to save the journal entries"
 
-    renderer = pyre.facility(interface=Device.Renderer, default=TextRenderer)
+    renderer = Device.Renderer(default=TextRenderer)
     renderer.doc = "the formatting strategy for journal entries"
 
 

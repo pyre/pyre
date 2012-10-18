@@ -11,9 +11,9 @@ import pyre
 
 
 # declaration
-class Renderer(pyre.interface, family="journal.renderers"):
+class Renderer(pyre.protocol, family="journal.renderers"):
     """
-    The interface specification that renderers must satisfy
+    The protocol specification that renderers must satisfy
     """
 
 

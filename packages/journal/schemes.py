@@ -10,10 +10,10 @@
 import pyre
 
 
-# the color scheme interface
-class ColorScheme(pyre.interface, family="journal.schemes"):
+# the color scheme protocol
+class ColorScheme(pyre.protocol, family="journal.schemes"):
     """
-    The color scheme interface definition
+    The color scheme protocol definition
     """
 
     header = pyre.properties.str()
