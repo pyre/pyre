@@ -6,15 +6,17 @@
 #
 
 
+# access to the framework
 import pyre
 
-# interfaces
+# protocols
 from .Integrator import Integrator
 from ..functors import functor
 from ..meshes import cloud
 from ..shapes import shape, box, ball
 
 
+# declaration
 class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implements=Integrator):
     """
     A Monte Carlo integrator
@@ -24,16 +26,16 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo", implemen
     samples = pyre.properties.int(default=10**5)
     samples.doc = "the number of integrand evaluations"
 
-    box = pyre.facility(interface=shape, default=box)
+    box = shape(default=box)
     box.doc = "the bounding box for my mesh"
 
-    mesh = pyre.facility(interface=cloud)
+    mesh = cloud()
     mesh.doc = "the generator of points at which to evaluate the integrand"
 
-    region = pyre.facility(interface=shape, default=ball)
+    region = shape(default=ball)
     region.doc = "the shape that defines the region of integration"
 
-    integrand = pyre.facility(interface=functor)
+    integrand = functor()
     integrand.doc = "the functor to integrate"
 
 

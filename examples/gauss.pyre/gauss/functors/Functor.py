@@ -6,20 +6,22 @@
 #
 
 
+# access to the framework
 import pyre
 
 
-class Functor(pyre.interface, family="gauss.functors"):
+# declaration
+class Functor(pyre.protocol, family="gauss.functors"):
     """
-    Interface declarator for function objects
+    Protocol declarator for function objects
     """
 
 
     # the suggested default implementation
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         """
-        The default implementation of the {Functor} interface
+        The default implementation of the {Functor} protocol
         """
         from .One import One
         return One

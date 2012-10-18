@@ -6,18 +6,20 @@
 #
 
 
+# access to the framework
 import pyre
 
 
-class PointCloud(pyre.interface, family="gauss.meshes"):
+# declaration
+class PointCloud(pyre.protocol, family="gauss.meshes"):
     """
-    Interface declarator for an unstructured collection of points
+    Protocol declarator for an unstructured collection of points
     """
 
 
     # my default implementation
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         """
         The default {PointCloud} implementation
         """

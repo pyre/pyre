@@ -6,30 +6,32 @@
 #
 
 
+# access to the framework
 import pyre
 
 
-class Integrator(pyre.interface, family="gauss.integrators"):
+# declaration
+class Integrator(pyre.protocol, family="gauss.integrators"):
     """
-    Interface declarator for integrators
+    Protocol declarator for integrators
     """
 
 
-    # access to the required interfaces
+    # access to the required protocols
     from ..shapes.Shape import Shape as shape
     from ..functors.Functor import Functor as functor
 
     # public state
-    region = pyre.facility(interface=shape)
+    region = shape()
     region.doc = "the region of integration"
 
-    integrand = pyre.facility(interface=functor)
+    integrand = functor()
     integrand.doc = "the functor to integrate"
 
 
     # my preferred implementation
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         # use {MonteCarlo} by default
         from .MonteCarlo import MonteCarlo
         return MonteCarlo

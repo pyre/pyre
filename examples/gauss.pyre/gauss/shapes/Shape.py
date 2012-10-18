@@ -6,18 +6,20 @@
 #
 
 
+# access to the framework
 import pyre
 
 
-class Shape(pyre.interface, family="gauss.shapes"):
+# declaration
+class Shape(pyre.protocol, family="gauss.shapes"):
     """
-    Interface declarator for geometrical regions
+    Protocol declarator for geometrical regions
     """
 
 
     # my default implementation
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         """
         The default {Shape} implementation
         """
