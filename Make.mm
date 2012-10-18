@@ -12,7 +12,7 @@ RECURSE_DIRS = \
     lib \
     packages \
     extensions \
-    depository \
+    defaults \
     bin \
     schema \
     tests \

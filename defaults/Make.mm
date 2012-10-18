@@ -7,7 +7,7 @@
 
 
 PROJECT = pyre
-PACKAGE = depository
+PACKAGE = defaults
 
 RECURSE_DIRS = \
     merlin \

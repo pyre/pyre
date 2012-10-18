@@ -149,7 +149,7 @@ class FileServer(Filesystem):
         else:
             # attempt to
             try:
-                # hunt down the depository subdirectory
+                # hunt down the directory with the system defaults
                 system = self.prefixfs["defaults"]
             # if this failed
             except self.NotFoundError:
