@@ -28,7 +28,7 @@ class Device(pyre.protocol, family="journal.devices"):
 
     # my default implementation
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         """
         The default {Device} implementation
         """

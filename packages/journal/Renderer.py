@@ -19,7 +19,7 @@ class Renderer(pyre.protocol, family="journal.renderers"):
 
     # my default implementation
     @classmethod
-    def default(cls):
+    def pyre_default(cls):
         """
         Examine {sys.stdout} and turn on color output if the current terminal type supports it
         """
