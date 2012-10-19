@@ -34,7 +34,7 @@ class OutputFile(Property):
 
 
     # interface
-    def coerce(self, value):
+    def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a file
         """
