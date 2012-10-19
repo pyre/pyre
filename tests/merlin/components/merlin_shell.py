@@ -16,13 +16,15 @@ def test():
     # package access
     import os
     from merlin import merlin
+
+    # debug:
+    # merlin.vfs.dump()
+    # merlin.nameserver.dump('merlin')
+    
     # mount the project directory
     project = merlin.vfs['/merlin/project']
     # check the project directory
     assert project.uri == os.path.join(os.getcwd(), '.merlin')
-
-    # debug: show me the vfs layout
-    # merlin.vfs.dump()
 
     # and return
     return

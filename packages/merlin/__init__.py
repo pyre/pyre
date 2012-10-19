@@ -141,7 +141,7 @@ def boot():
     # access the executive factory
     from .components.Merlin import Merlin
     # build one and return it
-    executive = Merlin()
+    executive = Merlin(name='merlin.executive')
     # patch components with access to this executive
     component.merlin = weakref.proxy(executive)
     # patch spells with access to this executive

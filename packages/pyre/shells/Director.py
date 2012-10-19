@@ -9,6 +9,7 @@
 # framework access
 import pyre
 
+
 # declaration
 class Director(pyre.actor):
     """
@@ -20,14 +21,24 @@ class Director(pyre.actor):
 
 
     # meta methods
-    def __init__(self, name, bases, attributes, **kwds):
+    def __init__(self, name, bases, attributes, prefix=None, **kwds):
         """
-        Initialize a new application class record
+        Initialization of application class records
         """
-        # initialize the record
+        # chain up
         super().__init__(name, bases, attributes, **kwds)
-        # if I am a hidden application subclass, we are all done
-        if self.pyre_internal: return
+
+        # compute the application prefix
+        # if one were given explicitly
+        if prefix:
+            # use it
+            self.pyre_prefix = prefix
+        # otherwise
+        else:
+            # get my family name
+            family = self.pyre_family()
+            # if i have one, use it; otherwise, use the class name
+            self.pyre_prefix = self.pyre_executive.nameserver.split(family)[0] if family else name
 
         # all done
         return
@@ -37,18 +48,18 @@ class Director(pyre.actor):
         """
         Instantiate one of my classes
         """
-        # access the locators
-        from .. import tracking
-        # build the application name
-        name = name if name is not None else self.applicationName
-        # build a locator
-        locator = tracking.simple('while initializing application {!r}'.format(name))
-        # get the executive
-        executive = self.pyre_executive
-        # get the name server
-        nameserver = executive.nameserver
-        # ask the executive to hunt down the application INSTANCE configuration file
-        nameserver.package(name=name, executive=executive, locator=locator)
+        # if I have a name for the application instance, use it hunt down configuration files
+        # for this particular instance
+        if name:
+            # get the executive
+            executive = self.pyre_executive
+            # set up the priority
+            priority = executive.priority.package
+            # build a locator
+            locator = pyre.tracking.simple('while initializing application {!r}'.format(name))
+            # ask the executive to hunt down the application INSTANCE configuration file
+            executive.configure(stem=name, priority=priority, locator=locator)
+
         # delegate the creation of the instance and return it
         return super().__call__(name=name, **kwds)
 

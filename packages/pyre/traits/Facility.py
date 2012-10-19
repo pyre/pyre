@@ -79,10 +79,10 @@ class Facility(Slotted):
         """
         Force the instantiation of {value}
         """
-        # run the {value} through coercion
-        value = self.coerce(value=value, node=node, **kwds)
         # {None} is special, leave it alone
         if value is None: return value
+        # run the {value} through coercion
+        value = self.coerce(value=value, node=node, **kwds)
         # if what I got back is a component instance, we are all done
         if isinstance(value, self.component): return value
         # otherwise, instantiate and return it

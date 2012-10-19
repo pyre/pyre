@@ -23,7 +23,7 @@ def test():
     # archive it
     curator.saveProject(project)
     # refresh the folder
-    merlin.pyre_executive.fileserver['/merlin/project'].discover()
+    merlin.pfs['project'].discover()
     # and load it back in
     project = curator.loadProject()
 

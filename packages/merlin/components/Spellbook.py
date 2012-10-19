@@ -38,7 +38,7 @@ class Spellbook(merlin.component, family="merlin.components.spellbook"):
         Look through the registered spell locations for a spell shelf that contains the given
         spell {name}.
         """
-        # print(" ** Spellbook.findSpell: looking for {!r}".format(name))
+        print(" ** Spellbook.findSpell: looking for {!r}".format(name))
         # ask the spell interface to convert the name into a spell factory
         factory = self.spell.coerce(value=name)
         # place the spell name in the merlin namespace and alias its traits at global scope

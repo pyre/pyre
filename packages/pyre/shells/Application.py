@@ -29,10 +29,10 @@ class Application(pyre.component, metaclass=Director):
     # the default name for pyre applications; subclasses are expected to provide a more
     # reasonable value, which gets used to load per-instance configuration right before the
     # application itself is instantiated
-    applicationName = 'pyreapp' 
+    prefix = None
 
     # public state
-    shell = Shell()
+    shell = Shell() # the hosting protocol
 
     # per-instance public data
     pfs = None # the root of my private filesystem
@@ -51,6 +51,14 @@ class Application(pyre.component, metaclass=Director):
         Easy access to the executive file server
         """
         return self.pyre_executive.fileserver
+
+
+    @property
+    def nameserver(self):
+        """
+        Easy access to the executive name server
+        """
+        return self.pyre_executive.nameserver
 
 
     # component interface
@@ -73,19 +81,11 @@ class Application(pyre.component, metaclass=Director):
         
 
     # meta methods
-    def __init__(self, name, **kwds):
+    def __init__(self, name=None, **kwds):
         super().__init__(name=name, **kwds)
 
-        # register the application class as the resolver of its namespace; this will cause
-        # {pyre_translateSymbol} to be invoked when an application trait is assigned a value
-        # N.B.: this is disabled, since this functionality is not supported by the refactored
-        # {Executive}; alternatives under investigation
-        # self.executive.registerNamespaceResolver(resolver=self, namespace=name)
-
-        # build the private file space
-        self.pfs = self.pyre_mountVirtualFilesystem()
-        # and mount any additional application-specific directories
-        self.pyre_mountApplicationFolders()
+        # build my private file space
+        self.pfs = self.pyre_mountVirtualFilesystem(root=self.pyre_prefix)
 
         # all done
         return
@@ -101,37 +101,32 @@ class Application(pyre.component, metaclass=Director):
 
 
     # initialization hooks
-    def pyre_mountVirtualFilesystem(self):
+    def pyre_mountVirtualFilesystem(self, root):
         """
         Gather all standard directories that are relevant for this application into its own
         private namespace and register it with the executive file server
         """
         # build the top level folder for my stuff
-        private = self.vfs.folder()
-        # use my name as the top level folder
-        top = self.pyre_name
+        pfs = self.vfs.folder()
         # mount it at the right place
-        self.vfs[top] = private
+        self.vfs[root] = pfs
+
         # mount the system folder
-        self.pyre_mountFolder(parent=private, folder="system", tag=top)
+        folder = 'system'
+        pfs[folder] = self.pyre_findFolder(folder=folder, tag=root)
+        
         # mount the user folder
-        self.pyre_mountFolder(parent=private, folder="user", tag=top)
-        # and return the private folder
-        return private
+        folder = 'user'
+        pfs[folder] = self.pyre_findFolder(folder=folder, tag=root)
+        
+        # and return my private folder
+        return pfs
 
 
-    def pyre_mountApplicationFolders(self):
+    def pyre_findFolder(self, folder, tag):
         """
-        Hook to enable applications to mount additional directories in the virtual filesystem
-        """
-        return
-
-
-    def pyre_mountFolder(self, folder, parent, tag):
-        """
-        Look through the standard configuration folders for {tag}/{folder} and mount it in the
-        application private namespace anchored at {parent}. If the folder does not exist,
-        create and mount an empty one.
+        Look through the standard configuration folders for {folder}/{tag}; if the folder does
+        not exist, create and mount an empty one.
 
         The variable {folder} is typically either "system" or "user", although additional
         folders may be explored by default in a future release.
@@ -154,31 +149,8 @@ class Application(pyre.component, metaclass=Director):
         else:
             # fill it up with its contents
             target.discover()
-        # in any case, mount it
-        parent[folder] = target
-        # and return
-        return
-
-
-    # namespace resolver obligations
-    def pyre_translateSymbol(self, context, symbol):
-        """
-        Translate the given {symbol} from {context}
-        """
-        # by default, leave it alone; subclasses will override and perform {context} specific
-        # translations
-        return symbol
-
-
-    def pyre_componentSearchPath(self, context):
-        """
-        Build a sequence of possible locations that may resolve the unqualified requests within
-        the given {context}.
-
-        {context}: typically the family of the interface expected by a facility
-        """
-        # nothing from me
-        return []
+        # and return it
+        return target
 
 
 # end of file 

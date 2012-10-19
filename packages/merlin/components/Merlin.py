@@ -10,28 +10,27 @@
 import pyre
 
 
-class Merlin(pyre.application):
+class Merlin(pyre.application, family='merlin.application'):
     """
     The merlin executive
     """
-
-
-    # constants
-    applicationName = "merlin"
-    merlinFolder = "." + applicationName
-
 
     # types
     # exceptions
     from .exceptions import MerlinError
 
-
+    # data
     # my subcomponents; built at construction time
     user = None # information about the current user
     host = None # information about the host we are running on
     curator = None # the manager of the project persistent store
     spellbook = None # the manager of the installed spells
     packages = None # the package manager
+
+    # public data
+    @property
+    def metafolder(self):
+        return '.' + self.pyre_prefix
 
 
     # interface
@@ -41,7 +40,7 @@ class Merlin(pyre.application):
         The main entry point for merlin
         """
         # extract the non-configurational parts of the command line
-        request = tuple(c for _,c,_ in self.executive.configurator.commands) 
+        request = tuple(command.command for command in self.executive.configurator.commands) 
         # show the default help screen if there was nothing useful on the command line
         if request == (): return self.help()
 
@@ -102,7 +101,7 @@ class Merlin(pyre.application):
         # loop until we reach the root of the filesystem
         while folder != os.path.sep:
             # form the path to the {.merlin} subdirectory
-            metadir = os.path.join(folder, self.merlinFolder)
+            metadir = os.path.join(folder, self.metafolder)
             # if it exists
             if os.path.isdir(metadir):
                 # got it
@@ -128,40 +127,45 @@ class Merlin(pyre.application):
         
 
     # application initialization hooks
-    def pyre_mountApplicationFolders(self):
+    def pyre_mountVirtualFilesystem(self, root):
         """
         Mount the project directories by walking up from {cwd} to the directory that contains
         the {.merlin} folder
         """
-        # access the file server
-        fileserver = self.pyre_executive.fileserver
-        # build the address where the project {.merlin} directory will be mounted
-        vpath = fileserver.join(self.applicationName, "project")
+        # chain up to initialize my private area
+        pfs = super().pyre_mountVirtualFilesystem(root=root)
+
+        # get the fileserver
+        vfs  = self.vfs
+
         # is it already there?
         try:
-            folder = fileserver[vpath]
+            folder = pfs['project']
         # if not
-        except fileserver.NotFoundError:
+        except vfs.NotFoundError:
             # no worries; we'll go hunting
             pass
         # otherwise, it is already mounted
         else:
+            raise NotImplementedError('NYI: multiple attempts to initialize the merlin vfs')
             # print("Merlin.pyre_mountApplicationFolders: already mounted")
-            return
+            return pfs
 
         # check whether we are within a project
         root, metadir = self.locateProjectRoot()
-        # if not, we are done
-        if not root: return
 
-        # otherwise
-        import pyre.filesystem
-        # first, mount the project root as {/project}
-        fileserver['/project'] = pyre.filesystem.local(root=root)
-        # next, mount the {merlin} meta-data directory as {/merlin/project}
-        fileserver[vpath] = pyre.filesystem.local(root=metadir).discover()
+
+        # build the project folder
+        project = vfs.local(root=root) if root else vfs.folder()
+        # build the folder with the merlin metadata
+        metadata = vfs.local(root=metadir) if metadir else vfs.folder
+
+        # mount them
+        vfs['project'] = project
+        pfs['project'] = metadata
+
         # and return
-        return
+        return pfs
 
 
     # namespace resolver obligations
@@ -174,7 +178,7 @@ class Merlin(pyre.application):
         sub-component for assistance in retrieving candidate shelves from the filesystem.
         """
         # the first part is my tag
-        assert context[0] == self.applicationName
+        assert context[0] == self.pyre_prefix
         # if there is only one fragment
         if len(context) == 1:
             # there is nothing to do
@@ -223,7 +227,7 @@ class Merlin(pyre.application):
         self.user = User(name=name+'.user')
         # the package manager
         from .PackageManager import PackageManager
-        self.packages = PackageManager(name=name+'.package-manager')
+        self.packages = PackageManager(name=name+'.packages')
         # the spell book
         from .Spellbook import Spellbook
         self.spellbook = Spellbook(name=name+".spellbook")
