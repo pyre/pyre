@@ -220,7 +220,9 @@ class Facility(Slotted):
         # reset the default value, if necessary
         default = protocol.pyre_default() if default is None else default
         # chain up
-        super().__init__(default=default, schema=protocol, **kwds)
+        super().__init__(default=default, **kwds)
+        # save my protocol
+        self.schema = protocol
         # all done
         return
 

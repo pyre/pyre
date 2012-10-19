@@ -21,12 +21,13 @@ class Dimensional(Property):
 
     # public data
     default = 0
+    schema = schema.dimensional
 
 
     # meta-methods
     def __init__(self, default=default, **kwds):
         # chain up
-        super().__init__(schema=schema.dimensional, default=default)
+        super().__init__(default=default, **kwds)
         # all done
         return
 

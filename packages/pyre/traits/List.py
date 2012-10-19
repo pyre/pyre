@@ -7,7 +7,7 @@
 
 
 # externals
-from .. import schema
+from ..schema import list
 # superclass
 from .Property import Property
 
@@ -21,7 +21,7 @@ class List(Property):
 
     # public data
     default = []
-    schema = schema.list.identity
+    schema = list(schema=list.identity)
 
 
     # framework support
@@ -36,7 +36,9 @@ class List(Property):
     # meta-methods
     def __init__(self, schema=schema, default=default, **kwds):
         # chain up
-        super().__init__(schema=schema.list(schema=schema), default=default)
+        super().__init__(default=default, **kwds)
+        # record my schema
+        self.schema = list(schema=schema)
         # all done
         return
 

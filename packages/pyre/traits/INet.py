@@ -21,6 +21,7 @@ class INet(Property):
 
     # public data
     default = schema.inet.any
+    schema = schema.inet
 
 
     # framework support
@@ -35,7 +36,7 @@ class INet(Property):
     # meta-methods
     def __init__(self, default=default, **kwds):
         # chain up
-        super().__init__(schema=schema.inet, default=default)
+        super().__init__(default=default, **kwds)
         # all done
         return
 

@@ -21,12 +21,13 @@ class Bool(Property):
 
     # public data
     default = True
+    schema = schema.bool
 
 
     # meta-methods
     def __init__(self, default=default, **kwds):
         # chain up
-        super().__init__(schema=schema.bool, default=default)
+        super().__init__(default=default, **kwds)
         # all done
         return
 

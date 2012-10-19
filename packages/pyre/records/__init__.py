@@ -21,25 +21,25 @@ from .CSV import CSV as csv
 
 # convenience factories
 # access to the type specifiers
-import pyre.schema
+from .. import schema
 
 def float(default=0, **kwds):
     descriptor = field(**kwds)
-    descriptor.schema = pyre.schema.float
+    descriptor.schema = schema.float
     descriptor.default = default
     return descriptor
 
 
 def int(default=0, **kwds):
     descriptor = field(**kwds)
-    descriptor.schema = pyre.schema.int
+    descriptor.schema = schema.int
     descriptor.default = default
     return descriptor
 
 
 def str(default="", **kwds):
     descriptor = field(**kwds)
-    descriptor.schema = pyre.schema.str
+    descriptor.schema = schema.str
     descriptor.default = default
     return descriptor
 

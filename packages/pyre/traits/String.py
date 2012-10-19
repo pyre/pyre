@@ -21,6 +21,7 @@ class String(Property):
 
     # public data
     default = ''
+    schema = schema.str
 
 
     # framework support
@@ -35,7 +36,7 @@ class String(Property):
     # meta-methods
     def __init__(self, default=default, **kwds):
         # chain up
-        super().__init__(schema=schema.str, default=default)
+        super().__init__(default=default, **kwds)
         # all done
         return
 

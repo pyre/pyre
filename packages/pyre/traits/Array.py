@@ -21,12 +21,13 @@ class Array(Property):
 
     # public data
     default = ()
+    schema = schema.array
 
 
     # meta-methods
     def __init__(self, default=default, **kwds):
         # chain up
-        super().__init__(schema=schema.array, default=default)
+        super().__init__(default=default, **kwds)
         # all done
         return
 

@@ -6,6 +6,10 @@
 #
 
 
+# externals
+from .. import schema
+
+
 # declaration
 class Descriptor:
     """
@@ -24,15 +28,11 @@ class Descriptor:
     """
 
 
-    # types
-    from ..schema import identity
-
-
     # public data
     name = None # my name
     aliases = None # alternate names by which I am known to my client
     default = None # my default value
-    schema = identity # my type; most likely one of the {pyre.schema} type declarators
+    schema = schema.identity # my type; most likely one of the {pyre.schema} type declarators
     tip = None # a short description of my purpose
 
     # wire doc to __doc__ so the bultin help can decorate the attributes properly
@@ -59,14 +59,13 @@ class Descriptor:
 
 
     # meta methods
-    def __init__(self, name=None, default=None, schema=identity, doc=None, **kwds):
+    def __init__(self, name=None, default=None, doc=None, **kwds):
         # chain up
         super().__init__(**kwds)
 
         # the attributes that are likely to be known at construction time
         self.name = name
         self.default = default
-        self.schema = schema
         self.__doc__ = doc
 
         # and the rest

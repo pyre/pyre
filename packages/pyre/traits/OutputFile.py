@@ -71,9 +71,11 @@ class OutputFile(Property):
     # meta-methods
     def __init__(self, mode=mode, default=default, **kwds):
         # chain up
-        super().__init__(schema=self, default=default, **kwds)
+        super().__init__(default=default, **kwds)
         # save my mode
         self.mode = mode
+        # i am my own schema
+        self.schema = self
         # all done
         return
 

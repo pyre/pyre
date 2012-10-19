@@ -21,6 +21,7 @@ class Object(Property):
 
     # public data
     default = None
+    schema = schema.identity
 
 
     # framework support
@@ -35,7 +36,7 @@ class Object(Property):
     # meta-methods
     def __init__(self, default=default, **kwds):
         # chain up
-        super().__init__(schema=schema.object, default=default)
+        super().__init__(default=default, **kwds)
         # all done
         return
 

@@ -21,12 +21,13 @@ class Integer(Property):
 
     # public data
     default = 0
+    schema = schema.int
 
 
     # meta-methods
     def __init__(self, default=default, **kwds):
         # chain up
-        super().__init__(schema=schema.int, default=default)
+        super().__init__(default=default, **kwds)
         # all done
         return
 

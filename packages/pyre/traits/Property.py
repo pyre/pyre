@@ -8,6 +8,7 @@
 
 # externals
 import collections
+from .. import schema
 from .. import tracking
 
 # superclass
@@ -20,10 +21,8 @@ class Property(Slotted):
     """
 
 
-    # convenience: import the packages exposed by properties
-    from .. import schema, constraints
-
     # public data
+    schema = schema.identity
     converters = () # the chain of functions that are required to produce my native type
     normalizers = () # the chain of functions that convert my values to canonical form
     validators = () # the chain of functions that validate my values
