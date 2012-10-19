@@ -78,30 +78,33 @@ class Executive:
 
 
     # support for internal requests
-    def configurePackage(self, package, locator):
+    def configure(self, stem, locator, priority):
         """
-        Locate and load the configuration files for the given {package}
+        Locate and load all accessible configuration files for the given {stem}
         """
-        # print("Executive.configurePackage: {} {}".format(package, locator))
-        # get the name of the package
-        name = package.name
         # access the fileserver
         fs = self.fileserver
-        # access the configurator
+        # and the configurator
         cfg = self.configurator
-        # the priority for package configuration
-        priority = self.priority.package
         # form all possible combinations of filename fragments for the configuration sources
-        scope = itertools.product(cfg.configpath, [name], cfg.encodings())
+        scope = itertools.product(cfg.configpath, [stem], cfg.encodings())
         # look for each one
-        for path, filename, extension in scope:
+        for root, filename, extension in scope:
             # build the uri
-            uri = fs.splice(path, filename, extension)
+            uri = fs.splice(root, filename, extension)
             # load the settings from the associated file
             self.loadConfiguration(uri=uri, priority=priority, locator=locator)
         # all done
         return
-            
+
+
+    def configurePackage(self, package, locator):
+        """
+        Locate and load the configuration files for the given {package}
+        """
+        # delegate
+        return self.configure(stem=package.name, priority=self.priority.package, locator=locator)
+        
 
     def retrieveComponentDescriptor(self, uri, facility=None):
         """
