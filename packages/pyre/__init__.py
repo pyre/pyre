@@ -190,6 +190,7 @@ executive = boot()
 # if the framework booted properly
 if executive:
     # for convenience
+    from . import tracking
     # configurables and their support
     from .components.Actor import Actor as actor
     from .components.Role import Role as role
