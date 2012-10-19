@@ -159,8 +159,10 @@ class Configurator:
         """
         Record a request to execute a command
         """
+        # adjust the command priority
+        command.priority = priority()
         # record the command and its context
-        self.commands.append((priority(), command))
+        self.commands.append(command)
         # all done
         return self
 

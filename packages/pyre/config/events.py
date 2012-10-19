@@ -42,6 +42,7 @@ class Command(Event):
     # meta methods
     def __init__(self, command, **kwds):
         super().__init__(**kwds)
+        self.priority = None
         self.command = command
         return
 
