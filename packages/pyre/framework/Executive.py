@@ -34,7 +34,6 @@ class Executive:
     registrar = None # protocol and component bookkeeping
     configurator = None # configuration sources and events
     linker = None # the plug-in manager
-    # commandlineParser = None # the parser of command line configuration events
     timekeeper = None # the timer registry
 
     # bookkeeping
