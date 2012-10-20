@@ -81,6 +81,11 @@ class Pyre(Executive):
         # the timer registry
         self.timekeeper = self.newTimerRegistry()
 
+        # critical step: record this instance with the {Executive} proxy to grant easy access
+        # to components and protocols
+        from ..components.Executive import Executive
+        Executive.pyre_installExecutive(executive=self)
+
         # all done
         return
 

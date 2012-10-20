@@ -302,16 +302,11 @@ class Executive:
 
     # meta-methods
     def __init__(self, **kwds):
-        #chain up
+        # chain up
         super().__init__(**kwds)
 
         # the pile of errors encountered
         self.errors = []
-
-        # critical step: attach this instance to {Configurable} to enable components and
-        # interfaces
-        from ..components.Configurable import Configurable
-        Configurable.pyre_executive = weakref.proxy(self)
 
         # all done
         return

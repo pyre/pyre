@@ -10,8 +10,12 @@
 import itertools
 
 
+# superclass
+from .Executive import Executive
+
+
 # class declaration
-class Configurable:
+class Configurable(Executive):
     """
     The base class for components and interfaces
 
@@ -23,8 +27,6 @@ class Configurable:
     from .exceptions import FrameworkError, CategoryMismatchError, TraitNotFoundError
 
 
-    # access to the framework executive; patched during framework boot; shared by all
-    pyre_executive = None
     # framework data; every class record gets a fresh set of these values
     pyre_key = None # the hash key issued by the nameserver
     pyre_pedigree = None # my ancestors that are configurables, in mro
