@@ -34,7 +34,7 @@ class Executive:
     registrar = None # protocol and component bookkeeping
     configurator = None # configuration sources and events
     linker = None # the plug-in manager
-    commandlineParser = None # the parser of command line configuration events
+    # commandlineParser = None # the parser of command line configuration events
     timekeeper = None # the timer registry
 
     # bookkeeping
@@ -56,14 +56,14 @@ class Executive:
         # if that fails
         except self.PyreError as error:
             # save it
-            self.errors.append(error)
+            # self.errors.append(error)
             # and bail out
             return
         # ask the configurator to process the stream
         errors = self.configurator.loadConfiguration(
             executive=self, uri=uri, source=source, locator=locator, priority=priority)
         # add any errors to my pile
-        self.errors.extend(errors)
+        # self.errors.extend(errors)
         # all done
         return
 

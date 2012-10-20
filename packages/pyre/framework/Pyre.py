@@ -44,7 +44,7 @@ class Pyre(Executive):
         # access the command line
         import sys
         # parse it
-        events = self.commandlineParser.parse(argv=sys.argv[1:])
+        events = self.newCommandLineParser().parse(argv=sys.argv[1:])
         # ask my configurator to process the configuration events
         configurator.processEvents(executive=self, events=events, priority=self.priority.user)
 
@@ -77,7 +77,7 @@ class Pyre(Executive):
         # component linker
         self.linker = self.newLinker()
         # command line processor
-        self.commandlineParser = self.newCommandLineParser()
+        # self.commandlineParser = self.newCommandLineParser()
         # the timer registry
         self.timekeeper = self.newTimerRegistry()
 
