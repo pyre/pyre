@@ -47,6 +47,12 @@ def debug():
     global _metaclass_Slot
     _metaclass_Slot = ExtentAware
 
+    # configure the garbage collector
+    import gc
+    gc.set_debug(gc.DEBUG_LEAK)
+    gc.collect()
+
+    # all done
     return
     
 
