@@ -34,7 +34,7 @@ def test():
     c.w1 = "import:sample.relax#worker"
     c.w2 = "import:sample.relax#worker"
     # check
-    assert c.w1 is c.w2
+    assert c.w1 == c.w2
     assert c.w1.pyre_name == 'worker'
 
     return c, component, job

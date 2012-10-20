@@ -63,7 +63,7 @@ if __name__ == "__main__":
     # run the test
     component = test()
     # verify that all instances of {component} have been destroyed
-    # assert tuple(pyre.executive.registrar.components[component]) == ()
+    assert tuple(pyre.executive.registrar.components[component]) == ()
 
 
 # end of file 
