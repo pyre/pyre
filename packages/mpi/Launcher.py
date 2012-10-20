@@ -39,7 +39,7 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
         """
 
         # check whether the mpi tasks have already been spawned
-        if self.pyre_executive.configurator.get('with-mpi', False):
+        if self.pyre_executive.nameserver.get('with-mpi', False):
             # launch the application
             status = application.main_mpi(*args, **kwds)
             # and exit

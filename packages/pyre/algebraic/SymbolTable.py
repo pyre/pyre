@@ -102,6 +102,22 @@ class SymbolTable:
 
 
     # interface
+    def get(self, name, default=None):
+        """
+        Attempt to resolve {name} and return its value; if {name} is not in the symbol table,
+        bind it to {default} and return this new value
+        """
+        # attempt to evaluate
+        try:
+            return self[name]
+        # if it failed
+        except self.UnresolvedNodeError:
+            # bind it to {default}
+            self[name] = default
+        # evaluate and return
+        return self[name]
+
+
     def retrieve(self, name):
         """
         Retrieve the node registered under {name}. If no such node exists, an error marker will
