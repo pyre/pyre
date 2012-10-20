@@ -46,8 +46,15 @@ sys.path = [''] + sys.path
 
 # turn on debugging in packages that support it
 # pyre_debug = { "pyre.framework", "pyre.filesystem", "pyre.calc" }
+
 # framework access
 import pyre
 
+# configure the garbage collector
+# import gc
+# tell who has a handle to the pyre executive
+# for entity in gc.get_referrers(pyre.executive):
+    # print(type(entity))
+    # print("   ", entity)
 
 # end of file 
