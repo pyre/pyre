@@ -100,7 +100,7 @@ def boot():
     from .Journal import Journal
     from .Channel import Channel
     # instantiate the journal component and patch {Channel}
-    Channel.journal = Journal(name="journal")
+    Channel.journal = Journal()
 
     # attempt to load the journal extension
     try:
