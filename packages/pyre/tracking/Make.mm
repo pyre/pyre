@@ -23,6 +23,7 @@ EXPORT_PYTHON_MODULES = \
     Command.py \
     File.py \
     FileRegion.py \
+    NameLookup.py \
     Script.py \
     Simple.py \
     Tracker.py \
