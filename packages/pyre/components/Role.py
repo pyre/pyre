@@ -30,6 +30,7 @@ class Role(Requirement):
             {implements}: the tuple of protocols that this component is known to implement
         """
         # save the location of the component declaration
+        # N.B.: the locator might be incorrect if the metaclass hierarchy gets deeper
         attributes["pyre_locator"] = tracking.here(1)
 
         # build and return the record

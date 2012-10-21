@@ -29,6 +29,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
 
     # framework data
+    pyre_inventory = None # my inventory management strategy
     pyre_implements = None # the lists of protocols i implement
 
 
@@ -149,7 +150,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
 
     # meta methods
-    def __new__(cls, locator, name=None, key=None, **kwds):
+    def __new__(cls, name, key, locator, **kwds):
         # build the instance
         instance = super().__new__(cls, **kwds)
 
@@ -200,18 +201,19 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Trap attribute lookup errors and attempt to resolve the name in my inventory's name
         map. This makes it possible to get the value of a trait by using any of its aliases.
         """
-        # attempt to resolve the attribute name by normalizing it
+        # attempt to
         try:
-            trait = self.pyre_trait(alias=name)
-        except self.TraitNotFoundError as error:
-            # build the exception
-            missing = AttributeError("{} has no attribute {!r}".format(self, name))
-            # and raise it
-            raise missing
+            # normalize the name
+            name = self.pyre_namemap[name]
+        # if it's not one of my traits
+        except KeyError:
+            # complain
+            raise AttributeError("{} has no attribute {!r}".format(self, name))
+            
         # if we got this far, restart the attribute lookup using the canonical name
         # don't be smart here; let getattr do its job, which involves invoking the trait
         # descriptors if necessary
-        return getattr(self, trait.name)
+        return getattr(self, name)
 
 
     def __setattr__(self, name, value):

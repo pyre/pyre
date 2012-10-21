@@ -33,23 +33,6 @@ class Trait(Descriptor):
     isConfigurable = False
 
 
-    # setting values
-    def setClassTrait(self, **kwds):
-        """
-        Set the value of this trait for a configurable class
-        """
-        raise NotImplementedError(
-            "class {.__name__!r} does not implement 'setClassTrait'".format(type(self)))
-
-
-    def setInstanceTrait(self, **kwds):
-        """
-        Set the value of this trait for a configurable class
-        """
-        raise NotImplementedError(
-            "class {.__name__!r} does not implement 'setInstanceTrait'".format(type(self)))
-
-
     # framework support
     def initialize(self, configurable):
         """

@@ -56,13 +56,11 @@ class Requirement(AttributeClassifier):
         traitmap = {}
 
         # initialize the class attributes explicitly
-        # {localTraits} gets done directly by the subclasses
         attributes['pyre_pedigree'] = ()
         attributes["pyre_localTraits"] = tuple(cls.pyre_getLocalTraits(attributes))
         attributes['pyre_inheritedTraits'] = ()
         attributes['pyre_namemap'] = namemap
         attributes['pyre_traitmap'] = traitmap
-        attributes['pyre_locator'] = tracking.here(2)
         attributes['pyre_internal'] = internal
 
         # build the record

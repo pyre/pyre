@@ -27,9 +27,7 @@ class CategoryMismatchError(ComponentError):
     """
 
     def __init__(self, configurable, target, name, **kwds):
-        reason = (
-            "category mismatch in trait {!r} between {} and {}"
-            .format(name, configurable, target))
+        reason = "category mismatch in trait {0.name!r} between {0.configurable} and {0.target}"
         super().__init__(description=reason, **kwds)
 
         self.configurable = configurable
@@ -46,7 +44,7 @@ class ImplementationSpecificationError(ComponentError):
     """
 
     def __init__(self, name, errors, **kwds):
-        msg = '{}: poorly formed implementation specification'.format(name)
+        msg = '{0.name}: poorly formed implementation specification'
         super().__init__(description=msg, **kwds)
 
         self.name = name
@@ -68,8 +66,8 @@ class ProtocolError(ComponentError):
         s = '' if len(protocols) == 1 else 's'
         # here is the error description
         reason = (
-            "{} does not implement correctly the following protocol{}: {}"
-            .format(component, s, ", ".join(protocols)))
+            "{{0.component}} does not implement correctly the following protocol{}: {}"
+            .format(s, ", ".join(protocols)))
         # pass this information along to my superclass
         super().__init__(description=reason, **kwds)
         # and record the error conditions for whomever may be catching this exception
@@ -86,13 +84,8 @@ class TraitNotFoundError(ComponentError):
     """
 
     def __init__(self, configurable, name, **kwds):
-        # get the family name of the {configurable}
-        family = configurable.pyre_family()
-        # build the family clause of the message
-        fclause = ", with family {!r}".format(family) if family else ""
         # build the reason
-        reason = "{}{} has no trait named {!r}".format(
-            configurable, fclause, name)
+        reason = "{0.configurable} has no trait named {0.name!r}"
         # pass it on
         super().__init__(description=reason, **kwds)
 
@@ -109,7 +102,7 @@ class FacilitySpecificationError(ComponentError):
     """
 
     def __init__(self, configurable, trait, value, **kwds):
-        reason = "{.__name__}.{.name}: could not instantiate {!r}".format(configurable,trait,value)
+        reason = "{0.__name__}.{0.trait.name}: could not instantiate {0.value!r}"
         super().__init__(description=reason, **kwds)
 
         self.configurable = configurable

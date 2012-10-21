@@ -199,9 +199,10 @@ class Configurator:
             # find the trait
             trait = instance.pyre_trait(assignment.key[0])
             # ask it to set the value
-            trait.setInstanceTrait(
-                configurable=instance, value=assignment.value,
-                priority=priority, locator=assignment.locator)
+            instance.pyre_inventory.setTrait(
+                trait=trait, strategy=trait.instanceSlot,
+                value=assignment.value, priority=priority, locator=assignment.locator)
+
         # all done
         return instance
 

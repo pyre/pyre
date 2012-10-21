@@ -45,8 +45,10 @@ class Actor(Requirement):
         # build and add the protocol specification to the attributes
         attributes["pyre_implements"] = protocol
         # save the location of the component declaration
+        # N.B.: the locator might be incorrect if the metaclass hierarchy gets deeper;
+        # e.g. {pyre.shells.Director}, which doesn't override {__new__} so it is not affected.
         attributes["pyre_locator"] = tracking.here(1)
-        
+
         # get my ancestors to build the class record
         component = super().__new__(cls, name, bases, attributes, **kwds)
 
@@ -66,7 +68,7 @@ class Actor(Requirement):
 
         # pick the appropriate inventory strategy
         inventory = self.PublicInventory if family else self.PrivateInventory
-        # and invoke it
+        # and invoke it to register the component class and build its inventory
         inventory.classInventory(component=self, family=family)
 
         # get my protocol specification
@@ -84,14 +86,14 @@ class Actor(Requirement):
         return
 
 
-    def __call__(self, locator=None, **kwds):
+    def __call__(self, name=None, key=None, locator=None, **kwds):
         """
         Build an instance of one of my classes
         """
         # record the caller's location
         locator = tracking.here(1) if locator is None else locator
         # build the instance
-        instance = super().__call__(locator=locator, **kwds)
+        instance = super().__call__(name=name, key=key, locator=locator, **kwds)
         # and return it
         return instance
 
@@ -108,18 +110,23 @@ class Actor(Requirement):
             return super().__setattr__(name, value)
         # for the rest, try to
         try:
-            # locate the trait 
-            trait = self.pyre_trait(alias=name)
+            # normalize the name
+            name = self.pyre_namemap[name]
         # if it doesn't
-        except self.TraitNotFoundError as error:
+        except KeyError:
             # treat as a normal assignment
             return super().__setattr__(name, value)
-        # the name refers to one of my traits; build an appropriate locator
+
+        # the name refers to one of my traits; find it
+        trait = self.pyre_traitmap[name]
+        # build an appropriate locator
         locator = tracking.here(level=1)
         # set the priority
         priority = self.pyre_executive.priority.explicit()
-        # ask it to set the value
-        trait.setClassTrait(configurable=self, value=value, locator=locator, priority=priority)
+        # set the value
+        self.pyre_inventory.setTrait(
+            trait=trait, strategy=trait.classSlot, 
+            value=value, priority=priority, locator=locator)
         # and return
         return
 

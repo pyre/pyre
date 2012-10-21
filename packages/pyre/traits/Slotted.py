@@ -19,27 +19,6 @@ class Slotted(Trait):
     """
 
 
-    # setting values
-    def setClassTrait(self, configurable, value, priority, locator):
-        """
-        Set the value of this trait for a configurable class
-        """
-        # ask the inventory of the configurable to perform the assignment
-        return configurable.pyre_inventory.setTrait(
-            trait=self, strategy=self.classSlot,
-            value=value, priority=priority, locator=locator)
-
-
-    def setInstanceTrait(self, configurable, value, priority, locator):
-        """
-        Set the value of this trait for a {configurable} instance
-        """
-        # ask the inventory of the configurable to perform the assignment
-        return configurable.pyre_inventory.setTrait(
-            trait=self, strategy=self.instanceSlot,
-            value=value, priority=priority, locator=locator)
-
-
     # framework support
     def getSlot(self, configurable):
         """
@@ -97,11 +76,11 @@ class Slotted(Trait):
         # set the priority
         priority = instance.pyre_executive.priority.explicit()
         # set the value
-        self.setInstanceTrait(
-            configurable=instance, value=value, locator=locator, priority=priority)
+        instance.pyre_inventory.setTrait(
+            trait=self, strategy=self.instanceSlot,
+            value=value, priority=priority, locator=locator)
         # and return
         return
-
 
 
 # end of file 
