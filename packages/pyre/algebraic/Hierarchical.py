@@ -248,10 +248,8 @@ class Hierarchical(SymbolTable):
         """
         Get the node associate with {name}
         """
-        # hash the name
-        key = self.hash(name)
         # find the node
-        node = self.retrieve(key)
+        node = self.retrieve(name)
         # and return its value
         return node.value
 
