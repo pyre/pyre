@@ -104,7 +104,7 @@ class ANSIRenderer(pyre.component, family="journal.renderers.ansi", implements=R
         # build my palette
         self.palette = {
             trait.name: self.colors[getattr(scheme, trait.name)] 
-            for trait in self.scheme.pyre_getTraitDescriptors()
+            for trait in self.scheme.pyre_traits()
             }
 
         # all done
