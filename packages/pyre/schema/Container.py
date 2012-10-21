@@ -46,7 +46,7 @@ class Container(Type):
             # all done
             return
         # otherwise, flag it as bad input
-        raise self.CastingError(value=value, description="unknown type: value={!r}".format(value))
+        raise self.CastingError(value=value, description="unknown type: value={0.value!r}")
 
 
     # support for building nodes

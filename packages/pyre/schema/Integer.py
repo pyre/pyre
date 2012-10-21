@@ -27,9 +27,7 @@ class Integer(Type):
         # attempt to cast {value} into an integer
         try:
             return int(value)
-        except TypeError as error:
-            raise cls.CastingError(value=value, description=str(error)) from error
-        except ValueError as error:
+        except (TypeError, ValueError) as error:
             raise cls.CastingError(value=value, description=str(error)) from error
 
 

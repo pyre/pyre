@@ -18,12 +18,14 @@ class PyreError(Exception):
         return
 
     def __str__(self):
+        # render the error message
+        reason = self.description.format(self)
         # if we have a locator
         if self.locator:
             # give it a chance to pinpoint the error
-            return "{}: {}".format(self.locator, self.description)
+            return "{.locator}: {}".format(self, reason)
         # otherwise
-        return self.description
+        return reason
 
 
 class FrameworkError(PyreError):
@@ -40,18 +42,17 @@ class BadResourceLocatorError(FrameworkError):
     """
 
     def __init__(self, uri, reason, **kwds):
+        super().__init__(description="{0.uri}: {0.reason}", **kwds)
         self.uri = uri
         self.reason = reason
-        super().__init__(description="{!r}: {}".format(str(self.uri), self.reason), **kwds)
         return
 
 
 class ComponentNotFoundError(FrameworkError):
 
     def __init__(self, uri, **kwds):
+        super().__init__(description="could not resolve {0.uri} into a component", **kwds)
         self.uri = uri
-        msg = "could not resolve {!r} into a component".format(str(self.uri))
-        super().__init__(description=msg, **kwds)
         return
                  
 

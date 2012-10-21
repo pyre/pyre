@@ -35,7 +35,7 @@ def test():
         f.open('unknown:sample.odb')
         assert False
     except f.URISpecificationError as error:
-        assert str(error.uri) == "unknown:sample.odb"
+        assert error.uri.uri == "unknown:sample.odb"
         assert error.reason == "unsupported scheme 'unknown'"
 
     # missing physical file 
@@ -44,7 +44,7 @@ def test():
         assert False
     except f.SourceNotFoundError as error:
         assert error.filesystem == f
-        assert str(error.uri) == 'file:not-there.odb'
+        assert error.uri.uri == 'file:not-there.odb'
 
     # missing logical file
     try:
@@ -52,7 +52,7 @@ def test():
         assert False
     except f.SourceNotFoundError as error:
         assert error.filesystem == f
-        assert str(error.uri) == 'vfs:/pyre/startup/not-there.odb'
+        assert error.uri.uri == 'vfs:/pyre/startup/not-there.odb'
 
     # missing logical directory
     try:
@@ -60,7 +60,7 @@ def test():
         assert False
     except f.SourceNotFoundError as error:
         assert error.filesystem == f
-        assert str(error.uri) == 'vfs:/oops/not-there.odb'
+        assert error.uri.uri == 'vfs:/oops/not-there.odb'
 
     # return the file server
     return f

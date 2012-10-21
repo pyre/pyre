@@ -26,7 +26,7 @@ class CircularReferenceError(NodeError):
     """
     
     def __init__(self, node, path=(), **kwds):
-        msg = "the evaluation graph has a cycle at {}".format(node)
+        msg = "the evaluation graph has a cycle at {0.node}"
         super().__init__(description=msg, **kwds)
         self.node = node
         self.path = path
@@ -39,7 +39,7 @@ class EvaluationError(NodeError):
     """
 
     def __init__(self, error, node=None, **kwds):
-        msg = "evaluation error: {}".format(error)
+        msg = "evaluation error: {0.error}"
         super().__init__(description=msg, **kwds)
         self.node = node
         self.error = error
@@ -59,7 +59,7 @@ class EmptyExpressionError(ExpressionError):
     """
 
     def __init__(self, formula, **kwds):
-        msg = "while parsing {!r}: no references found".format(formula)
+        msg = "while parsing {0.expression!r}: no references found"
         super().__init__(description=msg, **kwds)
         self.expression = formula
         return
@@ -72,7 +72,7 @@ class ExpressionSyntaxError(ExpressionError):
     """
 
     def __init__(self, formula, error, **kwds):
-        msg = "while evaluating {!r}: {}".format(formula, error)
+        msg = "while evaluating {0.expression!r}: {0.error}"
         super().__init__(description=msg, **kwds)
         self.expression = formula
         self.error = error
@@ -85,7 +85,7 @@ class UnresolvedNodeError(NodeError):
     """
 
     def __init__(self, name, node=None, **kwds):
-        msg = "node {!r} is unresolved".format(name)
+        msg = "node {0.name!r} is unresolved"
         super().__init__(description=msg, **kwds)
         self.name = name
         self.node = node

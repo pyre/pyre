@@ -38,8 +38,4 @@ class CSV:
         return sheet
         
 
-    # exceptions
-    from ..records.exceptions import SourceSpecificationError
-
-
 # end of file 

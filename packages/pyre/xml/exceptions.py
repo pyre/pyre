@@ -26,11 +26,6 @@ class ParsingError(FrameworkError):
         self.document = document
         return
 
-    def __str__(self):
-        if self.locator:
-            return "{0}: {1}".format(str(self.locator), self.description)
-        return self.description
-
 
 class UnsupportedFeatureError(ParsingError):
     """

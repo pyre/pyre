@@ -25,15 +25,11 @@ class CodecError(ConfigurationError):
     Base class for codec errors
     """
 
-    def __init__(self, codec, uri="", locator=None, description=" generic codec error", **kwds):
+    def __init__(self, codec, uri="", description="generic codec error", **kwds):
         super().__init__(description=description, **kwds)
         self.codec = codec
         self.uri = uri
-        self.locator = locator
         return
-
-    def __str__(self):
-        return self.description
 
 
 class UnknownEncodingError(CodecError):
@@ -41,9 +37,9 @@ class UnknownEncodingError(CodecError):
     A request for an unknown codec was made
     """
 
-    def __init__(self, uri, encoding, **kwds):
-        description = '{!r}: unknown encoding {!r}'.format(str(uri), encoding)
-        super().__init__(codec=None, uri=uri, description=description, **kwds)
+    def __init__(self, encoding, **kwds):
+        description = '{0.uri.uri!r}: unknown encoding {0.encoding!r}'
+        super().__init__(codec=None, description=description, **kwds)
         self.encoding = encoding
         return
 
@@ -76,9 +72,9 @@ class ShelfError(ConfigurationError):
 
 class SymbolNotFoundError(ShelfError):
 
-    def __init__(self, shelf, symbol, **kwds):
-        msg = "symbol {!r} not found in {!r}".format(symbol, shelf)
-        super().__init__(description=msg, shelf=shelf, **kwds)
+    def __init__(self, symbol, **kwds):
+        msg = "symbol {0.symbol!r} not found in {0.shelf!r}"
+        super().__init__(description=msg, **kwds)
         self.symbol = symbol
         return
                  

@@ -74,13 +74,11 @@ class ProgrammingError(DatabaseError):
     """
 
     def __init__(self, command, **kwds):
+        msg = "while executing {0.command!r}"
+        super().__init__(description=msg**kwds)
         self.command = command
-        super().__init__(**kwds)
         return
 
-    def __str__(self):
-        return "while executing {.command!r}: ".format(self) + super().__str__()
-    
 
 class NotSupportedError(DatabaseError):
     """

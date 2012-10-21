@@ -42,7 +42,7 @@ class PML(Codec):
                 loc = pyre.tracking.chain(this=error.locator, next=locator)
             else:
                 loc = error.locator
-            msg = "decoding error in {}: {}".format(loc, error.description)
+            msg = "decoding error: {}".format(error.description)
             # convert the parsing error into a decoding error and raise it
             raise cls.DecodingError(
                 codec=cls, uri=uri, locator=loc, description=msg) from error

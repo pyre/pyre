@@ -69,7 +69,7 @@ class URI:
                 # and return it
                 return uri
         # otherwise
-        msg = 'unrecognizable URI {!r}'.format(value)
+        msg = 'unrecognizable URI {0.value!r}'
         raise cls.CastingError(value=value, description=msg)
 
 

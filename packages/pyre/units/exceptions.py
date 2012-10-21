@@ -36,8 +36,9 @@ class CompatibilityError(UnitError):
     """
 
     def __init__(self, operation, op1, op2, **kwds):
-        msg = "{}: {} and {} are incompatible".format(operation, op1, op2)
+        msg = "{0.operation}: {0.op1} and {0.op2} are incompatible"
         super().__init__(description=msg, **kwds)
+        self.operation = operation
         self.op1 = op1
         self.op2 = op2
         return

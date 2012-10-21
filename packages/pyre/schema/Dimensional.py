@@ -38,7 +38,7 @@ class Dimensional(Type):
         if isinstance(value, cls.dimensional):
             return value
         # everything else is an error
-        msg="could not convert {!r} into a dimensional quantity".format(value)
+        msg="could not convert {0.value!r} into a dimensional quantity"
         raise cls.CastingError(value=value, description=msg)
         
 

@@ -29,7 +29,7 @@ def test():
         assert False
     except root.FolderInsertionError as error:
         assert (
-            error.description 
+            str(error)
             == "error while inserting '/home/users/mga/tmp': 'mga' is not a folder")
 
     # all done

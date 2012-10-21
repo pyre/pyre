@@ -29,7 +29,7 @@ class Array(Type):
         if  isinstance(value, collections.Iterable):
             return tuple(value)
         # otherwise flag it as bad input
-        raise cls.CastingError(value=value, description="unknown type: value={!r}".format(value))
+        raise cls.CastingError(value=value, description="unknown type: value={0.vale!r}")
 
 
 # end of file 

@@ -46,12 +46,12 @@ def test():
     registrar = pyre.executive.registrar
 
     # instantiate the component
-    c1 = component(name="c1")
+    c1 = component()
     # verify that the instance was recorded in the extent
     assert set(registrar.components[component]) == {c1}
 
     # instantiate another component
-    c2 = component(name="c2")
+    c2 = component()
     # verify that the instance was recorded in the extent
     assert set(registrar.components[component]) == {c1, c2}
 

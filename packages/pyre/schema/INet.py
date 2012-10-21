@@ -118,7 +118,7 @@ class INet(Type):
         if isinstance(value, str):
             return cls.parse(value)
         # everything else is an error
-        msg="could not convert {!r} into an internet address".format(value)
+        msg="could not convert {0.value!r} into an internet address"
         raise cls.CastingError(value=value, description=msg)
 
 
@@ -157,7 +157,7 @@ class INet(Type):
         # if it failed
         if not match:
             # describe the problem
-            msg = "could not convert {!r} into an internet address".format(value)
+            msg = "could not convert {0.value!r} into an internet address"
             # bail out
             raise cls.CastingError(value=value, description=msg)
         # we have a match; get the address family

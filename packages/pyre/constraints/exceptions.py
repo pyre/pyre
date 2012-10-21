@@ -26,13 +26,13 @@ class ConstraintViolationError(FrameworkError):
     to handle the failure.
     """
 
-    def __init__(self, constraint, value):
+    def __init__(self, constraint, value, **kwds):
+        msg  = "{0.value!r} violates the constraint ({0.constraint})"
+        super().__init__(description=msg, **kwds)
         self.constraint = constraint
         self.value = value
         return
 
-    def __str__(self):
-        return "{0.value!r} violates the constraint ({0.constraint})".format(self)
 
 
 # end of file 

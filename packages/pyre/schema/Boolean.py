@@ -28,7 +28,7 @@ class Boolean(Type):
         if isinstance(value, str):
             return cls._strmap[value.lower()]
         # anything else is an error
-        raise cls.CastingError(description='could not cast to bool', value=value)
+        raise cls.CastingError(description='could not cast {0.value!r} to bool', value=value)
 
 
     _strmap = {

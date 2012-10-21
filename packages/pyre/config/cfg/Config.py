@@ -37,7 +37,7 @@ class Config(Codec):
         # if anything goes wrong
         except parser.ParsingError as error:
             # build the error message parts
-            msg = "decoding error in {}: {}".format(error.locator, error.description)
+            msg = "decoding error: {}".format(error.description)
             # convert the parsing error into a decoding error and raise it
             raise cls.DecodingError(codec=cls, uri=uri, locator=error.locator, description=msg)
 

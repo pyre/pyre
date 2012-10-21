@@ -27,9 +27,10 @@ class DirectoryListingError(GenericError):
     """
 
     def __init__(self, uri, error, **kwds):
-        msg = "error while accessing {!r}: {}".format(str(uri), error)
+        msg = "error while accessing {0.uri!r}: {0.error}"
         super().__init__(description=msg, **kwds)
         self.uri = uri
+        self.error = error
         return
 
 
@@ -39,9 +40,10 @@ class MountPointError(GenericError):
     """
 
     def __init__(self, uri, error):
-        msg = "error while mounting {!r}: {}".format(str(uri), error)
+        msg = "error while mounting {0.uri!r}: {0.error}"
         super().__init__(description=msg)
         self.uri = uri
+        self.error = error
         return
 
 
@@ -65,7 +67,7 @@ class NotFoundError(FilesystemError):
     """
 
     def __init__(self, uri, fragment, **kwds):
-        msg = "while looking for {!r}: {!r} not found".format(str(uri), fragment)
+        msg = "while looking for {0.uri!r}: {0.fragment!r} not found"
         super().__init__(description=msg, **kwds)
         self.uri = uri
         self.fragment = fragment
@@ -78,7 +80,7 @@ class SourceNotFoundError(FilesystemError):
     """
 
     def __init__(self, uri, **kwds):
-        msg = "while looking for {!r}: file not found".format(str(uri))
+        msg = "while looking for {0.uri!r}: file not found"
         super().__init__(description=msg, **kwds)
         self.uri = uri
         return
@@ -90,7 +92,7 @@ class FolderError(FilesystemError):
     """
 
     def __init__(self, uri, fragment, **kwds):
-        msg = "while looking for {!r}: {!r} is not a folder".format(str(uri), fragment)
+        msg = "while looking for {0.uri!r}: {0.fragment!r} is not a folder"
         super().__init__(description=msg, **kwds)
         self.uri = uri
         self.fragment = fragment
@@ -104,7 +106,7 @@ class FolderInsertionError(FilesystemError):
     """
 
     def __init__(self, uri, target, **kwds):
-        msg = "error while inserting {!r}: {!r} is not a folder".format(str(uri), target)
+        msg = "error while inserting {0.uri!r}: {0.target!r} is not a folder"
         super().__init__(description=msg, **kwds)
         self.uri = uri
         self.target = target
@@ -117,7 +119,7 @@ class URISpecificationError(GenericError):
     """
 
     def __init__(self, uri, reason, **kwds):
-        msg = "'{}': {}".format(uri, reason)
+        msg = "{0.uri!r}: {0.reason}"
         super().__init__(description=msg , **kwds)
         self.uri = uri
         self.reason = reason

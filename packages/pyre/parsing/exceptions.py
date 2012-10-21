@@ -22,9 +22,6 @@ class ParsingError(FrameworkError):
     Can be used to catch all exceptions raised by this package
     """
 
-    def __str__(self):
-        return "error while parsing {0.locator}: {0.description}".format(self)
-
 
 class TokenizationError(ParsingError):
     """
@@ -32,7 +29,7 @@ class TokenizationError(ParsingError):
     """
 
     def __init__(self, text, **kwds):
-        super().__init__(description="could not match {0!r}".format(text), **kwds)
+        super().__init__(description="could not match {0.text!r}", **kwds)
         self.text = text
         return
 
