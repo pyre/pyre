@@ -28,7 +28,6 @@ class Configurable(Executive):
 
 
     # framework data; every class record gets a fresh set of these values
-    pyre_key = None # the hash key issued by the nameserver
     pyre_pedigree = None # my ancestors that are configurables, in mro
     pyre_localTraits = None # the traits explicitly specified in my declaration
     pyre_inheritedTraits = None # the traits inherited from my superclasses
@@ -39,59 +38,6 @@ class Configurable(Executive):
 
 
     # introspection
-    @property
-    def pyre_name(self):
-        """
-        Look up my name
-        """
-        # if i don't have a registration key
-        if self.pyre_key is None:
-            # then, i don't have a name
-            return None
-        # otherwise, ask the nameserver
-        _, name = self.pyre_executive.nameserver.lookup(self.pyre_key)
-        # and return the registration name
-        return name
-
-
-    @property
-    def pyre_familyKey(self):
-        """
-        Get my class registration key
-        """
-        return self.__class__.pyre_key
-
-
-    @classmethod
-    def pyre_family(cls):
-        """
-        Look up my family name
-        """
-        # if i don't have a key, i don't have a family
-        if cls.pyre_key is None: return None
-        # otherwise, ask the nameserver
-        _, family = cls.pyre_executive.nameserver.lookup(cls.pyre_key)
-        # and return the family name
-        return family
-
-
-    @classmethod
-    def pyre_package(cls):
-        """
-        Deduce my package name
-        """
-        # get the name server
-        ns = cls.pyre_executive.nameserver
-        # if i don't have a key, i don't have a package
-        if cls.pyre_key is None: return None
-        # otherwise, ask the nameserver
-        _, family = ns.lookup(cls.pyre_key)
-        # split the family name apart; the package name is the zeroth entry
-        pkgName = family.split(ns.separator)[0]
-        # use it to look up the package
-        return ns[pkgName]
-
-
     @classmethod
     def pyre_traits(cls):
         """

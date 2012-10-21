@@ -28,7 +28,7 @@ class protocol(pyre.protocol):
 
 def badImplementationSpec():
     class badspec(pyre.component, implements=1):
-        """bad implementation specification: not an Protocol subclass"""
+        """bad implementation specification: not a Protocol subclass"""
     return badspec
 
 

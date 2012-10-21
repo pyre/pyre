@@ -28,7 +28,6 @@ def test():
     assert base.__name__ == "base"
     assert base.__bases__ == (pyre.component,)
     # check the layout
-    assert base.pyre_key is None
     assert base.pyre_namemap == {'common': 'common'}
     assert base.pyre_pedigree == (base, pyre.component)
     # traits
@@ -44,7 +43,6 @@ def test():
     assert derived.__name__ == "derived"
     assert derived.__bases__ == (base, )
     # check the layout
-    assert derived.pyre_key is None
     assert derived.pyre_namemap == {'common':'common', 'extra': 'extra'}
     assert derived.pyre_pedigree == (derived, base, pyre.component)
     # traits

@@ -200,7 +200,7 @@ class Executive:
         return key
 
 
-    def registerComponentClass(self, component, family, locator):
+    def registerComponentClass(self, component, family):
         """
         Register a freshly minted component class
         """
@@ -210,18 +210,22 @@ class Executive:
         package = self.nameserver.package(executive=self, name=family, locator=pkgloc)
         # associate the component with its package
         package.components.add(component)
+        # get the component locator
+        locator = component.pyre_locator
         # insert the component into the model
         key = self.nameserver.configurable(name=family, configurable=component, locator=locator)
         # return the key
         return key
 
 
-    def registerComponentInstance(self, component, name, locator):
+    def registerComponentInstance(self, instance, name):
         """
         Register a freshly minted component instance
         """
+        # get the instance locator
+        locator = instance.pyre_locator
         # insert the component instance into the model
-        key = self.nameserver.configurable(name=name, configurable=component, locator=locator)
+        key = self.nameserver.configurable(name=name, configurable=instance, locator=locator)
         # return the key
         return key
 

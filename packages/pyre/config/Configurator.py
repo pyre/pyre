@@ -215,7 +215,7 @@ class Configurator:
         # and the nameserver
         nameserver = executive.nameserver
         # ask the {instance} for its registration key
-        key = instance.pyre_key
+        key = instance.pyre_inventory.key
         # go through all deferred assignment that were meant for {instance}
         for assignment, priority in self.deferred[key]:
             # check all the conditions
@@ -226,9 +226,9 @@ class Configurator:
                 # compute the intended instance safely: avoid the infinite recursion caused by
                 # asking the nameserver for the value of the slot whose value we are in the
                 # middle of building...
-                target = instance if name is key else nameserver[name]
+                target = instance.__class__ if name is key else nameserver[name].__class__
                 # check the family
-                if target.pyre_familyKey is not family: break
+                if target.pyre_inventory.key is not family: break
             # this is executed iff all assignment conditions are true
             else:
                 # hand this assignment to the caller

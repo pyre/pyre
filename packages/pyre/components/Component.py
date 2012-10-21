@@ -23,11 +23,41 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
 
     # types
+    from .PublicInventory import PublicInventory
+    from .PrivateInventory import PrivateInventory
     from ..constraints.exceptions import ConstraintViolationError
 
 
     # framework data
     pyre_implements = None # the lists of protocols i implement
+
+
+    # introspection
+    @property
+    def pyre_name(self):
+        """
+        Look up my name
+        """
+        # ask my inventory
+        return self.pyre_inventory.name()
+
+
+    @classmethod
+    def pyre_family(cls):
+        """
+        Deduce my family name
+        """
+        # get my inventory to answer this
+        return cls.pyre_inventory.name()
+
+
+    @classmethod
+    def pyre_package(cls):
+        """
+        Deduce my package name
+        """
+        # get my inventory to answer this
+        return cls.pyre_inventory.package()
 
 
     # framework notifications
@@ -91,7 +121,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Return the extent of this class, i.e. the set of its instances
         """
         # the registrar knows
-        return cls.pyre_executive.registrar.components[cls]
+        return cls.pyre_registrar.components[cls]
 
 
     def pyre_slot(self, attribute):
@@ -102,7 +132,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # find the trait
         trait = self.pyre_trait(alias=attribute)
         # look up the slot associated with this trait and return it
-        return trait.getSlot(configurable=self)
+        return self.pyre_inventory.getSlot(configurable=self)
 
 
     def pyre_where(self, attribute=None):
@@ -118,212 +148,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return slot.locator
 
 
-    # implementation details; don't use these
-    @classmethod
-    def pyre_buildClassInventory(cls):
-        """
-        Build the component inventory, a map from trait descriptors to the configuration slots
-        that hold the trait values
-        """
-        # get my registration key
-        me = cls.pyre_key
-
-        # make a locator
-        this = tracking.simple('during the initialization of {}'.format(cls))
-        locator = tracking.chain(this=this, next=cls.pyre_locator)
-
-        # get my local slots
-        localSlots = cls.pyre_buildLocalSlots(key=me, locator=locator)
-        # and references to my inherited slots
-        inheritedSlots = cls.pyre_buildInheritedSlots(key=me, locator=locator)
-
-        # if i am not registered with the nameserver
-        if me is None:
-            # we must build local storage for the trait values
-            inventory = {}
-            # insert the local traits
-            inventory.update(localSlots)
-            # and references to ancestral slots for my inherited traits
-            inventory.update(inheritedSlots)
-            # all done
-            return inventory
-
-        # otherwise, get my family name
-        family = cls.pyre_family()
-        # get the nameserver
-        ns = cls.pyre_executive.nameserver
-        # go through all the slots
-        for trait, slot in itertools.chain(localSlots, inheritedSlots):
-            # get the name of the trait
-            name = trait.name
-            # build the trait key
-            key = me[name]
-            # register this key as belonging to a trait
-            ns.registerTrait(key=key, strategy=trait.classSlot)
-            # build the trait full name
-            fullname = ns.join(family, name)
-            # add the slot to the nameserver model
-            ns.insert(name=fullname, key=key, node=slot)
-            # and register my aliases
-            for alias in trait.aliases:
-                # skip my canonical name
-                if alias == name: continue
-                # make it happen
-                ns.alias(base=me, alias=alias, target=key)
-
-        # indicate that this class does not need local storage for its traits
-        return None
-
-
-    @classmethod
-    def pyre_buildInstanceInventory(cls, instance):
-        """
-        Build the component inventory, a map from trait descriptors to the configuration slots
-        that hold the trait values
-        """
-        # get my registration key
-        me = instance.pyre_key
-
-        # make a locator
-        this = tracking.simple('during the instantiation of {}'.format(cls))
-        locator = tracking.chain(this=this, next=cls.pyre_locator)
-
-        # get my local slots
-        slots = cls.pyre_buildReferences(key=me, locator=locator)
-
-        # if i am not registered with the nameserver
-        if me is None:
-            # we must build local storage for the trait values
-            inventory = {}
-            # insert the local traits
-            inventory.update(slots)
-            # all done
-            return inventory
-
-        # get the nameserver
-        ns = cls.pyre_executive.nameserver
-        # go through all the slots
-        for trait, slot in slots:
-            # get the name of the trait
-            name = trait.name
-            # build the trait key
-            key = me[name]
-            # register this key as belonging to a trait
-            ns.registerTrait(key=key, strategy=trait.instanceSlot)
-            # build the trait full name
-            fullname = ns.join(instance.pyre_name, name)
-            # add the slot to the nameserver model
-            ns.insert(name=fullname, key=key, node=slot)
-            # and register my aliases
-            for alias in trait.aliases:
-                # skip my canonical name
-                if alias == name: continue
-                # make it happen
-                ns.alias(base=me, alias=alias, target=key)
-
-        # indicate that this instance does not need local storage for its traits
-        return None
-
-
-    @classmethod
-    def pyre_buildLocalSlots(cls, key, locator):
-        """
-        Build slots for the local traits
-        """
-        # get the nameserver
-        ns = cls.pyre_executive.nameserver
-        # the factory of priorities in the {defaults} category
-        priority = ns.priority.defaults
-        # go through my locally declared traits
-        for trait in cls.pyre_localTraits:
-            # skip the non configurable ones, e.g. behaviors, for which we don't build slots
-            if not trait.isConfigurable: continue
-            # ask the trait for its evaluation strategy
-            macro, converter = trait.classSlot(model=ns)
-            # use to build the slot
-            slot = macro(
-                key=None if key is None else key[trait.name],
-                value=trait.default, priority=priority(), locator=locator, converter=converter)
-            # yield the pair
-            yield trait, slot
-        # all done
-        return
-
-
-    @classmethod
-    def pyre_buildInheritedSlots(cls, key, locator):
-        """
-        Build references to ancestor slots for my inherited traits
-        """
-        # get the nameserver
-        ns = cls.pyre_executive.nameserver
-        # the factory of priorities in the {defaults} category
-        priority = ns.priority.defaults
-        # the traits i am looking for
-        traits = set(trait for trait in cls.pyre_inheritedTraits if trait.isConfigurable)
-        # if i don't have any, bail out
-        if not traits: return
-        # go through each of my ancestors
-        for ancestor in cls.pyre_pedigree[1:]:
-            # and all its configurable traits
-            for trait in ancestor.pyre_configurables():
-                # if the trait is not in the target pile
-                if trait not in traits:
-                    # no worries, it must have been processed already by a closer ancestor
-                    continue
-                # otherwise, remove it from the target set
-                traits.remove(trait)
-                # get the associated slot
-                slot = trait.getSlot(configurable=ancestor)
-                # build a reference to it
-                ref = slot.ref(
-                    key=None if key is None else key[trait.name],
-                    locator=locator, priority=priority())
-                # and yield the pair
-                yield trait, ref
-            # if we have exhausted the set of traits we are looking for
-            if not traits:
-                # skip the rest of the ancestors
-                break
-        # if we ran out ancestors before we ran out of traits
-        else:
-            # complain
-            missing = ', '.join('{!r}'.format(trait.name) for trait in traits)
-            msg = "{}: could not locate slots for the following traits: {}".format(
-                cls, missing)
-            # by raising a firewall, since this is almost certainly a bug
-            import journal
-            raise journal.firewall("pyre.components").log(msg)
-
-        # otherwise, we are done
-        return
-
-
-    @classmethod
-    def pyre_buildReferences(cls, key, locator):
-        """
-        Build references to the class inventory slots
-        """
-        # get the nameserver
-        ns = cls.pyre_executive.nameserver
-        # the factory of priorities in the {defaults} category
-        priority = ns.priority.defaults
-        # go through all my configurable traits
-        for trait in cls.pyre_configurables():
-            # ask the trait for its slot
-            slot = trait.getSlot(configurable=cls)
-            # and its slot strategy
-            _, converter = trait.instanceSlot(model=ns)
-            # build a reference to it for the caller
-            ref = slot.ref(
-                key=None if key is None else key[trait.name],
-                locator=locator, priority=priority(), converter=converter)
-            # send the (trait, reference) pair to my caller
-            yield trait, ref
-        # all done
-        return
-
-
     # meta methods
     def __new__(cls, locator, name=None, key=None, **kwds):
         # build the instance
@@ -332,37 +156,22 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # record the locator
         instance.pyre_locator = locator
 
-        # get the executive
-        executive = cls.pyre_executive
-
-        # if no key was specified
-        if key is None and name is not None:
-            # register with the executive
-            instance.pyre_key = executive.registerComponentInstance(
-                component=instance, name=name, locator=locator)
+        # pick the appropriate inventory strategy: if there is no public name associated with
+        # this instance
+        if key is None and name is None:
+            # make private inventory
+            inventory = cls.PrivateInventory
         # otherwise
         else:
-            # just use what i was given; this happens only when this component has been
-            # instantiated implicitly as the trait of another component
-            instance.pyre_key = key
-        # register with the component registrar
-        executive.registrar.registerComponentInstance(instance=instance)
-        # invoke the registration hook
-        instance.pyre_registered()
+            # make public inventory
+            inventory = cls.PublicInventory
+        # invoke it
+        inventory.instanceInventory(instance=instance, key=key, name=name)
 
-        # build the instance inventory
-        instance.pyre_inventory = cls.pyre_buildInstanceInventory(instance)
-        # if the instance has a registration key
-        if instance.pyre_key:
-            # configure it
-            executive.configurator.configureComponentInstance(instance=instance)
-        # invoke the registration hook
-        instance.pyre_configured()
-
-        # return the instance
+        # and return the new instance
         return instance
 
-
+                                    
     def __str__(self):
         # accumulate the name fragments here
         fragments = []

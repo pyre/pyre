@@ -57,7 +57,6 @@ class Requirement(AttributeClassifier):
 
         # initialize the class attributes explicitly
         # {localTraits} gets done directly by the subclasses
-        attributes['pyre_key'] = None
         attributes['pyre_pedigree'] = ()
         attributes["pyre_localTraits"] = tuple(cls.pyre_getLocalTraits(attributes))
         attributes['pyre_inheritedTraits'] = ()

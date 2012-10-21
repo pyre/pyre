@@ -111,7 +111,7 @@
   </component>
 
   <!-- data for component_catalog -->
-  <component name="catalog_container">
+  <component name="catalog_container" family="sample.container">
     <!-- put some components in the catalog -->
     <component name="catalog">
       <bind property="cat1">import:component_catalog.comp</bind>
@@ -137,7 +137,7 @@
   </component>
 
   <!-- data for component_map -->
-  <component name="map_container">
+  <component name="map_container" family="sample.map">
     <!-- put some components in the catalog -->
     <component name="map">
       <bind property="jim">value(jim)</bind>

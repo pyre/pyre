@@ -29,7 +29,6 @@ def test():
     assert component.__name__ == "component"
     assert component.__bases__ == (pyre.component,)
     # check the layout
-    assert component.pyre_key is None
     assert component.pyre_family() is None
     assert component.pyre_namemap == {'p': 'p'}
     assert component.pyre_pedigree == (component, pyre.component)

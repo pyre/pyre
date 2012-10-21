@@ -18,7 +18,7 @@ class Catalog(Facility):
 
 
     # value coercion
-    def instantiate(self, node, value, **kwds):
+    def instantiate(self, node, value, configurable, **kwds):
         """
         Attach a component catalog as my trait value
         """
@@ -60,8 +60,13 @@ class Catalog(Facility):
                 # hash them
                 name = nameserver.hash(name)
                 family = nameserver.hash(family)
+                # gingerly
+                if name == configurable.pyre_inventory.key:
+                    target = configurable.__class__
+                else:
+                    target = ns[name].__class__
                 # verify
-                if nameserver[name].pyre_familyKey is not family: break
+                if target.pyre_inventory.key is not family: break
             # if they all passed
             else:
                 # get the name of this entry

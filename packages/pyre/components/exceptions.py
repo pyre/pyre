@@ -63,9 +63,7 @@ class ProtocolError(ComponentError):
 
     def __init__(self, component, protocol, report, **kwds):
         # extract the actual protocols, skipping {object}
-        protocols = tuple(
-            str(base)
-            for base in protocol.__mro__[:-1] if not base.pyre_internal )
+        protocols = tuple(str(base) for base in protocol.pyre_pedigree)
         # support for singular/plural
         s = '' if len(protocols) == 1 else 's'
         # here is the error description

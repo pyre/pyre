@@ -19,6 +19,11 @@ class Protocol(Configurable, metaclass=Role, internal=True):
     """
 
 
+    # framework data
+    pyre_key = None
+
+
+    # override this in your protocols to provide the default implementation
     @classmethod
     def pyre_default(cls):
         """
@@ -27,6 +32,37 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         # actual protocols should override
         return None
+
+
+    # introspection
+    @classmethod
+    def pyre_family(cls):
+        """
+        Look up my family name
+        """
+        # if i don't have a key, i don't have a family
+        if cls.pyre_key is None: return None
+        # otherwise, ask the nameserver
+        _, family = cls.pyre_executive.nameserver.lookup(cls.pyre_key)
+        # and return the family name
+        return family
+
+
+    @classmethod
+    def pyre_package(cls):
+        """
+        Deduce my package name
+        """
+        # get the name server
+        ns = cls.pyre_executive.nameserver
+        # if i don't have a key, i don't have a package
+        if cls.pyre_key is None: return None
+        # otherwise, ask the nameserver
+        _, family = ns.lookup(cls.pyre_key)
+        # split the family name apart; the package name is the zeroth entry
+        pkgName = family.split(ns.separator)[0]
+        # use it to look up the package
+        return ns[pkgName]
 
 
 # end of file 

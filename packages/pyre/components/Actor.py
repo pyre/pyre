@@ -24,6 +24,8 @@ class Actor(Requirement):
 
     # types
     from .Role import Role
+    from .PublicInventory import PublicInventory
+    from .PrivateInventory import PrivateInventory
     from .exceptions import ImplementationSpecificationError, ProtocolError
 
 
@@ -48,15 +50,6 @@ class Actor(Requirement):
         # get my ancestors to build the class record
         component = super().__new__(cls, name, bases, attributes, **kwds)
 
-        # if a protocol spec was derivable from the declaration, check protocol compatibility 
-        if protocol:
-            # check whether the requirements were implemented correctly
-            check = component.pyre_isCompatible(protocol)
-            # if not
-            if not check:
-                # complain
-                raise cls.ProtocolError(component, protocol, check)
-
         # and pass the component on
         return component
 
@@ -68,38 +61,28 @@ class Actor(Requirement):
         # initialize the record
         super().__init__(name, bases, attributes, **kwds)
 
-        # get the executive
-        executive = self.pyre_executive
-
         # if this is an internal component, there is nothing further to do
         if self.pyre_internal: return
 
-        # if the component author specified a family name
-        if family:
-            #  register the component class with the executive
-            self.pyre_key = executive.registerComponentClass(
-                family=family, component=self, locator=self.pyre_locator)
-        # otherwise
-        else:
-            # i have no registration key
-            self.pyre_key = None
-        # register with the component registrar
-        executive.registrar.registerComponentClass(component=self)
-        # invoke the registration hook
-        self.pyre_classRegistered()
+        # pick the appropriate inventory strategy
+        inventory = self.PublicInventory if family else self.PrivateInventory
+        # and invoke it
+        inventory.classInventory(component=self, family=family)
 
-        # build the component class inventory
-        self.pyre_inventory = self.pyre_buildClassInventory()
-        # if i have a registration key
-        if self.pyre_key:
-            # hand me to the configurator
-            executive.configurator.configureComponentClass(component=self)
-        # invoke the configuration hook
-        self.pyre_classConfigured()
+        # get my protocol specification
+        protocol = self.pyre_implements
+        # if one was derivable from the declaration, check protocol compatibility 
+        if protocol:
+            # check whether the requirements were implemented correctly
+            check = self.pyre_isCompatible(protocol)
+            # if not
+            if not check:
+                # complain
+                raise self.ProtocolError(self, protocol, check)
 
         # all done
         return
-            
+
 
     def __call__(self, locator=None, **kwds):
         """
