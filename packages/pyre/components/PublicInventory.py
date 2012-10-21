@@ -237,7 +237,7 @@ class PublicInventory(Inventory):
         # get the nameserver
         ns = cls.pyre_nameserver
         # make a locator
-        this = tracking.simple('during the instantiation of {}'.format(instance))
+        this = tracking.lookup(description='during the instantiation of', key=key)
         locator = tracking.chain(this=this, next=instance.pyre_locator)
         # get the factory of priorities in the {defaults} category
         priority = ns.priority.defaults
