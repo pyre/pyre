@@ -33,7 +33,7 @@ class PathHash:
         # go through the entries in {items}
         for part in items:
             # find the right spot
-            node = node.nodes[part]
+            node = node[part]
         # and return it
         return node
 
