@@ -7,7 +7,7 @@
 
 
 # externals
-import weakref
+# import weakref
 from .. import tracking
 from .. import algebraic
 from .Package import Package
@@ -36,9 +36,9 @@ class NameServer(algebraic.hierarchicalModel):
         # get the right priority
         priority = self.priority.package()
         # build a weak reference to {configurable}
-        proxy = weakref.proxy(configurable)
+        # proxy = weakref.proxy(configurable)
         # build a slot to hold the {configurable} proxy
-        slot = self.literal(key=key, value=proxy, priority=priority, locator=locator)
+        slot = self.literal(key=key, value=configurable, priority=priority, locator=locator)
         # store it in the model
         self._nodes[key] = slot
         self._names[key] = name
