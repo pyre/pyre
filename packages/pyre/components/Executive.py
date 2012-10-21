@@ -19,6 +19,7 @@ class Executive:
 
     # public data
     pyre_executive = None
+    pyre_registrar = None
     pyre_fileserver = None
     pyre_nameserver = None
     pyre_configurator = None
@@ -31,6 +32,7 @@ class Executive:
         """
         # build weak references to the framework managers
         cls.pyre_executive = weakref.proxy(executive)
+        cls.pyre_registrar = weakref.proxy(executive.registrar)
         cls.pyre_fileserver = weakref.proxy(executive.fileserver)
         cls.pyre_nameserver = weakref.proxy(executive.nameserver)
         cls.pyre_configurator = weakref.proxy(executive.configurator)
