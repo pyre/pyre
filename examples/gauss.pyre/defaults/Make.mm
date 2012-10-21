@@ -7,7 +7,7 @@
 
 
 PROJECT = gauss.pyre
-PACKAGE = depository
+PACKAGE = defaults
 
 #--------------------------------------------------------------------------
 #
