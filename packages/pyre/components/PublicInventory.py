@@ -7,6 +7,7 @@
 
 
 # externals
+import operator
 import itertools
 from .. import tracking
 # superclass
@@ -104,8 +105,11 @@ class PublicInventory(Inventory):
         # collect the slots
         local = cls.localSlots(key=key, component=component, locator=locator)
         inherited = cls.inheritedSlots(key=key, component=component, locator=locator)
+        slots = itertools.chain(local, inherited)
+        # make sure we build class slots
+        strategy = operator.attrgetter('classSlot')
         # register them with the nameserver
-        slots = cls.registerClassSlots(key=key, slots=itertools.chain(local, inherited))
+        slots = cls.registerSlots(key=key, slots=slots, strategy=strategy)
 
         # build the inventory
         inventory = cls(key=key, slots=slots)
@@ -139,8 +143,10 @@ class PublicInventory(Inventory):
 
         # build the instance slots
         slots = cls.instanceSlots(key=key, instance=instance)
+        # make sure we build instance slots
+        strategy = operator.attrgetter('instanceSlot')
         # register them
-        slots = cls.registerInstanceSlots(key=key, slots=slots)
+        slots = cls.registerSlots(key=key, slots=slots, strategy=strategy)
         # build the inventory out of the instance slots and attach it
         instance.pyre_inventory = cls(key=key, slots=slots)
 
@@ -257,7 +263,7 @@ class PublicInventory(Inventory):
 
 
     @classmethod
-    def registerClassSlots(cls, key, slots):
+    def registerSlots(cls, key, slots, strategy):
         """
         Go through the (trait, slot) pairs in {slots} and register them with the nameserver
         """
@@ -272,40 +278,7 @@ class PublicInventory(Inventory):
             # build the trait key
             traitKey = key[traitName]
             # register this key as belonging to a trait
-            ns.registerTrait(key=traitKey, strategy=trait.classSlot)
-            # build the trait fill name
-            fullname = ns.join(base, traitName)
-            # place the slot with the nameserver 
-            ns.insert(name=fullname, key=traitKey, node=slot)
-            # register the trait aliases
-            for alias in trait.aliases:
-                # skip the canonical name
-                if alias == traitName: continue
-                # notify the nameserver
-                ns.alias(base=key, alias=alias, target=traitKey)
-            # hand this (trait, key) pair to the caller
-            yield trait, traitKey
-        # all done
-        return
-            
-
-    @classmethod
-    def registerInstanceSlots(cls, key, slots):
-        """
-        Go through the (trait, slot) pairs in {slots} and register them with the nameserver
-        """
-        # get the nameserver
-        ns = cls.pyre_nameserver
-        # look up the basename
-        _, base = ns.lookup(key)
-        # go through the (trait, slot) pairs
-        for trait, slot in slots:
-            # get the name of the trait
-            traitName = trait.name
-            # build the trait key
-            traitKey = key[traitName]
-            # register this key as belonging to a trait
-            ns.registerTrait(key=traitKey, strategy=trait.instanceSlot)
+            ns.registerTrait(key=traitKey, strategy=strategy(trait))
             # build the trait fill name
             fullname = ns.join(base, traitName)
             # place the slot with the nameserver 
