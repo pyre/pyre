@@ -13,7 +13,7 @@ PACKAGE = algebra
 PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
 
 #
-all: export release
+all: export
 
 export:: export-package-headers
 
