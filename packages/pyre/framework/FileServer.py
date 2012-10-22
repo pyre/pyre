@@ -46,10 +46,6 @@ class FileServer(Filesystem):
 
     # constants
     DOT_PYRE = '~/.pyre'
-    # public data
-    prefixfs = None
-    userfs = None
-    startupfs = None
 
 
     # interface
@@ -130,7 +126,7 @@ class FileServer(Filesystem):
         # print("pyre.FileServer:")
 
         # get access to the location where the framework is installed
-        from .. import prefix as pyre_prefix
+        from .. import defaults as pyre_defaults
 
         # first, mount the system directory
         # there are two possibilities
@@ -140,27 +136,11 @@ class FileServer(Filesystem):
         # both are handled correctly by the {pyre.filesystem.local} factory
         try:
             # so invoke it to build the filesystem for us
-            self.prefixfs = self.local(root=pyre_prefix()).discover(levels=1)
+            system = self.local(root=pyre_defaults()).discover()
         # if this failed
         except self.GenericError:
             # just create a new empty folder
             system = self.folder()
-        # otherwise
-        else:
-            # attempt to
-            try:
-                # hunt down the directory with the system defaults
-                system = self.prefixfs["defaults"]
-            # if this failed
-            except self.NotFoundError:
-                # hmm... why is this directory missing from the distribution?
-                # print(" ** warning: could not find system depository")
-                # moving on...
-                system = self.folder()
-            # if successful
-            else:
-                # populate it with the disk contents
-                system.discover(levels=1)
         # mount it as {/pyre/system}
         self["pyre/system"] = system
 
@@ -169,26 +149,20 @@ class FileServer(Filesystem):
         userdir = os.path.expanduser(self.DOT_PYRE) 
         try:
             # make filesystem out of the preference directory
-            self.userfs = self.local(root=userdir).discover(levels=1)
+            user = self.local(root=userdir).discover(levels=1)
         except self.GenericError:
-            self.userfs = self.folder()
+            user = self.folder()
        # mount this directory as {/pyre/user}
-        self["pyre/user"] = self.userfs
+        self["pyre/user"] = user
 
         # finally, mount the current working directory
         try:
             # make filesystem out of the preference directory
-            self.startupfs = self.local(root=".").discover(levels=1)
+            startup = self.local(root=".").discover(levels=1)
         except self.GenericError:
-            self.startupfs = self.folder()
+            startup = self.folder()
        # mount this directory as {/pyre/startup}
-        self["pyre/startup"] = self.startupfs
-
-        # print("  prefix: {!r}".format(self.prefixfs.uri))
-        # print("  system: {!r}".format(system.uri))
-        # print("  user: {!r}".format(self.userfs.uri))
-        # print("  startup: {!r}".format(self.startupfs.uri))
-        # self.dump()
+        self["pyre/startup"] = startup
 
         # all done
         return
