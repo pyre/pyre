@@ -7,23 +7,12 @@
 
 
 PROJECT = pyre
-PACKAGE = depository/merlin/help
+PACKAGE = defaults/merlin/help
 
 #--------------------------------------------------------------------------
 #
 
 all: export
-
-
-#--------------------------------------------------------------------------
-#
-
-EXPORT_ETCDIR = $(EXPORT_ROOT)
-EXPORT_ETC = \
-
-export:: export-etc
-
-release:: release-etc
 
 
 # end of file 

@@ -17,10 +17,9 @@ all: tidy
 #--------------------------------------------------------------------------
 #
 
-EXPORT_ETCDIR = $(EXPORT_ROOT)
 EXPORT_ETC = \
-    inventory.html \
-    inventory.xsd \
+    config.html \
+    config.xsd \
 
 
 export:: export-etc

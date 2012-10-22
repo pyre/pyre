@@ -17,7 +17,6 @@ all: export
 #--------------------------------------------------------------------------
 #
 
-EXPORT_ETCDIR = $(EXPORT_ROOT)
 EXPORT_ETC = \
     gauss.cfg
 

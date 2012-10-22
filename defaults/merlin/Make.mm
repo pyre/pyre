@@ -7,7 +7,7 @@
 
 
 PROJECT = pyre
-PACKAGE = depository/merlin
+PACKAGE = defaults/merlin
 
 RECURSE_DIRS = \
 
@@ -29,13 +29,10 @@ distclean::
 #--------------------------------------------------------------------------
 #
 
-EXPORT_ETCDIR = $(EXPORT_ROOT)
-EXPORT_ETC = \
-
 export:: # export-etc
 	BLD_ACTION="export" $(MM) recurse
 
-release:: # export-etc
+release:: # release-etc
 	BLD_ACTION="release" $(MM) recurse
 
 

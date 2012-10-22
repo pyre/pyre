@@ -27,6 +27,7 @@ PROJ_SRCS = \
 
 export:: export-headers
 
+EXPORT_INCDIR = $(EXPORT_ROOT)/include/pyre/$(PROJECT)
 EXPORT_HEADERS = \
     capsules.h
 

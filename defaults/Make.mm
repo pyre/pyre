@@ -31,7 +31,6 @@ distclean::
 #--------------------------------------------------------------------------
 #
 
-EXPORT_ETCDIR = $(EXPORT_ROOT)
 EXPORT_ETC = \
     merlin.cfg \
     pyre.cfg
