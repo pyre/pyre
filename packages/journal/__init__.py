@@ -93,8 +93,8 @@ def boot():
     Initialize the journal package.
 
     Attempt to locate the C++ extension and use it if available; fall back on the pure python
-    implementation if the fails. Either way, return a marker that enables clients to check
-    whether there is support for journal messages from C/C++/FORTRAN.
+    implementation. Either way, return a marker that enables clients to check whether there is
+    support for journal messages from C/C++/FORTRAN.
     """
     # access to the local types
     from .Journal import Journal
