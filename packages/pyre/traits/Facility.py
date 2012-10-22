@@ -98,7 +98,7 @@ class Facility(Slotted):
         # its family name
         family = protocol.pyre_family()
         # the executive
-        executive = self.schema.pyre_executive
+        executive = protocol.pyre_executive
         # the name server
         ns = executive.nameserver
         # and the file server

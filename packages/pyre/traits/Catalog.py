@@ -28,10 +28,8 @@ class Catalog(Facility):
         index = dict()
         # get my target key
         key = node.key
-        # if it is unregistered
-        if not key:
-            # nothing to do
-            return index
+        # if it is unregistered, there is nothing to do
+        if not key: return index
 
         # get my protocol
         protocol = self.schema
@@ -42,7 +40,7 @@ class Catalog(Facility):
         # and the configurator
         configurator = executive.configurator
         # get the full name of my slot
-        _, slotName = nameserver.lookup(node.key)
+        _, slotName = nameserver.lookup(key)
 
         # go through the children of this key
         for childKey, childNode in nameserver.children(key):
