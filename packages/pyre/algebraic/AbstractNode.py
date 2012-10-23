@@ -167,11 +167,11 @@ class AbstractNode:
 
 
     # interface
-    def ref(self):
+    def ref(self, **kwds):
         """
         Build and return a reference to me
         """
-        return self.reference(operands=[self])
+        return self.reference(operands=[self], **kwds)
 
 
     # default implementations for value management

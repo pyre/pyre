@@ -80,15 +80,6 @@ class Slot(algebraic.AbstractNode, algebraic.Arithmetic, metaclass=_metaclass_Sl
     priority = None # the priority of the value assignment operation
 
 
-    # interface
-    def ref(self, **kwds):
-        """
-        Build a reference to me
-        """
-        # easy enough
-        return self.reference(operands=[self], **kwds)
-
-
     # support for value management
     def replace(self, obsolete):
         """
