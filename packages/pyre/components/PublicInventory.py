@@ -302,4 +302,8 @@ class PublicInventory(Inventory):
         return
 
 
+    def __str__(self):
+        return "public inventory at {:#x}".format(id(self))
+
+
 # end of file 

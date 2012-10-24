@@ -162,6 +162,8 @@ class expression(
     Concrete class for encapsulating macros
     """
 
+    def __str__(self): return "expression {.expression!r}".format(self)
+
 # interpolations
 class interpolation(
     Slot.memo, Slot.converter, Slot.observer, algebraic.Interpolation, Slot.composite, Slot):
@@ -169,12 +171,16 @@ class interpolation(
     Concrete class for encapsulating simple string interpolation
     """
 
+    def __str__(self): return "expression {.expression!r}".format(self)
+
 # references
 class reference(
     Slot.memo, Slot.converter, Slot.observer, algebraic.Reference, Slot.composite, Slot):
     """
     Concrete class for encapsulating references to other nodes
     """
+
+    def __str__(self): return "reference to {}".format(self.operands[0])
 
 # unresolved nodes
 class unresolved(Slot.observable, algebraic.Unresolved, Slot.leaf, Slot):
