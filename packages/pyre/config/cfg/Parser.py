@@ -87,7 +87,7 @@ class Parser(pyre.parsing.parser):
         # if it is not a {key}
         if type(current) is not self.scanner.key:
             # we have an error
-            msg = "expected an identifier; got {}".format(current)
+            msg = "expected an identifier; got {.lexeme!r}".format(current)
             raise self.ParsingError(description=msg, locator=current.locator)
         # set the family to the lexeme
         self.family = current.lexeme.split('.')
@@ -105,7 +105,7 @@ class Parser(pyre.parsing.parser):
         # if it is not a name marker
         if type(current) is not self.scanner.marker:
             # we have an error
-            msg = "expected a '#'; got {}".format(current)
+            msg = "expected a '#'; got {.lexeme!r}".format(current)
             raise self.ParsingError(description=msg, locator=current.locator)
 
         # get the next token
@@ -113,7 +113,7 @@ class Parser(pyre.parsing.parser):
         # if it is not a key
         if type(current) is not self.scanner.key:
             # we have an error
-            msg = "expected an identifier; got {}".format(current)
+            msg = "expected an identifier; got {.lexeme!r}".format(current)
             raise self.ParsingError(description=msg, locator=current.locator)
         # set the name to the lexeme
         self.name = current.lexeme.split('.')
@@ -123,7 +123,7 @@ class Parser(pyre.parsing.parser):
         # if it is not a {secend} marker
         if type(current) is not self.lexer.secend:
             # we have an error
-            msg = "expected a ']'; got {}".format(current)
+            msg = "expected a ']'; got {.lexeme!r}".format(current)
             raise self.ParsingError(description=msg, locator=current.locator)
 
         # all done
