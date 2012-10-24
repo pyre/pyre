@@ -228,8 +228,20 @@ class Component(Configurable, metaclass=Actor, internal=True):
         except KeyError:
             # this must a non-trait attribute
             return super().__setattr__(name, value)
-        # try again with the normalized name
-        return super().__setattr__(canonical, value)
+
+        # find the trait
+        trait = self.pyre_traitmap[canonical]
+        # record the location of the caller
+        locator = tracking.here(level=1)
+        # set the priority
+        priority = self.pyre_executive.priority.explicit()
+        # set the value
+        self.pyre_inventory.setTrait(
+            trait=trait, strategy=trait.instanceSlot, 
+            value=value, priority=priority, locator=locator)
+
+        # all done
+        return
 
 
 # end of file 
