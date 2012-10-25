@@ -35,10 +35,8 @@ class NameServer(algebraic.hierarchicalModel):
         key = self._hash.hash(items=name.split(self.separator))
         # get the right priority
         priority = self.priority.package()
-        # build a weak reference to {configurable}
-        # proxy = weakref.proxy(configurable)
-        # build a slot to hold the {configurable} proxy
-        slot = self.literal(key=key, value=configurable, priority=priority, locator=locator)
+        # build a slot to hold the {configurable}
+        slot = self.variable(key=key, value=configurable, priority=priority, locator=locator)
         # store it in the model
         self._nodes[key] = slot
         self._names[key] = name
