@@ -86,19 +86,18 @@ class PublicInventory(Inventory):
 
     # support for constructing component classes and instances
     @classmethod
-    def classInventory(cls, component, family, **kwds):
+    def initializeCass(cls, component, family, **kwds):
         """
         Build inventory appropriate for a component class that is registered with the
         nameserver
         """
-        # make a locator
-        this = tracking.simple('during the initialization of component {!r}'.format(family))
-        locator = tracking.chain(this=this, next=component.pyre_locator)
+        # get the locator
+        locator = component.pyre_locator
                                
         # register the class with the executive
-        key = cls.pyre_executive.registerComponentClass(family=family, component=component)
+        key = component.pyre_executive.registerComponentClass(family=family, component=component)
         # register with the component registrar
-        cls.pyre_registrar.registerComponentClass(component=component)
+        component.pyre_registrar.registerComponentClass(component=component)
         # invoke the registration hook
         component.pyre_classRegistered()
 
@@ -117,7 +116,7 @@ class PublicInventory(Inventory):
         component.pyre_inventory = inventory
 
         # configure the class
-        cls.pyre_configurator.configureComponentClass(component=component)
+        component.pyre_configurator.configureComponentClass(component=component)
         # invoke the configuration hook
         component.pyre_classConfigured()
 
@@ -126,7 +125,7 @@ class PublicInventory(Inventory):
 
 
     @classmethod
-    def instanceInventory(cls, instance, name, key):
+    def initializeInstance(cls, instance, name, key):
         """
         Build inventory appropriate for a component instance that is not registered with the
         nameserver
@@ -242,9 +241,8 @@ class PublicInventory(Inventory):
         component = type(instance)
         # get the nameserver
         ns = cls.pyre_nameserver
-        # make a locator
-        this = tracking.lookup(description='during the instantiation of', key=key)
-        locator = tracking.chain(this=this, next=instance.pyre_locator)
+        # get the locator
+        locator = instance.pyre_locator
         # get the factory of priorities in the {defaults} category
         priority = ns.priority.defaults
         # go through all the configurable traits in {component}

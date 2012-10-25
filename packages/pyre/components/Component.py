@@ -157,17 +157,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # record the locator
         instance.pyre_locator = locator
 
-        # pick the appropriate inventory strategy: if there is no public name associated with
-        # this instance
-        if key is None and name is None:
-            # make private inventory
-            inventory = cls.PrivateInventory
-        # otherwise
-        else:
-            # make public inventory
-            inventory = cls.PublicInventory
+        # deduce the visibility of this instance
+        visibility = cls.PrivateInventory if key is None and name is None else cls.PublicInventory
         # invoke it
-        inventory.instanceInventory(instance=instance, key=key, name=name)
+        visibility.initializeInstance(instance=instance, key=key, name=name)
 
         # and return the new instance
         return instance

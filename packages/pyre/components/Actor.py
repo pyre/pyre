@@ -67,9 +67,9 @@ class Actor(Requirement):
         if self.pyre_internal: return
 
         # pick the appropriate inventory strategy
-        inventory = self.PublicInventory if family else self.PrivateInventory
+        visibility = self.PublicInventory if family else self.PrivateInventory
         # and invoke it to register the component class and build its inventory
-        inventory.classInventory(component=self, family=family)
+        visibility.initializeCass(component=self, family=family)
 
         # get my protocol specification
         protocol = self.pyre_implements

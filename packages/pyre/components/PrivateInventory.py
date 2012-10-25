@@ -74,26 +74,26 @@ class PrivateInventory(Inventory):
 
     # support for building component classes and instances
     @classmethod
-    def classInventory(cls, component, **kwds):
+    def initializeCass(cls, component, **kwds):
         """
         Build inventory appropriate for a component class that is not registered with the
         nameserver
         """
         # make a locator
-        this = tracking.simple('during the initialization of {.__name__!r}'.format(component))
-        locator = tracking.chain(this=this, next=component.pyre_locator)
+        locator = component.pyre_locator
                                
         # register with the component registrar
-        cls.pyre_registrar.registerComponentClass(component=component)
+        component.pyre_registrar.registerComponentClass(component=component)
         # invoke the registration hook
         component.pyre_classRegistered()
 
         # collect the slots
         local = cls.localSlots(component=component, locator=locator)
         inherited = cls.inheritedSlots(component=component, locator=locator)
+        slots = itertools.chain(local, inherited)
 
         # build the inventory
-        inventory = cls(slots=itertools.chain(local,  inherited))
+        inventory = cls(slots=slots)
         # attach it
         component.pyre_inventory = inventory
 
@@ -105,7 +105,7 @@ class PrivateInventory(Inventory):
 
 
     @classmethod
-    def instanceInventory(cls, instance, **kwds):
+    def initializeInstance(cls, instance, **kwds):
         """
         Build inventory appropriate for a component instance that is not registered with the
         nameserver
@@ -208,9 +208,8 @@ class PrivateInventory(Inventory):
         component = type(instance)
         # get the nameserver
         ns = cls.pyre_nameserver
-        # make a locator
-        this = tracking.simple(source='during instantiation')
-        locator = tracking.chain(this=this, next=instance.pyre_locator)
+        # get the locator
+        locator = instance.pyre_locator
         # get the factory of priorities in the {defaults} category
         priority = ns.priority.defaults
         # go through all the configurable traits in {component}
