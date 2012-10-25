@@ -39,7 +39,7 @@ def test():
         assert False
     except scanner.TokenizationError as error:
         assert error.locator.source == filename
-        assert error.locator.line == 6
+        assert error.locator.line == 7
         assert error.locator.column == 31
 
     return

@@ -71,7 +71,7 @@ class Scanner(metaclass=Lexer):
         # the locator factory
         locator = pyre.tracking.file
         # send a {start} token
-        yield self.start(locator=locator(source=uri, line=0, column=0))
+        yield self.start(locator=locator(source=uri, line=1, column=0))
 
         # iterate over the contents of the stream
         for line, text in enumerate(stream):
@@ -85,7 +85,7 @@ class Scanner(metaclass=Lexer):
                 if not match:
                     # nothing more to do...
                     raise self.TokenizationError(
-                        text=text[column:], locator=locator(source=uri, line=line, column=column))
+                        text=text[column:], locator=locator(source=uri, line=line+1, column=column))
                 # we have a match; find the name of the matching token
                 name = match.lastgroup
                 # get the token class
@@ -93,7 +93,7 @@ class Scanner(metaclass=Lexer):
                 # make a token and toss it back
                 yield token(
                     lexeme = match.group(name),
-                    locator = locator(source=uri, line=line, column=column)
+                    locator = locator(source=uri, line=line+1, column=column)
                     )
                 # update the column counter
                 column = match.end()
