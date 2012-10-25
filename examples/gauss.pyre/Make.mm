@@ -12,7 +12,7 @@ PROJECT = gauss.pyre
 RECURSE_DIRS = \
     gauss \
     bin \
-    depository \
+    defaults \
     tests
 
 #--------------------------------------------------------------------------
