@@ -14,8 +14,15 @@ RECURSE_DIRS = \
     pyre \
     journal \
     merlin \
+    sqlite \
 
 # the optional packages
+# postgres
+LIBPQ_DIR= # overriden by the the environment
+ifneq ($(strip $(LIBPQ_DIR)),)
+  RECURSE_DIRS += postgres
+endif
+
 # gsl
 GSL_DIR= # overriden by the the environment
 ifneq ($(strip $(GSL_DIR)),)
@@ -26,12 +33,6 @@ endif
 MPI_DIR= # overriden by the the environment
 ifneq ($(strip $(MPI_DIR)),)
   RECURSE_DIRS += mpi
-endif
-
-# postgres
-LIBPQ_DIR= # overriden by the the environment
-ifneq ($(strip $(LIBPQ_DIR)),)
-  RECURSE_DIRS += postgres
 endif
 
 #--------------------------------------------------------------------------
