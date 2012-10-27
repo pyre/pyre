@@ -227,7 +227,7 @@ class Configurator:
                 # compute the intended instance safely: avoid the infinite recursion caused by
                 # asking the nameserver for the value of the slot whose value we are in the
                 # middle of building...
-                target = instance.__class__ if name is key else nameserver[name].__class__
+                target = type(nameserver[name])
                 # check the family
                 if target.pyre_inventory.key is not family: break
             # this is executed iff all assignment conditions are true

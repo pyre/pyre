@@ -85,8 +85,18 @@ class Facility(Slotted):
         value = self.coerce(value=value, node=node, **kwds)
         # if what I got back is a component instance, we are all done
         if isinstance(value, self.component): return value
+
+        # if the node has a key
+        if node.key:
+            # find out my full name
+            _, name = value.pyre_nameserver.lookup(node.key)
+        # otherwise
+        else:
+            # make a nameless component
+            name = None
+
         # otherwise, instantiate and return it
-        return value(key=node.key, name=None, locator=node.locator)
+        return value(name=name, locator=node.locator)
 
 
     def find(self, uri):

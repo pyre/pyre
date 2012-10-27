@@ -86,14 +86,14 @@ class Actor(Requirement):
         return
 
 
-    def __call__(self, name=None, key=None, locator=None, **kwds):
+    def __call__(self, name=None, locator=None, **kwds):
         """
         Build an instance of one of my classes
         """
         # record the caller's location
         locator = tracking.here(1) if locator is None else locator
         # build the instance
-        instance = super().__call__(name=name, key=key, locator=locator, **kwds)
+        instance = super().__call__(name=name, locator=locator, **kwds)
         # and return it
         return instance
 

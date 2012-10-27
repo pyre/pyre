@@ -125,15 +125,13 @@ class PublicInventory(Inventory):
 
 
     @classmethod
-    def initializeInstance(cls, instance, name, key):
+    def initializeInstance(cls, instance, name):
         """
         Build inventory appropriate for a component instance that is not registered with the
         nameserver
         """
-        # if {instance} was given a name and no specific key
-        if key is None:
-            # have the executive make a key
-            key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
+        # have the executive make a key
+        key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
 
         # register with the component registrar
         cls.pyre_registrar.registerComponentInstance(instance=instance)

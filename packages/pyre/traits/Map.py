@@ -65,11 +65,8 @@ class Map(Facility):
                 # hash them
                 name = nameserver.hash(name)
                 family = nameserver.hash(family)
-                # gingerly
-                if name == configurable.pyre_inventory.key:
-                    target = configurable.__class__
-                else:
-                    target = ns[name].__class__
+                # get the class record of the referenced component
+                target = type(nameserver[name])
                 # verify
                 if target.pyre_inventory.key is not family: break
             # if they all passed

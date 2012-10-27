@@ -67,20 +67,4 @@ class Slotted(Trait):
         return slot.getValue(configurable=client)
 
 
-    def __set__(self, instance, value):
-        """
-        Set the trait of {instance} to {value}
-        """
-        # record the location of the caller
-        locator = tracking.here(level=1)
-        # set the priority
-        priority = instance.pyre_executive.priority.explicit()
-        # set the value
-        instance.pyre_inventory.setTrait(
-            trait=self, strategy=self.instanceSlot,
-            value=value, priority=priority, locator=locator)
-        # and return
-        return
-
-
 # end of file 
