@@ -165,6 +165,13 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # and return the new instance
         return instance
 
+
+    def __init__(self, name, key, locator, **kwds):
+        # only needed to swallow the extra arguments
+        super().__init__(**kwds)
+        # all done
+        return
+
                                     
     def __str__(self):
         # accumulate the name fragments here
