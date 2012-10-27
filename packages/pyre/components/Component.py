@@ -151,8 +151,12 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
     # meta methods
     def __new__(cls, name, key, locator, **kwds):
-        # build the instance
-        instance = super().__new__(cls, **kwds)
+        # build the instance; in order to accommodate components with non-trivial constructors,
+        # we have to swallow any extra arguments passed to {__new__}; unfortunately, this
+        # places some restrictions on how components participate in class hierarchies: no
+        # ancestor of a user component can implement a {__new__} with non-trivial signature,
+        # since it will never get its arguments. Sorry...
+        instance = super().__new__(cls)
 
         # record the locator
         instance.pyre_locator = locator
