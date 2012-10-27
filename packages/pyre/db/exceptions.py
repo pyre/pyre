@@ -73,10 +73,11 @@ class ProgrammingError(DatabaseError):
     Exception raised when there is a problem with the SQL statement being executed
     """
 
-    def __init__(self, command, **kwds):
-        msg = "while executing {0.command!r}"
-        super().__init__(description=msg**kwds)
+    def __init__(self, description, command, **kwds):
+        msg = "while executing {0.command!r}: {0.diagnostic}"
+        super().__init__(description=msg, **kwds)
         self.command = command
+        self.diagnostic = description
         return
 
 
