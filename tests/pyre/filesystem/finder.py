@@ -23,7 +23,7 @@ def test():
 
     # explore
     finder = pyre.filesystem.finder()
-    contents = list(path for node,path in finder.explore(fs))
+    contents = list(sorted(path for node,path in finder.explore(fs)))
     # for line in contents: print(line)
     
     # check
