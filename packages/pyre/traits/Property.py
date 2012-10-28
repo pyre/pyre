@@ -98,4 +98,5 @@ class Property(Slotted):
     def __str__(self):
         return "{0.name}: a property of type {0.schema}".format(self)
 
+
 # end of file 

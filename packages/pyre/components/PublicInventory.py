@@ -28,9 +28,9 @@ class PublicInventory(Inventory):
         Look up the family name of my client
         """
         # get the nameserver
-        ns = self.pyre_nameserver
+        nameserver = self.pyre_nameserver
         # ask it for my full name
-        _, name = ns.lookup(key=self.key)
+        _, name = nameserver.lookup(key=self.key)
         # and return it
         return name
 
@@ -40,13 +40,13 @@ class PublicInventory(Inventory):
         Return the package associated with this client
         """
         # get the nameserver
-        ns = self.pyre_nameserver
+        nameserver = self.pyre_nameserver
         # ask it for my full name
-        _, name = ns.lookup(key=self.key)
+        _, name = nameserver.lookup(key=self.key)
         # split it apart; the package name is the zeroth entry
-        packageName = ns.split(name)[0]
+        packageName = nameserver.split(name)[0]
         # use the name to look up the package
-        return ns[packageName]
+        return nameserver[packageName]
 
 
     # slot access
@@ -69,9 +69,9 @@ class PublicInventory(Inventory):
         # get my key
         key = self.key
         # get the nameserver
-        ns = self.pyre_nameserver
+        nameserver = self.pyre_nameserver
         # unpack the slot part
-        macro, converter = strategy(model=ns)
+        macro, converter = strategy(model=nameserver)
         # hash the trait name
         traitKey = key[trait.name]
         # build a slot to hold value
@@ -79,7 +79,7 @@ class PublicInventory(Inventory):
             key=traitKey, converter=converter,
             value=value, priority=priority, locator=locator)
         # adjust the model
-        ns.insert(name=None, key=traitKey, node=new)
+        nameserver.insert(name=None, key=traitKey, node=new)
         # all done
         return
 
@@ -162,15 +162,15 @@ class PublicInventory(Inventory):
         Build slots for the locally declared traits of a {component} class
         """
         # get the nameserver
-        ns = cls.pyre_nameserver
+        nameserver = cls.pyre_nameserver
         # get the factory of priorities in the {defaults} category
-        priority = ns.priority.defaults
+        priority = nameserver.priority.defaults
         # go through the traits declared locally in {component}
         for trait in component.pyre_localTraits:
             # skip the non-configurable ones
             if not trait.isConfigurable: continue
             # ask the trait for the evaluation strategy details
-            macro, converter = trait.classSlot(model=ns)
+            macro, converter = trait.classSlot(model=nameserver)
             # use it to build the slot
             slot = macro(
                 key=key[trait.name], value=trait.default, converter=converter,
@@ -187,9 +187,9 @@ class PublicInventory(Inventory):
         Build slots for the inherited traits of a {component} class
         """
         # get the nameserver
-        ns = cls.pyre_nameserver
+        nameserver = cls.pyre_nameserver
         # get the factory of priorities in the {defaults} category
-        priority = ns.priority.defaults
+        priority = nameserver.priority.defaults
         # collect the traits I am looking for
         traits = set(trait for trait in component.pyre_inheritedTraits if trait.isConfigurable)
         # if there are no inherited traits, bail out
@@ -238,17 +238,17 @@ class PublicInventory(Inventory):
         # get the component class of this {instance}
         component = type(instance)
         # get the nameserver
-        ns = cls.pyre_nameserver
+        nameserver = cls.pyre_nameserver
         # get the locator
         locator = instance.pyre_locator
         # get the factory of priorities in the {defaults} category
-        priority = ns.priority.defaults
+        priority = nameserver.priority.defaults
         # go through all the configurable traits in {component}
         for trait in component.pyre_configurables():
             # ask the class inventory for the slot that corresponds to this trait
             slot = component.pyre_inventory.getSlot(trait=trait)
             # and its slot strategy
-            _, converter = trait.instanceSlot(model=ns)
+            _, converter = trait.instanceSlot(model=nameserver)
             # build a reference to the class slot
             ref = slot.ref(
                 key=key[trait.name], converter=converter, locator=locator, priority=priority())
@@ -264,9 +264,9 @@ class PublicInventory(Inventory):
         Go through the (trait, slot) pairs in {slots} and register them with the nameserver
         """
         # get the nameserver
-        ns = cls.pyre_nameserver
+        nameserver = cls.pyre_nameserver
         # look up the basename
-        _, base = ns.lookup(key)
+        _, base = nameserver.lookup(key)
         # go through the (trait, slot) pairs
         for trait, slot in slots:
             # get the name of the trait
@@ -274,17 +274,17 @@ class PublicInventory(Inventory):
             # build the trait key
             traitKey = key[traitName]
             # register this key as belonging to a trait
-            ns.registerTrait(key=traitKey, strategy=strategy(trait))
+            nameserver.registerTrait(key=traitKey, strategy=strategy(trait))
             # build the trait fill name
-            fullname = ns.join(base, traitName)
+            fullname = nameserver.join(base, traitName)
             # place the slot with the nameserver 
-            ns.insert(name=fullname, key=traitKey, node=slot)
+            nameserver.insert(name=fullname, key=traitKey, node=slot)
             # register the trait aliases
             for alias in trait.aliases:
                 # skip the canonical name
                 if alias == traitName: continue
                 # notify the nameserver
-                ns.alias(base=key, alias=alias, target=traitKey)
+                nameserver.alias(base=key, alias=alias, target=traitKey)
             # hand this (trait, key) pair to the caller
             yield trait, traitKey
         # all done

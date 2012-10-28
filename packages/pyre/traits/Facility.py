@@ -26,17 +26,7 @@ class Facility(Slotted):
     # class or a component instance. In the latter case, we want to cast the trait value into
     # an actual component instance that is compatible with the facility requirements; in the
     # former we are happy with either a compatible component declaration or an instance.
-    # Properties don't have this problem, since they ostensibly represent simple types that can
-    # be instantiated without substantial penalty for both component classes and their
-    # instances.
-
-    # Normally, conversions of configuration settings to appropriate inventory values is
-    # handled by a trait's type. For facilities, this is normally a subclass of
-    # {Protocol}. {Protocol.pyre_cast} solves the first half of the problem: converting a
-    # value in to a component class record. In order to solve the second half, {Facility}
-    # registers its {pyre_instantiate} as the slot value processor for traits bound to
-    # component instances.
-
+    
 
     # types
     from ..schema import uri
@@ -116,7 +106,7 @@ class Facility(Slotted):
         # the name server knows the search path, already a list of uris
         searchpath = ns['pyre.configpath']
         # deduce my context path
-        contextpath = [''] if not family else ns.split(family)
+        contextpath = ns.split(family) if family else ['']
 
         # the choices of leading segments
         roots = (p.address for p in reversed(searchpath))

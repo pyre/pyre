@@ -156,6 +156,11 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # places some restrictions on how components participate in class hierarchies: no
         # ancestor of a user component can implement a {__new__} with non-trivial signature,
         # since it will never get its arguments. Sorry...
+
+        # NYI: a possible work-around is to introduce a dummy class in the ancestry whose only
+        # job is to swallow all extra arguments; this class can be injected automatically at
+        # the end of the list of bases by {Actor}, making this entire process transparent to
+        # the user
         instance = super().__new__(cls)
 
         # record the locator
@@ -185,7 +190,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # if i have one:
         if name is not None:
             # use it
-            fragments.append('component {!r}'.format(self.pyre_name))
+            fragments.append('component {!r}'.format(name))
         # otherwise, get my family name
         family = self.pyre_family()
         # if i have one
@@ -222,7 +227,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
     def __setattr__(self, name, value):
         """
-        Trap attribute retrieval and attempt to normalize the name before making the assignment
+        Trap attribute assignment and attempt to normalize the name before making the assignment
         """
         # attempt to
         try:
