@@ -11,7 +11,7 @@ import merlin
 
 
 # declaration
-class PackageManager(merlin.component, family='merlin.component.package-manager'):
+class PackageManager(merlin.component, family='merlin.components.package-manager'):
     """
     The component that manages the package archive
     """

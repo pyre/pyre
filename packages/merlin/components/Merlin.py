@@ -135,84 +135,35 @@ class Merlin(pyre.application, family='merlin.application'):
         # chain up to initialize my private area
         pfs = super().pyre_mountVirtualFilesystem(root=root)
 
-        # get the fileserver
-        vfs  = self.vfs
-
-        # is it already there?
+        # check whether the project folder is already mounted
         try:
-            folder = pfs['project']
-        # if not
-        except vfs.NotFoundError:
+            # by looking for it within my private file space
+            pfs['project']
+        # if it's not there
+        except pfs.NotFoundError:
             # no worries; we'll go hunting
             pass
-        # otherwise, it is already mounted
+        # otherwise, it is already mounted; bug?
         else:
+            # DEBUG: remove this when happy it never gets called
             raise NotImplementedError('NYI: multiple attempts to initialize the merlin vfs')
-            # print("Merlin.pyre_mountApplicationFolders: already mounted")
-            return pfs
 
         # check whether we are within a project
         root, metadir = self.locateProjectRoot()
 
-
+        # get the file server
+        vfs  = self.vfs
         # build the project folder
         project = vfs.local(root=root) if root else vfs.folder()
         # build the folder with the merlin metadata
-        metadata = vfs.local(root=metadir) if metadir else vfs.folder
+        metadata = vfs.local(root=metadir) if metadir else vfs.folder()
 
         # mount them
-        vfs['project'] = project
-        pfs['project'] = metadata
+        vfs['project'] = project.discover()
+        pfs['project'] = metadata.discover()
 
         # and return
         return pfs
-
-
-    # namespace resolver obligations
-    # support for automatically resolving merlin names
-    def pyre_componentSearchPath(self, context):
-        """
-        Hook invoked during the resolution of component names into descriptors.
-
-        Merlin iterates through each of the standard places, asking a {context} specific
-        sub-component for assistance in retrieving candidate shelves from the filesystem.
-        """
-        # the first part is my tag
-        assert context[0] == self.pyre_prefix
-        # if there is only one fragment
-        if len(context) == 1:
-            # there is nothing to do
-            return
-
-        # what are we looking for?
-        category = context[1]
-        # look up the responsible subcomponent
-        try:
-            component = self.categories[category]
-        except KeyError:
-            # any other ideas?
-            return
-
-        # my file server
-        vfs = self.vfs
-        # iterate over the standard locations
-        for root in self.configpath:
-            # form the name of category sub-folder
-            location = vfs.join(root, category)
-            # and look for it
-            try:
-                folder = vfs[location]
-            # if not there
-            except vfs.NotFoundError:
-                # move on to the next one
-                continue
-            # hand each one to the resolving subcomponent and get back shelves
-            for shelf in component.shelves(folder=folder, name=location):
-                # which, in turn, are processed by the caller
-                yield shelf
-
-        # no more
-        return
 
 
     # meta methods
