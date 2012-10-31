@@ -6,9 +6,11 @@
 #
 
 
+# access the framework
 import pyre
 
 
+# declaration
 class Spell(pyre.protocol, family="merlin.spells"):
     """
     Protocol declaration for merlin spells

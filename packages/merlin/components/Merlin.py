@@ -154,13 +154,13 @@ class Merlin(pyre.application, family='merlin.application'):
         # get the file server
         vfs  = self.vfs
         # build the project folder
-        project = vfs.local(root=root) if root else vfs.folder()
+        project = vfs.local(root=root).discover() if root else vfs.folder()
         # build the folder with the merlin metadata
-        metadata = vfs.local(root=metadir) if metadir else vfs.folder()
+        metadata = vfs.local(root=metadir).discover() if metadir else vfs.folder()
 
         # mount them
-        vfs['project'] = project.discover()
-        pfs['project'] = metadata.discover()
+        vfs['project'] = project
+        pfs['project'] = metadata
 
         # and return
         return pfs
