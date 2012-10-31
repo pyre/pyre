@@ -21,7 +21,7 @@ class Local(Filesystem):
 
 
     # exceptions
-    from .exceptions import DirectoryListingError
+    from .exceptions import DirectoryListingError, URISpecificationError
 
 
     # public data
@@ -36,8 +36,14 @@ class Local(Filesystem):
         """
         # get the info record associated with the node and extract the file uri
         uri = self.vnodes[node].uri
-        # call the system {open} and return the result
-        return open(uri, **kwds)
+        # attempt to
+        try:
+            # call the system {open} and return the result
+            return open(uri, **kwds)
+        # if this fails
+        except OSError as error:
+            # complain
+            raise self.URISpecificationError(uri=uri, reason=str(error))
 
 
     def make(self, name, tree, root=None, **kwds):
