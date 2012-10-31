@@ -23,8 +23,7 @@ def loadConfiguration(uri):
     Open {uri} and attempt to load its contents into the configaration model
     """
     # build a locator for these settings
-    import pyre.tracking
-    here = pyre.tracking.here(level=1)
+    here = tracking.here(level=1)
     # get the executive to do its thing
     return executive.loadConfiguration(uri=uri, locator=here)
 
