@@ -34,14 +34,16 @@ class Spellbook(merlin.component, family="merlin.components.spellbook"):
 
 
     # utilities
-    def findSpell(self, name):
+    def findSpell(self, name, locator=None):
         """
         Look through the registered spell locations for a spell shelf that contains the given
         spell {name}.
         """
         # print(" ** Spellbook.findSpell: looking for {!r}".format(name))
         # make a locator
-        locator = pyre.tracking.simple('while looking for spell {!r}'.format(name))
+        here = pyre.tracking.simple('while looking for spell {!r}'.format(name))
+        #
+        locator = pyre.tracking.chain(this=here, next=locator) if locator else here
         # ask the spell interface to convert the name into plausible spell factories
         factories = self.spell().resolve(value=name, locator=locator)
         # go through the possibilities

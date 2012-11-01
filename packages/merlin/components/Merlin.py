@@ -39,18 +39,18 @@ class Merlin(pyre.application, family='merlin.application'):
         """
         The main entry point for merlin
         """
-        # extract the non-configurational parts of the command line
-        request = tuple(command.command for command in self.executive.configurator.commands) 
+        # get the commands from the configurator
+        commands = self.executive.configurator.commands
         # show the default help screen if there was nothing useful on the command line
-        if request == (): return self.help()
+        if not commands: return self.help()
 
-        # interpret the request as the name of one of my actors, followed by an argument tuple
-        # for the actor's main entry point
-        spell = request[0]
-        args = request[1:]
-
-        # and cast it
-        return self.cast(name=spell, args=args)
+        # otherwise, the spell info is in the first entry
+        spell = commands[0]
+        # and the rest are the arguments to the main entry point of the spell
+        args = tuple(command.command for command in commands)
+        
+        # cast the spell and return its exit status
+        return self.cast(name=spell.command, locator=spell.locator, args=args)
 
 
     @pyre.export
@@ -70,14 +70,14 @@ class Merlin(pyre.application, family='merlin.application'):
 
 
     # interface
-    def cast(self, name, args=()):
+    def cast(self, name, locator, args=()):
         """
         Retrieve a spell by the given {name} and cast it
         """
         # try to
         try:
             # locate the spell
-            spell = self.spellbook.findSpell(name=name)
+            spell = self.spellbook.findSpell(name=name, locator=locator)
         # if that failed
         except self.FrameworkError:
             # complain
