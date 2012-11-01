@@ -8,7 +8,7 @@
 
 # externals
 import itertools
-import pyre.tracking
+from .. import tracking
 
 
 # class declaration
@@ -56,7 +56,7 @@ class CommandLineParser:
 
     handlers = None # the special handlers of command line arguments
     assignmentScanner = None
-    locator = staticmethod(pyre.tracking.command)
+    locator = staticmethod(tracking.command)
 
 
     # types
