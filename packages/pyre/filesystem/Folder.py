@@ -28,7 +28,7 @@ class Folder(Node):
     # my metadata
     from .metadata import FolderInfo as metadata
     # exceptions
-    from .exceptions import FolderInsertionError, FolderError, NotFoundError
+    from .exceptions import FolderInsertionError, FolderError, IsFolderError, NotFoundError
 
 
     # interface

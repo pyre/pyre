@@ -99,6 +99,18 @@ class FolderError(FilesystemError):
         return
 
 
+class IsFolderError(FilesystemError):
+    """
+    Exception raised when a request is made to open a folder
+    """
+
+    def __init__(self, uri, **kwds):
+        msg = "while opening {0.uri!r}: can't open; it is a folder"
+        super().__init__(description=msg, **kwds)
+        self.uri = uri
+        return
+
+
 class FolderInsertionError(FilesystemError):
     """
     Exception raised when attempting to insert a node in a filsystem and the target node is not
