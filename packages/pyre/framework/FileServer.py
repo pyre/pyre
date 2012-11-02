@@ -72,19 +72,30 @@ class FileServer(Filesystem):
             except IOError:
                 # complain
                 raise self.SourceNotFoundError(filesystem=self, node=None, uri=uri)
+            # if {uri} maps to a folder
+            except OSError: # NYI: after python3.3: convert to IsADirectoryError
+                # complain
+                raise self.IsFolderError(filesystem=self, node=None, uri=uri)
 
         # if the scheme is {vfs}
         if scheme == 'vfs':
             # assuming the uri is within my virtual filesystem
             try:
-                # open it
-                return self[uri.address].open()
+                # get the node
+                node = self[uri.address]
             # if {uri} is not in my logical namespace
             except self.NotFoundError as error:
                 # complain
                 raise self.SourceNotFoundError(filesystem=self, node=error.node, uri=uri)
 
-        # otherwise, complain
+            # if the node is a folder
+            if node.isFolder:
+                # complain
+                raise self.IsFolderError(filesystem=self, node=node, uri=uri)
+            # otherwise, open it
+            return node.open()
+
+        # if i didn't recognize the scheme, complain
         raise self.URISpecificationError(uri=uri, reason="unsupported scheme {!r}".format(scheme))
 
 
