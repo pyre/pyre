@@ -3,11 +3,11 @@
     Copyright (c) 1998-2012 Michael A.G. Aïvázis
     All Rights Reserved
 
-    This work has been funded in part by the US Department of Energy, the National Science
-    Foundation, and Orthologue, LLC.
+    This work has been funded in part by the Department of Energy, the National Science
+    Foundation, the National Nuclear Safety Administration, and Orthologue, LLC.
 
-    None of this would have been possible without Dan Meiron, Michael Ortiz, Mike Gurnis, and
-    Brent Fultz, all of whom took a risk by supporting pyre at various stages in its
+    None of this would have been possible without Dan Meiron, Michael Ortiz, Mike Gurnis, Brent
+    Fultz, and Mark Simons, all of whom took a risk by supporting pyre at various stages in its
     development.
 
     Much of the current design of pyre is due to ideas and constructive criticism by Leif
