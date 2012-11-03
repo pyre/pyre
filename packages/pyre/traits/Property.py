@@ -41,7 +41,7 @@ class Property(Slotted):
         # otherwise, convert
         for converter in self.converters: value = converter(value)
         # cast
-        value = self.schema.coerce(value)
+        value = self.schema.coerce(value, **kwds)
         # normalize
         for normalizer in self.normalizers: value = normalizer(value)
         # validate
