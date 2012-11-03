@@ -17,7 +17,8 @@ def test():
     executive = pyre.framework.executive()
 
     # retrieve a component descriptor from the python path
-    base, = executive.retrieveComponentDescriptor(uri="import:pyre.component")
+    bases = tuple(executive.retrieveComponentDescriptor(uri="import:pyre.component"))
+    for base in bases: assert base is pyre.component
     # retrieve a component descriptor from a file using the virtual filesystem
     d1, = executive.retrieveComponentDescriptor(uri="vfs:/pyre/startup/sample.py/d1")
     # check that one derives from the other

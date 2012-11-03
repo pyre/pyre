@@ -41,8 +41,8 @@ class Loader:
             if not facility: return
             # use the address itself as the symbol
             symbol = uri.address
-            # use the facility family as the package
-            package = cls.separator.join(executive.nameserver.split(facility.schema.pyre_family()))
+            # the package will be filled out using the protocol family
+            package = ''
 
         # build a template {uri} for the shelf
         template = cls.uri(scheme=uri.scheme, address=package)

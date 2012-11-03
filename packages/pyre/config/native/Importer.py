@@ -79,16 +79,29 @@ class Importer(Loader):
 
 
     @classmethod
-    def locateShelves(cls, uri, **kwds):
+    def locateShelves(cls, facility, uri, **kwds):
         """
         Locate candidate shelves for the given {uri}
         """
-        # try it first
-        yield uri
+        # print("Importer.locateShelves: uri={.uri!r}".format(uri))
         # get the address part of the uri; it serves as the package specification
         package = uri.address
+        # if there is something there
+        if package:
+            # try it first
+            yield uri
+        # otherwise
+        else:
+            # let the package be the protocol family name
+            package = facility.schema.pyre_family()
+
         # while there is still something left
         while True:
+            # set the address portion of the {uri} to the new package
+            uri.address = package
+            # and send it to the caller
+            # print("Importer.locateShelves: uri={.uri!r}".format(uri))
+            yield uri
             # attempt to
             try:
                 # split it on the rightmost separator
@@ -97,10 +110,6 @@ class Importer(Loader):
             except ValueError:
                 # we have exhausted the separators present in {address}
                 break
-            # set the address portion of the {uri} to the new package
-            uri.address = package
-            # and send it to the caller
-            yield uri
         # no more
         return
             

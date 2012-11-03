@@ -44,6 +44,7 @@ class ODB(Loader):
         fs = executive.fileserver
         # ask it to
         try:
+            # print("ODB.load: uri={.uri!r}".format(uri))
             # open the {uri}
             stream = fs.open(uri=uri)
         # if anything goes wrong
@@ -76,18 +77,29 @@ class ODB(Loader):
         """
         Locate candidate shelves from the given {uri}
         """
-        # try the given {uri} first
-        yield uri
+        # if the {uri} has an {address}
+        if uri.address:
+            # try it first
+            # print("ODB.locateShelves: uri={.uri!r}".format(uri))
+            yield uri
+
         # if the uri scheme was 'file'
         if uri.scheme == 'file':
             # there is nothing else to try
             return
+
         # otherwise, if there is a valid facility
         if facility:
+            # get the protocol
+            protocol = facility.schema
+            # get the fileserver
+            fileserver = protocol.pyre_fileserver
             # get it to provide some candidates from the virtual filesystem
-            for uri in facility.find(uri=uri):
+            for uri in protocol.pyre_find(uri=uri):
                 # whatever she said
+                # print("ODB.locateShelves: uri={.uri!r}".format(uri))
                 yield uri
+
         # no more ideas
         return
         
