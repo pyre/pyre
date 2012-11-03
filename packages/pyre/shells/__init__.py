@@ -39,6 +39,11 @@ from .Script import Script as script
 from .Fork import Fork as fork
 from .Daemon import Daemon as daemon
 
+# terminal support
+from .Terminal import Terminal as terminal
+from .ANSI import ANSI as ansi
+from .Dumb import Dumb as dumb
+
 
 # the base application component
 from .Application import Application as application

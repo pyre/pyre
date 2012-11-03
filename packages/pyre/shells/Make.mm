@@ -19,14 +19,17 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    ANSI.py \
     Application.py \
     Daemon.py \
     Director.py \
+    Dumb.py \
     Executive.py \
     Fork.py \
     Host.py \
     Script.py \
     Shell.py \
+    Terminal.py \
     User.py \
     __init__.py
 
