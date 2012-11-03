@@ -143,27 +143,28 @@ _pyre_acknowledgments = """
     Copyright (c) 1998-2012 Michael A.G. Aïvázis
     All Rights Reserved
 
+    This work has been funded in part by the Department of Energy, the
+    National Science Foundation, the National Nuclear Safety
+    Administration, and Orthologue, LLC.
 
-    This work has been funded in part by the Department of Energy, the National Science
-    Foundation, the National Nuclear Safety Administration, and Orthologue, LLC.
+    None of this would have been possible without Dan Meiron, Michael
+    Ortiz, Mike Gurnis, Brent Fultz, and Mark Simons, all of whom took a
+    risk by supporting pyre at various stages in its development.
 
-    None of this would have been possible without Dan Meiron, Michael Ortiz, Mike Gurnis, Brent
-    Fultz, and Mark Simons, all of whom took a risk by supporting pyre at various stages in its
-    development.
+    Much of the current design of pyre is due to ideas and constructive
+    criticism by Leif Strand.
 
-    Much of the current design of pyre is due to ideas and constructive criticism by Leif
-    Strand.
-
-    Raúl Radovitzky, Brad Aagaard and Patrick Hung taught me a lot about the needs of massively
-    parallel applications.
+    Raúl Radovitzky, Brad Aagaard and Patrick Hung taught me a lot about
+    the needs of massively parallel applications.
     
-    Jiao Lin has built a very sophisticated web-based application by stretching pyre beyond its
-    limits and contributing countless use cases that have had a significant impact on the
-    current implementation.
+    Jiao Lin has built a very sophisticated web application framework by
+    stretching pyre beyond its limits and contributing countless use cases
+    that have had a significant impact on the current implementation.
 
-    Mike McKerns, Tim Kelly, Brandon Keith are early adopters and have made significant
-    contributions to the usability of the package. Most of the existing documentation and user
-    support over the past ten years has been possible thanks to their remarkable efforts.
+    Mike McKerns, Tim Kelly, Brandon Keith are early adopters and have made
+    significant contributions to the usability of the package. Most of the
+    existing documentation and user support over the years has been
+    possible thanks to their remarkable efforts.
 """
 
 # put the following start-up steps inside functions so we can have better control over their
