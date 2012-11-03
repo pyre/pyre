@@ -64,7 +64,7 @@ class Slotted(Trait):
         # grab the slot from the client's inventory
         slot = client.pyre_inventory.getSlot(trait=self)
         # compute and return its value
-        return slot.getValue(configurable=client)
+        return slot.value
 
 
 # end of file 
