@@ -53,15 +53,13 @@ class Facility(Slotted):
         # get my protocol
         protocol = self.schema
 
-        # for each attempt to resolve {value} into something useful
+        # attempt to resolve {value} into something useful
         for candidate in self.resolve(value=value, locator=node.locator):
-            # check that the candidate is compatible with my protocol
-            if candidate.pyre_isCompatible(protocol):
-                # we are done
-                return candidate
+            # and return the first successful candidate
+            return candidate
 
         # otherwise, we are out of ideas; complain
-        msg = "could not convert {!r} into a component".format(value)
+        msg = "could not convert {0.value!r} into a component"
         raise self.CastingError(value=value, description=msg)
 
 
@@ -87,42 +85,6 @@ class Facility(Slotted):
 
         # otherwise, instantiate and return it
         return value(name=name, locator=node.locator)
-
-
-    def find(self, uri):
-        """
-        Participate in the search for suitable shelves described by {uri}
-        """
-        # get my protocol
-        protocol = self.schema
-        # its family name
-        family = protocol.pyre_family()
-        # the executive
-        executive = protocol.pyre_executive
-        # the name server
-        ns = executive.nameserver
-        # and the file server
-        fs = executive.fileserver
-        # the name server knows the search path, already a list of uris
-        searchpath = ns['pyre.configpath']
-        # deduce my context path
-        contextpath = ns.split(family) if family else ['']
-
-        # the choices of leading segments
-        roots = (p.address for p in reversed(searchpath))
-        # sub-folders built out progressively shorter leading portions of the family name
-        folders = (
-            fs.join(*contextpath[:marker])
-            for marker in reversed(range(0,len(contextpath)+1)))
-        # and the address specification from the {uri}
-        address = [uri.address]
-        # with all possible combinations of these three sequences
-        for address in itertools.product(roots, folders, address):
-            # build a uri and return it
-            yield self.uri(scheme='vfs', address=fs.join(*address))
-
-        # any other ideas?
-        return
 
 
     def initialize(self, **kwds):
@@ -175,24 +137,33 @@ class Facility(Slotted):
         nameserver = executive.nameserver
 
         # for each potential resolution of {value} by the executive
-        for dscr in executive.retrieveComponentDescriptor(uri=uri, facility=self):
+        for candidate in executive.retrieveComponentDescriptor(uri=uri, facility=self):
             # if it's neither a component class not a component instance
-            if not (isinstance(dscr, actor) or isinstance(dscr, component)):
+            if not (isinstance(candidate, actor) or isinstance(candidate, component)):
                 # it must be a callable that returns one
-                dscr = dscr()
-                # if not
-                if not (isinstance(dscr, actor) or isinstance(dscr, component)):
+                try:
+                    # evaluate it
+                    candidate = candidate()
+                # if that fails
+                except TypeError:
+                    # move on
+                    continue
+                # if it succeeded, check the return type
+                if not (isinstance(candidate, actor) or isinstance(candidate, component)):
                     # it's no good; move on
                     continue
-            # if it is a class and we have a request to instantiate
-            if instanceName and isinstance(dscr, actor):
+            # if it is a component class and we have been asked to instantiate it
+            if instanceName and isinstance(candidate, actor):
                 # make a locator
                 this = tracking.simple('while resolving {!r}'.format(uri.uri))
                 locator = tracking.chain(this=this, next=locator)
                 # build it
-                dscr = dscr(name=instanceName, locator=locator)
-            # give this a try
-            yield dscr
+                candidate = candidate(name=instanceName, locator=locator)
+
+            # if it is compatible with my protocol
+            if candidate.pyre_isCompatible(self.schema):
+                # give it a try
+                yield candidate
 
         # out of ideas
         return

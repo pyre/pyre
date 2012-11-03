@@ -76,53 +76,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # support for framework requests
     @classmethod
-    def pyre_resolve(cls, value, locator):
-        """
-        Resolve {value} into a component that is compatible with me
-        """
-        # for recognizing components and their class records
-        component, actor = cls.component, cls.actor
-
-        # otherwise, convert it to a uri
-        uri = cls.uri.coerce(value)
-        # if there is a fragment, extract it to use as the instance name
-        instanceName = uri.fragment
-
-        # for each potential resolution by the executive
-        for candidate in self.pyre_executive.retrieveComponentDescriptor(uri=uri, protocol=cls):
-            # if it's neither a component class nor a component record
-            if not (isinstance(candidate, actor) or isinstance(candidate, component)):
-                # it must be a callable that returns one
-                try:
-                    # evaluate it
-                    candidate = candidate()
-                # if that fails
-                except TypeError:
-                    # move on
-                    continue
-                # if it succeeded, check the return type
-                if not (isinstance(candidate, actor) or isinstance(candidate, component)):
-                    # and move on if it's not a component
-                    continue
-                # if it is a component class and we have been asked to instantiate it
-                if instanceName and isinstance(candidate, actor):
-                    # make a locator
-                    this = tracking.simple('while resolving {!r}'.format(uri.uri))
-                    locator = tracking.chain(this=this, next=locator)
-                    # instantiate
-                    candidate = candidate(name=instanceName, locator=locator)
-
-                # if it is compatible with me
-                if candidate.pyre_isCompatible(protocol=cls):
-                    # it has to be the one
-                    yield candidate
-
-        # out of ideas
-        return
-
-
-    @classmethod
-    def pyre_find(cls, uri):
+    def pyre_find(cls, uri, searchpath=None):
         """
         Participate in the search for shelves consistent with {uri}
         """
@@ -135,10 +89,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # and the fileserver
         fileserver = cls.pyre_fileserver
 
-        # the nameserver knows the search path, already a list of uris
-        searchpath = nameserver['pyre.configpath']
         # deduce my context path
         contextpath = nameserver.split(family) if family else ['']
+        # if not supplied, use the nameserver search path, which is already a list of uris
+        searchpath = nameserver['pyre.configpath'] if searchpath is None else searchpath
 
         # the choices of leading segments
         roots = (p.address for p in reversed(searchpath))
@@ -149,9 +103,14 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # and the address specification from the {uri}
         address = [uri.address]
         # with all possible combinations of these three sequences
-        for address in itertools.product(roots, folders, address):
-            # build a better uri and return it
-            yield cls.uri(scheme=vfs, address=fileserver.join(*address))
+        for fragments in itertools.product(roots, folders, address):
+            # assemble the path
+            path = fileserver.join(*fragments)
+            # build a better uri
+            uri = cls.uri(scheme='vfs', address=path)
+            # and yield it
+            print("Protocol.pyre_find: uri={.uri!r}".format(uri))
+            yield uri
 
         # out of ideas
         return
