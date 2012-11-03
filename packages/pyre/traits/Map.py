@@ -25,7 +25,7 @@ class Map(Facility):
         return value
 
 
-    def instantiate(self, configurable, node, value, **kwds):
+    def instantiate(self, node, value, **kwds):
         """
         Attach a component catalog as my trait value
         """

@@ -18,7 +18,7 @@ class Catalog(Facility):
 
 
     # value coercion
-    def instantiate(self, node, value, configurable, **kwds):
+    def instantiate(self, node, value, **kwds):
         """
         Attach a component catalog as my trait value
         """
