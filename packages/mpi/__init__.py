@@ -79,7 +79,7 @@ try:
     # pluggins will be able to find them. hopefully, the openmpi people will fix this soon
     # LAST CHECKED: 20120423, revision 1402, openmpi 1.4.3
     import sys
-    if sys.platform == 'linux2':
+    if sys.platform.startswith('linux'):
         # that's where the stupid flag value lives...
         import ctypes
         # adjust the {dlopen} flags
