@@ -18,9 +18,8 @@ class License(merlin.spell):
 
 
     # class interface
-    # interface
     @merlin.export
-    def main(self, **kwds):
+    def main(self, *args, **kwds):
         """
         Print out the license and terms of use of the merlin package
         """

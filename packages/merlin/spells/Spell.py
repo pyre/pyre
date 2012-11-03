@@ -35,7 +35,7 @@ class Spell(pyre.component, implements=spell):
 
     # interface
     @pyre.export
-    def main(self, **kwds):
+    def main(self, *args, **kwds):
         """
         This is the action of the spell
         """

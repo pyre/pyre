@@ -33,7 +33,7 @@ class Info(merlin.spell):
 
     # interface
     @merlin.export
-    def main(self, **kwds):
+    def main(self, *args, **kwds):
         """
         Print out information about a merlin project
         """

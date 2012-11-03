@@ -19,7 +19,12 @@ class Merlin(pyre.application, family='merlin.application'):
     # exceptions
     from .exceptions import MerlinError
 
-    # data
+    # public data
+    searchpath = pyre.properties.list(
+        schema=pyre.schema.str,
+        default=['/merlin/project', '/merlin/user', '/merlin/system'])
+
+
     # my subcomponents; built at construction time
     user = None # information about the current user
     host = None # information about the host we are running on
@@ -47,7 +52,7 @@ class Merlin(pyre.application, family='merlin.application'):
         # otherwise, the spell info is in the first entry
         spell = commands[0]
         # and the rest are the arguments to the main entry point of the spell
-        args = tuple(command.command for command in commands)
+        args = tuple(command.command for command in commands[1:])
         
         # cast the spell and return its exit status
         return self.cast(name=spell.command, locator=spell.locator, args=args)
@@ -190,19 +195,6 @@ class Merlin(pyre.application, family='merlin.application'):
         from .PythonClassifier import PythonClassifier
         self.assetClassifiers = [
             PythonClassifier(name=name+'.python')
-            ]
-
-        # register the components that explore my vfs looking for configuration choices
-        self.categories = {
-            "spells": self.spellbook,
-            "packages": self.packages,
-            }
-
-        # the ordered list of folders to visit while resolving names
-        self.configpath = [
-            '/merlin/project',
-            '/merlin/user',
-            '/merlin/system',
             ]
 
         # all done

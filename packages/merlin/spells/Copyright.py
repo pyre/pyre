@@ -20,7 +20,7 @@ class Copyright(merlin.spell):
     # class interface
     # interface
     @merlin.export
-    def main(self, **kwds):
+    def main(self, *args, **kwds):
         """
         Print the copyright note of the merlin package
         """

@@ -144,6 +144,9 @@ def boot():
     executive = Merlin(name='merlin.executive')
     # patch components with access to this executive
     component.merlin = weakref.proxy(executive)
+    # patch the spell protocol
+    from .components.Spell import Spell
+    Spell.merlin = weakref.proxy(executive)
     # patch spells with access to this executive
     from .spells.Spell import Spell
     Spell.merlin = weakref.proxy(executive)

@@ -21,10 +21,17 @@ def test():
     # merlin.vfs.dump()
     # merlin.nameserver.dump('merlin')
     
-    # mount the project directory
-    project = merlin.vfs['/merlin/project']
-    # check the project directory
-    assert project.uri == os.path.join(os.getcwd(), '.merlin')
+    # retrieve project directory
+    project = merlin.vfs['/project']
+    # check it
+    assert project.uri == os.getcwd()
+
+    # retrieve the location of the merlin settings
+    cfg = merlin.vfs['/merlin/project']
+    # check it
+    assert cfg.uri == os.path.join(os.getcwd(), '.merlin')
+    # verify that it is accessible through the {pfs]
+    assert cfg is merlin.pfs['/project']
 
     # and return
     return

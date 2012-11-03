@@ -17,10 +17,9 @@ class Version(merlin.spell):
     """
 
 
-    # class interface
     # interface
     @merlin.export
-    def main(self, **kwds):
+    def main(self, *args, **kwds):
         """
         Print the version of the merlin package
         """

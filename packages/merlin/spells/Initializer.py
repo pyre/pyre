@@ -29,8 +29,8 @@ class Initializer(merlin.spell):
     force = merlin.properties.bool(default=False)
     force.doc = 'initialize the target folder regardless of whether is it already part of a project'
 
+
     # class interface
-    # interface
     @merlin.export
     def main(self, *args, **kwds):
         """
@@ -83,7 +83,7 @@ class Initializer(merlin.spell):
         # attempt to
         try:
             # realize the layout
-            pfs.make(name=merlin.merlinFolder, tree=mfs)
+            pfs.make(name=merlin.metafolder, tree=mfs)
         # if it fails
         except OSError as error:
             # complain
@@ -91,7 +91,7 @@ class Initializer(merlin.spell):
 
         # mount it
         self.vfs['/project'] = pfs
-        self.vfs['/merlin/project'] = pfs[merlin.merlinFolder]
+        self.vfs['/merlin/project'] = pfs[merlin.metafolder]
 
         # if a name was not specified
         if self.project is None:

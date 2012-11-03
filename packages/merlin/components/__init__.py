@@ -8,10 +8,10 @@
 
 # load the framework
 from pyre import export, properties, protocol
+# the spell component
+from .Spell import Spell as spell
 # the locally enhanced component base class
 from .Component import Component as component
-# the spell interface
-from .Spell import Spell as spell
 
 
 # end of file 

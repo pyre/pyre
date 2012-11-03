@@ -38,7 +38,7 @@ class AssetManager(Spell):
             # complain
             return self.error.log("not a merlin project; did you forget to cast 'merlin init'?")
         # get hold of my local filesystem
-        local = self.vfs['/local']
+        local = self.vfs['/pyre/startup']
         # dump it
         # local.dump()
         # the first argument is supposed to be a subdirectory of the current directory
