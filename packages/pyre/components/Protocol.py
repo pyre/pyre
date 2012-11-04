@@ -109,7 +109,6 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             # build a better uri
             uri = cls.uri(scheme='vfs', address=path)
             # and yield it
-            print("Protocol.pyre_find: uri={.uri!r}".format(uri))
             yield uri
 
         # out of ideas
