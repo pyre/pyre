@@ -51,7 +51,7 @@ class Property(Slotted):
 
 
     # framework support
-    def initialize(self, **kwds):
+    def attach(self, **kwds):
         """
         Attach any metadata harvested by the requirement metaclass
 
@@ -59,7 +59,7 @@ class Property(Slotted):
         process that constructs the class record.
         """
         # chain up
-        super().initialize(**kwds)
+        super().attach(**kwds)
         # adjust the validators
         if self.validators is not tuple():
             # if the user placed them in a container

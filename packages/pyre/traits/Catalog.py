@@ -18,7 +18,7 @@ class Catalog(Facility):
 
 
     # value coercion
-    def instantiate(self, node, value, **kwds):
+    def coerce(self, node, value, **kwds):
         """
         Attach a component catalog as my trait value
         """
@@ -49,7 +49,7 @@ class Catalog(Facility):
             # take it apart and keep the trailing part
             tag = nameserver.split(childName)[-1]
             # store the (tag, value) pair in my index
-            index[tag] = super().instantiate(node=childNode, value=childNode.value)
+            index[tag] = super().coerce(node=childNode, value=childNode.value)
 
         # now, for the deferred assignments
         for assignment, priority in configurator.deferred[key]:

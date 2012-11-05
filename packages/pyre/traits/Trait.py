@@ -6,12 +6,13 @@
 #
 
 
-# superclass
+# superclasses
 from .Descriptor import Descriptor
+from ..components.Executive import Executive
 
 
 # class declaration
-class Trait(Descriptor):
+class Trait(Descriptor, Executive):
     """
     This is the base class for component features that form their public interface
 
@@ -31,18 +32,6 @@ class Trait(Descriptor):
     # framework data
     # predicate that indicates whether this trait is subject to runtime configuration
     isConfigurable = False
-
-
-    # framework support
-    def initialize(self, configurable):
-        """
-        Look through the metadata harvested from the class declaration and perform any
-        necessary cleanup
-        """
-        # update my aliases to include my name
-        self.aliases.add(self.name)
-        # all done
-        return self
 
 
 # end of file 

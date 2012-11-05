@@ -60,9 +60,9 @@ class Slotted(Trait):
         Retrieve the value of this trait
         """
         # find out whose inventory we are supposed to access
-        client = instance if instance else cls
+        configurable = instance if instance else cls
         # grab the slot from the client's inventory
-        slot = client.pyre_inventory.getSlot(trait=self)
+        slot = configurable.pyre_inventory.getSlot(trait=self)
         # compute and return its value
         return slot.value
 

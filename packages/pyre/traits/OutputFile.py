@@ -50,23 +50,10 @@ class OutputFile(Property):
                 import sys
                 return sys.stderr
             # otherwise, assume it is a valid file name and open it
-            return open(value, mode=self.mode)
+            return self.pyre_fileserver.open(value, mode=self.mode)
         # if not, just pass it through
         return value
 
-
-    # framework support
-    def initialize(self, configurable, **kwds):
-        """
-        Attach the meta-data harvested from {configurable}
-        """
-        # chain up
-        super().initialize(configurable=configurable, **kwds)
-        # i need access to the file server
-        self.fileserver = weakref.proxy(configurable.pyre_executive.fileserver)
-        # all done
-        return
-        
 
     # meta-methods
     def __init__(self, mode=mode, default=default, **kwds):
@@ -78,10 +65,6 @@ class OutputFile(Property):
         self.schema = self
         # all done
         return
-
-
-    # implementation details
-    fileserver = None
 
 
 # end of file 

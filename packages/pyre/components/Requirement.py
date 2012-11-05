@@ -57,7 +57,7 @@ class Requirement(AttributeClassifier):
 
         # initialize the class attributes explicitly
         attributes['pyre_pedigree'] = ()
-        attributes["pyre_localTraits"] = tuple(cls.pyre_getLocalTraits(attributes))
+        attributes["pyre_localTraits"] = ()
         attributes['pyre_inheritedTraits'] = ()
         attributes['pyre_namemap'] = namemap
         attributes['pyre_traitmap'] = traitmap
@@ -66,10 +66,14 @@ class Requirement(AttributeClassifier):
         # build the record
         configurable = super().__new__(cls, name, bases, attributes, **kwds)
 
+        # harvest the local traits
+        configurable.pyre_localTraits = tuple(
+            configurable.pyre_getLocalTraits(attributes))
+
         # harvest the inherited traits: this must be done from scratch for every new
         # configurable class, since multiple inheritance messes with the __mro__; 
-        configurable.pyre_inheritedTraits = tuple(cls.pyre_getInheritedTraits(
-            configurable=configurable, shadowed=set(attributes)))
+        configurable.pyre_inheritedTraits = tuple(
+            configurable.pyre_getInheritedTraits(shadowed=set(attributes)))
             
         # extract the ancestors listed in the mro of the configurable that are themselves
         # configurable; N.B.: since {Requirement} is not the direct metaclass of any class, the
@@ -78,11 +82,6 @@ class Requirement(AttributeClassifier):
         pedigree = tuple(base for base in configurable.__mro__ if isinstance(base, cls))
         # attach it to the configurable
         configurable.pyre_pedigree = pedigree
-
-        # go through the local traits
-        for trait in configurable.pyre_localTraits:
-            # and initialize them
-            trait.initialize(configurable=configurable)
 
         # adjust the name maps; the local variables are tied to the class attribute
         # N.B. this assumes that the traits have been initialized, which updates the {aliases}
@@ -98,31 +97,31 @@ class Requirement(AttributeClassifier):
 
 
     # support for decorating components and protocols
-    @classmethod
-    def pyre_getLocalTraits(cls, attributes):
+    def pyre_getLocalTraits(self, attributes):
         """
         Scan the dictionary {attributes} for trait descriptors
         """
         # examine the attributes and harvest the trait descriptors
-        for name, trait in cls.pyre_harvest(attributes=attributes, descriptor=cls.Trait):
-            # record the canonical name of the trait descriptor
-            trait.name = name
+        for name, trait in self.pyre_harvest(attributes=attributes, descriptor=self.Trait):
+            # establish my association with my trait
+            trait.attach(client=self, name=name)
             # add it to the pile
             yield trait
         # all done
         return
 
 
-    @classmethod
-    def pyre_getInheritedTraits(cls, configurable, shadowed):
+    def pyre_getInheritedTraits(self, shadowed):
         """
         Look through the ancestors of {configurable} for traits whose name are not members of
         {shadowed}, the set of names that are inaccessible.
         """
+        # my metaclass
+        metaclass = type(self)
         # for each superclass of configurable
-        for base in configurable.__mro__[1:]:
+        for base in self.__mro__[1:]:
             # only other configurables have traits
-            if isinstance(base, cls):
+            if isinstance(base, metaclass):
                 # go through the traits local in base
                 for trait in base.pyre_localTraits:
                     # skip it if something else by the same name is already known

@@ -23,7 +23,8 @@ class Behavior(Trait):
 
     # meta-methods
     def __init__(self, method, **kwds):
-        super().__init__(doc=method.__doc__, **kwds)
+        super().__init__(**kwds)
+        self.__doc__ = method.__doc__
         self.method = method
         return
 

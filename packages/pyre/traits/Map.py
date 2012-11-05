@@ -18,14 +18,14 @@ class Map(Facility):
 
 
     # value coercion
-    def coerce(self, node, value, **kwds):
+    def identify(self, node, value, **kwds):
         """
         A no-op to get around the class inventory constraints
         """
-        return value
+        return {}
 
 
-    def instantiate(self, node, value, **kwds):
+    def coerce(self, node, value, **kwds):
         """
         Attach a component catalog as my trait value
         """
@@ -41,7 +41,7 @@ class Map(Facility):
             return index
 
         # the executive
-        executive = self.executive
+        executive = self.pyre_executive
         # the nameserver
         nameserver = executive.nameserver
         # and the configurator
@@ -78,16 +78,6 @@ class Map(Facility):
 
         # store the index as my value
         return index
-
-
-    # framework support
-    def initialize(self, configurable, **kwds):
-        # chain up
-        super().initialize(configurable=configurable, **kwds)
-        # all i care about is access to the executive
-        self.executive = configurable.pyre_executive
-        # all done
-        return
 
 
     # support for constructing instance slots

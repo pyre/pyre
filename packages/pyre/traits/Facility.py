@@ -37,13 +37,14 @@ class Facility(Slotted):
 
 
     # public data
+    schema = None
     converters = ()
     # framework data
     isConfigurable = True
 
 
     # interface
-    def coerce(self, value, node, **kwds):
+    def identify(self, value, node, **kwds):
         """
         Convert {value} into a component class
         """
@@ -63,14 +64,14 @@ class Facility(Slotted):
         raise self.CastingError(value=value, description=msg)
 
 
-    def instantiate(self, value, node, **kwds):
+    def coerce(self, value, node, **kwds):
         """
         Force the instantiation of {value}
         """
         # {None} is special, leave it alone
         if value is None: return value
         # run the {value} through coercion
-        value = self.coerce(value=value, node=node, **kwds)
+        value = self.identify(value=value, node=node, **kwds)
         # if what I got back is a component instance, we are all done
         if isinstance(value, self.component): return value
 
@@ -87,7 +88,7 @@ class Facility(Slotted):
         return value(name=name, locator=node.locator)
 
 
-    def initialize(self, **kwds):
+    def attach(self, **kwds):
         """
         Attach any metadata harvested by the requirement metaclass
 
@@ -95,7 +96,7 @@ class Facility(Slotted):
         process that constructs the class record.
         """
         # chain up
-        super().initialize(**kwds)
+        super().attach(**kwds)
         # adjust the converters
         if self.converters is not tuple():
             # if the user placed them in a container
@@ -170,12 +171,12 @@ class Facility(Slotted):
 
     
     # support for constructing instance slots
-    def instanceSlot(self, model):
+    def classSlot(self, model):
         """
         Hook registered with the nameserver that informs it of my macro preference and the
         correct converter to attach to new slots for component classes
         """
-        return (self.macro(model=model), self.instantiate)
+        return (self.macro(model=model), self.identify)
 
 
     def macro(self, model):

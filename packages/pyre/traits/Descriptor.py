@@ -52,25 +52,29 @@ class Descriptor:
         return
 
 
-    # interface
-    def coerce(self, **kwds):
-        # not much to do; just pass it on to my schema
-        return self.schema.coerce(**kwds)
+    # framework requests
+    def attach(self, client, name):
+        """
+        Called by {client}, the class during whose declaration i was constructed, to let me
+        know it is aware of me as an attribute with a canonical {name}
+        """
+        # set my canonical name
+        self.name = name
+        # update my aliases
+        self.aliases.add(name)
+        # and return
+        return self
 
 
     # meta methods
-    def __init__(self, name=None, default=None, doc=None, **kwds):
+    def __init__(self, default=None, **kwds):
         # chain up
         super().__init__(**kwds)
-
         # the attributes that are likely to be known at construction time
-        self.name = name
         self.default = default
-        self.__doc__ = doc
-
         # and the rest
-        self.aliases = set() if name is None else { name }
-
+        self.__doc__ = None
+        self.aliases = set()
         # and return
         return
 
