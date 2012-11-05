@@ -74,7 +74,7 @@ class PrivateInventory(Inventory):
 
     # support for building component classes and instances
     @classmethod
-    def initializeCass(cls, component, **kwds):
+    def initializeClass(cls, component, **kwds):
         """
         Build inventory appropriate for a component class that is not registered with the
         nameserver

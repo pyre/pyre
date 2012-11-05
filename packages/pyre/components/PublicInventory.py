@@ -86,7 +86,7 @@ class PublicInventory(Inventory):
 
     # support for constructing component classes and instances
     @classmethod
-    def initializeCass(cls, component, family, **kwds):
+    def initializeClass(cls, component, family, **kwds):
         """
         Build inventory appropriate for a component class that is registered with the
         nameserver

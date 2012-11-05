@@ -69,7 +69,7 @@ class Actor(Requirement):
         # pick the appropriate inventory strategy
         visibility = self.PublicInventory if family else self.PrivateInventory
         # and invoke it to register the component class and build its inventory
-        visibility.initializeCass(component=self, family=family)
+        visibility.initializeClass(component=self, family=family)
 
         # get my protocol specification
         protocol = self.pyre_implements
