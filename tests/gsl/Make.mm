@@ -13,7 +13,7 @@ PROJECT = gsl
 
 all: test
 
-test: sanity rng pdf vectors matrices blas
+test: sanity rng pdf vectors matrices blas linalg
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -84,6 +84,9 @@ blas:
 	${PYTHON} ./blas_dnrm2.py
 	${PYTHON} ./blas_dasum.py
 	${PYTHON} ./blas_daxpy.py
+	${PYTHON} ./blas_dgemv.py
+	${PYTHON} ./blas_dtrmv.py
+	${PYTHON} ./blas_dtrsv.py
 	${PYTHON} ./blas_dsymv.py
 
 linalg:

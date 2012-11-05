@@ -146,9 +146,72 @@ gsl::blas::daxpy(PyObject *, PyObject * args) {
 }
 
 
+// blas::dgemv
+const char * const gsl::blas::dgemv__name__ = "blas_dgemv";
+const char * const gsl::blas::dgemv__doc__ = "compute y = a op(A) x + b y";
+
+PyObject * 
+gsl::blas::dgemv(PyObject *, PyObject * args) {
+    // the arguments
+    int op;
+    double a, b;
+    PyObject * xc;
+    PyObject * yc;
+    PyObject * Ac;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "idO!O!dO!:blas_dgemv",
+                                  &op,
+                                  &a,
+                                  &PyCapsule_Type, &Ac,
+                                  &PyCapsule_Type, &xc,
+                                  &b,
+                                  &PyCapsule_Type, &yc);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the third argument must be a matrix");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a vector");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(yc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the sixth argument must be a vector");
+        return 0;
+    }
+
+    // decode the enum
+    CBLAS_TRANSPOSE_t ctran;
+    switch(op) {
+    case 0:
+        ctran = CblasNoTrans; break;
+    case 1:
+        ctran = CblasTrans; break;
+    case 2:
+        ctran = CblasConjTrans; break;
+    default:
+        PyErr_SetString(PyExc_TypeError, "bad operation flag");
+        return 0;
+    }
+    // get the two vectors
+    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
+    gsl_vector * y = static_cast<gsl_vector *>(PyCapsule_GetPointer(yc, gsl::vector::capsule_t));
+    // get the matrix
+    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
+    // compute the form
+    gsl_blas_dgemv(ctran, a, A, x, b, y);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
 // blas::dtrmv
 const char * const gsl::blas::dtrmv__name__ = "blas_dtrmv";
-const char * const gsl::blas::dtrmv__doc__ = "compute y = a A x + b y";
+const char * const gsl::blas::dtrmv__doc__ = "compute x = op(A) x";
 
 PyObject * 
 gsl::blas::dtrmv(PyObject *, PyObject * args) {
@@ -196,6 +259,62 @@ gsl::blas::dtrmv(PyObject *, PyObject * args) {
     gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
     // compute the form
     gsl_blas_dtrmv(cuplo, ctran, cdiag, A, x);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// blas::dtrsv
+const char * const gsl::blas::dtrsv__name__ = "blas_dtrsv";
+const char * const gsl::blas::dtrsv__doc__ = "compute x = inv(op(A)) x";
+
+PyObject * 
+gsl::blas::dtrsv(PyObject *, PyObject * args) {
+    // the arguments
+    int uplo, op, unitDiag;
+    PyObject * xc;
+    PyObject * Ac;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "iiiO!O!:blas_dtrsv",
+                                  &uplo, &op, &unitDiag,
+                                  &PyCapsule_Type, &Ac,
+                                  &PyCapsule_Type, &xc);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the fifth argument must be a vector");
+        return 0;
+    }
+
+    // decode the enums
+    CBLAS_UPLO_t cuplo = uplo ? CblasUpper : CblasLower;
+    CBLAS_DIAG_t cdiag = unitDiag ? CblasUnit : CblasNonUnit;
+    CBLAS_TRANSPOSE_t ctran;
+    switch(op) {
+    case 0:
+        ctran = CblasNoTrans; break;
+    case 1:
+        ctran = CblasTrans; break;
+    case 2:
+        ctran = CblasConjTrans; break;
+    default:
+        PyErr_SetString(PyExc_TypeError, "bad operation flag");
+        return 0;
+    }
+
+    // get the two vectors
+    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
+    // get the matrix
+    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
+    // compute the form
+    gsl_blas_dtrsv(cuplo, ctran, cdiag, A, x);
     // and return
     Py_INCREF(Py_None);
     return Py_None;

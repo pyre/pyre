@@ -13,6 +13,7 @@
 namespace gsl {
     namespace blas {
 
+        // level 1
         extern const char * const ddot__name__;
         extern const char * const ddot__doc__;
         PyObject * ddot(PyObject *, PyObject *);
@@ -29,9 +30,18 @@ namespace gsl {
         extern const char * const daxpy__doc__;
         PyObject * daxpy(PyObject *, PyObject *);
 
+        // level 2
+        extern const char * const dgemv__name__;
+        extern const char * const dgemv__doc__;
+        PyObject * dgemv(PyObject *, PyObject *);
+
         extern const char * const dtrmv__name__;
         extern const char * const dtrmv__doc__;
         PyObject * dtrmv(PyObject *, PyObject *);
+
+        extern const char * const dtrsv__name__;
+        extern const char * const dtrsv__doc__;
+        PyObject * dtrsv(PyObject *, PyObject *);
 
         extern const char * const dsymv__name__;
         extern const char * const dsymv__doc__;
