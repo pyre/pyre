@@ -49,7 +49,31 @@ class Linker:
         # print("  protocol: {}".format(facility.schema))
         # print("        shelves: {!r}".format(tuple(self.shelves.keys())))
 
-        # what should we try?
+        # get the nameserver
+        nameserver = executive.nameserver
+        # get the specified scheme
+        scheme = uri.scheme
+        # if there was no explicit scheme given
+        if not scheme:
+            # if we have anything explicitly registered under the address
+            try:
+                # get it
+                yield nameserver[uri.address]
+            # if not
+            except nameserver.UnresolvedNodeError:
+                # no problem
+                pass
+
+            # how about splicing the family name with the given address
+            try:
+                # get it
+                yield nameserver[nameserver.join(facility.schema.pyre_family(), uri.address)]
+            # if not
+            except nameserver.UnresolvedNodeError:
+                # no problem
+                pass
+
+        # what else should we try?
         schemes = [uri.scheme] if uri.scheme else ['import', 'vfs']
         # print("  schemes: {!r}".format(schemes))
 
