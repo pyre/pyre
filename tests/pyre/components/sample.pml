@@ -136,6 +136,26 @@
       <bind property="tag">cat2</bind>
   </component>
 
+  <!-- data for component_list -->
+  <component name="alec" family="sample.person">
+    <!-- put some components in the list -->
+    <bind property="activities">
+      study#physics, relax#wow, sleep#nap
+    </bind>
+  </component>
+
+  <component name="physics" family="sample.activities.study">
+    <bind property="duration">30*minute</bind>
+  </component>
+
+  <component name="wow" family="sample.activities.relax">
+    <bind property="duration">60*minute</bind>
+  </component>
+
+  <component name="nap" family="sample.activities.sleep">
+    <bind property="duration">3*hour</bind>
+  </component>
+
   <!-- data for component_map -->
   <component name="map_container" family="sample.map">
     <!-- put some components in the catalog -->
