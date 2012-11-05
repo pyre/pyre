@@ -14,6 +14,7 @@ class Converter:
 
     # types
     from ..schema import identity
+    from .exceptions import EvaluationError
 
     # public data
     converter = None
@@ -27,8 +28,16 @@ class Converter:
         """
         # get the value
         value = super().getValue()
-        # process it
-        value = self.converter(value=value, node=self, **kwds)
+        # attempt to
+        try:
+            # process it
+            value = self.converter(value=value, node=self, **kwds)
+        # protect against framework bugs: asking for configurable attributes that don't exist
+        except AttributeError as error:
+            # complain carefully to avoid infinite recursions
+            # NYI: can i do journal here?
+            raise self.EvaluationError(node=self, error=str(error))
+
         # and return it
         return value
 

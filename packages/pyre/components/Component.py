@@ -213,16 +213,22 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # attempt to
         try:
             # normalize the name
-            name = self.pyre_namemap[name]
+            normal = self.pyre_namemap[name]
         # if it's not one of my traits
         except KeyError:
             # complain
             raise AttributeError("{} has no attribute {!r}".format(self, name))
+
+        # if the normalized name is the same as the original
+        if normal == name:
+            # nothing further to do but complain; this is almost certainly a framework bug
+            # NYI: can i do journal here?
+            raise self.TraitNotFoundError(configurable=self, name=name)
             
         # if we got this far, restart the attribute lookup using the canonical name
         # don't be smart here; let getattr do its job, which involves invoking the trait
         # descriptors if necessary
-        return getattr(self, name)
+        return getattr(self, normal)
 
 
     def __setattr__(self, name, value):
