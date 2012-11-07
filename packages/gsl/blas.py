@@ -51,7 +51,7 @@ def daxpy(α, x, y):
 # level 2
 def dgemv(transpose, α, A, x, β, y):
     """
-    Compute {y = a op(A) x + b y}
+    Compute {y = α op(A) x + β y}
     """
     # compute
     gsl.blas_dgemv(transpose, α, A.data, x.data, β, y.data)
@@ -97,6 +97,17 @@ def dsyr(uplo, α, x, A):
     gsl.blas_dsyr(uplo, α, x.data, A.data)
     # and return the result in {A}
     return A
+
+
+# level 3
+def dgemm(tranA, tranB, α, A, B, β, C):
+    """
+    Compute {C = α op(A) op(B) + β C}
+    """
+    # compute
+    gsl.blas_dgemm(tranA, tranB, α, A.data, B.data, β, C.data)
+    # and return the result
+    return C
 
 
 # end of file 

@@ -88,6 +88,7 @@ blas:
 	${PYTHON} ./blas_dtrmv.py
 	${PYTHON} ./blas_dtrsv.py
 	${PYTHON} ./blas_dsymv.py
+	${PYTHON} ./blas_dgemm.py
 
 linalg:
 	${PYTHON} ./linalg_LU.py

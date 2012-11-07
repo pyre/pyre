@@ -50,6 +50,8 @@ namespace gsl {
         { blas::dtrsv__name__, blas::dtrsv, METH_VARARGS, blas::dtrsv__doc__ },
         { blas::dsymv__name__, blas::dsymv, METH_VARARGS, blas::dsymv__doc__ },
         { blas::dsyr__name__, blas::dsyr, METH_VARARGS, blas::dsyr__doc__ },
+        // blas - level 3
+        { blas::dgemm__name__, blas::dgemm, METH_VARARGS, blas::dgemm__doc__ },
 
         // histograms
         { histogram::alloc__name__, histogram::alloc, METH_VARARGS, histogram::alloc__doc__ },

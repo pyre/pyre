@@ -417,4 +417,80 @@ gsl::blas::dsyr(PyObject *, PyObject * args) {
 }
 
 
+// blas::dgemm
+const char * const gsl::blas::dgemm__name__ = "blas_dgemm";
+const char * const gsl::blas::dgemm__doc__ = "compute y = a op(A) x + b y";
+
+PyObject * 
+gsl::blas::dgemm(PyObject *, PyObject * args) {
+    // the arguments
+    int opA, opB;
+    double a, b;
+    PyObject * Ac;
+    PyObject * Bc;
+    PyObject * Cc;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "iidO!O!dO!:blas_dgemm",
+                                  &opA, &opB,
+                                  &a,
+                                  &PyCapsule_Type, &Ac,
+                                  &PyCapsule_Type, &Bc,
+                                  &b,
+                                  &PyCapsule_Type, &Cc);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(Bc, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the fifth argument must be a matrix");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(Cc, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the seventh argument must be a matrix");
+        return 0;
+    }
+
+    // decode the enum
+    CBLAS_TRANSPOSE_t ctranA;
+    switch(opA) {
+    case 0:
+        ctranA = CblasNoTrans; break;
+    case 1:
+        ctranA = CblasTrans; break;
+    case 2:
+        ctranA = CblasConjTrans; break;
+    default:
+        PyErr_SetString(PyExc_TypeError, "bad operation flag");
+        return 0;
+    }
+    // decode the other enum
+    CBLAS_TRANSPOSE_t ctranB;
+    switch(opB) {
+    case 0:
+        ctranB = CblasNoTrans; break;
+    case 1:
+        ctranB = CblasTrans; break;
+    case 2:
+        ctranB = CblasConjTrans; break;
+    default:
+        PyErr_SetString(PyExc_TypeError, "bad operation flag");
+        return 0;
+    }
+
+    // get the matrices
+    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
+    gsl_matrix * B = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Bc, gsl::matrix::capsule_t));
+    gsl_matrix * C = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Cc, gsl::matrix::capsule_t));
+    // compute the form
+    gsl_blas_dgemm(ctranA, ctranB, a, A, B, b, C);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
 // end of file

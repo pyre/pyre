@@ -51,6 +51,11 @@ namespace gsl {
         extern const char * const dsyr__doc__;
         PyObject * dsyr(PyObject *, PyObject *);
 
+        // level 3
+        extern const char * const dgemm__name__;
+        extern const char * const dgemm__doc__;
+        PyObject * dgemm(PyObject *, PyObject *);
+
     } // of namespace blas
 } // of namespace gsl
 
