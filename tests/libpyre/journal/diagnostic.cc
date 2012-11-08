@@ -29,7 +29,7 @@ public:
     typedef std::string string_t;
     // meta methods
 public:
-    Debug(string_t name) : Diagnostic<Debug>("debug", name) {}
+    Debug(string_t name) : pyre::journal::Diagnostic<Debug>("debug", name) {}
 };
 
 

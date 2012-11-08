@@ -44,8 +44,8 @@ public:
     // meta methods
 public:
     Debug(string_t name) :
-        Diagnostic<Debug>("debug", name),
-        Channel<Debug, false>(name)
+        pyre::journal::Diagnostic<Debug>("debug", name),
+        pyre::journal::Channel<Debug, false>(name)
     {}
 };
 
