@@ -17,9 +17,19 @@ RECURSE_DIRS = \
 LIBPQ_DIR= # overriden by the the environment
 ifneq ($(strip $(LIBPQ_DIR)),)
 
-  RECURSE_DIRS += \
-      bizbook.pyre \
+  RECURSE_DIRS += bizbook.pyre
 
+endif
+
+# the mpi+gsl example
+GSL_DIR=
+ifneq ($(strip $(GSL_DIR)), )
+  MPI_DIR=
+  ifneq ($(strip $(MPI_DIR)), )
+
+    RECURSE_DIRS += mpigsl.pyre
+
+  endif
 endif
 
 #--------------------------------------------------------------------------

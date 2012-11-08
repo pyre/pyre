@@ -13,13 +13,16 @@ PROJECT = pyre
 
 all: test
 
-test: sanity partition
+test: sanity distribute
 
 sanity:
 	${PYTHON} ./sanity.py
 
-partition:
+distribute:
+	${PYTHON} ./collect.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./collect.py
 	${PYTHON} ./partition.py
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./partition.py
+
 
 # end of file 

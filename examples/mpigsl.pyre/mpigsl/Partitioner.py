@@ -11,63 +11,63 @@ class Partitioner:
     A class to exercise partitioning a gsl matrix among mpi tasks
     """
 
+
     # interface
-    def partition(self, sampleSize, samplesPerTask):
+    def partition(self, taskload, communicator=None, source=0, matrix=None):
         """
-        Verify that we can build a gsl matrix whose shape is (samples per task x number of
-        tasks) by sampleSize and scatter it among the mpi tasks
+        Scatter {matrix} held by the {source} tasks among all tasks in {communicator}. Only
+        {source} has to provide a {matrix}; the other tasks can use the default. Each task gets
+        a matrix whose layout is described by {taskload}.
         """
-        # access the external packages
-        import mpi
+        # normalize the communicator
+        if communicator is None:
+            # get the mpi package
+            import mpi
+            # use the world by default
+            communicator = mpi.world
+
+        # get the matrix capsule
+        data = None if matrix is None else matrix.data
+
+        # get the extension
+        from . import mpigsl
+        # make the call
+        partition = mpigsl.scatter(communicator.capsule, source, data, taskload)
+
+        # get the gsl package
         import gsl
-        # access my extension
-        from . import scatter, gather
-
-        # figure out the machine layout
-        world = mpi.world
-        tasks = world.size
-        rank = world.rank
-
-        # set the source tasks
-        source = 0
-        # at the source task
-        if rank == source:
-            # say something
-            print("Partitioner.partition:")
-            print("    sample size: {}".format(sampleSize))
-            print("    samples per task: {}".format(samplesPerTask))
-            print("    number of tasks: {}".format(tasks))
-
-            # allocate the source matrix
-            θ = gsl.matrix(shape=(tasks*samplesPerTask, sampleSize))
-            # initialize it
-            for task in range(tasks):
-                for sample in range(samplesPerTask):
-                    for dof in range(sampleSize):
-                        offset = task*samplesPerTask+sample 
-                        θ[offset, dof] = (offset)*sampleSize+ dof
-            # print it out
-            θ.print(format="{}")
-        # the other tasks
-        else:
-            # have a dummy source matrix
-            θ = None
-
-        # each task gets
-        shape = (samplesPerTask, sampleSize)
-        # time to scatter
-        θ_n = scatter(matrix=θ, shape=shape, communicator=world, source=source)
-        # print one of them out
-        if rank == tasks//2: θ_n.print(format="{}")
-            
-        # all done
-        return
+        # dress up my local portion as a matrix
+        result = gsl.matrix(shape=taskload, data=partition)
+        # and return it
+        return result
 
 
-    # meta-methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-        return 
+    def collect(self, matrix, communicator=None, destination=0):
+        """
+        Gather the data in {matrix} from each task in {communicator} into one big matrix
+        available at the {destination} task
+        """
+        # normalize the communicator
+        if communicator is None:
+            # get the mpi package
+            import mpi
+            # use the world by default
+            communicator = mpi.world
+
+        # get the extension
+        from . import mpigsl
+        # make the call
+        result = mpigsl.gather(communicator.capsule, destination, matrix.data)
+
+        # if i am not the destination task, nothing further to do
+        if communicator.rank != destination: return
+
+        # otherwise, get the gsl package
+        import gsl
+        # unpack the result
+        data, shape = result
+        # dress up the result as a matrix
+        return gsl.matrix(shape=shape, data=data)
 
 
 # end of file 
