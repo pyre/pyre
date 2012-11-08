@@ -162,6 +162,10 @@ namespace gsl {
           pdf::ugaussian::vector__doc__ },
         { pdf::ugaussian::matrix__name__, pdf::ugaussian::matrix, METH_VARARGS,
           pdf::ugaussian::matrix__doc__ },
+        { pdf::dirichlet::vector__name__, pdf::uniform::vector, METH_VARARGS,
+          pdf::dirichlet::vector__doc__ },
+        { pdf::dirichlet::matrix__name__, pdf::uniform::matrix, METH_VARARGS,
+          pdf::dirichlet::matrix__doc__ },
 
         // random numbers
         { rng::avail__name__, rng::avail, METH_VARARGS, rng::avail__doc__ },

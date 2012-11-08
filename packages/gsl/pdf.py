@@ -176,4 +176,39 @@ class ugaussian:
         return
 
 
+# the dirichlet probability distribution
+class dirichlet:
+    """
+    Encapsulation of the dirichlet probability distribution
+    """
+
+    # higher level support
+    def vector(self, vector):
+        """
+        Fill {vector} with random values
+        """
+        # fill the vector
+        gsl.dirichlet_vector(self.rng.rng, self.alpha.data, vector.data)
+        # and return it
+        return vector
+
+
+    def matrix(self, matrix):
+        """
+        Fill {matrix} with random values
+        """
+        # fill the matrix
+        gsl.dirichlet_matrix(self.rng.rng, self.alpha.data, matrix.data)
+        # and return it
+        return matrix
+
+
+    # meta methods
+    def __init__(self, alpha, rng, **kwds):
+        super().__init__(**kwds)
+        self.rng = rng
+        self.alpha = alpha
+        return
+
+
 # end of file 

@@ -78,6 +78,18 @@ namespace gsl {
             PyObject * matrix(PyObject *, PyObject *);
         } // of namespace ugaussian
 
+        // the dirichlet distribution
+        namespace dirichlet {
+            // fills
+            extern const char * const vector__name__;
+            extern const char * const vector__doc__;
+            PyObject * vector(PyObject *, PyObject *);
+
+            extern const char * const matrix__name__;
+            extern const char * const matrix__doc__;
+            PyObject * matrix(PyObject *, PyObject *);
+        } // of namespace dirichlet
+
     } // of namespace pdf
 } // of namespace gsl
 

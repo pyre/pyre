@@ -424,4 +424,127 @@ gsl::pdf::ugaussian::matrix(PyObject *, PyObject * args) {
 }
 
 
+// dirichlet::vector
+const char * const gsl::pdf::dirichlet::vector__name__ = "dirichlet_vector";
+const char * const gsl::pdf::dirichlet::vector__doc__ = "fill a vector with random values";
+
+PyObject * 
+gsl::pdf::dirichlet::vector(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * rngCapsule;
+    PyObject * alphaCapsule;
+    PyObject * vectorCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!O!:dirichlet_vector",
+                                  &PyCapsule_Type, &rngCapsule,
+                                  &PyCapsule_Type, &alphaCapsule,
+                                  &PyCapsule_Type, &vectorCapsule);
+    // bail out if something went wrong with the argument unpacking
+    if (!status) return 0;
+    // bail out if the rng capsule is not valid
+    if (!PyCapsule_IsValid(rngCapsule, gsl::rng::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+    // bail out if the alpha capsule is not valid
+    if (!PyCapsule_IsValid(alphaCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+    // bail out if the vector capsule is not valid
+    if (!PyCapsule_IsValid(vectorCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the rng
+    gsl_rng * rng =
+        static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
+    // get the vector
+    gsl_vector * alpha = 
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(alphaCapsule, gsl::vector::capsule_t));
+    // get the vector
+    gsl_vector * v = 
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+
+    // get the order of the pdf
+    size_t K = alpha->size;
+    // check that it is compatible with the matrix we were given
+    if (K != v->size) {
+        PyErr_SetString(PyExc_ValueError, "shape incompatibility");
+        return 0;
+    }
+    // fill the vector
+    gsl_ran_dirichlet(rng, K, alpha->data, v->data);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// dirichlet::matrix
+const char * const gsl::pdf::dirichlet::matrix__name__ = "dirichlet_matrix";
+const char * const gsl::pdf::dirichlet::matrix__doc__ = "fill a matrix with random values";
+
+PyObject * 
+gsl::pdf::dirichlet::matrix(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * rngCapsule;
+    PyObject * alphaCapsule;
+    PyObject * matrixCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!O!:dirichlet_matrix",
+                                  &PyCapsule_Type, &rngCapsule,
+                                  &PyCapsule_Type, &alphaCapsule,
+                                  &PyCapsule_Type, &matrixCapsule);
+    // bail out if something went wrong with the argument unpacking
+    if (!status) return 0;
+    // bail out if the rng capsule is not valid
+    if (!PyCapsule_IsValid(rngCapsule, gsl::rng::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+    // bail out if the alpha capsule is not valid
+    if (!PyCapsule_IsValid(alphaCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+    // bail out if the matrix capsule is not valid
+    if (!PyCapsule_IsValid(matrixCapsule, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
+        return 0;
+    }
+    // get the rng
+    gsl_rng * rng =
+        static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
+    // get the vector
+    gsl_vector * alpha = 
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(alphaCapsule, gsl::vector::capsule_t));
+    // get the matrix
+    gsl_matrix * m = 
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
+
+    // get the order of the pdf
+    size_t K = alpha->size;
+    // check that it is compatible with the matrix we were given
+    if (K != m->size2) {
+        PyErr_SetString(PyExc_ValueError, "shape incompatibility");
+        return 0;
+    }
+
+    // fill
+    for (size_t i = 0; i < m->size1; i++) {
+        // fill the row
+        gsl_ran_dirichlet(rng, K, alpha->data, m->data + i*m->size2);
+    }
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
 // end of file
