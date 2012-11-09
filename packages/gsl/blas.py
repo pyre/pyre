@@ -38,6 +38,34 @@ def dasum(x):
     return gsl.blas_dasum(x.data)
 
 
+def idamax(x):
+    """
+    Return the index with the largest value in {x}
+    """
+    # compute and return the result
+    return gsl.blas_idamax(x.data)
+
+
+def dswap(x, y):
+    """
+    Exchange the contents of {x} and {y}
+    """
+    # compute
+    gsl.blas_dswap(x.data, y.data)
+    # and return {x} and {y}
+    return x, y
+
+
+def dcopy(x, y):
+    """
+    Copy the elements of {x} into {y}
+    """
+    # compute
+    gsl.blas_dcopy(x.data, y.data)
+    # and return {x} and {y}
+    return y
+
+
 def daxpy(α, x, y):
     """
     Compute {α x + y} and store the result in {y}
@@ -46,6 +74,34 @@ def daxpy(α, x, y):
     gsl.blas_daxpy(α, x.data, y.data)
     # and return the result {y}
     return y
+
+
+def dscal(α, x):
+    """
+    Compute x = α x
+    """
+    # compute
+    gsl.blas_dscal(α, x.data)
+    # and return {x}
+    return x
+
+
+def drotg(x, y):
+    """
+    Compute the Givens rotation which zeroes the vectors {x} and {y}
+    """
+    # compute and return the tuple (x, y, c,s) for the Givens rotation
+    return gsl.blas_drotg(x, y)
+
+
+def drot(x, y, c, s):
+    """
+    Apply the Givens rotation {(c,s)} to {x} and {y}
+    """
+    # compute
+    gsl.blas_drot(x.data, y.data, c, s)
+    # and return
+    return x, y
 
 
 # level 2

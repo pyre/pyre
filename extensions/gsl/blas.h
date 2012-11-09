@@ -26,9 +26,33 @@ namespace gsl {
         extern const char * const dasum__doc__;
         PyObject * dasum(PyObject *, PyObject *);
 
+        extern const char * const idamax__name__;
+        extern const char * const idamax__doc__;
+        PyObject * idamax(PyObject *, PyObject *);
+
+        extern const char * const dswap__name__;
+        extern const char * const dswap__doc__;
+        PyObject * dswap(PyObject *, PyObject *);
+
+        extern const char * const dcopy__name__;
+        extern const char * const dcopy__doc__;
+        PyObject * dcopy(PyObject *, PyObject *);
+
         extern const char * const daxpy__name__;
         extern const char * const daxpy__doc__;
         PyObject * daxpy(PyObject *, PyObject *);
+
+        extern const char * const dscal__name__;
+        extern const char * const dscal__doc__;
+        PyObject * dscal(PyObject *, PyObject *);
+
+        extern const char * const drotg__name__;
+        extern const char * const drotg__doc__;
+        PyObject * drotg(PyObject *, PyObject *);
+
+        extern const char * const drot__name__;
+        extern const char * const drot__doc__;
+        PyObject * drot(PyObject *, PyObject *);
 
         // level 2
         extern const char * const dgemv__name__;

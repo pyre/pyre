@@ -17,6 +17,7 @@
 #include "capsules.h"
 
 
+// level 1
 // blas::ddot
 const char * const gsl::blas::ddot__name__ = "blas_ddot";
 const char * const gsl::blas::ddot__doc__ = "compute the scalar product of two vectors";
@@ -94,7 +95,7 @@ gsl::blas::dasum(PyObject *, PyObject * args) {
     int status = PyArg_ParseTuple(args, "O!:blas_dasum", &PyCapsule_Type, &vc);
     // if something went wrong
     if (!status) return 0;
-    // bail out if the two capsules are not valid
+    // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(vc, gsl::vector::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
         return 0;
@@ -106,6 +107,112 @@ gsl::blas::dasum(PyObject *, PyObject * args) {
     double norm = gsl_blas_dasum(v);
     // and return the result
     return PyFloat_FromDouble(norm);
+}
+
+
+// blas::idamax
+const char * const gsl::blas::idamax__name__ = "blas_idamax";
+const char * const gsl::blas::idamax__doc__ = 
+    "find the index of the largest element in a vector";
+
+PyObject * 
+gsl::blas::idamax(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * vc;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!:blas_idamax", &PyCapsule_Type, &vc);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(vc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(vc, gsl::vector::capsule_t));
+    // compute the index
+    CBLAS_INDEX_t index = gsl_blas_idamax(v);
+    // and return the result
+    return PyLong_FromLong(index);
+}
+
+
+// blas::dswap
+const char * const gsl::blas::dswap__name__ = "blas_dswap";
+const char * const gsl::blas::dswap__doc__ = "swap the contents of two vectors";
+
+PyObject * 
+gsl::blas::dswap(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * xc;
+    PyObject * yc;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args,
+                                  "O!:blas_dswap",
+                                  &PyCapsule_Type, &xc,
+                                  &PyCapsule_Type, &yc
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(yc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
+        return 0;
+    }
+
+    // get the vectors
+    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
+    gsl_vector * y = static_cast<gsl_vector *>(PyCapsule_GetPointer(yc, gsl::vector::capsule_t));
+    // swap the contents
+    gsl_blas_dswap(x, y);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// blas::dcopy
+const char * const gsl::blas::dcopy__name__ = "blas_dcopy";
+const char * const gsl::blas::dcopy__doc__ = "copy the contents of one vector into another";
+
+PyObject * 
+gsl::blas::dcopy(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * xc;
+    PyObject * yc;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args,
+                                  "O!:blas_dcopy",
+                                  &PyCapsule_Type, &xc,
+                                  &PyCapsule_Type, &yc
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(xc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(yc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
+        return 0;
+    }
+
+    // get the vectors
+    gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
+    gsl_vector * y = static_cast<gsl_vector *>(PyCapsule_GetPointer(yc, gsl::vector::capsule_t));
+    // swap the contents
+    gsl_blas_dcopy(x, y);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 
@@ -127,11 +234,11 @@ gsl::blas::daxpy(PyObject *, PyObject * args) {
     if (!status) return 0;
     // bail out if the two capsules are not valid
     if (!PyCapsule_IsValid(v1c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
+        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
         return 0;
     }
     if (!PyCapsule_IsValid(v2c, gsl::vector::capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
+        PyErr_SetString(PyExc_TypeError, "the third argument must be a vector");
         return 0;
     }
 
@@ -146,6 +253,108 @@ gsl::blas::daxpy(PyObject *, PyObject * args) {
 }
 
 
+// blas::dscal
+const char * const gsl::blas::dscal__name__ = "blas_dscal";
+const char * const gsl::blas::dscal__doc__ = "scale a vector by a number";
+
+PyObject * 
+gsl::blas::dscal(PyObject *, PyObject * args) {
+    // the arguments
+    double a;
+    PyObject * vc;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "dO!:blas_dscal",
+                                  &a,
+                                  &PyCapsule_Type, &vc);
+    // if something went wrong
+    if (!status) return 0;
+    // check that the capsule is valid
+    if (!PyCapsule_IsValid(vc, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
+        return 0;
+    }
+
+    // get the two vectors
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(vc, gsl::vector::capsule_t));
+    // compute the form
+    gsl_blas_dscal(a, v);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// blas::drotg
+const char * const gsl::blas::drotg__name__ = "blas_drotg";
+const char * const gsl::blas::drotg__doc__ = "compute the Givens rotation for two vectors";
+
+PyObject * 
+gsl::blas::drotg(PyObject *, PyObject * args) {
+    // the arguments
+    double x, y;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "dd:blas_drotg", &x, &y);
+
+    // if something went wrong
+    if (!status) return 0;
+
+    // compute the rotation
+    double c, s;
+    gsl_blas_drotg(&x, &y, &c, &s);
+
+    // build a tuple to hold the results
+    PyObject * result = PyTuple_New(4);
+    PyTuple_SET_ITEM(result, 0, PyFloat_FromDouble(x));
+    PyTuple_SET_ITEM(result, 1, PyFloat_FromDouble(y));
+    PyTuple_SET_ITEM(result, 2, PyFloat_FromDouble(c));
+    PyTuple_SET_ITEM(result, 3, PyFloat_FromDouble(c));
+
+    // and return
+    return result;
+}
+
+
+// blas::drot
+const char * const gsl::blas::drot__name__ = "blas_drot";
+const char * const gsl::blas::drot__doc__ = "apply a Givens rotation to two vectors";
+
+PyObject * 
+gsl::blas::drot(PyObject *, PyObject * args) {
+    // the arguments
+    double c, s;
+    PyObject * v1c;
+    PyObject * v2c;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!dd:blas_drot",
+                                  &PyCapsule_Type, &v1c,
+                                  &PyCapsule_Type, &v2c,
+                                  &c, &s);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(v1c, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a vector");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(v2c, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the second argument must be a vector");
+        return 0;
+    }
+
+    // get the two vectors
+    gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v1c, gsl::vector::capsule_t));
+    gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v2c, gsl::vector::capsule_t));
+    // compute the form
+    gsl_blas_drot(v1, v2, c, s);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// level 2
 // blas::dgemv
 const char * const gsl::blas::dgemv__name__ = "blas_dgemv";
 const char * const gsl::blas::dgemv__doc__ = "compute y = a op(A) x + b y";
