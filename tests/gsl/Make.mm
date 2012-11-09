@@ -35,6 +35,7 @@ rng:
 pdf:
 	${PYTHON} ./pdf_uniform.py
 	${PYTHON} ./pdf_gaussian.py
+	${PYTHON} ./pdf_dirichlet.py
 
 permutations:
 	${PYTHON} ./permutation_allocate.py
