@@ -18,40 +18,15 @@ def test():
     # print(alec.pyre_nameserver['alec.activities'])
     # print(alec.pyre_nameserver['alec.foo'])
     activities = tuple(alec.perform())
-    print(activities)
+    assert activities == (
+        'studying for 2.0 hour', 'relaxing for 1.0 hour', 'studying for 1.0 hour'
+        )
 
     joe = toy.policeman(name='joe')
-    # dump(joe)
     activities = tuple(joe.perform())
-    print(activities)
+    assert activities == ('patrolling for 5.0 hour', 'relaxing for 1.5 hour')
 
     return
-
-
-# helper
-def dump(entity):
-    print('{.pyre_name!r}:'.format(entity))
-    print('  inventory: {.pyre_inventory}'.format(entity))
-    for trait, key in entity.pyre_inventory.items():
-        print('    {}'.format(trait))
-        slot, fullname = entity.pyre_nameserver.lookup(key)
-        print('      full name: {!r}'.format(fullname))
-        print('      slot: {}'.format(slot))
-        print('        key: {.key}'.format(slot))
-        print('        priority: {.priority}'.format(slot))
-        print('        locator: {.locator}'.format(slot))
-        print('        converter: {.converter}'.format(slot))
-        print('        dirty: {.dirty}'.format(slot))
-        print('        cache: {._value!r}'.format(slot))
-        print('        value: {}'.format(slot.getValue(configurable=entity)))
-        slot, fullname = entity.pyre_nameserver.lookup(key)
-        print('      slot: {}'.format(slot))
-        print('        key: {.key}'.format(slot))
-        print('        priority: {.priority}'.format(slot))
-        print('        locator: {.locator}'.format(slot))
-        print('        converter: {.converter}'.format(slot))
-        print('        cache: {._value!r}'.format(slot))
-        print('        dirty: {.dirty}'.format(slot))
 
 
 # main

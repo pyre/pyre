@@ -14,12 +14,18 @@ import pyre
 # declare an abstract specification
 class task(pyre.protocol, family='toy.tasks'):
 
-    duration = pyre.properties.float(default=60)
+    # types
+    from pyre.units.time import hour
 
+    # public state
+    duration = pyre.properties.dimensional(default=1*hour)
+
+    # interface
     @pyre.provides
     def perform(self):
         """do something"""
 
+    # framework support
     @classmethod
     def pyre_default(cls):
         return relax
@@ -28,30 +34,30 @@ class task(pyre.protocol, family='toy.tasks'):
 # an actual task
 class relax(pyre.component, family='toy.tasks.relax', implements=task):
 
-    duration = pyre.properties.float(default=60)
+    duration = pyre.properties.dimensional(default=1*task.hour)
     
     @pyre.export
     def perform(self):
-        return "relaxing for {} minutes".format(self.duration)
+        return "relaxing for {:base={hour},label=hour}".format(self.duration, hour=task.hour)
 
 
 # another actual task
 class study(pyre.component, family='toy.tasks.study', implements=task):
 
-    duration = pyre.properties.float(default=120)
+    duration = pyre.properties.dimensional(default=2*task.hour)
     
     @pyre.export
     def perform(self):
-        return "studying for {} minutes".format(self.duration)
+        return "studying for {:base={hour},label=hour}".format(self.duration, hour=task.hour)
 
 
 class patrol(pyre.component, family='toy.tasks.patrol', implements=task):
 
-    duration = pyre.properties.float(default=75)
+    duration = pyre.properties.dimensional(default=1.5*task.hour)
     
     @pyre.export
     def perform(self):
-        return "patrolling for {} minutes".format(self.duration)
+        return "patrolling for {:base={hour},label=hour}".format(self.duration, hour=task.hour)
 
 
 # a specification for people categories

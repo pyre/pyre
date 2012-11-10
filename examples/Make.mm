@@ -10,6 +10,7 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
+    toy.pyre \
     gauss.pyre
 
 # add these if the corresponding support has been built
