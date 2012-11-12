@@ -47,6 +47,13 @@
 \definecolor{pyre@lava}{rgb}{0.25, .23, .22}
 \definecolor{pyre@brick}{rgb}{0.95, .50, .30}
 
+\definecolor{keywordcolor}{rgb}{0.25,0.25,1.0}
+\definecolor{commentcolor}{gray}{0.75}
+\definecolor{identifiercolor}{rgb}{0.5, 0.25, 0.75}
+\definecolor{stringcolor}{rgb}{0.5, 0.25, 0.75}
+\definecolor{linenumbercolor}{gray}{0.75}
+\definecolor{listingbgcolor}{gray}{1.0}
+
 
 % listings and their configurations
 \usepackage[slide,algoruled,linesnumbered,noend]{algorithm2e}
@@ -64,67 +71,100 @@
 
 \usepackage{listings}
 \lstloadlanguages{C,C++,python,bash}
+
 \lstset{
   columns=flexible,
   upquote=true,
   % 
   aboveskip=\medskipamount,
-  belowskip=\smallskipamount,
+  belowskip=\medskipamount,
+  % abovecaptionskip=\medskipamount,
+  % belowcaptionskip=\medskipamount,
   % 
   numbers=left,
-  numberstyle=\color{pyre@stone}\tiny,
+  numberstyle=\color{linenumbercolor}\tiny,
+  firstnumber=auto,
   stepnumber=1,
   numbersep=5pt,
   numberblanklines=true,
   % 
-  basicstyle=\tt\bfseries\scriptsize,
-  keywordstyle=\color{pyre@blue}\bfseries,
-  commentstyle=\color{pyre@stone}\slshape,
-  stringstyle=\color{pyre@olive}\slshape,
+  basicstyle=\tt\scriptsize,
+  keywordstyle=\color{keywordcolor},
+  commentstyle=\color{commentcolor}\slshape,
+  stringstyle=\color{stringcolor}\slshape,
   showstringspaces=false,
   % 
-  frame=,
+  %frame=tb,
   captionpos=t,
-  backgroundcolor=\color{pyre@cream},
+  backgroundcolor=\color{psaap@cream},
+  backgroundcolor=\color{listingbgcolor},
   xleftmargin=0em,
-  xrightmargin=0em
-} 
+  xrightmargin=0em,
+}
 
-\lstnewenvironment{shell}[2][]{
+\def\python#1#2{
+  \lstinputlisting[%
+  language=python,
+  morekeywords={as,self,yield,False,True,None},
+  escapeinside={\#@}{@},#1]
+  {#2}}
+  
+\def\C++#1#2{
+  \lstinputlisting[%
+    language=C++,
+    escapeinside={/*}{*/},#1]
+  {#2}}
+
+\lstnewenvironment{iC}[2][]{
   \lstset{
-    language=bash,
-    %
-    escapeinside={\#@}{@},
-    %
+    language=C,
+    backgroundcolor=\color{pyre@cream},
     #1
   }}{#2}
 
-\lstnewenvironment{python}[2][]{
-  \lstset{
-    language=python,
-    morekeywords={self,yield,False,True,None},
-    escapeinside={\#@}{@},
-    %
-    #1
-  }}{#2}
-
-\lstnewenvironment{C}[1][]{
-  \lstset{
-    language=c,
-    %
-    escapeinside={//@}{@},
-    %
-    #1
-  }}{}
-
-\lstnewenvironment{C++}[2][]{
+\lstnewenvironment{iC++}[2][]{
   \lstset{
     language=C++,
-    %
-    escapeinside={/*}{*/},
-    %
+    backgroundcolor=\color{pyre@cream},
     #1
   }}{#2}
+
+\lstnewenvironment{ipython}[2][]{
+  \lstset{
+    language=python,
+    backgroundcolor=\color{pyre@cream},
+    morekeywords={as,self,yield,False,True,None},
+    escapeinside={\#@}{@},
+    #1
+  }}{#2}
+
+\lstnewenvironment{ish}[2][]{
+  \lstset{
+    language=sh,
+    backgroundcolor=\color{pyre@cream},
+    #1
+  }}{#2}
+
+\lstdefinelanguage{cfg}
+{
+  sensitive=true,
+  morecomment=[l]{;},
+  alsoletter={[,]},
+  keywords={\],\[},
+}
+\lstnewenvironment{icfg}[2][]{
+  \lstset{
+    language=cfg,
+    backgroundcolor=\color{pyre@cream},
+    #1
+  }}{#2}
+
+\def\cfg#1#2{
+  \lstinputlisting[%
+  language=cfg,
+  escapeinside={\;@}{@},#1]
+  {#2}}
+  
 
 % references
 \usepackage[numbers]{natbib}
