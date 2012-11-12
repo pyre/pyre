@@ -21,17 +21,25 @@
 % fonts
 \usepackage{amsfonts}
 \usepackage{times}
+\usepackage{relsize}
 %\usepackage[iso-8859-7]{inputenc}
 
 % figures
 \usepackage{graphicx}
+\usepackage{tikz}
+
+% pyre colors
 \definecolor{pyre@pipe}{rgb}{0.675, .694, .251}
 \definecolor{pyre@green}{rgb}{0.557, .765, .286}
 \definecolor{pyre@blue}{rgb}{0.173, .678, .878}
 \definecolor{pyre@orange}{rgb}{0.961, .569, .180}
 
-\definecolor{pyre@cream}{rgb}{0.96, .95, .89}
+\definecolor{pyre@darkblue}{RGB}{68,96,160}
+\definecolor{pyre@gray}{RGB}{128,128,128}
+\definecolor{pyre@lightblue}{RGB}{128,158,168}
+\definecolor{pyre@gold}{RGB}{230,150,16}
 
+\definecolor{pyre@cream}{rgb}{0.96, .95, .89}
 \definecolor{pyre@sand}{rgb}{0.86, .85, .77}
 \definecolor{pyre@stone}{rgb}{0.55, .54, .46}
 \definecolor{pyre@leather}{rgb}{0.48, .47, .38}
@@ -133,6 +141,13 @@
 \usepackage{url}
 \usepackage{hyperref}
 
+% itemize with small items
+\newenvironment{xitemize}{%
+  \itemize
+  \scriptsize
+}{%
+  \enditemize
+}
 
 % shortcuts
 \def\slideref#1{{Slide~\ref{slide:#1}}}
