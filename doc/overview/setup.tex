@@ -54,7 +54,6 @@
 \definecolor{linenumbercolor}{gray}{0.75}
 \definecolor{listingbgcolor}{gray}{1.0}
 
-
 % listings and their configurations
 \usepackage[slide,algoruled,linesnumbered,noend]{algorithm2e}
 \SetKwComment{tnm}{\#}{}
@@ -96,11 +95,11 @@
   % 
   %frame=tb,
   captionpos=t,
-  backgroundcolor=\color{psaap@cream},
   backgroundcolor=\color{listingbgcolor},
   xleftmargin=0em,
   xrightmargin=0em,
-}
+  % 
+} 
 
 \def\python#1#2{
   \lstinputlisting[%
@@ -118,21 +117,18 @@
 \lstnewenvironment{iC}[2][]{
   \lstset{
     language=C,
-    backgroundcolor=\color{pyre@cream},
     #1
   }}{#2}
 
 \lstnewenvironment{iC++}[2][]{
   \lstset{
     language=C++,
-    backgroundcolor=\color{pyre@cream},
     #1
   }}{#2}
 
 \lstnewenvironment{ipython}[2][]{
   \lstset{
     language=python,
-    backgroundcolor=\color{pyre@cream},
     morekeywords={as,self,yield,False,True,None},
     escapeinside={\#@}{@},
     #1
@@ -141,7 +137,6 @@
 \lstnewenvironment{ish}[2][]{
   \lstset{
     language=sh,
-    backgroundcolor=\color{pyre@cream},
     #1
   }}{#2}
 
@@ -155,7 +150,6 @@
 \lstnewenvironment{icfg}[2][]{
   \lstset{
     language=cfg,
-    backgroundcolor=\color{pyre@cream},
     #1
   }}{#2}
 
@@ -165,7 +159,6 @@
   escapeinside={\;@}{@},#1]
   {#2}}
   
-
 % references
 \usepackage[numbers]{natbib}
 \bibliographystyle{unsrtnat}

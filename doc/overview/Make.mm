@@ -27,7 +27,11 @@ INCLUDES = \
     references.bib
 
 SECTIONS = \
-    sec-components.tex
+    sec-montecarlo.tex \
+    sec-components.tex \
+
+LISTINGS = \
+    listings/pi.py \
 
 FIGURES = \
     figures/pyre-logo.pdf
@@ -59,7 +63,7 @@ xpdf: $(DOCUMENT).pdf
 	xpdf -remote $(DOCUMENT) $(DOCUMENT).pdf
 
 # make the document using the default document class
-$(DOCUMENT).pdf: $(DOCUMENT).tex $(PACKAGES) $(INCLUDES) $(SECTIONS) $(FIGURES)
+$(DOCUMENT).pdf: $(DOCUMENT).tex $(PACKAGES) $(INCLUDES) $(SECTIONS) $(LISTINGS) $(FIGURES)
 
 # housekeeping
 PROJ_CLEAN = $(CLEAN_LATEX) *.snm *.nav *.vrb 
