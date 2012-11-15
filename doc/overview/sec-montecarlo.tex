@@ -142,7 +142,7 @@
 %
   \begin{itemize}
 %
-  \item to summarize, the Monte Carlo approximation is computed using
+  \item to summarize, the Monte Carlo approximation is computed from
 %
     \begin{equation}
       I_{\Omega} (f; X_{N})
@@ -150,7 +150,7 @@
       B \, \frac{1}{N} \sum_{x \in X_{N}} \Theta_{\Omega} \, f(x)
     \end{equation}
 %
-  \item using
+    using
     \begin{itemize}
     \item an implementation of the function $f$ to be integrated over $\Omega$
     \item an $n$-dimensional box $B$ that contains $\Omega$
@@ -159,7 +159,7 @@
       exterior to $\Omega$ and \keyword{true} otherwise
     \end{itemize}
 %
-  \item to sum the values of the integrand on points interior to $\Omega$, and scale by the
+    to sum the values of the integrand on points interior to $\Omega$, and scale by the
     volume of the bounding box $B$ over the sample size $N$
 %
   \item essentially a reduction

@@ -27,14 +27,21 @@ INCLUDES = \
     references.bib
 
 SECTIONS = \
+    sec-introduction.tex \
     sec-montecarlo.tex \
     sec-components.tex \
 
 LISTINGS = \
+    listings/integrator.py \
+    listings/montecarlo.py \
     listings/pi.py \
+    listings/shape.py \
 
 FIGURES = \
-    figures/pyre-logo.pdf
+    figures/layout-files.pdf \
+    figures/layout-namespace.pdf \
+    figures/montecarlo.pdf \
+    figures/pyre-logo.pdf \
 
 #--------------------------------------------------------------------------
 #
