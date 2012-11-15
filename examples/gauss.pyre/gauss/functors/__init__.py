@@ -10,10 +10,8 @@
 Package with functor definitions
 """
 
-
 # the interface
 from .Functor import Functor as functor
-
 
 # the components
 from .Constant import Constant as constant

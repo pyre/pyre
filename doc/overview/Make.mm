@@ -31,11 +31,11 @@ SECTIONS = \
 
 LISTINGS = \
     listings/*.py \
-    listings/gauss/*.py \
-    listings/gauss/functors/*.py \
-    listings/gauss/integrators/*.py \
-    listings/gauss/meshes/*.py \
-    listings/gauss/shapes/*.py \
+    ../../examples/gauss.pyre/gauss/*.py \
+    ../../examples/gauss.pyre/gauss/functors/*.py \
+    ../../examples/gauss.pyre/gauss/integrators/*.py \
+    ../../examples/gauss.pyre/gauss/meshes/*.py \
+    ../../examples/gauss.pyre/gauss/shapes/*.py \
 
 FIGURES = \
     figures/*.pdf \

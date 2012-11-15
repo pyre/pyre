@@ -422,45 +422,17 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 
 % --------------------------------------
 % protocols
-\begin{frame}[fragile]
+\begin{frame}
 %
   \frametitle{Protocols}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item the component version of an abstract base class is the \emph{protocol}
 %
-    \begin{ipython}[basicstyle=\tt\tiny]{}
-import pyre
-
-class Shape(pyre.protocol, family="gauss.shapes"):
-    """
-    The obligations of implementations of geometrical shapes
-    """
-
-    # my default implementation
-    @classmethod
-    def pyre\_default(cls):
-        """
-        The default {Shape} implementation
-        """
-        # use a box
-        from .Box import Box
-        return Box # if you return an instance, it will be shared by all...
-
-    # interface
-    @pyre.provides
-    def measure(self):
-        """
-        Compute my measure: length, area, volume, etc
-        """
-        
-    @pyre.provides
-    def interior(self, points):
-        """
-        Filter out {points} that are on my exterior
-        """
-    \end{ipython}
+    \python{firstnumber=9,linerange={9-39},basicstyle=\tt\tiny}%
+           {../../examples/gauss.pyre/gauss/shapes/Shape.py}
 %
   \end{itemize}
 %
@@ -625,7 +597,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 
 %-----------------------------------
 
-\subsection{implementation}
+\subsection{gauss}
 
 %-----------------------------------
 \begin{frame}
@@ -716,7 +688,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
   \item in order to make the directory \srcfile{gauss/shapes} a python package, we need to
     create the special file \srcfile{gauss/shapes/\_\_init\_\_.py}
 %
-    \python{firstnumber=9,linerange={9-18}}{listings/gauss/shapes/__init__.py}
+    \python{firstnumber=9,linerange={9-18}}{../../examples/gauss.pyre/gauss/shapes/__init__.py}
 %
   \item the \keyword{import} statements 
     \begin{itemize}
@@ -740,11 +712,13 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Shapes}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item the \protocol{Shape} protocol in \srcfile{gauss/shapes/Shape.py}
 %
-    \python{firstnumber=9,linerange={9-37},basicstyle=\tt\tiny}{listings/gauss/shapes/Shape.py}
+    \python{firstnumber=9,linerange={9-39},basicstyle=\tt\tiny}%
+           {../../examples/gauss.pyre/gauss/shapes/Shape.py}
 %
   \end{itemize}
 %
@@ -788,12 +762,12 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 % balls
 \begin{frame}
 %
-  \frametitle{Ball}
+  \frametitle{Ball - traits}
 %
   \begin{itemize}
 %
   \item the implementation of \component{Ball} in \srcfile{gauss/shapes/Ball.py}
-    \python{firstnumber=9,linerange={9-21}}{listings/gauss/shapes/Ball.py}
+    \python{firstnumber=9,linerange={9-25}}{../../examples/gauss.pyre/gauss/shapes/Ball.py}
 %
   \end{itemize}
 %
@@ -803,12 +777,12 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 % balls
 \begin{frame}
 %
-  \frametitle{Ball}
+  \frametitle{Ball - interface}
 %
   \begin{itemize}
 %
   \item the implementation of \method{Ball.measure}
-    \python{firstnumber=23,linerange={23-42}}{listings/gauss/shapes/Ball.py}
+    \python{firstnumber=28,linerange={28-49}}{../../examples/gauss.pyre/gauss/shapes/Ball.py}
 %
   \end{itemize}
 %
@@ -818,12 +792,12 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 % balls
 \begin{frame}
 %
-  \frametitle{Ball - continued}
+  \frametitle{Ball - more interface}
 %
   \begin{itemize}
 %
-  \item the implementation of \method{Ball.interior}
-    \python{firstnumber=43,linerange={43-60}}{listings/gauss/shapes/Ball.py}
+  \item the implementation of \method{Ball.contains}
+    \python{firstnumber=52,linerange={52-69}}{../../examples/gauss.pyre/gauss/shapes/Ball.py}
 %
   \end{itemize}
 %
@@ -835,10 +809,11 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Box}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item the implementation of \component{Box} in \srcfile{gauss/shapes/Box.py}
-  \python{firstnumber=9,linerange={9-30}}{listings/gauss/shapes/Box.py}
+  \python{firstnumber=9,linerange={9-23}}{../../examples/gauss.pyre/gauss/shapes/Box.py}
 %
   \end{itemize}
 %
@@ -848,12 +823,29 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 % boxes
 \begin{frame}
 %
-  \frametitle{Box - continued}
+  \frametitle{Box - interface}
 %
+  \vskip -2ex
   \begin{itemize}
 %
-  \item the implementation of \method{Box.interior}
-    \python{firstnumber=33,linerange={33-52}}{listings/gauss/shapes/Box.py}
+  \item the implementation of \method{Box.measure}
+    \python{firstnumber=26,linerange={26-37}}{../../examples/gauss.pyre/gauss/shapes/Box.py}
+%
+  \end{itemize}
+%
+\end{frame}
+
+% --------------------------------------
+% boxes
+\begin{frame}
+%
+  \frametitle{Box - more interface}
+%
+  \vskip -2ex
+  \begin{itemize}
+%
+  \item the implementation of \method{Box.contains}
+    \python{firstnumber=40,linerange={40-60}}{../../examples/gauss.pyre/gauss/shapes/Box.py}
 %
   \end{itemize}
 %
@@ -870,7 +862,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
   \item again, we need the special file \srcfile{gauss/meshes/\_\_init\_\_.py} in order to turn
     \srcfile{gauss/meshes} into a python package
 %
-    \python{firstnumber=9,linerange={9-17}}{listings/gauss/meshes/__init__.py}
+    \python{firstnumber=9,linerange={9-17}}{../../examples/gauss.pyre/gauss/meshes/__init__.py}
 %
   \end{itemize}
 %
@@ -882,12 +874,13 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Point clouds}
 %
-  \vskip -1.5em
+  \vskip -2ex
   \begin{itemize}
 %
   \item the \protocol{PointCloud} protocol in \srcfile{gauss/meshes/PointCloud.py}
 %
-    \python{firstnumber=9,linerange={9-33}}{listings/gauss/meshes/PointCloud.py}
+    \python{firstnumber=9,linerange={9-33}, basicstyle=\tt\tiny}%
+           {../../examples/gauss.pyre/gauss/meshes/PointCloud.py}
 %
   \end{itemize}
 %
@@ -899,12 +892,13 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Generating points with the Mersenne Twister RNG}
 %
-  \vskip -1.5em
+  \vskip -3ex
   \begin{itemize}
 %
   \item in \srcfile{gauss/meshes/Mersenne.py}
 %
-    \python{firstnumber=9,linerange={9-34}}{listings/gauss/meshes/Mersenne.py}
+    \python{firstnumber=9,linerange={9-41}, basicstyle=\tt\tiny}%
+           {../../examples/gauss.pyre/gauss/meshes/Mersenne.py}
 %
   \end{itemize}
 %
@@ -916,12 +910,12 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{The \package{functors} package}
 %
-  \vskip -1.5em
+  \vskip -2ex
   \begin{itemize}
 %
   \item the package initialization file in \srcfile{gauss/functors/\_\_init\_\_.py} 
 %
-    \python{firstnumber=9,linerange={9-18}}{listings/gauss/functors/__init__.py}
+    \python{firstnumber=9,linerange={9-19}}{../../examples/gauss.pyre/gauss/functors/__init__.py}
 %
   \end{itemize}
 %
@@ -933,12 +927,12 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Functors}
 %
-  \vskip -1.5em
+  \vskip -2ex
   \begin{itemize}
 %
   \item the \protocol{Functor} protocol in \srcfile{gauss/functors/Functor.py}
 %
-    \python{firstnumber=9,linerange={9-30}}{listings/gauss/functors/Functor.py}
+    \python{firstnumber=9,linerange={9-32}}{../../examples/gauss.pyre/gauss/functors/Functor.py}
 %
   \end{itemize}
 %
@@ -950,12 +944,13 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{The \component{Constant} functor}
 %
-  \vskip -1.5em
+  \vskip -2ex
   \begin{itemize}
 %
   \item in \srcfile{gauss/functors/Constant.py}
 %
-    \python{firstnumber=9,linerange={9-33}}{listings/gauss/functors/Constant.py}
+    \python{firstnumber=9,linerange={9-35}, basicstyle=\tt\tiny}%
+           {../../examples/gauss.pyre/gauss/functors/Constant.py}
 %
   \end{itemize}
 %
@@ -967,11 +962,12 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{A non-trivial functor}
 %
-  \vskip -1.5em
+  \vskip -2ex
   \begin{itemize}
 %
   \item the declaration of the traits
-    \python{firstnumber=9,linerange={9-26}}{listings/gauss/functors/Gaussian.py}
+    \python{firstnumber=9,linerange={9-32}, basicstyle=\tt\tiny}
+           {../../examples/gauss.pyre/gauss/functors/Gaussian.py}
 %
   \end{itemize}
 %
@@ -983,11 +979,12 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{A non-trivial functor -- continued}
 %
-  \vskip -1.5em
+  \vskip -2ex
   \begin{itemize}
 %
   \item the implementation of \method{eval}
-  \python{firstnumber=29,linerange={29-51}}{listings/gauss/functors/Gaussian.py}
+  \python{firstnumber=35,linerange={35-58}, basicstyle=\tt\tiny}
+         {../../examples/gauss.pyre/gauss/functors/Gaussian.py}
 %
   \end{itemize}
 %
@@ -999,12 +996,13 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{The \package{integrators} package}
 %
-  \vskip -1.5em
+  \vskip -2ex
   \begin{itemize}
 %
   \item the package initialization file in \srcfile{gauss/integrators/\_\_init\_\_.py} 
 %
-    \python{firstnumber=9,linerange={9-17}}{listings/gauss/integrators/__init__.py}
+    \python{firstnumber=9,linerange={9-16}}
+           {../../examples/gauss.pyre/gauss/integrators/__init__.py}
 %
   \end{itemize}
 %
@@ -1016,12 +1014,13 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Integrators}
 %
-  \vskip -1.5em
+  \vskip -3ex
   \begin{itemize}
 %
   \item in \srcfile{gauss/integrators/Integrator.py}
 %
-    \python{firstnumber=9,linerange={9-39},basicstyle=\tt\tiny}{listings/gauss/integrators/Integrator.py}
+    \python{firstnumber=9,linerange={9-41},basicstyle=\tt\tiny}
+           {../../examples/gauss.pyre/gauss/integrators/Integrator.py}
 %
   \end{itemize}
 %
@@ -1033,12 +1032,13 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{The Monte Carlo integrator}
 %
-  \vskip -1.5em
+  \vskip -3ex
   \begin{itemize}
 %
   \item in \srcfile{gauss/integrators/MonteCarlo.py}
 %
-    \python{firstnumber=9,linerange={9-36},basicstyle=\tt\tiny}{listings/gauss/integrators/MonteCarlo.py}
+    \python{firstnumber=9,linerange={9-39},basicstyle=\tt\tiny}
+           {../../examples/gauss.pyre/gauss/integrators/MonteCarlo.py}
 %
   \end{itemize}
 %
@@ -1050,11 +1050,11 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{The Monte Carlo integrator -- continued}
 %
-  \vskip -1.5em
   \begin{itemize}
 %
   \item the implementation of \method{integrate}
-    \python{firstnumber=38,linerange={38-53}}{listings/gauss/integrators/MonteCarlo.py}
+    \python{firstnumber=42,linerange={42-57}}
+           {../../examples/gauss.pyre/gauss/integrators/MonteCarlo.py}
 %
   \end{itemize}
 %
@@ -1066,12 +1066,13 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Top level -- the \package{gauss} package}
 %
-  \vskip -1.5em
+  \vskip -2ex
   \begin{itemize}
 %
   \item the package initialization file in \srcfile{gauss/\_\_init\_\_.py} 
 %
-    \python{firstnumber=9,linerange={9-38},basicstyle=\tt\tiny}{listings/gauss/__init__.py}
+    \python{firstnumber=9,linerange={9-38},basicstyle=\tt\tiny}
+           {../../examples/gauss.pyre/gauss/__init__.py}
 %
   \end{itemize}
 %
@@ -1083,36 +1084,36 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Checking that all is ok}
 %
-  \vskip -1.5em
+  \vskip -3ex
   \begin{itemize}
 %
   \item assuming that the directory \srcfile{gauss} is somewhere on the python path, we are now
     ready to check that everything works
 %
     \begin{ipython}{}
-mga@pythia:~/dv/acm114/2012-spring/lectures>python
-Python 3.2.3 (default, Apr 19 2012, 01:32:56) 
-[GCC 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2335.15.00)] on darwin
+mga@pythia:~/tmp>python3.3
+Python 3.3.0 (default, Sep 29 2012, 08:16:08) 
+[GCC 4.2.1 Compatible Apple Clang 3.1 (tags/Apple/clang-318.0.58)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 enabling readline
 >>> import gauss
->>> mc = gauss.montecarlo()
+>>> mc = gauss.integrators.montecarlo()
 >>> mc.samples
-10000
+100000
 >>> mc.box.diagonal
 ((0, 0), (1, 1))
 >>> mc.region
-<gauss.shapes.Ball.Ball object at 0x1083c5910>
+<gauss.shapes.Ball.Ball object at 0x1068d0610>
 >>> mc.region.radius
 1.0
 >>> mc.region.center
 (0, 0)
 >>> mc.integrand
-<gauss.functors.Constant.Constant object at 0x1083c59d0>
+<gauss.functors.Constant.Constant object at 0x10634b5d0>
 >>> mc.integrand.value
 1.0
 >>> 4 * mc.integrate()
-3.12672
+3.13464
     \end{ipython}
 %
   \end{itemize}

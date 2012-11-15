@@ -9,13 +9,11 @@
 # access to the framework
 import pyre
 
-
 # declaration
 class PointCloud(pyre.protocol, family="gauss.meshes"):
     """
     Protocol declarator for an unstructured collection of points
     """
-
 
     # my default implementation
     @classmethod
@@ -27,15 +25,11 @@ class PointCloud(pyre.protocol, family="gauss.meshes"):
         from .Mersenne import Mersenne
         return Mersenne
 
-
     # interface
     @pyre.provides
     def points(self, count, box):
         """
         Generate {count} random points on the interior of {box}
-        parameters: 
-            {count}: the number of points to generate
-            {box}: a shape that defines the computational domain
         """
 
 

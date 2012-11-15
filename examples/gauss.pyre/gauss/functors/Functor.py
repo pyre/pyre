@@ -9,13 +9,11 @@
 # access to the framework
 import pyre
 
-
 # declaration
 class Functor(pyre.protocol, family="gauss.functors"):
     """
     Protocol declarator for function objects
     """
-
 
     # the suggested default implementation
     @classmethod
@@ -23,9 +21,8 @@ class Functor(pyre.protocol, family="gauss.functors"):
         """
         The default implementation of the {Functor} protocol
         """
-        from .One import One
-        return One
-
+        from .Constant import Constant
+        return Constant
 
     # interface
     @pyre.provides

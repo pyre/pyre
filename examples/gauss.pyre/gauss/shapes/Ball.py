@@ -6,15 +6,16 @@
 #
 
 
+# access the framework
 import pyre
+# my protocol
 from .Shape import Shape
 
-
+# declaration
 class Ball(pyre.component, family="gauss.shapes.ball", implements=Shape):
     """
     A representation of the interior of a spere in $d$ dimensions
     """
-
 
     # public state
     center = pyre.properties.array(default=(0,0))

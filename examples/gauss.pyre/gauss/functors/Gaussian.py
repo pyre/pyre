@@ -6,7 +6,9 @@
 #
 
 
+# access the framework
 import pyre
+# my protocol
 from .Functor import Functor
 
 
@@ -19,7 +21,6 @@ class Gaussian(pyre.component, family="gauss.functors.gaussian", implements=Func
     μ and σ are implemented as component properties so that Gaussian can conform to the
     functor interface. See gauss.interfaces.functor for more details.
     """
-
 
     # public state
     mean = pyre.properties.array(default=[0])

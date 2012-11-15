@@ -9,13 +9,11 @@
 # access to the framework
 import pyre
 
-
 # declaration
 class Integrator(pyre.protocol, family="gauss.integrators"):
     """
     Protocol declarator for integrators
     """
-
 
     # access to the required protocols
     from ..shapes.Shape import Shape as shape
@@ -28,14 +26,12 @@ class Integrator(pyre.protocol, family="gauss.integrators"):
     integrand = functor()
     integrand.doc = "the functor to integrate"
 
-
     # my preferred implementation
     @classmethod
     def pyre_default(cls):
         # use {MonteCarlo} by default
         from .MonteCarlo import MonteCarlo
         return MonteCarlo
-
 
     # interface
     @pyre.provides

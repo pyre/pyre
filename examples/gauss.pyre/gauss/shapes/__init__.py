@@ -10,10 +10,8 @@
 Package that contains definitions of geometrical shapes
 """
 
-
 # the interfaces
 from .Shape import Shape as shape
-
 
 # the components
 from .Ball import Ball as ball

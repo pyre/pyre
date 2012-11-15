@@ -9,10 +9,8 @@
 Package with integrator implementations
 """
 
-
 # the interface
 from .Integrator import Integrator as integrator
-
 
 # the component
 from .MonteCarlo import MonteCarlo as montecarlo

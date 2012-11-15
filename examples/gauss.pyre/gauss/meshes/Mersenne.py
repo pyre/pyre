@@ -6,17 +6,17 @@
 #
 
 
+# externals
 import pyre
 import random
 import itertools
+# my protocol
 from .PointCloud import PointCloud
-
 
 class Mersenne(pyre.component, family="gauss.meshes.mersenne", implements=PointCloud):
     """
     A point generator that uses the python builtin random number generator
     """
-
 
     # interface
     @pyre.export

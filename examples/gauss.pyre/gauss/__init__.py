@@ -13,31 +13,30 @@ application.
 See gauss.license() for terms of use
 """
 
-
 # access to the package contents
 from . import functors, integrators, meshes, shapes, util
-
 
 # misc
 def copyright():
     """
-    Return the gauss copyright note
+    Return the package copyright note
     """
     return _gauss_copyright
 
 
 def license():
     """
-    Return the gauss license
+    Return the package license
     """
     return _gauss_license
 
 
 def version():
     """
-    Return the gauss version
+    Return the package version
     """
     return _gauss_version
+
 
 # license
 _gauss_version = "1.0"

@@ -9,13 +9,11 @@
 # access to the framework
 import pyre
 
-
 # declaration
 class Shape(pyre.protocol, family="gauss.shapes"):
     """
     Protocol declarator for geometrical regions
     """
-
 
     # my default implementation
     @classmethod
@@ -27,14 +25,12 @@ class Shape(pyre.protocol, family="gauss.shapes"):
         from .Ball import Ball
         return Ball
 
-
     # interface
     @pyre.provides
     def measure(self):
         """
         Compute my measure (length, area, volume, etc)
         """
-
 
     @pyre.provides
     def contains(self, points):

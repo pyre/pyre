@@ -6,7 +6,9 @@
 #
 
 
+# access the framework
 import pyre
+# my protocol
 from .Functor import Functor
 
 
@@ -15,11 +17,9 @@ class Constant(pyre.component, family="gauss.functors.constant", implements=Func
     A constant function
     """
 
-
     # public state
     value = pyre.properties.float(default=1)
     value.doc = "the value of the constant functor"""
-
 
     # interface
     @pyre.export

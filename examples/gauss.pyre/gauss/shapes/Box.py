@@ -6,15 +6,17 @@
 #
 
 
+# access the framework
 import pyre
+# my protocol
 from .Shape import Shape
 
 
+# declaration
 class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
     """
     A representation of the interior of a $d$-dimensional box
     """
-
 
     # public state
     diagonal = pyre.properties.array(default=((0,0),(1,1)))
@@ -30,7 +32,9 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
         # get functools and operator
         import functools, operator
         # compute and return the volume
-        return functools.reduce(operator.mul, ((right-left) for left,right in self.intervals()))
+        return functools.reduce(
+            operator.mul, 
+            ((right-left) for left,right in self.intervals()))
 
 
     @pyre.export
