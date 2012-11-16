@@ -391,9 +391,11 @@ x = A * cos(#@$\omega$@ * t)
 %
   \frametitle{Connecting components}
 %
-  the real power is in wiring components to other components
+  \begin{itemize}
 %
-  \begin{ipython}{}
+  \item the real power is in wiring components to other components
+%
+    \begin{ipython}{}
 import pyre
 
 class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
@@ -405,9 +407,8 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
     samples = pyre.property.int(default=10**5)
     region = ????
     ...
-  \end{ipython}
+    \end{ipython}
 %
-  \begin{itemize}
   \item \component{MonteCarlo} should be able to specify what constitutes an acceptable region
   \item \component{Disk} should be able to advertise itself as being an acceptable
     region
