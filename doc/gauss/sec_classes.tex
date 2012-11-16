@@ -29,11 +29,11 @@ inappropriate habits. Those who have managed to climb the learning curve report 
 awareness of the role of process in software engineering, and overall improvement in the
 quality of code they write. However, typical goals such as reuse and flexibility are hard to
 attain regardless of the programming paradigm. On one hand, the problem itself has to
-co\"operate by being reducible to fairly orthogonal and well characterized pieces, a rather
-special class of problems. On the other, one has to be able to identify these pieces and turn
-them into high quality, maintainable code. Much of the time, these form a string of low
-probability events that require a significant intellectual investment. Fortunately, the example
-at hand is rather well behaved in this regard.
+co\"operate by being reducible to fairly orthogonal and well characterized pieces, i.e.\~ it
+has to belong to a rather special class of problems. On the other, one has to be able to
+identify these pieces and turn them into high quality, maintainable code. Much of the time,
+these form a string of low probability events that require a significant intellectual
+investment. Fortunately, the example at hand is rather well behaved in this regard.
 
 \subsection{Encapsulating the random number generator}
 \label{sec:classes:pointcloud}
@@ -41,7 +41,7 @@ at hand is rather well behaved in this regard.
 The first candidate for generalization is the random number generator. We should be able to
 choose among many different ones so that we can compare them. In order to take advantage of the
 object oriented machinery in languages like python and \cpp, we must identify an appropriate
-base class that encapsulates the role the random number generators play in our integration
+base class that encapsulates the role that random number generators play in our integration
 algorithm. A moment's reflection should convince you that this role is to provide the cloud of
 sampling points for evaluating our integrand. The abstract class \class{PointCloud}, shown in
 \lstref{classes:pointcloud}, will fit this bill very nicely, and its specialization
@@ -129,7 +129,7 @@ iterable container with the structure shown will do.
   % firstnumber=9,
   linerange={9-29},
   label={lst:classes:mersenne},
-  caption={\srcfile{classes/Mersenne.py}: Encapsulating the standard python generator},
+  caption={\srcfile{classes/Mersenne.py}: Encapsulating the built-in random number generator},
 }{listings/classes/Mersenne.py}
 %
 
@@ -527,10 +527,12 @@ designed: there are really two kinds of arguments. The first kind is very much t
 should be presented to a function through \identifier{points}: the point in the domain of the
 function where the evaluation is supposed to happen. The other kind is {\em meta-data},
 i.e.~information about the functional form itself. For example, consider the expression
+%
 \begin{equation}
   g(x; \mu,\sigma) = \frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu)^2}{2\sigma^2}}
 \label{eq:gaussian}
 \end{equation}
+%
 that represents a normal distribution. Languages that do not support objects force you to mix
 $x$ with $\mu$ and $\sigma$ in the signature of the function. But they are not really supposed
 to be treated on equal footing. To see this, suppose that you were asked to plot this
@@ -577,7 +579,8 @@ We are now in a position to put together the final version of the Monte Carlo in
 script.
 %
 \python{
-  firstline=10,lastline=41,
+  % firstnumber=10,
+  linerange={10-41},
   label={lst:generators:montecarlo},
   caption={\srcfile{generators/gauss-mc.py}: A Monte Carlo integrator},
 }{listings/generators/gauss-mc.py}
@@ -593,15 +596,15 @@ a two dimensional version of \eqref{gaussian} is integrated over the unit circle
 \begin{figure}
 \centering
 \includegraphics[scale=0.60]{figures/gaussian.pdf}
-\caption{The normal distribution of two variables\label{fig:gaussian}}
+\caption{The normal distribution of two random variables\label{fig:gaussian}}
 \end{figure}
 %
 There are two distinct sections in this script. The top part contains mostly configuration
 options while the last few lines are the implementation of the integration algorithm. Computing
 an integral over a different region or a different integrand should be just a matter of
 instantiating different objects to hand to the integration algorithm. At this point, this
-involves editing the script and rerunning it; in the next section, I will show you how \pyre\
-makes it possible to have the end user make these choices without touching the source code to
-our application script.
+involves editing the script and rerunning it; in the next section, I will show you how
+\pyre\ makes it possible to have the end user make these choices without touching the source
+code to our application script.
 
 % end of file 

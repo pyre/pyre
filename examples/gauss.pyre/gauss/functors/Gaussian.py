@@ -54,7 +54,7 @@ class Gaussian(pyre.component, family="gauss.functors.gaussian", implements=Func
             r2 = sum((x_i - μ_i)**2 for x_i, μ_i in zip(x, μ))
             # yield the value at the current x
             yield normalization * exp(- r2 / scaling)
-
+        # all done    
         return
 
 

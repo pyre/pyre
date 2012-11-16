@@ -38,7 +38,11 @@ LISTINGS = \
     listings/classes/*.py \
     listings/containers/*.py \
     listings/generators/*.py \
-    listings/components/*.py \
+    ../../examples/gauss.pyre/gauss/*.py \
+    ../../examples/gauss.pyre/gauss/functors/*.py \
+    ../../examples/gauss.pyre/gauss/integrators/*.py \
+    ../../examples/gauss.pyre/gauss/meshes/*.py \
+    ../../examples/gauss.pyre/gauss/shapes/*.py \
 
 #--------------------------------------------------------------------------
 #
@@ -56,7 +60,6 @@ distclean::
 
 test:
 	BLD_ACTION="all" $(MM) recurse
-
 
 #--------------------------------------------------------------------------
 #

@@ -7,6 +7,7 @@
 #
 
 
+# externals
 import operator, functools
 
 def gauss():
