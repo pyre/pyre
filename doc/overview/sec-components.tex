@@ -67,7 +67,7 @@ class Disk:
   \end{ipython}
 %
 \item what do we have to do to tie instances of \class{Disk} with information in some
-  configuration file
+  configuration file?
 %
   \begin{icfg}{}
     [ disk1 ]
@@ -214,9 +214,8 @@ right = Disk(name='disk2')
   \item \pyre\ automatically loads configuration files whose name matches the name of a package
   \item there's even a way to override the default values that the developer hardwired into
     the class declaration
-  \end{itemize}
 %
-  \begin{icfg}{}
+    \begin{icfg}{}
     [ gauss.shapes.disk ]         ; use the family name
     radius = 2                    ; to override the defaults
     center = (-1,-1)              ; for all instances of disk
@@ -227,7 +226,9 @@ right = Disk(name='disk2')
     [ disk2 ]                     ; the name of another instance
     radius = .5
     center = (1,1)
-  \end{icfg}
+    \end{icfg}
+%
+  \end{itemize}
 %
 \end{frame}
 
@@ -274,6 +275,7 @@ right = Disk(name='disk2')
 %
   \frametitle{Configuration files}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item currently, there are two file formats for configuration information
@@ -315,6 +317,7 @@ right = Disk(name='disk2')
 %
   \frametitle{Properties}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item properties make sense for both classes and instances
@@ -356,6 +359,7 @@ right = Disk(name='disk2')
 %
   \frametitle{Units}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item \function{dimensional} properties have units
@@ -373,9 +377,9 @@ from pyre.units.SI import meter, second, radian
 
 A = 2.5 * meter
 t = 1.5 * second
-#@$\omega$@ = 4.2 * radian/second
+ω = 4.2 * radian/second
 
-x = A * cos(#@$\omega$@ * t)
+x = A * cos(ω * t)
     \end{ipython}
 %
     if the units in the argument to \function{cos} do not cancel, leaving a pure
@@ -391,6 +395,7 @@ x = A * cos(#@$\omega$@ * t)
 %
   \frametitle{Connecting components}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item the real power is in wiring components to other components
@@ -445,6 +450,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Declaring compatibility with a protocol}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item \component{Disk} can inform the framework that it intends to implement
@@ -487,6 +493,7 @@ class Disk(pyre.component, family="gauss.shapes.disk", implements=Shape):
 %
   \frametitle{Specifying assignment requirements}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item \component{MonteCarlo} can now specify it expects a \protocol{Shape} compatible object
@@ -520,6 +527,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Component specification}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item and now for the real trick: converting some string provided by the user into a live
@@ -556,6 +564,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{The user does the wiring}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item with our definition of \component{MonteCarlo}, an appropriately structured package
@@ -605,6 +614,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{A non-trivial example}
 %
+  \vskip -2ex
   \begin{itemize}
   \item {\tt gauss}: an extensible numeric integration package
     \begin{itemize}
@@ -625,6 +635,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Implementation strategy}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item key abstractions:
@@ -657,6 +668,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{Namespace design}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item we are now in a position to assemble the package \package{gauss}; let's start by laying
@@ -684,6 +696,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \frametitle{The \package{shapes} package}
 %
+  \vskip -2ex
   \begin{itemize}
 %
   \item in order to make the directory \srcfile{gauss/shapes} a python package, we need to
@@ -1002,7 +1015,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
 %
   \item the package initialization file in \srcfile{gauss/integrators/\_\_init\_\_.py} 
 %
-    \python{firstnumber=9,linerange={9-16}}
+    \python{firstnumber=9,linerange={9-17}}
            {../../examples/gauss.pyre/gauss/integrators/__init__.py}
 %
   \end{itemize}
