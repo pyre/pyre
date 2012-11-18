@@ -23,7 +23,7 @@ class Mersenne(PointCloud):
         # loop over the sample size
         for i in range(n):
             # build a point
-            p = [ random.uniform(*interval) for interval in intervals ]
+            p = [ random.uniform(*interval) for interval in box ]
             # and make it available to the caller
             yield p #@\label{line:mt:generators:yield}@
         # all done

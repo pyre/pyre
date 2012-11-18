@@ -27,8 +27,8 @@ def gauss():
         point = cloud.point(box)
         if disk.interior(point):
             interior += 1
-    # print out the estimate of #@$\pi$@
-    print("pi: {:.8f}".format(4*interior/N))
+    # print the estimate of π
+    print("π: {:.8f}".format(4*interior/N))
     return
 
 # main

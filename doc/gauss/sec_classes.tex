@@ -379,13 +379,13 @@ implementation of \class{Mersenne} is shown in \lstref{generators:mt}.
   % firstnumber=9,
   linerange={9-31},
   label={lst:generators:mt},
-  caption={\srcfile{containers/Mersenne.py}: The generator based implementation},
+  caption={\srcfile{generators/Mersenne.py}: The generator based implementation},
 }{listings/generators/Mersenne.py}
 %
 Almost everything looks the same as in \lstref{classes:mt:containers}, except for the new
 keyword \keyword{yield} on \lstlineref{mt:generators:yield}, and the \keyword{return} without a
 value on \lstlineref{mt:generators:return}. We loop over the desired sample size, generating
-ramdom points, but rather than storing each one in a container, we \keyword{yield} it to our
+random points, but rather than storing each one in a container, we \keyword{yield} it to our
 caller. This statement suspends the execution of \method{points} but saves everything that we
 have done so far, including the values of all the local variables, such as the loop counter
 \identifier{i}. The magical part is that when the iterator is asked to advance to the its next
@@ -412,7 +412,7 @@ Let's see what happens to \class{Disk}:
   % firstnumber=9,
   linerange={9-39},
   label={lst:generators:disk},
-  caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} with a generator},
+  caption={\srcfile{generators/Disk.py}: Implementing \class{Disk} with a generator},
 }{listings/generators/Disk.py}
 %
 The method \method{interior} still accepts some kind of iterable object \identifier{points} and
@@ -499,10 +499,10 @@ level of flexibility as with every other part of this exercise, so we should be 
 encapsulate functional forms inside appropriate classes, and insert them at the right point in
 the integration algorithm. To this end, we create an abstract class \class{Functor} that
 specifies the required interface as shown in \lstref{generators:functor}. The only thing
-missing to make \class{Functor} a real functor\supercite{c++-idioms} is to connect \method{eval} to
-\method{\_\_call\_\_} so that python can recognize subclass instances as callable objects
-indistinguishable from normal functions. We'll skip this step since we are not interested in
-syntactic sugar at this point of the design; we can always add this later.
+missing to make \class{Functor} a real functor\supercite{c++-idioms} is to connect
+\method{eval} to \method{\_\_call\_\_} so that python can recognize its implementations as
+callable objects indistinguishable from normal functions. We'll skip this step since we are not
+interested in syntactic sugar at this point of the design; we can always add this later.
 %
 \python{
   % firstnumber=9,

@@ -28,7 +28,7 @@ def gauss():
     # count the interior points
     interior = len(disk.interior(sample))
 
-    # print out the estimate of #@$\pi$@
+    # print the estimate of π
     print("π: {:.8f}".format(4*interior/N))
     return
 

@@ -37,7 +37,7 @@ def gauss():
     # compute the integral
     integral = B/N * sum(gaussian.eval(interior))#@\label{line:mc:integral}@
 
-    # print out the estimate of the integral
+    # print the estimate of the integral
     print("integral: {:.8f}".format(integral))
     return
 

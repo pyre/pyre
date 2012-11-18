@@ -17,18 +17,18 @@ def gauss():
     # inputs
     N = 10**5
     box = [(0,1), (0,1)]
-    # the point cloud generator
-    generator = Mersenne()
+    # the point cloud 
+    cloud = Mersenne()
     # the region of integration
     disk = Disk(center=(0,0), radius=1)
 
     # the integration algorithm
     # build the point sample
-    sample = generator.points(N, box)
+    sample = cloud.points(N, box)
     # count the interior points
     interior = count(disk.interior(sample))
 
-    # print out the estimate of #@$\pi$@
+    # print the estimate of π
     print("π: {:.8f}".format(4*interior/N))
     return
 
