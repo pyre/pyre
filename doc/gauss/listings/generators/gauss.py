@@ -16,7 +16,7 @@ def gauss():
 
     # inputs
     N = 10**5
-    box = [(0,0), (1,1)]
+    box = [(0,1), (0,1)]
     # the point cloud generator
     generator = Mersenne()
     # the region of integration
@@ -29,7 +29,7 @@ def gauss():
     interior = count(disk.interior(sample))
 
     # print out the estimate of #@$\pi$@
-    print("pi: {:.8f}".format(4*interior/N))
+    print("π: {:.8f}".format(4*interior/N))
     return
 
 
@@ -41,32 +41,6 @@ def count(iterable): #@\label{line:driver:generators:count}@
     for item in iterable:
         counter += 1
     return counter
-
-
-def testMT():
-    from Mersenne import Mersenne
-    wh = Mersenne()
-
-    sample = wh.generateSample(2, [(0, 1),(1, 2)])
-
-    print(sample)
-
-    return
-
-
-def testDisk():
-    from Disk import Disk
-    disk = Disk(center=(0,0), radius=1)
-
-    points = [
-        (0, 0),
-        (.5, .5),
-        (1, 1)
-        ]
-    
-    print(count(disk.contains(points)))
-
-    return
 
 
 # main

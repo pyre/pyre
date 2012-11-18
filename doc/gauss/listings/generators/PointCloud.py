@@ -19,7 +19,7 @@ class PointCloud:
         
         parameters: 
             {n}: the number of points to generate
-            {box}: a pair of points that specify the computational domain
+            {box}: pairs of points that specify the computational domain
         """
         raise NotImplementedError(
             "class {.__name__!r} should implement 'points'".format(type(self)))

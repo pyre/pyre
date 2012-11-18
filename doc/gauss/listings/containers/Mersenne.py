@@ -20,16 +20,17 @@ class Mersenne(PointCloud):
         """
         Generate {n} random points in the interior of {box}
         """
-        # unfold the bounding box
-        intervals = tuple(zip(*box))
-        # create the container for the sample
-        sample = []
-        # loop over the sample size
-        while n > 0:
-            p = [ random.uniform(*interval) for interval in intervals ]
-            sample.append(p)
-            n -= 1
+        # create the point container using a nested list comprehension: the outer one builds
+        # the container of points, the inner one builds individual points as containers of
+        # random numbers within the interval of box along each coordinate axis
+        sample = [
+            [ random.uniform(*interval) for interval in box ]
+            for i in range(n)
+            ]
+        # note the *interval notation in the call to uniform: it unpacks the interval and
+        # supplies uniform with as many arguments as there are entities in interval
                 
         return sample
+
 
 # end of file 

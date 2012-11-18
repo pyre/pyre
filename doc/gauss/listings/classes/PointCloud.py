@@ -17,7 +17,7 @@ class PointCloud:
         Generate a random point on the interior of {box}
         
         parameters: 
-            {box}: a pair of points that specify the computational domain
+            {box}: pairs of points that specify the computational domain
         """
         raise NotImplementedError(
             "class {.__name__!r} should implement 'point'".format(type(self)))

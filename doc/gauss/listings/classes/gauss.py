@@ -15,7 +15,7 @@ def gauss():
 
     # inputs
     N = 10**5
-    box = [(0,0), (1,1)]
+    box = [(0,1), (0,1)]
     # the point cloud generator
     cloud = Mersenne()
     # the region of integration

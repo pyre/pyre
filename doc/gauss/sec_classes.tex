@@ -63,7 +63,7 @@ Having identified such a candidate is half the battle; but now a universe of pos
 opens up. What should its interface be? What arguments should these methods accept? Should
 there be any data members associated with instances of this class and its subclasses? A good
 way to navigate through the possibilities is to do as little as possible at every step. Rather
-than trying to anticipate all the possible uses of \class{PointCloud} and its derivatives, we
+than trying to anticipate all the possible uses of \class{PointCloud} and its subclasses, we
 can focus on endowing it with just enough interface to solve our problem. We need a sample
 $X_{N}$ of $N$ random points $x$ that fall inside a box $B$, so let's create a method
 \method{point} that takes a suitable representation of $B$ and returns one.
@@ -87,9 +87,9 @@ from the outside that will help us steer the design is some particular direction
 which is a blessing and which a curse is left as an exercise. In these situations, experience
 strongly suggests that simplicity and laziness are the right guidelines: defer as many of the
 decisions to derived classes as possible, keep the number of methods to a minimum, and make the
-interface simple and generic. Unanticipated complexities, such as creating an actual model of
-some physical system, or making the code perform at an acceptable level, will force us to
-rethink much of the design.
+interface simple and generic. Unanticipated complexities that will arise while creating an
+actual model of some physical system, or making the code perform at an acceptable level, will
+force us to rethink much of the design.
 
 Performance considerations are particularly difficult to anticipate in object oriented
 applications. The usual maxims about picking algorithms with low computational complexity and
@@ -117,29 +117,25 @@ Returning to the problem at hand, we can now derive a class \class{Mersenne} tha
 the random number generator from the standard python library that we used in
 \secref{simple:python}. We require that \identifier{box} has enough structure so that we can
 deduce the dimensionality of the requested point, as well as build the set of transformations
-that map the unit line interval to the corresponding side of the box. The vector diagonal of
-the bounding box fits this bill perfectly: we specify that \identifier{box} is to be a pair of
-$d$-tuples specifying the coordinates of the point of the box closest to the origin and the
-point diagonally across from it. For example, the unit square on the plane might be represented
-by \literal{[[0,0], [1,1]]}, while the unit box in three dimensions would be given by
-\literal{[[0,0,0], [1,1,1]]}.  We only use iterators to access \identifier{box}, so any
-iterable container with the structure shown will do.
+that map the unit line interval to the corresponding side of the box. One of the possibilities
+is an ordered collection of pairs of numbers, each pair representing the extent of $B$ along
+the corresponding axis. For example, the unit square on the plane might be represented by
+\literal{[[0,1], [0,1]]}, while the unit box in three dimensions would be given by
+\literal{[[0,1], [0,1], [0,1]]}.  We will only use iterators to access \identifier{box}, so any
+iterable container with the correct structure shown will do.
 %
 \python{
   % firstnumber=9,
-  linerange={9-29},
+  linerange={9-26},
   label={lst:classes:mersenne},
   caption={\srcfile{classes/Mersenne.py}: Encapsulating the built-in random number generator},
 }{listings/classes/Mersenne.py}
 %
 
-The assignment on \lstlineref{mt:unpack} unpacks the two corners of the bounding box. The call
-to \function{zip} on \lstlineref{mt:zip} builds a tuple of the co\"ordinate intervals along
-each axis, over which we iterate in the list comprehension on \lstlineref{mt:list} in order to
-provide the arguments to \function{uniform}. The function \function{uniform} performs the
-necessary transformations to return a random number between \identifier{left} and
-\identifier{right} along each of the axes. The net effect is a $d$-dimensional random point
-from the interior of \identifier{box}.
+The point $p$ is represented as the list of numbers built by the list comprehension on
+\lstlineref{mt:list}. Each number is the result of calling the function
+\function{random.uniform} with two arguments that represent the interval within which the
+random number should fall, which we get by unpacking our representation of $B$.
 
 The class \class{PointCloud} and its subclasses should be generally useful to us and are good
 candidates for reuse. The interface should be broadened a bit, by adding a means to seed the
@@ -302,11 +298,12 @@ such a way that the interpreter can add elements at the tail in essentially cons
 %
 \python{
   % firstnumber=9,
-  linerange={9-33},
+  linerange={9-34},
   label={lst:classes:mt:containers},
   caption={\srcfile{containers/Mersenne.py}: Filling a container with random points},
 }{listings/containers/Mersenne.py}
 %
+
 
 The abstract class \class{Shape} doesn't require any significant changes. We merely reinterpret
 the dummy argument \identifier{points} of the method \method{interior} as a container of
@@ -339,8 +336,8 @@ counter updates. Instead, we just use the function \function{len} to compute the
 interior points.
 %
 \python{
-  % firstnumber=9,
-  linerange={10-33},
+  % firstnumber=10,
+  linerange={10-38},
   label=lst:classes:driver:containers,
   caption={\srcfile{containers/gauss.py}: The driver for the container based solution},
 }{listings/containers/gauss.py}
@@ -387,17 +384,16 @@ implementation of \class{Mersenne} is shown in \lstref{generators:mt}.
 %
 Almost everything looks the same as in \lstref{classes:mt:containers}, except for the new
 keyword \keyword{yield} on \lstlineref{mt:generators:yield}, and the \keyword{return} without a
-value on \lstlineref{mt:generators:return}. Indeed, we unpack the arguments to \method{points}
-as we did before, and proceed to loop over the desired sample size, generating ramdom points.
-Rather than storing \identifier{p}, we \keyword{yield} it to our caller. This statement
-suspends the execution of \method{points} but saves everything that we have done so far,
-including the values of all the local variables, such as the loop counter \identifier{n}. The
-magical part is that when the iterator is asked to advance to the its next item, it will resume
-evaluating the method \method{points} at whatever statement follows the \keyword{yield}
-statement on \lstlineref{mt:generators:yield} that suspended it. In our case it means that the
-counter will get decremented and the loop will execute another iteration until the next time
-the \keyword{yield} statement is reached. This process continues until the loop is exhausted,
-at which point we run into the \keyword{return} statement on
+value on \lstlineref{mt:generators:return}. We loop over the desired sample size, generating
+ramdom points, but rather than storing each one in a container, we \keyword{yield} it to our
+caller. This statement suspends the execution of \method{points} but saves everything that we
+have done so far, including the values of all the local variables, such as the loop counter
+\identifier{i}. The magical part is that when the iterator is asked to advance to the its next
+item, it will resume evaluating the method \method{points} at whatever statement follows the
+\keyword{yield} on \lstlineref{mt:generators:yield} that suspended it. In our case it means
+that the counter will get incremented and the loop will execute another iteration until the
+next time the \keyword{yield} statement is reached. This process continues until the loop is
+exhausted, at which point we run into the \keyword{return} statement on
 \lstlineref{mt:generators:return}. According to generator rules, \keyword{return} causes a
 \class{StopIteration} exception to be raised, signalling to the caller that we are done
 generating values from our virtual container. The \keyword{for} loop quietly handles this
@@ -419,11 +415,11 @@ Let's see what happens to \class{Disk}:
   caption={\srcfile{containers/Disk.py}: Implementing \class{Disk} with a generator},
 }{listings/generators/Disk.py}
 %
-The method \method{contains} still accepts some kind of iterable object \identifier{points} and
+The method \method{interior} still accepts some kind of iterable object \identifier{points} and
 goes about the business of deciding whether the contents are interior or not. We set up a loop
 over \identifier{points} on \lstlineref{disk:generators:loop}, but rather than storing the
 result in \identifier{keep} as we did in \lstref{classes:disk:containers}, we \keyword{yield}
-the interior point on\lstlineref{disk:generators:yield}.  When our loop exhausts
+the interior point on \lstlineref{disk:generators:yield}.  When our loop exhausts
 \identifier{points} we reach the \keyword{return} statement on
 \lstlineref{disk:generators:return}, which raises a \class{StopIteration} exception and
 terminates our generator.
@@ -434,11 +430,12 @@ interior points since it requires an actual container before it can compute size
 use \function{count}, defined in \lstlineref{driver:generators:count}, which updates a counter
 as it is looping over the filtered points. See if you can follow how looping over the virtual
 contents is driving the generators to produce the associated values without paying the
-computational expense to set up the function or manage a container for the intermediate values.
+computational expense of setting up the function or managing a container for the intermediate
+values.
 %
 \python{
   % firstnumber=10,
-  linerange={10-43},
+  linerange={10-48},
   label={lst:generators:driver},
   caption={\srcfile{generators/gauss.py}: The driver for the implementation based on generators},
 }{listings/generators/gauss.py}
@@ -458,15 +455,15 @@ are substantially slower than the essentially inlined implementation of \lstref{
 Is it possible to improve performance by using better containers than python provides?
 
 At first glance, this looks like a viable strategy. We know the size of the point container
-rather early in the program. The points themselves are just pairs of floating point numbers, so
-perhaps we can allocate something like a \cc\ array of the right size and hand that to our
-random number generator. It's going to be hard to take advantage of the python random number
-generator this way, but we can easily access the generators in \package{GSL}, so that's not a big
-problem. Once our \cc\ container comes back filled with random points, we should be able to
-hand that to a \cc\ routine that will count the interior points. The whole thing can be
+rather early in the program. The points themselves are just containers of floating point
+numbers, so perhaps we can allocate something like a \cc\ array of the right size and hand that
+to our random number generator. It's going to be hard to take advantage of the python random
+number generator this way, but we can easily access the generators in \package{GSL}, so that's
+not a big problem. Once our \cc\ container comes back filled with random points, we should be
+able to hand that to a \cc\ routine that will count the interior points. The whole thing can be
 orchestrated from python by writing wrappers for the low level routines. We can even recover
 the object oriented structure we have been building by using these python wrapped \cc\ routines
-as the implementations of the relevant methods of our classes. 
+as the implementations of the relevant methods of our classes.
 
 At this point you might be very strongly tempted to write your own array class as a thin
 wrapper on top of \cc\ arrays, or even \cpp\ containers. Resist. This thought has occurred to
@@ -475,11 +472,11 @@ dysfunctional software. Writing array classes correctly turns out to be much har
 appears, mostly due to the fact that containers of real numbers have extremely rich algebraic
 structures. You either respect the semantics or you are contributing to the trash heap.
 
-Fortunately, a few of those that didn't get--or didn't pay any attention to--such advice have
-tackled this problem and got it right. The package \identifier{numpy}\supercite{numpy} is such an
-example. We leave it as an exercise to build and profile a \identifier{numpy}-based solution
-that takes advantage of the compactness of representation, speed and convenience of the array
-implementation.
+Fortunately, a few of those that didn't get such advice--or didn't pay any attention to
+it--have tackled this problem and got it right. The package \identifier{numpy}\supercite{numpy}
+is such an example. We leave it as an exercise to build and profile a \identifier{numpy}-based
+solution that takes advantage of the compactness of representation, speed and convenience of
+the array implementation.
 
 How do all these implementations fit together? Do we have to throw away the generators because
 we moved the representation to a \identifier{numpy} container? Have we locked ourselves out of

@@ -78,16 +78,16 @@ generator. Two minutes of typing produce:
   caption={\srcfile{simple/gauss.py}: Estimating $\pi$ in python},
 }{listings/simple/gauss.py}
 %
-Note that by making the determination of whether the point is inside the quadrant using the
-square of the distance saves us quite a large number of calls to \function{sqrt}. This type of
-consideration is ubiquitous when trying to get good performance out of Monte Carlo methods.
-Also, note that we did not have to convert our integer counters to floats before the
-computation of the area fraction, since division of integers results in floating point numbers
-whenever necessary, a behavior that is standard since version 3.0 of the python interpreter.
+Note that by deciding whether the point is inside the circle using the square of the distance
+saves us a large number of calls to \function{sqrt}. This type of consideration is ubiquitous
+when trying to get good performance out of Monte Carlo methods.  Also, note that we did not
+have to convert our integer counters to floats before the computation of the area fraction,
+since division of integers results in floating point numbers whenever necessary, a behavior
+that is standard since version 3.0 of the python interpreter.
 
 There are two obvious questions to answer: how accurate and how fast is this calculation?  To
 answer these questions, we can perform some experiments where we vary the total number of
-points $N$ and record the result and the time it took, as shown in \tabref{simple-python}.
+points $N$, and record the result and the time it took, as shown in \tabref{simple-python}.
 %
 \begin{table}
 \centering

@@ -20,14 +20,13 @@ class Mersenne(PointCloud):
         """
         Generate {n} random points in the interior of {box}
         """
-        # unfold the bounding box
-        intervals = tuple(zip(*box))
         # loop over the sample size
-        while n > 0:
+        for i in range(n):
+            # build a point
             p = [ random.uniform(*interval) for interval in intervals ]
+            # and make it available to the caller
             yield p #@\label{line:mt:generators:yield}@
-            n -= 1
-                
+        # all done
         return #@\label{line:mt:generators:return}@
 
 

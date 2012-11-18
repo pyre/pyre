@@ -20,7 +20,7 @@ def gauss():
 
     # inputs
     N = 10**5
-    box = [(-1,-1), (1,1)]
+    box = [(-1,1), (-1,1)]
     B = functools.reduce(operator.mul, ((right-left) for left,right in zip(*box)))#@\label{line:mc:volume}@
     # the point cloud generator
     generator = Mersenne()
