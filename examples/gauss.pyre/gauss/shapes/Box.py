@@ -19,8 +19,8 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
     """
 
     # public state
-    diagonal = pyre.properties.array(default=((0,0),(1,1)))
-    diagonal.doc = "a vector that specifies the major diagonal of the box"
+    intervals = pyre.properties.array(default=((0,1),(0,1)))
+    intervals.doc = "the extent of the box along each axis"
 
 
     # interface
@@ -34,7 +34,7 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
         # compute and return the volume
         return functools.reduce(
             operator.mul, 
-            ((right-left) for left,right in self.intervals()))
+            ((right-left) for left,right in self.intervals))
 
 
     @pyre.export
@@ -42,8 +42,8 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
         """
         Filter out the members of {points} that are exterior to this box
         """
-        # form the list of intervals alomg each cöordinate axis
-        intervals = tuple(self.intervals())
+        # cache my extent along each coördinate axis
+        intervals = self.intervals
         # now, for each point
         for point in points:
             # for each cöordinate
@@ -59,13 +59,5 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
         # all done
         return
 
-
-    # other interface
-    def intervals(self):
-        """
-        Repack the diagonal vector as a list of the intervals along each axis
-        """
-        return zip(*self.diagonal)
-                
 
 # end of file 

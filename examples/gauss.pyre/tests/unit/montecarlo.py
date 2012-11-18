@@ -20,7 +20,7 @@ def test():
     one = gauss.functors.one(name="one")
     # set up the bounding box for the random number generator
     box = gauss.shapes.box(name="box")
-    box.diagonal = ((0,0), (1,1))
+    box.intervals = ((0,1), (0,1))
     # instantiate the region of integration
     disk = gauss.shapes.ball(name="disk")
     disk.center = (0,0)

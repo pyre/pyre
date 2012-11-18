@@ -24,19 +24,19 @@ class Mersenne(pyre.component, family="gauss.meshes.mersenne", implements=PointC
         """
         Generate {count} random points chosen from the interior of {box}
         """
-        # unpack the bounding box to form its extent along each of the coördinate axes
-        intervals = tuple(box.intervals())
         # our random number generator
-        generator = random.uniform
+        rng = random.uniform
         # get starmap from itertools
         starmap = itertools.starmap
+        # get the extent of the box
+        intervals = box.intervals
         # loop {count} times
         while count > 0:
             # decrement the counter
             count -= 1
             # build a point by calling the random number generator as many times as there are
             # dimensions in the box specification and send it along
-            yield tuple(starmap(generator, intervals))
+            yield tuple(starmap(rng, intervals))
         # all done
         return
 

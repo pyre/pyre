@@ -25,7 +25,7 @@ def test():
     # print("  samples: {.samples!r}".format(mc))
     # print("  box: {.box!r}".format(mc))
     # print("    name: {.box.pyre_name!r}".format(mc))
-    # print("    diagonal: {.box.diagonal!r}".format(mc))
+    # print("    intervals: {.box.intervals!r}".format(mc))
     # print("  mesh: {.mesh!r}".format(mc))
     # print("    name: {.mesh.pyre_name!r}".format(mc))
     # print("  region: {.region!r}".format(mc))

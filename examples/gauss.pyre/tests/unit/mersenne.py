@@ -21,15 +21,15 @@ def test():
     size = 5
     # specify the box
     box = gauss.shapes.box(name="box")
-    box.diagonal = ((0,0), (1,1))
+    box.intervals = ((0,1), (0,1))
     # make a bunch of random points
     points = tuple(mt.points(box=box, count=size))
     # check the length
     assert len(points) == size
     # verify they all lie inside the box
-    intervals = tuple(box.intervals())
+    intervals = tuple(box.intervals)
     for point in points:
-        for p, (left,right) in zip(point,intervals):
+        for p, (left,right) in zip(point, intervals):
             assert p>=left and p<=right
 
     return box
