@@ -17,6 +17,7 @@ RECURSE_DIRS = \
     schema \
     tests \
     examples \
+    web \
 
 #--------------------------------------------------------------------------
 #
@@ -36,29 +37,43 @@ distclean::
 
 #--------------------------------------------------------------------------
 #  shortcuts to building in my subdirectories
-.PHONY: doc lib extensions packages tests
+.PHONY: bin defaults doc examples extensions lib packages schema tests web
 
-doc:
-	(cd doc; $(MM))
-
-lib:
-	(cd lib; $(MM))
+bin:
+	(cd bin; $(MM))
 
 defaults:
 	(cd defaults; $(MM))
 
+doc:
+	(cd doc; $(MM))
+
+examples:
+	(cd examples; $(MM))
+
 extensions:
 	(cd extensions; $(MM))
+
+lib:
+	(cd lib; $(MM))
 
 packages:
 	(cd packages; $(MM))
 
+schema:
+	(cd schema; $(MM))
+
 tests:
 	(cd tests; $(MM))
 
-build: lib extensions packages depository
+web:
+	(cd web; $(MM))
+
+build: lib packages extensions defaults bin
 
 
+#--------------------------------------------------------------------------
+#
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-1.0.zip
 zip: packages defaults
 	(cd $(EXPORT_ROOT)/packages; zip -r ${PYRE_ZIP} * )
