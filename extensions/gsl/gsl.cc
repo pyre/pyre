@@ -26,6 +26,11 @@
 #include "rng.h" // random numbers
 #include "vector.h" // vectors
 
+// mpi support
+#if defined(WITH_MPI)
+#include "partition.h"
+#endif
+
 // put everything in my private namespace
 namespace gsl {
 
@@ -210,6 +215,13 @@ namespace gsl {
         { vector::median__name__, vector::median, METH_VARARGS, vector::median__doc__ },
         { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
         { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
+
+        // mpi support
+#if defined(WITH_MPI)
+        // matrix partitioning
+        { mpi::gather__name__, mpi::gather, METH_VARARGS, mpi::gather__doc__ },
+        { mpi::scatter__name__, mpi::scatter, METH_VARARGS, mpi::scatter__doc__ },
+#endif
 
         // sentinel
         {0, 0, 0, 0}

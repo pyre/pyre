@@ -22,17 +22,6 @@ ifneq ($(strip $(LIBPQ_DIR)),)
 
 endif
 
-# the mpi+gsl example
-GSL_DIR=
-ifneq ($(strip $(GSL_DIR)), )
-  MPI_DIR=
-  ifneq ($(strip $(MPI_DIR)), )
-
-    RECURSE_DIRS += mpigsl.pyre
-
-  endif
-endif
-
 #--------------------------------------------------------------------------
 #
 

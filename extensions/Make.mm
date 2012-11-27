@@ -13,15 +13,15 @@ RECURSE_DIRS = \
     timers
 
 # the optional packages
-#gsl
-GSL_DIR = # overriden by the environment
-ifneq ($(strip $(GSL_DIR)),)
-  RECURSE_DIRS += gsl
-endif
 # mpi
 MPI_DIR= # overriden by the the environment
 ifneq ($(strip $(MPI_DIR)),)
   RECURSE_DIRS += mpi
+endif
+#gsl
+GSL_DIR = # overriden by the environment
+ifneq ($(strip $(GSL_DIR)),)
+  RECURSE_DIRS += gsl
 endif
 
 # postgres

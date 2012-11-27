@@ -47,12 +47,8 @@ def test():
         # have a dummy source matrix
         θ = None
 
-    # access the package
-    import mpigsl
-    # make a partitioner
-    partitioner = mpigsl.partitioner()
-    # exercise it
-    part = partitioner.partition(communicator=world, source=source, matrix=θ, taskload=workload)
+    # partition
+    part = gsl.matrix.partition(communicator=world, source=source, matrix=θ, taskload=workload)
 
     # verify that i got the correct part
     for row in range(samplesPerTask):

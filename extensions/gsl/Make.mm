@@ -29,7 +29,14 @@ PROJ_SRCS = \
     rng.cc \
     vector.cc \
 
+# optional mpi support
+MPI_DIR= # should be overriden by the environment
+ifneq ($(strip $(MPI_DIR)), )
+    include MPI/default.def
+    PROJ_SRCS += partition.cc
+endif
 
+# actions
 export:: export-headers
 
 EXPORT_INCDIR = $(EXPORT_ROOT)/include/pyre/$(PROJECT)

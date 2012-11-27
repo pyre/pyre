@@ -13,7 +13,7 @@ PROJECT = gsl
 
 all: test
 
-test: sanity rng pdf vectors matrices blas linalg
+test: sanity rng pdf vectors matrices blas linalg mpi
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -93,5 +93,15 @@ blas:
 
 linalg:
 	${PYTHON} ./linalg_LU.py
+
+# do I have mpi?
+MPI_DIR=
+mpi:
+ifneq ($(strip $(MPI_DIR)), )
+	${PYTHON} ./collect.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./collect.py
+	${PYTHON} ./partition.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./partition.py
+endif
 
 # end of file 

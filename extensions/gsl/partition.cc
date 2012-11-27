@@ -17,21 +17,21 @@
 // the pyre mpi library
 #include <pyre/mpi.h>
 // the extension info
-#include <pyre/gsl/capsules.h>
+#include "capsules.h"
 #include <pyre/mpi/capsules.h>
 
 
 // gather
 const char * const
-mpigsl::
+gsl::mpi::
 gather__name__ = "gather";
 
 const char * const
-mpigsl::
+gsl::mpi::
 gather__doc__ = "gather a matrix from the members of a communicator";
 
 PyObject * 
-mpigsl::
+gsl::mpi::
 gather(PyObject *, PyObject * args)
 {
     // place holders 
@@ -48,14 +48,14 @@ gather(PyObject *, PyObject * args)
         return 0;
     }
     // check the communicator capsule
-    if (!PyCapsule_IsValid(communicatorCapsule, mpi::communicator::capsule_t)) {
+    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
         return 0;
     }
     // get the communicator
     pyre::mpi::communicator_t * comm = 
         static_cast<pyre::mpi::communicator_t *>
-        (PyCapsule_GetPointer(communicatorCapsule, mpi::communicator::capsule_t));
+        (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
     // check the matrix capsule
     if (!PyCapsule_IsValid(matrixCapsule, gsl::matrix::capsule_t)) {
@@ -126,15 +126,15 @@ gather(PyObject *, PyObject * args)
 
 // scatter
 const char * const
-mpigsl::
+gsl::mpi::
 scatter__name__ = "scatter";
 
 const char * const 
-mpigsl::
+gsl::mpi::
 scatter__doc__ = "scatter a matrix to the members of a communicator";
 
 PyObject * 
-mpigsl::
+gsl::mpi::
 scatter(PyObject *, PyObject * args)
 {
     // place holders 
@@ -153,14 +153,14 @@ scatter(PyObject *, PyObject * args)
         return 0;
     }
     // check the communicator capsule
-    if (!PyCapsule_IsValid(communicatorCapsule, mpi::communicator::capsule_t)) {
+    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
         return 0;
     }
     // get the communicator
     pyre::mpi::communicator_t * comm = 
         static_cast<pyre::mpi::communicator_t *>
-        (PyCapsule_GetPointer(communicatorCapsule, mpi::communicator::capsule_t));
+        (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
     // the pointer to source payload
     double * data = 0;

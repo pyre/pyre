@@ -35,14 +35,10 @@ def test():
         for column in range(sampleSize):
             θ[row, column] = (rank*samplesPerTask+row)*sampleSize + column
     
-    # access the package
-    import mpigsl
-    # make a partitioner
-    partitioner = mpigsl.partitioner()
     # decide on the destination task
     destination = 0
     # exercise it
-    result = partitioner.collect(matrix=θ, communicator=world, destination=destination)
+    result = gsl.matrix.collect(matrix=θ, communicator=world, destination=destination)
 
     # at the destination task
     if rank == destination:
