@@ -8,6 +8,7 @@
 
 # externals
 import os
+import sys
 import pyre # the framework
 from .Executive import Executive # my superclass 
 
@@ -50,7 +51,7 @@ class Fork(Executive, family='pyre.shells.fork'):
         # launch the application
         status = application.main(*args, stdout=stdout, stderr=stderr, **kwds)
         # and exit
-        return os._exit(status)
+        return sys.exit(status)
 
 
     # implementation details

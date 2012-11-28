@@ -13,8 +13,6 @@ PROJ_CLEAN = shells.log
 #--------------------------------------------------------------------------
 #
 
-working: hosts
-
 all: test
 
 test: sanity launching clean
@@ -30,9 +28,6 @@ sanity:
 	${PYTHON} ./fork_instantiation.py
 	${PYTHON} ./daemon_sanity.py
 	${PYTHON} ./daemon_instantiation.py
-
-hosts:
-	${PYTHON} ./hosts.py
 
 launching:
 	${PYTHON} ./script_launching.py

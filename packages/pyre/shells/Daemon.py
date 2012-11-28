@@ -8,6 +8,7 @@
 
 # externals
 import os # access to os services
+import sys
 import pyre # access the framework
 from .Fork import Fork # my superclass
 
@@ -56,7 +57,7 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         # launch the application
         status = application.main(*args, stdout=stdout, stderr=stderr, **kwds)
         # and exit
-        return os._exit(status)
+        return sys.exit(status)
 
 
 # end of file 
