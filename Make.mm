@@ -72,6 +72,8 @@ web:
 
 build: lib packages extensions defaults bin
 
+test: build tests examples
+
 
 #--------------------------------------------------------------------------
 #

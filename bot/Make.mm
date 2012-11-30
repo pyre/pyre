@@ -10,8 +10,8 @@ PROJECT = pyre
 
 RECURSE_DIRS = \
     master \
-    darwin11 \    
-    darwin12 \    
+    darwin11 \
+    darwin12 \
     ubuntu12 \
 
 #--------------------------------------------------------------------------
