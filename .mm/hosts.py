@@ -54,7 +54,7 @@ def host(builder):
     if name.startswith('shc'):
         systemdir = '/usr'
         # set up {gsl}
-        gslHome = os.environ['GSL_HOME']
+        gslHome = '/home/mga/tools'
         builder.requirements['gsl'].environ = {
             'GSL_DIR': gslHome,
             'GSL_LIBDIR': os.path.join(gslHome, 'lib'),
@@ -74,14 +74,13 @@ def host(builder):
             'MPI_EXECUTIVE': 'mpirun',
             }
         # set up {python}
-        pythonVersion = '3.2'
+        pythonVersion = '3.3'
         python = 'python' + pythonVersion
-        pythonHome = '/usr/local/python-3.2.2'
+        pythonHome = '${HOME}/tools'
         builder.requirements['python'].environ = {
             'PYTHON': python,
             'PYTHON_PYCFLAGS': '-b',
             'PYTHON_DIR': pythonHome,
-            # 'PYTHON_LIBDIR': os.path.join(pythonHome, 'lib', python),
             'PYTHON_INCDIR': os.path.join(pythonHome, 'include', python+'m'),
             }
         # all done
