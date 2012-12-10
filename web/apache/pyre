@@ -1,4 +1,4 @@
-#
+# -*- apache -*-
 # michael a.g. aïvázis
 # california institute of technology
 # (c) 2010-2012 all rights reserved
@@ -10,19 +10,19 @@
     ServerAlias pyre.cacr.caltech.edu
     ServerAdmin aivazis@cacr.caltech.edu
 
-    DocumentRoot /home/projects/pyre/dv/pyre-1.0/web/www
+    DocumentRoot /home/projects/pyre/web/www
     <Directory />
         Options FollowSymLinks
         AllowOverride None
     </Directory>
-    <Directory /home/projects/pyre/dv/pyre-1.0/web/www/>
+    <Directory /home/projects/pyre/web/www/>
         Options Indexes FollowSymLinks MultiViews
         AllowOverride None
         Order allow,deny
         Allow from all
     </Directory>
 
-    ScriptAlias /bin/ /home/projects/pyre/dv/pyre-1.0/web/bin/
+    ScriptAlias /bin/ /home/projects/pyre/web/bin/
     <Directory "/home/projects/pyre/web/bin">
         AllowOverride None
         Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
