@@ -45,9 +45,6 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
             # and exit
             return sys.exit(status)
 
-        # otherwise, access the __main__ module
-        import __main__
-
         # build the command line
         argv = [
             self.launcher,

@@ -20,6 +20,11 @@ class Daemon(Fork, family="pyre.shells.daemon"):
     parent and has no access to a terminal
     """
 
+   
+    # public state
+    capture = pyre.properties.bool(default=False)
+    capture.doc = "control whether to create communication channels to the daemon process"
+
 
     # interface
     @pyre.export
@@ -34,12 +39,12 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         if self.debug: return application.main(*args, **kwds)
 
         # otherwise, build the communication channels
-        channels = self.channels()
+        pipes = self.openCommunicationPipes()
         # fork
         pid = os.fork()
 
         # in the parent process, build and return the parent side channels
-        if pid > 0: return self.parentChannels(channels)
+        if pid > 0: return self.parentChannels(pipes)
 
         # in the intermediate child, decouple from the parent environment
         os.chdir("/")
@@ -53,9 +58,9 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         if pid > 0: return os._exit(0)
 
         # in the final child process, convert {stdout} and {stderr} into channels
-        stdout, stderr = self.childChannels(channels)
+        channels = self.childChannels(pipes)
         # launch the application
-        status = application.main(*args, stdout=stdout, stderr=stderr, **kwds)
+        status = application.main(*args, channels=channels, **kwds)
         # and exit
         return sys.exit(status)
 

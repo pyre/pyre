@@ -21,6 +21,10 @@ class Fork(Executive, family='pyre.shells.fork'):
 
 
     # public state
+    capture = pyre.properties.bool(default=True)
+    capture.doc = "control whether to create communication channels to the daemon process"
+
+
     debug = pyre.properties.bool(default=False)
     debug.doc = "turn it on to prevent the child from detaching from the parent"
 
@@ -37,29 +41,32 @@ class Fork(Executive, family='pyre.shells.fork'):
         if self.debug: return application.main(*args, **kwds)
 
         # build the three pipes
-        channels = self.channels()
+        pipes = self.openCommunicationPipes()
         # and fork
         pid = os.fork()
 
         # in the parent process
         if pid > 0:
             # build and return the parent side channels
-            return self.parentChannels(channels)
+            return self.parentChannels(pipes)
             
         # in the child process, convert {stdout} and {stderr} into channels
-        stdout, stderr = self.childChannels(channels)
+        channels = self.childChannels(pipes)
         # launch the application
-        status = application.main(*args, stdout=stdout, stderr=stderr, **kwds)
+        status = application.main(*args, channels=channels, **kwds)
         # and exit
         return sys.exit(status)
 
 
     # implementation details
-    def channels(self):
+    def openCommunicationPipes(self):
         """
         Build three pipes for parent/child communication
         """
-        # build the pipes
+        # bail out if we are not supposed to build pipes to the child
+        if not self.capture: return (None, None, None)
+
+        # otherwise, build the pipes
         stdin = os.pipe()
         stdout = os.pipe()
         stderr = os.pipe()
@@ -67,14 +74,17 @@ class Fork(Executive, family='pyre.shells.fork'):
         return (stdin, stdout, stderr)
 
 
-    def parentChannels(self, channels):
+    def parentChannels(self, pipes):
         """
         Build the parent side of the communication channels
         """
-        # access the pipe factory
+        # bail out if we are not supposed to build pipes to the child
+        if not self.capture: return (None, None)
+
+        # otherwise, access the pipe factory
         import pyre.ipc
         # unpack
-        stdin, stdout, stderr = channels
+        stdin, stdout, stderr = pipes
         # turn {stdout} and {stderr} into channels
         # careful to identify the read/write ends correctly
         stdout = pyre.ipc.pipe(descriptors=(stdout[0], stdin[1]))
@@ -83,14 +93,17 @@ class Fork(Executive, family='pyre.shells.fork'):
         return stdout, stderr
 
 
-    def childChannels(self, channels):
+    def childChannels(self, pipes):
         """
         Build the child side of the communication channels
         """
-        # access the pipe factory
+        # bail out if we are not supposed to build pipes to the child
+        if not self.capture: return (None, None)
+
+        # otherwise, access the pipe factory
         import pyre.ipc
         # unpack
-        stdin, stdout, stderr = channels
+        stdin, stdout, stderr = pipes
         # replace {stdin}, {stdout} and {stderr} with the correct pipe endpoints
         os.dup2(stdin[0], 0)
         os.dup2(stdout[1], 1)
