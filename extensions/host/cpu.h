@@ -6,7 +6,7 @@
 // 
 
 #if !defined(pyre_extensions_host_cpu_h)
-#define pyre_extensions_timer_cpu_h
+#define pyre_extensions_host_cpu_h
 
 // create my namespace
 namespace pyre {
