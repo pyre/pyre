@@ -51,9 +51,6 @@ class Facility(Slotted):
         # {None} is special, leave it alone
         if value is None: return value
 
-        # get my protocol
-        protocol = self.schema
-
         # attempt to resolve {value} into something useful
         for candidate in self.resolve(value=value, locator=node.locator):
             # and return the first successful candidate

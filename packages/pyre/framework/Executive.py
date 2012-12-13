@@ -136,24 +136,23 @@ class Executive:
         Any other scheme specification is interpreted as a request for a file based component
         factory. The {address} is again split into two parts: {path}/{symbol}, where {symbol}
         is the trailing part after the last '/' separator. The codec assumes that {path} is a
-        valid path in the physical or logical filesystems managed by the executive.fileserver,
-        and that it contains executable python code that provides the definition of the
-        required symbol.  For example, the {uri}
+        valid path in the physical or logical filesystems managed by the
+        {executive.fileserver}, and that it contains executable python code that provides the
+        definition of the required symbol.  For example, the {uri}
 
             vfs:/local/shapes.odb/box
 
-        expects that the fileserver can resolve the address local/shapes.odb into a valid file
-        within the virtual filesystem that forms the application namespace.
-
-        The symbol referenced by the {symbol} fragment must be a callable that can produce
-        component class records when called. For example, the file shapes.odb might contain
+        implies that the fileserver can resolve the address {local/shapes.odb} into a valid
+        file within the virtual filesystem that forms the application namespace. The symbol
+        referenced by the {symbol} fragment must be a callable that can produce component class
+        records when called. For example, the file {shapes.odb} might contain
 
             import pyre
-            class box(pyre.components): pass
+            class box(pyre.component): pass
 
-        which exposes a component {box} that has the right name and whose constructor can be
-        invoked to produce component instances. If you prefer to place such declarations inside
-        functions, e.g. to avoid certain name collisions, you can use constructs such as
+        which exposes a component class {box} that has the right name and whose constructor can
+        be invoked to produce component instances. If you prefer to place such declarations
+        inside functions, e.g. to avoid certain name collisions, you can use constructs such as
 
             def box():
                 import pyre
