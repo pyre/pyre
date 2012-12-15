@@ -18,6 +18,22 @@ For terms of use, see pyre.license()
 import os
 
 # convenience
+def resolve(uri):
+    """
+    Interpret {uri} as a request to locate and load a component
+    """
+    # build a locator
+    caller = tracking.here(level=1)
+    # get the executive to retrieve candidates
+    for component in executive.resolve(uri=uri):
+        # adjust its locator
+        component.pyre_locator = tracking.chain(caller, component.pyre_locator)
+        # and return it
+        return component
+    # otherwise, the {uri} could not be resolved
+    return
+
+
 def loadConfiguration(uri):
     """
     Open {uri} and attempt to load its contents into the configaration model

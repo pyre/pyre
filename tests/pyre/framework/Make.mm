@@ -45,10 +45,10 @@ linker:
 executive:
 	${PYTHON} ./executive.py
 	${PYTHON} ./executive_configuration.py
-	${PYTHON} ./executive_retrieveComponentDescriptor.py
-	${PYTHON} ./executive_retrieveComponentDescriptor_duplicate.py
-	${PYTHON} ./executive_retrieveComponentDescriptor_badImport.py
-	${PYTHON} ./executive_retrieveComponentDescriptor_syntaxError.py
+	${PYTHON} ./executive_resolve.py
+	${PYTHON} ./executive_resolve_duplicate.py
+	${PYTHON} ./executive_resolve_badImport.py
+	${PYTHON} ./executive_resolve_syntaxError.py
 
 
 # end of file 

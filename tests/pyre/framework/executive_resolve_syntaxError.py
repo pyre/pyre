@@ -14,13 +14,13 @@ Verify that bad component descriptors raise the correct exceptions
 
 def test():
     import pyre.framework
-    executive = pyre.framework.executive()
+    executive =  pyre.framework.executive()
 
-    # attempt to retrieve a non-existent component descriptor from the python path
+    # retrieve a component descriptor from the python path
     try:
-        unkown, = executive.retrieveComponentDescriptor(uri="import:not-there/unknown")
+        a, = executive.resolve(uri="file:sample_syntaxerror.py/factory")
         assert False
-    except ValueError:
+    except SyntaxError as error:
         pass
     # all done
     return executive

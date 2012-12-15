@@ -73,7 +73,7 @@ class ODB(Loader):
 
 
     @classmethod
-    def locateShelves(cls, facility, uri, **kwds):
+    def locateShelves(cls, client, uri, **kwds):
         """
         Locate candidate shelves from the given {uri}
         """
@@ -88,10 +88,10 @@ class ODB(Loader):
             # there is nothing else to try
             return
 
-        # otherwise, if there is a valid facility
-        if facility:
+        # otherwise, if there is a valid {client}
+        if client:
             # get the protocol
-            protocol = facility.schema
+            protocol = client.schema
             # get the fileserver
             fileserver = protocol.pyre_fileserver
             # get it to provide some candidates from the virtual filesystem

@@ -105,7 +105,7 @@ class Executive:
         return self.configure(stem=package.name, priority=self.priority.package, locator=locator)
         
 
-    def retrieveComponentDescriptor(self, uri, facility=None):
+    def resolve(self, uri, client=None):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
 
@@ -161,22 +161,102 @@ class Executive:
         """
         # force a uri
         uri = self.uri.coerce(uri)
-        # if the {uri} specifies a fragment, treat it as the name of the component
-        if uri.fragment:
-            # do we have a component by that name?
+        # grab my nameserver
+        nameserver = self.nameserver
+
+        # if the {uri} contains a fragment, treat it as the name of the component
+        name = uri.fragment
+
+        # is there anything registered under it? check carefully: do not to disturb the symbol
+        # table of the nameserver, in case the name is junk
+        if name and name in nameserver:
+            # look it up
             try:
-                # return it
-                yield self.nameserver[uri.fragment]
-            # if not
-            except self.nameserver.UnresolvedNodeError:
+                # and return it
+                yield nameserver[name]
+            # if it is unresolved
+            except nameserver.UnresolvedNodeError:
                 # no worries
                 pass
 
-        # get the linker to find descriptors
-        for descriptor in self.linker.retrieveComponentDescriptor(
-            executive=self, facility=facility, uri=uri):
-            # and see if they work
-            yield descriptor
+        # make a locator
+        locator = tracking.simple('while resolving {!r}'.format(uri.uri))
+        # load the component recognizers
+        from ..components.Actor import Actor as actor
+        from ..components.Component import Component as component
+
+        # the easy things didn't work out; look for matching descriptors
+        for candidate in self.retrieveComponentDescriptor(uri=uri, client=client):
+            # if the candidate is neither a component class nor a component instance
+            if not (isinstance(candidate, actor) or isinstance(candidate, component)):
+                # it must be a callable the returns one
+                try:
+                    # evaluate it
+                    candidate = candidate()
+                # if this fails
+                except TypeError:
+                    # move on to the next candidate
+                    continue
+                # if it succeeded, verify it is a component
+                if not (isinstance(candidate, actor) or isinstance(candidate, component)):
+                    # and if not, move on
+                    continue
+            # if it is a component class and we have been asked to instantiate it
+            if name and isinstance(candidate, actor):
+                # build it
+                candidate = candidate(name=name, locator=locator)
+            # otherwise
+            else:
+                # just mark it
+                candidate.pyre_locator = tracking.chain(candidate.pyre_locator, locator)
+            # ready to  hand it to our caller
+            yield candidate
+
+        # totally out of ideas
+        return
+
+
+    def retrieveComponentDescriptor(self, uri, client):
+        """
+        The component resolution workhorse
+        """
+        # grab my nameserver
+        nameserver = self.nameserver
+        # get the uri scheme
+        scheme = uri.scheme
+        # and the address
+        address = uri.address
+        # if no {scheme} was specified, assume it is {import} and look for possible
+        # interpretation of the uri that have been loaded previously
+        if not scheme:
+            # check whether the {address} points to a component that has been loaded
+            # previously; if there
+            if address and address in nameserver:
+                # look it up
+                try:
+                    # and return it
+                    yield nameserver[address]
+                # if it is unresolved
+                except nameserver.UnresolvedNodeError:
+                    # no worries
+                    pass
+            # try splicing the family name of the {client} with the given address
+            if client:
+                # build the new address
+                extended = nameserver.join(client.schema.pyre_family(), address)
+                # does the nameserver recognize it?
+                if extended in nameserver:
+                    # look it up
+                    try:
+                        # and return it
+                        yield nameserver[extended]
+                    # if it is unresolved
+                    except nameserver.UnresolvedNodeError:
+                        # no worries
+                        pass
+
+        # ask the linker to find descriptors
+        yield from self.linker.resolve(executive=self, client=client, uri=uri)
 
         # all done
         return

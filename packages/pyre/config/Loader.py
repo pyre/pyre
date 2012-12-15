@@ -19,10 +19,10 @@ class Loader:
 
     # interface
     @classmethod
-    def locateSymbol(cls, executive, uri, facility):
+    def locateSymbol(cls, executive, uri, client):
         """
         Locate and load the symbol that corresponds to the given {uri}; if {uri} is not
-        sufficiently qualified to point to a unique location, use {facility} to form candidates
+        sufficiently qualified to point to a unique location, use {client} to form candidates
         until one of them results in a loadable shelf that can resolve the specification
         """
         # we split the address part of the {uri} into a {package} and a {symbol}. The {symbol}
@@ -37,24 +37,24 @@ class Loader:
             package, symbol = uri.address.rsplit(cls.separator, 1)
         # if that fails
         except ValueError:
-            # if there is no facility, we are done
-            if not facility: return
+            # if there is no client, we are done
+            if not client: return
             # use the address itself as the symbol
             symbol = uri.address
-            # the package will be filled out using the protocol family
+            # the package will be filled out using the client family
             package = ''
 
         # build a template {uri} for the shelf
         template = cls.uri(scheme=uri.scheme, address=package)
 
-        # if there is a valid facility
-        if facility:
-            # run the symbol through the set of converters specified by the facility
-            for converter in facility.converters: symbol = converter(symbol)
+        # if there is a valid client
+        if client:
+            # run the symbol through the set of converters specified by the client
+            for converter in client.converters: symbol = converter(symbol)
 
         # look for matching shelves; the {uri} may match more than shelf, so try them all until
         # we find one that contains our target {symbol}
-        for shelf in cls.loadShelves(executive=executive, facility=facility, uri=template):
+        for shelf in cls.loadShelves(executive=executive, client=client, uri=template):
             # got one
             # attempt to 
             try:
@@ -75,16 +75,15 @@ class Loader:
 
 
     @classmethod
-    def loadShelves(cls, executive, facility, uri):
+    def loadShelves(cls, executive, client, uri):
         """
-        Locate and load shelves for the given {package}; if {package} is not sufficiently
-        qualified to point to a unique location, use {facility} to form plausible candidates.
+        Locate and load shelves for the given {uri}; if the {uri} is not sufficiently qualified
+        to point to a unique location, use {client} to form plausible candidates.
         """
         # access the linker
         linker = executive.linker
-        # if {package} is not empty, use it; otherwise use {facility} to build a sequence of
-        # candidate locations
-        candidates = cls.locateShelves(executive=executive, facility=facility, uri=uri)
+        # use {client} to build a sequence of candidate locations
+        candidates = cls.locateShelves(executive=executive, client=client, uri=uri)
         # go through each of them
         for uri in candidates:
             # does this uri correspond to a known shelf

@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2012 all rights reserved
+#
+
+
+"""
+Sample file with component declarations for the tests in this directory
+"""
+
+
+import pyre
+
+# FOR: resolve.py
+# declare a worker
+class worker(pyre.component):
+    """a worker"""
+
+    @pyre.export
+    def do(self):
+        """do nothing"""
+
+
+# end of file 

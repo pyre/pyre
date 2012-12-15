@@ -40,46 +40,15 @@ class Linker:
         return codec.load(executive=executive, uri=uri)
         
 
-    def retrieveComponentDescriptor(self, executive, facility, uri):
+    def resolve(self, executive, client, uri):
         """
         Attempt to locate the component class specified by {uri}
         """
-        # print("Linker.retrieveComponentDescriptor:")
-        # print("  uri: {!r}".format(uri))
-        # print("  protocol: {}".format(facility.schema))
-        # print("        shelves: {!r}".format(tuple(self.shelves.keys())))
-
-        # get the nameserver
-        nameserver = executive.nameserver
-        # get the specified scheme
-        scheme = uri.scheme
-        # if there was no explicit scheme given
-        if not scheme:
-            # if we have anything explicitly registered under the address
-            try:
-                # get it
-                yield nameserver[uri.address]
-            # if not
-            except nameserver.UnresolvedNodeError:
-                # no problem
-                pass
-
-            # how about splicing the family name with the given address
-            try:
-                # get it
-                yield nameserver[nameserver.join(facility.schema.pyre_family(), uri.address)]
-            # if not
-            except nameserver.UnresolvedNodeError:
-                # no problem
-                pass
-
-        # what else should we try?
+        # what should we try?
         schemes = [uri.scheme] if uri.scheme else ['import', 'vfs']
-        # print("  schemes: {!r}".format(schemes))
 
         # for each loading strategy
         for scheme in schemes:
-            # print("    attempting {!r}".format(scheme))
             # try to
             try:
                 # locate the associated decoder
@@ -91,19 +60,15 @@ class Linker:
                 # and complain
                 raise self.BadResourceLocatorError(uri=uri, reason=reason)
 
-            # copy the input {uri}
+            # clone the input {uri} so we don't disturb it
             candidate = uri.clone()
             # make sure the candidate has a scheme
             candidate.scheme = scheme
 
             # the codec is able to provide a sequence of matching symbols
-            for descriptor in codec.locateSymbol(
-                executive=executive, facility=facility, uri=candidate):
-                # got one! the facility will take care of the rest...
-                # print("    candidate: {}".format(candidate))
-                yield descriptor
+            yield from codec.locateSymbol(executive=executive, client=client, uri=candidate)
 
-        # if we get this far, everything we could think of has failed
+        # out of ideas
         return 
 
 

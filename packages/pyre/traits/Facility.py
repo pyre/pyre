@@ -135,29 +135,7 @@ class Facility(Slotted):
         nameserver = executive.nameserver
 
         # for each potential resolution of {value} by the executive
-        for candidate in executive.retrieveComponentDescriptor(uri=uri, facility=self):
-            # if it's neither a component class not a component instance
-            if not (isinstance(candidate, actor) or isinstance(candidate, component)):
-                # it must be a callable that returns one
-                try:
-                    # evaluate it
-                    candidate = candidate()
-                # if that fails
-                except TypeError:
-                    # move on
-                    continue
-                # if it succeeded, check the return type
-                if not (isinstance(candidate, actor) or isinstance(candidate, component)):
-                    # it's no good; move on
-                    continue
-            # if it is a component class and we have been asked to instantiate it
-            if instanceName and isinstance(candidate, actor):
-                # make a locator
-                this = tracking.simple('while resolving {!r}'.format(uri.uri))
-                locator = tracking.chain(this=this, next=locator)
-                # build it
-                candidate = candidate(name=instanceName, locator=locator)
-
+        for candidate in executive.resolve(uri=uri, client=self):
             # if it is compatible with my protocol
             if candidate.pyre_isCompatible(self.schema):
                 # give it a try
