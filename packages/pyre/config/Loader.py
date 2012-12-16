@@ -67,9 +67,27 @@ class Loader:
             # otherwise, success!
             yield descriptor
 
-        # now, for my next trick
-        # raise NotImplementedError("my next trick: NYI!")
-
+        # now, for my next trick:
+        if client:
+            # attempt to interpret the symbol itself as a shelf
+            try:
+                # load it
+                shelf = cls.load(executive=executive, uri=cls.uri.coerce(symbol))
+            # if anything goes wrong
+            except cls.LoadingError:
+                # just ignore it
+                pass
+            # if loading succeeds
+            else:
+                # ask the client for the implementation protocol
+                protocol = client.schema
+                # look through its implementors
+                for implementor in executive.registrar.implementors[protocol]:
+                    # get its package
+                    package = implementor.pyre_package()
+                    # and yield ones whose package name matches our symbol
+                    if package and package.name == symbol: yield implementor
+            
         # out of ideas
         return
 
