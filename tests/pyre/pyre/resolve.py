@@ -22,10 +22,33 @@ def test():
     assert c is pyre.component
 
     # something a bit more difficult
-    t = pyre.resolve(uri='file:sample.py/worker#joe')
+    joe = pyre.resolve(uri='file:sample.py/worker#joe')
     # check it
-    assert isinstance(t, pyre.component)
-    assert t.pyre_name == 'joe'
+    assert isinstance(joe, pyre.component)
+    assert joe.pyre_name == 'joe'
+
+    # through the vfs
+    barry = pyre.resolve(uri='vfs:/pyre/startup/sample.py/worker#barry')
+    # check it
+    assert isinstance(barry, pyre.component)
+    assert barry.pyre_name == 'barry'
+
+    # using {import} instead of {file}
+    bob = pyre.resolve(uri='import:sample.worker#bob')
+    # check it
+    assert isinstance(bob, pyre.component)
+    assert bob.pyre_name == 'bob'
+
+    # using {import} implicitly
+    fred = pyre.resolve(uri='sample.worker#fred')
+    # check it
+    assert isinstance(bob, pyre.component)
+    assert fred.pyre_name == 'fred'
+
+    # this should fail quietly
+    p = pyre.resolve(uri='import:pyre.protocol')
+    # check it
+    assert p is None
 
     # all done
     return
