@@ -34,6 +34,9 @@ running concurrent applications using {MPI}.
 """
 
 
+# the protocol
+from .Shell import Shell as shell
+
 # the hosting strategies
 from .Script import Script as script
 from .Fork import Fork as fork
