@@ -73,7 +73,7 @@ class ODB(Loader):
 
 
     @classmethod
-    def locateShelves(cls, client, uri, **kwds):
+    def locateShelves(cls, client, uri, symbol, **kwds):
         """
         Locate candidate shelves from the given {uri}
         """
@@ -82,6 +82,10 @@ class ODB(Loader):
             # try it first
             # print("ODB.locateShelves: uri={.uri!r}".format(uri))
             yield uri
+            # try adding a '.py' to it
+            extended = uri.clone()
+            extended.address += '.py'
+            yield extended
 
         # if the uri scheme was 'file'
         if uri.scheme == 'file':
@@ -92,13 +96,8 @@ class ODB(Loader):
         if client:
             # get the protocol
             protocol = client.schema
-            # get the fileserver
-            fileserver = protocol.pyre_fileserver
             # get it to provide some candidates from the virtual filesystem
-            for uri in protocol.pyre_find(uri=uri):
-                # whatever she said
-                # print("ODB.locateShelves: uri={.uri!r}".format(uri))
-                yield uri
+            yield from protocol.pyre_find(uri=uri, symbol=symbol)
 
         # no more ideas
         return

@@ -33,7 +33,8 @@ class Loader:
 
         # attempt to
         try:
-            # split the address into a package and a symbol
+            # split the address into a package and a symbol; this should be done by every
+            # loader since isolating the {symbol} requires knowledge of the separator
             package, symbol = uri.address.rsplit(cls.separator, 1)
         # if that fails
         except ValueError:
@@ -44,19 +45,19 @@ class Loader:
             # the package will be filled out using the client family
             package = ''
 
-        # build a template {uri} for the shelf
-        template = cls.uri(scheme=uri.scheme, address=package)
-
         # if there is a valid client
         if client:
             # run the symbol through the set of converters specified by the client
-            for converter in client.converters: symbol = converter(symbol)
+            symbol = client.convert(symbol)
+
+        # convert the package specification into a uri
+        package = cls.uri(scheme=uri.scheme, address=package)
 
         # look for matching shelves; the {uri} may match more than shelf, so try them all until
         # we find one that contains our target {symbol}
-        for shelf in cls.loadShelves(executive=executive, client=client, uri=template):
-            # got one
-            # attempt to 
+        for shelf in cls.loadShelves(executive=executive,
+                                     client=client, uri=package, symbol=symbol):
+            # got one; attempt to
             try:
                 # look for our symbol 
                 descriptor = shelf.retrieveSymbol(symbol)
@@ -67,33 +68,34 @@ class Loader:
             # otherwise, success!
             yield descriptor
 
-        # now, for my next trick:
-        if client:
-            # attempt to interpret the symbol itself as a shelf
-            try:
-                # load it
-                shelf = cls.load(executive=executive, uri=cls.uri.coerce(symbol))
-            # if anything goes wrong
-            except cls.LoadingError:
-                # just ignore it
-                pass
-            # if loading succeeds
-            else:
-                # ask the client for the implementation protocol
-                protocol = client.schema
-                # look through its implementors
-                for implementor in executive.registrar.implementors[protocol]:
-                    # get its package
-                    package = implementor.pyre_package()
-                    # and yield ones whose package name matches our symbol
-                    if package and package.name == symbol: yield implementor
+        # if there is no client to help out, give up
+        if not client: return
+
+        # now, for my next trick: attempt to interpret the symbol itself as a shelf
+        try:
+            # load it
+            shelf = cls.load(executive=executive, uri=cls.uri.coerce(symbol))
+        # if anything goes wrong
+        except cls.LoadingError:
+            # just ignore it
+            pass
+        # if loading succeeds
+        else:
+            # ask the client for the implementation protocol
+            protocol = client.schema
+            # look through its implementors
+            for implementor in executive.registrar.implementors[protocol]:
+                # get its package
+                package = implementor.pyre_package()
+                # and yield ones whose package name matches our symbol
+                if package and package.name == symbol: yield implementor
             
         # out of ideas
         return
 
 
     @classmethod
-    def loadShelves(cls, executive, client, uri):
+    def loadShelves(cls, executive, client, uri, symbol):
         """
         Locate and load shelves for the given {uri}; if the {uri} is not sufficiently qualified
         to point to a unique location, use {client} to form plausible candidates.
@@ -101,9 +103,10 @@ class Loader:
         # access the linker
         linker = executive.linker
         # use {client} to build a sequence of candidate locations
-        candidates = cls.locateShelves(executive=executive, client=client, uri=uri)
+        candidates = cls.locateShelves(executive=executive, client=client, uri=uri, symbol=symbol)
         # go through each of them
         for uri in candidates:
+            # print("Loader.loadShelves: uri={.uri!r}".format(uri))
             # does this uri correspond to a known shelf
             try:
                 # if yes, grab it

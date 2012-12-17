@@ -21,8 +21,8 @@ class Merlin(pyre.application, family='merlin.application'):
 
     # public data
     searchpath = pyre.properties.list(
-        schema=pyre.schema.str,
-        default=['/merlin/project', '/merlin/user', '/merlin/system'])
+        schema=pyre.schema.uri,
+        default=['vfs:/merlin/project', 'vfs:/merlin/user', 'vfs:/merlin/system'])
 
 
     # my subcomponents; built at construction time

@@ -17,6 +17,24 @@ class Language(pyre.protocol, family="pyre.weaver.languages"):
     """
 
 
+    # constants
+    # the language normalization table
+    languages = {
+        "c++": "cxx",
+        "fortran": "f77",
+        "fortran77": "f77",
+        }
+
+
+    # framework hooks
+    @classmethod
+    def pyre_convert(cls, language):
+        # first, convert to lower case
+        language = language.lower()
+        # now, translate
+        return cls.languages.get(language, language)
+
+
     # interface
     @pyre.provides
     def render(self, document, stationery):

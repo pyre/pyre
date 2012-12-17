@@ -43,6 +43,18 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         return None
 
 
+    # override this in your protocols to provide custom translations of symbols to component
+    # specifications
+    @classmethod
+    def pyre_convert(cls, value):
+        """
+        Hook to enable protocols to translate the component specification in {value} into a
+        canonical form
+        """
+        # by default, do nothing
+        return value
+
+
     # introspection
     @classmethod
     def pyre_family(cls):
@@ -76,7 +88,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # support for framework requests
     @classmethod
-    def pyre_find(cls, uri, searchpath=None):
+    def pyre_find(cls, uri, symbol, searchpath=None):
         """
         Participate in the search for shelves consistent with {uri}
         """
@@ -100,8 +112,9 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         folders = (
             fileserver.join(*contextpath[:marker])
             for marker in reversed(range(0, len(contextpath)+1)))
-        # and the address specification from the {uri}
-        address = [uri.address]
+
+        # and the address specification from the {uri}, with and without the {symbol}
+        address = [uri.address, fileserver.join(uri.address, '{}.py'.format(symbol))]
         # with all possible combinations of these three sequences
         for fragments in itertools.product(roots, folders, address):
             # assemble the path

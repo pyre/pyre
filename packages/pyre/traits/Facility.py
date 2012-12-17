@@ -144,6 +144,18 @@ class Facility(Slotted):
         # out of ideas
         return
 
+
+    def convert(self, value):
+        """
+        Walk {value} through the sequence of registered converters
+        """
+        # first through mine
+        for converter in self.converters: value = converter(value)
+        # now, ask the protocol to have a go
+        value = self.schema.pyre_convert(value)
+        # and return it
+        return value
+
     
     # support for constructing instance slots
     def classSlot(self, model):

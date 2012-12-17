@@ -40,7 +40,7 @@ class Spell(pyre.protocol, family="merlin.spells"):
 
     # support for framework requests
     @classmethod
-    def pyre_find(cls, uri):
+    def pyre_find(cls, uri, symbol):
         """
         Participate  in the search for shelves consistent with {uri}
         """
@@ -51,7 +51,7 @@ class Spell(pyre.protocol, family="merlin.spells"):
         # visit each location on the merlin search path
         for root in merlin.searchpath:
             # form the location of the subdirectory with spells
-            spelldir = vfs.join(root, 'spells')
+            spelldir = vfs.join(root.address, 'spells')
             # get the folder
             folder = vfs[spelldir]
 

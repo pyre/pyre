@@ -10,34 +10,6 @@
 import pyre
 
 
-# helpers
-# the language normalization table
-languages = {
-    "c++": "cxx",
-    "fortran": "f77",
-    "fortran77": "f77",
-    }
-
-# the language name converter
-def convertLanguageName(language):
-    """
-    Map {language} into the set of known language identifiers
-    """
-    # first, convert to lower case
-    language = language.lower()
-    
-    # attempt to
-    try:
-        # find the canonical name
-        language = languages[language]
-    # if it's not there
-    except KeyError:
-        # no problem
-        pass
-    # return the transformed symbol
-    return language
-
-
 # declaration
 class Weaver(pyre.component, family="pyre.weaver"):
     """
@@ -52,7 +24,6 @@ class Weaver(pyre.component, family="pyre.weaver"):
     # public state
     language = Language()
     language.doc = "the desired output language"
-    language.converters = [ convertLanguageName ]
 
 
     # public interface
@@ -61,11 +32,10 @@ class Weaver(pyre.component, family="pyre.weaver"):
         """
         Assemble and print the {document} into the given {stream}
         """
-        # create an empty {document} if none was give
+        # create an empty {document} if none was given
         document = () if document is None else document
-        # render the document
-        for line in self.language.render(document=document):
-            yield line
+        # render it
+        yield from self.language.render(document=document)
         # and return
         return
 
