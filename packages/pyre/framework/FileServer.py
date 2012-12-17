@@ -160,7 +160,7 @@ class FileServer(Filesystem):
         userdir = os.path.expanduser(self.DOT_PYRE) 
         try:
             # make filesystem out of the preference directory
-            user = self.local(root=userdir).discover(levels=1)
+            user = self.local(root=userdir).discover()
         except self.GenericError:
             user = self.folder()
        # mount this directory as {/pyre/user}
