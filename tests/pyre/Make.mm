@@ -35,7 +35,8 @@ RECURSE_DIRS = \
 #--------------------------------------------------------------------------
 #
 
-all: test
+all: 
+	BLD_ACTION="all" $(MM) recurse
 
 test::
 	BLD_ACTION="test" $(MM) recurse
