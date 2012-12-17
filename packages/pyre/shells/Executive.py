@@ -14,6 +14,8 @@ import operator
 import platform
 # my interface
 from .Shell import Shell as shell
+# the protocols of my traits
+from .Host import Host
 
 
 # declaration
@@ -23,23 +25,12 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
     """
 
 
-    # constants
-    # the key under which users can specify nicknames for known hosts
-    hostmapkey = ['pyre', 'hostmap']
-
     # user configurable state
     home = pyre.properties.str(default=None)
     home.doc = "the process home directory"
 
-    # public data
-    system = None # the type of host on which this process is running
-    release = None # the OS release
-    version = None # the OS version
-    architecture = None # the CPU architecture
-    processor = None # the CPU type
-
-    hostname = None # the name of the host on which this process is running
-    platform = None # the OS type on which this process is running
+    host = Host()
+    host.doc = "information about the host machine"
 
 
     @property
@@ -71,24 +62,6 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
         """
         # {Executive} is abstract
         raise NotImplementedError("class {.__name__} must implement 'launch'".format(type(self)))
-
-
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-
-        # host discovery
-        (system, name, release, version, architecture, processor) = platform.uname()
-        self.hostname = name
-        self.system = system
-        self.release = release
-        self.version = version
-        self.architecture = architecture
-        self.processor = processor
-        self.platform = sys.platform
-
-        # all done
-        return
 
 
 # end of file 

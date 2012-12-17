@@ -22,11 +22,14 @@ EXPORT_PYTHON_MODULES = \
     ANSI.py \
     Application.py \
     Daemon.py \
+    Darwin.py \
     Director.py \
     Dumb.py \
     Executive.py \
     Fork.py \
     Host.py \
+    Linux.py \
+    Platform.py \
     Script.py \
     Shell.py \
     Terminal.py \

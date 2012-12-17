@@ -24,7 +24,6 @@ class Fork(Executive, family='pyre.shells.fork'):
     capture = pyre.properties.bool(default=True)
     capture.doc = "control whether to create communication channels to the daemon process"
 
-
     debug = pyre.properties.bool(default=False)
     debug.doc = "turn it on to prevent the child from detaching from the parent"
 
