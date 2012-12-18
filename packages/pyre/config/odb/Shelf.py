@@ -57,8 +57,12 @@ class Shelf(dict):
     # meta methods
     def __init__(self, uri, locator, **kwds):
         super().__init__(**kwds)
+        # save my state
         self.uri = uri
         self.locator = locator
+        # load the global symbols so they are available to the execution context
+        self.update(__builtins__)
+        # ready to go
         return
 
 
