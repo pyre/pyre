@@ -19,6 +19,9 @@ class Spell(pyre.protocol, family="merlin.spells"):
     """
 
 
+    # types
+    from pyre.schema import uri
+
     # public data
     merlin = None # gets patched during boot
 
@@ -73,6 +76,37 @@ class Spell(pyre.protocol, family="merlin.spells"):
                 yield uri
         # all done
         return
+
+
+    @classmethod
+    def pyre_find(cls, uri, symbol):
+        """
+        Participate in the search for the spell {symbol}
+        """
+        # access the merlin executive
+        merlin = cls.merlin
+        # and its private file space
+        vfs = merlin.vfs
+
+        # starting with the locations on the search paths
+        roots = tuple(folder.address for folder in merlin.searchpath)
+        # the locations of spells
+        spells = [ 'spells' ]
+        # inject the address of the {uri}
+        address = [ uri.address ]
+        # the leaves
+        leaves = [ '{}.py'.format(symbol), '']
+
+        # with all possible combinations of all these
+        for fragments in itertools.product(roots, spells, address, leaves):
+            # assemble the  path
+            path = vfs.join(*filter(None, fragments))
+            # build a uri and yield it
+            yield cls.uri(scheme='vfs', address=path)
+
+        # all ideas exhausted
+        return
+        
 
 
 # end of file 

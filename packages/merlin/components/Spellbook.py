@@ -42,7 +42,7 @@ class Spellbook(merlin.component, family="merlin.components.spellbook"):
         # print(" ** Spellbook.findSpell: looking for {!r}".format(name))
         # make a locator
         here = pyre.tracking.simple('while looking for spell {!r}'.format(name))
-        #
+        # and chain it to the locator that was passed in
         locator = pyre.tracking.chain(this=here, next=locator) if locator else here
         # ask the spell interface to convert the name into plausible spell factories
         factories = self.spell().resolve(value=name, locator=locator)

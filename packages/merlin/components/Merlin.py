@@ -17,7 +17,7 @@ class Merlin(pyre.application, family='merlin.application'):
 
     # types
     # exceptions
-    from .exceptions import MerlinError
+    from .exceptions import MerlinError, SpellNotFoundError
 
     # public data
     searchpath = pyre.properties.list(
@@ -84,7 +84,7 @@ class Merlin(pyre.application, family='merlin.application'):
             # locate the spell
             spell = self.spellbook.findSpell(name=name, locator=locator)
         # if that failed
-        except self.FrameworkError:
+        except self.SpellNotFoundError:
             # complain
             import journal
             msg = "spell {!r} not found".format(name)

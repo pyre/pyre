@@ -9,7 +9,7 @@
 import merlin
 
 
-class test(merlin.spell, family="merlin.spells.test"):
+class sample(merlin.spell, family="merlin.spells.sample"):
     """
     A sample spell
     """
