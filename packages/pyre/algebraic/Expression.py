@@ -112,7 +112,7 @@ class Expression:
         # convert node references to legal python identifiers
         # print("Expression.parse: expression={!r}".format(expression))
         normalized = cls._scanner.sub(handler, expression)
-        print("  normalized: {!r}".format(normalized))
+        # print("  normalized: {!r}".format(normalized))
         # print("  operands:", operands)
         # if there were no symbols, the expression had no node evaluations; but since it may
         # have had escaped braces, make sure the caller has access to the processed value
