@@ -53,9 +53,9 @@ class SymbolTable:
             # compile the {value}
             program, operands = self.node.expression.compile(model=self, expression=value)
         # if this fails
-        except self.node.EmptyExpressionError:
-            # make a variable instead
-            return self.variable(value=value, **kwds)
+        except self.node.EmptyExpressionError as error:
+            # make a variable instead; use the processed value to get rid of the meta-characters
+            return self.variable(value=error.expression, **kwds)
         # otherwise, build an expression
         return self.node.expression(
             model=self, expression=value, program=program, operands=operands, **kwds)
@@ -78,9 +78,9 @@ class SymbolTable:
             # compile the {value}
             operands = self.node.interpolation.compile(model=self, expression=value)
         # if this fails
-        except self.node.EmptyExpressionError:
-            # make a variable instead
-            return self.variable(value=value, **kwds)
+        except self.node.EmptyExpressionError as error:
+            # make a variable instead; use the processed value to get rid of the meta-characters
+            return self.variable(value=error.expression, **kwds)
         # otherwise, build an interpolation
         return self.node.interpolation(model=self, expression=value, operands=operands, **kwds)
 

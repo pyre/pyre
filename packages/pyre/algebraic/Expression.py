@@ -112,11 +112,11 @@ class Expression:
         # convert node references to legal python identifiers
         # print("Expression.parse: expression={!r}".format(expression))
         normalized = cls._scanner.sub(handler, expression)
-        # print("  normalized: {!r}".format(normalized))
+        print("  normalized: {!r}".format(normalized))
         # print("  operands:", operands)
-        # raise an exception if there were no symbols
-        if not operands:
-            raise cls.EmptyExpressionError(formula=expression)
+        # if there were no symbols, the expression had no node evaluations; but since it may
+        # have had escaped braces, make sure the caller has access to the processed value
+        if not operands: raise cls.EmptyExpressionError(formula=normalized)
         # now, attempt to compile the expression
         try:
             program = compile(normalized, filename='expression', mode='eval')

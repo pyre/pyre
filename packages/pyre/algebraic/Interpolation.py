@@ -115,13 +115,15 @@ class Interpolation:
             # update the location in {expression}
             pos = end
 
-        # if there were no matches, the expression had no node evaluations
-        if not operands:
-            # complain
-            raise cls.EmptyExpressionError(formula=expression)
-
         # store the trailing part of the expression
         fragment += expression[pos:]    
+
+        # if there were no matches, the expression had no node evaluations; but since it may
+        # have had escaped braces, make sure the caller has access to the processed value
+        if not operands:
+            # complain
+            raise cls.EmptyExpressionError(formula=fragment)
+
         # and if it's not empty, turn it into a variable
         if fragment: operands.append(model.literal(value=fragment))
         
