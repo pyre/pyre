@@ -21,4 +21,16 @@ class Darwin(Platform, family='pyre.hosts.darwin'):
     platform = 'darwin'
 
 
+    # implementation details: explorers
+    @classmethod
+    def cpuServey(cls):
+        """
+        Collect information about the CPU resources on this host
+        """
+        # on darwin, we get this information from an extension
+        from pyre.extensions import host
+        # easy enough
+        return host.physicalMax(), host.logicalMax()
+
+
 # end of file 

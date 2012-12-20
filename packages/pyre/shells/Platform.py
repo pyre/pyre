@@ -29,7 +29,10 @@ class Platform(pyre.component, implements=Host):
     architecture = None # the CPU architecture
     processor = None # the CPU type
 
+    cpus = None # the triplet (cpus, physical cores, logical cores)
 
+
+    # protocol obligations
     @classmethod
     def flavor(cls):
         """
@@ -38,5 +41,20 @@ class Platform(pyre.component, implements=Host):
         # the default; override in subclasses
         return cls
 
+
+    # meta methods
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+        self.cpus = self.cpuServey()
+        return
+
+
+    # implementation details: explorers
+    @classmethod
+    def cpuServey(cls):
+        """
+        Collect information about the CPU resources on this host
+        """
+        raise NotImplementedError("class {.__name__!r} must implement 'cpuServey'".format(cls))
 
 # end of file 
