@@ -31,21 +31,40 @@ class Linux(Platform, family='pyre.hosts.linux'):
         Collect information about the CPU resources on this host
         """
         # initialize the cpu store
+        ids = 0
         cpus = collections.defaultdict(dict)
-        # the marker
+        # the markers
         physicalid = None
         # prime the tokenizer
         tokens = cls.tokenizeCPUInfo()
-        # the keys we car about
+        # the keys we care about
         targets = {'siblings', 'cpu cores'}
         # parse
         for key, value in tokens:
-            # if the key is blank, reset the marker
-            if not key: physicalid = None
-            # harvest the cpu physical id
-            if key == 'physical id': physicalid = value
+            # if the key is blank
+            if not key: 
+                # reset the marker
+                physicalid = None
+                # and move on
+                continue
+            # record the processor ids; that's all we have on single core machines
+            if key == 'processor':
+                # increment the count
+                ids += 1
+                # move on
+                continue
+            # the socket to which this core belongs
+            if key == 'physical id':
+                # harvest the cpu physical id
+                physicalid = value
+                # move on
+                continue
             # harvest the interesting info
-            if key in targets: cpus[physicalid][key] = value
+            if physicalid and key in targets:
+                # attach it to the right socket
+                cpus[physicalid][key] = value
+                # and move on
+                continue
 
         # initialize the counters
         sockets = physical = logical = 0
@@ -58,8 +77,13 @@ class Linux(Platform, family='pyre.hosts.linux'):
             # update the number of logical cores
             logical += int(info['siblings'])
         
-        # that's all for now
-        return physical, logical
+        # if the reduction produced non-zero results
+        if physical and logical:
+            # that's all for now
+            return physical, logical
+
+        # otherwise, we are on a single core host
+        return ids, ids
 
 
     # implementation details: workhorses
