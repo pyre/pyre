@@ -29,6 +29,7 @@ RECURSE_DIRS = \
     weaver \
     db \
     ipc \
+    platforms \
     shells \
     pyre
 
