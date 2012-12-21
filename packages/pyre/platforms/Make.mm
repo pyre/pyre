@@ -6,7 +6,7 @@
 #
 
 PROJECT = pyre
-PACKAGE = shells
+PACKAGE = platforms
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
@@ -19,17 +19,12 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    ANSI.py \
-    Application.py \
-    Daemon.py \
-    Director.py \
-    Dumb.py \
-    Executive.py \
-    Fork.py \
-    Script.py \
-    Shell.py \
-    Terminal.py \
-    User.py \
+    Darwin.py \
+    Host.py \
+    Linux.py \
+    MacPorts.py \
+    Platform.py \
+    Ubuntu.py \
     __init__.py
 
 

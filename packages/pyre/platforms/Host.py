@@ -9,11 +9,11 @@
 # framework
 import pyre
 # my protocol
-from .Host import Host
+from .Platform import Platform
 
 
 # declaration
-class Platform(pyre.component, implements=Host):
+class Host(pyre.component, implements=Platform):
     """
     Encapsulation of a generic linux host
     """
@@ -56,5 +56,6 @@ class Platform(pyre.component, implements=Host):
         Collect information about the CPU resources on this host
         """
         raise NotImplementedError("class {.__name__!r} must implement 'cpuServey'".format(cls))
+
 
 # end of file 

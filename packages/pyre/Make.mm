@@ -23,6 +23,7 @@ RECURSE_DIRS = \
     ipc \
     parsing \
     patterns \
+    platforms \
     records \
     schema \
     shells \

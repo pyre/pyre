@@ -15,7 +15,7 @@ import platform
 # my interface
 from .Shell import Shell as shell
 # the protocols of my traits
-from .Host import Host
+from ..platforms import platform
 
 
 # declaration
@@ -29,7 +29,7 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
     home = pyre.properties.str(default=None)
     home.doc = "the process home directory"
 
-    host = Host()
+    host = platform()
     host.doc = "information about the host machine"
 
 

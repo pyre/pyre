@@ -10,11 +10,11 @@
 import operator
 import collections
 # superclass
-from .Platform import Platform
+from .Host import Host
 
 
 # declaration
-class Linux(Platform, family='pyre.hosts.linux'):
+class Linux(Host, family='pyre.platforms.linux'):
     """
     Encapsulation of a generic linux host
     """
@@ -22,6 +22,28 @@ class Linux(Platform, family='pyre.hosts.linux'):
 
     # public data
     platform = 'linux'
+    systemdirs = ['/usr'] # canonical package installation locations
+
+
+    # protocol obligations
+    @classmethod
+    def flavor(cls):
+        """
+        Return a suitable default encapsulation of the runtime host
+        """
+        # open the issue file
+        with open(cls.issue) as issue:
+            # read the first line
+            tag = next(issue)
+            # check for ubuntu
+            if tag.lower().startswith('ubuntu'):
+                # load the platform file
+                from .Ubuntu import Ubuntu
+                # and return it
+                return Ubuntu
+
+        # otherwise, act like a generic linux system
+        return cls
 
 
     # implementation details: explorers
@@ -113,6 +135,7 @@ class Linux(Platform, family='pyre.hosts.linux'):
 
 
     # implementation constants
+    issue = '/etc/issue'
     cpuinfo = '/proc/cpuinfo'
 
 

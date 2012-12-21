@@ -6,15 +6,15 @@
 #
 
 
-# the framework
-import pyre
 # externals
 import re
 import operator
+# the framework
+import pyre
 
 
 # declaration
-class Host(pyre.protocol, family='pyre.hosts'):
+class Platform(pyre.protocol, family='pyre.platforms'):
     """
     Encapsulation of host specific information
     """
@@ -69,8 +69,8 @@ class Host(pyre.protocol, family='pyre.hosts'):
             return Linux.flavor()
 
         # otherwise, we know nothing; let the user know
-        from .Platform import Platform
-        return Platform
+        from .Host import Host
+        return Host
 
 
 # end of file 
