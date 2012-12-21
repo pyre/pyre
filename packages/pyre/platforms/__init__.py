@@ -15,6 +15,9 @@ from .Darwin import Darwin as darwin
 from .MacPorts import MacPorts as macports
 # linux
 from .Linux import Linux as linux
+from .CentOS import CentOS as centos
+from .RedHat import RedHat as redhat
+from .Ubuntu import Ubuntu as ubuntu
 
 
 # end of file 

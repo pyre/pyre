@@ -13,7 +13,7 @@ from .Linux import Linux
 
 
 # declaration
-class Ubuntu(Linux, family='pyre.platforms.ubuntu'):
+class RedHat(Linux, family='pyre.platforms.redhat'):
     """
     Encapsulation of a host running linux on the ubuntu distribution
     """
@@ -40,7 +40,7 @@ class Ubuntu(Linux, family='pyre.platforms.ubuntu'):
             # read the first line
             tag = next(issue)
             # parse
-            match = re.match('Ubuntu (?P<revision>[0-9]+\.[0-9]+)', tag)
+            match = re.match('Red Hat.*release (?P<revision>[0-9]+\.[0-9]+)', tag)
             # if this fails...
             if not match: return 'unknown'
             # otherwise

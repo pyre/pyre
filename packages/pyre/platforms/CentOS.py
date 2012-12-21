@@ -13,9 +13,9 @@ from .Linux import Linux
 
 
 # declaration
-class Ubuntu(Linux, family='pyre.platforms.ubuntu'):
+class CentOS(Linux, family='pyre.platforms.centos'):
     """
-    Encapsulation of a host running linux on the ubuntu distribution
+    Encapsulation of a host running linux on the centos distribution
     """
 
 
@@ -40,7 +40,7 @@ class Ubuntu(Linux, family='pyre.platforms.ubuntu'):
             # read the first line
             tag = next(issue)
             # parse
-            match = re.match('Ubuntu (?P<revision>[0-9]+\.[0-9]+)', tag)
+            match = re.match('CentOS release (?P<revision>[0-9]+\.[0-9]+)', tag)
             # if this fails...
             if not match: return 'unknown'
             # otherwise

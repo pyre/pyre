@@ -41,6 +41,18 @@ class Linux(Host, family='pyre.platforms.linux'):
                 from .Ubuntu import Ubuntu
                 # and return it
                 return Ubuntu
+            # check for red hat
+            if tag.lower().startswith('red hat'):
+                # load the platform file
+                from .RedHat import RedHat
+                # and return it
+                return RedHat
+            # check for centos
+            if tag.lower().startswith('centos'):
+                # load the platform file
+                from .CentOS import CentOS
+                # and return it
+                return CentOS
 
         # otherwise, act like a generic linux system
         return cls

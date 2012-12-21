@@ -19,11 +19,13 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    CentOS.py \
     Darwin.py \
     Host.py \
     Linux.py \
     MacPorts.py \
     Platform.py \
+    RedHat.py \
     Ubuntu.py \
     __init__.py
 
