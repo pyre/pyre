@@ -27,7 +27,7 @@ def test():
     # instantiate
     one = app(name='one')
     # check i have a host
-    print(one.host)
+    # print(one.host)
     assert one.host
     # and return
     return one
