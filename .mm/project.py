@@ -2,8 +2,9 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2011 all rights reserved
+# (c) 1998-2013 all rights reserved
 #
+
 
 class Package:
     """
@@ -25,14 +26,14 @@ def requirements():
     """
 
     # build the package instances
-    gsl = Package(name='gsl', optional=False)
-    libpq = Package(name='libpq', optional=True)
-    mpi = Package(name='mpi', optional=True)
-    python = Package(name='python', optional=False)
-    # attach
-    packages = { package.name: package for package in (gsl, libpq, mpi, python) }
-    # and return
-    return packages
+    packages = [
+        Package(name='gsl', optional=True),
+        Package(name='libpq', optional=True),
+        Package(name='mpi', optional=True),
+        Package(name='python', optional=False),
+        ]
+    # build a dictionary and return it
+    return { package.name: package for package in packages }
 
 
 # end of file 
