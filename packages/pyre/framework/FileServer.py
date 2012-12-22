@@ -179,4 +179,23 @@ class FileServer(Filesystem):
         return
 
 
+    # debugging
+    def draw(self, *paths):
+        """
+        Draw the contents of the nodes in {paths}
+        """
+        # assess the workload
+        paths = paths if paths else [ '/']
+        # go through the pile
+        for path in paths:
+            # get the associated node
+            node = self[path]
+            # leave a marker
+            print(" ** {}:".format(path))
+            # draw the contents
+            node.dump(indent=' '*4)
+        # all done
+        return
+
+
 # end of file 
