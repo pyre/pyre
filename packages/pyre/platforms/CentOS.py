@@ -20,31 +20,7 @@ class CentOS(Linux, family='pyre.platforms.centos'):
 
 
     # public data
-    release = None
+    distribution = 'centos'
 
-
-    # meta-methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-        self.release = self.identify()
-        return
-
-
-    # implementation details
-    def identify(self):
-        """
-        Extract the revision identifier
-        """
-        # open the issue file
-        with open(self.issue) as issue:
-            # read the first line
-            tag = next(issue)
-            # parse
-            match = re.match('CentOS release (?P<revision>[0-9]+\.[0-9]+)', tag)
-            # if this fails...
-            if not match: return 'unknown'
-            # otherwise
-            return match.group('revision')
-        
 
 # end of file 

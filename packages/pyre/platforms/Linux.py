@@ -31,36 +31,59 @@ class Linux(Host, family='pyre.platforms.linux'):
         """
         Return a suitable default encapsulation of the runtime host
         """
-        # open the issue file
-        with open(cls.issue) as issue:
-            # read the first line
-            tag = next(issue)
-            # check for ubuntu
-            if tag.lower().startswith('ubuntu'):
-                # load the platform file
-                from .Ubuntu import Ubuntu
-                # and return it
-                return Ubuntu
-            # check for red hat
-            if tag.lower().startswith('red hat'):
-                # load the platform file
-                from .RedHat import RedHat
-                # and return it
-                return RedHat
-            # check for centos
-            if tag.lower().startswith('centos'):
-                # load the platform file
-                from .CentOS import CentOS
-                # and return it
-                return CentOS
+        # ask the platform package
+        import platform
+        # for the linux distribution
+        distribution, release, codename = cls.identify()
+        
+        # check for ubuntu
+        if distribution.lower().startswith('ubuntu'):
+            # load the platform file
+            from .Ubuntu import Ubuntu
+            # and return it
+            return Ubuntu
+        # check for red hat
+        if distribution.lower().startswith('red hat'):
+            # load the platform file
+            from .RedHat import RedHat
+            # and return it
+            return RedHat
+        # check for centos
+        if distribution.lower().startswith('centos'):
+            # load the platform file
+            from .CentOS import CentOS
+            # and return it
+            return CentOS
 
         # otherwise, act like a generic linux system
         return cls
 
 
+    # meta-methods
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+
+        # get the markers
+        _, self.release, self.codename = self.identify()
+
+        #all done
+        return
+
+
     # implementation details: explorers
     @classmethod
-    def cpuServey(cls):
+    def identify(cls):
+        """
+        Return information about the linux distribution
+        """
+        # ask the platform package
+        import platform
+        # for distribution details
+        return platform.linux_distribution()
+
+
+    @classmethod
+    def cpuSurvey(cls):
         """
         Collect information about the CPU resources on this host
         """

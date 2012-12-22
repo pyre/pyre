@@ -20,31 +20,7 @@ class RedHat(Linux, family='pyre.platforms.redhat'):
 
 
     # public data
-    release = None
+    distribution = 'redhat'
 
-
-    # meta-methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-        self.release = self.identify()
-        return
-
-
-    # implementation details
-    def identify(self):
-        """
-        Extract the revision identifier
-        """
-        # open the issue file
-        with open(self.issue) as issue:
-            # read the first line
-            tag = next(issue)
-            # parse
-            match = re.match('Red Hat.*release (?P<revision>[0-9]+\.[0-9]+)', tag)
-            # if this fails...
-            if not match: return 'unknown'
-            # otherwise
-            return match.group('revision')
-        
 
 # end of file 

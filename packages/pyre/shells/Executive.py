@@ -32,6 +32,7 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
     host = platform()
     host.doc = "information about the host machine"
 
+
     # interface
     @pyre.export
     def launch(self, application, *args, **kwds):

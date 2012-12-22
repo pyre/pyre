@@ -17,6 +17,7 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
     """
 
     # public data
+    distribution = 'macports'
     systemdirs = ['/opt/local'] + Darwin.systemdirs # canonical package installation locations
 
 
