@@ -45,7 +45,7 @@ from .Daemon import Daemon as daemon
 # terminal support
 from .Terminal import Terminal as terminal
 from .ANSI import ANSI as ansi
-from .Dumb import Dumb as dumb
+from .Plain import Plain as plain
 
 
 # the base application component

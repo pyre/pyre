@@ -23,9 +23,10 @@ EXPORT_PYTHON_MODULES = \
     Application.py \
     Daemon.py \
     Director.py \
-    Dumb.py \
     Executive.py \
     Fork.py \
+    Plain.py \
+    Renderer.py \
     Script.py \
     Shell.py \
     Terminal.py \

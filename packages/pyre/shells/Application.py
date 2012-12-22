@@ -12,6 +12,7 @@ import pyre
 from .Director import Director
 # access to the local interfaces
 from .Shell import Shell
+from .Renderer import Renderer
 
 
 # declaration
@@ -33,6 +34,7 @@ class Application(pyre.component, metaclass=Director):
 
     # public state
     shell = Shell() # the hosting protocol
+    renderer = Renderer() # my custom journal device renderer
 
     # per-instance public data
     pfs = None # the root of my private filesystem
@@ -61,6 +63,43 @@ class Application(pyre.component, metaclass=Director):
         return self.pyre_executive.nameserver
 
 
+    # convenience interface
+    def error(self, message):
+        """
+        Generate an error message
+        """
+        # get the logging mechanism
+        import journal
+        # build an error message object in my namespace
+        error = journal.error(self.pyre_name)
+        # log and return
+        return error.log(message)
+        
+
+    def warning(self, message):
+        """
+        Generate a warning
+        """
+        # get the logging mechanism
+        import journal
+        # build a warning message object in my namespace
+        warning = journal.warning(self.pyre_name)
+        # log and return
+        return warning.log(message)
+        
+
+    def info(self, message):
+        """
+        Generate an informational message
+        """
+        # get the logging mechanism
+        import journal
+        # build an informational message object in my namespace
+        info = journal.info(self.pyre_name)
+        # log and return
+        return info.log(message)
+        
+
     # component interface
     @pyre.export
     def main(self, **kwds):
@@ -86,6 +125,10 @@ class Application(pyre.component, metaclass=Director):
 
         # build my private file space
         self.pfs = self.pyre_mountVirtualFilesystem(root=self.pyre_prefix)
+
+        # attach my renderer to the console
+        import journal
+        journal.console.renderer = self.renderer
 
         # all done
         return

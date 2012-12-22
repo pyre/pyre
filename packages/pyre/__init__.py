@@ -114,16 +114,18 @@ def where(configurable, attribute=None):
 
 
 # settings
-_pyre_version = (1, 0, 0)
+_pyre_version = (1, 0)
 
-_pyre_copyright = "pyre: Copyright (c) 1998-2012 Michael A.G. Aïvázis"
+_pyre_copyright = "pyre {}.{}: Copyright (c) 1998-2012 Michael A.G. Aïvázis".format(*_pyre_version)
 
-_pyre_license = """
-    pyre 1.0
+_pyre_header = """
+    pyre {}.{}
     Copyright (c) 1998-2012 Michael A.G. Aïvázis
     All Rights Reserved
 
+    """.format(*_pyre_version)
 
+_pyre_license = _pyre_header + """
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions
     are met:
@@ -154,11 +156,7 @@ _pyre_license = """
     POSSIBILITY OF SUCH DAMAGE.
     """
 
-_pyre_acknowledgments = """
-    pyre 1.0
-    Copyright (c) 1998-2012 Michael A.G. Aïvázis
-    All Rights Reserved
-
+_pyre_acknowledgments = _pyre_header + """
     This work has been funded in part by the Department of Energy, the
     National Science Foundation, the National Nuclear Safety
     Administration, and Orthologue, LLC.
@@ -174,14 +172,14 @@ _pyre_acknowledgments = """
     the needs of massively parallel applications.
     
     Jiao Lin has built a very sophisticated web application framework by
-    stretching pyre beyond its limits and contributing countless use cases
+    stretching pyre beyond its limits, and contributing countless use cases
     that have had a significant impact on the current implementation.
 
     Mike McKerns, Tim Kelly, Brandon Keith are early adopters and have made
     significant contributions to the usability of the package. Most of the
     existing documentation and user support over the years has been
     possible thanks to their remarkable efforts.
-"""
+    """
 
 # put the following start-up steps inside functions so we can have better control over their
 # execution context and namespace pollution

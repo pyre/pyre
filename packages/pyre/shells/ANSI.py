@@ -13,7 +13,7 @@ from .Terminal import Terminal as terminal
 
 
 # declaration
-class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
+class ANSI(pyre.component, family='pyre.shells.terminals.ansi', implements=terminal):
 
 
     # implementation details

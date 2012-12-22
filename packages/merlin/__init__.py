@@ -63,12 +63,13 @@ def license(**kwds):
 
 # the actual text 
 # NYI: add localized versions of all this
-_merlin_version = (1, 0, 0)
+_merlin_version = (1, 0)
 
-_merlin_copyright = "merlin: Copyright (c) 1998-2012 Michael A.G. Aïvázis"
+_merlin_copyright = (
+    "merlin {}.{}: Copyright (c) 1998-2012 Michael A.G. Aïvázis".format(*_merlin_version))
 
 _merlin_header = """
-    merlin {}.{}.{}
+    merlin {}.{}
     Copyright (c) 1998-2012 Michael A.G. Aïvázis
     All rights reserved
     """.format(*_merlin_version)
@@ -157,34 +158,43 @@ def boot():
 # factories
 # for spells
 from .spells.Spell import Spell as spell
-# for renderers
-from .components.ANSIRenderer import ANSIRenderer as ansi
-from .components.TextRenderer import TextRenderer as text
-def renderer():
-    """
-    Decide which renderer to use based on the  terminal capabilities
-    """
-    # externals
-    import sys
-    # the list of know terminal types
-    ansiCompatible = {'ansi', 'vt102', 'vt220', 'vt320', 'vt420', 'xterm', 'xterm-color'}
-    # attempt
-    try:
-        # to check whether {stdout} is connected to a terminal
-        if sys.stdout.isatty():
-            # figure out the terminal type
-            import os
-            term = os.environ.get('TERM', 'unknown').lower()
-            # if it is ANSI compatible
-            if term in ansiCompatible:
-                # the default is colored
-                return ansi
-    # some devices don't support isatty
-    except AttributeError:
-        pass
-    # plain text, by default
-    return text
 
+# convenience
+def error(message):
+    """
+    Generate an error message
+    """
+    # get the logging mechanism
+    import journal
+    # build an error message object in my namespace
+    error = journal.error('merlin')
+    # log and return
+    return error.log(message)
+
+
+def warning(message):
+    """
+    Generate a warning
+    """
+    # get the logging mechanism
+    import journal
+    # build a warning object in my namespace
+    warning = journal.warning('merlin')
+    # log and return
+    return warning.log(message)
+        
+
+def info(message):
+    """
+    Generate an informational message
+    """
+    # get the logging mechanism
+    import journal
+    # build an informational message object in my namespace
+    info = journal.info('merlin')
+    # log and return
+    return info.log(message)
+        
 
 # the singleton
 merlin = boot()

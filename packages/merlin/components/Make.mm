@@ -20,7 +20,6 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    ANSIRenderer.py \
     Component.py \
     Curator.py \
     Host.py \
@@ -29,7 +28,6 @@ EXPORT_PYTHON_MODULES = \
     PythonClassifier.py \
     Spell.py \
     Spellbook.py \
-    TextRenderer.py \
     User.py \
     exceptions.py \
     __init__.py

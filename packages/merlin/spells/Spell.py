@@ -49,7 +49,8 @@ class Spell(pyre.component, implements=spell):
         """
         Generate the help screen associated with this spell
         """
-        print(" ** help for {!r}".format(self.pyre_name))
+        # by default, dump my docstring
+        for line in self.__doc__: print(line.strip())
         # all done
         return
 
@@ -64,11 +65,6 @@ class Spell(pyre.component, implements=spell):
         self.info = journal.info(name)
         self.warning = journal.warning(name)
         self.error = journal.error(name)
-
-        # activate everything, by default
-        self.info.active = True
-        self.warning.active = True
-        self.error.active = True
 
         # all done
         return

@@ -15,11 +15,11 @@ from .Terminal import Terminal as terminal
 
 
 # declaration
-class Dumb(pyre.component, family='pyre.terminals.dumb', implements=terminal):
+class Plain(pyre.component, family='pyre.shells.terminals.plain', implements=terminal):
 
 
     # implementation details
-    colors = collections.defaultdict(str)
+    colors = collections.defaultdict(str) # all color decorations are empty strings...
 
 
 # end of file 

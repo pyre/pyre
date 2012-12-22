@@ -11,7 +11,7 @@ import pyre
 
 
 # declaration
-class Terminal(pyre.protocol, family='pyre.terminals'):
+class Terminal(pyre.protocol, family='pyre.shells.terminals'):
     """
     An abstraction for the capabilities of user terminals
     """
@@ -25,10 +25,16 @@ class Terminal(pyre.protocol, family='pyre.terminals'):
         """
         # access the {stdout} stream
         import sys
-        # check whether
+        # try to figure out
         try:
+            # whether the current terminal is a tty
+            atty = sys.stdout.isatty()
+        # some devices don't support {isatty}
+        except AttributeError: pass
+        # some do
+        else:
             # the current terminal is a tty
-            if sys.stdout.isatty():
+            if atty:
                 # access the environment
                 import os
                 # to figure out the terminal type
@@ -39,8 +45,6 @@ class Terminal(pyre.protocol, family='pyre.terminals'):
                     from .ANSI import ANSI
                     # and return it
                     return ANSI
-        # some devices don't support {isatty}
-        except AttributeError: pass
 
         # otherwise, get the plain terminal
         from .Plain import Plain
