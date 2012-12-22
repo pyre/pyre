@@ -39,7 +39,7 @@ def infoIndex():
     extension. i.e. {pyre::journal::info_t::index_t}
     """
     #
-    return Index(lookup=journal.lookupInfoInventory, inventory=Disabled)
+    return Index(lookup=journal.lookupInfoInventory, inventory=Enabled)
 
 
 def warningIndex():

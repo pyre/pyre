@@ -21,7 +21,7 @@ pyre::journal::Informational::
 pyre::journal::Informational::
 Informational(pyre::journal::Informational::string_t name) :
     pyre::journal::Diagnostic<pyre::journal::Informational>("info", name),
-    pyre::journal::Channel<pyre::journal::Informational, false>(name)
+    pyre::journal::Channel<pyre::journal::Informational, true>(name)
 {}
 
 

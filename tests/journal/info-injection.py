@@ -17,8 +17,8 @@ def test():
     import journal
     # build a info channel
     info = journal.info("journal.test1")
-    # activate it
-    # info.active = True
+    # deactivate it
+    info.active = False
 
     # and make it say something
     info.log("hello world!")

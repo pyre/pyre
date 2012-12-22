@@ -19,18 +19,18 @@ int main() {
 
     // instantiate a info channel
     pyre::journal::info_t info("pyre.journal.test");
-    // check that it is inactive, by default
-    assert(info.isActive() == false);
-
-    // activate it
-    info.activate();
-    // and check
+    // check that it is active, by default
     assert(info.isActive() == true);
+
+    // deactivate it
+    info.deactivate();
+    // and check
+    assert(info.isActive() == false);
 
     // now, instantiate again using the same channel name
     pyre::journal::info_t again("pyre.journal.test");
-    // check that it is active
-    assert(again.isActive() == true);
+    // check that it is inactive
+    assert(again.isActive() == false);
 
     // all done
     return 0;

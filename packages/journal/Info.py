@@ -25,7 +25,7 @@ class Info(Diagnostic, Channel):
     severity = "info"
 
     # class private data
-    _index = collections.defaultdict(Channel.Disabled)
+    _index = collections.defaultdict(Channel.Enabled)
 
 
 # end of file 

@@ -91,9 +91,9 @@ lookupInfo(PyObject *, PyObject * args)
         return 0;
     }
     // access the state
-    disabled_t * inventory = &pyre::journal::info_t::lookup(name);
+    enabled_t * inventory = &pyre::journal::info_t::lookup(name);
     // encapsulate it and return it
-    return PyCapsule_New(inventory, disabledInventoryCapsuleName, 0);
+    return PyCapsule_New(inventory, enabledInventoryCapsuleName, 0);
 }
 
 

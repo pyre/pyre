@@ -20,7 +20,7 @@ int main() {
 
     // instantiate a info channel
     pyre::journal::info_t info("pyre.journal.test");
-    // info.activate();
+    info.deactivate();
 
     // inject all the standard manipulators and built in types
     info 

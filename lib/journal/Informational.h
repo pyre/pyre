@@ -20,13 +20,13 @@ namespace pyre {
 // declaration
 class pyre::journal::Informational : 
     public pyre::journal::Diagnostic<Informational>,
-    public pyre::journal::Channel<Informational, false> 
+    public pyre::journal::Channel<Informational, true> 
 {
     // types
 public:
     typedef std::string string_t;
     typedef Diagnostic<Informational> diagnostic_t;
-    typedef Channel<Informational, false> channel_t;
+    typedef Channel<Informational, true> channel_t;
 
     // meta methods
 public:

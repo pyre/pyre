@@ -26,7 +26,7 @@ def test():
     # check their expected default state
     assert debug.active == False
     assert firewall.active == True
-    assert info.active == False
+    assert info.active == True
     assert warning.active == True
     assert error.active == True
 
