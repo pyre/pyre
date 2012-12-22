@@ -12,7 +12,7 @@ import sys
 import pyre # the framework
 import operator
 import platform
-# my interface
+# my protocol
 from .Shell import Shell as shell
 # the protocols of my traits
 from ..platforms import platform
@@ -31,28 +31,6 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
 
     host = platform()
     host.doc = "information about the host machine"
-
-
-    @property
-    def nickname(self, hostname=None):
-        """
-        Attempt to retrieve the user's assigned nickname for a {host}
-        """
-        # use my hostname if no host was given
-        hostname = self.hostname if hostname is None else hostname
-        # get the configuration slots
-        slots = [ slot for _,slot in self.pyre_executive.configurator.children(self.hostmapkey) ]
-        # go through each one in priority order
-        for slot in sorted(slots, key=operator.attrgetter('priority')):
-            # get the recognizer
-            regex = slot.value
-            # if my hostname matches
-            if re.match(regex, hostname):
-                # return the slot local name as the nickname
-                return slot.localname
-        # not known; return the original
-        return hostname
-
 
     # interface
     @pyre.export
