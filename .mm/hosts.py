@@ -111,7 +111,7 @@ def host(builder):
             'MPI_EXECUTIVE': 'mpirun',
             }
         # set up {python}
-        pythonVersion = '3.2'
+        pythonVersion = '3.3'
         python = 'python' + pythonVersion
         pythonHome = '/opt/python'
         builder.requirements['python'].environ = {
