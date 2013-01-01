@@ -2,7 +2,7 @@
 // 
 // michael a.g. aïvázis
 // california institute of technology
-// (c) 1998-2012 all rights reserved
+// (c) 1998-2013 all rights reserved
 // 
 
 #include <portinfo>
@@ -21,7 +21,7 @@ PyObject *
 gsl::
 copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "gsl: (c) 2008-2012 California Institute of Technology";
+    const char * const copyright_note = "gsl: (c) 1998-2013 California Institute of Technology";
     return Py_BuildValue("s", copyright_note);
 }
     
@@ -36,7 +36,7 @@ license(PyObject *, PyObject *)
     const char * const license_string = 
         "\n"
         "    gsl " GSL_VERSION "\n"
-        "    Copyright (c) 1998-2012 California Institute of Technology\n"
+        "    Copyright (c) 1998-2013 California Institute of Technology\n"
         "    All Rights Reserved\n"
         "\n"
         "    Redistribution and use in source and binary forms, with or without\n"

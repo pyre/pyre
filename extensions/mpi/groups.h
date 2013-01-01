@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // california institute of technology
-// (c) 1998-2012 all rights reserved
+// (c) 1998-2013 all rights reserved
 //
 
 #if !defined(pyre_extensions_mpi_groups_h)

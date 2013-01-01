@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2012 all rights reserved
+# (c) 1998-2013 all rights reserved
 #
 
 
@@ -116,11 +116,11 @@ def where(configurable, attribute=None):
 # settings
 _pyre_version = (1, 0)
 
-_pyre_copyright = "pyre {}.{}: Copyright (c) 1998-2012 Michael A.G. Aïvázis".format(*_pyre_version)
+_pyre_copyright = "pyre {}.{}: Copyright (c) 1998-2013 Michael A.G. Aïvázis".format(*_pyre_version)
 
 _pyre_header = """
     pyre {}.{}
-    Copyright (c) 1998-2012 Michael A.G. Aïvázis
+    Copyright (c) 1998-2013 Michael A.G. Aïvázis
     All Rights Reserved
 
     """.format(*_pyre_version)

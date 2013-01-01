@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2012 all rights reserved
+# (c) 1998-2013 all rights reserved
 #
 
 
@@ -25,7 +25,7 @@ def test():
         'c',
         'c Michael A.G. Aïvázis',
         'c California Institute of Technology',
-        'c (c) 1998-2012 All Rights Reserved',
+        'c (c) 1998-2013 All Rights Reserved',
         'c',
         '',
         '',
