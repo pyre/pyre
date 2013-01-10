@@ -15,6 +15,8 @@ Sanity check: verify that the MersenneTwister generator behaves as expected
 def test():
     import gauss
 
+    # set the default seed
+    gauss.meshes.mersenne.seed = 0
     # instantiate
     mt = gauss.meshes.mersenne(name="mt")
     # the number of points to generate
@@ -31,6 +33,15 @@ def test():
     for point in points:
         for p, (left,right) in zip(point, intervals):
             assert p>=left and p<=right
+    # now that we seed the random number, we can actually check we got a specific sequence of
+    # points
+    assert points == (
+        (0.8444218515250481, 0.7579544029403025),
+        (0.420571580830845, 0.25891675029296335),
+        (0.5112747213686085, 0.4049341374504143),
+        (0.7837985890347726, 0.30331272607892745),
+        (0.4765969541523558, 0.5833820394550312)
+        )
 
     return box
 

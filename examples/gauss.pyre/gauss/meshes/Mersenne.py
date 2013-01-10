@@ -18,6 +18,12 @@ class Mersenne(pyre.component, family="gauss.meshes.mersenne", implements=PointC
     A point generator that uses the python builtin random number generator
     """
 
+
+    # public state
+    seed = pyre.properties.int(default=None)
+    seed.doc = "initialization for the random number generator"
+
+
     # interface
     @pyre.export
     def points(self, count, box):
@@ -25,7 +31,7 @@ class Mersenne(pyre.component, family="gauss.meshes.mersenne", implements=PointC
         Generate {count} random points chosen from the interior of {box}
         """
         # our random number generator
-        rng = random.uniform
+        rng = self.rng.uniform
         # get starmap from itertools
         starmap = itertools.starmap
         # get the extent of the box
@@ -37,6 +43,15 @@ class Mersenne(pyre.component, family="gauss.meshes.mersenne", implements=PointC
             # build a point by calling the random number generator as many times as there are
             # dimensions in the box specification and send it along
             yield tuple(starmap(rng, intervals))
+        # all done
+        return
+
+
+    # meta methods
+    def __init__(self, **kwds):
+        super().__init__(**kwds)
+        # build and seed a random number generator
+        self.rng = random.Random(self.seed)
         # all done
         return
 
