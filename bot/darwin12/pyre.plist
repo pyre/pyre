@@ -4,6 +4,8 @@
 <dict>
 	<key>EnvironmentVariables</key>
 	<dict>
+		<key>LANG</key>
+		<string>en_US.UTF-8</string>
 		<key>PATH</key>
 		<string>/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
 	</dict>
