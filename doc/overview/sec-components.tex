@@ -409,7 +409,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
     """
 
     # public state
-    samples = pyre.property.int(default=10**5)
+    samples = pyre.properties.int(default=10**5)
     region = ????
     ...
     \end{ipython}
@@ -509,7 +509,7 @@ class MonteCarlo(pyre.component, family="gauss.integrators.montecarlo"):
     """
 
     # public state
-    samples = pyre.property.int(default=10**5)
+    samples = pyre.properties.int(default=10**5)
     region = Shape()
     ...
     \end{ipython}
