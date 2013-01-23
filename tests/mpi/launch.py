@@ -21,7 +21,7 @@ def test():
         """a sample application"""
 
         @pyre.export
-        def main_mpi(self, **kwds):
+        def main(self, **kwds):
             # access the package
             import mpi
             # get the world communicator

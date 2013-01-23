@@ -9,7 +9,6 @@
 # externals
 import sys
 import pyre
-import subprocess
 from pyre.shells.Executive import Executive # my superclass
 
 
@@ -37,26 +36,51 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
         """
         Launch {application} as a collection of mpi tasks
         """
-
         # check whether the mpi tasks have already been spawned
         if self.pyre_executive.nameserver.get('with-mpi', False):
             # launch the application
-            status = application.main_mpi(*args, **kwds)
-            # and exit
-            return sys.exit(status)
+            return self.main(application, *args, **kwds)
 
-        # build the command line
-        argv = [
-            self.launcher,
-            '-np', str(self.tasks),
-            self.python ] + sys.argv + [
-            '--with-mpi=true',
-            ]
+        # otherwise
+        return self.spawn()
+
+
+    # launching hooks; subclasses may override this to get finer control over the two launching
+    # branches
+    def main(self, application, *args, **kwds):
+        """
+        Called after the parallel machine has been built and it is time to invoke the user's
+        code in every node
+        """
+        # launch the application and harvest its exit code
+        status = application.main(*args, **kwds)
+        # and exit
+        return sys.exit(status)
+
+
+    def spawn(self):
+        """
+        Invoke {mpirun} with the correct arguments to create the  parallel machine
+        """
+        # externals
+        import subprocess
+
+        # start building the command line
+        argv = [ self.launcher ]
+
+        # if the user specified explicitly the number of tasks
+        if self.tasks:
+            # add the corresponding command line argument to the pile
+            argv += [ '-np', str(self.tasks) ]
+
+        # add python, the command line arguments to this script and a marker
+        argv += [self.python ] + sys.argv + ['--with-mpi=true' ]
+        
         # set the subprocess options
         options = {
             'args': argv,
             'executable': self.launcher,
-            # 'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
+            #'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
             }
@@ -65,6 +89,7 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
         # import pyre.tracking
         # print(' * {}: mpi.Launcher: subprocess options:'.format(pyre.tracking.here()))
         # for key,value in options.items(): print('    {} = {!r}'.format(key, value))
+
         # make a pipe
         with subprocess.Popen(**options) as child:
             # wait for it to finish
