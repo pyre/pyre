@@ -21,9 +21,14 @@ class Daemon(Fork, family="pyre.shells.daemon"):
     """
 
    
-    # public state
+    # user configurable state
     capture = pyre.properties.bool(default=False) # to override the default from {Fork}
     capture.doc = "control whether to create communication channels to the daemon process"
+
+
+    # public data
+    # a marker that enables applications to deduce the type of shell that is hosting them
+    mode = 'daemon'
 
 
     # interface
@@ -61,10 +66,8 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         channels = self.childChannels(pipes)
         # if the user has specified a home directory for this process, go there
         if self.home: os.chdir(self.home)
-        # launch the application
-        status = application.main(*args, channels=channels, **kwds)
-        # and exit
-        return sys.exit(status)
+        # launch the application and return its exit code
+        return application.main(*args, channels=channels, **kwds)
 
 
 # end of file 

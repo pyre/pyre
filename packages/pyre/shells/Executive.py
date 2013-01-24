@@ -32,6 +32,10 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
     host = platform()
     host.doc = "information about the host machine"
 
+    # public data
+    # a marker that enables applications to deduce the type of shell that is hosting them
+    mode = 'unknown'
+
 
     # interface
     @pyre.export

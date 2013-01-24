@@ -17,6 +17,10 @@ class Script(Executive, family="pyre.shells.script"):
     A shell that invokes the main application behavior and then exits
     """
 
+    # public data
+    # a marker that enables applications to deduce the type of shell that is hosting them
+    mode = 'script'
+
 
     # interface
     @pyre.export
