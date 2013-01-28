@@ -38,8 +38,8 @@ class TreeExplorer(Explorer):
         margin = self._margin
         graphic = self._graphic
         # update them
-        self._margin = margin + ' | '
-        self._graphic = margin + ' +-'
+        self._margin = margin + ' |  '
+        self._graphic = margin + ' +- '
         # iterate over the folder contents, except the last one
         for name, child in children[:-1]:
             # generate the content report
@@ -47,8 +47,8 @@ class TreeExplorer(Explorer):
         # grab the last entry
         name, child = children[-1]
         # which gets a special graphic
-        self._margin = margin + '   '
-        self._graphic = margin + ' `-'
+        self._margin = margin + '    '
+        self._graphic = margin + ' `- '
         # and explore it
         for description in self.explore(node=child, label=name): yield description
         # restore the graphics
@@ -69,7 +69,7 @@ class TreeExplorer(Explorer):
 
     # implementation details
     def render(self, name, node):
-        return "{} {} ({})".format(self._graphic, name, node.marker)
+        return "{._graphic}{} ({})".format(self, name, node.marker)
 
 
 # end of file 

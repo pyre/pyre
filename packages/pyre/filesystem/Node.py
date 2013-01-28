@@ -118,7 +118,7 @@ class Node(metaclass=_metaclass_Node):
         from . import treeExplorer
         explorer = treeExplorer()
         # get the representation of my contents and dump it out
-        for line in explorer.explore(node=self, label=self.uri): print(indent, line)
+        for line in explorer.explore(node=self, label=self.uri): print("{}{}".format(indent, line))
         # all done
         return self
 
