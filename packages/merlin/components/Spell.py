@@ -45,42 +45,6 @@ class Spell(pyre.protocol, family="merlin.spells"):
     @classmethod
     def pyre_find(cls, uri, symbol):
         """
-        Participate  in the search for shelves consistent with {uri}
-        """
-        # get the merlin executive
-        merlin = cls.merlin
-        # and its private namespace
-        vfs = merlin.vfs
-        # visit each location on the merlin search path
-        for root in merlin.searchpath:
-            # form the location of the subdirectory with spells
-            spelldir = vfs.join(root.address, 'spells')
-            # get the folder
-            folder = vfs[spelldir]
-
-            # if the uri has an address
-            if uri.address:
-                # just look for it
-                candidates = [ uri.address ]
-            # otherwise
-            else:
-                # visit all the files
-                candidates = list(
-                    name for name, node in folder.contents.items() if not node.isFolder)
-            
-            # for each target
-            for candidate in candidates:
-                # build a {uri} for it
-                uri = cls.uri(scheme='vfs', address=vfs.join(spelldir, candidate))
-                # and send it to the caller
-                yield uri
-        # all done
-        return
-
-
-    @classmethod
-    def pyre_find(cls, uri, symbol):
-        """
         Participate in the search for the spell {symbol}
         """
         # access the merlin executive
@@ -104,9 +68,8 @@ class Spell(pyre.protocol, family="merlin.spells"):
             # build a uri and yield it
             yield cls.uri(scheme='vfs', address=path)
 
-        # all ideas exhausted
+        # out of ideas
         return
         
-
 
 # end of file 
