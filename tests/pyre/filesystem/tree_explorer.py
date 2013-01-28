@@ -31,22 +31,22 @@ def test():
 
     # check
     assert contents == [
-        " / (d)",
+        "/ (d)",
         " `- home (d)",
-        "    `- users (d)",
-        "       `- mga (d)",
-        "          +- dv (d)",
-        "          |  `- pyre-1.0 (d)",
-        "          |     `- packages (d)",
-        "          |        `- pyre (d)",
-        "          |           `- __init__.py (f)",
-        "          `- tools (d)",
-        "             +- bin (d)",
-        "             |  +- goodbye (f)",
-        "             |  `- hello (f)",
-        "             `- lib (d)",
-        "                +- libgoodbye.a (f)",
-        "                `- libhello.a (f)",
+        "     `- users (d)",
+        "         `- mga (d)",
+        "             +- dv (d)",
+        "             |   `- pyre-1.0 (d)",
+        "             |       `- packages (d)",
+        "             |           `- pyre (d)",
+        "             |               `- __init__.py (f)",
+        "             `- tools (d)",
+        "                 +- bin (d)",
+        "                 |   +- goodbye (f)",
+        "                 |   `- hello (f)",
+        "                 `- lib (d)",
+        "                     +- libgoodbye.a (f)",
+        "                     `- libhello.a (f)",
         ]
 
     return fs, explorer
