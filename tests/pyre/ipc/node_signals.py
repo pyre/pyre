@@ -236,6 +236,7 @@ if __name__ == "__main__":
     import journal
     journal.debug("child").active = False
     journal.debug("parent").active = False
+    journal.info("pyre.ipc.nodes").active = False
     # do...
     test()
 
