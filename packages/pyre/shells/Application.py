@@ -30,7 +30,7 @@ class Application(pyre.component, metaclass=Director):
     # the default name for pyre applications; subclasses are expected to provide a more
     # reasonable value, which gets used to load per-instance configuration right before the
     # application itself is instantiated
-    prefix = None
+    pyre_prefix = None
 
     # public state
     shell = Shell() # the hosting protocol
@@ -52,7 +52,7 @@ class Application(pyre.component, metaclass=Director):
         """
         Easy access to the executive file server
         """
-        return self.pyre_executive.fileserver
+        return self.pyre_fileserver
 
 
     @property
@@ -60,7 +60,7 @@ class Application(pyre.component, metaclass=Director):
         """
         Easy access to the executive name server
         """
-        return self.pyre_executive.nameserver
+        return self.pyre_nameserver
 
 
     # convenience interface

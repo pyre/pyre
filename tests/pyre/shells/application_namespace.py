@@ -22,6 +22,7 @@ def test():
 
     # instantiate
     app = application()
+    # app.vfs.dump()
 
     # verify that the filesystem attribute was set
     assert(app.pfs)

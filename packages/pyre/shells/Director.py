@@ -36,9 +36,9 @@ class Director(pyre.actor):
         # otherwise
         else:
             # get my family name
-            family = self.pyre_family()
+            package = self.pyre_package()
             # if i have one, use it; otherwise, use the class name
-            self.pyre_prefix = self.pyre_executive.nameserver.split(family)[0] if family else name
+            self.pyre_prefix = package.name if package else name
 
         # all done
         return
@@ -48,8 +48,8 @@ class Director(pyre.actor):
         """
         Instantiate one of my classes
         """
-        # if I have a name for the application instance, use it hunt down configuration files
-        # for this particular instance
+        # if I have a name for the application instance, use it to hunt down configuration
+        # files for this particular instance
         if name:
             # get the executive
             executive = self.pyre_executive

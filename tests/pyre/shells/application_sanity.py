@@ -17,7 +17,7 @@ def test():
     import pyre
 
     # declare a trivial application
-    class application(pyre.application, family="sample"):
+    class application(pyre.application, family="sample.application"):
         """A trivial pyre application"""
 
     return
