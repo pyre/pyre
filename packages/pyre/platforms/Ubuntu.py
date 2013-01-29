@@ -18,7 +18,6 @@ class Ubuntu(Linux, family='pyre.platforms.ubuntu'):
     Encapsulation of a host running linux on the ubuntu distribution
     """
 
-
     # public data
     distribution = 'ubuntu'
 

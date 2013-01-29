@@ -22,14 +22,14 @@ class Host(pyre.component, implements=Platform):
     # host
     hostname = None # the name of the host on which this process is running
     nickname = None # the short name assigned to this host by the user
-    # os
-    platform = None # the OS type on which this process is running
-    # distribution
-    distribution = None # the type of host on which this process is running
-    release = None # the OS release
-    codename = None # the OS version
     # cpus
     cpus = None # the triplet (cpus, physical cores, logical cores)
+    # os
+    platform = None # the OS type on which this process is running
+    release = None # the OS release
+    codename = None # the OS version
+    # distribution
+    distribution = None # a clue about the package manager on this machine
 
 
     # protocol obligations
@@ -48,9 +48,9 @@ class Host(pyre.component, implements=Platform):
 
         # get the python platform package
         import platform
-
-        
+        # set the hostname
         self.hostname = platform.node()
+        # discover the number of cpus
         self.cpus = self.cpuSurvey()
 
         return

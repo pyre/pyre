@@ -31,6 +31,9 @@ class Darwin(Host, family='pyre.platforms.darwin'):
         """
         Return a suitable default encapsulation of the runtime host
         """
+        # set the release and the codename
+        cls.release, cls.codename = cls.getDarwinInfo()
+
         # if the macports directory exists
         if os.path.isdir('/opt/local/var/macports'):
             # load the class record
@@ -40,16 +43,6 @@ class Darwin(Host, family='pyre.platforms.darwin'):
 
         # otherwise, act like a generic darwin system
         return cls
-
-
-    # meta-methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-        
-        # use to set the codename
-        self.release, self.codename = self.getDarwinInfo()
-        # all done
-        return
 
 
     # implementation details: explorers

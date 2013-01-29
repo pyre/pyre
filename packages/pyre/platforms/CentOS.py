@@ -18,7 +18,6 @@ class CentOS(Linux, family='pyre.platforms.centos'):
     Encapsulation of a host running linux on the centos distribution
     """
 
-
     # public data
     distribution = 'centos'
 

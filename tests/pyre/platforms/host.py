@@ -27,8 +27,19 @@ def test():
     # instantiate
     one = app(name='one')
     # check i have a host
-    # print(one.host)
     assert one.host
+
+    # print out some details
+    # host = one.host
+    # print('host: {}'.format(host))
+    # print('  hostname: {.hostname}'.format(host))
+    # print('  nickname: {.nickname}'.format(host))
+    # print('  cpus: {.cpus}'.format(host))
+    # print('  platform: {.platform}'.format(host))
+    # print('  release: {.release}'.format(host))
+    # print('  codename: {.codename}'.format(host))
+    # print('  distribution: {.distribution}'.format(host))
+
     # and return
     return one
 

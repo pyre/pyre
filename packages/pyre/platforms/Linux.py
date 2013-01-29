@@ -31,10 +31,9 @@ class Linux(Host, family='pyre.platforms.linux'):
         """
         Return a suitable default encapsulation of the runtime host
         """
-        # ask the platform package
-        import platform
-        # for the linux distribution
-        distribution, release, codename = cls.identify()
+        # identify the platform characteristics; careful not to set the distribution attribute
+        # here; the subclasses set the distribution name to the pyre canonical nickname
+        distribution, cls.release, cls.codename = cls.identify()
         
         # check for ubuntu
         if distribution.lower().startswith('ubuntu'):
@@ -57,17 +56,6 @@ class Linux(Host, family='pyre.platforms.linux'):
 
         # otherwise, act like a generic linux system
         return cls
-
-
-    # meta-methods
-    def __init__(self, **kwds):
-        super().__init__(**kwds)
-
-        # get the markers
-        _, self.release, self.codename = self.identify()
-
-        #all done
-        return
 
 
     # implementation details: explorers
