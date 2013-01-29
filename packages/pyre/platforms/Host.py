@@ -62,7 +62,9 @@ class Host(pyre.component, implements=Platform):
         """
         Collect information about the CPU resources on this host
         """
-        raise NotImplementedError("class {.__name__!r} must implement 'cpuSurvey'".format(cls))
+        # by default, we know nothing; so assume one single core cpu with no hyper-threading
+        # subclasses should override with their platform dependent survey code
+        return (1,1,1)
 
 
 # end of file 
