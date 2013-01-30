@@ -29,7 +29,7 @@ class Registrar:
 
     # public data
     protocols = None # the set of known protocols
-    commponents = None # the map of component classes to their instances
+    components = None # the map of component classes to their instances
     implementors = None # a map of protocols to component classes that implements them
 
 
@@ -85,7 +85,6 @@ class Registrar:
                 yield protocol
         # all done
         return
-
 
 
     # meta-methods
