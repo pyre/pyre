@@ -44,7 +44,7 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
     @classmethod
     def configureDefaultPackage(cls, package, platform):
         """
-        Build an instance that corresponds to the default MPI package on the given {platform}
+        Configure the default MPI package on the given {platform}
         """
         # localize
         mpi = package

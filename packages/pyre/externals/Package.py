@@ -51,7 +51,7 @@ class Package(pyre.component, implements=category):
     @classmethod
     def configureDefaultPackage(cls, package, platform):
         """
-        Build a default package consistent with what is know about this {platform}
+        Configure the default package on this {platform}
         """
         # don't know any better...
         return package

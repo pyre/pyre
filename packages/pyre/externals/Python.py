@@ -19,7 +19,7 @@ from .Library import Library
 # the python package manager
 class Python(Tool, Library, family='pyre.externals.python'):
     """
-    The package manager for MPI packages
+    The package manager for the python interpreter
     """
 
 
@@ -42,7 +42,7 @@ class Python(Tool, Library, family='pyre.externals.python'):
     @classmethod
     def configureDefaultPackage(cls, package, platform):
         """
-        Build an instance that corresponds to the default MPI package on the given {platform}
+        Encapsulate the default python interpreter on the given {platform}
         """
         # instantiate using a name derived from my category and the platform name
         python = package
