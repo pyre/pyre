@@ -7,6 +7,7 @@
 
 
 # externals
+import collections
 from .. import tracking
 # superclass
 from .Requirement import Requirement
@@ -148,14 +149,14 @@ class Actor(Requirement):
         {component}, given its class record and the list of protocols it {implements}
         """
         # initialize the list of protocols
-        protocols = []
+        protocols = collections.OrderedDict()
 
         # try to understand what the component author specified
         if implements is not None:
             # accumulator for the protocols {component} doesn't implement correctly
             errors = []
             # if {implements} is a single protocol, add it to the pile
-            if isinstance(implements, cls.Role): protocols.append(implements)
+            if isinstance(implements, cls.Role): protocols[implements] = None
             # the only legal alternative is an iterable of {Protocol} subclasses
             else:
                 try:
@@ -163,7 +164,7 @@ class Actor(Requirement):
                         # if it's an actual {Protocol} subclass
                         if isinstance(protocol, cls.Role):
                             # add it to the pile
-                            protocols.append(protocol)
+                            protocols[protocol] = None
                         # otherwise, place it in the error bin
                         else:
                             errors.append(protocol)
@@ -175,19 +176,21 @@ class Actor(Requirement):
             if errors: raise cls.ImplementationSpecificationError(name=name, errors=errors)
 
         # now, add the commitments made by my immediate ancestors
-        protocols += [
-            base.pyre_implements for base in bases
-            if isinstance(base, cls) and base.pyre_implements is not None ]
+        protocols.update(
+            (base.pyre_implements, None) for base in bases
+            if isinstance(base, cls) and base.pyre_implements is not None)
 
+        # convert to a tuple
+        protocols = tuple(protocols.keys())
         # bail out if we didn't manage to find any protocols
         if not protocols: return None
         # if there is only one protocol on my pile
         if len(protocols) == 1:
             # use it directly
             return protocols[0]
-        # otherwise, derive an protocol from the harvested ones and return it as the
+        # otherwise, derive a protocol from the harvested ones and return it as the
         # implementation specification
-        return cls.Role("protocol".format(name), tuple(protocols), dict(), internal=True)
+        return cls.Role("protocol", protocols, dict(), internal=True)
 
 
 # end of file 
