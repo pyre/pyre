@@ -13,6 +13,8 @@ Ask the manager for a package based only on its category
 
 
 def test():
+    # externals
+    import os
     # get the framework
     import pyre
     # get the registered package manager
@@ -23,6 +25,11 @@ def test():
     # check it
     assert python
     assert python.category == 'python'
+    assert os.path.isdir(python.home)
+    assert os.path.isdir(python.binaries)
+    assert os.path.isdir(python.includes)
+    assert os.path.isdir(python.libraryPath)
+    assert os.path.isfile(python.executable)
     # show me
     # print('python: {}'.format(python))
     # print('  python: {.home}'.format(python))
@@ -36,6 +43,11 @@ def test():
     # check it
     assert mpi
     assert mpi.category == 'mpi'
+    assert os.path.isdir(mpi.home)
+    assert os.path.isdir(mpi.binaries)
+    assert os.path.isdir(mpi.includes)
+    assert os.path.isdir(mpi.libraryPath)
+    assert os.path.isfile(mpi.launcher)
     # show me
     # print('mpi: {}'.format(mpi))
     # print('  home: {.home}'.format(mpi))
