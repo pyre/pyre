@@ -43,7 +43,7 @@ class Spell(pyre.protocol, family="merlin.spells"):
 
     # support for framework requests
     @classmethod
-    def pyre_find(cls, uri, symbol):
+    def pyre_find(cls, uri, symbol, **kwds):
         """
         Participate in the search for the spell {symbol}
         """

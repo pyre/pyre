@@ -108,7 +108,7 @@ class Facility(Slotted):
         return self
 
 
-    def resolve(self, value, locator):
+    def resolve(self, value, locator, **kwds):
         """
         Attempt to convert {value} to a component
         """
@@ -135,7 +135,7 @@ class Facility(Slotted):
         nameserver = executive.nameserver
 
         # for each potential resolution of {value} by the executive
-        for candidate in executive.resolve(uri=uri, client=self):
+        for candidate in executive.resolve(uri=uri, client=self, **kwds):
             # if it is compatible with my protocol
             if candidate.pyre_isCompatible(self.schema):
                 # give it a try

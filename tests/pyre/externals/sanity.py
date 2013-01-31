@@ -13,7 +13,7 @@ Sanity check: verify that the package is accessible
 
 
 def test():
-    import pyre.platforms
+    import pyre.externals
     return
 
 

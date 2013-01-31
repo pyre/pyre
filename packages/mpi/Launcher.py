@@ -20,12 +20,6 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
 
 
     # user configurable state
-    launcher = pyre.properties.str(default='mpirun')
-    launcher.doc = 'the path to the mpi launcher'
-
-    python = pyre.properties.str(default=sys.executable)
-    python.doc = 'the path to the interpreter'
-
     tasks = pyre.properties.int()
     tasks.doc = 'the number of mpi tasks'
 
@@ -71,8 +65,13 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
         # externals
         import subprocess
 
+        # figure out which mpi we are using
+        launcher = self.pyre_externals.locate(category='mpi', platform=self.host).launcher
+        # and which python
+        python = self.pyre_externals.locate(category='python', platform=self.host).executable
+
         # start building the command line
-        argv = [ self.launcher ]
+        argv = [ launcher ]
 
         # if the user specified the number of tasks explicitly
         if self.tasks:
@@ -80,12 +79,12 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
             argv += [ '-np', str(self.tasks) ]
 
         # add python, the command line arguments to this script, and the autospawn marker
-        argv += [self.python ] + sys.argv + ['--{.pyre_name}.autospawn=no'.format(self) ]
+        argv += [python ] + sys.argv + ['--{.pyre_name}.autospawn=no'.format(self) ]
         
         # set the subprocess options
         options = {
             'args': argv,
-            'executable': self.launcher,
+            'executable': launcher,
             #'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False

@@ -5,9 +5,8 @@
 # (c) 1998-2013 all rights reserved
 #
 
-
 PROJECT = pyre
-PACKAGE = framework
+PACKAGE = externals
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
@@ -20,17 +19,14 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Executive.py \
-    Externals.py \
-    FileServer.py \
-    Linker.py \
-    NameServer.py \
+    Category.py \
+    Library.py \
+    MPI.py \
     Package.py \
-    Priority.py \
-    Pyre.py \
-    Slot.py \
-    exceptions.py \
+    Python.py \
+    Tool.py \
     __init__.py
+
 
 export:: export-package-python-modules
 

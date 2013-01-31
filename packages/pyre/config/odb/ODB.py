@@ -97,7 +97,7 @@ class ODB(Loader):
             # get the protocol
             protocol = client.schema
             # get it to provide some candidates from the virtual filesystem
-            yield from protocol.pyre_find(uri=uri, symbol=symbol)
+            yield from protocol.pyre_find(uri=uri, symbol=symbol, **kwds)
 
         # no more ideas
         return

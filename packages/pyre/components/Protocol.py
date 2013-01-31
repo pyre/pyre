@@ -88,7 +88,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # support for framework requests
     @classmethod
-    def pyre_find(cls, uri, symbol, searchpath=None):
+    def pyre_find(cls, uri, symbol, searchpath=None, **kwds):
         """
         Participate in the search for shelves consistent with {uri}
         """

@@ -264,6 +264,8 @@ if executive:
     from . import constraints
     # application
     from .shells import application
+    # package managers
+    from .externals import package
     # the base class of all pyre exceptions
     from .framework.exceptions import PyreError
 

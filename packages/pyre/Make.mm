@@ -18,6 +18,7 @@ RECURSE_DIRS = \
     constraints \
     db \
     extensions \
+    externals \
     filesystem \
     framework \
     ipc \

@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test clean
 
-test: sanity slots nameserver fileserver registrar linker executive
+test: sanity slots nameserver fileserver registrar linker externals executive
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -41,6 +41,9 @@ linker:
 	${PYTHON} ./linker.py
 	${PYTHON} ./linker_codecs.py
 	${PYTHON} ./linker_shelves.py
+
+externals:
+	${PYTHON} ./externals.py
 
 executive:
 	${PYTHON} ./executive.py

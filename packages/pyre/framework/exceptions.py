@@ -56,4 +56,16 @@ class ComponentNotFoundError(FrameworkError):
         return
                  
 
+class ExternalNotFoundError(FrameworkError):
+    """
+    Base class for parsing errors
+    """
+
+    def __init__(self, category, **kwds):
+        msg = "could not locate support for external package {0.category!r}"
+        super().__init__(description=msg, **kwds)
+        self.category = category
+        return
+
+
 # end of file 

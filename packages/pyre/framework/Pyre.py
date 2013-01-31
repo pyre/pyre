@@ -80,6 +80,8 @@ class Pyre(Executive):
         self.linker = self.newLinker()
         # the timer registry
         self.timekeeper = self.newTimerRegistry()
+        # the manager of external tools and libraries
+        self.externals = self.newExternalsManager()
 
         # critical step: record this instance with the {Executive} proxy to grant easy access
         # to components and protocols

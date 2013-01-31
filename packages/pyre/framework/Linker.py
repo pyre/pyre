@@ -40,12 +40,12 @@ class Linker:
         return codec.load(executive=executive, uri=uri)
         
 
-    def resolve(self, executive, client, uri):
+    def resolve(self, executive, client, uri, **kwds):
         """
         Attempt to locate the component class specified by {uri}
         """
         # what should we try?
-        schemes = [uri.scheme] if uri.scheme else ['import', 'vfs']
+        schemes = [uri.scheme] if uri.scheme else ['vfs', 'import']
 
         # for each loading strategy
         for scheme in schemes:
@@ -66,7 +66,7 @@ class Linker:
             candidate.scheme = scheme
 
             # the codec is able to provide a sequence of matching symbols
-            yield from codec.locateSymbol(executive=executive, client=client, uri=candidate)
+            yield from codec.locateSymbol(executive=executive, client=client, uri=candidate, **kwds)
 
         # out of ideas
         return 

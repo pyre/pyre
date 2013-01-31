@@ -19,7 +19,7 @@ class Loader:
 
     # interface
     @classmethod
-    def locateSymbol(cls, executive, uri, client):
+    def locateSymbol(cls, executive, uri, client, **kwds):
         """
         Locate and load the symbol that corresponds to the given {uri}; if {uri} is not
         sufficiently qualified to point to a unique location, use {client} to form candidates
@@ -56,7 +56,8 @@ class Loader:
         # look for matching shelves; the {uri} may match more than shelf, so try them all until
         # we find one that contains our target {symbol}
         for shelf in cls.loadShelves(executive=executive,
-                                     client=client, uri=package, symbol=symbol):
+                                     client=client, uri=package, symbol=symbol,
+                                     **kwds):
             # got one; attempt to
             try:
                 # look for our symbol 
@@ -95,7 +96,7 @@ class Loader:
 
 
     @classmethod
-    def loadShelves(cls, executive, client, uri, symbol):
+    def loadShelves(cls, executive, client, uri, symbol, **kwds):
         """
         Locate and load shelves for the given {uri}; if the {uri} is not sufficiently qualified
         to point to a unique location, use {client} to form plausible candidates.
@@ -103,7 +104,8 @@ class Loader:
         # access the linker
         linker = executive.linker
         # use {client} to build a sequence of candidate locations
-        candidates = cls.locateShelves(executive=executive, client=client, uri=uri, symbol=symbol)
+        candidates = cls.locateShelves(
+            executive=executive, client=client, uri=uri, symbol=symbol, **kwds)
         # go through each of them
         for uri in candidates:
             # print("Loader.loadShelves: uri={.uri!r}".format(uri))

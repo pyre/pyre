@@ -32,7 +32,7 @@ def test():
             return 0
 
     # instantiate it
-    app = application(name=sys.platform)
+    app = application(name='sample')
     # run it
     app.run()
 

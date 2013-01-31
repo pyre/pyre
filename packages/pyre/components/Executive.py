@@ -23,6 +23,7 @@ class Executive:
     pyre_fileserver = None
     pyre_nameserver = None
     pyre_configurator = None
+    pyre_externals = None
 
 
     @classmethod
@@ -36,6 +37,7 @@ class Executive:
         cls.pyre_fileserver = weakref.proxy(executive.fileserver)
         cls.pyre_nameserver = weakref.proxy(executive.nameserver)
         cls.pyre_configurator = weakref.proxy(executive.configurator)
+        cls.pyre_externals = weakref.proxy(executive.externals)
         # all done
         return
 

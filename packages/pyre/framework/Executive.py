@@ -33,8 +33,9 @@ class Executive:
     fileserver = None # the URI resolver
     registrar = None # protocol and component bookkeeping
     configurator = None # configuration sources and events
-    linker = None # the plug-in manager
+    linker = None # the pyre plug-in manager
     timekeeper = None # the timer registry
+    externals = None # the manager of external tools and libraries
 
     # bookkeeping
     errors = None # the pile of exceptions raised during booting and configuration
@@ -105,7 +106,7 @@ class Executive:
         return self.configure(stem=package.name, priority=self.priority.package, locator=locator)
         
 
-    def resolve(self, uri, client=None):
+    def resolve(self, uri, client=None, **kwds):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
 
@@ -186,7 +187,7 @@ class Executive:
         from ..components.Component import Component as component
 
         # the easy things didn't work out; look for matching descriptors
-        for candidate in self.retrieveComponentDescriptor(uri=uri, client=client):
+        for candidate in self.retrieveComponentDescriptor(uri=uri, client=client, **kwds):
             # if the candidate is neither a component class nor a component instance
             if not (isinstance(candidate, actor) or isinstance(candidate, component)):
                 # it must be a callable the returns one
@@ -216,7 +217,7 @@ class Executive:
         return
 
 
-    def retrieveComponentDescriptor(self, uri, client):
+    def retrieveComponentDescriptor(self, uri, client, **kwds):
         """
         The component resolution workhorse
         """
@@ -256,7 +257,7 @@ class Executive:
                         pass
 
         # ask the linker to find descriptors
-        yield from self.linker.resolve(executive=self, client=client, uri=uri)
+        yield from self.linker.resolve(executive=self, client=client, uri=uri, **kwds)
 
         # all done
         return
@@ -383,14 +384,23 @@ class Executive:
         # build one and return it
         return Registrar(**kwds)
 
+
+    def newExternalsManager(self, **kwds):
+        """
+        Build a new manager for external tools and libraries available to pyre applications
+        """
+        # access the factory
+        from .Externals import Externals
+        # build one and return it
+        return Externals(**kwds)
+
+
     # meta-methods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-
         # the pile of errors encountered
         self.errors = []
-
         # all done
         return
 
