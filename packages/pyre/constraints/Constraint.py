@@ -6,17 +6,18 @@
 #
 
 
-import abc
-
-
-class Constraint(metaclass=abc.ABCMeta):
+# class declaration
+class Constraint:
     """
     The base class for constraints
     """
 
 
+    # exceptions
+    from .exceptions import ConstraintViolationError
+
+
     # interface
-    @abc.abstractmethod
     def validate(self, candidate):
         """
         The default behavior for constraints is to raise a ConstraintViolationError.
@@ -49,10 +50,6 @@ class Constraint(metaclass=abc.ABCMeta):
         """
         from .Or import Or
         return Or(self, other)
-
-
-    # exceptions
-    from .exceptions import ConstraintViolationError
 
 
 # end of file 
