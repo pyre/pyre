@@ -64,7 +64,7 @@ class Host(pyre.component, implements=Platform):
         """
         # by default, we know nothing; so assume one single core cpu with no hyper-threading
         # subclasses should override with their platform dependent survey code
-        return (1,1,1)
+        return (1,1)
 
 
 # end of file 

@@ -128,7 +128,7 @@ class Linux(Host, family='pyre.platforms.linux'):
             return physical, logical
 
         # otherwise, we are on a single core host
-        return ids, ids
+        return (1,1)
 
 
     # implementation details: workhorses
