@@ -41,7 +41,7 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
         Encapsulation of what is known about the runtime environment
         """
         # ask the executive
-        return pyre.component.pyre_executive.host
+        return self.pyre_executive.host
 
 
     # interface
