@@ -37,6 +37,9 @@ class Executive:
     timekeeper = None # the timer registry
     externals = None # the manager of external tools and libraries
 
+    # the runtime environment; patched during boot
+    host = None 
+
     # bookkeeping
     errors = None # the pile of exceptions raised during booting and configuration
 
@@ -412,6 +415,19 @@ class Executive:
         """
         # initialize my namespace
         self.initializeNamespace()
+        # all done
+        return self
+
+
+    def discover(self, **kwds):
+        """
+        Discover what is known about the runtime environment
+        """
+        # access the platform protocol
+        from ..platforms import platform
+        # get information about the current host
+        self.host = platform().default(name='pyre.host')
+
         # all done
         return self
 

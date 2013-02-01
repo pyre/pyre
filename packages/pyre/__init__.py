@@ -269,6 +269,9 @@ if executive:
     # the base class of all pyre exceptions
     from .framework.exceptions import PyreError
 
+    # discover information about the runtime environment
+    executive.discover()
+
 
 # clean up the executive instance when the interpreter shuts down
 import atexit

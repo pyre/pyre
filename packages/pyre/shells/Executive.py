@@ -29,12 +29,19 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
     home = pyre.properties.str(default=None)
     home.doc = "the process home directory"
 
-    host = platform()
-    host.doc = "information about the host machine"
 
     # public data
     # a marker that enables applications to deduce the type of shell that is hosting them
     mode = 'unknown'
+
+    # access to what the framework knows about the runtime environment
+    @property
+    def host(self):
+        """
+        Encapsulation of what is known about the runtime environment
+        """
+        # ask the executive
+        return pyre.component.pyre_executive.host
 
 
     # interface
