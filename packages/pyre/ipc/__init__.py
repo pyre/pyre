@@ -31,7 +31,7 @@ def tcp(address):
     """
     Builds a channel over a TCP connection to a server
 
-    The parameter {address} is expected to be convertible to a {pyre.schema.inet} compatible
+    The parameter {address} is expected to be convertible to a {pyre.schemata.inet} compatible
     address.
     """
     # access the channel
@@ -53,12 +53,12 @@ def port(address=None):
 # convenient access to the inet parser that builds addresses
 def inet(spec=''):
     """
-    Convert {spec} to a {pyre.schema.inet} address
+    Convert {spec} to a {pyre.schemata.inet} address
     """
-    # access the type
-    from ..schema import inet
-    # get it to cast the value
-    return inet.coerce(value=spec)
+    # access the type factories
+    from .. import schemata
+    # cast the value
+    return schemata.inet.coerce(value=spec)
 
 
 # marshaller access

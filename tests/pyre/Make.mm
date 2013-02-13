@@ -16,7 +16,7 @@ RECURSE_DIRS = \
     xml \
     algebraic \
     calc \
-    schema \
+    schemata \
     units \
     constraints \
     records \

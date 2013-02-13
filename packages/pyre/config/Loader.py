@@ -13,7 +13,7 @@ class Loader:
 
 
     # types
-    from ..schema import uri
+    from ..schemata import uri
     from .exceptions import LoadingError
 
 

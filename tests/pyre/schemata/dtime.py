@@ -8,12 +8,22 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Verify that time conversions work as  expected
 """
 
 
 def test():
-    import pyre.schema
+    import pyre.schemata
+
+    # create a descriptor
+    descriptor = pyre.schemata.time
+
+    # casts are not implemented yet
+    try:
+        descriptor.coerce(None)
+    except NotImplementedError:
+        pass
+
     return
 
 

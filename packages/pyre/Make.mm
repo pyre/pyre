@@ -26,7 +26,7 @@ RECURSE_DIRS = \
     patterns \
     platforms \
     records \
-    schema \
+    schemata \
     shells \
     tabular \
     timers \

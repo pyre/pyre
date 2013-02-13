@@ -7,7 +7,7 @@
 
 
 # externals
-from .. import schema
+from .. import schemata
 # superclass
 from .Property import Property
 
@@ -21,7 +21,7 @@ class Bool(Property):
 
     # public data
     default = True
-    schema = schema.bool
+    schema = schemata.bool
 
 
     # meta-methods

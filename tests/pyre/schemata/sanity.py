@@ -8,22 +8,12 @@
 
 
 """
-Verify that date conversions work as  expected
+Sanity check: verify that the package is accessible
 """
 
 
 def test():
-    import pyre.schema
-
-    # create a descriptor
-    descriptor = pyre.schema.date
-
-    # casts are not implemented yet
-    try:
-        descriptor.coerce(None)
-    except NotImplementedError:
-        pass
-
+    import pyre.schemata
     return
 
 

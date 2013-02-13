@@ -29,11 +29,11 @@ class Facility(Slotted):
     
 
     # types
-    from ..schema import uri
+    from ..schemata import uri
     from ..components.Actor import Actor as actor
     from ..components.Component import Component as component
     # exceptions
-    from ..schema.exceptions import CastingError
+    from ..schemata.exceptions import CastingError
 
 
     # public data

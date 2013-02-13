@@ -7,7 +7,7 @@
 
 
 # externals
-from .. import tracking, schema
+from .. import tracking
 # superclass
 from .Executive import Executive
 

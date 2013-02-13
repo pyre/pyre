@@ -14,7 +14,7 @@ Exercise the internet address parser
 
 def test():
     # get the package parts
-    from pyre.schema.INet import (
+    from pyre.schemata.INet import (
         INet as inet,
         IPv4 as ipv4,
         Unix as unix)

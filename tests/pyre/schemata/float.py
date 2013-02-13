@@ -8,28 +8,26 @@
 
 
 """
-Check that dimensional conversions work as expected
+Check that float conversions work as expected
 """
 
 
 def test():
-    import pyre.schema
-    from pyre.units.SI import m, kg, s
+    import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schema.dimensional
+    descriptor = pyre.schemata.float
 
     # casts
     # successful
-    assert m == descriptor.coerce("meter")
-    assert 9.81*kg*m/s**2 == descriptor.coerce("9.81*kg*m/s**2")
-
+    assert 1.2 == descriptor.coerce(1.2)
+    assert 1.2 == descriptor.coerce("1.2")
     # failures
     try:
-        descriptor.coerce(1)
+        descriptor.coerce(test)
         assert False
     except descriptor.CastingError as error:
-        assert str(error) == "could not convert 1 into a dimensional quantity"
+        assert str(error) == "float() argument must be a string or a number"
         
     return
 

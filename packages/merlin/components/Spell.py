@@ -20,7 +20,7 @@ class Spell(pyre.protocol, family="merlin.spells"):
 
 
     # types
-    from pyre.schema import uri
+    from pyre.schemata import uri
 
     # public data
     merlin = None # gets patched during boot

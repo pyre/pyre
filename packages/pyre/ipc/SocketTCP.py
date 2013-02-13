@@ -20,7 +20,7 @@ class SocketTCP(Socket):
 
 
     # types
-    from ..schema import inet
+    from ..schemata import inet
     # constants
     type = socket.SOCK_STREAM
 

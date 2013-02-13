@@ -17,7 +17,7 @@ from .CSV import CSV as csv
 
 
 # access the type declarators
-from .. import schema
+from .. import schemata
 
 
 # convenience factories that build measures of specific types
@@ -28,7 +28,7 @@ def dimensional(default=0, **kwds):
     Legal assignments are constrained to have units compatible with the default value
     """
     m = measure(**kwds)
-    m.schema = schema.dimensional
+    m.schema = schemata.dimensional
     m.default = default
     return m
 
@@ -38,7 +38,7 @@ def float(default=0, **kwds):
     Build a float measure
     """
     m = measure(**kwds)
-    m.schema = schema.float
+    m.schema = schemata.float
     m.default = default
     return m
 
@@ -48,7 +48,7 @@ def int(default=0, **kwds):
     Build an integer measure
     """
     m = measure(**kwds)
-    m.schema = schema.int
+    m.schema = schemata.int
     m.default = default
     return m
 
@@ -58,7 +58,7 @@ def str(default="", **kwds):
     Build a string measure
     """
     m = measure(**kwds)
-    m.schema = schema.str
+    m.schema = schemata.str
     m.default = default
     return m
 

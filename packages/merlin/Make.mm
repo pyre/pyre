@@ -13,7 +13,7 @@ PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
 RECURSE_DIRS = \
     assets \
     components \
-    schema \
+    schemata \
     spells \
 
 

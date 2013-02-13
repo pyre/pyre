@@ -7,7 +7,7 @@
 
 
 # externals
-from .. import schema
+from .. import schemata
 # superclass
 from .Property import Property
 
@@ -21,7 +21,7 @@ class Array(Property):
 
     # public data
     default = ()
-    schema = schema.array
+    schema = schemata.array
 
 
     # meta-methods

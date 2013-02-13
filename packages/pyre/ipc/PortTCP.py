@@ -21,7 +21,7 @@ class PortTCP(Port, Channel):
 
 
     # types
-    from ..schema import inet
+    from ..schemata import inet
     from .SocketTCP import SocketTCP as tcp
     # constants
     type = socket.SOCK_STREAM

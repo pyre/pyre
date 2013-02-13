@@ -7,7 +7,7 @@
 
 
 # externals
-from ..schema import list
+from .. import schemata
 # superclass
 from .Property import Property
 
@@ -21,7 +21,7 @@ class List(Property):
 
     # public data
     default = []
-    schema = list(schema=list.identity)
+    schema = schemata.list(schema=schemata.identity)
 
 
     # framework support
@@ -34,11 +34,11 @@ class List(Property):
 
 
     # meta-methods
-    def __init__(self, schema=schema, default=default, **kwds):
+    def __init__(self, schema=schemata.identity, default=default, **kwds):
         # chain up
         super().__init__(default=default, **kwds)
         # record my schema
-        self.schema = list(schema=schema)
+        self.schema = schemata.list(schema=schema)
         # all done
         return
 

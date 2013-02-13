@@ -21,7 +21,7 @@ class Merlin(pyre.application, family='merlin.application'):
 
     # public data
     searchpath = pyre.properties.list(
-        schema=pyre.schema.uri,
+        schema=pyre.schemata.uri,
         default=['vfs:/merlin/project', 'vfs:/merlin/user', 'vfs:/merlin/system'])
 
 
@@ -118,13 +118,13 @@ class Merlin(pyre.application, family='merlin.application'):
         return None, None
 
 
-    # schema factories
+    # schemata factories
     def newProject(self, name):
         """
         Create a new project description object
         """
         # access the class
-        from ..schema.Project import Project
+        from ..schemata.Project import Project
         # build the object
         project = Project(name=name)
         # and return it 

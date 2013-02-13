@@ -37,7 +37,7 @@ from .Table import Table as table
 # the base query class
 from .Query import Query as query
 # the data model
-from .. import schema
+from .. import schemata
 from .Field import Field as field
 
 # supported servers

@@ -34,9 +34,9 @@ class Journal(pyre.component, family="journal.executive"):
         # access the nameserver
         ns = self.pyre_executive.nameserver
         # access the type converters
-        import pyre.schema
+        import pyre.schemata
         # pick the one for booleans
-        schema = pyre.schema.bool
+        schema = pyre.schemata.bool
         # and iterate over {categories}, updating their indices with the contents of the pyre
         # configuration store
         for category in categories:

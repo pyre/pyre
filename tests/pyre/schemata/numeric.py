@@ -8,18 +8,19 @@
 
 
 """
-Verify that string conversions work as  expected
+Verify that decimal conversions work as  expected
 """
 
 
 def test():
-    import pyre.schema
+    import decimal
+    import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schema.str
+    descriptor = pyre.schemata.decimal
 
-    # casts
-    assert "hello" == descriptor.coerce("hello")
+    # check
+    assert descriptor.coerce("1.20") == decimal.Decimal("1.20")
 
     return
 

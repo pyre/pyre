@@ -23,7 +23,7 @@ class Executive:
     from .exceptions import PyreError, ComponentNotFoundError
 
     # types
-    from ..schema.URI import URI as uri
+    from ..schemata import uri
     from .Priority import Priority as priority
 
 

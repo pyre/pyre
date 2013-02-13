@@ -7,7 +7,7 @@
 
 
 # externals
-from .. import schema
+from .. import schemata
 # superclass
 from .Property import Property
 
@@ -21,7 +21,7 @@ class Object(Property):
 
     # public data
     default = None
-    schema = schema.identity
+    schema = schemata.identity
 
 
     # framework support

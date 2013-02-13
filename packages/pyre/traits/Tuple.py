@@ -7,7 +7,7 @@
 
 
 # externals
-from ..schema import tuple
+from .. import schemata
 # superclass
 from .Property import Property
 
@@ -21,7 +21,7 @@ class Tuple(Property):
 
     # public data
     default = ()
-    schema = tuple(schema=tuple.identity)
+    schema = schemata.tuple(schema=schemata.identity)
 
 
     # framework support
@@ -34,11 +34,11 @@ class Tuple(Property):
 
 
     # meta-methods
-    def __init__(self, schema=schema, default=default, **kwds):
+    def __init__(self, schema=schemata.identity, default=default, **kwds):
         # chain up
         super().__init__(default=default, **kwds)
         # save my schema
-        self.schema = schema.tuple(schema=schema)
+        self.schema = schemata.tuple(schema=schema)
         # all done
         return
 

@@ -19,7 +19,7 @@ class Linker:
 
     # types
     from .exceptions import FrameworkError, ComponentNotFoundError, BadResourceLocatorError
-    from ..schema import uri
+    from ..schemata import uri
 
 
     # public data

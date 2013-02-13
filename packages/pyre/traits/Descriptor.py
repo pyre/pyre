@@ -7,7 +7,7 @@
 
 
 # externals
-from .. import schema
+from .. import schemata
 
 
 # declaration
@@ -32,7 +32,7 @@ class Descriptor:
     name = None # my name
     aliases = None # alternate names by which I am known to my client
     default = None # my default value
-    schema = schema.identity # my type; most likely one of the {pyre.schema} type declarators
+    schema = schemata.identity # my type; most likely one of the {pyre.schemata} type declarators
     tip = None # a short description of my purpose
 
     # wire doc to __doc__ so the bultin help can decorate the attributes properly

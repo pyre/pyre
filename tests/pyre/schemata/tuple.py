@@ -13,10 +13,10 @@ Check that array conversions work as expected
 
 
 def test():
-    import pyre.schema
+    import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schema.tuple(schema=pyre.schema.str)
+    descriptor = pyre.schemata.tuple(schema=pyre.schemata.str)
 
     # casts
     # successful

@@ -8,7 +8,7 @@
 
 # externals
 import os
-from .. import schema
+from .. import schemata
 # superclass
 from ..filesystem.Filesystem import Filesystem
 
@@ -53,8 +53,8 @@ class FileServer(Filesystem):
         """
         Convert {uri} into an input stream
         """
-        # make sure {uri} is a {schema.uri}
-        uri = schema.uri.coerce(uri)
+        # make sure {uri} is a {schemata.uri} instance
+        uri = schemata.uri.coerce(uri)
         # get the {uri} scheme
         scheme = uri.scheme
 

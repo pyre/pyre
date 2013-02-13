@@ -7,7 +7,7 @@
 
 
 # access to the type descriptors
-from .. import schema
+from .. import schemata
 # the base class for field descriptors
 from .Field import Field
 # other necessary packages
@@ -20,7 +20,7 @@ class Boolean(Field):
     Representation for booleans
     """
 
-    schema = schema.bool
+    schema = schemata.bool
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -43,7 +43,7 @@ class Date(Field):
     Representation for dates
     """
 
-    schema = schema.date
+    schema = schemata.date
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -60,7 +60,7 @@ class Decimal(Field):
     Representation of fixed precision numbers
     """
 
-    schema = schema.decimal
+    schema = schemata.decimal
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -83,7 +83,7 @@ class Float(Field):
     Representation of floating point numbers
     """
 
-    schema = schema.float
+    schema = schemata.float
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -104,7 +104,7 @@ class Integer(Field):
     Representation for integers
     """
 
-    schema = schema.int
+    schema = schemata.int
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -186,7 +186,7 @@ class String(Field):
     Representation for arbitrary length strings
     """
 
-    schema = schema.str
+    schema = schemata.str
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
@@ -216,7 +216,7 @@ class Time(Field):
     Representation for time stamps
     """
 
-    schema = schema.time
+    schema = schemata.time
 
     def rep(self, value):
         """SQL compliant rendering of my value"""

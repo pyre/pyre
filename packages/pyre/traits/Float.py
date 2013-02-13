@@ -7,7 +7,7 @@
 
 
 # externals
-from .. import schema
+from .. import schemata
 # superclass
 from .Property import Property
 
@@ -21,7 +21,7 @@ class Float(Property):
 
     # public data
     default = 0
-    schema = schema.float
+    schema = schemata.float
 
 
     # meta-methods

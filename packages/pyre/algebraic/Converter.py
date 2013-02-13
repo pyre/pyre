@@ -13,7 +13,7 @@ class Converter:
 
 
     # types
-    from ..schema import identity
+    from ..schemata import identity
     from .exceptions import EvaluationError
 
     # public data

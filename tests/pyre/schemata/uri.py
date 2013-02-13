@@ -13,7 +13,7 @@ Exercise the URI parser
 
 
 def test():
-    from pyre.schema import uri
+    from pyre.schemata import uri
 
     # the canonical case
     parts = uri.coerce("scheme://authority/address?query#fragment")

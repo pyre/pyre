@@ -13,10 +13,10 @@ Check that int conversions work as expected
 
 
 def test():
-    import pyre.schema
+    import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schema.int
+    descriptor = pyre.schemata.int
 
     # casts
     # successful

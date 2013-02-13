@@ -8,15 +8,15 @@
 
 
 """
-Verify that time conversions work as  expected
+Verify that date conversions work as  expected
 """
 
 
 def test():
-    import pyre.schema
+    import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schema.time
+    descriptor = pyre.schemata.date
 
     # casts are not implemented yet
     try:

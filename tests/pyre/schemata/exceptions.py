@@ -13,7 +13,7 @@ Tests for all the exceptions raised by this package
 
 def test():
 
-    from pyre.schema.exceptions import (
+    from pyre.schemata.exceptions import (
         SchemaError, CastingError
         )
 

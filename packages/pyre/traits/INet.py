@@ -7,7 +7,7 @@
 
 
 # externals
-from .. import schema
+from .. import schemata
 # superclass
 from .Property import Property
 
@@ -20,8 +20,8 @@ class INet(Property):
 
 
     # public data
-    default = schema.inet.any
-    schema = schema.inet
+    default = schemata.inet.any
+    schema = schemata.inet
 
 
     # framework support

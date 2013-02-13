@@ -9,7 +9,7 @@
 # externals
 import os # for path
 import collections # for defaultdict and OrderedDict
-from .. import schema
+from .. import schemata
 from .. import tracking
 
 
@@ -251,7 +251,7 @@ class Configurator:
         slot = nameserver.variable(
             key=key,
             value=self.configpath, 
-            converter=schema.list(schema.uri).coerce, 
+            converter=schemata.list(schema=schemata.uri).coerce, 
             priority=nameserver.priority.defaults(), locator=self.locator)
         # place it in the model
         nameserver.insert(name=name, key=key, node=slot)

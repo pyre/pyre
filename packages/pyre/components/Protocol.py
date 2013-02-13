@@ -23,7 +23,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
 
     # types
-    from ..schema import uri
+    from ..schemata import uri
     from .Actor import Actor as actor
     from .Component import Component as component
 
