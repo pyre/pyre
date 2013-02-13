@@ -19,6 +19,10 @@ class Slotted(Trait):
     """
 
 
+    # framework data
+    isConfigurable = True # slotted traits are configurable
+
+
     # framework support
     def getSlot(self, configurable):
         """

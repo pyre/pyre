@@ -22,13 +22,10 @@ class Property(Slotted):
 
 
     # public data
-    schema = schema.identity
+    schema = schema.identity # inherited from {Descriptor}
     converters = () # the chain of functions that are required to produce my native type
     normalizers = () # the chain of functions that convert my values to canonical form
     validators = () # the chain of functions that validate my values
-
-    # framework data; for internal purposes
-    isConfigurable = True # properties and subclasses are accessible through {configurator}
 
 
     # interface

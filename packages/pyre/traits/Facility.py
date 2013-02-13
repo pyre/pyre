@@ -37,10 +37,8 @@ class Facility(Slotted):
 
 
     # public data
-    schema = None
+    schema = None # component developers must specify the facility schema
     converters = ()
-    # framework data
-    isConfigurable = True
 
 
     # interface
