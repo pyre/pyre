@@ -387,14 +387,28 @@ class Dimensional:
             p = parser()
             # make the conversion
             base = p.parse(base)
+        # compute the numeric part
+        magnitude = self/base
         # if the dimensions label is empty
         if not label:
             # render my value
             return format(self/base, value)
-        # otherwise, decide which representation of multiplication to use
+        # otherwise, we have a label; attempt 
+        try:
+            # extract the singular and plural forms
+            singular, plural = label.split('|')
+        # if no plural was provided
+        except ValueError:
+            # make them the same
+            singular = plural = label
+        # decide which representation of multiplication to use
         op = ' ' if pretty else '*'
-        # build the string and return it
-        return format(self/base, value) + op + label
+        # if the magnitude is exactly one
+        if magnitude == 1:
+            # use the singular form
+            return format(magnitude, value) + op + singular
+        # otherwise use the plural
+        return format(magnitude, value) + op + plural
 
 
     # implementation details
