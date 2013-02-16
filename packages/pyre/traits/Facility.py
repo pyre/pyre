@@ -59,7 +59,7 @@ class Facility(Slotted):
         raise self.CastingError(value=value, description=msg)
 
 
-    def coerce(self, value, node, **kwds):
+    def coerce(self, value, node, incognito=False,  **kwds):
         """
         Force the instantiation of {value}
         """
@@ -70,9 +70,9 @@ class Facility(Slotted):
         # if what I got back is a component instance, we are all done
         if isinstance(value, self.component): return value
 
-        # if the node has a key
-        if node.key:
-            # find out my full name
+        # if I am supposed to name the new component
+        if not incognito and node.key:
+            # find out my full name and use it
             _, name = value.pyre_nameserver.lookup(node.key)
         # otherwise
         else:

@@ -31,34 +31,35 @@ class task(pyre.protocol, family='toy.tasks'):
         return relax
 
 
-# an actual task
-class relax(pyre.component, family='toy.tasks.relax', implements=task):
+# the base class for task implementors
+class activity(pyre.component, implements=task):
 
     duration = pyre.properties.dimensional(default=1*task.hour)
-    
+
     @pyre.export
     def perform(self):
-        return "relaxing for {:base={hour},label=hour}".format(self.duration, hour=task.hour)
+        return '{0.description} for {0.duration:base={hour},label=hour|hours}'.format(
+            self, hour=task.hour)
+
+
+# an actual task
+class relax(activity, family='toy.tasks.relax'):
+
+    description = 'relaxing'
 
 
 # another actual task
-class study(pyre.component, family='toy.tasks.study', implements=task):
+class study(activity, family='toy.tasks.study'):
 
+    description = 'studying'
     duration = pyre.properties.dimensional(default=2*task.hour)
     
-    @pyre.export
-    def perform(self):
-        return "studying for {:base={hour},label=hour}".format(self.duration, hour=task.hour)
 
+class patrol(activity, family='toy.tasks.patrol'):
 
-class patrol(pyre.component, family='toy.tasks.patrol', implements=task):
-
+    description = 'patrolling'
     duration = pyre.properties.dimensional(default=1.5*task.hour)
     
-    @pyre.export
-    def perform(self):
-        return "patrolling for {:base={hour},label=hour}".format(self.duration, hour=task.hour)
-
 
 # a specification for people categories
 class people(pyre.protocol, family='toy.people'):

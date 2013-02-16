@@ -12,19 +12,18 @@ import toy
 # driver
 def test():
     
+    # create a person
     alec = toy.student(name='alec')
-    # print(alec.pyre_nameserver.dump('alec'))
-    # print(alec.pyre_nameserver['toy.people.student.activities'])
-    # print(alec.pyre_nameserver['alec.activities'])
-    # print(alec.pyre_nameserver['alec.foo'])
     activities = tuple(alec.perform())
     assert activities == (
-        'studying for 2.0 hour', 'relaxing for 1.0 hour', 'studying for 1.0 hour'
+        'studying for 2.0 hours', 'relaxing for 3.0 hours',
+        'studying for 1.0 hour', 'relaxing for 1.0 hour'
         )
 
+    # and another one
     joe = toy.policeman(name='joe')
     activities = tuple(joe.perform())
-    assert activities == ('patrolling for 5.0 hour', 'relaxing for 1.5 hour')
+    assert activities == ('patrolling for 5.0 hours', 'relaxing for 1.5 hours')
 
     return
 
