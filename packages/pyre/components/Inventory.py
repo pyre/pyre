@@ -19,19 +19,21 @@ class Inventory(dict, Executive):
 
     # interface
     @classmethod
-    def classInventory(cls):
+    def initializeClass(cls):
         """
+        Build inventory for a component class
         """
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'classInventory'".format(cls))
+            "class {.__name__!r} must implement 'initializeClass'".format(cls))
 
 
     @classmethod
-    def instanceInventory(cls):
+    def initializeInstance(cls):
         """
+        Build inventory for a component instance
         """
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'instanceInventory'".format(cls))
+            "class {.__name__!r} must implement 'inistializeInstance'".format(cls))
 
 
     # meta-methods
