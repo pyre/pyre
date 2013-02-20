@@ -7,6 +7,7 @@
 
 
 # externals
+import re
 import weakref
 import itertools # for product
 from .. import tracking
@@ -25,6 +26,9 @@ class Executive:
     # types
     from ..schemata import uri
     from .Priority import Priority as priority
+
+    # constants
+    hostmapkey = 'pyre.hostmap' # the key with the nicknames of known hosts
 
 
     # public data
@@ -423,10 +427,46 @@ class Executive:
         """
         Discover what is known about the runtime environment
         """
+        # grab my nameserver
+        nameserver = self.nameserver
+        # and my fileserver
+        fileserver = self.fileserver
+
         # access the platform protocol
         from ..platforms import platform
-        # get information about the current host
-        self.host = platform().default(name='pyre.host')
+        # get the host class record
+        recognizer = platform()
+        # the default value already contains all we could discover about the type of machine we
+        # are running on
+        host = recognizer.default
+
+        # hunt down the map of known hosts
+        knownHosts = nameserver.find(pattern=self.hostmapkey)
+        # go through them in priority order
+        for name, slot in sorted(knownHosts, key=lambda x: x[1].priority):
+            # get the regular expression from the slot value
+            regex = slot.value
+            # if my hostname matches 
+            if re.match(regex, host.hostname):
+                # extract the nickname as the last part of the key name
+                host.nickname = nameserver.split(name)[-1]
+                # we are done
+                break
+        # if there was no match
+        else:
+            # make the hostname be the nickname
+            host.nickname = host.hostname
+
+        # hunt down the host specific configuration file and load it
+        # make a locator
+        here = tracking.simple('while configuring the runtime environment')
+        # set the stem
+        stem = 'pyre/hosts/{}'.format(host.nickname)
+        # attempt to load any matching configuration files
+        self.configure(stem=stem, priority=self.priority.framework, locator=here)
+        
+        # instantiate the host information store and attach it
+        self.host = host(name='pyre.host')
 
         # all done
         return self

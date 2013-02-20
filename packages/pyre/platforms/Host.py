@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import platform
 # framework
 import pyre
 # my protocol
@@ -20,7 +22,7 @@ class Host(pyre.component, implements=Platform):
 
     # public data
     # host
-    hostname = None # the name of the host on which this process is running
+    hostname = platform.node() # the name of the host on which this process is running
     nickname = None # the short name assigned to this host by the user
     # cpus
     cpus = None # the triplet (cpus, physical cores, logical cores)
@@ -45,14 +47,9 @@ class Host(pyre.component, implements=Platform):
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-
-        # get the python platform package
-        import platform
-        # set the hostname
-        self.hostname = platform.node()
         # discover the number of cpus
         self.cpus = self.cpuSurvey()
-
+        # all done
         return
 
 

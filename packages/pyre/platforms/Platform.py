@@ -6,9 +6,6 @@
 #
 
 
-# externals
-import re
-import operator
 # the framework
 import pyre
 
@@ -20,36 +17,12 @@ class Platform(pyre.protocol, family='pyre.platforms'):
     """
 
 
-    # constants
-    # the key under which users specify nicknames for known hosts
-    hostmapkey = 'pyre\.hostmap\..+'
-
-
     # framework obligations
     @classmethod
     def pyre_default(cls):
         """
         Build the preferred host implementation
         """
-        # get the nameserver
-        nameserver = cls.pyre_nameserver
-        # get the host name
-        import platform
-        hostname = platform.node()
-
-        # look for the entries under the {hostmap} key
-        hosts = nameserver.find(pattern=cls.hostmapkey)
-        # go through them in priority order
-        for name, slot in sorted(hosts, key=lambda x: x[1].priority):
-            # get the regular expression from the slot value
-            regex = slot.value
-            # if my hostname matches 
-            if re.match(regex, hostname):
-                # extract the nickname as the last part of the key name
-                nickname = nameserver.split(name)[-1]
-                # return a component specification for this nickname
-                return "{}".format(nickname)
-        
         # get the platform id
         import sys
         platform = sys.platform
