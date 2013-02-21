@@ -125,8 +125,16 @@ class Facility(Slotted):
         uri = self.uri.coerce(value)
         # extract the fragment, which we use as the instance name; it's ok if it's {None}
         instanceName = uri.fragment
+        # extract the address, which we use as the component specification; ok if it's {None}
+        componentSpec = uri.address
         # get my protocol
         protocol = self.schema
+
+        # if we have an instance name but no component specification
+        if instanceName and not componentSpec and self.default:
+            # try instantiating a component using my default
+            yield self.default(name=instanceName)
+
         # get the executive; my protocol has access
         executive = protocol.pyre_executive
         # the nameserver

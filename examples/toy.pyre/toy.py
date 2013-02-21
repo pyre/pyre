@@ -85,8 +85,8 @@ class person(pyre.component, implements=people):
 # students
 class student(person, family='toy.people.student'):
 
-    foo = task()
-    activities = pyre.properties.list(schema=task(default=relax))
+    # activities = pyre.properties.list(schema=task(default=relax))
+    activities = pyre.properties.list(schema=task(default=study))
 
 
 # policemen

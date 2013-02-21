@@ -12,7 +12,15 @@ import toy
 # driver
 def test():
     
-    # create a person
+    # here is a generic student
+    jane = toy.student(name='jane')
+    jane.activities = toy.relax, 'study#math', '#physics'
+    activities = tuple(jane.perform())
+    assert activities == (
+        'relaxing for 1.0 hour', 'studying for 1.0 hour', 'studying for 2.0 hours'
+        )
+
+    # create a person named in the configuration file
     alec = toy.student(name='alec')
     activities = tuple(alec.perform())
     assert activities == (
@@ -25,6 +33,7 @@ def test():
     activities = tuple(joe.perform())
     assert activities == ('patrolling for 5.0 hours', 'relaxing for 1.5 hours')
 
+    # all done
     return
 
 
