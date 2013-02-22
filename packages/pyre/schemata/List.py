@@ -7,10 +7,10 @@
 
 
 # superclass
-from .Container import Container
+from .Sequence import Sequence
 
 
-class List(Container):
+class List(Sequence):
     """
     The list type declarator
     """

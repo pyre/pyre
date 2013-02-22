@@ -13,9 +13,9 @@ from .Type import Type
 
 
 # declaration
-class Container(Type):
+class Sequence(Type):
     """
-    The base class for type declarators that are containers of others
+    The base class for type declarators that are sequences of other types
     """
 
 

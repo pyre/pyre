@@ -21,7 +21,16 @@ class List(Property):
 
     # public data
     default = []
-    schema = schemata.list(schema=schemata.identity)
+    schema = schemata.sequence(schema=schemata.identity)
+
+
+    # interface
+    def coerce(self, value, **kwds):
+        """
+        Walk {value} through the casting procedure
+        """
+        # easy enough for me
+        return list(super().coerce(value, **kwds))
 
 
     # framework support
@@ -38,7 +47,7 @@ class List(Property):
         # chain up
         super().__init__(default=default, **kwds)
         # record my schema
-        self.schema = schemata.list(schema=schema)
+        self.schema = schemata.sequence(schema=schema)
         # all done
         return
 

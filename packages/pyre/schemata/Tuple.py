@@ -7,11 +7,11 @@
 
 
 # superclass
-from .Container import Container
+from .Sequence import Sequence
 
 
 # declaration
-class Tuple(Container):
+class Tuple(Sequence):
     """
     The tuple type declarator
     """
