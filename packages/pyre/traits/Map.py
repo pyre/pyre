@@ -56,7 +56,7 @@ class Map(Facility):
             # take it apart and keep the trailing part
             tag = nameserver.split(childName)[-1]
             # store the (tag, value) pair in my index
-            index[tag] = self.schema.coerce(value=childNode.value)
+            index[tag] = self.schema.coerce(value=childNode.value, node=node, **kwds)
 
         # now, for the deferred assignments
         for assignment, priority in configurator.deferred[key]:
@@ -74,7 +74,7 @@ class Map(Facility):
                 # get the name of this entry
                 tag = nameserver.join(*assignment.key)
                 # place it in the index
-                index[tag] = self.schema.coerce(value=assignment.value)
+                index[tag] = self.schema.coerce(value=assignment.value, node=node, **kwds)
 
         # store the index as my value
         return index

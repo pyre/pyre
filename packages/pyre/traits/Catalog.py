@@ -49,7 +49,7 @@ class Catalog(Facility):
             # take it apart and keep the trailing part
             tag = nameserver.split(childName)[-1]
             # store the (tag, value) pair in my index
-            index[tag] = super().coerce(node=childNode, value=childNode.value)
+            index[tag] = super().coerce(node=childNode, value=childNode.value, **kwds)
 
         # now, for the deferred assignments
         for assignment, priority in configurator.deferred[key]:
