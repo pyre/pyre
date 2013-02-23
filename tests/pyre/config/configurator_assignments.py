@@ -41,7 +41,7 @@ def test():
         ]
 
     # process them
-    cfg.processEvents(executive=executive, events=events, priority=priority)
+    cfg.processEvents(events=events, priority=priority)
 
     # dump the contents of the model
     # ns.dump()

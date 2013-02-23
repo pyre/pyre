@@ -68,7 +68,7 @@ class Executive:
             return
         # ask the configurator to process the stream
         errors = self.configurator.loadConfiguration(
-            executive=self, uri=uri, source=source, locator=locator, priority=priority)
+            uri=uri, source=source, locator=locator, priority=priority)
         # add any errors to my pile
         # self.errors.extend(errors)
         # all done
@@ -477,8 +477,7 @@ class Executive:
         Create and initialize the default namespace entries
         """
         # ask my configurator for its defaults
-        self.configurator.initializeNamespace(nameserver=self.nameserver)
-
+        self.configurator.initializeNamespace()
         # all done
         return self
 

@@ -48,7 +48,7 @@ class Pyre(Executive):
         # parse the command line
         events = parser.parse(argv=sys.argv[1:])
         # ask my configurator to process the configuration events
-        configurator.processEvents(executive=self, events=events, priority=self.priority.user)
+        configurator.processEvents(events=events, priority=self.priority.user)
 
         # force the loading of the global configuration options
         nameserver.package(executive=self, name="pyre", locator=self.locator)
@@ -75,7 +75,7 @@ class Pyre(Executive):
         # component bookkeeping
         self.registrar = self.newComponentRegistrar()
         # handler of configuration events
-        self.configurator = self.newConfigurator()
+        self.configurator = self.newConfigurator(executive=self)
         # component linker
         self.linker = self.newLinker()
         # the timer registry

@@ -41,8 +41,7 @@ def test():
     # get the parser to populate the configurator
     events = parser.parse(commandline)
     # and transfer the events to the configurator
-    configurator.processEvents(
-        executive=executive, events=events, priority=executive.priority.user)
+    configurator.processEvents(events=events, priority=executive.priority.user)
 
     # dump the state
     # nameserver.dump()

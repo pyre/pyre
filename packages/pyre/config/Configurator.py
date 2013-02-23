@@ -8,6 +8,7 @@
 
 # externals
 import os # for path
+import weakref # for access to my executive
 import collections # for defaultdict and OrderedDict
 from .. import schemata
 from .. import tracking
@@ -35,7 +36,7 @@ class Configurator:
 
 
     # interface
-    def loadConfiguration(self, executive, uri, source, locator, priority):
+    def loadConfiguration(self, uri, source, locator, priority):
         """
         Use {uri} to find a codec that can process {source} into a stream of configuration
         events
@@ -64,7 +65,7 @@ class Configurator:
         # convert the input source into a stream of events
         events = self.codecs[encoding].decode(uri, source, locator)
         # process it
-        errors.extend(self.processEvents(executive=executive, events=events, priority=priority))
+        errors.extend(self.processEvents(events=events, priority=priority))
         # and return the errors
         return errors
 
@@ -97,7 +98,7 @@ class Configurator:
 
 
     # event processing
-    def processEvents(self, executive, events, priority):
+    def processEvents(self, events, priority):
         """
         Iterate over the {configuration} events and insert them into the model at the given
         {priority} level
@@ -108,17 +109,17 @@ class Configurator:
         for event in events:
             # process the event
             # print("pyre.config.Configurator.configure:", event)
-            event.identify(inspector=self, executive=executive, priority=priority)
+            event.identify(inspector=self, priority=priority)
         # all done
         return errors
 
 
-    def assign(self, executive, assignment, priority):
+    def assign(self, assignment, priority):
         """
         Process {assignment} by building a slot and placing it in {model}
         """
         # get the nameserver
-        model = executive.nameserver
+        model = self.executive.nameserver
         # unpack the value
         value = assignment.value
         # get the locator
@@ -132,12 +133,12 @@ class Configurator:
         return model.insert(name=model.join(*assignment.key), key=key, node=slot)
 
 
-    def defer(self, executive, assignment, priority):
+    def defer(self, assignment, priority):
         """
         Process a conditional assignment
         """
         # build the key
-        key = executive.nameserver.hash(name=assignment.component)
+        key = self.executive.nameserver.hash(name=assignment.component)
         # compute the priority
         priority = priority()
         # add it to the pile
@@ -155,7 +156,7 @@ class Configurator:
         return self
 
 
-    def execute(self, executive, command, priority):
+    def execute(self, command, priority):
         """
         Record a request to execute a command
         """
@@ -167,16 +168,16 @@ class Configurator:
         return self
 
 
-    def load(self, executive, request, priority):
+    def load(self, request, priority):
         """
-        Ask the pyre {executive} to load the configuration settings in {source}
+        Ask the pyre executive to load the configuration settings in {source}
         """
         # extract the source
         source = request.source
         # extract the locator
         locator = request.locator
         # get the executive to kick start the configuration loading
-        executive.loadConfiguration(uri=source, locator=locator, priority=priority)
+        self.executive.loadConfiguration(uri=source, locator=locator, priority=priority)
         # and return
         return self
 
@@ -194,12 +195,17 @@ class Configurator:
         """
         The last step in the configuration of a component instance
         """
+        # access the instance inventory
+        inventory = instance.pyre_inventory
+        # get the configuration key; guaranteed to exist since this method is only called for
+        # instances with public inventory
+        key = inventory.key
         # go through all deferred assignment that were meant for {instance}
-        for assignment, priority in self.retrieveDeferredAssignments(instance=instance):
+        for assignment, priority in self.retrieveDeferredAssignments(key=key):
             # find the trait
             trait = instance.pyre_trait(assignment.key[0])
             # ask it to set the value
-            instance.pyre_inventory.setTrait(
+            inventory.setTrait(
                 trait=trait, strategy=trait.instanceSlot,
                 value=assignment.value, priority=priority, locator=assignment.locator)
 
@@ -207,30 +213,25 @@ class Configurator:
         return instance
 
 
-    def retrieveDeferredAssignments(self, instance):
+    def retrieveDeferredAssignments(self, key):
         """
-        Locate the deferred assignments that are relevant to {instance}
+        Locate the deferred assignments that are relevant to the component instance associated
+        with the supplied configuration {key}
         """
-        # get the executive
-        executive = instance.pyre_executive
-        # and the nameserver
-        nameserver = executive.nameserver
-        # ask the {instance} for its registration key
-        key = instance.pyre_inventory.key
-        # go through all deferred assignment that were meant for {instance}
+        # access the nameserver
+        nameserver = self.executive.nameserver
+        # go through all deferred assignment that were meant for this instance
         for assignment, priority in self.deferred[key]:
             # check all the conditions
             for name, family in assignment.conditions:
                 # hash the conditions
                 name = nameserver.hash(name)
                 family = nameserver.hash(family)
-                # compute the intended instance safely: avoid the infinite recursion caused by
-                # asking the nameserver for the value of the slot whose value we are in the
-                # middle of building...
+                # deduce the class to which this component instance belongs
                 target = type(nameserver[name])
-                # check the family
+                # check the family name
                 if target.pyre_inventory.key is not family: break
-            # this is executed iff all assignment conditions are true
+            # iff all assignment conditions are satisfied
             else:
                 # hand this assignment to the caller
                 yield assignment, priority
@@ -239,10 +240,12 @@ class Configurator:
 
 
     # bootstrapping
-    def initializeNamespace(self, nameserver):
+    def initializeNamespace(self):
         """
         Place my default settings in the global namespace
         """
+        # get the nameserver
+        nameserver = self.executive.nameserver
         # the name of the configuration path slot
         name = 'pyre.configpath'
         # make its key
@@ -260,9 +263,13 @@ class Configurator:
 
 
     # meta-methods
-    def __init__(self, **kwds):
+    def __init__(self, executive=None, **kwds):
         # chain up
         super().__init__(**kwds)
+
+        # remember my executive
+        self.executive = None if executive is None else weakref.proxy(executive)
+
         # initialize my codecs
         self.codecs = self._indexDefaultCodecs()
 

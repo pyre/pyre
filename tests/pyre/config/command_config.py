@@ -29,7 +29,7 @@ def test():
     # get the parser to populate the configurator
     events = parser.parse(commandline)
     # and transfer the events to the configurator
-    cfg.processEvents(executive=executive, events=events, priority=executive.priority.user)
+    cfg.processEvents(events=events, priority=executive.priority.user)
     # now, check that the assignments took place
     assert ns["sample.user.name"] == "michael a.g. aïvázis"
     assert ns["sample.user.email"] == "aivazis@caltech.edu"
