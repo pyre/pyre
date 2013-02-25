@@ -18,6 +18,7 @@ class RNG:
 
 
     # constants
+    seed = 0
     available = gsl.rng_avail()
 
     # public data
@@ -49,7 +50,7 @@ class RNG:
 
 
     # meta methods
-    def __init__(self, algorithm='ranlxs2', seed=0, **kwds):
+    def __init__(self, algorithm='ranlxs2', seed=seed, **kwds):
         super().__init__(**kwds)
         # build the RNG
         self.rng = gsl.rng_alloc(algorithm)
