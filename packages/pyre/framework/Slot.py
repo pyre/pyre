@@ -76,6 +76,7 @@ class Slot(algebraic.AbstractNode, algebraic.Arithmetic, metaclass=_metaclass_Sl
     defaultPriority = priorities.defaults
 
     # public data
+    key = None # the hash by which i am known to the name server
     locator = None # the provenance of my value
     priority = None # the priority of the value assignment operation
 
@@ -91,11 +92,6 @@ class Slot(algebraic.AbstractNode, algebraic.Arithmetic, metaclass=_metaclass_Sl
 
 
     # implementation support
-    @classmethod
-    def coerce(cls, **kwds):
-        raise NotImplementedError("NYI! maybe DNI...")
-
-
     @classmethod
     def select(cls, model, existing, replacement):
         """
