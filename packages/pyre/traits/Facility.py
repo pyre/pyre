@@ -42,7 +42,7 @@ class Facility(Slotted):
 
 
     # interface
-    def identify(self, value, node, **kwds):
+    def identify(self, value, **kwds):
         """
         Convert {value} into a component class
         """
@@ -50,7 +50,7 @@ class Facility(Slotted):
         if value is None: return value
 
         # attempt to resolve {value} into something useful
-        for candidate in self.resolve(value=value, locator=node.locator):
+        for candidate in self.resolve(value=value):
             # and return the first successful candidate
             return candidate
 
@@ -106,7 +106,7 @@ class Facility(Slotted):
         return self
 
 
-    def resolve(self, value, locator, **kwds):
+    def resolve(self, value, **kwds):
         """
         Attempt to convert {value} to a component
         """
