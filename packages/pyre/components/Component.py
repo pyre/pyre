@@ -43,6 +43,19 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return self.pyre_inventory.name()
 
 
+    @property
+    def pyre_spec(self):
+        """
+        Build my configuration specification
+        """
+        # get my name
+        name = self.pyre_name or "<none>"
+        # and my family name
+        family = self.pyre_family() or "<none>"
+        # build the spec and return it
+        return "{} # {}".format(family, name)
+
+
     @classmethod
     def pyre_family(cls):
         """
