@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import weakref
 # framework access
 import pyre
 
@@ -48,20 +50,23 @@ class Director(pyre.actor):
         """
         Instantiate one of my classes
         """
+        # get the executive
+        executive = self.pyre_executive
         # if I have a name for the application instance, use it to hunt down configuration
         # files for this particular instance
         if name:
-            # get the executive
-            executive = self.pyre_executive
             # set up the priority
             priority = executive.priority.package
             # build a locator
             locator = pyre.tracking.simple('while initializing application {!r}'.format(name))
             # ask the executive to hunt down the application INSTANCE configuration file
             executive.configure(stem=name, priority=priority, locator=locator)
-
-        # delegate the creation of the instance and return it
-        return super().__call__(name=name, **kwds)
+        # chain up to create the instance
+        app = super().__call__(name=name, **kwds)
+        # attach it to the executive
+        executive.application = weakref.proxy(app)
+        # and return it
+        return app
 
 
 # end of file 
