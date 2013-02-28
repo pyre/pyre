@@ -7,11 +7,8 @@
 
 
 # externals
-import re
-import sys
 import pyre # the framework
-import operator
-import platform
+import weakref
 # my protocol
 from .Shell import Shell as shell
 # the protocols of my traits
@@ -50,7 +47,7 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
         Invoke the application behavior
         """
         # {Executive} is abstract
-        raise NotImplementedError("class {.__name__} must implement 'launch'".format(type(self)))
+        raise NotImplementedError("class {.__name__!r} must implement 'launch'".format(type(self)))
 
 
 # end of file 
