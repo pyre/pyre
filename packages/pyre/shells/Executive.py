@@ -28,11 +28,10 @@ class Executive(pyre.component, family='pyre.shells.executive', implements=shell
     # user configurable state
     home = pyre.properties.str(default=None)
     home.doc = "the process home directory"
-
-
-    # public data
     # a marker that enables applications to deduce the type of shell that is hosting them
-    mode = 'unknown'
+    model = pyre.properties.str(default='unknown')
+    model.doc = "the programming model"
+
 
     # access to what the framework knows about the runtime environment
     @property

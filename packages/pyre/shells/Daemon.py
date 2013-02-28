@@ -24,11 +24,9 @@ class Daemon(Fork, family="pyre.shells.daemon"):
     # user configurable state
     capture = pyre.properties.bool(default=False) # to override the default from {Fork}
     capture.doc = "control whether to create communication channels to the daemon process"
-
-
-    # public data
     # a marker that enables applications to deduce the type of shell that is hosting them
-    mode = 'daemon'
+    model = pyre.properties.str(default='daemon')
+    model.doc = "the programming model"
 
 
     # interface

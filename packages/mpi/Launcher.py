@@ -29,7 +29,7 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
 
     # public data
     # a marker that enables applications to deduce the type of shell that is hosting them
-    mode = 'mpi'
+    model = 'mpi'
 
 
     # interface
