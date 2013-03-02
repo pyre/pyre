@@ -66,6 +66,15 @@ lookup(typename Channel::string_t name)
 }
 
 
+// converters
+template <typename Severity, bool DefaultState>
+pyre::journal::Channel<Severity, DefaultState>::
+operator bool() const
+{
+    return isActive();
+}
+
+
 // destructor
 template <typename Severity, bool DefaultState>
 pyre::journal::Channel<Severity, DefaultState>::

@@ -76,6 +76,14 @@ class Channel(Named):
         return
 
 
+    def __bool__(self):
+        """
+        Simplify the state testing
+        """
+        # delegate to my state getter
+        return self.active
+
+
     # implementation details
     # private class data
     _index = None 

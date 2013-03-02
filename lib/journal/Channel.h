@@ -43,9 +43,13 @@ public:
     inline static inventory_t & lookup(string_t name);
 
     // meta methods
+public:
+    inline operator bool() const;
+
 protected:
     inline ~Channel();
     inline Channel(string_t);
+
     // disallow
 private:
     inline Channel(const Channel &);
