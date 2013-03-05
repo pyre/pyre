@@ -21,18 +21,19 @@
 #include <pyre/mpi/capsules.h>
 
 
+// matrix operations
 // gather
 const char * const
 gsl::mpi::
-gather__name__ = "gather";
+gatherMatrix__name__ = "gatherMatrix";
 
 const char * const
 gsl::mpi::
-gather__doc__ = "gather a matrix from the members of a communicator";
+gatherMatrix__doc__ = "gather a matrix from the members of a communicator";
 
 PyObject * 
 gsl::mpi::
-gather(PyObject *, PyObject * args)
+gatherMatrix(PyObject *, PyObject * args)
 {
     // place holders 
     int destination;
@@ -41,7 +42,7 @@ gather(PyObject *, PyObject * args)
     // parse the argument list
     if (!PyArg_ParseTuple(
                           args,
-                          "O!iO!:scatter",
+                          "O!iO!:gatherMatrix",
                           &PyCapsule_Type, &communicatorCapsule,
                           &destination,
                           &PyCapsule_Type, &matrixCapsule)) {
@@ -127,15 +128,15 @@ gather(PyObject *, PyObject * args)
 // scatter
 const char * const
 gsl::mpi::
-scatter__name__ = "scatter";
+scatterMatrix__name__ = "scatterMatrix";
 
 const char * const 
 gsl::mpi::
-scatter__doc__ = "scatter a matrix to the members of a communicator";
+scatterMatrix__doc__ = "scatter a matrix to the members of a communicator";
 
 PyObject * 
 gsl::mpi::
-scatter(PyObject *, PyObject * args)
+scatterMatrix(PyObject *, PyObject * args)
 {
     // place holders 
     int source, rows, columns;
@@ -144,7 +145,7 @@ scatter(PyObject *, PyObject * args)
     // parse the argument list
     if (!PyArg_ParseTuple(
                           args,
-                          "O!iO(ii):scatter",
+                          "O!iO(ii):scatterMatrix",
                           &PyCapsule_Type, &communicatorCapsule,
                           &source,
                           &matrixCapsule, // don't force the capsule type check; it may be {None}
@@ -197,6 +198,178 @@ scatter(PyObject *, PyObject * args)
 
     // wrap the destination matrix in a capsule and return it
     return PyCapsule_New(destination, gsl::matrix::capsule_t, gsl::matrix::free);
+}
+
+    
+// vector operations
+// gather
+const char * const
+gsl::mpi::
+gatherVector__name__ = "gatherVector";
+
+const char * const
+gsl::mpi::
+gatherVector__doc__ = "gather a vector from the members of a communicator";
+
+PyObject * 
+gsl::mpi::
+gatherVector(PyObject *, PyObject * args)
+{
+    // place holders 
+    int destination;
+    PyObject *communicatorCapsule, *vectorCapsule;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iO!:gatherVector",
+                          &PyCapsule_Type, &communicatorCapsule,
+                          &destination,
+                          &PyCapsule_Type, &vectorCapsule)) {
+        return 0;
+    }
+    // check the communicator capsule
+    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
+
+    // check the vector capsule
+    if (!PyCapsule_IsValid(vectorCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
+        return 0;
+    }
+    // get the source vector
+    gsl_vector * vector =
+        static_cast<gsl_vector *>
+        (PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+
+    // the place to deposit the data
+    double * data = 0;
+    // and the destination vector
+    gsl_vector * bertha = 0;
+
+    // at the destination task
+    if (comm->rank() == destination) {
+        // figure out the shape
+        int size = vector->size * comm->size();
+        // build the destination vector
+        bertha = gsl_vector_alloc(size);
+        // and use its payload as the location to deposit the data
+        data = bertha->data;
+    }
+
+    // gather the data
+    int status = MPI_Gather(
+                            vector->data, vector->size, MPI_DOUBLE, // send buffer
+                            data, vector->size, MPI_DOUBLE, // receive buffer
+                            destination, comm->handle() // address
+                            );
+
+    // check the return code
+    if (status != MPI_SUCCESS) {
+        // and throw an exception if anything went wrong
+        PyErr_SetString(PyExc_RuntimeError, "MPI_Gather failed");
+        return 0;
+    }
+
+    // at all tasks except the destination task
+    if (comm->rank() != destination) {
+        // return {None}
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
+    // wrap the destination vector in a capsule
+    PyObject * capsule = PyCapsule_New(bertha, gsl::vector::capsule_t, gsl::vector::free);
+
+    // build the result
+    PyObject * result = PyTuple_New(2);
+    PyTuple_SET_ITEM(result, 0, capsule);
+    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(bertha->size));
+    
+    // and return it
+    return result;
+}
+    
+
+// scatter
+const char * const
+gsl::mpi::
+scatterVector__name__ = "scatterVector";
+
+const char * const 
+gsl::mpi::
+scatterVector__doc__ = "scatter a vector to the members of a communicator";
+
+PyObject * 
+gsl::mpi::
+scatterVector(PyObject *, PyObject * args)
+{
+    // place holders 
+    int source, length;
+    PyObject *communicatorCapsule, *vectorCapsule;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iOi:scatterVector",
+                          &PyCapsule_Type, &communicatorCapsule,
+                          &source,
+                          &vectorCapsule, // don't force the capsule type check; it may be {None}
+                          &length
+                          )) {
+        return 0;
+    }
+    // check the communicator capsule
+    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
+
+    // the pointer to source payload
+    double * data = 0;
+    // I only have a valid vector at the {source} rank
+    if (comm->rank() == source) {
+        // check the vector capsule
+        if (!PyCapsule_IsValid(vectorCapsule, gsl::vector::capsule_t)) {
+            PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
+            return 0;
+        }
+        // get the source vector
+        gsl_vector * vector =
+            static_cast<gsl_vector *>
+            (PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+        // and extract the pointer to the payload
+        data = vector->data;
+    }
+
+    // build the destination vector
+    gsl_vector * destination = gsl_vector_alloc(length);
+
+    // scatter the data
+    int status = MPI_Scatter(
+                             data, length, MPI_DOUBLE, // source buffer
+                             destination->data, length, MPI_DOUBLE, // destination buffer
+                             source, comm->handle() // address
+                             );
+    // check the return code
+    if (status != MPI_SUCCESS) {
+        // and throw an exception if anything went wrong
+        PyErr_SetString(PyExc_RuntimeError, "MPI_Scatter failed");
+        return 0;
+    }
+
+    // wrap the destination vector in a capsule and return it
+    return PyCapsule_New(destination, gsl::vector::capsule_t, gsl::vector::free);
 }
 
     

@@ -13,15 +13,25 @@
 namespace gsl {
     namespace mpi {
 
-        // gather
-        extern const char * const gather__name__;
-        extern const char * const gather__doc__;
-        PyObject * gather(PyObject *, PyObject *);
+        // matrix gather
+        extern const char * const gatherMatrix__name__;
+        extern const char * const gatherMatrix__doc__;
+        PyObject * gatherMatrix(PyObject *, PyObject *);
 
-        // scatter
-        extern const char * const scatter__name__;
-        extern const char * const scatter__doc__;
-        PyObject * scatter(PyObject *, PyObject *);
+        // matrix scatter
+        extern const char * const scatterMatrix__name__;
+        extern const char * const scatterMatrix__doc__;
+        PyObject * scatterMatrix(PyObject *, PyObject *);
+
+        // matrix gather
+        extern const char * const gatherVector__name__;
+        extern const char * const gatherVector__doc__;
+        PyObject * gatherVector(PyObject *, PyObject *);
+
+        // matrix scatter
+        extern const char * const scatterVector__name__;
+        extern const char * const scatterVector__doc__;
+        PyObject * scatterVector(PyObject *, PyObject *);
 
     } // of namespace mpi
 } // of namespace gsl

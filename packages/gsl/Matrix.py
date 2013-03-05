@@ -55,7 +55,7 @@ class Matrix:
             # use the world by default
             communicator = mpi.world
         # gather the data
-        result = gsl.gather(communicator.capsule, destination, matrix.data)
+        result = gsl.gatherMatrix(communicator.capsule, destination, matrix.data)
         # if i am not the destination task, nothing further to do
         if communicator.rank != destination: return
         # otherwise, unpack the result
@@ -82,7 +82,7 @@ class Matrix:
         # get the matrix capsule
         data = None if matrix is None else matrix.data
         # scatter the data
-        partition = gsl.scatter(communicator.capsule, source, data, taskload)
+        partition = gsl.scatterMatrix(communicator.capsule, source, data, taskload)
         # dress up my local portion as a matrix
         result = cls(shape=taskload, data=partition)
         # and return it

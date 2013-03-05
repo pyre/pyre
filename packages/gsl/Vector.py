@@ -22,6 +22,55 @@ class Vector:
     from .Permutation import Permutation as permutation
 
 
+    # class methods
+    # mpi support
+    @classmethod
+    def collect(cls, vector, communicator=None, destination=0):
+        """
+        Gather the data in {vector} from each task in {communicator} into one big vector
+        available at the {destination} task
+        """
+        # normalize the communicator
+        if communicator is None:
+            # get the mpi package
+            import mpi
+            # use the world by default
+            communicator = mpi.world
+        # gather the data
+        result = gsl.gatherVector(communicator.capsule, destination, vector.data)
+        # if i am not the destination task, nothing further to do
+        if communicator.rank != destination: return
+        # otherwise, unpack the result
+        data, shape = result
+        # dress up the result as a vector
+        result = cls(shape=shape, data=data)
+        # and return it
+        return result
+
+
+    @classmethod
+    def partition(cls, taskload, communicator=None, source=0, vector=None):
+        """
+        Scatter {vector} held by the task {source} among all tasks in {communicator}. Only
+        {source} has to provide a {vector}; the other tasks can use the default value. Each
+        task gets a vector whose layout is described by {taskload}.
+        """
+        # normalize the communicator
+        if communicator is None:
+            # get the mpi package
+            import mpi
+            # use the world by default
+            communicator = mpi.world
+        # get the vector capsule
+        data = None if vector is None else vector.data
+        # scatter the data
+        partition = gsl.scatterVector(communicator.capsule, source, data, taskload)
+        # dress up my local portion as a vector
+        result = cls(shape=taskload, data=partition)
+        # and return it
+        return result
+
+
     # initialization
     def zero(self):
         """

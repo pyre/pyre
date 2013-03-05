@@ -219,8 +219,11 @@ namespace gsl {
         // mpi support
 #if defined(WITH_MPI)
         // matrix partitioning
-        { mpi::gather__name__, mpi::gather, METH_VARARGS, mpi::gather__doc__ },
-        { mpi::scatter__name__, mpi::scatter, METH_VARARGS, mpi::scatter__doc__ },
+        { mpi::gatherMatrix__name__, mpi::gatherMatrix, METH_VARARGS, mpi::gatherMatrix__doc__ },
+        { mpi::scatterMatrix__name__, mpi::scatterMatrix, METH_VARARGS, mpi::scatterMatrix__doc__ },
+        // vector partitioning
+        { mpi::gatherVector__name__, mpi::gatherVector, METH_VARARGS, mpi::gatherVector__doc__ },
+        { mpi::scatterVector__name__, mpi::scatterVector, METH_VARARGS, mpi::scatterVector__doc__ },
 #endif
 
         // sentinel

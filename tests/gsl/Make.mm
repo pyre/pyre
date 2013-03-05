@@ -98,10 +98,14 @@ linalg:
 MPI_DIR=
 mpi:
 ifneq ($(strip $(MPI_DIR)), )
-	${PYTHON} ./collect.py
-	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./collect.py
-	${PYTHON} ./partition.py
-	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./partition.py
+	${PYTHON} ./collectMatrix.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./collectMatrix.py
+	${PYTHON} ./partitionMatrix.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./partitionMatrix.py
+	${PYTHON} ./collectVector.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./collectVector.py
+	${PYTHON} ./partitionVector.py
+	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./partitionVector.py
 endif
 
 # end of file 
