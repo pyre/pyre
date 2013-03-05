@@ -13,6 +13,11 @@
 namespace gsl {
     namespace mpi {
 
+        // matrix bcast
+        extern const char * const bcastMatrix__name__;
+        extern const char * const bcastMatrix__doc__;
+        PyObject * bcastMatrix(PyObject *, PyObject *);
+
         // matrix gather
         extern const char * const gatherMatrix__name__;
         extern const char * const gatherMatrix__doc__;
@@ -23,12 +28,17 @@ namespace gsl {
         extern const char * const scatterMatrix__doc__;
         PyObject * scatterMatrix(PyObject *, PyObject *);
 
-        // matrix gather
+        // vector bcast
+        extern const char * const bcastVector__name__;
+        extern const char * const bcastVector__doc__;
+        PyObject * bcastVector(PyObject *, PyObject *);
+
+        // vector gather
         extern const char * const gatherVector__name__;
         extern const char * const gatherVector__doc__;
         PyObject * gatherVector(PyObject *, PyObject *);
 
-        // matrix scatter
+        // vector scatter
         extern const char * const scatterVector__name__;
         extern const char * const scatterVector__doc__;
         PyObject * scatterVector(PyObject *, PyObject *);

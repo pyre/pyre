@@ -22,6 +22,118 @@
 
 
 // matrix operations
+// bcast
+const char * const
+gsl::mpi::
+bcastMatrix__name__ = "bcastMatrix";
+
+const char * const
+gsl::mpi::
+bcastMatrix__doc__ = "broadcast a matrix to all members of a communicator";
+
+PyObject * 
+gsl::mpi::
+bcastMatrix(PyObject *, PyObject * args)
+{
+    // place holders 
+    int source;
+    PyObject *communicatorCapsule, *matrixCapsule;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iO:bcastMatrix",
+                          &PyCapsule_Type, &communicatorCapsule,
+                          &source,
+                          &matrixCapsule // don't force the capsule type check; it may be {None}
+                          )) {
+        return 0;
+    }
+    // check the communicator capsule
+    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
+
+    // the matrix
+    gsl_matrix * matrix;
+    // the shape of the matrix
+    long dim[2];
+
+    // I only have a valid matrix at the {source} rank
+    if (comm->rank() == source) {
+        // check the matrix capsule
+        if (!PyCapsule_IsValid(matrixCapsule, gsl::matrix::capsule_t)) {
+            PyErr_SetString(PyExc_TypeError, "invalid matrix capsule for source");
+            return 0;
+        }
+        // get the source matrix
+        matrix =
+            static_cast<gsl_matrix *>
+            (PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
+        // fill out the shape of the matrix
+        dim[0] = matrix->size1;
+        dim[1] = matrix->size2;
+    }
+
+    // broadcast the shape
+    MPI_Bcast(dim, 2, MPI_LONG, source, comm->handle());
+
+    // unpack the shape
+    size_t rows = dim[0];
+    size_t columns = dim[1];
+
+    // everybody except the source task
+    if (comm->rank() != source) {
+        // build the destination matrix
+        matrix = gsl_matrix_alloc(rows, columns);
+    }
+
+    // extract the pointer to the payload
+    double * data = matrix->data;
+
+    // broadcast the data
+    int status = MPI_Bcast(data, rows*columns, MPI_DOUBLE, source, comm->handle());
+
+    // check the return code
+    if (status != MPI_SUCCESS) {
+        // and throw an exception if anything went wrong
+        PyErr_SetString(PyExc_RuntimeError, "MPI_Scatter failed");
+        return 0;
+    }
+
+    // wrap the destination matrix in a capsule and return it
+    PyObject * capsule;
+    // in the source task
+    if (comm->rank() == source) {
+        // increment the reference count of the existing capsule
+        Py_INCREF(matrixCapsule);
+        // and make it the result
+        capsule = matrixCapsule;
+    } else {
+        // everybody else gets a new one
+        capsule = PyCapsule_New(matrix, gsl::matrix::capsule_t, gsl::matrix::free);
+    }
+
+    // build the matrix shape
+    PyObject * shape = PyTuple_New(2);
+    PyTuple_SET_ITEM(shape, 0, PyLong_FromLong(rows));
+    PyTuple_SET_ITEM(shape, 1, PyLong_FromLong(columns));
+
+    // build the result
+    PyObject * result = PyTuple_New(2);
+    PyTuple_SET_ITEM(result, 0, capsule);
+    PyTuple_SET_ITEM(result, 1, shape);
+    
+    // and return it
+    return result;
+}
+    
+
 // gather
 const char * const
 gsl::mpi::
@@ -202,6 +314,108 @@ scatterMatrix(PyObject *, PyObject * args)
 
     
 // vector operations
+// bcast
+const char * const
+gsl::mpi::
+bcastVector__name__ = "bcastVector";
+
+const char * const
+gsl::mpi::
+bcastVector__doc__ = "broadcast a vector to all members of a communicator";
+
+PyObject * 
+gsl::mpi::
+bcastVector(PyObject *, PyObject * args)
+{
+    // place holders 
+    int source;
+    PyObject *communicatorCapsule, *vectorCapsule;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(
+                          args,
+                          "O!iO:bcastVector",
+                          &PyCapsule_Type, &communicatorCapsule,
+                          &source,
+                          &vectorCapsule // don't force the capsule type check; it may be {None}
+                          )) {
+        return 0;
+    }
+    // check the communicator capsule
+    if (!PyCapsule_IsValid(communicatorCapsule, ::mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm = 
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
+
+    // the vector
+    gsl_vector * vector;
+    // the shape of the vector
+    long dim;
+
+    // I only have a valid vector at the {source} rank
+    if (comm->rank() == source) {
+        // check the vector capsule
+        if (!PyCapsule_IsValid(vectorCapsule, gsl::vector::capsule_t)) {
+            PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
+            return 0;
+        }
+        // get the source vector
+        vector =
+            static_cast<gsl_vector *>
+            (PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+        // fill out the shape of the vector
+        dim = vector->size;
+    }
+
+    // broadcast the shape
+    MPI_Bcast(&dim, 1, MPI_LONG, source, comm->handle());
+
+    // everybody except the source task
+    if (comm->rank() != source) {
+        // build the destination vector
+        vector = gsl_vector_alloc(dim);
+    }
+
+    // extract the pointer to the payload
+    double * data = vector->data;
+
+    // broadcast the data
+    int status = MPI_Bcast(data, dim, MPI_DOUBLE, source, comm->handle());
+
+    // check the return code
+    if (status != MPI_SUCCESS) {
+        // and throw an exception if anything went wrong
+        PyErr_SetString(PyExc_RuntimeError, "MPI_Scatter failed");
+        return 0;
+    }
+
+    // wrap the destination vector in a capsule and return it
+    PyObject * capsule;
+    // in the source task
+    if (comm->rank() == source) {
+        // increment the reference count of the existing capsule
+        Py_INCREF(vectorCapsule);
+        // and make it the result
+        capsule = vectorCapsule;
+    } else {
+        // everybody else gets a new one
+        capsule = PyCapsule_New(vector, gsl::vector::capsule_t, gsl::vector::free);
+    }
+
+    // build the result
+    PyObject * result = PyTuple_New(2);
+    PyTuple_SET_ITEM(result, 0, capsule);
+    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(dim));
+    
+    // and return it
+    return result;
+}
+    
+
 // gather
 const char * const
 gsl::mpi::

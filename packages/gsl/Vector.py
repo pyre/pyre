@@ -25,6 +25,27 @@ class Vector:
     # class methods
     # mpi support
     @classmethod
+    def bcast(cls, vector=None, communicator=None, source=0):
+        """
+        Broadcast the given {vector} from {source} to all tasks in {communicator}
+        """
+        # normalize the communicator
+        if communicator is None:
+            # get the mpi package
+            import mpi
+            # use the world by default
+            communicator = mpi.world
+        # get the vector capsule
+        data = None if vector is None else vector.data
+        # scatter the data
+        capsule, shape = gsl.bcastVector(communicator.capsule, source, data)
+        # dress up my local portion as a vector
+        result = cls(shape=shape, data=capsule)
+        # and return it
+        return result
+
+
+    @classmethod
     def collect(cls, vector, communicator=None, destination=0):
         """
         Gather the data in {vector} from each task in {communicator} into one big vector

@@ -43,6 +43,27 @@ class Matrix:
     # class methods
     # mpi support
     @classmethod
+    def bcast(cls, matrix=None, communicator=None, source=0):
+        """
+        Broadcast the given {matrix} from {source} to all tasks in {communicator}
+        """
+        # normalize the communicator
+        if communicator is None:
+            # get the mpi package
+            import mpi
+            # use the world by default
+            communicator = mpi.world
+        # get the matrix capsule
+        data = None if matrix is None else matrix.data
+        # scatter the data
+        capsule, shape = gsl.bcastMatrix(communicator.capsule, source, data)
+        # dress up my local portion as a matrix
+        result = cls(shape=shape, data=capsule)
+        # and return it
+        return result
+
+
+    @classmethod
     def collect(cls, matrix, communicator=None, destination=0):
         """
         Gather the data in {matrix} from each task in {communicator} into one big matrix
