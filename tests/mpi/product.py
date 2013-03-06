@@ -21,14 +21,14 @@ def test():
     # and its structure
     rank = world.rank
     size = world.size
-    # set up a root for the reduction
-    root = int(size / 2)
+    # set up a source for the reduction
+    source = int(size / 2)
     # create a value
     number = rank + 1
     # perform the reduction
-    product = world.product(item=number, root=root)
+    product = world.product(item=number, source=source)
     # check it
-    if rank == root:
+    if rank == source:
         assert product == math.factorial(size)
     # all done
     return

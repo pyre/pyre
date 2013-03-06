@@ -20,14 +20,14 @@ def test():
     # and its structure
     rank = world.rank
     size = world.size
-    # set up a root for the reduction
-    root = int(size / 2)
+    # set up a source for the reduction
+    source = int(size / 2)
     # create a value
     number = rank**2
     # perform the reduction
-    largest = world.max(item=number, root=root)
+    largest = world.max(item=number, source=source)
     # check it
-    if rank == root:
+    if rank == source:
         assert largest == (size-1)**2
     # all done
     return

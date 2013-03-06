@@ -120,48 +120,48 @@ class Communicator(Object):
 
 
     # communications
-    def bcast(self, item=None, root=0):
+    def bcast(self, item=None, source=0):
         """
-        Broadcast {item} from {root} to every task; only {root} has to pass an {item}
+        Broadcast {item} from {source} to every task; only {source} has to pass an {item}
         """
-        # if I am the root, pickle the {item}
-        data = pickle.dumps(item) if self.rank == root else bytes()
+        # if I am the source, pickle the {item}
+        data = pickle.dumps(item) if self.rank == source else bytes()
         # broadcast the data buffer
-        data = self.mpi.bcast(self.capsule, self.rank, root, data)
+        data = self.mpi.bcast(self.capsule, self.rank, source, data)
         # extract the item and return it
         return pickle.loads(data)
 
 
-    def sum(self, item, root):
+    def sum(self, item, source):
         """
         Perform a sum reduction of {item}
         """
         # pass it on
-        return self.mpi.sum(self.capsule, self.rank, root, item)
+        return self.mpi.sum(self.capsule, self.rank, source, item)
 
 
-    def product(self, item, root):
+    def product(self, item, source):
         """
         Perform a product reduction of {item}
         """
         # pass it on
-        return self.mpi.product(self.capsule, self.rank, root, item)
+        return self.mpi.product(self.capsule, self.rank, source, item)
 
 
-    def max(self, item, root):
+    def max(self, item, source):
         """
         Perform a max reduction of {item}
         """
         # pass it on
-        return self.mpi.max(self.capsule, self.rank, root, item)
+        return self.mpi.max(self.capsule, self.rank, source, item)
 
 
-    def min(self, item, root):
+    def min(self, item, source):
         """
         Perform a min reduction of {item}
         """
         # pass it on
-        return self.mpi.min(self.capsule, self.rank, root, item)
+        return self.mpi.min(self.capsule, self.rank, source, item)
 
 
     # meta methods

@@ -20,14 +20,14 @@ def test():
     # and its structure
     rank = world.rank
     size = world.size
-    # set up a root for the reduction
-    root = int(size / 2)
+    # set up a source for the reduction
+    source = int(size / 2)
     # create a value
     number = rank**2
     # perform the reduction
-    total = world.sum(item=number, root=root)
+    total = world.sum(item=number, source=source)
     # check it
-    if rank == root:
+    if rank == source:
         assert total == (size-1)*size*(2*size-1)/6
     # all done
     return

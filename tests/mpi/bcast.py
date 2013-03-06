@@ -27,12 +27,12 @@ def test():
     import mpi
     # get the world communicator
     world = mpi.world
-    # set up a root for the broadcast
-    root = int(world.size / 2)
+    # set up a source for the broadcast
+    source = int(world.size / 2)
     # create a message
-    item = message(data="Hello from {}".format(root))
+    item = message(data="Hello from {}".format(source))
     # broadcast it
-    received = world.bcast(item=item, root=root)
+    received = world.bcast(item=item, source=source)
     # check it
     assert received == item
     # all done
