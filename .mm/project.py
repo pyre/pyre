@@ -27,11 +27,13 @@ def requirements():
 
     # build the package instances
     packages = [
+        Package(name='cuda', optional=True),
         Package(name='gsl', optional=True),
         Package(name='libpq', optional=True),
         Package(name='mpi', optional=True),
         Package(name='python', optional=False),
         ]
+
     # build a dictionary and return it
     return { package.name: package for package in packages }
 
