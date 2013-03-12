@@ -14,11 +14,18 @@ RECURSE_DIRS = \
     timers
 
 # the optional packages
+# cuda
+CUDA_DIR= # overriden by the the environment
+ifneq ($(strip $(CUDA_DIR)),)
+  RECURSE_DIRS += cuda
+endif
+
 # mpi
 MPI_DIR= # overriden by the the environment
 ifneq ($(strip $(MPI_DIR)),)
   RECURSE_DIRS += mpi
 endif
+
 #gsl
 GSL_DIR = # overriden by the environment
 ifneq ($(strip $(GSL_DIR)),)

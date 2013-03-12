@@ -17,11 +17,19 @@ PACKAGES = \
     merlin \
 
 # the optional packages
+
+# gsl
+CUDA_DIR = # overriden by the environment
+ifneq ($(strip $(CUDA_DIR)),)
+  PACKAGES += cuda
+endif
+
 # gsl
 GSL_DIR = # overriden by the environment
 ifneq ($(strip $(GSL_DIR)),)
-  RECURSE_DIRS += gsl
+  PACKAGES += gsl
 endif
+
 # mpi
 MPI_DIR= # overriden by the the environment
 ifneq ($(strip $(MPI_DIR)),)
