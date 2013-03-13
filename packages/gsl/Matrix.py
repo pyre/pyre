@@ -266,7 +266,7 @@ class Matrix:
         return self
 
 
-    def setColumn(self, index):
+    def setColumn(self, index, v):
         """
         Set the column at {index} to the contents of the given vector {v}
         """
