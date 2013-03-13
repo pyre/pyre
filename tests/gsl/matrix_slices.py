@@ -42,6 +42,26 @@ def test():
     # full of {j}
     assert column == gsl.vector(shape=m.rows).fill(j)
 
+    # shape
+    rows = 100
+    columns = 200
+    # make another matrix
+    m = gsl.matrix(shape=(rows,columns)).zero()
+    
+    # make a vector of ones
+    ones = gsl.vector(shape=columns).fill(1.0)
+    # set the middle column
+    m.setRow(rows/2, ones)
+    # verify it was done properly
+    assert m.getRow(rows/2) == ones
+
+    # make a vector of twos
+    twos = gsl.vector(shape=rows).fill(2.0)
+    # set the middle column
+    m.setColumn(columns/2, twos)
+    # verify it was done properly
+    assert m.getColumn(columns/2) == twos
+
     # all done
     return m
 

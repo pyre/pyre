@@ -241,7 +241,7 @@ class Matrix:
         Return a view to the requested row
         """
         # let the extension do its thing
-        capsule = gsl.matrix_get_row(self.data, index)
+        capsule = gsl.matrix_get_row(self.data, int(index))
         # build a vector and return it
         return self.vector(shape=self.columns, data=capsule)
 
@@ -251,7 +251,7 @@ class Matrix:
         Return a view to the requested column
         """
         # let the extension do its thing
-        capsule = gsl.matrix_get_col(self.data, index)
+        capsule = gsl.matrix_get_col(self.data, int(index))
         # build a vector and return it
         return self.vector(shape=self.rows, data=capsule)
 
@@ -261,7 +261,7 @@ class Matrix:
         Set the row at {index} to the contents of the given vector {v}
         """
         # let the extension do its thing
-        gsl.matrix_set_row(self.data, index, v.data)
+        gsl.matrix_set_row(self.data, int(index), v.data)
         # and return
         return self
 
@@ -271,7 +271,7 @@ class Matrix:
         Set the column at {index} to the contents of the given vector {v}
         """
         # let the extension do its thing
-        gsl.matrix_set_col(self.data, index, v.data)
+        gsl.matrix_set_col(self.data, int(index), v.data)
         # and return
         return self
 
