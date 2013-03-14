@@ -40,7 +40,7 @@ class Dimensional:
         # if {other} is not a dimensional
         except AttributeError:
             # return false
-            return False
+            return self.derivation == self.zero
 
 
     # meta methods
@@ -114,7 +114,9 @@ class Dimensional:
             except TypeError:
                 # report an error
                 raise self.CompatibilityError(operation="multiplication", op1=self, op2=other)
-            # scale the magnitude and return the new dimensional
+            # if i am dimensionless, just return the value
+            if self.derivation == self.zero: return value
+            # otherwise, return a new dimensional
             return Dimensional(value=value, derivation=self.derivation)
         # otherwise, compute the units
         derivation = tuple(map(operator.add, self.derivation, other.derivation))
@@ -143,6 +145,8 @@ class Dimensional:
             except TypeError:
                 # report an error
                 raise self.CompatibilityError(operation="division", op1=self, op2=other)
+            # if i am dimensionless, just return the value
+            if self.derivation == self.zero: return value
             # otherwise, build a dimensional and return it
             return Dimensional(value=value, derivation=self.derivation)
         # otherwise compute the units
@@ -242,9 +246,13 @@ class Dimensional:
                 # and the values
                 return self.value < other.value
         # if not
-        except AttributeError: pass
+        except AttributeError:
+            # check whether I am dimensionless
+            if self.derivation == self.zero:
+                # in which case, just compare my value
+                return self.value < other
         # the operation is illegal
-        raise self.CompatibilityError(operand="<", op1=self, op2=other)
+        raise self.CompatibilityError(operation="<", op1=self, op2=other)
 
 
     def __le__(self, other):
@@ -258,9 +266,14 @@ class Dimensional:
                 # and the values
                 return self.value <= other.value
         # if not
-        except AttributeError: pass
+        # except AttributeError: pass
+        except AttributeError:
+            # check whether I am dimensionless
+            if self.derivation == self.zero:
+                # in which case, just compare my value
+                return self.value <= other
         # the operation is illegal
-        raise self.CompatibilityError(operand="<=", op1=self, op2=other)
+        raise self.CompatibilityError(operation="<=", op1=self, op2=other)
 
 
     def __eq__(self, other):
@@ -274,9 +287,13 @@ class Dimensional:
                 # and the values
                 return self.value == other.value
         # if not
-        except AttributeError: pass
-        # the operation is illegal
-        raise self.CompatibilityError(operand="==", op1=self, op2=other)
+        except AttributeError:
+            # check whether I am dimensionless
+            if self.derivation == self.zero:
+                # in which case, just compare my value
+                return self.value == other
+        # in every other case, the operation is illegal
+        raise self.CompatibilityError(operation="==", op1=self, op2=other)
 
 
     def __ne__(self, other):
@@ -290,9 +307,13 @@ class Dimensional:
                 # and the values
                 return self.value != other.value
         # if not
-        except AttributeError: pass
+        except AttributeError:
+            # check whether I am dimensionless
+            if self.derivation == self.zero:
+                # in which case, just compare my value
+                return self.value != other
         # the operation is illegal
-        raise self.CompatibilityError(operand="!=", op1=self, op2=other)
+        raise self.CompatibilityError(operation="!=", op1=self, op2=other)
 
 
     def __gt__(self, other):
@@ -306,9 +327,13 @@ class Dimensional:
                 # and the values
                 return self.value > other.value
         # if not
-        except AttributeError: pass
+        except AttributeError:
+            # check whether I am dimensionless
+            if self.derivation == self.zero:
+                # in which case, just compare my value
+                return self.value > other
         # the operation is illegal
-        raise self.CompatibilityError(operand=">", op1=self, op2=other)
+        raise self.CompatibilityError(operation=">", op1=self, op2=other)
 
 
     def __ge__(self, other):
@@ -322,9 +347,13 @@ class Dimensional:
                 # and the values
                 return self.value >= other.value
         # if not
-        except AttributeError: pass
+        except AttributeError:
+            # check whether I am dimensionless
+            if self.derivation == self.zero:
+                # in which case, just compare my value
+                return self.value >= other
         # the operation is illegal
-        raise self.CompatibilityError(operand=">=", op1=self, op2=other)
+        raise self.CompatibilityError(operation=">=", op1=self, op2=other)
 
 
     def __str__(self):
@@ -404,7 +433,7 @@ class Dimensional:
         # decide which representation of multiplication to use
         op = ' ' if pretty else '*'
         # if the magnitude is exactly one
-        if magnitude == 1:
+        if magnitude == one:
             # use the singular form
             return format(magnitude, value) + op + singular
         # otherwise use the plural
@@ -426,7 +455,7 @@ class Dimensional:
               
 
 # instances
-zero = dimensionless = Dimensional(0, Dimensional.zero)
+zero = Dimensional(0, Dimensional.zero)
 one = dimensionless = Dimensional(1, Dimensional.zero)
 
 
