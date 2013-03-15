@@ -8,8 +8,17 @@
 #include <portinfo>
 #include <Python.h>
 
-// the module method declarations
+// journal
+#include <pyre/journal.h>
+
+// CUDA
+#include <cuda.h>
+
+// boilerplate
 #include "metadata.h"
+#include "exceptions.h"
+// the module method declarations
+
 
 // put everything in my private namespace
 namespace pyre {
@@ -63,8 +72,21 @@ PyInit_cuda()
     if (!module) {
         return module;
     }
-    // module initialization
-    // return the newly created module
+
+    // initialize cuda
+    CUresult status = cuInit(0);
+    // check
+    if (status != CUDA_SUCCESS) {
+        // something went wrong
+        PyErr_SetString(PyExc_ImportError, "CUDA initialization failed");
+        // raise an exception
+        return 0;
+    }
+
+    // otherwise, we are good to go; register the module exceptions
+    pyre::extensions::cuda::registerExceptionHierarchy(module);
+
+    // and return the newly created module
     return module;
 }
 
