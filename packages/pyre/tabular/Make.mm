@@ -36,6 +36,7 @@ EXPORT_PYTHON_MODULES = \
     SheetMaker.py \
     View.py \
     exceptions.py \
+    measures.py \
     __init__.py
 
 
