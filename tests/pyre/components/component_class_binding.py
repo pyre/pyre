@@ -23,7 +23,7 @@ def test():
             """do something"""
 
         @classmethod
-        def pyre_default(cls):
+        def pyre_default(cls, **kwds):
             """the default task"""
             return relax
 

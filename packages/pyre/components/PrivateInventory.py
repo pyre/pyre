@@ -140,9 +140,11 @@ class PrivateInventory(Inventory):
             if not trait.isConfigurable: continue
             # ask the trait for the evaluation strategy details
             macro, converter = trait.classSlot(model=ns)
+            # and a default value appropriate for this component
+            initialValue = trait.classDefault(key=None, component=component)
             # use it to build the slot
             slot = macro(
-                key=None, value=trait.default, converter=converter,
+                key=None, value=initialValue, converter=converter,
                 priority=priority(), locator=locator)
             # yield the trait, slot pair
             yield trait, slot

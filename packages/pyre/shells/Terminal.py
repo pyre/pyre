@@ -19,7 +19,7 @@ class Terminal(pyre.protocol, family='pyre.shells.terminals'):
 
     # framework support
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         """
         Sniff out the capabilities of the current terminal and choose the default implementation
         """

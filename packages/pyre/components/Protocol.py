@@ -34,7 +34,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # override this in your protocols to provide the default implementation
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         """
         The preferred implementation of this protocol, in case the user has not provided an
         alternative

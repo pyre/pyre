@@ -24,7 +24,7 @@ class Shell(pyre.protocol, family="pyre.shells"):
 
     # my default implementation
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         """
         The default shell implementation
         """

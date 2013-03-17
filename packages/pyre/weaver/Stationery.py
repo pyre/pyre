@@ -39,7 +39,7 @@ class Stationery(pyre.protocol, family="pyre.weaver.layouts"):
 
     # utilities
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         """
         Choose a layout as the default
         """

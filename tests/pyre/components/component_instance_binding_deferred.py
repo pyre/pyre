@@ -12,7 +12,7 @@ import pyre
 class ifac(pyre.protocol, family="deferred.ifac"):
     """sample protocol"""
     @classmethod
-    def pyre_default(cls): return comp
+    def pyre_default(cls, **kwds): return comp
 
 class comp(pyre.component, family="deferred.ifac.comp", implements=ifac):
     """an implementation"""

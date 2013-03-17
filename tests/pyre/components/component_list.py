@@ -27,7 +27,7 @@ class activity(pyre.protocol, family="sample.activities"):
 
     # set  up my default implementation
     @classmethod
-    def pyre_default(cls): return relax
+    def pyre_default(cls, **kwds): return relax
 
 
 # a few implementations

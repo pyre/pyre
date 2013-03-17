@@ -58,6 +58,13 @@ class Slotted(Trait):
         return model.expression
 
 
+    def classDefault(self, **kwds):
+        """
+        Compute an appropriate default value for the given {component}
+        """
+        return self.default
+
+
     # meta methods
     def __get__(self, instance, cls):
         """

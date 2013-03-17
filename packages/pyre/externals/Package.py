@@ -39,7 +39,7 @@ class Package(pyre.component, implements=category):
             # get the platform protocol
             from ..platforms import platform as recognizer
             # and ask it to figure what kind of machine we are running on
-            platform = recognizer().default
+            platform = recognizer().classDefault()
 
         # instantiate using a name derived from my category and the platform name
         package = cls(name="{}-{}-default".format(cls.category, platform.distribution))

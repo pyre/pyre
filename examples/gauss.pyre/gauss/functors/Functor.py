@@ -17,7 +17,7 @@ class Functor(pyre.protocol, family="gauss.functors"):
 
     # the suggested default implementation
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         """
         The default implementation of the {Functor} protocol
         """

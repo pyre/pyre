@@ -162,7 +162,16 @@ class Facility(Slotted):
         # and return it
         return value
 
-    
+
+    # class initialization
+    def classDefault(self, **kwds):
+        """
+        Compute an appropriate default value for the given {component} class
+        """
+        # either my default value or whatever my protocol specifies
+        return self.default or self.schema.pyre_default(**kwds)
+
+
     # support for constructing instance slots
     def classSlot(self, model):
         """
@@ -182,8 +191,6 @@ class Facility(Slotted):
 
     # meta methods
     def __init__(self, protocol, default=None, **kwds):
-        # reset the default value, if necessary
-        default = protocol.pyre_default() if default is None else default
         # chain up
         super().__init__(default=default, **kwds)
         # save my protocol

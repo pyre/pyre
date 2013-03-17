@@ -28,7 +28,7 @@ class Integrator(pyre.protocol, family="gauss.integrators"):
 
     # my preferred implementation
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         # use {MonteCarlo} by default
         from .MonteCarlo import MonteCarlo
         return MonteCarlo

@@ -17,7 +17,7 @@ class Shape(pyre.protocol, family="gauss.shapes"):
 
     # my default implementation
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         """
         The default {Shape} implementation
         """

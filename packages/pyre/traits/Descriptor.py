@@ -70,9 +70,14 @@ class Descriptor:
     def __init__(self, default=default, **kwds):
         # chain up
         super().__init__(**kwds)
+
+        # N.B.: in most cases, {schema} is a class variable, so don't set it here; facilities
+        # are an exception to this: they use {schema} to record their protocols.
+
         # the attributes that are likely to be known at construction time
         self.default = default
-        # and the rest
+
+        # initialize the rest
         self.__doc__ = None
         self.aliases = set()
         # and return

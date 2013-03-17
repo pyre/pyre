@@ -19,7 +19,7 @@ class Platform(pyre.protocol, family='pyre.platforms'):
 
     # framework obligations
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         """
         Build the preferred host implementation
         """

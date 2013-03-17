@@ -17,7 +17,7 @@ class PointCloud(pyre.protocol, family="gauss.meshes"):
 
     # my default implementation
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         """
         The default {PointCloud} implementation
         """

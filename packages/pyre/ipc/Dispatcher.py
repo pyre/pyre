@@ -20,7 +20,7 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
 
     # default implementation
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
         """
         The suggested implementation of the {Dispatcher} protocol
         """
