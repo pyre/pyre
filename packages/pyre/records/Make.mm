@@ -34,6 +34,7 @@ EXPORT_PYTHON_MODULES = \
     Record.py \
     Templater.py \
     exceptions.py \
+    fields.py \
     __init__.py
 
 
