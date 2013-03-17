@@ -9,11 +9,11 @@
 # access to the type specifiers
 from .. import schemata
 # base class
-from .Entry import Entry.variable as field
+from .Entry import Entry
 
 
 # typed field declarators
-class float(field):
+class float(Entry.variable):
     """
     A floating point field
     """
@@ -29,7 +29,7 @@ class float(field):
         return
 
 
-class int(field):
+class int(Entry.variable):
     """
     An integer field
     """
@@ -45,7 +45,7 @@ class int(field):
         return
 
 
-class str(field):
+class str(Entry.variable):
     """
     A string field
     """
