@@ -67,7 +67,7 @@ class Descriptor:
 
 
     # meta methods
-    def __init__(self, default=None, **kwds):
+    def __init__(self, default=default, **kwds):
         # chain up
         super().__init__(**kwds)
         # the attributes that are likely to be known at construction time
