@@ -187,7 +187,12 @@ class Configurator:
         """
         The last step in the configuration of a component class
         """
-        # not much to do 
+        # notify each trait
+        for trait in component.pyre_traits():
+            # that the component class is configured
+            trait.classConfigured(component=component)
+
+        # and return the class record
         return component
 
 
@@ -208,6 +213,11 @@ class Configurator:
             inventory.setTrait(
                 trait=trait, strategy=trait.instanceSlot,
                 value=assignment.value, priority=priority, locator=assignment.locator)
+
+        # notify each trait
+        for trait in instance.pyre_traits():
+            # that the component instance is configured
+            trait.instanceConfigured(instance=instance)
 
         # all done
         return instance

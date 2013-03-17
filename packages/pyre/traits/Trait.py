@@ -34,4 +34,29 @@ class Trait(Descriptor, Executive):
     isConfigurable = False
 
 
+    # configuration
+    def classDefault(self, **kwds):
+        """
+        Compute an appropriate default value
+        """
+        # easy enough
+        return self.default
+
+
+    def classConfigured(self, **kwds):
+        """
+        Notification that the component class I am being attached to is configured
+        """
+        # nothing to do, by default
+        return self
+
+
+    def instanceConfigured(self, **kwds):
+        """
+        Notification that the component instance I am being attached to is configured
+        """
+        # nothing to do, by default
+        return self
+
+
 # end of file 
