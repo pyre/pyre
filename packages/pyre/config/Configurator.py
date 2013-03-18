@@ -223,6 +223,24 @@ class Configurator:
         return instance
 
 
+    def retrieveDirectAssignments(self, key):
+        """
+        Locate the direct configuration assignment under {key}
+        """
+        # access the nameserver
+        nameserver = self.executive.nameserver
+
+        # go through all the children of this key
+        for child, node in nameserver.children(key):
+            # get the name of the node
+            _, name = nameserver.lookup(child)
+            # yield the name and the current value of the node
+            yield name, node
+
+        # all done
+        return
+
+
     def retrieveDeferredAssignments(self, key):
         """
         Locate the deferred assignments that are relevant to the component instance associated
@@ -230,6 +248,7 @@ class Configurator:
         """
         # access the nameserver
         nameserver = self.executive.nameserver
+
         # go through all deferred assignment that were meant for this instance
         for assignment, priority in self.deferred[key]:
             # check all the conditions
@@ -245,6 +264,7 @@ class Configurator:
             else:
                 # hand this assignment to the caller
                 yield assignment, priority
+
         # all done
         return
 
