@@ -31,7 +31,6 @@ EXPORT_PYTHON_MODULES = \
     INet.py \
     Integer.py \
     List.py \
-    Map.py \
     Object.py \
     OutputFile.py \
     Property.py \
