@@ -24,32 +24,7 @@ class PrivateInventory(Inventory):
     key = None # components with private inventories have no keys
 
 
-    # interface
-    def name(self):
-        """
-        Return the name of my client
-        """
-        # private components have no name
-        return None
-
-
-    def package(self):
-        """
-        Return the package associated with this client
-        """
-        # private components have no packages
-        return None
-
-
     # slot access
-    def getSlot(self, trait):
-        """
-        Retrieve the slot associated with {trait}
-        """
-        # easy enough
-        return self[trait]
-
-
     def setTrait(self, trait, strategy, value, priority, locator):
         """
         Set the value of the slot associated with {trait}
@@ -176,7 +151,7 @@ class PrivateInventory(Inventory):
                 # otherwise, remove it from the target list
                 traits.remove(trait)
                 # get the associated slot
-                slot = ancestor.pyre_inventory.getSlot(trait=trait)
+                slot = ancestor.pyre_inventory[trait]
                 # build a reference to it; no need to switch converters here, since the type of
                 # an inherited trait is determined by the nearest ancestor that declared it
                 ref = slot.ref(key=None, locator=locator, priority=priority())
@@ -217,7 +192,7 @@ class PrivateInventory(Inventory):
         # go through all the configurable traits in {component}
         for trait in component.pyre_configurables():
             # ask the class inventory for the slot that corresponds to this trait
-            slot = component.pyre_inventory.getSlot(trait=trait)
+            slot = component.pyre_inventory[trait]
             # and its slot strategy
             _, converter = trait.instanceSlot(model=ns)
             # build a reference to the class slot

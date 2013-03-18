@@ -24,14 +24,6 @@ class Slotted(Trait):
 
 
     # framework support
-    def getSlot(self, configurable):
-        """
-        Locate the slot held by {configurable} on my behalf
-        """
-        # easy enough
-        return configurable.pyre_inventory.getSlot(trait=self)
-
-
     def classSlot(self, model):
         """
         Hook registered with the nameserver that informs it of my macro preference and the
@@ -66,7 +58,7 @@ class Slotted(Trait):
         # find out whose inventory we are supposed to access
         configurable = instance if instance else cls
         # grab the slot from the client's inventory
-        slot = configurable.pyre_inventory.getSlot(trait=self)
+        slot = configurable.pyre_inventory[self]
         # compute and return its value
         return slot.value
 

@@ -40,7 +40,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Look up my name
         """
         # ask my inventory
-        return self.pyre_inventory.name()
+        return self.pyre_inventory.name
 
 
     @property
@@ -62,7 +62,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Deduce my family name
         """
         # get my inventory to answer this
-        return cls.pyre_inventory.name()
+        return cls.pyre_inventory.name
 
 
     @classmethod
@@ -71,7 +71,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Deduce my package name
         """
         # get my inventory to answer this
-        return cls.pyre_inventory.package()
+        return cls.pyre_inventory.package
 
 
     # framework notifications
@@ -146,7 +146,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # find the trait
         trait = self.pyre_trait(alias=attribute)
         # look up the slot associated with this trait and return it
-        return self.pyre_inventory.getSlot(configurable=self)
+        return self.pyre_inventory[trait]
 
 
     def pyre_where(self, attribute=None):

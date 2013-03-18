@@ -108,7 +108,7 @@ def where(configurable, attribute=None):
     # retrieve the trait descriptor
     trait = configurable.pyre_trait(alias=attribute)
     # find the slot where the attribute is stored
-    slot = trait.getSlot(configurable=configurable)
+    slot = configurable.pyre_inventory[trait]
     # and return its locator
     return slot.locator
 

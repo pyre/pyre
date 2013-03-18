@@ -22,7 +22,8 @@ class PublicInventory(Inventory):
     """
 
 
-    # interface
+    # public data
+    @property
     def name(self):
         """
         Look up the family name of my client
@@ -35,6 +36,7 @@ class PublicInventory(Inventory):
         return name
 
 
+    @property
     def package(self):
         """
         Return the package associated with this client
@@ -50,18 +52,6 @@ class PublicInventory(Inventory):
 
 
     # slot access
-    def getSlot(self, trait):
-        """
-        Retrieve the slot associated with {trait}
-        """
-        # get the key
-        key = self[trait]
-        # ask the nameserver
-        slot, _ = self.pyre_nameserver.lookup(key)
-        # and return the slot
-        return slot
-
-
     def setTrait(self, trait, strategy, value, priority, locator):
         """
         Set the value of the slot associated with {trait}
@@ -202,12 +192,12 @@ class PublicInventory(Inventory):
             for trait in ancestor.pyre_configurables():
                 # if the trait is not in the target pile
                 if trait not in traits:
-                    # no worries; it must have been seen while processing a  closer ancestor
+                    # no worries; it must have been seen while processing a closer ancestor
                     continue
                 # otherwise, remove it from the target list
                 traits.remove(trait)
                 # get the associated slot
-                slot = trait.getSlot(configurable=ancestor)
+                slot = ancestor.pyre_inventory[trait]
                 # build a reference to it; no need to switch converters here, since the type of
                 # an inherited trait is determined by the nearest ancestor that declared it
                 ref = slot.ref(key=key[trait.name], locator=locator, priority=priority())
@@ -248,7 +238,7 @@ class PublicInventory(Inventory):
         # go through all the configurable traits in {component}
         for trait in component.pyre_configurables():
             # ask the class inventory for the slot that corresponds to this trait
-            slot = component.pyre_inventory.getSlot(trait=trait)
+            slot = component.pyre_inventory[trait]
             # and its slot strategy
             _, converter = trait.instanceSlot(model=nameserver)
             # build a reference to the class slot
@@ -299,6 +289,18 @@ class PublicInventory(Inventory):
         self.key = key
         return
 
+
+    def __getitem__(self, trait):
+        """
+        Retrieve the slot associated with {trait}
+        """
+        # get the key
+        key = super().__getitem__(trait)
+        # ask the nameserver
+        slot, _ = self.pyre_nameserver.lookup(key)
+        # and return the slot
+        return slot
+        
 
     def __str__(self):
         return "public inventory at {:#x}".format(id(self))

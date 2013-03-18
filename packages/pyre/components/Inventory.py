@@ -17,12 +17,18 @@ class Inventory(dict, Executive):
     """
 
 
+    # public data
+    name = None # by default, components have no name
+    package = None # by default, components have no family names
+
+
     # interface
     @classmethod
     def initializeClass(cls):
         """
         Build inventory for a component class
         """
+        # implementation dependent -- override in subclasses
         raise NotImplementedError(
             "class {.__name__!r} must implement 'initializeClass'".format(cls))
 
@@ -32,8 +38,19 @@ class Inventory(dict, Executive):
         """
         Build inventory for a component instance
         """
+        # implementation dependent -- override in subclasses
         raise NotImplementedError(
             "class {.__name__!r} must implement 'inistializeInstance'".format(cls))
+
+
+    # implementation details
+    def hashKey(cls, **kwds):
+        """
+        Build a hash key for a trait slot that is about to be minted
+        """
+        # implementation dependent -- override in subclasses
+        raise NotImplementedError(
+            "class {.__name__!r} must implement 'hashKey'".format(cls))
 
 
     # meta-methods
