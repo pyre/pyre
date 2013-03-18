@@ -64,9 +64,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # if i don't have a key, i don't have a family
         if cls.pyre_key is None: return None
         # otherwise, ask the nameserver
-        _, family = cls.pyre_executive.nameserver.lookup(cls.pyre_key)
-        # and return the family name
-        return family
+        return cls.pyre_nameserver.getName(cls.pyre_key)
 
 
     @classmethod
@@ -79,7 +77,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # if i don't have a key, i don't have a package
         if cls.pyre_key is None: return None
         # otherwise, ask the nameserver
-        _, family = ns.lookup(cls.pyre_key)
+        family = ns.getName(cls.pyre_key)
         # split the family name apart; the package name is the zeroth entry
         pkgName = family.split(ns.separator)[0]
         # use it to look up the package

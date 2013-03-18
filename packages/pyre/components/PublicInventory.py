@@ -30,10 +30,8 @@ class PublicInventory(Inventory):
         """
         # get the nameserver
         nameserver = self.pyre_nameserver
-        # ask it for my full name
-        _, name = nameserver.lookup(key=self.key)
-        # and return it
-        return name
+        # ask it for my full name and return it
+        return nameserver.getName(key=self.key)
 
 
     @property
@@ -44,7 +42,7 @@ class PublicInventory(Inventory):
         # get the nameserver
         nameserver = self.pyre_nameserver
         # ask it for my full name
-        _, name = nameserver.lookup(key=self.key)
+        name = nameserver.getName(key=self.key)
         # split it apart; the package name is the zeroth entry
         packageName = nameserver.split(name)[0]
         # use the name to look up the package
@@ -258,7 +256,7 @@ class PublicInventory(Inventory):
         # get the nameserver
         nameserver = cls.pyre_nameserver
         # look up the basename
-        _, base = nameserver.lookup(key)
+        base = nameserver.getName(key)
         # go through the (trait, slot) pairs
         for trait, slot in slots:
             # get the name of the trait
@@ -296,10 +294,8 @@ class PublicInventory(Inventory):
         """
         # get the key
         key = super().__getitem__(trait)
-        # ask the nameserver
-        slot, _ = self.pyre_nameserver.lookup(key)
-        # and return the slot
-        return slot
+        # ask the nameserver for the slot and return it
+        return self.pyre_nameserver.getNode(key)
         
 
     def __str__(self):

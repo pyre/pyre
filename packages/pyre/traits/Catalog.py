@@ -40,12 +40,12 @@ class Catalog(Facility):
         # and the configurator
         configurator = executive.configurator
         # get the full name of my slot
-        _, slotName = nameserver.lookup(key)
+        slotName = nameserver.getName(key)
 
         # go through the children of this key
         for childKey, childNode in nameserver.children(key):
             # look up the name of the node
-            _, childName = nameserver.lookup(childKey)
+            childName = nameserver.getName(childKey)
             # take it apart and keep the trailing part
             tag = nameserver.split(childName)[-1]
             # store the (tag, value) pair in my index

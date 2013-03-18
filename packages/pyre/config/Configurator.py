@@ -233,7 +233,7 @@ class Configurator:
         # go through all the children of this key
         for child, node in nameserver.children(key):
             # get the name of the node
-            _, name = nameserver.lookup(child)
+            name = nameserver.getName(child)
             # yield the name and the current value of the node
             yield name, node
 

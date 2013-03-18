@@ -177,6 +177,22 @@ class Hierarchical(SymbolTable):
         return key, node
                     
 
+    def getNode(self, key):
+        """
+        Retrieve the node registered under {key}
+        """
+        # look it up in my node map
+        return self._nodes[key]
+
+
+    def getName(self, key):
+        """
+        Retrieve the name of the node registered under {key}
+        """
+        # look it up in my name map
+        return self._names[key]
+
+
     def lookup(self, key):
         """
         Retrieve the node registered under {key}, raising a {KeyError} if no such node exists

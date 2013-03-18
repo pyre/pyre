@@ -70,14 +70,10 @@ class Facility(Slotted):
         # if what I got back is a component instance, we are all done
         if isinstance(value, self.component): return value
 
+        # get the key of the node
+        key = node.key
         # if I am supposed to name the new component
-        if not incognito and node.key:
-            # find out my full name and use it
-            _, name = value.pyre_nameserver.lookup(node.key)
-        # otherwise
-        else:
-            # make a nameless component
-            name = None
+        name = value.pyre_nameserver.getName(key) if not incognito and key else None
 
         # otherwise, instantiate and return it
         return value(name=name, locator=node.locator)

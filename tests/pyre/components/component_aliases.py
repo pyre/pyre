@@ -42,7 +42,7 @@ def test():
     # print(" -- at startup:")
     # ns.dump(pattern="(functor|gaussian)")
     # get the commandline slots
-    # mean,_ = ns.lookup(key=ns.hash('functor.μ'))
+    # mean,_ = ns.getNode(key=ns.hash('functor.μ'))
     # mean.dump(name='functor.μ')
     # print(" -- done")
 
