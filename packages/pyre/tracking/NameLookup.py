@@ -21,9 +21,9 @@ class NameLookup:
 
     def __str__(self):
         # get access to the framework managers
-        from ..components.Executive import Executive
+        from ..framework.Client import Client
         # generate my rep
-        return "{} {}".format(self.description, Executive.pyre_nameserver[self.key])
+        return "{} {}".format(self.description, Client.pyre_nameserver[self.key])
 
 
     # implementation details

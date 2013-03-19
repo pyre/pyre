@@ -11,11 +11,11 @@ import itertools
 
 
 # superclass
-from .Executive import Executive
+from ..framework.Client import Client
 
 
 # class declaration
-class Configurable(Executive):
+class Configurable(Client):
     """
     The base class for components and interfaces
 

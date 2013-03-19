@@ -24,7 +24,6 @@ EXPORT_PYTHON_MODULES = \
     CompatibilityReport.py \
     Component.py \
     Configurable.py \
-    Executive.py \
     Inventory.py \
     PrivateInventory.py \
     Protocol.py \

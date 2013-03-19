@@ -85,8 +85,8 @@ class Pyre(Executive):
 
         # critical step: record this instance with the {Executive} proxy to grant easy access
         # to components and protocols
-        from ..components.Executive import Executive
-        Executive.pyre_installExecutive(executive=self)
+        from .Client import Client
+        Client.pyre_installExecutive(executive=self)
 
         # all done
         return

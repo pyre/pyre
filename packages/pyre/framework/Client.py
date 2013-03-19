@@ -11,7 +11,7 @@ import weakref
 
 
 # declaration
-class Executive:
+class Client:
     """
     Mix-in class that provides access to the pyre executive and its managers
     """

@@ -7,11 +7,11 @@
 
 
 # superclass
-from .Executive import Executive
+from ..framework.Client import Client
 
 
 # declaration
-class Inventory(dict, Executive):
+class Inventory(dict, Client):
     """
     Base class for the state storage strategies for component classes and instances
     """

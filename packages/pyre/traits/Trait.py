@@ -8,11 +8,11 @@
 
 # superclasses
 from .Descriptor import Descriptor
-from ..components.Executive import Executive
+from ..framework.Client import Client
 
 
 # class declaration
-class Trait(Descriptor, Executive):
+class Trait(Descriptor, Client):
     """
     This is the base class for component features that form their public interface
 
