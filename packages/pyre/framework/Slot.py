@@ -10,13 +10,15 @@
 from .. import algebraic
 # access to the locators
 from .. import tracking
+# the framework client mix-in
+from .Client import Client
 # my metaclass
 from . import _metaclass_Slot
 
 
 
 # class declaration
-class Slot(algebraic.AbstractNode, algebraic.Arithmetic, metaclass=_metaclass_Slot):
+class Slot(algebraic.AbstractNode, algebraic.Arithmetic, Client, metaclass=_metaclass_Slot):
     """
     This class provides centralized access to the values of configurable traits
 
@@ -79,6 +81,14 @@ class Slot(algebraic.AbstractNode, algebraic.Arithmetic, metaclass=_metaclass_Sl
     key = None # the hash by which i am known to the name server
     locator = None # the provenance of my value
     priority = None # the priority of the value assignment operation
+
+
+    @property
+    def name(self):
+        """
+        Get the name under which I am registered with the nameserver
+        """
+        return self.pyre_nameserver.getName(self.key) if self.key else None
 
 
     # support for value management
