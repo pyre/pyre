@@ -55,7 +55,9 @@ class Facility(Slotted):
             return candidate
 
         # otherwise, we are out of ideas; complain
-        msg = "could not convert {0.value!r} into a component"
+        msg = (
+            "could not convert {0.value!r} into a component compatible with " 
+            + "{.schema}".format(self))
         raise self.CastingError(value=value, description=msg)
 
 
