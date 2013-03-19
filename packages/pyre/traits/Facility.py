@@ -128,11 +128,6 @@ class Facility(Slotted):
         # get my protocol
         protocol = self.schema
 
-        # if we have an instance name but no component specification
-        if instanceName and not componentSpec and self.default:
-            # try instantiating a component using my default
-            yield self.default(name=instanceName)
-
         # get the executive; my protocol has access
         executive = protocol.pyre_executive
         # the nameserver
@@ -144,6 +139,13 @@ class Facility(Slotted):
             if candidate.pyre_isCompatible(self.schema):
                 # give it a try
                 yield candidate
+
+        # if we have an instance name but no component specification
+        if instanceName and not componentSpec:
+            # get the default factory
+            default = self.classDefault()
+            # try instantiating a component it
+            yield default(name=instanceName)
 
         # out of ideas
         return

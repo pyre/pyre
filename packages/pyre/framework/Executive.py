@@ -190,6 +190,9 @@ class Executive:
                 # no worries
                 pass
 
+        # if the address part is empty, do not go any further
+        if not uri.address: return
+
         # make a locator
         locator = tracking.simple('while resolving {!r}'.format(uri.uri))
         # load the component recognizers
