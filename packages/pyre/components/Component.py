@@ -248,6 +248,12 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         Trap attribute assignment and attempt to normalize the name before making the assignment
         """
+
+        # with {__setattr__} defined, all assignment come through here; therefore, there is no
+        # need for the trait descriptors to define {__set__}: it would never get called unless
+        # we chain up here after normalizing the name. this might ok, if it weren't for the
+        # fact that it is impossible to guarantee that the locator will be correct in all cases
+
         # attempt to
         try:
             # normalize the name
