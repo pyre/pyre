@@ -11,13 +11,13 @@
 import pyre
 
 
-# declare an abstract specification
+# tasks
 class task(pyre.protocol, family='toy.tasks'):
 
     # types
     from pyre.units.time import hour
 
-    # public state
+    # user configurable state
     duration = pyre.properties.dimensional(default=1*hour)
 
     # interface
@@ -27,7 +27,8 @@ class task(pyre.protocol, family='toy.tasks'):
 
     # framework support
     @classmethod
-    def pyre_default(cls):
+    def pyre_default(cls, **kwds):
+        """the default task"""
         return relax
 
 
@@ -41,14 +42,12 @@ class activity(pyre.component, implements=task):
         return '{0.description} for {0.duration:base={hour},label=hour|hours}'.format(
             self, hour=task.hour)
 
-
-# an actual task
+# a few tasks
 class relax(activity, family='toy.tasks.relax'):
 
     description = 'relaxing'
 
 
-# another actual task
 class study(activity, family='toy.tasks.study'):
 
     description = 'studying'
@@ -61,7 +60,7 @@ class patrol(activity, family='toy.tasks.patrol'):
     duration = pyre.properties.dimensional(default=1.5*task.hour)
     
 
-# a specification for people categories
+# people
 class people(pyre.protocol, family='toy.people'):
 
     activities = pyre.properties.list(schema=task())
@@ -70,10 +69,16 @@ class people(pyre.protocol, family='toy.people'):
     def perform(self):
         """perform my specified activities"""
 
+    @classmethod
+    def pyre_default(cls, **kwds):
+        """the default implementation"""
+        return person
 
-# an actual person category
+
+# persons are people; or is it the other way around?
 class person(pyre.component, implements=people):
 
+    friends = pyre.properties.dict(schema=people())
     activities = pyre.properties.list(schema=task())
 
     @pyre.export
@@ -85,7 +90,6 @@ class person(pyre.component, implements=people):
 # students
 class student(person, family='toy.people.student'):
 
-    # activities = pyre.properties.list(schema=task(default=relax))
     activities = pyre.properties.list(schema=task(default=study))
 
 
