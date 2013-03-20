@@ -13,6 +13,7 @@ This package provides access to the factories for typed properties
 
 from .Array import Array as array
 from .Bool import Bool as bool
+from .Dict import Dict as dict
 from .Dimensional import Dimensional as dimensional
 from .Facility import Facility as facility
 from .Float import Float as float

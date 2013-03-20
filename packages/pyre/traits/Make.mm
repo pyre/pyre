@@ -25,6 +25,7 @@ EXPORT_PYTHON_MODULES = \
     Bool.py \
     Catalog.py \
     Descriptor.py \
+    Dict.py \
     Dimensional.py \
     Facility.py \
     Float.py \
