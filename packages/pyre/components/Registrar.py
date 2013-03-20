@@ -87,6 +87,18 @@ class Registrar:
         return
 
 
+    def retrieveComponentByName(self, componentClass, name):
+        """
+        Look through the registered instances of {componentClass} for one with the given {name}
+        """
+        # go through the pile
+        for instance in self.components[componentClass]:
+            # return the instance whose the name matches the given one
+            if instance.pyre_name == name:  return instance
+        # otherwise, no match
+        return None
+
+
     # meta-methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
