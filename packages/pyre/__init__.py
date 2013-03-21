@@ -261,10 +261,13 @@ if executive:
     from .traits.Catalog import Catalog as catalog
     # constraints
     from . import constraints
+    # package managers
+    from . import externals
+    # platform managers
+    from . import platforms
     # application
     from .shells import application
-    # package managers
-    from .externals import package
+
     # the base class of all pyre exceptions
     from .framework.exceptions import PyreError
 
