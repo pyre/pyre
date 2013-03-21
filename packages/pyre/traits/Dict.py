@@ -15,23 +15,22 @@ from .. import tracking
 from ..framework.Client import Client
 
 
-# the helper container class
-class Map(dict, Client):
+# the helper container classes
+class Map(collections.abc.MutableMapping, Client):
     """
-    Helper class that coerces values according to a supplied schema before storing them
+    The base class for the storage strategies
     """
 
     # public data
     schema = None
     strategy = None # information necessary to make slots 
 
-    # interface
-    update = collections.abc.MutableMapping.update # forwards to __setitem__
-
     # meta-methods
     def __init__(self, schema, strategy, *args, **kwds):
-        # chain up; careful to avoid bypassing the value coercion
-        super().__init__()
+        # chain  up
+        super().__init__(**kwds)
+        # my storage
+        self.map = {}
         # set my schema
         self.schema = schema
         # and my strategy
@@ -41,29 +40,31 @@ class Map(dict, Client):
         # all done
         return
 
-    def __setitem__(self, name, value):
+    def __delitem__(self, name):
         """
-        Store {value} in the map under {key}
+        Remove {name} from my map
         """
-        # build a priority
-        priority = self.pyre_nameserver.priority.explicit()
-        # and a locator
-        locator = tracking.here(1)
-        # delegate
-        return self.store(name=name, value=value, priority=priority, locator=locator)
-
-    def __getitem__(self, key):
-        """
-        Retrieve the value associated with {key} and convert according to my schema
-        """
-        # get the slot
-        node = super().__getitem__(key)
-        # and return its value
-        return node.value
-
-    def store(self, name, value):
-        super().__setitem__(name, value)
+        # easy enough
+        del self.map[name]
+        # all done
         return
+
+    def __iter__(self):
+        """
+        Create an iterator over my map
+        """
+        # easy enough
+        return iter(self.map)
+
+    def __len__(self):
+        """
+        Compute my size
+        """
+        # easy enough
+        return len(self.map)
+
+    # private data
+    map = None
 
 
 class KeyMap(Map):
@@ -73,26 +74,43 @@ class KeyMap(Map):
 
     # public data
     key = None
+    schema = None
+    strategy = None # information necessary to make slots 
 
     # meta-methods
-    def __init__(self, key, **kwds):
-        # chain  up
-        super().__init__(**kwds)
+    def __init__(self, key, *args, **kwds):
         # save my client's key
         self.key = key
+        # chain  up
+        super().__init__(*args, **kwds)
         # all done
         return
 
     # slot access
-    def store(self, name, value, priority, locator):
+    def __getitem__(self, name):
         """
-        Build a slot to hold {value} and place it in the map
+        Retrieve the value associated with {name} and convert according to my schema
         """
-        # straight out of {PublicInventory}
-        # build the key
-        key = self.key[name]
+        # get the key
+        key = self.map[name]
         # get the nameserver
         nameserver = self.pyre_nameserver
+        # and return its value
+        return nameserver.getNode(key).value
+
+
+    def __setitem__(self, name, value):
+        """
+        Store {value} in the map under {name}
+        """
+        # get the nameserver
+        nameserver = self.pyre_nameserver
+        # build a priority
+        priority = nameserver.priority.explicit()
+        # and a locator
+        locator = tracking.here(1)
+        # build the key
+        key = self.key[name]
         # unpack the slot part
         macro, converter = self.strategy(model=nameserver)
         # build a slot to hold value
@@ -100,10 +118,9 @@ class KeyMap(Map):
         # adjust the model
         nameserver.insert(name=None, key=key, node=new)
         # and my map
-        super().store(name, new)
+        self.map[name] = key
         # all done
         return
-
 
 
 class NameMap(Map):
@@ -111,12 +128,24 @@ class NameMap(Map):
     A storage strategy for nameless clients
     """
 
-    # meta-methods
-    def store(self, name, value, priority, locator):
+    def __getitem__(self, name):
+        """
+        Retrieve the value associated with {name} and convert according to my schema
+        """
+        # get the slot
+        node = self.map[name]
+        # and return its value
+        return node.value
+
+
+    def __setitem__(self, name, value):
         """
         Build a slot to hold {value} and place it in the map
         """
-        # straight out of {PrivateInventory}
+        # build a priority
+        priority = self.pyre_nameserver.priority.explicit()
+        # and a locator
+        locator = tracking.here(1)
         # get the nameserver
         ns = self.pyre_nameserver
         # unpack the slot part
@@ -124,13 +153,13 @@ class NameMap(Map):
         # build the slot
         new = macro(key=None, converter=converter, value=value, locator=locator, priority=priority)
         # get the old slot 
-        old = self[name]
+        old = self.map[name]
         # pick the winner of the two
         winner = ns.node.select(model=ns, existing=old, replacement=new)
         # if the new slot is the winner
         if new is winner:
             # update the map
-            super().store(name, new)
+            self.map[name] = new
         # all done
         return
 
