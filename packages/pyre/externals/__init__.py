@@ -6,6 +6,9 @@
 #
 
 
+# the protocol for external packages
+from .Category import Category as category
+
 # convenience
 from .Package import Package as package
 from .Tool import Tool as tool
