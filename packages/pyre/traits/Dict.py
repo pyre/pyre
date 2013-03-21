@@ -63,6 +63,13 @@ class Map(collections.abc.MutableMapping, Client):
         # easy enough
         return len(self.map)
 
+    def __contains__(self, name):
+        """
+        Check whether {name} is in my map
+        """
+        # easy enough
+        return name in self.map
+
     # private data
     map = None
 
