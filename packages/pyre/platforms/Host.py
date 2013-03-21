@@ -17,7 +17,7 @@ from .Platform import Platform
 # declaration
 class Host(pyre.component, implements=Platform):
     """
-    Encapsulation of a generic linux host
+    Encapsulation of a generic host
     """
 
     # public data
@@ -32,6 +32,9 @@ class Host(pyre.component, implements=Platform):
     codename = None # the OS version
     # distribution
     distribution = None # a clue about the package manager on this machine
+
+    # user configurable state
+    packages = pyre.properties.catalog(schema=pyre.externals.category())
 
 
     # protocol obligations
