@@ -91,10 +91,14 @@ class Actor(Requirement):
         """
         Build an instance of one of my classes
         """
-        # look for this name among my instances
-        instance = self.pyre_registrar.retrieveComponentByName(componentClass=self, name=name)
-        # if found, return it
-        if instance: return instance
+        # if I know the name
+        if name:
+            # get the registrar
+            registrar = self.pyre_registrar
+            # look for this name among my instances
+            instance = registrar.retrieveComponentByName(componentClass=self, name=name)
+            # if found, return it
+            if instance: return instance
 
         # otherwise, let's build one: record the caller's location
         locator = tracking.here(1) if locator is None else locator
