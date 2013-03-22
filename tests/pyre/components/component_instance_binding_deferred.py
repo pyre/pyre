@@ -26,7 +26,7 @@ class container(pyre.component, family="deferred.container"):
     """a component container"""
     name = pyre.properties.str(default=None)
     comp = ifac()
-    catalog = pyre.catalog(protocol=ifac)
+    catalog = pyre.properties.dict(schema=ifac())
 
 
 def test():

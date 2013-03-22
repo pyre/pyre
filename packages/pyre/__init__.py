@@ -258,7 +258,6 @@ if executive:
     from .traits.Behavior import Behavior as provides
     from .traits.Property import Property as property
     from .traits.Facility import Facility as facility
-    from .traits.Catalog import Catalog as catalog
     # constraints
     from . import constraints
     # package managers

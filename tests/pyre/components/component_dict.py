@@ -18,7 +18,7 @@ class comp(pyre.component, family="sample.ifac.comp", implements=ifac):
 
 class container(pyre.component, family="sample.container"):
     """a component container"""
-    catalog = pyre.catalog(protocol=ifac)
+    catalog = pyre.properties.dict(schema=ifac())
 
 
 def test():

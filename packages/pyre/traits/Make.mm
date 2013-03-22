@@ -23,7 +23,6 @@ EXPORT_PYTHON_MODULES = \
     Array.py \
     Behavior.py \
     Bool.py \
-    Catalog.py \
     Descriptor.py \
     Dict.py \
     Dimensional.py \

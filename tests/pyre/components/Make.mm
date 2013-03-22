@@ -88,7 +88,7 @@ component-instance:
 component-multi:
 	${PYTHON} ./component_slots.py
 	${PYTHON} ./component_list.py
-	${PYTHON} ./component_catalog.py
+	${PYTHON} ./component_dict.py
 
 configurations:
 	${PYTHON} ./quad.py

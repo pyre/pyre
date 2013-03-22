@@ -114,9 +114,9 @@
   <component name="catalog_container" family="sample.container">
     <!-- put some components in the catalog -->
     <component name="catalog">
-      <bind property="cat1">import:component_catalog.comp</bind>
-      <bind property="cat2">import:component_catalog.comp#foo</bind>
-      <bind property="cat3">import:component_catalog.comp</bind>
+      <bind property="cat1">import:component_dict.comp</bind>
+      <bind property="cat2">import:component_dict.comp#foo</bind>
+      <bind property="cat3">import:component_dict.comp</bind>
     </component>
   </component>
 
@@ -154,16 +154,6 @@
 
   <component name="nap" family="sample.activities.sleep">
     <bind property="duration">3*hour</bind>
-  </component>
-
-  <!-- data for component_map -->
-  <component name="map_container" family="sample.map">
-    <!-- put some components in the catalog -->
-    <component name="map">
-      <bind property="jim">value(jim)</bind>
-      <bind property="bob">value(bob)</bind>
-      <bind property="fred">value(fred)</bind>
-    </component>
   </component>
 
 </config>
