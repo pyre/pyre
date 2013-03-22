@@ -81,8 +81,6 @@ class KeyMap(Map):
 
     # public data
     key = None
-    schema = None
-    strategy = None # information necessary to make slots 
 
     # meta-methods
     def __init__(self, key, *args, **kwds):
@@ -105,7 +103,7 @@ class KeyMap(Map):
         # get the nameserver
         nameserver = self.pyre_nameserver
         # and return its value
-        return nameserver.getNode(key).value
+        return nameserver[key]
 
 
     def __setitem__(self, name, value):
@@ -122,12 +120,20 @@ class KeyMap(Map):
         key = self.key[name]
         # unpack the slot part
         macro, converter = self.strategy(model=nameserver)
+
         # build a slot to hold value
         new = macro(key=key, converter=converter, value=value, priority=priority, locator=locator)
+
         # adjust my map
         self.map[name] = key
-        # and the model
-        nameserver.insert(name=nameserver.join(self.name, name), key=key, node=new)
+
+        # register this key as belonging to a trait
+        nameserver.registerTrait(key=key, strategy=self.strategy)
+        # build the trait full name
+        fullname = nameserver.join(self.name, name)
+        # adjust the model
+        nameserver.insert(name=fullname, key=key, node=new)
+
         # all done
         return
 
