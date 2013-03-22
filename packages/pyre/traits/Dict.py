@@ -123,7 +123,7 @@ class KeyMap(Map):
         # build a slot to hold value
         new = macro(key=key, converter=converter, value=value, priority=priority, locator=locator)
         # adjust the model
-        nameserver.insert(name=None, key=key, node=new)
+        nameserver.insert(name=name, key=key, node=new)
         # and my map
         self.map[name] = key
         # all done

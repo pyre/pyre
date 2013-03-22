@@ -74,7 +74,7 @@ class Facility(Slotted):
 
         # get the key of the node
         key = node.key
-        # if I am supposed to name the new component
+        # decide what I am supposed to name the new component
         name = value.pyre_nameserver.getName(key) if not incognito and key else None
 
         # otherwise, instantiate and return it
@@ -144,7 +144,7 @@ class Facility(Slotted):
         if instanceName and not componentSpec:
             # get the default factory
             default = self.classDefault()
-            # try instantiating a component it
+            # try using it to instantiate a component
             yield default(name=instanceName)
 
         # out of ideas
