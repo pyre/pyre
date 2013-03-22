@@ -88,6 +88,8 @@ class KeyMap(Map):
     def __init__(self, key, *args, **kwds):
         # save my client's key
         self.key = key
+        # and his name
+        self.name = self.pyre_nameserver.getName(key)
         # chain  up
         super().__init__(*args, **kwds)
         # all done
@@ -122,10 +124,10 @@ class KeyMap(Map):
         macro, converter = self.strategy(model=nameserver)
         # build a slot to hold value
         new = macro(key=key, converter=converter, value=value, priority=priority, locator=locator)
-        # adjust the model
-        nameserver.insert(name=name, key=key, node=new)
-        # and my map
+        # adjust my map
         self.map[name] = key
+        # and the model
+        nameserver.insert(name=nameserver.join(self.name, name), key=key, node=new)
         # all done
         return
 
