@@ -467,7 +467,7 @@ class Executive:
         # set the stem
         stem = 'pyre/hosts/{}'.format(host.nickname)
         # attempt to load any matching configuration files
-        self.configure(stem=stem, priority=self.priority.framework, locator=here)
+        self.configure(stem=stem, priority=self.priority.user, locator=here)
         
         # instantiate the host information store and attach it
         self.host = host(name='pyre.host')
