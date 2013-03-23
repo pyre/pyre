@@ -34,18 +34,14 @@ class Component(pyre.component, hidden=True):
     def __init__(self, name, **kwds):
         super().__init__(name=name, **kwds)
 
-        # prepare the journal
-        # access the package
-        import journal
-        # build the channels
-        self.info = journal.info(name)
-        self.warning = journal.warning(name)
-        self.error = journal.error(name)
-
-        # activate everything, by default
-        self.info.active = True
-        self.warning.active = True
-        self.error.active = True
+        # if I have a name
+        if name:
+            # access the journal package
+            import journal
+            # build and activate my channels
+            self.info = journal.info(name).activate()
+            self.warning = journal.warning(name).activate()
+            self.error = journal.error(name).activate()
 
         # all done
         return
