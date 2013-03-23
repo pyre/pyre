@@ -15,7 +15,7 @@ from .Platform import Platform
 
 
 # declaration
-class Host(pyre.component, implements=Platform):
+class Host(pyre.component, family='pyre.platforms.generic', implements=Platform):
     """
     Encapsulation of a generic host
     """
