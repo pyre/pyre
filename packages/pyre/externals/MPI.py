@@ -23,8 +23,8 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
 
 
     # user configurable state
-    mpirun = pyre.properties.str() # the name of the launcher
-
+    mpirun = pyre.properties.str()
+    mpirun.doc = 'the name of the launcher of MPI jobs'
 
     # public data
     category = 'mpi'

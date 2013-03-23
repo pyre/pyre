@@ -19,6 +19,10 @@ class Package(pyre.component, implements=category):
     """
 
 
+    # configurable state
+    requirements = pyre.properties.list(schema=pyre.properties.str())
+    requirements.doc = 'the list of package categories on which I depend'
+
     # public data
     category = None # overridden by subclasses
 
