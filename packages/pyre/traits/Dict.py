@@ -112,25 +112,24 @@ class KeyMap(Map):
         """
         # get the nameserver
         nameserver = self.pyre_nameserver
+        # build the key
+        key = self.key[name]
+        # build the full name of the map entry
+        fullname = nameserver.join(self.name, name)
         # build a priority
         priority = nameserver.priority.explicit()
         # and a locator
-        locator = tracking.here(1)
-        # build the key
-        key = self.key[name]
-        # unpack the slot part
-        macro, converter = self.strategy(model=nameserver)
+        locator = tracking.simple('while adding entry {!r} to {.name!r}'.format(name, self))
 
-        # build a slot to hold value
+        # unpack the slot building strategy
+        macro, converter = self.strategy(model=nameserver)
+        # build a slot to hold the {value}
         new = macro(key=key, converter=converter, value=value, priority=priority, locator=locator)
 
         # adjust my map
         self.map[name] = key
-
         # register this key as belonging to a trait
         nameserver.registerTrait(key=key, strategy=self.strategy)
-        # build the trait full name
-        fullname = nameserver.join(self.name, name)
         # adjust the model
         nameserver.insert(name=fullname, key=key, node=new)
 
@@ -160,17 +159,17 @@ class NameMap(Map):
         # build a priority
         priority = self.pyre_nameserver.priority.explicit()
         # and a locator
-        locator = tracking.here(1)
+        locator = tracking.here('while adding entry {!r} to a dict property'.format(name))
         # get the nameserver
-        ns = self.pyre_nameserver
+        nameserver = self.pyre_nameserver
         # unpack the slot part
-        macro, converter = self.strategy(model=ns)
+        macro, converter = self.strategy(model=nameserver)
         # build the slot
         new = macro(key=None, converter=converter, value=value, locator=locator, priority=priority)
         # get the old slot 
         old = self.map[name]
         # pick the winner of the two
-        winner = ns.node.select(model=ns, existing=old, replacement=new)
+        winner = type(new).select(model=ns, existing=old, replacement=new)
         # if the new slot is the winner
         if new is winner:
             # update the map
