@@ -66,6 +66,27 @@ class Channel(Named):
         return
 
 
+    # interface
+    def activate(self):
+        """
+        Mark me as active
+        """
+        # do it
+        self.active = True
+        # and return
+        return self
+
+
+    def deactivate(self):
+        """
+        Mark me as inactive
+        """
+        # do it
+        self.active = False
+        # and return
+        return self
+
+
     # meta methods
     def __init__(self, name, **kwds):
         # chain to my ancestors
