@@ -18,14 +18,25 @@ class User(pyre.component, family='pyre.user'):
     """
 
 
-    # public data
+    # configurable state
+    # administrative
     name = pyre.properties.str()
-    email = pyre.properties.str()
-    affiliation = pyre.properties.str()
+    name.doc = 'the full name of the user'
 
-    uid = os.getuid()
-    home = os.environ.get('HOME')
-    username = os.environ.get('LOGNAME')
+    email = pyre.properties.str()
+    email.doc = 'the email address of the user'
+
+    affiliation = pyre.properties.str()
+    affiliation.doc = 'the affiliation of the user'
+
+    # choices and defaults
+    externals = pyre.externals.preferences()
+    externals.doc = 'the database of preferred instances for each external package category'
+
+    # public data
+    uid = os.getuid() # the user's system id
+    home = os.environ.get('HOME') # the location of the user's home directory
+    username = os.environ.get('LOGNAME') # the username
 
 
 # end of file 

@@ -22,6 +22,8 @@ EXPORT_PYTHON_MODULES = \
     Category.py \
     Library.py \
     MPI.py \
+    MPICH.py \
+    OpenMPI.py \
     Package.py \
     Python.py \
     Tool.py \

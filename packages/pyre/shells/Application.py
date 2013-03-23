@@ -33,11 +33,22 @@ class Application(pyre.component, metaclass=Director):
     pyre_prefix = None
 
     # public state
-    shell = Shell() # the hosting protocol
-    renderer = Renderer() # my custom journal device renderer
+    shell = Shell()
+    shell.doc = 'my hosting strategy'
 
+    renderer = Renderer() #
+    renderer.doc = 'my custom journal device renderer'
+
+    requirements = pyre.properties.list(schema=pyre.properties.str())
+    requirements.doc = 'the list of package categories on which I depend'
+    
     # per-instance public data
     pfs = None # the root of my private filesystem
+    dependencies = None # map of requirements to the package instances that satisfy 
+    # journal channels
+    info = None
+    warning = None
+    error = None
 
     # properties
     @property
@@ -54,7 +65,6 @@ class Application(pyre.component, metaclass=Director):
         """
         return self.pyre_fileserver
 
-
     @property
     def nameserver(self):
         """
@@ -62,43 +72,6 @@ class Application(pyre.component, metaclass=Director):
         """
         return self.pyre_nameserver
 
-
-    # convenience interface
-    def error(self, message):
-        """
-        Generate an error message
-        """
-        # get the logging mechanism
-        import journal
-        # build an error message object in my namespace
-        error = journal.error(self.pyre_name)
-        # log and return
-        return error.log(message)
-        
-
-    def warning(self, message):
-        """
-        Generate a warning
-        """
-        # get the logging mechanism
-        import journal
-        # build a warning message object in my namespace
-        warning = journal.warning(self.pyre_name)
-        # log and return
-        return warning.log(message)
-        
-
-    def info(self, message):
-        """
-        Generate an informational message
-        """
-        # get the logging mechanism
-        import journal
-        # build an informational message object in my namespace
-        info = journal.info(self.pyre_name)
-        # log and return
-        return info.log(message)
-        
 
     # component interface
     @pyre.export
@@ -126,9 +99,19 @@ class Application(pyre.component, metaclass=Director):
         # build my private file space
         self.pfs = self.pyre_mountVirtualFilesystem(root=self.pyre_prefix)
 
+        # go through my requirements and build my dependency map
+        self.dependencies = self.pyre_resolveDependencies()
+
         # attach my renderer to the console
         import journal
         journal.console.renderer = self.renderer
+
+        # if I have a name
+        if name:
+            # build my channels and activate them
+            self.info = journal.info(name).activate()
+            self.warning = journal.warning(name).activate()
+            self.error = journal.error(name).activate()
 
         # all done
         return
@@ -195,5 +178,26 @@ class Application(pyre.component, metaclass=Director):
         # and return it
         return target
 
+
+    def pyre_resolveDependencies(self):
+        """
+        Go through my list of required package categories and resolve them
+
+        The result is a map from package categories to package instances that satisfy each
+        requirement. This map includes dependencies induced while trying to satisfy my
+        requirements
+        """
+        # initialize the map
+        dependencies = {}
+
+        # do the easy thing, for now
+        for category in self.requirements:
+            # ask the external manager for a matching package
+            package = self.pyre_externals.locate(category=category)
+            # store the instance
+            dependencies[category] = package
+
+        # all done
+        return dependencies
 
 # end of file 

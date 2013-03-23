@@ -52,4 +52,8 @@ from .Plain import Plain as plain
 from .Application import Application as application
 
 
+# the user component
+from .User import User as user
+
+
 # end of file 

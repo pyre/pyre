@@ -43,6 +43,7 @@ class Executive:
 
     # the runtime environment; patched during boot
     host = None 
+    user = None
 
     # the application delegate; patched by {Director} when an application instance is created
     application = None
@@ -471,6 +472,11 @@ class Executive:
         
         # instantiate the host information store and attach it
         self.host = host(name='pyre.host')
+
+        # now the user
+        from ..shells import user
+        # instantiate it
+        self.user = user(name='pyre.user')
 
         # all done
         return self

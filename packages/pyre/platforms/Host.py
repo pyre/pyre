@@ -34,7 +34,8 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
     distribution = None # a clue about the package manager on this machine
 
     # user configurable state
-    packages = pyre.properties.catalog(schema=pyre.externals.category())
+    externals = pyre.externals.catalog()
+    externals.doc = 'the database of external packages installed on this host'
 
 
     # protocol obligations
