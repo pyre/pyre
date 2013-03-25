@@ -12,7 +12,7 @@ import pyre
 
 
 # declaration
-class User(pyre.component, family='pyre.user'):
+class User(pyre.component):
     """
     Encapsulation of user specific information
     """
