@@ -78,6 +78,7 @@ PyInit_cuda()
         return module;
     }
 
+#ifdef USE_CUDA_CRIVER_API
     // initialize cuda
     CUresult status = cuInit(0);
     // check
@@ -87,6 +88,7 @@ PyInit_cuda()
         // raise an exception
         return 0;
     }
+#endif
 
     // otherwise, we are good to go; register the module exceptions
     pyre::extensions::cuda::registerExceptionHierarchy(module);
