@@ -8,7 +8,7 @@
 
 
 """
-Check that array conversions work as expected
+Check that list conversions work as expected
 """
 
 
