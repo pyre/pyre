@@ -45,16 +45,8 @@ discover(PyObject *, PyObject *args)
     status = cudaGetDeviceCount(&count);
     // if anything went wrong
     if (status != cudaSuccess) {
-        // build an error message
-        std::stringstream msg;
-        msg 
-            << "cudaGetDeviceCount: error " << status 
-            << ": " << cudaGetErrorString(status)
-            << std::endl;
-        // decorate the exception
-        PyErr_SetString(Error, msg.str().c_str());
-        // and raise it
-        return 0;
+        // pretend there are no CUDA capable devices
+        return PyTuple_New(0);
     }
     // show me
     // info << "CUDA devices: " << count << journal::endl;
