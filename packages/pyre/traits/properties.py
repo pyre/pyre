@@ -18,19 +18,24 @@ from .Facility import Facility as facility
 from .Float import Float as float
 from .INet import INet as inet
 from .Integer import Integer as int
-from .List import List as list
 from .Object import Object as object
 from .OutputFile import OutputFile as outputfile
 from .String import String as str
+
+
+# meta-properties: trait descriptors for homogeneous containers; these require other trait
+# descriptors to specify the type of the contents
+from .Dict import Dict as dict
+from .List import List as list
+from .Set import Set as set
 from .Tuple import Tuple as tuple
 
-# meta-properties
-from .Dict import Dict as dict
 
 def catalog(**kwds):
     """
     A {dict} of {list}s
     """
     return dict(schema=list(**kwds))
+
 
 # end of file 

@@ -18,6 +18,7 @@ from .Integer import Integer as int
 from .List import List as list
 from .Object import Object as identity
 from .Sequence import Sequence as sequence
+from .Set import Set as set
 from .String import String as str
 from .Time import Time as time
 from .Tuple import Tuple as tuple

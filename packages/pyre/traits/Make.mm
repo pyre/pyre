@@ -34,6 +34,7 @@ EXPORT_PYTHON_MODULES = \
     Object.py \
     OutputFile.py \
     Property.py \
+    Set.py \
     Slotted.py \
     String.py \
     Trait.py \

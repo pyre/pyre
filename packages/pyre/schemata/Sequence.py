@@ -26,13 +26,13 @@ class Sequence(Type):
     # interface
     def coerce(self, value, **kwds):
         """
-        Covert {value} into a container
+        Convert {value} into a container
         """
         # string processing
         if isinstance(value, str):
             # strip opening and closing delimiters
-            if value and value[0] in '[(': value = value[1:]
-            if value and value[-1] in '])': value = value[:-1]
+            if value and value[0] in '[({': value = value[1:]
+            if value and value[-1] in '])}': value = value[:-1]
             # if there is nothing left, we are done
             if not value: return
             # otherwise, split it using comma as the separator

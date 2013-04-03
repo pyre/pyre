@@ -31,6 +31,7 @@ EXPORT_PYTHON_MODULES = \
     List.py \
     Object.py \
     Sequence.py \
+    Set.py \
     String.py \
     Time.py \
     Tuple.py \

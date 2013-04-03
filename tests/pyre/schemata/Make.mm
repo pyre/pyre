@@ -31,6 +31,7 @@ types:
 	${PYTHON} ./int.py
 	${PYTHON} ./list.py
 	${PYTHON} ./numeric.py
+	${PYTHON} ./set.py
 	${PYTHON} ./str.py
 	${PYTHON} ./tuple.py
 	${PYTHON} ./uri.py
