@@ -26,4 +26,9 @@ copyright = cuda.copyright
 def license() : print(cuda.license())
 
 
+# build the device manager
+from .DeviceManager import DeviceManager
+manager = DeviceManager(extension=cuda)
+
+
 # end of file 

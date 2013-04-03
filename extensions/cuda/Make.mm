@@ -17,6 +17,7 @@ PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
 EXTERNAL_LIBS += -ljournal
 
 PROJ_SRCS = \
+    discover.cc \
     exceptions.cc \
     metadata.cc
 

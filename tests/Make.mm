@@ -17,10 +17,10 @@ RECURSE_DIRS = \
     sqlite \
 
 # the optional packages
-# postgres
-LIBPQ_DIR= # overriden by the the environment
-ifneq ($(strip $(LIBPQ_DIR)),)
-  RECURSE_DIRS += postgres
+# cuda
+CUDA_DIR = # overriden by the environment
+ifneq ($(strip $(CUDA_DIR)),)
+  RECURSE_DIRS += cuda
 endif
 
 # mpi
@@ -33,6 +33,12 @@ endif
 GSL_DIR= # overriden by the the environment
 ifneq ($(strip $(GSL_DIR)),)
   RECURSE_DIRS += gsl
+endif
+
+# postgres
+LIBPQ_DIR= # overriden by the the environment
+ifneq ($(strip $(LIBPQ_DIR)),)
+  RECURSE_DIRS += postgres
 endif
 
 #--------------------------------------------------------------------------

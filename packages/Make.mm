@@ -18,7 +18,7 @@ PACKAGES = \
 
 # the optional packages
 
-# gsl
+# cuda
 CUDA_DIR = # overriden by the environment
 ifneq ($(strip $(CUDA_DIR)),)
   PACKAGES += cuda

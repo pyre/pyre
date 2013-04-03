@@ -18,6 +18,7 @@
 #include "metadata.h"
 #include "exceptions.h"
 // the module method declarations
+#include "discover.h"
 
 
 // put everything in my private namespace
@@ -34,6 +35,10 @@ namespace pyre {
                 { version__name__, version, METH_VARARGS, version__doc__ },
                 // license
                 { license__name__, license, METH_VARARGS, license__doc__ },
+
+                // device discovery and other administrative tasks
+                // discover
+                { discover__name__, discover, METH_VARARGS, discover__doc__ },
 
                 // sentinel
                 {0, 0, 0, 0}

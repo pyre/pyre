@@ -19,6 +19,8 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Device.py \
+    DeviceManager.py \
     exceptions.py \
     __init__.py
 
