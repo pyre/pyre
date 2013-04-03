@@ -18,6 +18,7 @@
 
 // access to the CUDA runtime
 #include <cuda.h>
+#include <cuda_runtime.h>
 
 
 // device discovery
@@ -37,16 +38,19 @@ discover(PyObject *, PyObject *args)
     }
     
     // the cuda flag
-    CUresult status;
+    cudaError_t status;
 
     // find out how many devices there are
     int count;
-    status = cuDeviceGetCount(&count);
+    status = cudaGetDeviceCount(&count);
     // if anything went wrong
-    if (status != CUDA_SUCCESS) {
+    if (status != cudaSuccess) {
         // build an error message
         std::stringstream msg;
-        msg << "'cuDeviceGetCount' returned error " << status << std::endl;
+        msg 
+            << "cudaGetDeviceCount: error " << status 
+            << ": " << cudaGetErrorString(status)
+            << std::endl;
         // decorate the exception
         PyErr_SetString(Error, msg.str().c_str());
         // and raise it
@@ -74,78 +78,46 @@ discover(PyObject *, PyObject *args)
         // start decorating: first the device id
         PyObject_SetAttrString(sheet, "id", PyLong_FromLong(index));
 
-        // the name of the device
-        char name[256];
-        status = cuDeviceGetName(name, 256, index);
-        // if anything went wrong
-        if (status != CUDA_SUCCESS) {
-            // build an error message
-            std::stringstream msg;
-            msg << "'cuDeviceGetName' returned error " << status << std::endl;
-            // decorate the exception
-            PyErr_SetString(Error, msg.str().c_str());
-            // and raise it
-            return 0;
-        }
-        // convert to a python string and attach
-        PyObject_SetAttrString(sheet, "name", PyUnicode_FromString(name));
+        // storage for the device properties
+        cudaDeviceProp prop;
+        // set the current device
+        cudaSetDevice(index);
+        // get its properties
+        cudaGetDeviceProperties(&prop, index);
 
-        // compute capability
-        int major, minor;
-        status = cuDeviceComputeCapability(&major, &minor, index);
-        // if anything went wrong
-        if (status != CUDA_SUCCESS) {
-            // build an error message
-            std::stringstream msg;
-            msg << "'cuDeviceComputeCapability' returned error " << status << std::endl;
-            // decorate the exception
-            PyErr_SetString(Error, msg.str().c_str());
-            // and raise it
-            return 0;
-        }
+        // get the name of the device
+        PyObject_SetAttrString(sheet, "name", PyUnicode_FromString(prop.name));
+
         // build a representation of the compute capability
         PyObject * capability = PyTuple_New(2);
-        PyTuple_SET_ITEM(capability, 0, PyLong_FromLong(major));
-        PyTuple_SET_ITEM(capability, 1, PyLong_FromLong(minor));
+        PyTuple_SET_ITEM(capability, 0, PyLong_FromLong(prop.major));
+        PyTuple_SET_ITEM(capability, 1, PyLong_FromLong(prop.minor));
         // attach it
         PyObject_SetAttrString(sheet, "capability", capability);
 
+        // version info
+        int version;
+        PyObject *vtuple;
         // get the driver version
-        int driverVersion;
-        status = cuDriverGetVersion(&driverVersion);
-        // if anything went wrong
-        if (status != CUDA_SUCCESS) {
-            // build an error message
-            std::stringstream msg;
-            msg << "'cuDriverGetVersion' returned error " << status << std::endl;
-            // decorate the exception
-            PyErr_SetString(Error, msg.str().c_str());
-            // and raise it
-            return 0;
-        }
+        cudaDriverGetVersion(&version);
         // build a rep for the driver version
-        PyObject *version = PyTuple_New(2);
-        PyTuple_SET_ITEM(version, 0, PyLong_FromLong(driverVersion/1000));
-        PyTuple_SET_ITEM(version, 1, PyLong_FromLong((driverVersion%100)/10));
+        vtuple = PyTuple_New(2);
+        PyTuple_SET_ITEM(vtuple, 0, PyLong_FromLong(version/1000));
+        PyTuple_SET_ITEM(vtuple, 1, PyLong_FromLong((version%100)/10));
         // attach it
-        PyObject_SetAttrString(sheet, "version", version);
+        PyObject_SetAttrString(sheet, "driverVersion", vtuple);
 
-        // memory
-        size_t memory;
-        // device total memory
-        status = cuDeviceTotalMem(&memory, index);
-        // if anything went wrong
-        if (status != CUDA_SUCCESS) {
-            // build an error message
-            std::stringstream msg;
-            msg << "'cuDeviceTotalMem' returned error " << status << std::endl;
-            // decorate the exception
-            PyErr_SetString(Error, msg.str().c_str());
-            // and raise it
-            return 0;
-        }
+        // get the runtime version
+        cudaRuntimeGetVersion(&version);
+        // build a rep for the runtime version
+        vtuple = PyTuple_New(2);
+        PyTuple_SET_ITEM(vtuple, 0, PyLong_FromLong(version/1000));
+        PyTuple_SET_ITEM(vtuple, 1, PyLong_FromLong((version%100)/10));
         // attach it
-        PyObject_SetAttrString(sheet, "globalMemory", PyLong_FromUnsignedLong(memory));
+        PyObject_SetAttrString(sheet, "runtimeVersion", vtuple);
+
+        // device total memory
+        PyObject_SetAttrString(sheet, "globalMemory", PyLong_FromUnsignedLong(prop.totalGlobalMem));
     }
 
     // return the device tuple

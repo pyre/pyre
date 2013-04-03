@@ -15,8 +15,9 @@ class Device:
     # attributes
     id = None
     name = ""
-    version = None
-    capability = None
+    capability = ()
+    driverVersion = ()
+    runtimeVersion = ()
 
     globalMemory = 0
     
@@ -28,7 +29,8 @@ class Device:
         """
         print("{}device {.id}:".format(indent, self))
         print("{}  name: {.name}".format(indent, self))
-        print("{}  driver version: {.version}".format(indent, self))
+        print("{}  driver version: {.driverVersion}".format(indent, self))
+        print("{}  runtime version: {.runtimeVersion}".format(indent, self))
         print("{}  compute capability: {.capability}".format(indent, self))
         print("{}  global memory: {.globalMemory} bytes".format(indent, self))
     
