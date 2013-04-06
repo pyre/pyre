@@ -6,20 +6,6 @@
 #
 
 
-class Package:
-    """
-    Meta data for external dependencies
-    """
-    name = None
-    environ = None
-    optional = False
-
-    def __init__(self, name, optional):
-        self.name = name
-        self.optional = optional
-        return
-
-
 def requirements():
     """
     Build a dictionary with the external dependencies of the {pyre} project

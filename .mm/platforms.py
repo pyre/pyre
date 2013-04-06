@@ -32,12 +32,16 @@ def platform(builder):
             )
         # if yes
         if haveGSL:
+            # get it
+            gsl = builder.requirements['gsl']
             # set it up
-            builder.requirements['gsl'].environ = {
+            gsl.environ = {
                 'GSL_DIR': systemdir,
                 'GSL_LIBDIR': systemlibdir,
                 'GSL_INCDIR': systemincdir
                 }
+            # and its runtime
+            gsl.ldpath = systemlibdir
 
         # set up {libpq}
         libpqVersion = 'postgresql92'
@@ -49,12 +53,16 @@ def platform(builder):
             )
         # if yes
         if havePostgres:
+            # grab it
+            libpq = builder.requirements['libpq']
             # set it up
-            builder.requirements['libpq'].environ = {
+            libpq.environ = {
                 'LIBPQ_DIR': systemdir,
                 'LIBPQ_LIBDIR': os.path.join(systemlibdir, libpqVersion),
                 'LIBPQ_INCDIR': os.path.join(systemincdir, libpqVersion),
                 }
+            # and its runtime
+            libpq.ldpath = os.path.join(systemincdir, libpqVersion)
 
         # set up {mpi}
         mpiVersion = 'openmpi'
@@ -66,14 +74,19 @@ def platform(builder):
             )
         # if yes
         if haveMPI:
+            # grab it
+            mpi = builder.requirements['mpi']
             # set it up
-            builder.requirements['mpi'].environ = {
+            mpi.environ = {
                 'MPI_VERSION': mpiVersion,
                 'MPI_DIR': systemdir,
                 'MPI_LIBDIR': systemlibdir,
                 'MPI_INCDIR': os.path.join(systemincdir, mpiVersion),
                 'MPI_EXECUTIVE': 'openmpirun',
                 }
+            # and its runtime
+            mpi.path = os.path.join(systemdir, 'bin')
+            mpi.ldpath = systemlibdir
 
         # set up {python}
         pythonVersion = '3.3'
@@ -94,12 +107,17 @@ def platform(builder):
         haveCUDA = os.path.exists(cudaHome)
         # if yes
         if haveCUDA:
+            # get it
+            cuda = builder.requirements['cuda'] 
             # set it up
-            builder.requirements['cuda'].environ = {
+            cuda.environ = {
                 'CUDA_DIR': cudaHome,
                 'CUDA_INCDIR': os.path.join(cudaHome, 'include'),
                 'CUDA_LIBDIR': os.path.join(cudaHome, 'lib')
                 }
+            # runtime
+            cuda.path = os.path.join(cudaHome, 'bin'),
+            cuda.ldpath = os.path.join(cudaHome, 'lib')
 
         # all done
         return builder
@@ -119,12 +137,16 @@ def platform(builder):
             )
         # if yes
         if haveGSL:
+            # get it
+            gsl = builder.requirements['gsl']
             # set it up
-            builder.requirements['gsl'].environ = {
+            gsl.environ = {
                 'GSL_DIR': systemdir,
                 'GSL_LIBDIR': systemlibdir,
                 'GSL_INCDIR': systemincdir,
                 }
+            # and its runtime
+            gsl.ldpath = systemlibdir
 
         # set up {libpq}
         libpq = 'postgresql'
@@ -136,12 +158,16 @@ def platform(builder):
             )
         # if yes
         if havePostgres:
+            # grab it
+            libpq = builder.requirements['libpq']
             # set it up
-            builder.requirements['libpq'].environ = {
+            libpq.environ = {
                 'LIBPQ_DIR': systemdir,
                 'LIBPQ_INCDIR': os.path.join(systemincdir, libpq),
                 'LIBPQ_LIBDIR': systemlibdir,
             }
+            # and its runtime
+            libpq.ldpath = os.path.join(systemincdir, libpqVersion)
 
         # set up {mpi}
         mpiVersion = 'openmpi'
@@ -153,14 +179,19 @@ def platform(builder):
             )
         # if yes
         if haveMPI:
+            # grab it
+            mpi = builder.requirements['mpi']
             # set it up
-            builder.requirements['mpi'].environ = {
+            mpi.environ = {
                 'MPI_VERSION': mpiVersion,
                 'MPI_DIR': systemdir,
                 'MPI_LIBDIR': os.path.join(systemdir, 'lib'),
                 'MPI_INCDIR': os.path.join(systemdir, 'include', mpiVersion),
                 'MPI_EXECUTIVE': 'mpirun',
                 }
+            # and its runtime
+            mpi.path = os.path.join(systemdir, 'bin')
+            mpi.ldpath = systemlibdir
 
         # set up {python}
         pythonVersion = '3.3'
@@ -179,12 +210,17 @@ def platform(builder):
             )
         # if yes
         if haveCUDA:
+            # get it
+            cuda = builder.requirements['cuda'] 
             # set it up
-            builder.requirements['cuda'].environ = {
+            cuda.environ = {
                 'CUDA_DIR': systemdir,
                 'CUDA_INCDIR': systemincdir,
                 'CUDA_LIBDIR': systemlibdir
                 }
+            # runtime
+            cuda.path = os.path.join(cudaHome, 'bin'),
+            cuda.ldpath = os.path.join(cudaHome, 'lib')
 
         # all done
         return builder
