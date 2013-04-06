@@ -149,12 +149,12 @@ def platform(builder):
             gsl.ldpath = systemlibdir
 
         # set up {libpq}
-        libpq = 'postgresql'
+        libpqVersion = 'postgresql'
         # do we have postgres?
         havePostgres = (
             os.path.isfile(os.path.join(systemlibdir, 'libpq.so'))
             and
-            os.path.isdir(os.path.join(systemincdir, libpq))
+            os.path.isdir(os.path.join(systemincdir, libpqVersion))
             )
         # if yes
         if havePostgres:
@@ -163,7 +163,7 @@ def platform(builder):
             # set it up
             libpq.environ = {
                 'LIBPQ_DIR': systemdir,
-                'LIBPQ_INCDIR': os.path.join(systemincdir, libpq),
+                'LIBPQ_INCDIR': os.path.join(systemincdir, libpqVersion),
                 'LIBPQ_LIBDIR': systemlibdir,
             }
             # and its runtime
