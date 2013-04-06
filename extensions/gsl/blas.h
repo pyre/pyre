@@ -80,6 +80,10 @@ namespace gsl {
         extern const char * const dgemm__doc__;
         PyObject * dgemm(PyObject *, PyObject *);
 
+        extern const char * const dtrmm__name__;
+        extern const char * const dtrmm__doc__;
+        PyObject * dtrmm(PyObject *, PyObject *);
+
     } // of namespace blas
 } // of namespace gsl
 

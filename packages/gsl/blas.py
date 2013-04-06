@@ -166,4 +166,14 @@ def dgemm(tranA, tranB, α, A, B, β, C):
     return C
 
 
+def dtrmm(sideA, uplo, transpose, diag, α, A, B): 
+    """
+    Compute {B = α op(A) B} or {B = α B op(A)} depending on the value of {sideA}
+    """
+    # compute
+    gsl.blas_dtrmm(sideA, uplo, transpose, diag, α, A.data, B.data)
+    # and return the result
+    return B
+
+
 # end of file 

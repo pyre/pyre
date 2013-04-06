@@ -702,4 +702,62 @@ gsl::blas::dgemm(PyObject *, PyObject * args) {
 }
 
 
+// blas::dtrmm
+const char * const gsl::blas::dtrmm__name__ = "blas_dtrmm";
+const char * const gsl::blas::dtrmm__doc__ = "compute B = a op(A) B";
+
+PyObject * 
+gsl::blas::dtrmm(PyObject *, PyObject * args) {
+    // the arguments
+    double a;
+    int side, uplo, op, unitDiag;
+    PyObject * Ac;
+    PyObject * Bc;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "iiiidO!O!:blas_dtrmm",
+                                  &side, &uplo, &op, &unitDiag,
+                                  &a,
+                                  &PyCapsule_Type, &Ac,
+                                  &PyCapsule_Type, &Bc);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the sixth argument must be a matrix");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(Bc, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the seventh argument must be a vector");
+        return 0;
+    }
+
+    // decode the enums
+    CBLAS_SIDE_t cside = side ? CblasRight : CblasLeft;
+    CBLAS_UPLO_t cuplo = uplo ? CblasUpper : CblasLower;
+    CBLAS_DIAG_t cdiag = unitDiag ? CblasUnit : CblasNonUnit;
+    CBLAS_TRANSPOSE_t ctran;
+    switch(op) {
+    case 0:
+        ctran = CblasNoTrans; break;
+    case 1:
+        ctran = CblasTrans; break;
+    case 2:
+        ctran = CblasConjTrans; break;
+    default:
+        PyErr_SetString(PyExc_TypeError, "bad operation flag");
+        return 0;
+    }
+
+    // get the two matrices
+    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
+    gsl_matrix * B = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Bc, gsl::matrix::capsule_t));
+    // compute the form
+    gsl_blas_dtrmm(cside, cuplo, ctran, cdiag, a, A, B);
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
 // end of file

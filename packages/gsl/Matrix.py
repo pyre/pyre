@@ -33,6 +33,10 @@ class Matrix:
     opTrans = 1
     opConjTrans = 2
 
+    # flag to control the order of operands in some matrix multiplication routines
+    sideRight = 1
+    sideLeft = 0
+
     # sort type for eigensystems
     sortValueAscending = 0
     sortValueDescending = 1

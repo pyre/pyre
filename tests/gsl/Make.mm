@@ -90,6 +90,7 @@ blas:
 	${PYTHON} ./blas_dtrsv.py
 	${PYTHON} ./blas_dsymv.py
 	${PYTHON} ./blas_dgemm.py
+	${PYTHON} ./blas_dtrmm.py
 
 linalg:
 	${PYTHON} ./linalg_LU.py
