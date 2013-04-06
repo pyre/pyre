@@ -219,8 +219,8 @@ def platform(builder):
                 'CUDA_LIBDIR': systemlibdir
                 }
             # runtime
-            cuda.path = os.path.join(cudaHome, 'bin'),
-            cuda.ldpath = os.path.join(cudaHome, 'lib')
+            cuda.path = os.path.join(systemdir, 'bin'),
+            cuda.ldpath = os.path.join(systemdir, 'lib')
 
         # all done
         return builder
