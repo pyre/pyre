@@ -6,18 +6,18 @@
 #
 
 
-def requirements():
+def requirements(package):
     """
     Build a dictionary with the external dependencies of the {pyre} project
     """
 
     # build the package instances
     packages = [
-        Package(name='cuda', optional=True),
-        Package(name='gsl', optional=True),
-        Package(name='libpq', optional=True),
-        Package(name='mpi', optional=True),
-        Package(name='python', optional=False),
+        package(name='cuda', optional=True),
+        package(name='gsl', optional=True),
+        package(name='libpq', optional=True),
+        package(name='mpi', optional=True),
+        package(name='python', optional=False),
         ]
 
     # build a dictionary and return it
