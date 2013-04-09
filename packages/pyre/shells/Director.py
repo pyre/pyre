@@ -46,7 +46,7 @@ class Director(pyre.actor):
         return
 
 
-    def __call__(self, name=None, globalAliases=True, **kwds):
+    def __call__(self, name=None, globalAliases=True, locator=None, **kwds):
         """
         Instantiate one of my classes
         """
@@ -58,12 +58,14 @@ class Director(pyre.actor):
             # set up the priority
             priority = executive.priority.package
             # build a locator
-            locator = pyre.tracking.simple('while initializing application {!r}'.format(name))
+            initloc = pyre.tracking.simple('while initializing application {!r}'.format(name))
             # ask the executive to hunt down the application INSTANCE configuration file
-            executive.configure(stem=name, priority=priority, locator=locator)
+            executive.configure(stem=name, priority=priority, locator=initloc)
 
+        # record the caller's location
+        locator = pyre.tracking.here(1) if locator is None else locator
         # chain up to create the instance
-        app = super().__call__(name=name, globalAliases=globalAliases, **kwds)
+        app = super().__call__(name=name, globalAliases=globalAliases, locator=locator, **kwds)
         # attach it to the executive
         executive.application = weakref.proxy(app)
         # and return it
