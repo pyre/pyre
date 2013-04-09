@@ -49,7 +49,7 @@ class Spellbook(merlin.component, family="merlin.components.spellbook"):
         # go through the possibilities
         for factory in factories:
             # place the spell name in the merlin namespace and alias its traits at global scope
-            spell = factory(name='merlin.'+name)
+            spell = factory(name='merlin.'+name, globalAliases=True)
             # print("    found: {}".format(spell))
             # return the spell instance
             return spell
