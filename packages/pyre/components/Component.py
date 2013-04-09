@@ -229,7 +229,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
             normal = self.pyre_namemap[name]
         # if it's not one of my traits
         except KeyError:
-            # complain
+            # get someone else to do the work
             raise AttributeError("{} has no attribute {!r}".format(self, name))
 
         # if the normalized name is the same as the original
@@ -248,8 +248,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         Trap attribute assignment and attempt to normalize the name before making the assignment
         """
-
-        # with {__setattr__} defined, all assignment come through here; therefore, there is no
+        # with {__setattr__} defined, all assignments come through here; therefore, there is no
         # need for the trait descriptors to define {__set__}: it would never get called unless
         # we chain up here after normalizing the name. this might ok, if it weren't for the
         # fact that it is impossible to guarantee that the locator will be correct in all cases
