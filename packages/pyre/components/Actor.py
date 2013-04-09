@@ -87,7 +87,7 @@ class Actor(Requirement):
         return
 
 
-    def __call__(self, name=None, locator=None, **kwds):
+    def __call__(self, name=None, locator=None, globalAliases=False, **kwds):
         """
         Build an instance of one of my classes
         """
@@ -99,6 +99,20 @@ class Actor(Requirement):
             instance = registrar.retrieveComponentByName(componentClass=self, name=name)
             # if found, return it
             if instance: return instance
+            # otherwise, we are making a new instance under this name; if i were asked to alias
+            # its traits globally
+            if globalAliases:
+                # grab the name server
+                nameserver = self.pyre_nameserver
+                # go through the list of application instance traits and alias them at global scope
+                for trait in self.pyre_configurables():
+                    # get the name of the trait
+                    alias = trait.name
+                    # form the canonical name
+                    canonical = nameserver.join(name, alias)
+                    # alias the raw trait name to the canonical name; by leaving the last argument
+                    # out, we ask for assignments at global scope
+                    nameserver.alias(target=canonical, alias=alias)
 
         # otherwise, let's build one: record the caller's location
         locator = tracking.here(1) if locator is None else locator
