@@ -40,13 +40,13 @@ class PathHash:
 
     def alias(self, target, alias):
         """
-        Make the node {target} accessible through the node {base} under the name {alias}
+        Make the node {target} accessible under the name {alias}
         """
         # save the current hash key of {alias}
         original = self[alias]
         # establish the alias by replacing it with the new {target} node
         self[alias] = target
-        # and return the pair
+        # and return the original key
         return original
 
 

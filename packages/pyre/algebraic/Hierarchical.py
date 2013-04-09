@@ -90,7 +90,7 @@ class Hierarchical(SymbolTable):
     # storing and retrieving nodes
     def alias(self, target, alias, base=None):
         """
-        Register the name {alias} as an alternate name for {canonical}
+        Register the name {alias} as an alternate name for {target}
         """
         # build the keys
         target = self.hash(target)
@@ -111,9 +111,8 @@ class Hierarchical(SymbolTable):
         # appropriately
         if aliasNode is None:
             # return the canonical node, whether it exists or not; the latter case corresponds
-            # to aliasing among names that do not yet have a configuration node built, which is
-            # currently doable only programmatically
-            return alias, canonicalNode
+            # to aliasing among names that do not yet have a configuration node built
+            return target, alias, canonicalNode
         # clean up after the obsolete node
         del self._nodes[alias]
         del self._names[alias] # this was missing; oversight?
@@ -122,7 +121,7 @@ class Hierarchical(SymbolTable):
             # install the alias node as the canonical
             self._nodes[target] = aliasNode
             # and return the alias node
-            return alias, aliasNode
+            return target, alias, aliasNode
 
         # if we get this far, both preëxisted; the aliased info has been cleared out, the
         # canonical is as it should be. all that remains is to patch the two nodes and return
@@ -131,7 +130,7 @@ class Hierarchical(SymbolTable):
         # update the model
         self._nodes[target] = survivor
         # all done
-        return alias, survivor
+        return target, alias, survivor
 
 
     def hash(self, name):

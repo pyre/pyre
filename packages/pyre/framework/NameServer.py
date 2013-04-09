@@ -125,10 +125,15 @@ class NameServer(algebraic.hierarchicalModel):
         Register the name {alias} as an alternate name for {canonical}
         """
         # chain up
-        key, survivor = super().alias(target=target, alias=alias, base=base)
-        # adjust the slot key
-        survivor.key = target
+        target, alias, survivor = super().alias(target=target, alias=alias, base=base)
+        # if there is no survivor
+        if survivor is None:
+            # this must have been an aliasing of nodes for which there is no configuration
+            # state yet; nothing further to do
+            return target, alias, survivor
 
+        # otherwise, adjust the slot key
+        survivor.key = target
         # check whether
         try:
             # this is an alias for a trait
@@ -143,8 +148,8 @@ class NameServer(algebraic.hierarchicalModel):
             survivor.converter = converter
             survivor.dirty = True
 
-        # return the pair
-        return key, survivor
+        # return the pair of keys and the surviving node
+        return target, alias, survivor
 
 
     def buildNode(self, key, value, priority, locator):
