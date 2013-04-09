@@ -73,6 +73,22 @@ class Application(pyre.component, metaclass=Director):
         return self.pyre_nameserver
 
 
+    @property
+    def home(self):
+        """
+        Deduce the directory where this application is installed
+        """
+        # externals
+        import os
+        import sys
+        # the leading entry is my path
+        me = sys.argv[0]
+        # split it
+        home, app = os.path.split(me)
+        # and return the directory
+        return home
+
+
     # component interface
     @pyre.export
     def main(self, **kwds):
