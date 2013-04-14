@@ -46,6 +46,48 @@ class Local(Filesystem):
             raise self.URISpecificationError(uri=uri, reason=str(error))
 
 
+    def mkdir(self, parent, name):
+        """
+        Create a subdirectory {name} in {parent}
+        """
+        # assemble the new folder uri
+        uri = self.join(parent.uri, name)
+        # create the directory
+        os.mkdir(uri)
+        # if we get this far, the directory has been created; update my internal structure
+        folder = parent.folder()
+        # insert the new node in its parent's contents
+        parent.contents[name] = folder
+        # get the directory meta-data
+        meta = self.recognizer.recognize(uri)
+        # and update my {vnode} table
+        self.vnodes[folder] = meta
+        # all done
+        return folder
+
+
+    def write(self, parent, name, contents):
+        """
+        Create the file {name} in the folder {parent} with the given {contents}
+        """
+        # assemble the new file uri
+        uri = self.join(parent.uri, name)
+        # create the file
+        with open(uri, mode="w") as file:
+            # save its contents
+            file.write(contents)
+        # build a node
+        node = parent.node()
+        # insert the new node in its parent's contents
+        parent.contents[name] = node
+        # get the file meta-data
+        meta = self.recognizer.recognize(uri)
+        # and update my {vnode} table
+        self.vnodes[node] = meta
+        # all done
+        return node
+
+
     def make(self, name, tree, root=None, **kwds):
         """
         Duplicate the hierarchical structure in {tree} within my context
@@ -65,21 +107,8 @@ class Local(Filesystem):
         # print(" ++ adding:")
         # as long as there is more to do
         for parent, name, source in todo:
-            # build the folder
-            folder = parent.folder()
-            # assemble the folder uri
-            uri = self.join(parent.uri, name)
-            # print("      {!r}".format(uri))
-
-            # create the folder
-            os.mkdir(uri)
-            # build the node meta data
-            meta = self.recognizer.recognize(uri)
-            # insert the new node in the parent folder
-            parent.contents[name] = folder
-            # and update my vnode table
-            self.vnodes[folder] = meta
-
+            # create the directory
+            folder = self.mkdir(parent=parent, name=name)
             # add the children to my work list
             todo.extend( 
                 (folder, name, child)
