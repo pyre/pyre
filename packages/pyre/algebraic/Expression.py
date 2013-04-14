@@ -126,6 +126,17 @@ class Expression:
         return program, operands
 
 
+    @classmethod
+    def expand(cls, model, expression):
+        """
+        Compute the value of {expression} by expanding any references to {model} nodes
+        """
+        # compile {expression}
+        program, _ = cls.compile(model=model, expresion=expresion)
+        # evaluate {program} and return the generated value
+        return eval(program, {'model': model})
+
+
     # private data
     _model = None # my symbol table
     _program = None # the compiled form of my expression

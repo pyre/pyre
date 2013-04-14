@@ -136,6 +136,19 @@ class Interpolation:
         return operands
 
 
+    @classmethod
+    def expand(cls, model, expression):
+        """
+        Compute the value of {expression} by expanding any references to {model} nodes
+        """
+        # compile the expression; pass any exceptions through to the caller
+        operands = cls.compile(model=model, expression=expression)
+        # compute the values of the operands
+        values = (op.value for op in operands)
+        # splice them together and return the result
+        return functools.reduce(operator.add, values)
+
+
     # private data
     node = None # my evaluation node
     _scanner = re.compile( # the expression tokenizer
