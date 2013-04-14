@@ -108,6 +108,35 @@ class NameServer(algebraic.hierarchicalModel):
         return
 
 
+    # expansion services
+    def evaluate(self, expression):
+        """
+        Evaluate the given {expression} in my current context
+        """
+        # attempt to
+        try:
+            # evaluate the expression
+            return self.node.expression.expand(model=self, expression=expression)
+        # with empty expressions
+        except self.EmptyExpressionError:
+            # just return the input
+            return expression
+
+
+    def interpolate(self, expression):
+        """
+        Interpolate the given {expression} in my current context
+        """
+        # attempt to
+        try:
+            # evaluate the expression
+            return self.node.interpolation.expand(model=self, expression=expression)
+        # with empty expressions
+        except self.EmptyExpressionError:
+            # just return the input
+            return expression
+
+
     # override the literal slot factory to provide a default priority
     def literal(self, key=None, priority=None, locator=None, **kwds):
         """
