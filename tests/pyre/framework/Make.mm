@@ -28,6 +28,7 @@ slots:
 nameserver:
 	${PYTHON} ./nameserver.py
 	${PYTHON} ./nameserver_access.py
+	${PYTHON} ./nameserver_aliases.py
 
 fileserver:
 	${PYTHON} ./fileserver.py

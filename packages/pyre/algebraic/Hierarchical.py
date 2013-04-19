@@ -91,20 +91,28 @@ class Hierarchical(SymbolTable):
     def alias(self, target, alias, base=None):
         """
         Register the name {alias} as an alternate name for {target}
+
+        parameters:
+          {target}: the canonical name/key that owns the associated node
+           {alias}: the alternate name, a string with no implied structure
+            {base}: the context name/key within which the alias is established;
+                    defaults to global scope
         """
-        # build the keys
-        target = self.hash(target)
-        base = self._hash if base is None else self.hash(base)
-        # ask the hash to alias the two names and retrieve the original key
-        alias = base.alias(alias=alias, target=target)
-        
+        # hash the target
+        targetKey = self.hash(target)
+        # deduce the base context
+        baseKey = self._hash if base is None else self.hash(base)
+        # ask the base to alias the two names and return the key under which the alias might
+        # have been registered originally
+        aliasKey = baseKey.alias(target=targetKey, alias=alias)
+
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
 
-        # look for a preëxisting node under the canonical hash
-        canonicalNode = self._nodes.get(target)
-        # and one under the alias
-        aliasNode = self._nodes.get(alias)
+        # look for a preëxisting node under the alias
+        aliasNode = self._nodes.get(aliasKey)
+        # and one under the canonical key
+        targetNode = self._nodes.get(targetKey)
 
         # if there is no node that has been previously registered under this alias, we are
         # done. if a registration appears, it will be treated as a duplicate and patched
@@ -112,25 +120,30 @@ class Hierarchical(SymbolTable):
         if aliasNode is None:
             # return the canonical node, whether it exists or not; the latter case corresponds
             # to aliasing among names that do not yet have a configuration node built
-            return target, alias, canonicalNode
+            return targetKey, aliasKey, targetNode
         # clean up after the obsolete node
-        del self._nodes[alias]
-        del self._names[alias] # this was missing; oversight?
+        del self._nodes[aliasKey]
+        del self._names[aliasKey] # this was missing; oversight?
         # if there is no node under the canonical name
-        if canonicalNode is None:
+        if targetNode is None:
             # install the alias node as the canonical
-            self._nodes[target] = aliasNode
+            self._nodes[targetKey] = aliasNode
+            # deduce the name of the base context: if base were a key, assume it has a
+            # registered name, otherwise treat the base itself as the name
+            baseName = self._names[baseKey] if base is baseKey else base
+            # register the name under the target key
+            self._names[targetKey] = self.join(baseName, target)
             # and return the alias node
-            return target, alias, aliasNode
+            return targetKey, aliasKey, aliasNode
 
         # if we get this far, both preëxisted; the aliased info has been cleared out, the
         # canonical is as it should be. all that remains is to patch the two nodes and return
         # the survivor
-        survivor = self.node.select(model=self, existing=aliasNode, replacement=canonicalNode)
+        survivor = self.node.select(model=self, existing=aliasNode, replacement=targetNode)
         # update the model
-        self._nodes[target] = survivor
+        self._nodes[targetKey] = survivor
         # all done
-        return target, alias, survivor
+        return targetKey, aliasKey, survivor
 
 
     def hash(self, name):
@@ -235,7 +248,7 @@ class Hierarchical(SymbolTable):
         Form the canonical name of a key by joining {levels} using my separator
         """
         # easy enough
-        return self.separator.join(levels)
+        return self.separator.join(filter(None, levels))
 
 
     # meta-methods
