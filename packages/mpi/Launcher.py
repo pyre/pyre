@@ -26,10 +26,9 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
     autospawn = pyre.properties.bool(default=True)
     autospawn.doc = 'set to {True} to re-launch this script under {mpirun}'
 
-
-    # public data
     # a marker that enables applications to deduce the type of shell that is hosting them
-    model = 'mpi'
+    model = pyre.properties.str(default='mpi')
+    model.doc = "the programming model"
 
 
     # interface
