@@ -42,6 +42,48 @@ gsl::vector::alloc(PyObject *, PyObject * args) {
 }
 
 
+// view construction
+const char * const gsl::vector::view_alloc__name__ = "vector_view_alloc";
+const char * const gsl::vector::view_alloc__doc__ = "allocate a vector view";
+
+PyObject * 
+gsl::vector::view_alloc(PyObject *, PyObject * args) {
+    // place holders for the python arguments
+    size_t origin;
+    size_t shape;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, 
+                                  "O!kk:vector_view_alloc",
+                                  &PyCapsule_Type, &capsule,
+                                  &origin, &shape);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the vector capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // build the vector view
+    gsl_vector_view * view = new gsl_vector_view(gsl_vector_subvector(v, origin, shape));
+
+    // the caller expects a tuple
+    PyObject * result = PyTuple_New(2);
+    // the zeroth entry is the capsule
+    PyTuple_SET_ITEM(result, 0, PyCapsule_New(view, view_t, freeview));
+    // followed by a pointer to the view data
+    // N.B.: don't attempt to deallocate this one...
+    PyTuple_SET_ITEM(result, 1, PyCapsule_New(&(view->vector), capsule_t, 0));
+
+    // all done
+    return result;
+}
+
+
 // initialization
 const char * const gsl::vector::zero__name__ = "vector_zero";
 const char * const gsl::vector::zero__doc__ = "zero out the elements of a vector";
@@ -946,7 +988,7 @@ gsl::vector::sdev(PyObject *, PyObject * args) {
 }
 
 
-// destructor
+// destructors
 void 
 gsl::vector::free(PyObject * capsule)
 {
@@ -958,6 +1000,21 @@ gsl::vector::free(PyObject * capsule)
     // std::cout << " gsl.vector_free: vector@" << v << std::endl;
     // deallocate
     gsl_vector_free(v);
+    // and return
+    return;
+}
+
+
+void 
+gsl::vector::freeview(PyObject * capsule)
+{
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, gsl::vector::view_t)) return;
+    // get the vector view
+    gsl_vector_view * v = 
+        static_cast<gsl_vector_view *>(PyCapsule_GetPointer(capsule, gsl::vector::view_t));
+    // deallocate
+    delete v;
     // and return
     return;
 }

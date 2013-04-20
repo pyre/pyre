@@ -18,6 +18,11 @@ namespace gsl {
         extern const char * const alloc__doc__;
         PyObject * alloc(PyObject *, PyObject *);
 
+        // view_alloc
+        extern const char * const view_alloc__name__;
+        extern const char * const view_alloc__doc__;
+        PyObject * view_alloc(PyObject *, PyObject *);
+
         // set_zero
         extern const char * const zero__name__;
         extern const char * const zero__doc__;

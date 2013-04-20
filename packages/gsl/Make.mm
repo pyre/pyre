@@ -21,9 +21,11 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Histogram.py \
     Matrix.py \
+    MatrixView.py \
     Permutation.py \
     RNG.py \
     Vector.py \
+    VectorView.py \
     blas.py \
     linalg.py \
     pdf.py \

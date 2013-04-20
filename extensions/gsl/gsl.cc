@@ -107,6 +107,7 @@ namespace gsl {
 
         // matrices
         { matrix::alloc__name__, matrix::alloc, METH_VARARGS, matrix::alloc__doc__ },
+        { matrix::view_alloc__name__, matrix::view_alloc, METH_VARARGS, matrix::view_alloc__doc__ },
         { matrix::zero__name__, matrix::zero, METH_VARARGS, matrix::zero__doc__ },
         { matrix::fill__name__, matrix::fill, METH_VARARGS, matrix::fill__doc__ },
         { matrix::identity__name__, matrix::identity, METH_VARARGS, matrix::identity__doc__ },
@@ -190,6 +191,7 @@ namespace gsl {
 
         // vectors
         { vector::alloc__name__, vector::alloc, METH_VARARGS, vector::alloc__doc__ },
+        { vector::view_alloc__name__, vector::view_alloc, METH_VARARGS, vector::view_alloc__doc__ },
         { vector::zero__name__, vector::zero, METH_VARARGS, vector::zero__doc__ },
         { vector::fill__name__, vector::fill, METH_VARARGS, vector::fill__doc__ },
         { vector::basis__name__, vector::basis, METH_VARARGS, vector::basis__doc__ },

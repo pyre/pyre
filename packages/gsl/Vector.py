@@ -144,6 +144,16 @@ class Vector:
         return clone
 
 
+    def view(self, start, shape):
+        """
+        Build a view of my from {start} to {start+shape}
+        """
+        # access the view object
+        from .VectorView import VectorView
+        # build and return one
+        return VectorView(vector=self, start=start, shape=shape)
+        
+
     def read(self, filename):
         """
         Read my values from {filename}
@@ -260,9 +270,14 @@ class Vector:
 
     # meta methods
     def __init__(self, shape, data=None, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # adjust the shape, just in case
+        shape = int(shape)
+        # store
         self.shape = shape
         self.data = gsl.vector_alloc(shape) if data is None else data
+        # all done
         return
 
 

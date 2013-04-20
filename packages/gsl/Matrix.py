@@ -151,6 +151,16 @@ class Matrix:
         return self
 
 
+    def view(self, start, shape):
+        """
+        Build a view to my data anchored at {start} with the given {shape}
+        """
+        # access the view object
+        from .MatrixView import MatrixView
+        # build one and return it
+        return MatrixView(matrix=self, start=start, shape=shape)
+
+
     def read(self, filename):
         """
         Read my values from {filename}
@@ -321,9 +331,15 @@ class Matrix:
 
     # meta methods
     def __init__(self, shape, data=None, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # adjust the shape
+        shape = tuple(map(int, shape))
+        # store
         self.shape = shape
+        # allocate
         self.data = gsl.matrix_alloc(shape) if data is None else data
+        # all done
         return
 
 

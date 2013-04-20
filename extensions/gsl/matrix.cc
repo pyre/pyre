@@ -39,6 +39,49 @@ gsl::matrix::alloc(PyObject *, PyObject * args) {
 }
 
 
+// view construction
+const char * const gsl::matrix::view_alloc__name__ = "matrix_view_alloc";
+const char * const gsl::matrix::view_alloc__doc__ = "allocate a matrix view";
+
+PyObject * 
+gsl::matrix::view_alloc(PyObject *, PyObject * args) {
+    // place holders for the python arguments
+    size_t origin0, origin1;
+    size_t s0, s1;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, 
+                                  "O!(kk)(kk):matrix_view_alloc",
+                                  &PyCapsule_Type, &capsule,
+                                  &origin0, &origin1,
+                                  &s0, &s1);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the matrix capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
+        return 0;
+    }
+
+    // get the matrix
+    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // build the matrix view
+    gsl_matrix_view * v = new gsl_matrix_view(gsl_matrix_submatrix(m, origin0, origin1, s0, s1));
+
+    // the caller expects a tuple
+    PyObject * result = PyTuple_New(2);
+    // the zeroth entry is the capsule
+    PyTuple_SET_ITEM(result, 0, PyCapsule_New(v, view_t, freeview));
+    // followed by a pointer to the view data
+    // N.B.: don't attempt to deallocate this one...
+    PyTuple_SET_ITEM(result, 1, PyCapsule_New(&(v->matrix), capsule_t, 0));
+
+    // all done
+    return result;
+}
+
+
 // initialization
 const char * const gsl::matrix::zero__name__ = "matrix_zero";
 const char * const gsl::matrix::zero__doc__ = "zero out the elements of a matrix";
@@ -1083,7 +1126,7 @@ gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
 }
 
 
-// destructor
+// destructors
 void 
 gsl::matrix::free(PyObject * capsule)
 {
@@ -1095,6 +1138,21 @@ gsl::matrix::free(PyObject * capsule)
     // std::cout << " gsl.matrix_free: matrix@" << m << std::endl;
     // deallocate
     gsl_matrix_free(m);
+    // and return
+    return;
+}
+
+
+void 
+gsl::matrix::freeview(PyObject * capsule)
+{
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, gsl::matrix::view_t)) return;
+    // get the matrix view
+    gsl_matrix_view * m = 
+        static_cast<gsl_matrix_view *>(PyCapsule_GetPointer(capsule, gsl::matrix::view_t));
+    // deallocate
+    delete m;
     // and return
     return;
 }

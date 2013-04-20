@@ -60,6 +60,7 @@ vectors:
 	${PYTHON} ./vector_max.py
 	${PYTHON} ./vector_min.py
 	${PYTHON} ./vector_minmax.py
+	${PYTHON} ./vector_view.py
 
 matrices:
 	${PYTHON} ./matrix_allocate.py
@@ -79,6 +80,7 @@ matrices:
 	${PYTHON} ./matrix_max.py
 	${PYTHON} ./matrix_min.py
 	${PYTHON} ./matrix_minmax.py
+	${PYTHON} ./matrix_view.py
 
 blas:
 	${PYTHON} ./blas_ddot.py

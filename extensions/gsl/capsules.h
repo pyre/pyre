@@ -19,7 +19,9 @@ namespace gsl {
     // matrix
     namespace matrix { 
         const char * const capsule_t = "gsl.matrix"; 
+        const char * const view_t = "gsl.matrix.view"; 
         void free(PyObject *);
+        void freeview(PyObject *);
     }
     // rng
     namespace rng {
@@ -34,7 +36,9 @@ namespace gsl {
     // vectors
     namespace vector { 
         const char * const capsule_t = "gsl.vector";
+        const char * const view_t = "gsl.vector.view";
         void free(PyObject *);
+        void freeview(PyObject *);
     }
 }
 // local
