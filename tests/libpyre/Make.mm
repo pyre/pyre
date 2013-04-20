@@ -11,8 +11,13 @@ PROJECT = pyre
 RECURSE_DIRS = \
     algebra \
     journal \
-    mpi \
     timers \
+
+# mpi
+MPI_DIR= # overriden by the the environment
+ifneq ($(strip $(MPI_DIR)),)
+  RECURSE_DIRS += mpi
+endif
 
 #--------------------------------------------------------------------------
 #
