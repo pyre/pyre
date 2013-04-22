@@ -174,18 +174,24 @@ class Vector:
         return self
 
 
-    def print(self, format='{:+12.5e}', width=100, indent=''):
+    def print(self, format='{:+12.5e}', indent='', interactive=True):
         """
         Print my values using the given {format}
         """
-        # print the left margin
-        print('{} ['.format(indent), end=' ')
-        # the values
-        for value in self: print(format.format(value), end=' ')
-        # the right margin
-        print(']')
+        # build the line
+        line = ' '.join(
+            [ '{}['.format(indent) ] +
+            [ format.format(value) for value in self ] +
+            [']']
+            )
+
+        # if we are in interactive mode
+        if interactive:
+            # print all this our
+            print(line)
+
         # all done
-        return
+        return line
 
 
     # maxima and minima

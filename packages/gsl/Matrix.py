@@ -181,21 +181,33 @@ class Matrix:
         return self
 
 
-    def print(self, format='{:+12.5e}', width=100, indent=''):
+    def print(self, format='{:+12.5e}', indent='', interactive=True):
         """
         Print my values using the given {format}
         """
+        # initialize the display
+        lines = []
         # for each row
         for i in range(self.rows):
+            # initialize the line
+            fragments = []
             # print the left margin: a '[[' on the first row, nothing on the others
-            print('{}{}'.format(indent, '[[' if i==0 else '  '), end=' ')
+            fragments.append('{}{}'.format(indent, '[[' if i==0 else '  '))
             # the row entries
             for j in range(self.columns):
-                print(format.format(self[i,j]), end=' ')
+                fragments.append(format.format(self[i,j]))
             # the right margin
-            print('{}'.format(']]' if i==self.rows-1 else '  '))
+            fragments.append('{}'.format(']]' if i==self.rows-1 else '  '))
+            # add the line to the pile
+            lines.append(' '.join(fragments))
+
+        # if we are in interactive mode
+        if interactive:
+            # print all this out
+            print('\n'.join(lines))
+
         # all done
-        return
+        return lines
 
 
     def identity(self):
