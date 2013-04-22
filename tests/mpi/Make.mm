@@ -11,6 +11,8 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+working: communications
+
 all: test
 
 test: sanity groups communications launch

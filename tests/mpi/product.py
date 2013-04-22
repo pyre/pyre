@@ -21,15 +21,17 @@ def test():
     # and its structure
     rank = world.rank
     size = world.size
-    # set up a source for the reduction
-    source = int(size / 2)
+    # set up a destination for the reduction
+    destination = int(size / 2)
     # create a value
     number = rank + 1
     # perform the reduction
-    product = world.product(item=number, source=source)
+    product = world.product(item=number, destination=destination)
     # check it
-    if rank == source:
+    if rank == destination:
         assert product == math.factorial(size)
+    else:
+        assert product is None
     # all done
     return
 

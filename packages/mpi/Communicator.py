@@ -132,36 +132,38 @@ class Communicator(Object):
         return pickle.loads(data)
 
 
-    def sum(self, item, source):
+    def sum(self, item, destination):
         """
-        Perform a sum reduction of {item}
+        Perform a sum reduction of {item} using {exemplar} to deduce the type and deliver the
+        result to the MPI task whose rank is given in {destination}
+
         """
         # pass it on
-        return self.mpi.sum(self.capsule, self.rank, source, item)
+        return self.mpi.sum(self.capsule, destination, item)
 
 
-    def product(self, item, source):
+    def product(self, item, destination):
         """
         Perform a product reduction of {item}
         """
         # pass it on
-        return self.mpi.product(self.capsule, self.rank, source, item)
+        return self.mpi.product(self.capsule, destination, item)
 
 
-    def max(self, item, source):
+    def max(self, item, destination):
         """
         Perform a max reduction of {item}
         """
         # pass it on
-        return self.mpi.max(self.capsule, self.rank, source, item)
+        return self.mpi.max(self.capsule, destination, item)
 
 
-    def min(self, item, source):
+    def min(self, item, destination):
         """
         Perform a min reduction of {item}
         """
         # pass it on
-        return self.mpi.min(self.capsule, self.rank, source, item)
+        return self.mpi.min(self.capsule, destination, item)
 
 
     # meta methods

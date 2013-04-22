@@ -396,17 +396,12 @@ sum__doc__ = "perform a sum reduction";
 PyObject * mpi::communicator::sum(PyObject *, PyObject * args)
 {
     // place holders
+    int root;
     double number;
-    int rank, root;
     PyObject * py_comm;
 
     // parse the argument list
-    if (!PyArg_ParseTuple(
-                          args,
-                          "O!iid:sum",
-                          &PyCapsule_Type, &py_comm,
-                          &rank, &root,
-                          &number)) {
+    if (!PyArg_ParseTuple(args, "O!id:sum", &PyCapsule_Type, &py_comm, &root, &number)) {
         return 0;
     }
 
@@ -425,8 +420,14 @@ PyObject * mpi::communicator::sum(PyObject *, PyObject * args)
     // compute the total
     MPI_Reduce(&number, &total, 1, MPI_DOUBLE, MPI_SUM, root, comm->handle());
 
-    // and return it
-    return PyFloat_FromDouble(total);
+    // at {root}
+    if (comm->rank() == root) {
+        // return the reduced value
+        return PyFloat_FromDouble(total);
+    }
+    // everybody else gets {None}
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 
@@ -442,17 +443,12 @@ product__doc__ = "perform a product reduction";
 PyObject * mpi::communicator::product(PyObject *, PyObject * args)
 {
     // place holders
+    int root;
     double number;
-    int rank, root;
     PyObject * py_comm;
 
     // parse the argument list
-    if (!PyArg_ParseTuple(
-                          args,
-                          "O!iid:product",
-                          &PyCapsule_Type, &py_comm,
-                          &rank, &root,
-                          &number)) {
+    if (!PyArg_ParseTuple(args, "O!id:max", &PyCapsule_Type, &py_comm, &root, &number)) {
         return 0;
     }
 
@@ -471,8 +467,14 @@ PyObject * mpi::communicator::product(PyObject *, PyObject * args)
     // compute the product
     MPI_Reduce(&number, &product, 1, MPI_DOUBLE, MPI_PROD, root, comm->handle());
 
-    // and return it
-    return PyFloat_FromDouble(product);
+    // at {root}
+    if (comm->rank() == root) {
+        // return the reduced value
+        return PyFloat_FromDouble(product);
+    }
+    // everybody else gets {None}
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 
@@ -488,17 +490,12 @@ max__doc__ = "perform a max reduction";
 PyObject * mpi::communicator::max(PyObject *, PyObject * args)
 {
     // place holders
+    int root;
     double number;
-    int rank, root;
     PyObject * py_comm;
 
     // parse the argument list
-    if (!PyArg_ParseTuple(
-                          args,
-                          "O!iid:max",
-                          &PyCapsule_Type, &py_comm,
-                          &rank, &root,
-                          &number)) {
+    if (!PyArg_ParseTuple(args, "O!id:max", &PyCapsule_Type, &py_comm, &root, &number)) {
         return 0;
     }
 
@@ -507,6 +504,7 @@ PyObject * mpi::communicator::max(PyObject *, PyObject * args)
         PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
         return 0;
     }
+
     // get the communicator
     pyre::mpi::communicator_t * comm = 
         static_cast<pyre::mpi::communicator_t *>
@@ -517,8 +515,14 @@ PyObject * mpi::communicator::max(PyObject *, PyObject * args)
     // compute the total
     MPI_Reduce(&number, &largest, 1, MPI_DOUBLE, MPI_MAX, root, comm->handle());
 
-    // and return it
-    return PyFloat_FromDouble(largest);
+    // at {root}
+    if (comm->rank() == root) {
+        // return the reduced value
+        return PyFloat_FromDouble(largest);
+    }
+    // everybody else gets {None}
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 
@@ -534,17 +538,12 @@ min__doc__ = "perform a min reduction";
 PyObject * mpi::communicator::min(PyObject *, PyObject * args)
 {
     // place holders
+    int root;
     double number;
-    int rank, root;
     PyObject * py_comm;
 
     // parse the argument list
-    if (!PyArg_ParseTuple(
-                          args,
-                          "O!iid:min",
-                          &PyCapsule_Type, &py_comm,
-                          &rank, &root,
-                          &number)) {
+    if (!PyArg_ParseTuple(args, "O!id:min", &PyCapsule_Type, &py_comm, &root, &number)) {
         return 0;
     }
 
@@ -563,8 +562,14 @@ PyObject * mpi::communicator::min(PyObject *, PyObject * args)
     // compute the smallest
     MPI_Reduce(&number, &smallest, 1, MPI_DOUBLE, MPI_MIN, root, comm->handle());
 
-    // and return it
-    return PyFloat_FromDouble(smallest);
+    // at {root}
+    if (comm->rank() == root) {
+        // return the reduced value
+        return PyFloat_FromDouble(smallest);
+    }
+    // everybody else gets {None}
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 

@@ -20,15 +20,17 @@ def test():
     # and its structure
     rank = world.rank
     size = world.size
-    # set up a source for the reduction
-    source = int(size / 2)
+    # set up a destination for the reduction
+    destination = int(size / 2)
     # create a value
     number = rank**2
     # perform the reduction
-    smallest = world.min(item=number, source=source)
+    smallest = world.min(item=number, destination=destination)
     # check it
-    if rank == source:
+    if rank == destination:
         assert smallest == 0
+    else:
+        assert smallest is None
     # all done
     return
 
