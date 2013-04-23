@@ -96,11 +96,15 @@ gsl::pdf::uniform::vector(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = 
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill
     for (size_t i = 0; i < v->size; i++) {
         double value = gsl_ran_flat(rng, a, b);
         gsl_vector_set(v, i, value);
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
     // return None
     Py_INCREF(Py_None);
     return Py_None;
@@ -141,6 +145,8 @@ gsl::pdf::uniform::matrix(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = 
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill
     for (size_t i = 0; i < m->size1; i++) {
         for (size_t j = 0; j < m->size2; j++) {
@@ -148,6 +154,8 @@ gsl::pdf::uniform::matrix(PyObject *, PyObject * args) {
             gsl_matrix_set(m, i, j, value);
         }
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
     // return None
     Py_INCREF(Py_None);
     return Py_None;
@@ -177,8 +185,17 @@ gsl::pdf::gaussian::sample(PyObject *, PyObject * args) {
     }
     // get the rng
     gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, gsl::rng::capsule_t));
-    // sample the distribution and return the value
-    return PyFloat_FromDouble(gsl_ran_gaussian(r, sigma));
+    
+    double sample;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // sample the distribution
+    sample = gsl_ran_gaussian(r, sigma);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
+    // return the value
+    return PyFloat_FromDouble(sample);
 }
 
 
@@ -194,8 +211,17 @@ gsl::pdf::gaussian::density(PyObject *, PyObject * args) {
     int status = PyArg_ParseTuple(args, "dd:gaussian_density", &sigma, &x);
     // bail out if something went wrong with the argument unpacking
     if (!status) return 0;
+
+    double pdf;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute
+    pdf = gsl_ran_gaussian_pdf(x, sigma);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
     // compute the density and return the value
-    return PyFloat_FromDouble(gsl_ran_gaussian_pdf(x, sigma));
+    return PyFloat_FromDouble(pdf);
 }
 
 
@@ -233,11 +259,15 @@ gsl::pdf::gaussian::vector(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = 
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill
     for (size_t i = 0; i < v->size; i++) {
         double value = gsl_ran_gaussian(rng, sigma);
         gsl_vector_set(v, i, value);
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
     // return None
     Py_INCREF(Py_None);
     return Py_None;
@@ -278,6 +308,8 @@ gsl::pdf::gaussian::matrix(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = 
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill
     for (size_t i = 0; i < m->size1; i++) {
         for (size_t j = 0; j < m->size2; j++) {
@@ -285,6 +317,8 @@ gsl::pdf::gaussian::matrix(PyObject *, PyObject * args) {
             gsl_matrix_set(m, i, j, value);
         }
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
     // return None
     Py_INCREF(Py_None);
     return Py_None;
@@ -313,8 +347,16 @@ gsl::pdf::ugaussian::sample(PyObject *, PyObject * args) {
     }
     // get the rng
     gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, gsl::rng::capsule_t));
-    // sample the distribution and return the value
-    return PyFloat_FromDouble(gsl_ran_ugaussian(r));
+
+    double sample;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // sample the distribution
+    sample = gsl_ran_ugaussian(r);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+    // and return the value
+    return PyFloat_FromDouble(sample);
 }
 
 
@@ -331,8 +373,16 @@ gsl::pdf::ugaussian::density(PyObject *, PyObject * args) {
     int status = PyArg_ParseTuple(args, "d:ugaussian_density", &x);
     // bail out if something went wrong with the argument unpacking
     if (!status) return 0;
+
+    double pdf;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // compute the density and return the value
-    return PyFloat_FromDouble(gsl_ran_ugaussian_pdf(x));
+    pdf = gsl_ran_ugaussian_pdf(x);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+    // and return the value
+    return PyFloat_FromDouble(pdf);
 }
 
 
@@ -368,11 +418,15 @@ gsl::pdf::ugaussian::vector(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = 
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill
     for (size_t i = 0; i < v->size; i++) {
         double value = gsl_ran_ugaussian(rng);
         gsl_vector_set(v, i, value);
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
     // return None
     Py_INCREF(Py_None);
     return Py_None;
@@ -411,6 +465,8 @@ gsl::pdf::ugaussian::matrix(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = 
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill
     for (size_t i = 0; i < m->size1; i++) {
         for (size_t j = 0; j < m->size2; j++) {
@@ -418,6 +474,8 @@ gsl::pdf::ugaussian::matrix(PyObject *, PyObject * args) {
             gsl_matrix_set(m, i, j, value);
         }
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
     // return None
     Py_INCREF(Py_None);
     return Py_None;
@@ -475,8 +533,12 @@ gsl::pdf::dirichlet::vector(PyObject *, PyObject * args) {
         PyErr_SetString(PyExc_ValueError, "shape incompatibility");
         return 0;
     }
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill the vector
     gsl_ran_dirichlet(rng, K, alpha->data, v->data);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -535,11 +597,15 @@ gsl::pdf::dirichlet::matrix(PyObject *, PyObject * args) {
         return 0;
     }
 
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill
     for (size_t i = 0; i < m->size1; i++) {
         // fill the row
         gsl_ran_dirichlet(rng, K, alpha->data, m->data + i*m->size2);
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);

@@ -105,8 +105,12 @@ gsl::vector::zero(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.vector_zero: vector@" << v << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // zero it out
     gsl_vector_set_zero(v);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -135,8 +139,12 @@ gsl::vector::fill(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.vector_fill: vector@" << v << ", value=" << value << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill it out
     gsl_vector_set_all(v, value);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -166,8 +174,12 @@ gsl::vector::basis(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.vector_basis: vector@" << v << ", index=" << index << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill it out
     gsl_vector_set_basis(v, index);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -208,8 +220,12 @@ gsl::vector::copy(PyObject *, PyObject * args) {
         static_cast<gsl_vector *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
     gsl_vector * destination =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // copy the data
     gsl_vector_memcpy(destination, source);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -245,14 +261,17 @@ gsl::vector::read(PyObject *, PyObject * args) {
         return 0;
     }
 
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // get the vector
     gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     // read the data
     gsl_vector_fread(stream, v);
-
     // close the file
     std::fclose(stream);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -291,8 +310,12 @@ gsl::vector::write(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // write the data
     gsl_vector_fwrite(stream, v);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // close the file
     std::fclose(stream);
@@ -338,8 +361,14 @@ gsl::vector::get(PyObject *, PyObject * args) {
         // and raise the exception
         return 0;
     }
+
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // get the value
-    double value = gsl_vector_get(v, i);
+    value = gsl_vector_get(v, i);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
     // std::cout
         // << " gsl.vector_get: vector@" << v << ", index=" << index << ", value=" << value 
         // << std::endl;
@@ -390,8 +419,12 @@ gsl::vector::set(PyObject *, PyObject * args) {
         // and raise the exception
         return 0;
     }
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // set the value
     gsl_vector_set(v, i, value);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -425,6 +458,8 @@ gsl::vector::contains(PyObject *, PyObject * args) {
 
     // the answer
     PyObject * result = Py_False;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
 
     // loop over the elements
     for (size_t index=0; index < v->size; index++) {
@@ -436,6 +471,8 @@ gsl::vector::contains(PyObject *, PyObject * args) {
             break;
         }
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the answer
     Py_INCREF(result);
@@ -463,8 +500,15 @@ gsl::vector::max(PyObject *, PyObject * args) {
 
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    double value = gsl_vector_max(v);
+    // the result
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute the max
+    value = gsl_vector_max(v);
     // std::cout << " gsl.vector_max: vector@" << v << ", value=" << value << std::endl;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the value
     return PyFloat_FromDouble(value);
@@ -490,8 +534,15 @@ gsl::vector::min(PyObject *, PyObject * args) {
 
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
-    double value = gsl_vector_min(v);
+    double value;
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute
+    value = gsl_vector_min(v);
     // std::cout << " gsl.vector_max: vector@" << v << ", value=" << value << std::endl;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the value
     return PyFloat_FromDouble(value);
@@ -519,10 +570,14 @@ gsl::vector::minmax(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     double small, large;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     gsl_vector_minmax(v, &small, &large);
     // std::cout 
         // << " gsl.vector_max: vector@" << v << ", min=" << small << ", max=" << large 
         // << std::endl;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // build the answer
     PyObject * answer = PyTuple_New(2);
@@ -567,8 +622,13 @@ gsl::vector::equal(PyObject *, PyObject * args) {
     gsl_vector * right =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(rightCapsule, capsule_t));
 
+    PyObject * answer;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // the answer
-    PyObject * answer = gsl_vector_equal(left, right) ? Py_True : Py_False;
+    answer = gsl_vector_equal(left, right) ? Py_True : Py_False;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
     // return 
     Py_INCREF(answer);
     return answer;
@@ -600,8 +660,12 @@ gsl::vector::add(PyObject *, PyObject * args) {
     gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(other, capsule_t));
     // std::cout << " gsl.vector_add: vector@" << v1 << ", vector@" << v2 << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the addition
     gsl_vector_add(v1, v2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -633,8 +697,12 @@ gsl::vector::sub(PyObject *, PyObject * args) {
     gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(other, capsule_t));
     // std::cout << " gsl.vector_sub: vector@" << v1 << ", vector@" << v2 << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the subtraction
     gsl_vector_sub(v1, v2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -666,8 +734,12 @@ gsl::vector::mul(PyObject *, PyObject * args) {
     gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(other, capsule_t));
     // std::cout << " gsl.vector_mul: vector@" << v1 << ", vector@" << v2 << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the multiplication
     gsl_vector_mul(v1, v2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -699,8 +771,12 @@ gsl::vector::div(PyObject *, PyObject * args) {
     gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(other, capsule_t));
     // std::cout << " gsl.vector_div: vector@" << v1 << ", vector@" << v2 << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the division
     gsl_vector_div(v1, v2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -729,8 +805,12 @@ gsl::vector::shift(PyObject *, PyObject * args) {
     // get the two vectors
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
     // std::cout << " gsl.vector_shift: vector@" << v << ", value=" << value << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the shift
     gsl_vector_add_constant(v, value);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -759,8 +839,12 @@ gsl::vector::scale(PyObject *, PyObject * args) {
     // get the two vectors
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
     // std::cout << " gsl.vector_scale: vector@" << v << ", value=" << value << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the scale
     gsl_vector_scale(v, value);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -789,8 +873,12 @@ gsl::vector::sort(PyObject *, PyObject * args) {
 
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // sort it
     gsl_sort_vector(v);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -821,8 +909,12 @@ gsl::vector::sortIndex(PyObject *, PyObject * args) {
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     // allocate the permutation
     gsl_permutation * p = gsl_permutation_alloc(v->size);
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // sort it
     gsl_sort_vector_index(p, v);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return a permutation capsule
     return PyCapsule_New(p, gsl::permutation::capsule_t, gsl::permutation::free);
@@ -857,8 +949,12 @@ gsl::vector::mean(PyObject *, PyObject * args) {
     double mean;
     // if no weights were given
     if (weights == Py_None) {
+        // allow threads
+        Py_BEGIN_ALLOW_THREADS;
         // compute the mean
         mean = gsl_stats_mean(v->data, v->stride, v->size);
+        // disallow threads
+        Py_END_ALLOW_THREADS;
     } else {
         // otherwise, check that {weights} is a vector capsule
         if (!PyCapsule_IsValid(weights, capsule_t)) {
@@ -867,8 +963,12 @@ gsl::vector::mean(PyObject *, PyObject * args) {
         }
         // extract the  vector of weights
         gsl_vector * w = static_cast<gsl_vector *>(PyCapsule_GetPointer(weights, capsule_t));
+        // allow threads
+        Py_BEGIN_ALLOW_THREADS;
         // compute the weighted mean
         mean = gsl_stats_wmean(w->data, w->stride, v->data, v->stride, v->size);
+        // disallow threads
+        Py_END_ALLOW_THREADS;
     }
     // and return it
     return PyFloat_FromDouble(mean);
@@ -897,8 +997,14 @@ gsl::vector::median(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
 
+    double median;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // compute the median
-    double median = gsl_stats_median_from_sorted_data(v->data, v->stride, v->size);
+    median = gsl_stats_median_from_sorted_data(v->data, v->stride, v->size);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
     // and return it
     return PyFloat_FromDouble(median);
 }
@@ -931,11 +1037,19 @@ gsl::vector::variance(PyObject *, PyObject * args) {
     double variance;
     // three cases
     if (mean == Py_None) {
+        // allow threads
+        Py_BEGIN_ALLOW_THREADS;
         // {mean} is {None}: compute the mean on the fly
         variance = gsl_stats_variance(v->data, v->stride, v->size);
+        // disallow threads
+        Py_END_ALLOW_THREADS;
     } else if (PyFloat_Check(mean)) {
+        // allow threads
+        Py_BEGIN_ALLOW_THREADS;
         // {mean} is a float: use it
         variance = gsl_stats_variance_m(v->data, v->stride, v->size, PyFloat_AsDouble(mean));
+        // disallow threads
+        Py_END_ALLOW_THREADS;
     } else {
         // {mean} is anything else: raise an exception
         PyErr_SetString(PyExc_TypeError, "{mean} must be a float");
@@ -973,11 +1087,19 @@ gsl::vector::sdev(PyObject *, PyObject * args) {
     double sdev;
     // three cases
     if (mean == Py_None) {
+        // allow threads
+        Py_BEGIN_ALLOW_THREADS;
         // {mean} is {None}: compute the mean on the fly
         sdev = gsl_stats_sd(v->data, v->stride, v->size);
+        // disallow threads
+        Py_END_ALLOW_THREADS;
     } else if (PyFloat_Check(mean)) {
+        // allow threads
+        Py_BEGIN_ALLOW_THREADS;
         // {mean} is a float: use it
         sdev = gsl_stats_sd_m(v->data, v->stride, v->size, PyFloat_AsDouble(mean));
+        // disallow threads
+        Py_END_ALLOW_THREADS;
     } else {
         // {mean} is anything else: raise an exception
         PyErr_SetString(PyExc_TypeError, "{mean} must be a float");

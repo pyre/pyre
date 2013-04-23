@@ -55,8 +55,12 @@ gsl::permutation::init(PyObject *, PyObject * args) {
 
     // get the permutation
     gsl_permutation * p = static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // init it out
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // initialize it
     gsl_permutation_init(p);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // std::cout << "permutation: ";
     // for (size_t i=0; i<gsl_permutation_size(p); i++) {
@@ -103,8 +107,12 @@ gsl::permutation::copy(PyObject *, PyObject * args) {
         static_cast<gsl_permutation *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
     gsl_permutation * destination =
         static_cast<gsl_permutation *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // copy the data
     gsl_permutation_memcpy(destination, source);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -133,8 +141,14 @@ gsl::permutation::get(PyObject *, PyObject * args) {
 
     // get the permutation
     gsl_permutation * p = static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    size_t value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // get the value
-    size_t value = gsl_permutation_get(p, index);
+    value = gsl_permutation_get(p, index);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the value
     return PyLong_FromSize_t(value);
@@ -165,8 +179,12 @@ gsl::permutation::swap(PyObject *, PyObject * args) {
 
     // swap the permutation
     gsl_permutation * p = static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // swap the value
     gsl_permutation_swap(p, index1, index2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the value
     Py_INCREF(Py_None);
@@ -194,8 +212,17 @@ gsl::permutation::size(PyObject *, PyObject * args) {
 
     // get the permutation
     gsl_permutation * p = static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // get the size and return it
-    return PyLong_FromSize_t(gsl_permutation_size(p));
+
+    size_t size;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // get the size
+    size = gsl_permutation_size(p);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
+    // and return it
+    return PyLong_FromSize_t(size);
 }
 
 
@@ -219,8 +246,14 @@ gsl::permutation::valid(PyObject *, PyObject * args) {
 
     // get the permutation
     gsl_permutation * p = static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    PyObject * result;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // the answer
-    PyObject * result = (GSL_SUCCESS == gsl_permutation_valid(p)) ? Py_True : Py_False;
+    result = (GSL_SUCCESS == gsl_permutation_valid(p)) ? Py_True : Py_False;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the answer
     Py_INCREF(result);
@@ -248,8 +281,12 @@ gsl::permutation::reverse(PyObject *, PyObject * args) {
 
     // get the permutation
     gsl_permutation * p = static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // reverse it
     gsl_permutation_reverse(p);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return
     Py_INCREF(Py_None);
@@ -279,8 +316,12 @@ gsl::permutation::inverse(PyObject *, PyObject * args) {
     gsl_permutation * p = static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, capsule_t));
     // build the result
     gsl_permutation * inv = gsl_permutation_alloc(gsl_permutation_size(p));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // invert
     gsl_permutation_inverse(inv, p);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // wrap it in a capsule and return it
     return PyCapsule_New(inv, capsule_t, free);
@@ -307,8 +348,16 @@ gsl::permutation::next(PyObject *, PyObject * args) {
 
     // get the permutation
     gsl_permutation * p = static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    PyObject * result;
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // compute the next one
-    PyObject * result = (GSL_SUCCESS == gsl_permutation_next(p)) ? Py_True : Py_False;
+    result = (GSL_SUCCESS == gsl_permutation_next(p)) ? Py_True : Py_False;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
     // return the value
     Py_INCREF(result);
     return result;
@@ -335,8 +384,15 @@ gsl::permutation::prev(PyObject *, PyObject * args) {
 
     // get the permutation
     gsl_permutation * p = static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    PyObject * result;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // compute the prev one
-    PyObject * result = (GSL_SUCCESS == gsl_permutation_prev(p)) ? Py_True : Py_False;
+    result = (GSL_SUCCESS == gsl_permutation_prev(p)) ? Py_True : Py_False;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
     // return the value
     Py_INCREF(result);
     return result;

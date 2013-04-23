@@ -62,8 +62,12 @@ gsl::histogram::uniform(PyObject *, PyObject * args) {
 
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // uniform it out
     gsl_histogram_set_ranges_uniform(h, lower, upper);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -110,8 +114,12 @@ gsl::histogram::ranges(PyObject *, PyObject * args) {
         // and raise an exception
         return 0;
     }
-    // otherwise, adjust the bins
+    // otherwise, allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // adjust the bins
     gsl_histogram_set_ranges(h, ranges, size);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // deallocate the range array
     delete [] ranges;
@@ -141,8 +149,12 @@ gsl::histogram::reset(PyObject *, PyObject * args) {
 
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill it out
     gsl_histogram_reset(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -175,8 +187,12 @@ gsl::histogram::increment(PyObject *, PyObject * args) {
 
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // fill it out
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // increment it
     gsl_histogram_increment(h, x);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -209,8 +225,12 @@ gsl::histogram::accumulate(PyObject *, PyObject * args) {
 
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
-    // fill it out
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // accumulate the weight
     gsl_histogram_accumulate(h, x, weight);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -254,10 +274,14 @@ gsl::histogram::fill(PyObject *, PyObject * args) {
     gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
 
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill it out
     for (size_t i=0; i < v->size; i++) {
         gsl_histogram_increment(h, gsl_vector_get(v, i));
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -289,8 +313,13 @@ gsl::histogram::clone(PyObject *, PyObject * args) {
     // get the histograms
     gsl_histogram * source =
         static_cast<gsl_histogram *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
+    gsl_histogram * clone;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // clone the histogram
-    gsl_histogram * clone = gsl_histogram_clone(source);
+    clone = gsl_histogram_clone(source);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // wrap it in a capsule and return it
     return PyCapsule_New(clone, capsule_t, free);
@@ -330,8 +359,12 @@ gsl::histogram::copy(PyObject *, PyObject * args) {
         static_cast<gsl_histogram *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
     gsl_histogram * destination =
         static_cast<gsl_histogram *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // copy the data
     gsl_histogram_memcpy(destination, source);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -363,11 +396,18 @@ gsl::histogram::vector(PyObject *, PyObject * args) {
         static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // build the vector
-    gsl_vector * v = gsl_vector_alloc(h->n);
+    gsl_vector * v;
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // make the vector
+    v = gsl_vector_alloc(h->n);
     // copy the data
     for (size_t i=0; i < h->n; i++) {
         gsl_vector_set(v, i, gsl_histogram_get(h, i));
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return a capsule with the vector data
     return PyCapsule_New(v, gsl::vector::capsule_t, gsl::vector::free);
@@ -402,7 +442,14 @@ gsl::histogram::find(PyObject *, PyObject * args) {
 
     // find the bin index and return it
     size_t index;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // find the value
     gsl_histogram_find(h, value, &index); 
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
+    // and return the index
     return PyLong_FromSize_t(index);
 }
 
@@ -428,8 +475,16 @@ gsl::histogram::max(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
+    double max;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute the maximum
+    max = gsl_histogram_max(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
     // find the maximum upper range and return it
-    return PyFloat_FromDouble(gsl_histogram_max(h));
+    return PyFloat_FromDouble(max);
 }
 
 
@@ -454,8 +509,16 @@ gsl::histogram::min(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
+    double min;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute the minimum
+    min = gsl_histogram_min(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
     // find the minimum upper range and return it
-    return PyFloat_FromDouble(gsl_histogram_max(h));
+    return PyFloat_FromDouble(min);
 }
 
 
@@ -487,8 +550,12 @@ gsl::histogram::range(PyObject *, PyObject * args) {
 
     // the endpoints
     double lower, upper;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // compute them
     gsl_histogram_get_range(h, index, &lower, &upper);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // place the result in a doublet
     PyObject * range = PyTuple_New(2);
@@ -522,8 +589,16 @@ gsl::histogram::max_bin(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
-    // find the index and return it
-    return PyLong_FromSize_t(gsl_histogram_max_bin(h));
+    size_t bin;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute the bin
+    bin = gsl_histogram_max_bin(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
+    // return the index
+    return PyLong_FromSize_t(bin);
 }
 
 
@@ -549,8 +624,16 @@ gsl::histogram::min_bin(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
-    // find the index and return it
-    return PyLong_FromSize_t(gsl_histogram_min_bin(h));
+    size_t bin;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute the bin
+    bin = gsl_histogram_min_bin(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
+    // return the index
+    return PyLong_FromSize_t(bin);
 }
 
 
@@ -576,8 +659,16 @@ gsl::histogram::max_val(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // find the maximum value
+    value = gsl_histogram_max_val(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+    
     // find the value and return it
-    return PyFloat_FromDouble(gsl_histogram_max_val(h));
+    return PyFloat_FromDouble(value);
 }
 
 
@@ -603,8 +694,16 @@ gsl::histogram::min_val(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
-    // find the value and return it
-    return PyFloat_FromDouble(gsl_histogram_min_val(h));
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // find the maximum value
+    value = gsl_histogram_min_val(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+    
+    // return the value
+    return PyFloat_FromDouble(value);
 }
 
 
@@ -630,8 +729,16 @@ gsl::histogram::mean(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
-    // compute the mean value and return it
-    return PyFloat_FromDouble(gsl_histogram_mean(h));
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // find the maximum value
+    value = gsl_histogram_mean(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+    
+    // return the value
+    return PyFloat_FromDouble(value);
 }
 
 
@@ -657,8 +764,16 @@ gsl::histogram::sdev(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute
+    value = gsl_histogram_sigma(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
     // compute the standard deviation and return it
-    return PyFloat_FromDouble(gsl_histogram_sigma(h));
+    return PyFloat_FromDouble(value);
 }
 
 
@@ -684,8 +799,16 @@ gsl::histogram::sum(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
 
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute
+    value = gsl_histogram_sum(h);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+
     // compute the standard deviation and return it
-    return PyFloat_FromDouble(gsl_histogram_sum(h));
+    return PyFloat_FromDouble(value);
 }
 
 
@@ -711,7 +834,13 @@ gsl::histogram::get(PyObject *, PyObject * args) {
     // get the histogram
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(capsule, capsule_t));
     // get the value
-    double value = gsl_histogram_get(h, index);
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute
+    value = gsl_histogram_get(h, index);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the value
     return PyFloat_FromDouble(value);
@@ -742,8 +871,13 @@ gsl::histogram::add(PyObject *, PyObject * args) {
     // get the two histograms
     gsl_histogram * h1 = static_cast<gsl_histogram *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_histogram * h2 = static_cast<gsl_histogram *>(PyCapsule_GetPointer(other, capsule_t));
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the addition
     gsl_histogram_add(h1, h2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -774,8 +908,13 @@ gsl::histogram::sub(PyObject *, PyObject * args) {
     // get the two histograms
     gsl_histogram * h1 = static_cast<gsl_histogram *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_histogram * h2 = static_cast<gsl_histogram *>(PyCapsule_GetPointer(other, capsule_t));
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the subtraction
     gsl_histogram_sub(h1, h2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -806,8 +945,13 @@ gsl::histogram::mul(PyObject *, PyObject * args) {
     // get the two histograms
     gsl_histogram * h1 = static_cast<gsl_histogram *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_histogram * h2 = static_cast<gsl_histogram *>(PyCapsule_GetPointer(other, capsule_t));
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the multiplication
     gsl_histogram_mul(h1, h2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -838,8 +982,13 @@ gsl::histogram::div(PyObject *, PyObject * args) {
     // get the two histograms
     gsl_histogram * h1 = static_cast<gsl_histogram *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_histogram * h2 = static_cast<gsl_histogram *>(PyCapsule_GetPointer(other, capsule_t));
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the division
     gsl_histogram_div(h1, h2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -867,8 +1016,13 @@ gsl::histogram::shift(PyObject *, PyObject * args) {
 
     // get the two histograms
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(self, capsule_t));
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the shift
     gsl_histogram_shift(h, value);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -896,8 +1050,13 @@ gsl::histogram::scale(PyObject *, PyObject * args) {
 
     // get the two histograms
     gsl_histogram * h = static_cast<gsl_histogram *>(PyCapsule_GetPointer(self, capsule_t));
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the scale
     gsl_histogram_scale(h, value);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);

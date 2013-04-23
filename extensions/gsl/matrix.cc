@@ -103,8 +103,13 @@ gsl::matrix::zero(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.matrix_zero: matrix@" << m << std::endl;
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // zero it out
     gsl_matrix_set_zero(m);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -133,8 +138,12 @@ gsl::matrix::fill(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.matrix_fill: matrix@" << m << ", value=" << value << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill it out
     gsl_matrix_set_all(m, value);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -163,8 +172,12 @@ gsl::matrix::identity(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.matrix_identity: matrix@" << m << ", index=" << index << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // fill it out
     gsl_matrix_set_identity(m);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -205,8 +218,13 @@ gsl::matrix::copy(PyObject *, PyObject * args) {
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(sourceCapsule, capsule_t));
     gsl_matrix * destination =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // copy the data
     gsl_matrix_memcpy(destination, source);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -245,8 +263,13 @@ gsl::matrix::read(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // read the data
     gsl_matrix_fread(stream, m);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // close the file
     std::fclose(stream);
@@ -288,11 +311,15 @@ gsl::matrix::write(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // write the data
     gsl_matrix_fwrite(stream, m);
-
     // close the file
     std::fclose(stream);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -329,7 +356,11 @@ gsl::matrix::transpose(PyObject *, PyObject * args) {
     // check the destination object
     if (destinationCapsule == Py_None) {
         // we are doing this in place, assuming a square matrix
+        // allow threads
+        Py_BEGIN_ALLOW_THREADS;
         gsl_matrix_transpose(source);
+        // disallow threads
+        Py_END_ALLOW_THREADS;
         // return None
         Py_INCREF(Py_None);
         return Py_None;
@@ -346,8 +377,12 @@ gsl::matrix::transpose(PyObject *, PyObject * args) {
 
     gsl_matrix * destination =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(destinationCapsule, capsule_t));
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // transpose the data
     gsl_matrix_transpose_memcpy(destination, source);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -524,8 +559,12 @@ gsl::matrix::get_col(PyObject *, PyObject * args) {
 
     // create a vector to hold the column
     gsl_vector * v = gsl_vector_alloc(m->size1);
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // get the column
     gsl_matrix_get_col(v, m, i);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // wrap the column in a capsule and return it
     return PyCapsule_New(v, gsl::vector::capsule_t, gsl::vector::free);
@@ -574,8 +613,12 @@ gsl::matrix::get_row(PyObject *, PyObject * args) {
 
     // create a vector to hold the row
     gsl_vector * v = gsl_vector_alloc(m->size2);
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // get the row
     gsl_matrix_get_row(v, m, i);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // wrap the column in a capsule and return it
     return PyCapsule_New(v, gsl::vector::capsule_t, gsl::vector::free);
@@ -619,8 +662,12 @@ gsl::matrix::set_col(PyObject *, PyObject * args) {
     gsl_vector * v = 
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
 
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // set the col
     gsl_matrix_set_col(m, index, v);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return
     Py_INCREF(Py_None);
@@ -665,8 +712,12 @@ gsl::matrix::set_row(PyObject *, PyObject * args) {
     gsl_vector * v = 
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
 
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // set the row
     gsl_matrix_set_row(m, index, v);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return
     Py_INCREF(Py_None);
@@ -702,6 +753,8 @@ gsl::matrix::contains(PyObject *, PyObject * args) {
     // the answer
     PyObject * result = Py_False;
 
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // loop over the elements
     for (size_t index0=0; index0 < m->size1; index0++) {
         for (size_t index1=0; index1 < m->size2; index1++) {
@@ -714,6 +767,8 @@ gsl::matrix::contains(PyObject *, PyObject * args) {
             }
         }
     }
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the answer
     Py_INCREF(result);
@@ -741,8 +796,16 @@ gsl::matrix::max(PyObject *, PyObject * args) {
 
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
-    double value = gsl_matrix_max(m);
+
+    // the result
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // compute the maximum
+    value = gsl_matrix_max(m);
     // std::cout << " gsl.matrix_max: matrix@" << m << ", value=" << value << std::endl;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the value
     return PyFloat_FromDouble(value);
@@ -768,8 +831,14 @@ gsl::matrix::min(PyObject *, PyObject * args) {
 
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
-    double value = gsl_matrix_min(m);
+    double value;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // get the minimum
+    value = gsl_matrix_min(m);
     // std::cout << " gsl.matrix_max: matrix@" << m << ", value=" << value << std::endl;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return the value
     return PyFloat_FromDouble(value);
@@ -797,10 +866,14 @@ gsl::matrix::minmax(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     double small, large;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     gsl_matrix_minmax(m, &small, &large);
     // std::cout 
         // << " gsl.matrix_max: matrix@" << m << ", min=" << small << ", max=" << large 
         // << std::endl;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // build the answer
     PyObject * answer = PyTuple_New(2);
@@ -845,8 +918,15 @@ gsl::matrix::equal(PyObject *, PyObject * args) {
     gsl_matrix * right =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(rightCapsule, capsule_t));
 
-    // the answer
-    PyObject * answer = gsl_matrix_equal(left, right) ? Py_True : Py_False;
+
+    PyObject * answer;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // check
+    answer = gsl_matrix_equal(left, right) ? Py_True : Py_False;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
+    
     // return 
     Py_INCREF(answer);
     return answer;
@@ -878,8 +958,12 @@ gsl::matrix::add(PyObject *, PyObject * args) {
     gsl_matrix * m1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_matrix * m2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
     // std::cout << " gsl.matrix_add: matrix@" << m1 << ", matrix@" << m2 << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the addition
     gsl_matrix_add(m1, m2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -911,8 +995,12 @@ gsl::matrix::sub(PyObject *, PyObject * args) {
     gsl_matrix * m1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_matrix * m2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
     // std::cout << " gsl.matrix_sub: matrix@" << m1 << ", matrix@" << m2 << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the subtraction
     gsl_matrix_sub(m1, m2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -944,8 +1032,12 @@ gsl::matrix::mul(PyObject *, PyObject * args) {
     gsl_matrix * m1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_matrix * m2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
     // std::cout << " gsl.matrix_mul: matrix@" << m1 << ", matrix@" << m2 << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the multiplication
     gsl_matrix_mul_elements(m1, m2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -977,8 +1069,12 @@ gsl::matrix::div(PyObject *, PyObject * args) {
     gsl_matrix * m1 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
     gsl_matrix * m2 = static_cast<gsl_matrix *>(PyCapsule_GetPointer(other, capsule_t));
     // std::cout << " gsl.matrix_div: matrix@" << m1 << ", matrix@" << m2 << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the division
     gsl_matrix_div_elements(m1, m2);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -1009,8 +1105,12 @@ gsl::matrix::shift(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
     // std::cout << " gsl.matrix_shift: matrix@" << m << ", value=" << value << std::endl;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // perform the shift
     gsl_matrix_add_constant(m, value);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -1041,8 +1141,12 @@ gsl::matrix::scale(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
     // std::cout << " gsl.matrix_scale: matrix@" << m << ", value=" << value << std::endl;
-    // perform the scale
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+    // perform the scaling
     gsl_matrix_scale(m, value);
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -1095,14 +1199,20 @@ gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
 
+    // the results
+    gsl_vector * eigenvalues;
+    gsl_matrix * eigenvectors;
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // allocate the clone and make a copy of the data so we don't destroy the original
     gsl_matrix * A = gsl_matrix_alloc(m->size1, m->size2);
     gsl_matrix_memcpy(A, m);
 
     // allocate the vector of eigenvalues
-    gsl_vector * eigenvalues = gsl_vector_alloc(m->size1);
+    eigenvalues = gsl_vector_alloc(m->size1);
     // and the matrix of eigenvectors
-    gsl_matrix * eigenvectors = gsl_matrix_alloc(m->size1, m->size2);
+    eigenvectors = gsl_matrix_alloc(m->size1, m->size2);
     // allocate the working space for the eigensolver
     gsl_eigen_symmv_workspace * w = gsl_eigen_symmv_alloc(m->size1);
 
@@ -1114,6 +1224,9 @@ gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
     // clean up
     gsl_matrix_free(A);
     gsl_eigen_symmv_free(w);
+
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // build the return value
     PyObject * answer = PyTuple_New(2);
