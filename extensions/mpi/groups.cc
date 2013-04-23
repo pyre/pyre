@@ -69,8 +69,13 @@ PyObject * mpi::group::create(PyObject *, PyObject * args)
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
+    pyre::mpi::group_t * group;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // build the associated group
-    pyre::mpi::group_t * group = new pyre::mpi::group_t(comm->group());
+    group = new pyre::mpi::group_t(comm->group());
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     if (!group) {
         PyErr_SetString(PyExc_ValueError, "group could not be created");
@@ -224,8 +229,14 @@ PyObject * mpi::group::exclude(PyObject *, PyObject * args)
         ranks.push_back(PyLong_AsLong(PySequence_GetItem(rankSeq, i)));
     }
 
+    pyre::mpi::group_t * newGroup;
+
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // make the MPI call
-    pyre::mpi::group_t * newGroup = new pyre::mpi::group_t(group->exclude(ranks));
+    newGroup = new pyre::mpi::group_t(group->exclude(ranks));
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     return PyCapsule_New(newGroup, capsule_t, free);
 }
@@ -263,8 +274,14 @@ PyObject * mpi::group::add(PyObject *, PyObject * args)
     pyre::mpi::group_t * g2 = 
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_g2, capsule_t));
 
+
+    pyre::mpi::group_t * newGroup;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // make the MPI call
-    pyre::mpi::group_t * newGroup = new pyre::mpi::group_t(pyre::mpi::groupUnion(*g1, *g2));
+    newGroup = new pyre::mpi::group_t(pyre::mpi::groupUnion(*g1, *g2));
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     return PyCapsule_New(newGroup, capsule_t, free);
 }
@@ -303,8 +320,14 @@ PyObject * mpi::group::intersect(PyObject *, PyObject * args)
     pyre::mpi::group_t * g2 = 
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_g2, capsule_t));
 
+
+    pyre::mpi::group_t * newGroup;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // make the MPI call
-    pyre::mpi::group_t * newGroup = new pyre::mpi::group_t(pyre::mpi::groupIntersection(*g1, *g2));
+    newGroup = new pyre::mpi::group_t(pyre::mpi::groupIntersection(*g1, *g2));
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     return PyCapsule_New(newGroup, capsule_t, free);
 }
@@ -343,8 +366,13 @@ PyObject * mpi::group::subtract(PyObject *, PyObject * args)
     pyre::mpi::group_t * g2 = 
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_g2, capsule_t));
 
+    pyre::mpi::group_t * newGroup;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // make the MPI call
-    pyre::mpi::group_t * newGroup = new pyre::mpi::group_t(pyre::mpi::groupDifference(*g1, *g2));
+    newGroup = new pyre::mpi::group_t(pyre::mpi::groupDifference(*g1, *g2));
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     return PyCapsule_New(newGroup, capsule_t, free);
 }

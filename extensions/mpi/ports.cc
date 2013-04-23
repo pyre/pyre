@@ -59,8 +59,12 @@ PyObject * mpi::port::sendBytes(PyObject *, PyObject * args)
         << "}, bytes={" << len << "} at " << (void *)str
         << pyre::journal::endl;
 
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // send the data
     MPI_Send(str, len, MPI_BYTE, peer, tag, comm->handle());
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return
     Py_INCREF(Py_None);
@@ -99,14 +103,17 @@ PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
+    int len;
+    char * str;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // block until an appropriate message has arrived
     MPI_Status status;
     MPI_Probe(peer, tag, comm->handle(), &status);
     // get the size of the message, including the terminating null
-    int len;
     MPI_Get_count(&status, MPI_BYTE, &len);
     // allocate a buffer
-    char * str = new char[len];
+    str = new char[len];
     // receive the data
     MPI_Recv(str, len, MPI_BYTE, peer, tag, comm->handle(), &status);
 
@@ -118,6 +125,8 @@ PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
         << "}, tag={" << tag
         << "}, bytes={" << len << "} at " << (void *)str
         << pyre::journal::endl;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // build the return value
     PyObject * value = Py_BuildValue("y#", str, len);
@@ -172,8 +181,12 @@ PyObject * mpi::port::sendString(PyObject *, PyObject * args)
         << "}, string={" << str << "}@" << len
         << pyre::journal::endl;
 
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // send the data (along with the terminating null)
     MPI_Send(str, len+1, MPI_CHAR, peer, tag, comm->handle());
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // return
     Py_INCREF(Py_None);
@@ -212,14 +225,17 @@ PyObject * mpi::port::recvString(PyObject *, PyObject * args)
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
+    int len;
+    char * str;
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
     // block until an appropriate message has arrived
     MPI_Status status;
     MPI_Probe(peer, tag, comm->handle(), &status);
     // get the size of the message, including the terminating null
-    int len;
     MPI_Get_count(&status, MPI_CHAR, &len);
     // allocate a buffer
-    char * str = new char[len];
+    str = new char[len];
     // receive the data
     MPI_Recv(str, len, MPI_CHAR, peer, tag, comm->handle(), &status);
 
@@ -231,6 +247,8 @@ PyObject * mpi::port::recvString(PyObject *, PyObject * args)
         << "}, tag={" << tag
         << "}, string={" << str << "}@" << len
         << pyre::journal::endl;
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // build the return value
     PyObject * value = Py_BuildValue("s", str);

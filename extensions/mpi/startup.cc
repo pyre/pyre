@@ -29,6 +29,9 @@ PyObject * mpi::initialize(PyObject *, PyObject *)
         return 0;
     }
 
+    // allow threads
+    Py_BEGIN_ALLOW_THREADS;
+
     if (!isInitialized) {
         MPI_Init(0, 0);
     }
@@ -45,6 +48,9 @@ PyObject * mpi::initialize(PyObject *, PyObject *)
             << "MPI_Init succeeded"
             << pyre::journal::endl;
     }
+
+    // disallow threads
+    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -66,9 +72,14 @@ PyObject * mpi::finalize(PyObject *, PyObject *)
         return 0;
     }
 
-    /// shut it down
+    // if it is already initialized
     if (isInitialized) {
+        // allow threads
+        Py_BEGIN_ALLOW_THREADS;
+        // shut it down
         MPI_Finalize();
+        // disallow threads
+        Py_END_ALLOW_THREADS;
     }
 
     // and return
