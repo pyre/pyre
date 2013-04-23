@@ -27,7 +27,7 @@ def test():
     start = (1,1)
     shape = (2,2)
     # make a submatrix
-    v = m.view(start=(1,1), shape=(2,2))
+    v = m.view(start=start, shape=shape)
     # show me
     # print('v:')
     # v.print(format='{:6.2f}', indent=' '*4)
@@ -38,6 +38,16 @@ def test():
     for i in range(shape[0]):
         for j in range(shape[1]):
             assert v[i,j] == m[i+start[0], j+start[1]]
+
+    # now modify
+    v.fill(0)
+    # show me
+    # print('m:')
+    # m.print(format='{:6.2f}', indent=' '*4)
+    # and check
+    for i in range(shape[0]):
+        for j in range(shape[1]):
+            assert m[i+start[0],j+start[1]] == 0
 
     # all done
     return

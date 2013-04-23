@@ -41,6 +41,13 @@ def test():
     for i in range(shape):
         assert s[i] == start + i
 
+    # now modify
+    s.fill(0)
+    # and check
+    for i in range(shape):
+        assert v[start+i] == 0
+
+
     # all done
     return
 
