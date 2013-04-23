@@ -144,6 +144,16 @@ class Vector:
         return clone
 
 
+    def copy(self, other):
+        """
+        Fill me with values from {other}, which is assumed to be of compatible shape
+        """
+        # have the extension do the work
+        gsl.vector_copy(self.data, other.data)
+        # and return me
+        return self
+
+
     def view(self, start, shape):
         """
         Build a view of my from {start} to {start+shape}

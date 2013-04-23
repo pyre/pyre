@@ -240,6 +240,17 @@ class Matrix:
         # and return it
         return clone
 
+
+    def copy(self, other):
+        """
+        Fill me with values from {other}, which is assumed to be of compatible shape
+        """
+        # have the extension initialize the clone
+        gsl.matrix_copy(self.data, other.data)
+        # and return it
+        return self
+
+
     # matrix operations
     def transpose(self, destination=None):
         """
