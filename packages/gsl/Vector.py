@@ -69,12 +69,11 @@ class Vector:
         return result
 
 
-    @classmethod
-    def partition(cls, taskload, communicator=None, source=0, vector=None):
+    def excerpt(self, communicator=None, source=0, vector=None):
         """
-        Scatter {vector} held by the task {source} among all tasks in {communicator}. Only
-        {source} has to provide a {vector}; the other tasks can use the default value. Each
-        task gets a vector whose layout is described by {taskload}.
+        Scatter {vector} held by the task {source} among all tasks in {communicator} and fill me
+        with the partition values. Only {source} has to provide a {vector}; the other tasks can
+        use the default value.
         """
         # normalize the communicator
         if communicator is None:
@@ -85,11 +84,9 @@ class Vector:
         # get the vector capsule
         data = None if vector is None else vector.data
         # scatter the data
-        partition = gsl.scatterVector(communicator.capsule, source, data, taskload)
-        # dress up my local portion as a vector
-        result = cls(shape=taskload, data=partition)
-        # and return it
-        return result
+        gsl.scatterVector(communicator.capsule, source, self.data, data)
+        # and return me
+        return self
 
 
     # initialization

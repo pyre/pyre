@@ -45,8 +45,9 @@ def test():
         # have a dummy source vector
         θ = None
 
-    # partition
-    part = gsl.vector.partition(communicator=world, source=source, vector=θ, taskload=workload)
+    # make a partition
+    part = gsl.vector(shape=workload)
+    part.excerpt(communicator=world, source=source, vector=θ)
 
     # verify that i got the correct part
     for index in range(samplesPerTask):

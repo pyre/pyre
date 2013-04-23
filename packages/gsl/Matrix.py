@@ -91,12 +91,11 @@ class Matrix:
         return result
 
 
-    @classmethod
-    def partition(cls, taskload, communicator=None, source=0, matrix=None):
+    def excerpt(self, communicator=None, source=0, matrix=None):
         """
-        Scatter {matrix} held by the task {source} among all tasks in {communicator}. Only
-        {source} has to provide a {matrix}; the other tasks can use the default value. Each
-        task gets a matrix whose layout is described by {taskload}.
+        Scatter {matrix} held by the task {source} among all tasks in {communicator} and fill me
+        with the partition values. Only {source} has to provide a {matrix}; the other tasks can
+        use the default value.
         """
         # normalize the communicator
         if communicator is None:
@@ -107,11 +106,9 @@ class Matrix:
         # get the matrix capsule
         data = None if matrix is None else matrix.data
         # scatter the data
-        partition = gsl.scatterMatrix(communicator.capsule, source, data, taskload)
-        # dress up my local portion as a matrix
-        result = cls(shape=taskload, data=partition)
-        # and return it
-        return result
+        gsl.scatterMatrix(communicator.capsule, source, self.data, data)
+        # and return me
+        return self
 
 
     # public data

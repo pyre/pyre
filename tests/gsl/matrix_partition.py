@@ -27,7 +27,7 @@ def test():
     # figure out its geometry
     rank = world.rank
     tasks = world.size
-    
+
     # decide which task is the source
     source = 0
     # at the source task
@@ -47,8 +47,10 @@ def test():
         # have a dummy source matrix
         θ = None
 
-    # partition
-    part = gsl.matrix.partition(communicator=world, source=source, matrix=θ, taskload=workload)
+    # build the destination matrix
+    part = gsl.matrix(shape=workload)
+    # make a partition
+    part.excerpt(communicator=world, source=source, matrix=θ)
 
     # verify that i got the correct part
     for row in range(samplesPerTask):

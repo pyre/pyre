@@ -263,17 +263,17 @@ gsl::mpi::
 scatterMatrix(PyObject *, PyObject * args)
 {
     // place holders 
-    int source, rows, columns;
-    PyObject *communicatorCapsule, *matrixCapsule;
+    int source;
+    PyObject *communicatorCapsule, *matrixCapsule, *destinationCapsule;
 
     // parse the argument list
     if (!PyArg_ParseTuple(
                           args,
-                          "O!iO(ii):scatterMatrix",
+                          "O!iO!O:scatterMatrix",
                           &PyCapsule_Type, &communicatorCapsule,
                           &source,
-                          &matrixCapsule, // don't force the capsule type check; it may be {None}
-                          &rows, &columns
+                          &PyCapsule_Type, &destinationCapsule,
+                          &matrixCapsule // don't force the capsule type check; it may be {None}
                           )) {
         return 0;
     }
@@ -282,10 +282,19 @@ scatterMatrix(PyObject *, PyObject * args)
         PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
         return 0;
     }
+    // check the destination capsule
+    if (!PyCapsule_IsValid(destinationCapsule, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the third argument must be a valid matrix");
+        return 0;
+    }
     // get the communicator
     pyre::mpi::communicator_t * comm = 
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
+    // get the destination matrix
+    gsl_matrix * destination = 
+        static_cast<gsl_matrix *>
+        (PyCapsule_GetPointer(destinationCapsule, gsl::matrix::capsule_t));
 
     // the pointer to source payload
     double * data = 0;
@@ -304,18 +313,18 @@ scatterMatrix(PyObject *, PyObject * args)
         data = matrix->data;
     }
 
-    // build the destination matrix
-    gsl_matrix * destination = gsl_matrix_alloc(rows, columns);
-
     int status;
     // allow threads
     Py_BEGIN_ALLOW_THREADS;
+    // get the rows and columns of the destination
+    int rows = destination->size1;
+    int columns = destination->size2;
     // scatter the data
     status = MPI_Scatter(
-                             data, rows*columns, MPI_DOUBLE, // source buffer
-                             destination->data, rows*columns, MPI_DOUBLE, // destination buffer
-                             source, comm->handle() // address
-                             );
+                         data, rows*columns, MPI_DOUBLE, // source buffer
+                         destination->data, rows*columns, MPI_DOUBLE, // destination buffer
+                         source, comm->handle() // address
+                         );
     // disallow threads
     Py_END_ALLOW_THREADS;
 
@@ -326,8 +335,9 @@ scatterMatrix(PyObject *, PyObject * args)
         return 0;
     }
 
-    // wrap the destination matrix in a capsule and return it
-    return PyCapsule_New(destination, gsl::matrix::capsule_t, gsl::matrix::free);
+    // all done
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
     
@@ -554,17 +564,17 @@ gsl::mpi::
 scatterVector(PyObject *, PyObject * args)
 {
     // place holders 
-    int source, length;
-    PyObject *communicatorCapsule, *vectorCapsule;
+    int source;
+    PyObject *communicatorCapsule, *vectorCapsule, *destinationCapsule;
 
     // parse the argument list
     if (!PyArg_ParseTuple(
                           args,
-                          "O!iOi:scatterVector",
+                          "O!iO!O:scatterVector",
                           &PyCapsule_Type, &communicatorCapsule,
                           &source,
-                          &vectorCapsule, // don't force the capsule type check; it may be {None}
-                          &length
+                          &PyCapsule_Type, &destinationCapsule,
+                          &vectorCapsule // don't force the capsule type check; it may be {None}
                           )) {
         return 0;
     }
@@ -573,10 +583,19 @@ scatterVector(PyObject *, PyObject * args)
         PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
         return 0;
     }
+    // check the destination capsule
+    if (!PyCapsule_IsValid(destinationCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the third argument must be a valid vector");
+        return 0;
+    }
     // get the communicator
     pyre::mpi::communicator_t * comm = 
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
+    // get the destination vector
+    gsl_vector * destination = 
+        static_cast<gsl_vector *>
+        (PyCapsule_GetPointer(destinationCapsule, gsl::vector::capsule_t));
 
     // the pointer to source payload
     double * data = 0;
@@ -595,18 +614,17 @@ scatterVector(PyObject *, PyObject * args)
         data = vector->data;
     }
 
-    // build the destination vector
-    gsl_vector * destination = gsl_vector_alloc(length);
-
     int status;
     // allow threads
     Py_BEGIN_ALLOW_THREADS;
+    // get the length of the destination vector
+    int length = destination->size;
     // scatter the data
     status = MPI_Scatter(
-                             data, length, MPI_DOUBLE, // source buffer
-                             destination->data, length, MPI_DOUBLE, // destination buffer
-                             source, comm->handle() // address
-                             );
+                         data, length, MPI_DOUBLE, // source buffer
+                         destination->data, length, MPI_DOUBLE, // destination buffer
+                         source, comm->handle() // address
+                         );
     // disallow threads
     Py_END_ALLOW_THREADS;
 
@@ -617,8 +635,9 @@ scatterVector(PyObject *, PyObject * args)
         return 0;
     }
 
-    // wrap the destination vector in a capsule and return it
-    return PyCapsule_New(destination, gsl::vector::capsule_t, gsl::vector::free);
+    // return
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
     
