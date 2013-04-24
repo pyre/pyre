@@ -242,7 +242,7 @@ class Matrix:
         """
         Fill me with values from {other}, which is assumed to be of compatible shape
         """
-        # have the extension initialize the clone
+        # fill me with values from {other}
         gsl.matrix_copy(self.data, other.data)
         # and return it
         return self
@@ -408,7 +408,7 @@ class Matrix:
         In-place addition with the elements of {other}
         """
         # if other is a matrix
-        if type(other) is type(self):
+        if isinstance(other, Matrix):
             # do matrix-matrix addition
             gsl.matrix_add(self.data, other.data)
             # and return
@@ -428,7 +428,7 @@ class Matrix:
         In-place subtraction with the elements of {other}
         """
         # if other is a matrix
-        if type(other) is type(self):
+        if isinstance(other, Matrix):
             # do matrix-matrix subtraction
             gsl.matrix_sub(self.data, other.data)
             # and return
@@ -448,7 +448,7 @@ class Matrix:
         In-place multiplication with the elements of {other}
         """
         # if other is a matrix
-        if type(other) is type(self):
+        if isinstance(other, Matrix):
             # do matrix-matrix multiplication
             gsl.matrix_mul(self.data, other.data)
             # and return
@@ -468,7 +468,7 @@ class Matrix:
         In-place addition with the elements of {other}
         """
         # if other is a matrix
-        if type(other) is type(self):
+        if isinstance(other, Matrix):
             # do matrix-matrix division
             gsl.matrix_div(self.data, other.data)
             # and return

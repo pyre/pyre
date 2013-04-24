@@ -145,7 +145,7 @@ class Vector:
         """
         Fill me with values from {other}, which is assumed to be of compatible shape
         """
-        # have the extension do the work
+        # fill me with values from {other}
         gsl.vector_copy(self.data, other.data)
         # and return me
         return self
@@ -371,7 +371,7 @@ class Vector:
         In-place addition with the elements of {other}
         """
         # if other is a vector
-        if type(other) is type(self):
+        if isinstance(other, Vector):
             # do vector-vector addition
             gsl.vector_add(self.data, other.data)
             # and return
@@ -391,7 +391,7 @@ class Vector:
         In-place subtraction with the elements of {other}
         """
         # if other is a vector
-        if type(other) is type(self):
+        if isinstance(other, Vector):
             # do vector-vector subtraction
             gsl.vector_sub(self.data, other.data)
             # and return
@@ -411,7 +411,7 @@ class Vector:
         In-place multiplication with the elements of {other}
         """
         # if other is a vector
-        if type(other) is type(self):
+        if isinstance(other, Vector):
             # do vector-vector multiplication
             gsl.vector_mul(self.data, other.data)
             # and return
@@ -431,7 +431,7 @@ class Vector:
         In-place addition with the elements of {other}
         """
         # if other is a vector
-        if type(other) is type(self):
+        if isinstance(other, Vector):
             # do vector-vector division
             gsl.vector_div(self.data, other.data)
             # and return
