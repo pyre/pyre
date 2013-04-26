@@ -24,7 +24,8 @@ def test():
     assert rank in range(size)
 
     # for debugging purposes:
-    # print("Hello from {}/{}!".format(rank, size))
+    # import platform
+    # print("Hello from {}/{}: {}".format(rank, size, platform.node()))
     
     # all done
     return
