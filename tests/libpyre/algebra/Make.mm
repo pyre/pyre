@@ -11,7 +11,8 @@ PACKAGE = algebra
 
 PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
 PROJ_CLEAN += $(TESTS)
-
+PROJ_LIBRARIES =
+LIBRARIES = $(PROJ_LIBRARIES) $(EXTERNAL_LIBS)
 
 TESTS = bcd
 
@@ -24,8 +25,9 @@ test: $(TESTS)
 	./bcd
 
 
-bcd: bcd.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXX_FLAGS)
+# build
+%: %.cc
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 
 # end of file 

@@ -15,7 +15,7 @@ include std-pythonmodule.def
 
 PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)/$(MODULE)
 PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
-PROJ_CXX_SRCLIB += -lpyre-timers
+PROJ_LIBRARIES = -lpyre-timers
 
 PROJ_SRCS = \
     display.cc \

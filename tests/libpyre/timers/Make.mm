@@ -15,10 +15,12 @@ PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
 PROJ_CLEAN += $(TESTS)
 
 
-TESTS = timer
+TESTS = \
+    timer
 
 PROJ_LCXX_LIBPATH = $(BLD_LIBDIR)
-LIBRARIES = -lpyre-timers $(EXTERNAL_LIBS)
+PROJ_LIBRARIES = -lpyre-timers
+LIBRARIES = $(PROJ_LIBRARIES) $(EXTERNAL_LIBS)
 
 #--------------------------------------------------------------------------
 all: test clean
@@ -27,9 +29,9 @@ all: test clean
 test: $(TESTS)
 	./timer
 
-
-timer: timer.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+# build
+%: %.cc
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 
 # end of file 

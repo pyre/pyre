@@ -39,25 +39,8 @@ test: $(TESTS)
 	$(MPI_EXECUTIVE) -np 7 ./group-setops
 	$(MPI_EXECUTIVE) -np 8 ./communicator
 
-sanity: sanity.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
-
-world: world.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
-
-group: group.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
-
-group-include: group-include.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
-
-group-exclude: group-exclude.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
-
-group-setops: group-setops.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
-
-communicator: communicator.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) $(LIBRARIES)
+# build
+%: %.cc
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LCXXFLAGS) $(LIBRARIES)
 
 # end of file 
