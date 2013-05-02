@@ -398,7 +398,7 @@ class Dimensional:
             # assume pretty output
             pretty = True
             # update the formatting fields
-            fields.update(field.split('=') for field in code.split(','))
+            fields.update(field.strip().split('=') for field in code.split(','))
         # otherwise
         else:
             # render in a way recognizable by the parser
