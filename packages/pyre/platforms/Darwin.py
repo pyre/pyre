@@ -9,11 +9,11 @@
 # externals
 import os
 # superclass
-from .Host import Host
+from .POSIX import POSIX
 
 
 # declaration
-class Darwin(Host, family='pyre.platforms.darwin'):
+class Darwin(POSIX, family='pyre.platforms.darwin'):
     """
     Encapsulation of a generic darwin host
     """
@@ -22,7 +22,6 @@ class Darwin(Host, family='pyre.platforms.darwin'):
     # public data
     platform = 'darwin'
     distribution = 'apple'
-    systemdirs = ['/usr'] # canonical package installation locations
 
 
     # protocol obligations

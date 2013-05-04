@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     Host.py \
     Linux.py \
     MacPorts.py \
+    POSIX.py \
     Platform.py \
     RedHat.py \
     Ubuntu.py \

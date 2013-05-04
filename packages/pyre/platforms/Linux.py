@@ -10,11 +10,11 @@
 import operator
 import collections
 # superclass
-from .Host import Host
+from .POSIX import POSIX
 
 
 # declaration
-class Linux(Host, family='pyre.platforms.linux'):
+class Linux(POSIX, family='pyre.platforms.linux'):
     """
     Encapsulation of a generic linux host
     """
@@ -22,7 +22,6 @@ class Linux(Host, family='pyre.platforms.linux'):
 
     # public data
     platform = 'linux'
-    systemdirs = ['/usr'] # canonical package installation locations
 
 
     # protocol obligations
