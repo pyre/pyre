@@ -25,18 +25,12 @@ def test():
     # check it
     assert python
     assert python.category == 'python'
-    assert os.path.isdir(python.home)
-    assert os.path.isdir(python.binaries)
-    assert os.path.isdir(python.includes)
-    assert os.path.isdir(python.libraryPath)
-    assert os.path.isfile(python.executable)
     # show me
-    # print('python: {}'.format(python))
-    # print('  python: {.home}'.format(python))
-    # print('  python: {.binaries}'.format(python))
-    # print('  python: {.libraryPath}'.format(python))
-    # print('  python: {.includes}'.format(python))
-    # print('  executable: {.executable}'.format(python))
+    print('python: {.pyre_spec}'.format(python))
+    print('  path: {.path}'.format(python))
+    print('  ldpath: {.ldpath}'.format(python))
+    print('  include: {.include}'.format(python))
+    print('  interpreter: {.interpreter}'.format(python))
 
     # attempt to
     try:
