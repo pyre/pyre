@@ -31,6 +31,13 @@ from .Set import Set as set
 from .Tuple import Tuple as tuple
 
 
+def pathlist(**kwds):
+    """
+    A {list} of {str}ings that represent uris
+    """
+    return list(schema=str(**kwds))
+
+
 def catalog(**kwds):
     """
     A {dict} of {list}s

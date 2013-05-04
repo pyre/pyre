@@ -8,8 +8,8 @@
 
 # access the framework
 import pyre
-# and the local protocol
-from .Category import Category as category
+# my protocol and the trait descriptor for external dependencies
+from . import category, requirements
 
 
 # the base class for package managers
@@ -20,7 +20,7 @@ class Package(pyre.component, implements=category):
 
 
     # configurable state
-    requirements = pyre.properties.list(schema=pyre.properties.str())
+    requirements = requirements()
     requirements.doc = 'the list of package categories on which I depend'
 
     # public data

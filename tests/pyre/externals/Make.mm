@@ -11,17 +11,18 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-working: manager
-
 all: test
 
-test: sanity manager
+test: sanity manager applications
 
 sanity:
 	${PYTHON} ./sanity.py
 
 manager:
 	${PYTHON} ./locate.py
+
+applications:
+	${PYTHON} ./simple.py
 
 
 # end of file 

@@ -38,24 +38,6 @@ def test():
     # print('  python: {.includes}'.format(python))
     # print('  executable: {.executable}'.format(python))
 
-    # look for mpi; it's built-in so it must be there
-    mpi = manager.locate(category='mpi')
-    # check it
-    assert mpi
-    assert mpi.category == 'mpi'
-    assert os.path.isdir(mpi.home)
-    assert os.path.isdir(mpi.binaries)
-    assert os.path.isdir(mpi.includes)
-    assert os.path.isdir(mpi.libraryPath)
-    assert os.path.isfile(mpi.launcher)
-    # show me
-    # print('mpi: {}'.format(mpi))
-    # print('  home: {.home}'.format(mpi))
-    # print('  bin: {.binaries}'.format(mpi))
-    # print('  lib: {.libraryPath}'.format(mpi))
-    # print('  inc: {.includes}'.format(mpi))
-    # print('  launcher: {.launcher}'.format(mpi))
-
     # attempt to
     try:
         # look for something that shouldn't exist

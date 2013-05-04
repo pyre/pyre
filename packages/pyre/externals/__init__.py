@@ -9,12 +9,6 @@
 # the protocol for external packages
 from .Category import Category as category
 
-# convenience
-from .Package import Package as package
-from .Tool import Tool as tool
-from .Library import Library as library
-
-
 # a trait descriptor suitable for collecting package categories and instance specifications
 def catalog(**kwds):
     """
@@ -47,6 +41,12 @@ def requirements(**kwds):
     from ..traits import properties
     # {preferences} is a dictionary mapping package categories to package instances
     return properties.list(schema=properties.str(), **kwds)
+
+
+# convenience
+from .Package import Package as package
+from .Tool import Tool as tool
+from .Library import Library as library
 
 
 # the packages with built-in support

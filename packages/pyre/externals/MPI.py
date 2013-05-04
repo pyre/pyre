@@ -22,45 +22,13 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
     """
 
 
-    # user configurable state
-    mpirun = pyre.properties.str()
-    mpirun.doc = 'the name of the launcher of MPI jobs'
-
-    # public data
+    # constants
     category = 'mpi'
 
-    @property
-    def launcher(self):
-        """
-        Return the full path to the launcher
-        """
-        # get the name of the launcher
-        launcher = self.mpirun if self.mpirun else 'mpirun'
-        # join this to my binary directory and return it
-        return os.path.join(self.binaries, launcher)
 
-
-    # default package factory
-    @classmethod
-    def configureDefaultPackage(cls, package, platform):
-        """
-        Configure the default MPI package on the given {platform}
-        """
-        # localize
-        mpi = package
-
-        # if this instance did not end up getting a home directory
-        if not mpi.home:
-            # set it using the default system directory
-            mpi.home = platform.systemdirs[0]
-
-        # on macports
-        if not mpi.mpirun and platform.distribution == 'macports':
-            # adjust the name of the launcher
-            mpi.mpirun = 'openmpirun'
-
-        # all done
-        return mpi
+    # user configurable state
+    launcher = pyre.properties.str(default='mpirun')
+    launcher.doc = 'the name of the launcher of MPI jobs'
 
 
 # end of file 
