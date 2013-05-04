@@ -13,6 +13,8 @@ from .Director import Director
 # access to the local interfaces
 from .Shell import Shell
 from .Renderer import Renderer
+# so i can describe my dependencies
+from .. import externals
 
 
 # declaration
@@ -39,12 +41,14 @@ class Application(pyre.component, metaclass=Director):
     renderer = Renderer() #
     renderer.doc = 'my custom journal device renderer'
 
-    requirements = pyre.properties.list(schema=pyre.properties.str())
+    requirements = externals.requirements()
     requirements.doc = 'the list of package categories on which I depend'
+
+    dependencies = externals.dependencies()
+    dependencies.doc = 'the map of requirements to package instances that satisfy them'
     
     # per-instance public data
     pfs = None # the root of my private filesystem
-    dependencies = None # map of requirements to the package instances that satisfy them
     # journal channels
     info = None
     warning = None

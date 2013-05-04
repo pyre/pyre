@@ -27,7 +27,7 @@ def catalog(**kwds):
     return properties.catalog(schema=category(), **kwds)
 
 
-def preferences(**kwds):
+def dependencies(**kwds):
     """
     Build a trait descriptor suitable for building a database of external package choices for
     each package category
@@ -36,6 +36,17 @@ def preferences(**kwds):
     from ..traits import properties
     # {preferences} is a dictionary mapping package categories to package instances
     return properties.dict(schema=category(), **kwds)
+
+
+def requirements(**kwds):
+    """
+    Build a trait descriptor suitable for describing the list of package categories on which
+    applications depend
+    """
+    # get the trait descriptors
+    from ..traits import properties
+    # {preferences} is a dictionary mapping package categories to package instances
+    return properties.list(schema=properties.str(), **kwds)
 
 
 # the packages with built-in support

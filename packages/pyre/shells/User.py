@@ -30,7 +30,7 @@ class User(pyre.component):
     affiliation.doc = 'the affiliation of the user'
 
     # choices and defaults
-    externals = pyre.externals.preferences()
+    externals = pyre.externals.dependencies()
     externals.doc = 'the database of preferred instances for each external package category'
 
     # public data
