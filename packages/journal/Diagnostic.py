@@ -23,7 +23,7 @@ class Diagnostic:
 
 
     # interface
-    def line(self, message):
+    def line(self, message=''):
         """
         Add {message} to the diagnostic text
         """
