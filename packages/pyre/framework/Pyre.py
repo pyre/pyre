@@ -83,10 +83,9 @@ class Pyre(Executive):
         # the manager of external tools and libraries
         self.externals = self.newExternalsManager()
 
-        # critical step: record this instance with the {Executive} proxy to grant easy access
-        # to components and protocols
-        from .Client import Client
-        Client.pyre_installExecutive(executive=self)
+        # critical step: record this instance with the base class of all framework clients in
+        # order to grant easy access to my parts
+        self.install()
 
         # all done
         return

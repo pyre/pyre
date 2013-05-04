@@ -276,6 +276,9 @@ if executive:
     # discover information about the runtime environment
     executive.discover()
 
+    # turn on the executive
+    executive.activate()
+
 
 # clean up the executive instance when the interpreter shuts down
 import atexit
