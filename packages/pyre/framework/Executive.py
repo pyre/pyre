@@ -445,6 +445,14 @@ class Executive:
         # about the type of machine we are running on
         host = platform().classDefault()
 
+        # hunt down the distribution configuration file and load it
+        # make a locator
+        here = tracking.simple('while configuring the runtime environment')
+        # set the stem
+        stem = 'pyre/platforms/{}'.format(host.distribution)
+        # attempt to load any matching configuration files
+        self.configure(stem=stem, priority=self.priority.user, locator=here)
+
         # hunt down the map of known hosts
         knownHosts = nameserver.find(pattern=self.hostmapkey)
         # go through them in priority order

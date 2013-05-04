@@ -44,7 +44,7 @@ class Application(pyre.component, metaclass=Director):
     
     # per-instance public data
     pfs = None # the root of my private filesystem
-    dependencies = None # map of requirements to the package instances that satisfy 
+    dependencies = None # map of requirements to the package instances that satisfy them
     # journal channels
     info = None
     warning = None
