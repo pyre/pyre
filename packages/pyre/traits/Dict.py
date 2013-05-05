@@ -15,6 +15,13 @@ from .. import tracking
 from ..framework.Client import Client
 
 
+# TODO: priorities and locators
+
+# it's not clear that value overrides are working correctly for all possible sources of
+# configuration events; the latest pass avoids using {update} in favor of the new method
+# {insert} in the base class, but i don't think this goes far enough or solves all the problems
+
+
 # the helper container classes
 class Map(collections.abc.MutableMapping, Client):
     """
@@ -70,6 +77,17 @@ class Map(collections.abc.MutableMapping, Client):
         # easy enough
         return name in self.map
 
+    def __setitem__(self, name, value):
+        """
+        Store {value} in the map under {name}
+        """
+        # build a priority
+        priority = self.pyre_nameserver.priority.explicit()
+        # and a locator
+        locator = tracking.here(-1)
+        # delegate
+        return self.insert(name=name, value=value, priority=priority, locator=locator)
+
     # private data
     map = None
 
@@ -106,7 +124,8 @@ class KeyMap(Map):
         return nameserver[key]
 
 
-    def __setitem__(self, name, value):
+    # implementation details
+    def insert(self, name, value, priority, locator):
         """
         Store {value} in the map under {name}
         """
@@ -116,10 +135,6 @@ class KeyMap(Map):
         key = self.key[name]
         # build the full name of the map entry
         fullname = nameserver.join(self.name, name)
-        # build a priority
-        priority = nameserver.priority.explicit()
-        # and a locator
-        locator = tracking.simple('while adding entry {!r} to {.name!r}'.format(name, self))
 
         # unpack the slot building strategy
         macro, converter = self.strategy(model=nameserver)
@@ -152,14 +167,11 @@ class NameMap(Map):
         return node.value
 
 
-    def __setitem__(self, name, value):
+    # implementation details
+    def insert(self, name, value, priority, locator):
         """
         Build a slot to hold {value} and place it in the map
         """
-        # build a priority
-        priority = self.pyre_nameserver.priority.explicit()
-        # and a locator
-        locator = tracking.here('while adding entry {!r} to a dict property'.format(name))
         # get the nameserver
         nameserver = self.pyre_nameserver
         # unpack the slot part
@@ -278,6 +290,8 @@ class Dict(Property):
         key = slot.key
         # get my name
         tag = nameserver.getName(key)
+        # the priority of all these assignments
+        priority = nameserver.priority.user
 
         # make a key based map
         catalog = KeyMap(schema=schema, strategy=traitStrategy, key=key)
@@ -286,20 +300,28 @@ class Dict(Property):
         for name, node in configurator.retrieveDirectAssignments(key):
             # extract the item key
             name = nameserver.split(name)[-1]
+            # and its value
+            value = node.value
+            # make a locator
+            locator = tracking.simple('while adding entry {!r} to {.name!r}'.format(name, self))
             # and store them
-            catalog[name] = node.value
+            catalog.insert(name=name, value=value, priority=priority(), locator=locator)
 
         # grab all deferred assignments to this key
-        for assignment,priority in configurator.retrieveDeferredAssignments(key):
+        for assignment, prty in configurator.retrieveDeferredAssignments(key):
             # store them
-            catalog[assignment.key[0]] = assignment.value
+            catalog.insert(
+                name=assignment.key[0], value=assignment.value, 
+                priority=prty, locator=assignment.locator)
 
         # get the my current slot value
         current = slot.value
         # if non-trivial, use it to initialize my catalog; i expect it to be a dictionary
         # this must happen after direct and indirect assignments to avoid changing the
         # nameserver model while the update is taking place
-        if current: catalog.update(current)
+        if current: 
+            # raise NotImplementedError("NYI: priorities/locators?")
+            catalog.update(current)
 
         # make a locator
         here = tracking.simple('while configuring {.pyre_name!r}'.format(client))
@@ -307,7 +329,7 @@ class Dict(Property):
         # attach my new value
         client.pyre_inventory.setTrait(
             trait=self, strategy=myStrategy, 
-            value=catalog, priority=nameserver.priority.user(), locator=here)
+            value=catalog, priority=priority(), locator=here)
         
         # all done
         return
@@ -335,8 +357,14 @@ class Dict(Property):
             # make a key based map
             catalog = KeyMap(schema=schema, strategy=strategy, key=key)
 
-        # populate the new map
-        catalog.update(value)
+        # use this priority
+        priority = self.pyre_nameserver.priority.user
+        # go through the entries in {value}
+        for key, setting in value.items():
+            # make a locator
+            locator = tracking.simple('while adding entry {!r} to {.name!r}'.format(key, self))
+            # and update my map
+            catalog.insert(name=key, value=setting, locator=locator, priority=priority())
         # and return it
         return catalog
 
