@@ -65,20 +65,24 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
         import subprocess
 
         # figure out which mpi we are using
-        launcher = self.pyre_externals.locate(category='mpi', platform=self.host).launcher
+        mpi = self.pyre_externals.locate(category='mpi')
+        launcher = mpi.launcher
         # and which python
-        python = self.pyre_externals.locate(category='python', platform=self.host).executable
+        python = self.pyre_externals.locate(category='python')
+        interpreter = python.interpreter
+
+        # NYI: check these and raise some exceptions if they are no good
 
         # start building the command line
-        argv = [ launcher ]
+        argv = [launcher]
 
         # if the user specified the number of tasks explicitly
         if self.tasks:
             # add the corresponding command line argument to the pile
-            argv += [ '-np', str(self.tasks) ]
+            argv += ['-np', str(self.tasks)]
 
         # add python, the command line arguments to this script, and the autospawn marker
-        argv += [python ] + sys.argv + ['--{.pyre_name}.autospawn=no'.format(self) ]
+        argv += [interpreter] + sys.argv + ['--{.pyre_name}.autospawn=no'.format(self)]
         
         # set the subprocess options
         options = {

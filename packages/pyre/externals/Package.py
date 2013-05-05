@@ -29,36 +29,26 @@ class Package(pyre.component, implements=category):
 
     # package factories
     @classmethod
-    def package(cls, chosen, platform):
+    def package(cls):
         """
         Build a package instance
         """
-        # if there is a request for a specific one
-        if chosen is not None:
-            # build it and return it
-            return cls(name=chosen)
+        # get the user
+        user = cls.pyre_user
+        # has the user chosen one?
+        chosen = user.externals.get(cls.category)
+        # if yes, we are done
+        if chosen: return chosen
 
-        # if the platform is not known
-        if platform is None:
-            # get the platform protocol
-            from ..platforms import platform as recognizer
-            # and ask it to figure what kind of machine we are running on
-            platform = recognizer().classDefault()
+        # get the host
+        host = cls.pyre_host
+        # are there any available packages?
+        available = host.externals.get(cls.category, [])
+        # if yes, grab the first one and return it
+        if available: return available[0]
 
-        # instantiate using a name derived from my category and the platform name
-        package = cls(name="{}-{}-default".format(cls.category, platform.distribution))
-
-        # get the default for this platform
-        return cls.configureDefaultPackage(package=package, platform=platform)
-
-
-    @classmethod
-    def configureDefaultPackage(cls, package, platform):
-        """
-        Configure the default package on this {platform}
-        """
-        # don't know any better...
-        return package
+        # otherwise, instantiate using a name derived from my category and the platform name
+        return cls(name="{}-{}-default".format(cls.category, host.distribution))
 
 
 # end of file 

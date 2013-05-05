@@ -22,7 +22,7 @@ class Externals:
 
 
     # interface
-    def locate(self, category, platform=None, chosen=None):
+    def locate(self, category):
         """
         Locate a package from the given {category} suitable for {platform} subject to the
         {user} choices
@@ -51,7 +51,7 @@ class Externals:
                 raise self.ExternalNotFoundError(category=category) from None
 
         # otherwise, ask the package manager to build one
-        return manager.package(chosen=chosen, platform=platform)
+        return manager.package()
 
 
     # meta-methods

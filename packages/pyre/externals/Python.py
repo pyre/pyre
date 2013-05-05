@@ -22,10 +22,8 @@ class Python(Tool, Library, family='pyre.externals.python'):
     The package manager for the python interpreter
     """
 
-
     # constants
     category = 'python'
-
 
     # user configurable state
     interpreter = pyre.properties.str()

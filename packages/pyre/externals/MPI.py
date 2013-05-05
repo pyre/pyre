@@ -21,10 +21,8 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
     The package manager for MPI packages
     """
 
-
     # constants
     category = 'mpi'
-
 
     # user configurable state
     launcher = pyre.properties.str(default='mpirun')
