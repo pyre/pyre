@@ -26,7 +26,7 @@ class Python(Tool, Library, family='pyre.externals.python'):
     category = 'python'
 
     # user configurable state
-    interpreter = pyre.properties.str()
+    interpreter = pyre.properties.str(default=sys.executable)
     interpreter.doc = 'the name of the interpreter; may be the full path to the executable'
 
 
