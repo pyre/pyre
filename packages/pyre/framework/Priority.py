@@ -24,6 +24,7 @@ class Priority:
     boot = None
     package = None
     user = None
+    command = None
     explicit = None
     framework = None
 
@@ -96,6 +97,13 @@ class User(Priority):
     # public data
     category = next(categories)
 
+class Command(Priority):
+    """
+    Category for the priorities of values assigned during the processing of the command line
+    """
+    # public data
+    category = next(categories)
+
 class Explicit(Priority):
     """
     Category for the priorities of values assigned explicitly by the user program
@@ -116,6 +124,7 @@ Priority.uninitialized = Uninitialized
 Priority.defaults = Defaults
 Priority.boot = Boot
 Priority.package = Package
+Priority.command = Command
 Priority.user = User
 Priority.explicit = Explicit
 Priority.framework = Framework

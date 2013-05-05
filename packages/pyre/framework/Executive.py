@@ -545,7 +545,7 @@ class Executive:
         Handler for the {config} command line argument
         """
         # load the configuration
-        self.loadConfiguration(uri=value, locator=locator, priority=self.priority.user)
+        self.loadConfiguration(uri=value, locator=locator, priority=self.priority.command)
         # and return
         return
 
