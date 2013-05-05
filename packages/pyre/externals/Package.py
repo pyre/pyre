@@ -23,6 +23,9 @@ class Package(pyre.component, implements=category):
     requirements = requirements()
     requirements.doc = 'the list of package categories on which I depend'
 
+    home = pyre.properties.str()
+    home.doc = 'the package installation directory'
+
     # public data
     category = None # overridden by subclasses
 
