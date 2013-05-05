@@ -7,17 +7,15 @@
 
 
 PROJECT = pyre
-PACKAGE = defaults
+PACKAGE = defaults/pyre
 
 RECURSE_DIRS = \
-    merlin \
-    pyre \
+    platforms
 
 #--------------------------------------------------------------------------
 #
 
 all: export
-
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -32,15 +30,10 @@ distclean::
 #--------------------------------------------------------------------------
 #
 
-EXPORT_ETC = \
-    merlin.cfg \
-    pyre.cfg
-
-
-export:: export-etc
+export::
 	BLD_ACTION="export" $(MM) recurse
 
-release:: release-etc
+release::
 	BLD_ACTION="release" $(MM) recurse
 
 
