@@ -16,6 +16,6 @@ EXPORT_ETC = \
 all: export
 
 export:: export-package-etc
-	BLD_ACTION="export" $(MM) recurse
+
 
 # end of file 
