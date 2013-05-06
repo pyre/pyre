@@ -51,7 +51,7 @@ class Externals:
                 raise self.ExternalNotFoundError(category=category) from None
 
         # otherwise, ask the package manager to build one
-        return manager.package()
+        return manager.pyre_select()
 
 
     # meta-methods
