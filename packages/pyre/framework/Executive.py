@@ -44,6 +44,7 @@ class Executive:
     # the runtime environment; patched during boot
     host = None 
     user = None
+    environ = None
 
     # the application delegate; patched by {Director} when an application instance is created
     application = None
@@ -485,6 +486,11 @@ class Executive:
         from ..shells import user
         # instantiate it
         self.user = user(name='pyre.user')
+
+        # finally, the environment variables
+        from .Environ import Environ
+        # instantiate and attach
+        self.environ = Environ(executive=self)
 
         # all done
         return self

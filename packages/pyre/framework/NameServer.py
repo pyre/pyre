@@ -27,14 +27,14 @@ class NameServer(algebraic.hierarchicalModel):
 
 
     # framework object management 
-    def configurable(self, name, configurable, locator):
+    def configurable(self, name, configurable, locator, priority=None):
         """
         Add {configurable} to the model under {name}
         """
         # hash the name
         key = self._hash.hash(items=name.split(self.separator))
         # get the right priority
-        priority = self.priority.package()
+        priority = self.priority.package() if priority is None else priority
         # build a slot to hold the {configurable}
         slot = self.variable(key=key, value=configurable, priority=priority, locator=locator)
         # store it in the model

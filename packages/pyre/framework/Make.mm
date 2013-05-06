@@ -21,6 +21,7 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     Client.py \
+    Environ.py \
     Executive.py \
     Externals.py \
     FileServer.py \
