@@ -59,10 +59,12 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         if self.username is not None: spec.append(['user', self.username])
         if self.password is not None: spec.append(('password', self.password))
         # if application is not None: spec.append(('application_name', application))
+
         spec = ' '.join([ '='.join(entry) for entry in spec ])
         
-        # establish a connection
+        # establish the connection
         self.connection = self.postgres.connect(spec)
+
         # all done
         return self
 
@@ -89,14 +91,17 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         """
         Execute the sequence of SQL statements in {sql} as a single command
         """
+        # assemble the command and pass it on to the connection
         return self.postgres.execute(self.connection, "\n".join(sql))
 
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
         # initialize the extension module, if necessary
         if type(self).postgres is None: type(self).postgres = initializeExtension()
+        # all done
         return
 
 
@@ -105,7 +110,9 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         """
         Hook invoked when the context manager is entered
         """
-        status = self.execute(*self.sql.transaction())
+        # mark the beginning of a transaction
+        self.execute(*self.sql.transaction())
+        # and hand me back to the caller
         return self
 
 
@@ -113,12 +120,17 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         """
         Hook invoked when the context manager's block exits
         """
+        # if there were no errors detected
         if exc_type is None:
-            status = self.execute(*self.sql.commit())
+            # commit the transaction to the datastore
+            self.execute(*self.sql.commit())
+        # otherwise
         else:
-            status = self.execute(*self.sql.rollback())
+            # roll back
+            self.execute(*self.sql.rollback())
 
-        # re-raise any exception that occurred while executing the body of the with statement
+        # indicate that we want to re-raise any exceptions that occurred while executing the
+        # body of the {with} statement
         return False
 
 
