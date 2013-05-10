@@ -29,6 +29,7 @@ EXPORT_PYTHON_MODULES = \
     Facility.py \
     Float.py \
     INet.py \
+    InputFile.py \
     Integer.py \
     List.py \
     Object.py \

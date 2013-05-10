@@ -17,6 +17,7 @@ from .Dimensional import Dimensional as dimensional
 from .Facility import Facility as facility
 from .Float import Float as float
 from .INet import INet as inet
+from .InputFile import InputFile as inputfile
 from .Integer import Integer as int
 from .Object import Object as object
 from .OutputFile import OutputFile as outputfile
