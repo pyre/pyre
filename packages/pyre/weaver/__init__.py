@@ -22,6 +22,7 @@ from .Language import Language as language
 # access to the known languages
 from .C import C as c
 from .CSh import CSh as csh
+from .Cfg import Cfg as cfg
 from .Cxx import Cxx as cxx
 from .F77 import F77 as f77
 from .F90 import F90 as f90

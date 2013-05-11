@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     BlockMill.py \
     C.py \
     CSh.py \
+    Cfg.py \
     Cxx.py \
     Expression.py \
     F77.py \
