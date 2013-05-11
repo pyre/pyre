@@ -23,7 +23,7 @@ class Scanner(pyre.parsing.scanner):
     secbeg = pyre.parsing.token(pattern=r'\[')
     secend = pyre.parsing.token(pattern=r'\]')
     comment = pyre.parsing.token(head=';', pattern=r'.*', tail='$')
-    key = pyre.parsing.token(pattern=r'\w[-.\w]*')
+    key = pyre.parsing.token(pattern=r'\w[-.:\w]*')
     value = pyre.parsing.token(head='=', pattern=r'[^;]*')
 
 
