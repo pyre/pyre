@@ -34,7 +34,7 @@ class Banner(pyre.component, family="pyre.weaver.layouts.banner", implements=Sta
     license = pyre.properties.str()
     license.doc = "the license"
 
-    footer = pyre.properties.str()
+    footer = pyre.properties.str(default='end of file')
     footer.doc = "the marker to drop at the bottom of the document"
 
 
