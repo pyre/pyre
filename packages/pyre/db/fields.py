@@ -87,7 +87,7 @@ class Float(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        raise float(value)
+        return str(value)
 
     def decl(self):
         """SQL compliant rendering of my type name"""

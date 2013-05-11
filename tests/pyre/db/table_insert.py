@@ -22,6 +22,7 @@ def test():
         id = pyre.db.int().primary()
         name = pyre.db.str().notNull()
         phone = pyre.db.str(maxlen=10).notNull()
+        weight = pyre.db.float().notNull()
 
     # declare the customer table
     class Customer(pyre.db.table, id='customers'):
@@ -36,8 +37,8 @@ def test():
 
     # create some customers
     customers = [
-        Person(id=107, name="Bit Twiddle", phone="+1 800 555 1114"),
-        Person(id=108, name="Eva Lu Ator", phone="+1 800 555 7687"),
+        Person(id=107, name="Bit Twiddle", phone="+1 800 555 1114", weight=185),
+        Person(id=108, name="Eva Lu Ator", phone="+1 800 555 7687", weight=112),
         Customer(cid=1023, pid=107, balance=1000),
         Customer(cid=1024, pid=108, balance=50),
         ]
@@ -50,10 +51,10 @@ def test():
     # print('\n'.join(stmt))
     assert stmt == (
         "INSERT INTO persons",
-        "    (id, name, phone)",
+        "    (id, name, phone, weight)",
         "  VALUES",
-        "    (107, 'Bit Twiddle', '+1 800 555 1114'),",
-        "    (108, 'Eva Lu Ator', '+1 800 555 7687');",
+        "    (107, 'Bit Twiddle', '+1 800 555 1114', 185),",
+        "    (108, 'Eva Lu Ator', '+1 800 555 7687', 112);",
         "INSERT INTO customers",
         "    (cid, pid, balance)",
         "  VALUES",
