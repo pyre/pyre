@@ -105,8 +105,10 @@ class Server(pyre.component, implements=datastore):
 
     def insert(self, *records):
         """
-        Insert {items} into the database
+        Insert {records} into the database
         """
+        # if there are no records to insert, bail
+        if not records: return
         # build the sql statements
         sql = self.sql.insertRecords(*records)
         # and execute
