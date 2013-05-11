@@ -40,10 +40,13 @@ class Postgres(Server, family="pyre.db.server.postgres"):
     database.doc = "the name of the database to connect to"
 
     username = pyre.properties.str(default=None)
-    username.doc = "the username to use for the connection"
+    username.doc = "the database user name to use during authentication"
 
     password = pyre.properties.str(default=None)
-    password.doc = "the password to use for the connection"
+    password.doc = "the password of the database user"
+
+    application = pyre.properties.str(default=None)
+    application.doc = "the application name to use for the connection"
 
 
     # interface
@@ -58,7 +61,7 @@ class Postgres(Server, family="pyre.db.server.postgres"):
             ]
         if self.username is not None: spec.append(['user', self.username])
         if self.password is not None: spec.append(('password', self.password))
-        # if application is not None: spec.append(('application_name', application))
+        if self.application is not None: spec.append(('application_name', self.application))
 
         spec = ' '.join([ '='.join(entry) for entry in spec ])
         
