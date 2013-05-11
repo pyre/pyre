@@ -40,6 +40,7 @@ EXPORT_PYTHON_MODULES = \
     String.py \
     Trait.py \
     Tuple.py \
+    URI.py \
     properties.py \
     __init__.py
 

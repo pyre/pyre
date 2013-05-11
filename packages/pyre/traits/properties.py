@@ -22,6 +22,7 @@ from .Integer import Integer as int
 from .Object import Object as object
 from .OutputFile import OutputFile as outputfile
 from .String import String as str
+from .URI import URI as uri
 
 
 # meta-properties: trait descriptors for homogeneous containers; these require other trait
