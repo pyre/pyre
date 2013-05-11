@@ -60,6 +60,14 @@ class Configurable(Client):
 
 
     @classmethod
+    def pyre_localConfigurables(cls):
+        """
+        Generate a sequence of all my trait descriptors that are marked as configurable.
+        """
+        return filter(lambda trait: trait.isConfigurable, cls.pyre_localTraits)
+
+
+    @classmethod
     def pyre_trait(cls, alias):
         """
         Given the name {alias}, locate and return the associated descriptor
