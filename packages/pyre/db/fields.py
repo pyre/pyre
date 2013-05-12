@@ -24,6 +24,9 @@ class Boolean(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
+        # leave null alone
+        if value == 'NULL' : return value
+        # convert the rest to a string
         return 'true' if value else 'false'
 
     def decl(self):
@@ -47,6 +50,9 @@ class Date(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
+        # leave null alone
+        if value == 'NULL' : return value
+        # convert the rest to a string
         raise NotImplementedError("NYI!")
 
     def decl(self):
@@ -64,6 +70,9 @@ class Decimal(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
+        # leave null alone
+        if value == 'NULL' : return value
+        # convert the rest to a string
         return str(value)
 
     def decl(self):
@@ -87,6 +96,9 @@ class Float(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
+        # leave null alone
+        if value == 'NULL' : return value
+        # convert the rest to a string
         return str(value)
 
     def decl(self):
@@ -108,6 +120,9 @@ class Integer(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
+        # leave null alone
+        if value == 'NULL' : return value
+        # convert the rest to a string
         return str(value)
 
     def decl(self):
@@ -147,6 +162,8 @@ class Reference(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
+        # leave null alone
+        if value == 'NULL' : return value
         # delegate to the field to which i refer
         return self.referent.rep(value)
 
@@ -190,6 +207,9 @@ class String(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
+        # leave null alone
+        if value == 'NULL' : return value
+        # escape any single quotes in other strings
         return "'{}'".format(value.replace("'", "''"))
 
     def decl(self):
@@ -220,6 +240,9 @@ class Time(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
+        # leave null alone
+        if value == 'NULL' : return value
+        # convert the rest to a string
         raise NotImplementedError("NYI!")
 
     def decl(self):

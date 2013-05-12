@@ -81,7 +81,7 @@ class Table(metaclass=Schemer):
     # meta methods
     def __init__(self, **kwds):
         # build the per instance field cache
-        self._pyre_data = cache ={}
+        self._pyre_data = cache = {}
         # and populate it by hunting down a value for each field
         for field in self.pyre_fields:
             # if this field is among the {kwds}
