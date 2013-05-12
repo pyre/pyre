@@ -32,6 +32,9 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
         """
         Convert the diagnostic information into a form that a device can record
         """
+        # if the page is empty, there's nothing to do
+        if not page: return
+        
         # my colors; hardwired for now
         marker = self.palette[metadata['severity']]
         blue = self.terminal.colors['blue']
@@ -48,9 +51,9 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
             return
 
         # otherwise, build the first line of the message
-        yield "{}: {}:".format(channel, severity)
+        yield "{}: {}: {}".format(channel, severity, page[0])
         # and render the rest
-        for line in page: yield line
+        for line in page[1:]: yield line
             
         # all done
         return
