@@ -42,4 +42,20 @@ class SQL(LineMill, Expression):
         return
 
 
+    # overrides
+    def _literalRenderer(self, node, **kwds):
+        """
+        Render {node} as a literal
+        """
+        # get the value of the node
+        value = node.value
+        # if it is a string
+        if isinstance(value, str):
+            # we have to escape the single quotes
+            return "'{}'".format(value.replace("'", "''"))
+
+        # otherwise, render the value
+        return repr(node.value)
+
+
 # end of file 
