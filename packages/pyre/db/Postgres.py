@@ -48,6 +48,8 @@ class Postgres(Server, family="pyre.db.server.postgres"):
     application = pyre.properties.str(default=None)
     application.doc = "the application name to use for the connection"
 
+    quiet = pyre.properties.bool(default=True)
+    quiet.doc = "control whether certain postgres informationals are shown"
 
     # interface
     @pyre.export
@@ -57,16 +59,23 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         """
         # build the connection specification string
         spec = [
+            # the name of the database is required
             ['dbname', self.database]
             ]
+        # the others are optional, depending on how the database is configured
         if self.username is not None: spec.append(['user', self.username])
         if self.password is not None: spec.append(('password', self.password))
         if self.application is not None: spec.append(('application_name', self.application))
-
-        spec = ' '.join([ '='.join(entry) for entry in spec ])
+        # put it all together
+        spec = ' '.join('='.join(entry) for entry in spec)
         
         # establish the connection
         self.connection = self.postgres.connect(spec)
+
+        # if the user asked for {quiet} operation
+        if self.quiet:
+            # set the minimum diagnostic level to {warning}
+            self.execute("SET client_min_messages = warning;")
 
         # all done
         return self
