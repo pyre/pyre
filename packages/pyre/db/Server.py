@@ -113,6 +113,25 @@ class Server(pyre.component, implements=datastore):
         sql = self.sql.insertRecords(*records)
         # and execute
         return self.execute(*sql)
+
+
+    def update(self, *specifications):
+        """
+        Use {specifications} to update the database
+
+        Each item in {specifications} is a pair of a {template} and a {condition}. The
+        {template} is an instance of a table row with all fields that require update having
+        values that are not {None}. The {condition} is an expression that identifies the
+        portion of the table that will be affected
+        """
+        # go through the {specifications}
+        for template, condition in specifications:
+            # build the sql statement for this update
+            sql = self.sql.updateRecords(template=template, condition=condition)
+            # and execute it
+            self.execute(*sql)
+        # all done
+        return
         
 
     def delete(self, table, condition):

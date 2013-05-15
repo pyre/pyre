@@ -388,20 +388,25 @@ class SQL(Mill, family="pyre.db.sql"):
         # build the tuple of affected fields and their values
         names = []
         values = []
-        # by iterating over all the fields
+        # iterate over all the fields
         for field in template.pyre_fields:
-            # getting the corresponding name from {template}
+            # get the corresponding name from {template}
             name = field.name
             value = getattr(template, name)
-            # skipping the ones set to {None}
+            # skip values set to {None}
             if value is None: continue
-            # and saving the rest
+
+            # handle 'NULL'
+            if value is template.null: value = 'NULL'
+            # handle 'DEFAULT'
+            elif value is template.default: value = 'DEFAULT'
+            # this pair needs an update
             names.append(name)
-            values.append(value)
+            values.append(field.rep(value))
 
         # render the names
         names = "(" + ", ".join(names) + ")"
-        values = tuple(values)
+        values = "(" + ", ".join(values) + ")"
 
         # initiate the statement
         yield self.place("UPDATE {}".format(template.pyre_name))
@@ -412,7 +417,7 @@ class SQL(Mill, family="pyre.db.sql"):
         # indent
         self.indent()
         # render the assignments
-        yield self.place("{} = {!r}".format(names, values))
+        yield self.place("{} = {}".format(names, values))
         # outdent
         self.outdent()
         # build the filtering expression
