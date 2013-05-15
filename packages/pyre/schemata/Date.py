@@ -6,26 +6,39 @@
 #
 
 
+# externals
+import time
+# superclass
 from .Type import Type
 
 
+# my declaration
 class Date(Type):
     """
     A class declarator for dates
     """
 
+    # the default format
+    format = "%Y-%m-%d"
+
 
     # interface
-    @classmethod
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a date
         """
-        # get the interpreter to evaluate simple expressions
-        if isinstance(value, str):
-            value = eval(value)
         # attempt to cast {value} into a date
-        raise NotImplementedError("class {.__name__!r} must implement 'cast'".format(cls))
+        return time.strptime(value, self.format)
+
+
+    # meta-methods
+    def __init__(self, format=format, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store the format
+        self.format = format
+        # all done
+        return
 
 
 # end of file 

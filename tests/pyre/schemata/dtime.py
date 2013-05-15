@@ -16,13 +16,14 @@ def test():
     import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schemata.time
+    descriptor = pyre.schemata.time()
 
     # casts are not implemented yet
-    try:
-        descriptor.coerce(None)
-    except NotImplementedError:
-        pass
+    magic = descriptor.coerce('13:30:00')
+    # check
+    assert magic.tm_hour == 13
+    assert magic.tm_min == 30
+    assert magic.tm_sec == 0
 
     return
 

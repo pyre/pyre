@@ -16,14 +16,16 @@ def test():
     import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schemata.date
+    descriptor = pyre.schemata.date()
 
-    # casts are not implemented yet
-    try:
-        descriptor.coerce(None)
-    except NotImplementedError:
-        pass
+    # convert a string into a date
+    magic = descriptor.coerce('1992-12-21')
+    # check
+    assert magic.tm_year == 1992
+    assert magic.tm_mon == 12
+    assert magic.tm_mday == 21
 
+    # all done
     return
 
 
