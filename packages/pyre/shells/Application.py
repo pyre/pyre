@@ -53,6 +53,8 @@ class Application(pyre.component, metaclass=Director):
     info = None
     warning = None
     error = None
+    debug = None
+    firewall = None
 
     # properties
     @property
@@ -128,7 +130,9 @@ class Application(pyre.component, metaclass=Director):
 
         # if I have a name
         if name:
-            # build my channels and activate them
+            # build my channels
+            self.debug = journal.error(name)
+            self.firewall = journal.error(name)
             self.info = journal.info(name).activate()
             self.warning = journal.warning(name).activate()
             self.error = journal.error(name).activate()
