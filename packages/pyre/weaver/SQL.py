@@ -55,7 +55,7 @@ class SQL(LineMill, Expression):
             return "'{}'".format(value.replace("'", "''"))
 
         # otherwise, render the value
-        return repr(node.value)
+        return repr(value)
 
 
 # end of file 
