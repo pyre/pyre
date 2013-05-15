@@ -33,12 +33,6 @@ class Boolean(Field):
         # otherwise
         return "BOOLEAN"
 
-    def decldefault(self):
-        """SQL compliant rendering of my default value"""
-        if self.default is not None:
-            return " DEFAULT {}".format(self.rep(self.default))
-        return ""
-
     
 # dates
 class Date(Field):
@@ -215,15 +209,9 @@ class String(Field):
 
     def decl(self):
         """SQL compliant rendering of my type name"""
-        if self.maxlen == None:
+        if self.maxlen is None:
             return "TEXT"
         return "VARCHAR({})".format(self.maxlen)
-
-    def decldefault(self):
-        """SQL compliant rendering of my default value"""
-        if self.default is not None:
-            return " DEFAULT {}".format(self.rep(self.default))
-        return ""
 
     def __init__(self, maxlen=None, default='', **kwds):
         super().__init__(default=default, **kwds)

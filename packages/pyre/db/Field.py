@@ -89,7 +89,7 @@ class Field(traits.descriptor, Entry.variable):
         # if my default has been specified
         if self.default is not None:
             # render it
-            return " DEFAULT {}".format(self.default)
+            return " DEFAULT {}".format(self.rep(self.default))
         # otherwise just send back an empty string
         return ""
 
