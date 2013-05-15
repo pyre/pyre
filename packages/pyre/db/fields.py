@@ -11,6 +11,7 @@ from .. import schemata
 # the base class for field descriptors
 from .Field import Field
 # other necessary packages
+import time
 import decimal
 
 
@@ -31,6 +32,7 @@ class Boolean(Field):
 
     def decl(self):
         """SQL compliant rendering of my type name"""
+        # otherwise
         return "BOOLEAN"
 
     def decldefault(self):
@@ -47,17 +49,26 @@ class Date(Field):
     """
 
     schema = schemata.date
+    format = schema.format
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
         # leave null alone
         if value == 'NULL' : return value
-        # convert the rest to a string
-        raise NotImplementedError("NYI!")
+        # don't touch, for now
+        return  "'{}'".format(value)
 
     def decl(self):
         """SQL compliant rendering of my type name"""
         return "DATE"
+
+    def __init__(self, format=format, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # build my schema
+        self.schema = schemata.date(format=format)
+        # all done
+        return
 
 
 # fixed precision arithmetic
@@ -237,21 +248,25 @@ class Time(Field):
     """
 
     schema = schemata.time
+    format = schema.format
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
         # leave null alone
         if value == 'NULL' : return value
-        # convert the rest to a string
-        raise NotImplementedError("NYI!")
+        # don't touch, for now
+        return  "'{}'".format(value)
 
     def decl(self):
         """SQL compliant rendering of my type name"""
         return "TIMESTAMP WITH{} TIME ZONE".format('' if self.timezone else 'OUT')
 
-    def __init__(self, timezone=False, **kwds):
+    def __init__(self, timezone=False, format=format, **kwds):
         super().__init__(**kwds)
         self.timezone = timezone
+        # build my schema
+        self.schema = schemata.time(format=format)
+        # all done
         return
 
 
