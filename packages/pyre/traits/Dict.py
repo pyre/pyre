@@ -209,6 +209,8 @@ class Dict(Property):
         """
         Walk {value} through the casting procedure
         """
+        # leave {None} alone
+        if value is None: return None
         # make sure we build class slots and delegate
         return self.catalog(strategy=self.schema.classSlot, value=value, node=node)
 
@@ -217,6 +219,8 @@ class Dict(Property):
         """
         Walk {value} through the casting procedure
         """
+        # leave {None} alone
+        if value is None: return None
         # make sure we build instance slots and delegate
         return self.catalog(strategy=self.schema.instanceSlot, value=value, node=node)
 

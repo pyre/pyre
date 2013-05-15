@@ -20,7 +20,7 @@ class Set(Property):
 
 
     # public data
-    default = []
+    default = set()
     schema = schemata.sequence(schema=schemata.identity)
 
 
@@ -29,6 +29,8 @@ class Set(Property):
         """
         Walk {value} through the casting procedure
         """
+        # leave {None} alone
+        if value is None: return None
         # easy enough for me
         return set(super().coerce(value, **kwds))
 

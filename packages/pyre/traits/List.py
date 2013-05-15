@@ -29,6 +29,8 @@ class List(Property):
         """
         Walk {value} through the casting procedure
         """
+        # leave {None} alone
+        if value is None: return None
         # easy enough for me
         return list(super().coerce(value, **kwds))
 
