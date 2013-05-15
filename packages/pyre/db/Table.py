@@ -18,7 +18,8 @@ class Table(metaclass=Schemer):
 
 
     # constants
-    from . import default, null
+    from .literals import default, null
+    from .expressions import IsNull as isNull, IsNotNull as isNotNull
 
 
     # publicly accessible data in the protected pyre namespace

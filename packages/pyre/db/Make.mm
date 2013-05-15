@@ -38,6 +38,8 @@ EXPORT_PYTHON_MODULES = \
     actions.py \
     fields.py \
     exceptions.py \
+    expressions.py \
+    literals.py \
     __init__.py
 
 
