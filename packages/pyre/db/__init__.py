@@ -27,6 +27,12 @@ def template(table):
     return row
 
 
+# the representation of NULL
+null = object()
+# the representation of DEFAULT
+default = object()
+
+
 # interfaces
 from .DataStore import DataStore as datastore
 # components
@@ -43,12 +49,6 @@ from .Field import Field as field
 # supported servers
 from .SQLite import SQLite as sqlite
 from .Postgres import Postgres as postgres
-
-# the representation of NULL
-null = object()
-# the representation of DEFAULT
-default = object()
-
 
 # descriptor factories
 from .fields import (

@@ -100,7 +100,11 @@ class Field(traits.descriptor, Entry.variable):
         """
         # get the value
         value = instance._pyre_data[self]
-        # render and return 
+        # handle 'NULL'
+        if value is instance.null: return 'NULL'
+        # handle 'DEFAULT'
+        if value is instance.default: return 'DEFAULT'
+        # otherwise, render and return 
         return self.rep(value)
 
 

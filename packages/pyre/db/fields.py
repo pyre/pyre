@@ -25,8 +25,6 @@ class Boolean(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        # leave null alone
-        if value == 'NULL' : return value
         # convert the rest to a string
         return 'true' if value else 'false'
 
@@ -49,13 +47,15 @@ class Date(Field):
     """
 
     schema = schemata.date
-    format = schema.format
+    format = "%Y-%m-%d"
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        # leave null alone
-        if value == 'NULL' : return value
-        # don't touch, for now
+        # if the value is a struct_time
+        if isinstance(value, time.struct_time):
+            # use my format to convert it to a string rep
+            return repr(time.strftime(self.format, value))
+        # other values just get passed along, for now
         return  "'{}'".format(value)
 
     def decl(self):
@@ -81,8 +81,6 @@ class Decimal(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        # leave null alone
-        if value == 'NULL' : return value
         # convert the rest to a string
         return str(value)
 
@@ -107,8 +105,6 @@ class Float(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        # leave null alone
-        if value == 'NULL' : return value
         # convert the rest to a string
         return str(value)
 
@@ -131,8 +127,6 @@ class Integer(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        # leave null alone
-        if value == 'NULL' : return value
         # convert the rest to a string
         return str(value)
 
@@ -173,8 +167,6 @@ class Reference(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        # leave null alone
-        if value == 'NULL' : return value
         # delegate to the field to which i refer
         return self.referent.rep(value)
 
@@ -218,8 +210,6 @@ class String(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        # leave null alone
-        if value == 'NULL' : return value
         # escape any single quotes in other strings
         return "'{}'".format(value.replace("'", "''"))
 
@@ -252,9 +242,11 @@ class Time(Field):
 
     def rep(self, value):
         """SQL compliant rendering of my value"""
-        # leave null alone
-        if value == 'NULL' : return value
-        # don't touch, for now
+        # if the value is a struct_time
+        if isinstance(value, time.struct_time):
+            # use my format to convert it to a string rep
+            return repr(time.strftime(self.format, value))
+        # other values just get passed along, for now
         return  "'{}'".format(value)
 
     def decl(self):

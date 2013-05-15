@@ -13,6 +13,8 @@ Exercise table declaration
 
 
 def test():
+    # externals
+    import time
     # access to the package
     import pyre.db
 
@@ -40,12 +42,12 @@ def test():
 
     # build one
     measurement = Weather(
-        city='Los Angeles', date='2011/07/04', low=62, high=71, precipitation=0
+        city='Los Angeles', date='2011-07-04', low=62, high=71, precipitation=0
         )
 
     # verify it
     assert measurement.city == 'Los Angeles'
-    assert measurement.date == '2011/07/04'
+    assert time.strftime("%Y-%m-%d", measurement.date) == '2011-07-04'
     assert measurement.low == 62
     assert measurement.high == 71
     assert measurement.precipitation == 0

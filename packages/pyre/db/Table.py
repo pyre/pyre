@@ -17,6 +17,10 @@ class Table(metaclass=Schemer):
     """
 
 
+    # constants
+    from . import default, null
+
+
     # publicly accessible data in the protected pyre namespace
     pyre_name = None # the name of the table; must match the name in the database
     pyre_alias = None # an alias for this table; used by queries
@@ -84,16 +88,23 @@ class Table(metaclass=Schemer):
         self._pyre_data = cache = {}
         # and populate it by hunting down a value for each field
         for field in self.pyre_fields:
-            # if this field is among the {kwds}
+            # check whether this field is among the {kwds}
             try:
                 # get the value we were passed
                 value = kwds[field.name]
-            # otherwise
+            # if not
             except KeyError:
                 # look up the default
                 value = field.default
+            # if it is
+            else:
+                # if the value is not 'NULL' or 'DEFAULT'
+                if not (value is self.null or value is self.default):
+                    # convert it
+                    value = field.schema.coerce(value=value)
             # and set it
             cache[field] = value
+
         # all done
         return
 
