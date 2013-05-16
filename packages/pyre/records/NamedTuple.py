@@ -55,9 +55,10 @@ class NamedTuple(tuple):
                     continue
             # error: unable to find a source for this field
             else:
-                msg = "unable to find a source for field {!r}".format(field.name)
-                import journal
-                raise journal.firewall("pyre.records").log(msg)
+                if not field.pyre_optional:
+                    msg = "unable to find a source for field {!r}".format(field.name)
+                    import journal
+                    raise journal.error("pyre.records").log(msg)
         # all done
         return
 

@@ -17,6 +17,10 @@ class Field:
     from ..calc.Node import Node as node
 
 
+    # public data
+    pyre_optional = False
+
+
     # interface
     def buildNode(self, stream, model):
         """
@@ -54,6 +58,15 @@ class Field:
 
         # and return
         return value
+
+
+    def __init__(self, optional=pyre_optional, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # record whether this is an optional field, i.e. it may not be present in input sources
+        self.pyre_optional = optional
+        # all done
+        return
 
 
 # end of file 
