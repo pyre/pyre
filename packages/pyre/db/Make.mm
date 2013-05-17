@@ -19,6 +19,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Client.py \
     Collation.py \
     DataStore.py \
     Entry.py \

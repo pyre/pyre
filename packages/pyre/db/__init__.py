@@ -39,6 +39,7 @@ from .DataStore import DataStore as datastore
 # components
 from .SQL import SQL as sql
 from .Server import Server as server
+from .Client import Client as client
 # the table class
 from .Table import Table as table
 # the base query class
