@@ -20,9 +20,9 @@ class Requirement(AttributeClassifier):
     This class captures the class record processing that is common to both interfaces and
     components. Given a declaration record, {Requirement}
 
-    * discovers the bases classes that are configurables
-    * identifies the specially marked attributes
-    * creates the namemap that handles trait name aliasing
+      * discovers the bases classes that are configurables
+      * identifies the specially marked attributes
+      * creates the namemap that handles trait name aliasing
     """
 
     # the presence of a family/component name determines the slot storage strategy: if a
@@ -38,6 +38,7 @@ class Requirement(AttributeClassifier):
 
     # types
     from ..traits.Trait import Trait
+    from .Configurable import Configurable
 
 
     # meta-methods
@@ -79,9 +80,7 @@ class Requirement(AttributeClassifier):
         # configurable; N.B.: since {Requirement} is not the direct metaclass of any class, the
         # chain here stops at either {Component} or {Protocol}, depending on whether {Actor}
         # or {Role} is the actual metaclass
-        pedigree = tuple(base for base in configurable.__mro__ if isinstance(base, cls))
-        # attach it to the configurable
-        configurable.pyre_pedigree = pedigree
+        configurable.pyre_pedigree = tuple(configurable.pyre_getPedigree())
 
         # adjust the name maps; the local variables are tied to the class attribute
         # N.B. this assumes that the traits have been initialized, which updates the {aliases}
@@ -116,20 +115,71 @@ class Requirement(AttributeClassifier):
         Look through the ancestors of {configurable} for traits whose name are not members of
         {shadowed}, the set of names that are inaccessible.
         """
-        # my metaclass
-        metaclass = type(self)
+        # N.B.: this used to filter ancestors based simply on whether they were instances of my
+        # metaclass. See the note at {pyre_getPedigree} below for reasons why this was not a
+        # good solution
+
+        # print("{.__name__!r}: harvesting inherited traits".format(self))
         # for each superclass of configurable
         for base in self.__mro__[1:]:
-            # only other configurables have traits
-            if isinstance(base, metaclass):
-                # go through the traits local in base
-                for trait in base.pyre_localTraits:
+            # print("    looking through {.__name__!r}".format(base))
+            # try to
+            try:
+                # get its local traits
+                traits = base.pyre_localTraits
+            # if this fails
+            except AttributeError:
+                # not a problem
+                # print("        no traits")
+                pass
+            # if it succeeds
+            else:
+                # bail out if we have reached the end of the configurable chain
+                if base is self.Configurable: return
+                # go through the traits local to this base
+                for trait in traits:
+                    # print("        found {!r}".format(trait.name))
                     # skip it if something else by the same name is already known
                     if trait.name in shadowed: continue
                     # otherwise, save it
                     yield trait
             # in any case, add all the local attribute names onto the known pile
             shadowed.update(base.__dict__)
+            # print("    done")
+
+        # all done
+        return
+
+
+    def pyre_getPedigree(self):
+        """
+        Visit my ancestors and locate the ones that are themselves configurables
+        """
+        # N.B.: this used to be implemented as a simple check of whether a given {base} was an
+        # instance of my metaclass. it turns out that this algorithm fails for subclasses of
+        # configurables that have their own metaclass, such as {pyre.shells.Application} whose
+        # metaclass {pyre.shells.Director} fails to recognize {Component} subclasses as its
+        # instances. The net effect was that any trait defined in an {Application} ancestor
+        # component would be ignored during the computation of inherited traits, making certain
+        # factorization impossible
+
+        # for each class in the chain
+        for base in self.__mro__:
+            # check whether
+            try:
+                # the base has a {pyre_localTraits} attribute
+                base.pyre_localTraits
+            # if not
+            except AttributeError:
+                # no problem; move on
+                continue
+            # otherwise
+            else:
+                # one of ours; if it is the end of the chain, stop looking
+                if base is self.Configurable: return
+                # otherwise, hand it to our caller
+                yield base
+
         # all done
         return
 

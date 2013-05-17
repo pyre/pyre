@@ -21,6 +21,7 @@ sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./application_sanity.py
 	${PYTHON} ./application_instantiation.py
+	${PYTHON} ./application_inheritance.py
 	${PYTHON} ./application_namespace.py
 	${PYTHON} ./script_sanity.py
 	${PYTHON} ./script_instantiation.py

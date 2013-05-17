@@ -29,8 +29,8 @@ class Configurable(Client):
 
     # framework data; every class record gets a fresh set of these values
     pyre_pedigree = None # my ancestors that are configurables, in mro
-    pyre_localTraits = None # the traits explicitly specified in my declaration
-    pyre_inheritedTraits = None # the traits inherited from my superclasses
+    pyre_localTraits = () # the traits explicitly specified in my declaration
+    pyre_inheritedTraits = () # the traits inherited from my superclasses
     pyre_namemap = None # the map of trait aliases to their canonical names
     pyre_traitmap = None # the map of trait names to trait descriptors
     pyre_locator = None # the location of the configurable declaration
