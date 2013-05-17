@@ -23,6 +23,7 @@ EXPORT_PYTHON_MODULES = \
     Accessor.py \
     CSV.py \
     ConstAccessor.py \
+    Converter.py \
     Derivation.py \
     DynamicRecord.py \
     Entry.py \
@@ -31,8 +32,11 @@ EXPORT_PYTHON_MODULES = \
     Literal.py \
     Mutable.py \
     NamedTuple.py \
+    Normalizer.py \
+    Processor.py \
     Record.py \
     Templater.py \
+    Validator.py \
     exceptions.py \
     fields.py \
     __init__.py

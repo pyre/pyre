@@ -25,4 +25,10 @@ from .. import schemata
 from .fields import float, int, str
 
 
+# decorators
+from .Converter import Converter as converter
+from .Normalizer import Normalizer as normalizer
+from .Validator import Validator as validator
+
+
 # end of file 

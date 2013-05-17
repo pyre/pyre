@@ -36,8 +36,9 @@ class Entry(Descriptor, algebraic.AbstractNode, algebraic.Arithmetic):
 
 
     # public data
-    validators = () # the chain of functions that inspect and validate my value
     converters = () # the chain of transformations necessary to produce a value in my native type
+    normalizers = () # the chain of transformations that convert my value to normal form
+    validators = () # the chain of functions that inspect and validate my value
 
 
     # interface
@@ -45,16 +46,31 @@ class Entry(Descriptor, algebraic.AbstractNode, algebraic.Arithmetic):
         """
         Convert {value} into an object that is consistent with my type and value requirements
         """
-        # cast it
-        value = self.schema.coerce(value)
         # convert it
         for converter in self.converters:
             value = converter(value)
+        # cast it
+        value = self.schema.coerce(value)
+        # normalize it
+        for normalizer in self.normalizers:
+            value = normalizer(value)
         # validate it
         for validator in self.validators:
             value = validator(value)
         # and return it
         return value
+
+
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # reset my data processors
+        self.converters = []
+        self.normalizers = []
+        self.validators = []
+        # all done
+        return
 
         
 # literals
