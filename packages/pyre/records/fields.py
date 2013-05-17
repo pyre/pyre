@@ -13,6 +13,22 @@ from .Entry import Entry
 
 
 # typed field declarators
+class decimal(Entry.variable):
+    """
+    A floating point field
+    """
+
+    default = 0
+    schema = schemata.decimal
+
+    # meta-methods
+    def __init__(self, default=default, **kwds):
+        # chain up
+        super().__init__(default=default, **kwds)
+        # all done
+        return
+
+
 class float(Entry.variable):
     """
     A floating point field

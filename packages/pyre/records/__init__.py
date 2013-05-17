@@ -22,7 +22,7 @@ from .CSV import CSV as csv
 # access to the type specifiers
 from .. import schemata
 # access to the typed field declarators
-from .fields import float, int, str
+from .fields import decimal, float, int, str
 
 
 # decorators
