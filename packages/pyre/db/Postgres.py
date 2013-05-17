@@ -51,13 +51,17 @@ class Postgres(Server, family="pyre.db.server.postgres"):
     quiet = pyre.properties.bool(default=True)
     quiet.doc = "control whether certain postgres informationals are shown"
 
+
     # interface
     @pyre.export
     def attach(self):
         """
         Connect to the database
         """
-        # build the connection specification string
+        # if i have an existing connection to the back end, do nothing
+        if self.connection is not None: return
+
+        # otherwise, build the connection specification string
         spec = [
             # the name of the database is required
             ['dbname', self.database]
@@ -90,10 +94,14 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         to all objects that may retain a reference to the connection being closed. Any
         uncommitted changes will be lost
         """
-        # close the connection
+        # if i don't have an existing connection to the back end, do nothing
+        if self.connection is None: return
+
+        # otherwise, close the connection
         status = self.postgres.disconnect(self.connection)
         # invalidate the member
         self.connection = None
+
         # and return the status
         return status
 

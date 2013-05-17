@@ -27,7 +27,7 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
 
         def __iter__(self):
             """
-            Wrap each result tuple as record as return it
+            Wrap each result tuple as a record as return it
             """
             # iterate over the result set
             for result in self.results:
@@ -50,7 +50,9 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
         """
         Connect to the database
         """
-        # make a connection
+        # if i have an existing connection to the database, do nothing
+        if self.connection is not None: return
+        # otherwise, make a connection
         self.connection = sqlite3.connect(self.database)
         # and a cursor
         self.cursor = self.connection.cursor()
@@ -63,8 +65,15 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
         """
         Close the connection to the database
         """
-        # close the cursor
+        # if i don't have an existing connection to the database, do nothing
+        if self.connection is None: return
+        # otherwise, close my cursor
         self.cursor.close()
+        # and the connection
+        self.connection.close()
+        # reset the connection objects
+        self.cursor = None
+        self.connection = None
         # all done
         return
 
