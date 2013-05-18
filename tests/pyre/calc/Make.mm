@@ -30,6 +30,7 @@ evaluators:
 	${PYTHON} ./operations.py
 	${PYTHON} ./algebra.py
 	${PYTHON} ./expression.py
+	${PYTHON} ./interpolation.py
 
 structural:
 	${PYTHON} ./substitute.py

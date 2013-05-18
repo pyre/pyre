@@ -37,7 +37,7 @@ class Node(pyre.algebraic.AbstractNode, pyre.algebraic.Arithmetic, metaclass=_me
     memo = pyre.algebraic.Memo
     observer = pyre.algebraic.Observer
     observable = pyre.algebraic.Observable
-    # the functional; they will be patched below with my subclasses
+    # the functionals; they will be patched below with my subclasses
     variable = None
     operator = None
     expression = None
@@ -125,6 +125,7 @@ Node.literal = literal
 Node.variable = variable
 Node.operator = operator
 Node.expression = expression
+Node.interpolation = interpolation
 Node.reference = reference
 Node.unresolved = unresolved
 
