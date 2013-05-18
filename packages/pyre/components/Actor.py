@@ -106,13 +106,13 @@ class Actor(Requirement):
                 nameserver = self.pyre_nameserver
                 # go through the list of application instance traits and alias them at global scope
                 for trait in self.pyre_configurables():
-                    # get the name of the trait
-                    alias = trait.name
-                    # form the canonical name
-                    canonical = nameserver.join(name, alias)
-                    # alias the raw trait name to the canonical name; by leaving the last argument
-                    # out, we ask for assignments at global scope
-                    nameserver.alias(target=canonical, alias=alias)
+                    # go through all of the registered aliases
+                    for alias in trait.aliases:
+                        # form the canonical name
+                        canonical = nameserver.join(name, alias)
+                        # alias the raw trait name to the canonical name; by leaving the last
+                        # argument out, we ask for assignments at global scope
+                        nameserver.alias(target=canonical, alias=alias)
 
         # otherwise, let's build one: record the caller's location
         locator = tracking.here(1) if locator is None else locator
