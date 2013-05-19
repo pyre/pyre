@@ -104,6 +104,8 @@ class Field(traits.descriptor, Entry.variable):
         if value is instance.null: return 'NULL'
         # handle 'DEFAULT'
         if value is instance.default: return 'DEFAULT'
+        # handle lazy assignments
+        # if isinstance(value, instance.lazy): value = value.value
         # otherwise, render and return 
         return self.rep(value)
 

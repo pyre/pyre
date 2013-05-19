@@ -18,6 +18,12 @@ from .. import schemata
 # the representations of NULL and DEFAULT
 from .literals import null, default
 
+# lazily evaluated nodes
+from .Lazy import Lazy as lazy
+ref = lazy.reference
+variable = lazy.variable
+counter = lazy.counter
+
 # the base field descriptor
 from .Field import Field as field
 

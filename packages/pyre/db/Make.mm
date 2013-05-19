@@ -26,6 +26,7 @@ EXPORT_PYTHON_MODULES = \
     Field.py \
     FieldReference.py \
     ForeignKey.py \
+    Lazy.py \
     Postgres.py \
     Query.py \
     SQL.py \
