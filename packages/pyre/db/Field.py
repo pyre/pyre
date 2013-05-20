@@ -6,6 +6,8 @@
 #
 
 
+# constants
+from . import literals
 # externals
 from .. import traits
 # superclass
@@ -86,10 +88,20 @@ class Field(traits.descriptor, Entry.variable):
         """
         Invoked by the SQL mill to create the default value part of the declaration
         """
-        # if my default has been specified
-        if self.default is not None:
+        # get my default value
+        value = self.default
+        # if one has been specified
+        if value is not None:
+            # if the value is a reference to the NULL object
+            if value is literals.null:
+                # convert to its rep
+                value = 'NULL'
+            # otherwise
+            else:
+                # get its representation
+                value = self.rep(self.default)
             # render it
-            return " DEFAULT {}".format(self.rep(self.default))
+            return " DEFAULT {}".format(value)
         # otherwise just send back an empty string
         return ""
 
@@ -101,9 +113,9 @@ class Field(traits.descriptor, Entry.variable):
         # get the value
         value = instance._pyre_data[self]
         # handle 'NULL'
-        if value is instance.null: return 'NULL'
+        if value is literals.null: return 'NULL'
         # handle 'DEFAULT'
-        if value is instance.default: return 'DEFAULT'
+        if value is literals.default: return 'DEFAULT'
         # handle lazy assignments
         # if isinstance(value, instance.lazy): value = value.value
         # otherwise, render and return 
