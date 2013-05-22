@@ -66,7 +66,7 @@ class Spell(pyre.protocol, family="merlin.spells"):
             # assemble the  path
             path = vfs.join(*filter(None, fragments))
             # build a uri and yield it
-            yield cls.uri(scheme='vfs', address=path)
+            yield cls.uri.uri(scheme='vfs', address=path)
 
         # out of ideas
         return

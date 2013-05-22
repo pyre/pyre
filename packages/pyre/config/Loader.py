@@ -51,7 +51,7 @@ class Loader:
             symbol = client.convert(symbol)
 
         # convert the package specification into a uri
-        package = cls.uri(scheme=uri.scheme, address=package)
+        package = cls.uri.uri(scheme=uri.scheme, address=package)
 
         # look for matching shelves; the {uri} may match more than shelf, so try them all until
         # we find one that contains our target {symbol}
