@@ -6,30 +6,40 @@
 #
 
 
+# superclass
 from .Constraint import Constraint
 
 
+# declaration
 class And(Constraint):
     """
-    Given a set of contraints, $x$ satisfies this iff it satisfies all the constraints in the set
+    Meta-constraint that is satisfied when all of its constraints are satisfied
     """
 
 
+    # interface
     def validate(self, candidate):
-        for constraint in self.constraints:
-            constraint.validate(candidate)
-
+        """
+        Check whether {candidate} satisfies this constraint
+        """
+        # i am happy only if every one of my constraints is happy
+        for constraint in self.constraints: constraint.validate(candidate)
+        # return success
         return candidate
 
 
+    # meta-methods
     def __init__(self, *constraints, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save my list of constraints
         self.constraints = constraints
+        # all done
         return
 
 
     def __str__(self):
-        return " and ".join("({0})".format(constraint) for constraint in self.constraints)
+        return " and ".join("({})".format(constraint) for constraint in self.constraints)
 
 
 # end of file 

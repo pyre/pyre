@@ -6,30 +6,23 @@
 #
 
 
-from .Constraint import Constraint
+# externals
+import operator
+# superclass
+from .Comparison import Comparison
 
 
-class Greater(Constraint):
+# declaration
+class Greater(Comparison):
     """
-    Given $a$, candidate $x$ satisfies this constraint if $x > a$
+    Constraint that is satisfied when a candidate is greater than a given value
     """
 
 
-    def validate(self, candidate):
-        if candidate > self.value:
-            return candidate
-
-        raise self.ConstraintViolationError(self, candidate)
-
-
-    def __init__(self, value, **kwds):
-        super().__init__(**kwds)
-        self.value = value
-        return
-
-
-    def __str__(self):
-        return "greater than {0!r}".format(self.value)
+    # my comparison
+    compare = operator.gt
+    # my tag
+    tag = "greater than"
 
 
 # end of file 

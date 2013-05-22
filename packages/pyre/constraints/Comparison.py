@@ -11,11 +11,14 @@ from .Constraint import Constraint
 
 
 # declaration
-class Between(Constraint):
+class Comparison(Constraint):
     """
-    Given {a} and {b} from a set with an ordering principle, this constraint is satisfied if
-    the candidate is in {(a,b)}
+    Base class for constraints that compare candidates against values
     """
+
+    # my comparison operator and its textual representation
+    tag = None
+    compare = None
 
 
     # interface
@@ -23,8 +26,8 @@ class Between(Constraint):
         """
         Check whether {candidate} satisfies this constraint
         """
-        # if {candidate} is between my {low} and my {high}
-        if self.low < candidate < self.high:
+        # if {candidate} compares correctly with my value
+        if self.compare(candidate, self.value):
             # indicate success
             return candidate
         # otherwise, fail
@@ -32,18 +35,17 @@ class Between(Constraint):
 
 
     # meta-methods
-    def __init__(self, low, high, **kwds):
+    def __init__(self, value, **kwds):
         # chain up
         super().__init__(**kwds)
-        # save my range
-        self.low = low
-        self.high = high
+        # save my reference value
+        self.value = value
         # all done
         return
 
 
     def __str__(self):
-        return "between {0.low} and {0.high}".format(self)
+        return "{0.tag} {0.value!r}".format(self)
 
 
 # end of file 

@@ -20,8 +20,6 @@ sanity:
 	${PYTHON} ./exceptions.py
 
 constraints:
-	${PYTHON} ./isAll.py
-	${PYTHON} ./isAny.py
 	${PYTHON} ./isBetween.py
 	${PYTHON} ./isEqual.py
 	${PYTHON} ./isGreater.py
@@ -31,8 +29,10 @@ constraints:
 	${PYTHON} ./isLike.py
 	${PYTHON} ./isMember.py
 	${PYTHON} ./isNegative.py
-	${PYTHON} ./isNot.py
 	${PYTHON} ./isPositive.py
+	${PYTHON} ./isAll.py
+	${PYTHON} ./isAny.py
+	${PYTHON} ./isNot.py
 	${PYTHON} ./isSubset.py
 	${PYTHON} ./and.py
 	${PYTHON} ./or.py

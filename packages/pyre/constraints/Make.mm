@@ -22,6 +22,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     And.py \
     Between.py \
+    Comparison.py \
     Constraint.py \
     Equal.py \
     Greater.py \

@@ -6,30 +6,22 @@
 #
 
 
-from .Constraint import Constraint
+# externals
+import operator
+# superclass
+from .Comparison import Comparison
 
 
-class Less(Constraint):
+# declaration
+class Less(Comparison):
     """
-    Given $a$, candidate $x$ satisfies this constraint if $x < a$
+    Constraint that checks whether the candidate is less than some value
     """
 
-
-    def validate(self, candidate):
-        if candidate < self.value:
-            return candidate
-
-        raise self.ConstraintViolationError(self, candidate)
-
-
-    def __init__(self, value, **kwds):
-        super().__init__(**kwds)
-        self.value = value
-        return
-
-
-    def __str__(self):
-        return "less than {0!r}".format(self.value)
+    # my comparison
+    compare = operator.lt
+    # and its textual representation
+    tag = "less than"
 
 
 # end of file 
