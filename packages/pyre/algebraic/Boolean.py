@@ -43,4 +43,42 @@ class Boolean:
         return self.operator(evaluator=operator.or_, operands=[self, other])
 
 
+    # the reflections
+    def __rand__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Boolean):
+            # promote it
+            other = self.literal(value=other)
+        # build a representation of the equality test
+        return self.operator(evaluator=operator.rand, operands=[other, self])
+
+
+    def __ror(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Boolean):
+            # promote it
+            other = self.literal(value=other)
+        # build a representation of the equality test
+        return self.operator(evaluator=operator.ror, operands=[other, self])
+
+
+    # in-place
+    def __iand__(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Boolean):
+            # promote it
+            other = self.literal(value=other)
+        # build a representation of the equality test
+        return self.operator(evaluator=operator.iand, operands=[self, other])
+
+
+    def __ior(self, other):
+        # if {other} is not a node
+        if not isinstance(other, Boolean):
+            # promote it
+            other = self.literal(value=other)
+        # build a representation of the equality test
+        return self.operator(evaluator=operator.ior, operands=[self, other])
+
+
 # end of file 
