@@ -35,6 +35,7 @@ EXPORT_PYTHON_MODULES = \
     OutputFile.py \
     Property.py \
     Set.py \
+    Sequence.py \
     Slotted.py \
     String.py \
     Trait.py \

@@ -54,16 +54,6 @@ class URI(Type):
         raise cls.CastingError(value=value, description=msg)
 
 
-    # support for building nodes
-    @classmethod
-    def macro(cls, model):
-        """
-        Return my preferred macro factory
-        """
-        # by default, i build interpolations
-        return model.interpolation
-
-
     # implementation details
     class uri:
 

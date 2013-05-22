@@ -21,7 +21,6 @@ class Tuple(Property):
 
     # public data
     default = ()
-    schema = schemata.sequence(schema=schemata.identity)
 
 
     # interface
@@ -29,25 +28,16 @@ class Tuple(Property):
         """
         Walk {value} through the casting procedure
         """
+        # leave {None} alone
+        if value is None: return None
         # easy enough for me
-        return list(super().coerce(value, **kwds))
-
-
-    # framework support
-    def macro(self, model):
-        """
-        Return my preferred macro processor
-        """
-        # ask my schema
-        return self.schema.macro(model=model)
+        return tuple(super().coerce(value, **kwds))
 
 
     # meta-methods
-    def __init__(self, schema=schemata.identity, default=default, **kwds):
-        # chain up
+    def __init__(self, default=default, **kwds):
+        # chain up with my default
         super().__init__(default=default, **kwds)
-        # save my schema
-        self.schema = schemata.sequence(schema=schema)
         # all done
         return
 

@@ -9,11 +9,11 @@
 # externals
 from .. import schemata
 # superclass
-from .Property import Property
+from .Sequence import Sequence
 
 
 # declaration
-class List(Property):
+class List(Sequence):
     """
     A property that represents lists
     """
@@ -21,7 +21,6 @@ class List(Property):
 
     # public data
     default = []
-    schema = schemata.sequence(schema=schemata.identity)
 
 
     # interface
@@ -35,21 +34,10 @@ class List(Property):
         return list(super().coerce(value, **kwds))
 
 
-    # framework support
-    def macro(self, model):
-        """
-        Return my preferred macro processor
-        """
-        # ask my schema
-        return self.schema.macro(model=model)
-
-
     # meta-methods
-    def __init__(self, schema=schemata.identity, default=default, **kwds):
-        # chain up
+    def __init__(self, default=default, **kwds):
+        # chain up with my default
         super().__init__(default=default, **kwds)
-        # record my schema
-        self.schema = schemata.sequence(schema=schema)
         # all done
         return
 

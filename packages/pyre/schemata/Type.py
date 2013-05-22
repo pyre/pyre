@@ -21,20 +21,9 @@ class Type:
     @classmethod
     def coerce(cls, *args, **kwds):
         """
-        Convert the given value into the native type i represent
+        Convert the given value into my native type
         """
-        raise NotImplementedError(
-            "class {.__name__!r} must implement 'cast'".format(cls))
+        raise NotImplementedError("class {.__name__!r} must implement 'coerce'".format(cls))
 
-
-    # support for building nodes
-    @classmethod
-    def macro(cls, model):
-        """
-        Return my preferred macro factory
-        """
-        # by default, we build expressions
-        return model.expression
-    
 
 # end of file 

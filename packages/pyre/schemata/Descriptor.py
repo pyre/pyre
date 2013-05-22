@@ -8,10 +8,12 @@
 
 # externals
 import collections
+# superclass
+from .Type import Type
 
 
 # declaration
-class Descriptor:
+class Descriptor(Type):
     """
     The base class for typed descriptors
 
@@ -55,6 +57,25 @@ class Descriptor:
         """
         self.__doc__ = text
         return
+
+
+    # interface
+    def coerce(self, value, **kwds):
+        """
+        Walk {value} through value coercion
+        """
+        # {None} is special; leave it alone
+        if value is None: return None
+        # otherwise, convert
+        for converter in self.converters: value = converter(value)
+        # cast
+        value = self.schema.coerce(value, **kwds)
+        # normalize
+        for normalizer in self.normalizers: value = normalizer(value)
+        # validate
+        for validator in self.validators: value = validator(value)
+        # and return the new value
+        return value
 
 
     # framework requests

@@ -168,16 +168,6 @@ class INet(Type):
         return getattr(cls, family)(**match.groupdict())
 
 
-    # support for building nodes
-    @classmethod
-    def macro(cls, model):
-        """
-        Return my preferred macro factory
-        """
-        # by default, i build interpolations
-        return model.interpolation
-    
-
     # private data
     regex = re.compile(
         r"(?P<unix>unix|local):(?P<path>.+)"

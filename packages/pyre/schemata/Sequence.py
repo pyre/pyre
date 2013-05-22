@@ -52,15 +52,6 @@ class Sequence(Type):
         raise self.CastingError(value=value, description="unknown type: value={0.value!r}")
 
 
-    # support for building nodes
-    def macro(self, model):
-        """
-        Return my preferred macro factory
-        """
-        # ask my {schema} for its preference
-        return self.schema.macro(model=model)
-    
-
     # meta-methods
     def __init__(self, schema=identity, **kwds):
         super().__init__(**kwds)

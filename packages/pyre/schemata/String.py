@@ -24,14 +24,4 @@ class String(Type):
         return str(value)
 
 
-    # support for building nodes
-    @classmethod
-    def macro(cls, model):
-        """
-        Return my preferred macro factory
-        """
-        # by default, i build interpolations
-        return model.interpolation
-    
-
 # end of file 

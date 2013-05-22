@@ -28,9 +28,6 @@ class Trait(descriptor, Client):
     it should satisfy before it is considered a legal value.
     """
 
-    # access to the various type
-    from .. import schemata
-
 
     # framework data
     # predicate that indicates whether this trait is subject to runtime configuration
