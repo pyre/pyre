@@ -14,7 +14,7 @@ from .Type import Type
 
 class Decimal(Type):
     """
-    A class declarator for fixed point numbers
+    A type declarator for fixed point numbers
     """
 
 

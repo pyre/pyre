@@ -7,7 +7,7 @@
 
 
 # externals
-from .. import schemata
+import collections
 
 
 # declaration
@@ -17,7 +17,7 @@ class Descriptor:
 
     Descriptors are class data members that enable special processing to occur whenever they
     are accessed as attributes of class instances. For example, descriptors that define the
-    methods __get__ and __set__ are recognized by the python interpreter as data access
+    methods {__get__} and {__set__} are recognized by the python interpreter as data access
     interceptors.
 
     In pyre, classes that use descriptors typically have a non-trivial metaclass that harvests
@@ -28,11 +28,16 @@ class Descriptor:
     """
 
 
+    # types
+    from .Object import Object as identity
+
+
     # public data
     name = None # my name
-    aliases = None # alternate names by which I am known to my client
     default = None # my default value
-    schema = schemata.identity # my type; most likely one of the {pyre.schemata} type declarators
+    aliases = None # alternate names by which I am known to my client
+    schema = identity # my type; most likely one of the type declarators in this package
+    # documentation support
     tip = None # a short description of my purpose
 
     # wire doc to __doc__ so the bultin help can decorate the attributes properly
@@ -60,8 +65,16 @@ class Descriptor:
         """
         # set my canonical name
         self.name = name
-        # update my aliases
+        # update my aliases: easy access to all the names by which I am known
         self.aliases.add(name)
+
+        # normalize my converters
+        self.converters = self.listify(self.converters)
+        # my normalizers
+        self.normalizers = self.listify(self.normalizers)
+        # and my validators
+        self.validators = self.listify(self.validators)
+
         # and return
         return self
 
@@ -76,12 +89,32 @@ class Descriptor:
 
         # the attributes that are likely to be known at construction time
         self.default = default
-
         # initialize the rest
         self.__doc__ = None
         self.aliases = set()
+
+        # initialize my value processors
+        self.converters = []
+        self.normalizers = []
+        self.validators = []
+
         # and return
         return
+
+
+    # implementation details
+    def listify(self, processors):
+        """
+        Make sure {processors} is an iterable regardless of what the user left behind
+        """
+        # handle anything empty
+        if not processors: return []
+        # if i have an iterable
+        if isinstance(processors, collections.Iterable):
+            # turn it into a list
+            return list(processors)
+        # otherwise, place the lone processor in a list
+        return [processors]
 
 
 # end of file 

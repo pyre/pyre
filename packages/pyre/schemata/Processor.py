@@ -8,20 +8,20 @@
 
 class Processor:
     """
-    The base class for decorators that attach value processors to record fields
+    The base class for decorators that attach value processors to descriptors
     """
 
 
     # public data
-    fields = () # the sequence of record fields that i decorate
+    descriptors = () # the sequence of descriptors that i decorate
 
 
     # meta methods
-    def __init__(self, fields=fields, **kwds):
+    def __init__(self, descriptors=descriptors, **kwds):
         # chain up
         super().__init__(**kwds)
-        # record which fields i decorate
-        self.fields = tuple(fields)
+        # record which descriptors i decorate
+        self.descriptors = tuple(descriptors)
         # all done
         return
 

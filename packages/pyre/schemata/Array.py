@@ -23,11 +23,9 @@ class Array(Type):
         Convert {value} into a tuple
         """
         # evaluate the string
-        if isinstance(value, str):
-            value = eval(value)
+        if isinstance(value, str): value = eval(value)
         # if {value} is an iterable, convert it to a tuple and return it
-        if  isinstance(value, collections.Iterable):
-            return tuple(value)
+        if  isinstance(value, collections.Iterable): return tuple(value)
         # otherwise flag it as bad input
         raise cls.CastingError(value=value, description="unknown type: value={0.value!r}")
 

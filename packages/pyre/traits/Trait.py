@@ -7,12 +7,12 @@
 
 
 # superclasses
-from .Descriptor import Descriptor
+from ..schemata import descriptor
 from ..framework.Client import Client
 
 
 # class declaration
-class Trait(Descriptor, Client):
+class Trait(descriptor, Client):
     """
     This is the base class for component features that form their public interface
 
@@ -27,6 +27,9 @@ class Trait(Descriptor, Client):
     attribute is not explictly given a value during configuration, and the set of constraints
     it should satisfy before it is considered a legal value.
     """
+
+    # access to the various type
+    from .. import schemata
 
 
     # framework data

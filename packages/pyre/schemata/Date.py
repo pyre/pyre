@@ -15,7 +15,7 @@ from .Type import Type
 # my declaration
 class Date(Type):
     """
-    A class declarator for dates
+    A type declarator for dates
     """
 
     # the default format

@@ -22,14 +22,18 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Array.py \
     Boolean.py \
+    Converter.py \
     Date.py \
     Decimal.py \
+    Descriptor.py \
     Dimensional.py \
     Float.py \
     INet.py \
     Integer.py \
     List.py \
+    Normalizer.py \
     Object.py \
+    Processor.py \
     Sequence.py \
     Set.py \
     String.py \
@@ -37,6 +41,7 @@ EXPORT_PYTHON_MODULES = \
     Tuple.py \
     Type.py \
     URI.py \
+    Validator.py \
     exceptions.py \
     __init__.py
 

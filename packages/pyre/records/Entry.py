@@ -8,7 +8,7 @@
 
 # super classes
 from .. import algebraic
-from ..traits.Descriptor import Descriptor
+from ..schemata import descriptor
 
 # my mix-ins
 from .Field import Field
@@ -17,7 +17,7 @@ from .Literal import Literal
 
 
 # declaration
-class Entry(Descriptor, algebraic.AbstractNode, algebraic.Arithmetic):
+class Entry(descriptor, algebraic.AbstractNode, algebraic.Arithmetic):
     """
     The base class for record entries
     """
@@ -33,12 +33,6 @@ class Entry(Descriptor, algebraic.AbstractNode, algebraic.Arithmetic):
     literal = None
     variable = None
     operator = None
-
-
-    # public data
-    converters = () # the chain of transformations necessary to produce a value in my native type
-    normalizers = () # the chain of transformations that convert my value to normal form
-    validators = () # the chain of functions that inspect and validate my value
 
 
     # interface
@@ -61,18 +55,6 @@ class Entry(Descriptor, algebraic.AbstractNode, algebraic.Arithmetic):
         return value
 
 
-    # meta-methods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # reset my data processors
-        self.converters = []
-        self.normalizers = []
-        self.validators = []
-        # all done
-        return
-
-        
 # literals
 class literal(Literal, algebraic.Const, algebraic.Literal, Entry):
     """Concrete class for representing foreign values"""

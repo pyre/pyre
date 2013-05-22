@@ -21,6 +21,7 @@ class Object(Type):
         """
         Convert the given value into a python native object
         """
+        # do nothing
         return value
 
 

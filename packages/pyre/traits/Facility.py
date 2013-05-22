@@ -81,29 +81,6 @@ class Facility(Slotted):
         return value(name=name, locator=node.locator)
 
 
-    def attach(self, **kwds):
-        """
-        Attach any metadata harvested by the requirement metaclass
-
-        This gets called by {Requirement}, the metaclass of all configurables, as part of the
-        process that constructs the class record.
-        """
-        # chain up
-        super().attach(**kwds)
-        # adjust the converters
-        if self.converters is not tuple():
-            # if the user placed them in a container
-            if isinstance(self.converters, collections.Iterable):
-                # convert it into a tuple
-                self.converters = tuple(self.converters)
-            # otherwise
-            else:
-                # make a tuple out of the lone converter
-                self.converters = (self.converters, )
-        # all done
-        return self
-
-
     def resolve(self, value, **kwds):
         """
         Attempt to convert {value} to a component

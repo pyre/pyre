@@ -42,8 +42,9 @@ class Sequence(Type):
             # go through each entry
             for entry in value:
                 # convert it and hand it to the caller. perform the conversion incognito, in
-                # case my values require the instantiation of components; i don't the facility
-                # to use the name of my node as the name of any instantiated components
+                # case coercing my values requires the instantiation of components; i don't
+                # want facilities to use the name of my node as the name of any instantiated
+                # components
                 yield self.schema.coerce(value=entry, incognito=True, **kwds)
             # all done
             return

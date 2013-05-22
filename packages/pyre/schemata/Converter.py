@@ -13,19 +13,19 @@ from .Processor import Processor
 # declaration
 class Converter(Processor):
     """
-    A record method decorator that registers this method as a converter of field values
+    A record method decorator that registers this method as a converter of descriptor values
     """
 
 
     # meta-methods
     def __call__(self, method):
         """
-        Add {method} as a converter the my registered fields
+        Add {method} as a converter to my registered descriptors
         """
-        # go through the sequence of registered fields
-        for field in self.fields:
+        # go through the sequence of registered descriptors
+        for descriptor in self.descriptors:
             # and register {method} as a converter
-            field.converters.append(method)
+            descriptor.converters.append(method)
         # all done
         return method
     

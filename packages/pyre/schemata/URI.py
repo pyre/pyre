@@ -8,10 +8,12 @@
 
 # externals
 import re
+# superclass
+from .Type import Type
 
 
 # the declaration
-class URI:
+class URI(Type):
     """
     Parser for resource identifiers
     """

@@ -10,6 +10,7 @@
 from .Sequence import Sequence
 
 
+# declaration
 class Set(Sequence):
     """
     The set type declarator

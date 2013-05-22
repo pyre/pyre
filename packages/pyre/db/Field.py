@@ -9,13 +9,13 @@
 # constants
 from . import literals
 # externals
-from .. import traits
+from .. import schemata
 # superclass
 from .Entry import Entry
 
 
 # declaration
-class Field(traits.descriptor, Entry.variable):
+class Field(schemata.descriptor, Entry.variable):
     """
     The base class for database table descriptors
 

@@ -32,11 +32,9 @@ class Dimensional(Type):
         Attempt to convert {value} into a dimensional
         """
         # use the unit parser to convert strings to dimensionals 
-        if isinstance(value, str):
-            return cls.parser.parse(value)
+        if isinstance(value, str): return cls.parser.parse(value)
         # dimensionals go right through
-        if isinstance(value, cls.dimensional):
-            return value
+        if isinstance(value, cls.dimensional): return value
         # everything else is an error
         msg="could not convert {0.value!r} into a dimensional quantity"
         raise cls.CastingError(value=value, description=msg)

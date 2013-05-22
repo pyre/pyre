@@ -11,7 +11,7 @@ from .Type import Type
 
 class String(Type):
     """
-    A class declarator for strings
+    A type declarator for strings
     """
 
 
@@ -21,10 +21,7 @@ class String(Type):
         """
         Attempt to convert {value} into a string
         """
-        try:
-            return str(value)
-        except Exception as error:
-            raise cls.CastingError(value=value, description=str(error)) from error
+        return str(value)
 
 
     # support for building nodes

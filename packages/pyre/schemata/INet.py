@@ -112,11 +112,9 @@ class INet(Type):
         Attempt to convert {value} into a internet address
         """
         # {address} instances go right through
-        if isinstance(value, cls.address):
-            return value
+        if isinstance(value, cls.address): return value
         # use the address parser to convert strings
-        if isinstance(value, str):
-            return cls.parse(value)
+        if isinstance(value, str): return cls.parse(value)
         # everything else is an error
         msg="could not convert {0.value!r} into an internet address"
         raise cls.CastingError(value=value, description=msg)

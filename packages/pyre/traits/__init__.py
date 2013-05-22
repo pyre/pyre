@@ -6,8 +6,4 @@
 #
 
 
-# the descriptor base class
-from .Descriptor import Descriptor as descriptor
-
-
 # end of file 

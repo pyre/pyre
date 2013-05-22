@@ -21,6 +21,16 @@ class Templater(AttributeClassifier):
     * derivations, i.e. fields whose values depend on the values of other fields
     """
 
+    # Templater performs the following tasks
+
+    #     __new__: harvest entries, decorate them, remove them from the class attribute
+    #     dictionary, visit the mro to support inheritance, fill
+    #     {pyre_(entries,fields,derivations)}, and build the entry index (a map from the
+    #     descriptor to its position in the entry ordering)
+
+    #    __init__: go through {pyre_entries} and attach attribute accessors that pull values
+    #    from the storage tuple
+
 
     # types
     from .Entry import Entry as entry

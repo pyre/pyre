@@ -11,7 +11,7 @@ from .Type import Type
 
 class Float(Type):
     """
-    A class declarator for floats
+    A type declarator for floats
     """
 
 
@@ -28,7 +28,7 @@ class Float(Type):
         try:
             return float(value)
         except (TypeError, ValueError) as error:
-            raise cls.CastingError(value=value, description=str(error)) from error
+            raise cls.CastingError(value=value, description=str(error)) from None
 
 
 # end of file 

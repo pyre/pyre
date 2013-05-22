@@ -15,7 +15,7 @@ from .Type import Type
 # my declaration
 class Time(Type):
     """
-    A class declarator for timestamp
+    A type declarator for timestamp
     """
 
     # the default format

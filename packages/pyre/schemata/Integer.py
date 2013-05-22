@@ -11,7 +11,7 @@ from .Type import Type
 
 class Integer(Type):
     """
-    A class declarator for integers
+    A type declarator for integers
     """
 
 
@@ -28,7 +28,7 @@ class Integer(Type):
         try:
             return int(value)
         except (TypeError, ValueError) as error:
-            raise cls.CastingError(value=value, description=str(error)) from error
+            raise cls.CastingError(value=value, description=str(error)) from None
 
 
 # end of file 
