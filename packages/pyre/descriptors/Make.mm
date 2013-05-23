@@ -7,7 +7,7 @@
 
 
 PROJECT = pyre
-PACKAGE = schemata
+PACKAGE = descriptors
 PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
