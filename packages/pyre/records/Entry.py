@@ -35,26 +35,6 @@ class Entry(descriptor, algebraic.AbstractNode, algebraic.Arithmetic):
     operator = None
 
 
-    # interface
-    def process(self, value):
-        """
-        Convert {value} into an object that is consistent with my type and value requirements
-        """
-        # convert it
-        for converter in self.converters:
-            value = converter(value)
-        # cast it
-        value = self.schema.coerce(value)
-        # normalize it
-        for normalizer in self.normalizers:
-            value = normalizer(value)
-        # validate it
-        for validator in self.validators:
-            value = validator(value)
-        # and return it
-        return value
-
-
 # literals
 class literal(Literal, algebraic.Const, algebraic.Literal, Entry):
     """Concrete class for representing foreign values"""

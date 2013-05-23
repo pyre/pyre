@@ -33,7 +33,7 @@ class Field:
         # if not
         except KeyError:
             # make the node
-            node = self.node.variable(value=self.process(value=next(stream)))
+            node = self.node.variable(value=self.coerce(value=next(stream)))
             # add it to the model
             model[self.name] = node
         # and return it
@@ -52,7 +52,7 @@ class Field:
         # otherwise
         except KeyError:
             # compute it
-            value = self.process(value = next(stream))
+            value = self.coerce(value = next(stream))
             # cache it
             cache[self] = value
 

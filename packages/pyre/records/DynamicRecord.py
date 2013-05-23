@@ -76,7 +76,7 @@ class DynamicRecord(NamedTuple, metaclass=Mutable):
         # find the descriptor responsible for this value
         descriptor = self.pyre_entries[index]
         # get it to cast, convert, validate
-        value = descriptor.process(value)
+        value = descriptor.coerce(value)
         # get the relevant node
         node = super().__getitem__(index)
         # set its value
