@@ -17,6 +17,7 @@ RECURSE_DIRS = \
     config \
     constraints \
     db \
+    descriptors \
     extensions \
     externals \
     filesystem \

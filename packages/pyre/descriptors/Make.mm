@@ -20,23 +20,14 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Array.py \
-    Boolean.py \
-    Date.py \
-    Decimal.py \
-    Dimensional.py \
-    Float.py \
-    INet.py \
-    Integer.py \
-    List.py \
-    Object.py \
-    Sequence.py \
-    Set.py \
-    String.py \
-    Time.py \
-    Tuple.py \
-    Type.py \
-    URI.py \
+    Converter.py \
+    Default.py \
+    Descriptor.py \
+    Normalizer.py \
+    Processor.py \
+    Public.py \
+    Typed.py \
+    Validator.py \
     exceptions.py \
     __init__.py
 

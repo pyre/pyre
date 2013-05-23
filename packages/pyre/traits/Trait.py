@@ -7,7 +7,7 @@
 
 
 # superclasses
-from ..schemata import descriptor
+from ..descriptors import descriptor
 from ..framework.Client import Client
 
 

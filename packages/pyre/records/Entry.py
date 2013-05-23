@@ -8,7 +8,7 @@
 
 # super classes
 from .. import algebraic
-from ..schemata import descriptor
+from ..descriptors import descriptor
 
 # my mix-ins
 from .Field import Field
