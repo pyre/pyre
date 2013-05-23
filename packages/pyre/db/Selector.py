@@ -59,6 +59,15 @@ class Selector(AttributeClassifier):
                 # and make it accessible as an attribute
                 attributes[name] = alias
 
+        # now, go through each of the bases to make tables from ancestor queries available in
+        # the local scope of the class declaration so users don't have to stand on their head
+        # to get access to them
+        for base in bases:
+            # skip bases that are not queries
+            if not isinstance(base, cls): continue
+            # queries contribute their aliased tables to my attributes
+            attributes.update((table.pyre_name, table) for table in base.pyre_tables)
+
         # prime the table aliases
         attributes["pyre_tables"] = aliases
                 
