@@ -17,8 +17,7 @@ from .Literal import Literal
 
 
 # declaration
-class Entry(descriptor, 
-            algebraic.AbstractNode, algebraic.Arithmetic, algebraic.Ordering, algebraic.Boolean):
+class Entry(descriptor, algebraic.AbstractNode, algebraic.Arithmetic):
     """
     The base class for record entries
     """
