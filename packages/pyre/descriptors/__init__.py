@@ -28,19 +28,24 @@ def mix(schema, descriptor=descriptor):
 from .. import schemata
 # build the typed descriptors
 # first the simple ones
-bool = mix(schemata.bool, descriptor)
-decimal = mix(schemata.decimal, descriptor)
-float = mix(schemata.float, descriptor)
-inet = mix(schemata.inet, descriptor)
-int = mix(schemata.int, descriptor)
-identity = mix(schemata.identity, descriptor)
-str = mix(schemata.str, descriptor)
+bool = mix(schema=schemata.bool, descriptor=descriptor)
+decimal = mix(schema=schemata.decimal, descriptor=descriptor)
+float = mix(schema=schemata.float, descriptor=descriptor)
+inet = mix(schema=schemata.inet, descriptor=descriptor)
+int = mix(schema=schemata.int, descriptor=descriptor)
+identity = mix(schema=schemata.identity, descriptor=descriptor)
+str = mix(schema=schemata.str, descriptor=descriptor)
 
 # next the more complex types
-date = mix(schemata.date, descriptor)
-dimensional = mix(schemata.dimensional, descriptor)
-time = mix(schemata.time, descriptor)
-uri = mix(schemata.uri, descriptor)
+date = mix(schema=schemata.date, descriptor=descriptor)
+dimensional = mix(schema=schemata.dimensional, descriptor=descriptor)
+time = mix(schema=schemata.time, descriptor=descriptor)
+uri = mix(schema=schemata.uri, descriptor=descriptor)
+
+# finally, containers
+list = mix(schema=schemata.list, descriptor=descriptor)
+set = mix(schema=schemata.set, descriptor=descriptor)
+tuple = mix(schema=schemata.tuple, descriptor=descriptor)
 
 
 # end of file 

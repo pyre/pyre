@@ -8,7 +8,7 @@
 
 
 """
-Verify that decimal conversions work as  expected
+Verify that decimal conversions work as expected
 """
 
 

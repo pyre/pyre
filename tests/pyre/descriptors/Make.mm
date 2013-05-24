@@ -19,7 +19,7 @@ test: sanity simple
 sanity:
 	${PYTHON} ./sanity.py
 
-simple: basic complex
+simple: basic complex containers
 
 basic:
 	${PYTHON} ./booleans.py
