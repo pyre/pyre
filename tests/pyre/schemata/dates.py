@@ -16,14 +16,33 @@ def test():
     import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schemata.date()
+    date = pyre.schemata.date()
 
     # convert a string into a date
-    magic = descriptor.coerce('1992-12-21')
+    magic = date.coerce('1992-12-21')
     # check
     assert magic.tm_year == 1992
     assert magic.tm_mon == 12
     assert magic.tm_mday == 21
+
+    # now one with a different input format
+    date = pyre.schemata.date(format='%Y/%m/%d')
+    # try again
+    magic = date.coerce(value='1992/12/21')
+    # check
+    assert magic.tm_year == 1992
+    assert magic.tm_mon == 12
+    assert magic.tm_mday == 21
+
+    # how about one
+    try:
+        # with the wrong format
+        date.coerce(value='1992-12-21')
+        assert False
+    # it should fail
+    except date.CastingError: 
+        # so no problem
+        pass
 
     # all done
     return

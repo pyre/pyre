@@ -27,8 +27,14 @@ class Date(Type):
         """
         Attempt to convert {value} into a date
         """
-        # attempt to cast {value} into a date
-        return time.strptime(value, self.format)
+        # attempt to 
+        try:
+           # cast {value} into a date
+            return time.strptime(value, self.format)
+        # if this fails
+        except ValueError as error:
+            # complain
+            raise self.CastingError(value=value, description=str(error))
 
 
     # meta-methods

@@ -38,11 +38,17 @@ class URI(Type):
             match = self._regex.match(value)
             # if successful
             if match:
+                # extract the parts
+                scheme = match.group('scheme')
+                authority = match.group('authority')
+                address = match.group('address')
+                query = match.group('query')
+                fragment = match.group('fragment')
                 # build a URI object
                 uri = self.uri(
-                    scheme=match.group('scheme') or self.scheme,
-                    authority=match.group('authority') or self.authority,
-                    address=match.group('address') or self.address,
+                    scheme=self.scheme if scheme is None else scheme,
+                    authority=self.authority if authority is None else authority,
+                    address=self.address if address is None else address,
                     query=match.group('query'),
                     fragment=match.group('fragment')
                     )

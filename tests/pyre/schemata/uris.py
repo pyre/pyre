@@ -13,7 +13,10 @@ Exercise the URI parser
 
 
 def test():
-    from pyre.schemata import uri
+    import pyre.schemata
+
+    # make a converter
+    uri = pyre.schemata.uri()
 
     # the canonical case
     parts = uri.coerce("scheme://authority/address?query#fragment")
@@ -109,6 +112,7 @@ def test():
     except uri.CastingError as error:
         assert str(error) == 'unrecognizable URI {!r}'.format('&')
 
+    # anything else?
     return
 
 

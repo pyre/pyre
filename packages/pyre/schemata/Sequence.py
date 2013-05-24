@@ -42,7 +42,7 @@ class Sequence(Type):
             # if there is nothing left, we are done
             if not value: return
             # otherwise, split it using comma as the separator
-            value = (entry.strip() for entry in value.split(.self.delimiter))
+            value = (entry.strip() for entry in value.split(self.delimiter))
         # if we have an iterable
         if isinstance(value, collections.Iterable):
             # go through each entry
