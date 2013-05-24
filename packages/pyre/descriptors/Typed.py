@@ -23,8 +23,6 @@ class Typed(Type):
     # public data
     # value preprocessors
     converters = ()
-    # type coercion: by default, leave values alone
-    from ..schemata import identity as schema
     # value post processors
     normalizers = ()
     # consistency checks
@@ -34,14 +32,14 @@ class Typed(Type):
     # interface
     def coerce(self, value, **kwds):
         """
-        Walk {value} through value coercion
+        Walk {value} through the steps from raw to validated
         """
         # {None} is special; leave it alone
         if value is None: return None
         # otherwise, convert
         for converter in self.converters: value = converter(value)
         # cast
-        value = self.schema.coerce(value, **kwds)
+        value = super().coerce(value, **kwds)
         # normalize
         for normalizer in self.normalizers: value = normalizer(value)
         # validate
@@ -69,9 +67,6 @@ class Typed(Type):
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-
-        # N.B.: {schema} is typically a class attribute, so we don't try to set it here; the
-        # subclasses that have per-instance schemata must set {schema} themselves
 
         # initialize my value processors to something modifiable
         self.converters = []

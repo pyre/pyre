@@ -13,9 +13,9 @@ from . import descriptor
 
 
 # declaration
-class Bool(descriptor):
+class Bool:
     """
-    A property that represents booleans
+    A mix-in that represents booleans
     """
 
 

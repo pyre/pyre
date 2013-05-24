@@ -10,17 +10,18 @@ PROJECT = pyre
 
 RECURSE_DIRS = \
     patterns \
-    tracking \
     parsing \
+    units \
     filesystem \
     xml \
+    constraints \
     algebraic \
     calc \
     schemata \
-    units \
-    constraints \
+    descriptors \
     records \
     tabular \
+    tracking \
     codecs \
     config \
     framework \

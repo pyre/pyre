@@ -12,10 +12,6 @@ class Default:
     """
 
 
-    # public data
-    default = None
-
-
     # framework requests
     def getValue(self):
         """
@@ -23,16 +19,6 @@ class Default:
         """
         # easy enough
         return self.default
-
-
-    # meta methods
-    def __init__(self, default=default, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # set my default value
-        self.default = default
-        # all done
-        return
 
 
 # end of file 

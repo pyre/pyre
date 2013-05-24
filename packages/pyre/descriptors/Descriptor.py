@@ -62,7 +62,7 @@ class operator(Typed, Public, algebraic.Operator, Descriptor.composite, Descript
     """Concrete class for representing derivations"""
 
 # literals, to close the algebra
-class literal(Typed, algebraic.Const, algebraic.Literal, Descriptor):
+class literal(algebraic.Const, algebraic.Literal, Descriptor):
     """Concrete class for representing foreign values"""
 
 

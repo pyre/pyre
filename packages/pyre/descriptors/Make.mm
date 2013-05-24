@@ -20,7 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Bool.py \
+    Boolean.py \
     Converter.py \
     Decimal.py \
     Default.py \
