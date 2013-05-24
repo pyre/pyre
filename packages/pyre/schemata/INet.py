@@ -92,6 +92,7 @@ class INet(Type):
     A type declarator for internet addresses
     """
 
+
     # types
     from .exceptions import CastingError
     # the address base class 
@@ -102,7 +103,10 @@ class INet(Type):
 
 
     # constants
-    any = ip(host='', port=0)
+    any = ip(host='', port=0) # the moral equivalent of zero...
+    typename = 'inet' # the name of my type
+    default = any # my default value
+
 
 
     # interface
@@ -166,6 +170,14 @@ class INet(Type):
             return cls.ipv4(**match.groupdict())
         # otherwise, use it to find the appropriate factory to build and return an address
         return getattr(cls, family)(**match.groupdict())
+
+
+    # meta-methods
+    def __init__(self, default=default, **kwds):
+        # chain up with my default
+        super().__init__(default=default, **kwds)
+        # all done
+        return
 
 
     # private data

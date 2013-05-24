@@ -17,6 +17,11 @@ class Boolean(Type):
     """
 
 
+    # constants
+    typename = 'bool' # the name of my type
+    default = bool() # my default value
+
+
     # interface
     @classmethod
     def coerce(cls, value, **kwds):
@@ -26,13 +31,22 @@ class Boolean(Type):
         # native type pass through unchanged
         if isinstance(value, bool): return value
         # strings go through the translation map
-        if isinstance(value, str): return cls._strmap[value.lower()]
+        if isinstance(value, str): return cls.xlat[value.lower()]
         # anything else is an error
         raise cls.CastingError(description='could not cast {0.value!r} to bool', value=value)
 
 
+    # meta-methods
+    def __init__(self, default=default, **kwds):
+        # chain up with my default
+        super().__init__(default=default, **kwds)
+        # all done
+        return
+
+
+    # implementation details
     # strings recognized as booleans
-    _strmap = {
+    xlat = {
         '1': True,
         'y' : True,
         'yes' : True,

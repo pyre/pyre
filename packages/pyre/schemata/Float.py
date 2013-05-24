@@ -17,6 +17,11 @@ class Float(Type):
     """
 
 
+    # constants
+    typename = 'float' # the name of my type
+    default = float() # my default value
+
+
     # interface
     @classmethod
     def coerce(cls, value, **kwds):
@@ -34,6 +39,14 @@ class Float(Type):
         except (TypeError, ValueError) as error:
             # complain
             raise cls.CastingError(value=value, description=str(error)) from None
+
+
+    # meta-methods
+    def __init__(self, default=default, **kwds):
+        # chain up with my default
+        super().__init__(default=default, **kwds)
+        # all done
+        return
 
 
 # end of file 

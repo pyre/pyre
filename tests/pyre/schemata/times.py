@@ -16,14 +16,33 @@ def test():
     import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schemata.time()
+    time = pyre.schemata.time()
 
     # casts are not implemented yet
-    magic = descriptor.coerce('13:30:00')
+    magic = time.coerce('13:30:00')
     # check
     assert magic.tm_hour == 13
     assert magic.tm_min == 30
     assert magic.tm_sec == 0
+
+    # now one with a different input format
+    time = pyre.schemata.time(format='%H|%M|%S')
+    # try again
+    magic = time.coerce(value='13|30|00')
+    # check
+    assert magic.tm_hour == 13
+    assert magic.tm_min == 30
+    assert magic.tm_sec == 0
+
+    # how about one
+    try:
+        # with the wrong format
+        time.coerce(value='13-30-00')
+        assert False
+    # it should fail
+    except time.CastingError: 
+        # so no problem
+        pass
 
     return
 

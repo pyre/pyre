@@ -6,6 +6,8 @@
 #
 
 
+# externals
+from .. import units
 # my superclass
 from .Type import Type
 
@@ -17,12 +19,13 @@ class Dimensional(Type):
     """
 
 
-    # types
-    from ..units import parser as parserFactory, dimensional
+    # constants
+    typename = 'dimensional' # the name of my type
+    default = units.zero # my default value
 
 
     # public data
-    parser = parserFactory()
+    parser = units.parser()
 
 
     # interface
@@ -34,10 +37,20 @@ class Dimensional(Type):
         # use the unit parser to convert strings to dimensionals 
         if isinstance(value, str): return cls.parser.parse(value)
         # dimensionals go right through
-        if isinstance(value, cls.dimensional): return value
+        if isinstance(value, units.dimensional): return value
         # everything else is an error
         msg="could not convert {0.value!r} into a dimensional quantity"
         raise cls.CastingError(value=value, description=msg)
         
+
+    # meta-methods
+    def __init__(self, default=default, **kwds):
+        # try to convert the {default} value
+        default = default if default is None else self.coerce(value=default)
+        # chain up with my default
+        super().__init__(default=default, **kwds)
+        # all done
+        return
+
 
 # end of file 

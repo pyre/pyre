@@ -17,6 +17,11 @@ class Object(Type):
     """
 
 
+    # constants
+    default = object()
+    typename = 'identity'
+
+
     # interface
     @classmethod
     def coerce(cls, value, **kwds):
@@ -25,6 +30,14 @@ class Object(Type):
         """
         # just leave it alone
         return value
+
+
+    # meta-methods
+    def __init__(self, default=default, **kwds):
+        # chain up with my default
+        super().__init__(default=default, **kwds)
+        # all done
+        return
 
 
 # end of file 

@@ -12,6 +12,57 @@ import re
 from .Type import Type
 
 
+# implementation details
+class uri:
+
+    # public data
+    @property
+    def uri(self):
+        """
+        Assemble a string from my parts
+        """
+        parts = []
+        # if I have a scheme
+        if self.scheme: parts.append('{}:'.format(self.scheme))
+        # if I have an authority
+        if self.authority: parts.append('//{}'.format(self.authority))
+        # if I have an address
+        if self.address: parts.append('{}'.format(self.address))
+        # if I have a query
+        if self.query: parts.append('?{}'.format(self.query))
+        # if I have a fragment
+        if self.fragment: parts.append('#{}'.format(self.fragment))
+        # assemble and return
+        return ''.join(parts)
+
+    # interface
+    def clone(self):
+        """
+        Make a copy of me
+        """
+        return type(self)(
+            scheme=self.scheme, authority=self.authority, address=self.address,
+            query=self.query, fragment=self.fragment)
+
+    # meta methods
+    def __init__(self, scheme=None, authority=None, address=None, query=None, fragment=None):
+        # save my parts
+        self.scheme = scheme
+        self.authority = authority
+        self.address = address
+        self.query = query
+        self.fragment = fragment
+        # all done
+        return
+
+    def __str__(self):
+        # easy enough
+        return self.uri
+
+    # implementation details
+    __slots__ = ( 'scheme', 'authority', 'address', 'query', 'fragment' )
+
+
 # the declaration
 class URI(Type):
     """
@@ -19,7 +70,13 @@ class URI(Type):
     """
 
 
+    # constants
+    typename = 'uri' # the name of my type
+    default = uri() # my default value
+
+
     # types
+    uri = uri # save the implementation type
     from .exceptions import CastingError
 
 
@@ -59,66 +116,17 @@ class URI(Type):
         raise self.CastingError(value=value, description=msg)
 
 
-    def __init__(self, scheme=None, authority=None, address=None, **kwds):
-        # chain up
-        super().__init__(**kwds)
+    def __init__(self, default=default, scheme=None, authority=None, address=None, **kwds):
+        # try to convert the default value
+        default = default if default is None else self.coerce(value=default)
+        # chain up with my default
+        super().__init__(default=default, **kwds)
         # save my defaults
         self.scheme = scheme
         self.authority = authority
         self.address = address
         # all done
         return
-
-
-    # implementation details
-    class uri:
-
-        # public data
-        @property
-        def uri(self):
-            """
-            Assemble a string from my parts
-            """
-            parts = []
-            # if I have a scheme
-            if self.scheme: parts.append('{}:'.format(self.scheme))
-            # if I have an authority
-            if self.authority: parts.append('//{}'.format(self.authority))
-            # if I have an address
-            if self.address: parts.append('{}'.format(self.address))
-            # if I have a query
-            if self.query: parts.append('?{}'.format(self.query))
-            # if I have a fragment
-            if self.fragment: parts.append('#{}'.format(self.fragment))
-            # assemble and return
-            return ''.join(parts)
-
-        # interface
-        def clone(self):
-            """
-            Make a copy of me
-            """
-            return type(self)(
-                scheme=self.scheme, authority=self.authority, address=self.address,
-                query=self.query, fragment=self.fragment)
-    
-        # meta methods
-        def __init__(self, scheme=None, authority=None, address=None, query=None, fragment=None):
-            # save my parts
-            self.scheme = scheme
-            self.authority = authority
-            self.address = address
-            self.query = query
-            self.fragment = fragment
-            # all done
-            return
-
-        def __str__(self):
-            # easy enough
-            return self.uri
-            
-        # implementation details
-        __slots__ = ( 'scheme', 'authority', 'address', 'query', 'fragment' )
 
 
     # private data

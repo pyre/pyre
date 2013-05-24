@@ -17,6 +17,11 @@ class String(Type):
     """
 
 
+    # constants
+    typename = 'str' # the name of my type
+    default = str() # my default value
+
+
     # interface
     @classmethod
     def coerce(cls, value, **kwds):
@@ -25,6 +30,14 @@ class String(Type):
         """
         # let the constructor do its job
         return str(value)
+
+
+    # meta-methods
+    def __init__(self, default=default, **kwds):
+        # chain up with my default
+        super().__init__(default=default, **kwds)
+        # all done
+        return
 
 
 # end of file 

@@ -18,8 +18,11 @@ class Date(Type):
     A type declarator for dates
     """
 
-    # the default format
-    format = "%Y-%m-%d"
+
+    # constants
+    format = "%Y-%m-%d" # the default date format
+    typename = 'date' # the name of my type
+    default = time.localtime() # my default value
 
 
     # interface
@@ -38,9 +41,9 @@ class Date(Type):
 
 
     # meta-methods
-    def __init__(self, format=format, **kwds):
-        # chain up
-        super().__init__(**kwds)
+    def __init__(self, default=default, format=format, **kwds):
+        # chain up with my default
+        super().__init__(default=default, **kwds)
         # store the format
         self.format = format
         # all done
