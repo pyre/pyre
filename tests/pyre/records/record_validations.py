@@ -22,9 +22,10 @@ def test():
         # field declarations
         left = pyre.records.float()
         right = pyre.records.float()
+
         # constraints
-        left.validators = pyre.constraints.isLess(value=0),
-        right.validators = pyre.constraints.isGreater(value=0),
+        left.validators = pyre.constraints.isLess(value=0)
+        right.validators = pyre.constraints.isGreater(value=0)
 
 
     # try to build a record

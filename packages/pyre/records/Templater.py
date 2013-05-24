@@ -33,9 +33,7 @@ class Templater(AttributeClassifier):
 
 
     # types
-    from .Entry import Entry as entry
-    from .Field import Field as field
-    from .Derivation import Derivation as derivation
+    from ..descriptors.Descriptor import Descriptor as descriptor
 
 
     # meta methods
@@ -47,12 +45,10 @@ class Templater(AttributeClassifier):
         # initialize the local entry pile
         localEntries = []
         # harvest the entries
-        for entryName, entry in cls.pyre_harvest(attributes, cls.entry):
-            # adjust the name
-            entry.name = entryName
-            # update the aliases
-            entry.aliases.add(entryName)
-            # and add it to the pile
+        for entryName, entry in cls.pyre_harvest(attributes, cls.descriptor):
+            # initialize them
+            entry.attach(name=entryName)
+            # and add them to the pile
             localEntries.append(entry)
 
         # create and attribute to hold the locally declared records entries
@@ -86,10 +82,10 @@ class Templater(AttributeClassifier):
         record.pyre_entries = tuple(inheritedEntries + localEntries)
         # build the tuple of all my fields
         record.pyre_fields = tuple(
-            entry for entry in record.pyre_entries if isinstance(entry, cls.field))
+            entry for entry in record.pyre_entries if isinstance(entry, cls.descriptor.variable))
         # build the tuple of all my derivations
         record.pyre_derivations = tuple(
-            entry for entry in record.pyre_entries if isinstance(entry, cls.derivation))
+            entry for entry in record.pyre_entries if isinstance(entry, cls.descriptor.operator))
 
         # build the map from entries to offsets
         # initialize the entry index

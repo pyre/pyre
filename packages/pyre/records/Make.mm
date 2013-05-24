@@ -25,7 +25,6 @@ EXPORT_PYTHON_MODULES = \
     ConstAccessor.py \
     Derivation.py \
     DynamicRecord.py \
-    Entry.py \
     Field.py \
     Immutable.py \
     Literal.py \
@@ -34,7 +33,6 @@ EXPORT_PYTHON_MODULES = \
     Record.py \
     Templater.py \
     exceptions.py \
-    fields.py \
     __init__.py
 
 

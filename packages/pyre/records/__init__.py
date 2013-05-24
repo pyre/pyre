@@ -10,7 +10,7 @@
 from .Record import Record as record
 from .DynamicRecord import DynamicRecord as dynamicrecord
 
-from .Entry import Entry as entry
+from ..descriptors.Descriptor import Descriptor as entry
 field = entry.variable
 derivation = entry.operator
 
@@ -22,7 +22,7 @@ from .CSV import CSV as csv
 # access to the type specifiers
 from .. import schemata
 # access to the typed field declarators
-from .fields import decimal, float, int, str
+from ..descriptors import bool, dimensional, decimal, float, inet, int, str, uri
 
 
 # end of file 
