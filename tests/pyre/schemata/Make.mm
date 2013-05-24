@@ -21,20 +21,20 @@ sanity:
 	${PYTHON} ./exceptions.py
 
 types:
-	${PYTHON} ./array.py
-	${PYTHON} ./boolean.py
-	${PYTHON} ./date.py
-	${PYTHON} ./dimensional.py
-	${PYTHON} ./dtime.py
-	${PYTHON} ./float.py
-	${PYTHON} ./inet.py
-	${PYTHON} ./int.py
-	${PYTHON} ./list.py
-	${PYTHON} ./numeric.py
-	${PYTHON} ./set.py
-	${PYTHON} ./str.py
-	${PYTHON} ./tuple.py
-	${PYTHON} ./uri.py
+	${PYTHON} ./arrays.py
+	${PYTHON} ./booleans.py
+	${PYTHON} ./dates.py
+	${PYTHON} ./decimals.py
+	${PYTHON} ./dimensionals.py
+	${PYTHON} ./floats.py
+	${PYTHON} ./inets.py
+	${PYTHON} ./integers.py
+	${PYTHON} ./lists.py
+	${PYTHON} ./sets.py
+	${PYTHON} ./strings.py
+	${PYTHON} ./times.py
+	${PYTHON} ./tuples.py
+	${PYTHON} ./uris.py
 
 
 # end of file 
