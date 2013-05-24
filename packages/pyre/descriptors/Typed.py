@@ -24,7 +24,7 @@ class Typed(Type):
     # value preprocessors
     converters = ()
     # type coercion: by default, leave values alone
-    from .Object import Object as schema
+    from ..schemata import identity as schema
     # value post processors
     normalizers = ()
     # consistency checks
@@ -53,7 +53,7 @@ class Typed(Type):
     # framework requests
     def attach(self, **kwds):
         """
-        Called by my client to let me know that all the available meta-data has been harvested
+        Called by my client to let me know that all the available meta-data have been harvested
         """
         # repair convenient usage that breaks my representation constraints: make sure my value
         # processors are iterable
@@ -69,10 +69,15 @@ class Typed(Type):
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
+
+        # N.B.: {schema} is typically a class attribute, so we don't try to set it here; the
+        # subclasses that have per-instance schemata must set {schema} themselves
+
         # initialize my value processors to something modifiable
         self.converters = []
         self.normalizers = []
         self.validators = []
+
         # all done
         return
     

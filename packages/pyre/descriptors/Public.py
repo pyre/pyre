@@ -40,15 +40,14 @@ class Public:
     # framework requests
     def attach(self, name, **kwds):
         """
-        Called by my client after all the available meta-data has been harvested
+        Called by my client after all the available meta-data have been harvested
         """
         # set my canonical name
         self.name = name
         # update my aliases, so that I can provide easy access to the full set of my names
         self.aliases.add(name)
-
         # chain up
-        return super.__init__(name=name, **kwds)
+        return super().attach(**kwds)
 
 
     # meta methods
