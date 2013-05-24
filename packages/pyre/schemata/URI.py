@@ -24,26 +24,25 @@ class URI(Type):
 
 
     # interface
-    @classmethod
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a internet address
         """
         # if {value} is one of mine
-        if isinstance(value, cls.uri):
+        if isinstance(value, self.uri):
             # leave it alone
             return value
         # if it is a string
         if isinstance(value, str):
             # parse it
-            match = cls._regex.match(value)
-            # if unsuccessful
+            match = self._regex.match(value)
+            # if successful
             if match:
                 # build a URI object
-                uri = cls.uri(
-                    scheme=match.group('scheme'),
-                    authority=match.group('authority'),
-                    address=match.group('address'),
+                uri = self.uri(
+                    scheme=match.group('scheme') or self.scheme,
+                    authority=match.group('authority') or self.authority,
+                    address=match.group('address') or self.address,
                     query=match.group('query'),
                     fragment=match.group('fragment')
                     )
@@ -51,7 +50,18 @@ class URI(Type):
                 return uri
         # otherwise
         msg = 'unrecognizable URI {0.value!r}'
-        raise cls.CastingError(value=value, description=msg)
+        raise self.CastingError(value=value, description=msg)
+
+
+    def __init__(self, scheme=None, authority=None, address=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save my defaults
+        self.scheme = scheme
+        self.authority = authority
+        self.address = address
+        # all done
+        return
 
 
     # implementation details
@@ -115,8 +125,6 @@ class URI(Type):
                 r"(?:\?(?P<query>[^#]*))?", # grab the query, i.e. the ?key=value&... chunks
                 r"(?:#(?P<fragment>.*))?"
                 )))
-
-
 
 
 # end of file 
