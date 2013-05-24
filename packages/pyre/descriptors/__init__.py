@@ -26,26 +26,26 @@ def mix(schema, descriptor=descriptor):
 
 # get the schemata
 from .. import schemata
-# build the typed descriptors
-# first the simple ones
-bool = mix(schema=schemata.bool, descriptor=descriptor)
-decimal = mix(schema=schemata.decimal, descriptor=descriptor)
-float = mix(schema=schemata.float, descriptor=descriptor)
-inet = mix(schema=schemata.inet, descriptor=descriptor)
-int = mix(schema=schemata.int, descriptor=descriptor)
-identity = mix(schema=schemata.identity, descriptor=descriptor)
-str = mix(schema=schemata.str, descriptor=descriptor)
 
-# next the more complex types
-date = mix(schema=schemata.date, descriptor=descriptor)
-dimensional = mix(schema=schemata.dimensional, descriptor=descriptor)
-time = mix(schema=schemata.time, descriptor=descriptor)
-uri = mix(schema=schemata.uri, descriptor=descriptor)
+# build the typed descriptors; first the simple ones
+class bool(descriptor, schemata.bool): pass
+class decimal(descriptor, schemata.decimal): pass
+class float(descriptor, schemata.float): pass
+class inet(descriptor, schemata.inet): pass
+class int(descriptor, schemata.int): pass
+class identity(descriptor, schemata.identity): pass
+class str(descriptor, schemata.str): pass
+
+# next, the more complex types
+class date(descriptor, schemata.date): pass
+class dimensional(descriptor, schemata.dimensional): pass
+class time(descriptor, schemata.time): pass
+class uri(descriptor, schemata.uri): pass
 
 # finally, containers
-list = mix(schema=schemata.list, descriptor=descriptor)
-set = mix(schema=schemata.set, descriptor=descriptor)
-tuple = mix(schema=schemata.tuple, descriptor=descriptor)
+class list(descriptor, schemata.list): pass
+class set(descriptor, schemata.set): pass
+class tuple(descriptor, schemata.tuple): pass
 
 
 # end of file 
