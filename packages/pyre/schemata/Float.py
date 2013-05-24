@@ -6,9 +6,11 @@
 #
 
 
+# superclass
 from .Type import Type
 
 
+# declaration
 class Float(Type):
     """
     A type declarator for floats
@@ -22,12 +24,15 @@ class Float(Type):
         Attempt to convert {value} into a float
         """
         # get the interpreter to evaluate simple expressions
-        if isinstance(value, str):
-            value = eval(value)
-        # attempt to cast {value} into a float
+        if isinstance(value, str): value = eval(value)
+
+        # attempt to 
         try:
+            # cast {value} into a float
             return float(value)
+        # if it didn't work
         except (TypeError, ValueError) as error:
+            # complain
             raise cls.CastingError(value=value, description=str(error)) from None
 
 

@@ -24,7 +24,7 @@ class Decimal(Type):
         """
         Attempt to convert {value} into a decimal
         """
-        # attempt to cast {value} into a decimal
+        # let the constructor do its job
         return decimal.Decimal(value)
 
 

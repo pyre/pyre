@@ -10,6 +10,7 @@
 from .Sequence import Sequence
 
 
+# declaration
 class List(Sequence):
     """
     The list type declarator

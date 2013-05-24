@@ -19,9 +19,15 @@ class Sequence(Type):
     """
 
 
+    # constants
+    open = '[({'
+    close = '])}'
+    delimiter = ','
+
+
     # public data
-    from .Object import Object as identity # my default type
-    
+    from .Object import Object as schema # my default type
+
 
     # interface
     def coerce(self, value, **kwds):
@@ -31,12 +37,12 @@ class Sequence(Type):
         # string processing
         if isinstance(value, str):
             # strip opening and closing delimiters
-            if value and value[0] in '[({': value = value[1:]
-            if value and value[-1] in '])}': value = value[:-1]
+            if value and value[0] in self.open: value = value[1:]
+            if value and value[-1] in self.close: value = value[:-1]
             # if there is nothing left, we are done
             if not value: return
             # otherwise, split it using comma as the separator
-            value = (entry.strip() for entry in value.split(','))
+            value = (entry.strip() for entry in value.split(.self.delimiter))
         # if we have an iterable
         if isinstance(value, collections.Iterable):
             # go through each entry
@@ -53,9 +59,12 @@ class Sequence(Type):
 
 
     # meta-methods
-    def __init__(self, schema=identity, **kwds):
+    def __init__(self, schema=schema, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save my schema
         self.schema = schema
+        # all done
         return
 
 

@@ -6,9 +6,11 @@
 #
 
 
+# superclass
 from .Type import Type
 
 
+# declaration
 class String(Type):
     """
     A type declarator for strings
@@ -21,6 +23,7 @@ class String(Type):
         """
         Attempt to convert {value} into a string
         """
+        # let the constructor do its job
         return str(value)
 
 

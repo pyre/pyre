@@ -6,9 +6,11 @@
 #
 
 
+# superclass
 from .Type import Type
 
 
+# declaration
 class Object(Type):
     """
     A generic type declarator
@@ -21,7 +23,7 @@ class Object(Type):
         """
         Convert the given value into a python native object
         """
-        # do nothing
+        # just leave it alone
         return value
 
 

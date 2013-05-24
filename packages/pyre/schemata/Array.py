@@ -6,10 +6,13 @@
 #
 
 
+# externals
 import collections
+# superclass
 from .Type import Type
 
 
+# declaration
 class Array(Type):
     """
     The array type declarator

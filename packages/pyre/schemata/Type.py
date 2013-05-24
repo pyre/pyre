@@ -23,6 +23,7 @@ class Type:
         """
         Convert the given value into my native type
         """
+        # obligations...
         raise NotImplementedError("class {.__name__!r} must implement 'coerce'".format(cls))
 
 
