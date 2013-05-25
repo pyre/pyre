@@ -23,9 +23,9 @@ class Converter(Processor):
         Add {method} as a converter to my registered descriptors
         """
         # go through the sequence of registered descriptors
-        for descriptor in self.descriptors:
+        for trait in self.traits:
             # and register {method} as a converter
-            descriptor.converters.append(method)
+            trait.converters.append(method)
         # all done
         return method
     

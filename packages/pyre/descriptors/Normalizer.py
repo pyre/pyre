@@ -23,9 +23,9 @@ class Normalizer(Processor):
         Add {method} as a normalizer to my registered descriptors
         """
         # go through the sequence of registered descriptors
-        for descriptor in self.descriptors:
+        for trait in self.traits:
             # and register {method} as a normalizer
-            descriptor.normalizers.append(method)
+            trait.normalizers.append(method)
         # all done
         return method
     

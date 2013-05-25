@@ -23,9 +23,9 @@ class Validator(Processor):
         Add {method} as a validator to my registered descriptors
         """
         # go through the sequence of registered descriptors
-        for descriptor in self.descriptors:
+        for trait in self.traits:
             # and register {method} as a validator
-            descriptor.validators.append(method)
+            trait.validators.append(method)
         # all done
         return method
     
