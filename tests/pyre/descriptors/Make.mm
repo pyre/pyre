@@ -14,7 +14,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity simple
+test: sanity simple compositions
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -40,5 +40,11 @@ containers:
 	${PYTHON} ./lists.py
 	${PYTHON} ./sets.py
 
+compositions:
+	${PYTHON} ./harvesting.py
+	${PYTHON} ./defaults.py
+	${PYTHON} ./inheritance.py
+	${PYTHON} ./filtering.py
+	${PYTHON} ./converters.py
 
 # end of file 
