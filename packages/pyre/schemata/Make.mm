@@ -29,7 +29,6 @@ EXPORT_PYTHON_MODULES = \
     INet.py \
     Integer.py \
     List.py \
-    Object.py \
     Sequence.py \
     Set.py \
     String.py \

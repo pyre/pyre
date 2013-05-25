@@ -6,13 +6,14 @@
 #
 
 
+# the trivial type
+from .Type import Type as identity
 # simple types
 from .Boolean import Boolean as bool
 from .Decimal import Decimal as decimal
 from .Float import Float as float
 from .INet import INet as inet
 from .Integer import Integer as int
-from .Object import Object as identity
 from .String import String as str
 
 # more complex types

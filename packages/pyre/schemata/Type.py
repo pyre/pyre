@@ -16,19 +16,24 @@ class Type:
     # exception
     from .exceptions import CastingError
 
+    # constants
+    default = object()
+    typename = 'identity'
+
 
     # interface
     @classmethod
-    def coerce(cls, *args, **kwds):
+    def coerce(cls, value, **kwds):
         """
-        Convert the given value into my native type
+        Convert the given value into a python native object
         """
-        # obligations...
-        raise NotImplementedError("class {.__name__!r} must implement 'coerce'".format(cls))
+        # just leave it alone
+        return value
+
 
 
     # meta-methods
-    def __init__(self, default=None, **kwds):
+    def __init__(self, default=default, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my default value

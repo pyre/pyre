@@ -29,7 +29,7 @@ class Sequence(Type):
 
 
     # public data
-    from .Object import Object as schema # my default type
+    from .Type import Type as schema # my default type is the trivial one
 
 
     # interface
