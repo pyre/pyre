@@ -14,10 +14,10 @@ RECURSE_DIRS = \
     units \
     filesystem \
     xml \
+    schemata \
     constraints \
     algebraic \
     calc \
-    schemata \
     descriptors \
     records \
     tabular \
