@@ -7,7 +7,7 @@
 
 
 # externals
-import pyre.algebraic
+from .. import algebraic
 # local operators
 from .Average import Average
 from .Count import Count
@@ -21,7 +21,7 @@ from . import _metaclass_Node
 
 
 # declaration of the base node
-class Node(pyre.algebraic.AbstractNode, pyre.algebraic.Arithmetic, metaclass=_metaclass_Node):
+class Node(algebraic.AbstractNode, algebraic.Arithmetic, metaclass=_metaclass_Node):
     """
     The base class for lazily evaluated nodes. It employs the memoized evaluation strategy so
     that nodes have their values recomputed on demand.
@@ -30,13 +30,15 @@ class Node(pyre.algebraic.AbstractNode, pyre.algebraic.Arithmetic, metaclass=_me
 
     # types: hooks for implementing the expression graph construction
     # the mix-ins
-    leaf = pyre.algebraic.Leaf
-    literal = pyre.algebraic.Literal
-    composite = pyre.algebraic.Composite
-    const = pyre.algebraic.Const
-    memo = pyre.algebraic.Memo
-    observer = pyre.algebraic.Observer
-    observable = pyre.algebraic.Observable
+    leaf = algebraic.Leaf
+    literal = algebraic.Literal
+    composite = algebraic.Composite
+    const = algebraic.Const
+    # evaluation strategies
+    memo = algebraic.Memo
+    converter = algebraic.Converter
+    observer = algebraic.Observer
+    observable = algebraic.Observable
     # the functionals; they will be patched below with my subclasses
     variable = None
     operator = None
@@ -53,37 +55,40 @@ class literal(Node.const, Node.literal, Node):
     """
 
 # variables
-class variable(Node.observable, pyre.algebraic.Variable, Node.leaf, Node):
+class variable(Node.memo, Node.converter, Node.observable, algebraic.Variable, Node.leaf, Node):
     """
     Concrete class for encapsulating the user accessible nodes
     """
 
 # operators
-class operator(Node.memo, Node.observer, pyre.algebraic.Operator, Node.composite, Node):
+class operator(Node.memo, Node.converter, Node.observer, algebraic.Operator, Node.composite, Node):
     """
     Concrete class for encapsulating operations among nodes
     """
 
 # expressions
-class expression(Node.memo, Node.observer, pyre.algebraic.Expression, Node.composite, Node):
+class expression(Node.memo, Node.converter, 
+                 Node.observer, algebraic.Expression, Node.composite, Node):
     """
     Concrete class for encapsulating macros
     """
 
 # interpolations
-class interpolation(Node.memo, Node.observer, pyre.algebraic.Interpolation, Node.composite, Node):
+class interpolation(Node.memo, Node.converter, 
+                    Node.observer, algebraic.Interpolation, Node.composite, Node):
     """
     Concrete class for encapsulating simple string interpolation
     """
 
 # references
-class reference(Node.observer, pyre.algebraic.Reference, Node.composite, Node):
+class reference(Node.memo, Node.converter,
+                Node.observer, algebraic.Reference, Node.composite, Node):
     """
     Concrete class for encapsulating references to other nodes
     """
 
 # unresolved nodes
-class unresolved(Node.observable, pyre.algebraic.Unresolved, Node.leaf, Node):
+class unresolved(Node.observable, algebraic.Unresolved, Node.leaf, Node):
     """
     Concrete class for representing unknown nodes
     """
