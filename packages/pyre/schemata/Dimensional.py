@@ -45,8 +45,6 @@ class Dimensional(Type):
 
     # meta-methods
     def __init__(self, default=default, **kwds):
-        # try to convert the {default} value
-        default = default if default is None else self.coerce(value=default)
         # chain up with my default
         super().__init__(default=default, **kwds)
         # all done

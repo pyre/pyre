@@ -117,8 +117,6 @@ class URI(Type):
 
 
     def __init__(self, default=default, scheme=None, authority=None, address=None, **kwds):
-        # try to convert the default value
-        default = default if default is None else self.coerce(value=default)
         # chain up with my default
         super().__init__(default=default, **kwds)
         # save my defaults
