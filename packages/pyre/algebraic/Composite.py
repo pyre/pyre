@@ -34,9 +34,7 @@ class Composite:
         # now, traverse my operands
         for operand in self.operands:
             # and ask them for their span
-            for node in operand.span:
-                # got one
-                yield node
+            yield from operand.span
         # all done
         return
 
@@ -52,9 +50,7 @@ class Composite:
         # traverse my operands
         for operand in self.operands:
             # and ask them for their dependencies
-            for node in operand.variables:
-                # return whatever it discovered
-                yield node
+            yield from operand.variables
         # and no more
         return
 
@@ -72,9 +68,26 @@ class Composite:
         # now, traverse my operands
         for operand in self.operands:
             # and ask them for their operators
-            for node in operand.operators:
-                # got one
-                yield node
+            yield from operand.operators
+        # all done
+        return
+
+
+    # graph traversal
+    def unique(self, encountered=None):
+        """
+        Traverse my expression graph and visit all nodes not previously {encountered}
+        """
+        # if I have been visited before, do nothing
+        if self in encountered: return
+
+        # otherwise, add me to the pile
+        encountered.add(self)
+        # visit all my operands
+        for operand in self.operands:
+            # and ask them for their unique nodes
+            yield from operand.unique(encountered=encountered)
+
         # all done
         return
 

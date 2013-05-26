@@ -12,6 +12,10 @@ class Operator:
     """
 
 
+    # constants
+    category = 'operator'
+
+
     # public data
     evaluator = None
 

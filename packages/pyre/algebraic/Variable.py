@@ -12,6 +12,10 @@ class Variable:
     """
 
 
+    # constants
+    category = 'variable'
+
+
     # interface
     def getValue(self):
         """
