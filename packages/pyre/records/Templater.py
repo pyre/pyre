@@ -44,16 +44,16 @@ class Templater(AttributeClassifier):
         later with accessors appropriate for each type of record.
         """
         # make a pile foe the meta-data descriptors
-        localEntries = []
+        localFields = []
         # harvest them
         for fieldName, field in cls.pyre_harvest(attributes, cls.pyre_field):
             # initialize them
             field.attach(name=fieldName)
             # and add them to the pile
-            localEntries.append(field)
+            localFields.append(field)
 
         # build an attribute to hold the locally declared fields
-        attributes["pyre_localEntries"] = tuple(localEntries)
+        attributes["pyre_localFields"] = tuple(localFields)
         # disable the wasteful {__dict__}
         if slots is not None: attributes['__slots__'] = slots
 
@@ -75,7 +75,7 @@ class Templater(AttributeClassifier):
             # skip the ones that are not records themselves
             if not isinstance(base, cls): continue
             # get all of the locally declared record fields
-            for field in base.pyre_localEntries:
+            for field in base.pyre_localFields:
                 # add this to the pile
                 fields.append(field)
                 # if it is a measure

@@ -30,7 +30,7 @@ class Accessor:
 
     def __get__(self, record, cls):
         """
-        Entry retrieval
+        Field retrieval
         """
         # if the target of this access is the class itself
         if record is None:
@@ -43,7 +43,7 @@ class Accessor:
 
     def __set__(self, record, value):
         """
-        Entry modification
+        Field modification
         """
         # try to set the value of this field; this will fail for const records
         record[self.index] = value

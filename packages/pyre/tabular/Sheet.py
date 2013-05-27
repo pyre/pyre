@@ -17,7 +17,7 @@ class Sheet(metaclass=SheetMaker):
 
 
     # types
-    from ..records.DynamicRecord import DynamicRecord as pyre_recordType
+    from ..records.Record import Record as pyre_recordType
 
 
     # public data
@@ -27,7 +27,7 @@ class Sheet(metaclass=SheetMaker):
     pyre_keymaps = None # storage for measures that are primary keys
 
     pyre_entries = () # the full set of measures and derivations
-    pyre_fields = () # a tuple with all my fields
+    pyre_measures = () # a tuple with all my fields
     pyre_derivations = () # a tuple with all my derivations
     pyre_localEntries = () # the locally declared measures and derivations
 
