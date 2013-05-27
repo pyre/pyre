@@ -10,7 +10,7 @@
 class Extractor:
     """
     A strategy for pulling data from a stream and performing value coercions indicated by the
-    entry descriptors
+    field descriptors
     """
 
 
@@ -20,9 +20,9 @@ class Extractor:
         Pull values from {source}, convert and yield them
         """
         # zip together the data stream and the descriptors
-        for entry, value in zip(record.pyre_entries, source):
+        for field, value in zip(record.pyre_fields, source):
             # convert the value
-            value = entry.coerce(value)
+            value = field.coerce(value)
             # and make it available
             yield value
         # all done

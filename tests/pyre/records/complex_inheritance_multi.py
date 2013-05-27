@@ -39,7 +39,7 @@ def test():
     assert isinstance(item.description, pyre.records.field)
 
     assert identical(item.pyre_localEntries, (item.sku, item.description))
-    assert identical(item.pyre_entries, (item.sku, item.description))
+    assert identical(item.pyre_fields, (item.sku, item.description))
     assert identical(item.pyre_measures, (item.sku, item.description))
     assert identical(item.pyre_derivations, ())
 
@@ -50,7 +50,7 @@ def test():
     assert isinstance(production.cost, pyre.records.field)
 
     assert identical(production.pyre_localEntries, (production.cost,))
-    assert identical(production.pyre_entries, (production.cost,))
+    assert identical(production.pyre_fields, (production.cost,))
     assert identical(production.pyre_measures, (production.cost,))
     assert identical(production.pyre_derivations, ())
 
@@ -61,7 +61,7 @@ def test():
     assert isinstance(handling.margin, pyre.records.field)
 
     assert identical(handling.pyre_localEntries, (handling.overhead, handling.margin))
-    assert identical(handling.pyre_entries, (handling.overhead, handling.margin))
+    assert identical(handling.pyre_fields, (handling.overhead, handling.margin))
     assert identical(handling.pyre_measures, (handling.overhead, handling.margin))
     assert identical(handling.pyre_derivations, ())
 
@@ -77,7 +77,7 @@ def test():
     assert isinstance(pricing.price, pyre.records.derivation)
 
     assert identical(pricing.pyre_localEntries, (pricing.price,))
-    assert identical(pricing.pyre_entries, (
+    assert identical(pricing.pyre_fields, (
         pricing.overhead, pricing.margin,
         pricing.cost,
         pricing.sku, pricing.description,

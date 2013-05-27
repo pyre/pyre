@@ -38,7 +38,7 @@ def test():
         record.sku, record.description, record.cost, record.overhead, record.price)
 
 
-    assert identical(record.pyre_entries, record.pyre_localEntries)
+    assert identical(record.pyre_fields, record.pyre_localEntries)
     assert identical(record.pyre_measures, record.pyre_localEntries)
     assert identical(record.pyre_derivations, ())
 

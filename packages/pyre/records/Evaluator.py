@@ -10,7 +10,7 @@
 class Evaluator:
     """
     A strategy for pulling data from a stream, and performing evaluations and coercions as
-    indicated by the entry descriptors
+    indicated by the field descriptors
     """
 
 
@@ -20,16 +20,16 @@ class Evaluator:
         Pull values from {source}, perform the calculation encoded in the derivation expression
         graphs, walk values through coercions, and make the results available to the caller
         """
-        # in the presence of derivations, we must cache the values of entries that have been
+        # in the presence of derivations, we must cache the values of fields that have been
         # converted previously; set up a cache
         cache = {}
-        # go through the entries in {record}
-        for entry in record.pyre_entries:
-            # and ask it to dispatch to the appropriate entry handler, which will perform all
+        # go through the fields in {record}
+        for field in record.pyre_fields:
+            # and ask it to dispatch to the appropriate field handler, which will perform all
             # necessary evaluations and conversions
-            value = entry.identify(authority=self, cache=cache, source=source)
+            value = field.identify(authority=self, cache=cache, source=source)
             # update the cache (only for descriptors that actually appear in the record)
-            cache[entry] = value
+            cache[field] = value
             # make the value available
             yield value
         # all done

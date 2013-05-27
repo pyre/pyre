@@ -15,14 +15,14 @@ class Templater(AttributeClassifier):
     Metaclass that inspects record declarations and endows their instances with the necessary
     infrastructure to support
 
-    * named access of the entries in a record
+    * named access of the fields in a record
     * composition via inheritance
     * derivations, i.e. fields whose values depend on the values of other fields
     """
 
 
     # types: the descriptor categories
-    from . import entry as pyre_entry
+    from . import descriptor as pyre_field
     from . import measure as pyre_measure
     from . import derivation as pyre_derivation
     # my value accessor
@@ -46,13 +46,13 @@ class Templater(AttributeClassifier):
         # make a pile foe the meta-data descriptors
         localEntries = []
         # harvest them
-        for entryName, entry in cls.pyre_harvest(attributes, cls.pyre_entry):
+        for fieldName, field in cls.pyre_harvest(attributes, cls.pyre_field):
             # initialize them
-            entry.attach(name=entryName)
+            field.attach(name=fieldName)
             # and add them to the pile
-            localEntries.append(entry)
+            localEntries.append(field)
 
-        # build an attribute to hold the locally declared entries
+        # build an attribute to hold the locally declared fields
         attributes["pyre_localEntries"] = tuple(localEntries)
         # disable the wasteful {__dict__}
         if slots is not None: attributes['__slots__'] = slots
@@ -60,58 +60,58 @@ class Templater(AttributeClassifier):
         # build the class record
         record = super().__new__(cls, name, bases, attributes, **kwds)
 
-        # now that the class record is built, we can look for inherited entries as well; we
-        # traverse the {__mro__} in reverse order and place inherited entries ahead of local
+        # now that the class record is built, we can look for inherited fields as well; we
+        # traverse the {__mro__} in reverse order and place inherited fields ahead of local
         # ones; this corresponds to the intuitive layout that users expect. further,
-        # derivations are expressions involving any of the entries accessible at the point of
+        # derivations are expressions involving any of the fields accessible at the point of
         # their declaration, so all of them must have been populated already
 
         # initialize the three piles
-        entries = []
+        fields = []
         measures = []
         derivations = []
         # for each base class
         for base in reversed(record.__mro__):
             # skip the ones that are not records themselves
             if not isinstance(base, cls): continue
-            # get all of the locally declared record entries
-            for entry in base.pyre_localEntries:
+            # get all of the locally declared record fields
+            for field in base.pyre_localEntries:
                 # add this to the pile
-                entries.append(entry)
+                fields.append(field)
                 # if it is a measure
-                if cls.pyre_isMeasure(entry):
+                if cls.pyre_isMeasure(field):
                     # add it to the measure pile
-                    measures.append(entry)
+                    measures.append(field)
                 # if it is a derivation
-                elif cls.pyre_isDerivation(entry):
+                elif cls.pyre_isDerivation(field):
                     # add it to the pile of derivations
-                    derivations.append(entry)
+                    derivations.append(field)
                 # otherwise
                 else:
                     # we have a problem; get the journal
                     import journal
                     # and complain
                     raise journal.firewall('pyre.records').log(
-                        'unknown entry type: {}'.format(entry))
+                        'unknown field type: {}'.format(field))
 
         # attach them to the class record
-        record.pyre_entries = tuple(entries)
+        record.pyre_fields = tuple(fields)
         # filter the measures
         record.pyre_measures = tuple(measures)
         # and the derivations
         record.pyre_derivations = tuple(derivations)
         
-        # finally, some clients need a map from entries to their index in our underlying tuple
-        record.pyre_index = dict((entry, index) for index, entry in enumerate(entries))
+        # finally, some clients need a map from fields to their index in our underlying tuple
+        record.pyre_index = dict((field, index) for index, field in enumerate(fields))
 
         # show me
         # print("{}:".format(name))
-        # print("  entries: {}".format(tuple(entry.name for entry in record.pyre_entries)))
-        # print("  measures: {}".format(tuple(entry.name for entry in record.pyre_measures)))
-        # print("  derivations: {}".format(tuple(entry.name for entry in record.pyre_derivations)))
+        # print("  fields: {}".format(tuple(field.name for field in record.pyre_fields)))
+        # print("  measures: {}".format(tuple(field.name for field in record.pyre_measures)))
+        # print("  derivations: {}".format(tuple(field.name for field in record.pyre_derivations)))
         # print("  index:")
-        # for entry, index in record.pyre_index.items():
-            # print("    {.name} -> {}".format(entry, index))
+        # for field, index in record.pyre_index.items():
+            # print("    {.name} -> {}".format(field, index))
 
         # all done
         return record
@@ -123,8 +123,8 @@ class Templater(AttributeClassifier):
 
         Now that the class record is built and all the meta-data have been harvested, we can
         build the generators of my instances. The are two of them: one for immutable instances,
-        built using a named tuple whose entries are the actual values of the various entries;
-        and one for mutable instances, built from a named tuple whose entries are {pyre.calc}
+        built using a named tuple whose fields are the actual values of the various fields;
+        and one for mutable instances, built from a named tuple whose fields are {pyre.calc}
         nodes.
         """
         # chain up
@@ -132,10 +132,10 @@ class Templater(AttributeClassifier):
 
         # build the tuple attributes: start with the value accessors
         attributes = dict(
-            # map the name of the entry to an accessor
-            (entry.name, self.pyre_accessor(entry=entry, index=index))
-            # for each of my entries
-            for index, entry in enumerate(self.pyre_entries))
+            # map the name of the field to an accessor
+            (field.name, self.pyre_accessor(field=field, index=index))
+            # for each of my fields
+            for index, field in enumerate(self.pyre_fields))
 
         # build the helper classes that generate my instances
         mutable = type('mutable', (self.pyre_mutableTuple,), attributes)
@@ -162,21 +162,21 @@ class Templater(AttributeClassifier):
 
     # predicates
     @classmethod
-    def pyre_isMeasure(cls, entry):
+    def pyre_isMeasure(cls, field):
         """
-        Predicate that tests whether {entry} is a measure
+        Predicate that tests whether {field} is a measure
         """
         # easy...
-        return entry.category == 'variable'
+        return field.category == 'variable'
 
 
     @classmethod
-    def pyre_isDerivation(cls, entry):
+    def pyre_isDerivation(cls, field):
         """
-        Predicate that tests whether {entry} is a derivation
+        Predicate that tests whether {field} is a derivation
         """
         # easy...
-        return entry.category == 'operator'
+        return field.category == 'operator'
         
 
 # end of file

@@ -8,7 +8,7 @@
 
 
 """
-Exercise validators attached to entries of simple immutable records
+Exercise validators attached to fields of simple immutable records
 """
 
 

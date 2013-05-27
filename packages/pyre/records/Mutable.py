@@ -15,7 +15,7 @@ class Mutable(NamedTuple):
     """
     Storage for and access to the values of mutable record instances
 
-    This class assumes that its entries are {pyre.calc} nodes.
+    This class assumes that its items are {pyre.calc} nodes.
     """
 
 

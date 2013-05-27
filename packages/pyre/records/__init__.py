@@ -9,7 +9,7 @@
 from .. import descriptors
 
 # access to the descriptor parts
-entry = descriptors.stem
+descriptor = descriptors.stem
 measure = descriptors.descriptor
 derivation = descriptors.operator
 literal = descriptors.literal

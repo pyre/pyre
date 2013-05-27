@@ -23,9 +23,9 @@ class Calculator:
         Pull values from {source}, convert and yield them
         """
         # zip together the data stream and the descriptors
-        for entry, value in zip(record.pyre_entries, source):
+        for field, value in zip(record.pyre_fields, source):
             # build a node to hold it
-            node = self.variable(value=value, converter=entry.coerce)
+            node = self.variable(value=value, converter=field.coerce)
             # and make it available
             yield node
         # all done

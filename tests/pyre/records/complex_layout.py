@@ -27,7 +27,7 @@ def test():
     assert isinstance(item.cost, pyre.records.measure)
     assert isinstance(item.price, pyre.records.derivation)
 
-    assert identical(item.pyre_entries, (item.cost, item.price))
+    assert identical(item.pyre_fields, (item.cost, item.price))
     assert identical(item.pyre_measures, (item.cost,))
     assert identical(item.pyre_derivations, (item.price,))
 

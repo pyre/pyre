@@ -24,12 +24,12 @@ class Compiler:
         """
         # build a cache
         cache = {}
-        # go through the entries in {record}
-        for entry in record.pyre_entries:
+        # go through the fields in {record}
+        for field in record.pyre_fields:
             # ask each one to dispatch to the appropriate handler to build the node
-            node = entry.identify(authority=self, cache=cache, source=source)
+            node = field.identify(authority=self, cache=cache, source=source)
             # update the cache
-            cache[entry] = node
+            cache[field] = node
             # and make the node available
             yield node
         # all done

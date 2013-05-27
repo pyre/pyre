@@ -20,7 +20,7 @@ class Record(metaclass=Templater):
     required by the application.
 
     Records are similar to named tuples: the underlying storage mechanism is a tuple, and the
-    fields are descriptors that provide named access to the tuple entries. They are superior to
+    fields are descriptors that provide named access to the tuple items. They are superior to
     named tuples since they enable the data model designer to specify types and constraints
     that must be satisfied by the data, and automate the conversion process to a large degree.
 
@@ -55,11 +55,11 @@ class Record(metaclass=Templater):
 
 
     # public data; patched by the metaclass
-    pyre_localEntries = None # the tuple of locally declared record entries
+    pyre_localEntries = None # the tuple of locally declared record fields
 
-    pyre_entries = None # the tuple of all accessible entries, both local and inherited
-    pyre_measures = None # the tuple of all primary entries
-    pyre_derivations = None # the tuple of entries whose values are computed on the fly
+    pyre_fields = None # the tuple of all accessible fields, both local and inherited
+    pyre_measures = None # the tuple of all primary fields
+    pyre_derivations = None # the tuple of fields whose values are computed on the fly
 
 
     # interface
@@ -67,7 +67,7 @@ class Record(metaclass=Templater):
     def pyre_const(cls, data=None, **kwds):
         """
         Build an immutable record by extracting values from either {source} or {kwds}, walking them
-        through the conversion processes encoded in the associated entry descriptor and
+        through the conversion processes encoded in the associated field descriptor and
         building a tuple with these values
         """
         # build an instance of my immutable tuple and return it
@@ -84,7 +84,7 @@ class Record(metaclass=Templater):
         return cls.pyre_mutable(record=cls, data=data, **kwds)
 
 
-    # support for readers that want to match their headers to my entries
+    # support for readers that want to match their headers to my fields
     @classmethod
     def pyre_selectColumns(cls, headers):
         """
@@ -104,16 +104,16 @@ class Record(metaclass=Templater):
                 try:
                     # compute the column index and return it
                     yield headers[alias]
-                    # get the next entry
+                    # get the next field
                     break
                 except KeyError:
                     continue
-            # error: unable to find a source for this entry
+            # error: unable to find a source for this field
             else:
-                # if it is not an optional entry
+                # if it is not an optional field
                 if not measure.pyre_optional:
                     # complain
-                    msg = "unable to find a source for entry {!r}".format(entry.name)
+                    msg = "unable to find a source for field {!r}".format(field.name)
                     import journal
                     raise journal.error("pyre.records").log(msg)
         # all done

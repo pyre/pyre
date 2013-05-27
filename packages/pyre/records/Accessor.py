@@ -8,22 +8,22 @@
 
 class Accessor:
     """
-    The object responsible for managing access to record entries
+    The object responsible for managing access to record fields
     """
 
 
     # public data
     index = None # the index of my value in the data tuple
-    entry = None # the associated descriptor with the meta data
+    field = None # the associated descriptor with the meta data
 
 
     # meta-methods
-    def __init__(self, index, entry, **kwds):
+    def __init__(self, index, field, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my spot
         self.index = index
-        self.entry = entry
+        self.field = field
         # all done
         return
 
@@ -35,7 +35,7 @@ class Accessor:
         # if the target of this access is the class itself
         if record is None:
             # just return my meta-data
-            return self.entry
+            return self.field
 
         # otherwise, retrieve my item and return it
         return record[self.index]
@@ -45,7 +45,7 @@ class Accessor:
         """
         Entry modification
         """
-        # try to set the value of this entry; this will fail for const records
+        # try to set the value of this field; this will fail for const records
         record[self.index] = value
         # all done
         return
