@@ -118,11 +118,11 @@ def isMember(*choices):
     return Set(*choices)
 
 
-def isNegative(value=0):
+def isNegative():
     """
     Check that the given value is less than zero
     """
-    return isLess(value=value)
+    return isLess(value=0)
 
 
 def isNot(constraint):
@@ -133,11 +133,11 @@ def isNot(constraint):
     return Not(constraint)
 
 
-def isPositive(value=0):
+def isPositive():
     """
     Check that the given value is greater than or equal to zero
     """
-    return isGreaterEqual(value=value)
+    return isGreaterEqual(value=0)
 
 
 def isSubset(*, choices):
