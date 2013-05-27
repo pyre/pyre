@@ -6,14 +6,12 @@
 #
 
 
-# meta class
-from .Immutable import Immutable
-# superclass
-from .NamedTuple import NamedTuple
+# my metaclass
+from .Templater import Templater
 
 
 # declaration
-class Record(NamedTuple, metaclass=Immutable):
+class Record(metaclass=Templater):
     """
     The base class for representing data extracted from persistent stores.
 
@@ -46,69 +44,80 @@ class Record(NamedTuple, metaclass=Immutable):
       corresponding underlying tuple.
     """
 
- 
-    # interface
-    # tuple construction
-    @classmethod
-    def pyre_processFields(cls, raw, **kwds):
-        """
-        Form the tuple that holds my values by extracting information either from {raw} or
-        {kwds}, and walking the data through conversion, casting and validation.
 
-        In the absence of derivations, the data tuple can be constructed by simply asking each
-        field to consume one item from the raw input, convert it and place it in the record
-        tuple
-        """
-        # if I were given an explicit tuple, build an iterator over it
-        source = iter(raw) if raw is not None else (
-            # otherwise, build a generator that extracts values from {kwds}
-            kwds.pop(item.name, item.default) for item in cls.pyre_fields)
-        # build the data tuple and return it
-        return (item.coerce(value=next(source)) for item in cls.pyre_entries)
-
-            
-    @classmethod
-    def pyre_processFieldsAndDerivations(cls, raw, **kwds):
-        """
-        In the presence of derivations, things are a little more complicated: we must grant
-        derivations access to the fields they depend on. To avoid casting, converting and
-        validating the fields more than once, we maintain a cache with their values. An
-        important step is performed by the metaclass: scanning derivation expressions and
-        converting references to fields into field proxies
-        """
-        # if I were given an explicit tuple, build an iterator over it
-        source = iter(raw) if raw is not None else (
-            # otherwise, build a generator that extracts values from {kwds}
-            kwds.pop(item.name, item.default) for item in cls.pyre_fields)
-        # prepare my cache
-        cache = {}
-        # iterate over my items
-        for item in cls.pyre_entries:
-            # get the item to extract its value, either from the {cache} or the actual {source}
-            value = item.extract(stream=source, cache=cache)
-            # and yield the value
-            yield value
-        # all done
-        return
-
-
-    # fast but dangerous short-cut to record creation
-    @classmethod
-    def pyre_raw(cls, data):
-        """
-        Bypass casting, conversions and validations for those special clients that know their
-        data is good. Use with caution
-        """
-        return super().__new__(cls, data)
+    # types
+    # the tuples
+    from .Mutable import Mutable as pyre_mutableTuple
+    from .Immutable import Immutable as pyre_immutableTuple
+    # exceptions
+    from ..constraints.exceptions import ConstraintViolationError
     
 
-    # meta methods
-    def __new__(cls, raw=None, **kwds):
+
+    # public data; patched by the metaclass
+    pyre_localEntries = None # the tuple of locally declared record entries
+
+    pyre_entries = None # the tuple of all accessible entries, both local and inherited
+    pyre_measures = None # the tuple of all primary entries
+    pyre_derivations = None # the tuple of entries whose values are computed on the fly
+
+
+    # interface
+    @classmethod
+    def pyre_const(cls, data=None, **kwds):
         """
-        Initialize a record using either the pre-qualified tuple {raw}, or by extracting the
-        data from {kwds}
+        Build an immutable record by extracting values from either {source} or {kwds}, walking them
+        through the conversion processes encoded in the associated entry descriptor and
+        building a tuple with these values
         """
-        return super().__new__(cls, cls.pyre_processEntries(raw, **kwds))
+        # build an instance of my immutable tuple and return it
+        return cls.pyre_immutable(record=cls, data=data, **kwds)
+
+
+    # meta-methods
+    def __new__(cls, data=None, **kwds):
+        """
+        Initialize a mutable record by extracting values from either {data} or {kwds}, and building
+        {pyre.calc} nodes to hold the values
+        """
+        # build an instance of my mutable tuple and return it
+        return cls.pyre_mutable(record=cls, data=data, **kwds)
+
+
+    # support for readers that want to match their headers to my entries
+    @classmethod
+    def pyre_selectColumns(cls, headers):
+        """
+        Prepare a tuple of the column numbers needed to populate my instances, given a map
+        (column name) -> (column index).
+
+        This enables the managers of the various persistent stores to build record instances
+        from a subset of the information they have access to. It is also designed to perform
+        column name translations from whatever meta data is available in the store to the
+        canonical record field names
+        """
+        # iterate over my measures
+        for measure in cls.pyre_measures:
+            # and over its aliases
+            for alias in measure.aliases:
+                # if this alias appears in the headers
+                try:
+                    # compute the column index and return it
+                    yield headers[alias]
+                    # get the next entry
+                    break
+                except KeyError:
+                    continue
+            # error: unable to find a source for this entry
+            else:
+                # if it is not an optional entry
+                if not measure.pyre_optional:
+                    # complain
+                    msg = "unable to find a source for entry {!r}".format(entry.name)
+                    import journal
+                    raise journal.error("pyre.records").log(msg)
+        # all done
+        return
 
 
 # end of file 

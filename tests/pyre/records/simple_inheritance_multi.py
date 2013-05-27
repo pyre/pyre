@@ -15,20 +15,19 @@ Verify record building in the presence of multiple inheritance
 def test():
     import pyre.records
 
-    class item(pyre.records.dynamicrecord):
+    class item(pyre.records.record):
         """
         A sample record
         """
         sku = pyre.records.field()
         description = pyre.records.field()
 
-    class production(pyre.records.dynamicrecord):
+    class production(pyre.records.record):
         cost = pyre.records.field()
         overhead = pyre.records.field()
 
     class pricing(item, production):
-        price = production.cost + production.overhead
-
+        price = pyre.records.field()
 
     # explore the item record
     assert isinstance(item.sku, pyre.records.field)
@@ -36,7 +35,7 @@ def test():
 
     assert identical(item.pyre_localEntries, (item.sku, item.description))
     assert identical(item.pyre_entries, (item.sku, item.description))
-    assert identical(item.pyre_fields, (item.sku, item.description))
+    assert identical(item.pyre_measures, item.pyre_entries)
     assert identical(item.pyre_derivations, ())
 
     assert item.pyre_index[item.sku] == 0
@@ -48,7 +47,7 @@ def test():
 
     assert identical(production.pyre_localEntries, (production.cost, production.overhead))
     assert identical(production.pyre_entries, (production.cost, production.overhead))
-    assert identical(production.pyre_fields, (production.cost, production.overhead))
+    assert identical(production.pyre_measures, (production.cost, production.overhead))
     assert identical(production.pyre_derivations, ())
 
     assert production.pyre_index[production.cost] == 0
@@ -59,7 +58,7 @@ def test():
     assert isinstance(pricing.description, pyre.records.field)
     assert isinstance(pricing.cost, pyre.records.field)
     assert isinstance(pricing.overhead, pyre.records.field)
-    assert isinstance(pricing.price, pyre.records.derivation)
+    assert isinstance(pricing.price, pyre.records.field)
 
     assert identical(pricing.pyre_localEntries, (pricing.price,))
     assert identical(pricing.pyre_entries, (
@@ -67,9 +66,8 @@ def test():
         pricing.sku, pricing.description, 
         pricing.price, 
         ))
-    assert identical(pricing.pyre_fields, (
-        pricing.cost, pricing.overhead, pricing.sku, pricing.description))
-    assert identical(pricing.pyre_derivations, (pricing.price,))
+    assert identical(pricing.pyre_measures, pricing.pyre_entries)
+    assert identical(pricing.pyre_derivations, ())
 
     assert pricing.pyre_index[pricing.cost] == 0
     assert pricing.pyre_index[pricing.overhead] == 1

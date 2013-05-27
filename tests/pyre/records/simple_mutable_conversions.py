@@ -8,7 +8,7 @@
 
 
 """
-Exercise data conversions
+Exercise data conversions for simple mutable records
 """
 
 
@@ -27,7 +27,8 @@ def test():
         price = pyre.records.float()
 
     # build a record
-    r = record(sku="9-4013", description="organic kiwi", cost=".85", overhead=".15", price="1")
+    r = record(
+        sku="9-4013", description="organic kiwi", cost=".85", overhead=".15", price="1")
     # check
     assert r.sku == "9-4013"
     assert r.description == "organic kiwi"

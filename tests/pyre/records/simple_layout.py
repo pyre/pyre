@@ -8,7 +8,7 @@
 
 
 """
-Build a rudimentary table
+Build a simple record and verify its structure
 """
 
 
@@ -39,7 +39,7 @@ def test():
 
 
     assert identical(record.pyre_entries, record.pyre_localEntries)
-    assert identical(record.pyre_fields, record.pyre_localEntries)
+    assert identical(record.pyre_measures, record.pyre_localEntries)
     assert identical(record.pyre_derivations, ())
 
     assert record.pyre_index[record.sku] == 0

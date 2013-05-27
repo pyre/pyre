@@ -8,12 +8,13 @@
 
 
 """
-Build a rudimentary record
+Exercise validators attached to entries of simple immutable records
 """
 
 
 def test():
     import pyre.records
+    import pyre.constraints
 
     class interval(pyre.records.record):
         """
@@ -28,20 +29,23 @@ def test():
         right.validators = pyre.constraints.isGreater(value=0)
 
 
-    # try to build a record
+    # try to
     try:
-        interval(left=1, right=2)
+        # build an invalid record
+        interval.pyre_const(left=1, right=1)
         assert False
+    # it should fail
     except interval.ConstraintViolationError as error:
-        assert error.constraint == interval.left.validators[0]
+        # check
+        assert error.constraint is interval.left.validators[0]
         assert error.value == 1
         
     # and again
     try:
-        interval(left=-2, right=-1)
+        interval.pyre_const(left=-1, right=-1)
         assert False
     except interval.ConstraintViolationError as error:
-        assert error.constraint == interval.right.validators[0]
+        assert error.constraint is interval.right.validators[0]
         assert error.value == -1
         
     return interval

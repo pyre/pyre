@@ -7,41 +7,18 @@
 
 
 # superclass
-from .Templater import Templater
+from .NamedTuple import NamedTuple
 
 
 # declaration
-class Immutable(Templater):
+class Immutable(NamedTuple):
     """
-    Metaclass for records whose entries are immutable
+    Storage for and access to the values of immutable record instances
     """
 
 
-    # types
-    from .ConstAccessor import ConstAccessor as pyre_accessor
+    # private data
+    __slots__ = ()
 
 
-    # meta methods
-    def __new__(cls, name, bases, attributes, **kwds):
-        """
-        Scan through the class attributes and harvest the record entries; adjust the attribute
-        dictionary; build the class record for a new immutable {Record} class
-        """
-        # build the class record; disable the wasteful __dict__
-        record = super().__new__(cls, name, bases, attributes, slots=(), **kwds)
-
-        # inspect the record and install an appropriate data processor
-        # if there are derivations present in this record
-        if record.pyre_derivations:
-            # use the slower method that enables inter-column data access
-            record.pyre_processEntries = record.pyre_processFieldsAndDerivations
-        # otherwise
-        else:
-            # use fast processing
-            record.pyre_processEntries = record.pyre_processFields
-
-        # all done
-        return record
-
-
-# end of file 
+# end of file

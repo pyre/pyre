@@ -6,72 +6,35 @@
 #
 
 
+# declaration
 class NamedTuple(tuple):
     """
-    Base class for the two record types declared in this package.
-
-    This class is used to establish the common layout of records. Its instances are not
-    directly useful, so please do not instantiate.
+    Storage for and access to the values of record instances
     """
 
 
-    # exceptions
-    from ..constraints.exceptions import ConstraintViolationError
-    
-
-    # public data
-    pyre_entries = () # a tuple with all my record entries, regardless of type
-    pyre_fields = () # a tuple with all my fields
-    pyre_derivations = () # a tuple with all my derivations
-    pyre_localEntries = () # a tuple with all the record entries that show up in my declaration
-
-    pyre_index = None # the map of descriptors to indices
-    pyre_processEntries = None # the data processing algorithm
+    # public data; patched by my metaclass
+    pyre_extract = None # the strategy for extracting values and storing them
 
 
-    # interface
-    @classmethod
-    def pyre_selectColumns(cls, headers):
+    # meta-methods
+    def __new__(cls, record, data=None, **kwds):
         """
-        Prepare a tuple of the column numbers needed to populate my instances, given a map
-        (column name) -> (column index).
-
-        This enables the managers of the various persistent stores to build record instances
-        from a subset of the information they have access to. It is also designed to perform
-        column name translations from whatever meta data is available in the store to the
-        canonical record field names
+        Initialize a new record instance by extracting values from either {data} or {kwds}
         """
-        # iterate over my fields
-        for field in cls.pyre_fields:
-            # and over its aliases
-            for alias in field.aliases:
-                # if this alias appears in the headers
-                try:
-                    # compute the column index and return it
-                    yield headers[alias]
-                    # get the next field
-                    break
-                except KeyError:
-                    continue
-            # error: unable to find a source for this field
-            else:
-                if not field.pyre_optional:
-                    msg = "unable to find a source for field {!r}".format(field.name)
-                    import journal
-                    raise journal.error("pyre.records").log(msg)
-        # all done
-        return
+        # set up an iterable over {data} if available
+        source = iter(data) if data is not None else (
+            # otherwise, over {kwds}; only pull measures, not derivations
+            kwds.get(item.name, item.default) for item in record.pyre_measures
+            )
+        # extract the values
+        values = cls.pyre_extract(record=record, source=source)
+        # and invoke the tuple constructor; {pyre_isConst} is set to {True} by default
+        return super().__new__(cls, values)
+        
 
-
-    # fast but dangerous short-cut to record creation
-    @classmethod
-    def pyre_raw(cls, data):
-        """
-        Bypass casting, conversions and validations for those special clients that know their
-        data is good. Use with caution
-        """
-        raise NotImplementedError(
-            "class {.__name__!r} must implement 'pyre_raw'".format(cls))
-    
+    # private data
+    __slots__ = ()
+        
 
 # end of file 

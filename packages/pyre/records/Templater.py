@@ -6,11 +6,10 @@
 #
 
 
-# i am an attribute classifier
+# superclass
 from ..patterns.AttributeClassifier import AttributeClassifier
 
 
-# declaration
 class Templater(AttributeClassifier):
     """
     Metaclass that inspects record declarations and endows their instances with the necessary
@@ -21,105 +20,163 @@ class Templater(AttributeClassifier):
     * derivations, i.e. fields whose values depend on the values of other fields
     """
 
-    # Templater performs the following tasks
 
-    #     __new__: harvest entries, decorate them, remove them from the class attribute
-    #     dictionary, visit the mro to support inheritance, fill
-    #     {pyre_(entries,fields,derivations)}, and build the entry index (a map from the
-    #     descriptor to its position in the entry ordering)
+    # types: the descriptor categories
+    from . import entry as pyre_entry
+    from . import measure as pyre_measure
+    from . import derivation as pyre_derivation
+    # my value accessor
+    from .Accessor import Accessor as pyre_accessor
+    # the value extractors
+    from .Extractor import Extractor as pyre_extractor # simple immutable tuples
+    from .Evaluator import Evaluator as pyre_evaluator # complex immutable tuples
+    from .Calculator import Calculator as pyre_calculator # simple mutable tuples
+    from .Compiler import Compiler as pyre_compiler # complex mutable tuples
 
-    #    __init__: go through {pyre_entries} and attach attribute accessors that pull values
-    #    from the storage tuple
 
-
-    # types
-    from ..descriptors.Descriptor import Descriptor as descriptor
-
-
-    # meta methods
-    def __new__(cls, name, bases, attributes, *, slots=None, **kwds):
+    # meta-methods
+    def __new__(cls, name, bases, attributes, *, slots=(), **kwds):
         """
-        Scan through the class attributes and harvest the record entries; adjust the attribute
-        dictionary; build the class record for a new {Record} class
+        The builder of a new record class.
+
+        Scans through the attributes of the class record being built and harvests the meta-data
+        descriptors. These descriptors are removed for the attribute dictionary and replaced
+        later with accessors appropriate for each type of record.
         """
-        # initialize the local entry pile
+        # make a pile foe the meta-data descriptors
         localEntries = []
-        # harvest the entries
-        for entryName, entry in cls.pyre_harvest(attributes, cls.descriptor):
+        # harvest them
+        for entryName, entry in cls.pyre_harvest(attributes, cls.pyre_entry):
             # initialize them
             entry.attach(name=entryName)
             # and add them to the pile
             localEntries.append(entry)
 
-        # create and attribute to hold the locally declared records entries
+        # build an attribute to hold the locally declared entries
         attributes["pyre_localEntries"] = tuple(localEntries)
-
-        # remove the harvested attributes from the class dictionary; we will replace them with
-        # record accessors in __init__. this can't be done while harvesting since it modifies
-        # the attribute dictionary we are iterating over
-        for entry in localEntries: del attributes[entry.name]
-
-        # disable the wasteful __dict__
-        if slots is not None: attributes["__slots__"] = slots
+        # disable the wasteful {__dict__}
+        if slots is not None: attributes['__slots__'] = slots
 
         # build the class record
         record = super().__new__(cls, name, bases, attributes, **kwds)
 
-        # now that the class record is built, we can hunt down inherited entries
-        # prime the inherited pile
-        inheritedEntries = []
-        # traverse the mro in _reverse_ order
-        # for consistency, we place inherited entries ahead of local ones; derivations are
-        # expressions involving any of the entries accessible at the point of their
-        # declaration, so all of them must have been populated already
-        for base in reversed(record.__mro__[1:]):
-            # narrow down to my instances
-            if isinstance(base, cls):
-                # add entries from this ancestor
-                inheritedEntries.extend(base.pyre_localEntries)
+        # now that the class record is built, we can look for inherited entries as well; we
+        # traverse the {__mro__} in reverse order and place inherited entries ahead of local
+        # ones; this corresponds to the intuitive layout that users expect. further,
+        # derivations are expressions involving any of the entries accessible at the point of
+        # their declaration, so all of them must have been populated already
 
-        # build the tuple of all my entries
-        record.pyre_entries = tuple(inheritedEntries + localEntries)
-        # build the tuple of all my fields
-        record.pyre_fields = tuple(
-            entry for entry in record.pyre_entries if isinstance(entry, cls.descriptor.variable))
-        # build the tuple of all my derivations
-        record.pyre_derivations = tuple(
-            entry for entry in record.pyre_entries if isinstance(entry, cls.descriptor.operator))
+        # initialize the three piles
+        entries = []
+        measures = []
+        derivations = []
+        # for each base class
+        for base in reversed(record.__mro__):
+            # skip the ones that are not records themselves
+            if not isinstance(base, cls): continue
+            # get all of the locally declared record entries
+            for entry in base.pyre_localEntries:
+                # add this to the pile
+                entries.append(entry)
+                # if it is a measure
+                if cls.pyre_isMeasure(entry):
+                    # add it to the measure pile
+                    measures.append(entry)
+                # if it is a derivation
+                elif cls.pyre_isDerivation(entry):
+                    # add it to the pile of derivations
+                    derivations.append(entry)
+                # otherwise
+                else:
+                    # we have a problem; get the journal
+                    import journal
+                    # and complain
+                    raise journal.firewall('pyre.records').log(
+                        'unknown entry type: {}'.format(entry))
 
-        # build the map from entries to offsets
-        # initialize the entry index
-        subscripts = {}
-        # enumerate my entries
-        for index, entry in enumerate(record.pyre_entries):
-            # record the index of this entry
-            subscripts[entry] = index
-        # attach the subscript index
-        record.pyre_index = subscripts
+        # attach them to the class record
+        record.pyre_entries = tuple(entries)
+        # filter the measures
+        record.pyre_measures = tuple(measures)
+        # and the derivations
+        record.pyre_derivations = tuple(derivations)
+        
+        # finally, some clients need a map from entries to their index in our underlying tuple
+        record.pyre_index = dict((entry, index) for index, entry in enumerate(entries))
+
+        # show me
+        # print("{}:".format(name))
+        # print("  entries: {}".format(tuple(entry.name for entry in record.pyre_entries)))
+        # print("  measures: {}".format(tuple(entry.name for entry in record.pyre_measures)))
+        # print("  derivations: {}".format(tuple(entry.name for entry in record.pyre_derivations)))
+        # print("  index:")
+        # for entry, index in record.pyre_index.items():
+            # print("    {.name} -> {}".format(entry, index))
 
         # all done
         return record
 
 
-    def __init__(self, name, bases, attributes, **kwds):
+    def __init__(self, names, bases, attributes, **kwds):
         """
-        Decorate a newly minted record 
+        Decorate a newly minted record
 
-        Now that the class record is built, we iterate over all entries and build the accessors
-        that will convert named access through the descriptors into indexed access to the
-        underlying tuple. Each {Templater} subclass defines {pyre_accessor} to supply whatever
-        descriptor makes sense for the type of record being built
+        Now that the class record is built and all the meta-data have been harvested, we can
+        build the generators of my instances. The are two of them: one for immutable instances,
+        built using a named tuple whose entries are the actual values of the various entries;
+        and one for mutable instances, built from a named tuple whose entries are {pyre.calc}
+        nodes.
         """
-        # first, get my superclass to do its thing
-        super().__init__(name, bases, attributes, **kwds)
-        # enumerate my entries
-        for index, entry in enumerate(self.pyre_entries):
-            # create the data accessor 
-            accessor = self.pyre_accessor(entry=entry, index=index)
-            # and attach it
-            setattr(self, entry.name, accessor)
+        # chain up
+        super().__init__(names, bases, attributes, **kwds)
+
+        # build the tuple attributes: start with the value accessors
+        attributes = dict(
+            # map the name of the entry to an accessor
+            (entry.name, self.pyre_accessor(entry=entry, index=index))
+            # for each of my entries
+            for index, entry in enumerate(self.pyre_entries))
+
+        # build the helper classes that generate my instances
+        mutable = type('mutable', (self.pyre_mutableTuple,), attributes)
+        immutable = type('immutable', (self.pyre_immutableTuple,), attributes)
+
+        # if i have derivations
+        if self.pyre_derivations:
+            # attach the value extraction strategies that are aware of derivations
+            mutable.pyre_extract = self.pyre_compiler()
+            immutable.pyre_extract = self.pyre_evaluator()
+        # otherwise
+        else:
+            # attach the fast value extraction strategies
+            mutable.pyre_extract = self.pyre_calculator()
+            immutable.pyre_extract = self.pyre_extractor()
+
+        # and attach them
+        self.pyre_mutable = mutable
+        self.pyre_immutable = immutable
+
         # all done
         return
 
 
-# end of file 
+    # predicates
+    @classmethod
+    def pyre_isMeasure(cls, entry):
+        """
+        Predicate that tests whether {entry} is a measure
+        """
+        # easy...
+        return entry.category == 'variable'
+
+
+    @classmethod
+    def pyre_isDerivation(cls, entry):
+        """
+        Predicate that tests whether {entry} is a derivation
+        """
+        # easy...
+        return entry.category == 'operator'
+        
+
+# end of file

@@ -40,7 +40,7 @@ def test():
 
     assert identical(item.pyre_localEntries, (item.sku, item.description))
     assert identical(item.pyre_entries, (item.sku, item.description))
-    assert identical(item.pyre_fields, (item.sku, item.description))
+    assert identical(item.pyre_measures, (item.sku, item.description))
     assert identical(item.pyre_derivations, ())
 
     assert item.pyre_index[item.sku] == 0
@@ -51,7 +51,7 @@ def test():
 
     assert identical(production.pyre_localEntries, (production.cost,))
     assert identical(production.pyre_entries, (production.cost,))
-    assert identical(production.pyre_fields, (production.cost,))
+    assert identical(production.pyre_measures, (production.cost,))
     assert identical(production.pyre_derivations, ())
 
     assert production.pyre_index[production.cost] == 0
@@ -62,7 +62,7 @@ def test():
 
     assert identical(handling.pyre_localEntries, (handling.overhead, handling.margin))
     assert identical(handling.pyre_entries, (handling.overhead, handling.margin))
-    assert identical(handling.pyre_fields, (handling.overhead, handling.margin))
+    assert identical(handling.pyre_measures, (handling.overhead, handling.margin))
     assert identical(handling.pyre_derivations, ())
 
     assert handling.pyre_index[handling.overhead] == 0
@@ -83,7 +83,7 @@ def test():
         pricing.sku, pricing.description,
         pricing.price,
         ))
-    assert identical(pricing.pyre_fields, (
+    assert identical(pricing.pyre_measures, (
         pricing.overhead, pricing.margin,
         pricing.cost,
         pricing.sku, pricing.description,

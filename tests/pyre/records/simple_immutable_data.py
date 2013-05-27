@@ -8,7 +8,7 @@
 
 
 """
-Instantiate a record using the keyword form
+Instantiate a simple immutable record using the raw form
 """
 
 
@@ -27,7 +27,7 @@ def test():
 
 
     # build a record
-    r = record(sku="9-4013", description="organic kiwi", cost=.85, overhead=.15, price=1.0)
+    r = record.pyre_const(data=("9-4013", "organic kiwi", .85, .15, 1.0))
     # check
     assert r.sku == "9-4013"
     assert r.description == "organic kiwi"

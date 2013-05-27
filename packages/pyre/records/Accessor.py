@@ -8,39 +8,44 @@
 
 class Accessor:
     """
-    Descriptor that provides access to a record item
+    The object responsible for managing access to record entries
     """
 
 
     # public data
     index = None # the index of my value in the data tuple
-    entry = None # the entry with the meta data
+    entry = None # the associated descriptor with the meta data
 
 
-    # meta methods
+    # meta-methods
     def __init__(self, index, entry, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save my spot
         self.index = index
         self.entry = entry
+        # all done
         return
 
 
-    # descriptor interface
     def __get__(self, record, cls):
         """
-        Retrieve the value of my entry from {record}
+        Entry retrieval
         """
-        try:
-            return record[self.index]
-        except TypeError:
+        # if the target of this access is the class itself
+        if record is None:
+            # just return my meta-data
             return self.entry
+
+        # otherwise, retrieve my item and return it
+        return record[self.index]
 
 
     def __set__(self, record, value):
         """
-        Store {value} in my {record} entry
+        Entry modification
         """
-        # get the {record} to assign the value at the right spot
+        # try to set the value of this entry; this will fail for const records
         record[self.index] = value
         # all done
         return

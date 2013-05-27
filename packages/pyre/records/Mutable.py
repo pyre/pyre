@@ -7,32 +7,57 @@
 
 
 # superclass
-from .Templater import Templater
+from .NamedTuple import NamedTuple
 
 
 # declaration
-class Mutable(Templater):
+class Mutable(NamedTuple):
     """
-    Metaclass for records whose entries are mutable.
+    Storage for and access to the values of mutable record instances
 
-    Mutable records are implemented using tuples of {pyre.calc} nodes. As a result, the values
-    of fields may be modified after the original data ingestion, and all derivations are
-    updated dynamically.
+    This class assumes that its entries are {pyre.calc} nodes.
     """
 
 
-    # types
-    from .Accessor import Accessor as pyre_accessor
-
-
-    # meta methods
-    def __new__(cls, name, bases, attributes, **kwds):
+    # meta-methods
+    def __getitem__(self, index):
         """
-        Scan through the class attributes and harvest the record entries; adjust the attribute
-        dictionary; build the class record for a new {Record} class
+        Retrieve the item at {index} and return its value
         """
-        # disable the wasteful __dict__
-        return super().__new__(cls, name, bases, attributes, slots=(), **kwds)
+        # get the item
+        item = super().__getitem__(index)
+        # return the value
+        return item.value
 
+
+    def __setitem__(self, index, value):
+        """
+        Set the item at {index} to the indicated value
+        """
+        # get the node
+        node = super().__getitem__(index)
+        # and set its value
+        node.value = value
+        # all done
+        return
+        
+        
+    def __iter__(self):
+        """
+        Build an iterator over my values
+        """
+        # ask my tuple for an iterator
+        iterator = super().__iter__()
+        # for each item
+        for item in iterator:
+            # return its value
+            yield item.value
+        # all done
+        return
+
+
+    # private data
+    __slots__ = ()
+        
 
 # end of file 

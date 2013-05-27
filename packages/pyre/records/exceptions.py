@@ -11,15 +11,18 @@ Definitions for all the exceptions raised by this package
 """
 
 
+# superclass
 from ..framework.exceptions import FrameworkError
 
 
+# the local base
 class RecordError(FrameworkError):
     """
     The base class of all exceptions raised by this package
     """
 
 
+# something's wrong with an input source
 class SourceSpecificationError(RecordError):
     """
     A method that reads records from external input sources was given an invalid input

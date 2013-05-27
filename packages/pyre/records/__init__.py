@@ -5,24 +5,43 @@
 # (c) 1998-2013 all rights reserved
 #
 
+# externals
+from .. import descriptors
 
-# data records
-from .Record import Record as record
-from .DynamicRecord import DynamicRecord as dynamicrecord
+# access to the descriptor parts
+entry = descriptors.stem
+measure = descriptors.descriptor
+derivation = descriptors.operator
+literal = descriptors.literal
 
-from ..descriptors.Descriptor import Descriptor as entry
-field = entry.variable
-derivation = entry.operator
-
-
-# persistence
-from .CSV import CSV as csv
-
-
-# access to the type specifiers
-from .. import schemata
 # access to the typed field declarators
-from ..descriptors import bool, dimensional, decimal, float, inet, int, str, uri
+field = descriptors.identity # the local name of the untyped descriptor
+# basic
+bool = descriptors.bool
+decimal = descriptors.decimal
+float = descriptors.float
+inet = descriptors.inet
+int = descriptors.int
+identity = descriptors.identity
+str = descriptors.str
+# complex
+date = descriptors.date
+dimensional = descriptors.dimensional
+time = descriptors.time
+uri = descriptors.uri
+
+# the decorators
+converter = descriptors.converter
+normalizer = descriptors.normalizer
+validator = descriptors.validator
+
+
+# access to the record class
+from .Record import Record as record
+
+
+# record extraction from formatted streams
+from .CSV import CSV as csv
 
 
 # end of file 

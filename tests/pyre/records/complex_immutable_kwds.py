@@ -8,19 +8,30 @@
 
 
 """
-Build a rudimentary data record
+Instantiate a complex immutable record using the keyword form
 """
 
 
 def test():
     import pyre.records
 
-    class record(pyre.records.dynamicrecord):
+    class record(pyre.records.record):
         """
         A sample record
         """
+        sku = pyre.records.field()
+        cost = pyre.records.field()
+        price = 1.25 * cost + .25
 
-    return record
+
+    # build a record
+    r = record.pyre_const(sku="9-4013", cost=1.0)
+    # check
+    assert r.sku == "9-4013"
+    assert r.cost == 1.0
+    assert r.price == 1.25 * r.cost + .25
+
+    return r
 
 
 # main

@@ -24,21 +24,23 @@ def test():
         overhead = pyre.records.float()
         shipping = pyre.records.float()
         margin = pyre.records.float()
+        # a derived quantity
+        price = production*(1 + overhead/100 + margin/100) + shipping
 
     # build the target tuple
     target = [
-        ("4000", "tomatoes", 2.95, 5, .2, 50),
-        ("4001", "peppers", 0.35, 15, .1, 25),
-        ("4002", "grapes", 1.65, 15, .15, 15),
-        ("4003", "kiwis", 0.95, 7, .15, 75),
-        ("4004", "lemons", 0.50, 4, .25, 50),
-        ("4005", "oranges", 0.50, 4, .25, 50),
+        ("4000", "tomatoes", 2.95, 5, .2, 50, 2.95*(1+.05+.5)+.2),
+        ("4001", "peppers", 0.35, 15, .1, 25, .35*(1+.15+.25)+.1),
+        ("4002", "grapes", 1.65, 15, .15, 15, 1.65*(1+.15+.15)+.15),
+        ("4003", "kiwis", 0.95, 7, .15, 75, .95*(1+.07+.75)+.15),
+        ("4004", "lemons", 0.50, 4, .25, 50, .5*(1+.04+.5)+.25),
+        ("4005", "oranges", 0.50, 4, .25, 50, .5*(1+.04+.5)+.25),
         ]
 
     # create the reader
     csv = pyre.records.csv()
     # read the csv data
-    source = csv.read(layout=item, uri="vegetables.csv")
+    source = csv.immutable(layout=item, uri="vegetables.csv")
     # check
     for given, loaded in zip(target, source):
         assert given == loaded

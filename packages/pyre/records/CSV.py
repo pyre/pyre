@@ -16,6 +16,32 @@ class CSV:
     """
 
 
+    # record factories
+    def immutable(self, layout, uri=None, stream=None, **kwds):
+        """
+        Build mutable record instances from a csv formatted source
+        """
+        # for each record in the input stream
+        for data in self.read(layout=layout, uri=uri, stream=stream, **kwds):
+            # get the immutable record constructor to do its thing
+            yield layout.pyre_const(data=data)
+        # all done
+        return
+
+
+    def mutable(self, layout, uri=None, stream=None, **kwds):
+        """
+        Build mutable record instances from a csv formatted source
+        """
+        # for each record in the input stream
+        for data in self.read(layout=layout, uri=uri, stream=stream, **kwds):
+            # get the mutable record constructor to do its thing
+            yield layout(data=data)
+        # all done
+        return
+
+
+    # support
     def read(self, layout, uri=None, stream=None, **kwds):
         """
         Read lines from a csv formatted input source
@@ -46,10 +72,8 @@ class CSV:
         columns = tuple(layout.pyre_selectColumns(headers=index))
         # start reading lines from the input source
         for row in reader:
-            # assemble the requested data tuple
-            data = (row[column] for column in columns)
-            # build a record out of it and yield it
-            yield layout(raw=data)
+            # assemble the requested data tuple and yield it
+            yield (row[column] for column in columns)
         # all done
         return
 
