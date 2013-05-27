@@ -7,7 +7,7 @@
 
 PROJECT = pyre
 PACKAGE = parsing
-PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
+PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------
