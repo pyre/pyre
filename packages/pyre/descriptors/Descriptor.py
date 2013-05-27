@@ -52,21 +52,37 @@ class Descriptor(algebraic.AbstractNode,
         return self
 
 
-
 # variables
 class descriptor(Typed, Public, Default, algebraic.Variable, Descriptor.leaf, Descriptor):
     """Concrete class for representing fields"""
+
+    # support for graph traversals
+    def identify(self, authority, **kwds):
+        """Let {authority} know I am a descriptor"""
+        return authority.onDescriptor(descriptor=self, **kwds)
+
 
 # representations of the various operations among descriptors
 class operator(Typed, Public, algebraic.Operator, Descriptor.composite, Descriptor):
     """Concrete class for representing derivations"""
 
+    # support for graph traversals
+    def identify(self, authority, **kwds):
+        """Let {authority} know I am an operator"""
+        return authority.onOperator(descriptor=self, **kwds)
+
+
 # literals, to close the algebra
 class literal(algebraic.Const, algebraic.Literal, Descriptor):
     """Concrete class for representing foreign values"""
 
+    # support for graph traversals
+    def identify(self, authority, **kwds):
+        """Let {authority} know I am a literal"""
+        return authority.onLiteral(descriptor=self, **kwds)
 
-# patch entry
+
+# patch the base class
 Descriptor.literal = literal
 Descriptor.variable = descriptor
 Descriptor.operator = operator
