@@ -27,7 +27,10 @@ def mix(schema, descriptor=descriptor):
 # get the schemata
 from .. import schemata
 
-# build the typed descriptors; first the simple ones
+# build the typed descriptors; {descriptor} must show up before the schema, otherwise
+# conversions, normalizations and validations don't happen
+
+# first the simple ones
 class bool(descriptor, schemata.bool): pass
 class decimal(descriptor, schemata.decimal): pass
 class float(descriptor, schemata.float): pass
