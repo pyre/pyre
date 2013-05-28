@@ -19,11 +19,11 @@ def test():
         """
         A sample record
         """
-        sku = pyre.records.field()
-        description = pyre.records.field()
-        cost = pyre.records.field()
-        overhead = pyre.records.field()
-        price = pyre.records.field()
+        sku = pyre.records.measure()
+        description = pyre.records.measure()
+        cost = pyre.records.measure()
+        overhead = pyre.records.measure()
+        price = pyre.records.measure()
 
 
     # build a record

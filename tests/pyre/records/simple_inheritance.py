@@ -19,18 +19,18 @@ def test():
         """
         A sample record
         """
-        sku = pyre.records.field()
-        description = pyre.records.field()
+        sku = pyre.records.measure()
+        description = pyre.records.measure()
 
     class pricing(item):
-        cost = pyre.records.field()
-        overhead = pyre.records.field()
-        price = pyre.records.field()
+        cost = pyre.records.measure()
+        overhead = pyre.records.measure()
+        price = pyre.records.measure()
 
 
     # explore the base
-    assert isinstance(item.sku, pyre.records.field)
-    assert isinstance(item.description, pyre.records.field)
+    assert isinstance(item.sku, pyre.records.measure)
+    assert isinstance(item.description, pyre.records.measure)
 
     assert identical(item.pyre_localFields, (item.sku, item.description))
     assert identical(item.pyre_fields, (item.sku, item.description))
@@ -41,11 +41,11 @@ def test():
     assert item.pyre_index[item.description] == 1
 
     # explore the derived class
-    assert isinstance(pricing.sku, pyre.records.field)
-    assert isinstance(pricing.description, pyre.records.field)
-    assert isinstance(pricing.cost, pyre.records.field)
-    assert isinstance(pricing.overhead, pyre.records.field)
-    assert isinstance(pricing.price, pyre.records.field)
+    assert isinstance(pricing.sku, pyre.records.measure)
+    assert isinstance(pricing.description, pyre.records.measure)
+    assert isinstance(pricing.cost, pyre.records.measure)
+    assert isinstance(pricing.overhead, pyre.records.measure)
+    assert isinstance(pricing.price, pyre.records.measure)
 
     assert identical(pricing.pyre_localFields, (pricing.cost, pricing.overhead, pricing.price))
     assert identical(

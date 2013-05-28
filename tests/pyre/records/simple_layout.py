@@ -20,19 +20,19 @@ def test():
         """
         A sample record
         """
-        sku = pyre.records.field()
-        description = pyre.records.field()
-        cost = pyre.records.field()
-        overhead = pyre.records.field()
-        price = pyre.records.field()
+        sku = pyre.records.measure()
+        description = pyre.records.measure()
+        cost = pyre.records.measure()
+        overhead = pyre.records.measure()
+        price = pyre.records.measure()
 
 
     # explore the record class
-    assert isinstance(record.sku, pyre.records.field)
-    assert isinstance(record.description, pyre.records.field)
-    assert isinstance(record.cost, pyre.records.field)
-    assert isinstance(record.overhead, pyre.records.field)
-    assert isinstance(record.price, pyre.records.field)
+    assert isinstance(record.sku, pyre.records.measure)
+    assert isinstance(record.description, pyre.records.measure)
+    assert isinstance(record.cost, pyre.records.measure)
+    assert isinstance(record.overhead, pyre.records.measure)
+    assert isinstance(record.price, pyre.records.measure)
 
     assert record.pyre_localFields == (
         record.sku, record.description, record.cost, record.overhead, record.price)

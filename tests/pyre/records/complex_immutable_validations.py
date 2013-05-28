@@ -20,7 +20,7 @@ def test():
         """
         A sample record
         """
-        sku = pyre.records.field()
+        sku = pyre.records.str()
         cost = pyre.records.float()
 
         price = -1.25 * cost

@@ -9,13 +9,12 @@
 from .. import descriptors
 
 # access to the descriptor parts
-descriptor = descriptors.stem
+field = descriptors.stem
 measure = descriptors.descriptor
 derivation = descriptors.operator
 literal = descriptors.literal
 
 # access to the typed field declarators
-field = descriptors.identity # the local name of the untyped descriptor
 # basic
 bool = descriptors.bool
 decimal = descriptors.decimal
@@ -38,8 +37,6 @@ validator = descriptors.validator
 
 # access to the record class
 from .Record import Record as record
-
-
 # record extraction from formatted streams
 from .CSV import CSV as csv
 

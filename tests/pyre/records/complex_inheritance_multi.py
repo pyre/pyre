@@ -20,23 +20,23 @@ def test():
         """
         A sample record
         """
-        sku = pyre.records.field()
-        description = pyre.records.field()
+        sku = pyre.records.measure()
+        description = pyre.records.measure()
 
     class production(pyre.records.record):
-        cost = pyre.records.field()
+        cost = pyre.records.measure()
 
     class handling(pyre.records.record):
-        overhead = pyre.records.field()
-        margin = pyre.records.field()
+        overhead = pyre.records.measure()
+        margin = pyre.records.measure()
 
     class pricing(item, production, handling):
         price = production.cost * (1 + handling.overhead/100 + handling.margin/100)
 
 
     # explore the item record
-    assert isinstance(item.sku, pyre.records.field)
-    assert isinstance(item.description, pyre.records.field)
+    assert isinstance(item.sku, pyre.records.measure)
+    assert isinstance(item.description, pyre.records.measure)
 
     assert identical(item.pyre_localFields, (item.sku, item.description))
     assert identical(item.pyre_fields, (item.sku, item.description))
@@ -47,7 +47,7 @@ def test():
     assert item.pyre_index[item.description] == 1
 
     # explore the production record
-    assert isinstance(production.cost, pyre.records.field)
+    assert isinstance(production.cost, pyre.records.measure)
 
     assert identical(production.pyre_localFields, (production.cost,))
     assert identical(production.pyre_fields, (production.cost,))
@@ -57,8 +57,8 @@ def test():
     assert production.pyre_index[production.cost] == 0
 
     # explore the handling record
-    assert isinstance(handling.overhead, pyre.records.field)
-    assert isinstance(handling.margin, pyre.records.field)
+    assert isinstance(handling.overhead, pyre.records.measure)
+    assert isinstance(handling.margin, pyre.records.measure)
 
     assert identical(handling.pyre_localFields, (handling.overhead, handling.margin))
     assert identical(handling.pyre_fields, (handling.overhead, handling.margin))
@@ -69,11 +69,11 @@ def test():
     assert handling.pyre_index[handling.margin] == 1
 
     # explore the derived class
-    assert isinstance(pricing.sku, pyre.records.field)
-    assert isinstance(pricing.description, pyre.records.field)
-    assert isinstance(pricing.cost, pyre.records.field)
-    assert isinstance(pricing.overhead, pyre.records.field)
-    assert isinstance(pricing.margin, pyre.records.field)
+    assert isinstance(pricing.sku, pyre.records.measure)
+    assert isinstance(pricing.description, pyre.records.measure)
+    assert isinstance(pricing.cost, pyre.records.measure)
+    assert isinstance(pricing.overhead, pyre.records.measure)
+    assert isinstance(pricing.margin, pyre.records.measure)
     assert isinstance(pricing.price, pyre.records.derivation)
 
     assert identical(pricing.pyre_localFields, (pricing.price,))

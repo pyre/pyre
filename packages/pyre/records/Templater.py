@@ -22,9 +22,10 @@ class Templater(AttributeClassifier):
 
 
     # types: the descriptor categories
-    from . import descriptor as pyre_field
+    from . import field as pyre_field
     from . import measure as pyre_measure
     from . import derivation as pyre_derivation
+    from . import literal as pyre_literal
     # my value accessor
     from .Accessor import Accessor as pyre_accessor
     # the value extractors
