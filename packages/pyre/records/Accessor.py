@@ -6,28 +6,22 @@
 #
 
 
-class Accessor:
-    """
-    The object responsible for managing access to record fields
-    """
+# superclass
+from .Selector import Selector
 
 
-    # public data
-    index = None # the index of my value in the data tuple
-    field = None # the associated descriptor with the meta data
+class Accessor(Selector):
+    """
+    The object responsible for providing named access to field values
+
+    Accessors connect the name of a field to its value in the underlying tuple by keeping track
+    of the index of their column. This information is available when the record class is
+    formed: accessors are built and attached to the tuple generators by {Templater}, the
+    {Record} metaclass
+    """
 
 
     # meta-methods
-    def __init__(self, index, field, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save my spot
-        self.index = index
-        self.field = field
-        # all done
-        return
-
-
     def __get__(self, record, cls):
         """
         Field retrieval

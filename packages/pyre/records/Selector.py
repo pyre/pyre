@@ -8,7 +8,7 @@
 
 class Selector:
     """
-    The object responsible for managing access to field descriptors
+    The base class for objects responsible for providing named access to field descriptors
     """
 
 
@@ -35,7 +35,7 @@ class Selector:
         # if the target of this access is the class itself, just return my meta-data
         if record is None: return self.field
         # otherwise, complain
-        raise NotImplementedError('record selectors do not support read access to instances')
+        raise NotImplementedError('field selectors do not support read access to instances')
 
 
     def __set__(self, record, value):
@@ -43,7 +43,7 @@ class Selector:
         Field modification
         """
         # complain
-        raise NotImplementedError('record selectors do not support write access')
+        raise NotImplementedError('field selectors do not support write access')
 
 
 # end of file 

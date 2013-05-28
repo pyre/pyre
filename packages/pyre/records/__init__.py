@@ -35,10 +35,13 @@ normalizer = descriptors.normalizer
 validator = descriptors.validator
 
 
+# the base class for field selectors
+from .Selector import Selector as selector
 # the record metaclass
 from .Templater import Templater as templater
 # access to the record class
 from .Record import Record as record
+
 # record extraction from formatted streams
 from .CSV import CSV as csv
 
