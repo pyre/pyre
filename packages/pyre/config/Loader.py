@@ -75,7 +75,7 @@ class Loader:
         # now, for my next trick: attempt to interpret the symbol itself as a shelf
         try:
             # load it
-            shelf = cls.load(executive=executive, uri=cls.uri.coerce(symbol))
+            shelf = cls.load(executive=executive, uri=cls.uri().coerce(symbol))
         # if anything goes wrong
         except cls.LoadingError:
             # just ignore it

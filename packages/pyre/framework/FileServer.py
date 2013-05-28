@@ -54,7 +54,7 @@ class FileServer(Filesystem):
         Convert {uri} into an input stream
         """
         # make sure {uri} is a {schemata.uri} instance
-        uri = schemata.uri.coerce(uri)
+        uri = schemata.uri().coerce(uri)
         # get the {uri} scheme
         scheme = uri.scheme
 

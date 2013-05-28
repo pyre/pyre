@@ -33,7 +33,7 @@ class Linker:
         Load the shelf specified by {uri}
         """
         # coerce the uri
-        uri = self.uri.coerce(uri)
+        uri = self.uri().coerce(uri)
         # get the codec
         codec = self.codecs[uri.scheme]
         # get it load the shelf and return it

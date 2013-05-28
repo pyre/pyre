@@ -60,7 +60,7 @@ class Executive:
         with the given {priority}.
         """
         # parse the {uri}
-        uri = self.uri.coerce(uri)
+        uri = self.uri().coerce(uri)
         # attempt to
         try:
             # ask the file server for the input stream
@@ -173,7 +173,7 @@ class Executive:
                 return box
         """
         # force a uri
-        uri = self.uri.coerce(uri)
+        uri = self.uri().coerce(uri)
         # grab my nameserver
         nameserver = self.nameserver
 

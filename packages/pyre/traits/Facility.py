@@ -97,7 +97,7 @@ class Facility(Slotted):
         if not isinstance(value, str): return
 
         # otherwise, convert it to a uri
-        uri = self.uri.coerce(value)
+        uri = self.uri().coerce(value)
         # extract the fragment, which we use as the instance name; it's ok if it's {None}
         instanceName = uri.fragment
         # extract the address, which we use as the component specification; ok if it's {None}
