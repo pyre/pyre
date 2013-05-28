@@ -124,7 +124,7 @@ class Templater(AttributeClassifier):
         return record
 
 
-    def __init__(self, names, bases, attributes, **kwds):
+    def __init__(self, name, bases, attributes, **kwds):
         """
         Decorate a newly minted record
 
@@ -135,10 +135,10 @@ class Templater(AttributeClassifier):
         nodes.
         """
         # chain up
-        super().__init__(names, bases, attributes, **kwds)
+        super().__init__(name, bases, attributes, **kwds)
 
         # add selectors for all my fields we removed in {__new__}
-        for index, field in enumerate(self.pyre_localFields):
+        for index, field in enumerate(self.pyre_fields):
             # build a selector
             selector = self.pyre_selector(field=field, index=index)
             # attach it
