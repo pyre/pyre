@@ -39,7 +39,7 @@ class Templater(AttributeClassifier):
 
 
     # meta-methods
-    def __new__(cls, name, bases, attributes, *, slots=(), **kwds):
+    def __new__(cls, name, bases, attributes, **kwds):
         """
         The builder of a new record class.
 
@@ -58,8 +58,6 @@ class Templater(AttributeClassifier):
 
         # build an attribute to hold the locally declared fields
         attributes["pyre_localFields"] = tuple(localFields)
-        # disable the wasteful {__dict__}
-        if slots is not None: attributes['__slots__'] = slots
 
         # build the class record
         record = super().__new__(cls, name, bases, attributes, **kwds)
