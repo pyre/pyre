@@ -64,7 +64,7 @@ def test():
 
     # now instantiate one
     cost = 1.0
-    p = pricing(sku="4013", description="kiwi", cost=cost)
+    p = pricing.pyre_mutable(sku="4013", description="kiwi", cost=cost)
     # check
     assert p.sku == "4013"
     assert p.description == "kiwi"

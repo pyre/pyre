@@ -30,7 +30,7 @@ def test():
     # attempt to
     try:
         # build an invalid record
-        record.pyre_const(data=("9-4013", "1.0"))
+        record.pyre_immutable(data=("9-4013", "1.0"))
         assert False
     # it should fail 
     except record.ConstraintViolationError as error:

@@ -26,6 +26,9 @@ class Templater(AttributeClassifier):
     from . import measure as pyre_measure
     from . import derivation as pyre_derivation
     from . import literal as pyre_literal
+    # the tuples
+    from .Mutable import Mutable as pyre_mutableTupleType
+    from .Immutable import Immutable as pyre_immutableTupleType
     # my value accessor
     from .Accessor import Accessor as pyre_accessor
     # the value extractors
@@ -139,8 +142,8 @@ class Templater(AttributeClassifier):
             for index, field in enumerate(self.pyre_fields))
 
         # build the helper classes that generate my instances
-        mutable = type('mutable', (self.pyre_mutableTuple,), attributes)
-        immutable = type('immutable', (self.pyre_immutableTuple,), attributes)
+        mutable = type('mutable', (self.pyre_mutableTupleType,), attributes)
+        immutable = type('immutable', (self.pyre_immutableTupleType,), attributes)
 
         # if i have derivations
         if self.pyre_derivations:
@@ -154,8 +157,8 @@ class Templater(AttributeClassifier):
             immutable.pyre_extract = self.pyre_extractor()
 
         # and attach them
-        self.pyre_mutable = mutable
-        self.pyre_immutable = immutable
+        self.pyre_mutableTuple = mutable
+        self.pyre_immutableTuple = immutable
 
         # all done
         return

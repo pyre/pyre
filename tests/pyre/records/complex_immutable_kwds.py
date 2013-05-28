@@ -25,7 +25,7 @@ def test():
 
 
     # build a record
-    r = record.pyre_const(sku="9-4013", cost=1.0)
+    r = record.pyre_immutable(sku="9-4013", cost=1.0)
     # check
     assert r.sku == "9-4013"
     assert r.cost == 1.0

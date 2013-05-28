@@ -101,7 +101,8 @@ def test():
     cost = 1.0
     overhead = 20
     margin = 50
-    p = pricing(sku="4013", description="kiwi", cost=cost, overhead=overhead, margin=margin)
+    p = pricing.pyre_mutable(
+        sku="4013", description="kiwi", cost=cost, overhead=overhead, margin=margin)
     # check
     assert p.sku == "4013"
     assert p.description == "kiwi"

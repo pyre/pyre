@@ -27,7 +27,7 @@ def test():
 
 
     # build a record
-    r = record.pyre_const(
+    r = record.pyre_immutable(
         sku="9-4013", description="organic kiwi", cost=.85, overhead=.15, price=1.0)
 
     # check

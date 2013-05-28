@@ -27,7 +27,7 @@ def test():
         price = pyre.records.float()
 
     # build a record
-    r = record(
+    r = record.pyre_mutable(
         sku="9-4013", description="organic kiwi", cost=".85", overhead=".15", price="1")
     # check
     assert r.sku == "9-4013"

@@ -30,7 +30,7 @@ def test():
 
 
     # build an invalid record; construction should succeed, access should fail
-    invalid = interval(left=1, right=-1)
+    invalid = interval.pyre_mutable(left=1, right=-1)
 
     # try to access the fields
     try:

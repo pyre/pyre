@@ -32,7 +32,7 @@ def test():
     # try to
     try:
         # build an invalid record
-        interval.pyre_const(left=1, right=1)
+        interval.pyre_immutable(left=1, right=1)
         assert False
     # it should fail
     except interval.ConstraintViolationError as error:
@@ -42,7 +42,7 @@ def test():
         
     # and again
     try:
-        interval.pyre_const(left=-1, right=-1)
+        interval.pyre_immutable(left=-1, right=-1)
         assert False
     except interval.ConstraintViolationError as error:
         assert error.constraint is interval.right.validators[0]

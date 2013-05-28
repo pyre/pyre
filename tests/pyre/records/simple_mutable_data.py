@@ -25,7 +25,7 @@ def test():
 
 
     # build a record
-    r = record(data=("9-4013", "organic kiwi", .85))
+    r = record.pyre_mutable(data=("9-4013", "organic kiwi", .85))
     # check
     assert r.sku == "9-4013"
     assert r.description == "organic kiwi"

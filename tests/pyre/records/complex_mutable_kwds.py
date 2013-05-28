@@ -25,7 +25,7 @@ def test():
 
 
     # build a record
-    r = record(sku="9-4013", cost=1.0)
+    r = record.pyre_mutable(sku="9-4013", cost=1.0)
     # check
     assert r.sku == "9-4013"
     assert r.cost == 1.0

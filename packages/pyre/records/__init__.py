@@ -35,6 +35,8 @@ normalizer = descriptors.normalizer
 validator = descriptors.validator
 
 
+# the record metaclass
+from .Templater import Templater as templater
 # access to the record class
 from .Record import Record as record
 # record extraction from formatted streams

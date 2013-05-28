@@ -24,7 +24,7 @@ class CSV:
         # for each record in the input stream
         for data in self.read(layout=layout, uri=uri, stream=stream, **kwds):
             # get the immutable record constructor to do its thing
-            yield layout.pyre_const(data=data)
+            yield layout.pyre_immutable(data=data)
         # all done
         return
 
@@ -36,7 +36,7 @@ class CSV:
         # for each record in the input stream
         for data in self.read(layout=layout, uri=uri, stream=stream, **kwds):
             # get the mutable record constructor to do its thing
-            yield layout(data=data)
+            yield layout.pyre_mutable(data=data)
         # all done
         return
 

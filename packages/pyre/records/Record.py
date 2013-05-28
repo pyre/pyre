@@ -19,6 +19,8 @@ class Record(metaclass=Templater):
     between the representation used by the persistent store and the native python object
     required by the application.
 
+    
+
     Records are similar to named tuples: the underlying storage mechanism is a tuple, and the
     fields are descriptors that provide named access to the tuple items. They are superior to
     named tuples since they enable the data model designer to specify types and constraints
@@ -46,13 +48,9 @@ class Record(metaclass=Templater):
 
 
     # types
-    # the tuples
-    from .Mutable import Mutable as pyre_mutableTuple
-    from .Immutable import Immutable as pyre_immutableTuple
     # exceptions
     from ..constraints.exceptions import ConstraintViolationError
     
-
     # public data; patched by the metaclass
     pyre_localFields = None # the tuple of locally declared record fields
     # the full piles that include inherited entries
@@ -61,26 +59,23 @@ class Record(metaclass=Templater):
     pyre_derivations = None # the tuple of fields whose values are computed on the fly
 
 
-    # interface
+    # interface; patched by the metaclass
     @classmethod
-    def pyre_const(cls, data=None, **kwds):
+    def pyre_immutable(cls, data=None, **kwds):
         """
-        Build an immutable record by extracting values from either {source} or {kwds}, walking them
-        through the conversion processes encoded in the associated field descriptor and
-        building a tuple with these values
+        Build a mutable instance
         """
-        # build an instance of my immutable tuple and return it
-        return cls.pyre_immutable(record=cls, data=data, **kwds)
+        # easy enough
+        return cls.pyre_immutableTuple(record=cls, data=data, **kwds)
 
 
-    # meta-methods
-    def __new__(cls, data=None, **kwds):
+    @classmethod
+    def pyre_mutable(cls, data=None, **kwds):
         """
-        Initialize a mutable record by extracting values from either {data} or {kwds}, and building
-        {pyre.calc} nodes to hold the values
+        Build a mutable instance
         """
-        # build an instance of my mutable tuple and return it
-        return cls.pyre_mutable(record=cls, data=data, **kwds)
+        # easy enough
+        return cls.pyre_mutableTuple(record=cls, data=data, **kwds)
 
 
     # support for readers that want to match their headers to my fields

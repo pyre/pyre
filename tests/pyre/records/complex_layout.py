@@ -35,7 +35,7 @@ def test():
     assert item.pyre_index[item.price] == 1
 
     # now instantiate one
-    sample = item(cost=1.0)
+    sample = item.pyre_mutable(cost=1.0)
     # check
     assert sample.cost == 1.0
     assert sample.price == 1.25

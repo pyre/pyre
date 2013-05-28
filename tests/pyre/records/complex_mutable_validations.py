@@ -28,7 +28,7 @@ def test():
 
 
     # build a record
-    r = record(data=("9-4013", "1.0"))
+    r = record.pyre_mutable(data=("9-4013", "1.0"))
 
     # attempt to
     try:
