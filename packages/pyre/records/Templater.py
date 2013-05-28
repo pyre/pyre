@@ -29,7 +29,9 @@ class Templater(AttributeClassifier):
     # the tuples
     from .Mutable import Mutable as pyre_mutableTupleType
     from .Immutable import Immutable as pyre_immutableTupleType
-    # my value accessor
+    # my field selector
+    from .Selector import Selector as pyre_selector
+    # my field value accessor
     from .Accessor import Accessor as pyre_accessor
     # the value extractors
     from .Extractor import Extractor as pyre_extractor # simple immutable tuples
@@ -58,6 +60,9 @@ class Templater(AttributeClassifier):
 
         # build an attribute to hold the locally declared fields
         attributes["pyre_localFields"] = tuple(localFields)
+
+        # remove the field descriptors; we replace them in {__init__} with selectors
+        for field in localFields: del attributes[field.name]
 
         # build the class record
         record = super().__new__(cls, name, bases, attributes, **kwds)
@@ -132,7 +137,14 @@ class Templater(AttributeClassifier):
         # chain up
         super().__init__(names, bases, attributes, **kwds)
 
-        # build the tuple attributes: start with the value accessors
+        # add selectors for all my fields we removed in {__new__}
+        for index, field in enumerate(self.pyre_localFields):
+            # build a selector
+            selector = self.pyre_selector(field=field, index=index)
+            # attach it
+            setattr(self, field.name, selector)
+
+        # build value accessors for the data tuples
         attributes = dict(
             # map the name of the field to an accessor
             (field.name, self.pyre_accessor(field=field, index=index))
