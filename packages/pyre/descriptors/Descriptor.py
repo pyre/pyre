@@ -53,8 +53,11 @@ class Descriptor(algebraic.AbstractNode,
 
 
 # variables
-class descriptor(Typed, Public, Default, algebraic.Variable, Descriptor.leaf, Descriptor):
+class descriptor(Typed, Public, Descriptor.leaf, Descriptor):
     """Concrete class for representing fields"""
+
+    # constant
+    category = 'descriptor'
 
     # support for graph traversals
     def identify(self, authority, **kwds):
@@ -66,6 +69,9 @@ class descriptor(Typed, Public, Default, algebraic.Variable, Descriptor.leaf, De
 class operator(Typed, Public, algebraic.Operator, Descriptor.composite, Descriptor):
     """Concrete class for representing derivations"""
 
+    # constant
+    category = 'operator'
+
     # support for graph traversals
     def identify(self, authority, **kwds):
         """Let {authority} know I am an operator"""
@@ -75,6 +81,9 @@ class operator(Typed, Public, algebraic.Operator, Descriptor.composite, Descript
 # literals, to close the algebra
 class literal(algebraic.Const, algebraic.Literal, Descriptor):
     """Concrete class for representing foreign values"""
+
+    # constant
+    category = 'literal'
 
     # support for graph traversals
     def identify(self, authority, **kwds):

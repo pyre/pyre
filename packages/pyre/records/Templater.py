@@ -181,7 +181,7 @@ class Templater(AttributeClassifier):
         Predicate that tests whether {field} is a measure
         """
         # easy...
-        return field.category == 'variable'
+        return field.category == 'descriptor'
 
 
     @classmethod
