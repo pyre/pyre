@@ -36,6 +36,7 @@ complex:
 	${PYTHON} ./uris.py
 
 containers:
+	${PYTHON} ./arrays.py
 	${PYTHON} ./tuples.py
 	${PYTHON} ./lists.py
 	${PYTHON} ./sets.py

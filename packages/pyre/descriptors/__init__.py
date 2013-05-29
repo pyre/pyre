@@ -46,6 +46,7 @@ class time(descriptor, schemata.time): pass
 class uri(descriptor, schemata.uri): pass
 
 # finally, containers
+class array(descriptor, schemata.array): pass
 class list(descriptor, schemata.list): pass
 class set(descriptor, schemata.set): pass
 class tuple(descriptor, schemata.tuple): pass
