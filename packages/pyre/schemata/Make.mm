@@ -35,6 +35,7 @@ EXPORT_PYTHON_MODULES = \
     Time.py \
     Tuple.py \
     Type.py \
+    Typed.py \
     URI.py \
     exceptions.py \
     __init__.py

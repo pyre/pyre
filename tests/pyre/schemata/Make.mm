@@ -14,7 +14,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity types
+test: sanity types meta
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -35,6 +35,9 @@ types:
 	${PYTHON} ./times.py
 	${PYTHON} ./tuples.py
 	${PYTHON} ./uris.py
+
+meta:
+	${PYTHON} ./typed.py
 
 
 # end of file 

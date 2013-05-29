@@ -30,12 +30,15 @@ from .Set import Set as set
 from .Tuple import Tuple as tuple
 
 
-# put them in piles
+# put the schemata in piles
 basic = (identity, bool, decimal, float, inet, int, str)
 composite = (date, dimensional, time, uri)
 containers = (sequence, array, list, set, tuple)
 # all of them
-types = basic + composite + containers
+schemata = basic + composite + containers
 
+
+# grant access to the type decorator
+from .Typed import Typed as typed
 
 # end of file 
