@@ -17,6 +17,11 @@ class Tuple(Sequence):
     """
 
 
+    # constants
+    typename = 'tuple' # the name of my type
+    default  = () # my default value
+
+
     # interface
     def coerce(cls, value, **kwds):
         """

@@ -19,6 +19,11 @@ class Array(Type):
     """
 
 
+    # constants
+    typename = 'array' # the name of my type
+    default  = () # my default value
+
+
     # interface
     @classmethod
     def coerce(cls, value, **kwds):

@@ -17,6 +17,11 @@ class Set(Sequence):
     """
 
 
+    # constants
+    typename = 'set' # the name of my type
+    default  = set() # my default value
+
+
     # interface
     def coerce(cls, value, **kwds):
         """

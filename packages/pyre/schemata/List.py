@@ -17,6 +17,11 @@ class List(Sequence):
     """
 
 
+    # constants
+    typename = 'list' # the name of my type
+    default  = [] # my default value
+
+
     # interface
     def coerce(cls, value, **kwds):
         """
