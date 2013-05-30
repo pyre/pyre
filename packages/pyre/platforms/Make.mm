@@ -7,7 +7,7 @@
 
 PROJECT = pyre
 PACKAGE = platforms
-PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
+PROJ_CLEAN += $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------

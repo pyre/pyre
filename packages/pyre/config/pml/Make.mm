@@ -8,7 +8,7 @@
 
 PROJECT = pyre
 PACKAGE = config/pml
-PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
+PROJ_CLEAN += $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------

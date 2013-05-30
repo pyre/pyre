@@ -75,7 +75,7 @@ xpdf: $(DOCUMENT).pdf
 $(DOCUMENT).pdf: $(DOCUMENT).tex $(INCLUDES) $(SECTIONS) $(FIGURES) $(LISTINGS)
 
 # housekeeping
-PROJ_CLEAN = $(CLEAN_LATEX) *.snm *.nav *.vrb 
+PROJ_CLEAN += $(CLEAN_LATEX) *.snm *.nav *.vrb 
 PROJ_DISTCLEAN = *.ps *.pdf $(PROJ_CLEAN)
 
 # end of file

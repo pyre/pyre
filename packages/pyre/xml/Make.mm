@@ -7,7 +7,7 @@
 
 PROJECT = pyre
 PACKAGE = xml
-PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
+PROJ_CLEAN += $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------

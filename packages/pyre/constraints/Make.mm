@@ -8,7 +8,7 @@
 
 PROJECT = pyre
 PACKAGE = constraints
-PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
+PROJ_CLEAN += $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------

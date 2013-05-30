@@ -8,7 +8,7 @@
 
 PROJECT = pyre
 PACKAGE = pyre
-PROJ_CLEAN = $(EXPORT_MODULEDIR)
+PROJ_CLEAN += $(EXPORT_MODULEDIR)
 
 RECURSE_DIRS = \
     algebraic \

@@ -8,7 +8,7 @@
 
 PROJECT = pyre
 
-PROJ_CLEAN = journal.log
+PROJ_CLEAN += journal.log
 
 #--------------------------------------------------------------------------
 #
