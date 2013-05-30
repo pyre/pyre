@@ -15,27 +15,25 @@ class Operator:
     # constants
     category = 'operator'
 
-
     # public data
     evaluator = None
 
 
-    # interface
-    def getValue(self):
-        """
-        Compute and return my value
-        """
-        # compute the values of my operands
-        values = (op.value for op in self.operands)
-        # apply my operator
-        return self.evaluator(*values)
-
-
     # meta-methods
     def __init__(self, evaluator, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save my operator
         self.evaluator = evaluator
+        # all done
         return
+
+
+    # support for graph traversals
+    def identify(self, authority, **kwds):
+        """Let {authority} know I am an operator"""
+        # invoke the callback
+        return authority.onOperator(descriptor=self, **kwds)
 
 
 # end of file 

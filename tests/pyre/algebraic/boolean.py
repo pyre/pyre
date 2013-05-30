@@ -13,21 +13,51 @@ Exercise node algebra
 
     
 def test():
-    # get the package
+    # access the various operator
+    import operator
+    # access the package
     import pyre.algebraic
 
+    # declare a node class
+    class node(metaclass=pyre.algebraic.algebra): pass
+
     # declare a couple of nodes
-    zero = pyre.algebraic.var(value=0)
-    one = pyre.algebraic.var(value=1)
+    n1 = node.variable()
+    n2 = node.variable()
 
-    # and
-    assert ((zero == 0) & (one == 1)).value == True
+    # check
+    check_binary(n1 & n2, operator.and_, n1, n2)
+    check_binary(n1 | n2, operator.or_, n1, n2)
 
-    # or
-    assert ((zero == 0) | (zero == one)).value == True
-    assert ((zero == one) | (zero == 0)).value == True
+    check_right(n1 & 2, operator.and_, 2, n1)
+    check_right(n1 | 2, operator.or_, 2, n1)
 
-    return one, zero
+    check_left(1 & n2, operator.and_, 1, n2)
+    check_left(1 | n2, operator.or_, 1, n2)
+
+    return node
+
+
+# the checkers
+def check_binary(expression, operator, op1, op2):
+    assert expression.evaluator is operator
+    assert expression.operands[0] is op1
+    assert expression.operands[1] is op2
+    return
+
+    
+def check_left(expression, operator, value, node):
+    assert expression.evaluator is operator
+    assert expression.operands[0]._value == value
+    assert expression.operands[1] is node
+    return
+
+
+def check_right(expression, operator, value, node):
+    assert expression.evaluator is operator
+    assert expression.operands[0] is node
+    assert expression.operands[1]._value == value
+    return
 
 
 # main

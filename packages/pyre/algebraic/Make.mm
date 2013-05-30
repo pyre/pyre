@@ -20,26 +20,15 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     AbstractNode.py \
+    Algebra.py \
     Arithmetic.py \
-    AutoNode.py \
     Boolean.py \
-    Converter.py \
+    Category.py \
     Composite.py \
-    Const.py \
-    Expression.py \
-    Hierarchical.py \
-    Interpolation.py \
     Leaf.py \
     Literal.py \
-    Memo.py \
-    Node.py \
-    Observable.py \
-    Observer.py \
     Operator.py \
     Ordering.py \
-    Reference.py \
-    SymbolTable.py \
-    Unresolved.py \
     Variable.py \
     exceptions.py \
     __init__.py

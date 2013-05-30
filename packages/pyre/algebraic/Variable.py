@@ -8,7 +8,7 @@
 
 class Variable:
     """
-    Mix-in class to encapsulate nodes that can hold a value.
+    Mix-in class to encapsulate nodes 
     """
 
 
@@ -16,33 +16,11 @@ class Variable:
     category = 'variable'
 
 
-    # interface
-    def getValue(self):
-        """
-        Return my value
-        """
-        return self._value
-
-
-    def setValue(self, value):
-        """
-        Set my value
-        """
-        # store the value
-        self._value = value
-        # all done
-        return self
-
-
-    # meta methods
-    def __init__(self, value=None, **kwds):
-        super().__init__(**kwds)
-        self._value = value
-        return
-
-
-    # private data
-    _value = None
+    # support for graph traversals
+    def identify(self, authority, **kwds):
+        """Let {authority} know I am a variable"""
+        # invoke the callback
+        return authority.onVariable(descriptor=self, **kwds)
 
 
 # end of file 

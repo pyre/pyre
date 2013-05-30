@@ -19,25 +19,24 @@ class Literal:
 
     # public data
     span = () # literals are not proper nodes so their span is empty
-    operands = () # literals have no operands
-    variables = () # empty span
-    operators = () # empty span
+    variables = () # and so is their list of nodes
 
 
-    # graph traversal
-    def unique(self, encountered=None):
-        """
-        Traverse my expression graph and visit all nodes not previously {encountered}
-        """
-        # if I have been visited before, nothing left to do
-        if self in encountered: return
-        # otherwise, add me to the pile
-        encountered.add(self)
-        # announce
-        yield self
-        
+    # meta-methods
+    def __init__(self, value, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store the foreign object as my value
+        self._value = value
         # all done
         return
         
+
+    # support for graph traversals
+    def identify(self, authority, **kwds):
+        """Let {authority} know I am a literal"""
+        # invoke the callback
+        return authority.onLiteral(descriptor=self, **kwds)
+
 
 # end of file 

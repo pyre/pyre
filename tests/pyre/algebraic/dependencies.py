@@ -17,9 +17,12 @@ def test():
     # access to the basic node
     import pyre.algebraic
 
-    # make a few to use as operands
-    n1 = pyre.algebraic.var()
-    n2 = pyre.algebraic.var()
+    # declare a node class
+    class node(metaclass=pyre.algebraic.algebra): pass
+
+    # declare a couple of nodes
+    n1 = node.variable()
+    n2 = node.variable()
 
     # check that they have no dependencies
     assert tuple(id(v) for v in n1.variables) == (id(n1),)

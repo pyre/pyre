@@ -16,10 +16,13 @@ def test():
     # access to the package
     import pyre.algebraic
 
-    # make a few to use as operands
-    n1 = pyre.algebraic.var()
-    n2 = pyre.algebraic.var()
-    n3 = pyre.algebraic.var()
+    # declare a node class
+    class node(metaclass=pyre.algebraic.algebra): pass
+
+    # declare a couple of nodes
+    n1 = node.variable()
+    n2 = node.variable()
+    n3 = node.variable()
 
     # careful with comparisons: do not trigger operator _eq_!
     # check that they have no dependencies

@@ -20,7 +20,7 @@ class Boolean:
 
     {Boolean} expects its subclasses to define two class methods: {literal} and
     {operator}. The former is used to encapsulate operands that are not {Boolean}
-    instances. The latter is used to construct the operator representations
+    instances. The latter is used to construct the operator representations.
     """
 
 
@@ -50,35 +50,16 @@ class Boolean:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.rand, operands=[other, self])
+        return self.operator(evaluator=operator.and_, operands=[other, self])
 
 
-    def __ror(self, other):
+    def __ror__(self, other):
         # if {other} is not a node
         if not isinstance(other, Boolean):
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.ror, operands=[other, self])
-
-
-    # in-place
-    def __iand__(self, other):
-        # if {other} is not a node
-        if not isinstance(other, Boolean):
-            # promote it
-            other = self.literal(value=other)
-        # build a representation of the equality test
-        return self.operator(evaluator=operator.iand, operands=[self, other])
-
-
-    def __ior(self, other):
-        # if {other} is not a node
-        if not isinstance(other, Boolean):
-            # promote it
-            other = self.literal(value=other)
-        # build a representation of the equality test
-        return self.operator(evaluator=operator.ior, operands=[self, other])
+        return self.operator(evaluator=operator.or_, operands=[other, self])
 
 
 # end of file 
