@@ -86,7 +86,7 @@ class URI(Type):
         Attempt to convert {value} into a internet address
         """
         # if {value} is one of mine
-        if isinstance(value, self.uri):
+        if isinstance(value, self.locator):
             # leave it alone
             return value
         # if it is a string
