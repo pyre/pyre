@@ -14,7 +14,7 @@ Verify that descriptors can be harvested
 
 def test():
     # get the descriptor package
-    from pyre import descriptors
+    from pyre.descriptors import stem
     # get the base metaclass
     from pyre.patterns.AttributeClassifier import AttributeClassifier
 
@@ -25,7 +25,7 @@ def test():
             # the pile
             pile = []
             # harvest
-            for entryName, entry in cls.pyre_harvest(attributes, descriptors.stem):
+            for entryName, entry in cls.pyre_harvest(attributes, stem):
                 # initialize
                 entry.attach(name=entryName)
                 # and add them to the pile
@@ -38,12 +38,14 @@ def test():
             record.pile = pile
 
             # filter the measures
-            record.measures = list(filter(lambda x: isinstance(x, descriptors.descriptor), pile))
+            record.measures = list(filter(lambda x: isinstance(x, stem.variable), pile))
             # and derivations
-            record.derivations = list(filter(lambda x: isinstance(x, descriptors.operator), pile))
+            record.derivations = list(filter(lambda x: isinstance(x, stem.operator), pile))
             # all done
             return record
 
+    # get the package
+    from pyre import descriptors
     # the client
     class client(metaclass=harvester):
         # some descriptors

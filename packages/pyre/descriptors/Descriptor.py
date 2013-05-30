@@ -6,18 +6,12 @@
 #
 
 
-# my mix-ins
-from .Typed import Typed
-from .Public import Public
-from .Default import Default
-
-# to get my algebra
-from .. import algebraic
+# metaclass
+from .Decorator import Decorator
 
 
 # declaration
-class Descriptor(algebraic.AbstractNode,
-                 algebraic.Arithmetic, algebraic.Ordering, algebraic.Boolean):
+class Descriptor(metaclass=Decorator):
     """
     The base class for typed descriptors
 
@@ -32,15 +26,17 @@ class Descriptor(algebraic.AbstractNode,
 
 
     # types
-    # obligations from {pyre.algebraic} to support nodal algebra 
-    # structural
-    leaf = algebraic.Leaf
-    composite = algebraic.Composite
+    # variables
+    class variable:
+        """Concrete class for representing fields"""
 
-    # functional
-    literal = None
-    variable = None
-    operator = None
+        # constant
+        category = 'descriptor'
+
+        # support for graph traversals
+        def identify(self, authority, **kwds):
+            """Let {authority} know I am a descriptor"""
+            return authority.onDescriptor(descriptor=self, **kwds)
 
 
     # interface
@@ -50,51 +46,6 @@ class Descriptor(algebraic.AbstractNode,
         """
         # end of the line; nothing else to do
         return self
-
-
-# variables
-class descriptor(Typed, Public, Descriptor.leaf, Descriptor):
-    """Concrete class for representing fields"""
-
-    # constant
-    category = 'descriptor'
-
-    # support for graph traversals
-    def identify(self, authority, **kwds):
-        """Let {authority} know I am a descriptor"""
-        return authority.onDescriptor(descriptor=self, **kwds)
-
-
-# representations of the various operations among descriptors
-class operator(Typed, Public, algebraic.Operator, Descriptor.composite, Descriptor):
-    """Concrete class for representing derivations"""
-
-    # constant
-    category = 'operator'
-
-    # support for graph traversals
-    def identify(self, authority, **kwds):
-        """Let {authority} know I am an operator"""
-        return authority.onOperator(descriptor=self, **kwds)
-
-
-# literals, to close the algebra
-class literal(algebraic.Const, algebraic.Literal, Descriptor):
-    """Concrete class for representing foreign values"""
-
-    # constant
-    category = 'literal'
-
-    # support for graph traversals
-    def identify(self, authority, **kwds):
-        """Let {authority} know I am a literal"""
-        return authority.onLiteral(descriptor=self, **kwds)
-
-
-# patch the base class
-Descriptor.literal = literal
-Descriptor.variable = descriptor
-Descriptor.operator = operator
 
 
 # end of file 
