@@ -6,12 +6,6 @@
 #
 
 
-# externals
-import re
-# superclass
-from .Type import Type
-
-
 # implementation details
 class uri:
 
@@ -63,6 +57,12 @@ class uri:
     __slots__ = ( 'scheme', 'authority', 'address', 'query', 'fragment' )
 
 
+# externals
+import re
+# superclass
+from .Type import Type
+
+
 # the declaration
 class URI(Type):
     """
@@ -70,14 +70,14 @@ class URI(Type):
     """
 
 
+    # types
+    locator = uri # save the implementation type
+    from .exceptions import CastingError
+
+
     # constants
     typename = 'uri' # the name of my type
-    default = uri() # my default value
-
-
-    # types
-    uri = uri # save the implementation type
-    from .exceptions import CastingError
+    default = locator() # my default value
 
 
     # interface
@@ -102,7 +102,7 @@ class URI(Type):
                 query = match.group('query')
                 fragment = match.group('fragment')
                 # build a URI object
-                uri = self.uri(
+                uri = self.locator(
                     scheme=self.scheme if scheme is None else scheme,
                     authority=self.authority if authority is None else authority,
                     address=self.address if address is None else address,
