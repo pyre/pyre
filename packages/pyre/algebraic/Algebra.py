@@ -40,23 +40,10 @@ class Algebra(Category):
         """
         Build a new class record
         """ 
-        # go through each of the bases
-        for base in bases:
-            # looking for
-            try:
-                # a marked one
-                base._hasAlgebra
-            # of that fails
-            except AttributeError:
-                # perfect; check the next one
-                continue
-            # otherwise
-            else:
-                # this class derived from one of mine, so don't try to process it
-                return super().__new__(cls, name, bases, attributes, **kwds)
-        
-        # skip explicitly marked classes
-        if ignore: return super().__new__(cls, name, bases, attributes, **kwds)
+        # specially marked classes
+        if ignore or cls.isIgnorable(bases):
+            # bypass any of my processing
+            return super().__new__(cls, name, bases, attributes, **kwds)
 
         # prime the list of ancestors
         ancestors = [cls.base]
@@ -139,5 +126,32 @@ class Algebra(Category):
         # all done
         return
 
+
+    @classmethod
+    def isIgnorable(cls, bases):
+        """
+        Filter that determines whether a class should be decorated or not.
+
+        This is necessary because the metaclass is asked to process all subclasses of the type
+        that injected it in the hierarchy. In our case, variables, operators and the like would
+        also pass through the process. This routine detects these cases and avoids them
+        """
+        # go through each of the bases
+        for base in bases:
+            # looking for
+            try:
+                # a marked one
+                base._hasAlgebra
+            # of that fails
+            except AttributeError:
+                # perfect; check the next one
+                continue
+            # otherwise
+            else:
+                # this class derived from one of mine, so don't try to process it
+                return True
+        # all good
+        return False
+        
 
 # end of file 
