@@ -31,14 +31,9 @@ def test():
         algebra.arithmetic, algebra.ordering, algebra.boolean,
         object)
 
-    # check the leaf
-    assert node.leaf is algebra.leaf
-    # and the composite
-    assert node.composite is algebra.composite
-
     # check literals
     assert node.literal.__mro__ == (
-        node.literal, algebra.literal, node.leaf,
+        node.literal, algebra.literal, algebra.leaf,
         node,
         algebra.base,
         algebra.arithmetic, algebra.ordering, algebra.boolean,
@@ -46,7 +41,7 @@ def test():
 
     # check variables
     assert node.variable.__mro__ == (
-        node.variable, algebra.variable, node.leaf,
+        node.variable, algebra.variable, algebra.leaf,
         node,
         algebra.base,
         algebra.arithmetic, algebra.ordering, algebra.boolean,
@@ -54,7 +49,7 @@ def test():
 
     # check operator
     assert node.operator.__mro__ == (
-        node.operator, algebra.operator, node.composite,
+        node.operator, algebra.operator, algebra.composite,
         node,
         algebra.base,
         algebra.arithmetic, algebra.ordering, algebra.boolean,

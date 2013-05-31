@@ -48,11 +48,11 @@ class Algebra(Category):
                 base._hasAlgebra
             # of that fails
             except AttributeError:
-                # no problem, skip it
+                # perfect; check the next one
                 continue
             # otherwise
             else:
-                # this class derived from one of mine, so skip it
+                # this class derived from one of mine, so don't try to process it
                 return super().__new__(cls, name, bases, attributes, **kwds)
         
         # skip explicitly marked classes
@@ -100,8 +100,10 @@ class Algebra(Category):
         """
         Contribute to the list of ancestors of the representation of literals
         """
-        # if the class record specifies a literal mix-in use it, otherwise use the default
-        yield record.literal if record.literal else cls.literal
+        # if the class record specifies a literal mix-in use it
+        if record.literal: yield record.literal
+        # must also derive from the default
+        yield cls.literal
         # get the classes necessary to make leaves
         yield from cls.leafDerivation(record)
         # all done

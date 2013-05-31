@@ -23,12 +23,10 @@ class Category(AbstractMetaclass):
         """
         Contribute to the list of ancestors of the representation of literals
         """
-        # if the {record} does not specify a leaf mix-in
-        if not record.leaf:
-            # set it to the default
-            record.leaf = cls.leaf
-        # yield the leaf class
-        yield record.leaf
+        # if the {record} specifies a leaf mix-in, add it to the pile
+        if record.leaf: yield record.leaf
+        # yield the default leaf class
+        yield cls.leaf
         # and the buck stops here...
         yield record
         # all done
@@ -40,12 +38,10 @@ class Category(AbstractMetaclass):
         """
         Contribute to the list of ancestors of the representation of literals
         """
-        # if the {record} does not specify a leaf mix-in
-        if not record.composite:
-            # set it to the default
-            record.composite = cls.composite
-        # yield the leaf class
-        yield record.composite
+        # if the {record} specifies a composite mix-in, add it to the pile
+        if record.composite: yield record.composite
+        # yield the default composite class
+        yield cls.composite
         # and the buck stops here...
         yield record
         # all done
