@@ -84,7 +84,7 @@ class Evaluator:
         Handler for descriptors that encapsulate foreign values
         """
         # not much to do
-        return descriptor.value
+        return descriptor._value
 
 
 # end of file

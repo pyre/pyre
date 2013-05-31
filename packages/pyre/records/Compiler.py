@@ -50,7 +50,7 @@ class Compiler:
             # grab one from the data stream
             value = next(source)
             # build a node for it
-            node = self.node.variable(value=value, converter=descriptor.coerce)
+            node = self.node.variable(value=value, postprocessor=descriptor.coerce)
         # and make it available
         return node
 
@@ -73,7 +73,7 @@ class Compiler:
                 for op in descriptor.operands)
             # make an operator node
             node = self.node.operator(
-                evaluator=descriptor.evaluator, converter=descriptor.coerce, operands=operands)
+                evaluator=descriptor.evaluator, postprocessor=descriptor.coerce, operands=operands)
         # and make it available
         return node
 
@@ -82,8 +82,8 @@ class Compiler:
         """
         Handler for literals
         """
-        # just return the descriptor itself; is there ever a need to build a new one?
-        return descriptor
+        # build a literal node
+        return self.node.literal(value=descriptor._value)
 
 
 # end of file

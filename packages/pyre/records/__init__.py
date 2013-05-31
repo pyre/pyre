@@ -10,9 +10,9 @@ from .. import descriptors
 
 # access to the descriptor parts
 field = descriptors.stem
-measure = descriptors.descriptor
-derivation = descriptors.operator
-literal = descriptors.literal
+measure = field.variable
+derivation = field.operator
+literal = field.literal
 
 # access to the typed field declarators
 # basic
