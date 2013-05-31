@@ -37,4 +37,37 @@ class AbstractNode:
     operator = None # operations among my native nodes
 
 
+    # interface
+    def replace(self, obsolete):
+        """
+        Take ownership of any information held by the {obsolete} node, which is about to be
+        destroyed
+        """
+        # print("AbstractNode.replace:")
+        # print("    self:", self)
+        # print("        span:", tuple(self.span))
+        # print("    obsolete:", obsolete)
+        # print("        span:", tuple(obsolete.span))
+        # protection against circular references: verify that {obsolete} is not in my span by
+        # iterating over all nodes. this must be done carefully so as not to trigger the
+        # overloaded operator __eq__
+        for node in self.span:
+            # if it matches {obsolete} 
+            if node is obsolete:
+                # report the error
+                raise self.CircularReferenceError(node=obsolete)
+        # all done
+        return self
+
+
+    # implementation support
+    @classmethod
+    def select(cls, model, existing, replacement):
+        """
+        Pick either {existing} or {replacement} as the node that will remain in {model}
+        """
+        # by default, {replacement} always wins
+        return replacement.replace(existing)
+
+
 # end of file 
