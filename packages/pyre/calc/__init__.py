@@ -54,14 +54,14 @@ def model(**kwds):
 
 
 # nodes
-def var(value=None):
+def var(value=None, **kwds):
     """
     Build a variable, i.e. a node that can hold an arbitrary value
     """
     # get the base node
     from .Node import Node
     # build a variable and return it
-    return Node.variable(value=value)
+    return Node.variable(value=value, **kwds)
 
 
 def expression(*, formula, model):
