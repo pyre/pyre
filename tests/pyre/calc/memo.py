@@ -13,14 +13,11 @@ Basic AutoNode exercises
 
 def test():
     # access the package
-    import pyre.algebraic
-
-    # use the auto nodes
-    node = pyre.algebraic.AutoNode
+    import pyre.calc
 
     # make two nodes
-    v1 = node.variable(value=1)
-    v2 = node.variable(value=2)
+    v1 = pyre.calc.var(value=1)
+    v2 = pyre.calc.var(value=2)
     # and a couple that reference them
     s = v1 + v2
     p = v1 * v2

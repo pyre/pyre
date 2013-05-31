@@ -16,18 +16,8 @@ def test():
 
     import pyre.calc
     from pyre.calc.exceptions import (
-        NodeError, CircularReferenceError, EvaluationError,
-        ExpressionError, EmptyExpressionError, ExpressionSyntaxError, UnresolvedNodeError )
-
-    try:
-        raise NodeError(description="generic error")
-    except NodeError as error:
-        pass
-
-    try:
-        raise CircularReferenceError(node=None, path=None)
-    except CircularReferenceError as error:
-        pass
+        EvaluationError, ExpressionError, EmptyExpressionError,
+        ExpressionSyntaxError, UnresolvedNodeError )
 
     try:
         raise EvaluationError(node=None, error=None)

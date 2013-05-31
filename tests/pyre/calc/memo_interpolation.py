@@ -17,14 +17,12 @@ import os
 
 def test():
     # access the package
-    import pyre.algebraic
+    import pyre.calc
     # set up the model
-    model = pyre.algebraic.model()
-    # adjust the node factory
-    model.node = pyre.algebraic.AutoNode
+    model = pyre.calc.model()
 
     # make some nodes
-    home = model.node.variable(value='/opt/local')
+    home = model.variable(value='/opt/local')
     tools = model.interpolation("{home}")
     bin = model.interpolation("{tools}/bin")
     lib = model.interpolation("{tools}/lib")

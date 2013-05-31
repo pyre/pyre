@@ -38,6 +38,9 @@ def test():
     assert model["cost"] == p+s
     assert model["price"] == 2*(p+s)
 
+    # thanks to the indirect references to their operands, expressions get updated values when
+    # their dependents change; this is a side effect of the current implementation
+
     # make a change
     p = 100.
     model["production"] = p
@@ -58,17 +61,10 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # request debugging support for the pyre.calc package
-    pyre_debug = { "pyre.calc" }
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
     # run the test
     test()
-    # verify reference counts
-    # for nodes
-    from pyre.calc.Node import Node
-    # print(tuple(Node._pyre_extent))
-    assert tuple(Node._pyre_extent) == ()
 
 
 # end of file 

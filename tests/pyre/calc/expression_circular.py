@@ -13,10 +13,10 @@ Verify that circular dependencies are caught properly
 
 
 def test():
-    import pyre.algebraic
+    import pyre.calc
 
     # a model
-    model = pyre.algebraic.model()
+    model = pyre.calc.model()
 
     # self reference
     try:
@@ -26,7 +26,7 @@ def test():
         pass
 
     # another model
-    model = pyre.algebraic.model()
+    model = pyre.calc.model()
     # now validate the graph, expecting the circular reference to raise an exception
     try:
         # a cycle

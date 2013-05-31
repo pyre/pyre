@@ -13,28 +13,28 @@ Verify that syntax errors in expressions are caught
 
 
 def test():
-    import pyre.algebraic
+    import pyre.calc
 
     # build a model
-    model = pyre.algebraic.model()
+    model = pyre.calc.model()
 
     # unbalanced open brace
     try:
-        pyre.algebraic.expression(value="{production", model=model)
+        model.expression(value="{production", model=model)
         assert False
     except model.ExpressionSyntaxError:
         pass
 
     # unbalanced open brace
     try:
-        pyre.algebraic.expression(value="production}", model=model)
+        model.expression(value="production}", model=model)
         assert False
     except model.ExpressionSyntaxError:
         pass
 
     # unbalanced parenthesis
     try:
-        pyre.algebraic.expression(value="{production}({shipping}", model=model)
+        model.expression(value="{production}({shipping}", model=model)
         assert False
     except model.ExpressionSyntaxError:
         pass

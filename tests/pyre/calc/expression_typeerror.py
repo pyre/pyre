@@ -14,10 +14,10 @@ evaluated even though they have no syntax errors
 
 
 def test():
-    import pyre.algebraic
+    import pyre.calc
 
     # a model
-    model = pyre.algebraic.model()
+    model = pyre.calc.model()
     # the nodes
     model["production"] = 80.
     model["shipping"] = 20.

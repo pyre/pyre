@@ -75,7 +75,7 @@ class Observable:
         """
         # initialize the list of dead references
         discard = []
-        # with each registered observer reference
+        # for each registered observer reference
         for ref in self.observers:
             # unwrap the weak reference
             observer = ref()
@@ -103,8 +103,11 @@ class Observable:
 
     # meta-methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # initialize the set of my observers
         self.observers = set() # should have been a weak set, but I can do better...
+        # all done
         return
 
 

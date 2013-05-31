@@ -28,15 +28,4 @@ class Const:
         raise NotImplementedError("const nodes do not support 'setValue'")
 
 
-    # meta-methods
-    def __init__(self, value, **kwds):
-        super().__init__(**kwds)
-        self._value = value
-        return
-
-
-    # private data
-    _value = None
-
-
 # end of file 

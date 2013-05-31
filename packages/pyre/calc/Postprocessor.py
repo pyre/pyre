@@ -6,9 +6,9 @@
 #
 
 
-class Converter:
+class Postprocessor:
     """
-    A mix-in class that ensures node values have undergone special processing
+    A mix-in class that performs arbitrary transformations on the value of a node
     """
 
 
@@ -17,37 +17,38 @@ class Converter:
     from .exceptions import EvaluationError
 
     # public data
-    converter = None
+    postprocessor = None
 
 
     # interface
     def getValue(self, **kwds):
         """
         Intercept the node value retriever and make sure that the value the caller gets has
-        been through my {converter}
+        been through my {postprocessor}
         """
         # get the value
         value = super().getValue()
         # attempt to
         try:
             # process it
-            value = self.converter(value=value, node=self, **kwds)
+            value = self.postprocessor(value=value, node=self, **kwds)
         # protect against framework bugs: asking for configurable attributes that don't exist
         except AttributeError as error:
-            # complain carefully to avoid infinite recursions
-            # NYI: can i do journal here?
-            raise self.EvaluationError(node=self, error=str(error))
+            # get the journal
+            import journal
+            # complain
+            raise journal.firewall('pyre.calc').log(str(error))
 
         # and return it
         return value
 
 
     # meta-methods
-    def __init__(self, converter=identity.coerce, **kwds):
+    def __init__(self, postprocessor=identity.coerce, **kwds):
         # chain up
         super().__init__(**kwds)
         # set my value processor
-        self.converter = converter
+        self.postprocessor = postprocessor
         # all done
         return
 

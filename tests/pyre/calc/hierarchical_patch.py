@@ -13,10 +13,10 @@ Verify that node updates propagate properly
 
 
 def test():
-    import pyre.algebraic
+    import pyre.calc
 
     # create a model
-    model = pyre.algebraic.hierarchicalModel()
+    model = pyre.calc.model()
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"

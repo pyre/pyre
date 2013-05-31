@@ -13,10 +13,10 @@ Verify that syntax errors in interpolations are caught
 
 
 def test():
-    import pyre.algebraic
+    import pyre.calc
 
     # build a model
-    model = pyre.algebraic.model()
+    model = pyre.calc.model()
 
     # escaped macro delimiters
     node = model.interpolation('{{production}}')

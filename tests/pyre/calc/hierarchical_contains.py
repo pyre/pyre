@@ -13,10 +13,10 @@ Verify that __contains__ is implemented correctly
 
 
 def test():
-    import pyre.algebraic
+    import pyre.calc
 
     # create a model
-    model = pyre.algebraic.hierarchicalModel()
+    model = pyre.calc.model()
 
     # the name of the test node
     name = "user.name"

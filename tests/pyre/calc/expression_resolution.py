@@ -13,10 +13,10 @@ Verify that node resolution works
 
 
 def test():
-    import pyre.algebraic
+    import pyre.calc
 
     # set up the model
-    model = pyre.algebraic.model()
+    model = pyre.calc.model()
 
     # set up an expression with an unresolved node
     model["price"] = "2*{production}"

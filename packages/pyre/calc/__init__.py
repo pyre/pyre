@@ -18,18 +18,22 @@ The interesting aspect of this package is that nodal values get updated automati
 values of any of the nodes in their domain change. Nodes keep track of the set of dependents
 that are interested in their values and post notifications when their values change.
 
-In addition, this package provides {Model}, a simple manager for evaluation nodes. Beyond node
-storage, {Model} enables the naming of nodes and can act as the name resolution context for
-{Expression} nodes, which evaluate strings with arbitrary python expressions that may involve
-the values of other nodes in the model. The other nodes provided here operate independently of
-{Model}. However, it is a good idea to build some kind of container to hold nodes while the
-evaluation graph is in use.
+In addition, this package provides {SymbolTable}, a simple manager for evaluation nodes. Beyond
+node storage, {SymbolTable} enables the naming of nodes and can act as the name resolution
+context for {Expression} nodes, which evaluate strings with arbitrary python expressions that
+may involve the values of other nodes in the model. The other nodes provided here operate
+independently of {SymbolTable}. However, it is a good idea to build some kind of container to
+hold nodes while the evaluation graph is in use.
 
 Simple examples of the use of the ideas in this package are provided in the unit tests. For a
-somewhat more advanced example, take a look at {pyre.config.Configurator}, which is a {Model}
-that builds an evaluation network out of the traits of pyre components, so that trait settings
-can refer to the values of other traits in the configuration files.
+somewhat more advanced example, take a look at {pyre.config.Configurator}, which is a
+{Hierarchical} model that builds an evaluation network out of the traits of pyre components, so
+that trait settings can refer to the values of other traits in the configuration files.
 """
+
+
+# the node generator
+from .Calculator import Calculator as calculator
 
 
 # implementation note: these factories are functions (rather than a raw import of the
@@ -45,8 +49,8 @@ def model(**kwds):
     Build a node container that specializes in names that have encoded hierarchical levels,
     such as file paths or namespaces
     """
-    from .HierarchicalModel import HierarchicalModel
-    return HierarchicalModel(**kwds)
+    from .Hierarchical import Hierarchical
+    return Hierarchical(**kwds)
 
 
 # nodes
@@ -74,9 +78,9 @@ def average(*operands):
     Compute the average of a collection of nodes
     """
     # access the constructor
-    from .Node import average
+    from .Node import Node
     # build the node and return it
-    return average(operands=operands)
+    return Node.average(operands=operands)
 
 
 def count(*operands):
@@ -84,9 +88,9 @@ def count(*operands):
     Compute the length of a collection of nodes
     """
     # access the constructor
-    from .Node import count
+    from .Node import Node
     # build the node and return it
-    return count(operands=operands)
+    return Node.count(operands=operands)
 
 
 def max(*operands):
@@ -94,9 +98,9 @@ def max(*operands):
     Compute the minimum of a collection of nodes
     """
     # access the constructor
-    from .Node import max
+    from .Node import Node
     # build the node and return it
-    return max(operands=operands)
+    return Node.max(operands=operands)
 
 
 def min(*operands):
@@ -104,9 +108,9 @@ def min(*operands):
     Compute the minimum of a collection of nodes
     """
     # access the constructor
-    from .Node import min
+    from .Node import Node
     # build the node and return it
-    return min(operands=operands)
+    return Node.min(operands=operands)
 
 
 def product(*operands):
@@ -114,9 +118,9 @@ def product(*operands):
     Compute the sum of a collection of nodes
     """
     # access the constructor
-    from .Node import product
+    from .Node import Node
     # build the node and return it
-    return product(operands=operands)
+    return Node.product(operands=operands)
 
 
 def sum(*operands):
@@ -124,29 +128,26 @@ def sum(*operands):
     Compute the sum of a collection of nodes
     """
     # access the constructor
-    from .Node import sum
+    from .Node import Node
     # build the node and return it
-    return sum(operands=list(operands))
+    return Node.sum(operands=list(operands))
 
-
-# exceptions
-from .exceptions import EmptyExpressionError
-
-
-# debugging support
-_metaclass_Node = type
 
 def debug():
     """
     Support for debugging the calc package
     """
     # print(" ++ debugging 'pyre.calc'")
-    # Attach {ExtentAware} as the metaclass of {Node} so we can verify that all instances of
+    # attach {ExtentAware} as the metaclass of {Node} so we can verify that all instances of
     # this class are properly garbage collected
     from ..patterns.ExtentAware import ExtentAware
-    global _metaclass_Node
-    _metaclass_Node = ExtentAware
-
+    # get the normal metaclass
+    global calculator
+    # derive a new one
+    class counted(calculator, ExtentAware): pass
+    # and set it as the default
+    calculator = counted
+    # all done
     return
     
 
