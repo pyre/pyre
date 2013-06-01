@@ -8,7 +8,7 @@
 
 PROJECT = pyre
 PACKAGE = tabular
-PROJ_CLEAN += $(EXPORT_MODULEDIR)/$(PACKAGE)
+PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------
@@ -20,23 +20,21 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Aggregator.py \
-    CSV.py \
     Chart.py \
     Column.py \
     Dimension.py \
-    Index.py \
-    InferredDimension.py \
-    IntervalDimension.py \
+    Inferred.py \
+    Interval.py \
     Measure.py \
     Pivot.py \
-    Record.py \
+    Primary.py \
     Reduction.py \
+    Selector.py \
     Sheet.py \
-    SheetMaker.py \
+    Surveyor.py \
+    Tabulator.py \
     View.py \
     exceptions.py \
-    measures.py \
     __init__.py
 
 

@@ -37,24 +37,24 @@ def test():
 
     # check the bases
     assert production.pyre_name == "production"
-    assert identical(production.pyre_localEntries, ( production.sku, production.production ))
-    assert identical(production.pyre_entries, ( production.sku, production.production ))
+    assert identical(production.pyre_localFields, ( production.sku, production.production ))
+    assert identical(production.pyre_fields, ( production.sku, production.production ))
     assert identical(production.pyre_fields, ( production.sku, production.production ))
     assert production.pyre_derivations == ()
 
     assert shipping.pyre_name == "shipping"
-    assert identical(shipping.pyre_localEntries, ( shipping.shipping, ))
-    assert identical(shipping.pyre_entries, ( shipping.shipping, ))
+    assert identical(shipping.pyre_localFields, ( shipping.shipping, ))
+    assert identical(shipping.pyre_fields, ( shipping.shipping, ))
     assert identical(shipping.pyre_fields, ( shipping.shipping, ))
     assert shipping.pyre_derivations == ()
     
     # check the subclass
     assert pricing.pyre_name == "pricing"
-    assert identical(pricing.pyre_localEntries, (
+    assert identical(pricing.pyre_localFields, (
         pricing.margin, pricing.overhead, pricing.discount,
         pricing.cost, pricing.msrp, pricing.price
         ))
-    assert identical(pricing.pyre_entries, (
+    assert identical(pricing.pyre_fields, (
         pricing.shipping,
         pricing.sku, pricing.production,
         pricing.margin, pricing.overhead, pricing.discount,

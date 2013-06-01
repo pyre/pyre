@@ -13,11 +13,10 @@ Verify the class record structure
 
 
 def test():
+    # get the package
     import pyre.tabular
-    # save the entry types
-    measure = pyre.tabular.measure
-    from pyre.records.Derivation import Derivation as derivation
 
+    # the sheet
     class pricing(pyre.tabular.sheet):
         """
         The sheet layout
@@ -35,11 +34,14 @@ def test():
 
         price = msrp*(1 - discount)
 
+    # short names for the stuctural parts
+    measure = pyre.tabular.measure
+    derivation = pyre.tabular.derivation
 
-    # access the embedded record object
-    record = pricing.pyre_Record
+    # access the record object
+    record = pricing
     # verify pedigree
-    assert issubclass(record, tuple)
+    assert issubclass(record, pyre.tabular.record)
     # verify the accessors
     assert isinstance(record.sku, measure)
     assert isinstance(record.production, measure)

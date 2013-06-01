@@ -6,104 +6,95 @@
 #
 
 
-import itertools
-from .SheetMaker import SheetMaker
+# superclass
+from .. import records
+# metaclass
+from .Tabulator import Tabulator
 
 
-class Sheet(metaclass=SheetMaker):
+# declaration
+class Sheet(records.record, metaclass=Tabulator):
     """
-    The base class for worksheets
+    The base class for pyre worksheets, collections of record instances
     """
-
-
-    # types
-    from ..records.Record import Record as pyre_recordType
 
 
     # public data
-    pyre_name = None # the name of the sheet
+    pyre_name = None
     pyre_data = None # the list of records
-    pyre_primaries = None # a list of measure accessors that are primary keys
-    pyre_keymaps = None # storage for measures that are primary keys
-
-    pyre_entries = () # the full set of measures and derivations
-    pyre_measures = () # a tuple with all my fields
-    pyre_derivations = () # a tuple with all my derivations
-    pyre_localEntries = () # the locally declared measures and derivations
 
 
     # interface
-    def pyre_populate(self, data):
+    def pyre_immutable(self, data):
         """
-        Assume that the layout of the iterable {data} is compatible with my record layout; use
-        it to populate my data set
-
-        Compatibility with my record layout implies that {data} is a container of records, and
-        each record is itself an iterable that has as many entries as i have measures.
+        Iterate over {data} extracting records that are compatible with my layout and use them to
+        populate my data set
         """
-        # iterate of the reords in {data}
-        for row in data:
+        # iterate over the records in {data}
+        for line in data:
+            # convert the {row} into a mutable tuple
+            row = super().pyre_immutable(data=line)
             # populate the data set
-            self.pyre_append(data=row)
+            self.pyre_append(row=row)
         # all done
         return self
-                        
-        
-    def pyre_append(self, data=None, **kwds):
-        """
-        Add {record} to my data set
-        """
-        # covert {data} into a row
-        row = self.pyre_Record(raw=data, **kwds)
-        # the collation number of this record
-        rank = len(self.pyre_data)
-        # update my indices
-        for primary in self.pyre_primaries:
-            # grab the associated keymap
-            keymap = self.pyre_keymaps[primary]
-            # the key is the value of the indexed column
-            key = row[primary.index]
-            # update
-            keymap[key] = rank
-        # what's the right thing to do when a new record with a key conflict shows up?
-        # add the record to the data set
-        self.pyre_data.append(row)
-        # return 
-        return self
-        
 
-    # introspection
+
+    def pyre_mutable(self, data):
+        """
+        Iterate over {data} extracting records that are compatible with my layout and use them to
+        populate my data set
+        """
+        # iterate over the records in {data}
+        for line in data:
+            # convert the {row} into a mutable tuple
+            row = super().pyre_mutable(data=line)
+            # populate the data set
+            self.pyre_append(row=row)
+        # all done
+        return self
+
+
+    def pyre_append(self, row):
+        """
+        Add the given {row} to my data set
+        """
+        # get my dataset
+        dataset = self.pyre_data
+        # compute the collation number of this record
+        rank = len(dataset)
+        # add the record to the dataset
+        dataset.append(row)
+        # all done
+        return self
+
+
     @classmethod
     def pyre_offset(cls, measure):
         """
-        Return the offset of {measure} within my records
+        Return the column number of {measure}
         """
-        return cls.__dict__[measure.name].index
+        # easy enough
+        getattr(cls, measure).index
 
 
-    # meta methods
-    def __init__(self, name=None, **kwds):
+    # meta-methods
+    def __init__(self, name, **kwds):
+        # chain up
         super().__init__(**kwds)
-
+        # set my name
         self.pyre_name = name
+        # initialize my data set
         self.pyre_data = []
-        self.pyre_keymaps = {} # populated by my metaclass
-
+        # all done
         return
-
-
-    def __getitem__(self, index):
-        """
-        Indexed access to the data
-        """
-        # delegate to the storage
-        return self.pyre_data[index]
 
 
     def __len__(self):
         """
-        Compute the number of records in the sheet
+        Compute the number of records in my dataset
         """
+        # delegate to the dataset
         return len(self.pyre_data)
 
 
@@ -111,7 +102,26 @@ class Sheet(metaclass=SheetMaker):
         """
         Build an iterator over my data set
         """
+        # delegate to the dataset
         return iter(self.pyre_data)
 
 
-# end of file 
+    def __getitem__(self, address):
+        """
+        Retrieve the portion of the sheet that corresponds to {address}
+        """
+        # by definition, string addresses refer to my columns
+        if isinstance(address, str): 
+            # let my descriptor do the work
+            return getattr(self, address)
+
+        # again by definition, single integers refer to my rows
+        if isinstance(address, int):
+            # retrieve the requested row and return it
+            return self.pyre_data[address]
+
+        # eventually I will support really smart slicing
+        raise NotImplementedError('NYI: smart sheet indexing is not yet implemented')
+
+
+# end of file

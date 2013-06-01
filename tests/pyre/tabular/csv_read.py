@@ -13,13 +13,13 @@ Read a sheet from a csv file
 
 
 def test():
+    # get the package
     import pyre.tabular
-
+    # lay out a sheet
     class pricing(pyre.tabular.sheet):
         """
         The sheet layout
         """
-
         # layout
         sku = pyre.tabular.str()
         description = pyre.tabular.str()
@@ -30,10 +30,12 @@ def test():
 
     # make a csv reader
     csv = pyre.tabular.csv()
-    # make a sheet
+    # build the data set
+    data = csv.read(layout=pricing, uri='vegetables.csv')
+    # make a sheet instance
     sheet = pricing(name="vegetables")
     # populate the table
-    csv.read(sheet=sheet, uri="vegetables.csv")
+    sheet.pyre_immutable(data=data)
     # check that we read the data correctly
     # here is what we expect
     target = [

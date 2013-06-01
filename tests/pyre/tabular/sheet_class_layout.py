@@ -13,34 +13,35 @@ Build a rudimentary table
 
 
 def test():
+    # access the package
     import pyre.tabular
-
+    # the sheet
     class pricing(pyre.tabular.sheet):
         """
         The sheet layout
         """
-
+        # measures
         sku = pyre.tabular.measure()
         production = pyre.tabular.measure()
         shipping = pyre.tabular.measure()
         margin = pyre.tabular.measure()
         overhead = pyre.tabular.measure()
         discount = pyre.tabular.measure()
-
+        # derivations
         cost = production + shipping
         msrp = (1 + margin + overhead)*cost
-
         price = msrp*(1 - discount)
 
-
+    # check the name
     assert pricing.pyre_name == "pricing"
 
-    assert identical(pricing.pyre_localEntries, (
+    # check the structure
+    assert identical(pricing.pyre_localFields, (
         pricing.sku, pricing.production, pricing.shipping, pricing.margin,
         pricing.overhead, pricing.discount,
         pricing.cost, pricing.msrp, pricing.price,
         ))
-    assert identical(pricing.pyre_entries, pricing.pyre_localEntries)
+    assert identical(pricing.pyre_fields, pricing.pyre_localFields)
     assert identical(pricing.pyre_fields, (
         pricing.sku, pricing.production, pricing.shipping, pricing.margin,
         pricing.overhead, pricing.discount,
@@ -49,6 +50,7 @@ def test():
         pricing.cost, pricing.msrp, pricing.price,
         ))
 
+    # all done
     return pricing
 
 

@@ -13,9 +13,10 @@ Build a couple of views
 
 
 def test():
+    # get the package
     import pyre.tabular
 
-
+    # lay out a sheet
     class cost(pyre.tabular.sheet):
         """The prices of things"""
         # layout
@@ -28,7 +29,7 @@ def test():
         shipping = pyre.tabular.float()
         margin = pyre.tabular.float()
 
-
+    # and another
     class sales(pyre.tabular.sheet):
         """The transaction data"""
         # layout
@@ -42,12 +43,14 @@ def test():
 
     # make a csv reader
     csv = pyre.tabular.csv()
-    # make a sheet
+    # make a couple of sheets
     vegetables = cost(name="vegetables")
     transactions = sales(name="sales")
-    # populate the tables
-    csv.read(sheet=transactions, uri="sales.csv")
-    csv.read(sheet=vegetables, uri="vegetables.csv")
+
+    # populate them
+    csv.immutable(layout=transactions, uri="sales.csv")
+    csv.immutable(layout=vegetables, uri="vegetables.csv")
+
     # and return the sheets
     return vegetables, sales
 

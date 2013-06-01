@@ -13,8 +13,10 @@ Build a rudimentary pivot table
 
 
 def test():
+    # get the package
     import pyre.tabular
 
+    # make a sheet
     class cost(pyre.tabular.sheet):
         """The prices of things"""
         # layout
@@ -27,6 +29,7 @@ def test():
         shipping = pyre.tabular.float()
         margin = pyre.tabular.float()
 
+    # and another
     class sales(pyre.tabular.sheet):
         """The transaction data"""
         # layout
@@ -40,13 +43,16 @@ def test():
 
     # make a csv reader
     csv = pyre.tabular.csv()
-    # make a sheet
-    vegetables = cost(name="vegetables")
-    transactions = sales(name="sales")
-    # populate the tables
-    csv.read(sheet=transactions, uri="sales.csv")
-    csv.read(sheet=vegetables, uri="vegetables.csv")
-    # and return the sheets
+    # build a data set
+    vegetables = csv.read(layout=cost, uri='vegetables.csv')
+    transactions = csv.read(layout=sales, uri='sales.csv')
+    # make the sheets
+    prices = cost(name="vegetables").pyre_immutable(vegetables)
+    activity = sales(name="sales").pyre_immutable(transactions)
+
+    # NYI: pivot, pivot
+
+    # and return them
     return vegetables, sales
 
 

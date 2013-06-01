@@ -13,8 +13,10 @@ Exercise an inferred chart dimension
 
 
 def test():
+    # get the package
     import pyre.tabular
 
+    # make a sheet
     class sales(pyre.tabular.sheet):
         """The transaction data"""
         # layout
@@ -25,32 +27,35 @@ def test():
         discount = pyre.tabular.float()
         sale = pyre.tabular.float()
 
+    # and a chart
     class chart(pyre.tabular.chart, sheet=sales):
         """
         Aggregate the information in the {sales} table
         """
         sku = pyre.tabular.inferred(sales.sku)
 
-
     # make a csv reader
     csv = pyre.tabular.csv()
+    # build a data set
+    data = csv.read(layout=sales, uri='sales.csv')
     # make a sheet
-    transactions = sales(name="sales")
-    # populate the tables
-    csv.read(sheet=transactions, uri="sales.csv")
+    transactions = sales(name="sales").pyre_immutable(data)
+
     # build a chart
-    cube = chart()
-    # bin the transactions
-    cube.pyre_project(transactions)
+    cube = chart(sheet=transactions)
+    # index the skus
+    skus = cube.sku
+
     # here are the skus we expect to retrieve from the data set
-    skus = ("4000", "4001", "4002", "4003", "4004", "4005")
+    targets = {"4000", "4001", "4002", "4003", "4004", "4005"}
+
     # check that the skus were classified correctly
-    assert tuple(sku for sku, bin in cube.sku.bins) == skus
+    assert set(skus.keys()) == targets
     # check that all the transactions were binned
-    assert len(transactions) == sum(len(bin) for info, bin in cube.sku.bins)
+    assert len(transactions) == sum(len(bin) for bin in skus.values())
     
     # verify that all transaction records binned as having a given sku do so
-    for sku, bin in cube.sku.bins:
+    for sku, bin in skus.items():
         for rank in bin:
             assert transactions[rank].sku == sku
 

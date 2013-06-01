@@ -13,21 +13,21 @@ Verify columns get indexed properly
 
 
 def test():
+    # get the package
     import pyre.tabular
 
+    # make a sheet
     class pricing(pyre.tabular.sheet):
         """
         The sheet layout
         """
         # layout
-        sku = pyre.tabular.str()
+        sku = pyre.tabular.str().primary()
         description = pyre.tabular.str()
         production = pyre.tabular.float()
         shipping = pyre.tabular.float()
         margin = pyre.tabular.float()
         overhead = pyre.tabular.float()
-        # index on  skus
-        sku.index = True
 
     # our data set
     data = [
@@ -41,14 +41,17 @@ def test():
     # make a sheet
     p = pricing(name="vegetables")
     # populate it
-    p.pyre_populate(data)
+    p.pyre_immutable(data)
 
-    # check that we can read the data correctly
+    # access the {sku} column and build an index over its values
+    skus = p.sku
+
+    # check that we can read and index the data correctly
     for row in data:
         # get the sku
         sku = row[0]
         # check that the data and the sheet match
-        assert row == tuple(p.sku[sku])
+        assert row == tuple(skus[sku])
 
     # and return the data set
     return p

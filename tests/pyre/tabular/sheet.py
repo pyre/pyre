@@ -19,20 +19,19 @@ def test():
         """
         The sheet layout
         """
-
+        # measures
         sku = pyre.tabular.measure()
         production = pyre.tabular.measure()
         shipping = pyre.tabular.measure()
         margin = pyre.tabular.measure()
         overhead = pyre.tabular.measure()
         discount = pyre.tabular.measure()
-
+        # derivations
         cost = production + shipping
         msrp = (1 + margin + overhead)*cost
-
         price = msrp*(1 - discount)
 
-
+    # all done
     return pricing
 
 

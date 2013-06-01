@@ -6,66 +6,52 @@
 #
 
 
-# access to the basic objects in the package
-from .Sheet import Sheet as sheet # basic data tables
-from .Chart import Chart as chart # coördinate systems
-from .Pivot import Pivot as pivot # pivot tables
-# column descriptors
-from .Measure import Measure as measure
-# readers/writers
-from .CSV import CSV as csv
-
-
-# access the type declarators
+# type conversion from {schemata}
 from .. import schemata
+# infrastructure from {records}
+from .. import records
+# structural
+field = records.field
+derivation = records.derivation
+literal = records.literal
 
 
-# convenience factories that build measures of specific types
-def dimensional(default=0, **kwds):
-    """
-    Build a measure that has units
-
-    Legal assignments are constrained to have units compatible with the default value
-    """
-    m = measure(**kwds)
-    m.schema = schemata.dimensional
-    m.default = default
-    return m
-
-
-def float(default=0, **kwds):
-    """
-    Build a float measure
-    """
-    m = measure(**kwds)
-    m.schema = schemata.float
-    m.default = default
-    return m
-
-
-def int(default=0, **kwds):
-    """
-    Build an integer measure
-    """
-    m = measure(**kwds)
-    m.schema = schemata.int
-    m.default = default
-    return m
+# support for sheets
+# i have my own measures
+from .Measure import Measure as measure
+# build the typed descriptors; first the simple ones
+bool = measure.bool
+decimal = measure.decimal
+float = measure.float
+inet = measure.inet
+int = measure.int
+identity = measure.identity
+str = measure.str
+# next, the more complex types
+date = measure.date
+dimensional = measure.dimensional
+time = measure.time
+uri = measure.uri
+# finally, containers
+list = measure.list
+set = measure.set
+tuple = measure.tuple
+# access to the basic objects in this package
+from .Sheet import Sheet as sheet
 
 
-def str(default="", **kwds):
-    """
-    Build a string measure
-    """
-    m = measure(**kwds)
-    m.schema = schemata.str
-    m.default = default
-    return m
+# dimensions
+from .Inferred import Inferred as inferred
+from .Interval import Interval as interval
+# support for charts
+from .Chart import Chart as chart
 
 
-# dimension factories
-from .InferredDimension import InferredDimension as inferred
-from .IntervalDimension import IntervalDimension as interval
+# reading and writing
+# the records class
+record = records.record
+# the CSV support in records is sufficient for now
+csv = records.csv
 
 
 # end of file 

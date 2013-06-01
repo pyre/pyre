@@ -36,10 +36,10 @@ def test():
 
     # check the base
     assert raw.pyre_name == "raw"
-    assert identical(raw.pyre_localEntries, (
+    assert identical(raw.pyre_localFields, (
         raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount
         ))
-    assert identical(raw.pyre_entries, raw.pyre_localEntries)
+    assert identical(raw.pyre_fields, raw.pyre_localFields)
     assert identical(raw.pyre_fields, (
         raw.sku, raw.production, raw.shipping, raw.margin, raw.overhead, raw.discount
         ))
@@ -49,10 +49,10 @@ def test():
     # check the subclass
     assert pricing.pyre_name == "pricing"
 
-    assert identical(pricing.pyre_localEntries, (
+    assert identical(pricing.pyre_localFields, (
         pricing.cost, pricing.msrp, pricing.price
         ))
-    assert identical(pricing.pyre_entries, (
+    assert identical(pricing.pyre_fields, (
         pricing.sku, pricing.production, pricing.shipping, pricing.margin,
         pricing.overhead, pricing.discount,
         pricing.cost, pricing.msrp, pricing.price

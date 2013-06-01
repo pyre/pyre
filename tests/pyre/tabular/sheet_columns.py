@@ -40,7 +40,7 @@ def test():
     # make a sheet
     p = pricing(name="vegetables")
     # populate it
-    p.pyre_populate(data)
+    p.pyre_immutable(data)
 
     # check the fields in the sheet against the data set
     assert tuple(p.sku) == tuple(record[0] for record in data)

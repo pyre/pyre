@@ -6,6 +6,11 @@
 #
 
 
+# superclass
+from . import measure
+
+
+# declaration
 class Dimension:
     """
     The base class for implementing data binning strategies
@@ -13,39 +18,29 @@ class Dimension:
 
 
     # public data
-    measure = None # the sheet descriptor that i am responsible for binning
-    offset = None # the field offset with a sheet record that contains the data i bin
+    measure = None # the sheet descriptor to bin
 
 
-    # interface
-    def pyre_register(self, chart):
-        """
-        Build a bin handler for a newly built {chart}
-        """
-        raise NotImplementedError(
-            "class {.__name__!r} must implement 'pyre_register'".format(type(self)))
-
-
-    # meta methods
+    # meta-methods
     def __init__(self, measure, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save my measure
         self.measure = measure
+        # all done
         return
 
 
-    def __get__(self, instance, cls):
-        """
-        Implementation of the descriptor read interface
-        """
-        try:
-            return instance.pyre_bins[self]
-        except AttributeError:
-            return self
-
-        import journal
-        firewall = journal.firewall("pyre.tabular")
-        return firewall.log(
-            "{.__name__!r}: chart {} is not initialized properly".format(type(self), instance))
+    def __get__(self, chart, cls):
+        # if i am being accessed through an instance
+        if chart:
+            # get the journal
+            import journal
+            # complain
+            raise journal.firewall('pyre.tabular').log(
+                "dimensions can't operate on chart instances")
+        # otherwise
+        return self
 
 
 # end of file 

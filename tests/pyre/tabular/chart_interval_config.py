@@ -8,13 +8,15 @@
 
 
 """
-Instantiate a simple chart
+Configure an interval dimension
 """
 
 
 def test():
+    # get the package
     import pyre.tabular
 
+    # make a sheet
     class sales(pyre.tabular.sheet):
         """The transaction data"""
         # layout
@@ -25,6 +27,7 @@ def test():
         discount = pyre.tabular.float()
         sale = pyre.tabular.float()
 
+    # make a chart
     class chart(pyre.tabular.chart, sheet=sales):
         """
         Aggregate the information in the {sales} table
@@ -32,27 +35,16 @@ def test():
         sku = pyre.tabular.inferred(sales.sku)
         quantity = pyre.tabular.interval(measure=sales.quantity, interval=(0, 20), subdivisions=4)
 
-
-    # make a chart instance
-    c = chart()
     # check that the instance picked up the expected dimensions
-    assert c._pyre_initialized == False
-    assert c.quantity.start == 0
-    assert c.quantity.end == 20
-    assert c.quantity.subdivisions == 4
+    assert chart.quantity.interval == (0, 20)
+    assert chart.quantity.subdivisions == 4
     # adjust the binning strategy
-    c.quantity.subdivisions = 2
+    chart.quantity.subdivisions = 2
     # check that theconfiguration was updated
-    assert c.quantity.subdivisions == 2
-    # verify that no bin storage has been allocated yet
-    assert c.quantity.intervals == None
-    # initialize the chart
-    c.pyre_initialize()
-    # and check that storage was allocated
-    assert c.quantity.intervals == (set(), set())
-    
+    assert chart.quantity.subdivisions == 2
+
     # and return the chart object
-    return c
+    return chart
 
 
 # main

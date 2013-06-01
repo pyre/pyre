@@ -40,8 +40,8 @@ charts:
 	${PYTHON} ./chart_class_inheritance.py
 	${PYTHON} ./chart_instance.py
 	${PYTHON} ./chart_inferred.py
+	${PYTHON} ./chart_interval_config.py
 	${PYTHON} ./chart_interval.py
-	${PYTHON} ./chart_instance_config.py
 	${PYTHON} ./chart_filter.py
 	${PYTHON} ./chart_sales.py
 

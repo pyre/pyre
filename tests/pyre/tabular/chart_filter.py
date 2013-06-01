@@ -13,8 +13,10 @@ Exercise an inferred chart dimension
 
 
 def test():
+    # get the package
     import pyre.tabular
 
+    # make a sheet
     class sales(pyre.tabular.sheet):
         """The transaction data"""
         # layout
@@ -25,6 +27,7 @@ def test():
         discount = pyre.tabular.float()
         sale = pyre.tabular.float()
 
+    # make a chart
     class chart(pyre.tabular.chart, sheet=sales):
         """
         Aggregate the information in the {sales} table
@@ -35,14 +38,13 @@ def test():
 
     # make a csv reader
     csv = pyre.tabular.csv()
+    # build a dataset
+    data = csv.read(layout=sales, uri='sales.csv')
     # make a sheet
-    transactions = sales(name="sales")
-    # populate the tables
-    csv.read(sheet=transactions, uri="sales.csv")
+    transactions = sales(name="sales").pyre_immutable(data)
+
     # build a chart
-    cube = chart()
-    # bin the transactions
-    cube.pyre_project(transactions)
+    cube = chart(sheet=transactions)
 
     # select the records the match a given sku and date
     grp = cube.pyre_filter(date="2010/11/01", sku="4000")

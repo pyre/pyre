@@ -31,24 +31,21 @@ def test():
 
     class chart(base):
         """Further aggregation by {date}"""
-        date = pyre.tabular.inferred(base.pyre_Sheet.date)
-
+        date = pyre.tabular.inferred(base.sheet.date)
 
     # base checks
     # check the sheet class
-    assert base.pyre_Sheet == sales
+    assert base.pyre_sheets == {'sheet': sales}
     # check the dimensions
     assert base.pyre_localDimensions == (chart.sku,)
-    assert base.pyre_inheritedDimensions == ()
     assert base.pyre_dimensions == (chart.sku,)
 
     # derived class checks
     # check the sheet class
-    assert chart.pyre_Sheet == sales
+    assert chart.pyre_sheets == {'sheet': sales}
     # check the dimensions in the derived chart
     assert chart.pyre_localDimensions == (chart.date,)
-    assert chart.pyre_inheritedDimensions == (chart.sku,)
-    assert chart.pyre_dimensions == (chart.date, chart.sku)
+    assert chart.pyre_dimensions == (chart.sku, chart.date)
     # and return the chart
     return chart
 

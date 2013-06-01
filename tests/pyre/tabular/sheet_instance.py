@@ -20,11 +20,11 @@ def test():
         The sheet layout
         """
 
-        sku = pyre.tabular.measure()
-        production = pyre.tabular.measure()
-        shipping = pyre.tabular.measure()
-        margin = pyre.tabular.measure()
-        overhead = pyre.tabular.measure()
+        sku = pyre.tabular.str()
+        production = pyre.tabular.float()
+        shipping = pyre.tabular.float()
+        margin = pyre.tabular.float()
+        overhead = pyre.tabular.float()
 
 
     # make a sheet

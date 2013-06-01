@@ -6,17 +6,32 @@
 #
 
 
-from ..records.Entry import Entry
+# superclass
+from .. import records
+from .. import schemata
 
 
-class Measure(Entry.variable):
+# declaration
+@schemata.typed
+class Measure(records.measure):
     """
-    The base class for table descriptors whose values are explicitly specified in the data source
+    Base class for the measures in this package
     """
 
 
-    # public data in addition to what is inherited from Field
-    index = False # True when this measure is a primary key that can be used to create an index
+    # public data
+    indexed = False # {True} when this measure is a primary key used to create an index
+
+
+    # interface
+    def primary(self):
+        """
+        Mark this measure as a primary key
+        """
+        # mark me
+        self.indexed = True
+        # and return me so I chain properly
+        return self
 
 
 # end of file 

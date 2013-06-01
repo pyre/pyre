@@ -6,49 +6,41 @@
 #
 
 
-class Column:
+# superclass
+from .. import records
+
+
+# declaration
+class Column(records.selector):
     """
-    Descriptor that iterates over the values of a given sheet comlumn
+    A selector that grants access to sheet columns
     """
 
 
     # public data
-    index = None # the index of this column
-    measure = None # the original measure with the meta data
+    sheet = None # the worksheet I am bound to
 
 
-    # interface
-    def column(self, sheet):
-        """
-        Generate an iterable over the values of this measure in the entire dataset
-        """
-        # iterate over the entire data set
-        for record in sheet.pyre_data:
-            # return the values of my measure
-            yield record[self.index]
+    # meta-methods
+    def __init__(self, sheet, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # bind my to the sheet
+        self.sheet = sheet
         # all done
         return
 
 
-    # meta methods
-    def __init__(self, index, entry, **kwds):
-        super().__init__(**kwds)
-        self.index = index
-        self.measure = entry
+    def __iter__(self):
+        """
+        Build an iterator over the values in this column
+        """
+        # go through all the records
+        for record in self.sheet.pyre_data:
+            # yielding the values of my column
+            yield record[self.index]
+        # all done
         return
-
-
-    # descriptor interface
-    def __get__(self, sheet, cls):
-        """
-        Read access to the measure slice from the data set
-        """
-        # if this instance access
-        if sheet is not None:
-            # return the column data selector
-            return self.column(sheet)
-        # otherwise, return the descriptor itself
-        return self.measure
 
 
 # end of file 

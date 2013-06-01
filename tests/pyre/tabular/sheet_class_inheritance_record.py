@@ -14,68 +14,70 @@ Verify the class record in the presence of multiple inheritance
 
 def test():
     import pyre.tabular
-    # save the entry types
-    measure = pyre.tabular.measure
-    from pyre.records.Derivation import Derivation as derivation
 
+    # a few sheets
     class production(pyre.tabular.sheet):
-
         sku = pyre.tabular.measure()
         production = pyre.tabular.measure()
 
-    class shipping(pyre.tabular.sheet):
 
+    class shipping(pyre.tabular.sheet):
         shipping = pyre.tabular.measure()
 
-    class pricing(production, shipping):
 
+    class pricing(production, shipping):
+        # measures
         margin = pyre.tabular.measure()
         overhead = pyre.tabular.measure()
         discount = pyre.tabular.measure()
-
+        # derivations
         cost = production.production + shipping.shipping
         msrp = (1 + margin + overhead)*cost
         price = msrp*(1 - discount)
 
 
-    # check production
-    record = production.pyre_Record
-    # verify the accessors
-    assert isinstance(record.sku, pyre.tabular.measure)
-    assert isinstance(record.production, pyre.tabular.measure)
-    # and their indices
-    assert record.pyre_index[record.sku] == 0
-    assert record.pyre_index[record.production] == 1
+    # short names for the stuctural parts
+    measure = pyre.tabular.measure
+    derivation = pyre.tabular.derivation
 
-    # check shipping
-    record = shipping.pyre_Record
+    # verify ancestry
+    assert issubclass(production, pyre.tabular.record)
     # verify the accessors
-    assert isinstance(record.shipping, pyre.tabular.measure)
+    assert isinstance(production.sku, measure)
+    assert isinstance(production.production, measure)
     # and their indices
-    assert record.pyre_index[record.shipping] == 0
+    assert production.pyre_index[production.sku] == 0
+    assert production.pyre_index[production.production] == 1
 
-    # and now pricing
-    record = pricing.pyre_Record
+    # verify ancestry
+    assert issubclass(shipping, pyre.tabular.record)
     # verify the accessors
-    assert isinstance(record.margin, measure)
-    assert isinstance(record.overhead, measure)
-    assert isinstance(record.discount, measure)
-    assert isinstance(record.shipping, measure)
-    assert isinstance(record.sku, measure)
-    assert isinstance(record.production, measure)
-    assert isinstance(record.cost, derivation)
-    assert isinstance(record.msrp, derivation)
-    assert isinstance(record.price, derivation)
+    assert isinstance(shipping.shipping, measure)
     # and their indices
-    assert record.pyre_index[record.shipping] == 0
-    assert record.pyre_index[record.sku] == 1
-    assert record.pyre_index[record.production] == 2
-    assert record.pyre_index[record.margin] == 3
-    assert record.pyre_index[record.overhead] == 4
-    assert record.pyre_index[record.discount] == 5
-    assert record.pyre_index[record.cost] == 6
-    assert record.pyre_index[record.msrp] == 7
-    assert record.pyre_index[record.price] == 8
+    assert shipping.pyre_index[shipping.shipping] == 0
+
+    # verify ancestry
+    assert issubclass(pricing, pyre.tabular.record)
+    # verify the accessors
+    assert isinstance(pricing.margin, measure)
+    assert isinstance(pricing.overhead, measure)
+    assert isinstance(pricing.discount, measure)
+    assert isinstance(pricing.shipping, measure)
+    assert isinstance(pricing.sku, measure)
+    assert isinstance(pricing.production, measure)
+    assert isinstance(pricing.cost, derivation)
+    assert isinstance(pricing.msrp, derivation)
+    assert isinstance(pricing.price, derivation)
+    # and their indices
+    assert pricing.pyre_index[pricing.shipping] == 0
+    assert pricing.pyre_index[pricing.sku] == 1
+    assert pricing.pyre_index[pricing.production] == 2
+    assert pricing.pyre_index[pricing.margin] == 3
+    assert pricing.pyre_index[pricing.overhead] == 4
+    assert pricing.pyre_index[pricing.discount] == 5
+    assert pricing.pyre_index[pricing.cost] == 6
+    assert pricing.pyre_index[pricing.msrp] == 7
+    assert pricing.pyre_index[pricing.price] == 8
 
     return pricing, shipping, production
 

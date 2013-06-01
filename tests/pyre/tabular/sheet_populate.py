@@ -40,7 +40,7 @@ def test():
     # make a sheet
     p = pricing(name="vegetables")
     # and populate it
-    p.pyre_populate(data)
+    p.pyre_immutable(data)
 
     # check that all is good
     for expected, actual in zip(data, p):

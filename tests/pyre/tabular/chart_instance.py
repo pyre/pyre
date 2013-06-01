@@ -33,7 +33,7 @@ def test():
 
 
     # create a chart instance
-    c = chart()
+    c = chart(sheet=None)
     # and return it
     return c
 

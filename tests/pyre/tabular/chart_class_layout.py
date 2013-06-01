@@ -13,8 +13,10 @@ Verify that chart class records get built as expected
 
 
 def test():
+    # get the package
     import pyre.tabular
 
+    # make a sheet
     class sales(pyre.tabular.sheet):
         """The transaction data"""
         # layout
@@ -25,19 +27,19 @@ def test():
         discount = pyre.tabular.float()
         sale = pyre.tabular.float()
 
+    # build a chart
     class chart(pyre.tabular.chart, sheet=sales):
         """
         Aggregate the information in the {sales} table
         """
-        sku = pyre.tabular.inferred(sales.sku)
-
+        sku = pyre.tabular.inferred(sheet.sku)
 
     # check the sheet class
-    assert chart.pyre_Sheet == sales
+    assert chart.pyre_sheets == {'sheet': sales}
     # check the dimensions
     assert chart.pyre_localDimensions == (chart.sku,)
-    assert chart.pyre_inheritedDimensions == ()
     assert chart.pyre_dimensions == (chart.sku,)
+
     # and return the chart
     return chart
 
