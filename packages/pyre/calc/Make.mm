@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     Calculator.py \
     Const.py \
     Count.py \
+    Datum.py \
     Evaluator.py \
     Expression.py \
     Filter.py \

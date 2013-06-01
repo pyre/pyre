@@ -32,6 +32,8 @@ that trait settings can refer to the values of other traits in the configuration
 """
 
 
+# the base node
+from .Datum import Datum as datum
 # the node generator
 from .Calculator import Calculator as calculator
 

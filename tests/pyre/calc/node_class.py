@@ -13,10 +13,14 @@ Check that the refcount is zero after all nodes have gone out of scope
 
 
 def test():
-    # get the package
+    # get calc
     import pyre.calc
+    # and algebraic
+    import pyre.algebraic
     # save the metaclass
     calculator = pyre.calc.calculator
+    # and the base node
+    base = pyre.algebraic.node
 
     # make a node class
     class node(metaclass=calculator): pass
@@ -24,7 +28,7 @@ def test():
     # verify that the {mro} is what we expect
     assert node.__mro__ == (
         node,
-        calculator.base,
+        calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
         object)
 
@@ -34,7 +38,7 @@ def test():
         calculator.const,  # from calculator
         calculator.literal, calculator.leaf, # from algebra
         node, # from node
-        calculator.base,
+        calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
         object)
 
@@ -46,7 +50,7 @@ def test():
         calculator.observable, calculator.value, # from calculator
         calculator.variable, calculator.leaf, # from algebra
         node, # from node
-        calculator.base,
+        calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
         object)
 
@@ -58,7 +62,7 @@ def test():
         calculator.observer, calculator.observable, calculator.evaluator, # from calculator
         calculator.operator, calculator.composite, # from algebra
         node, # from node
-        calculator.base,
+        calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
         object)
 
@@ -70,7 +74,7 @@ def test():
         calculator.observer, calculator.observable, calculator.expression, # from calculator
         calculator.composite, # from algebra
         node, # from node
-        calculator.base,
+        calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
         object)
 
@@ -82,7 +86,7 @@ def test():
         calculator.observer, calculator.observable, calculator.interpolation, # from calculator
         calculator.composite, # from algebra
         node, # from node
-        calculator.base,
+        calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
         object)
 
@@ -94,7 +98,7 @@ def test():
         calculator.observer, calculator.observable, calculator.reference, # from calculator
         calculator.composite, # from algebra
         node, # from node
-        calculator.base,
+        calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
         object)
 
@@ -104,7 +108,7 @@ def test():
         calculator.observable, calculator.unresolved, # from calculator
         calculator.leaf, # from algebra
         node, # from node
-        calculator.base,
+        calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
         object)
 

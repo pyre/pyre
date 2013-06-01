@@ -18,6 +18,7 @@ class Calculator(algebraic.algebra, type):
 
 
     # types
+    from .Datum import Datum as base
     # entities: my literals, variables and operators have values
     from .Const import Const as const
     from .Value import Value as value
@@ -173,8 +174,20 @@ class Calculator(algebraic.algebra, type):
         """
         Contribute to the list of ancestors of the representation of expressions
         """
-        # build the derivation for interpolations
-        yield from cls.injectComposite(composite=cls.expression, record=record)
+        # my expressions memoize their values
+        yield cls.memo
+        # support arbitrary value conversions
+        yield cls.preprocessor
+        yield cls.postprocessor
+        # notify their clients of changes to their values and respond when the values of their
+        # operands change
+        yield cls.observer
+        # if the record has anything to say
+        if record.expression: yield record.expression
+        # this where they fit
+        yield cls.expression
+        # and whatever else my superclass says
+        yield from cls.compositeDerivation(record)
         # all done
         return
 
@@ -184,8 +197,20 @@ class Calculator(algebraic.algebra, type):
         """
         Contribute to the list of ancestors of the representation of interpolations
         """
-        # build the derivation for interpolations
-        yield from cls.injectComposite(composite=cls.interpolation, record=record)
+        # my interpolations memoize their values
+        yield cls.memo
+        # support arbitrary value conversions
+        yield cls.preprocessor
+        yield cls.postprocessor
+        # notify their clients of changes to their values and respond when the values of their
+        # operands change
+        yield cls.observer
+        # if the record has anything to say
+        if record.interpolation: yield record.interpolation
+        # this where they fit
+        yield cls.interpolation
+        # and whatever else my superclass says
+        yield from cls.compositeDerivation(record)
         # all done
         return
 
@@ -195,8 +220,20 @@ class Calculator(algebraic.algebra, type):
         """
         Contribute to the list of ancestors of the representation of references
         """
-        # build the derivation for references
-        yield from cls.injectComposite(composite=cls.reference, record=record)
+        # my references memoize their values
+        yield cls.memo
+        # support arbitrary value conversions
+        yield cls.preprocessor
+        yield cls.postprocessor
+        # notify their clients of changes to their values and respond when the values of their
+        # operands change
+        yield cls.observer
+        # if the record has anything to say
+        if record.reference: yield record.reference
+        # this where they fit
+        yield cls.reference
+        # and whatever else my superclass says
+        yield from cls.compositeDerivation(record)
         # all done
         return
 
@@ -209,6 +246,8 @@ class Calculator(algebraic.algebra, type):
         # my unresolved nodes notify their clients of changes to their values and respond when
         # the values of their operands change
         yield cls.observable
+        # if the record has anything to say
+        if record.unresolved: yield record.unresolved
         # my unresolved nodes know how to compute their values
         yield cls.unresolved
         # and whatever else my superclass says
