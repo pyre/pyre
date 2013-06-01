@@ -57,6 +57,8 @@ class Record(metaclass=Templater):
     pyre_fields = None # the tuple of all accessible fields, both local and inherited
     pyre_measures = None # the tuple of all primary fields
     pyre_derivations = None # the tuple of fields whose values are computed on the fly
+    # a map from field descriptors to their column index
+    pyre_columns = None
 
 
     # interface; patched by the metaclass

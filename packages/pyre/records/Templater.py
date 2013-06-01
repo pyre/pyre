@@ -137,12 +137,17 @@ class Templater(AttributeClassifier):
         # chain up
         super().__init__(name, bases, attributes, **kwds)
 
+        columns = {}
         # add selectors for all my fields we removed in {__new__}
         for index, field in enumerate(self.pyre_fields):
             # build a selector
             selector = self.pyre_selector(field=field, index=index)
+            # map this field to its column number
+            columns[field] = index
             # attach it
             setattr(self, field.name, selector)
+        # attach the column map
+        self.pyre_columns = columns
 
         # build value accessors for the data tuples
         attributes = dict(
