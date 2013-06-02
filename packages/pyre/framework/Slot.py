@@ -7,18 +7,16 @@
 
 
 # access to the algebraic package
-from .. import algebraic
+from .. import calc
 # access to the locators
 from .. import tracking
 # the framework client mix-in
 from .Client import Client
-# my metaclass
-from . import _metaclass_Slot
 
 
 
 # class declaration
-class Slot(algebraic.AbstractNode, algebraic.Arithmetic, Client, metaclass=_metaclass_Slot):
+class Slot(metaclass=calc.calculator):
     """
     This class provides centralized access to the values of configurable traits
 
@@ -53,26 +51,6 @@ class Slot(algebraic.AbstractNode, algebraic.Arithmetic, Client, metaclass=_meta
     # types
     # priorities
     from .Priority import Priority as priorities
-
-    # hooks for implementing the expression graph construction
-    # structural
-    leaf = algebraic.Leaf
-    literal = algebraic.Literal
-    composite = algebraic.Composite
-    const = algebraic.Const
-    # evaluation strategies
-    memo = algebraic.Memo
-    converter = algebraic.Converter
-    observer = algebraic.Observer
-    observable = algebraic.Observable
-
-    # functional; they will be patched below with my subclasses
-    variable = None
-    operator = None
-    expression = None
-    interpolation = None
-    reference = None
-    unresolved = None
 
     # constants
     defaultPriority = priorities.defaults
@@ -117,6 +95,7 @@ class Slot(algebraic.AbstractNode, algebraic.Arithmetic, Client, metaclass=_meta
 
     # meta-methods
     def __init__(self, key, priority, locator, **kwds):
+        assert 'converter' not in kwds
         assert isinstance(priority, self.priorities)
         # chain up
         super().__init__(**kwds)
@@ -136,77 +115,28 @@ class Slot(algebraic.AbstractNode, algebraic.Arithmetic, Client, metaclass=_meta
         return
 
 
-# literals
-class literal(Slot.const, Slot.literal, Slot):
-    """
-    Concrete class for representing foreign values
-    """
+    # operators
+    class operator:
+        """
+        Concrete class for encapsulating operations among nodes
+        """
+        # meta-methods
+        def __init__(self, **kwds):
+            super().__init__(
+                key=None,
+                priority=self.priorities.uninitialized(), locator=tracking.here(2),
+                **kwds)
+            return
 
-# variables
-class variable(Slot.memo, Slot.converter, Slot.observable, algebraic.Variable, Slot.leaf, Slot):
-    """
-    Concrete class for encapsulating the user accessible nodes
-    """
-
-# operators
-class operator(Slot.memo, Slot.converter, Slot.observer, algebraic.Operator, Slot.composite, Slot):
-    """
-    Concrete class for encapsulating operations among nodes
-    """
-    # meta-methods
-    def __init__(self, **kwds):
-        super().__init__(
-            key=None,
-            priority=self.priorities.uninitialized(), locator=tracking.here(2),
-            **kwds)
-        return
-
-# expressions
-class expression(
-    Slot.memo, Slot.converter, Slot.observer, algebraic.Expression, Slot.composite, Slot):
-    """
-    Concrete class for encapsulating macros
-    """
-
-    def __str__(self): return "expression {.expression!r}".format(self)
-
-# interpolations
-class interpolation(
-    Slot.memo, Slot.converter, Slot.observer, algebraic.Interpolation, Slot.composite, Slot):
-    """
-    Concrete class for encapsulating simple string interpolation
-    """
-
-    def __str__(self): return "expression {.expression!r}".format(self)
-
-# references
-class reference(
-    Slot.memo, Slot.converter, Slot.observer, algebraic.Reference, Slot.composite, Slot):
-    """
-    Concrete class for encapsulating references to other nodes
-    """
-
-    def __str__(self): return "reference to {}".format(self.operands[0])
-
-# unresolved nodes
-class unresolved(Slot.observable, algebraic.Unresolved, Slot.leaf, Slot):
-    """
-    Concrete class for representing unknown nodes
-    """
-    # meta-methods
-    def __init__(self, **kwds):
-        super().__init__(priority=self.priorities.uninitialized(), locator=None, **kwds)
-        return
-
-
-# patch the base class
-Slot.literal = literal
-Slot.variable = variable
-Slot.operator = operator
-Slot.expression = expression
-Slot.interpolation = interpolation
-Slot.reference = reference
-Slot.unresolved = unresolved
+    # unresolved nodes
+    class unresolved:
+        """
+        Concrete class for representing unknown nodes
+        """
+        # meta-methods
+        def __init__(self, **kwds):
+            super().__init__(priority=self.priorities.uninitialized(), locator=None, **kwds)
+            return
 
 
 # end of file 

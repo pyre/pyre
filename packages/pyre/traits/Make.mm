@@ -20,27 +20,14 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Array.py \
     Behavior.py \
-    Bool.py \
     Dict.py \
-    Dimensional.py \
     Facility.py \
-    Float.py \
-    INet.py \
     InputFile.py \
-    Integer.py \
-    List.py \
-    Object.py \
     OutputFile.py \
     Property.py \
-    Set.py \
-    Sequence.py \
     Slotted.py \
-    String.py \
     Trait.py \
-    Tuple.py \
-    URI.py \
     properties.py \
     __init__.py
 

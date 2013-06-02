@@ -14,18 +14,18 @@ class Expression:
     This mill mix-in builds textual representations of expression trees built out of node
     hierarchies that conform to the {pyre.algebraic} protocols. The base class of the node
     hierarchy must be supplied as a constructor argument; the implementation falls back to
-    {pyre.algebraic.Node} if no alternative is provided.
+    {pyre.calc.Node} if no alternative is provided.
     """
 
 
     # types
-    from .. import algebraic
+    from .. import calc
 
 
     # interface
     def expression(self, root, **kwds):
         """
-        Build a representation of {node}, assumed to be an instance of a {pyre.algebraic.Node}
+        Build a representation of {node}, assumed to be an instance of a {pyre.calc.Node}
         subclass
         """
         return self._renderers[type(root)](root, **kwds)
@@ -35,8 +35,8 @@ class Expression:
     def __init__(self, nodeType=None, **kwds):
         super().__init__(**kwds)
 
-        # fall back to {algebraic} nodes
-        if nodeType is None: from ..algebraic.Node import Node as nodeType
+        # fall back to {calc} nodes
+        if nodeType is None: from ..calc.Node import Node as nodeType
 
         # build the symbol table
         self._symbols = self._newSymbolTable()
@@ -49,7 +49,7 @@ class Expression:
     # implementation details
     def _newSymbolTable(self):
         """
-        Build a table mapping all {pyre.algebraic} operators to their 'default' symbols
+        Build a table mapping all {pyre.calc} operators to their 'default' symbols
 
         This table is built by considering the python representation of the operator to be its
         default. Other mills can build their own tables, or start with this one and modify it as
@@ -84,7 +84,7 @@ class Expression:
 
     def _newRenderingStrategyTable(self, nodeType):
         """
-        Build a table that maps {pyre.algebraic} operators to rendering strategies
+        Build a table that maps {pyre.calc} operators to rendering strategies
         """
         # grab the types that handles literal values and operations
         literal = nodeType.literal

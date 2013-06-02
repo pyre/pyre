@@ -284,7 +284,7 @@ class Configurator:
         slot = nameserver.variable(
             key=key,
             value=self.configpath, 
-            converter=schemata.list(schema=schemata.uri()).coerce, 
+            postprocessor=schemata.list(schema=schemata.uri()).coerce, 
             priority=nameserver.priority.defaults(), locator=self.locator)
         # place it in the model
         nameserver.insert(name=name, key=key, node=slot)

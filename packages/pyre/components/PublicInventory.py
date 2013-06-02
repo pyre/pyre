@@ -59,12 +59,12 @@ class PublicInventory(Inventory):
         # get the nameserver
         nameserver = self.pyre_nameserver
         # unpack the slot part
-        macro, converter = strategy(model=nameserver)
+        macro, postprocessor = strategy(model=nameserver)
         # hash the trait name
         traitKey = key[trait.name]
         # build a slot to hold value
         new = macro(
-            key=traitKey, converter=converter,
+            key=traitKey, postprocessor=postprocessor,
             value=value, priority=priority, locator=locator)
         # adjust the model
         nameserver.insert(name=None, key=traitKey, node=new)
@@ -158,12 +158,12 @@ class PublicInventory(Inventory):
             # skip the non-configurable ones
             if not trait.isConfigurable: continue
             # ask the trait for the evaluation strategy details
-            macro, converter = trait.classSlot(model=nameserver)
+            macro, postprocessor = trait.classSlot(model=nameserver)
             # and a default value appropriate for this component
             initialValue = trait.classDefault(key=key, component=component)
             # use it to build the slot
             slot = macro(
-                key=key[trait.name], value=initialValue, converter=converter,
+                key=key[trait.name], value=initialValue, postprocessor=postprocessor,
                 priority=priority(), locator=locator)
             # yield the trait, slot pair
             yield trait, slot
@@ -196,7 +196,7 @@ class PublicInventory(Inventory):
                 traits.remove(trait)
                 # get the associated slot
                 slot = ancestor.pyre_inventory[trait]
-                # build a reference to it; no need to switch converters here, since the type of
+                # build a reference to it; no need to switch postprocessor here, since the type of
                 # an inherited trait is determined by the nearest ancestor that declared it
                 ref = slot.ref(key=key[trait.name], locator=locator, priority=priority())
                 # and yield the trait, slot pair
@@ -238,10 +238,10 @@ class PublicInventory(Inventory):
             # ask the class inventory for the slot that corresponds to this trait
             slot = component.pyre_inventory[trait]
             # and its slot strategy
-            _, converter = trait.instanceSlot(model=nameserver)
+            _, postprocessor = trait.instanceSlot(model=nameserver)
             # build a reference to the class slot
-            ref = slot.ref(
-                key=key[trait.name], converter=converter, locator=locator, priority=priority())
+            ref = slot.ref(key=key[trait.name], postprocessor=postprocessor,
+                           locator=locator, priority=priority())
             # hand the trait, slot pair
             yield trait, ref
         # all done

@@ -6,10 +6,13 @@
 #
 
 
+# externals
+from .. import schemata
 # superclass
 from .Slotted import Slotted
 
 
+@schemata.typed
 class Property(Slotted):
     """
     The base class for attribute descriptors that describe a component's external state

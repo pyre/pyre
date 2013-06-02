@@ -10,27 +10,38 @@
 This package provides access to the factories for typed properties
 """
 
+# get the typed class
+from .Property import Property as property
 
-from .Array import Array as array
-from .Bool import Bool as bool
-from .Dimensional import Dimensional as dimensional
+# for convenience, expose the typed ones
+# first the simple ones
+bool = property.bool
+decimal = property.decimal
+float = property.float
+inet = property.inet
+int = property.int
+identity = property.identity
+str = property.str
+
+# next, the more complex types
+date = property.date
+dimensional = property.dimensional
+time = property.time
+uri = property.uri
+
+# finally, containers
+array = property.array
+list = property.list
+set = property.set
+tuple = property.tuple
+
 from .Facility import Facility as facility
-from .Float import Float as float
-from .INet import INet as inet
 from .InputFile import InputFile as inputfile
-from .Integer import Integer as int
-from .Object import Object as object
 from .OutputFile import OutputFile as outputfile
-from .String import String as str
-from .URI import URI as uri
-
 
 # meta-properties: trait descriptors for homogeneous containers; these require other trait
 # descriptors to specify the type of the contents
 from .Dict import Dict as dict
-from .List import List as list
-from .Set import Set as set
-from .Tuple import Tuple as tuple
 
 
 def pathlist(**kwds):

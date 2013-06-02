@@ -137,9 +137,10 @@ class KeyMap(Map):
         fullname = nameserver.join(self.name, name)
 
         # unpack the slot building strategy
-        macro, converter = self.strategy(model=nameserver)
+        macro, postprocessor = self.strategy(model=nameserver)
         # build a slot to hold the {value}
-        new = macro(key=key, converter=converter, value=value, priority=priority, locator=locator)
+        new = macro(key=key, postprocessor=postprocessor, value=value,
+                    priority=priority, locator=locator)
 
         # adjust my map
         self.map[name] = key
@@ -175,9 +176,10 @@ class NameMap(Map):
         # get the nameserver
         nameserver = self.pyre_nameserver
         # unpack the slot part
-        macro, converter = self.strategy(model=nameserver)
+        macro, postprocessor = self.strategy(model=nameserver)
         # build the slot
-        new = macro(key=None, converter=converter, value=value, locator=locator, priority=priority)
+        new = macro(key=None, postprocessor=postprocessor, value=value, 
+                    locator=locator, priority=priority)
         # get the old slot 
         old = self.map[name]
         # pick the winner of the two
@@ -256,7 +258,7 @@ class Dict(Property):
     def classSlot(self, model):
         """
         Hook registered with the nameserver that informs it of my macro preference and the
-        correct converter to attach to new slots for component classes
+        correct postprocessor to attach to new slots for component classes
         """
         # my schema knows
         return self.macro(model=model), self.identify
@@ -265,7 +267,7 @@ class Dict(Property):
     def instanceSlot(self, model):
         """
         Hook registered with the nameserver that informs it of my macro preference and the
-        correct converter to attach to new slots for component classes
+        correct postprocessor to attach to new slots for component classes
         """
         # my schema knows
         return self.macro(model=model), self.coerce

@@ -118,7 +118,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             # assemble the path
             path = fileserver.join(*fragments)
             # build a better uri
-            uri = cls.uri.uri(scheme='vfs', address=path)
+            uri = cls.uri.locator(scheme='vfs', address=path)
             # and yield it
             yield uri
 

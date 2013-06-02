@@ -9,12 +9,12 @@
 # externals
 # import weakref
 from .. import tracking
-from .. import algebraic
+from ..calc.Hierarchical import Hierarchical
 from .Package import Package
 
 
 # my declaration
-class NameServer(algebraic.hierarchicalModel):
+class NameServer(Hierarchical):
     """
     The manager of the full set of runtime objects that are accessible by name. This includes
     everything from configuration settings to components and interfaces
@@ -102,7 +102,7 @@ class NameServer(algebraic.hierarchicalModel):
         # if there
         else:
             # adjust it
-            slot.macro, slot.converter = strategy(model=self)
+            slot.macro, slot.postprocessor = strategy(model=self)
 
         # all done
         return
@@ -174,9 +174,9 @@ class NameServer(algebraic.hierarchicalModel):
         # if the key corresponds to a trait
         else:
             # ask it for its value conversion strategy
-            _, converter = strategy(model=self)
-            # attach the converter to the surviving slot
-            survivorSlot.converter = converter
+            _, postprocessor = strategy(model=self)
+            # attach the postprocessor to the surviving slot
+            survivorSlot.postprocessor = postprocessor
             # and mark it as dirty so its value is recomputed
             survivorSlot.dirty = True
 
@@ -196,15 +196,16 @@ class NameServer(algebraic.hierarchicalModel):
         except KeyError:
             # by default, make interpolations
             macro = self.interpolation
-            # use the default converter
-            converter = self.node.converter.identity.coerce
+            # use the default postprocessor
+            postprocessor = self.node.postprocessor.identity.coerce
         # if it a trait node
         else:
             # invoke it to get the node factory and schema
-            macro, converter = strategy(model=self)
+            macro, postprocessor = strategy(model=self)
 
         # build and return the slot
-        return macro(key=key, value=value, priority=priority, locator=locator, converter=converter)
+        return macro(key=key, value=value, priority=priority, 
+                     locator=locator, postprocessor=postprocessor)
 
             
     def retrieve(self, name):

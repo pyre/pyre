@@ -15,7 +15,7 @@ Exercise a C expression weaver
 def test():
     # get the packages
     import pyre.weaver
-    import pyre.algebraic
+    import pyre.calc
     # instantiate a weaver
     weaver = pyre.weaver.newWeaver(name="sanity")
     weaver.language = "cxx"
@@ -23,8 +23,8 @@ def test():
     mill = weaver.language
 
     # build a few nodes
-    zero = pyre.algebraic.var(value=0)
-    one = pyre.algebraic.var(value=1)
+    zero = pyre.calc.var(value=0)
+    one = pyre.calc.var(value=1)
 
     # check expression generation
     # the trivial cases
