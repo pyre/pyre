@@ -23,7 +23,7 @@ from .. import schemata
 class descriptor(stem.variable): pass
 
 # for convenience, expose the typed ones
-# first the simple ones
+# the simple ones
 bool = descriptor.bool
 decimal = descriptor.decimal
 float = descriptor.float
@@ -32,17 +32,34 @@ int = descriptor.int
 identity = descriptor.identity
 str = descriptor.str
 
-# next, the more complex types
+# more complex types
 date = descriptor.date
 dimensional = descriptor.dimensional
 time = descriptor.time
 uri = descriptor.uri
 
-# finally, containers
+# containers
 array = descriptor.array
 list = descriptor.list
 set = descriptor.set
 tuple = descriptor.tuple
+
+
+# common meta-descriptors
+def strings(default=list, **kwds):
+    """
+    A list of strings
+    """
+    # build a descriptor that describes a list of strings
+    return list(schema=str(), default=default)
+
+
+def uris(default=list, **kwds):
+    """
+    A list of URIs
+    """
+    # build a descriptor that describes a list of uris and return it
+    return list(schema=uri(), default=default)
 
 
 # end of file 
