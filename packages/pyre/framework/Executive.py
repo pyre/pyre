@@ -103,7 +103,7 @@ class Executive:
         # look for each one
         for root, filename, extension in scope:
             # build the uri
-            uri = fs.splice(root, filename, extension)
+            uri = fs.splice(root.uri, filename, extension)
             # load the settings from the associated file
             self.loadConfiguration(uri=uri, priority=priority, locator=locator)
         # all done

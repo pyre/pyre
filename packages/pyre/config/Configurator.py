@@ -10,8 +10,8 @@
 import os # for path
 import weakref # for access to my executive
 import collections # for defaultdict and OrderedDict
-from .. import schemata
 from .. import tracking
+from .. import descriptors
 
 
 # class declaration
@@ -26,13 +26,25 @@ class Configurator:
     from . import exceptions
 
 
-    # defaults
-    locator = tracking.simple('during pyre startup')
-    configpath = ['vfs:/pyre/system', 'vfs:/pyre/user', 'vfs:/pyre/startup']
+    # constants
+    locator = tracking.simple('during pyre startup') # the default locator
+    cfgpath = descriptors.uris(default=['vfs:/pyre/system','vfs:/pyre/user','vfs:/pyre/startup'])
 
 
     # public data
     codecs = None
+
+    @property
+    def configpath(self):
+        """
+        Return an iterable over my configuration path
+        """
+        # get the nameserver
+        nameserver = self.executive.nameserver
+        # get my path list and return an iterable over it
+        yield from nameserver['pyre.configpath']
+        # all done
+        return
 
 
     # interface
@@ -283,8 +295,8 @@ class Configurator:
         # build the configuration path slot
         slot = nameserver.variable(
             key=key,
-            value=self.configpath, 
-            postprocessor=schemata.list(schema=schemata.uri()).coerce, 
+            value=self.cfgpath.default,
+            postprocessor=self.cfgpath.coerce, 
             priority=nameserver.priority.defaults(), locator=self.locator)
         # place it in the model
         nameserver.insert(name=name, key=key, node=slot)
