@@ -23,8 +23,7 @@ class Preprocessor:
     # interface
     def setValue(self, value, **kwds):
         """
-        Intercept the node value setter and make sure that the value the caller gets has
-        been through my {preprocessor}
+        Hand the incoming {value} to my {preprocessor} before storing it
         """
         # attempt to
         try:

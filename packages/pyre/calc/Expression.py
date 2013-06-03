@@ -47,7 +47,7 @@ class Expression:
         # other errors
         except Exception as error: 
             # are reported as evaluation errors
-            raise self.EvaluationError(node=self, error=error) from error
+            raise self.EvaluationError(node=self, error=error) from None
         # otherwise, just return the value
         return value
 
@@ -98,6 +98,7 @@ class Expression:
             if match.group("esc_close"): return "}"
             # unmatched braces
             if match.group("lone_open") or match.group("lone_closed"):
+                # are errors
                 raise cls.ExpressionSyntaxError(formula=expression, error="unmatched brace")
             # only one case left: a valid node reference
             # extract the name from the match
@@ -119,8 +120,11 @@ class Expression:
         if not operands: raise cls.EmptyExpressionError(formula=normalized)
         # now, attempt to compile the expression
         try:
+            # by asking python to build a code object
             program = compile(normalized, filename='expression', mode='eval')
+        # if it failed
         except SyntaxError as error:
+            # complain
             raise cls.ExpressionSyntaxError(formula=expression, error=error) from error
         # all is well
         return program, operands
