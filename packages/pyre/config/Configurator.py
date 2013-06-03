@@ -128,21 +128,23 @@ class Configurator:
 
     def assign(self, assignment, priority):
         """
-        Process {assignment} by building a slot and placing it in {model}
+        Process {assignment} by building a slot and placing it in the nameserver
         """
         # get the nameserver
-        model = self.executive.nameserver
+        nameserver = self.executive.nameserver
         # unpack the value
         value = assignment.value
         # get the locator
         locator = assignment.locator
+
+
         # hash the assignment key
-        key = model._hash.hash(items=assignment.key)
+        key = nameserver._hash.hash(items=assignment.key)
         # ask the nameserver to make a slot for me
-        slot = model.buildNode(key=key, value=value, priority=priority(), locator=locator)
+        slot = nameserver.buildNode(key=key, value=value, priority=priority(), locator=locator)
         # add it to the model and return the (key, slot) pair; note that the slot returned is
         # the survivor of the priority context, hence not necessarily the slot we made here
-        return model.insert(name=model.join(*assignment.key), key=key, node=slot)
+        return nameserver.insert(name=nameserver.join(*assignment.key), key=key, node=slot)
 
 
     def defer(self, assignment, priority):
