@@ -59,14 +59,12 @@ class NameServer(Hierarchical):
             package = self._nodes[key].value
             # make sure it is a package
             if not isinstance(package, Package):
-                # complain
-                complaint = 'name conflict while configuring package {!r}: {}'.format(name, package)
-                # log the error
+                # get the journal
                 import journal
-                error = journal.error('pyre.configuration')
-                error.log(complaint)
-                # and punt
-                raise ValueError(complaint)
+                # build the report
+                complaint = 'name conflict while configuring package {!r}: {}'.format(name, package)
+                # complain
+                raise journal.error('pyre.configuration').log(complaint)
         # if not
         except (KeyError, ValueError):
             # make one
@@ -208,28 +206,6 @@ class NameServer(Hierarchical):
                      locator=locator, postprocessor=postprocessor)
 
             
-    def retrieve(self, name):
-        """
-        Retrieve the node registered under {name}. If no such node exists, an error marker will
-        be built, stored in the symbol table under {name}, and returned.
-        """
-        # hash the {name}
-        key = self.hash(name)
-        # if a node is already registered under this key
-        try:
-            # grab it
-            node = self._nodes[key]
-        # otherwise
-        except KeyError:
-            # build an error marker
-            node = self.node.unresolved(key=key, request=name)
-            # add it to the pile
-            self._nodes[key] = node
-            self._names[key] = name
-        # return the node
-        return node
-
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
