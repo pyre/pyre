@@ -16,9 +16,9 @@ from .Client import Client
 
 
 # class declaration
-class Slot(metaclass=calc.calculator):
+class Slot(Client, metaclass=calc.calculator):
     """
-    This class provides centralized access to the values of configurable traits
+    This class provides centralized access to the values of all configurables
 
     All configuration information recovered from the command line, configuration files or
     explicit assignments to the {configurator} is contained in slots. The {configurator}
@@ -59,6 +59,15 @@ class Slot(metaclass=calc.calculator):
     key = None # the hash by which i am known to the name server
     locator = None # the provenance of my value
     priority = None # the priority of the value assignment operation
+
+
+    @property
+    def model(self):
+        """
+        Return the model against which named references are resolved
+        """
+        # easy enough
+        return self.pyre_nameserver
 
 
     @property
