@@ -28,7 +28,7 @@ class Descriptor(metaclass=Decorator):
     # types
     # variables
     class variable:
-        """Concrete class for representing fields"""
+        """Concrete class for representing descriptors"""
 
         # constant
         category = 'descriptor'

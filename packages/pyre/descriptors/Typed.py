@@ -37,13 +37,13 @@ class Typed(Type):
         # {None} is special; leave it alone
         if value is None: return None
         # otherwise, convert
-        for converter in self.converters: value = converter(value)
+        for converter in self.converters: value = converter(value=value, **kwds)
         # cast
-        value = super().coerce(value, **kwds)
+        value = super().coerce(value=value, **kwds)
         # normalize
-        for normalizer in self.normalizers: value = normalizer(value)
+        for normalizer in self.normalizers: value = normalizer(value=value, **kwds)
         # validate
-        for validator in self.validators: value = validator(value)
+        for validator in self.validators: value = validator(value=value)
         # and return the new value
         return value
 
