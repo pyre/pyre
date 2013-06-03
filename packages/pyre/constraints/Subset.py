@@ -18,16 +18,16 @@ class Subset(Constraint):
 
 
     # interface
-    def validate(self, candidate):
+    def validate(self, value, **kwds):
         """
-        Check whether {candidate} satisfies this constraint
+        Check whether {value} satisfies this constraint
         """
-        # if my set is a superset of {candidate}
-        if self.choices.issuperset(candidate):
+        # if my set is a superset of {value}
+        if self.choices.issuperset(value):
             # indicate success
-            return candidate
-        # otherwise, fail
-        raise self.ConstraintViolationError(self, candidate)
+            return value
+        # otherwise, chain up
+        return super().validate(value=value, **kwds)
 
 
     # meta-methods

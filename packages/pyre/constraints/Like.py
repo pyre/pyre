@@ -21,16 +21,16 @@ class Like(Constraint):
 
 
     # interface
-    def validate(self, candidate):
+    def validate(self, value, **kwds):
         """
-        Check whether {candidate} satisfies this constraint
+        Check whether {value} satisfies this constraint
         """
-        # if the candidate matches my regular expression
-        if self.regexp.match(candidate):
+        # if the value matches my regular expression
+        if self.regexp.match(value):
             # indicate success
-            return candidate
-        # otherwise, fail
-        raise self.ConstraintViolationError(self, candidate)
+            return value
+        # otherwise, chain up
+        return super().validate(value=value, **kwds)
 
 
     # meta-methods

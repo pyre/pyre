@@ -18,14 +18,14 @@ class And(Constraint):
 
 
     # interface
-    def validate(self, candidate):
+    def validate(self, value, **kwds):
         """
-        Check whether {candidate} satisfies this constraint
+        Check whether {value} satisfies this constraint
         """
         # i am happy only if every one of my constraints is happy
-        for constraint in self.constraints: constraint.validate(candidate)
+        for constraint in self.constraints: constraint.validate(value=value, **kwds)
         # return success
-        return candidate
+        return value
 
 
     # meta-methods

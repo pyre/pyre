@@ -18,22 +18,22 @@ class Or(Constraint):
 
 
     # interface
-    def validate(self, candidate):
+    def validate(self, value, **kwds):
         """
-        Check whether {candidate} satisfies this constraint
+        Check whether {value} satisfies this constraint
         """
         # go through my constraints
         for constraint in self.constraints:
             # and look for
             try:
                 # the first one that is satisfied
-                return constraint.validate(candidate)
+                return constraint.validate(value=value, **kwds)
             # if this one did not
             except constraint.ConstraintViolationError:
                 # check the next
                 continue
-        # if they all failed, fail
-        raise self.ConstraintViolationError(self, candidate)
+        # if they all failed, chain up
+        return super().validate(value=value, **kwds)
 
 
     # meta-methods

@@ -18,20 +18,20 @@ class Not(Constraint):
 
 
     # interface
-    def validate(self, candidate):
+    def validate(self, value, **kwds):
         """
-        Check whether {candidate} satisfies this constraint
+        Check whether {value} satisfies this constraint
         """
         # check
         try:
             # whether my constraint is satisfied
-            self.constraint.validate(candidate)
+            self.constraint.validate(value=value, **kwds)
         # and if it is not
         except self.constraint.ConstraintViolationError:
             # indicate success
-            return candidate
-        # otherwise, fail
-        raise self.ConstraintViolationError(self, candidate)
+            return value
+        # otherwise, chain up
+        return super().validate(value=value, **kwds)
 
 
     # meta-methods

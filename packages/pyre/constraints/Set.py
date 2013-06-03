@@ -18,16 +18,16 @@ class Set(Constraint):
 
 
     # interface
-    def validate(self, candidate):
+    def validate(self, value, **kwds):
         """
-        Check whether {candidate} satisfies this constraint
+        Check whether {value} satisfies this constraint
         """
-        # if {candidate} is one of my values
-        if candidate in self.choices:
+        # if {value} is one of my values
+        if value in self.choices:
             # indicate success
-            return candidate
-        # otherwise, fail
-        raise self.ConstraintViolationError(self, candidate)
+            return value
+        # otherwise, chain up
+        return super().validate(value=value, **kwds)
 
 
     # meta-methods

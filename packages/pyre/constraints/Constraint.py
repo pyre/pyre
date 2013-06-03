@@ -18,21 +18,23 @@ class Constraint:
 
 
     # interface
-    def validate(self, candidate):
+    def validate(self, value, **kwds):
         """
         The default behavior for constraints is to raise a ConstraintViolationError.
 
         Override to implement a specific test
         """
-        raise self.ConstraintViolationError(self, candidate)
+        # complain; all subclasses should chain up, and this the end of the line
+        raise self.ConstraintViolationError(self, value)
 
 
     # function interface
-    def __call__(self, candidate):
+    def __call__(self, value, **kwds):
         """
         Interface to make constraints callable
         """
-        return self.validate(candidate)
+        # forward to my method
+        return self.validate(value=value, **kwds)
 
 
     # logical operations
@@ -40,7 +42,9 @@ class Constraint:
         """
         Enable the chaining of constraints using the logical operators
         """
+        # get the operator
         from .And import And
+        # build a constraint and return it
         return And(self, other)
 
 
@@ -48,7 +52,9 @@ class Constraint:
         """
         Enable the chaining of constraints using the logical operators
         """
+        # get the operator
         from .Or import Or
+        # build a constraint and return it
         return Or(self, other)
 
 

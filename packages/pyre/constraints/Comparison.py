@@ -22,16 +22,16 @@ class Comparison(Constraint):
 
 
     # interface
-    def validate(self, candidate):
+    def validate(self, value, **kwds):
         """
-        Check whether {candidate} satisfies this constraint
+        Check whether {value} satisfies this constraint
         """
-        # if {candidate} compares correctly with my value
-        if self.compare(candidate, self.value):
+        # if {value} compares correctly with my value
+        if self.compare(value, self.value):
             # indicate success
-            return candidate
-        # otherwise, fail
-        raise self.ConstraintViolationError(self, candidate)
+            return value
+        # otherwise, chain up
+        return super().validate(value=value, **kwds)
 
 
     # meta-methods

@@ -19,16 +19,16 @@ class Between(Constraint):
 
 
     # interface
-    def validate(self, candidate):
+    def validate(self, value, **kwds):
         """
         Check whether {candidate} satisfies this constraint
         """
         # if {candidate} is between my {low} and my {high}
-        if self.low < candidate < self.high:
+        if self.low < value < self.high:
             # indicate success
-            return candidate
-        # otherwise, fail
-        raise self.ConstraintViolationError(self, candidate)
+            return value
+        # otherwise, chain up
+        return super().validate(value=value, **kwds)
 
 
     # meta-methods
