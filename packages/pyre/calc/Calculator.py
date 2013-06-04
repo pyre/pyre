@@ -11,7 +11,7 @@ from .. import algebraic
 
 
 # declaration
-class Calculator(algebraic.algebra, type):
+class Calculator(algebraic.algebra):
     """
     Metaclass that grants nodes value management capabilities
     """
