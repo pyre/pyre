@@ -206,6 +206,28 @@ class NameServer(Hierarchical):
                      locator=locator, postprocessor=postprocessor)
 
             
+    def retrieve(self, name):
+        """
+        Retrieve the node registered under {name}. If no such node exists, an error marker will
+        be built, stored in the symbol table under {name}, and returned.
+        """
+        # hash the {name}
+        key = self.hash(name)
+        # if a node is already registered under this key
+        try:
+            # grab it
+            node = self._nodes[key]
+        # otherwise
+        except KeyError:
+            # build an error marker
+            node = self.node.unresolved(key=key, request=name)
+            # add it to the pile
+            self._nodes[key] = node
+            self._names[key] = name
+        # return the node
+        return node
+
+
     # meta-methods
     def __init__(self, **kwds):
         # chain up
