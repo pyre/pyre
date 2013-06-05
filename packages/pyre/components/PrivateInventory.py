@@ -30,16 +30,16 @@ class PrivateInventory(Inventory):
         Set the value of the slot associated with {trait}
         """
         # get the nameserver
-        ns = self.pyre_nameserver
+        nameserver = self.pyre_nameserver
         # unpack the slot part
-        macro, postprocessor = strategy(model=ns)
+        macro, postprocessor = strategy(model=nameserver)
         # build the slot
         new = macro(key=None, postprocessor=postprocessor, value=value,
                     locator=locator, priority=priority)
         # get the old slot 
         old = self[trait]
         # pick the winner of the two
-        winner = ns.node.select(model=ns, existing=old, replacement=new)
+        winner = nameserver.node.select(model=nameserver, existing=old, replacement=new)
         # if the new slot is the winner
         if new is winner:
             # update the inventory
@@ -107,15 +107,15 @@ class PrivateInventory(Inventory):
         Build slots for the locally declared traits of a {component} class
         """
         # get the nameserver
-        ns = cls.pyre_nameserver
+        nameserver = cls.pyre_nameserver
         # get the factory of priorities in the {defaults} category
-        priority = ns.priority.defaults
+        priority = nameserver.priority.defaults
         # go through the traits declared locally in {component}
         for trait in component.pyre_localTraits:
             # skip the non-configurable ones
             if not trait.isConfigurable: continue
             # ask the trait for the evaluation strategy details
-            macro, postprocessor = trait.classSlot(model=ns)
+            macro, postprocessor = trait.classSlot(model=nameserver)
             # and a default value appropriate for this component
             initialValue = trait.classDefault(key=None, component=component)
             # use it to build the slot
@@ -134,9 +134,9 @@ class PrivateInventory(Inventory):
         Build slots for the inherited traits of a {component} class
         """
         # get the nameserver
-        ns = cls.pyre_nameserver
+        nameserver = cls.pyre_nameserver
         # get the factory of priorities in the {defaults} category
-        priority = ns.priority.defaults
+        priority = nameserver.priority.defaults
         # collect the traits I am looking for
         traits = set(trait for trait in component.pyre_inheritedTraits if trait.isConfigurable)
         # if there are no inherited traits, bail out
@@ -185,17 +185,17 @@ class PrivateInventory(Inventory):
         # get the class record of this {instance}
         component = type(instance)
         # get the nameserver
-        ns = cls.pyre_nameserver
+        nameserver = cls.pyre_nameserver
         # get the locator
         locator = instance.pyre_locator
         # get the factory of priorities in the {defaults} category
-        priority = ns.priority.defaults
+        priority = nameserver.priority.defaults
         # go through all the configurable traits in {component}
         for trait in component.pyre_configurables():
             # ask the class inventory for the slot that corresponds to this trait
             slot = component.pyre_inventory[trait]
             # and its slot strategy
-            _, postprocessor = trait.instanceSlot(model=ns)
+            _, postprocessor = trait.instanceSlot(model=nameserver)
             # build a reference to the class slot
             ref = slot.ref(key=None, postprocessor=postprocessor,
                            locator=locator, priority=priority())

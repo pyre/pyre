@@ -23,11 +23,12 @@ class Calculator(algebraic.algebra):
     from .Const import Const as const
     from .Value import Value as value
     from .Evaluator import Evaluator as evaluator
-    # the new entities
+    # the new types of entities that support evaluation after name resolution
     from .Expression import Expression as expression
     from .Interpolation import Interpolation as interpolation
-    from .Reference import Reference as reference
     from .Unresolved import Unresolved as unresolved
+    # references to other nodes
+    from .Reference import Reference as reference
     # local operators
     from .Average import Average as average
     from .Count import Count as count
@@ -35,7 +36,7 @@ class Calculator(algebraic.algebra):
     from .Minimum import Minimum as minimum
     from .Product import Product as product
     from .Sum import Sum as sum
-    # change notifications
+    # value change notification
     from .Observer import Observer as observer
     from .Observable import Observable as observable
     # value processing

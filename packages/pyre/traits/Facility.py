@@ -76,8 +76,7 @@ class Facility(Slotted):
         key = node.key
         # decide what I am supposed to name the new component
         name = value.pyre_nameserver.getName(key) if not incognito and key else None
-
-        # otherwise, instantiate and return it
+        # instantiate and return it
         return value(name=name, locator=node.locator)
 
 
