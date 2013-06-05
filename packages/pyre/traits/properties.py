@@ -14,7 +14,7 @@ This package provides access to the factories for typed properties
 from .Property import Property as property
 
 # for convenience, expose the typed ones
-# first the simple ones
+# the simple ones
 bool = property.bool
 decimal = property.decimal
 float = property.float
@@ -23,17 +23,21 @@ int = property.int
 identity = property.identity
 str = property.str
 
-# next, the more complex types
+# the more complex types
 date = property.date
 dimensional = property.dimensional
 time = property.time
 uri = property.uri
 
-# finally, containers
+# containers
 array = property.array
 list = property.list
 set = property.set
 tuple = property.tuple
+
+# meta
+istream = property.istream
+ostream = property.ostream
 
 from .Facility import Facility as facility
 

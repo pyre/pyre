@@ -26,7 +26,7 @@ class File(pyre.component, family="journal.devices.file", implements=Device):
 
 
     # public state
-    log = pyre.properties.outputfile()
+    log = pyre.properties.ostream()
     log.doc = "the file in which to save the journal entries"
 
     renderer = Device.Renderer(default=TextRenderer)
