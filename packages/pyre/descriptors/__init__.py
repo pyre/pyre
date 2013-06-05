@@ -44,6 +44,10 @@ list = descriptor.list
 set = descriptor.set
 tuple = descriptor.tuple
 
+# meta-types
+istream = descriptor.istream
+ostream = descriptor.ostream
+
 
 # common meta-descriptors
 def strings(default=list, **kwds):

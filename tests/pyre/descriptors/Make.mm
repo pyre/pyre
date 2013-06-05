@@ -8,18 +8,19 @@
 
 
 PROJECT = pyre
+PROJ_CLEAN += output.cfg
 
 #--------------------------------------------------------------------------
 #
 
-all: test
+all: test clean
 
 test: sanity simple compositions
 
 sanity:
 	${PYTHON} ./sanity.py
 
-simple: basic complex containers
+simple: basic complex containers meta
 
 basic:
 	${PYTHON} ./booleans.py
@@ -40,6 +41,10 @@ containers:
 	${PYTHON} ./tuples.py
 	${PYTHON} ./lists.py
 	${PYTHON} ./sets.py
+
+meta:
+	${PYTHON} ./istreams.py
+	${PYTHON} ./ostreams.py
 
 compositions:
 	${PYTHON} ./harvesting.py

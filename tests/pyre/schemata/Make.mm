@@ -8,11 +8,12 @@
 
 
 PROJECT = pyre
+PROJ_CLEAN += output.cfg
 
 #--------------------------------------------------------------------------
 #
 
-all: test
+all: test clean
 
 test: sanity types meta
 
