@@ -47,7 +47,7 @@ class Datum(AbstractNode):
         Set my value
         """
         # delegate
-        return self.setValue(value)
+        return self.setValue(value=value)
 
 
     # interface

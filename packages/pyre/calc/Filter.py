@@ -15,17 +15,18 @@ class Filter:
 
 
     # interface
-    def setValue(self, value, **kwds):
+    def setValue(self, **kwds):
         """
-        Override the value setter to refresh my cache and notify my observers
+        Override the value setter to let the assignment go through iff my constraints are all
+        satisfied
         """
         # go through all my constraints
         for constraint in self.constraints:
             # if any fail, leave the value unmodified
-            if not constraint(value=value, node=self): return self
+            if not constraint(node=node, **kwds): return self
 
         # if they all succeed, update the value
-        return super().setValue(value=value, **kwds)
+        return super().setValue(**kwds)
 
 
     # meta-methods
