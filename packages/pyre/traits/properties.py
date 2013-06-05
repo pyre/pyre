@@ -36,8 +36,6 @@ set = property.set
 tuple = property.tuple
 
 from .Facility import Facility as facility
-from .InputFile import InputFile as inputfile
-from .OutputFile import OutputFile as outputfile
 
 # meta-properties: trait descriptors for homogeneous containers; these require other trait
 # descriptors to specify the type of the contents
