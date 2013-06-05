@@ -29,13 +29,18 @@ from .List import List as list
 from .Set import Set as set
 from .Tuple import Tuple as tuple
 
+# meta-types
+from .InputStream import InputStream as istream
+from .OutputStream import OutputStream as ostream
+
 
 # put the schemata in piles
 basic = (identity, bool, decimal, float, inet, int, str)
 composite = (date, dimensional, time, uri)
 containers = (sequence, array, list, set, tuple)
+meta = (istream, ostream)
 # all of them
-schemata = basic + composite + containers
+schemata = basic + composite + containers + meta
 
 
 # grant access to the type decorator

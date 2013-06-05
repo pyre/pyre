@@ -27,8 +27,10 @@ EXPORT_PYTHON_MODULES = \
     Dimensional.py \
     Float.py \
     INet.py \
+    InputStream.py \
     Integer.py \
     List.py \
+    OutputStream.py \
     Sequence.py \
     Set.py \
     String.py \

@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# california institute of technology
+# (c) 1998-2013 all rights reserved
+#
+
+
+# externals
+import sys
+# superclasses
+from .Type import Type
+from ..framework.Client import Client
+
+
+# declaration
+class InputStream(Type, Client):
+    """
+    A representation of input streams
+    """
+
+
+    # constants
+    mode = 'r'
+    default = 'stdin'
+    typename = 'istream'
+    
+
+    # interface
+    def coerce(self, value, **kwds):
+        """
+        Attempt to convert {value} into an open input stream
+        """
+        # the value is the special string {stdin}
+        if value == 'stdin':
+            # return the process stdin
+            return sys.stdin
+        # if the {value} is a string
+        if isinstance(value, str):
+            # assume it is a uri that the framework fileserver knows how to deal with
+            return self.pyre_fileserver.open(uri=value, mode=self.mode)
+        # otherwise, leave it alone
+        return value
+        
+
+    # meta-methods
+    def __init__(self, default=default, mode=mode, **kwds):
+        # chain up
+        super().__init__(default=default, **kwds)
+        # save my mode
+        self.mode = mode
+        # all done
+        return
+
+
+# end of file 

@@ -23,8 +23,6 @@ EXPORT_PYTHON_MODULES = \
     Behavior.py \
     Dict.py \
     Facility.py \
-    InputFile.py \
-    OutputFile.py \
     Property.py \
     Slotted.py \
     Trait.py \
