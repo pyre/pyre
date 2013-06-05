@@ -65,7 +65,7 @@ class SymbolTable:
         """
         Build an interpolation node
         """
-        # if the value is already a slot
+        # if the value is already a node
         if isinstance(value, self.node):
             # just return it
             return value
@@ -116,6 +116,31 @@ class SymbolTable:
             self[name] = default
         # evaluate and return
         return self[name]
+
+
+    def insert(self, name, node):
+        """
+        Insert {node} in the symbol table under {name}. If there is an existing node, adjust the
+        evaluation graph by replacing the existing node with the new one everywhere
+        """
+        # look for
+        try:
+            # an existing one
+            old = self._nodes[name]
+        # if not there
+        except KeyError:
+            # no problem
+            pass
+        # if there is an existing node
+        else:
+            # replace it
+            node.replace(old)
+
+        # update the model
+        self._nodes[name] = node
+
+        # and return
+        return
 
 
     def retrieve(self, name):
@@ -170,16 +195,8 @@ class SymbolTable:
         """
         # convert {value} into an appropriate node
         new = self.interpolation(value=value)
-        # find the existing node
-        old = self._nodes.get(name)
-        # if it's there
-        if old:
-            # choose the survivor
-            new = self.node.select(model=self, existing=old, replacement=new)
-        # update the model
-        self._nodes[name] = new
-        # and return
-        return
+        # insert it into the model and return
+        return self.insert(node=new, name=name)
 
 
     # private data

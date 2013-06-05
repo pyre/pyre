@@ -74,4 +74,23 @@ class UnresolvedNodeError(NodeError):
         return
 
 
+class AliasingError(NodeError):
+    """
+    Signal that an alias was requested among names that were associated with existing nodes
+    """
+
+    def __init__(self, target, alias, targetNode, aliasNode, **kwds):
+        # build the error format string
+        msg = "both {0.target!r} and {0.alias!r} have existing nodes"
+        # chain up
+        super().__init__(description=msg, **kwds)
+        # save the information
+        self.target = target
+        self.alias = alias
+        self.targetNode = targetNode
+        self.aliasNode = aliasNode
+        # all done
+        return
+
+
 # end of file 

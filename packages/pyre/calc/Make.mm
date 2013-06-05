@@ -34,6 +34,7 @@ EXPORT_PYTHON_MODULES = \
     Memo.py \
     Minimum.py \
     Node.py \
+    NodeInfo.py \
     Observable.py \
     Observer.py \
     Preprocessor.py \

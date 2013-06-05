@@ -42,8 +42,11 @@ def test():
 
     # case 4: both are preëxisting nodes
     model["author.name"] = "TBD"
-    model.alias(base="author", alias="name", target="user.name")
-    assert model["author.name"] == model["user.name"]
+    try:
+        model.alias(base="author", alias="name", target="user.name")
+        assert False
+    except model.AliasingError as error:
+        pass
 
     # check the final state
     assert model["user.name"] == "Michael Aïvázis"

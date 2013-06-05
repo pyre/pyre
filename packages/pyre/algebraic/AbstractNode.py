@@ -60,14 +60,4 @@ class AbstractNode:
         return self
 
 
-    # implementation support
-    @classmethod
-    def select(cls, model, existing, replacement):
-        """
-        Pick either {existing} or {replacement} as the node that will remain in {model}
-        """
-        # by default, {replacement} always wins
-        return replacement.replace(existing)
-
-
 # end of file 

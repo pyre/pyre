@@ -29,6 +29,11 @@ class Hierarchical(SymbolTable):
     """
 
 
+    # types
+    from .exceptions import AliasingError
+    from .NodeInfo import NodeInfo as info
+
+
     # public data
     separator = '.'
 
@@ -78,11 +83,11 @@ class Hierarchical(SymbolTable):
         # build the name recognizer
         regex = re.compile(pattern)
         # iterate over my nodes
-        for key, name in sorted(self._names.items(), key=operator.itemgetter(1)):
+        for info in sorted(self._metadata.values(), key=operator.attrgetter('name')):
             # if the name matches
-            if regex.match(name):
+            if regex.match(info.name):
                 # yield the name and the node
-                yield name, self._nodes[key]
+                yield name, self._nodes[info.key]
         # all done
         return
 
@@ -90,13 +95,18 @@ class Hierarchical(SymbolTable):
     # storing and retrieving nodes
     def alias(self, target, alias, base=None):
         """
-        Register the name {alias} as an alternate name for {target}
+        Within the context of {base}, register the name {alias} as an alternate name for
+        {target}. The net effect is to make {base.alias} point to {target}.
 
         parameters:
           {target}: the canonical name/key that owns the associated node
            {alias}: the alternate name, a string with no implied structure
             {base}: the context name/key within which the alias is established;
                     defaults to global scope
+
+        If both {target} and {alias} exist, an exception is raised; if the caller ignores this
+        exception, the net effect is to make the {target} value accessible under both names,
+        and discard the value previously registered under {alias}.
         """
         # hash the target
         targetKey = self.hash(target)
@@ -121,29 +131,26 @@ class Hierarchical(SymbolTable):
             # return the canonical node, whether it exists or not; the latter case corresponds
             # to aliasing among names that do not yet have a configuration node built
             return targetKey, aliasKey, targetNode
+        # grab the alias metadata
+        aliasInfo = self._metadata[aliasKey]
         # clean up after the obsolete node
-        del self._nodes[aliasKey]
-        del self._names[aliasKey] # this was missing; oversight?
+        del self._nodes[aliasKey] # not accessible any more
+        del self._metadata[aliasKey] # assuming the alias meta-data was not authoritative...
         # if there is no node under the canonical name
         if targetNode is None:
             # install the alias node as the canonical
             self._nodes[targetKey] = aliasNode
-            # deduce the name of the base context: if base were a key, assume it has a
-            # registered name, otherwise treat the base itself as the name
-            baseName = self._names[baseKey] if base is baseKey else base
-            # register the name under the target key
-            self._names[targetKey] = self.join(baseName, target)
-            # and return the alias node
+            # and its metadata
+            self._metadata[targetKey] = self.info(model=self, key=targetKey, name=target)
+            # return the two keys and the alias node
             return targetKey, aliasKey, aliasNode
 
         # if we get this far, both preëxisted; the aliased info has been cleared out, the
-        # canonical is as it should be. all that remains is to patch the two nodes and return
-        # the survivor
-        survivor = self.node.select(model=self, existing=aliasNode, replacement=targetNode)
-        # update the model
-        self._nodes[targetKey] = survivor
-        # all done
-        return targetKey, aliasKey, survivor
+        # canonical is as it should be. all that's missing is a basis for picking which one to
+        # keep, something that I can't decide; perhaps the caller knows what to do... If the
+        # caller ignores this exception, the net effect is to have the original node survive
+        raise self.AliasingError(target=target, alias=alias,
+                                 targetNode=targetNode, aliasNode=aliasNode)
 
 
     def hash(self, name):
@@ -176,15 +183,16 @@ class Hierarchical(SymbolTable):
             old = self._nodes[key]
         # if it's not there
         except KeyError:
-            # this is a new registration
-            self._nodes[key] = node
-            self._names[key] = name
+            # this is a new registration; update the node metadata
+            self._metadata[key] = self.info(model=self, key=key, name=name)
         # if it's there
         else:
-            # choose the survivor
-            node = self.node.select(model=self, existing=old, replacement=node)
-            # update the model
-            self._nodes[key] = node
+            # replace it
+            node.replace(old)
+            
+        # either way, update the model
+        self._nodes[key] = node
+
         # all done
         return key, node
                     
@@ -202,15 +210,7 @@ class Hierarchical(SymbolTable):
         Retrieve the name of the node registered under {key}
         """
         # look it up in my name map
-        return self._names[key]
-
-
-    def lookup(self, key):
-        """
-        Retrieve the node registered under {key}, raising a {KeyError} if no such node exists
-        """
-        # look it up in my nodemap and return it
-        return self._nodes[key], self._names[key]
+        return self._metadata[key].name
 
 
     def retrieve(self, name):
@@ -230,7 +230,7 @@ class Hierarchical(SymbolTable):
             node = self.node.unresolved(request=name)
             # add it to the pile
             self._nodes[key] = node
-            self._names[key] = name
+            self._metadata[key] = self.info(model=self, key=key, name=name)
         # return the node
         return node
 
@@ -258,8 +258,8 @@ class Hierarchical(SymbolTable):
         self.separator = separator
         # initialize my name hash
         self._hash = patterns.newPathHash()
-        # and my name map
-        self._names = {}
+        # and the node metadata
+        self._metadata = {}
         # all done
         return
 
@@ -270,16 +270,6 @@ class Hierarchical(SymbolTable):
         """
         # check whether the hashed name is present in my node index
         return self.hash(name) in self._nodes
-
-
-    def __getitem__(self, name):
-        """
-        Get the node associate with {name}
-        """
-        # find the node
-        node = self.retrieve(name)
-        # and return its value
-        return node.value
 
 
     def __setitem__(self, name, value):
@@ -297,7 +287,7 @@ class Hierarchical(SymbolTable):
     # implementation details
     # private data
     _hash = None
-    _names = None
+    _info = None
 
 
     # debug support
