@@ -173,10 +173,12 @@ class Hierarchical(SymbolTable):
         raise ValueError("can't hash {!r}".format(name))
 
 
-    def insert(self, key, node, name=None):
+    def insert(self, key, value, name=None):
         """
         Register the new {node} in the model under {name}
         """
+        # convert value into a node
+        node = self.interpolation(value=value)
         # attempt to
         try:
             # retrieve the existing one
@@ -278,10 +280,8 @@ class Hierarchical(SymbolTable):
         """
         # hash the name
         key = self.hash(name)
-        # convert value into a node
-        new = self.interpolation(value=value)
         # delegate
-        return self.insert(name=name, key=key, node=new)
+        return self.insert(name=name, key=key, value=value)
 
 
     # implementation details
