@@ -61,8 +61,20 @@ class Typed:
         """
         # go through all the schemata
         for schema in schemata:
-            # we inherit from both the client base and the schema
-            ancestors = (client, schema)
+            # first, let's build the tuple of base classes; if the client provides a mixin
+            # class to be included in the hierarchy
+            try:
+                # get it
+                mixin = getattr(client, schema.typename)
+            # if not
+            except AttributeError:
+                # inherit from the client and the schema
+                ancestors = (client, schema)
+            # if it's there
+            else:
+                # inherit from all three
+                ancestors = (client, mixin, schema)
+           
             # document it
             doc = "a subclass of {!r} of type {!r}".format(client.__name__, schema.typename)
             # build the class: name it after the schema, add the docstring
