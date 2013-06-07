@@ -7,12 +7,12 @@
 
 
 # superclasses
-from ..descriptors import descriptor
+from ..descriptors import stem
 from ..framework.Client import Client
 
 
 # class declaration
-class Trait(descriptor, Client):
+class Trait(stem, Client):
     """
     This is the base class for component features that form their public interface
 

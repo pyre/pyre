@@ -11,11 +11,11 @@ import itertools
 import collections
 from .. import tracking
 # superclass
-from .Slotted import Slotted
+from .Trait import Trait
 
 
 # declaration
-class Facility(Slotted):
+class Facility(Trait):
     """
     The base class for traits that must conform to a given interface
     """
