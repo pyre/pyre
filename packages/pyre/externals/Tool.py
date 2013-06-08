@@ -25,10 +25,10 @@ class Tool(Package):
     bin = pyre.properties.str()
     bin.doc = "the location of my binaries"
 
-    path = pyre.properties.pathlist()
+    path = pyre.properties.strings()
     path.doc = "directories to add to the user's {PATH} environment variable"
 
-    ldpath = pyre.properties.pathlist()
+    ldpath = pyre.properties.strings()
     ldpath.doc = "directories to add to the user's {LD_LIBRARY_PATH} environment variable"
 
 

@@ -46,11 +46,21 @@ from .Facility import Facility as facility
 from .Dict import Dict as dict
 
 
-def pathlist(**kwds):
+# common meta-descriptors
+def strings(default=list, **kwds):
     """
-    A {list} of {str}ings that represent uris
+    A list of strings
     """
-    return list(schema=str(**kwds))
+    # build a descriptor that describes a list of strings
+    return list(schema=str(), default=default, **kwds)
+
+
+def paths(default=list, **kwds):
+    """
+    A list of URIs
+    """
+    # build a descriptor that describes a list of uris and return it
+    return list(schema=uri(), default=default, **kwds)
 
 
 def catalog(**kwds):
