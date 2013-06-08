@@ -149,8 +149,9 @@ class Hierarchical(SymbolTable):
         # canonical is as it should be. all that's missing is a basis for picking which one to
         # keep, something that I can't decide; perhaps the caller knows what to do... If the
         # caller ignores this exception, the net effect is to have the original node survive
-        raise self.AliasingError(target=target, alias=alias,
-                                 targetNode=targetNode, aliasNode=aliasNode)
+        raise self.AliasingError(key=targetKey, target=target, alias=alias,
+                                 targetNode=targetNode, targetInfo=self._metadata[targetKey],
+                                 aliasNode=aliasNode, aliasInfo=aliasInfo)
 
 
     def hash(self, name):

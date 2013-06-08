@@ -11,7 +11,7 @@ import os # for path
 import weakref # for access to my executive
 import collections # for defaultdict and OrderedDict
 from .. import tracking
-from .. import descriptors
+from ..traits import properties
 
 
 # class declaration
@@ -28,7 +28,6 @@ class Configurator:
 
     # constants
     locator = tracking.simple('during pyre startup') # the default locator
-    cfgpath = descriptors.uris(default=['vfs:/pyre/system','vfs:/pyre/user','vfs:/pyre/startup'])
 
 
     # public data
@@ -130,21 +129,19 @@ class Configurator:
         """
         Process {assignment} by building a slot and placing it in the nameserver
         """
-        # get the nameserver
-        nameserver = self.executive.nameserver
+        # get the key
+        name = assignment.key
         # unpack the value
         value = assignment.value
         # get the locator
         locator = assignment.locator
+        # instantiate a priority ranking
+        priority = priority()
 
-
-        # hash the assignment key
-        key = nameserver._hash.hash(items=assignment.key)
-        # ask the nameserver to make a slot for me
-        slot = nameserver.buildNode(key=key, value=value, priority=priority(), locator=locator)
-        # add it to the model and return the (key, slot) pair; note that the slot returned is
-        # the survivor of the priority context, hence not necessarily the slot we made here
-        return nameserver.insert(name=nameserver.join(*assignment.key), key=key, node=slot)
+        # get the model
+        nameserver = self.executive.nameserver
+        # insert the value in the model
+        return nameserver.insert(name=name, value=value, locator=locator, priority=priority)
 
 
     def defer(self, assignment, priority):
@@ -290,20 +287,24 @@ class Configurator:
         """
         # get the nameserver
         nameserver = self.executive.nameserver
+
         # the name of the configuration path slot
         name = 'pyre.configpath'
-        # make its key
-        key = nameserver.hash(name)
-        # build the configuration path slot
-        slot = nameserver.variable(
-            key=key,
-            value=self.cfgpath.default,
-            postprocessor=self.cfgpath.coerce, 
-            priority=nameserver.priority.defaults(), locator=self.locator)
-        # place it in the model
-        nameserver.insert(name=name, key=key, node=slot)
+        # the default value
+        value = ['vfs:/pyre/system','vfs:/pyre/user','vfs:/pyre/startup']
+        # get the locator
+        locator = self.locator
+        # build a priority
+        priority = nameserver.priority.defaults()
+        # make a trait; give it a name since it won't be attached to anybody
+        cfgpath = properties.paths(name='pyre.cfgpath', default=value)
+
+        # place the trait in the model
+        nameserver.insert(name=name, value=value,
+                          descriptor=cfgpath, priority=priority, locator=locator)
+
         # all done
-        return
+        return self
 
 
     # meta-methods

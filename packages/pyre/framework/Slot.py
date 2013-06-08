@@ -55,11 +55,9 @@ class Slot(Client, metaclass=calc.calculator):
     # constants
     defaultPriority = priorities.defaults
 
+
     # public data
     key = None # the hash by which i am known to the name server
-    locator = None # the provenance of my value
-    priority = None # the priority of the value assignment operation
-
 
     @property
     def model(self):
@@ -69,7 +67,6 @@ class Slot(Client, metaclass=calc.calculator):
         # easy enough
         return self.pyre_nameserver
 
-
     @property
     def name(self):
         """
@@ -78,74 +75,24 @@ class Slot(Client, metaclass=calc.calculator):
         return self.pyre_nameserver.getName(self.key) if self.key else None
 
 
-    # support for value management
-    def replace(self, obsolete):
-        """
-        Take ownership of any information held by the {obsolete} node, which is about to be
-        destroyed
-        """
-        # print("Slot.replace: NYI! not sure what though...")
-        return super().replace(obsolete)
-
-
-    # implementation support
-    @classmethod
-    def select(cls, model, existing, replacement):
-        """
-        Pick either {existing} or {replacement} as the node that will remain in {model}
-        """
-        # compare the priorities
-        if existing.priority > replacement.priority:
-            # the existing one wins
-            return existing
-        # otherwise
-        return super().select(model=model, existing=existing, replacement=replacement)
+    # mixins
+    class literal:
+        """Representation of foreign values"""
+        def __init__(self, key=None, **kwds):
+            # chain up with a blank key
+            super().__init__(key=key, **kwds)
+            # and return
+            return
 
 
     # meta-methods
-    def __init__(self, key, priority, locator, **kwds):
-        assert 'converter' not in kwds
-        assert isinstance(priority, self.priorities)
+    def __init__(self, key, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my state
         self.key = key
-        self.locator = locator
-        self.priority = priority
         # all done
         return
-
-
-    # debugging support
-    def dump(self, name, indent=""):
-        super().dump(indent=indent, name=name)
-        print('{}  locator: {}'.format(indent, self.locator))
-        print('{}  priority: {}'.format(indent, self.priority))
-        return
-
-
-    # operators
-    class operator:
-        """
-        Concrete class for encapsulating operations among nodes
-        """
-        # meta-methods
-        def __init__(self, **kwds):
-            super().__init__(
-                key=None,
-                priority=self.priorities.uninitialized(), locator=tracking.here(2),
-                **kwds)
-            return
-
-    # unresolved nodes
-    class unresolved:
-        """
-        Concrete class for representing unknown nodes
-        """
-        # meta-methods
-        def __init__(self, **kwds):
-            super().__init__(priority=self.priorities.uninitialized(), locator=None, **kwds)
-            return
 
 
 # end of file 

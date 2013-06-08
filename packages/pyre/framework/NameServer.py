@@ -7,10 +7,12 @@
 
 
 # externals
-# import weakref
+import collections
+
 from .. import tracking
+
+# superclass
 from ..calc.Hierarchical import Hierarchical
-from .Package import Package
 
 
 # my declaration
@@ -21,8 +23,12 @@ class NameServer(Hierarchical):
     """
 
 
+
     # types
+    from .Package import Package
+    # node storage and metadata
     from .Slot import Slot as node
+    from .SlotInfo import SlotInfo as info
     from .Priority import Priority as priority
 
 
@@ -36,10 +42,11 @@ class NameServer(Hierarchical):
         # get the right priority
         priority = self.priority.package() if priority is None else priority
         # build a slot to hold the {configurable}
-        slot = self.variable(key=key, value=configurable, priority=priority, locator=locator)
+        slot = self.variable(key=key, value=configurable)
         # store it in the model
         self._nodes[key] = slot
-        self._names[key] = name
+        self._metadata[key] = self.info(model=self, 
+                                        key=key, name=name, locator=locator, priority=priority)
         # and return the key
         return key
 
@@ -57,53 +64,33 @@ class NameServer(Hierarchical):
         try:
             # grab it
             package = self._nodes[key].value
-            # make sure it is a package
-            if not isinstance(package, Package):
+        # if not
+        except KeyError:
+            # make one
+            package = self.Package(name=name)
+            # get the right priority
+            priority = self.priority.package()
+            # attach it to a slot
+            slot = self.literal(key=key, value=package)
+            # store it in the model
+            self._nodes[key] = slot
+            self._metadata[key] = self.info(model=self,
+                                            name=name, key=key, locator=locator, priority=priority)
+            # configure it
+            executive.configurePackage(package=package, locator=locator)
+        # if it's there
+        else:
+            # make sure it is a package, and if not
+            if not isinstance(package, self.Package):
                 # get the journal
                 import journal
                 # build the report
                 complaint = 'name conflict while configuring package {!r}: {}'.format(name, package)
                 # complain
                 raise journal.error('pyre.configuration').log(complaint)
-        # if not
-        except (KeyError, ValueError):
-            # make one
-            package = Package(name=name)
-            # get the right priority
-            priority = self.priority.package()
-            # attach it to a slot
-            slot = self.literal(key=key, value=package, locator=locator, priority=priority)
-            # store it in the model
-            self._nodes[key] = slot
-            self._names[key] = name
-            # configure it
-            executive.configurePackage(package=package, locator=locator)
-        # and return it
+
+        # return the package
         return package
-
-
-    # access to my indices
-    def registerTrait(self, key, strategy):
-        """
-        Register {trait} under {key}
-        """
-        # associate the trait with the key
-        self._traits[key] = strategy
-        # if there is already a slot under this key
-        try:
-            # get it
-            slot = self._nodes[key]
-        # if not there
-        except KeyError:
-            # no worries
-            pass
-        # if there
-        else:
-            # adjust it
-            slot.macro, slot.postprocessor = strategy(model=self)
-
-        # all done
-        return
 
 
     # expansion services
@@ -135,75 +122,138 @@ class NameServer(Hierarchical):
             return expression
 
 
-    # override the literal slot factory to provide a default priority
-    def literal(self, key=None, priority=None, locator=None, **kwds):
-        """
-        Build a literal node
-        """
-        # adjust the priority
-        priority = self.priority.uninitialized() if priority is None else priority
-        # easy enough
-        return self.node.literal(key=key, priority=priority, locator=locator, **kwds)
-
-
     # override superclass methods
     def alias(self, target, alias, base=None):
         """
         Register the name {alias} as an alternate name for {canonical}
         """
         # chain up
-        targetKey, aliasKey, survivorSlot = super().alias(target=target, alias=alias, base=base)
-        # if there is no survivor
-        if survivorSlot is None:
-            # this must have been an aliasing of nodes for which there is no configuration
-            # state yet; nothing further to do
-            return targetKey, aliasKey, survivorSlot
-
-        # otherwise, adjust the slot key
-        survivorSlot.key = targetKey
-        # check whether
         try:
-            # this is an alias for a trait
-            strategy = self._traits[targetKey]
+            # to have most aliasing cases handled by the hierarchical symbol table
+            return super().alias(target=target, alias=alias, base=base)
+        # which fails when the {alias} and the {target} both exist
+        except self.AliasingError as error:
+            # a situation that I can resolve by comparing the priorities of the two nodes
+            targetInfo = error.targetInfo
+            aliasInfo = error.aliasInfo
+            # if the alias node is higher priority
+            if targetInfo.priority < aliasInfo.priority:
+                # get the target
+                targetNode = error.targetNode
+                # and the alias
+                aliasNode = error.aliasNode
+                # get the alias to replace the target
+                aliasNode.replace(targetNode)
+
+        # all done
+        return
+            
+
+    def insert(self, value, priority, locator, key=None, name=None, descriptor=None):
+        """
+        Add {value} to the store
+        """
+        # check whether the name is a string
+        if isinstance(name, str):
+            # split it
+            split = self.split(name)
+            # and hash it, if necessary
+            key = key or self._hash.hash(items=split)
+        # if it is a collection of fragments
+        elif isinstance(name, collections.Iterable):
+            # save it
+            split = name
+            # put the name back together
+            name = self.join(*split)
+            # and hash it, if necessary
+            key = key or self._hash.hash(items=split)
+        # if it is already hashed
+        elif isinstance(name, type(self._hash)):
+            # override the given {key}, if necessary
+            key = key or name
+            # and clear the others, since they are not derivable 
+            name = None
+            split = ()
+        # if it is empty
+        elif name is None:
+            # better have a non-empty key...
+            pass
+        # anything else is a bug
+        else:
+            # get the journal
+            import journal
+            # put together a message
+            msg = "unrecognizable name: {!r}".format(name)
+            # and complain
+            raise journal.firewall('pyre.config').log(msg)
+
+        # if i don't have a key by now, we have found a bug
+        if key is None:
+            # get the journal
+            import journal
+            # put together a message
+            msg = "both name and key were empty; now what?"
+            # and complain
+            raise journal.firewall('pyre.config').log(msg)
+
+        # look for registered metadata
+        try:
+            # registered under this key
+            meta = self._metadata[key]
+        # if there's no registered metadata, this is the first time this name was encountered
+        except KeyError:
+            # build the info node
+            meta = self.info(model=self,
+                             name=name, split=split, key=key,
+                             priority=priority, locator=locator, descriptor=descriptor)
+            # and attach it
+            self._metadata[key] = meta
+        # if there is an existing metadata node
+        else:
+            # and whether this assignment is of lesser priority, in which case we just leave
+            # the value as is
+            if priority < meta.priority:
+                # but we may have to adjust the descriptor
+                if descriptor:
+                    # which involves two steps: first, update the info node
+                    meta.descriptor = descriptor
+                    # and now look for the existing model node
+                    old = self._nodes[key]
+                    # so we can update its value postprocessor
+                    old.postprocessor = descriptor.coerce
+                # in any case, we are done here
+                return key
+            # ok: higher priority assignment; check whether we should update the descriptor
+            if descriptor: meta.descriptor = descriptor
+            # adjust the locator and priority of the info node
+            meta.locator = locator
+            meta.priority = priority
+
+        # if we get this far, we have a valid key, and valid and updated metadata; start
+        # processing the value by getting the trait; use the info node, which is the
+        # authoritative source of this information
+        descriptor = meta.descriptor
+        # and ask it to build a node for the value
+        new = descriptor.buildSlot(model=self, key=key, value=value)
+
+        # if we are replacing an existing node
+        try:
+            # get it
+            old = self._nodes[key]
         # if not
         except KeyError:
             # no worries
             pass
-        # if the key corresponds to a trait
+        # otherwise
         else:
-            # ask it for its value conversion strategy
-            _, postprocessor = strategy(model=self)
-            # attach the postprocessor to the surviving slot
-            survivorSlot.postprocessor = postprocessor
-            # and mark it as dirty so its value is recomputed
-            survivorSlot.dirty = True
+            # adjust the dependency graph
+            new.replace(old)
 
-        # return the pair of keys and the surviving node
-        return targetKey, aliasKey, survivorSlot
+        # place the new node in the model
+        self._nodes[key] = new
 
-
-    def buildNode(self, key, value, priority, locator):
-        """
-        Build a node to hold {value}
-        """
-        # if the key is associate with a trait
-        try:
-            # get the evaluation strategy left behind during trait registration
-            strategy = self._traits[key]
-        # if not a trait node
-        except KeyError:
-            # by default, make interpolations
-            macro = self.interpolation
-            # use the default postprocessor
-            postprocessor = self.node.postprocessor.identity.coerce
-        # if it a trait node
-        else:
-            # invoke it to get the node factory and schema
-            macro, postprocessor = strategy(model=self)
-
-        # build and return the slot
-        return macro(key=key, value=value, priority=priority, 
-                     locator=locator, postprocessor=postprocessor)
+        # and return
+        return key
 
             
     def retrieve(self, name):
@@ -223,20 +273,9 @@ class NameServer(Hierarchical):
             node = self.node.unresolved(key=key, request=name)
             # add it to the pile
             self._nodes[key] = node
-            self._names[key] = name
+            self._metadata[key] = self.info(model=self, name=name, key=key)
         # return the node
         return node
-
-
-    # meta-methods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # build the index of slots that are traits
-        self._traits = {}
-
-        # all done
-        return
 
 
     # implementation details
@@ -245,21 +284,13 @@ class NameServer(Hierarchical):
         """
         Convert {value} into a node and update the model
         """
-        # hash the {name}
-        key = self.hash(name)
         # figure out the location of my caller
         locator = tracking.here(1)
-        # make priorities from the explicit category
-        priority = self.priority.explicit
+        # make a priority ranking from the explicit category
+        priority = self.priority.explicit()
 
-        # make the slot
-        new = self.buildNode(key=key, value=value, priority=priority(), locator=locator)
-        # add it to the model
-        return self.insert(name=name, key=key, node=new)
-
-
-    # private data
-    _traits = None
+        # add the value to the model
+        return self.insert(name=name, value=value, priority=priority, locator=locator)
 
 
 # end of file 

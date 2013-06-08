@@ -31,6 +31,7 @@ EXPORT_PYTHON_MODULES = \
     Priority.py \
     Pyre.py \
     Slot.py \
+    SlotInfo.py \
     exceptions.py \
     __init__.py
 
