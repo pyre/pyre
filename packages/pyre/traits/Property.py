@@ -13,7 +13,7 @@ from .Trait import Trait
 
 
 @schemata.typed
-class Property(Trait):
+class Property(Trait.variable):
     """
     The base class for attribute descriptors that describe a component's external state
     """
@@ -80,7 +80,7 @@ class Property(Trait):
 
 
     def __str__(self):
-        return "{0.name}: a property of type {0.schema}".format(self)
+        return "{0.name!r}: a property of type {0.typename!r}".format(self)
 
 
 # end of file 
