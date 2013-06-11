@@ -17,7 +17,25 @@ class Postprocessor:
     from .exceptions import EvaluationError
 
     # public data
-    postprocessor = None
+    @property
+    def postprocessor(self):
+        """
+        Read access to my value post processor
+        """
+        # easy enough
+        return self._postprocessor
+
+    @postprocessor.setter
+    def postprocessor(self, processor):
+        """
+        Write access to my postprocessor
+        """
+        # set it
+        self._postprocessor = processor
+        # invalidate my value cache
+        self.flush()
+        # all done
+        return
 
 
     # interface
@@ -51,6 +69,10 @@ class Postprocessor:
         self.postprocessor = postprocessor
         # all done
         return
+
+
+    # private data
+    _postprocessor = None
 
 
 # end of file 
