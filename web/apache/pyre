@@ -6,9 +6,8 @@
 # pyre virtual host definition file
 
 <VirtualHost *:80>
-    ServerName pyre.caltech.edu
-    ServerAlias pyre.cacr.caltech.edu
-    ServerAdmin aivazis@cacr.caltech.edu
+    ServerName pyre.orthologue.com
+    ServerAdmin web@orthologue.com
 
     DocumentRoot /home/projects/pyre/web/www
     <Directory />
@@ -30,16 +29,8 @@
         Allow from all
     </Directory>
 
-    Alias /repository/ "/home/projects/pyre/web/repository/"
-    <Directory "/home/projects/pyre/web/repository/">
-        Options FollowSymLinks MultiViews
-        AllowOverride None
-        Order allow,deny
-        Allow from all
-    </Directory>
-
-    Alias /release/ "/home/projects/pyre/web/release/"
-    <Directory "/home/projects/pyre/web/release/">
+    Alias /1.0/ /home/projects/pyre/repository/1.0/
+    <Directory /home/projects/pyre/repository/1.0/>
         Options FollowSymLinks MultiViews
         AllowOverride None
         Order allow,deny

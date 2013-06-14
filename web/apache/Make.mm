@@ -10,7 +10,7 @@ PROJECT = pyre
 PACKAGE = apache
 
 
-WWW_SERVER=root@pyre.caltech.edu
+WWW_SERVER=root@orthologue.com
 
 all: tidy
 
