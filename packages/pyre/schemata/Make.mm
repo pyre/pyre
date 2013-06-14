@@ -22,6 +22,7 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Array.py \
     Boolean.py \
+    Component.py \
     Date.py \
     Decimal.py \
     Dimensional.py \

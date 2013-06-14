@@ -30,6 +30,7 @@ from .Set import Set as set
 from .Tuple import Tuple as tuple
 
 # meta-types
+from .Component import Component as component
 from .InputStream import InputStream as istream
 from .OutputStream import OutputStream as ostream
 
