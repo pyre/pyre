@@ -55,6 +55,8 @@ class Public:
         # chain up
         super().__init__(**kwds)
 
+        # set my name
+        self.name = name
         # initialize my aliases
         self.aliases = set() if name is None else {name}
         # make sure I have a {__doc__} for the user to modify
