@@ -71,23 +71,25 @@ class Hierarchical(SymbolTable):
         return
 
 
-    def find(self, pattern=''):
+    def find(self, pattern='', key=None):
         """
         Generate a sequence of (name, node) pairs for all nodes in the model whose name
         matches the supplied {pattern}. Careful to properly escape periods and other characters
         that may occur in the name of the requested keys that are recognized by the {re}
-        package
+        package. The order in which the nodes are returned is controlled by {key}.
         """
         # check whether i have any nodes
         if not self._nodes: return
         # build the name recognizer
         regex = re.compile(pattern)
+        # we need a key, since slots are not orderable
+        key = operator.attrgetter('name') if key is None else key
         # iterate over my nodes
-        for info in sorted(self._metadata.values(), key=operator.attrgetter('name')):
+        for info in sorted(self._metadata.values(), key=key):
             # if the name matches
             if regex.match(info.name):
                 # yield the name and the node
-                yield name, self._nodes[info.key]
+                yield info, self._nodes[info.key]
         # all done
         return
 
@@ -200,6 +202,14 @@ class Hierarchical(SymbolTable):
         return key, node
                     
 
+    def getInfo(self, key):
+        """
+        Retrieve the metadata of the node registered under {key}
+        """
+        # look it up in my info map
+        return self._metadata[key]
+
+
     def getNode(self, key):
         """
         Retrieve the node registered under {key}
@@ -212,7 +222,7 @@ class Hierarchical(SymbolTable):
         """
         Retrieve the name of the node registered under {key}
         """
-        # look it up in my name map
+        # look it up in my info map
         return self._metadata[key].name
 
 
