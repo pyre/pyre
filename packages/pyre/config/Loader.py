@@ -45,11 +45,6 @@ class Loader:
             # the package will be filled out using the client family
             package = ''
 
-        # if there is a valid client
-        if client:
-            # run the symbol through the set of converters specified by the client
-            symbol = client.convert(symbol)
-
         # convert the package specification into a uri
         package = cls.uri.locator(scheme=uri.scheme, address=package)
 
@@ -83,7 +78,7 @@ class Loader:
         # if loading succeeds
         else:
             # ask the client for the implementation protocol
-            protocol = client.schema
+            protocol = client.protocol
             # look through its implementors
             for implementor in executive.registrar.implementors[protocol]:
                 # get its package

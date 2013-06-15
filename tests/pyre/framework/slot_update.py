@@ -19,9 +19,9 @@ def test():
     # the priority factory
     explicit = Slot.priorities.explicit
     # build a few slots
-    var = Slot.variable(key=None, value=None, priority=explicit(), locator=pyre.tracking.here())
-    one = Slot.variable(key=None, value=1, priority=explicit(), locator=pyre.tracking.here())
-    two = Slot.variable(key=None, value=2, priority=explicit(), locator=pyre.tracking.here())
+    var = Slot.variable(key=None, value=None)
+    one = Slot.variable(key=None, value=1)
+    two = Slot.variable(key=None, value=2)
 
     three = one + two
     double = var + var

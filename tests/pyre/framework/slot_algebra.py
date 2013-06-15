@@ -16,12 +16,10 @@ def test():
     import pyre.tracking
     # get the constructor
     from pyre.framework.Slot import Slot
-    # thepriority factory
-    explicit = Slot.priorities.explicit
     # build a few slots
-    zero = Slot.variable(key=None, value=0, priority=explicit(), locator=pyre.tracking.here())
-    one = Slot.variable(key=None, value=1, priority=explicit(), locator=pyre.tracking.here())
-    two = Slot.variable(key=None, value=2, priority=explicit(), locator=pyre.tracking.here())
+    zero = Slot.variable(key=None, value=0)
+    one = Slot.variable(key=None, value=1)
+    two = Slot.variable(key=None, value=2)
     # verify their values
     assert zero.value == 0
     assert one.value == 1

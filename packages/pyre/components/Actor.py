@@ -68,9 +68,9 @@ class Actor(Requirement):
         if self.pyre_internal: return
 
         # pick the appropriate inventory strategy
-        visibility = self.PublicInventory if family else self.PrivateInventory
+        inventory = self.PublicInventory if family else self.PrivateInventory
         # and invoke it to register the component class and build its inventory
-        visibility.initializeClass(component=self, family=family)
+        inventory.initializeClass(component=self, family=family)
 
         # get my protocol specification
         protocol = self.pyre_implements
@@ -128,15 +128,17 @@ class Actor(Requirement):
         value using the natural syntax
         """
         # print("Actor.__setattr__: {!r}<-{!r}".format(name, value))
+        # in the early states of decorating component class records, it is important to
         # recognize internal attributes
         if name.startswith('pyre_'):
-            # and process them normally
+            # and process them normally without attempting to lookup the attribute name in the
+            # name map, which might not have been built yet
             return super().__setattr__(name, value)
         # for the rest, try to
         try:
             # normalize the name
             name = self.pyre_namemap[name]
-        # if it doesn't
+        # if it isn't one of my traits
         except KeyError:
             # treat as a normal assignment
             return super().__setattr__(name, value)
@@ -149,7 +151,7 @@ class Actor(Requirement):
         priority = self.pyre_executive.priority.explicit()
         # set the value
         self.pyre_inventory.setTrait(
-            trait=trait, strategy=trait.classSlot, 
+            trait=trait, factory=trait.classSlot, 
             value=value, priority=priority, locator=locator)
         # and return
         return

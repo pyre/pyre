@@ -16,7 +16,7 @@ def test():
     import pyre
 
     # the job name converter
-    def converter(name): return "relax"
+    def converter(value, **kwds): return "import:sample.relax"
 
     # declare a protocol
     class task(pyre.protocol):

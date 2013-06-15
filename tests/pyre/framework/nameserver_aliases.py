@@ -32,8 +32,8 @@ def test():
     assert nameserver._nodes.get(aliasKey) == None
     assert nameserver._nodes.get(canonicalKey) == None
     # and neither should the name map
-    assert nameserver._names.get(aliasKey) == None
-    assert nameserver._names.get(canonicalKey) == None
+    assert nameserver._metadata.get(aliasKey) == None
+    assert nameserver._metadata.get(canonicalKey) == None
 
     # next batch
     alias = 'second'
@@ -50,7 +50,7 @@ def test():
     # the node map should have our value under the canonical key
     assert nameserver._nodes[canonicalKey].value == canonical
     # the canonical key should map to its name
-    assert nameserver._names[canonicalKey] == canonical
+    assert nameserver._metadata[canonicalKey].name == canonical
 
     # invert the relationship: existing alias, new canonical
     alias = 'third'
@@ -67,7 +67,7 @@ def test():
     # the node map should have our value under the canonical key
     assert nameserver._nodes[canonicalKey].value == alias
     # the canonical key should map to its name
-    assert nameserver._names[canonicalKey] == canonical
+    assert nameserver._metadata[canonicalKey].name == canonical
 
     # both pre-existing, with canonical having higher priority
     alias = 'fourth'
@@ -86,7 +86,7 @@ def test():
     # the node map should have our value under the canonical key
     assert nameserver._nodes[canonicalKey].value == canonical
     # the canonical key should map to its name
-    assert nameserver._names[canonicalKey] == canonical
+    assert nameserver._metadata[canonicalKey].name == canonical
 
     # both pre-existing, with the alias having higher priority
     alias = 'fifth'
@@ -105,7 +105,7 @@ def test():
     # the node map should have our value under the canonical key
     assert nameserver._nodes[canonicalKey].value == alias
     # the canonical key should map to its name
-    assert nameserver._names[canonicalKey] == canonical
+    assert nameserver._metadata[canonicalKey].name == canonical
 
     # and return the managers
     return nameserver

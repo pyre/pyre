@@ -43,16 +43,6 @@ class Inventory(dict, Client):
             "class {.__name__!r} must implement 'inistializeInstance'".format(cls))
 
 
-    # implementation details
-    def hashKey(cls, **kwds):
-        """
-        Build a hash key for a trait slot that is about to be minted
-        """
-        # implementation dependent -- override in subclasses
-        raise NotImplementedError(
-            "class {.__name__!r} must implement 'hashKey'".format(cls))
-
-
     # meta-methods
     def __init__(self, slots, **kwds):
         super().__init__(**kwds)

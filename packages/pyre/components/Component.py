@@ -269,9 +269,8 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # set the priority
         priority = self.pyre_executive.priority.explicit()
         # set the value
-        self.pyre_inventory.setTrait(
-            trait=trait, strategy=trait.instanceSlot, 
-            value=value, priority=priority, locator=locator)
+        self.pyre_inventory.setTrait(trait=trait, factory=trait.instanceSlot, 
+                                     value=value, priority=priority, locator=locator)
 
         # all done
         return

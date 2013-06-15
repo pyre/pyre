@@ -7,12 +7,12 @@
 
 
 # superclasses
-from ..descriptors import stem
-from ..framework.Client import Client
+from ..descriptors import stem # for types and algebra
+from ..framework.Client import Client # access to the framework managers
 
 
-# class declaration
-class Trait(stem, Client):
+# declaration
+class Trait(stem.variable, Client):
     """
     This is the base class for component features that form their public interface
 
@@ -28,21 +28,16 @@ class Trait(stem, Client):
     it should satisfy before it is considered a legal value.
     """
 
+    # N.B.: resist the temptation to add abstract definitions for {__get__} and {__set__} in
+    # this base class; their mere presence changes the semantics and gets in the way of the
+    # trait name translation that is necessary to support trait aliases
 
     # framework data
     # predicate that indicates whether this trait is subject to runtime configuration
     isConfigurable = False
 
 
-    # configuration
-    def classDefault(self, **kwds):
-        """
-        Compute an appropriate default value
-        """
-        # easy enough
-        return self.default
-
-
+    # framework support
     def classConfigured(self, **kwds):
         """
         Notification that the component class I am being attached to is configured

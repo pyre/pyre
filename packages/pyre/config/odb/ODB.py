@@ -95,7 +95,7 @@ class ODB(Loader):
         # otherwise, if there is a valid {client}
         if client:
             # get the protocol
-            protocol = client.schema
+            protocol = client.protocol
             # get it to provide some candidates from the virtual filesystem
             yield from protocol.pyre_find(uri=uri, symbol=symbol, **kwds)
 

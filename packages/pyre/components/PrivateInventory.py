@@ -25,25 +25,18 @@ class PrivateInventory(Inventory):
 
 
     # slot access
-    def setTrait(self, trait, strategy, value, priority, locator):
+    def setTrait(self, trait, factory, value, **kwds):
         """
         Set the value of the slot associated with {trait}
         """
-        # get the nameserver
-        nameserver = self.pyre_nameserver
-        # unpack the slot part
-        macro, postprocessor = strategy(model=nameserver)
-        # build the slot
-        new = macro(key=None, postprocessor=postprocessor, value=value,
-                    locator=locator, priority=priority)
-        # get the old slot 
+        # grab the old slot
         old = self[trait]
-        # pick the winner of the two
-        winner = nameserver.node.select(model=nameserver, existing=old, replacement=new)
-        # if the new slot is the winner
-        if new is winner:
-            # update the inventory
-            self[trait] = new
+        # use the factory to make a new slot
+        new = factory(value=value)
+        # replace references to the old slot
+        new.replace(old)
+        # and attach the new one
+        self[trait] = new
         # all done
         return
 
@@ -55,17 +48,14 @@ class PrivateInventory(Inventory):
         Build inventory appropriate for a component class that is not registered with the
         nameserver
         """
-        # make a locator
-        locator = component.pyre_locator
-                               
         # register with the component registrar
         component.pyre_registrar.registerComponentClass(component=component)
         # invoke the registration hook
         component.pyre_classRegistered()
 
         # collect the slots
-        local = cls.localSlots(component=component, locator=locator)
-        inherited = cls.inheritedSlots(component=component, locator=locator)
+        local = cls.localSlots(component=component)
+        inherited = cls.inheritedSlots(component=component)
         slots = itertools.chain(local, inherited)
 
         # build the inventory
@@ -102,41 +92,25 @@ class PrivateInventory(Inventory):
 
 
     @classmethod
-    def localSlots(cls, component, locator):
+    def localSlots(cls, component):
         """
         Build slots for the locally declared traits of a {component} class
         """
-        # get the nameserver
-        nameserver = cls.pyre_nameserver
-        # get the factory of priorities in the {defaults} category
-        priority = nameserver.priority.defaults
         # go through the traits declared locally in {component}
         for trait in component.pyre_localTraits:
             # skip the non-configurable ones
             if not trait.isConfigurable: continue
-            # ask the trait for the evaluation strategy details
-            macro, postprocessor = trait.classSlot(model=nameserver)
-            # and a default value appropriate for this component
-            initialValue = trait.classDefault(key=None, component=component)
-            # use it to build the slot
-            slot = macro(
-                key=None, value=initialValue, postprocessor=postprocessor,
-                priority=priority(), locator=locator)
-            # yield the trait, slot pair
-            yield trait, slot
+            # yield a (trait, slot) pair
+            yield trait, trait.classSlot(value=trait.default)
         # all done
         return
 
 
     @classmethod
-    def inheritedSlots(cls, component, locator):
+    def inheritedSlots(cls, component):
         """
         Build slots for the inherited traits of a {component} class
         """
-        # get the nameserver
-        nameserver = cls.pyre_nameserver
-        # get the factory of priorities in the {defaults} category
-        priority = nameserver.priority.defaults
         # collect the traits I am looking for
         traits = set(trait for trait in component.pyre_inheritedTraits if trait.isConfigurable)
         # if there are no inherited traits, bail out
@@ -155,7 +129,7 @@ class PrivateInventory(Inventory):
                 slot = ancestor.pyre_inventory[trait]
                 # build a reference to it; no need to switch postprocessor here, since the type
                 # of an inherited trait is determined by the nearest ancestor that declared it
-                ref = slot.ref(key=None, locator=locator, priority=priority())
+                ref = slot.ref(postprocessor=trait.classSlot.processor)
                 # and yield the trait, slot pair
                 yield trait, ref
             # if we have exhausted the trait pile
@@ -168,8 +142,9 @@ class PrivateInventory(Inventory):
             missing = ', '.join('{!r}'.format(trait.name) for trait in traits)
             msg = "{}: could not locate slots for the following traits: {}".format(
                 component, missing)
-            # by raising a firewall, since this is almost certainly a bug
+            # by accessing the journal package
             import journal
+            # and raising a firewall, since this is almost certainly a bug
             raise journal.firewall("pyre.components").log(msg)
 
         # otherwise, we are done
@@ -184,21 +159,12 @@ class PrivateInventory(Inventory):
         """
         # get the class record of this {instance}
         component = type(instance)
-        # get the nameserver
-        nameserver = cls.pyre_nameserver
-        # get the locator
-        locator = instance.pyre_locator
-        # get the factory of priorities in the {defaults} category
-        priority = nameserver.priority.defaults
         # go through all the configurable traits in {component}
         for trait in component.pyre_configurables():
             # ask the class inventory for the slot that corresponds to this trait
             slot = component.pyre_inventory[trait]
-            # and its slot strategy
-            _, postprocessor = trait.instanceSlot(model=nameserver)
             # build a reference to the class slot
-            ref = slot.ref(key=None, postprocessor=postprocessor,
-                           locator=locator, priority=priority())
+            ref = slot.ref(key=None, postprocessor=trait.instanceSlot.processor)
             # hand the trait, slot pair
             yield trait, ref
         # all done

@@ -29,7 +29,7 @@ class Behavior(Trait):
         return
 
 
-    def __get__(self, instance, cls=None):
+    def __get__(self, instance, cls):
         """
         Access to the behavior: dispatch to the encapsulated method
         """

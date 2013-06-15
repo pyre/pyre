@@ -86,7 +86,7 @@ class Slot(Client, metaclass=calc.calculator):
 
 
     # meta-methods
-    def __init__(self, key, **kwds):
+    def __init__(self, key=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my state

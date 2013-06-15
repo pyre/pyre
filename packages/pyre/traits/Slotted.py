@@ -6,8 +6,6 @@
 #
 
 
-# externals
-from .. import tracking
 # superclass
 from .Trait import Trait
 
@@ -20,47 +18,67 @@ class Slotted(Trait):
 
 
     # framework data
-    isConfigurable = True # slotted traits are configurable
+    isConfigurable = True # slotted traits have configurable values
 
 
-    # framework support
-    def classSlot(self, model):
+    # public data
+    @property
+    def macro(self):
         """
-        Hook registered with the nameserver that informs it of my macro preference and the
-        correct converter to attach to new slots for component classes
+        Return the default strategy for handling expressions in slot values
         """
-        # by default, build expressions and use my schema
-        return (self.macro(model=model), self.coerce)
-        
-
-    def instanceSlot(self, model):
-        """
-        Hook registered with the nameserver that informs it of my macro preference and the
-        correct converter to attach to new slots for component classes
-        """
-        # by default, build expressions and use my schema
-        return (self.macro(model=model), self.coerce)
-        
-
-    def macro(self, model):
-        """
-        Return my choice of macro evaluator so the caller can build appropriate slots
-        """
-        # build expressions
-        return model.expression
+        # by default, build interpolations
+        return self.pyre_nameserver.interpolation
 
 
-    # meta methods
+    # meta-methods
+    def __init__(self, classSlot=None, instanceSlot=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save my parts
+        self.classSlot = classSlot or self.factory(trait=self, processor=self.coerce)
+        self.instanceSlot = instanceSlot or self.factory(trait=self, processor=self.coerce)
+        # all done
+        return
+
+
     def __get__(self, instance, cls):
         """
         Retrieve the value of this trait
         """
         # find out whose inventory we are supposed to access
-        configurable = instance if instance else cls
-        # grab the slot from the client's inventory
+        configurable = instance or cls
+        # get the slot from the client's inventory
         slot = configurable.pyre_inventory[self]
         # compute and return its value
         return slot.value
+
+
+    # implementation details
+    class factory:
+        """
+        A factory of slots of a given trait
+        """
+
+        # meta-methods
+        def __init__(self, trait, processor, **kwds):
+            # chain up
+            super().__init__(**kwds)
+            # save my parts
+            self.trait = trait
+            self.macro = trait.macro
+            self.processor = processor
+            # all done
+            return
+
+        def __call__(self, postprocessor=None, **kwds):
+            """
+            Make a slot for my client trait
+            """
+            # figure out which postprocessor I am supposed to use
+            processor = postprocessor or self.processor
+            # build a slot and return it
+            return self.macro(postprocessor=processor, **kwds)
 
 
 # end of file 

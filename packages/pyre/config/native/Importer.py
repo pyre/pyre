@@ -56,7 +56,7 @@ class Importer(Loader):
             # import the module
             module = __import__(source)
         # the address portion of {uri} is not importable
-        except ImportError as error:
+        except (ImportError, TypeError) as error:
             # complain
             raise cls.LoadingError(
                 codec=cls, uri=uri, locator=locator, description=str(error)) from error
@@ -93,8 +93,7 @@ class Importer(Loader):
         # otherwise
         else:
             # let the package be the protocol family name
-            package = client.schema.pyre_family()
-
+            package = client.protocol.pyre_family()
         # while there is still something left
         while True:
             # set the address portion of the {uri} to the new package

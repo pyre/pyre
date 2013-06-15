@@ -8,9 +8,8 @@
 
 # externals
 import collections
-
-from .. import tracking
-
+from .. import tracking # for locators
+from ..traits import properties # to get the default trait type
 # superclass
 from ..calc.Hierarchical import Hierarchical
 
@@ -21,7 +20,6 @@ class NameServer(Hierarchical):
     The manager of the full set of runtime objects that are accessible by name. This includes
     everything from configuration settings to components and interfaces
     """
-
 
 
     # types
@@ -37,16 +35,18 @@ class NameServer(Hierarchical):
         """
         Add {configurable} to the model under {name}
         """
-        # hash the name
-        key = self._hash.hash(items=name.split(self.separator))
         # get the right priority
         priority = self.priority.package() if priority is None else priority
+        # build the node metadata
+        info = self.info(model=self, name=name, locator=locator, priority=priority)
+        # grab the key
+        key = info.key
         # build a slot to hold the {configurable}
         slot = self.variable(key=key, value=configurable)
         # store it in the model
         self._nodes[key] = slot
-        self._metadata[key] = self.info(model=self, 
-                                        key=key, name=name, locator=locator, priority=priority)
+        self._metadata[key] = info
+
         # and return the key
         return key
 
@@ -57,7 +57,7 @@ class NameServer(Hierarchical):
         configure it, and add it to the model.
         """
         # take {name} apart and extract the package name as the top level identifier
-        name = name.split(self.separator)[0]
+        name = self.split(name)[0]
         # hash it
         key = self._hash[name]
         # if there is a node registered under this key
@@ -144,17 +144,23 @@ class NameServer(Hierarchical):
                 aliasNode = error.aliasNode
                 # get the alias to replace the target
                 aliasNode.replace(targetNode)
+                # and make it the node associated with the key
+                self._nodes[error.key] = aliasNode
 
         # all done
         return
             
 
-    def insert(self, value, priority, locator, key=None, name=None, descriptor=None):
+    def insert(self, value, priority, locator, key=None, name=None, trait=None):
         """
         Add {value} to the store
         """
+        # if the name is empty
+        if name is None:
+            # better have a non-empty key...
+            pass
         # check whether the name is a string
-        if isinstance(name, str):
+        elif isinstance(name, str):
             # split it
             split = self.split(name)
             # and hash it, if necessary
@@ -174,10 +180,6 @@ class NameServer(Hierarchical):
             # and clear the others, since they are not derivable 
             name = None
             split = ()
-        # if it is empty
-        elif name is None:
-            # better have a non-empty key...
-            pass
         # anything else is a bug
         else:
             # get the journal
@@ -196,35 +198,39 @@ class NameServer(Hierarchical):
             # and complain
             raise journal.firewall('pyre.config').log(msg)
 
-        # look for registered metadata
+        # look for metadata
         try:
             # registered under this key
             meta = self._metadata[key]
         # if there's no registered metadata, this is the first time this name was encountered
         except KeyError:
+            # if we need to build type information
+            if not trait:
+                # use instance slots for an identity trait, by default
+                trait = properties.identity(name=name).instanceSlot
             # build the info node
             meta = self.info(model=self,
                              name=name, split=split, key=key,
-                             priority=priority, locator=locator, descriptor=descriptor)
+                             priority=priority, locator=locator, trait=trait)
             # and attach it
             self._metadata[key] = meta
         # if there is an existing metadata node
         else:
-            # and whether this assignment is of lesser priority, in which case we just leave
+            # check whether this assignment is of lesser priority, in which case we just leave
             # the value as is
             if priority < meta.priority:
-                # but we may have to adjust the descriptor
-                if descriptor:
+                # but we may have to adjust the trait
+                if trait:
                     # which involves two steps: first, update the info node
-                    meta.descriptor = descriptor
+                    meta.trait = trait
                     # and now look for the existing model node
                     old = self._nodes[key]
                     # so we can update its value postprocessor
-                    old.postprocessor = descriptor.coerce
+                    old.postprocessor = trait.processor
                 # in any case, we are done here
                 return key
             # ok: higher priority assignment; check whether we should update the descriptor
-            if descriptor: meta.descriptor = descriptor
+            if trait: meta.trait = trait
             # adjust the locator and priority of the info node
             meta.locator = locator
             meta.priority = priority
@@ -232,9 +238,9 @@ class NameServer(Hierarchical):
         # if we get this far, we have a valid key, and valid and updated metadata; start
         # processing the value by getting the trait; use the info node, which is the
         # authoritative source of this information
-        descriptor = meta.descriptor
+        trait = meta.trait
         # and ask it to build a node for the value
-        new = descriptor.buildSlot(model=self, key=key, value=value)
+        new = trait(key=key, value=value)
 
         # if we are replacing an existing node
         try:

@@ -222,7 +222,7 @@ class Configurator:
             trait = instance.pyre_trait(assignment.key[0])
             # ask it to set the value
             inventory.setTrait(
-                trait=trait, strategy=trait.instanceSlot,
+                trait=trait, factory=trait.instanceSlot,
                 value=assignment.value, priority=priority, locator=assignment.locator)
 
         # notify each trait
@@ -297,11 +297,11 @@ class Configurator:
         # build a priority
         priority = nameserver.priority.defaults()
         # make a trait; give it a name since it won't be attached to anybody
-        cfgpath = properties.paths(name='pyre.cfgpath', default=value)
+        cfgpath = properties.paths(name=name, default=value)
 
         # place the trait in the model
-        nameserver.insert(name=name, value=value,
-                          descriptor=cfgpath, priority=priority, locator=locator)
+        nameserver.insert(name=name, value=value, 
+                          trait=cfgpath.instanceSlot, priority=priority, locator=locator)
 
         # all done
         return self

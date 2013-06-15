@@ -50,24 +50,16 @@ class PublicInventory(Inventory):
 
 
     # slot access
-    def setTrait(self, trait, strategy, value, priority, locator):
+    def setTrait(self, trait, value, priority, locator, **kwds):
         """
         Set the value of the slot associated with {trait}
         """
-        # get my key
-        key = self.key
+        # hash the trait name
+        key = self.key[trait.name]
         # get the nameserver
         nameserver = self.pyre_nameserver
-        # unpack the slot part
-        macro, postprocessor = strategy(model=nameserver)
-        # hash the trait name
-        traitKey = key[trait.name]
-        # build a slot to hold value
-        new = macro(
-            key=traitKey, postprocessor=postprocessor,
-            value=value, priority=priority, locator=locator)
         # adjust the model
-        nameserver.insert(name=None, key=traitKey, node=new)
+        nameserver.insert(key=key, value=value, priority=priority, locator=locator)
         # all done
         return
 
@@ -90,13 +82,12 @@ class PublicInventory(Inventory):
         component.pyre_classRegistered()
 
         # collect the slots
-        local = cls.localSlots(key=key, component=component, locator=locator)
-        inherited = cls.inheritedSlots(key=key, component=component, locator=locator)
+        local = cls.localSlots(key=key, component=component)
+        inherited = cls.inheritedSlots(key=key, component=component)
         slots = itertools.chain(local, inherited)
-        # make sure we build class slots
-        strategy = operator.attrgetter('classSlot')
+
         # register them with the nameserver
-        slots = cls.registerSlots(key=key, slots=slots, strategy=strategy)
+        slots = cls.registerSlots(key=key, slots=slots, locator=locator)
 
         # build the inventory
         inventory = cls(key=key, slots=slots)
@@ -128,10 +119,8 @@ class PublicInventory(Inventory):
 
         # build the instance slots
         slots = cls.instanceSlots(key=key, instance=instance)
-        # make sure we build instance slots
-        strategy = operator.attrgetter('instanceSlot')
         # register them
-        slots = cls.registerSlots(key=key, slots=slots, strategy=strategy)
+        slots = cls.registerSlots(key=key, slots=slots, locator=instance.pyre_locator)
         # build the inventory out of the instance slots and attach it
         instance.pyre_inventory = cls(key=key, slots=slots)
 
@@ -145,41 +134,25 @@ class PublicInventory(Inventory):
 
 
     @classmethod
-    def localSlots(cls, key, component, locator):
+    def localSlots(cls, key, component):
         """
         Build slots for the locally declared traits of a {component} class
         """
-        # get the nameserver
-        nameserver = cls.pyre_nameserver
-        # get the factory of priorities in the {defaults} category
-        priority = nameserver.priority.defaults
         # go through the traits declared locally in {component}
         for trait in component.pyre_localTraits:
             # skip the non-configurable ones
             if not trait.isConfigurable: continue
-            # ask the trait for the evaluation strategy details
-            macro, postprocessor = trait.classSlot(model=nameserver)
-            # and a default value appropriate for this component
-            initialValue = trait.classDefault(key=key, component=component)
-            # use it to build the slot
-            slot = macro(
-                key=key[trait.name], value=initialValue, postprocessor=postprocessor,
-                priority=priority(), locator=locator)
-            # yield the trait, slot pair
-            yield trait, slot
+            # yield the trait, its class slot factory, and the default value of the trait
+            yield trait, trait.classSlot, trait.default
         # all done
         return
 
 
     @classmethod
-    def inheritedSlots(cls, key, component, locator):
+    def inheritedSlots(cls, key, component):
         """
         Build slots for the inherited traits of a {component} class
         """
-        # get the nameserver
-        nameserver = cls.pyre_nameserver
-        # get the factory of priorities in the {defaults} category
-        priority = nameserver.priority.defaults
         # collect the traits I am looking for
         traits = set(trait for trait in component.pyre_inheritedTraits if trait.isConfigurable)
         # if there are no inherited traits, bail out
@@ -198,9 +171,9 @@ class PublicInventory(Inventory):
                 slot = ancestor.pyre_inventory[trait]
                 # build a reference to it; no need to switch postprocessor here, since the type of
                 # an inherited trait is determined by the nearest ancestor that declared it
-                ref = slot.ref(key=key[trait.name], locator=locator, priority=priority())
-                # and yield the trait, slot pair
-                yield trait, ref
+                ref = slot.ref(key=key[trait.name], postprocessor=trait.classSlot.processor)
+                # yield the trait, its class slot factory, and a reference to the inherited trait
+                yield trait, trait.classSlot, ref
             # if we have exhausted the trait pile
             if not traits:
                 # skip the rest of the ancestors
@@ -227,52 +200,43 @@ class PublicInventory(Inventory):
         """
         # get the component class of this {instance}
         component = type(instance)
-        # get the nameserver
-        nameserver = cls.pyre_nameserver
-        # get the locator
-        locator = instance.pyre_locator
-        # get the factory of priorities in the {defaults} category
-        priority = nameserver.priority.defaults
         # go through all the configurable traits in {component}
         for trait in component.pyre_configurables():
             # ask the class inventory for the slot that corresponds to this trait
             slot = component.pyre_inventory[trait]
-            # and its slot strategy
-            _, postprocessor = trait.instanceSlot(model=nameserver)
             # build a reference to the class slot
-            ref = slot.ref(key=key[trait.name], postprocessor=postprocessor,
-                           locator=locator, priority=priority())
+            ref = slot.ref(key=key[trait.name], postprocessor=trait.instanceSlot.processor)
             # hand the trait, slot pair
-            yield trait, ref
+            yield trait, trait.instanceSlot, ref
         # all done
         return
 
 
     @classmethod
-    def registerSlots(cls, key, slots, strategy):
+    def registerSlots(cls, key, slots, locator):
         """
-        Go through the (trait, slot) pairs in {slots} and register them with the nameserver
+        Go through the (trait, factory, value) tuples in {slots} and register them with the
+        nameserver
         """
         # get the nameserver
         nameserver = cls.pyre_nameserver
+        # get the factory of priorities in the {defaults} category
+        priority = nameserver.priority.defaults
         # look up the basename
         base = nameserver.getName(key)
         # go through the (trait, slot) pairs
-        for trait, slot in slots:
-            # get the name of the trait
-            traitName = trait.name
-            # build the trait key
-            traitKey = key[traitName]
-            # register this key as belonging to a trait
-            nameserver.registerTrait(key=traitKey, strategy=strategy(trait))
-            # build the trait fill name
-            fullname = nameserver.join(base, traitName)
+        for trait, factory, value in slots:
+            # get the name of the trait descriptor
+            name = trait.name
+            # build the trait full name
+            fullname = nameserver.join(base, name)
             # place the slot with the nameserver 
-            nameserver.insert(name=fullname, key=traitKey, node=slot)
+            traitKey = nameserver.insert(name=fullname, value=value, 
+                                         trait=factory, locator=locator, priority=priority())
             # register the trait aliases
             for alias in trait.aliases:
                 # skip the canonical name
-                if alias == traitName: continue
+                if alias == name: continue
                 # notify the nameserver
                 nameserver.alias(base=key, alias=alias, target=traitKey)
             # hand this (trait, key) pair to the caller

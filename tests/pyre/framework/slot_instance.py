@@ -17,15 +17,13 @@ def test():
     # get the slot class
     from pyre.framework.Slot import Slot
 
-    # make a value
-    value = 4
-    # build a locator and a priority
+    # make a key
     key = None
-    locator = pyre.tracking.here()
-    priority = Slot.priorities.explicit()
+    # and a value
+    value = 4
     
     # make a slot
-    return Slot.variable(key=key, value=value, locator=locator, priority=priority)
+    return Slot.variable(key=key, value=value)
 
 
 # main

@@ -9,6 +9,7 @@
 # externals
 import re
 import weakref
+import operator # for the sorting key
 import itertools # for product
 from .. import tracking
 
@@ -259,7 +260,7 @@ class Executive:
             # try splicing the family name of the {client} with the given address
             if client:
                 # build the new address
-                extended = nameserver.join(client.schema.pyre_family(), address)
+                extended = nameserver.join(client.protocol.pyre_family(), address)
                 # does the nameserver recognize it?
                 if extended in nameserver:
                     # look it up
@@ -444,7 +445,7 @@ class Executive:
         from ..platforms import platform
         # get the host class record; the default value already contains all we could discover
         # about the type of machine we are running on
-        host = platform().classDefault()
+        host = platform().default
 
         # hunt down the distribution configuration file and load it
         # make a locator
@@ -454,16 +455,16 @@ class Executive:
         # attempt to load any matching configuration files
         self.configure(stem=stem, priority=self.priority.user, locator=here)
 
-        # hunt down the map of known hosts
-        knownHosts = nameserver.find(pattern=self.hostmapkey)
-        # go through them in priority order
-        for name, slot in sorted(knownHosts, key=lambda x: x[1].priority):
+        # set up an iterator over the map of known hosts, in priority order
+        knownHosts = nameserver.find(pattern=self.hostmapkey, key=operator.attrgetter('priority'))
+        # go through them
+        for info, slot in knownHosts:
             # get the regular expression from the slot value
             regex = slot.value
             # if my hostname matches 
             if re.match(regex, host.hostname):
                 # extract the nickname as the last part of the key name
-                host.nickname = nameserver.split(name)[-1]
+                host.nickname = nameserver.split(info.name)[-1]
                 # we are done
                 break
         # if there was no match
