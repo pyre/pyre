@@ -19,7 +19,7 @@ class Evaluator:
         Compute and return my value
         """
         # compute the values of my operands
-        values = (op.value for op in self.operands)
+        values = tuple(op.value for op in self.operands)
         # apply my operator
         return self.evaluator(*values)
 
