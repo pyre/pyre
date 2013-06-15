@@ -50,7 +50,7 @@ class Type:
 
 
     # meta-methods
-    def __init__(self, default=object, **kwds):
+    def __init__(self, default=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my default value

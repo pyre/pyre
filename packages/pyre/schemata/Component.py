@@ -79,9 +79,9 @@ class Component(Type):
 
 
     # meta-methods
-    def __init__(self, protocol, default=object, **kwds):
+    def __init__(self, protocol, **kwds):
         # chain up
-        super().__init__(default=default, **kwds)
+        super().__init__(**kwds)
         # save my protocol
         self.protocol = protocol
         # all done
