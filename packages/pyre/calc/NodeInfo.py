@@ -20,16 +20,16 @@ class NodeInfo:
 
 
     # meta-methods
-    def __init__(self, model, key, name=None, split=None, **kwds):
+    def __init__(self, model, key=None, name=None, split=None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # save the key
-        self.key = key
         # if we know both the full and split versions of the name
         if name and split:
             # save them
             self.name = name
             self.split = split
+            # save the key
+            self.key = key or model._hash.hash(items=split)
             # all done
             return
         # if we only know the name
@@ -37,7 +37,11 @@ class NodeInfo:
             # save it
             self.name = name
             # and form the split version
-            self.split = tuple(model.split(name))
+            split = tuple(model.split(name))
+            # save it
+            self.split = split
+            # save the key
+            self.key = key or model._hash.hash(items=split)
             # all done
             return
         # if i know the split version
@@ -46,6 +50,18 @@ class NodeInfo:
             self.split = split
             # assemble the name
             self.name = model.join(split)
+            # save the key
+            self.key = key or model._hash.hash(items=split)
+            # all done
+            return
+
+        # at the very least I should know the key
+        if key:
+            # save it
+            self.key = key
+            # and the rest get their default values
+            self.name = name
+            self.split = split
             # all done
             return
 
