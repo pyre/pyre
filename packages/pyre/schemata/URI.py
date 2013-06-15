@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -77,7 +77,6 @@ class URI(Type):
 
     # constants
     typename = 'uri' # the name of my type
-    default = locator() # my default value
 
 
     # interface
@@ -116,7 +115,7 @@ class URI(Type):
         raise self.CastingError(value=value, description=msg)
 
 
-    def __init__(self, default=default, scheme=None, authority=None, address=None, **kwds):
+    def __init__(self, default=locator(), scheme=None, authority=None, address=None, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # save my defaults

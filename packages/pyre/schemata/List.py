@@ -22,12 +22,12 @@ class List(Sequence):
 
 
     # interface
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Convert {value} into a list
         """
-        # easy enough; resist the temptation to optimize this by skipping the call to super: we
-        # have to coerce every item in the container!
+        # easy enough; resist the temptation to optimize this by skipping the call to {super}:
+        # we have to coerce every item in the container!
         return list(super().coerce(value, **kwds))
 
 

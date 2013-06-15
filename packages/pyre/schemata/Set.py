@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -22,12 +22,12 @@ class Set(Sequence):
 
 
     # interface
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Convert {value} into a set
         """
-        # easy enough; resist the temptation to optimize this by skipping the call to super: we
-        # have to coerce every item in the container!
+        # easy enough; resist the temptation to optimize this by skipping the call to {super}:
+        # we have to coerce every item in the container!
         return set(super().coerce(value, **kwds))
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -19,11 +19,10 @@ class Tuple(Sequence):
 
     # constants
     typename = 'tuple' # the name of my type
-    default  = () # my default value
 
 
     # interface
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Convert {value} into a tuple
         """

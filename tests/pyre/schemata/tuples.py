@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -16,7 +16,7 @@ def test():
     import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schemata.tuple(schema=pyre.schemata.str)
+    descriptor = pyre.schemata.tuple(schema=pyre.schemata.str())
 
     # casts
     # successful

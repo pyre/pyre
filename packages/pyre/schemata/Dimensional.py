@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -21,7 +21,6 @@ class Dimensional(Type):
 
     # constants
     typename = 'dimensional' # the name of my type
-    default = units.zero # my default value
 
 
     # public data
@@ -29,22 +28,21 @@ class Dimensional(Type):
 
 
     # interface
-    @classmethod
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a dimensional
         """
         # use the unit parser to convert strings to dimensionals 
-        if isinstance(value, str): return cls.parser.parse(value)
+        if isinstance(value, str): return self.parser.parse(value)
         # dimensionals go right through
         if isinstance(value, units.dimensional): return value
         # everything else is an error
         msg="could not convert {0.value!r} into a dimensional quantity"
-        raise cls.CastingError(value=value, description=msg)
+        raise self.CastingError(value=value, description=msg)
         
 
     # meta-methods
-    def __init__(self, default=default, **kwds):
+    def __init__(self, default=units.zero, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # all done

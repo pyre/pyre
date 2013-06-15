@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -21,12 +21,10 @@ class Array(Type):
 
     # constants
     typename = 'array' # the name of my type
-    default  = () # my default value
 
 
     # interface
-    @classmethod
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Convert {value} into a tuple
         """
@@ -35,7 +33,15 @@ class Array(Type):
         # if {value} is an iterable, convert it to a tuple and return it
         if  isinstance(value, collections.Iterable): return tuple(value)
         # otherwise flag it as bad input
-        raise cls.CastingError(value=value, description="unknown type: value={0.value!r}")
+        raise self.CastingError(value=value, description="unknown type: value={0.value!r}")
+
+
+    # meta-methods
+    def __init__(self, default=(), **kwds):
+        # chain up, potentially with my local default value
+        super().__init__(default=default, **kwds)
+        # all done
+        return
 
 
 # end of file 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -22,7 +22,6 @@ class OutputStream(Type, Client):
 
     # constants
     mode = 'w'
-    default = 'stdout'
     typename = 'ostream'
     
 
@@ -48,7 +47,7 @@ class OutputStream(Type, Client):
         
 
     # meta-methods
-    def __init__(self, default=default, mode=mode, **kwds):
+    def __init__(self, default='stdout', mode=mode, **kwds):
         # chain up
         super().__init__(default=default, **kwds)
         # save my mode

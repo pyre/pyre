@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -19,12 +19,10 @@ class Float(Type):
 
     # constants
     typename = 'float' # the name of my type
-    default = float() # my default value
 
 
     # interface
-    @classmethod
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a float
         """
@@ -38,11 +36,11 @@ class Float(Type):
         # if it didn't work
         except (TypeError, ValueError) as error:
             # complain
-            raise cls.CastingError(value=value, description=str(error)) from None
+            raise self.CastingError(value=value, description=str(error)) from None
 
 
     # meta-methods
-    def __init__(self, default=default, **kwds):
+    def __init__(self, default=float(), **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # all done

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -17,7 +17,7 @@ def test():
     import pyre.schemata
 
     # create a descriptor
-    descriptor = pyre.schemata.decimal
+    descriptor = pyre.schemata.decimal()
 
     # check
     assert descriptor.coerce("1.20") == decimal.Decimal("1.20")

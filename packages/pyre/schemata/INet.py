@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -105,27 +105,23 @@ class INet(Type):
     # constants
     any = ip(host='', port=0) # the moral equivalent of zero...
     typename = 'inet' # the name of my type
-    default = any # my default value
-
 
 
     # interface
-    @classmethod
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a internet address
         """
         # {address} instances go right through
-        if isinstance(value, cls.address): return value
+        if isinstance(value, self.address): return value
         # use the address parser to convert strings
-        if isinstance(value, str): return cls.parse(value)
+        if isinstance(value, str): return self.parse(value)
         # everything else is an error
         msg="could not convert {0.value!r} into an internet address"
-        raise cls.CastingError(value=value, description=msg)
+        raise self.CastingError(value=value, description=msg)
 
 
-    @classmethod
-    def recognize(cls, family, address):
+    def recognize(self, family, address):
         """
         Return an appropriate address type based on the socket family
         """
@@ -134,46 +130,45 @@ class INet(Type):
             # unpack the raw address
             host, port = address
             # return an ipv4 addres
-            return cls.ipv4(host=host, port=port)
+            return self.ipv4(host=host, port=port)
 
         # unix
         if family == socket.AF_UNIX:
             # return a unix addres
-            return cls.unix(path=address)
+            return self.unix(path=address)
 
         # otherwise
         raise NotImplementedError("unsupported socket family: {}".format(family))
 
 
-    @classmethod
-    def parse(cls, value):
+    def parse(self, value):
         """
         Convert {value}, expected to be a string, into an inet address
         """
         # interpret an empty {value}
         if not value:
             # as an ip4 address, on the local host at some random port
-            return cls.ipv4()
+            return self.ipv4()
         # attempt to match against my regex
-        match = cls.regex.match(value)
+        match = self.regex.match(value)
         # if it failed
         if not match:
             # describe the problem
             msg = "could not convert {0.value!r} into an internet address"
             # bail out
-            raise cls.CastingError(value=value, description=msg)
+            raise self.CastingError(value=value, description=msg)
         # we have a match; get the address family
         family = match.group('ip') or match.group('unix')
         # if no family were specified
         if family is None:
             # build an ipv4 address
-            return cls.ipv4(**match.groupdict())
+            return self.ipv4(**match.groupdict())
         # otherwise, use it to find the appropriate factory to build and return an address
-        return getattr(cls, family)(**match.groupdict())
+        return getattr(self, family)(**match.groupdict())
 
 
     # meta-methods
-    def __init__(self, default=default, **kwds):
+    def __init__(self, default=any, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # all done

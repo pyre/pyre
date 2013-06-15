@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -22,7 +22,6 @@ class InputStream(Type, Client):
 
     # constants
     mode = 'r'
-    default = 'stdin'
     typename = 'istream'
     
 
@@ -44,8 +43,8 @@ class InputStream(Type, Client):
         
 
     # meta-methods
-    def __init__(self, default=default, mode=mode, **kwds):
-        # chain up
+    def __init__(self, default='stdin', mode=mode, **kwds):
+        # chain up, potentially with local default
         super().__init__(default=default, **kwds)
         # save my mode
         self.mode = mode

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -15,14 +15,13 @@ from .Type import Type
 # my declaration
 class Time(Type):
     """
-    A type declarator for timestamp
+    A type declarator for timestamps
     """
 
     
     # constants
     format = "%H:%M:%S" # the default format
-    typename = 'time'
-    default = time.localtime()
+    typename = 'time' # the name of my type
 
 
     # interface
@@ -41,7 +40,7 @@ class Time(Type):
 
 
     # meta-methods
-    def __init__(self, default=default, format=format, **kwds):
+    def __init__(self, default=time.localtime(), format=format, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # store the format

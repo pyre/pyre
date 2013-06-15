@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -22,7 +22,6 @@ class Date(Type):
     # constants
     format = "%Y-%m-%d" # the default date format
     typename = 'date' # the name of my type
-    default = time.localtime() # my default value
 
 
     # interface
@@ -41,7 +40,7 @@ class Date(Type):
 
 
     # meta-methods
-    def __init__(self, default=default, format=format, **kwds):
+    def __init__(self, default=time.localtime(), format=format, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # store the format

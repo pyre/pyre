@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -19,12 +19,10 @@ class String(Type):
 
     # constants
     typename = 'str' # the name of my type
-    default = str() # my default value
 
 
     # interface
-    @classmethod
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into a string
         """
@@ -33,7 +31,7 @@ class String(Type):
 
 
     # meta-methods
-    def __init__(self, default=default, **kwds):
+    def __init__(self, default=str(), **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # all done

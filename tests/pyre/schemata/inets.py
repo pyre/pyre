@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -19,6 +19,8 @@ def test():
         IPv4 as ipv4,
         Unix as unix)
 
+    # make one
+    inet = inet()
     # positive tests
     # ip4 with full information
     address = inet.coerce("ip4:pyre.caltech.edu:50000")

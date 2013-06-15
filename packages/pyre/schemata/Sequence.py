@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -23,9 +23,7 @@ class Sequence(Type):
     open = '[({'
     close = '])}'
     delimiter = ','
-
     typename = 'sequence' # the name of my type
-    default = () # my default value
 
 
     # public data
@@ -62,7 +60,7 @@ class Sequence(Type):
 
 
     # meta-methods
-    def __init__(self, default=default, schema=schema, **kwds):
+    def __init__(self, default=(), schema=schema, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # save my schema

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -17,7 +17,7 @@ def test():
     from pyre.units.SI import m, kg, s
 
     # create a descriptor
-    descriptor = pyre.schemata.dimensional
+    descriptor = pyre.schemata.dimensional()
 
     # casts
     # successful

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -41,7 +41,7 @@ class Preprocessor:
 
 
     # meta-methods
-    def __init__(self, preprocessor=identity.coerce, **kwds):
+    def __init__(self, preprocessor=identity().coerce, **kwds):
         # chain up
         super().__init__(**kwds)
         # set my value processor

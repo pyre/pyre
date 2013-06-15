@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -17,13 +17,31 @@ class Type:
     from .exceptions import CastingError
 
     # constants
-    default = object()
     typename = 'identity'
 
 
+    # public data
+    @property
+    def default(self):
+        """
+        Grant access to my default value
+        """
+        # easy enough
+        return self._default
+
+    @default.setter
+    def default(self, value):
+        """
+        Save {value} as my default
+        """
+        # also easy
+        self._default = value
+        # all done
+        return
+
+
     # interface
-    @classmethod
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Convert the given value into a python native object
         """
@@ -31,13 +49,12 @@ class Type:
         return value
 
 
-
     # meta-methods
-    def __init__(self, default=default, **kwds):
+    def __init__(self, default=object, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my default value
-        self.default = default
+        self._default = default
         # all done
         return
 

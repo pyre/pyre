@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -31,12 +31,11 @@ class Typed:
         return super().__new__(cls, **kwds)
 
         
-    def __init__(self, record=None, schemata=schemata, **kwds):
+    def __init__(self, schemata=schemata, **kwds):
         """
         Build an instance of this decorator.
         """
-        # the parameter {record} is not used; it is present only because it must be removed
-        # from {kwds} before chaining up
+        # chain up
         super().__init__(**kwds)
         # save my schemata
         self.schemata = schemata

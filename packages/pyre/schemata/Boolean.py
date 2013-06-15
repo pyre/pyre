@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -19,25 +19,23 @@ class Boolean(Type):
 
     # constants
     typename = 'bool' # the name of my type
-    default = bool() # my default value
 
 
     # interface
-    @classmethod
-    def coerce(cls, value, **kwds):
+    def coerce(self, value, **kwds):
         """
         Convert {value} into a boolean
         """
         # native type pass through unchanged
         if isinstance(value, bool): return value
         # strings go through the translation map
-        if isinstance(value, str): return cls.xlat[value.lower()]
+        if isinstance(value, str): return self.xlat[value.lower()]
         # anything else is an error
-        raise cls.CastingError(description='could not cast {0.value!r} to bool', value=value)
+        raise self.CastingError(description='could not cast {0.value!r} to bool', value=value)
 
 
     # meta-methods
-    def __init__(self, default=default, **kwds):
+    def __init__(self, default=True, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # all done
