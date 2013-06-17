@@ -35,6 +35,15 @@ class Facility(Slotted, schemata.component):
         return self._default or self.protocol.pyre_default()
 
 
+    @property
+    def macro(self):
+        """
+        Return the default strategy for handling expressions in slot values
+        """
+        # build expressions
+        return self.pyre_nameserver.interpolation
+
+
     # interface
     def convert(self, value):
         """

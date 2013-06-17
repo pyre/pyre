@@ -21,61 +21,48 @@ class Property(Slotted):
 
 
     # mixins to be included to my type offering
-    class decimal:
+    class schema:
         """Mixin for handling decimal values"""
 
         # override the default expression handler
         @property
         def macro(self):
             """
-            Return the default strategy for handling expressions in slot values
+            Access to the default strategy for handling macros in slot values
             """
-            # build expressions
-            return self.pyre_nameserver.expression
+            # by default, build interpolations
+            return self.pyre_nameserver.interpolation
 
 
-    class dimensional:
-        """Mixin for handling quantities with units"""
+    class numeric:
+        """Mixin for handling numeric types"""
 
         # override the default expression handler
         @property
         def macro(self):
             """
-            Return the default strategy for handling expressions in slot values
+            Access to the default strategy for handling macros for numeric types
             """
             # build expressions
             return self.pyre_nameserver.expression
 
 
-    class float:
-        """Mixin for handling floating point values"""
+    class sequences:
+        """Mixin for handling typed containers"""
 
         # override the default expression handler
         @property
         def macro(self):
             """
-            Return the default strategy for handling expressions in slot values
+            Access to the default strategy for handling macros in sequences
             """
-            # build expressions
-            return self.pyre_nameserver.expression
-
-
-    class int:
-        """Mixin for handling integer values"""
-
-        # override the default expression handler
-        @property
-        def macro(self):
-            """
-            Return the default strategy for handling expressions in slot values
-            """
-            # build expressions
-            return self.pyre_nameserver.expression
+            # build whatever my schema specifies
+            return self.schema.macro
 
 
     # meta-methods
     def __str__(self):
-        return "{0.__name!r}: a property of type {0.typename!r}".format(self)
+        return "{0.name!r}: a property of type {0.typename!r}".format(self)
 
 
 # end of file 

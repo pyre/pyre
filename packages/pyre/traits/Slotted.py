@@ -21,16 +21,6 @@ class Slotted(Trait):
     isConfigurable = True # slotted traits have configurable values
 
 
-    # public data
-    @property
-    def macro(self):
-        """
-        Return the default strategy for handling expressions in slot values
-        """
-        # by default, build interpolations
-        return self.pyre_nameserver.interpolation
-
-
     # meta-methods
     def __init__(self, classSlot=None, instanceSlot=None, **kwds):
         # chain up
