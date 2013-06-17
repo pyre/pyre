@@ -9,7 +9,7 @@
 # externals
 import collections
 from .. import tracking # for locators
-from ..traits import properties # to get the default trait type
+from ..traits.Property import Property as properties # to get the default trait type
 # superclass
 from ..calc.Hierarchical import Hierarchical
 

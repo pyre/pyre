@@ -18,8 +18,8 @@ class SlotInfo(NodeInfo):
 
 
     # types
-    from ..traits.properties import identity
     from .Priority import Priority as priorities
+    from ..traits.Property  import Property as properties
 
 
     # public data
@@ -35,7 +35,7 @@ class SlotInfo(NodeInfo):
         # save my metadata
         self.locator = locator
         self.priority = priority or self.priorities.uninitialized()
-        self.trait = trait or self.identity().instanceSlot
+        self.trait = trait or self.properties.identity().instanceSlot
         # all done
         return
 
