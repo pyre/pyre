@@ -58,11 +58,21 @@ class Typed:
         Embed within {client} subclasses of its direct ancestor that also derive from the types in
         my {schemata}
         """
-        # go through all the schemata
+        # we do this in two passes over the tuple of schemata: once to get the pedigree of each
+        # typed class, and once again to build the actual class record. this avoids the problem
+        # of having the client record modified while we are hunting for custom mixins
+
+        # temporary storage for the ancestors of each schema
+        pedigree = []
+        # make a pass collecting all the ancestors for each schema, BEFORE we make any
+        # modifications to the client
         for schema in schemata:
-            # build the tuple of base classes; if the client provides a mixin
-            ancestors = tuple(cls.pedigree(client=client, schema=schema))
-            # document it
+            # get the ancestors for this schema
+            pedigree.append(tuple(cls.pedigree(client, schema)))
+
+        # once again, to build the classes
+        for schema, ancestors in zip(schemata, pedigree):
+            # make a docstring
             doc = "A subclass of {!r} of type {!r}".format(client.__name__, schema.typename)
             # build the class: name it after the schema, add the docstring
             typedClient = type(schema.typename, ancestors, {"__doc__": doc})
