@@ -9,6 +9,7 @@
 # the protocol for external packages
 from .Category import Category as category
 
+
 # a trait descriptor suitable for collecting package categories and instance specifications
 def catalog(**kwds):
     """

@@ -38,7 +38,7 @@ class Application(pyre.component, metaclass=Director):
     shell = Shell()
     shell.doc = 'my hosting strategy'
 
-    renderer = Renderer() #
+    renderer = Renderer()
     renderer.doc = 'my custom journal device renderer'
 
     requirements = externals.requirements()
