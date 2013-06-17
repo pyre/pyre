@@ -497,29 +497,6 @@ class Executive:
         return self
 
 
-    def install(self):
-        """
-        Register me with the base class for framework clients so they can have easy access to my
-        parts
-        """
-        # critical step: record this instance with the {Executive} proxy to grant easy access
-        # to components and protocols
-        from .Client import Client as client
-
-        # attach me
-        client.pyre_executive = weakref.proxy(self)
-
-        # build weak references to my managers
-        client.pyre_registrar = weakref.proxy(self.registrar)
-        client.pyre_fileserver = weakref.proxy(self.fileserver)
-        client.pyre_nameserver = weakref.proxy(self.nameserver)
-        client.pyre_configurator = weakref.proxy(self.configurator)
-        client.pyre_externals = weakref.proxy(self.externals)
-
-        # all done
-        return self
-
-
     def activate(self):
         """
         Turn on the executive

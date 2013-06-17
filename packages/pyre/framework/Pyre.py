@@ -7,6 +7,7 @@
 
 
 # externals
+import weakref
 from .. import tracking
 # superclass
 from .Executive import Executive
@@ -68,24 +69,41 @@ class Pyre(Executive):
         # chain up
         super().__init__(**kwds)
 
-        # my nameserver
+        # get storage for the framework manager proxies
+        from .Client import Client as client
+
+        # attach me
+        client.pyre_executive = weakref.proxy(self)
+
+        # build my nameserver
         self.nameserver = self.newNameServer()
+        # attach
+        client.pyre_nameserver = weakref.proxy(self.nameserver)
+
         # my fileserver
         self.fileserver = self.newFileServer()
+        # attach
+        client.pyre_fileserver = weakref.proxy(self.fileserver)
+
         # component bookkeeping
         self.registrar = self.newComponentRegistrar()
+        # attach
+        client.pyre_registrar = weakref.proxy(self.registrar)
+
         # handler of configuration events
         self.configurator = self.newConfigurator(executive=self)
+        # attach
+        client.pyre_configurator = weakref.proxy(self.configurator)
+
         # component linker
         self.linker = self.newLinker()
         # the timer registry
         self.timekeeper = self.newTimerRegistry()
+
         # the manager of external tools and libraries
         self.externals = self.newExternalsManager()
-
-        # critical step: record this instance with the base class of all framework clients in
-        # order to grant easy access to my parts
-        self.install()
+        # attach
+        client.pyre_externals = weakref.proxy(self.externals)
 
         # all done
         return
