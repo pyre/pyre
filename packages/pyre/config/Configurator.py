@@ -11,7 +11,6 @@ import os # for path
 import weakref # for access to my executive
 import collections # for defaultdict and OrderedDict
 from .. import tracking
-from ..traits import properties
 
 
 # class declaration
@@ -285,6 +284,7 @@ class Configurator:
         """
         Place my default settings in the global namespace
         """
+        from ..traits import properties
         # get the nameserver
         nameserver = self.executive.nameserver
 
