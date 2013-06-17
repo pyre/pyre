@@ -7,11 +7,11 @@
 
 
 # superclass
-from .Type import Type
+from .Numeric import Numeric
 
 
 # declaration
-class Boolean(Type):
+class Boolean(Numeric):
     """
     A type declarator for booleans
     """

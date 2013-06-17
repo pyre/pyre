@@ -9,12 +9,12 @@
 # externals
 import sys
 # superclasses
-from .Type import Type
+from .Schema import Schema
 from ..framework.Client import Client
 
 
 # declaration
-class InputStream(Type, Client):
+class InputStream(Schema, Client):
     """
     A representation of input streams
     """

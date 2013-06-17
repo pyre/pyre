@@ -9,11 +9,11 @@
 # externals
 import collections
 # my base class is from {pyre.schemata}
-from ..schemata.Type import Type
+from ..schemata.Schema import Schema
 
 
 # declaration
-class Typed(Type):
+class Typed(Schema):
     """
     Mix-in class that encapsulates type information. Its instances participate in value
     conversions from external representations to python internal forms.

@@ -9,10 +9,10 @@
 # access the decimal package
 import decimal
 # and my superclass
-from .Type import Type
+from .Numeric import Numeric
 
 
-class Decimal(Type):
+class Decimal(Numeric):
     """
     A type declarator for fixed point numbers
     """

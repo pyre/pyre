@@ -7,11 +7,11 @@
 
 
 # superclass
-from .Type import Type
+from .Schema import Schema
 
 
 # declaration
-class String(Type):
+class String(Schema):
     """
     A type declarator for strings
     """

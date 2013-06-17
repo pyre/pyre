@@ -9,11 +9,11 @@
 # externals
 import collections
 # superclass
-from .Type import Type
+from .Schema import Schema
 
 
 # declaration
-class Array(Type):
+class Array(Schema):
     """
     The array type declarator
     """

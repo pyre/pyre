@@ -7,7 +7,7 @@
 
 
 # declaration
-class Type:
+class Schema:
     """
     The base class for type declarators
     """

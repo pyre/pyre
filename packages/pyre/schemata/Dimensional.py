@@ -9,11 +9,11 @@
 # externals
 from .. import units
 # my superclass
-from .Type import Type
+from .Numeric import Numeric
 
 
 # declaration
-class Dimensional(Type):
+class Dimensional(Numeric):
     """
     A type declarator for quantities with units
     """

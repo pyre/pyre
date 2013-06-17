@@ -7,11 +7,11 @@
 
 
 # superclass
-from .Type import Type
+from .Numeric import Numeric
 
 
 # declaration
-class Float(Type):
+class Float(Numeric):
     """
     A type declarator for floats
     """

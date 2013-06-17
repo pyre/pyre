@@ -7,7 +7,7 @@
 
 
 # the trivial type
-from .Type import Type as identity
+from .Schema import Schema as identity
 # simple types
 from .Boolean import Boolean as bool
 from .Decimal import Decimal as decimal
@@ -42,6 +42,10 @@ containers = (sequence, array, list, set, tuple)
 meta = (istream, ostream)
 # all of them
 schemata = basic + composite + containers + meta
+
+# type categories
+sequences = { list, set, tuple }
+numeric = { bool, decimal, dimensional, float, int }
 
 
 # grant access to the type decorator

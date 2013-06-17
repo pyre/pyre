@@ -9,11 +9,11 @@
 # externals
 import time
 # superclass
-from .Type import Type
+from .Schema import Schema
 
 
 # my declaration
-class Time(Type):
+class Time(Schema):
     """
     A type declarator for timestamps
     """

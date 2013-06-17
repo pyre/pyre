@@ -7,11 +7,11 @@
 
 
 # superclass
-from .Type import Type
+from .Numeric import Numeric
 
 
 # declaration
-class Integer(Type):
+class Integer(Numeric):
     """
     A type declarator for integers
     """

@@ -9,11 +9,11 @@
 # externals
 import collections # for the container protocols
 # superclass
-from .Type import Type
+from .Schema import Schema
 
 
 # declaration
-class Sequence(Type):
+class Sequence(Schema):
     """
     The base class for type declarators that are sequences of other types
     """
@@ -24,10 +24,6 @@ class Sequence(Type):
     close = '])}'
     delimiter = ','
     typename = 'sequence' # the name of my type
-
-
-    # public data
-    from .Type import Type as schema # my default type is the trivial one
 
 
     # interface
@@ -60,7 +56,7 @@ class Sequence(Type):
 
 
     # meta-methods
-    def __init__(self, default=(), schema=schema, **kwds):
+    def __init__(self, default=(), schema=Schema(), **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # save my schema

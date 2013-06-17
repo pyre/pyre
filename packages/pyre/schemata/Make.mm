@@ -31,13 +31,14 @@ EXPORT_PYTHON_MODULES = \
     InputStream.py \
     Integer.py \
     List.py \
+    Numeric.py \
     OutputStream.py \
+    Schema.py \
     Sequence.py \
     Set.py \
     String.py \
     Time.py \
     Tuple.py \
-    Type.py \
     Typed.py \
     URI.py \
     exceptions.py \

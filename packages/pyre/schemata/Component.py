@@ -7,11 +7,11 @@
 
 
 # superclass
-from .Type import Type
+from .Schema import Schema
 
 
 # declaration
-class Component(Type):
+class Component(Schema):
     """
     A type declarator for components
     """

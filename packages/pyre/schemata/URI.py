@@ -60,11 +60,11 @@ class uri:
 # externals
 import re
 # superclass
-from .Type import Type
+from .Schema import Schema
 
 
 # the declaration
-class URI(Type):
+class URI(Schema):
     """
     Parser for resource identifiers
     """

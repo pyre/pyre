@@ -83,11 +83,11 @@ class Unix(Address):
 
 
 # the schema type superclass
-from .Type import Type
+from .Schema import Schema
 
 
 # declaration
-class INet(Type):
+class INet(Schema):
     """
     A type declarator for internet addresses
     """

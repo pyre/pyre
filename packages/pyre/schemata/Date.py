@@ -9,11 +9,11 @@
 # externals
 import time
 # superclass
-from .Type import Type
+from .Schema import Schema
 
 
 # my declaration
-class Date(Type):
+class Date(Schema):
     """
     A type declarator for dates
     """
