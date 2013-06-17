@@ -14,7 +14,7 @@ class Typed:
 
 
     # the list of types that i will use to decorate my client
-    from . import schemata
+    from . import schemata, numeric, sequences
 
 
     # meta-methods
@@ -60,22 +60,10 @@ class Typed:
         """
         # go through all the schemata
         for schema in schemata:
-            # first, let's build the tuple of base classes; if the client provides a mixin
-            # class to be included in the hierarchy
-            try:
-                # get it
-                mixin = getattr(client, schema.typename)
-            # if not
-            except AttributeError:
-                # inherit from the client and the schema
-                ancestors = (client, schema)
-            # if it's there
-            else:
-                # inherit from all three
-                ancestors = (client, mixin, schema)
-           
+            # build the tuple of base classes; if the client provides a mixin
+            ancestors = tuple(cls.pedigree(client=client, schema=schema))
             # document it
-            doc = "a subclass of {!r} of type {!r}".format(client.__name__, schema.typename)
+            doc = "A subclass of {!r} of type {!r}".format(client.__name__, schema.typename)
             # build the class: name it after the schema, add the docstring
             typedClient = type(schema.typename, ancestors, {"__doc__": doc})
             # and attach it to the client
@@ -84,5 +72,62 @@ class Typed:
         # return the new class record
         return client
 
+
+    @classmethod
+    def pedigree(cls, client, schema):
+        """
+        Build the ancestry of the client
+        """
+        # first the client
+        yield client
+        # get the name of the type we are building
+        typename = schema.typename
+
+        # if the client declares a mixin for this type
+        try:
+            # use it
+            yield getattr(client, typename)
+        # if not
+        except AttributeError:
+            # no worries
+            pass
+
+        # handle the numeric types
+        if schema in cls.numeric:
+            # check whether the client has a 'sequence' mixin
+            try:
+                # and use it
+                yield getattr(client, 'numeric')
+            # if not
+            except AttributeError:
+                # no worries
+                pass
+
+        # handle the sequences
+        if schema in cls.sequences:
+            # check whether the client has a 'sequence' mixin
+            try:
+                # and use it
+                yield getattr(client, 'sequences')
+            # if not
+            except AttributeError:
+                # no worries
+                pass
+
+        # check whether the client provides a custom base class
+        try:
+            # and use it
+            yield getattr(client, 'schema')
+        # if not
+        except AttributeError:
+            # no worries
+            pass
+
+        # now, the {schema} itself
+        yield schema
+
+        # all done
+        return
+                
 
 # end of file
