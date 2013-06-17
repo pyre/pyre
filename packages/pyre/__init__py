@@ -257,9 +257,9 @@ if executive:
     from .components.Component import Component as component
     # traits
     from .traits import properties
+    property = properties.identity
     from .traits.Behavior import Behavior as export
     from .traits.Behavior import Behavior as provides
-    from .traits.Property import Property as property
     from .traits.Facility import Facility as facility
     # constraints
     from . import constraints
