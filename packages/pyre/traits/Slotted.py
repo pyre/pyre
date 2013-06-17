@@ -19,19 +19,11 @@ class Slotted(Trait):
 
     # framework data
     isConfigurable = True # slotted traits have configurable values
+    classSlot = None # the factory for class slots
+    instanceSlot = None # the factory of instance slots
 
 
     # meta-methods
-    def __init__(self, classSlot=None, instanceSlot=None, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save my parts
-        self.classSlot = classSlot or self.factory(trait=self, processor=self.coerce)
-        self.instanceSlot = instanceSlot or self.factory(trait=self, processor=self.coerce)
-        # all done
-        return
-
-
     def __get__(self, instance, cls):
         """
         Retrieve the value of this trait

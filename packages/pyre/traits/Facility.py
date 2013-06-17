@@ -87,11 +87,11 @@ class Facility(Slotted, schemata.component):
 
     # meta-methods
     def __init__(self, **kwds):
-        # make my slot factories
-        classSlot = self.factory(trait=self, processor=self.coerce)
-        instanceSlot = self.factory(trait=self, processor=self.instantiate)
         # chain up
-        super().__init__(classSlot=classSlot, instanceSlot=instanceSlot, **kwds)
+        super().__init__(**kwds)
+        # build my slot factories
+        self.classSlot = self.factory(trait=self, processor=self.coerce)
+        self.instanceSlot = self.factory(trait=self, processor=self.instantiate)
         # all done
         return
 

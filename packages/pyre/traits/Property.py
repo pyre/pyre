@@ -61,6 +61,16 @@ class Property(Slotted):
 
 
     # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # build my slot factories
+        self.classSlot = self.factory(trait=self, processor=self.coerce)
+        self.instanceSlot = self.factory(trait=self, processor=self.coerce)
+        # all done
+        return
+
+
     def __str__(self):
         return "{0.name!r}: a property of type {0.typename!r}".format(self)
 
