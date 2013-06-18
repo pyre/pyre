@@ -60,4 +60,10 @@ class AbstractNode:
         return self
 
 
+    # debugging support
+    def dump(self, name, indent):
+        print('{}{}: {}'.format(indent, name, self.value))
+        return self
+        
+
 # end of file 
