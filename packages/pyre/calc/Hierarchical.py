@@ -130,9 +130,8 @@ class Hierarchical(SymbolTable):
         # done. if a registration appears, it will be treated as a duplicate and patched
         # appropriately
         if aliasNode is None:
-            # return the canonical node, whether it exists or not; the latter case corresponds
-            # to aliasing among names that do not yet have a configuration node built
-            return targetKey, aliasKey, targetNode
+            # all done
+            return
         # grab the alias metadata
         aliasInfo = self._metadata[aliasKey]
         # clean up after the obsolete node
@@ -144,8 +143,8 @@ class Hierarchical(SymbolTable):
             self._nodes[targetKey] = aliasNode
             # and its metadata
             self._metadata[targetKey] = self.info(model=self, key=targetKey, name=target)
-            # return the two keys and the alias node
-            return targetKey, aliasKey, aliasNode
+            # all done
+            return
 
         # if we get this far, both preëxisted; the aliased info has been cleared out, the
         # canonical is as it should be. all that's missing is a basis for picking which one to
@@ -308,8 +307,8 @@ class Hierarchical(SymbolTable):
         """
         print("model {}:".format(self))
         print("  nodes:")
-        for name, node in self.find(pattern):
-            node.dump(indent=' '*4, name=name)
+        for info, node in self.find(pattern):
+            node.dump(indent=' '*4, name=info.name)
             print("      slot: {}".format(type(node).__name__))
         return
 

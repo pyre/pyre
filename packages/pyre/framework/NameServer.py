@@ -133,7 +133,7 @@ class NameServer(Hierarchical):
             return super().alias(target=target, alias=alias, base=base)
         # which fails when the {alias} and the {target} both exist
         except self.AliasingError as error:
-            # a situation that I can resolve by comparing the priorities of the two nodes
+            # resolve by comparing the priorities of the two nodes
             targetInfo = error.targetInfo
             aliasInfo = error.aliasInfo
             # if the alias node is higher priority
@@ -144,11 +144,17 @@ class NameServer(Hierarchical):
                 aliasNode = error.aliasNode
                 # get the alias to replace the target
                 aliasNode.replace(targetNode)
-                # and make it the node associated with the key
+                # adjust the processor
+                aliasNode.postprocessor = targetNode.postprocessor
+                # make it the node associated with the key
                 self._nodes[error.key] = aliasNode
+                # adjust the node info
+                meta = self._metadata[error.key]
+                meta.priority = aliasInfo.priority
+                meta.locator = aliasInfo.locator
 
         # all done
-        return
+        return 
             
 
     def insert(self, value, priority, locator, key=None, name=None, factory=None):
