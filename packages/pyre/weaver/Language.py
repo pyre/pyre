@@ -28,9 +28,9 @@ class Language(pyre.protocol, family="pyre.weaver.languages"):
 
     # framework hooks
     @classmethod
-    def pyre_convert(cls, language):
+    def pyre_convert(cls, value, **kwds):
         # first, convert to lower case
-        language = language.lower()
+        language = value.lower()
         # now, translate
         return cls.languages.get(language, language)
 

@@ -59,6 +59,8 @@ class Facility(Slotted, schemata.component):
         """
         Coerce {value} into an instance of a component compatible with my protocol
         """
+        # leave {None} alone
+        if value is None: return None
         # run the value through my regular coercion
         value = self.coerce(value=value, node=node, **kwds)
         # if what I got back is a component instance, we are all done
@@ -86,12 +88,14 @@ class Facility(Slotted, schemata.component):
 
 
     # meta-methods
-    def __init__(self, **kwds):
+    def __init__(self, protocol, **kwds):
         # chain up
-        super().__init__(**kwds)
+        super().__init__(protocol=protocol, **kwds)
         # build my slot factories
         self.classSlot = self.factory(trait=self, processor=self.coerce)
         self.instanceSlot = self.factory(trait=self, processor=self.instantiate)
+        # add the converter from my protocol to my pile
+        self.converters.append(protocol.pyre_convert)
         # all done
         return
 
