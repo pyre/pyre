@@ -301,7 +301,7 @@ class Configurator:
 
         # place the trait in the model
         nameserver.insert(name=name, value=value, 
-                          trait=cfgpath.instanceSlot, priority=priority, locator=locator)
+                          factory=cfgpath.instanceSlot, priority=priority, locator=locator)
 
         # all done
         return self

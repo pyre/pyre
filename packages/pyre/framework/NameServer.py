@@ -151,7 +151,7 @@ class NameServer(Hierarchical):
         return
             
 
-    def insert(self, value, priority, locator, key=None, name=None, trait=None):
+    def insert(self, value, priority, locator, key=None, name=None, factory=None):
         """
         Add {value} to the store
         """
@@ -205,13 +205,13 @@ class NameServer(Hierarchical):
         # if there's no registered metadata, this is the first time this name was encountered
         except KeyError:
             # if we need to build type information
-            if not trait:
+            if not factory:
                 # use instance slots for an identity trait, by default
-                trait = properties.identity(name=name).instanceSlot
+                factory = properties.identity(name=name).instanceSlot
             # build the info node
             meta = self.info(model=self,
                              name=name, split=split, key=key,
-                             priority=priority, locator=locator, trait=trait)
+                             priority=priority, locator=locator, factory=factory)
             # and attach it
             self._metadata[key] = meta
         # if there is an existing metadata node
@@ -220,17 +220,17 @@ class NameServer(Hierarchical):
             # the value as is
             if priority < meta.priority:
                 # but we may have to adjust the trait
-                if trait:
+                if factory:
                     # which involves two steps: first, update the info node
-                    meta.trait = trait
+                    meta.factory = factory
                     # and now look for the existing model node
                     old = self._nodes[key]
                     # so we can update its value postprocessor
-                    old.postprocessor = trait.processor
+                    old.postprocessor = factory.processor
                 # in any case, we are done here
                 return key
             # ok: higher priority assignment; check whether we should update the descriptor
-            if trait: meta.trait = trait
+            if factory: meta.factory = factory
             # adjust the locator and priority of the info node
             meta.locator = locator
             meta.priority = priority
@@ -238,9 +238,9 @@ class NameServer(Hierarchical):
         # if we get this far, we have a valid key, and valid and updated metadata; start
         # processing the value by getting the trait; use the info node, which is the
         # authoritative source of this information
-        trait = meta.trait
+        factory = meta.factory
         # and ask it to build a node for the value
-        new = trait(key=key, value=value)
+        new = factory(key=key, value=value)
 
         # if we are replacing an existing node
         try:

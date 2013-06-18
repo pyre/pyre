@@ -25,17 +25,17 @@ class SlotInfo(NodeInfo):
     # public data
     locator = None # provenance
     priority = None # the rank of this setting
-    trait = None # the type information
+    factory = None # the type information
 
 
     # meta-methods
-    def __init__(self, priority=None, locator=None, trait=None, **kwds):
+    def __init__(self, priority=None, locator=None, factory=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my metadata
         self.locator = locator
         self.priority = priority or self.priorities.uninitialized()
-        self.trait = trait or self.properties.identity().instanceSlot
+        self.factory = factory or self.properties.identity().instanceSlot
         # all done
         return
 

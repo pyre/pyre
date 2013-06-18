@@ -50,7 +50,7 @@ class PublicInventory(Inventory):
 
 
     # slot access
-    def setTrait(self, trait, value, priority, locator, **kwds):
+    def setTrait(self, trait, **kwds):
         """
         Set the value of the slot associated with {trait}
         """
@@ -59,7 +59,7 @@ class PublicInventory(Inventory):
         # get the nameserver
         nameserver = self.pyre_nameserver
         # adjust the model
-        nameserver.insert(key=key, value=value, priority=priority, locator=locator)
+        nameserver.insert(key=key, **kwds)
         # all done
         return
 
@@ -232,7 +232,7 @@ class PublicInventory(Inventory):
             fullname = nameserver.join(base, name)
             # place the slot with the nameserver 
             traitKey = nameserver.insert(name=fullname, value=value, 
-                                         trait=factory, locator=locator, priority=priority())
+                                         factory=factory, locator=locator, priority=priority())
             # register the trait aliases
             for alias in trait.aliases:
                 # skip the canonical name
