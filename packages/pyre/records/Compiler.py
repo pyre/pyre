@@ -6,6 +6,7 @@
 #
 
 
+# declaration
 class Compiler:
     """
     A strategy for pulling data from a stream and building {pyre.calc} nodes to represent both
