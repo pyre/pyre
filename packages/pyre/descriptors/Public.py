@@ -38,7 +38,7 @@ class Public:
 
 
     # framework requests
-    def attach(self, name, **kwds):
+    def bind(self, name, **kwds):
         """
         Called by my client after all the available meta-data have been harvested
         """
@@ -47,7 +47,7 @@ class Public:
         # update my aliases, so that I can provide easy access to the full set of my names
         self.aliases.add(name)
         # chain up
-        return super().attach(**kwds)
+        return super().bind(**kwds)
 
 
     # meta methods

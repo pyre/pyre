@@ -53,8 +53,8 @@ class Templater(AttributeClassifier):
         localFields = []
         # harvest them
         for fieldName, field in cls.pyre_harvest(attributes, cls.pyre_field):
-            # initialize them
-            field.attach(name=fieldName)
+            # bind them
+            field.bind(name=fieldName)
             # and add them to the pile
             localFields.append(field)
 

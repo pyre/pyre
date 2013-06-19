@@ -40,7 +40,7 @@ class Descriptor(metaclass=Decorator):
 
 
     # interface
-    def attach(self, **kwds):
+    def bind(self, **kwds):
         """
         Called by my client to let me know that all the available meta-data have been harvested
         """

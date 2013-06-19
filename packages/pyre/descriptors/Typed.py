@@ -49,7 +49,7 @@ class Typed(Schema):
 
 
     # framework requests
-    def attach(self, **kwds):
+    def bind(self, **kwds):
         """
         Called by my client to let me know that all the available meta-data have been harvested
         """
@@ -60,7 +60,7 @@ class Typed(Schema):
         self.validators = self.listify(self.validators)
 
         # chain up
-        return super().attach(**kwds)
+        return super().bind(**kwds)
 
 
     # meta methods

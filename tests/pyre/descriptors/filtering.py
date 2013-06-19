@@ -27,7 +27,7 @@ def test():
             # harvest
             for entryName, entry in cls.pyre_harvest(attributes, stem):
                 # initialize
-                entry.attach(name=entryName)
+                entry.bind(name=entryName)
                 # and add them to the pile
                 pile.append(entry)
             # remove them from the attributes

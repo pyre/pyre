@@ -27,7 +27,7 @@ def test():
             # harvest
             for entryName, entry in cls.pyre_harvest(attributes, descriptors.stem):
                 # initialize
-                entry.attach(name=entryName)
+                entry.bind(name=entryName)
                 # and add them to the pile
                 pile.append(entry)
             # build the class record

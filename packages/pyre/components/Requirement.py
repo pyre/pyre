@@ -103,7 +103,7 @@ class Requirement(AttributeClassifier):
         # examine the attributes and harvest the trait descriptors
         for name, trait in self.pyre_harvest(attributes=attributes, descriptor=self.Trait):
             # establish my association with my trait
-            trait.attach(client=self, name=name)
+            trait.bind(client=self, name=name)
             # add it to the pile
             yield trait
         # all done
