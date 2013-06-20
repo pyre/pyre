@@ -25,7 +25,7 @@ class Calculator:
         # zip together the data stream and the descriptors
         for field, value in zip(record.pyre_fields, source):
             # build a node to hold it
-            node = self.node.variable(value=value, postprocessor=field.coerce)
+            node = self.node.variable(value=value, postprocessor=field.process)
             # and make it available
             yield node
         # all done

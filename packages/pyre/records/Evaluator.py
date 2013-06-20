@@ -50,7 +50,7 @@ class Evaluator:
             # grab one from the data stream
             value = next(source)
             # coerce
-            value = descriptor.coerce(value)
+            value = descriptor.process(value)
         # and make it available
         return value
 
@@ -74,7 +74,7 @@ class Evaluator:
             # compute the raw value of this descriptor by applying its evaluator
             value = descriptor.evaluator(*values)
             # coerce the value
-            value = descriptor.coerce(value)
+            value = descriptor.process(value)
         # and make it available
         return value
 

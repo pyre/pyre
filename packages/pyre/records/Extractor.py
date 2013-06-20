@@ -22,7 +22,7 @@ class Extractor:
         # zip together the data stream and the descriptors
         for field, value in zip(record.pyre_fields, source):
             # convert the value
-            value = field.coerce(value)
+            value = field.process(value)
             # and make it available
             yield value
         # all done

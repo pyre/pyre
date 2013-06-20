@@ -21,13 +21,13 @@ sanity:
 tables:
 	${PYTHON} ./table_declaration.py
 	${PYTHON} ./table_inheritance.py
-	${PYTHON} ./table_instantiation.py
 	${PYTHON} ./table_create.py
 	${PYTHON} ./table_references.py
 	${PYTHON} ./table_annotations.py
 	${PYTHON} ./table_insert.py
 	${PYTHON} ./table_delete.py
 	${PYTHON} ./table_update.py
+	${PYTHON} ./table_instantiation.py
 
 queries:
 	${PYTHON} ./query_star.py

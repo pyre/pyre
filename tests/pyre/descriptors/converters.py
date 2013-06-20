@@ -60,8 +60,8 @@ def test():
     assert [entry.name for entry in client.pile] == ['sku', 'cost']
 
     # get the defaults
-    sku = client.sku.coerce(client.sku.default)
-    cost = client.cost.coerce(client.cost.default)
+    sku = client.sku.process(client.sku.default)
+    cost = client.cost.process(client.cost.default)
 
     # check the default value
     assert sku == 4503

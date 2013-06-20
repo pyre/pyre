@@ -65,8 +65,8 @@ class Property(Slotted):
         # chain up
         super().__init__(**kwds)
         # build my slot factories
-        self.classSlot = self.factory(trait=self, processor=self.coerce)
-        self.instanceSlot = self.factory(trait=self, processor=self.coerce)
+        self.classSlot = self.factory(trait=self, processor=self.process)
+        self.instanceSlot = self.factory(trait=self, processor=self.process)
         # all done
         return
 

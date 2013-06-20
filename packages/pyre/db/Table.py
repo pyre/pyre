@@ -102,7 +102,7 @@ class Table(metaclass=Schemer):
                 # if the value is not 'NULL' or 'DEFAULT'
                 if not (value is self.null or value is self.default):
                     # convert it
-                    value = field.schema.coerce(value=value)
+                    value = field.schema.process(value=value)
             # and set it
             cache[field] = value
 

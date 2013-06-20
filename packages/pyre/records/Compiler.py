@@ -51,7 +51,7 @@ class Compiler:
             # grab one from the data stream
             value = next(source)
             # build a node for it
-            node = self.node.variable(value=value, postprocessor=descriptor.coerce)
+            node = self.node.variable(value=value, postprocessor=descriptor.process)
         # and make it available
         return node
 
@@ -73,8 +73,8 @@ class Compiler:
                 # each operand
                 for op in descriptor.operands)
             # make an operator node
-            node = self.node.operator(
-                evaluator=descriptor.evaluator, postprocessor=descriptor.coerce, operands=operands)
+            node = self.node.operator(evaluator=descriptor.evaluator,
+                                      postprocessor=descriptor.process, operands=operands)
         # and make it available
         return node
 

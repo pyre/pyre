@@ -30,7 +30,7 @@ class Typed(Schema):
 
 
     # interface
-    def coerce(self, value, **kwds):
+    def process(self, value, **kwds):
         """
         Walk {value} through the steps from raw to validated
         """
@@ -39,7 +39,7 @@ class Typed(Schema):
         # otherwise, convert
         for converter in self.converters: value = converter(value=value, **kwds)
         # cast
-        value = super().coerce(value=value, **kwds)
+        value = self.coerce(value=value, **kwds)
         # normalize
         for normalizer in self.normalizers: value = normalizer(value=value, **kwds)
         # validate

@@ -30,7 +30,7 @@ class Dict(Slotted):
 
 
     # my value processors
-    def coerce(self, value, **kwds):
+    def process(self, value, **kwds):
         """
         Walk {value} through the casting procedure appropriate for clients that are component
         classes
@@ -88,7 +88,7 @@ class Dict(Slotted):
         # record my schema
         self.schema = schema
         # build my slot factories
-        self.classSlot = self.factory(trait=self, processor=self.coerce)
+        self.classSlot = self.factory(trait=self, processor=self.process)
         self.instanceSlot = self.factory(trait=self, processor=self.instantiate)
         # all done
         return
