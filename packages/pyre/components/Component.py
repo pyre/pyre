@@ -230,17 +230,21 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # if it's not one of my traits
         except KeyError:
             # get someone else to do the work
-            raise AttributeError("{} has no attribute {!r}".format(self, name))
+            raise AttributeError("{} has no attribute {!r}".format(self, name)) from None
 
         # if the normalized name is the same as the original
         if normal == name:
-            # nothing further to do but complain; this is almost certainly a framework bug
-            # NYI: can i do journal here?
-            raise self.TraitNotFoundError(configurable=self, name=name)
+            # nothing further to do but complain: this is almost certainly a framework bug;
+            # build an error message
+            error = self.TraitNotFoundError(configurable=self, name=name)
+            # get the journal
+            import journal
+            # complain
+            raise journal.firewall('pyre.components').log(str(error))
             
         # if we got this far, restart the attribute lookup using the canonical name
-        # don't be smart here; let getattr do its job, which involves invoking the trait
-        # descriptors if necessary
+        # N.B.: don't be smart here; let {getattr} do its job, which involves invoking the
+        # trait descriptors if necessary
         return getattr(self, normal)
 
 
