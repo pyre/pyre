@@ -48,7 +48,7 @@ def check_binary(expression, operator, op1, op2):
     
 def check_left(expression, operator, value, node):
     assert expression.evaluator is operator
-    assert expression.operands[0]._value == value
+    assert expression.operands[0].value == value
     assert expression.operands[1] is node
     return
 
@@ -56,7 +56,7 @@ def check_left(expression, operator, value, node):
 def check_right(expression, operator, value, node):
     assert expression.evaluator is operator
     assert expression.operands[0] is node
-    assert expression.operands[1]._value == value
+    assert expression.operands[1].value == value
     return
 
 
