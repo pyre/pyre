@@ -41,7 +41,7 @@ class Templater(AttributeClassifier):
 
 
     # meta-methods
-    def __new__(cls, name, bases, attributes, **kwds):
+    def __new__(cls, name, bases, attributes, id=None, **kwds):
         """
         The builder of a new record class.
 
@@ -59,6 +59,7 @@ class Templater(AttributeClassifier):
             localFields.append(field)
 
         # build an attribute to hold the locally declared fields
+        attributes["pyre_name"] = name if id is None else id
         attributes["pyre_localFields"] = tuple(localFields)
 
         # remove the field descriptors; we replace them in {__init__} with selectors
@@ -140,10 +141,10 @@ class Templater(AttributeClassifier):
         columns = {}
         # add selectors for all my fields we removed in {__new__}
         for index, field in enumerate(self.pyre_fields):
-            # build a selector
-            selector = self.pyre_selector(field=field, index=index)
             # map this field to its column number
             columns[field] = index
+            # build a selector
+            selector = self.pyre_selector(field=field, index=index)
             # attach it
             setattr(self, field.name, selector)
         # attach the column map
@@ -171,6 +172,9 @@ class Templater(AttributeClassifier):
             mutable.pyre_extract = self.pyre_calculator()
             immutable.pyre_extract = self.pyre_extractor()
 
+        # mark them as mine
+        mutable.pyre_layout = self
+        immutable.pyre_layout = self
         # and attach them
         self.pyre_mutableTuple = mutable
         self.pyre_immutableTuple = immutable

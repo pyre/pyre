@@ -14,6 +14,7 @@ class NamedTuple(tuple):
 
 
     # public data; patched by my metaclass
+    pyre_layout = None # the record that generates me
     pyre_extract = None # the strategy for extracting values and storing them
 
 

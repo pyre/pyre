@@ -52,6 +52,8 @@ class Record(metaclass=Templater):
     from ..constraints.exceptions import ConstraintViolationError
     
     # public data; patched by the metaclass
+    pyre_name = None # the name of the record
+    # structure
     pyre_localFields = None # the tuple of locally declared record fields
     # the full piles that include inherited entries
     pyre_fields = None # the tuple of all accessible fields, both local and inherited
