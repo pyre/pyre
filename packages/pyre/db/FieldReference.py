@@ -27,6 +27,14 @@ class FieldReference(descriptors.stem.variable):
 
 
     # interface
+    def coerce(self, **kwds):
+        """
+        Convert {value} into my type
+        """
+        # get my field to do this
+        return self.field.coerce(**kwds)
+        
+
     def project(self, table):
         """
         Build a reference to the given {table} that points to the same field as i do
