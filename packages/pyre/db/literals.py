@@ -6,13 +6,13 @@
 #
 
 
-# the node factory
-from .Lazy import Lazy
+# get the nodes
+from ..calc.Node import Node as node
 
 
 # the constants
-null = Lazy.literal(value='NULL')
-default = Lazy.literal(value='DEFAULT')
+null = node.literal(value='NULL')
+default = node.literal(value='DEFAULT')
 
 
-# end of file
+# end of file 

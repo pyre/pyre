@@ -22,23 +22,20 @@ EXPORT_PYTHON_MODULES = \
     Client.py \
     Collation.py \
     DataStore.py \
-    Entry.py \
-    Field.py \
     FieldReference.py \
+    FieldSelector.py \
     ForeignKey.py \
-    Lazy.py \
+    Measure.py \
     Postgres.py \
     Query.py \
+    Reference.py \
     SQL.py \
     SQLite.py \
-    Selector.py \
     Schemer.py \
-    Selection.py \
+    Selector.py \
     Server.py \
     Table.py \
-    View.py \
     actions.py \
-    fields.py \
     exceptions.py \
     expressions.py \
     literals.py \

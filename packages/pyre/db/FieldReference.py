@@ -6,10 +6,12 @@
 #
 
 
-from .Entry import Entry
+# superclass
+from .. import descriptors
 
 
-class FieldReference(Entry.variable):
+# declaration
+class FieldReference(descriptors.stem.variable):
     """
     A field decorator that encapsulates references to table fields
 
@@ -22,46 +24,44 @@ class FieldReference(Entry.variable):
     # public data
     table = None # the table class
     field = None # the field descriptor
-    name = None # some are top level objects, e.g. in queries, so they are named
-
-
-    @property
-    def schema(self):
-        """
-        Return the type of the field i refer to
-        """
-        # my referent knows...
-        return self.field.schema
 
 
     # interface
     def project(self, table):
         """
-        Build a reference to {table} that points to the same field as i do
+        Build a reference to the given {table} that points to the same field as i do
         """
-        return FieldReference(table=table, field=self.field)
+        # easy enough
+        return type(self)(table=table, field=self.field)
 
 
-    # meta methods
+    # rendering
+    def sql(self, context=None):
+        """
+        Convert me into an SQL expression
+        """
+        # if I am not bound to a specific field
+        if self.field is None:
+            # reference just the table
+            return self.table.pyre_name
+        # if my rendering context matches my table
+        if not self.table or context is self.table:
+            # just render my name
+            return self.field.name
+        # otherwise, build a fully qualified reference expression
+        return "{0.table.pyre_name}.{0.field.name}".format(self)
+
+
+    # meta-methods
     def __init__(self, table, field, **kwds):
+        # chain up
         super().__init__(**kwds)
-
+        # save my referents
         self.table = table
         self.field = field
-
+        # all done
         return
 
-
-    def __str__(self):
-        """
-        Convert the field reference to an expression
-        """
-        # if i am bound to a specific field
-        if self.field is not None:
-            # include its name in the generated expression
-            return "{0.table.pyre_name}.{0.field.name}".format(self)
-        # otherwise, just refer to the table
-        return "{0.table.pyre_name}".format(self)
 
 
 # end of file 

@@ -16,6 +16,13 @@ class UnaryPostfix:
     operand = None
     operator = None
 
+
+    # interface
+    def sql(self):
+        """SQL rendering of the expression I represent"""
+        # straightforward
+        return "{} {.operator}".format(self.operand.sql(), self)
+
     # meta-methods
     def __init__(self, operand, **kwds):
         # chain up
@@ -24,12 +31,6 @@ class UnaryPostfix:
         self.operand = operand
         # all done
         return
-
-    def __str__(self):
-        return "{0.operand} {0.operator}".format(self)
-
-    def __repr__(self): 
-        return "{0.operand} {0.operator}".format(self)
 
 
 class IsNull(UnaryPostfix):
@@ -48,4 +49,4 @@ class IsNotNull(UnaryPostfix):
     operator = "IS NOT NULL"
 
 
-# end of file
+# end of file 

@@ -8,12 +8,12 @@
 
 class ForeignKey:
     """
-    A field decorator that encapsulates references to table fields
+    A field decorator the encapsulates references to table fields
     """
 
- 
+
     # types
-    from .FieldReference import FieldReference
+    from .FieldReference import FieldReference as fieldReference
 
 
     # public data
@@ -24,14 +24,17 @@ class ForeignKey:
 
     # meta methods
     def __init__(self, key=None, onDelete=None, onUpdate=None, **kwds):
+        # chain up
         super().__init__(**kwds)
 
         # if {key} is already a field reference
-        if isinstance(key, self.FieldReference):
+        if isinstance(key, self.fieldReference):
+            # save it
             reference = key
         # otherwise, assume {key} is a table
         else:
-            reference = self.FieldReference(table=key, field=None)
+            # and build a default reference to it
+            reference = self.fieldReference(table=key, field=None)
 
         # record the field reference
         self.reference = key
@@ -39,7 +42,10 @@ class ForeignKey:
         self.delete = onDelete
         self.update = onUpdate
 
+        # all done
         return
+
+
 
 
 # end of file 

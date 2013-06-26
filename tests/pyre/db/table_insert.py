@@ -37,10 +37,10 @@ def test():
 
     # create some customers
     customers = [
-        Person(id=107, name="Bit Twiddle", phone="+1 800 555 1114", weight=185),
-        Person(id=108, name="Eva Lu Ator", phone="+1 800 555 7687", weight=112),
-        Customer(cid=1023, pid=107, balance=1000),
-        Customer(cid=1024, pid=108, balance=50),
+        Person.pyre_immutable(id=107, name="Bit Twiddle", phone="+1 800 555 1114", weight=185),
+        Person.pyre_immutable(id=108, name="Eva Lu Ator", phone="+1 800 555 7687", weight=112),
+        Customer.pyre_immutable(cid=1023, pid=107, balance=1000),
+        Customer.pyre_immutable(cid=1024, pid=108, balance=50),
         ]
 
     # get a server

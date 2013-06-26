@@ -29,11 +29,11 @@ def test():
         precipitation = pyre.db.float()
 
     # and a simple query
-    class measurements(pyre.db.query):
+    class measurements(pyre.db.query, weather=Weather):
         # the fields
-        city = Weather.city
-        date = Weather.date
-        average = (Weather.high - Weather.low) / 2
+        city = weather.city
+        date = weather.date
+        average = (weather.high - weather.low) / 2
         # the collation
         order = pyre.db.descending(average),
 

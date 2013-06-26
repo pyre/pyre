@@ -8,10 +8,12 @@
 
 # metaclass
 from .Schemer import Schemer
+# superclass
+from .. import records
 
 
 # declaration
-class Table(metaclass=Schemer):
+class Table(records.record, metaclass=Schemer):
     """
     Base class for database table declarations
     """
@@ -20,13 +22,6 @@ class Table(metaclass=Schemer):
     # constants
     from .literals import default, null
     from .expressions import IsNull as isNull, IsNotNull as isNotNull
-
-
-    # publicly accessible data in the protected pyre namespace
-    pyre_name = None # the name of the table; must match the name in the database
-    pyre_alias = None # an alias for this table; used by queries
-    pyre_localFields = None # a tuple of the field descriptors that were declared locally
-    pyre_fields = None # a tuple of all the field descriptors, including inherited ones
 
 
     # interface
@@ -73,52 +68,6 @@ class Table(metaclass=Schemer):
         cls._pyre_constraints.append(expression)
         # and return
         return cls
-
-
-    # representations
-    def pyre_toSQL(self):
-        """
-        SQL compliant representation of my values in declaration order
-        """
-        return ", ".join(field.toSQL(self) for field in self.pyre_fields)
-
-
-    # meta methods
-    def __init__(self, **kwds):
-        # build the per instance field cache
-        self._pyre_data = cache = {}
-        # and populate it by hunting down a value for each field
-        for field in self.pyre_fields:
-            # check whether this field is among the {kwds}
-            try:
-                # get the value we were passed
-                value = kwds[field.name]
-            # if not
-            except KeyError:
-                # look up the default
-                value = field.default
-            # if it is
-            else:
-                # if the value is not 'NULL' or 'DEFAULT'
-                if not (value is self.null or value is self.default):
-                    # convert it
-                    value = field.schema.process(value=value)
-            # and set it
-            cache[field] = value
-
-        # all done
-        return
-
-
-    # private data
-    _pyre_data = None # a dictionary that holds the per-instance field values
-
-    # these are sensitive to inheritance among tables; they may not work as expected (or at
-    # all...), for the time being
-    _pyre_primaryKeys = set() # the list of my primary key specifications
-    _pyre_uniqueFields = set() # the list of my unique fields
-    _pyre_foreignKeys = [] # the list of my foreign key specifications
-    _pyre_constraints = [] # the list of my nameless constraints
 
 
 # end of file 

@@ -6,20 +6,17 @@
 #
 
 
-# the metaclass
+# superclass
+from .. import records
+# metaclass
 from .Selector import Selector
 
 
 # declaration
-class Query(metaclass=Selector, hidden=True):
+class Query(records.record, hidden=True, metaclass=Selector):
     """
     Base class for describing database queries
     """
-
-
-    # types
-    pyre_Record = None
-
 
     # public data
     where = None # retrieve only rows that satisfy this expression
@@ -27,12 +24,7 @@ class Query(metaclass=Selector, hidden=True):
     group = None # aggregate the results using the distinct values of this column
 
     # metaclass decorations; treat as read-only
-    # locally declared
-    pyre_localFields = ()
-    pyre_localDescriptors = {}
-    # the complete set
-    pyre_fields = () # the query fields
-    pyre_tables = set() # the set of tables referenced by the query
+    pyre_tables = {} # a map of local names to referenced tables
 
 
 # end of file 

@@ -29,7 +29,7 @@ def test():
         precipitation = pyre.db.float()
 
     # and a simple query
-    class measurements(pyre.db.query):
+    class measurements(pyre.db.query, weather=Weather):
         # the fields
         city = Weather.city
         date = Weather.date

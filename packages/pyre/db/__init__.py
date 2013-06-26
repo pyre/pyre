@@ -7,53 +7,42 @@
 
 
 """
-This package contains the bases for building machinery that enable connections to database back
-ends
+Machinery for building connections to database back ends
 """
 
 
-# the data model
-from .. import schemata
+# field declarations
+from ..records import field
+# the local measure class
+from .Measure import Measure as measure
+# the typed measures
+bool = measure.bool
+date = measure.date
+decimal = measure.decimal
+float = measure.float
+int = measure.int
+str = measure.str
+time = measure.time
+# references to external keys
+from .Reference import Reference as reference
 
-# the representations of NULL and DEFAULT
-from .literals import null, default
+# tables
+from .Table import Table as table
+# queries
+from .Query import Query as query
 
-# lazily evaluated nodes
-from .Lazy import Lazy as lazy
-ref = lazy.reference
-variable = lazy.variable
-counter = lazy.counter
 
-# the base field descriptor
-from .Field import Field as field
-
-# typed descriptor factories
-from .fields import (
-    Boolean as bool,
-    Date as date,
-    Decimal as decimal,
-    Float as float,
-    Integer as int,
-    Reference as reference,
-    String as str,
-    Time as time,
-    )
-
-# interfaces
+# protocols
 from .DataStore import DataStore as datastore
-
 # components
 from .SQL import SQL as sql
 from .Server import Server as server
 from .Client import Client as client
-# the table class
-from .Table import Table as table
-# the base query class
-from .Query import Query as query
 
 # supported servers
 from .SQLite import SQLite as sqlite
 from .Postgres import Postgres as postgres
+
 
 # cascade action markers for foreign keys
 from .actions import noAction, restrict, cascade, setNull, setDefault
@@ -61,17 +50,19 @@ from .actions import noAction, restrict, cascade, setNull, setDefault
 # orderings
 from .Collation import Collation as collation
 
-def ascending(field):
+def ascending(fieldref):
     """
     Build a clause for the {ORDER} expression that marks {field} as sorted in ascending order
     """
-    return collation(field=field, collation="ASC")
+    # build and return a collation object
+    return collation(fieldref=fieldref, collation="ASC")
 
-def descending(field):
+def descending(fieldref):
     """
     Build a clause for the {ORDER} expression that marks {field} as sorted in descending order
     """
-    return collation(field=field, collation="DESC")
+    # build and return a collation object
+    return collation(fieldref=fieldref, collation="DESC")
 
 
 # templates: table rows with all fields set to None; used to update table entries
@@ -80,12 +71,8 @@ def template(table):
     Build a row of {table} with all its fields set to {None}.
     """
     # build an instance, bypassing the constructor
-    row = table.__new__(table)
-    # iterate over the table fields
-    for field in table.pyre_localFields:
-        # set all attributes to {None}
-        setattr(row, field.name, None)
-    # and return the instance
+    row = table.pyre_mutable(data=(None,)*len(table.pyre_fields))
+    # and return it
     return row
 
 

@@ -29,17 +29,17 @@ def test():
         precipitation = pyre.db.float()
 
     # and a meaningless query from two copies of the same table
-    class measurements(pyre.db.query):
+    class measurements(pyre.db.query, weather=Weather):
         # the fields
-        city = Weather.city
-        date = Weather.date
-        average = (Weather.high - Weather.low)/2
+        city = weather.city
+        date = weather.date
+        average = (weather.high - weather.low)/2
 
     # get a server
     server = pyre.db.server()
     # generate the SQL statement
     stmt = tuple(server.sql.select(measurements))
-    #print('\n'.join(stmt))
+    # print('\n'.join(stmt))
     assert stmt == (
         "SELECT",
         "    weather.city AS city,",

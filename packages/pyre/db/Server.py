@@ -26,8 +26,10 @@ class Server(pyre.component, implements=datastore):
     # types
     # exceptions
     from . import exceptions
-    # access to query results
-    from .Selection import Selection as selection
+
+
+    # constants
+    providesHeaders = True
 
 
     # traits
@@ -150,8 +152,19 @@ class Server(pyre.component, implements=datastore):
         """
         # build the sql statements
         sql = self.sql.select(query=query)
-        # and execute it
-        return self.selection(query=query, results=iter(self.execute(*sql)))
+        # execute them
+        results = iter(self.execute(*sql))
+
+        # get the headers, if the server provides them; ignore them, for now, since the order
+        # of the results matches exactly the field order, by construction
+        if self.providesHeaders: headers = next(results)
+
+        # for each row with actual data
+        for row in results:
+            # build a named tuple
+            yield query.pyre_immutable(data=row)
+        # all done
+        return
         
 
     # meta methods

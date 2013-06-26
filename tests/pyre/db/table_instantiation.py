@@ -41,7 +41,7 @@ def test():
         precipitation.doc = "amount of rainfall"
 
     # build one
-    measurement = Weather(
+    measurement = Weather.pyre_immutable(
         city='Los Angeles', date='2011-07-04', low=62, high=71, precipitation=0
         )
 
