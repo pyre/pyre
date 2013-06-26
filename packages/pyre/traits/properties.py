@@ -47,20 +47,20 @@ from .Dict import Dict as dict
 
 
 # common meta-descriptors
-def strings(default=list, **kwds):
+def strings(**kwds):
     """
     A list of strings
     """
     # build a descriptor that describes a list of strings
-    return list(schema=str(), default=default, **kwds)
+    return list(schema=str(), **kwds)
 
 
-def paths(default=list, **kwds):
+def paths(**kwds):
     """
     A list of URIs
     """
     # build a descriptor that describes a list of uris and return it
-    return list(schema=uri(), default=default, **kwds)
+    return list(schema=uri(), **kwds)
 
 
 def catalog(**kwds):
