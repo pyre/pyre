@@ -39,16 +39,21 @@ class Externals:
             locator = tracking.simple('while looking for external package {!r}'.format(category))
             # ask the protocol
             from ..externals.Category import Category
-            # for package managers for this category
-            for manager in Category().resolve(value=category, locator=locator):
-                # register the manager
-                self.packages[manager.category] = manager
-                # we only care about the first one, so bail out
-                break
-            # if the category could not be resolved
-            else:
-                # let the user know
+            # for the trait descriptor
+            facility = Category()
+
+            # attempt to
+            try:
+                # get the package manager for this category
+                manager = facility.coerce(value=category, locator=locator)
+            # if one could not be located
+            except facility.CastingError:
+                # complain
                 raise self.ExternalNotFoundError(category=category) from None
+            # otherwise
+            else:
+                # register it
+                self.packages[manager.category] = manager
 
         # otherwise, ask the package manager to build one
         return manager.pyre_select()
