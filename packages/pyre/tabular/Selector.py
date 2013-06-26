@@ -31,7 +31,7 @@ class Selector(records.selector):
 
         # otherwise, this is access to a sheet instance
         # if I manage a primary field
-        if self.field.indexed:
+        if self.field._primary:
             # make an indexed column and return it
             return self.primary(sheet=sheet, field=self.field, index=self.index)
         # otherwise, bind a regular column selector to this instance and return it

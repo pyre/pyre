@@ -19,19 +19,19 @@ class Measure(records.measure):
     """
 
 
-    # public data
-    indexed = False # {True} when this measure is a primary key used to create an index
-
-
     # interface
     def primary(self):
         """
         Mark this measure as a primary key
         """
         # mark me
-        self.indexed = True
+        self._primary = True
         # and return me so I chain properly
         return self
+
+
+    # private data
+    _primary = False # {True} when this measure is a primary key used to create an index
 
 
 # end of file 

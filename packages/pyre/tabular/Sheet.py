@@ -31,9 +31,9 @@ class Sheet(records.record, metaclass=Tabulator):
         populate my data set
         """
         # iterate over the records in {data}
-        for line in data:
+        for entry in data:
             # convert the {row} into a mutable tuple
-            row = super().pyre_immutable(data=line)
+            row = super().pyre_immutable(data=entry)
             # populate the data set
             self.pyre_append(row=row)
         # all done
@@ -46,9 +46,9 @@ class Sheet(records.record, metaclass=Tabulator):
         populate my data set
         """
         # iterate over the records in {data}
-        for line in data:
+        for entry in data:
             # convert the {row} into a mutable tuple
-            row = super().pyre_mutable(data=line)
+            row = super().pyre_mutable(data=entry)
             # populate the data set
             self.pyre_append(row=row)
         # all done
