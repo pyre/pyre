@@ -49,13 +49,12 @@ class SQL(LineMill, Expression):
         """
         # get the value of the node
         value = node.value
-        # if it is a string
+        # if it is already a string
         if isinstance(value, str):
-            # we have to escape the single quotes
+            # just escape the single quotes
             return "'{}'".format(value.replace("'", "''"))
-
-        # otherwise, render the value
-        return repr(value)
+        # otherwise, render the value as a string
+        return str(value)
 
 
 # end of file 
