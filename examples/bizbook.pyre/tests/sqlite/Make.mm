@@ -14,7 +14,7 @@ PROJ_CLEAN += bizbook.sql
 
 all: test
 
-test: sanity create queries destroy clean
+test: sanity create queries drop clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -28,7 +28,7 @@ queries:
 	${PYTHON} ./restrictions.py
 	${PYTHON} ./collations.py
 
-destroy:
+drop:
 	${PYTHON} ./drop_tables.py
 
 

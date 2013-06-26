@@ -33,7 +33,6 @@ def test():
     for record in db.select(titles):
         # check the length
         assert len(record) == 4
-        assert len(record.pyre_entries) == 4
         # check the fields
         assert hasattr(record, 'id')
         assert hasattr(record, 'title')

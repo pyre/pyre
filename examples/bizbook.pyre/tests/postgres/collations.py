@@ -26,6 +26,7 @@ def test():
         category = book.category
         price = book.price
 
+    # derive a query from it that specifies a collation order
     class collated(titles):
         """Extend the 'titles' query with a collation order"""
         # collation
@@ -37,14 +38,13 @@ def test():
     assert db.database == 'bizbook'
 
     # run the query
-    report = list(db.select(collated()))
-    # for record in report: print(record)
+    report = list(db.select(collated))
     # here is what we expect
-    correct = sorted(
+    correct = list(sorted(
         sorted(
             sorted(db.select(titles), key=operator.attrgetter('title')),
             key=operator.attrgetter('price'), reverse=True),
-        key=operator.attrgetter('category'))
+        key=operator.attrgetter('category')))
     # check
     assert report == correct
 
