@@ -36,9 +36,9 @@ uri = measure.uri
 list = measure.list
 set = measure.set
 tuple = measure.tuple
+
 # access to the basic objects in this package
 from .Sheet import Sheet as sheet
-
 
 # dimensions
 from .Inferred import Inferred as inferred
@@ -46,12 +46,16 @@ from .Interval import Interval as interval
 # support for charts
 from .Chart import Chart as chart
 
-
 # reading and writing
 # the records class
 record = records.record
 # the CSV support in records is sufficient for now
 csv = records.csv
+
+
+# the metaclasses
+from .Tabulator import Tabulator as tabulator
+from .Surveyor import Surveyor as surveyor
 
 
 # end of file 
