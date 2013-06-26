@@ -31,6 +31,10 @@ class AttributeClassifier(AbstractMetaclass):
     """
 
 
+    # data
+    pyre_reserved = set()
+
+
     # meta methods
     @classmethod
     def __prepare__(cls, name, bases, **kwds):
@@ -47,10 +51,12 @@ class AttributeClassifier(AbstractMetaclass):
         """
         Examine {attributes}, looking for instances of {descriptor}
         """
+        # reserved names are excluded from harvesting
+        reserved = cls.pyre_reserved
         # loop over the attributes
         for name, attribute in attributes.items():
-            # if this is a descriptor
-            if isinstance(attribute, descriptor):
+            # if this is a descriptor that's not in the reserved list
+            if isinstance(attribute, descriptor) and name not in reserved:
                 # return it to the caller along with its name
                 yield name, attribute
         # all done
