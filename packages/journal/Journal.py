@@ -36,14 +36,14 @@ class Journal(pyre.component, family="journal.executive"):
         # access the type converters
         import pyre.schemata
         # pick the one for booleans
-        schema = pyre.schemata.bool
+        schema = pyre.schemata.bool()
         # and iterate over {categories}, updating their indices with the contents of the pyre
         # configuration store
         for category in categories:
             # build the key prefix
             prefix = "journal\." + category.severity
             # identify the relevant keys
-            for name, node in ns.find(pattern=prefix):
+            for info, node in ns.find(pattern=prefix):
                 # get the value
                 value = node.value
                 # if it's {None}, it probably came from the command line without an assignment
@@ -56,7 +56,7 @@ class Journal(pyre.component, family="journal.executive"):
                     # ignore it and move on
                     continue
                 # extract the category name
-                categoryName = '.'.join(name.split('.')[2:])
+                categoryName = '.'.join(info.name.split('.')[2:])
                 # update the index
                 category(categoryName).active = value
         # all done
