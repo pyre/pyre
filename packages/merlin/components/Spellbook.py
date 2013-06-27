@@ -45,16 +45,12 @@ class Spellbook(merlin.component, family="merlin.components.spellbook"):
         # and chain it to the locator that was passed in
         locator = pyre.tracking.chain(this=here, next=locator) if locator else here
         # ask the spell interface to convert the name into plausible spell factories
-        factories = self.spell().resolve(value=name, locator=locator)
-        # go through the possibilities
-        for factory in factories:
-            # place the spell name in the merlin namespace and alias its traits at global scope
-            spell = factory(name='merlin.'+name, globalAliases=True)
-            # print("    found: {}".format(spell))
-            # return the spell instance
-            return spell
-        # if we got this far, complain
-        raise self.SpellNotFoundError(spell=name)
+        factory = self.spell().coerce(value=name, locator=locator)
+        # place the spell name in the merlin namespace and alias its traits at global scope
+        spell = factory(name='merlin.'+name, globalAliases=True)
+        # print("    found: {}".format(spell))
+        # return the spell instance
+        return spell
 
 
     def shelves(self, name, folder):
