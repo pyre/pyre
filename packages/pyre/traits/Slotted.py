@@ -48,19 +48,16 @@ class Slotted(Trait):
             super().__init__(**kwds)
             # save my parts
             self.trait = trait
-            self.macro = trait.macro
             self.processor = processor
             # all done
             return
 
-        def __call__(self, postprocessor=None, **kwds):
+        def __call__(self, **kwds):
             """
             Make a slot for my client trait
             """
-            # figure out which postprocessor I am supposed to use
-            processor = postprocessor or self.processor
             # build a slot and return it
-            return self.macro(postprocessor=processor, **kwds)
+            return self.trait.macro(postprocessor=self.processor, **kwds)
 
 
 # end of file 

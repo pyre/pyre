@@ -61,12 +61,12 @@ class Property(Slotted):
 
 
     # meta-methods
-    def __init__(self, **kwds):
+    def __init__(self, classSlot=None, instanceSlot=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # build my slot factories
-        self.classSlot = self.factory(trait=self, processor=self.process)
-        self.instanceSlot = self.factory(trait=self, processor=self.process)
+        self.classSlot = classSlot or self.factory(trait=self, processor=self.process)
+        self.instanceSlot = instanceSlot or self.factory(trait=self, processor=self.process)
         # all done
         return
 
