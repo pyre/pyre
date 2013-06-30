@@ -88,8 +88,6 @@ class Typed:
         """
         Build the ancestry of the client
         """
-        # first the client
-        yield client
         # get the name of the type we are building
         typename = schema.typename
 
@@ -133,7 +131,10 @@ class Typed:
             # no worries
             pass
 
-        # now, the {schema} itself
+        # now, the client
+        yield client
+
+        # finally, the {schema} itself
         yield schema
 
         # all done
