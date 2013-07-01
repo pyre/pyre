@@ -44,6 +44,8 @@ from .SQLite import SQLite as sqlite
 from .Postgres import Postgres as postgres
 
 
+# the literals
+from .literals import null, default
 # cascade action markers for foreign keys
 from .actions import noAction, restrict, cascade, setNull, setDefault
 
