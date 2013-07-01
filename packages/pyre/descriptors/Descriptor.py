@@ -48,4 +48,18 @@ class Descriptor(metaclass=Decorator):
         return self
 
 
+    # data
+    optional = False
+
+
+    # meta-methods
+    def __init__(self, optional=optional, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # mark me
+        self.optional = optional
+        # all done
+        return
+
+
 # end of file 

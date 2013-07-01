@@ -109,7 +109,7 @@ class Record(metaclass=Templater):
             # error: unable to find a source for this field
             else:
                 # if it is not an optional field
-                if not measure.pyre_optional:
+                if not measure.optional:
                     # complain
                     msg = "unable to find a source for field {!r}".format(field.name)
                     import journal
