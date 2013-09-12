@@ -19,7 +19,8 @@ def test():
     michael = toy.person(name='michael')
     # here is a generic student
     jane = toy.student(name='jane')
-    jane.activities = toy.relax, 'study#math', '#physics'
+    jane.activities = toy.relax(), 'study#math', '#physics'
+
     activities = tuple(jane.perform())
     assert activities == (
         'relaxing for 1.0 hour', 'studying for 1.0 hour', 'studying for 2.0 hours'
@@ -31,7 +32,7 @@ def test():
     activities = tuple(alec.perform())
     assert activities == (
         'studying for 2.0 hours', 'relaxing for 3.0 hours',
-        'studying for 1.0 hour', 'relaxing for 1.0 hour'
+        'studying for 1.0 hour', 'relaxing for 1.5 hours'
         )
     # print(alec.friends['girlfriend'].pyre_name)
     # print(alec.friends['girlfriend'].friends)
@@ -41,7 +42,7 @@ def test():
     activities = tuple(jessica.perform())
     assert activities == (
         'studying for 0.5 hours', 'relaxing for 3.0 hours',
-        'studying for 1.5 hours', 'relaxing for 1.0 hour'
+        'studying for 1.5 hours', 'relaxing for 1.5 hours'
         )
     # print(jessica.friends)
     assert jessica.friends['teacher'] is michael

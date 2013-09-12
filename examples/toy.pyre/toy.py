@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -76,7 +75,7 @@ class people(pyre.protocol, family='toy.people'):
 
 
 # persons are people; or is it the other way around?
-class person(pyre.component, implements=people):
+class person(pyre.component, family='toy.people.person', implements=people):
 
     friends = pyre.properties.dict(schema=people())
     activities = pyre.properties.list(schema=task())
@@ -84,7 +83,18 @@ class person(pyre.component, implements=people):
     @pyre.export
     def perform(self):
         """perform my activities"""
+        # print("{.pyre_spec!r}:".format(self))
+        # print("  friends:")
+        # for name, friend in self.friends.items(): 
+            # print("    {!r}: {.pyre_spec!r}".format(name, friend))
+            #print("    {0.pyre_spec!r}: {0}".format(friend))
+        # print("  activities:", self.activities)
+        # for activity in self.activities: 
+            # print("    {0.pyre_spec!r}: {0}".format(activity))
+        # perform each activity
         for activity in self.activities: yield activity.perform()
+        # all done
+        return
 
 
 # students
