@@ -360,5 +360,4 @@ class NameMap(Map):
         return
 
 
-
 # end of file 
