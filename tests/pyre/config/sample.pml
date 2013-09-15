@@ -2,7 +2,7 @@
 <!--
 !
 ! michael a.g. aïvázis
-! california institute of technology
+! orthologue
 ! (c) 1998-2013 all rights reserved
 !
 -->
@@ -16,7 +16,7 @@
       <bind property="email">aivazis@caltech.edu</bind>
     </package>
 
-    <bind property="user.affiliation">california institute of technology</bind>
+    <bind property="user.affiliation">orthologue</bind>
 
   </package>
 

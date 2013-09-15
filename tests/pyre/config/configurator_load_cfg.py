@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -54,7 +54,7 @@ def test():
     # try again
     assert ns["sample.user.name"] == "michael a.g. aïvázis"
     assert ns["sample.user.email"] == "aivazis@caltech.edu"
-    assert ns["sample.user.affiliation"] == "california institute of technology"
+    assert ns["sample.user.affiliation"] == "orthologue"
     # and the local one
     assert ns["sample.user.byline"] == "michael a.g. aïvázis -- aivazis@caltech.edu"
 

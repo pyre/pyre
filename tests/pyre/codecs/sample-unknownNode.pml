@@ -2,14 +2,14 @@
 <!--
 !
 ! michael a.g. aïvázis
-! california institute of technology
+! orthologue
 ! (c) 1998-2013 all rights reserved
 !
 -->
 
 <config>
   <!-- unsupported node -->
-  <BIND property="pyre.user.affiliation">california institute of technology</BIND>
+  <BIND property="pyre.user.affiliation">orthologue</BIND>
 </config>
 
 

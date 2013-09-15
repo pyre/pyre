@@ -2,7 +2,7 @@
 <!--
 !
 ! michael a.g. aïvázis
-! california institute of technology
+! orthologue
 ! (c) 1998-2013 all rights reserved
 !
 -->
@@ -22,7 +22,7 @@
 
   </package>
 
-  <bind property="package.user.affiliation">california institute of technology</bind>
+  <bind property="package.user.affiliation">orthologue</bind>
 
 </config>
 

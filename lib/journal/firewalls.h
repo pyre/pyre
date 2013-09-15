@@ -1,7 +1,7 @@
 /* -*- C++ -*-
 // 
 // michael a.g. aïvázis
-// california institute of technology
+// orthologue
 // (c) 1998-2013 all rights reserved
 */ 
 

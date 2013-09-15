@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# california institute of technology
+# orthologue
 # (c) 1998-2013 all rights reserved
 #
 
@@ -30,7 +30,7 @@ def test():
             key=("sample", "user", "name"), value="michael aïvázis",
             locator=pyre.tracking.here()),
         cfg.events.Assignment(
-            key=("sample", "user", "affiliation"), value="california institute of technology",
+            key=("sample", "user", "affiliation"), value="orthologue",
             locator=pyre.tracking.here()),
         cfg.events.Assignment(
             key=("sample", "user", "email"), value="michael.aivazis@caltech.edu",
@@ -49,7 +49,7 @@ def test():
     # check the variable bindings
     assert ns["sample.user.name"] == "michael aïvázis"
     assert ns["sample.user.email"] == "michael.aivazis@caltech.edu"
-    assert ns["sample.user.affiliation"] == "california institute of technology"
+    assert ns["sample.user.affiliation"] == "orthologue"
     assert ns["sample.user.alias"] == ns["sample.user.name"]
 
     # and return the manager
