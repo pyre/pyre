@@ -44,7 +44,7 @@ def platform(builder):
             gsl.ldpath = systemlibdir
 
         # set up {libpq}
-        libpqVersion = 'postgresql92'
+        libpqVersion = 'postgresql93'
         # do we have postgres?
         havePostgres = (
             os.path.isdir(os.path.join(systemlibdir, libpqVersion))
@@ -90,13 +90,16 @@ def platform(builder):
 
         # set up {python}
         pythonVersion = '3.3'
+        pythonMemoryModel = 'm'
         python = 'python' + pythonVersion
+        pythonHome = os.path.join(
+            systemdir, 'Library/Frameworks/Python.framework/Versions', pythonVersion)
         builder.requirements['python'].environ = {
             'PYTHON': python,
             'PYTHON_PYCFLAGS': '-b',
             'PYTHON_DIR': systemdir,
-            'PYTHON_LIBDIR': os.path.join(systemdir, 'lib', python),
-            'PYTHON_INCDIR': os.path.join(systemdir, 'include', python),
+            'PYTHON_LIBDIR': os.path.join(pythonHome, 'lib'),
+            'PYTHON_INCDIR': os.path.join(pythonHome, 'include', python+pythonMemoryModel),
             }
 
         # the cuda version
