@@ -19,8 +19,6 @@ class Record(metaclass=Templater):
     between the representation used by the persistent store and the native python object
     required by the application.
 
-    
-
     Records are similar to named tuples: the underlying storage mechanism is a tuple, and the
     fields are descriptors that provide named access to the tuple items. They are superior to
     named tuples since they enable the data model designer to specify types and constraints
