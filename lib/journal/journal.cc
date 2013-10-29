@@ -84,30 +84,33 @@ static debugindex_t initializeDebugIndex()
 
 
 // specializations that serve as definitions of the indices
-// firewall
-template <>
-firewallindex_t 
-firewall_t::channel_t::_index = firewallindex_t();
+namespace pyre {
+    namespace journal {
+        // firewall
+        template <>
+        firewallindex_t 
+        firewall_t::channel_t::_index = firewallindex_t();
 
-// debug
-template <>
-debugindex_t 
-debug_t::channel_t::_index = initializeDebugIndex();
+        // debug
+        template <>
+        debugindex_t 
+        debug_t::channel_t::_index = initializeDebugIndex();
 
-// error
-template <>
-errorindex_t 
-error_t::channel_t::_index = errorindex_t();
+        // error
+        template <>
+        errorindex_t 
+        error_t::channel_t::_index = errorindex_t();
 
-// info
-template <>
-infoindex_t 
-info_t::channel_t::_index = infoindex_t();
+        // info
+        template <>
+        infoindex_t 
+        info_t::channel_t::_index = infoindex_t();
 
-// warning
-template <>
-warningindex_t 
-warning_t::channel_t::_index = warningindex_t();
-
+        // warning
+        template <>
+        warningindex_t 
+        warning_t::channel_t::_index = warningindex_t();
+    }
+}
 
 // end of file
