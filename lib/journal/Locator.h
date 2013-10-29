@@ -44,8 +44,9 @@ public:
 public:
     inline ~Locator();
     inline Locator(const char *, int, const char * = 0);
-private:
     inline Locator(const Locator &);
+    // disabled
+private:
     inline Locator & operator=(const Locator &);
 
     // data
