@@ -49,9 +49,9 @@ public:
 public:
     inline ~Selector();
     inline Selector(string_t, string_t);
+    inline Selector(const Selector &); // accessible but not implemented; for C++89 compatibility
     // disallow
 private:
-    inline Selector(const Selector &);
     inline Selector & operator= (const Selector &);
 
     // data
