@@ -352,7 +352,7 @@ gsl::vector::get(PyObject *, PyObject * args) {
     // convert to an unsigned value
     size_t i = index;
     // bounds check index 1
-    if (i < 0 || i >= v->size) {
+    if (i >= v->size) {
         // build an error message
         std::stringstream msg;
         msg << "vector index " << index << " out of range";
@@ -410,7 +410,7 @@ gsl::vector::set(PyObject *, PyObject * args) {
     // convert to an unsigned value
     size_t i = index;
     // bounds check index 1
-    if (i < 0 || i >= v->size) {
+    if (i >= v->size) {
         // build an error message
         std::stringstream msg;
         msg << "vector index " << index << " out of range";

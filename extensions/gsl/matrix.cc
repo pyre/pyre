@@ -422,7 +422,7 @@ gsl::matrix::get(PyObject *, PyObject * args) {
     size_t i1 = index1;
     size_t i2 = index2;
     // bounds check index 1
-    if (i1 < 0 || i1 >= m->size1) {
+    if (i1 >= m->size1) {
         // build an error message
         std::stringstream msg;
         msg << "matrix index " << index1 << " out of range";
@@ -432,7 +432,7 @@ gsl::matrix::get(PyObject *, PyObject * args) {
         return 0;
     }
     // bounds check index 2
-    if (i2 < 0 || i2 >= m->size2) {
+    if (i2 >= m->size2) {
         // build an error message
         std::stringstream msg;
         msg << "matrix index " << index2 << " out of range";
@@ -488,7 +488,7 @@ gsl::matrix::set(PyObject *, PyObject * args) {
     size_t i1 = index1;
     size_t i2 = index2;
     // bounds check index 1
-    if (i1 < 0 || i1 >= m->size1) {
+    if (i1 >= m->size1) {
         // build an error message
         std::stringstream msg;
         msg << "matrix index " << index1 << " out of range";
@@ -498,7 +498,7 @@ gsl::matrix::set(PyObject *, PyObject * args) {
         return 0;
     }
     // bounds check index 2
-    if (i2 < 0 || i2 >= m->size2) {
+    if (i2 >= m->size2) {
         // build an error message
         std::stringstream msg;
         msg << "matrix index " << index2 << " out of range";
@@ -547,7 +547,7 @@ gsl::matrix::get_col(PyObject *, PyObject * args) {
     // convert to unsigned values
     size_t i = index;
     // bounds check index
-    if (i < 0 || i >= m->size2) {
+    if (i >= m->size2) {
         // build an error message
         std::stringstream msg;
         msg << "matrix column index " << index << " out of range";
@@ -601,7 +601,7 @@ gsl::matrix::get_row(PyObject *, PyObject * args) {
     // convert to unsigned values
     size_t i = index;
     // bounds check index
-    if (i < 0 || i >= m->size1) {
+    if (i >= m->size1) {
         // build an error message
         std::stringstream msg;
         msg << "matrix row index " << index << " out of range";
