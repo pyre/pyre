@@ -39,8 +39,15 @@ public:
 
 
 // specializations for the static data members
-template<> typename trueref_t::index_t Channel<trueref_t>::_index = trueref_t::index_t();
-template<> typename falseref_t::index_t Channel<falseref_t,false>::_index = falseref_t::index_t();
+namespace pyre {
+    namespace journal {
+
+        template<> 
+        typename trueref_t::index_t Channel<trueref_t>::_index = trueref_t::index_t();
+        template<>
+        typename falseref_t::index_t Channel<falseref_t,false>::_index = falseref_t::index_t();
+    }
+}
 
 // main program
 int main() {

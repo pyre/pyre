@@ -51,9 +51,12 @@ public:
 
 
 // storage for the index
-template <>
-Debug::index_t pyre::journal::Channel<Debug, false>::_index = Debug::index_t();
-
+namespace pyre {
+    namespace journal {
+        template <>
+        Debug::index_t pyre::journal::Channel<Debug, false>::_index = Debug::index_t();
+    }
+}
 
 // main program
 int main() {
