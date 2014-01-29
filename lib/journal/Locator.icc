@@ -54,9 +54,9 @@ pyre::journal::Locator::
 // constructor
 pyre::journal::Locator::
 Locator(const char * file, int line, const char * function) :
-    _file(file),
-    _line(line),
-    _function(function)
+    _file(file ? file : "<unknown>"),
+    _line(line >= 0 ? line : 0),
+    _function(function ? function : "<unknown>")
 {}
 
 
