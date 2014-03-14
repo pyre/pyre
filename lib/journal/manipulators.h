@@ -7,7 +7,7 @@
 //
 
 
-#if !defined(pyre_jourmal_manipulators_h)
+#if !defined(pyre_journal_manipulators_h)
 #define pyre_journal_manipulators_h
 
 

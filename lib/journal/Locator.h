@@ -7,7 +7,7 @@
 //
 
 
-#if !defined(pyre_jourmal_Locator_h)
+#if !defined(pyre_journal_Locator_h)
 #define pyre_journal_Locator_h
 
 

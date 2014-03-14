@@ -7,7 +7,7 @@
 //
 
 
-#if !defined(pyre_jourmal_Selector_h)
+#if !defined(pyre_journal_Selector_h)
 #define pyre_journal_Selector_h
 
 

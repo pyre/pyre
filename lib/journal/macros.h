@@ -7,7 +7,7 @@
 //
 
 
-#if !defined(pyre_jourmal_macros_h)
+#if !defined(pyre_journal_macros_h)
 #define pyre_journal_macros_h
 
 //
