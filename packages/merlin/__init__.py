@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2013 all rights reserved
+# (c) 1998-2014 all rights reserved
 #
 
 
@@ -66,11 +66,11 @@ def license(**kwds):
 _merlin_version = (1, 0)
 
 _merlin_copyright = (
-    "merlin {}.{}: Copyright (c) 1998-2013 Michael A.G. Aïvázis".format(*_merlin_version))
+    "merlin {}.{}: Copyright (c) 1998-2014 Michael A.G. Aïvázis".format(*_merlin_version))
 
 _merlin_header = """
     merlin {}.{}
-    Copyright (c) 1998-2013 Michael A.G. Aïvázis
+    Copyright (c) 1998-2014 Michael A.G. Aïvázis
     All rights reserved
     """.format(*_merlin_version)
 

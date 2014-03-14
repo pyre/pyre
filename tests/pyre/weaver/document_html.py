@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2013 all rights reserved
+# (c) 1998-2014 all rights reserved
 #
 
 
@@ -26,7 +26,7 @@ def test():
         ' ! ',
         ' ! Michael A.G. Aïvázis',
         ' ! California Institute of Technology',
-        ' ! (c) 1998-2013 All Rights Reserved',
+        ' ! (c) 1998-2014 All Rights Reserved',
         ' ! ',
         ' -->',
         '',

@@ -2,7 +2,7 @@
 //
 // michael a.g. aivazis
 // orthologue
-// (c) 1998-2013 all rights reserved
+// (c) 1998-2014 all rights reserved
 //
 
 #if !defined(pyre_mpi_Error_h__)

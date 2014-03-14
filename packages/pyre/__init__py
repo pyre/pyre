@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2013 all rights reserved
+# (c) 1998-2014 all rights reserved
 #
 
 
@@ -119,11 +119,11 @@ _pyre_version = (1, 0, BZR_REVNO)
 
 _pyre_tag = "pyre {}.{} revision {}".format(*_pyre_version)
 
-_pyre_copyright = "{}: Copyright (c) 1998-2013 Michael A.G. Aïvázis".format(_pyre_tag)
+_pyre_copyright = "{}: Copyright (c) 1998-2014 Michael A.G. Aïvázis".format(_pyre_tag)
 
 _pyre_header = """
     {}
-    Copyright (c) 1998-2013 Michael A.G. Aïvázis
+    Copyright (c) 1998-2014 Michael A.G. Aïvázis
     All Rights Reserved
 
     """.format(_pyre_tag)

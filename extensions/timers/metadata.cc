@@ -2,7 +2,7 @@
 // 
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2013 all rights reserved
+// (c) 1998-2014 all rights reserved
 // 
 
 #include <portinfo>
@@ -16,7 +16,7 @@ PyObject *
 pyre::extensions::timers::
 copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "timers: (c) 1998-2013 Michael A.G. Aïvázis";
+    const char * const copyright_note = "timers: (c) 1998-2014 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
 }
     
