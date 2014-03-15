@@ -65,7 +65,7 @@ def platform(builder):
             libpq.ldpath = os.path.join(systemincdir, libpqVersion)
 
         # set up {mpi}
-        mpiVersion = 'openmpi'
+        mpiVersion = 'openmpi-mp'
         # do we have {mpi}?
         haveMPI = (
             os.path.isdir(os.path.join(systemlibdir, mpiVersion))
@@ -80,9 +80,9 @@ def platform(builder):
             mpi.environ = {
                 'MPI_VERSION': mpiVersion,
                 'MPI_DIR': systemdir,
-                'MPI_LIBDIR': systemlibdir,
+                'MPI_LIBDIR': os.path.join(systemlibdir, mpiVersion),
                 'MPI_INCDIR': os.path.join(systemincdir, mpiVersion),
-                'MPI_EXECUTIVE': 'openmpirun',
+                'MPI_EXECUTIVE': 'mpiexec',
                 }
             # and its runtime
             mpi.path = os.path.join(systemdir, 'bin')
