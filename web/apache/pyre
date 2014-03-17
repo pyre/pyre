@@ -9,18 +9,16 @@
     ServerName pyre.orthologue.com
     ServerAdmin web@orthologue.com
 
+    # the web
     DocumentRoot /home/projects/pyre/web/www
     <Directory />
-        Options FollowSymLinks
-        AllowOverride None
-    </Directory>
-    <Directory /home/projects/pyre/web/www/>
         Options Indexes FollowSymLinks MultiViews
         AllowOverride None
         Order allow,deny
         Allow from all
     </Directory>
 
+    # the applications
     ScriptAlias /bin/ /home/projects/pyre/web/bin/
     <Directory "/home/projects/pyre/web/bin">
         AllowOverride None
@@ -29,6 +27,7 @@
         Allow from all
     </Directory>
 
+    # the repository
     Alias /1.0/ /home/projects/pyre/repository/1.0/
     <Directory /home/projects/pyre/repository/1.0/>
         Options FollowSymLinks MultiViews
