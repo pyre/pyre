@@ -111,12 +111,14 @@ class Executive:
         return
 
 
-    def configurePackage(self, package, locator):
+    def configurePackage(self, package, locator=None):
         """
-        Locate and load the configuration files for the given {package}
+        Locate and load the configuration files for the given {package} name
         """
+        # if I do not have a locator, point to my caller
+        locator = tracking.here(level=1) if locator is None else locator
         # delegate
-        return self.configure(stem=package.name, priority=self.priority.package, locator=locator)
+        return self.configure(stem=package, priority=self.priority.package, locator=locator)
         
 
     def resolve(self, uri, client=None, **kwds):
