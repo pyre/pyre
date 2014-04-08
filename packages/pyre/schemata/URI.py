@@ -82,7 +82,7 @@ class URI(Schema):
     # interface
     def coerce(self, value, **kwds):
         """
-        Attempt to convert {value} into a internet address
+        Attempt to convert {value} into a resource locator
         """
         # if {value} is one of mine
         if isinstance(value, self.locator):
