@@ -45,6 +45,43 @@ def loadConfiguration(uri):
     return executive.loadConfiguration(uri=uri, locator=here)
 
 
+def addPackageConfiguration(namespace, file):
+    """
+    Given the location of a {pyre} package as returned by its {__file__}, this convenience
+    method returns the standard package geography in {home}, {prefix} and {defaults}, and
+    add to=he package configuration folder to {configpath}
+    """
+    # first, compute {home}
+    home = os.path.dirname(file)
+    # now the {prefix}
+    prefix = os.path.abspath(os.path.join(home, os.path.pardir, os.path.pardir))
+    # finally {defaults}
+    defaults = os.path.abspath(os.path.join(prefix, 'defaults'))
+
+    # if {pyre} has booted
+    if executive:
+        # get the fileserver
+        fileserver = executive.fileserver
+        # and the nameserver
+        nameserver = executive.nameserver
+
+        # turn the configuration path into a file node
+        cfg = fileserver.local(root=defaults).discover()
+        # attach it under the package namespace
+        fileserver['{}/system'.format(namespace)] = cfg
+
+        # get the configuration path
+        cfgpath = nameserver['pyre.configpath']
+
+        # build the uri for the package configuration files
+        uri = executive.uri().coerce("vfs:/{}/system".format(namespace))
+        # add it to the configuration path
+        cfgpath.append(uri)
+
+    # all done
+    return home, prefix, defaults
+
+
 # geography
 def home():
     """

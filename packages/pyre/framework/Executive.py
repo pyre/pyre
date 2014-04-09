@@ -111,6 +111,23 @@ class Executive:
         return
 
 
+    def addPackageConfiguration(self, file):
+        """
+        Given the location of a {pyre} package as returned by its {__file__}, this convenience
+        method returns the standard package geography in {home}, {prefix} and {defaults}, and
+        add to=he package configuration folder to {configpath}
+        """
+        # first, compute {home}
+        home = os.path.dirname(__file__)
+        # now the {prefix}
+        prefix = os.path.abspath(os.path.join(home, os.path.pardir, os.path.pardir))
+        # finally {defaults}
+        defaults = os.path.abspath(os.path.join(prefix, 'defaults'))
+
+        # all done
+        return home, prefix, defaults
+
+
     def configurePackage(self, package, locator=None):
         """
         Locate and load the configuration files for the given {package} name
@@ -512,7 +529,6 @@ class Executive:
 
         # all done
         return self
-
 
 
     def initializeNamespace(self):
