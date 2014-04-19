@@ -13,7 +13,7 @@ PROJECT = pyre
 
 all: test
 
-test: sanity tables queries
+test: sanity tables queries persistence
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -39,6 +39,9 @@ queries:
 	${PYTHON} ./query_collation_explicit.py
 	${PYTHON} ./query_collation_expression.py
 	${PYTHON} ./query_inheritance.py
+
+persistence:
+	${PYTHON} ./persistent_declaration.py
 
 
 # end of file 
