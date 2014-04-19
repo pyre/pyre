@@ -26,6 +26,8 @@ EXPORT_PYTHON_MODULES = \
     FieldSelector.py \
     ForeignKey.py \
     Measure.py \
+    Object.py \
+    Persistent.py \
     Postgres.py \
     Query.py \
     Reference.py \

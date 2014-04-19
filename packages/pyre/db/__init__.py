@@ -30,6 +30,8 @@ from .Reference import Reference as reference
 from .Table import Table as table
 # queries
 from .Query import Query as query
+# persistent object
+from .Object import Object as object
 
 
 # protocols
@@ -49,19 +51,22 @@ from .literals import null, default
 # cascade action markers for foreign keys
 from .actions import noAction, restrict, cascade, setNull, setDefault
 
+
 # orderings
 from .Collation import Collation as collation
 
 def ascending(fieldref):
     """
-    Build a clause for the {ORDER} expression that marks {field} as sorted in ascending order
+    Build a clause for the {ORDER} expression that marks {fieldref} as sorted in ascending
+    order
     """
     # build and return a collation object
     return collation(fieldref=fieldref, collation="ASC")
 
 def descending(fieldref):
     """
-    Build a clause for the {ORDER} expression that marks {field} as sorted in descending order
+    Build a clause for the {ORDER} expression that marks {fieldref} as sorted in descending
+    order
     """
     # build and return a collation object
     return collation(fieldref=fieldref, collation="DESC")
