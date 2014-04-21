@@ -17,22 +17,22 @@ def test():
     import pyre.db
 
     # the schema
-    class Entity(pyre.db.table):
+    class entity(pyre.db.table):
         """Entities"""
         eid = pyre.db.str().primary()
         name = pyre.db.str().notNull()
 
-    class Person(Entity, id='persons'):
+    class person(entity, id='persons'):
         """People"""
 
-    class Employer(Entity, id='employers'):
+    class company(entity, id='companies'):
         """Companies"""
 
-    class Employement(pyre.db.table, id="employment"):
+    class employement(pyre.db.table, id="employment"):
         """Relationships between people and companies"""
         eid = pyre.db.str().primary()
-        employee = pyre.db.reference(key=Person.eid).notNull()
-        employer = pyre.db.reference(key=Employer.eid).notNull()
+        employee = pyre.db.reference(key=person.eid).notNull()
+        employer = pyre.db.reference(key=company.eid).notNull()
         rate = pyre.db.float()
         
     # the model
@@ -40,6 +40,21 @@ def test():
         """
         An object whose attributes are stored in a relational schema
         """
+        # my unique identifier
+        eid = person.eid
+        # my attributes
+        name = person.name
+        employer = None # how do I refer to {Employer} defined below?
+
+    class Employer(pyre.db.object):
+        """
+        A more complicated object whose attributes are scattered in a schema
+        """
+        # my unique identifier
+        eir = company.eid
+        # my attributes
+        name = company.name
+        employees = None # list of {Employee} instances!!!
 
     # all done
     return
