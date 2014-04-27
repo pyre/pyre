@@ -21,18 +21,18 @@ def test():
     # convert a string into a date
     magic = date.coerce('1992-12-21')
     # check
-    assert magic.tm_year == 1992
-    assert magic.tm_mon == 12
-    assert magic.tm_mday == 21
+    assert magic.year == 1992
+    assert magic.month == 12
+    assert magic.day == 21
 
     # now one with a different input format
     date = pyre.descriptors.date(format='%Y/%m/%d')
     # try again
     magic = date.coerce(value='1992/12/21')
     # check
-    assert magic.tm_year == 1992
-    assert magic.tm_mon == 12
-    assert magic.tm_mday == 21
+    assert magic.year == 1992
+    assert magic.month == 12
+    assert magic.day == 21
 
     # how about one
     try:

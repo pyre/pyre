@@ -47,7 +47,7 @@ def test():
 
     # verify it
     assert measurement.city == 'Los Angeles'
-    assert time.strftime("%Y-%m-%d", measurement.date) == '2011-07-04'
+    assert str(measurement.date) == '2011-07-04'
     assert measurement.low == 62
     assert measurement.high == 71
     assert measurement.precipitation == 0

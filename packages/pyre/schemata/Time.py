@@ -7,7 +7,7 @@
 
 
 # externals
-import time
+import datetime
 # superclass
 from .Schema import Schema
 
@@ -20,7 +20,7 @@ class Time(Schema):
 
     
     # constants
-    format = "%H:%M:%S" # the default format
+    format = "%Y-%m-%d %H:%M:%S" # the default format
     typename = 'time' # the name of my type
 
 
@@ -32,7 +32,7 @@ class Time(Schema):
         # attempt to 
         try:
            # cast {value} into a date
-            return time.strptime(value, self.format)
+            return datetime.datetime.strptime(value, self.format)
         # if this fails
         except ValueError as error:
             # complain
@@ -40,7 +40,7 @@ class Time(Schema):
 
 
     # meta-methods
-    def __init__(self, default=time.localtime(), format=format, **kwds):
+    def __init__(self, default=datetime.datetime.today(), format=format, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # store the format

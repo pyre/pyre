@@ -19,20 +19,20 @@ def test():
     time = pyre.descriptors.time()
 
     # casts are not implemented yet
-    magic = time.coerce('13:30:00')
+    magic = time.coerce('1992-12-21 13:30:00')
     # check
-    assert magic.tm_hour == 13
-    assert magic.tm_min == 30
-    assert magic.tm_sec == 0
+    assert magic.hour == 13
+    assert magic.minute == 30
+    assert magic.second == 0
 
     # now one with a different input format
-    time = pyre.descriptors.time(format='%H|%M|%S')
+    time = pyre.descriptors.time(format='%Y/%m/%d %H|%M|%S')
     # try again
-    magic = time.coerce(value='13|30|00')
+    magic = time.coerce(value='1992/12/21 13|30|00')
     # check
-    assert magic.tm_hour == 13
-    assert magic.tm_min == 30
-    assert magic.tm_sec == 0
+    assert magic.hour == 13
+    assert magic.minute == 30
+    assert magic.second == 0
 
     # how about one
     try:
