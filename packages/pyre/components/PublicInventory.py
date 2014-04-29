@@ -68,8 +68,8 @@ class PublicInventory(Inventory):
     @classmethod
     def initializeClass(cls, component, family, **kwds):
         """
-        Build inventory appropriate for a component class that is registered with the
-        nameserver
+        Build inventory appropriate for a component instance that has a publicly visible name and
+        is registered with the nameserver
         """
         # get the locator
         locator = component.pyre_locator
@@ -106,8 +106,8 @@ class PublicInventory(Inventory):
     @classmethod
     def initializeInstance(cls, instance, name):
         """
-        Build inventory appropriate for a component instance that is not registered with the
-        nameserver
+        Build inventory appropriate for a component instance that has a publicly visible name and
+        is registered with the nameserver
         """
         # have the executive make a key
         key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
@@ -206,7 +206,7 @@ class PublicInventory(Inventory):
             slot = component.pyre_inventory[trait]
             # build a reference to the class slot
             ref = slot.ref(key=key[trait.name], postprocessor=trait.instanceSlot.processor)
-            # hand the trait, slot pair
+            # hand the trait, slot and its value
             yield trait, trait.instanceSlot, ref
         # all done
         return

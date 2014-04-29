@@ -114,7 +114,7 @@ class Actor(Requirement):
                         # argument out, we ask for assignments at global scope
                         nameserver.alias(target=canonical, alias=alias)
 
-        # otherwise, let's build one: record the caller's location
+        # otherwise, record the caller's location
         locator = tracking.here(1) if locator is None else locator
         # build the instance
         instance = super().__call__(name=name, locator=locator, **kwds)

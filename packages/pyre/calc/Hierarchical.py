@@ -141,8 +141,9 @@ class Hierarchical(SymbolTable):
         if targetNode is None:
             # install the alias node as the canonical
             self._nodes[targetKey] = aliasNode
-            # and its metadata
-            self._metadata[targetKey] = self.info(model=self, key=targetKey, name=target)
+            # and adjust its metadata
+            self._metadata[targetKey] = self.adjustAliasMetadata(
+                key=targetKey, name=target, info=aliasInfo)
             # all done
             return
 
@@ -295,6 +296,15 @@ class Hierarchical(SymbolTable):
 
 
     # implementation details
+    # workers
+    def adjustAliasMetadata(self, key, name, **kwds):
+        """
+        Perform the delicate task of adjusting the metadata of an aliased node
+        """
+        # build an alias node and return it
+        return self.info(model=self, key=key, name=name)
+
+
     # private data
     _hash = None
     _info = None
