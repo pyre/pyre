@@ -6,7 +6,7 @@
 // 
 
 #if !defined(pyre_extensions_timers_display_h)
-#define pyre_extensions_timer_display_h
+#define pyre_extensions_timers_display_h
 
 // create my namespace
 namespace pyre {
