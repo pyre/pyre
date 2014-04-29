@@ -293,16 +293,6 @@ class NameServer(Hierarchical):
 
 
     # implementation details
-    # workers
-    def adjustAliasMetadata(self, key, name, info, **kwds):
-        """
-        Perform the delicate task of adjusting the metadata of an aliased node
-        """
-        # build an alias node and return it
-        return self.info(
-            model=self, key=key, name=name, priority=info.priority, locator=info.locator)
-
-
     # adding entries to the model: the highest level interface
     def __setitem__(self, name, value):
         """
