@@ -7,8 +7,13 @@
 
 
 """
-This package contains classes that encapsulate common usage patterns.
+This package contains functions and classes that encapsulate common usage patterns.
 """
+
+
+# external packages
+import itertools, collections
+
 
 # utilities
 def average(iterable):
@@ -34,10 +39,22 @@ def powerset(iterable):
         powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     Taken from the python itertools documentation
     """
-    from itertools import chain, combinations
 
     s = list(iterable)
-    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+    return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s)+1))
+
+
+# autovivified maps
+def vivify(levels=1, atom=dict):
+    """
+    Builds a nested {defaultdict} with a fixed depth and a specified type at the deepest level.
+
+    Adopted from (http://en.wikipedia.org/wiki/Autovivification)
+    """
+    # the embryonic case is a {defaultdict} of type {atom}
+    if levels < 2: return collections.defaultdict(atom)
+    # otherwise, build a {defaultdict} that is shallower by one level
+    return collections.defaultdict(lambda: vivify(levels=levels-1, atom=atom))
 
 
 # factories
