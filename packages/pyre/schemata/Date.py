@@ -29,12 +29,21 @@ class Date(Schema):
         """
         Attempt to convert {value} into a date
         """
-        # attempt to 
+        # check whether {value} is already a {date} instance
+        if isinstance(value, datetime.date):
+            # in which case we are done
+            return value
+        # perhaps it is a {datetime} instance
+        if isinstance(value, datetime.datetime):
+            # in which case extract its date component
+            return value.date()
+
+        # otherwise, assume it is a string and attempt to 
         try:
            # cast {value} into a date
             return datetime.datetime.strptime(value, self.format).date()
         # if this fails
-        except ValueError as error:
+        except (TypeError, ValueError) as error:
             # complain
             raise self.CastingError(value=value, description=str(error))
 
