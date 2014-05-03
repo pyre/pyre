@@ -29,9 +29,14 @@ class Time(Schema):
         """
         Attempt to convert {value} into a timestamp
         """
-        # attempt to 
+        # perhaps {value} is already a {datetime} instance
+        if isinstance(value, datetime.datetime):
+            # in which case just return it
+            return value
+
+        # otherwise attempt to 
         try:
-           # cast {value} into a date
+           # cast {value} into a timestamp
             return datetime.datetime.strptime(value, self.format)
         # if this fails
         except ValueError as error:
