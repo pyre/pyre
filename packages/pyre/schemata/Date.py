@@ -29,6 +29,9 @@ class Date(Schema):
         """
         Attempt to convert {value} into a date
         """
+        # treat false values as uninitialized
+        if not value: return None
+
         # check whether {value} is already a {date} instance
         if isinstance(value, datetime.date):
             # in which case we are done

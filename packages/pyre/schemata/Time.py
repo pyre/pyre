@@ -29,6 +29,9 @@ class Time(Schema):
         """
         Attempt to convert {value} into a timestamp
         """
+        # treat false values as uninitialized
+        if not value: return None
+
         # perhaps {value} is already a {datetime} instance
         if isinstance(value, datetime.datetime):
             # in which case just return it
