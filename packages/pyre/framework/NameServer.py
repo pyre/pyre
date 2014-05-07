@@ -56,8 +56,6 @@ class NameServer(Hierarchical):
         Retrieve the named package from the model. If there is no such package, instantiate one, 
         configure it, and add it to the model.
         """
-        # if I do not have a locator, point to my caller
-        locator = tracking.here(level=1) if locator is None else locator
         # take {name} apart and extract the package name as the top level identifier
         name = self.split(name)[0]
         # hash it
@@ -68,6 +66,8 @@ class NameServer(Hierarchical):
             package = self._nodes[key].value
         # if not
         except KeyError:
+            # if I do not have a locator, point to my caller
+            locator = tracking.here(level=1) if locator is None else locator
             # make one
             package = self.Package(name=name)
             # get the right priority
@@ -79,7 +79,7 @@ class NameServer(Hierarchical):
             self._metadata[key] = self.info(model=self,
                                             name=name, key=key, locator=locator, priority=priority)
             # configure it
-            executive.configurePackage(package=package.name, locator=locator)
+            package.configure(executive=executive, locator=locator)
         # if it's there
         else:
             # make sure it is a package, and if not

@@ -111,33 +111,6 @@ class Executive:
         return
 
 
-    def addPackageConfiguration(self, file):
-        """
-        Given the location of a {pyre} package as returned by its {__file__}, this convenience
-        method returns the standard package geography in {home}, {prefix} and {defaults}, and
-        add to=he package configuration folder to {configpath}
-        """
-        # first, compute {home}
-        home = os.path.dirname(__file__)
-        # now the {prefix}
-        prefix = os.path.abspath(os.path.join(home, os.path.pardir, os.path.pardir))
-        # finally {defaults}
-        defaults = os.path.abspath(os.path.join(prefix, 'defaults'))
-
-        # all done
-        return home, prefix, defaults
-
-
-    def configurePackage(self, package, locator=None):
-        """
-        Locate and load the configuration files for the given {package} name
-        """
-        # if I do not have a locator, point to my caller
-        locator = tracking.here(level=1) if locator is None else locator
-        # delegate
-        return self.configure(stem=package, priority=self.priority.package, locator=locator)
-        
-
     def resolve(self, uri, client=None, **kwds):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
@@ -343,6 +316,20 @@ class Executive:
         key = self.nameserver.configurable(name=name, configurable=instance, locator=locator)
         # return the key
         return key
+
+
+    def registerPackage(self, name, file):
+        """
+        Register a {pyre} package
+        """
+        # build a locator
+        locator = tracking.here(level=1)
+        # get the nameserver to build one
+        package = self.nameserver.package(name=name, executive=self, locator=locator)
+        # register
+        package.register(executive=self, file=file)
+        # all done
+        return package
 
 
     # the default factories of all my parts
