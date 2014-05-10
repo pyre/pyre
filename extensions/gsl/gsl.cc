@@ -275,15 +275,11 @@ PyInit_gsl()
         return 0;
     }
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // otherwise, we have an initialized module
     // set the error handler
     gsl_set_error_handler(&errorHandler);
     // initialize the table of known random number generators
     gsl::rng::initialize();
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // return the newly created module
     return module;

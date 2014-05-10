@@ -96,13 +96,8 @@ bcastMatrix(PyObject *, PyObject * args)
     // extract the pointer to the payload
     double * data = matrix->data;
 
-    int status;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // broadcast the data
-    status = MPI_Bcast(data, rows*columns, MPI_DOUBLE, source, comm->handle());
-    // disallow threads
-    Py_END_ALLOW_THREADS;
+    int status = MPI_Bcast(data, rows*columns, MPI_DOUBLE, source, comm->handle());
 
     // check the return code
     if (status != MPI_SUCCESS) {
@@ -204,18 +199,11 @@ gatherMatrix(PyObject *, PyObject * args)
     // the length of each contribution
     int size = matrix->size1 * matrix->size2;
     // gather the data
-    int status;
-
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
-    // gather
-    status = MPI_Gather(
+    int status = MPI_Gather(
                             matrix->data, size, MPI_DOUBLE, // send buffer
                             data, size, MPI_DOUBLE, // receive buffer
                             destination, comm->handle() // address
                             );
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // check the return code
     if (status != MPI_SUCCESS) {
@@ -313,20 +301,15 @@ scatterMatrix(PyObject *, PyObject * args)
         data = matrix->data;
     }
 
-    int status;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // get the rows and columns of the destination
     int rows = destination->size1;
     int columns = destination->size2;
     // scatter the data
-    status = MPI_Scatter(
+    int status = MPI_Scatter(
                          data, rows*columns, MPI_DOUBLE, // source buffer
                          destination->data, rows*columns, MPI_DOUBLE, // destination buffer
                          source, comm->handle() // address
                          );
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // check the return code
     if (status != MPI_SUCCESS) {
@@ -399,12 +382,8 @@ bcastVector(PyObject *, PyObject * args)
         dim = vector->size;
     }
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // broadcast the shape
     MPI_Bcast(&dim, 1, MPI_LONG, source, comm->handle());
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // everybody except the source task
     if (comm->rank() != source) {
@@ -509,19 +488,12 @@ gatherVector(PyObject *, PyObject * args)
         data = bertha->data;
     }
 
-    // gather the data
-    int status;
-
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // gather
-    status = MPI_Gather(
+    int status = MPI_Gather(
                             vector->data, vector->size, MPI_DOUBLE, // send buffer
                             data, vector->size, MPI_DOUBLE, // receive buffer
                             destination, comm->handle() // address
                             );
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // check the return code
     if (status != MPI_SUCCESS) {
@@ -614,19 +586,14 @@ scatterVector(PyObject *, PyObject * args)
         data = vector->data;
     }
 
-    int status;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // get the length of the destination vector
     int length = destination->size;
     // scatter the data
-    status = MPI_Scatter(
+    int status = MPI_Scatter(
                          data, length, MPI_DOUBLE, // source buffer
                          destination->data, length, MPI_DOUBLE, // destination buffer
                          source, comm->handle() // address
                          );
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // check the return code
     if (status != MPI_SUCCESS) {

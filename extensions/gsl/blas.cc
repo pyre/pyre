@@ -48,12 +48,8 @@ gsl::blas::ddot(PyObject *, PyObject * args) {
     gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v2c, gsl::vector::capsule_t));
     // the result
     double result;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the dot product
     gsl_blas_ddot(v1, v2, &result);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
     // and return the result
     return PyFloat_FromDouble(result);
 }
@@ -81,12 +77,8 @@ gsl::blas::dnrm2(PyObject *, PyObject * args) {
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(vc, gsl::vector::capsule_t));
 
     double norm;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the norm
     norm = gsl_blas_dnrm2(v);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return the result
     return PyFloat_FromDouble(norm);
@@ -117,12 +109,8 @@ gsl::blas::dasum(PyObject *, PyObject * args) {
 
     double norm;
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the norm
     norm = gsl_blas_dasum(v);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return the result
     return PyFloat_FromDouble(norm);
@@ -152,12 +140,8 @@ gsl::blas::idamax(PyObject *, PyObject * args) {
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(vc, gsl::vector::capsule_t));
 
     CBLAS_INDEX_t index;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the index
     index = gsl_blas_idamax(v);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return the result
     return PyLong_FromLong(index);
@@ -196,12 +180,8 @@ gsl::blas::dswap(PyObject *, PyObject * args) {
     gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
     gsl_vector * y = static_cast<gsl_vector *>(PyCapsule_GetPointer(yc, gsl::vector::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // swap the contents
     gsl_blas_dswap(x, y);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -241,12 +221,8 @@ gsl::blas::dcopy(PyObject *, PyObject * args) {
     gsl_vector * x = static_cast<gsl_vector *>(PyCapsule_GetPointer(xc, gsl::vector::capsule_t));
     gsl_vector * y = static_cast<gsl_vector *>(PyCapsule_GetPointer(yc, gsl::vector::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // copy
     gsl_blas_dcopy(x, y);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -285,11 +261,7 @@ gsl::blas::daxpy(PyObject *, PyObject * args) {
     gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v2c, gsl::vector::capsule_t));
 
     // compute the form
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     gsl_blas_daxpy(a, v1, v2);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -322,12 +294,8 @@ gsl::blas::dscal(PyObject *, PyObject * args) {
     // get the two vectors
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(vc, gsl::vector::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the form
     gsl_blas_dscal(a, v);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -350,12 +318,8 @@ gsl::blas::drotg(PyObject *, PyObject * args) {
     if (!status) return 0;
 
     double c, s;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the rotation
     gsl_blas_drotg(&x, &y, &c, &s);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // build a tuple to hold the results
     PyObject * result = PyTuple_New(4);
@@ -401,12 +365,8 @@ gsl::blas::drot(PyObject *, PyObject * args) {
     gsl_vector * v1 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v1c, gsl::vector::capsule_t));
     gsl_vector * v2 = static_cast<gsl_vector *>(PyCapsule_GetPointer(v2c, gsl::vector::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the form
     gsl_blas_drot(v1, v2, c, s);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -471,12 +431,8 @@ gsl::blas::dgemv(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the form
     gsl_blas_dgemv(ctran, a, A, x, b, y);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -533,12 +489,8 @@ gsl::blas::dtrmv(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the form
     gsl_blas_dtrmv(cuplo, ctran, cdiag, A, x);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -595,12 +547,8 @@ gsl::blas::dtrsv(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the form
     gsl_blas_dtrsv(cuplo, ctran, cdiag, A, x);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -653,12 +601,8 @@ gsl::blas::dsymv(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the form
     gsl_blas_dsymv(cuplo, a, A, x, b, y);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -703,12 +647,8 @@ gsl::blas::dsyr(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the form
     gsl_blas_dsyr(cuplo, a, x, A);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -785,12 +725,8 @@ gsl::blas::dgemm(PyObject *, PyObject * args) {
     gsl_matrix * B = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Bc, gsl::matrix::capsule_t));
     gsl_matrix * C = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Cc, gsl::matrix::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the form
     gsl_blas_dgemm(ctranA, ctranB, a, A, B, b, C);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -849,12 +785,8 @@ gsl::blas::dtrmm(PyObject *, PyObject * args) {
     gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
     gsl_matrix * B = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Bc, gsl::matrix::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the form
     gsl_blas_dtrmm(cside, cuplo, ctran, cdiag, a, A, B);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);

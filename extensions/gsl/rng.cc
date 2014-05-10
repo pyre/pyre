@@ -74,14 +74,9 @@ gsl::rng::alloc(PyObject *, PyObject * args) {
         return 0;
     }
 
-    gsl_rng * r;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // allocate a rng
-    r = gsl_rng_alloc(algorithm);
+    gsl_rng * r = gsl_rng_alloc(algorithm);
     // std::cout << " gsl.rng_allocate: rng@" << r << ", name=" << name << std::endl;
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // wrap it in a capsule and return it
     return PyCapsule_New(r, capsule_t, free);
@@ -110,12 +105,8 @@ gsl::rng::set(PyObject *, PyObject * args) {
     // get the rng
     gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.rng_set: rng@" << r << std::endl;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // seed it
     gsl_rng_set(r, seed);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // return None
     Py_INCREF(Py_None);
@@ -145,13 +136,8 @@ gsl::rng::name(PyObject *, PyObject * args) {
     gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.rng_name: rng@" << r << std::endl;
 
-    const char * name;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // get the name
-    name = gsl_rng_name(r);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
+    const char * name = gsl_rng_name(r);
 
     // return the name
     return PyUnicode_FromString(name);
@@ -184,13 +170,9 @@ gsl::rng::range(PyObject *, PyObject * args) {
     unsigned long min;
     unsigned long max;
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute
     min = gsl_rng_min(r);
     max = gsl_rng_max(r);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // build the range
     PyObject * range = PyTuple_New(2);
@@ -225,13 +207,8 @@ gsl::rng::get(PyObject *, PyObject * args) {
     gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.rng_range: rng@" << r << std::endl;
 
-    unsigned long v;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // get
-    v = gsl_rng_get(r);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
+    unsigned long v = gsl_rng_get(r);
 
     // return a value
     return PyLong_FromUnsignedLong(v);
@@ -261,13 +238,8 @@ gsl::rng::uniform(PyObject *, PyObject * args) {
     gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout << " gsl.rng_range: rng@" << r << std::endl;
 
-    double value;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // get a value
-    value = gsl_rng_uniform(r);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
+    double value = gsl_rng_uniform(r);
 
     // return a value
     return PyFloat_FromDouble(value);

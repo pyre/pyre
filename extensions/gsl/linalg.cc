@@ -40,16 +40,10 @@ gsl::linalg::LU_decomp(PyObject *, PyObject * args) {
 
     // the other arguments
     int sign;
-    gsl_permutation * p;
-
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // allocate a permutation
-    p = gsl_permutation_alloc(m->size1);
+    gsl_permutation * p = gsl_permutation_alloc(m->size1);
     // compute the decomposition
     gsl_linalg_LU_decomp(m, p, &sign);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // adjust the reference count of the matrix capsule
     Py_INCREF(capsule);
@@ -99,12 +93,8 @@ gsl::linalg::LU_invert(PyObject *, PyObject * args) {
     // allocate space for the inverse
     gsl_matrix * inverse = gsl_matrix_alloc(m->size1, m->size2);
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the inverse
     gsl_linalg_LU_invert(m, p, inverse);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     return PyCapsule_New(inverse, gsl::matrix::capsule_t, gsl::matrix::free);
@@ -134,13 +124,8 @@ gsl::linalg::LU_det(PyObject *, PyObject * args) {
     gsl_matrix * m = 
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
 
-    double det;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the determinant
-    det =  gsl_linalg_LU_det(m, sign);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
+    double det =  gsl_linalg_LU_det(m, sign);
 
     // compute the determinant and return
     return PyFloat_FromDouble(det);
@@ -169,13 +154,8 @@ gsl::linalg::LU_lndet(PyObject *, PyObject * args) {
     gsl_matrix * m = 
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
 
-    double lndet;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the log of the determinant
-    lndet = gsl_linalg_LU_lndet(m);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
+    double lndet = gsl_linalg_LU_lndet(m);
 
     // compute the determinant and return
     return PyFloat_FromDouble(lndet);
@@ -204,12 +184,8 @@ gsl::linalg::cholesky_decomp(PyObject *, PyObject * args) {
     gsl_matrix * m = 
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the decomposition
     gsl_linalg_cholesky_decomp(m);
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
