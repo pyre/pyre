@@ -25,6 +25,10 @@ class Descriptor(metaclass=Decorator):
     """
 
 
+    # easy access to the {constraints} package
+    from .. import constraints
+
+
     # types
     # variables
     class variable:
