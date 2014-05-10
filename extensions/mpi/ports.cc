@@ -59,12 +59,8 @@ PyObject * mpi::port::sendBytes(PyObject *, PyObject * args)
         << "}, bytes={" << len << "} at " << (void *)str
         << pyre::journal::endl;
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // send the data
     MPI_Send(str, len, MPI_BYTE, peer, tag, comm->handle());
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // return
     Py_INCREF(Py_None);
@@ -105,8 +101,6 @@ PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
 
     int len;
     char * str;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // block until an appropriate message has arrived
     MPI_Status status;
     MPI_Probe(peer, tag, comm->handle(), &status);
@@ -125,8 +119,6 @@ PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
         << "}, tag={" << tag
         << "}, bytes={" << len << "} at " << (void *)str
         << pyre::journal::endl;
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // build the return value
     PyObject * value = Py_BuildValue("y#", str, len);
@@ -181,12 +173,8 @@ PyObject * mpi::port::sendString(PyObject *, PyObject * args)
         << "}, string={" << str << "}@" << len
         << pyre::journal::endl;
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // send the data (along with the terminating null)
     MPI_Send(str, len+1, MPI_CHAR, peer, tag, comm->handle());
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // return
     Py_INCREF(Py_None);
@@ -227,8 +215,6 @@ PyObject * mpi::port::recvString(PyObject *, PyObject * args)
 
     int len;
     char * str;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // block until an appropriate message has arrived
     MPI_Status status;
     MPI_Probe(peer, tag, comm->handle(), &status);
@@ -247,8 +233,6 @@ PyObject * mpi::port::recvString(PyObject *, PyObject * args)
         << "}, tag={" << tag
         << "}, string={" << str << "}@" << len
         << pyre::journal::endl;
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // build the return value
     PyObject * value = Py_BuildValue("s", str);

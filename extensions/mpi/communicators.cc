@@ -244,12 +244,8 @@ PyObject * mpi::communicator::barrier(PyObject *, PyObject * args)
     pyre::mpi::communicator_t * comm = 
         static_cast<pyre::mpi::communicator_t *>(PyCapsule_GetPointer(py_comm, capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // set up the barrier
     comm->barrier();
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // and return
     Py_INCREF(Py_None);
@@ -295,8 +291,6 @@ PyObject * mpi::cartesian::coordinates(PyObject *, PyObject * args)
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // dump
     pyre::journal::debug_t info("mpi.cartesian");
     if (info.isActive()) {
@@ -317,8 +311,6 @@ PyObject * mpi::cartesian::coordinates(PyObject *, PyObject * args)
         info << " " << coordinates[i];
     }
     info << pyre::journal::endl;
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     PyObject *value = PyTuple_New(dim);
     for (int i = 0; i < dim; ++i) {
@@ -367,8 +359,6 @@ PyObject * mpi::communicator::bcast(PyObject *, PyObject * args)
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // trying to stay Py_ssize_t clean...
     int size = len;
     // broadcast the length of the data buffer
@@ -382,8 +372,6 @@ PyObject * mpi::communicator::bcast(PyObject *, PyObject * args)
     }
     // broadcast the data
     MPI_Bcast(data, len, MPI_BYTE, root, comm->handle());
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // build the return value
     PyObject * value = Py_BuildValue("y#", data, len);
@@ -430,12 +418,8 @@ PyObject * mpi::communicator::sum(PyObject *, PyObject * args)
 
     // space for the result
     double total;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the total
     MPI_Reduce(&number, &total, 1, MPI_DOUBLE, MPI_SUM, root, comm->handle());
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // at {root}
     if (comm->rank() == root) {
@@ -481,12 +465,8 @@ PyObject * mpi::communicator::product(PyObject *, PyObject * args)
 
     // space for the result
     double product = 0;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the product
     MPI_Reduce(&number, &product, 1, MPI_DOUBLE, MPI_PROD, root, comm->handle());
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // at {root}
     if (comm->rank() == root) {
@@ -533,12 +513,8 @@ PyObject * mpi::communicator::max(PyObject *, PyObject * args)
 
     // space for the result
     double largest = 0;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the total
     MPI_Reduce(&number, &largest, 1, MPI_DOUBLE, MPI_MAX, root, comm->handle());
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // at {root}
     if (comm->rank() == root) {
@@ -584,12 +560,8 @@ PyObject * mpi::communicator::min(PyObject *, PyObject * args)
 
     // space for the result
     double smallest = 0;
-    // allow threads
-    Py_BEGIN_ALLOW_THREADS;
     // compute the smallest
     MPI_Reduce(&number, &smallest, 1, MPI_DOUBLE, MPI_MIN, root, comm->handle());
-    // disallow threads
-    Py_END_ALLOW_THREADS;
 
     // at {root}
     if (comm->rank() == root) {
