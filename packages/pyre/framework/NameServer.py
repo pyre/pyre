@@ -69,15 +69,7 @@ class NameServer(Hierarchical):
             # if I do not have a locator, point to my caller
             locator = tracking.here(level=1) if locator is None else locator
             # make one
-            package = self.Package(name=name)
-            # get the right priority
-            priority = self.priority.package()
-            # attach it to a slot
-            slot = self.literal(key=key, value=package)
-            # store it in the model
-            self._nodes[key] = slot
-            self._metadata[key] = self.info(model=self,
-                                            name=name, key=key, locator=locator, priority=priority)
+            package = self.createPackage(name=name, locator=locator)
             # configure it
             package.configure(executive=executive, locator=locator)
         # if it's there
@@ -94,6 +86,29 @@ class NameServer(Hierarchical):
         # return the package
         return package
 
+
+    # auxiliary object management
+    def createPackage(self, name, locator=None):
+        """
+        Build a new package node and attach it to the model
+        """
+        # make one
+        package = self.Package(name=name)
+        # hash the name
+        key = self._hash[name]
+        # if I were not given a locator, point to my caller
+        locator = tracking.here(level=1) if locator is None else locator
+        # get the right priority
+        priority = self.priority.package()
+        # attach it to a slot
+        slot = self.literal(key=key, value=package)
+        # store it in the model
+        self._nodes[key] = slot
+        self._metadata[key] = self.info(model=self,
+                                        name=name, key=key, locator=locator, priority=priority)
+        # and return it
+        return package
+        
 
     # expansion services
     def evaluate(self, expression):

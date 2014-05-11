@@ -325,9 +325,12 @@ class Executive:
         # build a locator
         locator = tracking.here(level=1)
         # get the nameserver to build one
-        package = self.nameserver.package(name=name, executive=self, locator=locator)
-        # register
+        package = self.nameserver.createPackage(name=name, locator=locator)
+        # register it
         package.register(executive=self, file=file)
+        # configure it
+        package.configure(executive=self, locator=locator)
+        
         # all done
         return package
 
