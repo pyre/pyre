@@ -1,0 +1,116 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# orthologue
+# (c) 1998-2014 all rights reserved
+#
+
+
+# externals
+import os
+import operator
+import functools
+# access the framework
+import pyre
+
+
+# the application class
+class project(pyre.application):
+    """
+    A generator of projects in pyre standard form
+    """
+
+
+    # user configurable state
+    name = pyre.properties.str(default='project')
+    name.doc = "the name of the project"
+
+    authors = pyre.properties.str(default='[ replace with the list of authors ]')
+    authors.doc = "the list project authors"
+
+    affiliations = pyre.properties.str(default='[ replace with the author affiliations ]')
+    affiliations.doc = "the author affiliations"
+
+    span = pyre.properties.str(default='[ replace with the project duration ]')
+    span.doc = "the project duration for the copyright message"
+
+
+    # public data
+    @property
+    def template(self):
+        """
+        Return the location of the project template directory
+        """
+        # externals
+        import os
+        # build and  return the absolute path to the model template
+        return os.path.join(pyre.prefix, 'templates', 'project')
+        
+
+    # application obligations
+    @pyre.export
+    def main(self, *args, **kwds):
+        # get the name of the project
+        project = self.name
+        # get the nameserver
+        nameserver = self.pyre_nameserver
+        # make local filesystem rooted at the model template directory
+        template = self.vfs.local(root=self.template).discover()
+
+        # if the target path exists already
+        if os.path.exists(project):
+            # complain
+            self.error.log("the folder {!r} exists already".format(project))
+            # report failure
+            return 1
+            
+        # make a local filesystem rooted at the current directory
+        cwd = self.vfs.local(root='.')
+
+        # initialize the workload
+        todo = [(cwd, project, template)]
+        # as long as there are folders to visit
+        for destination, name, source in todo:
+            # show me
+            self.info.log('creating the folder {!r}'.format(name))
+            # create the new folder
+            folder = cwd.mkdir(parent=destination, name=name)
+            # go through the folder contents
+            for entry, node in source.contents.items():
+                # expand any macros in the name
+                entry = nameserver.interpolate(expression=entry)
+                # show me
+                self.info.log('generating {!r}'.format(entry))
+                # if the {node} is a folder
+                if node.isFolder:
+                    # add it to the workload
+                    todo.append((folder, entry, node))
+                    # and move on
+                    continue
+                # otherwise, the {node} is a regular file; open it
+                with node.open() as raw:
+                    # pull the contents
+                    body = raw.read()
+                    # expand any macros
+                    body = nameserver.interpolate(expression=body)
+                    # create the file
+                    cwd.write(parent=folder, name=entry, contents=body)
+
+        # return success
+        return 0
+
+
+# main
+if __name__ == '__main__':
+    # instantiate
+    app = project(name='project')
+    # and invoke
+    status = app.run()
+
+    # return the exit code to the shell
+    import sys
+    sys.exit(status)
+
+
+# end of file 
