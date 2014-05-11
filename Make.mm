@@ -14,6 +14,7 @@ RECURSE_DIRS = \
     extensions \
     defaults \
     bin \
+    templates \
     schema \
     tests \
     examples \
