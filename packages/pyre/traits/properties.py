@@ -46,6 +46,9 @@ from .Facility import Facility as facility
 from .Dict import Dict as dict
 
 
+# the decorators
+from ..descriptors import converter, normalizer, validator
+
 # common meta-descriptors
 def strings(**kwds):
     """
