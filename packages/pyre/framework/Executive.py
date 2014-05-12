@@ -66,6 +66,7 @@ class Executive:
         try:
             # ask the file server for the input stream
             source = self.fileserver.open(uri=uri)
+            # print(" -- found: {} ".format(uri))
         # if that fails
         except self.PyreError as error:
             # save it
@@ -95,6 +96,10 @@ class Executive:
         """
         Locate and load all accessible configuration files for the given {stem}
         """
+        # print("Executive.configure:")
+        # print("    stem={}".format(stem))
+        # print("    locator={}".format(locator))
+        # print("    priority={}".format(priority))
         # access the fileserver
         fs = self.fileserver
         # and the configurator
@@ -105,6 +110,7 @@ class Executive:
         for root, filename, extension in scope:
             # build the uri
             uri = fs.splice(root.uri, filename, extension)
+            # print(' ++ looking for {!r}'.format(uri))
             # load the settings from the associated file
             self.loadConfiguration(uri=uri, priority=priority, locator=locator)
         # all done
@@ -458,7 +464,7 @@ class Executive:
 
         # hunt down the distribution configuration file and load it
         # make a locator
-        here = tracking.simple('while configuring the runtime environment')
+        here = tracking.simple('while discovering the platform characteristics')
         # set the stem
         stem = 'pyre/platforms/{}'.format(host.distribution)
         # attempt to load any matching configuration files
@@ -483,7 +489,7 @@ class Executive:
 
         # hunt down the host specific configuration file and load it
         # make a locator
-        here = tracking.simple('while configuring the runtime environment')
+        here = tracking.simple('while discovering the host characteristics')
         # set the stem
         stem = 'pyre/hosts/{}'.format(host.nickname)
         # attempt to load any matching configuration files
