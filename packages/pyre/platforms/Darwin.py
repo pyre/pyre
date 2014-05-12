@@ -31,7 +31,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         Return a suitable default encapsulation of the runtime host
         """
         # set the release and the codename
-        cls.release, cls.codename = cls.getDarwinInfo()
+        cls.release, cls.codename = cls.getOSInfo()
 
         # if the macports directory exists
         if os.path.isdir('/opt/local/var/macports'):
@@ -57,7 +57,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
 
 
     @classmethod
-    def getDarwinInfo(cls):
+    def getOSInfo(cls):
         # ask the platform package
         import platform
         # for the release number
@@ -73,6 +73,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     # private data
     # the known code names
     codenames = {
+        '10.9': 'mavericks',
         '10.8': 'mountain lion',
         '10.7': 'lion',
         '10.6': 'snow leopard',
