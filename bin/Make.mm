@@ -20,6 +20,7 @@ all: export
 
 EXPORT_BINS = \
     class.pyre \
+    listdir.py \
     merlin \
     project.pyre \
     pyre
