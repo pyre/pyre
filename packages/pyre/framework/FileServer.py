@@ -153,7 +153,7 @@ class FileServer(Filesystem):
             # just create a new empty folder
             system = self.folder()
         # mount it as {/system/pyre}
-        self["system/pyre"] = system
+        self["system"] = system
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
