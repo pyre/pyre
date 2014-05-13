@@ -93,6 +93,19 @@ def zip(root, **kwds):
     return Zip(metadata=info)
 
 
+# nodes
+def naked(**kwds):
+    """
+    Build a naked node, i.e. a node that is a trivial wrapper around a file in the local
+    filesystem. Useful for quick and dirty mounting of specific files without having to build a
+    local filesystem out of the folder that contains them
+    """
+    # get the constructor
+    from .Naked import Naked
+    # build one and return it
+    return Naked(**kwds)
+
+
 # explorers
 def finder(**kwds):
     """

@@ -30,6 +30,7 @@ EXPORT_PYTHON_MODULES = \
     Folder.py \
     HDF5.py \
     Local.py \
+    Naked.py \
     NamedPipe.py \
     Node.py \
     Recognizer.py \
