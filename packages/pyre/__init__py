@@ -46,25 +46,12 @@ def loadConfiguration(uri):
 
 
 # geography
-def home():
-    """
-    Return the directory of the pyre package
-    """
-    return os.path.dirname(__file__)
-
-
-def prefix():
-    """
-    Compute the pathname of the pyre installation
-    """
-    return os.path.abspath(os.path.join(home(), os.path.pardir, os.path.pardir))
-
-
-def defaults():
-    """
-    Compute the pathname of the directory with the system defaults
-    """
-    return os.path.abspath(os.path.join(prefix(), 'defaults'))
+# the directory of the pyre package
+home = os.path.dirname(__file__)
+# the pathname of the pyre installation
+prefix = os.path.abspath(os.path.join(home, os.path.pardir, os.path.pardir))
+# the directory with the system defaults
+defaults = os.path.abspath(os.path.join(prefix, 'defaults'))
     
 
 # administrative
@@ -206,9 +193,12 @@ def boot():
         # just ignore it and carry on
         pass
 
-    # build, initialize and return the executive
+    # build and initialize the executive
     from . import framework
-    return framework.executive().boot()
+    executive = framework.executive().boot()
+
+    # return the executive so it can be attached to the package
+    return executive
 
 
 def debug():

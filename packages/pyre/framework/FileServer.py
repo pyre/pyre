@@ -26,15 +26,15 @@ class FileServer(Filesystem):
     their physical locations at runtime. For example, as part of the bootstrapping process, the
     framework discovers the pyre installation directory; the persistent store for the default
     component configurations is a subdirectory of that location and it is mounted as
-    '/pyre/system' in the virtual filesystem. This has the following benefits:
+    '/system/pyre' in the virtual filesystem. This has the following benefits:
     
-    * applications can navigate through the contents of '/pyre/system' as if it were an actual
+    * applications can navigate through the contents of '/system/pyre' as if it were an actual
       filesystem
 
-    * configuration settings that require references to entries in '/pyre/system' can now be
+    * configuration settings that require references to entries in '/system/pyre' can now be
       expressed portably, since there is no need to hardwire actual paths
 
-    Similarly, user preferences are retrieved from '/pyre/user', which typically refers to the
+    Similarly, user preferences are retrieved from '/user', which typically refers to the
     subdirectory '.pyre' of the user's home directory, but may be populated from other sources,
     depending on the operating system and the runtime environment.
 
@@ -95,7 +95,7 @@ class FileServer(Filesystem):
             # otherwise, open it
             return node.open()
 
-        # if i didn't recognize the scheme, complain
+        # if i didn't recognize the {scheme}, complain
         raise self.URISpecificationError(uri=uri, reason="unsupported scheme {!r}".format(scheme))
 
 
@@ -143,17 +143,17 @@ class FileServer(Filesystem):
         # there are two possibilities
         #  - it is an actual location on the disk
         #  - it is inside a zip file
-        # the way to tell is by checking whether pyre.prefix() points to an actual directory
+        # the way to tell is by checking whether {pyre.prefix} points to an actual directory
         # both are handled correctly by the {pyre.filesystem.local} factory
         try:
             # so invoke it to build the filesystem for us
-            system = self.local(root=pyre_defaults()).discover()
+            system = self.local(root=pyre_defaults).discover()
         # if this failed
         except self.GenericError:
             # just create a new empty folder
             system = self.folder()
-        # mount it as {/pyre/system}
-        self["pyre/system"] = system
+        # mount it as {/system/pyre}
+        self["system/pyre"] = system
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
@@ -163,17 +163,17 @@ class FileServer(Filesystem):
             user = self.local(root=userdir).discover()
         except self.GenericError:
             user = self.folder()
-       # mount this directory as {/pyre/user}
-        self["pyre/user"] = user
+       # mount this directory as {/user}
+        self["user"] = user
 
         # finally, mount the current working directory
         try:
-            # make filesystem out of the preference directory
+            # make a filesystem out of the configuration directory
             startup = self.local(root=".").discover(levels=1)
         except self.GenericError:
             startup = self.folder()
-       # mount this directory as {/pyre/startup}
-        self["pyre/startup"] = startup
+       # mount this directory as {/startup}
+        self["startup"] = startup
 
         # all done
         return

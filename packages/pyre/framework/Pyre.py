@@ -54,11 +54,22 @@ class Pyre(Executive):
         # force the loading of the global configuration options
         nameserver.package(executive=self, name="pyre", locator=self.locator)
 
+        # all done
+        return self
+
+
+    def check(self):
+        """
+        Report and boot time errors
+        """
+        # bail out if no errors were detetcted
+        if not self.errors: return
+
         # report the boot time errors
-        if self.verbose and self.errors:
-            print(' ** pyre: the following errors were encountered while booting:')
-            for error in self.errors:
-                print(' ++   {}'.format(error))
+        # MGA: ??can i use journal??
+        print(' ** pyre: the following errors were encountered while booting:')
+        for error in self.errors:
+            print(' ++   {}'.format(error))
 
         # all done
         return self

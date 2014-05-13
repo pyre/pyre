@@ -26,7 +26,7 @@ def test():
     assert stream.name == os.path.abspath('sample.odb')
 
     # using vfs
-    stream = f.open('vfs:/pyre/startup/sample.odb')
+    stream = f.open('vfs:/startup/sample.odb')
     assert stream.name == os.path.abspath('sample.odb')
 
     # test failure modes
@@ -48,11 +48,11 @@ def test():
 
     # missing logical file
     try:
-        f.open('vfs:/pyre/startup/not-there.odb')
+        f.open('vfs:/startup/not-there.odb')
         assert False
     except f.SourceNotFoundError as error:
         assert error.filesystem == f
-        assert error.uri.uri == 'vfs:/pyre/startup/not-there.odb'
+        assert error.uri.uri == 'vfs:/startup/not-there.odb'
 
     # missing logical directory
     try:

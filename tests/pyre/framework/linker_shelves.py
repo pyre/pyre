@@ -58,7 +58,7 @@ def test():
         pass
 
     # request the same file through vfs
-    shelf = linker.loadShelf(executive=executive, uri="vfs:/pyre/startup/sample.py")
+    shelf = linker.loadShelf(executive=executive, uri="vfs:/startup/sample.py")
     # make sure it got imported correctly
     assert shelf.retrieveSymbol('factory')
 
