@@ -66,8 +66,9 @@ class File(Info):
 
     # meta methods
     def __init__(self, info=None, **kwds):
+        # chain up
         super().__init__(**kwds)
-        # extract the file metadata from info
+        # extract the file metadata from {info}, if given
         info and self.decorate(info)
         # all done
         return
