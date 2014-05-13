@@ -22,7 +22,8 @@ class Walker:
 
 
     # interface
-    def walk(self, path):
+    @classmethod
+    def walk(cls, path):
         """
         Assume {path} is a directory, get the names of its contents and iterate over them
         """
@@ -33,7 +34,7 @@ class Walker:
         # if this fails
         except os.error as error:
             # raise a package specific exception
-            raise self.DirectoryListingError(uri=path, error=error.strerror)
+            raise cls.DirectoryListingError(uri=path, error=error.strerror)
 
 
 # end of file 

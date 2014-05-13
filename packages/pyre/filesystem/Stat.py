@@ -37,29 +37,29 @@ class Stat(Recognizer):
 
 
     # interface
-    def recognize(self, entry):
+    @classmethod
+    def recognize(cls, entry):
         """
-        The most basic file recognition: convert the name of a file into an Node descendant
+        The most basic file recognition: convert the name of a file into a {Node} descendant
         and decorate it with all the metadata available on the disk.
         """
-
         # pull the information from the hard filesystem
         meta = os.stat(entry)
         mode = meta.st_mode
 
         # walk through the cases
         if stat.S_ISREG(mode):
-            return self.File(uri=entry, info=meta)
+            return cls.File(uri=entry, info=meta)
         elif stat.S_ISDIR(mode):
-            return self.Directory(uri=entry, info=meta)
+            return cls.Directory(uri=entry, info=meta)
         elif stat.S_ISSOCK(mode):
-            return self.Socket(uri=entry, info=meta)
+            return cls.Socket(uri=entry, info=meta)
         elif stat.S_ISBLK(mode):
-            return self.BlockDevice(uri=entry, info=meta)
+            return cls.BlockDevice(uri=entry, info=meta)
         elif stat.S_ISCHR(mode):
-            return self.CharacterDevice(uri=entry, info=meta)
+            return cls.CharacterDevice(uri=entry, info=meta)
         elif stat.S_ISFIFO(mode):
-            return self.NamedPipe(uri=entry, info=meta)
+            return cls.NamedPipe(uri=entry, info=meta)
         # otherwise
         import journal
         msg = "{!r}: unknown file type: mode={}".format(entry, mode)

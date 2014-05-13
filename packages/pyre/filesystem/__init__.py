@@ -118,19 +118,19 @@ def simpleExplorer(**kwds):
 
 
 # tools for poking around locally mounted filesystems
-def stat(**kwds):
+def stat():
     """
     Build a recognizer of the contents of local filesystems based on {os.stat}
     """
     from .Stat import Stat
-    return Stat(**kwds)
+    return Stat
 
-def walker(**kwds):
+def walker():
     """
     Build an object that can list the contents of locally mounted folders
     """
     from .Walker import Walker
-    return Walker(**kwds)
+    return Walker
 
 
 # exceptions thrown by the factories
