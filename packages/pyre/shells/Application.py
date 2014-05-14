@@ -78,7 +78,6 @@ class Application(pyre.component, metaclass=Director):
         """
         return self.pyre_nameserver
 
-
     @property
     def home(self):
         """
@@ -87,12 +86,20 @@ class Application(pyre.component, metaclass=Director):
         # externals
         import os
         import sys
-        # the leading entry is my path
-        me = sys.argv[0]
-        # split it
-        home, app = os.path.split(me)
-        # and return the directory
-        return home
+        # my path is the directory portion of the leading entry
+        return os.path.dirname(sys.argv[0])
+
+    @property
+    def argv(self):
+        """
+        Return an iterable over the command line arguments that were not configuration options
+        """
+        # the {configurator} has what I am looking for
+        for command in self.pyre_configurator.commands:
+            # but its kind of buried
+            yield command.command
+        # all done
+        return
 
 
     # component interface
@@ -147,7 +154,7 @@ class Application(pyre.component, metaclass=Director):
         Ask my shell to launch me
         """
         # easy enough
-        return self.shell.launch(application=self, *args, **kwds)
+        return self.shell.launch(self, *args, **kwds)
 
 
     # initialization hooks
