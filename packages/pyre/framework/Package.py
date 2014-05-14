@@ -37,6 +37,11 @@ class Package(Named):
         Deduce the package geography based on the location of the importable and add the package
         configuration folder to the pyre configuration path
         """
+        # This should be done very carefully because multiple packages may share a common
+        # installation folder. For example, this is true of the packages that ship with the
+        # standard pyre distribution. The registration procedure takes care not to mount
+        # redundant filesystems in the virtual namespace.
+
         # compute {home}
         home = os.path.dirname(file)
         # the prefix is the root of the package installation; in {pyre} standard form, that's
@@ -45,28 +50,13 @@ class Package(Named):
         # the location of the package configuration files
         defaults = os.path.abspath(os.path.join(prefix, self.DEFAULTS))
 
-        # my system folder name
-        system = '{.name}/system'.format(self)
-        # get the fileserver
-        fileserver = executive.fileserver
-        # and the nameserver
-        nameserver = executive.nameserver
-        # turn the configuration path into a file node
-        cfg = fileserver.local(root=defaults).discover()
-        # and attach it under the package namespace
-        fileserver[system] = cfg
-
-        # build a uri for the package configuration files
-        uri = executive.uri().coerce('vfs:/{}'.format(system))
-        # get the configuration path
-        cfgpath = nameserver['pyre.configpath']
-        # add my uri to it
-        cfgpath.append(uri)
-
         # attach
         self.home = home
         self.prefix = prefix
         self.defaults = defaults
+
+        # register with the fileserver
+        executive.fileserver.registerPackage(package=self)
 
         # all done
         return

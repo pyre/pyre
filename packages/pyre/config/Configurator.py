@@ -291,7 +291,7 @@ class Configurator:
         # the name of the configuration path slot
         name = 'pyre.configpath'
         # the default value
-        value = ['vfs:/system','vfs:/user','vfs:/startup']
+        value = ['vfs:/packages','vfs:/user','vfs:/startup']
         # get the locator
         locator = self.locator
         # build a priority

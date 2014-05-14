@@ -92,7 +92,7 @@ class Pyre(Executive):
         client.pyre_nameserver = weakref.proxy(self.nameserver)
 
         # my fileserver
-        self.fileserver = self.newFileServer()
+        self.fileserver = self.newFileServer(executive=self)
         # attach
         client.pyre_fileserver = weakref.proxy(self.fileserver)
 

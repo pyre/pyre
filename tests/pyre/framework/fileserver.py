@@ -21,9 +21,9 @@ def test():
     fs = executive.fileserver
     assert fs is not None
 
-    # get hold of the system node
-    system = fs["/system"]
-    assert system is not None
+    # get hold of the package node
+    packages = fs["/packages"]
+    assert packages is not None
 
     # get hold of the user node
     user = fs["/user"]

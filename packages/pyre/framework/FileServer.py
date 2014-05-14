@@ -8,6 +8,7 @@
 
 # externals
 import os
+import weakref
 from .. import schemata
 # superclass
 from ..filesystem.Filesystem import Filesystem
@@ -23,20 +24,16 @@ class FileServer(Filesystem):
     objects, although they are typically either local or remote files.
 
     The framework uses a {FileServer} instance to decouple the logical names of resources from
-    their physical locations at runtime. For example, as part of the bootstrapping process, the
-    framework discovers the pyre installation directory; the persistent store for the default
-    component configurations is a subdirectory of that location and it is mounted as
-    '/system/pyre' in the virtual filesystem. This has the following benefits:
-    
-    * applications can navigate through the contents of '/system/pyre' as if it were an actual
+    their physical locations at runtime. For example, during the bootstrapping process the
+    framework looks for user preferences for pyre applications. On Unix like machines, these
+    are stored in '~/.pyre' and its subfolders. The entire hierarchy is mounted in the virtual
+    filesystem under '/user'. This has the following advantages:
+
+    * applications can navigate through the contents of '/user' as if it were an actual
       filesystem
 
-    * configuration settings that require references to entries in '/system/pyre' can now be
+    * configuration settings that require references to entries in '/user' can now be
       expressed portably, since there is no need to hardwire actual paths
-
-    Similarly, user preferences are retrieved from '/user', which typically refers to the
-    subdirectory '.pyre' of the user's home directory, but may be populated from other sources,
-    depending on the operating system and the runtime environment.
 
     Applications are encouraged to lay out their own custom namespaces. The application
     developer can refer to resources through their standardized logical names, whereas the user
@@ -110,14 +107,14 @@ class FileServer(Filesystem):
 
 
     # convenience: access to the filesystem factories
-    def local(self, **kwds):
+    def local(self, root, **kwds):
         """
         Build a local filesystem
         """
         # access the factory
         from .. import filesystem
-        # and invoke it
-        return filesystem.local(**kwds)
+        # invoke it
+        return filesystem.local(root=root, **kwds)
 
 
     def virtual(self, **kwds):
@@ -130,30 +127,90 @@ class FileServer(Filesystem):
         return filesystem.virtual(**kwds)
 
 
+    # framework support
+    def registerPackage(self, package):
+        """
+        Make the package configuration folder accessible in the virtual filesystem`
+        """
+        # This should be done very carefully because multiple packages may share a common
+        # installation folder. For example, this is true of the packages that ship with the
+        # standard pyre distribution. The registration procedure takes care not to mount
+        # redundant filesystems in the virtual namespace.
+
+        # grab the package prefix
+        prefix = package.prefix
+        # check whether
+        try:
+            # we have seen this location before
+            fs = self._mounts[prefix]
+        # if not
+        except KeyError:
+            # build it; there are two possibilities
+            #  - it is an actual location on the disk
+            #  - it is inside a zip file
+            # the way to tell is by checking whether {prefix} points to an actual directory
+            # both are handled correctly by the {pyre.filesystem.local} factory
+            fs = self.local(root=prefix).discover()
+            # remember
+            self._mounts[prefix] = fs
+
+        # attempt to
+        try:
+            # look for the configuration folder
+            defaults = fs['defaults']
+        # if not there
+        except fs.NotFoundError:
+            # nothing else to do
+            return package
+
+        # look for configuration files
+        for encoding in self.executive.configurator.encodings():
+            # build the configuration file name
+            filename = "{}.{}".format(package.name, encoding)
+            # look for
+            try:
+                # the node that corresponds to the configuration file
+                cfgfile = defaults[filename]
+            # if it's not there
+            except fs.NotFoundError:
+                # bail
+                continue
+            # if it is there, mount it at '/packages'
+            self['packages/{}'.format(filename)] = cfgfile
+
+        # look for the configuration folder
+        try:
+            # get the associated node
+            cfgdir = defaults[package.name]
+        # if it's not there
+        except fs.NotFoundError:
+            # no problem
+            pass
+        # if it is there
+        else:
+            # attach it 
+            self['packages/{}'.format(package.name)] = cfgdir
+
+        # all done
+        return package
+
+
     # meta-methods
-    def __init__(self, **kwds):
+    def __init__(self, executive=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # print("pyre.FileServer:")
 
-        # get access to the location where the framework is installed
-        from .. import defaults as pyre_defaults
+        # remember my executive
+        self.executive = None if executive is None else weakref.proxy(executive)
 
-        # first, mount the system directory
-        # there are two possibilities
-        #  - it is an actual location on the disk
-        #  - it is inside a zip file
-        # the way to tell is by checking whether {pyre.prefix} points to an actual directory
-        # both are handled correctly by the {pyre.filesystem.local} factory
-        try:
-            # so invoke it to build the filesystem for us
-            system = self.local(root=pyre_defaults).discover()
-        # if this failed
-        except self.GenericError:
-            # just create a new empty folder
-            system = self.folder()
-        # mount it as {/system/pyre}
-        self["system"] = system
+        # initialize the table of known mount points
+        self._mounts = {}
+
+        # build a place holder for package configuration hierarchies
+        packages = self.folder()
+        # mount it
+        self["packages"] = packages
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre

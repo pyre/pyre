@@ -47,11 +47,11 @@ def loadConfiguration(uri):
 
 # geography
 # the directory of the pyre package
-home = os.path.dirname(__file__)
+home = None
 # the pathname of the pyre installation
-prefix = os.path.abspath(os.path.join(home, os.path.pardir, os.path.pardir))
+prefix = None
 # the directory with the system defaults
-defaults = os.path.abspath(os.path.join(prefix, 'defaults'))
+defaults = None
     
 
 # administrative
@@ -196,6 +196,15 @@ def boot():
     # build and initialize the executive
     from . import framework
     executive = framework.executive().boot()
+
+    # register this package
+    package = executive.registerPackage(name='pyre', file=__file__)
+
+    # attach the geography
+    global home, prefix, defaults
+    home = package.home
+    prefix = package.prefix
+    defaults = package.defaults
 
     # return the executive so it can be attached to the package
     return executive
