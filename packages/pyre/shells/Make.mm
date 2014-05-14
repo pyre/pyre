@@ -26,6 +26,7 @@ EXPORT_PYTHON_MODULES = \
     Executive.py \
     Fork.py \
     Plain.py \
+    Plexus.py \
     Renderer.py \
     Script.py \
     Shell.py \

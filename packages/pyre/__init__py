@@ -266,8 +266,8 @@ if executive:
     from . import externals
     # platform managers
     from . import platforms
-    # application
-    from .shells import application
+    # application shells
+    from .shells import application, plexus
 
     # the base class of all pyre exceptions
     from .framework.exceptions import PyreError

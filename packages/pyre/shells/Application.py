@@ -96,7 +96,7 @@ class Application(pyre.component, metaclass=Director):
         """
         # the {configurator} has what I am looking for
         for command in self.pyre_configurator.commands:
-            # but its kind of buried
+            # but it is buried
             yield command.command
         # all done
         return

@@ -50,6 +50,7 @@ from .Plain import Plain as plain
 
 # the base application component
 from .Application import Application as application
+from .Plexus import Plexus as plexus
 
 
 # the user component
