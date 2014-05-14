@@ -11,8 +11,6 @@ import pyre # the framework
 import weakref
 # my protocol
 from .Shell import Shell as shell
-# the protocols of my traits
-from ..platforms import platform
 
 
 # declaration
