@@ -32,6 +32,14 @@ class Folder(Node):
 
 
     # interface
+    def open(self):
+        """
+        Return an iterable over my contents
+        """
+        # return my contents
+        return self.contents.items()
+
+        
     # searching for specific contents
     def find(self, pattern=None):
         """
