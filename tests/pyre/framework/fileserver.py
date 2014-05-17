@@ -22,11 +22,11 @@ def test():
     assert fs is not None
 
     # get hold of the package node
-    packages = fs["/packages"]
+    packages = fs["/pyre/packages"]
     assert packages is not None
 
     # get hold of the user node
-    user = fs["/user"]
+    user = fs["/pyre/user"]
     assert user is not None
 
     # dump the filesystem

@@ -17,7 +17,7 @@ def test():
     import pyre
 
     # load the configuration file
-    pyre.loadConfiguration('vfs:/startup/sample.cfg')
+    pyre.loadConfiguration('vfs:/pyre/startup/sample.cfg')
 
     # access the nameserver
     ns = pyre.executive.nameserver

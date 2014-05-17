@@ -27,12 +27,12 @@ class FileServer(Filesystem):
     their physical locations at runtime. For example, during the bootstrapping process the
     framework looks for user preferences for pyre applications. On Unix like machines, these
     are stored in '~/.pyre' and its subfolders. The entire hierarchy is mounted in the virtual
-    filesystem under '/user'. This has the following advantages:
+    filesystem under '/pyre/user'. This has the following advantages:
 
     * applications can navigate through the contents of '/user' as if it were an actual
       filesystem
 
-    * configuration settings that require references to entries in '/user' can now be
+    * configuration settings that require references to entries in '/pyre/user' can now be
       expressed portably, since there is no need to hardwire actual paths
 
     Applications are encouraged to lay out their own custom namespaces. The application
@@ -43,6 +43,25 @@ class FileServer(Filesystem):
 
     # constants
     DOT_PYRE = '~/.pyre'
+    USER_DIR = '/pyre/user'
+    STARTUP_DIR = '/pyre/startup'
+    PACKAGES_DIR = '/pyre/packages'
+
+
+    # public data
+    @property
+    def systemFolders(self):
+        """
+        Return the sequence of uris of the {pyre} system folders
+        """
+        # first the packages folder
+        yield self.PACKAGES_DIR
+        # next the user folder
+        yield self.USER_DIR
+        # finally the startup folder
+        yield self.STARTUP_DIR
+        # all done
+        return
 
 
     # interface
@@ -175,8 +194,8 @@ class FileServer(Filesystem):
             except fs.NotFoundError:
                 # bail
                 continue
-            # if it is there, mount it at '/packages'
-            self['packages/{}'.format(filename)] = cfgfile
+            # if it is there, mount it at '/pyre/packages'
+            self['{}/{}'.format(self.PACKAGES_DIR, filename)] = cfgfile
 
         # look for the configuration folder
         try:
@@ -189,7 +208,7 @@ class FileServer(Filesystem):
         # if it is there
         else:
             # attach it 
-            self['packages/{}'.format(package.name)] = cfgdir
+            self['{}/{}'.format(self.PACKAGES_DIR, package.name)] = cfgdir
 
         # all done
         return package
@@ -210,7 +229,7 @@ class FileServer(Filesystem):
         # build a place holder for package configuration hierarchies
         packages = self.folder()
         # mount it
-        self["packages"] = packages
+        self[self.PACKAGES_DIR] = packages
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
@@ -220,8 +239,8 @@ class FileServer(Filesystem):
             user = self.local(root=userdir).discover()
         except self.GenericError:
             user = self.folder()
-       # mount this directory as {/user}
-        self["user"] = user
+       # mount this directory as {/pyre/user}
+        self[self.USER_DIR] = user
 
         # finally, mount the current working directory
         try:
@@ -229,8 +248,8 @@ class FileServer(Filesystem):
             startup = self.local(root=".").discover(levels=1)
         except self.GenericError:
             startup = self.folder()
-       # mount this directory as {/startup}
-        self["startup"] = startup
+       # mount this directory as {/pyre/startup}
+        self[self.STARTUP_DIR] = startup
 
         # all done
         return

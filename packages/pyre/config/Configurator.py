@@ -287,11 +287,13 @@ class Configurator:
         from ..traits import properties
         # get the nameserver
         nameserver = self.executive.nameserver
+        # and the fileserver
+        fileserver = self.executive.fileserver
 
         # the name of the configuration path slot
         name = 'pyre.configpath'
         # the default value
-        value = ['vfs:/packages','vfs:/user','vfs:/startup']
+        value = [ 'vfs:{}'.format(folder) for folder in fileserver.systemFolders ]
         # get the locator
         locator = self.locator
         # build a priority

@@ -28,7 +28,7 @@ def test():
     assert joe.pyre_name == 'joe'
 
     # through the vfs
-    barry = pyre.resolve(uri='vfs:/startup/sample.py/worker#barry')
+    barry = pyre.resolve(uri='vfs:/pyre/startup/sample.py/worker#barry')
     # check it
     assert isinstance(barry, pyre.component)
     assert barry.pyre_name == 'barry'
