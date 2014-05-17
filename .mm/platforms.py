@@ -82,7 +82,7 @@ def platform(builder):
                 'MPI_DIR': systemdir,
                 'MPI_LIBDIR': os.path.join(systemlibdir, mpiVersion),
                 'MPI_INCDIR': os.path.join(systemincdir, mpiVersion),
-                'MPI_EXECUTIVE': 'mpiexec',
+                'MPI_EXECUTIVE': 'mpirun',
                 }
             # and its runtime
             mpi.path = os.path.join(systemdir, 'bin')
