@@ -158,20 +158,8 @@ class FileServer(Filesystem):
 
         # grab the package prefix
         prefix = package.prefix
-        # check whether
-        try:
-            # we have seen this location before
-            fs = self._mounts[prefix]
-        # if not
-        except KeyError:
-            # build it; there are two possibilities
-            #  - it is an actual location on the disk
-            #  - it is inside a zip file
-            # the way to tell is by checking whether {prefix} points to an actual directory
-            # both are handled correctly by the {pyre.filesystem.local} factory
-            fs = self.local(root=prefix).discover()
-            # remember
-            self._mounts[prefix] = fs
+        # get the associated filesystem
+        fs = self.retrieveFilesystem(root=prefix)
 
         # attempt to
         try:
@@ -214,6 +202,25 @@ class FileServer(Filesystem):
         return package
 
 
+    def retrieveFilesystem(self, root):
+        """
+        Retrieve {root} if it is an already mounted filesystem; if not, mount it and return it
+        """
+        # check whether
+        try:
+            # i have seen this path before
+            fs = self.mounts[root]
+        # if not
+        except KeyError:
+            # no problem; make it
+            fs = self.local(root=root).discover()
+            # and remember it
+            self.mounts[root] = fs
+
+        # either way, return it
+        return fs
+
+
     # meta-methods
     def __init__(self, executive=None, **kwds):
         # chain up
@@ -224,7 +231,7 @@ class FileServer(Filesystem):
         self.executive = None if executive is None else weakref.proxy(executive)
 
         # initialize the table of known mount points
-        self._mounts = {}
+        self.mounts = {}
 
         # build a place holder for package configuration hierarchies
         packages = self.folder()
