@@ -24,7 +24,7 @@ class Filesystem(Folder):
 
 
     # exceptions
-    from .exceptions import NotFoundError, SourceNotFoundError, URISpecificationError
+    from .exceptions import NotFoundError, SourceNotFoundError, URISpecificationError, FolderError
 
 
     # interface
@@ -43,6 +43,32 @@ class Filesystem(Folder):
         # i don't know how to do it
         raise NotImplementedError(
             "class {.__name__!r} must implement 'open'".format(type(self)))
+
+
+    def getFolder(self, *args):
+        """
+        Assemble a path by joining {args} together and return the folder at that location. If the
+        folder does not exist, create it and mount it
+        """
+        # make the path
+        path = self.join(*args)
+        # if
+        try:
+            # the folder exists, get it
+            target = self[path]
+        # if not
+        except self.NotFoundError:
+            # make it
+            target = self.folder()
+            # and mount it
+            self[path] = target
+
+        # if the {target} is not a folder
+        if not target.isFolder:
+            # complain
+            raise self.FolderError(uri=path, fragment=path, filesystem=self, node=target)
+        # otherwise, all good
+        return target
 
 
     # implementation details
