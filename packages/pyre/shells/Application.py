@@ -6,6 +6,9 @@
 #
 
 
+# externals
+import os
+import sys
 # access to the framework
 import pyre
 # my metaclass
@@ -56,6 +59,9 @@ class Application(pyre.component, metaclass=Director):
     debug = None
     firewall = None
 
+    # public data
+    home = os.path.dirname(sys.argv[0])
+
     # properties
     @property
     def executive(self):
@@ -77,17 +83,6 @@ class Application(pyre.component, metaclass=Director):
         Easy access to the executive name server
         """
         return self.pyre_nameserver
-
-    @property
-    def home(self):
-        """
-        Deduce the directory where this application is installed
-        """
-        # externals
-        import os
-        import sys
-        # my path is the directory portion of the leading entry
-        return os.path.dirname(sys.argv[0])
 
     @property
     def argv(self):
@@ -123,10 +118,8 @@ class Application(pyre.component, metaclass=Director):
 
     # meta methods
     def __init__(self, name=None, **kwds):
+        # chain up
         super().__init__(name=name, **kwds)
-
-        # build my private file space
-        self.pfs = self.pyre_mountVirtualFilesystem(root=self.pyre_prefix)
 
         # go through my requirements and build my dependency map
         self.dependencies = self.pyre_resolveDependencies()
@@ -158,11 +151,18 @@ class Application(pyre.component, metaclass=Director):
 
 
     # initialization hooks
-    def pyre_mountVirtualFilesystem(self, root):
+    def pyre_mountVirtualFilesystem(self, namespace):
         """
         Gather all standard directories that are relevant for this application into its own
         private namespace and register it with the executive file server
         """
+        # grab the fileserver
+        vfs = self.vfs
+        # get/create the top level of my private namespace
+        pfs = vfs.getFolder(namespace)
+        return pfs
+            
+
         # build the top level folder for my stuff
         pfs = self.vfs.folder()
         # mount it at the right place
@@ -192,22 +192,18 @@ class Application(pyre.component, metaclass=Director):
         and retrieve its contents without first having to test for its existence
         """
         # cache the file server
-        fileserver = self.vfs
+        vfs = self.vfs
         # build the target name
-        path = fileserver.join("/pyre", folder, tag)
+        path = vfs.join(folder, tag)
         # look for it 
         try:
-            target = fileserver[path]
+            target = vfs[path]
         # if not there
-        except fileserver.NotFoundError:
-            # create an empty folder
-            target = fileserver.folder()
-        # if it is there
-        else:
-            # fill it up with its contents
-            target.discover()
-        # and return it
-        return target
+        except vfs.NotFoundError:
+            # create an empty folder and return it
+            return vfs.folder()
+        # if it is there, fill it up with its contents and return it
+        return target.discover()
 
 
     def pyre_resolveDependencies(self):

@@ -7,6 +7,7 @@
 
 
 # externals
+import os
 import weakref
 # framework access
 import pyre
@@ -30,17 +31,25 @@ class Director(pyre.actor):
         # chain up
         super().__init__(name, bases, attributes, **kwds)
 
-        # compute the application prefix
-        # if one were given explicitly
+        # if i don't have a prefix
+        if not prefix:
+            # get my package
+            package = self.pyre_package()
+            # and if it exists
+            if package:
+                # use its name as my prefix
+                prefix = package.name
+        # if i now have a prefix
         if prefix:
-            # use it
-            self.pyre_prefix = prefix
+            # populate and mount the private filesystem; 
+            pfs = self.pyre_mountApplicationFolders(prefix)
         # otherwise
         else:
-            # get my family name
-            package = self.pyre_package()
-            # if i have one, use it; otherwise, use the class name
-            self.pyre_prefix = package.name if package else name
+            # make an empty one
+            pfs = self.pyre_fileserver.virtual()
+
+        # attach it
+        self.pfs = pfs
 
         # all done
         return
@@ -70,6 +79,45 @@ class Director(pyre.actor):
         executive.application = weakref.proxy(app)
         # and return it
         return app
+
+
+    # implementation details
+    def pyre_mountApplicationFolders(self, prefix):
+        """
+        Build the private filesystem
+        """
+        # get the file server
+        vfs = self.pyre_fileserver
+        # get/create the top level of my private namespace
+        pfs = vfs.getFolder(prefix)
+
+        # check whether 
+        try:
+            # the user directory is already mounted
+            pfs['user']
+        # if not
+        except pfs.NotFoundError:
+            # make it
+            pfs['user'] = vfs.getFolder(vfs.USER_DIR,  prefix)
+
+        # now, let's hunt down the application specific configurations
+        # my installation directory is the parent folder of my home
+        installdir = os.path.abspath(os.path.join(os.path.pardir, self.home))
+        # get the associated filesystem
+        home = vfs.retrieveFilesystem(root=installdir)
+        # look for
+        try:
+            # the folder with my configurations
+            cfgdir = home['defaults/{}'.format(prefix)]
+        # if it is not there
+        except vfs.NotFoundError:
+            # make an empty folder
+            cfgdir = home.folder()
+        # attach it
+        pfs['system'] = cfgdir
+
+        # all done
+        return pfs
 
 
 # end of file 
