@@ -10,11 +10,11 @@
 import sys
 # superclasses
 from .Schema import Schema
-from ..framework.Client import Client
+from ..framework.Dashboard import Dashboard
 
 
 # declaration
-class InputStream(Schema, Client):
+class InputStream(Schema, Dashboard):
     """
     A representation of input streams
     """

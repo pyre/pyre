@@ -7,11 +7,11 @@
 
 
 # superclass
-from ..framework.Client import Client
+from ..framework.Dashboard import Dashboard
 
 
 # declaration
-class Inventory(dict, Client):
+class Inventory(dict, Dashboard):
     """
     Base class for the state storage strategies for component classes and instances
     """

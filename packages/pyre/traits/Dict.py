@@ -195,12 +195,12 @@ class Dict(Slotted):
 # externals
 # superclasses
 import collections
-from ..framework.Client import Client
+from ..framework.Dashboard import Dashboard
 from .. import tracking
 
 
 # the helper container classes
-class Map(collections.abc.MutableMapping, Client):
+class Map(collections.abc.MutableMapping, Dashboard):
     """
     The base class for the storage helpers
     """

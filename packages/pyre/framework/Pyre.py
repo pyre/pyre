@@ -81,30 +81,30 @@ class Pyre(Executive):
         super().__init__(**kwds)
 
         # get storage for the framework manager proxies
-        from .Client import Client as client
+        from .Dashboard import Dashboard as dashboard
 
         # attach me
-        client.pyre_executive = weakref.proxy(self)
+        dashboard.pyre_executive = weakref.proxy(self)
 
         # build my nameserver
         self.nameserver = self.newNameServer()
         # attach
-        client.pyre_nameserver = weakref.proxy(self.nameserver)
+        dashboard.pyre_nameserver = weakref.proxy(self.nameserver)
 
         # my fileserver
         self.fileserver = self.newFileServer(executive=self)
         # attach
-        client.pyre_fileserver = weakref.proxy(self.fileserver)
+        dashboard.pyre_fileserver = weakref.proxy(self.fileserver)
 
         # component bookkeeping
         self.registrar = self.newComponentRegistrar()
         # attach
-        client.pyre_registrar = weakref.proxy(self.registrar)
+        dashboard.pyre_registrar = weakref.proxy(self.registrar)
 
         # handler of configuration events
         self.configurator = self.newConfigurator(executive=self)
         # attach
-        client.pyre_configurator = weakref.proxy(self.configurator)
+        dashboard.pyre_configurator = weakref.proxy(self.configurator)
 
         # component linker
         self.linker = self.newLinker()
@@ -114,7 +114,7 @@ class Pyre(Executive):
         # the manager of external tools and libraries
         self.externals = self.newExternalsManager()
         # attach
-        client.pyre_externals = weakref.proxy(self.externals)
+        dashboard.pyre_externals = weakref.proxy(self.externals)
 
         # all done
         return

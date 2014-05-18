@@ -11,12 +11,11 @@ from .. import calc
 # access to the locators
 from .. import tracking
 # the framework client mix-in
-from .Client import Client
-
+from .Dashboard import Dashboard
 
 
 # class declaration
-class Slot(Client, metaclass=calc.calculator):
+class Slot(Dashboard, metaclass=calc.calculator):
     """
     This class provides centralized access to the values of all configurables
 

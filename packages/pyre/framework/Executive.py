@@ -517,11 +517,11 @@ class Executive:
         Turn on the executive
         """
         # get the client base class
-        from .Client import Client as client
+        from .Dashboard import Dashboard as dashboard
 
         # build weak references to the managers of the runtime environment
-        client.pyre_host = weakref.proxy(self.host)
-        client.pyre_user = weakref.proxy(self.user)
+        dashboard.pyre_host = weakref.proxy(self.host)
+        dashboard.pyre_user = weakref.proxy(self.user)
 
         # all done
         return self

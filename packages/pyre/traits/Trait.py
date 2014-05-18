@@ -8,11 +8,11 @@
 
 # superclasses
 from ..descriptors import stem # for types and algebra
-from ..framework.Client import Client # access to the framework managers
+from ..framework.Dashboard import Dashboard # access to the framework managers
 
 
 # declaration
-class Trait(stem.variable, Client):
+class Trait(stem.variable, Dashboard):
     """
     This is the base class for component features that form their public interface
 

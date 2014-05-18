@@ -20,7 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    Client.py \
+    Dashboard.py \
     Environ.py \
     Executive.py \
     Externals.py \

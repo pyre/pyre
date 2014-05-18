@@ -6,12 +6,8 @@
 #
 
 
-# externals
-import weakref
-
-
 # declaration
-class Client:
+class Dashboard:
     """
     Mix-in class that provides access to the pyre executive and its managers
     """
