@@ -51,8 +51,14 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         Collect information about the CPU resources on this host
         """
         # on darwin, we get this information from an extension
-        from pyre.extensions import host
-        # easy enough
+        try:
+            # we get this information from an extension
+            from pyre.extensions import host
+        # which may not be accessible, e.g. if pyre is executed from within a zipfile
+        except ImportError:
+            # revert to defaults
+            return 1,1
+        # otherwise, return the information given by OSX
         return host.physicalMax(), host.logicalMax()
 
 
