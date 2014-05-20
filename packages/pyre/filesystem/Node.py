@@ -80,6 +80,15 @@ class Node(metaclass=_metaclass_Node):
         return separator.join(fragments)
 
 
+    @classmethod
+    def split(cls, path, separator=None):
+        """
+        Take {path} apart using {separator} and return a sequence of the fragments
+        """
+        # take {path} apart while removing blank fragments
+        return filter(None, path.split(separator if separator is not None else cls.separator))
+
+
     def open(self, **kwds):
         """
         Access the contents of the physical resource with which I am associated

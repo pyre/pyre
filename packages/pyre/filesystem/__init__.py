@@ -153,9 +153,18 @@ from .exceptions import MountPointError
 # utilities
 def join(*fragments):
     """
+    Splice {fragments} together to build a path
     """
     from .Node import Node
     return Node.join(*fragments)
+
+
+def split(path):
+    """
+    Convert {path} into a sequence of fragments
+    """
+    from .Node import Node
+    return Node.split(path)
 
 
 # debugging support: 
