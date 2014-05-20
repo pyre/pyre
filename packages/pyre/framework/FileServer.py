@@ -54,12 +54,12 @@ class FileServer(Filesystem):
         """
         Return the sequence of uris of the {pyre} system folders
         """
-        # first the packages folder
-        yield self.PACKAGES_DIR
+        # first the startup folder
+        yield self.STARTUP_DIR
         # next the user folder
         yield self.USER_DIR
-        # finally the startup folder
-        yield self.STARTUP_DIR
+        # finally the packages folder
+        yield self.PACKAGES_DIR
         # all done
         return
 

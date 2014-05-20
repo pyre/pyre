@@ -105,7 +105,7 @@ class Executive:
         # and the configurator
         cfg = self.configurator
         # form all possible combinations of filename fragments for the configuration sources
-        scope = itertools.product(cfg.configpath, [stem], cfg.encodings())
+        scope = itertools.product(reversed(cfg.configpath), [stem], cfg.encodings())
         # look for each one
         for root, filename, extension in scope:
             # build the uri
