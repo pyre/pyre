@@ -112,4 +112,21 @@ class FacilitySpecificationError(ComponentError):
         return
 
 
+class ResolutionError(ComponentError):
+    """
+    Exception raised when a protocol cannot resolve a string into a component
+    """
+
+    def __init__(self, protocol, value, **kwds):
+        # build a description
+        reason = '{.protocol} could not resolve {.value} into a component'
+        # chain up
+        super().__init__(description=reason, **kwds)
+        # store my context
+        self.protocol = protocol
+        self.value = value
+        # all done
+        return
+
+
 # end of file 

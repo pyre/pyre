@@ -38,31 +38,31 @@ class Component(Schema):
         # first, give {value} a try
         if isinstance(value, actor) or isinstance(value, component): return value
 
-        # the only remaining case that i can handle is {value} being a string;
+        # the only remaining case that i can handle is {value} being a string; if it's not
         if not isinstance(value, str):
             # build an error message
             msg = 'could not convert {0.value} into a component'
-            # and complain, if necessary
+            # and complain
             raise self.CastingError(value=value, description=msg) from None
             
-        # ok, we have a string; convert it to a uri; if the conversion is not successful, the
-        # {uri} schema will complain
+        # ok, we have a string; ask the protocol
+        try:
+            # to have a pass at resolving the uri into a compatible component; this handles
+            # both uris that point to a retrievable component and uris that point to existing
+            # instances known to the executive
+            return protocol.pyre_resolveSpecification(spec=value, **kwds)
+        # if that fails
+        except protocol.ResolutionError:
+            # no worries; more to try
+            pass
+        
+        # convert the {value} into a uri; if the conversion is not successful, the {uri} schema
+        # will complain
         uri = self.uri().coerce(value)
         # extract the fragment, which we use as the instance name; it's ok if it's {None}
         instanceName = uri.fragment
         # extract the address, which we use as the component specification; it's ok if it's {None}
         componentSpec = uri.address
-        
-        # get the executive
-        executive = protocol.pyre_executive
-        # and ask it to resolve {value} into component candidates; this will handle correctly
-        # uris that resolve to a retrievable component, as well as uris that mention an
-        # existing instance
-        for candidate in executive.resolve(uri=uri, client=self, **kwds):
-            # if it is compatible with my protocol
-            if candidate.pyre_isCompatible(protocol):
-                # we are done
-                return candidate
         # if we have an instance name but no component specification
         if instanceName and not componentSpec:
             # get my default

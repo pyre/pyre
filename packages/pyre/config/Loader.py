@@ -19,10 +19,10 @@ class Loader:
 
     # interface
     @classmethod
-    def locateSymbol(cls, executive, uri, client, **kwds):
+    def locateSymbol(cls, executive, uri, protocol, **kwds):
         """
         Locate and load the symbol that corresponds to the given {uri}; if {uri} is not
-        sufficiently qualified to point to a unique location, use {client} to form candidates
+        sufficiently qualified to point to a unique location, use {protocol} to form candidates
         until one of them results in a loadable shelf that can resolve the specification
         """
         # we split the address part of the {uri} into a {package} and a {symbol}. The {symbol}
@@ -38,11 +38,11 @@ class Loader:
             package, symbol = uri.address.rsplit(cls.separator, 1)
         # if that fails
         except ValueError:
-            # if there is no client, we are done
-            if not client: return
+            # if there is no protocol, we are done
+            if not protocol: return
             # use the address itself as the symbol
             symbol = uri.address
-            # the package will be filled out using the client family
+            # the package will be filled out using the protocol family
             package = ''
 
         # convert the package specification into a uri
@@ -51,7 +51,7 @@ class Loader:
         # look for matching shelves; the {uri} may match more than shelf, so try them all until
         # we find one that contains our target {symbol}
         for shelf in cls.loadShelves(executive=executive,
-                                     client=client, uri=package, symbol=symbol,
+                                     protocol=protocol, uri=package, symbol=symbol,
                                      **kwds):
             # got one; attempt to
             try:
@@ -64,8 +64,8 @@ class Loader:
             # otherwise, success!
             yield descriptor
 
-        # if there is no client to help out, give up
-        if not client: return
+        # if there is no protocol to help out, give up
+        if not protocol: return
 
         # now, for my next trick: attempt to interpret the symbol itself as a shelf
         try:
@@ -77,8 +77,6 @@ class Loader:
             pass
         # if loading succeeds
         else:
-            # ask the client for the implementation protocol
-            protocol = client.protocol
             # look through its implementors
             for implementor in executive.registrar.implementors[protocol]:
                 # get its package
@@ -91,16 +89,16 @@ class Loader:
 
 
     @classmethod
-    def loadShelves(cls, executive, client, uri, symbol, **kwds):
+    def loadShelves(cls, executive, protocol, uri, symbol, **kwds):
         """
         Locate and load shelves for the given {uri}; if the {uri} is not sufficiently qualified
-        to point to a unique location, use {client} to form plausible candidates.
+        to point to a unique location, use {protocol} to form plausible candidates.
         """
         # access the linker
         linker = executive.linker
-        # use {client} to build a sequence of candidate locations
+        # use {protocol} to build a sequence of candidate locations
         candidates = cls.locateShelves(
-            executive=executive, client=client, uri=uri, symbol=symbol, **kwds)
+            executive=executive, protocol=protocol, uri=uri, symbol=symbol, **kwds)
         # go through each of them
         for uri in candidates:
             # print("Loader.loadShelves: uri={.uri!r}".format(uri))

@@ -117,7 +117,7 @@ class Executive:
         return
 
 
-    def resolve(self, uri, client=None, **kwds):
+    def resolve(self, uri, protocol=None, **kwds):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
 
@@ -201,7 +201,7 @@ class Executive:
         from ..components.Component import Component as component
 
         # the easy things didn't work out; look for matching descriptors
-        for candidate in self.retrieveComponentDescriptor(uri=uri, client=client, **kwds):
+        for candidate in self.retrieveComponentDescriptor(uri=uri, protocol=protocol, **kwds):
             # if the candidate is neither a component class nor a component instance
             if not (isinstance(candidate, actor) or isinstance(candidate, component)):
                 # it must be a callable the returns one
@@ -231,7 +231,7 @@ class Executive:
         return
 
 
-    def retrieveComponentDescriptor(self, uri, client, **kwds):
+    def retrieveComponentDescriptor(self, uri, protocol, **kwds):
         """
         The component resolution workhorse
         """
@@ -255,10 +255,10 @@ class Executive:
                 except nameserver.UnresolvedNodeError:
                     # no worries
                     pass
-            # try splicing the family name of the {client} with the given address
-            if client:
+            # try splicing the family name of the {protocol} with the given address
+            if protocol:
                 # build the new address
-                extended = nameserver.join(client.protocol.pyre_family(), address)
+                extended = nameserver.join(protocol.pyre_family(), address)
                 # does the nameserver recognize it?
                 if extended in nameserver:
                     # look it up
@@ -271,7 +271,7 @@ class Executive:
                         pass
 
         # ask the linker to find descriptors
-        yield from self.linker.resolve(executive=self, client=client, uri=uri, **kwds)
+        yield from self.linker.resolve(executive=self, protocol=protocol, uri=uri, **kwds)
 
         # all done
         return

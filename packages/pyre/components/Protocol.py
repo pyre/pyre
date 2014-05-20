@@ -24,6 +24,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # types
     from ..schemata import uri
+    from .exceptions import ResolutionError
     from .Actor import Actor as actor
     from .Component import Component as component
 
@@ -86,7 +87,28 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # support for framework requests
     @classmethod
-    def pyre_find(cls, uri, symbol, searchpath=None, **kwds):
+    def pyre_resolveSpecification(cls, spec, **kwds):
+        """
+        Attempt to resolve {spec} into a component that implements me; {spec} is
+        assumed to be a string
+        """
+        # get the executive
+        executive = cls.pyre_executive
+        # and ask it to resolve {value} into component candidates; this will handle correctly
+        # uris that resolve to a retrievable component, as well as uris that mention an
+        # existing instance
+        for candidate in executive.resolve(uri=spec, protocol=cls, **kwds):
+            # if it is compatible with my protocol
+            if candidate.pyre_isCompatible(cls):
+                # we are done
+                return candidate
+
+        # if we get this far, i just couldn't pull it off
+        raise cls.ResolutionError(protocol=cls, value=spec)
+
+
+    @classmethod
+    def pyre_formCandidates(cls, uri, symbol, searchpath=None, **kwds):
         """
         Participate in the search for shelves consistent with {uri}
         """

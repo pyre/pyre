@@ -40,7 +40,7 @@ class Linker:
         return codec.load(executive=executive, uri=uri)
         
 
-    def resolve(self, executive, client, uri, **kwds):
+    def resolve(self, executive, protocol, uri, **kwds):
         """
         Attempt to locate the component class specified by {uri}
         """
@@ -66,7 +66,8 @@ class Linker:
             candidate.scheme = scheme
 
             # the codec is able to provide a sequence of matching symbols
-            yield from codec.locateSymbol(executive=executive, client=client, uri=candidate, **kwds)
+            yield from codec.locateSymbol(
+                executive=executive, protocol=protocol, uri=candidate, **kwds)
 
         # out of ideas
         return 

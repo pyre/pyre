@@ -79,7 +79,7 @@ class Importer(Loader):
 
 
     @classmethod
-    def locateShelves(cls, client, uri, **kwds):
+    def locateShelves(cls, protocol, uri, **kwds):
         """
         Locate candidate shelves for the given {uri}
         """
@@ -93,7 +93,7 @@ class Importer(Loader):
         # otherwise
         else:
             # let the package be the protocol family name
-            package = client.protocol.pyre_family()
+            package = protocol.pyre_family()
         # while there is still something left
         while True:
             # set the address portion of the {uri} to the new package
