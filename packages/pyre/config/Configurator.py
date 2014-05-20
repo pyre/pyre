@@ -37,12 +37,8 @@ class Configurator:
         """
         Return an iterable over my configuration path
         """
-        # get the nameserver
-        nameserver = self.executive.nameserver
-        # get my path list and return an iterable over it
-        yield from nameserver['pyre.configpath']
-        # all done
-        return
+        # the nameserver knows...
+        return self.executive.nameserver.configpath
 
 
     # interface

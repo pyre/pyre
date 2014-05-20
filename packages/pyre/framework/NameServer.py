@@ -30,6 +30,16 @@ class NameServer(Hierarchical):
     from .Priority import Priority as priority
 
 
+    # public data
+    @property
+    def configpath(self):
+        """
+        Return an iterable over my configuration path
+        """
+        # the answer is in my store
+        return self['pyre.configpath']
+
+
     # framework object management 
     def configurable(self, name, configurable, locator, priority=None):
         """
