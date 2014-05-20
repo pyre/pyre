@@ -228,6 +228,14 @@ class Hierarchical(SymbolTable):
         return self._metadata[key].name
 
 
+    def getSplitName(self, key):
+        """
+        Retrieve the sequence of fragments in the name of the node registered under {key}
+        """
+        # look it up in my info map
+        return self._metadata[key].split
+
+
     def retrieve(self, name):
         """
         Retrieve the node registered under {name}. If no such node exists, an error marker will
