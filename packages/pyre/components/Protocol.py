@@ -123,10 +123,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Participate in the search for shelves consistent with {uri}
         """
-        # print("Protocol.pyre_formCandidates:")
-        # print("    uri: {.uri!r}".format(uri))
-        # print("    symbol: {}".format(symbol))
-        # print("    searchpath: {}".format(searchpath))
+        print("Protocol.pyre_formCandidates:")
+        print("    uri: {.uri!r}".format(uri))
+        print("    symbol: {}".format(symbol))
+        print("    searchpath: {}".format(searchpath))
         # print("    kwds: {}".format(kwds))
         # get my resolver
         resolver = cls.pyre_contextResolver()
@@ -144,9 +144,11 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
         # with all possible combinations of these three sequences
         for prefix, folder, spec, container in product:
-            # print('{} {!r} {!r} {!r}'.format(prefix, folder, spec, container))
-            # assemble the address portion of the uri
-            path = resolver.join(prefix.address, folder, spec, container)
+            # print('{} : {!r} : {!r} : {!r}'.format(prefix, folder, spec, container))
+            # assemble the address portion of the uri; we are only looking for files, so it's
+            # ok to hardwire the extension
+            path = resolver.join(prefix.address, folder, spec, container) + cls.EXTENSION
+            print('trying {!r}'.format(path))
             # build a better uri
             uri = cls.uri.locator(scheme=prefix.scheme, address=path)
             # and yield it
@@ -215,17 +217,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             # all done
             return
 
-        # get my resolver
-        resolver = cls.pyre_contextResolver()
-        # split the address
-        path = tuple(resolver.split(address))
-
-        # build a progressively shorter sequence of portions of my family name
-        for marker in reversed(range(0, len(path)+1)):
-            # splice it together and return it
-            yield resolver.join(*path[:marker])
-
-        # all done
+        # otherwise, return the address
+        yield address
+        # do not attempt to transform this in any other way; it is conceptually wrong to ignore
+        # an explicit specification provided by the user....
         return
 
 
@@ -234,13 +229,16 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Build a sequence of symbol containers to try
         """
-        # first an empty string, which corresponds to (??)
-        # MGA: skipping this does not seem possible; i must understand how this gets used
+        # first, involve the {symbol} in the uri search
+        yield symbol
+        # if that didn't work, let's see whether the 'parent' is not a folder but a container
         yield ''
-        # now, make up a python filename out of the symbol name
-        yield '{}.py'.format(symbol)
         # out of ideas
         return
+
+
+    # constants
+    EXTENSION = '.py'
 
 
 # end of file 
