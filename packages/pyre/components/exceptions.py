@@ -119,7 +119,7 @@ class ResolutionError(ComponentError):
 
     def __init__(self, protocol, value, **kwds):
         # build a description
-        reason = '{.protocol} could not resolve {.value} into a component'
+        reason = '{0.protocol} could not resolve {0.value!r} into a component'
         # chain up
         super().__init__(description=reason, **kwds)
         # store my context
