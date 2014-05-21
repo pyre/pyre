@@ -45,7 +45,7 @@ class Linker:
         Attempt to locate the component class specified by {uri}
         """
         # what should we try?
-        schemes = [uri.scheme] if uri.scheme else ['vfs', 'import']
+        schemes = [uri.scheme] if uri.scheme else self.SCHEMES
 
         # for each loading strategy
         for scheme in schemes:
@@ -102,6 +102,10 @@ class Linker:
 
         # all done
         return index
+
+
+    # constants
+    SCHEMES = [ 'vfs', 'import' ]
         
         
 # end of file 
