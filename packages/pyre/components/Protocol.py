@@ -123,10 +123,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Participate in the search for shelves consistent with {uri}
         """
-        print("Protocol.pyre_formCandidates:")
-        print("    uri: {.uri!r}".format(uri))
-        print("    symbol: {}".format(symbol))
-        print("    searchpath: {}".format(searchpath))
+        # print("Protocol.pyre_formCandidates:")
+        # print("    uri: {.uri!r}".format(uri))
+        # print("    symbol: {}".format(symbol))
+        # print("    searchpath: {}".format(searchpath))
         # print("    kwds: {}".format(kwds))
         # get my resolver
         resolver = cls.pyre_contextResolver()
@@ -148,7 +148,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             # assemble the address portion of the uri; we are only looking for files, so it's
             # ok to hardwire the extension
             path = resolver.join(prefix.address, folder, spec, container) + cls.EXTENSION
-            print('trying {!r}'.format(path))
+            # print('trying {!r}'.format(path))
             # build a better uri
             uri = cls.uri.locator(scheme=prefix.scheme, address=path)
             # and yield it
