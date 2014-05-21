@@ -39,17 +39,8 @@ class Director(pyre.actor):
             if package:
                 # use its name as my prefix
                 prefix = package.name
-        # if i now have a prefix
-        if prefix:
-            # populate and mount the private filesystem; 
-            pfs = self.pyre_mountApplicationFolders(prefix)
-        # otherwise
-        else:
-            # make an empty one
-            pfs = self.pyre_fileserver.virtual()
-
         # attach it
-        self.pfs = pfs
+        self.pyre_prefix = prefix
 
         # all done
         return
@@ -79,45 +70,6 @@ class Director(pyre.actor):
         executive.application = weakref.proxy(app)
         # and return it
         return app
-
-
-    # implementation details
-    def pyre_mountApplicationFolders(self, prefix):
-        """
-        Build the private filesystem
-        """
-        # get the file server
-        vfs = self.pyre_fileserver
-        # get/create the top level of my private namespace
-        pfs = vfs.getFolder(prefix)
-
-        # check whether 
-        try:
-            # the user directory is already mounted
-            pfs['user']
-        # if not
-        except pfs.NotFoundError:
-            # make it
-            pfs['user'] = vfs.getFolder(vfs.USER_DIR,  prefix)
-
-        # now, let's hunt down the application specific configurations
-        # my installation directory is the parent folder of my home
-        installdir = os.path.abspath(os.path.join(os.path.pardir, self.home))
-        # get the associated filesystem
-        home = vfs.retrieveFilesystem(root=installdir)
-        # look for
-        try:
-            # the folder with my configurations
-            cfgdir = home['defaults/{}'.format(prefix)]
-        # if it is not there
-        except vfs.NotFoundError:
-            # make an empty folder
-            cfgdir = home.folder()
-        # attach it
-        pfs['system'] = cfgdir
-
-        # all done
-        return pfs
 
 
 # end of file 

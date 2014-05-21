@@ -121,6 +121,8 @@ class Application(pyre.component, metaclass=Director):
         # chain up
         super().__init__(name=name, **kwds)
 
+        # mount my folders
+        self.pfs = self.pyre_mountApplicationFolders()
         # go through my requirements and build my dependency map
         self.dependencies = self.pyre_resolveDependencies()
 
@@ -151,59 +153,48 @@ class Application(pyre.component, metaclass=Director):
 
 
     # initialization hooks
-    def pyre_mountVirtualFilesystem(self, namespace):
+    def pyre_mountApplicationFolders(self):
         """
-        Gather all standard directories that are relevant for this application into its own
-        private namespace and register it with the executive file server
+        Build the private filesystem
         """
-        # grab the fileserver
-        vfs = self.vfs
+        # get the file server
+        vfs = self.pyre_fileserver
+        # get the prefix
+        prefix = self.pyre_prefix
+        # if i don't have a prefix
+        if not prefix:
+            # make an empty virtual filesystem and return it
+            return vfs.virtual()
         # get/create the top level of my private namespace
-        pfs = vfs.getFolder(namespace)
-        return pfs
-            
+        pfs = vfs.getFolder(prefix)
 
-        # build the top level folder for my stuff
-        pfs = self.vfs.folder()
-        # mount it at the right place
-        self.vfs[root] = pfs
-
-        # mount the system folder
-        folder = 'system'
-        pfs[folder] = self.pyre_findFolder(folder=folder, tag=root)
-        
-        # mount the user folder
-        folder = 'user'
-        pfs[folder] = self.pyre_findFolder(folder=folder, tag=root)
-        
-        # and return my private folder
-        return pfs
-
-
-    def pyre_findFolder(self, folder, tag):
-        """
-        Look through the standard configuration folders for {folder}/{tag}; if the folder does
-        not exist, create and mount an empty one.
-
-        The variable {folder} is typically either "system" or "user", although additional
-        folders may be explored by default in a future release.
-
-        Mounting an empty folder is a consistency guarantee: applications can access the folder
-        and retrieve its contents without first having to test for its existence
-        """
-        # cache the file server
-        vfs = self.vfs
-        # build the target name
-        path = vfs.join(folder, tag)
-        # look for it 
+        # check whether 
         try:
-            target = vfs[path]
-        # if not there
+            # the user directory is already mounted
+            pfs['user']
+        # if not
+        except pfs.NotFoundError:
+            # make it
+            pfs['user'] = vfs.getFolder(vfs.USER_DIR,  prefix)
+
+        # now, let's hunt down the application specific configurations
+        # my installation directory is the parent folder of my home
+        installdir = os.path.abspath(os.path.join(os.path.pardir, self.home))
+        # get the associated filesystem
+        home = vfs.retrieveFilesystem(root=installdir)
+        # look for
+        try:
+            # the folder with my configurations
+            cfgdir = home['defaults/{}'.format(prefix)]
+        # if it is not there
         except vfs.NotFoundError:
-            # create an empty folder and return it
-            return vfs.folder()
-        # if it is there, fill it up with its contents and return it
-        return target.discover()
+            # make an empty folder
+            cfgdir = home.folder()
+        # attach it
+        pfs['system'] = cfgdir
+
+        # all done
+        return pfs
 
 
     def pyre_resolveDependencies(self):
@@ -226,5 +217,6 @@ class Application(pyre.component, metaclass=Director):
 
         # all done
         return dependencies
+
 
 # end of file 

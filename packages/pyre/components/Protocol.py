@@ -123,6 +123,11 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Participate in the search for shelves consistent with {uri}
         """
+        # print("Protocol.pyre_formCandidates:")
+        # print("    uri: {.uri!r}".format(uri))
+        # print("    symbol: {}".format(symbol))
+        # print("    searchpath: {}".format(searchpath))
+        # print("    kwds: {}".format(kwds))
         # get my resolver
         resolver = cls.pyre_contextResolver()
         # if no {searchpath} is supplied, use my default

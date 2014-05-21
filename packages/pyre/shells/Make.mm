@@ -20,14 +20,18 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     ANSI.py \
+    Action.py \
     Application.py \
+    Command.py \
     Daemon.py \
     Director.py \
     Executive.py \
     Fork.py \
     Plain.py \
+    Plector.py \
     Plexus.py \
     Renderer.py \
+    Repertoir.py \
     Script.py \
     Shell.py \
     Terminal.py \

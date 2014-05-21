@@ -34,8 +34,12 @@ running concurrent applications using {MPI}.
 """
 
 
-# the protocol
+# the protocols
 from .Shell import Shell as shell
+from .Command import Command as command
+
+# command implementation
+from .Action import Action as action
 
 # the hosting strategies
 from .Script import Script as script
@@ -47,11 +51,9 @@ from .Terminal import Terminal as terminal
 from .ANSI import ANSI as ansi
 from .Plain import Plain as plain
 
-
 # the base application component
 from .Application import Application as application
 from .Plexus import Plexus as plexus
-
 
 # the user component
 from .User import User as user
