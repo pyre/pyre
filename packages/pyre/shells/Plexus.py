@@ -44,15 +44,30 @@ class Plexus(Application, metaclass=Plector):
         argv = self.argv
         # attempt
         try:
-            # to grab the first one and interpret it as an action
-            self.pyre_action = next(argv)
+            # get the name of the command
+            name = next(argv)
         # if there aren't any
         except StopIteration:
             # the user needs help
             return self.help()
-        
-        # invoke the action
-        return self.pyre_action(plexus=self, argv=argv)
+
+        # get my action protocol
+        action = self.pyre_action
+        # attempt to
+        try:
+            # coerce it into an actual command component
+            component = action.pyre_resolveSpecification(spec=name)
+        # if this failed
+        except action.ResolutionError as error:
+            # report it
+            self.error.log('could not locate action {!r}'.format(name))
+            # indicate failure
+            return 1
+
+        # otherwise, instantiate it
+        command = component(name=name)
+        # and invoke it
+        return command(plexus=self, argv=argv)
 
 
 # end of file

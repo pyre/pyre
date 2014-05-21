@@ -38,8 +38,8 @@ class Command(pyre.component, implements=Action):
         """
         Provide help with invoking this action
         """
-        # just print a message
-        self.info.log('help: missing implementation')
+        # by default, just dump my docstring
+        for line in self.__doc__: print(line.strip())
         # and indicate success
         return 0
 

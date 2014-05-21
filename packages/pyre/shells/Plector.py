@@ -18,6 +18,18 @@ class Plector(Director):
 
 
     def __new__(cls, name, bases, attributes, action=None, **kwds):
+        # chain up
+        record = super().__new__(cls, name, bases, attributes, **kwds)
+        # if an {action} protocol is provided
+        if action:
+            # instantiate it to get a descrptor and attach it to the record; doing this after
+            # record instantiation bypasses {action} being recorded as a trait and makes it a
+            # regular class variable
+            record.pyre_action = action
+        # all done
+        return record
+
+        # the following is the implementation necessary to turn {action} into an actual trait
         # if an {action} protocol is provided
         if action:
             # add it to the attributes so my superclass can turn it into a trait
