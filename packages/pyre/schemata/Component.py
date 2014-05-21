@@ -73,7 +73,7 @@ class Component(Schema):
             return candidate
           
         # out of ideas; build an error message
-        msg = 'could not convert {0.value} into a component'
+        msg = 'could not convert {0.value!r} into a component'
         # and complain, if necessary
         raise self.CastingError(value=value, description=msg) from None
 
