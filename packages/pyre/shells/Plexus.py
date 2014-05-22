@@ -12,6 +12,8 @@ import pyre
 from .Application import Application
 # metaclass
 from .Plector import Plector
+# for my parts
+from .Repertoir import Repertoir
 
 
 # class declaration
@@ -68,6 +70,20 @@ class Plexus(Application, metaclass=Plector):
         command = component(name=name, globalAliases=True)
         # and invoke it
         return command(plexus=self, argv=argv)
+
+
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # build my repertoir
+        self.repertoir = Repertoir(protocol=self.pyre_action)
+        # all done
+        return
+
+
+    # implementation details
+    repertoir = None
 
 
 # end of file

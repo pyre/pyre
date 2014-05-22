@@ -11,10 +11,25 @@ import pyre
 
 
 # class declaration
-class Repertoir(pyre.component):
+class Repertoir:
     """
-    A component that discovers and manages the collection of installed actions
+    The manager of the collection of installed actions
     """
 
+
+    # meta-methods
+    def __init__(self, protocol, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the protocol
+        self.protocol = protocol
+        # all done
+        return
+
+
+    # implementation details
+    # data
+    protocol = None
+        
 
 # end of file 
