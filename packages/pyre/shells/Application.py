@@ -179,7 +179,7 @@ class Application(pyre.component, metaclass=Director):
 
         # now, let's hunt down the application specific configurations
         # my installation directory is the parent folder of my home
-        installdir = os.path.abspath(os.path.join(os.path.pardir, self.home))
+        installdir = os.path.abspath(os.path.join(self.home, os.path.pardir))
         # get the associated filesystem
         home = vfs.retrieveFilesystem(root=installdir)
         # look for
@@ -188,8 +188,8 @@ class Application(pyre.component, metaclass=Director):
             cfgdir = home['defaults/{}'.format(prefix)]
         # if it is not there
         except vfs.NotFoundError:
-            # make an empty folder
-            cfgdir = home.folder()
+            # make an empty folder; must use {pfs} to do this to guarantee filesystem consistency
+            cfgdir = pfs.folder()
         # attach it
         pfs['system'] = cfgdir
 
