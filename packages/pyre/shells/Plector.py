@@ -22,7 +22,7 @@ class Plector(Director):
         record = super().__new__(cls, name, bases, attributes, **kwds)
         # if an {action} protocol is provided
         if action:
-            # instantiate it to get a descrptor and attach it to the record; doing this after
+            # instantiate it to get a descriptor and attach it to the record; doing this after
             # record instantiation bypasses {action} being recorded as a trait and makes it a
             # regular class variable
             record.pyre_action = action

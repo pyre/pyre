@@ -65,7 +65,7 @@ class Plexus(Application, metaclass=Plector):
             return 1
 
         # otherwise, instantiate it
-        command = component(name=name)
+        command = component(name=name, globalAliases=True)
         # and invoke it
         return command(plexus=self, argv=argv)
 
