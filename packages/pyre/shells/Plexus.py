@@ -12,8 +12,6 @@ import pyre
 from .Application import Application
 # metaclass
 from .Plector import Plector
-# for my parts
-from .Repertoir import Repertoir
 
 
 # class declaration
@@ -53,22 +51,20 @@ class Plexus(Application, metaclass=Plector):
             # the user needs help
             return self.help()
 
-        # get my action protocol
-        action = self.pyre_action
+        # get the manager of actions
+        repertoir = self.repertoir
         # attempt to
         try:
-            # coerce it into an actual command component
-            component = action.pyre_resolveSpecification(spec=name)
+            # resolve the name into an actual command component
+            command = repertoir.find(name=name)
         # if this failed
-        except action.ResolutionError as error:
+        except repertoir.ResolutionError as error:
             # report it
             self.error.log('could not locate action {!r}'.format(name))
             # indicate failure
             return 1
 
-        # otherwise, instantiate it
-        command = component(name=name, globalAliases=True)
-        # and invoke it
+        # otherwise, invoke it
         return command(plexus=self, argv=argv)
 
 
@@ -77,13 +73,25 @@ class Plexus(Application, metaclass=Plector):
         # chain up
         super().__init__(**kwds)
         # build my repertoir
-        self.repertoir = Repertoir(protocol=self.pyre_action)
+        self.repertoir = self.newRepertoir()
         # all done
         return
 
 
     # implementation details
+    # data
     repertoir = None
+
+
+    # hooks
+    def newRepertoir(self):
+        """
+        Factory for the manager of actions
+        """
+        # get the default implementation
+        from .Repertoir import Repertoir
+        # build one and return it
+        return Repertoir(protocol=self.pyre_action)
 
 
 # end of file

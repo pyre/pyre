@@ -17,6 +17,25 @@ class Repertoir:
     """
 
 
+    # types
+    from ..components.exceptions import ResolutionError
+
+
+    # interface
+    def find(self, name):
+        """
+        Attempt to locate and instantiate a command with the given {name}
+        """
+        # get the action protocol
+        action = self.protocol
+        # coerce the {name} into an actual command component
+        component = action.pyre_resolveSpecification(spec=name)
+        # instantiate it
+        command = component(name=name, globalAliases=True)
+        # and return it
+        return command
+
+
     # meta-methods
     def __init__(self, protocol, **kwds):
         # chain up
