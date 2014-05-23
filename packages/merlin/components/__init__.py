@@ -6,12 +6,14 @@
 #
 
 
-# load the framework
-from pyre import export, properties, protocol
 # the spell component
 from .Spell import Spell as spell
 # the locally enhanced component base class
 from .Component import Component as component
+# the singletons
+from .Dashboard import Dashboard as dashboard
+# the executive
+from .Merlin import Merlin as merlin
 
 
 # end of file 

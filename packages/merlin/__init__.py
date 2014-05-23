@@ -7,6 +7,7 @@
 
 
 """
+merlin is a package intended as a replacement to {make}
 """
 
 
@@ -123,41 +124,56 @@ _merlin_license = _merlin_header + """
     POSSIBILITY OF SUCH DAMAGE.
     """
 
-# the framework entities
-from .components import export, properties, component, protocol
-
 # bootstrapping
 def boot():
-    # check whether the user has indicated we should skip booting
+    # check whether
     try:
+        # the user
         import __main__
-        if __main__.merlin_noboot: return None
+        # has indicated we should skip booting
+        if __main__.merlin_noboot: 
+            # in which case, do not build an executive
+            return None
     # if anything goes wrong
     except:
         # just ignore it and carry on
         pass
 
+    # package registration
+    import pyre
+    # register the package
+    global package
+    package = pyre.executive.registerPackage(name='merlin', file=__file__)
+    # attach the geography
+    global home, prefix, defaults
+    home = package.home
+    prefix = package.prefix
+    defaults = package.defaults
+
     # externals
     import weakref
     # access the executive factory
-    from .components.Merlin import Merlin
+    from .components import merlin
     # build one and return it
-    executive = Merlin(name='merlin.executive')
-    # patch components with access to this executive
-    component.merlin = weakref.proxy(executive)
-    # patch the spell protocol
-    from .components.Spell import Spell
-    Spell.merlin = weakref.proxy(executive)
-    # patch spells with access to this executive
-    from .spells.Spell import Spell
-    Spell.merlin = weakref.proxy(executive)
-    # and return it
+    executive = merlin(name='merlin.executive')
+
+    # get the dashboard
+    from .components import dashboard
+    # attach the singletons
+    dashboard.merlin = weakref.proxy(executive)
+
+    # all done
     return executive
-    
+
+
+# the framework entities
+from pyre import export, properties, protocol
+from .components.Component import Component as component
 
 # factories
 # for spells
 from .spells.Spell import Spell as spell
+
 
 # convenience
 def error(message):
@@ -171,7 +187,6 @@ def error(message):
     # log and return
     return error.log(message)
 
-
 def warning(message):
     """
     Generate a warning
@@ -182,7 +197,6 @@ def warning(message):
     warning = journal.warning('merlin')
     # log and return
     return warning.log(message)
-        
 
 def info(message):
     """
@@ -196,6 +210,15 @@ def info(message):
     return info.log(message)
         
 
+# the package
+package = None
+# geography
+# the directory of the package
+home = None
+# the pathname of the installation
+prefix = None
+# the directory with the system defaults
+defaults = None
 # the singleton
 merlin = boot()
 

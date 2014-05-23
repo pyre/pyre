@@ -33,7 +33,7 @@ class Info(merlin.spell):
 
     # interface
     @merlin.export
-    def main(self, *args, **kwds):
+    def main(self, plexus, argv):
         """
         Print out information about a merlin project
         """
@@ -47,7 +47,7 @@ class Info(merlin.spell):
             # attempt to
             try:
                 # load the project metadata
-                project = self.merlin.curator.loadProject()
+                project = merlin.curator.loadProject()
             # if that fails
             except vfs.NotFoundError:
                 # no worries
@@ -63,7 +63,7 @@ class Info(merlin.spell):
         # user information
         if self.user or self.all:
             # access the user metadata
-            user = self.merlin.user
+            user = merlin.pyre_user
             # print
             self.info.line('user:')
             self.info.line('  name: {}'.format(user.name))
@@ -77,13 +77,13 @@ class Info(merlin.spell):
         # host information
         if self.host or self.all:
             # access the host metadata
-            host = self.merlin.host
+            host = merlin.pyre_host
             # print
             self.info.line('host:')
-            self.info.line('  name: {}'.format(host.name))
-            self.info.line('  system: {}'.format(host.system))
+            self.info.line('  name: {}'.format(host.hostname))
+            self.info.line('  platform: {}'.format(host.platform))
             self.info.line('  release: {}'.format(host.release))
-            self.info.log('  architecture: {}'.format(host.architecture))
+            self.info.log('  codename: {}'.format(host.codename))
 
         # asset information
         if self.assets or self.all:

@@ -7,7 +7,7 @@
 
 PROJECT = merlin
 PACKAGE = assets
-PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
+PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------

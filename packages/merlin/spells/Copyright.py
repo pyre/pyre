@@ -20,21 +20,12 @@ class Copyright(merlin.spell):
     # class interface
     # interface
     @merlin.export
-    def main(self, *args, **kwds):
+    def main(self, plexus, argv):
         """
         Print the copyright note of the merlin package
         """
         # invoke the package function
         merlin.copyright()
-        # all done
-        return
-
-
-    @merlin.export
-    def help(self, **kwds):
-        """
-        Generate the help screen associated with this spell
-        """
         # all done
         return
 

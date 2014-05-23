@@ -6,139 +6,96 @@
 #
 
 
-# access to the framework
+# externals
+import os
+# access the pyre framework
 import pyre
+# and my action protocol
+from .Spell import Spell as spell
 
 
-class Merlin(pyre.application, family='merlin.application'):
+# class declaration; merlin is a plexus app
+class Merlin(pyre.plexus, family='merlin.plexus', action=spell):
     """
-    The merlin executive
+    The merlin executive and application wrapper
     """
+
 
     # types
     # exceptions
     from .exceptions import MerlinError, SpellNotFoundError
 
-    # public data
-    searchpath = pyre.properties.list(
-        schema=pyre.properties.uri(),
-        default=['vfs:/merlin/project', 'vfs:/merlin/user', 'vfs:/merlin/system'])
 
+    # constants
+    METAFOLDER = '.merlin'
+    PATH = ['vfs:/merlin/project', 'vfs:/merlin/user', 'vfs:/merlin/system']
 
-    # my subcomponents; built at construction time
-    user = None # information about the current user
-    host = None # information about the host we are running on
-    curator = None # the manager of the project persistent store
-    spellbook = None # the manager of the installed spells
-    packages = None # the package manager
-
-    # public data
-    @property
-    def metafolder(self):
-        return '.' + self.pyre_prefix
+    # user configurable state
+    searchpath = pyre.properties.paths(default=PATH)
 
 
     # interface
-    @pyre.export
-    def main(self, *args, **kwds):
-        """
-        The main entry point for merlin
-        """
-        # get the commands from the configurator
-        commands = self.executive.configurator.commands
-        # show the default help screen if there was nothing useful on the command line
-        if not commands: return self.help()
-
-        # otherwise, the spell info is in the first entry
-        spell = commands[0]
-        # and the rest are the arguments to the main entry point of the spell
-        args = tuple(command.command for command in commands[1:])
-        
-        # cast the spell and return its exit status
-        return self.cast(name=spell.command, locator=spell.locator, args=args)
-
-
     @pyre.export
     def help(self, *topics):
         """
-        Access to the help system
+        Provide help on {topics}
         """
         # if not topics were specified
         if not topics:
-            # show the default usage message
+            # get the usage message from the packages
             from .. import usage
+            # invoke it
             usage()
-            return self
+            # indicate success
+            return 0
+
         # otherwise, invoke the help system
-        print("help:", topics)
-        return self
+        print('help:', topics)
+        # all done
+        return 0
 
 
-    # interface
-    def cast(self, name, locator, args=()):
-        """
-        Retrieve a spell by the given {name} and cast it
-        """
-        # try to
-        try:
-            # locate the spell
-            spell = self.spellbook.findSpell(name=name, locator=locator)
-        # if that failed
-        except self.SpellNotFoundError:
-            # complain
-            import journal
-            msg = "spell {!r} not found".format(name)
-            return journal.error('merlin').log(msg)
-
-        # otherwise, cast it
-        return spell.main(*args)
-
-
-    # support
-    def locateProjectRoot(self, folder=None):
-        """
-        Check whether {folder} is contained within a {merlin} project
-        """
-        # access to the path utilities
-        import os
-        # default to checking starting with the current directory
-        folder = os.path.abspath(folder) if folder else os.getcwd()
-        # loop until we reach the root of the filesystem
-        while folder != os.path.sep:
-            # form the path to the {.merlin} subdirectory
-            metadir = os.path.join(folder, self.metafolder)
-            # if it exists
-            if os.path.isdir(metadir):
-                # got it
-                return folder, metadir
-            # otherwise, split the path and try again
-            folder, _ = os.path.split(folder)
-        # if the loop exited normally, we ran up to the root without success; return
-        # empty-handed
-        return None, None
-
-
-    # schemata factories
+    # schema factories
     def newProject(self, name):
         """
         Create a new project description object
         """
         # access the class
-        from ..schemata.Project import Project
+        from ..schema.Project import Project
         # build the object
         project = Project(name=name)
         # and return it 
         return project
         
 
-    # application initialization hooks
-    def pyre_mountVirtualFilesystem(self, root):
+    # meta methods
+    def __init__(self, name, **kwds):
+        super().__init__(name=name, **kwds)
+
+        # the spell manager is built during the construction of superclass; local alias
+        self.spellbook = self.repertoir
+
+        # the curator
+        from .Curator import Curator
+        self.curator = Curator(name=name+".curator")
+
+        # the asset classifiers
+        from .PythonClassifier import PythonClassifier
+        self.assetClassifiers = [
+            PythonClassifier(name=name+'.python')
+            ]
+
+        # all done
+        return
+
+
+    # framework requests
+    def pyre_mountApplicationFolders(self):
         """
-        Mount the project directories by walking up from {cwd} to the directory that contains
-        the {.merlin} folder
+        Build my private filesystem
         """
-        # chain up to initialize my private area
-        pfs = super().pyre_mountVirtualFilesystem(root=root)
+        # chain up
+        pfs = super().pyre_mountApplicationFolders()
 
         # check whether the project folder is already mounted
         try:
@@ -171,34 +128,36 @@ class Merlin(pyre.application, family='merlin.application'):
         return pfs
 
 
-    # meta methods
-    def __init__(self, name, **kwds):
-        super().__init__(name=name, **kwds)
-
-        # the host
-        from .Host import Host
-        self.host = Host(name=name+'.host')
-        # the user
-        from .User import User
-        self.user = User(name=name+'.user')
-        # the package manager
-        from .PackageManager import PackageManager
-        self.packages = PackageManager(name=name+'.packages')
-        # the spell book
+    # support
+    def newRepertoir(self):
+        """
+        Build my spell manager
+        """
+        # access the factory
         from .Spellbook import Spellbook
-        self.spellbook = Spellbook(name=name+".spellbook")
-        # the curator
-        from .Curator import Curator
-        self.curator = Curator(name=name+".curator")
+        # make one and return it
+        return Spellbook(protocol=self.pyre_action)
 
-        # the asset classifiers
-        from .PythonClassifier import PythonClassifier
-        self.assetClassifiers = [
-            PythonClassifier(name=name+'.python')
-            ]
 
-        # all done
-        return
+    def locateProjectRoot(self, folder=None):
+        """
+        Check whether {folder} is contained within a {merlin} project
+        """
+        # default to checking starting with the current directory
+        folder = os.path.abspath(folder) if folder else os.getcwd()
+        # loop until we reach the root of the filesystem
+        while folder != os.path.sep:
+            # form the path to the {.merlin} subdirectory
+            metadir = os.path.join(folder, self.METAFOLDER)
+            # if it exists
+            if os.path.isdir(metadir):
+                # got it
+                return folder, metadir
+            # otherwise, split the path and try again
+            folder, _ = os.path.split(folder)
+        # if the loop exited normally, we ran up to the root without success; return
+        # empty-handed
+        return None, None
 
 
 # end of file 

@@ -8,19 +8,18 @@
 
 # externals
 import pyre
+# my superclass
+from .Dashboard import Dashboard as dashboard
 
 
 # declaration
-class Component(pyre.component, hidden=True):
+class Component(pyre.component, dashboard, hidden=True):
     """
-    Minor merlin specific embellishment of the {pyre.Component} base class
+    Minor merlin specific embellishment of the {pyre.component} base class
     """
 
 
     # public data
-    merlin = None # access to the merlin executive
-
-
     @property
     def vfs(self):
         """
@@ -32,6 +31,7 @@ class Component(pyre.component, hidden=True):
 
     # meta methods`
     def __init__(self, name, **kwds):
+        # chain up
         super().__init__(name=name, **kwds)
 
         # if I have a name

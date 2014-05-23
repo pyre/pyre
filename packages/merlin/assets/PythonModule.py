@@ -6,9 +6,11 @@
 #
 
 
+# super class
 from .Asset import Asset
 
 
+# class declaration
 class PythonModule(Asset):
     """
     Encapsulation of an asset that represents a python source file

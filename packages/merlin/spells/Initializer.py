@@ -32,7 +32,7 @@ class Initializer(merlin.spell):
 
     # class interface
     @merlin.export
-    def main(self, *args, **kwds):
+    def main(self, plexus, argv):
         """
         Make {folder} the root of a new merlin project. The target {folder} is given as an
         optional command line argument, and defaults to the current directory. Issue an error
@@ -42,8 +42,15 @@ class Initializer(merlin.spell):
         # access my executive
         merlin = self.merlin
 
-        # the first argument is supposed to be the target folder that will hold the new project
-        folder = args[0] if args else os.curdir
+        # extract my arguments
+        folders = list(argv) or [os.curdir]
+        # if there is more than one
+        if len(folders) > 1:
+            # issue a warning
+            self.warning.log(
+                'cannot initialize multiple project folders; ignoring all but the first')
+        # extract the folder
+        folder = folders[0]
 
         # first check whether this directory is already part of a merlin project
         root, metadir = merlin.locateProjectRoot(folder=folder)
@@ -83,7 +90,7 @@ class Initializer(merlin.spell):
         # attempt to
         try:
             # realize the layout
-            pfs.make(name=merlin.metafolder, tree=mfs)
+            pfs.make(name=merlin.METAFOLDER, tree=mfs)
         # if it fails
         except OSError as error:
             # complain
@@ -91,7 +98,7 @@ class Initializer(merlin.spell):
 
         # mount it
         self.vfs['/project'] = pfs
-        self.vfs['/merlin/project'] = pfs[merlin.metafolder]
+        self.vfs['/merlin/project'] = pfs[merlin.METAFOLDER]
 
         # if a name was not specified
         if self.project is None:
@@ -105,15 +112,6 @@ class Initializer(merlin.spell):
 
         # all done
         return self
-
-
-    @merlin.export
-    def help(self, **kwds):
-        """
-        Generate the help screen associated with this spell
-        """
-        # all done
-        return
 
 
 # end of file 

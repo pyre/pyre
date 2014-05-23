@@ -6,9 +6,11 @@
 #
 
 
+# superclass
 from .Asset import Asset
 
 
+# class declaration
 class AssetContainer(Asset):
     """
     Base class for all merlin asset containers
@@ -18,11 +20,16 @@ class AssetContainer(Asset):
     # constants
     category = "asset container"
 
+    # public data
+    contants = None # the assets i contain
+
 
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
+        # initialize my container
         self.contents = {}
+        # all done
         return
 
 

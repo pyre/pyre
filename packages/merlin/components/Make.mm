@@ -8,7 +8,7 @@
 
 PROJECT = merlin
 PACKAGE = components
-PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
+PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------
@@ -22,13 +22,11 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Component.py \
     Curator.py \
-    Host.py \
+    Dashboard.py \
     Merlin.py \
-    PackageManager.py \
     PythonClassifier.py \
     Spell.py \
     Spellbook.py \
-    User.py \
     exceptions.py \
     __init__.py
 

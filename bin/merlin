@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -6,6 +6,16 @@
 # (c) 1998-2014 all rights reserved
 #
 
+
+# version check
+# python version information is in {{sys.version}
+import sys
+# unwrap
+major, minor, _, _, _ = sys.version_info
+# check
+if major < 3 or (major == 3 and minor < 2):
+    # and complain
+    raise RuntimeError("merlin needs python 3.2 or newer")
 
 # shell for invoking merlin commands
 # package access

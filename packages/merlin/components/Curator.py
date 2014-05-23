@@ -8,6 +8,7 @@
 
 # externals
 import pickle
+# the framework
 import merlin
 
 
@@ -18,6 +19,11 @@ class Curator(merlin.component, family="merlin.components.curator"):
     """
 
 
+    # constants
+    projectURI = merlin.properties.str(default='/merlin/project/project.pickle')
+    projectURI.doc = 'the location of the persistent project state'
+
+
     # interface
     def loadProject(self):
         """
@@ -26,7 +32,7 @@ class Curator(merlin.component, family="merlin.components.curator"):
         # the fileserver
         vfs = self.vfs
         # get the project pickle
-        project = vfs[vfs.join("/merlin/project", "project.pickle")]
+        project = vfs[self.projectURI]
         # retrieve the project instance from the file
         return self.load(node=project)
 

@@ -16,10 +16,9 @@ def test():
     # access to the merlin executive
     from merlin import merlin
 
-    # get the curator
-    packages = merlin.packages
-
-    # check the name
+    # get the package manager
+    packages = merlin.pyre_externals
+    # check it is accessible
     assert packages
 
     # and return

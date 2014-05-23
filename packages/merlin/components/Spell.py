@@ -6,70 +6,37 @@
 #
 
 
-# externals
-import itertools
 # access the framework
 import pyre
+# and the merlin singletons
+from .Dashboard import Dashboard as dashboard
 
 
 # declaration
-class Spell(pyre.protocol, family="merlin.spells"):
+class Spell(pyre.action, dashboard, family="merlin.spells"):
     """
     Protocol declaration for merlin spells
     """
 
 
-    # types
-    from pyre.schemata import uri
-
-    # public data
-    merlin = None # gets patched during boot
-
-
-    # interface
-    @pyre.provides
-    def main(self, **kwds):
-        """
-        This is the action of the spell
-        """
-
-
-    @pyre.provides
-    def help(self, **kwds):
-        """
-        Generate the help screen associated with this spell
-        """
-
-
     # support for framework requests
     @classmethod
-    def pyre_find(cls, uri, symbol, **kwds):
+    def pyre_contextPath(cls):
         """
-        Participate in the search for the spell {symbol}
+        Return an iterable over the starting point for hunting down spells
         """
-        # access the merlin executive
-        merlin = cls.merlin
-        # and its private file space
-        vfs = merlin.vfs
+        # merlin knows
+        return cls.merlin.searchpath
 
-        # starting with the locations on the search paths
-        roots = tuple(folder.address for folder in merlin.searchpath)
-        # the locations of spells
-        spells = [ 'spells' ]
-        # inject the address of the {uri}
-        address = [ uri.address ]
-        # the leaves
-        leaves = [ '{}.py'.format(symbol), '']
 
-        # with all possible combinations of all these
-        for fragments in itertools.product(roots, spells, address, leaves):
-            # assemble the  path
-            path = vfs.join(*filter(None, fragments))
-            # build a uri and yield it
-            yield cls.uri.locator(scheme='vfs', address=path)
+    @classmethod
+    def pyre_contextFolders(cls):
+        """
+        Return an iterable over portions of my family name
+        """
+        # spells are in the 'spells' folder
+        return [ 'spells' ]
 
-        # out of ideas
-        return
-        
+
 
 # end of file 

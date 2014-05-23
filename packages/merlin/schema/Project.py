@@ -6,10 +6,15 @@
 #
 
 
+# superclass
 from pyre.patterns.Named import Named
 
 
+# class declaration
 class Project(Named):
+    """
+    Project metadata
+    """
 
 
     # public state

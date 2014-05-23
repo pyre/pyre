@@ -8,6 +8,7 @@
 
 # externals
 import os
+import re
 import merlin
 
 
@@ -20,6 +21,9 @@ class PythonClassifier(merlin.component):
 
     # types: the python asset factories
     from ..assets import pythonmodule, pythonpackage
+
+    # constants
+    INIT = re.compile(r'__init__.*py')
 
 
     # interface
@@ -41,9 +45,17 @@ class PythonClassifier(merlin.component):
             # otherwise
             return self.pythonmodule(name=name, uri=uri)
             
-        # otherwise it is a folder; if it contains a '__init__.py'
-        if node.isFolder and '__init__.py' in node.contents:
-            # it is a python package
+        # otherwise it is a folder
+        if node.isFolder:
+            # go through the contents looking for a filename that matches my init recognizer
+            for name in node.contents:
+                # bail out if my module recognizer matches
+                if self.INIT.match(name): break
+            # if there was no match
+            else:
+                # this folder is not a python package
+                return
+            # if we get this far, it is a python package
             package = self.pythonpackage(name=filename, uri=uri)
             # populate it
             for child in node.contents.values():

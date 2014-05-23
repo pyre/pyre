@@ -6,8 +6,8 @@
 #
 
 PROJECT = merlin
-PACKAGE = schemata
-PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
+PACKAGE = schema
+PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
 
 
 #--------------------------------------------------------------------------

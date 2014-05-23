@@ -8,12 +8,12 @@
 
 PROJECT = merlin
 PACKAGE = merlin
-PROJ_DISTCLEAN = $(EXPORT_MODULEDIR)
+PROJ_CLEAN = $(EXPORT_MODULEDIR)
 
 RECURSE_DIRS = \
     assets \
     components \
-    schemata \
+    schema \
     spells \
 
 

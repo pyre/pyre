@@ -6,6 +6,7 @@
 #
 
 
+# class declaration
 class Asset:
     """
     Base class for all objects tracked by merlin
@@ -19,10 +20,10 @@ class Asset:
     # meta methods
     def __init__(self, name, uri, **kwds):
         super().__init__(**kwds)
-
+        # save my properties
         self.name = name # my name
-        self.uri = uri # the path relative to the relevant top level asset container
-        
+        self.uri = uri # my path relative to the top level container
+        # all done
         return
 
 
@@ -32,7 +33,7 @@ class Asset:
 
     # debugging support
     def dump(self, indent=''):
-        print('{}{}'.format(indent, self.name))
+        print('{0}{1.name} ({1.category})'.format(indent, self))
         return
 
 

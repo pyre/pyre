@@ -8,7 +8,7 @@
 
 
 """
-Verify that the spell book can locate spells
+Verify that the spellbook can locate spells
 """
 
 
@@ -19,7 +19,7 @@ def test():
     spellbook = merlin.spellbook
 
     # ask it to find a spell
-    spell = spellbook.findSpell(name="sample")
+    spell = spellbook.find(name="sample")
 
     # and return
     return spell

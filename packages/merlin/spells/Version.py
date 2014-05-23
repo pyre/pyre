@@ -19,21 +19,12 @@ class Version(merlin.spell):
 
     # interface
     @merlin.export
-    def main(self, *args, **kwds):
+    def main(self, plexus, argv):
         """
         Print the version of the merlin package
         """
         # invoke the package function
         merlin.version()
-        # all done
-        return
-
-
-    @merlin.export
-    def help(self, **kwds):
-        """
-        Generate the help screen associated with this spell
-        """
         # all done
         return
 

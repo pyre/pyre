@@ -8,15 +8,11 @@
 
 # externals
 import os
-import pyre
-
-
-# superclasses
-from .Spell import Spell
+import merlin
 
 
 # declaration
-class AssetManager(Spell):
+class AssetManager(merlin.spell):
     """
     Attempt to classify a folder as an asset container and add it to the project
     """
@@ -24,8 +20,8 @@ class AssetManager(Spell):
 
     # class interface
     # interface
-    @pyre.export
-    def main(self, *args, **kwds):
+    @merlin.export
+    def main(self, plexus, argv):
         """
         This is the action of the spell
         """
@@ -38,13 +34,15 @@ class AssetManager(Spell):
             # complain
             return self.error.log("not a merlin project; did you forget to cast 'merlin init'?")
         # get hold of my local filesystem
-        local = self.vfs['/startup']
+        local = self.vfs['pyre/startup']
         # dump it
         # local.dump()
+        # collect the arguments
+        argv = tuple(argv)
         # the first argument is supposed to be a subdirectory of the current directory
-        target = args[0] if args else '.'
+        target = argv[0] if argv else '.'
         # the first argument is supposed to be a subdirectory of the current directory
-        names = tuple(filter(None, target.split(local.separator))) if args else ()
+        names = tuple(filter(None, target.split(local.separator))) if argv else ()
         # starting with the current directory
         folder = local
         # drill down until we reach the target folder
@@ -81,20 +79,10 @@ class AssetManager(Spell):
             None,
             (classifier.classify(root=root, node=folder)
              for classifier in self.merlin.assetClassifiers))
-
         # iterate over the returned assets and persist them
         for asset in assets: 
             self.merlin.curator.saveAsset(asset)
 
-        # all done
-        return
-
-
-    @pyre.export
-    def help(self, **kwds):
-        """
-        Generate the help screen associated with this spell
-        """
         # all done
         return
 

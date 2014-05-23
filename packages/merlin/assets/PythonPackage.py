@@ -6,9 +6,11 @@
 #
 
 
+# superclass
 from .AssetContainer import AssetContainer
 
 
+# class declaration
 class PythonPackage(AssetContainer):
     """
     Encapsulation of a python package, i.e. a folder of python modules
