@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.3 -i
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -7,16 +7,24 @@
 #
 
 
+# version check
+# python version information is in {{sys.version}
+import sys
+# unwrap
+major, minor, _, _, _ = sys.version_info
+# check
+if major < 3 or (major == 3 and minor < 2):
+    # complain
+    raise RuntimeError("pyre needs python 3.2 or newer")
+
 # settings for interactive use of python
 # attempt to enable readline
-print("enabling readline")
 try:
     import readline
-
-# not there; bail out
+# not there
 except ImportError:
+    # bail
     print("    readline not available")
-
 # success!
 else:
     # turn on completion
@@ -29,7 +37,7 @@ else:
         readline.parse_and_bind("tab: complete")
     # form the path to the history file
     import os
-    history = os.path.join(os.path.expanduser('~'), '.python-history')
+    history = os.path.join(os.path.expanduser('~'), '.pyre-history')
     # attempt to read it
     try:
         readline.read_history_file(history)
@@ -39,8 +47,6 @@ else:
     import atexit
     atexit.register(readline.write_history_file, history)
 
-# import the sys package
-import sys
 # add the current directory to the path
 sys.path = [''] + sys.path
 
@@ -49,10 +55,17 @@ sys.path = [''] + sys.path
 
 # framework access
 import pyre
+# get the code package
+import code
+# adjust the prompts
+sys.ps1 = 'pyre: '
+sys.ps2 = '  ... '
+# enter interactive mode
+code.interact(banner=pyre.copyright(), local=locals())
 
 # configure the garbage collector
 # import gc
-# tell who has a handle to the pyre executive
+# show me who has a handle to the pyre executive
 # for entity in gc.get_referrers(pyre.executive):
     # print(type(entity))
     # print("   ", entity)
