@@ -7,6 +7,7 @@
 
 
 # externals
+import io
 import pyre.tracking
 # my superclass
 from .Lexer import Lexer
@@ -34,6 +35,13 @@ class Scanner(metaclass=Lexer):
         """
         Convert the input {stream} into tokens
         """
+        # print(' ++ pyre.parsing.Scanner:')
+        # print('      uri={}'.format(uri))
+        # print('      stream={}'.format(stream))
+        # if the {stream} is not open in text mode
+        if not isinstance(stream, io.TextIOBase):
+            # wrap a {io.TextIOWrapper} around it
+            stream = io.TextIOWrapper(stream)
         # clear out the token cache
         self.pyre_cache = []
         # tokenize the stream
