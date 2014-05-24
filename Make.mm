@@ -80,9 +80,12 @@ test: build tests examples
 #--------------------------------------------------------------------------
 #
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-1.0.zip
-zip: packages defaults
-	(cd $(EXPORT_ROOT)/packages; zip -r ${PYRE_ZIP} * )
-	(cd $(EXPORT_ROOT); zip -r ${PYRE_ZIP} defaults )
+
+zip: build zipit
+
+zipit:
+	$(RM_F) $(PYRE_ZIP)
+	(cd $(EXPORT_ROOT); zip -r ${PYRE_ZIP} * )
 
 
 # end of file 
