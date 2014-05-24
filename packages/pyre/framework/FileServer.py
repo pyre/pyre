@@ -109,7 +109,7 @@ class FileServer(Filesystem):
                 # complain
                 raise self.IsFolderError(filesystem=self, node=node, uri=uri)
             # otherwise, open it
-            return node.open()
+            return node.open(**kwds)
 
         # if i didn't recognize the {scheme}, complain
         raise self.URISpecificationError(uri=uri, reason="unsupported scheme {!r}".format(scheme))
