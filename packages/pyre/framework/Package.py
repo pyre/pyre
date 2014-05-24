@@ -42,13 +42,32 @@ class Package(Named):
         # standard pyre distribution. The registration procedure takes care not to mount
         # redundant filesystems in the virtual namespace.
 
-        # compute {home}
+        # compute {home}; guaranteed to exist
         home = os.path.dirname(file)
+
         # the prefix is the root of the package installation; in {pyre} standard form, that's
-        # two levels up from {home}
+        # two levels up from {home}: {prefix}/packages/{home}/{file}
         prefix = os.path.abspath(os.path.join(home, os.path.pardir, os.path.pardir))
-        # the location of the package configuration files
-        defaults = os.path.abspath(os.path.join(prefix, self.DEFAULTS))
+        # hopefully, it also exists
+        if os.path.isdir(prefix):
+            # in which case, here is the location of the package configuration files
+            defaults = os.path.abspath(os.path.join(prefix, self.DEFAULTS, self.name))
+            # if this doesn't exist
+            if not os.path.isdir(defaults):
+                # we have no configuration folder
+                defaults = None
+        # if {prefix} does not exist
+        else:
+            # we have no prefix
+            prefix = None
+            # and no configuration folder
+            defaults = None
+
+        # show me
+        # print('pyre.framework.Package.register: name={.name!r}'.format(self))
+        # print('  home={!r}'.format(home))
+        # print('  prefix={!r}'.format(prefix))
+        # print('  defaults={!r}'.format(defaults))
 
         # attach
         self.home = home
@@ -90,7 +109,7 @@ class Package(Named):
 
 
     # implementation details
-    DEFAULTS = 'defaults'
+    DEFAULTS = 'defaults' # the path to the configuration folder relative to {prefix}
 
 
 # end of file 

@@ -24,23 +24,23 @@ class Director(pyre.actor):
 
 
     # meta methods
-    def __init__(self, name, bases, attributes, prefix=None, **kwds):
+    def __init__(self, name, bases, attributes, namespace=None, **kwds):
         """
         Initialization of application class records
         """
         # chain up
         super().__init__(name, bases, attributes, **kwds)
 
-        # if i don't have a prefix
-        if not prefix:
+        # if i don't have a namespace
+        if not namespace:
             # get my package
             package = self.pyre_package()
             # and if it exists
             if package:
-                # use its name as my prefix
-                prefix = package.name
+                # use its name as my namespace
+                namespace = package.name
         # attach it
-        self.pyre_prefix = prefix
+        self.pyre_namespace = namespace
 
         # all done
         return

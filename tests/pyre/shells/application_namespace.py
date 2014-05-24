@@ -17,7 +17,7 @@ def test():
     import pyre
 
     # declare a trivial application
-    class application(pyre.application, prefix='sample'):
+    class application(pyre.application, namespace='sample'):
         """A trivial pyre application"""
 
     # instantiate

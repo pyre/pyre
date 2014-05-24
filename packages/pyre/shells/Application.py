@@ -32,10 +32,11 @@ class Application(pyre.component, metaclass=Director):
 
 
     # constants 
+    DEFAULTS = 'defaults' # the name of the folder with my configuration files
     # the default name for pyre applications; subclasses are expected to provide a more
     # reasonable value, which gets used to load per-instance configuration right before the
     # application itself is instantiated
-    pyre_prefix = None
+    pyre_namespace = None
 
     # public state
     shell = Shell()
@@ -51,6 +52,10 @@ class Application(pyre.component, metaclass=Director):
     dependencies.doc = 'the map of requirements to package instances that satisfy them'
     
     # per-instance public data
+    # geography
+    home = None # the directory where my invocation script lives
+    prefix = None # my installation directory
+    defaults = None # the directory with my configuration folders
     pfs = None # the root of my private filesystem
     # journal channels
     info = None
@@ -60,8 +65,6 @@ class Application(pyre.component, metaclass=Director):
     firewall = None
 
     # public data
-    home = os.path.dirname(sys.argv[0])
-
     # properties
     @property
     def executive(self):
@@ -83,6 +86,7 @@ class Application(pyre.component, metaclass=Director):
         Easy access to the executive name server
         """
         return self.pyre_nameserver
+
 
     @property
     def argv(self):
@@ -121,6 +125,8 @@ class Application(pyre.component, metaclass=Director):
         # chain up
         super().__init__(name=name, **kwds)
 
+        # sniff around for my environment
+        self.home, self.prefix, self.defaults = self.pyre_explore()
         # mount my folders
         self.pfs = self.pyre_mountApplicationFolders()
         # go through my requirements and build my dependency map
@@ -153,20 +159,74 @@ class Application(pyre.component, metaclass=Director):
 
 
     # initialization hooks
+    def pyre_explore(self):
+        """
+        Look around my runtime environment and the filesystem for my special folders
+        """
+        # by default, i have nothing
+        home = prefix = defaults = None
+
+        # check how the runtime was invoked
+        argv0 = sys.argv[0] # this is guaranteed to exist, but may be empty
+        # if it's not empty
+        if argv0:
+            # turn into an absolute path
+            argv0 = os.path.abspath(argv0)
+            # if it is a valid file
+            if os.path.exists(argv0):
+                # split the folder name and save it; that's where i am from...
+                home = os.path.dirname(argv0)
+
+        # if i have my own home and my own namespace
+        if home and self.pyre_namespace:
+            # my configuration directory should be at {home}/../defaults/{namespace}
+            cfg = os.path.join(home, os.path.pardir, self.DEFAULTS, self.pyre_namespace)
+            # if this exists
+            if os.path.isdir(cfg):
+                # form my prefix
+                prefix = os.path.abspath(os.path.join(home, os.path.pardir))
+                # and normalize my configuration directory
+                defaults = os.path.abspath(cfg)
+                # all done
+                return home, prefix, defaults
+
+        # let's try to work with my package and my namespace
+        package = self.pyre_package()
+        namespace = self.pyre_namespace
+        # if they both exist
+        if package and namespace:
+            # get the package prefix
+            prefix = package.prefix
+            # if it exists
+            if prefix:
+                # my configuration directory should be at {prefix}/defaults/{namespace}
+                cfg = os.path.join(prefix, package.DEFAULTS, namespace)
+                # if this exists
+                if os.path.isdir(cfg):
+                    # and normalize my configuration directory
+                    defaults = os.path.abspath(cfg)
+                    # all done
+                    return home, prefix, defaults
+
+        # all done
+        return home, prefix, defaults
+
+
     def pyre_mountApplicationFolders(self):
         """
         Build the private filesystem
         """
         # get the file server
         vfs = self.pyre_fileserver
-        # get the prefix
-        prefix = self.pyre_prefix
-        # if i don't have a prefix
-        if not prefix:
+        # get the namespace
+        namespace = self.pyre_namespace
+        # if i don't have a namespace
+        if not namespace:
             # make an empty virtual filesystem and return it
             return vfs.virtual()
+
         # get/create the top level of my private namespace
-        pfs = vfs.getFolder(prefix)
+        pfs = vfs.getFolder(namespace)
 
         # check whether 
         try:
@@ -175,17 +235,23 @@ class Application(pyre.component, metaclass=Director):
         # if not
         except pfs.NotFoundError:
             # make it
-            pfs['user'] = vfs.getFolder(vfs.USER_DIR,  prefix)
+            pfs['user'] = vfs.getFolder(vfs.USER_DIR,  namespace)
 
-        # now, let's hunt down the application specific configurations
-        # my installation directory is the parent folder of my home
-        installdir = os.path.abspath(os.path.join(self.home, os.path.pardir))
-        # get the associated filesystem
-        home = vfs.retrieveFilesystem(root=installdir)
+        # get my prefix
+        prefix = self.prefix
+        # if i don't have one
+        if not prefix: 
+            # attach an empty folder; must use {pfs} to do this to guarantee filesystem consistency
+            pfs['system'] = pfs.folder()
+            # and return
+            return pfs
+            
+        # otherwise, get the associated filesystem
+        home = vfs.retrieveFilesystem(root=prefix)
         # look for
         try:
             # the folder with my configurations
-            cfgdir = home['defaults/{}'.format(prefix)]
+            cfgdir = home['defaults/{}'.format(namespace)]
         # if it is not there
         except vfs.NotFoundError:
             # make an empty folder; must use {pfs} to do this to guarantee filesystem consistency

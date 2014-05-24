@@ -158,13 +158,15 @@ class FileServer(Filesystem):
 
         # grab the package prefix
         prefix = package.prefix
-        # get the associated filesystem
-        fs = self.retrieveFilesystem(root=prefix)
+        # not much to do if there isn't one
+        if not prefix: return package
 
+        # otherwise, mount/get the associated filesystem
+        fs = self.retrieveFilesystem(root=prefix)
         # attempt to
         try:
             # look for the configuration folder
-            defaults = fs['defaults']
+            defaults = fs[package.DEFAULTS]
         # if not there
         except fs.NotFoundError:
             # nothing else to do
@@ -233,27 +235,30 @@ class FileServer(Filesystem):
         # initialize the table of known mount points
         self.mounts = {}
 
-        # build a place holder for package configuration hierarchies
-        packages = self.folder()
-        # mount it
-        self[self.PACKAGES_DIR] = packages
+        # build a place holder for package configuration hierarchies and mount it
+        self[self.PACKAGES_DIR] = self.folder()
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
         userdir = os.path.expanduser(self.DOT_PYRE) 
+        # if that exists
         try:
             # make filesystem out of the preference directory
             user = self.local(root=userdir).discover()
+        # otherwise
         except self.GenericError:
+            # make an empty folder
             user = self.folder()
-       # mount this directory as {/pyre/user}
+        # mount this directory as {/pyre/user}
         self[self.USER_DIR] = user
 
         # finally, mount the current working directory
         try:
             # make a filesystem out of the configuration directory
             startup = self.local(root=".").discover(levels=1)
+        # if that fails
         except self.GenericError:
+            # make an empty folder
             startup = self.folder()
        # mount this directory as {/pyre/startup}
         self[self.STARTUP_DIR] = startup
