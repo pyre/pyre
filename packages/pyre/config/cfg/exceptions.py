@@ -6,24 +6,8 @@
 #
 
 
-class ParsingError(Exception):
-    """
-    Error raised when there is a problem with the contents of a configuration file
-    """
-
-
-    # public data
-    locator = None # tracking the error location
-    description = None # a brief explanation about what went wrong
-
-
-    def __init__(self, description, locator, **kwds):
-        super().__init__(**kwds)
-
-        self.locator = locator
-        self.description = description
-
-        return
+# pull in the parsing exceptions
+from ...parsing.exceptions import ParsingError, TokenizationError, SyntaxError
 
 
 # end of file 

@@ -22,7 +22,7 @@ class Parser(pyre.parsing.parser):
 
 
     # types
-    from .exceptions import ParsingError
+    from .exceptions import ParsingError, SyntaxError
     from ..events import Assignment, ConditionalAssignment
     from .Scanner import Scanner as lexer # my superclass uses this to instantiate my scanner
 
@@ -39,8 +39,16 @@ class Parser(pyre.parsing.parser):
         tokens = self.scanner.pyre_tokenize(uri=uri, stream=stream)
         # process the tokens
         for token in tokens:
-            # look up the relevant production based on this terminal
-            production = self.productions[type(token)]
+            # attempt to
+            try:
+                # look up the relevant production based on this terminal
+                production = self.productions[type(token)]
+            # if i don't have a production for this token
+            except KeyError:
+                # it must be a syntax error; build a locator
+                loc = pyre.tracking.chain(this=token.locator, next=locator)
+                # and an error
+                raise self.SyntaxError(token=token, locator=loc)
             # and invoke it
             production(current=token, rest=tokens)
         # all done

@@ -32,8 +32,10 @@ class Scanner(pyre.parsing.scanner):
         """
         Convert the input {stream} into tokens that are not whitespace
         """
+        # build the token stream generator
+        tokens = super().pyre_tokenize(uri=uri, stream=stream)
         # tokenize the input stream
-        for token in super().pyre_tokenize(uri=uri, stream=stream):
+        for token in tokens:
             # filter out whitespace
             if type(token) is self.whitespace: continue
             # yield the token

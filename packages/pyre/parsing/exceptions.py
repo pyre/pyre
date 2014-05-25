@@ -34,4 +34,15 @@ class TokenizationError(ParsingError):
         return
 
 
+class SyntaxError(ParsingError):
+    """
+    Exception raised when a syntax error is detected
+    """
+
+    def __init__(self, token, **kwds):
+        super().__init__(description="syntax error: {0.token.lexeme!r}", **kwds)
+        self.token = token
+        return
+
+
 # end of file 
