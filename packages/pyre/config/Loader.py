@@ -109,17 +109,22 @@ class Loader:
                 # print("    shelf {!r} previously loaded".format(uri.uri))
             # otherwise
             except KeyError:
-                # print("    new shelf; loading")
-                # attempt to 
+                # print(" new shelf; loading") make an empty shelf and register it with the
+                # linker to prevent it from attempting to load this shelf again, in case there
+                # are loading side effects
+                linker.shelves[uri.uri] =  cls.shelf(uri=uri)
+                # attempt to
                 try:
                     # load it
                     shelf = cls.load(executive=executive, uri=uri)
                 # if it fails
                 except cls.LoadingError as error:
                     # print("      skipping: {}".format(error))
+                    # remove the bogus registration
+                    del linker.shelves[uri.uri]
                     # move on to the next candidate
                     continue
-                # if the shelf was loaded correctly, register it with the linker
+                # if the shelf was loaded correctly, replace the bogus registration
                 linker.shelves[uri.uri] = shelf
                 # show me
                 # print("      success; registering {!r} with the linker".format(uri.uri))

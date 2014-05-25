@@ -14,7 +14,7 @@ PROJ_TIDY += __pycache__
 
 all: test clean
 
-test: sanity api
+test: sanity api regressions
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -22,5 +22,8 @@ sanity:
 api:
 	${PYTHON} ./loadConfiguration.py
 	${PYTHON} ./resolve.py
+
+regressions:
+	${PYTHON} ./play.py
 
 # end of file 
