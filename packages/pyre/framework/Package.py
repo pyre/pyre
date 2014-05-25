@@ -81,6 +81,13 @@ class Package(Named):
         return
 
 
+    def layout(self):
+        """
+        Easy access to the package folders
+        """
+        return self.home, self.prefix, self.defaults
+
+
     def configure(self, executive, locator=None):
         """
         Locate and ask the executive to load my configuration files
