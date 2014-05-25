@@ -388,8 +388,12 @@ class Executive:
         """
         # access the factory
         from .Linker import Linker
-        # build one and return it
-        return Linker(**kwds)
+        # build one 
+        linker = Linker(**kwds)
+        # initialize it
+        linker.prime(executive=self)
+        # and return it
+        return linker
 
 
     def newCommandLineParser(self, **kwds):

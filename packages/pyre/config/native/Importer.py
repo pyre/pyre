@@ -7,6 +7,7 @@
 
 
 # externals
+import os
 import sys
 from ... import tracking
 # superclass
@@ -101,7 +102,7 @@ class Importer(Loader):
             # and send it to the caller
             # print("Importer.locateShelves: uri={.uri!r}".format(uri))
             yield uri
-            # attempt to
+            # next, attempt to
             try:
                 # split it on the rightmost separator
                 package, _ = package.rsplit(cls.separator, 1)
@@ -112,5 +113,36 @@ class Importer(Loader):
         # no more
         return
             
+
+    # initialization
+    @classmethod
+    def prime(cls, linker):
+        """
+        Build my initial set of shelves
+        """
+        # attempt to
+        try:
+            # get the main module
+            import __main__
+        # if this failed
+        except ImportError:
+            # no worries
+            pass
+        # otherwise
+        else:
+            # make a uri
+            uri = linker.uri.locator(scheme='file', address=os.path.abspath(__main__.__file__))
+            # and a locator
+            here = tracking.simple('while priming the {.scheme} scheme'.format(cls))
+            # make a shelf
+            shelf = cls.shelf(module=__main__, uri=uri, locator=here)
+            # attach it to the linker
+            linker.shelves[uri.uri] = shelf
+            # show me
+            # print("registered '__main__' as {.uri!r}".format(uri))
+
+        # nothing else to do
+        return
+
 
 # end of file 

@@ -46,7 +46,7 @@ class Shelf:
 
 
     # meta methods
-    def __init__(self, module, uri, locator,  **kwds):
+    def __init__(self, uri, module=None, locator=None,  **kwds):
         super().__init__(**kwds)
         # record the module
         self.module = module

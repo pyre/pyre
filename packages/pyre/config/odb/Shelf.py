@@ -55,7 +55,7 @@ class Shelf(dict):
 
 
     # meta methods
-    def __init__(self, uri, locator, **kwds):
+    def __init__(self, uri, locator=None, **kwds):
         super().__init__(**kwds)
         # save my state
         self.uri = uri

@@ -44,7 +44,9 @@ class Linker:
         """
         Attempt to locate the component class specified by {uri}
         """
-        # what should we try?
+        # what should we try? don't be tempted to make this more dynamic by, say, initializing
+        # {schemes} with the {codecs} keys; order is significant here, so is visiting codecs
+        # that register themselves under multiple schemes to be visited once...
         schemes = [uri.scheme] if uri.scheme else self.SCHEMES
 
         # for each loading strategy
@@ -76,16 +78,28 @@ class Linker:
     # meta-methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
-        # initialize my codec index
-        self.codecs = self._indexDefaultCodecs()
         # the map from uris to known shelves
         self.shelves = {}
+        # initialize my codec index
+        self.codecs = self.indexDefaultCodecs()
         # all done
         return
 
 
     # implementation details
-    def _indexDefaultCodecs(self):
+    def prime(self, executive):
+        """
+        Initialize my codecs
+        """
+        # go through the set of registered codecs
+        for codec in {codec for codec in self.codecs.values()}:
+            # and prime each one
+            codec.prime(linker=self)
+        # nothing else
+        return
+
+
+    def indexDefaultCodecs(self):
         """
         Initialize my codec index
         """

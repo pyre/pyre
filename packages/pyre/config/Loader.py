@@ -120,11 +120,22 @@ class Loader:
                     # move on to the next candidate
                     continue
                 # if the shelf was loaded correctly, register it with the linker
-                # print("      success; registering it with the linker")
                 linker.shelves[uri.uri] = shelf
+                # show me
+                # print("      success; registering {!r} with the linker".format(uri.uri))
             # yield the shelf to my caller
             yield shelf
         # no more candidates
+        return
+
+
+    # initialization
+    @classmethod
+    def prime(self, linker):
+        """
+        Build my initial set of shelves
+        """
+        # nothing to do
         return
 
 
