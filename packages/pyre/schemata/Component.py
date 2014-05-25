@@ -72,10 +72,8 @@ class Component(Schema):
             # and return it
             return candidate
           
-        # out of ideas; build an error message
-        msg = 'could not convert {0.value!r} into a component'
-        # and complain, if necessary
-        raise self.CastingError(value=value, description=msg) from None
+        # out of ideas; build an error message and complain
+        raise protocol.ResolutionError(protocol=protocol, value=value) from None
 
 
     # meta-methods

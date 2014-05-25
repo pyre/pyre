@@ -47,7 +47,7 @@ class Externals:
                 # get the package manager for this category
                 manager = facility.coerce(value=category, locator=locator)
             # if one could not be located
-            except facility.CastingError:
+            except Category.ResolutionError:
                 # complain
                 raise self.ExternalNotFoundError(category=category) from None
             # otherwise
