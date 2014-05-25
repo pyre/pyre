@@ -42,10 +42,10 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         if distribution == 'macports':
             # is to use openmpi
             from .OpenMPI import OpenMPI
-            return OpenMPI.pyre_package()
+            return OpenMPI.pyre_newPackage()
 
         # for all others, just chain up and let my superclass hunt the right package down
-        return super().pyre_package()
+        return super().pyre_newPackage()
 
 
 # end of file 

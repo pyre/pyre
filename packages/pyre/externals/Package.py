@@ -37,11 +37,11 @@ class Package(pyre.component, implements=category):
         Select the default package manager for this package and ask for a package instance
         """
         # easy enough
-        return cls.pyre_package()
+        return cls.pyre_newPackage()
 
 
     @classmethod
-    def pyre_package(cls):
+    def pyre_newPackage(cls):
         """
         Build a package instance
         """
