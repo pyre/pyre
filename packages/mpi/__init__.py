@@ -116,4 +116,11 @@ else:
     # build the world communicator
     world = communicator(mpi.world)
 
+# in any case, grab the framework
+import pyre
+# register the package
+package = pyre.executive.registerPackage(name='mpi', file=__file__)
+# record the layout
+home, prefix, defaults = package.layout()
+
 # end of file 

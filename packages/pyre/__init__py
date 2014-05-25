@@ -202,9 +202,7 @@ def boot():
 
     # attach the geography
     global home, prefix, defaults
-    home = package.home
-    prefix = package.prefix
-    defaults = package.defaults
+    home, prefix, defaults = package.layout()
 
     # return the executive so it can be attached to the package
     return executive

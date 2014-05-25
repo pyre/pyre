@@ -33,6 +33,12 @@ except ImportError:
     import journal
     raise journal.error('gsl').log(msg)
 
+# get the framework
+import pyre
+# register the package
+package = pyre.executive.registerPackage(name='gsl', file=__file__)
+# record the layout
+home, prefix, defaults = package.layout()
 
 # otherwise, all is well;
 # pull in the administrivia

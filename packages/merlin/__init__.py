@@ -146,9 +146,7 @@ def boot():
     package = pyre.executive.registerPackage(name='merlin', file=__file__)
     # attach the geography
     global home, prefix, defaults
-    home = package.home
-    prefix = package.prefix
-    defaults = package.defaults
+    home, prefix, defaults = package.layout()
 
     # externals
     import weakref

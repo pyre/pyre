@@ -5,6 +5,12 @@
 # (c) 1998-2014 all rights reserved
 #
 
+# grab the framework
+import pyre
+# register the package
+package = pyre.executive.registerPackage(name='journal', file=__file__)
+# record the layout
+home, prefix, defaults = package.layout()
 
 # access to the public names
 # the channel categories
@@ -133,7 +139,6 @@ def boot():
 
     # all done
     return extension
-
 
 # make it so...
 extension = boot()
