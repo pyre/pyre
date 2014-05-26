@@ -13,8 +13,8 @@ Launch an mpi application
 
 
 def test():
-    import sys
-    import pyre # access the framework
+    # access the framework
+    import pyre
 
     # declare a trivial application
     class application(pyre.application, family='mpi.application'):
@@ -27,8 +27,10 @@ def test():
             # get the world communicator
             world = mpi.world
             # print("Hello from {0.rank} of {0.size}".format(world)) 
+            # check
             assert world.size == 8
             assert world.rank in range(world.size)
+            # all done
             return 0
 
     # instantiate it
