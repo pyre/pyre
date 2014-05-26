@@ -83,7 +83,8 @@ class Info(merlin.spell):
             self.info.line('  name: {}'.format(host.hostname))
             self.info.line('  platform: {}'.format(host.platform))
             self.info.line('  release: {}'.format(host.release))
-            self.info.log('  codename: {}'.format(host.codename))
+            self.info.line('  codename: {}'.format(host.codename))
+            self.info.log('  merlin configuration: {}'.format(vfs['/merlin/system'].uri))
 
         # asset information
         if self.assets or self.all:
