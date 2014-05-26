@@ -31,16 +31,12 @@ class Pyre(Executive):
 
 
     # interface
-    def boot(self, **kwds):
+    def activate(self, **kwds):
         """
         Initialize the providers of the runtime services
         """
         # chain up to my base class
-        super().boot(**kwds)
-
-        # local names for my managers
-        nameserver = self.nameserver
-        configurator = self.configurator
+        super().activate(**kwds)
 
         # access the command line
         import sys
@@ -49,10 +45,7 @@ class Pyre(Executive):
         # parse the command line
         events = parser.parse(argv=sys.argv[1:])
         # ask my configurator to process the configuration events
-        configurator.processEvents(events=events, priority=self.priority.command)
-
-        # force the loading of the global configuration options
-        nameserver.package(executive=self, name="pyre", locator=self.locator)
+        self.configurator.processEvents(events=events, priority=self.priority.command)
 
         # all done
         return self

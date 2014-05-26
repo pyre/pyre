@@ -15,9 +15,6 @@ For terms of use, see pyre.license()
 """
 
 
-# imported symbols
-import os
-
 # convenience
 def resolve(uri):
     """
@@ -44,15 +41,6 @@ def loadConfiguration(uri):
     # get the executive to do its thing
     return executive.loadConfiguration(uri=uri, locator=here)
 
-
-# geography
-# the directory of the pyre package
-home = None
-# the pathname of the pyre installation
-prefix = None
-# the directory with the system defaults
-defaults = None
-    
 
 # administrative
 def copyright():
@@ -101,7 +89,7 @@ def where(configurable, attribute=None):
     return slot.locator
 
 
-# settings
+# constants
 _pyre_version = (1, 0, BZR_REVNO)
 
 _pyre_tag = "pyre {}.{} revision {}".format(*_pyre_version)
@@ -193,19 +181,10 @@ def boot():
         # just ignore it and carry on
         pass
 
-    # build and initialize the executive
+    # grab the executive factory
     from . import framework
-    executive = framework.executive().boot()
-
-    # register this package
-    package = executive.registerPackage(name='pyre', file=__file__)
-
-    # attach the geography
-    global home, prefix, defaults
-    home, prefix, defaults = package.layout()
-
-    # return the executive so it can be attached to the package
-    return executive
+    # build one and return it
+    return framework.executive().boot()
 
 
 def debug():
@@ -272,9 +251,13 @@ if executive:
 
     # discover information about the runtime environment
     executive.discover()
-
     # turn on the executive
     executive.activate()
+
+    # register this package
+    package = executive.registerPackage(name='pyre', file=__file__)
+    # record its geography
+    home, prefix, defaults = package.layout()
 
 
 # clean up the executive instance when the interpreter shuts down
