@@ -6,36 +6,46 @@
 #
 
 
-class FirewallError(Exception):
+# get the base pyre exception
+from pyre.framework.exceptions import PyreError
+
+
+# firewalls
+class FirewallError(PyreError):
     """
     Exception raised whenever a fatal firewall is encountered
     """
 
 
     def __init__(self, firewall, **kwds):
-        super().__init__(**kwds)
+        # build the info
+        reason = "firewall breached; aborting..." 
+        locator = firewall.locator
+        # chain up
+        super().__init__(description=reason, locator=locator, **kwds)
+        # record the error
         self.firewall = firewall
+        # all done
         return
 
 
-    def __str__(self):
-        return "firewall breached; aborting..."
-
-
-class ApplicationError(Exception):
+# application errors
+class ApplicationError(PyreError):
     """
     Exception raised whenever an application error is encountered
     """
 
 
     def __init__(self, error, **kwds):
-        super().__init__(**kwds)
+        # build the info
+        reason = "firewall breached; aborting..." 
+        locator = error.locator
+        # chain up
+        super().__init__(description=reason, locator=locator, **kwds)
+        # record the error
         self.error = error
+        # all done
         return
-
-
-    def __str__(self):
-        return "the application encountered a non-recoverable error; aborting..."
 
 
 # end of file 

@@ -7,6 +7,7 @@
 
 
 # packages
+import pyre
 import traceback
 
 
@@ -20,6 +21,7 @@ class Diagnostic:
     # per-instance public data
     meta = None
     text = None
+    locator = None
 
 
     # interface
@@ -57,6 +59,9 @@ class Diagnostic:
         meta["function"] = function
         meta["source"] = source
 
+        # build my locator
+        self.locator = pyre.tracking.script(source=filename, line=line, function=function)
+
         # record
         self.device.record(page=self.text, metadata=meta)
 
@@ -74,6 +79,8 @@ class Diagnostic:
 
         # initialize the list of message lines
         self.text = []
+        # my locator
+        self.locator = None
         # prime the meta data
         self.meta = {
             "channel": name,

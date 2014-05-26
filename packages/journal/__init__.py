@@ -5,28 +5,6 @@
 # (c) 1998-2014 all rights reserved
 #
 
-# grab the framework
-import pyre
-# register the package
-package = pyre.executive.registerPackage(name='journal', file=__file__)
-# record the layout
-home, prefix, defaults = package.layout()
-
-# access to the public names
-# the channel categories
-from .Debug import Debug as debug
-from .Firewall import Firewall as firewall
-from .Info import Info as info
-from .Warning import Warning as warning
-from .Error import Error as error
-
-# devices
-from .Console import Console as console
-from .File import File as file
-    
-# the package exception
-from .exceptions import FirewallError
-
 
 # administrative
 def copyright():
@@ -139,6 +117,28 @@ def boot():
 
     # all done
     return extension
+
+# grab the framework
+import pyre
+# register the package
+package = pyre.executive.registerPackage(name='journal', file=__file__)
+# record the layout
+home, prefix, defaults = package.layout()
+
+# access to the public names
+# the channel categories
+from .Debug import Debug as debug
+from .Firewall import Firewall as firewall
+from .Info import Info as info
+from .Warning import Warning as warning
+from .Error import Error as error
+
+# devices
+from .Console import Console as console
+from .File import File as file
+    
+# the package exception
+from .exceptions import FirewallError
 
 # make it so...
 extension = boot()

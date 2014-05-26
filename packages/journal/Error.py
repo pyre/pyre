@@ -34,7 +34,7 @@ class Error(Diagnostic, Channel):
     # interface
     def log(self, message=None, stackdepth=0):
         """
-        Make a journal entry and raise an exception
+        Make a journal entry and build an exception ready to be raised by the caller
         """
         # first, record the entry
         super().log(message, stackdepth)
