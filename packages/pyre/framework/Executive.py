@@ -451,6 +451,14 @@ class Executive:
         return self
 
 
+    def activate(self):
+        """
+        Turn on the executive
+        """
+        # nothing to do here, for now...
+        return self
+
+
     def discover(self, **kwds):
         """
         Discover what is known about the runtime environment
@@ -512,14 +520,6 @@ class Executive:
         # instantiate and attach
         self.environ = Environ(executive=self)
 
-        # all done
-        return self
-
-
-    def activate(self):
-        """
-        Turn on the executive
-        """
         # get the client base class
         from .Dashboard import Dashboard as dashboard
 
