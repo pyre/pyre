@@ -66,4 +66,28 @@ def newPathHash(**kwds):
     return PathHash(**kwds)
 
 
+# cofunctors
+from .CoFunctor import CoFunctor as cofunctor
+from .Accumulator import Accumulator as accumulator
+from .Printer import Printer as printer
+from .Tee import Tee as tee
+
+
+# decorators
+def coroutine(f):
+    """
+    Decorator that automatically primes a coroutine
+    """
+    # the wrapper
+    def wrapper(*args, **kwds):
+        # instantiate the generator
+        gen = f(*args, **kwds)
+        # prime it
+        next(gen)
+        # and return it
+        return gen
+    # return the wrapper to the caller
+    return wrapper
+
+
 # end of file 

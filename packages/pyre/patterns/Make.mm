@@ -21,12 +21,16 @@ all: export
 
 EXPORT_PYTHON_MODULES = \
     AbstractMetaclass.py \
+    Accumulator.py \
     AttributeClassifier.py \
+    CoFunctor.py \
     ExtentAware.py \
     Named.py \
     Observable.py \
     PathHash.py \
+    Printer.py \
     Singleton.py \
+    Tee.py \
     __init__.py
 
 
