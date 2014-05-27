@@ -26,8 +26,8 @@ all: test
 test: init clean
 
 init:
-	$(MERLIN) init $(TEST_DIR)/merlin.shallow
-	$(MERLIN) init $(TEST_DIR)/merlin.one $(TEST_DIR)/merlin.two
-	$(MERLIN) init --create-prefix $(TEST_DIR)/merlin.deep/ly/burried
+	$(PYTHON) $(MERLIN) init $(TEST_DIR)/merlin.shallow
+	$(PYTHON) $(MERLIN) init $(TEST_DIR)/merlin.one $(TEST_DIR)/merlin.two
+	$(PYTHON) $(MERLIN) init --create-prefix $(TEST_DIR)/merlin.deep/ly/burried
 
 # end of file 
