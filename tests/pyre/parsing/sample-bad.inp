@@ -5,5 +5,6 @@
 #
 
     document: header, body, foo*ter;
+    document: header, bo*dy, footer;
 
-# end of file 
+# end of file

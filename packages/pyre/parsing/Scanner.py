@@ -8,11 +8,12 @@
 
 # externals
 import io
-import pyre.tracking
+from ..tracking import file as fileloc # i make file locators
 # my superclass
 from .Lexer import Lexer
 
 
+# class declaration
 class Scanner(metaclass=Lexer):
     """
     The input stream tokenizer
@@ -31,25 +32,81 @@ class Scanner(metaclass=Lexer):
 
 
     # interface
-    def pyre_tokenize(self, uri, stream):
-        """
-        Convert the input {stream} into tokens
-        """
+    def pyre_tokenize(self, uri, stream, client):
+        # show me
         # print(' ++ pyre.parsing.Scanner:')
         # print('      uri={}'.format(uri))
         # print('      stream={}'.format(stream))
+        # print('      client={}'.format(client))
+
         # if the {stream} is not open in text mode
         if not isinstance(stream, io.TextIOBase):
             # wrap a {io.TextIOWrapper} around it
             stream = io.TextIOWrapper(stream)
-        # clear out the token cache
+            # show me
+            # print('        now open in text mode')
+
+        # flush the token cache
         self.pyre_cache = []
-        # tokenize the stream
-        for token in self._pyre_tokenize(uri=uri, stream=stream):
-            # first empty out the token cache, in case there was push back during processing
-            yield from self.pyre_cache
-            # then send the current token
-            yield token
+
+        # to get things going, build a {start} token
+        start = self.start(locator=fileloc(source=uri, line=1, column=0))
+        # and send it along
+        client.send(start)
+
+        # fault detection
+        fault = None
+        # iterate over the contents of the stream
+        for line, text in enumerate(stream):
+            # reset the column number
+            column = 0
+            # scan until then end of the line
+            while column != len(text):
+                # print('at line={}, column={}'.format(line+1, column))
+                # send all tokens currently in the token cache
+                for token in self.pyre_cache: client.send(token)
+                # and flush it
+                self.pyre_cache = []
+                    
+                # attempt to recognize the contents of the line
+                match = self.pyre_recognizer.match(text, pos=column)
+                # if i failed to recognize a valid token
+                if not match:
+                    # if this didn't just happen
+                    if not fault:
+                        # build an error descriptor
+                        fault = self.TokenizationError(
+                            text = text[column:],
+                            locator = fileloc(source=uri, line=line+1, column=column))
+                        # invoke the downstream error handler
+                        client.throw(self.TokenizationError, fault)
+                    # carry on: skip the current character
+                    column += 1
+                    # and try again
+                    continue
+
+                # we have a match; clear the fault indicator
+                fault = None
+                # lookup the name of the token
+                name = match.lastgroup
+                # get the token class
+                factory = getattr(self, name)
+                # make a token
+                token = factory(
+                    lexeme = match.group(name),
+                    locator = fileloc(source=uri, line=line+1, column=column))
+
+                # show me
+                # print(token)
+                # process it
+                client.send(token)
+                # if all went well, update the column counter and move on
+                column = match.end()
+
+        # all done; make a {finish} token
+        finish = self.finish(locator=fileloc(source=uri, line=line+1, column=0))
+        # and send it
+        client.send(finish)
         # all done
         return
 
@@ -61,79 +118,20 @@ class Scanner(metaclass=Lexer):
         # do it
         self.pyre_cache.append(token)
         # all done
-        return
+        return self
 
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # storage for pushed back tokens
         self.pyre_cache = []
-        return
-
-
-    # implementation details
-    def _pyre_tokenize(self, uri, stream):
-        """
-        Convert the contents of the input source into a token stream
-        """
-        # the locator factory
-        locator = pyre.tracking.file
-        # send a {start} token
-        yield self.start(locator=locator(source=uri, line=1, column=0))
-
-        # iterate over the contents of the stream
-        for line, text in enumerate(stream):
-            # reset the column
-            column = 0
-            # scan until the end of the line
-            while column != len(text):
-                # attempt to recognize the contents of the line
-                match = self.pyre_recognizer.match(text, pos=column)
-                # if it failed
-                if not match:
-                    # build an error descriptor
-                    error = self.TokenizationError(
-                        text=text[column:], locator=locator(source=uri, line=line+1, column=column))
-                    # invoke the error handler
-                    self._pyre_handleError(error=error)
-                    # and skip the rest of this line
-                    break
-                # we have a match; find the name of the matching token
-                name = match.lastgroup
-                # get the token class
-                tokenFactory = getattr(self, name)
-                # make a token
-                token = tokenFactory(
-                    lexeme = match.group(name),
-                    locator = locator(source=uri, line=line+1, column=column)
-                    )
-                # and attempt to
-                try:
-                    # toss it back to the caller
-                     yield token
-                # if anything goes wrong during the processing
-                except self.ParsingError as error:
-                    # invoke the error handler
-                    self._pyre_handleError(error=error)
-                    # and skip the rest of this line
-                    break
-                # update the column counter
-                column = match.end()
-
-        # send a {finish} token
-        yield self.finish(locator=locator(source=uri, line=line+1, column=0))
         # all done
         return
 
 
-    def _pyre_handleError(self, error):
-        """
-        Invoked when the scanner encounters an error
-        """
-        # by default, throw the error
-        raise error
-
-
+    # implementation details
     # private data
     pyre_cache = [] # the list of tokens that have been pushed back
     # set by {Lexer}

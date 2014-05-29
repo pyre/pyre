@@ -27,24 +27,21 @@ class Config(Codec):
         """
         Parse {source} and return the configuration events it contains
         """
-        # make a parser
+        # get the parser factory
         from .Parser import Parser
+        # make a parser
         parser = Parser()
-        # parse the contents of {source}
-        try:
-            # harvest the configuration events
-            configuration = parser.parse(uri=uri, stream=source, locator=locator)
-        # if anything goes wrong
-        except parser.ParsingError as error:
-            # build the error message parts
-            msg = "{{0.codec.encoding}} parsing error: {}".format(
-                error.description)
-            # convert the parsing error into a decoding error and raise it
-            raise cls.DecodingError(codec=cls, uri=uri, locator=error.locator, description=msg)
-
-        # return the harvested configuration events
-        # for event in configuration: print(event)
-        return configuration
+        # harvest the configuration events
+        configuration = parser.parse(uri=uri, stream=source, locator=locator)
+        # grab the accumulated errors
+        errors = parser.errors
+        # if there were no errors
+        if not errors:
+            # return the harvested configuration events
+            return configuration
+        # otherwise, throw away the harvested events
+        return []
+            
 
 
 # end of file

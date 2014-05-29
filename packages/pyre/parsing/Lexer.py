@@ -51,7 +51,7 @@ class Lexer(AttributeClassifier):
 
         # attribute adjustments
         # replace the descriptors with the new token classes
-        for token in tokens: attributes[token.name] = token
+        attributes.update((token.name, token) for token in tokens)
         # add the list of tokens
         attributes["pyre_tokens"] = tokens
 

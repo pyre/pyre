@@ -21,7 +21,7 @@ sanity:
 	${PYTHON} ./exceptions.py
 	${PYTHON} ./manager.py
 
-formats: pml
+formats: pml cfg
 
 pml:
 	${PYTHON} ./pml.py
@@ -37,5 +37,14 @@ pml:
 	${PYTHON} ./pml_componentConditional.py
 	${PYTHON} ./pml_componentConditionalNested.py
 	${PYTHON} ./pml_sample.py
+
+cfg:
+	${PYTHON} ./cfg.py
+	${PYTHON} ./cfg_empty.py
+	${PYTHON} ./cfg_badToken.py
+	${PYTHON} ./cfg_marker.py
+	${PYTHON} ./cfg_open.py
+	${PYTHON} ./cfg_close.py
+
 
 # end of file 

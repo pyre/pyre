@@ -12,8 +12,11 @@ Build and test a simple tokenizer
 """
 
 def test():
+    # get the modules
     import pyre.parsing
+    import pyre.patterns
 
+    # declare a scanner
     class Simple(pyre.parsing.scanner):
         """a simple scanner"""
 
@@ -24,16 +27,17 @@ def test():
         terminator = pyre.parsing.token(r";")
         identifier = pyre.parsing.token(r"[\w]+")
 
-
     # open the input stream
     uri = 'sample.inp'
     stream = open(uri)
-    # create a scanner
+    # create a source
     scanner = Simple()
+    # and a sink
+    sink = pyre.patterns.accumulator()
+    
 
     # tokenize
-    actual = list(scanner.pyre_tokenize(uri=uri, stream=stream))
-    # for token in actual: print(token)
+    scanner.pyre_tokenize(uri=uri, stream=stream, client=sink)
 
     # check
     expected = (
@@ -54,7 +58,7 @@ def test():
         Simple.finish,
         )
 
-    for token, klass in zip(actual, expected):
+    for token, klass in zip(sink.cache, expected):
         # print(token)
         assert isinstance(token, klass)
 

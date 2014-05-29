@@ -239,12 +239,6 @@ if executive:
     from .traits.Facility import Facility as facility
     # constraints
     from . import constraints
-    # package managers
-    from . import externals
-    # platform managers
-    from . import platforms
-    # application shells
-    from .shells import application, plexus, command, action
 
     # the base class of all pyre exceptions
     from .framework.exceptions import PyreError
@@ -255,8 +249,15 @@ if executive:
     package = executive.registerPackage(name='pyre', file=__file__)
     # record its geography
     home, prefix, defaults = package.layout()
+
+    # package managers
+    from . import externals
+    # platform managers
+    from . import platforms
     # discover information about the runtime environment
     executive.discover()
+    # application shells
+    from .shells import application, plexus, command, action
 
 
 # clean up the executive instance when the interpreter shuts down
