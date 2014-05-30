@@ -15,6 +15,7 @@ RECURSE_DIRS = \
     journal \
     merlin \
     sqlite \
+    opal \
 
 # the optional packages
 # cuda
@@ -41,7 +42,6 @@ ifneq ($(strip $(LIBPQ_DIR)),)
   RECURSE_DIRS += postgres
 endif
 
-#--------------------------------------------------------------------------
 #
 
 all:

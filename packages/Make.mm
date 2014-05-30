@@ -15,6 +15,7 @@ PACKAGES = \
     pyre \
     journal \
     merlin \
+    opal \
 
 # the optional packages
 
