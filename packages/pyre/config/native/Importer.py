@@ -127,19 +127,27 @@ class Importer(Loader):
         # if this failed
         except ImportError:
             # no worries
-            pass
-        # otherwise
-        else:
-            # make a uri
-            uri = linker.uri.locator(scheme='file', address=os.path.abspath(__main__.__file__))
-            # and a locator
-            here = tracking.simple('while priming the {.scheme} scheme'.format(cls))
-            # make a shelf
-            shelf = cls.shelf(module=__main__, uri=uri, locator=here)
-            # attach it to the linker
-            linker.shelves[uri.uri] = shelf
-            # show me
-            # print("registered '__main__' as {.uri!r}".format(uri))
+            return
+
+        # otherwise, attempt to
+        try:
+            # get the name of the script we are executing
+            filename = __main__.__file__
+        # if it doesn't have one
+        except AttributeError:
+            # no worries
+            return
+        
+        # make a uri
+        uri = linker.uri.locator(scheme='file', address=os.path.abspath(filename))
+        # and a locator
+        here = tracking.simple('while priming the {.scheme} scheme'.format(cls))
+        # make a shelf
+        shelf = cls.shelf(module=__main__, uri=uri, locator=here)
+        # attach it to the linker
+        linker.shelves[uri.uri] = shelf
+        # show me
+        # print("registered '__main__' as {.uri!r}".format(uri))
 
         # nothing else to do
         return
