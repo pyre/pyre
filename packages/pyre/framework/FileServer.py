@@ -223,18 +223,11 @@ class FileServer(Filesystem):
         return fs
 
 
-    # meta-methods
-    def __init__(self, executive=None, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # print("pyre.FileServer:")
-
-        # remember my executive
-        self.executive = None if executive is None else weakref.proxy(executive)
-
-        # initialize the table of known mount points
-        self.mounts = {}
-
+    # framework requests
+    def initializeNamespace(self):
+        """
+        Construct the initial layout of my virtual filesystem
+        """
         # build a place holder for package configuration hierarchies and mount it
         self[self.PACKAGES_DIR] = self.folder()
 
@@ -263,6 +256,19 @@ class FileServer(Filesystem):
        # mount this directory as {/pyre/startup}
         self[self.STARTUP_DIR] = startup
 
+        # all done
+        return
+
+
+    # meta-methods
+    def __init__(self, executive=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # print("pyre.FileServer:")
+        # remember my executive
+        self.executive = None if executive is None else weakref.proxy(executive)
+        # initialize the table of known mount points
+        self.mounts = {}
         # all done
         return
 

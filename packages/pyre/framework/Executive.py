@@ -33,7 +33,7 @@ class Executive:
 
 
     # public data
-    # the managers
+    # the managers; patched during boot
     nameserver = None # entities accessible by name
     fileserver = None # the URI resolver
     registrar = None # protocol and component bookkeeping
@@ -42,9 +42,10 @@ class Executive:
     timekeeper = None # the timer registry
     externals = None # the manager of external tools and libraries
 
-    # the runtime environment; patched during boot
+    # the runtime environment; patched during discovery
     host = None 
     user = None
+    terminal = None
     environ = None
 
     # the application delegate; patched by {Director} when an application instance is created
@@ -445,8 +446,8 @@ class Executive:
         """
         Perform the final framework initialization step
         """
-        # initialize my namespace
-        self.initializeNamespace()
+        # initialize my namespaces
+        self.initializeNamespaces()
         # all done
         return self
 
@@ -531,11 +532,13 @@ class Executive:
         return self
 
 
-    def initializeNamespace(self):
+    def initializeNamespaces(self):
         """
         Create and initialize the default namespace entries
         """
-        # ask my configurator for its defaults
+        # initialize my fileserver
+        self.fileserver.initializeNamespace()
+        # initialize my configurator
         self.configurator.initializeNamespace()
         # all done
         return self
