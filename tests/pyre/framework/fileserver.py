@@ -13,13 +13,14 @@ Exercises the fileserver
 
 
 def test():
-    import pyre.framework
-    # build the executive
-    executive = pyre.framework.executive()
-
+    import pyre
     # access the fileserver
-    fs = executive.fileserver
+    fs = pyre.executive.fileserver
+    # make sure we got one
     assert fs is not None
+
+    # initialize it
+    fs.initializeNamespace()
 
     # get hold of the package node
     packages = fs["/pyre/packages"]
@@ -33,7 +34,7 @@ def test():
     fs.dump(False) # switch to True to see the dump
 
     # all done
-    return executive
+    return fs
 
 
 # main

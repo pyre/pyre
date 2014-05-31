@@ -13,8 +13,8 @@ Verify that bad component descriptors raise the correct exceptions
 
 
 def test():
-    import pyre.framework
-    executive =  pyre.framework.executive()
+    import pyre
+    executive =  pyre.executive
 
     # retrieve a component descriptor from the python path
     try:

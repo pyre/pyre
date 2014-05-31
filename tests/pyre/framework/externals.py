@@ -13,9 +13,9 @@ Sanity check: verify that the package manager is accessible
 
 
 def test():
-    import pyre.framework
+    import pyre
     # build the executive
-    executive = pyre.framework.executive()
+    executive = pyre.executive
 
     # access the external package manager
     assert executive.externals is not None

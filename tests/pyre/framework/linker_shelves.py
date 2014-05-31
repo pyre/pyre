@@ -13,9 +13,9 @@ Verify the linker can understand shelf uris
 
 
 def test():
-    import pyre.framework
+    import pyre
     # build the executive
-    executive = pyre.framework.executive()
+    executive = pyre.executive
     # access the linker
     linker = executive.linker
 

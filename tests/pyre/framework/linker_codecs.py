@@ -13,9 +13,9 @@ Exercise the linker
 
 
 def test():
-    import pyre.framework
+    import pyre
     # get the linker
-    linker = pyre.framework.executive().linker
+    linker = pyre.executive.linker
 
     # check the registered codecs
     assert tuple(linker.codecs.keys()) == ('import', 'vfs', 'file')

@@ -13,11 +13,9 @@ Verify that the file server can mount arbitrary locations
 
 
 def test():
-    import pyre.framework
-    # build the executive
-    executive = pyre.framework.executive()
+    import pyre
     # access the file server
-    fs = executive.fileserver
+    fs = pyre.executive.fileserver
 
     # build a file system for the current directory
     local = fs.local(root='.').discover(levels=1)
@@ -29,7 +27,7 @@ def test():
     fs.dump(False) # switch to True to see the dump
 
     # all done
-    return executive
+    return fs
 
 
 # main

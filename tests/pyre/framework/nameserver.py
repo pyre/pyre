@@ -13,9 +13,9 @@ Exercises the fileserver
 
 
 def test():
-    import pyre.framework
+    import pyre
     # build the executive
-    executive = pyre.framework.executive()
+    executive = pyre.executive
 
     # access the name server
     ns = executive.nameserver

@@ -13,8 +13,8 @@ Verify that the binder can retrieve components from odb files
 
 
 def test():
-    import pyre.framework
-    executive =  pyre.framework.executive()
+    import pyre
+    executive =  pyre.executive
 
     # retrieve a component descriptor from a file
     one, = executive.resolve(uri="file:sample.odb/one")

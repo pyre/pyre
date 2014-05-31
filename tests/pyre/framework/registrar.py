@@ -13,9 +13,9 @@ Exercises the component registrar
 
 
 def test():
-    import pyre.framework
+    import pyre
     # build the executive
-    executive = pyre.framework.executive()
+    executive = pyre.executive
 
     # access the component registrar
     assert executive.registrar is not None

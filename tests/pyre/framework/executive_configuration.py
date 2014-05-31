@@ -13,9 +13,9 @@ Verify that a sample configuration file can be ingested correctly
 
 
 def test():
-    import pyre.framework
+    import pyre
     # build the executive
-    executive = pyre.framework.executive()
+    executive = pyre.executive
     # verify the right parts were built
     assert executive.linker is not None
     assert executive.nameserver is not None

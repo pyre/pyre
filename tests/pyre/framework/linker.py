@@ -13,9 +13,9 @@ Verify the linker is accessible through the executive
 
 
 def test():
-    import pyre.framework
+    import pyre
     # build the executive
-    executive = pyre.framework.executive()
+    executive = pyre.executive
 
     # access the linker
     assert executive.linker is not None
