@@ -511,10 +511,11 @@ class Executive:
         # instantiate the host information store and attach it
         self.host = host(name='pyre.host')
 
-        # now the user
-        from ..shells import user
-        # instantiate it
+        # now the user and the terminal
+        from ..shells import user, terminal
+        # instantiate them and attach them
         self.user = user(name='pyre.user')
+        self.terminal = terminal.pyre_default()(name='pyre.terminal')
 
         # finally, the environment variables
         from .Environ import Environ
