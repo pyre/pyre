@@ -219,37 +219,34 @@ def debug():
 # kickstart
 # invoke the debug method in case the user asked for debugging support
 debug()
+
+# convenient access to parts of the framework
+from . import constraints, tracking
+# configurables and their support
+from .components.Actor import Actor as actor
+from .components.Role import Role as role
+from .components.Protocol import Protocol as protocol
+from .components.Component import Component as component
+# traits
+from .traits import properties
+property = properties.identity
+from .traits.Behavior import Behavior as export
+from .traits.Behavior import Behavior as provides
+from .traits.Facility import Facility as facility
+
+# the base class of all pyre exceptions
+from .framework.exceptions import PyreError
+
 # build the executive
 executive = boot()
-
 # if the framework booted properly
 if executive:
-    # for convenience
-    from . import tracking
-    # configurables and their support
-    from .components.Actor import Actor as actor
-    from .components.Role import Role as role
-    from .components.Protocol import Protocol as protocol
-    from .components.Component import Component as component
-    # traits
-    from .traits import properties
-    property = properties.identity
-    from .traits.Behavior import Behavior as export
-    from .traits.Behavior import Behavior as provides
-    from .traits.Facility import Facility as facility
-    # constraints
-    from . import constraints
-
-    # the base class of all pyre exceptions
-    from .framework.exceptions import PyreError
-
     # turn on the executive
     executive.activate()
     # register this package
     package = executive.registerPackage(name='pyre', file=__file__)
     # record its geography
     home, prefix, defaults = package.layout()
-
     # package managers
     from . import externals
     # platform managers
