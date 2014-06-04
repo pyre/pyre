@@ -39,7 +39,13 @@ EXPORT_PYTHON_MODULES = \
     __init__.py
 
 
-export:: export-python-modules
+export:: __init__.py export-python-modules
 	BLD_ACTION="export" $(MM) recurse
+	@$(RM) __init__.py
+
+# construct my {__init__.py}
+__init__.py: __init__py
+	@sed -e "s:BZR_REVNO:$$(bzr revno):g" __init__py > __init__.py
+
 
 # end of file 
