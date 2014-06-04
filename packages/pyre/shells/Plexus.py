@@ -34,6 +34,12 @@ class Plexus(Application, metaclass=Plector):
     """
 
 
+    # public state
+    interactive = pyre.properties.bool(default=False)
+    interactive.doc = "go interactive when no command line arguments are provided"
+
+
+    # interface
     @pyre.export
     def main(self, *args, **kwds):
         """
@@ -42,30 +48,21 @@ class Plexus(Application, metaclass=Plector):
         """
         # grab my command line arguments
         argv = self.argv
-        # attempt
+        # attempt to
         try:
             # get the name of the command
             name = next(argv)
         # if there aren't any
         except StopIteration:
-            # the user needs help
+            # if the user has requested an interactive session
+            if self.interactive:
+                # do it
+                return self.pyre_interactiveSession()
+            # otherwise, show the help screen
             return self.help()
 
-        # get the manager of actions
-        repertoir = self.repertoir
-        # attempt to
-        try:
-            # resolve the name into an actual command component
-            command = repertoir.find(name=name)
-        # if this failed
-        except repertoir.ResolutionError as error:
-            # report it
-            self.error.log('could not locate action {!r}'.format(name))
-            # indicate failure
-            return 1
-
-        # otherwise, invoke it
-        return command(plexus=self, argv=argv)
+        # invoke the command
+        return self.invoke(action=name, argv=argv)
 
 
     # meta-methods
@@ -81,6 +78,34 @@ class Plexus(Application, metaclass=Plector):
     # implementation details
     # data
     repertoir = None
+
+
+    # implementation details
+    def banner(self):
+        """
+        Print an identifying message
+        """
+        return 'entering interactive mode'
+
+
+    def invoke(self, action, argv):
+        """
+        Locate and invoke the named {action}
+        """
+        # get the manager of actions
+        repertoir = self.repertoir
+        # attempt to
+        try:
+            # resolve the name into an actual command component
+            command = repertoir.find(name=action)
+        # if this failed
+        except repertoir.ResolutionError as error:
+            # report it
+            self.error.log('could not locate action {!r}'.format(action))
+            # indicate failure
+            return 1
+        # otherwise, invoke it
+        return command(plexus=self, argv=argv)
 
 
     # hooks

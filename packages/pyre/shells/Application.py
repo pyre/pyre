@@ -107,8 +107,8 @@ class Application(pyre.component, metaclass=Director):
         """
         The main entry point of an application component
         """
-        raise NotImplementedError(
-            "application {.pyre_name!r} must implement 'main'".format(self))
+        # what should i do?
+        return self.pyre_interactiveSession()
         
 
     @pyre.export
@@ -285,4 +285,71 @@ class Application(pyre.component, metaclass=Director):
         return dependencies
 
 
+    def pyre_interactiveSession(self):
+        """
+        Convert this session to an interactive one
+        """
+        # try to 
+        try:
+            # get readline
+            import readline
+        # if not there
+        except ImportError:
+            # no problem
+            pass
+        # if successful
+        else:
+            # turn on completion
+            import rlcompleter
+            # check which interface is available and do the right thing: on OSX, readline is
+            # provided by libedit
+            if 'libedit' in readline.__doc__:
+                # enable completion
+                readline.parse_and_bind('bind -v')
+                readline.parse_and_bind('bind ^I rl_complete')
+            # on other machines, or if the python readline extension is available on OSX
+            else:
+                # enable completion
+                readline.parse_and_bind('tab: complete')
+
+            # attempt to make it possible to save the command history across sessions
+            # get path
+            import os
+            # build the uri to the history file
+            history = os.path.join(os.path.expanduser('~'), '.{}-history'.format(self.pyre_name))
+            # attempt to
+            try:
+                # read it
+                readline.read_history_file(history)
+            # if not there
+            except IOError:
+                # no problem
+                pass
+            # make sure it gets saved
+            import atexit
+            # by registering a handler for when the session terminates
+            atexit.register(readline.write_history_file, history)
+
+        # go live
+        import code, sys
+        # adjust the prompts
+        sys.ps1 = '{}: '.format(self.pyre_name)
+        sys.ps2 = '  ... '
+        # adjust the local namespace
+        context = self.pyre_interactiveSessionContext()
+        # enter interactive mode
+        code.interact(banner=self.banner(), local=context)
+
+        # when the user terminates the session, all done
+        return 0
+
+
+    def pyre_interactiveSessionContext(self):
+        """
+        Prepare the interactive context by granting access to application parts
+        """
+        # just me, by default
+        return {'self': self}
+        
+        
 # end of file 
