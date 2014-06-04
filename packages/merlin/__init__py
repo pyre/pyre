@@ -1,3 +1,4 @@
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -64,14 +65,15 @@ def license(**kwds):
 # NYI: add localized versions of all this
 _merlin_version = (1, 0, BZR_REVNO)
 
-_merlin_copyright = (
-    "merlin {}.{} build {}: Copyright (c) 1998-2014 Michael A.G. Aïvázis".format(*_merlin_version))
+_merlin_tag = "merlin {}.{} build {}".format(*_merlin_version)
+
+_merlin_copyright = "{}: Copyright (c) 1998-2014 Michael A.G. Aïvázis".format(_merlin_tag)
 
 _merlin_header = """
-    merlin {}.{} build {}
+    {}
     Copyright (c) 1998-2014 Michael A.G. Aïvázis
     All rights reserved
-    """.format(*_merlin_version)
+    """.format(_merlin_tag)
 
 
 _merlin_usage = _merlin_header + """

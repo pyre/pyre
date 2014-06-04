@@ -24,7 +24,7 @@ class Version(merlin.spell):
         Print the version of the merlin package
         """
         # invoke the package function
-        merlin.version()
+        print(merlin._merlin_header)
         # all done
         return
 
