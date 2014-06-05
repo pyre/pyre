@@ -15,7 +15,7 @@ from .Spell import Spell as spell
 
 
 # class declaration; merlin is a plexus app
-class Merlin(pyre.plexus, family='merlin.plexus', action=spell):
+class Merlin(pyre.plexus, family='merlin.components.plexus', action=spell):
     """
     The merlin executive and application wrapper
     """

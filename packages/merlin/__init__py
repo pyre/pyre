@@ -21,7 +21,7 @@ def main():
 
     There are other possible ways to invoke merlin. See the package documentation.
     """
-    # let the executive do its thing
+    # let the plexus do its thing
     return merlin.run()
 
 
@@ -132,7 +132,7 @@ def boot():
         import __main__
         # has indicated we should skip booting
         if __main__.merlin_noboot: 
-            # in which case, do not build an executive
+            # in which case, do not build a plexus
             return None
     # if anything goes wrong
     except:
@@ -150,18 +150,18 @@ def boot():
 
     # externals
     import weakref
-    # access the executive factory
+    # access the plexus factory
     from .components import merlin
     # build one and return it
-    executive = merlin(name='merlin.executive')
+    plexus = merlin(name='merlin.plexus')
 
     # get the dashboard
     from .components import dashboard
     # attach the singletons
-    dashboard.merlin = weakref.proxy(executive)
+    dashboard.merlin = weakref.proxy(plexus)
 
     # all done
-    return executive
+    return plexus
 
 
 # the framework entities
