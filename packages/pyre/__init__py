@@ -100,7 +100,6 @@ _pyre_header = """
     {}
     Copyright (c) 1998-2014 Michael A.G. Aïvázis
     All Rights Reserved
-
     """.format(_pyre_tag)
 
 _pyre_license = _pyre_header + """

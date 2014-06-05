@@ -312,11 +312,22 @@ class Application(pyre.component, metaclass=Director):
                 # enable completion
                 readline.parse_and_bind('tab: complete')
 
-            # attempt to make it possible to save the command history across sessions
-            # get path
+            # attempt to make it possible to save the command history across sessions; we need
+            # a name for the history file; check whether I belong to a package
+            package = self.pyre_package()
+            # in which case
+            if package:
+                # use its name
+                name = package.name
+            # otherwise
+            else:
+                # use 'pyre' by default
+                name = 'pyre'
+
+            # get {os.path}
             import os
             # build the uri to the history file
-            history = os.path.join(os.path.expanduser('~'), '.{}-history'.format(self.pyre_name))
+            history = os.path.join(os.path.expanduser('~'), '.{}-history'.format(name))
             # attempt to
             try:
                 # read it
