@@ -27,7 +27,7 @@ def test():
         descriptor.coerce(test)
         assert False
     except descriptor.CastingError as error:
-        assert str(error) == "float() argument must be a string or a number"
+        assert str(error).startswith("float() argument must be a string or a number")
         
     return
 

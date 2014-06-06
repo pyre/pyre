@@ -191,7 +191,7 @@ class Dict(Slotted):
 # implementation details
 # externals
 # superclasses
-import collections
+import collections.abc
 from ..framework.Dashboard import Dashboard
 from .. import tracking
 

@@ -9,7 +9,7 @@
 # externals
 import os
 import weakref
-import collections
+import collections.abc
 from .. import tracking
 
 
