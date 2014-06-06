@@ -23,7 +23,7 @@ import pyre.ipc
 # the launcher
 def test():
     # testing the delivery of signals is a bit tricky. {fork} is not sufficient: there must be
-    # an {exec} as well, otherwise signals do get delivered properly
+    # an {exec} as well, otherwise signals do not get delivered properly
 
     # grab the nameserver
     ns = pyre.executive.nameserver
@@ -43,6 +43,16 @@ def test():
     # otherwise, set the parent/child process context
     # build the communication channels
     parent, child = pyre.ipc.pipe()
+
+    # on python 3.4 and later
+    try:
+        # descriptors are not inheritable
+        os.set_inheritable(child.infd, True)
+        os.set_inheritable(child.outfd, True)
+    # older versions don't have this function
+    except AttributeError:
+        # but also allow subprocesses to inherit file descriptors, so no worries
+        pass
 
     # fork
     pid = os.fork()
