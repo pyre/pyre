@@ -27,7 +27,7 @@ class Node(pyre.component):
     # signal handling
     def registerSignalHandlers(self):
         """
-        By default, nodes register handlers for process termination and configuration reload.
+        By default, nodes register handlers for process termination and configuration reload
         """
         # get the {signal} package
         import signal

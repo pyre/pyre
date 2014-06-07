@@ -44,16 +44,6 @@ def test():
     # build the communication channels
     parent, child = pyre.ipc.pipe()
 
-    # on python 3.4 and later
-    try:
-        # descriptors are not inheritable
-        os.set_inheritable(child.infd, True)
-        os.set_inheritable(child.outfd, True)
-    # older versions don't have this function
-    except AttributeError:
-        # but also allow subprocesses to inherit file descriptors, so no worries
-        pass
-
     # fork
     pid = os.fork()
     # in the parent process
@@ -68,6 +58,22 @@ def test():
         "--outfd={}".format(child.outfd)
         ]
     # print("execv:", argv)
+
+    # on python 3.4 and later
+    try:
+        # we have to explicitly ask for the pipes to become available across the call to
+        # {exec}; grab the function that enables file descriptor inheritance
+        inherit = os.set_inheritable
+    # older versions don't have this function
+    except AttributeError:
+        # but also allow subprocesses to inherit file descriptors, so no worries
+        pass
+    # if all is well
+    else:
+        # mark the two descriptors
+        inherit(child.infd, True)
+        inherit(child.outfd, True)
+
     # and exec
     return os.execv(sys.executable, argv)
 
@@ -127,11 +133,15 @@ def onParent(childpid, channel):
             return False
 
         def __init__(self, channel, **kwds):
+            # chain up
             super().__init__(**kwds)
+            # save my channel
             self.channel = channel
-            
+            # show me
             pdbg.log("registering 'recvReady'")
+            # register my handler
             self.dispatcher.notifyOnReadReady(channel=channel, handler=self.recvReady)
+            # all done
             return
 
     # create a node
@@ -187,8 +197,9 @@ def onChild(channel):
             return False
             
         def sendReloaded(self, *uargs, **ukwds):
-            # send a message to the parent
+            # show me
             cdbg.log("sending 'reloaded' to my parent")
+            # send a message to the parent
             self.marshaller.send(item="reloaded", channel=self.channel)
             # don't reschedule
             return False
@@ -199,13 +210,15 @@ def onChild(channel):
             return
 
         def onReload(self, *uargs, **ukwds):
-            # schedule to send a message to the parent
+            # show me
             cdbg.log("schedule 'sendReloaded'")
+            # schedule to send a message to the parent
             self.dispatcher.notifyOnWriteReady(channel=self.channel, handler=self.sendReloaded)
             # all done
             return
 
         def onTerminate(self, *uargs, **ukwds):
+            # show me
             cdbg.log("marking clean exit and stopping the dispatcher")
             # mark me
             self.cleanExit = True
@@ -213,15 +226,16 @@ def onChild(channel):
             return super().onTerminate(*uargs, **ukwds)
 
         def __init__(self, channel, **kwds):
+            # chain up
             super().__init__(**kwds)
-
+            # show me
             cdbg.log("dispatcher: {}".format(self.dispatcher))
             # my communication channel
             self.channel = channel
             # marker that my {onTerminate} was called
             self.cleanExit = False
             # set up an alarm to keep the process alive
-            self.dispatcher.alarm(interval=10*self.dispatcher.second, handler=self.alarm)
+            self.dispatcher.alarm(interval=self.dispatcher.second, handler=self.alarm)
             # let my parent know I am ready
             self.dispatcher.notifyOnWriteReady(channel=channel, handler=self.sendReady)
             # all done 
@@ -235,8 +249,9 @@ def onChild(channel):
     child.dispatcher.watch()
     # check that this is a clean exit
     assert child.cleanExit
-    # return it 
+    # show me
     cdbg.log("exiting")
+    # return it 
     return child
 
 

@@ -116,11 +116,12 @@ class PortTCP(Port, Channel):
 
     # meta methods
     def __init__(self, channel, address, **kwds):
+        # chain up
         super().__init__(**kwds)
-
+        # store my state
         self.address = address
         self.channel = channel
-
+        # all done
         return
 
 
