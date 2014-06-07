@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -33,7 +33,7 @@ def test():
     # turn it into a stream and read its content
     contents = this.open().readlines()
     # check the first line
-    assert contents[0] == b"#!/usr/bin/env python\n"
+    assert contents[0] == b"#!/usr/bin/env python3\n"
     # check the last line
     assert contents[-1] == b"# end of file\n"
 
