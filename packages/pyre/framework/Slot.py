@@ -20,15 +20,15 @@ class Slot(Dashboard, metaclass=calc.calculator):
     This class provides centralized access to the values of all configurables
 
     All configuration information recovered from the command line, configuration files or
-    explicit assignments to the {configurator} is contained in slots. The {configurator}
-    maintains a map from a hashed version of the public name of the value to a slot.
+    explicit assignments to the {configurator} is stored in slots. The {configurator} maintains
+    a map from a hashed version of the public name of the key to a slot.
 
     Similarly, all component classes and instances store the values of their properties and
     facilities in slots. The {pyre_inventory} dictionary is a map from trait descriptors to the
     corresponding slot, and the {__get__} and {__set__} descriptor methods manipulate the slot
     contents.
 
-    Component classes and instances that have public names register their slots with the
+    Component classes and instances with public names register their slots with the
     {configurator}, which establishes the connection between component configurable state and
     the configuration store. These slots are shared among the component and the store, and
     changes to one are immediately reflected in the other.
