@@ -29,7 +29,7 @@ def dependencies(**kwds):
     """
     # get the trait descriptors
     from ..traits import properties
-    # {preferences} is a dictionary mapping package categories to package instances
+    # {dependencies} is a dictionary mapping package categories to package instances
     return properties.dict(schema=category(), **kwds)
 
 
@@ -40,7 +40,7 @@ def requirements(**kwds):
     """
     # get the trait descriptors
     from ..traits import properties
-    # {preferences} is a dictionary mapping package categories to package instances
+    # {requirements} is a list of package category names
     return properties.list(schema=properties.str(), **kwds)
 
 
