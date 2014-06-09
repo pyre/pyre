@@ -66,8 +66,6 @@ class Director(pyre.actor):
         locator = pyre.tracking.here(1) if locator is None else locator
         # chain up to create the instance
         app = super().__call__(name=name, globalAliases=globalAliases, locator=locator, **kwds)
-        # attach it to the executive
-        executive.application = weakref.proxy(app)
         # and return it
         return app
 

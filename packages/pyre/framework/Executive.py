@@ -48,9 +48,6 @@ class Executive:
     terminal = None
     environ = None
 
-    # the application delegate; patched by {Director} when an application instance is created
-    application = None
-
     # bookkeeping
     errors = None # the pile of exceptions raised during booting and configuration
 
