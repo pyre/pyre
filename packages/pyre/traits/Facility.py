@@ -45,16 +45,6 @@ class Facility(Slotted, schemata.component):
 
 
     # interface
-    def convert(self, value):
-        """
-        Perform the value conversion specified by my protocol
-        """
-        # ask my protocol to have a go
-        value = self.protocol.pyre_convert(value)
-        # and return it
-        return value
-
-
     def instantiate(self, value, node, incognito=False, **kwds):
         """
         Coerce {value} into an instance of a component compatible with my protocol
