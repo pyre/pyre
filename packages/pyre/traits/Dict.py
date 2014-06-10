@@ -271,19 +271,16 @@ class KeyMap(Map):
     A storage strategy that is appropriate when a client has public inventory
     """
 
-    # public data
-    key = None
 
     # meta-methods
     def __init__(self, key, *args, **kwds):
-        # save my client's key
-        self.key = key
-        # and his name
-        self.name = self.pyre_nameserver.getName(key)
         # chain  up
         super().__init__(*args, **kwds)
+        # save my client's name
+        self.name = self.pyre_nameserver.getName(key)
         # all done
         return
+
 
     # slot access
     def __getitem__(self, name):
@@ -314,7 +311,6 @@ class KeyMap(Map):
         self.map[name] = key
         # all done
         return
-
 
 
 class NameMap(Map):
