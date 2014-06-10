@@ -150,40 +150,6 @@ class NameServer(Hierarchical):
 
 
     # override superclass methods
-    def alias(self, target, alias, base=None):
-        """
-        Register the name {alias} as an alternate name for {canonical}
-        """
-        # chain up
-        try:
-            # to have most aliasing cases handled by the hierarchical symbol table
-            return super().alias(target=target, alias=alias, base=base)
-        # which fails when the {alias} and the {target} both exist
-        except self.AliasingError as error:
-            # resolve by comparing the priorities of the two nodes
-            targetInfo = error.targetInfo
-            aliasInfo = error.aliasInfo
-            # if the alias node is higher priority
-            if targetInfo.priority < aliasInfo.priority:
-                # get the target
-                targetNode = error.targetNode
-                # and the alias
-                aliasNode = error.aliasNode
-                # get the alias to replace the target
-                aliasNode.replace(targetNode)
-                # adjust the processor
-                aliasNode.postprocessor = targetNode.postprocessor
-                # make it the node associated with the key
-                self._nodes[error.key] = aliasNode
-                # adjust the node info
-                meta = self._metadata[error.key]
-                meta.priority = aliasInfo.priority
-                meta.locator = aliasInfo.locator
-
-        # all done
-        return 
-            
-
     def insert(self, value, priority, locator, key=None, name=None, factory=None):
         """
         Add {value} to the store
@@ -331,5 +297,45 @@ class NameServer(Hierarchical):
         # add the value to the model
         return self.insert(name=name, value=value, priority=priority, locator=locator)
 
+
+    def replaceCanonical(self, key, target, alias, aliasNode, aliasInfo):
+        """
+        Replace the canonical node under {target} with the associated information from {alias}
+        """
+        # replace the node
+        self._nodes[key] = aliasNode
+        # adjust its key
+        aliasNode.key = key
+        # adjust its metadata
+        aliasInfo.key = key
+        aliasInfo.name = target
+        # and register it under its new key
+        self._metadata[key] = aliasInfo
+        # all done
+        return
+
+
+    def resolveAliasingConflict(
+            self,
+            key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo):
+        """
+        Choose whether to keep the {target} or {alias} information depending on their priorities
+        """
+        # if the alias node is higher priority
+        if aliasInfo.priority > targetInfo.priority:
+            # get the alias to replace the target
+            aliasNode.replace(targetNode)
+            # adjust the processor
+            aliasNode.postprocessor = targetNode.postprocessor
+            # make it the node associated with the key
+            self._nodes[key] = aliasNode
+            # adjust the node info
+            meta = self._metadata[key]
+            meta.priority = aliasInfo.priority
+            meta.locator = aliasInfo.locator
+
+        # all done
+        return 
+            
 
 # end of file 

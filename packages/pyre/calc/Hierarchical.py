@@ -46,7 +46,7 @@ class Hierarchical(SymbolTable):
         its logical children
         """
         # hash the root key
-        # print("HierarchicalModel.children: key={}".format(key))
+        # print("Hierarchical.children: key={}".format(key))
         hashkey = self.hash(key)
         # extract the unique hashed keys (to avoid double counting aliases)
         unique = set(hashkey.nodes.values())
@@ -140,22 +140,18 @@ class Hierarchical(SymbolTable):
         # if there is no node under the canonical name
         if targetNode is None:
             # install the alias node as the canonical
-            self._nodes[targetKey] = aliasNode
-            # adjust its metadata
-            aliasInfo.key = targetKey
-            aliasInfo.name = target
-            # and register it under its new key
-            self._metadata[targetKey] = aliasInfo
-            # all done
-            return
+            return self.replaceCanonical(
+                key=targetKey, target=target, alias=alias, aliasNode=aliasNode, aliasInfo=aliasInfo)
 
         # if we get this far, both preëxisted; the aliased info has been cleared out, the
         # canonical is as it should be. all that's missing is a basis for picking which one to
-        # keep, something that I can't decide; perhaps the caller knows what to do... If the
-        # caller ignores this exception, the net effect is to have the original node survive
-        raise self.AliasingError(key=targetKey, target=target, alias=alias,
-                                 targetNode=targetNode, targetInfo=self._metadata[targetKey],
-                                 aliasNode=aliasNode, aliasInfo=aliasInfo)
+        # keep; grab the target info
+        targetInfo = self._metadata[targetKey]
+        # and see if someone know what to do
+        return self.resolveAliasingConflict(
+            key=targetKey, target=target, alias=alias,
+            targetNode=targetNode, targetInfo=targetInfo, aliasNode=aliasNode, aliasInfo=aliasInfo)
+
 
 
     def hash(self, name):
@@ -309,6 +305,31 @@ class Hierarchical(SymbolTable):
     # private data
     _hash = None
     _info = None
+
+
+    # aliasing
+    def replaceCanonical(self, key, target, alias, aliasNode, aliasInfo):
+        """
+        Replace the canonical node under {target} with the associated information from {alias}
+        """
+        # replace the node
+        self._nodes[key] = aliasNode
+        # adjust its metadata
+        aliasInfo.key = key
+        aliasInfo.name = target
+        # and register it under its new key
+        self._metadata[key] = aliasInfo
+        # MGA: BROKEN INVARIANT: the node key and the index key are not the same
+        # all done
+        return
+
+
+    def resolveAliasingConflict(self, 
+              key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo):
+        # i don't know what to do
+        raise self.AliasingError(
+            key=key, target=target, alias=alias,
+            targetNode=targetNode, targetInfo=targetInfo, aliasNode=aliasNode, aliasInfo=aliasInfo)
 
 
     # debug support

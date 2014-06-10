@@ -79,7 +79,8 @@ class AliasingError(NodeError):
     Signal that an alias was requested among names that were associated with existing nodes
     """
 
-    def __init__(self, key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo, **kwds):
+    def __init__(self, 
+                 key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo, **kwds):
         # build the error format string
         msg = "both {0.target!r} and {0.alias!r} have existing nodes"
         # chain up
