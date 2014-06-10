@@ -81,13 +81,6 @@ class Plexus(Application, metaclass=Plector):
 
 
     # implementation details
-    def banner(self):
-        """
-        Print an identifying message
-        """
-        return 'entering interactive mode'
-
-
     def invoke(self, action, argv):
         """
         Locate and invoke the named {action}

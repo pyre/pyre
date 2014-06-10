@@ -349,7 +349,7 @@ class Application(pyre.component, metaclass=Director):
         # adjust the local namespace
         context = self.pyre_interactiveSessionContext()
         # enter interactive mode
-        code.interact(banner=self.banner(), local=context)
+        code.interact(banner=self.pyre_banner(), local=context)
 
         # when the user terminates the session, all done
         return 0
@@ -363,4 +363,11 @@ class Application(pyre.component, metaclass=Director):
         return {'self': self}
         
         
+    def pyre_banner(self):
+        """
+        Print an identifying message
+        """
+        return 'entering interactive mode'
+
+
 # end of file 
