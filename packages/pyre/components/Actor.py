@@ -108,11 +108,8 @@ class Actor(Requirement):
                 for trait in self.pyre_configurables():
                     # go through all of the registered aliases
                     for alias in trait.aliases:
-                        # form the canonical name
-                        canonical = nameserver.join(name, alias)
-                        # alias the raw trait name to the canonical name; by leaving the last
-                        # argument out, we ask for assignments at global scope
-                        nameserver.alias(target=canonical, alias=alias)
+                        # and make references to any setting by their name at global scope
+                        nameserver.linkApplicationTrait(component=name, name=alias, trait=trait)
 
         # otherwise, record the caller's location
         locator = tracking.here(1) if locator is None else locator

@@ -336,6 +336,36 @@ class NameServer(Hierarchical):
 
         # all done
         return 
+
+
+    def linkApplicationTrait(self, component, trait, name):
+        """
+        Build a reference to {name} and store it under {component.name} as a proposed value for
+        {trait}
+        """
+        # hash the name
+        key = self.hash(name)
+        # check whether
+        try:
+            # there is a slot registered under the name at global scope
+            slot = self._nodes[key]
+        # if not
+        except KeyError:
+            # no worries, we are done
+            return
+
+        # otherwise, get the slot info
+        meta = self._metadata[key]
+        # build the full name of the scoped entry
+        full = self.join(component, name)
+        # hash it
+        fullkey = self.hash(full)
+        # build a reference to the global value
+        ref = slot.ref(key=fullkey, postprocessor=trait.instanceSlot.processor)
+        # make the assignment
+        self.insert(name=full, value=ref, priority=meta.priority, locator=meta.locator)
+        # all done
+        return
             
 
 # end of file 

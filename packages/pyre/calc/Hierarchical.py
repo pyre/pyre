@@ -140,8 +140,8 @@ class Hierarchical(SymbolTable):
         # if there is no node under the canonical name
         if targetNode is None:
             # install the alias node as the canonical
-            return self.replaceCanonical(
-                key=targetKey, target=target, alias=alias, aliasNode=aliasNode, aliasInfo=aliasInfo)
+            return self.replaceCanonical(key=targetKey, target=target, alias=alias,
+                                         aliasNode=aliasNode, aliasInfo=aliasInfo)
 
         # if we get this far, both preëxisted; the aliased info has been cleared out, the
         # canonical is as it should be. all that's missing is a basis for picking which one to
@@ -319,7 +319,6 @@ class Hierarchical(SymbolTable):
         aliasInfo.name = target
         # and register it under its new key
         self._metadata[key] = aliasInfo
-        # MGA: BROKEN INVARIANT: the node key and the index key are not the same
         # all done
         return
 
