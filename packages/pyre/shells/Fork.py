@@ -103,16 +103,12 @@ class Fork(Executive, family='pyre.shells.fork'):
         import pyre.ipc
         # unpack
         stdin, stdout, stderr = pipes
-        # replace {stdin}, {stdout} and {stderr} with the correct pipe endpoints
-        os.dup2(stdin[0], 0)
-        os.dup2(stdout[1], 1)
-        os.dup2(stderr[1], 2)
         # convert {stdout} and {stderr} into channels 
         # careful to identify the read/write ends correctly
-        stdout = pyre.ipc.pipe(descriptors=(0, 1))
-        stderr = pyre.ipc.pipe(descriptors=(0, 2))
+        stdout = pyre.ipc.pipe(descriptors=(stdin[0], stdout[1]))
+        stderr = pyre.ipc.pipe(descriptors=(stdin[0], stderr[1]))
         # and return them
         return stdout, stderr
-        
+
 
 # end of file 

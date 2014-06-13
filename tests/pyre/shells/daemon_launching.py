@@ -40,6 +40,15 @@ def test():
         # and return the app
         return app
 
+    # if this is the re-invocation  of the daemon spawn
+    if app.shell.daemon:
+        # launch it
+        status = app.run()
+        # check it
+        assert status == 0
+        # and return the status
+        return status
+
     # otherwise, launch it and get the channels to the child
     stdout, stderr = app.run()
 

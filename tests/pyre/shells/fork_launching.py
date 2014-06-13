@@ -21,8 +21,12 @@ def test():
         """a sample application"""
 
         @pyre.export
-        def main(self, **kwds):
-            print("Hello")
+        def main(self, channels, **kwds):
+            # unpack
+            stdout, stderr = channels
+            # say something
+            stdout.write(b"Hello father!")
+            # all done
             return 0
 
     # instantiate it
@@ -44,7 +48,7 @@ def test():
     stdout, stderr = app.run()
 
     # make sure we can read its output correctly
-    assert stdout.read(10) == b"Hello\n"
+    assert stdout.read(13) == b"Hello father!"
 
     # and return the app
     return app
