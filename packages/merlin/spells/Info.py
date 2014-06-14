@@ -11,7 +11,9 @@ import merlin
 
 # spells
 class Info(merlin.spell):
-    """A simple spell that prints out the contents of the merlin virtual filesystem"""
+    """
+    A simple spell that prints out information about the machine, user and project
+    """
 
 
     # public state

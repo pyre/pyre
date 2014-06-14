@@ -17,7 +17,7 @@ from ..components import dashboard
 # class declaration
 class Spell(dashboard, pyre.command, implements=spell):
     """
-    Interface declaration for merlin spells
+    Base class for merlin spell implementations
     """
 
 
