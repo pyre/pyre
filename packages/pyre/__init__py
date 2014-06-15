@@ -253,7 +253,7 @@ if executive:
     # discover information about the runtime environment
     executive.discover()
     # application shells
-    from .shells import application, plexus, command, action
+    from .shells import application, action, plexus, command, panel
 
 
 # clean up the executive instance when the interpreter shuts down

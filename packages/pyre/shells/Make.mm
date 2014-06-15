@@ -27,6 +27,7 @@ EXPORT_PYTHON_MODULES = \
     Director.py \
     Executive.py \
     Fork.py \
+    Panel.py \
     Plain.py \
     Plector.py \
     Plexus.py \

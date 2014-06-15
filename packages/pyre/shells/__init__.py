@@ -36,10 +36,11 @@ running concurrent applications using {MPI}.
 
 # the protocols
 from .Shell import Shell as shell
-from .Command import Command as command
-
-# command implementation
 from .Action import Action as action
+
+# command implementations
+from .Command import Command as command
+from .Panel import Panel as panel
 
 # the hosting strategies
 from .Script import Script as script
