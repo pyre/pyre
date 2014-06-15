@@ -21,6 +21,11 @@ class Command(pyre.component, implements=Action):
     """
 
 
+    # public state
+    dry = pyre.properties.bool(default=False)
+    dry.doc = "show what would get done without actually doing anything"
+    
+
     # expected interface
     @pyre.export
     def main(self, **kwds):
