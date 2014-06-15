@@ -18,6 +18,7 @@ RECURSE_DIRS = \
 
 all:
 	BLD_ACTION="all" $(MM) recurse
+	BLD_ACTION="clean" $(MM) recurse
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
