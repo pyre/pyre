@@ -19,7 +19,7 @@ class Client(pyre.component, family="pyre.db.client"):
     """
 
     # user configurable state
-    db = DataStore()
+    server = DataStore()
 
 
 # end of file 
