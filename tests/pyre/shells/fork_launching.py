@@ -35,7 +35,7 @@ def test():
     assert app.shell.pyre_name == 'λήδα'
 
     # if it is in debugging mode
-    if app.shell.debug:
+    if app.DEBUG:
         print("in debugging mode")
         # launch it
         status = app.run()

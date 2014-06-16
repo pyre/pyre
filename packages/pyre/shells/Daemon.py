@@ -42,7 +42,7 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         itself completely from its parent.
         """
         # if i was told not to spawn, just invoke the behavior
-        if self.debug: return application.main(*args, **kwds)
+        if application.DEBUG: return application.main(*args, **kwds)
 
         # if spawning is done
         if self.daemon:

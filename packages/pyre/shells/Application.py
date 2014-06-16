@@ -39,6 +39,9 @@ class Application(pyre.component, metaclass=Director):
     pyre_namespace = None
 
     # public state
+    DEBUG = pyre.properties.bool(default=False)
+    DEBUG.doc = 'debugging mode'
+
     shell = Shell()
     shell.doc = 'my hosting strategy'
 

@@ -47,7 +47,9 @@ class Panel(Command):
                 method(plexus=plexus)
             # if anything goes wrong
             except Exception as error:
-                # tell me
+                # if we are in debug mode, just let the exception go through
+                if plexus.DEBUG: raise
+                # otherwise, generate an error message for the user
                 self.error.log('{}: {}'.format(command, error))
                 # and bail
                 return 1

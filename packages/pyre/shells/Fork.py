@@ -24,20 +24,17 @@ class Fork(Executive, family='pyre.shells.fork'):
     capture = pyre.properties.bool(default=True)
     capture.doc = "control whether to create communication channels to the daemon process"
 
-    debug = pyre.properties.bool(default=False)
-    debug.doc = "turn it on to prevent the child from detaching from the parent"
-
 
     # interface
     @pyre.export
-    def launch(self, application=None, *args, **kwds):
+    def launch(self, application, *args, **kwds):
         """
         Invoke the {application} behavior in a subprocess and return a pair of channels
         corresponding to {stdout} and {stderr} of the child, with the write end of the channels
         both connected to the child's {stdin}
         """
         # if we are in debug mode, launch the application
-        if self.debug: return application.main(*args, **kwds)
+        if application.DEBUG: return application.main(*args, **kwds)
 
         # build the three pipes
         pipes = self.openCommunicationPipes()
