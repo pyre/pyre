@@ -41,6 +41,9 @@ class Application(pyre.component, metaclass=Director):
     # public state
     DEBUG = pyre.properties.bool(default=False)
     DEBUG.doc = 'debugging mode'
+    
+    interactive = pyre.properties.bool(default=False)
+    interactive.doc = "go interactive when no command line arguments are provided"
 
     shell = Shell()
     shell.doc = 'my hosting strategy'

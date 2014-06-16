@@ -34,11 +34,6 @@ class Plexus(Application, metaclass=Plector):
     """
 
 
-    # public state
-    interactive = pyre.properties.bool(default=False)
-    interactive.doc = "go interactive when no command line arguments are provided"
-
-
     # interface
     @pyre.export
     def main(self, *args, **kwds):
