@@ -30,12 +30,12 @@ class HTML(BlockMill):
         """
         Layout the {document} using my stationery for the header and footer
         """
-        # render the doctype
+        # if I have doctype
         if self.doctype:
+            # translate and render it
             yield "<!doctype html{}>".format(self.doctypes[self.doctype])
-        # and the rest
-        for line in super().render(document):
-            yield line
+        # render the rest
+        yield from super().render(document)
         # all done
         return
 

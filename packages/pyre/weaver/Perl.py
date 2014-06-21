@@ -34,8 +34,7 @@ class Perl(LineMill):
         if self.version:
             yield "#!/usr/bin/env perl" + self.version
         # and the rest
-        for line in super().render(document):
-            yield line
+        yield from super().render(document)
         # all done
         return
 

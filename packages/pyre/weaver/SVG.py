@@ -34,7 +34,7 @@ class SVG(BlockMill):
             # render the xml marker
             yield '<?xml version="1.0"?>'
             # the document header
-            for line in self.header(): yield line
+            yield from self.header()
             # and a blank line
             yield ''
 
@@ -43,7 +43,7 @@ class SVG(BlockMill):
         # a blank line
         yield ''
         # the document body
-        for line in document: yield line
+        yield from document
         # a blank line
         yield ''
         # close the svg tag
@@ -54,7 +54,7 @@ class SVG(BlockMill):
             # render a blank line
             yield ''
             # and the document footer
-            for line in self.footer(): yield line
+            yield from self.footer()
 
         # all done
         return

@@ -34,8 +34,7 @@ class Sh(LineMill):
         if self.variant:
             yield "#!" + self.variant
         # and the rest
-        for line in super().render(document):
-            yield line
+        yield from super().render(document)
         # all done
         return
 

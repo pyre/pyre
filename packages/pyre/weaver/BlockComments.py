@@ -23,6 +23,7 @@ class BlockComments:
         yield self.leader + self.startBlock
         # iterate over the {lines}
         for line in lines:
+            # and render each one
             yield leader + ' ' + line
         # place the end comment block marker
         yield self.leader + ' ' + self.endBlock

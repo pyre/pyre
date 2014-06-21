@@ -28,8 +28,7 @@ class XML(BlockMill):
         # render the xml marker
         yield '<?xml version="1.0"?>'
         # and the rest
-        for line in super().render(document):
-            yield line
+        yield from super().render(document)
         # all done
         return
 

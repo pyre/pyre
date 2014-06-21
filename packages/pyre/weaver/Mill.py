@@ -43,18 +43,15 @@ class Mill(pyre.component, Indenter, implements=Language):
         Layout the {document} using my stationery for the header and footer
         """
         # create the header
-        for line in self.header():
-            yield line
+        yield from self.header()
         # and a blank line
         yield ''
         # iterate over the document
-        for line in document:
-            yield line
+        yield from document
         # another blank line
         yield ''
         # and the footer
-        for line in self.footer():
-            yield line
+        yield from self.footer()
         # all done
         return
 
@@ -65,9 +62,7 @@ class Mill(pyre.component, Indenter, implements=Language):
         Build the header of the document
         """
         # the low level guy does all the work; just wrap everything in a comment block
-        for line in self.commentBlock(self._header()):
-            # pass it on
-            yield line
+        yield from self.commentBlock(self._header())
         # all done
         return
 
