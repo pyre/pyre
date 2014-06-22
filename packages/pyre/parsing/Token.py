@@ -41,8 +41,12 @@ class Token:
         """
         Textual representation, mostly for debugging purposes
         """
-        # render the lexeme
-        return "{{{0.name}: {0.lexeme!r}}}".format(self)
+        # if there is a lexeme
+        if self.lexeme:
+            # render it along with the token name
+            return "{{{0.name}: {0.lexeme!r}}}".format(self)
+        # otherwise
+        return "{{{0.name}}}".format(self)
 
     
     # implementation details

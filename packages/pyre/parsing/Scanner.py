@@ -8,6 +8,7 @@
 
 # externals
 import io
+from ..patterns import coroutine
 from ..tracking import file as fileloc # i make file locators
 # my superclass
 from .Lexer import Lexer
@@ -119,6 +120,33 @@ class Scanner(metaclass=Lexer):
         self.pyre_cache.append(token)
         # all done
         return self
+
+
+    # helpers
+    @coroutine
+    def pyre_ignoreWhitespace(self, client):
+        """
+        Remove {whitespace} tokens from the input stream
+        """
+        # support for upstream error notification
+        fault = None
+        # for ever
+        while True:
+            # attempt to
+            try:
+                # get a token
+                token = yield fault
+            # if anything goes wrong
+            except self.ParsingError as error:
+                # forward it to my client
+                client.throw(type(error), error)
+            
+            # if it is not whitespace
+            if not isinstance(token, self.whitespace):
+                # pass it along
+                fault = client.send(token)
+        # all done
+        return
 
 
     # meta methods

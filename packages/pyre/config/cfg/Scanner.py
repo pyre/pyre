@@ -8,7 +8,6 @@
 
 # externals
 import pyre.parsing
-import pyre.patterns
 
 
 # the scanner
@@ -39,31 +38,4 @@ class Scanner(pyre.parsing.scanner):
         return super().pyre_tokenize(uri=uri, stream=stream, client=filtered)
 
 
-    # implementation details
-    @pyre.patterns.coroutine
-    def pyre_ignoreWhitespace(self, client):
-        """
-        Remove {whitespace} tokens from the input stream
-        """
-        # support for upstream error notification
-        fault = None
-        # for ever
-        while True:
-            # attempt to
-            try:
-                # get a token
-                token = yield fault
-            # if anything goes wrong
-            except self.ParsingError as error:
-                # forward it to my client
-                client.throw(type(error), error)
-            
-            # if it is not whitespace
-            if not isinstance(token, self.whitespace):
-                # pass it along
-                fault = client.send(token)
-        # all done
-        return
-
-        
 # end of file 

@@ -12,6 +12,10 @@ class Parser:
     """
 
 
+    # types
+    from .exceptions import ParsingError
+
+
     # meta methods
     def __init__(self, **kwds):
         super().__init__(**kwds)
