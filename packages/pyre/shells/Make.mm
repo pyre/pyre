@@ -37,6 +37,7 @@ EXPORT_PYTHON_MODULES = \
     Shell.py \
     Terminal.py \
     User.py \
+    VFS.py \
     __init__.py
 
 
