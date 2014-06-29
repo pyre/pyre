@@ -49,8 +49,10 @@ class Panel(Command):
             except Exception as error:
                 # if we are in debug mode, just let the exception go through
                 if plexus.DEBUG: raise
-                # otherwise, generate an error message for the user
-                self.error.log('{}: {}'.format(command, error))
+                # otherwise, grab the type of error
+                category = type(error).__name__
+                # and generate an error message for the user
+                self.error.log('{}: {}: {}'.format(command, category, error))
                 # and bail
                 return 1
 
