@@ -52,9 +52,11 @@ from .Terminal import Terminal as terminal
 from .ANSI import ANSI as ansi
 from .Plain import Plain as plain
 
-# the base application component
+# the base application components
 from .Application import Application as application
 from .Plexus import Plexus as plexus
+# and its support
+from .Layout import Layout as layout
 
 # the user component
 from .User import User as user

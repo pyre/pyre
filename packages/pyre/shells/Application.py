@@ -33,6 +33,7 @@ class Application(pyre.component, metaclass=Director):
 
     # constants 
     DEFAULTS = 'defaults' # the name of the folder with my configuration files
+
     # the default name for pyre applications; subclasses are expected to provide a more
     # reasonable value, which gets used to load per-instance configuration right before the
     # application itself is instantiated
@@ -63,6 +64,7 @@ class Application(pyre.component, metaclass=Director):
     prefix = None # my installation directory
     defaults = None # the directory with my configuration folders
     pfs = None # the root of my private filesystem
+    layout = None # my configuration options
     # journal channels
     info = None
     warning = None
@@ -131,13 +133,6 @@ class Application(pyre.component, metaclass=Director):
         # chain up
         super().__init__(name=name, **kwds)
 
-        # sniff around for my environment
-        self.home, self.prefix, self.defaults = self.pyre_explore()
-        # mount my folders
-        self.pfs = self.pyre_mountApplicationFolders()
-        # go through my requirements and build my dependency map
-        self.dependencies = self.pyre_resolveDependencies()
-
         # attach my renderer to the console
         import journal
         journal.console.renderer = self.renderer
@@ -150,6 +145,15 @@ class Application(pyre.component, metaclass=Director):
             self.info = journal.info(name).activate()
             self.warning = journal.warning(name).activate()
             self.error = journal.error(name).activate()
+
+        # sniff around for my environment
+        self.home, self.prefix, self.defaults = self.pyre_explore()
+        # instantiate my layout
+        self.layout = self.pyre_loadLayout()
+        # mount my folders
+        self.pfs = self.pyre_makePrivateFilespace()
+        # go through my requirements and build my dependency map
+        self.dependencies = self.pyre_resolveDependencies()
 
         # all done
         return
@@ -165,6 +169,16 @@ class Application(pyre.component, metaclass=Director):
 
 
     # initialization hooks
+    def pyre_loadLayout(self):
+        """
+        Create my application layout object, typically an derivative of {pyre.shells.Layout}
+        """
+        # access the factory
+        from .Layout import Layout
+        # build one and return it
+        return Layout()
+
+
     def pyre_explore(self):
         """
         Look around my runtime environment and the filesystem for my special folders
@@ -218,7 +232,7 @@ class Application(pyre.component, metaclass=Director):
         return home, prefix, defaults
 
 
-    def pyre_mountApplicationFolders(self):
+    def pyre_makePrivateFilespace(self):
         """
         Build the private filesystem
         """
@@ -241,7 +255,7 @@ class Application(pyre.component, metaclass=Director):
         # if not
         except pfs.NotFoundError:
             # make it
-            pfs['user'] = vfs.getFolder(vfs.USER_DIR,  namespace)
+            pfs['user'] = vfs.getFolder(vfs.USER_DIR, namespace)
 
         # get my prefix
         prefix = self.prefix
@@ -254,12 +268,24 @@ class Application(pyre.component, metaclass=Director):
             
         # otherwise, get the associated filesystem
         home = vfs.retrieveFilesystem(root=prefix)
+        # and mount my folders in my namespace
+        self.pyre_mountApplicationFolders(pfs=pfs, prefix=home)
+        # all done
+        return pfs
+
+
+    def pyre_mountApplicationFolders(self, pfs, prefix):
+        """
+        Explore the application installation folders and construct my private filespace
+        """
+        # get my namespace
+        namespace = self.pyre_namespace
         # look for
         try:
             # the folder with my configurations
-            cfgdir = home['defaults/{}'.format(namespace)]
+            cfgdir = prefix['defaults/{}'.format(namespace)]
         # if it is not there
-        except vfs.NotFoundError:
+        except pfs.NotFoundError:
             # make an empty folder; must use {pfs} to do this to guarantee filesystem consistency
             cfgdir = pfs.folder()
         # attach it
@@ -268,6 +294,38 @@ class Application(pyre.component, metaclass=Director):
         # all done
         return pfs
 
+
+    def pyre_mountPrivateFolder(self, pfs, prefix, folder):
+        """
+        Look in {prefix} for {folder}, create it if necessary, and mount it within {pfs}, my
+        private filespace
+        """
+        # get my namespace
+        namespace = self.pyre_namespace
+
+        # check whether the parent folder exists
+        try:
+            # if so, get it
+            parent = prefix[folder]
+        # if not
+        except prefix.NotFoundError:
+            # create it
+            parent = prefix.mkdir(parent=prefix, name=folder)
+        # now, check whether there is a subdirectory named after me
+        try:
+            # if so get it
+            mine = parent[namespace]
+        # if not
+        except prefix.NotFoundError as error:
+            # create it
+            mine = prefix.mkdir(parent=parent, name=namespace)
+
+        # attach it to my private filespace
+        pfs[folder] = mine
+
+        # all done
+        return
+    
 
     def pyre_resolveDependencies(self):
         """

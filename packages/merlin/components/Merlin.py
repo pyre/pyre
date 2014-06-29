@@ -90,12 +90,12 @@ class Merlin(pyre.plexus, family='merlin.components.plexus', action=spell):
 
 
     # framework requests
-    def pyre_mountApplicationFolders(self):
+    def pyre_mountApplicationFolders(self, pfs, prefix):
         """
         Build my private filesystem
         """
         # chain up
-        pfs = super().pyre_mountApplicationFolders()
+        pfs = super().pyre_mountApplicationFolders(pfs=pfs, prefix=prefix)
 
         # check whether the project folder is already mounted
         try:
