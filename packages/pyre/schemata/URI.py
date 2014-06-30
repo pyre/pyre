@@ -6,8 +6,15 @@
 #
 
 
+# externals
+import re
+
+
 # implementation details
 class uri:
+
+    # types
+    from .exceptions import CastingError
 
     # public data
     @property
@@ -30,6 +37,33 @@ class uri:
         return ''.join(parts)
 
     # interface
+    @classmethod
+    def parse(cls, value, scheme=None, authority=None, address=None):
+        """
+        Convert {value} into a {uri}
+        """
+        # parse it
+        match = cls._regex.match(value)
+        # if unsuccessful
+        if not match:
+            msg = 'unrecognizable URI {0.value!r}'
+            raise cls.CastingError(value=value, description=msg)
+
+        # otherwise, extract the parts
+        thescheme = match.group('scheme')
+        theauthority = match.group('authority')
+        theaddress = match.group('address')
+        thequery = match.group('query')
+        thefragment = match.group('fragment')
+        # build a URI object and return it
+        return cls(
+            scheme=thescheme if thescheme is not None else scheme,
+            authority=theauthority if theauthority is not None else authority,
+            address=theaddress if theaddress is not None else address,
+            query=thequery,
+            fragment=thefragment
+            )
+
     def clone(self):
         """
         Make a copy of me
@@ -38,7 +72,7 @@ class uri:
             scheme=self.scheme, authority=self.authority, address=self.address,
             query=self.query, fragment=self.fragment)
 
-    # meta methods
+    # meta-methods
     def __init__(self, scheme=None, authority=None, address=None, query=None, fragment=None):
         # save my parts
         self.scheme = scheme
@@ -49,16 +83,40 @@ class uri:
         # all done
         return
 
+    def __add__(self, other):
+        """
+        Enable concatenations
+
+        N.B.: this is not {join}; it just takes my string representation, adds {other} to the
+        end, and attempts to parse the result as a {uri}
+        """
+        # if {other} is not a string
+        if not isinstance(other, str):
+            # i don't know what to do
+            raise NotImplemented
+        # otherwise, turn me into a string and add {other}
+        new = str(self) + other
+        # coerce that into a uri and return it
+        return self.parse(new)
+
     def __str__(self):
         # easy enough
         return self.uri
 
     # implementation details
+    _regex = re.compile(
+        "".join(( # adapted from http://regexlib.com/Search.aspx?k=URL
+                r"^(?=[^&])", # disallow '&' at the beginning of uri
+                r"(?:(?P<scheme>[^:/?#]+):)?", # grab the scheme
+                r"(?://(?P<authority>[^/?#]*))?", # grab the authority
+                r"(?P<address>[^?#]*)", # grab the address, typically a path
+                r"(?:\?(?P<query>[^#]*))?", # grab the query, i.e. the ?key=value&... chunks
+                r"(?:#(?P<fragment>.*))?"
+                )))
+
     __slots__ = ( 'scheme', 'authority', 'address', 'query', 'fragment' )
 
 
-# externals
-import re
 # superclass
 from .Schema import Schema
 
@@ -90,31 +148,15 @@ class URI(Schema):
             return value
         # if it is a string
         if isinstance(value, str):
-            # parse it
-            match = self._regex.match(value)
-            # if successful
-            if match:
-                # extract the parts
-                scheme = match.group('scheme')
-                authority = match.group('authority')
-                address = match.group('address')
-                query = match.group('query')
-                fragment = match.group('fragment')
-                # build a URI object
-                uri = self.locator(
-                    scheme=self.scheme if scheme is None else scheme,
-                    authority=self.authority if authority is None else authority,
-                    address=self.address if address is None else address,
-                    query=match.group('query'),
-                    fragment=match.group('fragment')
-                    )
-                # and return it
-                return uri
+            # get my basic type to parse it
+            return self.locator.parse(
+                value, scheme=self.scheme, authority=self.authority, address=self.address)
         # otherwise
         msg = 'unrecognizable URI {0.value!r}'
         raise self.CastingError(value=value, description=msg)
 
 
+    # meta-methods
     def __init__(self, default=locator(), scheme=None, authority=None, address=None, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
@@ -124,18 +166,6 @@ class URI(Schema):
         self.address = address
         # all done
         return
-
-
-    # private data
-    _regex = re.compile(
-        "".join(( # adapted from http://regexlib.com/Search.aspx?k=URL
-                r"^(?=[^&])", # disallow '&' at the beginning of uri
-                r"(?:(?P<scheme>[^:/?#]+):)?", # grab the scheme
-                r"(?://(?P<authority>[^/?#]*))?", # grab the authority
-                r"(?P<address>[^?#]*)", # grab the address, typically a path
-                r"(?:\?(?P<query>[^#]*))?", # grab the query, i.e. the ?key=value&... chunks
-                r"(?:#(?P<fragment>.*))?"
-                )))
 
 
 # end of file 
