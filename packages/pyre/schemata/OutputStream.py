@@ -24,23 +24,26 @@ class OutputStream(Schema, Dashboard):
     mode = 'w'
     typename = 'ostream'
     
+    # types
+    from . import uri
+    
 
     # interface
     def coerce(self, value, **kwds):
         """
         Attempt to convert {value} into an open input stream
         """
-        # the value is the special string {stdout}
+        # the value is the special string "stdout"
         if value == 'stdout':
             # return the process stdout
             return sys.stdout
-        # the value is the special string {stderr}
+        # the value is the special string "stderr"
         if value == 'stderr':
             # return the process stderr
             return sys.stderr
-        # if the {value} is a string
-        if isinstance(value, str):
-            # assume it is a uri that the framework fileserver knows how to deal with
+        # if the {value} is a string or a uri
+        if isinstance(value, str) or isintance(value, self.uri.locator):
+            # assume that the framework fileserver knows how to deal with it
             return self.pyre_fileserver.open(uri=value, mode=self.mode)
         # otherwise, leave it alone
         return value

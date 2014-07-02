@@ -23,6 +23,9 @@ class InputStream(Schema, Dashboard):
     # constants
     mode = 'r'
     typename = 'istream'
+
+    # types
+    from . import uri
     
 
     # interface
@@ -30,13 +33,13 @@ class InputStream(Schema, Dashboard):
         """
         Attempt to convert {value} into an open input stream
         """
-        # the value is the special string {stdin}
+        # the value is the special string "stdin"
         if value == 'stdin':
             # return the process stdin
             return sys.stdin
-        # if the {value} is a string
-        if isinstance(value, str):
-            # assume it is a uri that the framework fileserver knows how to deal with
+        # if the {value} is either a string or a uri
+        if isinstance(value, str) or isinstance(value, self.uri.locator):
+            # assume that the framework fileserver knows how to deal with it
             return self.pyre_fileserver.open(uri=value, mode=self.mode)
         # otherwise, leave it alone
         return value
