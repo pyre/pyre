@@ -26,6 +26,7 @@ RECURSE_DIRS = \
     parsing \
     patterns \
     platforms \
+    primitives \
     records \
     schemata \
     shells \
