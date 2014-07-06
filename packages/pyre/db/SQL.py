@@ -344,7 +344,11 @@ class SQL(Mill, family="pyre.db.sql"):
                 # render any dangling values
                 yield self.place(dangling + ',') # add a comma since we know there are more...
             # collect the values
-            values = (field.sql(value=value) for field, value in zip(table.pyre_fields, record))
+            values = (
+                value.value 
+                if value is table.default or value is table.null 
+                else field.sql(value=value) 
+                for field, value in zip(table.pyre_fields, record))
             # render them
             dangling = "({})".format(", ".join(values))
 

@@ -78,9 +78,29 @@ class Measure(records.measure):
         # and return
         return self
 
+
+    # the base class of the local mixins
+    class measure:
+        """
+        The base class of the local mixins.
+
+        Its purpose is to trap value coercion and skip it for the special values {NULL} and
+        {DEFAULT} that show up as {literals} instances
+        """
+
+        # interface
+        def coerce(self, value, **kwds):
+            # the literals
+            if value is literals.null or value is literals.default:
+                # require no processing
+                return value
+            # for the rest, chain up...
+            return super().coerce(value=value, **kwds)
+
+
  
     # mixins for the various supported types
-    class bool:
+    class bool(measure):
         """Mixin for booleans"""
 
         # public data
@@ -93,7 +113,7 @@ class Measure(records.measure):
             return 'true' if value else 'false'
 
 
-    class date:
+    class date(measure):
         """Mixin for dates"""
 
         # public data
@@ -118,7 +138,7 @@ class Measure(records.measure):
             return
 
         
-    class decimal:
+    class decimal(measure):
         """Mixin for fixed point numbers"""
 
         # public data
@@ -145,7 +165,7 @@ class Measure(records.measure):
             return
 
         
-    class float:
+    class float(measure):
         """Mixin for floating point numbers"""
 
         # public data
@@ -158,7 +178,7 @@ class Measure(records.measure):
             return str(value)
             
 
-    class int:
+    class int(measure):
         """Mixin for integers"""
 
         # public data
@@ -171,7 +191,7 @@ class Measure(records.measure):
             return str(value)
             
 
-    class str:
+    class str(measure):
         """Mixin for strings"""
 
         # public data
@@ -199,7 +219,7 @@ class Measure(records.measure):
             return
             
 
-    class time:
+    class time(measure):
         """Mixin for timestamps"""
 
         # public data
