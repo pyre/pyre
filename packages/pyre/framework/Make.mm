@@ -30,6 +30,7 @@ EXPORT_PYTHON_MODULES = \
     Package.py \
     Priority.py \
     Pyre.py \
+    Schema.py \
     Slot.py \
     SlotInfo.py \
     exceptions.py \

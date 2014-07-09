@@ -18,15 +18,18 @@ class Dashboard:
     pyre_executive = None 
 
     # framework parts
-    pyre_registrar = None
     pyre_fileserver = None
     pyre_nameserver = None
     pyre_configurator = None
-    pyre_externals = None
+
+    # infrastructure managers
+    pyre_registrar = None # the component registrar
+    pyre_externals = None # the manager of external packages
+    pyre_schema = None # the database schema
 
     # information about the runtime environment
-    pyre_host = None
-    pyre_user = None
+    pyre_host = None # the current host
+    pyre_user = None # the current user
 
 
 # end of file 

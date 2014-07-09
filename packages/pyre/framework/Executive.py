@@ -408,6 +408,16 @@ class Executive:
         return parser
 
 
+    def newSchema(self, **kwds):
+        """
+        Build a new schema manager
+        """
+        # access the factory
+        from .Schema import Schema
+        # build one and return it
+        return Schema(**kwds)
+
+
     def newTimerRegistry(self, **kwds):
         """
         Build a new time registrar

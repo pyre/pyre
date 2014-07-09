@@ -99,6 +99,11 @@ class Pyre(Executive):
         # attach
         dashboard.pyre_configurator = weakref.proxy(self.configurator)
 
+        # database schema
+        self.schema = self.newSchema(executive=self)
+        # attach
+        dashboard.pyre_schema = weakref.proxy(self.schema)
+
         # component linker
         self.linker = self.newLinker()
         # the timer registry
