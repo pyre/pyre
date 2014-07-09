@@ -6,7 +6,12 @@
 #
 
 
-class Persistent:
+# superclass
+from ..patterns.AttributeClassifier import AttributeClassifier
+
+
+# class declaration
+class Persistent(AttributeClassifier):
     """
     Metaclass that enables the creation of classes whose instances store part of their
     attributes in relational database tables.
@@ -16,6 +21,30 @@ class Persistent:
     relational tables more transparent to the developer of database applications by removing as
     much of the grunt work of storing and retrieving object state as possible.
     """
+
+
+    # meta-methods
+    def __init__(self, name, bases, attributes, schema=None, **kwds):
+        # chain up
+        super().__init__(name, bases, attributes, **kwds)
+
+        # if i model a table
+        if schema is not None:
+            # attach my schema
+            self.pyre_primaryTable = schema
+            # register me with the schema manager
+            self.pyre_schema.models[schema] = self
+
+        # all done
+        return
+
+
+    def __call__(self, **kwds):
+        """
+        Create one of my instances
+        """
+        # make one and return it
+        return super().__call__()
 
 
 # end of file

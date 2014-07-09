@@ -70,4 +70,13 @@ class Table(records.record, metaclass=Schemer):
         return cls
 
 
+    # implementation details
+    # table attributes that generate the table wide declaration statements; initialized by my
+    # metaclass at compile time
+    _pyre_primaryKeys = None
+    _pyre_uniqueFields = None
+    _pyre_foreignKeys = None
+    _pyre_constraints = None
+
+
 # end of file 

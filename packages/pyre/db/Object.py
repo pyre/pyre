@@ -6,7 +6,14 @@
 #
 
 
-class Object:
+# my superclass
+from ..framework.Dashboard import Dashboard
+# my metaclass
+from .Persistent import Persistent
+
+
+# class declaration
+class Object(Dashboard, metaclass=Persistent):
     """
     The base class of classes whose instances store part of their attributes in relational
     database tables.
@@ -16,6 +23,10 @@ class Object:
     tables more transparent to the developer of database applications by removing as much of
     the grunt work of storing and retrieving object state as possible.
     """
+
+
+    # implementation details
+    pyre_primaryTable = None
 
 
 # end of file
