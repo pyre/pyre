@@ -16,7 +16,13 @@ class ExtentAware(AbstractMetaclass):
     """
     Metaclass that endows its instances with awareness of their extent.
 
-    The extent of a class is the set of its instances.
+    The extent of a class is the set of its own instances and the instances of all of its
+    subclasses.
+
+    The class extent is stored with the first class that mentions {ExtentAware} as a metaclass,
+    and all descendants are counted by that class. Descendants that want to keep track of their
+    own extent and prevent their extent from being counted by their superclass must be declared
+    with {pyre_extentRoot} set to {True}.
 
     implementation details:
 
@@ -30,29 +36,26 @@ class ExtentAware(AbstractMetaclass):
 
 
     # class methods
-    def __new__(cls, name, bases, attributes, pyre_extentRoot=False, **kwds):
+    def __init__(self, name, bases, attributes, pyre_extentRoot=False, **kwds):
         """
-        Intercept the class record creation and install a replacement constructor that records
-        the number of instances of this class
-        """
-        # the old implementation replaced the client constructor with one that added a weak
-        # reference to the new instance in _pyre_extent. as a side effect, each class in a
-        # hierarchy maintained an extent for itself and its descendants, assuming that __init__
-        # was chaining upwards correctly. the current implementation with __new__/__call__
-        # behaves somewhat differently: the extent is stored with the first class that mentions
-        # ExtentAware as a metaclass, and all descendants are counted by that class
+        Endow extent aware class records with a registry of their instances
 
-        # build the class record
-        record = super().__new__(cls, name, bases, attributes, **kwds)
-        # add the weakset attribute that maintains the extent, if it is not already there this
+        By default, an extent aware class keeps track of both its own instances and the
+        instances of all of its subclasses. Descendants that wish to maintain their own count
+        """
+        # chain up
+        super().__init__(name, bases, attributes, **kwds)
+
+        # add the weakset attribute that maintains the extent, if it is not already there; this
         # has the effect of storing the class extent at the root class in a hierarchy which
         # makes it easy to check that descendants have been garbage collected as well. if you
         # want to keep track of the extent at some other point in a class hierarchy, declare
         # that class with {pyre_extentRoot} set to {True}
-        if pyre_extentRoot or not hasattr(record, "_pyre_extent"): 
-            record._pyre_extent = weakref.WeakSet()
-        # and return it
-        return record
+        if pyre_extentRoot or not hasattr(self, "_pyre_extent"): 
+            # build the instance registry
+            self._pyre_extent = weakref.WeakSet()
+        # all done
+        return
 
 
     def __call__(self, *args, **kwds):
