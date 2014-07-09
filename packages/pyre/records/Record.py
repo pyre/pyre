@@ -8,10 +8,12 @@
 
 # my metaclass
 from .Templater import Templater
+# superclass
+from ..framework.Dashboard import Dashboard
 
 
 # declaration
-class Record(metaclass=Templater):
+class Record(Dashboard, metaclass=Templater):
     """
     The base class for representing data extracted from persistent stores.
 
