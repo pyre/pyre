@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import weakref
 # superclass
 from ..patterns.AttributeClassifier import AttributeClassifier
 
@@ -34,6 +36,8 @@ class Persistent(AttributeClassifier):
             self.pyre_primaryTable = schema
             # register me with the schema manager
             self.pyre_schema.models[schema] = self
+            # initialize my extent
+            self.pyre_extent = weakref.WeakValueDictionary()
 
         # all done
         return
@@ -43,8 +47,12 @@ class Persistent(AttributeClassifier):
         """
         Create one of my instances
         """
-        # make one and return it
-        return super().__call__()
+        # show me
+        # print('pyre.db.Persistent.__call__: kwds={}'.format(kwds))
+        # chain up to build the instance
+        model = super().__call__()
+        # and return it
+        return model
 
 
 # end of file

@@ -26,7 +26,8 @@ class Object(Dashboard, metaclass=Persistent):
 
 
     # implementation details
-    pyre_primaryTable = None
+    pyre_extent = None # a map from primary keys to model instances
+    pyre_primaryTable = None # the table I model
 
 
 # end of file
