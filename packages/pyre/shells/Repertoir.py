@@ -33,7 +33,7 @@ class Repertoir:
         # construct the name of the instance
         tag = '{.pyre_name}.{}'.format(plexus, name)
         # instantiate it
-        command = component(name=tag, globalAliases=True)
+        command = component(name=tag, plexus=plexus, globalAliases=True)
         # and return it
         return command
 

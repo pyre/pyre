@@ -137,14 +137,16 @@ class Application(pyre.component, metaclass=Director):
         import journal
         journal.console.renderer = self.renderer
 
+        # make a name for my channels
+        channel  = self.pyre_namespace or name
         # if I have a name
-        if name:
+        if channel:
             # build my channels
-            self.debug = journal.error(name)
-            self.firewall = journal.error(name)
-            self.info = journal.info(name).activate()
-            self.warning = journal.warning(name).activate()
-            self.error = journal.error(name).activate()
+            self.debug = journal.debug(channel)
+            self.firewall = journal.firewall(channel)
+            self.info = journal.info(channel).activate()
+            self.warning = journal.warning(channel).activate()
+            self.error = journal.error(channel).activate()
 
         # sniff around for my environment
         self.home, self.prefix, self.defaults = self.pyre_explore()

@@ -50,15 +50,17 @@ class Command(pyre.component, implements=Action):
 
 
     # meta-methods
-    def __init__(self, name, **kwds):
+    def __init__(self, name, plexus, **kwds):
         # chain up
         super().__init__(name=name, **kwds)
         # give me journal
         import journal
         # build my channels
-        self.info = journal.info(name)
-        self.warning = journal.warning(name)
-        self.error = journal.error(name)
+        self.debug = plexus.debug
+        self.firewall = plexus.firewall
+        self.info = plexus.info
+        self.warning = plexus.warning
+        self.error = plexus.error
         # all done
         return
 
