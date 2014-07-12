@@ -8,8 +8,8 @@
 
 # iterator tools
 import itertools
-# access to the text wrapping utilities
-import textwrap
+# so i can check for sequences
+import collections
 # my base class
 from pyre.weaver.SQL import SQL as Mill
 
@@ -113,7 +113,7 @@ class SQL(Mill, family="pyre.db.sql"):
                 # push out
                 self.outdent()
                 # build the filtering expression
-                predicate = self.expression(root=query.where)
+                predicate = self.expression(root=query.where, context=query)
                 # render the {WHERE} marker
                 yield self.place("WHERE")
                 # push in
@@ -122,7 +122,13 @@ class SQL(Mill, family="pyre.db.sql"):
                 yield self.place("({}){}".format(predicate, terminator))
 
             # render the {ORDER BY} clause
-            if query.order is not None:
+            order = query.order
+            # if it exists
+            if order is not None:
+                # if it is not an iterable
+                if not isinstance(order, collections.Iterable):
+                    # make it one
+                    order = order,
                 # push out
                 self.outdent()
                 # render the {ORDER BY} marker
@@ -130,7 +136,7 @@ class SQL(Mill, family="pyre.db.sql"):
                 # push in
                 self.indent()
                 # build the collation expression
-                collation = (self.expression(root=spec, context=query) for spec in query.order)
+                collation = (self.expression(root=spec, context=query) for spec in order)
                 # and render it
                 yield self.place("{};".format(", ".join(collation)))
 
@@ -286,7 +292,7 @@ class SQL(Mill, family="pyre.db.sql"):
                     constraints -= 1
                     # build the declaration
                     yield self.place("CHECK ({}){}".format(
-                        self.expression(root=constraint, table=table),
+                        self.expression(root=constraint, context=table),
                         ',' if constraints or annotations else ''
                         ))
         # push out
@@ -378,7 +384,7 @@ class SQL(Mill, family="pyre.db.sql"):
         # indent
         self.indent()
         # build the filtering expression
-        predicate = self.expression(root=condition, table=table)
+        predicate = self.expression(root=condition, context=table)
         # and render it
         yield self.place("WHERE ({});".format(predicate))
         # outdent
@@ -433,7 +439,7 @@ class SQL(Mill, family="pyre.db.sql"):
         # outdent
         self.outdent()
         # build the filtering expression
-        predicate = self.expression(root=condition, table=table)
+        predicate = self.expression(root=condition, context=table)
         # and render it
         yield self.place("WHERE ({});".format(predicate))
         # outdent
@@ -453,30 +459,50 @@ class SQL(Mill, family="pyre.db.sql"):
         from .Collation import Collation as collation
         from .FieldReference import FieldReference as fieldReference
         # add them to the rendering strategy
-        self._renderers[collation] = self._collation
-        self._renderers[fieldReference] = self._fieldReference
+        self._renderers[collation] = self._collationRenderer
+        self._renderers[fieldReference] = self._fieldReferenceRenderer
+
+        # SQl primitives
+        from .expressions import (
+            IsNull as isNull,
+            IsNotNull as isNotNull,
+            Cast as cast
+            )
+
+        # add them to the rendering strategy
+        self._renderers[isNull] = self._primitiveSQLExpressionRenderer
+        self._renderers[isNotNull] = self._primitiveSQLExpressionRenderer
+        self._renderers[cast] = self._primitiveSQLExpressionRenderer
 
         # all done
         return
 
 
     # implementation details
-    def _collation(self, order, context=None, **kwds):
+    def _collationRenderer(self, order, context=None, **kwds):
         """
         Render the collation order specification
         """
         # get the column reference and decorate it
-        return order.sql(context=context)
+        return order.sql(context=context, **kwds)
 
 
-    def _fieldReference(self, node, table=None, **kwds):
+    def _fieldReferenceRenderer(self, node, context=None, **kwds):
         """
         Render {node} as reference to a field
         """
         # get the reference to render itself
-        return node.sql(context=table)
+        return node.sql(context=context, **kwds)
 
 
+    def _primitiveSQLExpressionRenderer(self, node, context=None, **kwds):
+        """
+        Render {node} as a unary postfix operator
+        """
+        return node.sql(context=context, **kwds)
+
+
+    # declarations
     def _fieldDeclaration(self, field, comma):
         """
         Build the declaration lines for a given table field

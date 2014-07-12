@@ -49,4 +49,27 @@ class IsNotNull(UnaryPostfix):
     operator = "IS NOT NULL"
 
 
+ # some built-in functions
+class Cast:
+
+    # interface
+    def sql(self, **kwds):
+        """
+        SQL rendering of the expression I represent
+        """
+        # easy enough
+        return "CAST({} AS {})".format(self.field.sql(**kwds), self.targetType.decl)
+
+    # meta-methods
+    def __init__(self, field, targetType, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save my field reference
+        self.field = field
+        # and the target type
+        self.targetType = targetType
+        # all done
+        return
+
+
 # end of file 

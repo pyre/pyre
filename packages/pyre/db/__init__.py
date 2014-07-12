@@ -83,4 +83,12 @@ def template(table):
     return row
 
 
+# primitive SQL expressions
+from .expressions import (
+    IsNull as isNull,
+    IsNotNull as isNotNull,
+    Cast as cast
+    )
+
+
 # end of file 
