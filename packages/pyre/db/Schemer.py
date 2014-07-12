@@ -23,9 +23,14 @@ class Schemer(records.templater):
 
 
     # meta methods
-    def __new__(cls, name, bases, attributes, **kwds):
+    def __new__(cls, name, bases, attributes, id=None, **kwds):
         # chain up
-        table = super().__new__(cls, name, bases, attributes, **kwds)
+        table = super().__new__(cls, name, bases, attributes, id=id, **kwds)
+
+        # tables with public names
+        if id is not None:
+            # get added to the global schema
+            table.pyre_schema.tables.add(table)
 
         # now that the class record is built, we can hunt down inherited attributes
         primary = set()
