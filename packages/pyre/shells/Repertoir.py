@@ -22,18 +22,18 @@ class Repertoir:
 
 
     # interface
-    def find(self, plexus, name):
+    def resolve(self, plexus, spec):
         """
         Attempt to locate and instantiate a command with the given {name}
         """
         # get the action protocol
         action = self.protocol
         # coerce the {name} into an actual command component
-        component = action.pyre_resolveSpecification(spec=name)
+        component = action.pyre_resolveSpecification(spec=spec)
         # construct the name of the instance
-        tag = '{.pyre_name}.{}'.format(plexus, name)
+        name = '{.pyre_name}.{}'.format(plexus, spec)
         # instantiate it
-        command = component(name=tag, plexus=plexus, globalAliases=True)
+        command = component(name=name, spec=spec, plexus=plexus, globalAliases=True)
         # and return it
         return command
 

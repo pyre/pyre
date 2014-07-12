@@ -50,9 +50,11 @@ class Command(pyre.component, implements=Action):
 
 
     # meta-methods
-    def __init__(self, name, plexus, **kwds):
+    def __init__(self, name, spec, plexus, **kwds):
         # chain up
         super().__init__(name=name, **kwds)
+        # save my short name
+        self.pyre_spec = spec
         # give me journal
         import journal
         # build my channels
@@ -72,6 +74,10 @@ class Command(pyre.component, implements=Action):
         """
         # wire it to invoking {main}
         return self.main(plexus=plexus, argv=argv)
+
+
+    # private data
+    pyre_spec = None
 
         
 # end of file 

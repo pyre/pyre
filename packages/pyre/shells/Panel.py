@@ -38,7 +38,7 @@ class Panel(Command):
             # if there was a typo
             except AttributeError:
                 # show an error message
-                self.error.log('unrecognized command {!r}'.format(command))
+                self.error.log('{.pyre_spec}: unrecognized command {!r}'.format(self, command))
                 # and my help screen
                 return self.help(plexus=plexus)
             # otherwise, all is well; attempt to

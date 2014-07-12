@@ -85,7 +85,7 @@ class Plexus(Application, metaclass=Plector):
         # attempt to
         try:
             # resolve the name into an actual command component
-            command = repertoir.find(plexus=self, name=action)
+            command = repertoir.resolve(plexus=self, spec=action)
         # if this failed
         except repertoir.ResolutionError as error:
             # report it
