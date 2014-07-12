@@ -53,7 +53,17 @@ class SQL(LineMill, Expression):
         if isinstance(value, str):
             # just escape the single quotes
             return "'{}'".format(value.replace("'", "''"))
-        # otherwise, render the value as a string
+
+        # check whether
+        try:
+            # it knows how to render itself
+            return value.sql()
+        # otherwise
+        except AttributeError:
+            # no worries
+            pass
+
+        # last resort: render the value as a string
         return str(value)
 
 
