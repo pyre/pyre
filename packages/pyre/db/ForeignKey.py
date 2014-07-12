@@ -22,6 +22,22 @@ class ForeignKey:
     reference = None # the table/field i refer to
 
 
+    @property
+    def field(self):
+        """
+        Return the field to which I refer
+        """
+        return self.reference.field
+
+
+    @property
+    def table(self):
+        """
+        Return the table to which I refer
+        """
+        return self.reference.table
+
+
     # meta methods
     def __init__(self, key=None, onDelete=None, onUpdate=None, **kwds):
         # chain up
