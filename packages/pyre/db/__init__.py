@@ -11,6 +11,37 @@ Machinery for building connections to database back ends
 """
 
 
+# the literals
+from .literals import null, default
+# cascade action markers for foreign keys
+from .actions import noAction, restrict, cascade, setNull, setDefault
+
+# orderings
+from .Collation import Collation as collation
+# for convenience
+def ascending(fieldref):
+    """
+    Build a clause for the {ORDER} expression that marks {fieldref} as sorted in ascending
+    order
+    """
+    # build and return a collation object
+    return collation(fieldref=fieldref, collation="ASC")
+
+def descending(fieldref):
+    """
+    Build a clause for the {ORDER} expression that marks {fieldref} as sorted in descending
+    order
+    """
+    # build and return a collation object
+    return collation(fieldref=fieldref, collation="DESC")
+
+# primitive SQL expressions
+from .expressions import (
+    IsNull as isNull,
+    IsNotNull as isNotNull,
+    Cast as cast
+    )
+
 # field declarations
 from ..records import field
 # the local measure class
@@ -33,7 +64,6 @@ from .Query import Query as query
 # persistent object
 from .Object import Object as object
 
-
 # protocols
 from .DataStore import DataStore as datastore
 # components
@@ -46,32 +76,6 @@ from .SQLite import SQLite as sqlite
 from .Postgres import Postgres as postgres
 
 
-# the literals
-from .literals import null, default
-# cascade action markers for foreign keys
-from .actions import noAction, restrict, cascade, setNull, setDefault
-
-
-# orderings
-from .Collation import Collation as collation
-
-def ascending(fieldref):
-    """
-    Build a clause for the {ORDER} expression that marks {fieldref} as sorted in ascending
-    order
-    """
-    # build and return a collation object
-    return collation(fieldref=fieldref, collation="ASC")
-
-def descending(fieldref):
-    """
-    Build a clause for the {ORDER} expression that marks {fieldref} as sorted in descending
-    order
-    """
-    # build and return a collation object
-    return collation(fieldref=fieldref, collation="DESC")
-
-
 # templates: table rows with all fields set to None; used to update table entries
 def template(table):
     """
@@ -81,14 +85,6 @@ def template(table):
     row = table.pyre_mutable(data=(None,)*len(table.pyre_fields))
     # and return it
     return row
-
-
-# primitive SQL expressions
-from .expressions import (
-    IsNull as isNull,
-    IsNotNull as isNotNull,
-    Cast as cast
-    )
 
 
 # end of file 

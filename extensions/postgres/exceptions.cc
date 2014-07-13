@@ -9,6 +9,7 @@
 #include <Python.h>
 #include <string>
 #include <iostream>
+#include <pyre/journal.h>
 
 #include "exceptions.h"
 
@@ -82,6 +83,42 @@ registerExceptions(PyObject * module, PyObject * args) {
 
     NotSupportedError = PyObject_GetAttrString(exceptions, "NotSupportedError");
     PyModule_AddObject(module, "NotSupportedError", NotSupportedError);
+
+    // and return the module
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// the representation of {NULL} from {pyre.db}; set during extension registration
+PyObject * pyre::extensions::postgres::null = 0;
+
+
+// {NULL} registration
+const char * const
+pyre::extensions::postgres::
+registerNULL__name__ = "registerNULL";
+
+const char * const
+pyre::extensions::postgres::
+registerNULL__doc__ = "register the representation of the {NULL} object";
+
+PyObject *
+pyre::extensions::postgres::
+registerNULL(PyObject * module, PyObject * args) {
+
+    // unpack the arguments
+    if (!PyArg_ParseTuple(args, "O:registerNULL", &null)) {
+        return 0;
+    }
+
+    // set up the debug channel
+    pyre::journal::debug_t debug("postgres.registration");
+    // let me know what the {NULL} rep looks like
+    debug
+        << pyre::journal::at(__HERE__)
+        << "NULL from " << null
+        << pyre::journal::endl;
 
     // and return the module
     Py_INCREF(Py_None);

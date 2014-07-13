@@ -11,6 +11,7 @@
 #include <libpq-fe.h>
 #include <pyre/journal.h>
 
+#include "exceptions.h"
 #include "interlayer.h"
 #include "constants.h"
 
@@ -102,8 +103,8 @@ buildResultTuple(PGresult * result)
                 item = converters[field](value);
             } else {
                 // otherwise it is null, which we encode as None
-                Py_INCREF(Py_None);
-                item = Py_None;
+                Py_INCREF(null);
+                item = null;
             }
             // add it to the tuple
             PyTuple_SET_ITEM(row, field, item);

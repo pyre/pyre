@@ -28,9 +28,10 @@ namespace pyre {
                 // the version method
                 { version__name__, version, METH_VARARGS, version__doc__ },
 
-                // exceptions
+                // registration
                 { registerExceptions__name__, 
                   registerExceptions, METH_VARARGS, registerExceptions__doc__ },
+                { registerNULL__name__, registerNULL, METH_VARARGS, registerNULL__doc__ },
 
                 // connections
                 { connect__name__, connect, METH_VARARGS, connect__doc__ },

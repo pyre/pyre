@@ -12,19 +12,6 @@ import pyre
 from .Server import Server
 
 
-# helper routine to initialize the extension module
-def initializeExtension():
-    # access the extension
-    from ..extensions import postgres
-    # get hold of the standard compliant exception hierarchy
-    from pyre.db import exceptions
-    # register the exception hierarchy with the module so that the exceptions it raises are
-    # subclasses of the ones defined in pyre.db
-    postgres.registerExceptions(exceptions)
-    # and return the module
-    return postgres
-
-
 # declaration
 class Postgres(Server, family="pyre.db.server.postgres"):
     """
@@ -116,13 +103,13 @@ class Postgres(Server, family="pyre.db.server.postgres"):
 
 
     # meta methods
-    def __init__(self, **kwds):
+    def __new__(cls, **kwds):
+        # if necessary
+        if cls.postgres is None:
+            # initialize the extension module
+            cls.postgres = cls.initializeExtension()
         # chain up
-        super().__init__(**kwds)
-        # initialize the extension module, if necessary
-        if type(self).postgres is None: type(self).postgres = initializeExtension()
-        # all done
-        return
+        return super().__new__(cls, **kwds)
 
 
     # context manager interface
@@ -157,6 +144,27 @@ class Postgres(Server, family="pyre.db.server.postgres"):
     # implementation details
     postgres = None # the handle to the extension module
     connection = None # the handle to the session with the back-end
+
+
+    # helper routine to initialize the extension module
+    @classmethod
+    def initializeExtension(cls):
+        # access the extension
+        from ..extensions import postgres
+
+        # pull in the {NNULL} object rep
+        from . import null
+        # register it with the extension
+        postgres.registerNULL(null)
+
+        # get hold of the standard compliant exception hierarchy
+        from . import exceptions
+        # register the exception hierarchy with the module so that the exceptions it raises are
+        # subclasses of the ones defined in pyre.db
+        postgres.registerExceptions(exceptions)
+        # and return the module
+        return postgres
+
 
 
 # end of file 
