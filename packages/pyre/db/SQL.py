@@ -466,13 +466,15 @@ class SQL(Mill, family="pyre.db.sql"):
         from .expressions import (
             IsNull as isNull,
             IsNotNull as isNotNull,
-            Cast as cast
+            Cast as cast,
+            Like as like,
             )
 
         # add them to the rendering strategy
         self._renderers[isNull] = self._primitiveSQLExpressionRenderer
         self._renderers[isNotNull] = self._primitiveSQLExpressionRenderer
         self._renderers[cast] = self._primitiveSQLExpressionRenderer
+        self._renderers[like] = self._primitiveSQLExpressionRenderer
 
         # all done
         return

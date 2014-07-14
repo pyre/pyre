@@ -39,7 +39,8 @@ def descending(fieldref):
 from .expressions import (
     IsNull as isNull,
     IsNotNull as isNotNull,
-    Cast as cast
+    Cast as cast,
+    Like as like,
     )
 
 # field declarations

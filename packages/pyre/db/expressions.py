@@ -51,6 +51,9 @@ class IsNotNull(UnaryPostfix):
 
  # some built-in functions
 class Cast:
+    """
+    Implementation of the {CAST} expression
+    """
 
     # interface
     def sql(self, **kwds):
@@ -70,6 +73,34 @@ class Cast:
         self.targetType = targetType
         # all done
         return
+
+
+# some built-in operators
+class Like:
+    """
+    Implementation of the LIKE operator
+    """
+
+    # interface
+    def sql(self, **kwds):
+        """
+        SQL rendering of the expression I represent
+        """
+        # easy enough
+        return "({} LIKE '{}')".format(self.field.sql(**kwds), self.regex)
+
+    # meta-methods
+    def __init__(self, field, regex, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save my field reference
+        self.field = field
+        # and the target type
+        self.regex = regex
+        # all done
+        return
+
+
 
 
 # end of file 
