@@ -32,10 +32,8 @@ class Selector:
         """
         Field retrieval
         """
-        # if the target of this access is the class itself, just return my meta-data
-        if record is None: return self.field
-        # otherwise, complain
-        raise NotImplementedError('field selectors do not support read access to instances')
+        # return my meta-data regardless of the target of this access
+        return self.field
 
 
     def __set__(self, record, value):
