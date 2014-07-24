@@ -12,6 +12,7 @@ from .Schema import Schema as identity
 from .Boolean import Boolean as bool
 from .Decimal import Decimal as decimal
 from .Float import Float as float
+from .Fraction import Fraction as fraction
 from .INet import INet as inet
 from .Integer import Integer as int
 from .String import String as str
@@ -36,7 +37,7 @@ from .OutputStream import OutputStream as ostream
 
 
 # put the schemata in piles
-basic = (identity, bool, decimal, float, inet, int, str)
+basic = (identity, bool, decimal, float, fraction, inet, int, str)
 composite = (date, dimensional, time, uri)
 containers = (sequence, array, list, set, tuple)
 meta = (istream, ostream)

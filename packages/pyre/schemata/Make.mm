@@ -27,6 +27,7 @@ EXPORT_PYTHON_MODULES = \
     Decimal.py \
     Dimensional.py \
     Float.py \
+    Fraction.py \
     INet.py \
     InputStream.py \
     Integer.py \

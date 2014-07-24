@@ -28,6 +28,7 @@ types:
 	${PYTHON} ./decimals.py
 	${PYTHON} ./dimensionals.py
 	${PYTHON} ./floats.py
+	${PYTHON} ./fractional.py
 	${PYTHON} ./inets.py
 	${PYTHON} ./integers.py
 	${PYTHON} ./lists.py
