@@ -65,7 +65,7 @@ def platform(builder):
             libpq.ldpath = os.path.join(systemincdir, libpqVersion)
 
         # set up {mpi}
-        mpiVersion = 'openmpi-mp'
+        mpiVersion = 'openmpi-gcc48'
         # do we have {mpi}?
         haveMPI = (
             os.path.isdir(os.path.join(systemlibdir, mpiVersion))
@@ -197,7 +197,7 @@ def platform(builder):
             mpi.ldpath = systemlibdir
 
         # set up {python}
-        pythonVersion = '3.3'
+        pythonVersion = '3.4'
         python = 'python' + pythonVersion
         builder.requirements['python'].environ = {
             'PYTHON': python,
