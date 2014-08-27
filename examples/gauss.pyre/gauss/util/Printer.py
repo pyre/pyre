@@ -14,7 +14,7 @@ class Printer:
 
     def __call__(self, stream):
         """
-        Count the number of objects in {stream} and pass them through
+        Print the objects in {stream} and pass them through
         """
         # loop through the iterable
         for item in stream:
