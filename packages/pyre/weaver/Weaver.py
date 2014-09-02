@@ -28,14 +28,12 @@ class Weaver(pyre.component, family="pyre.weaver"):
 
     # public interface
     @pyre.export
-    def weave(self, document=None):
+    def weave(self):
         """
-        Assemble and print the {document} into the given {stream}
+        Assemble the {document}
         """
-        # create an empty {document} if none was given
-        document = () if document is None else document
-        # render it
-        yield from self.language.render(document=document)
+        # let my language do its thing
+        yield from self.language.render()
         # and return
         return
 

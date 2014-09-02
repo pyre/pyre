@@ -22,6 +22,7 @@ RECURSE_DIRS = \
     externals \
     filesystem \
     framework \
+    geometry \
     ipc \
     parsing \
     patterns \

@@ -44,13 +44,10 @@ class BlockComments:
         return line
 
 
-    # meta methods
-    def __init__(self, startBlock, commentMarker, endBlock, **kwds):
-        super().__init__(**kwds)
-        self.endBlock = endBlock
-        self.startBlock = startBlock
-        self.commentMarker = commentMarker
-        return
+    # implementation details
+    endBlock = None
+    startBlock = None
+    commentMarker = None
 
 
 # end of file 

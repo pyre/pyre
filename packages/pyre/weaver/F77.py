@@ -24,10 +24,8 @@ class F77(LineMill):
     languageMarker.doc = "the variant to use in the language marker"
 
     
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(comment='c', **kwds)
-        return
+    # private data
+    comment = 'c'
 
 
 # end of file 

@@ -27,7 +27,7 @@ def test():
         '#!/usr/bin/env python3.2',
         '#',
         '# Michael A.G. Aïvázis',
-        '# California Institute of Technology',
+        '# Orthologue',
         '# (c) 1998-2014 All Rights Reserved',
         '#',
         '',

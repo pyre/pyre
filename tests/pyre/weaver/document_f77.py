@@ -24,7 +24,7 @@ def test():
         'c -*- Fortran -*-',
         'c',
         'c Michael A.G. Aïvázis',
-        'c California Institute of Technology',
+        'c Orthologue',
         'c (c) 1998-2014 All Rights Reserved',
         'c',
         '',

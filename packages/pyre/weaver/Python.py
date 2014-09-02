@@ -21,7 +21,7 @@ class Python(LineMill, Expression):
 
 
     # traits
-    version = pyre.properties.str(default='')
+    version = pyre.properties.str(default='3')
     version.doc = "the version of python to use on the hash-bang line"
 
     languageMarker = pyre.properties.str(default='Python')
@@ -32,24 +32,23 @@ class Python(LineMill, Expression):
 
 
     # interface
-    @pyre.provides
-    def render(self, document):
+    @pyre.export
+    def header(self):
         """
         Layout the {document} using my stationery for the header and footer
         """
-        # render the hash-bang line
+        # if this is an executable script
         if self.script:
+            # render the hash-bang line
             yield "#!/usr/bin/env python" + self.version
         # and the rest
-        yield from super().render(document)
+        yield from super().header()
         # all done
         return
 
 
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(comment='#', **kwds)
-        return
+    # private data
+    comment = '#'
 
 
 # end of file 

@@ -27,8 +27,8 @@ class SQL(LineMill, Expression):
     
     # meta methods
     def __init__(self, **kwds):
-        super().__init__(comment='--', **kwds)
-
+        # chain up
+        super().__init__(**kwds)
         # access the {operator} module
         import operator
         # adjust the symbol table
@@ -38,7 +38,7 @@ class SQL(LineMill, Expression):
         self._symbols[operator.abs] = "@"
         self._symbols[operator.and_] = "AND"
         self._symbols[operator.or_] = "OR"
-
+        # all done
         return
 
 
@@ -65,6 +65,10 @@ class SQL(LineMill, Expression):
 
         # last resort: render the value as a string
         return str(value)
+
+
+    # private data
+    comment='--'
 
 
 # end of file 

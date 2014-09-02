@@ -25,8 +25,8 @@ class HTML(BlockMill):
 
 
     # interface
-    @pyre.provides
-    def render(self, document):
+    @pyre.export
+    def header(self):
         """
         Layout the {document} using my stationery for the header and footer
         """
@@ -35,14 +35,8 @@ class HTML(BlockMill):
             # translate and render it
             yield "<!doctype html{}>".format(self.doctypes[self.doctype])
         # render the rest
-        yield from super().render(document)
+        yield from super().header()
         # all done
-        return
-
-
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(startBlock='<!--', commentMarker=' !', endBlock='-->', **kwds)
         return
 
 
@@ -53,6 +47,12 @@ class HTML(BlockMill):
             ' public "-//w3c//dtd html 4.01//en" "http://www.w3.org/TR/html4/strict.dtd"',
         'html4-transitional': ' public "-//w3c//dtd html 4.01 transitional//en"',
         }
+
+
+    # private data
+    startBlock = '<!--'
+    commentMarker = ' !'
+    endBlock = '-->'
 
 
 # end of file 

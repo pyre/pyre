@@ -25,24 +25,27 @@ class Perl(LineMill):
 
 
     # interface
-    @pyre.provides
-    def render(self, document):
+    @pyre.export
+    def header(self):
         """
         Layout the {document} using my stationery for the header and footer
         """
-        # render the hash-bang line
+        # if i have been given an explicit version number
         if self.version:
+            # use it
             yield "#!/usr/bin/env perl" + self.version
+        # otherwise
+        else:
+            # render a generic hash-bang line
+            yield "#!/usr/bin/env perl"
         # and the rest
-        yield from super().render(document)
+        yield from super().header()
         # all done
         return
 
 
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(comment='#', **kwds)
-        return
+    # private data
+    comment = '#'
 
 
 # end of file 

@@ -25,24 +25,21 @@ class CSh(LineMill):
 
 
     # interface
-    @pyre.provides
-    def render(self, document):
+    @pyre.export
+    def header(self):
         """
-        Layout the {document} using my stationery for the header and footer
+        Render a hash-bang line if i know the shell variant
         """
         # render the hash-bang line
-        if self.variant:
-            yield "#!" + self.variant
+        if self.variant: yield "#!" + self.variant
         # and the rest
-        yield from super().render(document)
+        yield from super().header()
         # all done
         return
 
 
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(comment='#', **kwds)
-        return
+    # private data
+    comment = '#'
 
 
 # end of file 

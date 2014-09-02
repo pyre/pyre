@@ -24,7 +24,7 @@ def test():
         '#!/usr/bin/env perl5',
         '#',
         '# Michael A.G. Aïvázis',
-        '# California Institute of Technology',
+        '# Orthologue',
         '# (c) 1998-2014 All Rights Reserved',
         '#',
         '',

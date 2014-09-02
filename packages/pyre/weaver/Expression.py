@@ -33,16 +33,15 @@ class Expression:
 
     # meta methods
     def __init__(self, nodeType=None, **kwds):
+        # chain up
         super().__init__(**kwds)
-
         # fall back to {calc} nodes
         if nodeType is None: from ..calc.Node import Node as nodeType
-
         # build the symbol table
         self._symbols = self._newSymbolTable()
         # initialize the table of renderers
         self._renderers = self._newRenderingStrategyTable(nodeType=nodeType)
-
+        # all done
         return
 
 

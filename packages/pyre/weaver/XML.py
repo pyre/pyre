@@ -20,34 +20,23 @@ class XML(BlockMill):
 
 
     # interface
-    @pyre.provides
-    def render(self, document):
+    @pyre.export
+    def header(self):
         """
         Layout the {document} using my stationery for the header and footer
         """
         # render the xml marker
         yield '<?xml version="1.0"?>'
         # and the rest
-        yield from super().render(document)
+        yield from super().header()
         # all done
         return
 
 
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(startBlock='<!--', commentMarker=' !', endBlock='-->', **kwds)
-        return
-
-
-    # constants
-    doctypes = {
-        'html5': '',
-
-        'html4-strict':
-            ' public "-//w3c//dtd html 4.01 transitional//en" "http://www.w3.org/TR/html4/strict.dtd"',
-
-        'html4-transitional': ' public "-//w3c//dtd html 4.0 transitional//en"',
-        }
+    # private data
+    startBlock = '<!--'
+    commentMarker = ' !'
+    endBlock = '-->'
 
 
 # end of file 

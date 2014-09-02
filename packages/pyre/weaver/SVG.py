@@ -24,8 +24,8 @@ class SVG(BlockMill):
 
 
     # interface
-    @pyre.provides
-    def render(self, document):
+    @pyre.export
+    def header(self):
         """
         Layout the {document} using my stationery for the header and footer
         """
@@ -34,36 +34,36 @@ class SVG(BlockMill):
             # render the xml marker
             yield '<?xml version="1.0"?>'
             # the document header
-            yield from self.header()
+            yield from super().header()
             # and a blank line
             yield ''
-
         # render the svg tag
         yield '<svg version="1.1" xmlns="http://www.w3.org/2000/svg">'
-        # a blank line
-        yield ''
-        # the document body
-        yield from document
-        # a blank line
-        yield ''
+        # all done
+        return
+
+
+    @pyre.export
+    def footer(self):
+        """
+        Build the document footer
+        """
         # close the svg tag
         yield '</svg>'
-
         # if this is a stand-alone document
         if self.standalone:
             # render a blank line
             yield ''
             # and the document footer
-            yield from self.footer()
-
+            yield from super().footer()
         # all done
         return
 
 
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(startBlock='<!--', commentMarker=' !', endBlock='-->', **kwds)
-        return
+    # private data
+    startBlock = '<!--'
+    commentMarker = ' !'
+    endBlock = '-->'
 
 
 # end of file 

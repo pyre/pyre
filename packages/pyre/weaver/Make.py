@@ -24,10 +24,8 @@ class Make(LineMill):
     languageMarker.doc = "the language marker"
 
     
-    # meta methods
-    def __init__(self, **kwds):
-        super().__init__(comment='#', **kwds)
-        return
+    # private data
+    comment = '#'
 
 
 # end of file 

@@ -27,8 +27,8 @@ class C(BlockMill, Expression):
     
     # meta methods
     def __init__(self, **kwds):
-        super().__init__(startBlock='/*', commentMarker=' *', endBlock='*/', **kwds)
-
+        # chain up
+        super().__init__(**kwds)
         # access the {operator} module
         import operator
         # adjust the symbol table
@@ -37,7 +37,7 @@ class C(BlockMill, Expression):
         self._symbols[operator.or_] = "||"
         # and the rendering strategy table
         self._renderers[operator.pow] = self._powerRenderer
-
+        # all done
         return
 
 
@@ -53,6 +53,12 @@ class C(BlockMill, Expression):
         op2 = self._renderers[type(exponent)](exponent)
         # and return my string
         return "pow({},{})".format(op1, op2)
+
+        
+    # private data
+    startBlock = '/*'
+    commentMarker = ' *'
+    endBlock = '*/'
 
 
 # end of file 

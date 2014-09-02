@@ -27,18 +27,17 @@ class Cxx(LineMill, Expression):
     
     # meta methods
     def __init__(self, **kwds):
-        super().__init__(comment='//', **kwds)
-
+        # chain up
+        super().__init__(**kwds)
         # access the {operator} module
         import operator
         # adjust the symbol table
         self._symbols[operator.floordiv] = "/"
         self._symbols[operator.and_] = "&&"
         self._symbols[operator.or_] = "||"
-
         # and the rendering strategy table
         self._renderers[operator.pow] = self._powerRenderer
-
+        # all done
         return
 
 
@@ -54,6 +53,10 @@ class Cxx(LineMill, Expression):
         op2 = self._renderers[type(exponent)](exponent)
         # and return my string
         return "pow({},{})".format(op1, op2)
+
+
+    # private data
+    comment = '//'
 
 
 # end of file 

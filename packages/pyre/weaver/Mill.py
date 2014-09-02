@@ -37,8 +37,8 @@ class Mill(pyre.component, Indenter, implements=Language):
 
 
     # interface
-    @pyre.provides
-    def render(self, document):
+    @pyre.export
+    def render(self):
         """
         Layout the {document} using my stationery for the header and footer
         """
@@ -46,10 +46,12 @@ class Mill(pyre.component, Indenter, implements=Language):
         yield from self.header()
         # and a blank line
         yield ''
-        # iterate over the document
-        yield from document
+
+        # process it
+        yield from self.body()
         # another blank line
         yield ''
+
         # and the footer
         yield from self.footer()
         # all done
@@ -57,6 +59,7 @@ class Mill(pyre.component, Indenter, implements=Language):
 
 
     # the lower level interface
+    @pyre.export
     def header(self):
         """
         Build the header of the document
@@ -66,7 +69,17 @@ class Mill(pyre.component, Indenter, implements=Language):
         # all done
         return
 
+
+    @pyre.export
+    def body(self):
+        """
+        The body of the document
+        """
+        # empty, by default
+        return ()
+
                                           
+    @pyre.export
     def footer(self):
         """
         Build the footer of the document

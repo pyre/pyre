@@ -41,9 +41,30 @@ class Language(pyre.protocol, family="pyre.weaver.languages"):
 
     # interface
     @pyre.provides
-    def render(self, document, stationery):
+    def render(self):
         """
-        Layout the {document} using {stationery} for the header and footer
+        Render the document
+        """
+
+
+    @pyre.provides
+    def header(self):
+        """
+        Render the header of the document
+        """
+
+
+    @pyre.provides
+    def body(self):
+        """
+        Render the body of the document
+        """
+
+
+    @pyre.provides
+    def footer(self):
+        """
+        Render the footer of the document
         """
 
 

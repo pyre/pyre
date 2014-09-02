@@ -48,11 +48,8 @@ class LineComments:
         return leader
 
 
-    # meta methods
-    def __init__(self, comment, **kwds):
-        super().__init__(**kwds)
-        self.comment = comment
-        return
+    # private data
+    comment = None
 
 
 # end of file 
