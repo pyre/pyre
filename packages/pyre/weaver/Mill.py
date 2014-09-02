@@ -107,9 +107,9 @@ class Mill(pyre.component, Indenter, implements=Language):
             yield "-*- " + self.languageMarker + " -*-"
         # a blank, commented line
         yield ''
-        # render the author
-        if stationery.author:
-            yield stationery.author
+        # render the authors
+        if stationery.authors:
+            yield from stationery.authors
         # render the affiliation
         if stationery.affiliation:
             yield stationery.affiliation

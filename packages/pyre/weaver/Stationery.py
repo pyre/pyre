@@ -21,8 +21,8 @@ class Stationery(pyre.protocol, family="pyre.weaver.layouts"):
     width = pyre.properties.int()
     width.doc = "the preferred width of the generated text"
 
-    author = pyre.properties.str()
-    author.doc = "the name of the entity to blame for this content"
+    authors = pyre.properties.strings()
+    authors.doc = "the name of the entity to blame for this content"
 
     affiliation = pyre.properties.str()
     affiliation.doc = "the author's institutional affiliation"
