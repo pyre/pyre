@@ -21,12 +21,11 @@ and clients are expected to build timers through it. For example, the sequence
     t.stop()
     elapsed = t.read()
     
-
 produces a timer, and registers it under the name "test". Timers must be started before any
-readings can take place. Stopping a timer prevents it form accumulating tie while, while
-{t.read} returns the total number of seconds the timer has been active. You can only {read}
-timers that have been stopped. If you want to peek at the accumulated time without interfering
-with the time operation use {lap}. Timers can be {reset} and reused as many times as you like.
+readings can take place. Stopping a timer prevents it from accumulating time, while {t.read}
+returns the total number of seconds the timer has been active. You can only {read} timers that
+have been stopped. If you want to peek at the accumulated time without interfering with the
+time operation, use {lap}. Timers can be {reset} and reused as many times as you like.
 
 Another interesting feature is that registered timers are available from anywhere in an
 application. You can register a timer in one place, access it and start it in another, and stop
