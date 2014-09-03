@@ -42,6 +42,7 @@ EXPORT_PYTHON_MODULES = \
     Probe.py \
     Product.py \
     Reference.py \
+    Sequence.py \
     Sum.py \
     SymbolTable.py \
     Unresolved.py \

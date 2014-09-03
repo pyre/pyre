@@ -19,10 +19,11 @@ class Calculator(algebraic.algebra):
 
     # types
     from .Datum import Datum as base
-    # entities: my literals, variables and operators have values
+    # entities: my literals, variables, operators and sequences have values
     from .Const import Const as const
     from .Value import Value as value
     from .Evaluator import Evaluator as evaluator
+    from .Sequence import Sequence as sequence
     # the new types of entities that support evaluation after name resolution
     from .Expression import Expression as expression
     from .Interpolation import Interpolation as interpolation
@@ -68,6 +69,11 @@ class Calculator(algebraic.algebra):
         ancestors = tuple(cls.interpolationDerivation(record))
         # make one
         record.interpolation = cls('interpolation', ancestors, {}, ignore=True)
+
+        # build the list of base classes for interpolation
+        ancestors = tuple(cls.sequenceDerivation(record))
+        # make one
+        record.sequence = cls('sequence', ancestors, {}, ignore=True)
 
         # build the list of base classes for reference
         ancestors = tuple(cls.referenceDerivation(record))
@@ -166,6 +172,29 @@ class Calculator(algebraic.algebra):
         yield cls.evaluator
         # and whatever else my superclass says
         yield from super().operatorDerivation(record)
+        # all done
+        return
+
+
+    @classmethod
+    def sequenceDerivation(cls, record):
+        """
+        Contribute to the list of ancestors of the representation of operators
+        """
+        # my operators memoize their values
+        yield cls.memo
+        # my operators support arbitrary value conversions
+        yield cls.preprocessor
+        yield cls.postprocessor
+        # my operators notify their clients of changes to their values and respond when the
+        # values of their operands change
+        yield cls.observer
+        # if the record has anything to say
+        if record.sequence: yield record.sequence
+        # my sequences know how to compute their values
+        yield cls.sequence
+        # and whatever else my superclass says
+        yield from cls.compositeDerivation(record)
         # all done
         return
 

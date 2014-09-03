@@ -18,11 +18,11 @@ class Datum(AbstractNode):
 
 
     # types
+    sequence = None
     expression = None
     interpolation = None
     reference = None
     unresolved = None
-
 
     # exceptions; included here for client convenience
     from .exceptions import (

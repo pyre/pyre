@@ -85,6 +85,14 @@ class SymbolTable:
         return self.node.interpolation(model=self, expression=value, operands=operands, **kwds)
 
 
+    def sequence(self, values, **kwds):
+        """
+        Build a sequence node
+        """
+        # easy enough
+        return self.node.sequence(operands=tuple(values), **kwds)
+
+
     def variable(self, **kwds):
         """
         Build a variable

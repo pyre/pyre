@@ -75,6 +75,16 @@ def expression(*, formula, model):
     return model.expression(expression=formula)
 
 
+def sequence(*operands):
+    """
+    Build a node that holds a sequence of other nodes
+    """
+    # access the constructor
+    from .Node import Node
+    # build the node and return it
+    return Node.sequence(operands=operands)
+
+
 def average(*operands):
     """
     Compute the average of a collection of nodes
