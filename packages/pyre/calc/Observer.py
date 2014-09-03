@@ -80,7 +80,7 @@ class Observer(Observable):
 
 
     # implementation details
-    def _substitute(self, index, current, replacement):
+    def _substitute(self, current, replacement):
         """
         Adjust the operands by substituting {replacement} for {current} in the list of operands
         at position {index}
@@ -96,7 +96,7 @@ class Observer(Observable):
         # and add me to the list of observers of the replacement
         replacement.observers.add(selfref)
         # and ask my superclass to do the rest
-        return super()._substitute(index, current, replacement)
+        return super()._substitute(current, replacement)
 
 
 # end of file

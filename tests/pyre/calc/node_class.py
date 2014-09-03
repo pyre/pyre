@@ -60,7 +60,7 @@ def test():
         calculator.memo, # from calculator
         calculator.preprocessor, calculator.postprocessor, # from calculator
         calculator.observer, calculator.observable, calculator.evaluator, # from calculator
-        calculator.operator, calculator.composite, # from algebra
+        calculator.operator, calculator.composite, calculator.traversible, # from algebra
         node, # from node
         calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
@@ -72,7 +72,7 @@ def test():
         calculator.memo, # from calculator
         calculator.preprocessor, calculator.postprocessor, # from calculator
         calculator.observer, calculator.observable, calculator.expression, # from calculator
-        calculator.composite, # from algebra
+        calculator.composite, calculator.traversible, # from algebra
         node, # from node
         calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
@@ -84,7 +84,7 @@ def test():
         calculator.memo, # from calculator
         calculator.preprocessor, calculator.postprocessor, # from calculator
         calculator.observer, calculator.observable, calculator.interpolation, # from calculator
-        calculator.composite, # from algebra
+        calculator.composite, calculator.traversible, # from algebra
         node, # from node
         calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,
@@ -96,7 +96,7 @@ def test():
         calculator.memo, # from calculator
         calculator.preprocessor, calculator.postprocessor, # from calculator
         calculator.observer, calculator.observable, calculator.reference, # from calculator
-        calculator.composite, # from algebra
+        calculator.composite, calculator.traversible, # from algebra
         node, # from node
         calculator.base, base,
         calculator.arithmetic, calculator.ordering, calculator.boolean,

@@ -49,7 +49,7 @@ def test():
 
     # check operator
     assert node.operator.__mro__ == (
-        node.operator, algebra.operator, algebra.composite,
+        node.operator, algebra.operator, algebra.composite, algebra.traversible,
         node,
         algebra.base,
         algebra.arithmetic, algebra.ordering, algebra.boolean,

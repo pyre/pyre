@@ -25,6 +25,7 @@ class Algebra(Category):
     from .Boolean import Boolean as boolean
     # structural
     from .Leaf import Leaf as leaf
+    from .Traversible import Traversible as traversible
     from .Composite import Composite as composite
     # entities
     from .Literal import Literal as literal

@@ -42,6 +42,8 @@ class Category(AbstractMetaclass):
         if record.composite: yield record.composite
         # yield the default composite class
         yield cls.composite
+        # the traversible
+        yield cls.traversible
         # and the buck stops here...
         yield record
         # all done

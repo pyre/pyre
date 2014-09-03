@@ -29,6 +29,7 @@ EXPORT_PYTHON_MODULES = \
     Literal.py \
     Operator.py \
     Ordering.py \
+    Traversible.py \
     Variable.py \
     exceptions.py \
     __init__.py
