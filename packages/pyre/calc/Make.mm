@@ -30,6 +30,7 @@ EXPORT_PYTHON_MODULES = \
     Filter.py \
     Hierarchical.py \
     Interpolation.py \
+    Mapping.py \
     Maximum.py \
     Memo.py \
     Minimum.py \

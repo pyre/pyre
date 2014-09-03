@@ -7,7 +7,7 @@
 
 
 # externals
-import collections # for the container protocols
+import collections.abc # for container identification
 # superclass
 from .Schema import Schema
 
@@ -41,7 +41,7 @@ class Sequence(Schema):
             # otherwise, split it using comma as the separator
             value = (entry.strip() for entry in value.split(self.delimiter))
         # if we have an iterable
-        if isinstance(value, collections.Iterable):
+        if isinstance(value, collections.abc.Iterable):
             # go through each entry
             for entry in value:
                 # convert it and hand it to the caller. perform the conversion incognito, in

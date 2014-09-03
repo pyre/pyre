@@ -18,6 +18,7 @@ class Datum(AbstractNode):
 
 
     # types
+    mapping = None
     sequence = None
     expression = None
     interpolation = None

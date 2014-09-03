@@ -23,6 +23,7 @@ class Calculator(algebraic.algebra):
     from .Const import Const as const
     from .Value import Value as value
     from .Evaluator import Evaluator as evaluator
+    from .Mapping import Mapping as mapping
     from .Sequence import Sequence as sequence
     # the new types of entities that support evaluation after name resolution
     from .Expression import Expression as expression
@@ -74,6 +75,11 @@ class Calculator(algebraic.algebra):
         ancestors = tuple(cls.sequenceDerivation(record))
         # make one
         record.sequence = cls('sequence', ancestors, {}, ignore=True)
+
+        # build the list of base classes for interpolation
+        ancestors = tuple(cls.mappingDerivation(record))
+        # make one
+        record.mapping = cls('mapping', ancestors, {}, ignore=True)
 
         # build the list of base classes for reference
         ancestors = tuple(cls.referenceDerivation(record))
@@ -195,6 +201,31 @@ class Calculator(algebraic.algebra):
         yield cls.sequence
         # and whatever else my superclass says
         yield from cls.compositeDerivation(record)
+        # all done
+        return
+
+
+    @classmethod
+    def mappingDerivation(cls, record):
+        """
+        Contribute to the list of ancestors of the representation of operators
+        """
+        # my operators memoize their values
+        yield cls.memo
+        # my operators support arbitrary value conversions
+        yield cls.preprocessor
+        yield cls.postprocessor
+        # my operators notify their clients of changes to their values and respond when the
+        # values of their operands change
+        yield cls.observer
+        # if the record has anything to say
+        if record.mapping: yield record.mapping
+        # my mappings know how to compute their values
+        yield cls.mapping
+        # the traversible
+        yield cls.traversible
+        # and the end of the line
+        yield record
         # all done
         return
 

@@ -85,12 +85,12 @@ class SymbolTable:
         return self.node.interpolation(model=self, expression=value, operands=operands, **kwds)
 
 
-    def sequence(self, values, **kwds):
+    def sequence(self, nodes, **kwds):
         """
         Build a sequence node
         """
         # easy enough
-        return self.node.sequence(operands=tuple(values), **kwds)
+        return self.node.sequence(operands=tuple(nodes), **kwds)
 
 
     def variable(self, **kwds):

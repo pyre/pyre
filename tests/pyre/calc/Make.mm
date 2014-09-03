@@ -30,6 +30,7 @@ structural:
 evaluators:
 	${PYTHON} ./explicit.py
 	${PYTHON} ./probe.py
+	${PYTHON} ./containers.py
 	${PYTHON} ./reference.py
 	${PYTHON} ./sum.py
 	${PYTHON} ./aggregators.py

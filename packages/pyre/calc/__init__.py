@@ -85,6 +85,16 @@ def sequence(*operands):
     return Node.sequence(operands=operands)
 
 
+def mapping(**operands):
+    """
+    Build a node that holds a sequence of other nodes
+    """
+    # access the constructor
+    from .Node import Node
+    # build the node and return it
+    return Node.mapping(operands=operands)
+
+
 def average(*operands):
     """
     Compute the average of a collection of nodes
