@@ -108,8 +108,7 @@ class Mill(pyre.component, Indenter, implements=Language):
         # a blank, commented line
         yield ''
         # render the authors
-        if stationery.authors:
-            yield from stationery.authors
+        yield from stationery.authors
         # render the affiliation
         if stationery.affiliation:
             yield stationery.affiliation

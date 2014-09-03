@@ -22,8 +22,8 @@ class Banner(pyre.component, family="pyre.weaver.layouts.banner", implements=Sta
     width = pyre.properties.int(default=100)
     width.doc = "the preferred width of the generated text"
 
-    authors = pyre.properties.strings(default=["{pyre.user.name}"])
-    authors.doc = "the name of the entity to blame for this content"
+    authors = pyre.properties.strings(default="[{pyre.user.name}]")
+    authors.doc = "the name of the entities to blame for this content"
 
     affiliation = pyre.properties.str(default="{pyre.user.affiliation}")
     affiliation.doc = "the author's institutional affiliation"
