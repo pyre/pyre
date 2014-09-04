@@ -102,10 +102,10 @@ class Typed:
 
         # handle the numeric types
         if schema in cls.numeric:
-            # check whether the client has a 'sequence' mixin
+            # check whether the client has a 'numeric' mixin
             try:
                 # and use it
-                yield getattr(client, 'numeric')
+                yield client.numeric
             # if not
             except AttributeError:
                 # no worries
@@ -116,7 +116,7 @@ class Typed:
             # check whether the client has a 'sequence' mixin
             try:
                 # and use it
-                yield getattr(client, 'sequences')
+                yield client.sequences
             # if not
             except AttributeError:
                 # no worries
@@ -125,7 +125,7 @@ class Typed:
         # check whether the client provides a custom base class
         try:
             # and use it
-            yield getattr(client, 'schema')
+            yield client.schema
         # if not
         except AttributeError:
             # no worries
