@@ -93,6 +93,14 @@ class SymbolTable:
         return self.node.sequence(operands=tuple(nodes), **kwds)
 
 
+    def mapping(self, nodes, **kwds):
+        """
+        Build a mapping node
+        """
+        # easy enough
+        return self.node.mapping(operands=nodes, **kwds)
+
+
     def variable(self, **kwds):
         """
         Build a variable
