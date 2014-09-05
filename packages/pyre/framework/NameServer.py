@@ -47,8 +47,11 @@ class NameServer(Hierarchical):
         """
         # get the right priority
         priority = self.priority.package() if priority is None else priority
+        # fill out the node info
+        name, split, key = self.info.fillNodeId(model=self, name=name)
         # build the node metadata
-        info = self.info(model=self, name=name, locator=locator, priority=priority)
+        info = self.info(name=name, split=split, key=key,
+                         locator=locator, priority=priority)
         # grab the key
         key = info.key
         # build a slot to hold the {configurable}
@@ -112,10 +115,12 @@ class NameServer(Hierarchical):
         priority = self.priority.package()
         # attach it to a slot
         slot = self.literal(key=key, value=package)
+        # fill out the node info
+        name, split, key = self.info.fillNodeId(model=self, key=key, name=name)
         # store it in the model
         self._nodes[key] = slot
-        self._metadata[key] = self.info(model=self,
-                                        name=name, key=key, locator=locator, priority=priority)
+        self._metadata[key] = self.info(name=name, key=key, split=split,
+                                        locator=locator, priority=priority)
         # and return it
         return package
         
@@ -150,52 +155,12 @@ class NameServer(Hierarchical):
 
 
     # override superclass methods
-    def insert(self, value, priority, locator, key=None, name=None, factory=None):
+    def insert(self, value, priority, locator, key=None, name=None, split=None, factory=None):
         """
         Add {value} to the store
         """
-        # if the name is empty
-        if name is None:
-            # better have a non-empty key...
-            pass
-        # check whether the name is a string
-        elif isinstance(name, str):
-            # split it
-            split = self.split(name)
-            # and hash it, if necessary
-            key = key or self._hash.hash(items=split)
-        # if it is a collection of fragments
-        elif isinstance(name, collections.Iterable):
-            # save it
-            split = name
-            # put the name back together
-            name = self.join(*split)
-            # and hash it, if necessary
-            key = key or self._hash.hash(items=split)
-        # if it is already hashed
-        elif isinstance(name, type(self._hash)):
-            # override the given {key}, if necessary
-            key = key or name
-            # and clear the others, since they are not derivable 
-            name = None
-            split = ()
-        # anything else is a bug
-        else:
-            # get the journal
-            import journal
-            # put together a message
-            msg = "unrecognizable name: {!r}".format(name)
-            # and complain
-            raise journal.firewall('pyre.config').log(msg)
-
-        # if i don't have a key by now, we have found a bug
-        if key is None:
-            # get the journal
-            import journal
-            # put together a message
-            msg = "both name and key were empty; now what?"
-            # and complain
-            raise journal.firewall('pyre.config').log(msg)
+        # figure out the node info
+        name, split, key = self.info.fillNodeId(model=self, key=key, split=split, name=name)
 
         # look for metadata
         try:
@@ -208,8 +173,7 @@ class NameServer(Hierarchical):
                 # use instance slots for an identity trait, by default
                 factory = properties.identity(name=name).instanceSlot
             # build the info node
-            meta = self.info(model=self,
-                             name=name, split=split, key=key,
+            meta = self.info(name=name, split=split, key=key,
                              priority=priority, locator=locator, factory=factory)
             # and attach it
             self._metadata[key] = meta
@@ -276,9 +240,11 @@ class NameServer(Hierarchical):
         except KeyError:
             # build an error marker
             node = self.node.unresolved(key=key, request=name)
+            # fill out the node info
+            name, split, key = self.info.fillNodeId(model=self, key=key, name=name)
             # add it to the pile
             self._nodes[key] = node
-            self._metadata[key] = self.info(model=self, name=name, key=key)
+            self._metadata[key] = self.info(name=name, split=split, key=key)
         # return the node
         return node
 

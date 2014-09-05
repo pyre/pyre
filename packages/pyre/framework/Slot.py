@@ -47,14 +47,6 @@ class Slot(Dashboard, metaclass=calc.calculator):
     """
 
 
-    # types
-    # priorities
-    from .Priority import Priority as priorities
-
-    # constants
-    defaultPriority = priorities.defaults
-
-
     # public data
     key = None # the hash by which i am known to the name server
 

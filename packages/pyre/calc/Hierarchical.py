@@ -186,8 +186,10 @@ class Hierarchical(SymbolTable):
             old = self._nodes[key]
         # if it's not there
         except KeyError:
-            # this is a new registration; update the node metadata
-            self._metadata[key] = self.info(model=self, key=key, name=name)
+            # this is a new registration; fill out the node id
+            name, split, key = self.info.fillNodeId(model=self, key=key, name=name)
+            # update the node metadata
+            self._metadata[key] = self.info(key=key, name=name, split=split)
         # if it's there
         else:
             # replace it
@@ -247,9 +249,11 @@ class Hierarchical(SymbolTable):
         except KeyError:
             # build an error marker
             node = self.node.unresolved(request=name)
+            # fill out the node id
+            name, split, key = self.info.fillNodeId(model=self, key=key, name=name)
             # add it to the pile
             self._nodes[key] = node
-            self._metadata[key] = self.info(model=self, key=key, name=name)
+            self._metadata[key] = self.info(key=key, name=name, split=split)
         # return the node
         return node
 

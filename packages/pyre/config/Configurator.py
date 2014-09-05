@@ -125,7 +125,7 @@ class Configurator:
         Process {assignment} by building a slot and placing it in the nameserver
         """
         # get the key
-        name = assignment.key
+        split = assignment.key
         # unpack the value
         value = assignment.value
         # get the locator
@@ -136,7 +136,7 @@ class Configurator:
         # get the model
         nameserver = self.executive.nameserver
         # insert the value in the model
-        return nameserver.insert(name=name, value=value, locator=locator, priority=priority)
+        return nameserver.insert(split=split, value=value, locator=locator, priority=priority)
 
 
     def defer(self, assignment, priority):

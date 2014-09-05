@@ -16,8 +16,6 @@ def test():
     import pyre.tracking
     # get the constructor
     from pyre.framework.Slot import Slot
-    # the priority factory
-    explicit = Slot.priorities.explicit
     # build a few slots
     var = Slot.variable(key=None, value=None)
     one = Slot.variable(key=None, value=1)

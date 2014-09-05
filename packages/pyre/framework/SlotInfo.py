@@ -35,7 +35,7 @@ class SlotInfo(NodeInfo):
         # save my metadata
         self.locator = locator
         self.priority = priority or self.priorities.uninitialized()
-        self.factory = factory or self.properties.identity().instanceSlot
+        self.factory = factory or self.properties.identity(name=self.name).instanceSlot
         # all done
         return
 
