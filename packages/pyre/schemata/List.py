@@ -19,6 +19,7 @@ class List(Sequence):
 
     # constants
     typename = 'list' # the name of my type
+    container = list # the container i represent
 
 
     # interface
@@ -28,16 +29,11 @@ class List(Sequence):
         """
         # easy enough; resist the temptation to optimize this by skipping the call to {super}:
         # we have to coerce every item in the container!
-        return list(super().coerce(value, **kwds))
+        return self.container(super().coerce(value, **kwds))
 
 
     # meta-methods
-    def __init__(self, default=list, **kwds):
-        # adjust the default; carefully, so we don't all end up using the same global container
-        # checking for {None} is not appropriate here; the user may want {None} as the default
-        # value; we need a way to know that {default} was not supplied: use {list} as the
-        # marker
-        default = list() if default is list else default
+    def __init__(self, default=container, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # all done

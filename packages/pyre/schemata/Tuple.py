@@ -19,6 +19,7 @@ class Tuple(Sequence):
 
     # constants
     typename = 'tuple' # the name of my type
+    container = tuple # the container i represent
 
 
     # interface
@@ -28,7 +29,7 @@ class Tuple(Sequence):
         """
         # easy enough; resist the temptation to optimize this by skipping the call to super: we
         # have to coerce every item in the container!
-        return tuple(super().coerce(value, **kwds))
+        return self.container(super().coerce(value, **kwds))
 
 
 # end of file 

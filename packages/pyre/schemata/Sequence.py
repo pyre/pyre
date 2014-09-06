@@ -24,6 +24,7 @@ class Sequence(Schema):
     close = '])}'
     delimiter = ','
     typename = 'sequence' # the name of my type
+    container = tuple # the default container i represent
 
 
     # interface
@@ -56,7 +57,12 @@ class Sequence(Schema):
 
 
     # meta-methods
-    def __init__(self, default=(), schema=Schema(), **kwds):
+    def __init__(self, default=container, schema=Schema(), **kwds):
+        # adjust the default; carefully, so we don't all end up using the same global container
+        # checking for {None} is not appropriate here; the user may want {None} as the default
+        # value; we need a way to know that {default} was not supplied: use {list} as the
+        # marker
+        default = self.container() if default is self.container else default
         # chain up with my default
         super().__init__(default=default, **kwds)
         # save my schema
