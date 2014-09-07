@@ -16,7 +16,7 @@ class Trait(stem.variable, Dashboard):
     """
     This is the base class for component features that form their public interface
 
-    Traits extend the notion of a class attribute to an object that is capabable of
+    Traits extend the notion of a class attribute to an object that is capable of
     capturing information about the attribute that has no natural resting place as part of a
     normal class declaration.
 
@@ -24,7 +24,7 @@ class Trait(stem.variable, Dashboard):
     more elaborate objects, such as other components. Individual inventory items need a name
     that enables access to the associated information, per-instance actual storage for the
     attribute value, and additional meta data, such as reasonable default values when the
-    attribute is not explictly given a value during configuration, and the set of constraints
+    attribute is not explicitly given a value during configuration, and the set of constraints
     it should satisfy before it is considered a legal value.
     """
 

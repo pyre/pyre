@@ -24,6 +24,7 @@ api:
 	${PYTHON} ./resolve.py
 
 regressions:
+	${PYTHON} ./defaults.py
 	${PYTHON} ./play.py
 
 # end of file 

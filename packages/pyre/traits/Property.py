@@ -7,6 +7,7 @@
 
 
 # externals
+import collections # for sequence checking
 from .. import schemata # type information
 # superclass
 from .Slotted import Slotted
@@ -51,13 +52,29 @@ class Property(Slotted):
         """Mixin for handling typed containers"""
 
         # override the default expression handler
-        @property
-        def macro(self):
+        def macro(self, value, **kwds):
             """
             Access to the default strategy for handling macros in sequences
             """
-            # build whatever my schema specifies
-            return self.schema.macro
+            # if the value is a string
+            if isinstance(value, str):
+                # do whatever my schema specifies
+                return self.schema.macro(value=value, **kwds)
+
+            # if the value is a sequence
+            if isinstance(value, collections.Iterable):
+                # convert the items into nodes
+                nodes = (self.schema.macro(item) for item in value)
+                # and attach them to a sequence node
+                return self.pyre_nameserver.sequence(nodes=nodes, **kwds)
+
+            # if the value is already some kind of node
+            if isinstance(value, self.pyre_nameserver.node):
+                # just return it
+                return value
+
+            # shouldn't get here
+            assert False, 'unreachable'
 
 
     # meta-methods

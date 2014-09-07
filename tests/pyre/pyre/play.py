@@ -21,11 +21,16 @@ class role(pyre.protocol, family='play.roles'):
 class actor(pyre.component, implements=role):
     """An actor"""
     
+# protect this class declaration because the configuration file has an intentional error
+def musical(**kwds):
+    # build the embedded class record
+    class musical(pyre.component, family='play.musicals'):
+        """A play"""
 
-class musical(pyre.component, family='play.musicals'):
-    """A play"""
+        cast = pyre.properties.dict(schema=role())
 
-    cast = pyre.properties.dict(schema=role())
+    # return it
+    return musical(**kwds)
 
 
 # driver

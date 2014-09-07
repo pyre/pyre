@@ -20,13 +20,36 @@ class Dict(Slotted):
 
 
     # public data
-    @property
-    def macro(self):
+    def macro(self, value, **kwds):
         """
         Access to the default strategy for handling macros in slot values
         """
-        # build whatever my schema specifies
-        return self.schema.macro
+        # if the value is a string
+        if isinstance(value, str):
+            # do whatever my schema specifies
+            return self.schema.macro(value=value, **kwds)
+
+        # if the value is any kind of mapping object
+        if isinstance(value, collections.abc.Mapping):
+            # build a dictionary of nodes
+            nodes = {key: self.schema.macro(value=load) for key, load in value.items()}
+            # build a mapping node and return it
+            return self.pyre_nameserver.mapping(nodes, **kwds)
+
+        # if the value is any kind of iterable
+        if isinstance(value, collections.abc.Iterable):
+            # build a dictionary of nodes
+            nodes = {key: self.schema.macro(value=load) for key, load in value}
+            # build a mapping node and return it
+            return self.pyre_nameserver.mapping(nodes, **kwds)
+
+        # if the value is already some kind of node
+        if isinstance(value, self.pyre_nameserver.node):
+            # just return it
+            return value
+
+        # shouldn't get here
+        assert False, 'unreachable'
 
 
     # my value processors
@@ -104,7 +127,6 @@ class Dict(Slotted):
         key = node.key
         # grab my schema
         schema = self.schema
-
         # decide which mapping strategy to use: if the {node} has no key
         if key is None:
             #  make a {NameMap}
