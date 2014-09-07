@@ -66,11 +66,11 @@ def paths(**kwds):
     return list(schema=uri(), **kwds)
 
 
-def catalog(**kwds):
+def catalog(default={}, **kwds):
     """
     A {dict} of {list}s
     """
-    return dict(schema=list(**kwds))
+    return dict(schema=list(**kwds), default=default)
 
 
 # end of file 
