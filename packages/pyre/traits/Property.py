@@ -7,7 +7,7 @@
 
 
 # externals
-import collections # for sequence checking
+import collections.abc # for sequence checking
 from .. import schemata # type information
 # superclass
 from .Slotted import Slotted
@@ -26,52 +26,54 @@ class Property(Slotted):
         """Mixin for handling decimal values"""
 
         # override the default expression handler
-        @property
-        def macro(self):
+        def macro(self, **kwds):
             """
-            Access to the default strategy for handling macros in slot values
+            The default strategy for handling macros in slot values
             """
             # by default, build interpolations
-            return self.pyre_nameserver.interpolation
+            return self.pyre_nameserver.interpolation(**kwds)
+
+        def native(self, **kwds):
+            """
+            The strategy for building slots from more complex input values
+            """
+            return self.pyre_nameserver.variable(**kwds)
 
 
     class numeric:
         """Mixin for handling numeric types"""
 
         # override the default expression handler
-        @property
-        def macro(self):
+        def macro(self, **kwds):
             """
             Access to the default strategy for handling macros for numeric types
             """
             # build expressions
-            return self.pyre_nameserver.expression
+            return self.pyre_nameserver.expression(**kwds)
 
 
     class sequences:
         """Mixin for handling typed containers"""
 
         # override the default expression handler
-        def macro(self, value, **kwds):
+        def macro(self, **kwds):
             """
-            Access to the default strategy for handling macros in sequences
+            The default strategy for handling slot values that are strings and therefore
+            subject to some kind of evaluation in the context of the configuration store
             """
-            # if the value is a string
-            if isinstance(value, str):
-                # do whatever my schema specifies
-                return self.schema.macro(value=value, **kwds)
+            # whatever my schema says
+            return self.schema.macro(**kwds)
 
+        def native(self, value, **kwds):
+            """
+            The strategy for building slots from more complex input values
+            """
             # if the value is a sequence
-            if isinstance(value, collections.Iterable):
+            if isinstance(value, collections.abc.Iterable):
                 # convert the items into nodes
-                nodes = (self.schema.macro(item) for item in value)
+                nodes = (self.schema.macro(value=item) for item in value)
                 # and attach them to a sequence node
                 return self.pyre_nameserver.sequence(nodes=nodes, **kwds)
-
-            # if the value is already some kind of node
-            if isinstance(value, self.pyre_nameserver.node):
-                # just return it
-                return value
 
             # shouldn't get here
             assert False, 'unreachable'

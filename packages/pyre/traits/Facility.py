@@ -35,13 +35,19 @@ class Facility(Slotted, schemata.component):
         return self._default or self.protocol.pyre_default()
 
 
-    @property
-    def macro(self):
+    def macro(self, **kwds):
         """
         Return the default strategy for handling expressions in slot values
         """
         # build expressions
-        return self.pyre_nameserver.interpolation
+        return self.pyre_nameserver.interpolation(**kwds)
+
+
+    def native(self, **kwds):
+        """
+        The strategy for building slots from more complex input values
+        """
+        return self.pyre_nameserver.variable(**kwds)
 
 
     # interface

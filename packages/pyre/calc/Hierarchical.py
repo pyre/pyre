@@ -153,7 +153,6 @@ class Hierarchical(SymbolTable):
             targetNode=targetNode, targetInfo=targetInfo, aliasNode=aliasNode, aliasInfo=aliasInfo)
 
 
-
     def hash(self, name):
         """
         Split a multilevel {name} into its parts and return its hash

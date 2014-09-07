@@ -20,15 +20,20 @@ class Dict(Slotted):
 
 
     # public data
-    def macro(self, value, **kwds):
+    @property
+    def macro(self):
         """
-        Access to the default strategy for handling macros in slot values
+        The default strategy for handling slot values that are strings and therefore subject to
+        some kind of evaluation in the context of the configuration store
         """
-        # if the value is a string
-        if isinstance(value, str):
-            # do whatever my schema specifies
-            return self.schema.macro(value=value, **kwds)
+        # whatever my schema says
+        return self.schema.macro
+        
 
+    def native(self, value, **kwds):
+        """
+        The default strategy for handling macros in slot values
+        """
         # if the value is any kind of mapping object
         if isinstance(value, collections.abc.Mapping):
             # build a dictionary of nodes
@@ -42,11 +47,6 @@ class Dict(Slotted):
             nodes = {key: self.schema.macro(value=load) for key, load in value}
             # build a mapping node and return it
             return self.pyre_nameserver.mapping(nodes, **kwds)
-
-        # if the value is already some kind of node
-        if isinstance(value, self.pyre_nameserver.node):
-            # just return it
-            return value
 
         # shouldn't get here
         assert False, 'unreachable'

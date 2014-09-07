@@ -24,6 +24,7 @@ EXPORT_PYTHON_MODULES = \
     Dict.py \
     Facility.py \
     Property.py \
+    SlotFactory.py \
     Slotted.py \
     Trait.py \
     properties.py \
