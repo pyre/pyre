@@ -7,19 +7,19 @@
 
 
 # superclass
-from .Sequence import Sequence
+from .Mapping import Mapping
 
 
 # declaration
-class List(Sequence):
+class Catalog(Mapping):
     """
     The list type declarator
     """
 
 
     # constants
-    typename = 'list' # the name of my type
-    container = list # the container i represent
+    typename = 'catalog' # the name of my type
+    container = dict # the container i represent
 
 
 # end of file 

@@ -14,7 +14,7 @@ class Typed:
 
 
     # the list of types that i will use to decorate my client
-    from . import schemata, numeric, sequences
+    from . import schemata, numeric, sequences, mappings
 
 
     # meta-methods
@@ -117,6 +117,17 @@ class Typed:
             try:
                 # and use it
                 yield client.sequences
+            # if not
+            except AttributeError:
+                # no worries
+                pass
+
+        # handle the sequences
+        if schema in cls.mappings:
+            # check whether the client has a 'sequence' mixin
+            try:
+                # and use it
+                yield client.mappings
             # if not
             except AttributeError:
                 # no worries

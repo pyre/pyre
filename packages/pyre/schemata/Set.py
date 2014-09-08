@@ -22,22 +22,4 @@ class Set(Sequence):
     container = set # the container I represent
 
 
-    # interface
-    def coerce(self, value, **kwds):
-        """
-        Convert {value} into a set
-        """
-        # easy enough; resist the temptation to optimize this by skipping the call to {super}:
-        # we have to coerce every item in the container!
-        return self.container(super().coerce(value, **kwds))
-
-
-    # meta-methods
-    def __init__(self, default=container, **kwds):
-        # chain up with my default
-        super().__init__(default=default, **kwds)
-        # all done
-        return
-
-
 # end of file 

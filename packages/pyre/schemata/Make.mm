@@ -22,7 +22,9 @@ all: export
 EXPORT_PYTHON_MODULES = \
     Array.py \
     Boolean.py \
+    Catalog.py \
     Component.py \
+    Container.py \
     Date.py \
     Decimal.py \
     Dimensional.py \
@@ -32,6 +34,7 @@ EXPORT_PYTHON_MODULES = \
     InputStream.py \
     Integer.py \
     List.py \
+    Mapping.py \
     Numeric.py \
     OutputStream.py \
     Schema.py \

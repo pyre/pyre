@@ -24,6 +24,7 @@ sanity:
 types:
 	${PYTHON} ./arrays.py
 	${PYTHON} ./booleans.py
+	${PYTHON} ./catalogs.py
 	${PYTHON} ./dates.py
 	${PYTHON} ./decimals.py
 	${PYTHON} ./dimensionals.py

@@ -22,14 +22,4 @@ class Tuple(Sequence):
     container = tuple # the container i represent
 
 
-    # interface
-    def coerce(self, value, **kwds):
-        """
-        Convert {value} into a tuple
-        """
-        # easy enough; resist the temptation to optimize this by skipping the call to super: we
-        # have to coerce every item in the container!
-        return self.container(super().coerce(value, **kwds))
-
-
 # end of file 

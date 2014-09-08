@@ -9,11 +9,11 @@
 # externals
 import collections.abc # for container identification
 # superclass
-from .Schema import Schema
+from .Container import Container
 
 
 # declaration
-class Sequence(Schema):
+class Sequence(Container):
     """
     The base class for type declarators that are sequences of other types
     """
@@ -27,10 +27,10 @@ class Sequence(Schema):
     container = tuple # the default container i represent
 
 
-    # interface
-    def coerce(self, value, **kwds):
+    # implementation details
+    def _coerce(self, value, **kwds):
         """
-        Convert {value} into a container
+        Convert {value} into an iterable
         """
         # string processing
         if isinstance(value, str):
@@ -54,21 +54,6 @@ class Sequence(Schema):
             return
         # otherwise, flag it as bad input
         raise self.CastingError(value=value, description="unknown type: value={0.value!r}")
-
-
-    # meta-methods
-    def __init__(self, default=container, schema=Schema(), **kwds):
-        # adjust the default; carefully, so we don't all end up using the same global container
-        # checking for {None} is not appropriate here; the user may want {None} as the default
-        # value; we need a way to know that {default} was not supplied: use {list} as the
-        # marker
-        default = self.container() if default is self.container else default
-        # chain up with my default
-        super().__init__(default=default, **kwds)
-        # save my schema
-        self.schema = schema
-        # all done
-        return
 
 
 # end of file 
