@@ -28,12 +28,12 @@ class Weaver(pyre.component, family="pyre.weaver"):
 
     # public interface
     @pyre.export
-    def weave(self):
+    def weave(self, **kwds):
         """
         Assemble the {document}
         """
         # let my language do its thing
-        yield from self.language.render()
+        yield from self.language.render(**kwds)
         # and return
         return
 
