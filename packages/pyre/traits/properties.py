@@ -70,6 +70,7 @@ def catalog(default={}, **kwds):
     """
     A {dict} of {list}s
     """
+    # build a dictionary that maps strings to lists
     return dict(schema=list(**kwds), default=default)
 
 

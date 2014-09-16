@@ -75,6 +75,11 @@ class Property(Slotted):
                 # and attach them to a sequence node
                 return self.pyre_nameserver.sequence(nodes=nodes, **kwds)
 
+            # if the value is {None}
+            if value is None:
+                # chain up
+                return super().native(value=value, **kwds)
+
             # shouldn't get here
             assert False, 'unreachable'
 

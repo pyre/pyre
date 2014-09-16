@@ -48,6 +48,11 @@ class Dict(Slotted):
             # build a mapping node and return it
             return self.pyre_nameserver.mapping(nodes, **kwds)
 
+        # if it is {None}
+        if value is None:
+            # store it in a variable
+            return self.pyre_nameserver.variable(value=value, **kwds)
+
         # shouldn't get here
         assert False, 'unreachable'
 
@@ -103,9 +108,9 @@ class Dict(Slotted):
 
 
     # meta-methods
-    def __init__(self, schema=Property.identity(), default=dict, **kwds):
+    def __init__(self, schema=Property.identity(), default=object, **kwds):
         # adjust the default value
-        default = dict() if default is dict else default
+        default = dict() if default is object else default
         # chain up with a potentially adjusted default value
         super().__init__(default=default, **kwds)
         # record my schema
@@ -197,6 +202,10 @@ class Dict(Slotted):
         if current: 
             # raise NotImplementedError("NYI: priorities/locators?")
             catalog.update(current)
+        # one more special case: no settings in the store and {None} value
+        if current is None and not catalog:
+            # leave uninitialized
+            catalog = None
 
         # make a locator
         here = tracking.simple('while configuring {.pyre_name!r}'.format(client))

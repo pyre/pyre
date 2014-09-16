@@ -13,6 +13,8 @@ import pyre
 # an app with lists 
 class lister(pyre.application, family='defaults.lister'):
 
+    # the default value as {None}
+    none = pyre.properties.strings(default=None)
     # the default value as a list of strings that should be expanded by the framework
     explicit = pyre.properties.strings(default=['{people.alec}'])
     # the default value as a string that evaluates to a list
@@ -21,12 +23,21 @@ class lister(pyre.application, family='defaults.lister'):
 # an app with dicts
 class dicter(pyre.component, family='str.dict'):
 
+    # the default value as {None}
+    none = pyre.properties.catalog(
+        schema=pyre.properties.str(), default=None)
+    # the default value as a list of strings that should be expanded by the framework
     explicit = pyre.properties.catalog(
         schema=pyre.properties.str(), default={'name': '{people.alec}'})
 
 
 # the test
 def test():
+    # show me
+    # print(lister.none)
+    # check that the class defaults get evaluated correctly
+    assert lister.none is None
+
     # show me
     # print(lister.explicit)
     # print(lister.implicit)
@@ -43,16 +54,21 @@ def test():
 
     # now the dict
     # show me
+    # print(dicter.none)
+    # check
+    assert dicter.none == None
+
+    # show me
     # print(dict(dicter.explicit))
     # check
-    assert dict(dicter.explicit) == {'name': ['alec aivazis']}
+    assert dicter.explicit == {'name': ['alec aivazis']}
 
     # instantiate
     d = dicter(name='dicter')
     # show me
     # print(dict(d.explicit))
     # check
-    assert dict(d.explicit) == {'name': ['alec aivazis']}
+    assert d.explicit == {'name': ['alec aivazis']}
 
     # all done
     return l, d

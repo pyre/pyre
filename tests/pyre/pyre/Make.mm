@@ -12,6 +12,9 @@ PROJ_TIDY += __pycache__
 #--------------------------------------------------------------------------
 #
 
+working:
+	${PYTHON} ./defaults.py
+
 all: test clean
 
 test: sanity api regressions
