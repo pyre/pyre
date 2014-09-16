@@ -38,7 +38,7 @@ class Mill(pyre.component, Indenter, implements=Language):
 
     # interface
     @pyre.export
-    def render(self):
+    def render(self, **kwds):
         """
         Layout the {document} using my stationery for the header and footer
         """
@@ -48,7 +48,7 @@ class Mill(pyre.component, Indenter, implements=Language):
         yield ''
 
         # process it
-        yield from self.body()
+        yield from self.body(**kwds)
         # another blank line
         yield ''
 
@@ -71,12 +71,14 @@ class Mill(pyre.component, Indenter, implements=Language):
 
 
     @pyre.export
-    def body(self):
+    def body(self, document=()):
         """
         The body of the document
         """
-        # empty, by default
-        return ()
+        # empty, by default, but maybe the caller has already built one. of course, the proper
+        # way is to have a subclass do something smart, but some users may want to dump into
+        # the file text they have already prepared
+        yield from document
 
                                           
     @pyre.export
