@@ -106,7 +106,7 @@ class Mill(pyre.component, Indenter, implements=Language):
         # if we have a language marker
         if self.languageMarker:
             # render it
-            yield "-*- " + self.languageMarker + " -*-"
+            yield "-*- {.languageMarker} -*-" .format(self)
         # a blank, commented line
         yield ''
         # render the authors
