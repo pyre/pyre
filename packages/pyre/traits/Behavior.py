@@ -21,19 +21,59 @@ class Behavior(Trait):
     method = None # the actual callable in the component declaration
 
 
+    # framework data
+    # predicate that indicates whether this trait is a behavior
+    isBehavior = True
+
+
     # meta-methods
-    def __init__(self, method, **kwds):
+    def __new__(cls, method=None, tip=None, **kwds):
+        """
+        Trap the invocation with meta-data and delay the decoration of the method
+        """
+        # if the method is known
+        if method is not None:
+            # check that the user gave us something we can decorate
+            assert callable(method), 'please invoke with keyword arguments'
+            # and chain up to do the normal thing; swallow the extra arguments, but don't
+            # worry, we'll see them again in {__init__}
+            return super().__new__(cls, **kwds)
+
+        # if we don't know the method, we were invoked with keyword arguments; the strategy
+        # here is to return a {Behavior} constructor as the value of this invocation, which
+        # accomplishes two things: it gives python something to call when the method
+        # declaration is done, and prevent my {__init__} from getting invoked prematurely
+
+        # here is the constructor closure
+        def build(method):
+            """
+            Covert a component method into a behavior
+            """
+            # just build one of my instance
+            return cls(method=method, tip=tip, **kwds)
+
+        # to hand over
+        return build
+        
+
+    def __init__(self, method, tip=None, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # appropriate the method's docstring
         self.__doc__ = method.__doc__
+        # save it
         self.method = method
+        # save the tip
+        self.tip = tip
+        # all done
         return
 
 
     def __get__(self, instance, cls):
         """
-        Access to the behavior: dispatch to the encapsulated method
+        Access to the behavior
         """
-        # bind my method and return the resulting callable
+        # dispatch to the encapsulated method
         return self.method.__get__(instance, cls)
 
 

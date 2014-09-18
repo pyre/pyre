@@ -52,6 +52,14 @@ class Configurable(Dashboard):
 
 
     @classmethod
+    def pyre_behaviors(cls):
+        """
+        Generate a sequence of all my trait descriptors that are marked as configurable.
+        """
+        return filter(lambda trait: trait.isBehavior, cls.pyre_traits())
+
+
+    @classmethod
     def pyre_configurables(cls):
         """
         Generate a sequence of all my trait descriptors that are marked as configurable.
