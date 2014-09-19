@@ -15,9 +15,13 @@ The primary target is human readable formats, such source code for programming l
 
 # access to the main component in this package
 from .Weaver import Weaver as newWeaver
-# and the language interface
+# the language interface
 from .Language import Language as language
 
+# the mill base classes
+from .Mill import Mill as mill
+from .LineMill import LineMill as line
+from .BlockMill import BlockMill as block
 
 # access to the known languages
 from .C import C as c
