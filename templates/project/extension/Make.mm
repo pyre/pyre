@@ -2,7 +2,7 @@
 #
 # {project.authors}
 # {project.affiliations}
-# (c) {project.span}  all rights reserved
+# (c) {project.span} all rights reserved
 #
 
 # get the global defaults for the {{{project.name}}} project

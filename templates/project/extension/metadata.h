@@ -2,7 +2,7 @@
 // 
 // {project.authors}
 // {project.affiliations}
-// (c) {project.span}  all rights reserved
+// (c) {project.span} all rights reserved
 // 
 
 #if !defined({project.name}_extension_metadata_h)
