@@ -9,8 +9,8 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
-    master \
-    slaves \
+    beryllium \
+    pelio \
 
 #--------------------------------------------------------------------------
 #

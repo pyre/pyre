@@ -9,7 +9,7 @@
 PROJECT = pyre
 PACKAGE = bot
 
-BUILDBOT_MASTER=root@pyre.caltech.edu
+BUILDBOT_MASTER=root@pyre.orthologue.com
 BUILDBOT_HOME=/var/lib/buildbot/masters/pyre
 
 all: tidy
@@ -18,6 +18,6 @@ install:
 	scp master.cfg $(BUILDBOT_MASTER):$(BUILDBOT_HOME)
 
 deploy: install
-	ssh $(BUILDBOT_MASTER) '/etc/init.d/buildmaster restart'
+	ssh $(BUILDBOT_MASTER) 'service buildmaster restart'
 
 # end of file 
