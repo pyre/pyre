@@ -18,7 +18,7 @@ PyObject *
 pyre::extensions::cuda::
 copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "cuda: (c) 1998-2014 California Institute of Technology";
+    const char * const copyright_note = "cuda: (c) 1998-2014 orthologue";
     return Py_BuildValue("s", copyright_note);
 }
     
@@ -41,7 +41,7 @@ license(PyObject *, PyObject *)
     const char * const license_string = 
         "\n"
         "    cuda " CUDA_VERSION "\n"
-        "    Copyright (c) 1998-2014 California Institute of Technology\n"
+        "    Copyright (c) 1998-2014 orthologue\n"
         "    All Rights Reserved\n"
         "\n"
         "    Redistribution and use in source and binary forms, with or without\n"

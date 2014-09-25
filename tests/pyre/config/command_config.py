@@ -32,7 +32,7 @@ def test():
     cfg.processEvents(events=events, priority=executive.priority.user)
     # now, check that the assignments took place
     assert ns["sample.user.name"] == "michael a.g. aïvázis"
-    assert ns["sample.user.email"] == "aivazis@caltech.edu"
+    assert ns["sample.user.email"] == "michael.aivazis@orthologue.com"
     # and return the managers
     return parser
 

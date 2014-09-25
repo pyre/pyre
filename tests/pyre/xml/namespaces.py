@@ -21,7 +21,7 @@ def test():
     class Node(BaseNode):
         """Base class for node handlers of this document"""
 
-        namespace = "http://pyre.caltech.edu/releases/1.0/schema/inventory.html"
+        namespace = "http://pyre.orthologue.com/releases/1.0/schema/inventory.html"
 
     class Inventory(Node):
         """The top level document element"""

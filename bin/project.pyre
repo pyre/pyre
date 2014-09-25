@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -26,8 +27,8 @@ class project(pyre.application):
     name = pyre.properties.str(default='project')
     name.doc = "the name of the project"
 
-    authors = pyre.properties.str(default='[ replace with the list of authors ]')
-    authors.doc = "the list project authors"
+    authors = pyre.properties.strings(default='[ replace with the list of authors ]')
+    authors.doc = "the list of project authors"
 
     affiliations = pyre.properties.str(default='[ replace with the author affiliations ]')
     affiliations.doc = "the author affiliations"

@@ -48,7 +48,7 @@ def test():
     event = events[3]
     assert isinstance(event, Assignment)
     assert tuple(event.key) == ("pyre", "user", "email")
-    assert event.value == "aivazis@caltech.edu"
+    assert event.value == "michael.aivazis@orthologue.com"
 
     event = events[4]
     assert isinstance(event, Assignment)

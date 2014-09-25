@@ -20,14 +20,14 @@ def test():
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
-    model["user.email"] = "aivazis@caltech.edu"
+    model["user.email"] = "michael.aivazis@orthologue.com"
     model["user.signature"] = model.interpolation("{user.name} -- {user.email}")
     # check the signature
-    assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
+    assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
     # case 1: canonical does not exist, alias does not exist
     model.alias(base="author", alias="affiliation", target="user.affiliation")
-    model["user.affiliation"] = "California Institute of Technology"
+    model["user.affiliation"] = "orthologue"
     assert model["author.affiliation"] == model["user.affiliation"]
 
     # case 2: canonical exists, alias does not
@@ -50,10 +50,10 @@ def test():
 
     # check the final state
     assert model["user.name"] == "Michael Aïvázis"
-    assert model["user.email"] == "aivazis@caltech.edu"
+    assert model["user.email"] == "michael.aivazis@orthologue.com"
     assert model["user.telephone"] == "+1 626.395.3424"
-    assert model["user.affiliation"] == "California Institute of Technology"
-    assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
+    assert model["user.affiliation"] == "orthologue"
+    assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
     # and again through the aliases
     assert model["author.name"] == "Michael Aïvázis"
@@ -63,8 +63,8 @@ def test():
     except model.UnresolvedNodeError as error:
         pass
     assert model["author.telephone"] == "+1 626.395.3424"
-    assert model["author.affiliation"] == "California Institute of Technology"
-    assert model["author.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
+    assert model["author.affiliation"] == "orthologue"
+    assert model["author.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
     return
 

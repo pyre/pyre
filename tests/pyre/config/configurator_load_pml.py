@@ -53,10 +53,10 @@ def test():
 
     # try again
     assert ns["sample.user.name"] == "michael a.g. aïvázis"
-    assert ns["sample.user.email"] == "aivazis@caltech.edu"
+    assert ns["sample.user.email"] == "michael.aivazis@orthologue.com"
     assert ns["sample.user.affiliation"] == "orthologue"
     # and the local one
-    assert ns["sample.user.byline"] == "michael a.g. aïvázis -- aivazis@caltech.edu"
+    assert ns["sample.user.byline"] == "michael a.g. aïvázis -- michael.aivazis@orthologue.com"
 
     # make a change
     ns["sample.user.affiliation"] = "orthologue"

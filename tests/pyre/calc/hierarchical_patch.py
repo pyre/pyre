@@ -20,11 +20,11 @@ def test():
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
-    model["user.email"] = "aivazis@caltech.edu"
+    model["user.email"] = "michael.aivazis@orthologue.com"
     model["user.signature"] = model.expression("{user.name}+' -- '+{user.email}")
 
     # check the signature
-    assert model["user.signature"] == "Michael Aïvázis -- aivazis@caltech.edu"
+    assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
     # modify one of the nodes
     model["user.email"] = "michael.aivazis@orthologue.com"

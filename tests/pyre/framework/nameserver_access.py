@@ -21,7 +21,7 @@ def test():
     # create some assignments
     nameserver["sample.user.name"] = "Michael Aïvázis"
     nameserver["sample.user.name"] = "michael aïvázis"
-    nameserver["sample.user.email"] = "michael.aivazis@caltech.edu"
+    nameserver["sample.user.email"] = "michael.aivazis@orthologue.com"
     nameserver["sample.user.affiliation"] = "orthologue"
     nameserver["sample.user.alias"] = "{sample.user.name}"
 
@@ -30,7 +30,7 @@ def test():
 
     # check the variable bindings
     assert nameserver["sample.user.name"] == "michael aïvázis"
-    assert nameserver["sample.user.email"] == "michael.aivazis@caltech.edu"
+    assert nameserver["sample.user.email"] == "michael.aivazis@orthologue.com"
     assert nameserver["sample.user.affiliation"] == "orthologue"
     assert nameserver["sample.user.alias"] == nameserver["sample.user.name"]
 

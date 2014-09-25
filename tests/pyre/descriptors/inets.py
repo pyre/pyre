@@ -21,32 +21,32 @@ def test():
 
     # positive tests
     # ip4 with full information
-    address = inet.coerce("ip4:pyre.caltech.edu:50000")
+    address = inet.coerce("ip4:pyre.orthologue.com:50000")
     assert address.family == inet.ipv4.family
-    assert address.host == "pyre.caltech.edu"
+    assert address.host == "pyre.orthologue.com"
     assert address.port == 50000
-    assert address.value == ("pyre.caltech.edu", 50000)
+    assert address.value == ("pyre.orthologue.com", 50000)
 
     # ip4 with no family
-    address = inet.coerce("pyre.caltech.edu:50000")
+    address = inet.coerce("pyre.orthologue.com:50000")
     assert address.family == inet.ipv4.family
-    assert address.host == "pyre.caltech.edu"
+    assert address.host == "pyre.orthologue.com"
     assert address.port == 50000
-    assert address.value == ("pyre.caltech.edu", 50000)
+    assert address.value == ("pyre.orthologue.com", 50000)
 
     # ip4 with no port
-    address = inet.coerce("ip4:pyre.caltech.edu")
+    address = inet.coerce("ip4:pyre.orthologue.com")
     assert address.family == inet.ipv4.family
-    assert address.host == "pyre.caltech.edu"
+    assert address.host == "pyre.orthologue.com"
     assert address.port == 0
-    assert address.value == ("pyre.caltech.edu", 0)
+    assert address.value == ("pyre.orthologue.com", 0)
 
     # ip4 with no family or port
-    address = inet.coerce("pyre.caltech.edu")
+    address = inet.coerce("pyre.orthologue.com")
     assert address.family == inet.ipv4.family
-    assert address.host == "pyre.caltech.edu"
+    assert address.host == "pyre.orthologue.com"
     assert address.port == 0
-    assert address.value == ("pyre.caltech.edu", 0)
+    assert address.value == ("pyre.orthologue.com", 0)
 
     # unix
     address = inet.coerce("unix:/tmp/.s.5394")

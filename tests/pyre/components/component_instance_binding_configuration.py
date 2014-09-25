@@ -45,16 +45,16 @@ def test():
     assert c.jobs == 10
     assert isinstance(c.gopher, worker)
     assert c.gopher.pyre_name == "c.gopher"
-    assert c.gopher.host == "foxtrot.caltech.edu"
+    assert c.gopher.host == "foxtrot.orthologue.com"
     # instantiate the worker
     w = worker(name="w")
-    assert w.host == "pyre.caltech.edu"
+    assert w.host == "pyre.orthologue.com"
     # bind the two; verify that that {w} retained its configuration as a result of the assignment
     c.gopher = w
     # check that the binding left {w} untouched
     assert c.gopher == w
     assert c.gopher.pyre_name == "w"
-    assert c.gopher.host == "pyre.caltech.edu"
+    assert c.gopher.host == "pyre.orthologue.com"
 
     return c
 

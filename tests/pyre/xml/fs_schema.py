@@ -21,7 +21,7 @@ def test():
 
     class Node(BaseNode):
         """Base class for my nodes"""
-        namespace = "http://pyre.caltech.edu/releases/1.0/schema/fs.html"
+        namespace = "http://pyre.orthologue.com/releases/1.0/schema/fs.html"
 
         def notify(self, parent, locator): return
 

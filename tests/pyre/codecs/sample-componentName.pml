@@ -12,7 +12,7 @@
   <component name="sample">
     <!-- some properties -->
     <bind property="author">Michael Aïvázis</bind>
-    <bind property="affiliation">California Institute of Technology</bind>
+    <bind property="affiliation">orthologue</bind>
 
   </component>
 

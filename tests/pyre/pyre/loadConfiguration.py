@@ -26,7 +26,7 @@ def test():
     assert ns["package.home"] == "home"
     assert ns["package.prefix"] == "prefix"
     assert ns["package.user.name"] == "michael a.g. aïvázis"
-    assert ns["package.user.email"] == "aivazis@caltech.edu"
+    assert ns["package.user.email"] == "michael.aivazis@orthologue.com"
     assert ns["package.user.affiliation"] == "orthologue"
 
     # all done

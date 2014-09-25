@@ -8,8 +8,8 @@
 -->
 
 <inventory 
-   xmlns="http://pyre.caltech.edu/releases/1.0/schema/inventory.html"
-   xmlns:pyre="http://pyre.caltech.edu/releases/1.0/schema/inventory.html">
+   xmlns="http://pyre.orthologue.com/releases/1.0/schema/inventory.html"
+   xmlns:pyre="http://pyre.orthologue.com/releases/1.0/schema/inventory.html">
 
 </inventory>
 

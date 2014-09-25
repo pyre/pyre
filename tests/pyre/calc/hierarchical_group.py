@@ -20,8 +20,8 @@ def test():
 
     # register the nodes
     model["pyre.user.name"] = "Michael Aïvázis"
-    model["pyre.user.email"] = "aivazis@caltech.edu"
-    model["pyre.user.affiliation"] = "California Institute of Technology"
+    model["pyre.user.email"] = "michael.aivazis@orthologue.com"
+    model["pyre.user.affiliation"] = "orthologue"
     model["pyre.user.signature"] = "{pyre.user.name}+' -- '+{pyre.user.email}"
     model["pyre.user.telephone"] = "+1 626.395.3424"
 

@@ -21,7 +21,7 @@ class Node(Base):
 
     # constants
     separator = '.'
-    namespace = "http://pyre.caltech.edu/releases/1.0/schema/fs.html"
+    namespace = "http://pyre.orthologue.com/releases/1.0/schema/fs.html"
 
 
 # end of file

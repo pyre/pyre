@@ -17,7 +17,7 @@
     <!-- and some per user settings -->
     <package name="user">
       <bind property="name">michael a.g. aïvázis</bind>
-      <bind property="email">aivazis@caltech.edu</bind>
+      <bind property="email">michael.aivazis@orthologue.com</bind>
     </package>
 
   </package>

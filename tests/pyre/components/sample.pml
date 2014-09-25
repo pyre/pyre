@@ -96,10 +96,10 @@
     <bind property="jobs">10</bind>
   </component>
   <component name="w" family="sample.worker">
-    <bind property="host">pyre.caltech.edu</bind>
+    <bind property="host">pyre.orthologue.com</bind>
   </component>
   <component name="c.gopher" family="sample.worker">
-    <bind property="host">foxtrot.caltech.edu</bind>
+    <bind property="host">foxtrot.orthologue.com</bind>
   </component>
 
   <!-- data for component_aliases -->

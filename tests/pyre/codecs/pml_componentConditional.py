@@ -42,7 +42,7 @@ def test():
     assert event.component == ["mine"]
     assert event.conditions == [(["mine"], ["test", "sample"])]
     assert event.key == ["affiliation"]
-    assert event.value == "California Institute of Technology"
+    assert event.value == "orthologue"
 
     return m, reader, events
 

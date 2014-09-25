@@ -8,10 +8,10 @@
 -->
 
 <filesystem
-   xmlns="http://pyre.caltech.edu/releases/1.0/schema/fs.html"
-   xmlns:fs="http://pyre.caltech.edu/releases/1.0/schema/fs.html"
-   xsi:schemaLocation="http://pyre.caltech.edu/releases/1.0/schema/inventory.html
-                       http://pyre.caltech.edu/releases/1.0/schema/inventory.xsd">
+   xmlns="http://pyre.orthologue.com/releases/1.0/schema/fs.html"
+   xmlns:fs="http://pyre.orthologue.com/releases/1.0/schema/fs.html"
+   xsi:schemaLocation="http://pyre.orthologue.com/releases/1.0/schema/inventory.html
+                       http://pyre.orthologue.com/releases/1.0/schema/inventory.xsd">
 
   <folder name="tmp">
     <!-- a file -->
