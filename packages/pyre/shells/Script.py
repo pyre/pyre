@@ -18,6 +18,10 @@ class Script(Executive, family="pyre.shells.script"):
     """
 
     # user configurable state
+    # the help markers
+    helpon = pyre.properties.strings(default=['?', 'h', 'help'])
+    helpon.doc = "the list of markers that indicate the user has asked for help"
+    
     # a marker that enables applications to deduce the type of shell that is hosting them
     model = pyre.properties.str(default='script')
     model.doc = "the programming model"
@@ -29,7 +33,17 @@ class Script(Executive, family="pyre.shells.script"):
         """
         Invoke the application behavior
         """
-        # launch the application
+        # the only decision to make here is whether to invoke the help system;
+        # get the nameserver
+        nameserver = self.pyre_nameserver
+        # go through the markers
+        for marker in self.helpon:
+            # if it is known by the configuration store
+            if marker in nameserver:
+                # get help
+                return application.help(*args, **kwds)
+        
+        # otherwise, launch the application
         return application.main(*args, **kwds)
 
 

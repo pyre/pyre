@@ -40,17 +40,8 @@ class Application(pyre.component, metaclass=Director):
     pyre_namespace = None
 
     # public state
-    DEBUG = pyre.properties.bool(default=False)
-    DEBUG.doc = 'debugging mode'
-    
-    interactive = pyre.properties.bool(default=False)
-    interactive.doc = "go interactive when no command line arguments are provided"
-
     shell = Shell()
     shell.doc = 'my hosting strategy'
-
-    renderer = Renderer()
-    renderer.doc = 'my custom journal device renderer'
 
     requirements = externals.requirements()
     requirements.doc = 'the list of package categories on which I depend'
@@ -58,6 +49,12 @@ class Application(pyre.component, metaclass=Director):
     dependencies = externals.dependencies()
     dependencies.doc = 'the map of requirements to package instances that satisfy them'
     
+    DEBUG = pyre.properties.bool(default=False)
+    DEBUG.doc = 'debugging mode'
+    
+    interactive = pyre.properties.bool(default=False)
+    interactive.doc = "go interactive when no command line arguments are provided"
+
     # per-instance public data
     # geography
     home = None # the directory where my invocation script lives
@@ -65,6 +62,8 @@ class Application(pyre.component, metaclass=Director):
     defaults = None # the directory with my configuration folders
     pfs = None # the root of my private filesystem
     layout = None # my configuration options
+    renderer = Renderer()
+
     # journal channels
     info = None
     warning = None
@@ -111,7 +110,7 @@ class Application(pyre.component, metaclass=Director):
 
     # component interface
     @pyre.export
-    def main(self, **kwds):
+    def main(self, *args, **kwds):
         """
         The main entry point of an application component
         """
@@ -124,8 +123,50 @@ class Application(pyre.component, metaclass=Director):
         """
         Hook for the application help system
         """
-        raise NotImplementedError(
-            "application {.pyre_name!r} must implement 'help'".format(self))
+        # hardwired (for now?)
+        indent = '    '
+        # tell the user what they typed
+        self.info.line('{.pyre_namespace}'.format(self))
+
+        # if i have a docstring
+        if self.__doc__:
+            # split my docstring into lines
+            for line in self.__doc__.splitlines():
+                # indent each one and print it out
+                self.info.line('{}{}'.format(indent, line.strip()))
+
+        # my public state
+        public = []
+        # collect them
+        for trait in self.pyre_configurables():
+            # get the name
+            name = trait.name
+            # get the type
+            schema = trait.typename
+            # and the tip
+            tip = trait.tip or trait.doc
+            # skip nameless undocumented ones
+            if not name or not tip: continue
+            # pile the rest
+            public.append((name, schema, tip))
+
+        # if we were able to find any trait info
+        if public:
+            # the {options} section
+            self.info.line('options:')
+            # figure out how much space we need
+            width = max(len(name) for name,_,_ in public) + 2 # for the dashes
+            # for each behavior
+            for name, schema, tip in public:
+                # show the details
+                self.info.line("{}{:>{}}: {} [{}]".format(indent, '--'+name, width, tip, schema))
+            # leave some space
+            self.info.line()
+
+        # flush
+        self.info.log()
+        # and indicate success
+        return 0
         
 
     # meta methods

@@ -48,10 +48,12 @@ class Command(pyre.component, implements=Action):
         # tell the user what they typed
         self.info.line('{.pyre_namespace} {.pyre_spec}'.format(plexus, self))
 
-        # split my docstring into lines
-        for line in self.__doc__.splitlines():
-            # indent each one and print it out
-            self.info.line('{}{}'.format(indent, line.strip()))
+        # if i have a docstring
+        if self.__doc__:
+            # split my docstring into lines
+            for line in self.__doc__.splitlines():
+                # indent each one and print it out
+                self.info.line('{}{}'.format(indent, line.strip()))
 
         # the pile of my behaviors
         behaviors = []
