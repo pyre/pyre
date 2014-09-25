@@ -29,7 +29,7 @@ PyObject *
 {project.name}::extension::
 copyright(PyObject *, PyObject *)
 {{
-    const char * const copyright_note = "{project.name}: (c) 2010-2013 {project.authors}";
+    const char * const copyright_note = "{project.name}: (c) {project.span} {project.authors}";
     return Py_BuildValue("s", copyright_note);
 }}
     

@@ -2,7 +2,7 @@
 // 
 // {pyre.user.name}
 // {pyre.user.affiliation}
-// (c) 2010-2013 all rights reserved
+// (c) {project.span} all rights reserved
 // 
 
 #include <portinfo>
