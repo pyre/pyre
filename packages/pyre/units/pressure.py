@@ -36,6 +36,7 @@ torr = 133.3 * pascal
 atmosphere = 101325 * pascal
 
 atm = atmosphere
+psi = 6894.757 * pascal
 
 
 # end of file
