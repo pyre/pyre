@@ -27,7 +27,7 @@ class project(pyre.application):
     name = pyre.properties.str(default='project')
     name.doc = "the name of the project"
 
-    authors = pyre.properties.strings(default='[ replace with the list of authors ]')
+    authors = pyre.properties.str(default='[ replace with the list of authors ]')
     authors.doc = "the list of project authors"
 
     affiliations = pyre.properties.str(default='[ replace with the author affiliations ]')
@@ -96,7 +96,12 @@ class project(pyre.application):
                     # expand any macros
                     body = nameserver.interpolate(expression=body)
                     # create the file
-                    cwd.write(parent=folder, name=entry, contents=body)
+                    destination = cwd.write(parent=folder, name=entry, contents=body)
+                    # get me the meta data
+                    metaold = template.info(node)
+                    metanew = cwd.info(destination)
+                    # adjust the permissions of the new file
+                    metanew.chmod(metaold.permissions)
 
         # return success
         return 0
