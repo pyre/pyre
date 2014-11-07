@@ -7,6 +7,7 @@
 
 
 # externals
+import os
 import stat
 # superclass
 from .metadata import Info
@@ -45,6 +46,14 @@ class File(Info):
         self.modificationTime = info.st_mtime
 
         return
+
+
+    def chmod(self, permissions):
+        """
+        Apply {permissions} to this file
+        """
+        # just do it...
+        return os.chmod(self.uri, permissions)
 
 
     # debugging support
