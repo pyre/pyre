@@ -1,0 +1,109 @@
+# -*- Python -*-
+# -*- coding: utf-8 -*-
+#
+# {project.authors}
+# {project.affiliations}
+# (c) {project.span} all rights reserved
+#
+
+
+# import and publish pyre symbols
+from pyre import (
+    # protocols, components and traits
+    schemata, constraints, properties, protocol, component,
+    # decorators
+    export, provides,
+    # the manager of the pyre runtime
+    executive,
+    # miscellaneous
+    tracking, units
+    )
+
+
+# bootstrap
+package = executive.registerPackage(name='{project.name}', file=__file__)
+# save the geography
+home, prefix, defaults = package.layout()
+
+# plexus support
+from .components import plexus, action
+from .actions import command
+
+# publish local modules
+from . import (
+    # my extensions
+    extensions
+    )
+
+
+# administrative
+def credits():
+    """
+    Print the acknowledgments
+    """
+    return _{project.name}_acknowledgments
+
+
+def copyright():
+    """
+    Return the {project.name} copyright note
+    """
+    return _{project.name}_copyright
+
+
+def license():
+    """
+    Print the {project.name} license
+    """
+    return _{project.name}_license
+
+
+def version():
+    """
+    Return the {project.name} version
+    """
+    return _{project.name}_version
+
+
+def usage():
+    """
+    Basic usage information
+    """
+    # print the usage screen
+    print(_{project.name}_usage)
+    # all done
+    return
+
+
+# constants
+_{project.name}_version = (1, 0, REVISION)
+
+_{project.name}_tag = "{project.name} {{}}.{{}} revision {{}}".format(*_{project.name}_version)
+
+_{project.name}_copyright = "{{}}: Copyright (c) {project.span} All rights reserved".format(_{project.name}_tag)
+
+_{project.name}_header = """
+    {{}}
+
+    Authors:
+      {project.authors}
+
+    Copyright (c) {project.span} All Rights Reserved
+    """.format(_{project.name}_tag)
+
+_{project.name}_license = _{project.name}_header + """
+    The complete usage terms can be found in the file LICENSE.txt
+    """
+_{project.name}_acknowledgments = _{project.name}_header + """
+    """
+
+_{project.name}_usage = _{project.name}_header + """
+    Basic commands:
+        {project.name} credits        acknowledgments
+        {project.name} license        terms of use
+        {project.name} version        current version of the package
+        {project.name} copyright      the copyright note
+    """
+
+
+# end of file

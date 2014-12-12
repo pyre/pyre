@@ -5,22 +5,20 @@
 # (c) {project.span} all rights reserved
 #
 
-# project defaults
+# access the project defaults
 include {project.name}.def
 # the package name
-PACKAGE = defaults
+PACKAGE = components
 
-# the configuration files
-EXPORT_ETC = \
-    {project.name}.cfg
-
-# add these to the clean pile
-PROJ_CLEAN = ${{addprefix $(EXPORT_ETCDIR)/, $(EXPORT_ETC)}}
-
+# the list of python modules
+EXPORT_PYTHON_MODULES = \
+    Action.py \
+    Plexus.py \
+    __init__.py
 
 # the standard build targets
 all: export
 
-export:: export-etc
+export:: export-package-python-modules
 
 # end of file

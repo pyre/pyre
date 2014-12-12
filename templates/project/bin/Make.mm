@@ -5,22 +5,23 @@
 # (c) {project.span} all rights reserved
 #
 
-# project defaults
+
+# access the project defaults
 include {project.name}.def
 # the package name
-PACKAGE = defaults
+PACKAGE = bin
 
-# the configuration files
-EXPORT_ETC = \
-    {project.name}.cfg
+# export these
+EXPORT_BINS = \
+    {project.name} \
 
 # add these to the clean pile
-PROJ_CLEAN = ${{addprefix $(EXPORT_ETCDIR)/, $(EXPORT_ETC)}}
+PROJ_CLEAN = ${{addprefix $(EXPORT_BINDIR)/, $(EXPORT_BINS)}}
 
 
-# the standard build targets
+# standard targets
 all: export
 
-export:: export-etc
+export:: export-binaries
 
 # end of file

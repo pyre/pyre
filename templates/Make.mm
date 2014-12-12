@@ -19,9 +19,10 @@ all: export
 #
 TEMPLATE_DIR = $(EXPORT_ROOT)/templates
 export::
+	@find . -name \*~ -delete
 	@$(RM_RF) $(TEMPLATE_DIR)
 	@$(MKDIR) $(MKPARENTS) $(TEMPLATE_DIR)
 	@$(CP_R) $(TEMPLATES) $(TEMPLATE_DIR)
 
 
-# end of file 
+# end of file

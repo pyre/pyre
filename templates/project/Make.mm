@@ -13,6 +13,7 @@ RECURSE_DIRS = \
     lib \
     extension \
     defaults \
+    bin \
     tests \
     doc \
 
@@ -59,4 +60,4 @@ build: {project.name} lib extension defaults
 test: build tests
 
 
-# end of file 
+# end of file
