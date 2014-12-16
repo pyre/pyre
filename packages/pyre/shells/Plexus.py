@@ -90,6 +90,10 @@ class Plexus(Application, metaclass=Plector):
         except repertoir.ResolutionError as error:
             # report it
             self.error.log('could not locate action {!r}'.format(action))
+            # and if we are in DEBUG mode
+            if self.DEBUG:
+                # show me what actually happened
+                self.error.log(str(error))
             # indicate failure
             return 1
         # otherwise, invoke it
