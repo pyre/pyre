@@ -23,7 +23,7 @@ EXPORT_PYTHON_MODULES = \
     __init__.py
 
 # grab the revision number
-REVISION = $(strip $(bzr revno))
+REVISION = ${{strip ${{shell bzr revno}}}}
 # if not there
 ifeq ($(REVISION),)
 REVISION = 0
