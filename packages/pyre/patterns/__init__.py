@@ -39,8 +39,9 @@ def powerset(iterable):
         powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     Taken from the python itertools documentation
     """
-
+    # convert {iterable} into a list; we need its length
     s = list(iterable)
+    # build all possible combinations of all possible lengths
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s)+1))
 
 
@@ -62,7 +63,9 @@ def newPathHash(**kwds):
     """
     Build a hashing functor for name hierarchies
     """
+    # get the factory
     from .PathHash import PathHash
+    # and invoke it
     return PathHash(**kwds)
 
 
@@ -90,4 +93,4 @@ def coroutine(f):
     return wrapper
 
 
-# end of file 
+# end of file
