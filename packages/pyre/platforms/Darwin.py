@@ -79,6 +79,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     # private data
     # the known code names
     codenames = {
+        '10.10': 'yosemite',
         '10.9': 'mavericks',
         '10.8': 'mountain lion',
         '10.7': 'lion',
