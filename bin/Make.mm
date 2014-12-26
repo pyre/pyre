@@ -22,7 +22,7 @@ EXPORT_BINS = \
     class.pyre \
     listdir.py \
     merlin \
-    project.pyre \
+    smith.pyre \
     pyre
 
 export:: export-binaries
@@ -30,4 +30,4 @@ export:: export-binaries
 release:: release-binaries
 
 
-# end of file 
+# end of file

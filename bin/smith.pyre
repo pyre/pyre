@@ -36,18 +36,21 @@ class project(pyre.application):
     span = pyre.properties.str(default='[ replace with the project duration ]')
     span.doc = "the project duration for the copyright message"
 
+    template = pyre.properties.str(default='plexus')
+    template.doc = "the template directory to clone"
+
 
     # public data
     @property
-    def template(self):
+    def vault(self):
         """
         Return the location of the project template directory
         """
         # externals
         import os
         # build and  return the absolute path to the model template
-        return os.path.join(pyre.prefix, 'templates', 'project')
-        
+        return os.path.join(pyre.prefix, 'templates', self.template)
+
 
     # application obligations
     @pyre.export
@@ -57,7 +60,7 @@ class project(pyre.application):
         # get the nameserver
         nameserver = self.pyre_nameserver
         # make local filesystem rooted at the model template directory
-        template = self.vfs.local(root=self.template).discover()
+        template = self.vfs.local(root=self.vault).discover()
 
         # if the target path exists already
         if os.path.exists(project):
@@ -65,7 +68,7 @@ class project(pyre.application):
             self.error.log("the folder {!r} exists already".format(project))
             # report failure
             return 1
-            
+
         # make a local filesystem rooted at the current directory
         cwd = self.vfs.local(root='.')
 
@@ -119,4 +122,4 @@ if __name__ == '__main__':
     sys.exit(status)
 
 
-# end of file 
+# end of file
