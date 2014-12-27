@@ -22,9 +22,9 @@ RECURSE_DIRS = \
     bot \
     people \
 
-#--------------------------------------------------------------------------
-#
+PYRE_ZIP = $(EXPORT_ROOT)/pyre-1.0.zip
 
+# the standard targets
 all:
 	BLD_ACTION="all" $(MM) recurse
 
@@ -37,49 +37,10 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-
-#--------------------------------------------------------------------------
-#  shortcuts to building in my subdirectories
-.PHONY: bin defaults doc examples extensions lib packages schema tests web
-
-bin:
-	(cd bin; $(MM))
-
-defaults:
-	(cd defaults; $(MM))
-
-doc:
-	(cd doc; $(MM))
-
-examples:
-	(cd examples; $(MM))
-
-extensions:
-	(cd extensions; $(MM))
-
-lib:
-	(cd lib; $(MM))
-
-packages:
-	(cd packages; $(MM))
-
-schema:
-	(cd schema; $(MM))
-
-tests:
-	(cd tests; $(MM))
-
-web:
-	(cd web; $(MM))
-
+# other targets
 build: lib packages extensions defaults bin
 
 test: build tests examples
-
-
-#--------------------------------------------------------------------------
-#
-PYRE_ZIP = $(EXPORT_ROOT)/pyre-1.0.zip
 
 zip: build zipit
 
@@ -87,5 +48,11 @@ zipit:
 	$(RM_F) $(PYRE_ZIP)
 	(cd $(EXPORT_ROOT); zip -r ${PYRE_ZIP} * )
 
+# shortcuts for building specific subdirectories
+.PHONY: $(RECURSE_DIRS)
 
-# end of file 
+$(RECURSE_DIRS):
+	(cd $@; $(MM))
+
+
+# end of file

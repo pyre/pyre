@@ -57,41 +57,11 @@ distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
 
-#  shortcuts to building in my subdirectories
-.PHONY: cuda gsl journal libpyre merlin mpi opal postgres pyre python sqlite
+# shortcuts for building specific subdirectories
+.PHONY: $(RECURSE_DIRS)
 
-cuda:
-	(cd cuda; $(MM))
-
-gsl:
-	(cd gsl; $(MM))
-
-journal:
-	(cd journal; $(MM))
-
-libpyre:
-	(cd libpyre; $(MM))
-
-merlin:
-	(cd merlin; $(MM))
-
-mpi:
-	(cd mpi; $(MM))
-
-opal:
-	(cd opal; $(MM))
-
-postgres:
-	(cd postgres; $(MM))
-
-pyre:
-	(cd pyre; $(MM))
-
-python:
-	(cd python; $(MM))
-
-sqlite:
-	(cd sqlite; $(MM))
+$(RECURSE_DIRS):
+	(cd $@; $(MM))
 
 
-# end of file 
+# end of file
