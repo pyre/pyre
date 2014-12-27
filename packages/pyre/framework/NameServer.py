@@ -40,7 +40,7 @@ class NameServer(Hierarchical):
         return self['pyre.configpath']
 
 
-    # framework object management 
+    # framework object management
     def configurable(self, name, configurable, locator, priority=None):
         """
         Add {configurable} to the model under {name}
@@ -66,7 +66,7 @@ class NameServer(Hierarchical):
 
     def package(self, name, executive, locator=None):
         """
-        Retrieve the named package from the model. If there is no such package, instantiate one, 
+        Retrieve the named package from the model. If there is no such package, instantiate one,
         configure it, and add it to the model.
         """
         # take {name} apart and extract the package name as the top level identifier
@@ -76,7 +76,7 @@ class NameServer(Hierarchical):
         # if there is a node registered under this key
         try:
             # grab it
-            package = self._nodes[key].value
+            node = self._nodes[key]
         # if not
         except KeyError:
             # if I do not have a locator, point to my caller
@@ -87,13 +87,15 @@ class NameServer(Hierarchical):
             package.configure(executive=executive, locator=locator)
         # if it's there
         else:
+            # get the value of the node
+            package = node.value
             # make sure it is a package, and if not
             if not isinstance(package, self.Package):
                 # get the journal
                 import journal
                 # build the report
                 complaint = 'name conflict while configuring package {!r}: {}'.format(name, package)
-                # complain
+                # and complain
                 raise journal.error('pyre.configuration').log(complaint)
 
         # return the package
@@ -123,7 +125,7 @@ class NameServer(Hierarchical):
                                         locator=locator, priority=priority)
         # and return it
         return package
-        
+
 
     # expansion services
     def evaluate(self, expression):
@@ -224,7 +226,7 @@ class NameServer(Hierarchical):
         # and return
         return key
 
-            
+
     def retrieve(self, name):
         """
         Retrieve the node registered under {name}. If no such node exists, an error marker will
@@ -301,37 +303,18 @@ class NameServer(Hierarchical):
             meta.locator = aliasInfo.locator
 
         # all done
-        return 
+        return
 
 
-    def linkApplicationTrait(self, component, trait, name):
+    def publishTrait(self, scope, name):
         """
         Build a reference to {name} and store it under {component.name} as a proposed value for
         {trait}
         """
-        # hash the name
-        key = self.hash(name)
-        # check whether
-        try:
-            # there is a slot registered under the name at global scope
-            slot = self._nodes[key]
-        # if not
-        except KeyError:
-            # no worries, we are done
-            return
-
-        # otherwise, get the slot info
-        meta = self._metadata[key]
-        # build the full name of the scoped entry
-        full = self.join(component, name)
-        # hash it
-        fullkey = self.hash(full)
-        # build a reference to the global value
-        ref = slot.ref(key=fullkey, postprocessor=trait.instanceSlot.processor)
-        # make the assignment
-        self.insert(name=full, value=ref, priority=meta.priority, locator=meta.locator)
+        # insert the global key as the value of name in the scope of the component
+        scope.nodes[name] = self.hash(name)
         # all done
         return
-            
 
-# end of file 
+
+# end of file

@@ -74,7 +74,7 @@ class Actor(Requirement):
 
         # get my protocol specification
         protocol = self.pyre_implements
-        # if one was derivable from the declaration, check protocol compatibility 
+        # if one was derivable from the declaration, check protocol compatibility
         if protocol:
             # check whether the requirements were implemented correctly
             check = self.pyre_isCompatible(protocol)
@@ -104,12 +104,14 @@ class Actor(Requirement):
             if globalAliases:
                 # grab the name server
                 nameserver = self.pyre_nameserver
+                # build the scope of the component name
+                scope = nameserver.hash(name)
                 # go through the list of application instance traits and alias them at global scope
                 for trait in self.pyre_configurables():
                     # go through all of the registered aliases
                     for alias in trait.aliases:
                         # and make references to any setting by their name at global scope
-                        nameserver.linkApplicationTrait(component=name, name=alias, trait=trait)
+                        nameserver.publishTrait(scope=scope, name=alias)
 
         # otherwise, record the caller's location
         locator = tracking.here(1) if locator is None else locator
@@ -148,7 +150,7 @@ class Actor(Requirement):
         priority = self.pyre_executive.priority.explicit()
         # set the value
         self.pyre_inventory.setTrait(
-            trait=trait, factory=trait.classSlot, 
+            trait=trait, factory=trait.classSlot,
             value=value, priority=priority, locator=locator)
         # and return
         return
@@ -215,4 +217,4 @@ class Actor(Requirement):
         return cls.Role("protocol", protocols, dict(), internal=True)
 
 
-# end of file 
+# end of file

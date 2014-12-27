@@ -93,7 +93,7 @@ class Hierarchical(SymbolTable):
         # all done
         return
 
-    
+
     # storing and retrieving nodes
     def alias(self, target, alias, base=None):
         """
@@ -193,13 +193,13 @@ class Hierarchical(SymbolTable):
         else:
             # replace it
             node.replace(old)
-            
+
         # either way, update the model
         self._nodes[key] = node
 
         # all done
         return key, node
-                    
+
 
     def getInfo(self, key):
         """
@@ -275,6 +275,7 @@ class Hierarchical(SymbolTable):
 
     # meta-methods
     def __init__(self, separator=separator, **kwds):
+        # chain up
         super().__init__(**kwds)
         # record my separator
         self.separator = separator
@@ -326,7 +327,7 @@ class Hierarchical(SymbolTable):
         return
 
 
-    def resolveAliasingConflict(self, 
+    def resolveAliasingConflict(self,
               key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo):
         # i don't know what to do
         raise self.AliasingError(
@@ -347,4 +348,4 @@ class Hierarchical(SymbolTable):
         return
 
 
-# end of file 
+# end of file

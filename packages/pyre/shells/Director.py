@@ -50,11 +50,11 @@ class Director(pyre.actor):
         """
         Instantiate one of my classes
         """
-        # get the executive
-        executive = self.pyre_executive
         # if I have a name for the application instance, use it to hunt down configuration
         # files for this particular instance
         if name:
+            # get the executive
+            executive = self.pyre_executive
             # set up the priority
             priority = executive.priority.package
             # build a locator
@@ -70,4 +70,4 @@ class Director(pyre.actor):
         return app
 
 
-# end of file 
+# end of file
