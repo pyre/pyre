@@ -65,7 +65,7 @@ def platform(builder):
             libpq.ldpath = os.path.join(systemincdir, libpqVersion)
 
         # set up {mpi}
-        mpiVersion = 'openmpi-gcc48'
+        mpiVersion = 'openmpi-gcc49'
         # do we have {mpi}?
         haveMPI = (
             os.path.isdir(os.path.join(systemlibdir, mpiVersion))
