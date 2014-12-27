@@ -13,6 +13,8 @@ Access the timer that is implemented on top of the time module form the python s
 
 
 def test():
+    # externals
+    import time
     # access
     from pyre.timers.PythonTimer import PythonTimer as timer
 
@@ -21,8 +23,11 @@ def test():
 
     # start it
     t.start()
-    # stop it 
+    # sleep for a bit
+    time.sleep(1)
+    # stop it
     t.stop()
+    # check
     assert t._accumulatedTime != 0
     # read it
     t.read()
@@ -37,7 +42,7 @@ def test():
     # reset it
     t.reset()
     assert t._accumulatedTime == 0
-    
+
     return t
 
 
@@ -46,4 +51,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file
