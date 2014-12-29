@@ -102,16 +102,14 @@ class Actor(Requirement):
             # otherwise, we are making a new instance under this name; if i were asked to alias
             # its traits globally
             if globalAliases:
-                # grab the name server
+                # get the nameserver
                 nameserver = self.pyre_nameserver
-                # build the scope of the component name
-                scope = nameserver.hash(name)
-                # go through the list of application instance traits and alias them at global scope
-                for trait in self.pyre_configurables():
-                    # go through all of the registered aliases
-                    for alias in trait.aliases:
-                        # and make references to any setting by their name at global scope
-                        nameserver.publishTrait(scope=scope, name=alias)
+                # my configurable traits
+                traits = self.pyre_configurables()
+                # build the set of names
+                aliases = { alias for trait in traits for alias in trait.aliases }
+                # merge global settings
+                nameserver.pushGlobalIntoScope(scope=name, symbols=aliases)
 
         # otherwise, record the caller's location
         locator = tracking.here(1) if locator is None else locator

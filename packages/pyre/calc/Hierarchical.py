@@ -120,55 +120,27 @@ class Hierarchical(SymbolTable):
 
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
-
-        # look for a preëxisting node under the alias
-        aliasNode = self._nodes.get(aliasKey)
-        # and one under the canonical key
-        targetNode = self._nodes.get(targetKey)
-
-        # if there is no node that has been previously registered under this alias, we are
-        # done. if a registration appears, it will be treated as a duplicate and patched
-        # appropriately
-        if aliasNode is None:
-            # all done
-            return
-        # grab the alias metadata
-        aliasInfo = self._metadata[aliasKey]
-        # clean up after the obsolete node
-        del self._nodes[aliasKey] # not accessible any more
-        del self._metadata[aliasKey] # assuming the alias meta-data was not authoritative...
-        # if there is no node under the canonical name
-        if targetNode is None:
-            # install the alias node as the canonical
-            return self.replaceCanonical(key=targetKey, target=target, alias=alias,
-                                         aliasNode=aliasNode, aliasInfo=aliasInfo)
-
-        # if we get this far, both preëxisted; the aliased info has been cleared out, the
-        # canonical is as it should be. all that's missing is a basis for picking which one to
-        # keep; grab the target info
-        targetInfo = self._metadata[targetKey]
-        # and see if someone know what to do
-        return self.resolveAliasingConflict(
-            key=targetKey, target=target, alias=alias,
-            targetNode=targetNode, targetInfo=targetInfo, aliasNode=aliasNode, aliasInfo=aliasInfo)
+        return self.merge(source=aliasKey, canonical=target, destination=targetKey, name=alias)
 
 
-    def hash(self, name):
+    def hash(self, name, context=None):
         """
         Split a multilevel {name} into its parts and return its hash
         """
+        # if we were not given a hashin context, use my root
+        context = self._hash if context is None else context
         # if {name} is already a hash key
-        if isinstance(name, type(self._hash)):
+        if isinstance(name, type(context)):
             # leave it alone
             return name
         # if {name} is a string
         if isinstance(name, str):
             # hash it
-            return self._hash.hash(items=name.split(self.separator))
+            return context.hash(items=name.split(self.separator))
         # if it is an iterable
         if isinstance(name, collections.Iterable):
             # skip the split, just hash
-            return self._hash.hash(items=name)
+            return context.hash(items=name)
         # otherwise
         raise ValueError("can't hash {!r}".format(name))
 
@@ -312,27 +284,110 @@ class Hierarchical(SymbolTable):
 
 
     # aliasing
-    def replaceCanonical(self, key, target, alias, aliasNode, aliasInfo):
+    def pushGlobalIntoScope(self, scope, symbols):
         """
-        Replace the canonical node under {target} with the associated information from {alias}
+        Merge settings for {traits} between global scope and the scope of {name}
         """
-        # replace the node
-        self._nodes[key] = aliasNode
-        # adjust its metadata
-        aliasInfo.key = key
-        aliasInfo.name = target
-        # and register it under its new key
-        self._metadata[key] = aliasInfo
+        # get the global scope
+        top = self._hash
+        # build the scope of the new instance
+        key = self.hash(scope)
+        # with each one
+        for symbol in symbols:
+            # if the name has never been hashed
+            if symbol not in top:
+                # nothing to do; no assignments have been made to it or its possible children
+                continue
+            # build the destination key
+            destination = key[symbol]
+            # make an alias
+            source = top.alias(alias=symbol, target=destination)
+            # construct the global name for the symbol
+            canonical = self.join(scope, symbol)
+            # and merge the information
+            self.merge(source=source, canonical=canonical, destination=destination, name=symbol)
+
         # all done
         return
 
 
-    def resolveAliasingConflict(self,
-              key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo):
+    def merge(self, source, canonical, destination, name):
+        """
+        Merge the information associated with {source} into {context} under {name}.
+
+        Both {source} and {context} are assumed to be valid hash keys, while {name} is a
+        string with no key structure.
+        """
+        # attempt to
+        try:
+            # grab the configuration node for source
+            sourceNode = self._nodes[source]
+        # if it is not there
+        except KeyError:
+            # no adjustment needed at this level; however {source} may have children, so we
+            # can't bail out just yet
+            pass
+        # if it is there
+        else:
+            # get its metadata
+            sourceInfo = self._metadata[source]
+            # clean up my indices
+            del self._nodes[source]
+            del self._metadata[source]
+            # attempt to
+            try:
+                # get the destination node
+                destinationNode = self._nodes[destination]
+            # if it is not there
+            except KeyError:
+                # just attach the {source} node
+                self.store(key=destination, name=canonical, node=sourceNode, info=sourceInfo)
+            # otherwise
+            else:
+                # both exist; get the {destination} metadata
+                destinationInfo = self._metadata[destination]
+                # and figure out what to do
+                self.replace(
+                    key=destination, name=canonical,
+                    newNode=sourceNode, newInfo=sourceInfo,
+                    oldNode=destinationNode, oldInfo=destinationInfo)
+
+        # now, take care of the children in {source}
+        for name, child in source.nodes.items():
+            # recurse with the new context
+            self.merge(
+                source=child,
+                destination=destination[name],
+                canonical=self.join(canonical, name),
+                name=name)
+
+        # all done
+        return
+
+
+    def store(self, key, name, node, info):
+        """
+        Associate {name}, {node} and {info} with {key}
+        """
+        # attach the node
+        self._nodes[key] = node
+        # adjust the metadata
+        info.key = key
+        info.name = name
+        # and register it under key
+        self._metadata[key] = info
+        # all done
+        return
+
+
+    def replace(self, key, name, oldNode, oldInfo, newNode, newInfo):
+        """
+        Choose which settings to retain
+        """
         # i don't know what to do
         raise self.AliasingError(
-            key=key, target=target, alias=alias,
-            targetNode=targetNode, targetInfo=targetInfo, aliasNode=aliasNode, aliasInfo=aliasInfo)
+            key=key, target=name, alias=name,
+            targetNode=oldNode, targetInfo=oldInfo, aliasNode=newNode, aliasInfo=newInfo)
 
 
     # debug support
@@ -340,11 +395,16 @@ class Hierarchical(SymbolTable):
         """
         List my contents
         """
+        # sign on
         print("model {}:".format(self))
         print("  nodes:")
+        # for all node that match {pattern}
         for info, node in self.find(pattern):
+            # print the node information
             node.dump(indent=' '*4, name=info.name)
+            # and the slot type
             print("      slot: {}".format(type(node).__name__))
+        # all done
         return
 
 

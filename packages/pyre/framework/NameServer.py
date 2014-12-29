@@ -266,53 +266,40 @@ class NameServer(Hierarchical):
         return self.insert(name=name, value=value, priority=priority, locator=locator)
 
 
-    def replaceCanonical(self, key, target, alias, aliasNode, aliasInfo):
+    # handling of content and topological changes to the store
+    def store(self, key, name, node, info):
         """
-        Replace the canonical node under {target} with the associated information from {alias}
+        Associate {name}, {node} and {info} with {key}
         """
-        # replace the node
-        self._nodes[key] = aliasNode
-        # adjust its key
-        aliasNode.key = key
-        # adjust its metadata
-        aliasInfo.key = key
-        aliasInfo.name = target
-        # and register it under its new key
-        self._metadata[key] = aliasInfo
+        # adjust the node key
+        node.key = key
+        # attach the node
+        self._nodes[key] = node
+        # adjust the metadata
+        info.key = key
+        info.name = name
+        # and register it under key
+        self._metadata[key] = info
         # all done
         return
 
 
-    def resolveAliasingConflict(
-            self,
-            key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo):
+    def replace(self, key, name, oldNode, oldInfo, newNode, newInfo):
         """
-        Choose whether to keep the {target} or {alias} information depending on their priorities
+        Choose which settings to retain
         """
-        # if the alias node is higher priority
-        if aliasInfo.priority > targetInfo.priority:
-            # get the alias to replace the target
-            aliasNode.replace(targetNode)
-            # adjust the processor
-            aliasNode.postprocessor = targetNode.postprocessor
-            # make it the node associated with the key
-            self._nodes[key] = aliasNode
-            # adjust the node info
-            meta = self._metadata[key]
-            meta.priority = aliasInfo.priority
-            meta.locator = aliasInfo.locator
+        # if the new node has higher priority
+        if newInfo.priority > oldInfo.priority:
+            # replace the old node in its evaluation graph
+            newNode.replace(oldNode)
+            # adjust the post-processor
+            newNode.postprocessor = oldNode.postprocessor
+            # attach it to the store
+            self._nodes[key] = newNode
+            # adjust the metadata
+            oldInfo.priority = newInfo.priority
+            oldInfo.locator = newInfo.locator
 
-        # all done
-        return
-
-
-    def publishTrait(self, scope, name):
-        """
-        Build a reference to {name} and store it under {component.name} as a proposed value for
-        {trait}
-        """
-        # insert the global key as the value of name in the scope of the component
-        scope.nodes[name] = self.hash(name)
         # all done
         return
 
