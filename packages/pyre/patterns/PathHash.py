@@ -54,9 +54,13 @@ class PathHash:
         """
         Dump out the names of all encountered nodes
         """
+        # go through my nodes
         for name, node in self.nodes.items():
+            # show me the name
             print("{}{!r}".format(graphic, name))
-            node.dump(graphic=graphic+"  ")
+            # show me the contents
+            node.dump(graphic=graphic+'  ')
+        # all done
         return
 
 
@@ -66,12 +70,20 @@ class PathHash:
         return
 
 
-    def __getitem__(self, key):
+    def __contains__(self, name):
         """
-        Hash {key}
+        Check whether i have a hash key for {name}
         """
         # easy enough
-        return self.nodes[key]
+        return name in self.nodes
+
+
+    def __getitem__(self, name):
+        """
+        Hash {name}
+        """
+        # easy enough
+        return self.nodes[name]
 
 
     def __setitem__(self, name, key):
@@ -87,4 +99,4 @@ class PathHash:
     __slots__ = ["nodes"]
 
 
-# end of file 
+# end of file
