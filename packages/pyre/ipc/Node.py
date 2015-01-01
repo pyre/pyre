@@ -31,8 +31,9 @@ class Node(pyre.component):
         """
         # get the {signal} package
         import signal
-        # register the two basic handlers
+        # register the three basic handlers
         signal.signal(signal.SIGHUP, self.onReload)
+        signal.signal(signal.SIGINT, self.onTerminate)
         signal.signal(signal.SIGTERM, self.onTerminate)
         # all done
         return
@@ -73,16 +74,14 @@ class Node(pyre.component):
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
-
         # register my signal handlers
         self.registerSignalHandlers()
-
         # build my port
         self.port = self.newPort()
         # register it with my dispatcher
         self.dispatcher.notifyOnReadReady(channel=self.port, handler=self.onConnectionAttempt)
-
         # all done
         return
 
@@ -104,4 +103,4 @@ class Node(pyre.component):
     info = journal.info("pyre.ipc.nodes")
 
 
-# end of file 
+# end of file
