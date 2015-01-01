@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -37,8 +37,8 @@ def test():
     c2 = declare(default="1")
     # check that it got what we expect
     assert c2.value == 1
-    
-    # build one with no family name and a proper instance 
+
+    # build one with no family name and a proper instance
     c3 = declare(default=5)
     # check that it got what we expect
     assert c3.value == 5
@@ -52,7 +52,7 @@ def test():
     c4 = declare(default="{value}")
     # check that it got what we expect
     assert c4.value == 5
-    
+
     # and return
     return c1, c2, c3, c4
 
@@ -62,4 +62,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

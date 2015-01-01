@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -29,7 +29,7 @@ namespace pyre {
                 { version__name__, version, METH_VARARGS, version__doc__ },
 
                 // registration
-                { registerExceptions__name__, 
+                { registerExceptions__name__,
                   registerExceptions, METH_VARARGS, registerExceptions__doc__ },
                 { registerNULL__name__, registerNULL, METH_VARARGS, registerNULL__doc__ },
 

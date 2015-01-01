@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -27,7 +27,7 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
     @pyre.export
     def alarm(self, interval, handler):
         """
-        Schedule {handler} to be invoked after {interval} elapses. 
+        Schedule {handler} to be invoked after {interval} elapses.
 
         parameters:
            {interval}: expected to be a dimensional quantity from {pyre.units} with units of
@@ -39,7 +39,7 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
         alarm = self._alarm(time=now()+interval/self.second, handler=handler)
         # add it to my list
         self._alarms.append(alarm)
-        # sort 
+        # sort
         self._alarms.sort(key=operator.attrgetter('time'), reverse=True)
         # and return
         return
@@ -95,7 +95,7 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
 
         # all done
         return
-        
+
 
     # meta methods
     def __init__(self, **kwds):
@@ -126,4 +126,4 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
     _alarms = None
 
 
-# end of file 
+# end of file

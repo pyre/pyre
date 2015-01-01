@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 #include <portinfo>
@@ -51,7 +51,7 @@ PyObject * mpi::communicator::create(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi objects
-    pyre::mpi::communicator_t * old = 
+    pyre::mpi::communicator_t * old =
         static_cast<pyre::mpi::communicator_t *>(PyCapsule_GetPointer(py_old, capsule_t));
     pyre::mpi::group_t * group =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_group, mpi::group::capsule_t));
@@ -86,7 +86,7 @@ PyObject * mpi::cartesian::create(PyObject *, PyObject * args)
 
     // extract them from the argument tuple
     if (!PyArg_ParseTuple(
-                          args, 
+                          args,
                           "O!iOO:communicatorCreateCartesian",
                           &PyCapsule_Type, &py_comm,
                           &reorder, &procSeq, &periodSeq)) {
@@ -110,7 +110,7 @@ PyObject * mpi::cartesian::create(PyObject *, PyObject * args)
     }
 
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -181,7 +181,7 @@ PyObject * mpi::communicator::size(PyObject *, PyObject * args)
     }
 
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>(PyCapsule_GetPointer(py_comm, capsule_t));
 
     // extract the communicator size and return it
@@ -211,7 +211,7 @@ PyObject * mpi::communicator::rank(PyObject *, PyObject * args)
     }
 
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>(PyCapsule_GetPointer(py_comm, capsule_t));
 
     // return
@@ -241,7 +241,7 @@ PyObject * mpi::communicator::barrier(PyObject *, PyObject * args)
     }
 
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>(PyCapsule_GetPointer(py_comm, capsule_t));
 
     // set up the barrier
@@ -259,7 +259,7 @@ const char * const
 mpi::cartesian::
 coordinates__name__ = "communicatorCartesianCoordinates";
 
-const char * const 
+const char * const
 mpi::cartesian::
 coordinates__doc__ = "retrieve the cartesian coordinates of this process";
 
@@ -287,7 +287,7 @@ PyObject * mpi::cartesian::coordinates(PyObject *, PyObject * args)
 
     pyre::mpi::communicator_t::ranklist_t coordinates;
     // get the communicator
-    pyre::mpi::communicator_t * cartesian = 
+    pyre::mpi::communicator_t * cartesian =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -327,7 +327,7 @@ const char * const
 mpi::communicator::
 bcast__name__ = "bcast";
 
-const char * const 
+const char * const
 mpi::communicator::
 bcast__doc__ = "broadcast a python object to all tasks";
 
@@ -355,7 +355,7 @@ PyObject * mpi::communicator::bcast(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -390,7 +390,7 @@ const char * const
 mpi::communicator::
 sum__name__ = "sum";
 
-const char * const 
+const char * const
 mpi::communicator::
 sum__doc__ = "perform a sum reduction";
 
@@ -412,7 +412,7 @@ PyObject * mpi::communicator::sum(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -437,7 +437,7 @@ const char * const
 mpi::communicator::
 product__name__ = "product";
 
-const char * const 
+const char * const
 mpi::communicator::
 product__doc__ = "perform a product reduction";
 
@@ -459,7 +459,7 @@ PyObject * mpi::communicator::product(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -484,7 +484,7 @@ const char * const
 mpi::communicator::
 max__name__ = "max";
 
-const char * const 
+const char * const
 mpi::communicator::
 max__doc__ = "perform a max reduction";
 
@@ -507,7 +507,7 @@ PyObject * mpi::communicator::max(PyObject *, PyObject * args)
     }
 
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -532,7 +532,7 @@ const char * const
 mpi::communicator::
 min__name__ = "min";
 
-const char * const 
+const char * const
 mpi::communicator::
 min__doc__ = "perform a min reduction";
 
@@ -554,7 +554,7 @@ PyObject * mpi::communicator::min(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -584,7 +584,7 @@ free(PyObject * capsule)
         return;
     }
     // get the pointer
-    pyre::mpi::communicator_t * communicator = 
+    pyre::mpi::communicator_t * communicator =
         static_cast<pyre::mpi::communicator_t *>(PyCapsule_GetPointer(capsule, capsule_t));
 
     // generate a diagnostic

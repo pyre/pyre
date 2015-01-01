@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -33,7 +33,7 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         # identify the platform characteristics; careful not to set the distribution attribute
         # here; the subclasses set the distribution name to the pyre canonical nickname
         distribution, cls.release, cls.codename = cls.identify()
-        
+
         # check for ubuntu
         if distribution.lower().startswith('ubuntu'):
             # load the platform file
@@ -86,7 +86,7 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         # parse
         for key, value in tokens:
             # if the key is blank
-            if not key: 
+            if not key:
                 # reset the marker
                 physicalid = None
                 # and move on
@@ -120,7 +120,7 @@ class Linux(POSIX, family='pyre.platforms.linux'):
             physical += int(info['cpu cores'])
             # update the number of logical cores
             logical += int(info['siblings'])
-        
+
         # if the reduction produced non-zero results
         if physical and logical:
             # that's all for now
@@ -161,4 +161,4 @@ class Linux(POSIX, family='pyre.platforms.linux'):
     cpuinfo = '/proc/cpuinfo'
 
 
-# end of file 
+# end of file

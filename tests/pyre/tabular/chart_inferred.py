@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -53,7 +53,7 @@ def test():
     assert set(skus.keys()) == targets
     # check that all the transactions were binned
     assert len(transactions) == sum(len(bin) for bin in skus.values())
-    
+
     # verify that all transaction records binned as having a given sku do so
     for sku, bin in skus.items():
         for rank in bin:
@@ -71,4 +71,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -40,8 +40,8 @@ class Mutable(NamedTuple):
         node.value = value
         # all done
         return
-        
-        
+
+
     def __iter__(self):
         """
         Build an iterator over my values
@@ -58,6 +58,6 @@ class Mutable(NamedTuple):
 
     # private data
     __slots__ = ()
-        
 
-# end of file 
+
+# end of file

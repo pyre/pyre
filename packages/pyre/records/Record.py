@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -50,7 +50,7 @@ class Record(Dashboard, metaclass=Templater):
     # types
     # exceptions
     from ..constraints.exceptions import ConstraintViolationError
-    
+
     # public data; patched by the metaclass
     pyre_name = None # the name of the record
     # structure
@@ -118,4 +118,4 @@ class Record(Dashboard, metaclass=Templater):
         return
 
 
-# end of file 
+# end of file

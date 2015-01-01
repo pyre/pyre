@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -16,11 +16,11 @@ const char * const
 pyre::extensions::journal::
 debugTest__name__ = "debugTest";
 
-const char * const 
+const char * const
 pyre::extensions::journal::
 debugTest__doc__ = "test the debug channel";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 debugTest(PyObject *, PyObject * args)
 {
@@ -35,7 +35,7 @@ debugTest(PyObject *, PyObject * args)
     pyre::journal::debug_t debug(name);
 
     // say something
-    debug 
+    debug
         << pyre::journal::at(__HERE__)
         << "here is a debug message from C++"
         << pyre::journal::endl;
@@ -47,7 +47,7 @@ debugTest(PyObject *, PyObject * args)
 
 
 // firewall
-const char * const 
+const char * const
 pyre::extensions::journal::
 firewallTest__name__ = "firewallTest";
 
@@ -55,7 +55,7 @@ const char * const
 pyre::extensions::journal::
 firewallTest__doc__ = "test the firewall channel";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 firewallTest(PyObject *, PyObject * args)
 {
@@ -70,7 +70,7 @@ firewallTest(PyObject *, PyObject * args)
     pyre::journal::firewall_t firewall(name);
 
     // say something
-    firewall 
+    firewall
         << pyre::journal::at(__HERE__)
         << "here is a firewall from C++"
         << pyre::journal::endl;
@@ -90,7 +90,7 @@ const char * const
 pyre::extensions::journal::
 infoTest__doc__ = "test the info channel";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 infoTest(PyObject *, PyObject * args)
 {
@@ -105,7 +105,7 @@ infoTest(PyObject *, PyObject * args)
     pyre::journal::info_t info(name);
 
     // say something
-    info 
+    info
         << pyre::journal::at(__HERE__)
         << "here is an informational from C++"
         << pyre::journal::endl;
@@ -125,7 +125,7 @@ const char * const
 pyre::extensions::journal::
 warningTest__doc__ = "test the warning channel";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 warningTest(PyObject *, PyObject * args)
 {
@@ -138,9 +138,9 @@ warningTest(PyObject *, PyObject * args)
 
     // build the channel
     pyre::journal::warning_t warning(name);
-        
+
     // say something
-    warning 
+    warning
         << pyre::journal::at(__HERE__)
         << "here is a warning from C++"
         << pyre::journal::endl;
@@ -160,7 +160,7 @@ const char * const
 pyre::extensions::journal::
 errorTest__doc__ = "test the error channel";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 errorTest(PyObject *, PyObject * args)
 {
@@ -175,7 +175,7 @@ errorTest(PyObject *, PyObject * args)
     pyre::journal::error_t error(name);
 
     // say something
-    error 
+    error
         << pyre::journal::at(__HERE__)
         << "here is an error from C++"
         << pyre::journal::endl;

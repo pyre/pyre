@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -79,7 +79,7 @@ class AliasingError(NodeError):
     Signal that an alias was requested among names that were associated with existing nodes
     """
 
-    def __init__(self, 
+    def __init__(self,
                  key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo, **kwds):
         # build the error format string
         msg = "both {0.target!r} and {0.alias!r} have existing nodes"
@@ -97,4 +97,4 @@ class AliasingError(NodeError):
         return
 
 
-# end of file 
+# end of file

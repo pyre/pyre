@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 
@@ -46,7 +46,7 @@ public:
     // zero out a timer
     Display & reset();
 
-    // take a reading in seconds from a *running* timer 
+    // take a reading in seconds from a *running* timer
     double lap();
     // get the number of seconds accumulated by a *stopped* timer
     double read();

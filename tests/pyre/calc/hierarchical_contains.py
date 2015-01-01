@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -29,7 +29,7 @@ def test():
     assert tuple(model.split(name)) in model
     # hash it and check whether it is accessible as a key
     assert model.hash(name) in model
-    
+
     # all done
     return
 
@@ -42,4 +42,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

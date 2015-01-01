@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -49,7 +49,7 @@ class DecodingError(CodecError):
     Exception raised by codecs when they encounter errors in their input streams
     """
 
-    
+
 class EncodingError(CodecError):
     """
     Exception raised by codecs when they fail to inject an item in a stream
@@ -61,14 +61,14 @@ class LoadingError(CodecError):
     Exception raised by codecs when they encounter errors in their input streams
     """
 
-    
+
 class ShelfError(ConfigurationError):
 
     def __init__(self, shelf, **kwds):
         super().__init__(**kwds)
         self.shelf = shelf
         return
-                 
+
 
 class SymbolNotFoundError(ShelfError):
 
@@ -77,6 +77,6 @@ class SymbolNotFoundError(ShelfError):
         super().__init__(description=msg, **kwds)
         self.symbol = symbol
         return
-                 
+
 
 # end of file

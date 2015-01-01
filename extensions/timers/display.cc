@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // externals
 #include <portinfo>
@@ -55,7 +55,7 @@ PyObject * pyre::extensions::timers::start(PyObject *, PyObject * args)
         return 0;
     }
     // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer 
+    pyre::timer_t::timer_t * timer
         = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
     // start the timer
     timer->start();
@@ -78,7 +78,7 @@ PyObject * pyre::extensions::timers::stop(PyObject *, PyObject * args)
         return 0;
     }
     // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer 
+    pyre::timer_t::timer_t * timer
         = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
     // start the timer
     timer->stop();
@@ -101,7 +101,7 @@ PyObject * pyre::extensions::timers::reset(PyObject *, PyObject * args)
         return 0;
     }
     // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer 
+    pyre::timer_t::timer_t * timer
         = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
     // stop the timer
     timer->reset();
@@ -124,7 +124,7 @@ PyObject * pyre::extensions::timers::read(PyObject *, PyObject * args)
         return 0;
     }
     // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer 
+    pyre::timer_t::timer_t * timer
         = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
     // start the timer
     double elapsed = timer->read();
@@ -146,7 +146,7 @@ PyObject * pyre::extensions::timers::lap(PyObject *, PyObject * args)
         return 0;
     }
     // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer 
+    pyre::timer_t::timer_t * timer
         = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
     // reset the timer
     double elapsed = timer->lap();

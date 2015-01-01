@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -30,7 +30,7 @@ def test():
     except reader.DecodingError as error:
         assert str(error) == (
             "file='sample-badRoot.pml', line=11, column=0: decoding error: unknown tag 'Config'")
- 
+
     return m, reader
 
 
@@ -42,4 +42,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

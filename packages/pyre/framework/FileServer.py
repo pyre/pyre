@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -122,7 +122,7 @@ class FileServer(Filesystem):
         # adjust the extension
         extension = '.' + extension if extension else ""
         # piece the parts together
-        return "{}{}{}{}".format(path, self.separator, address, extension) 
+        return "{}{}{}{}".format(path, self.separator, address, extension)
 
 
     # convenience: access to the filesystem factories
@@ -197,7 +197,7 @@ class FileServer(Filesystem):
             pass
         # if it is there
         else:
-            # attach it 
+            # attach it
             self['{}/{}'.format(self.PACKAGES_DIR, package.name)] = cfgdir
 
         # all done
@@ -233,7 +233,7 @@ class FileServer(Filesystem):
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
-        userdir = os.path.expanduser(self.DOT_PYRE) 
+        userdir = os.path.expanduser(self.DOT_PYRE)
         # if that exists
         try:
             # make filesystem out of the preference directory
@@ -292,4 +292,4 @@ class FileServer(Filesystem):
         return
 
 
-# end of file 
+# end of file

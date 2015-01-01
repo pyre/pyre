@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -73,7 +73,7 @@ class Interpolation:
         nodes against {model}.
         """
         # if {expression} is empty
-        if not expression: 
+        if not expression:
             # complain
             raise cls.EmptyExpressionError(formula=expression)
 
@@ -116,7 +116,7 @@ class Interpolation:
             pos = end
 
         # store the trailing part of the expression
-        fragment += expression[pos:]    
+        fragment += expression[pos:]
 
         # if there were no matches, the expression had no node evaluations; but since it may
         # have had escaped braces, make sure the caller has access to the processed value
@@ -126,7 +126,7 @@ class Interpolation:
 
         # and if it's not empty, turn it into a variable
         if fragment: operands.append(model.literal(value=fragment))
-        
+
         # summarize
         # print(" ** SymbolTable.interpolation:")
         # print("    expression:", expression)

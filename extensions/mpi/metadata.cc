@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -16,10 +16,10 @@ const char * const mpi::copyright__name__ = "copyright";
 const char * const mpi::copyright__doc__ = "the module copyright string";
 PyObject * mpi::copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "mpi: (c) 1998-2014 Michael A.G. Aïvázis";
+    const char * const copyright_note = "mpi: (c) 1998-2015 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
 }
-    
+
 
 // version
 const char * const mpi::version__name__ = "version";
@@ -30,5 +30,5 @@ PyObject * mpi::version(PyObject *, PyObject *)
     return Py_BuildValue("s", version_string);
 }
 
-    
+
 // end of file

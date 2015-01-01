@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // for the build system
 #include <portinfo>
@@ -34,31 +34,31 @@ namespace mpi {
         // init-fini
         { initialize__name__, initialize, METH_VARARGS, initialize__doc__ },
         { finalize__name__, finalize, METH_VARARGS, finalize__doc__ },
-        
+
         // communicators
-        { communicator::create__name__, 
+        { communicator::create__name__,
           communicator::create, METH_VARARGS, communicator::create__doc__ },
-        { communicator::size__name__, 
+        { communicator::size__name__,
           communicator::size, METH_VARARGS, communicator::size__doc__ },
-        { communicator::rank__name__, 
+        { communicator::rank__name__,
           communicator::rank, METH_VARARGS, communicator::rank__doc__ },
-        { communicator::barrier__name__, 
+        { communicator::barrier__name__,
           communicator::barrier, METH_VARARGS, communicator::barrier__doc__ },
-        { communicator::bcast__name__, 
+        { communicator::bcast__name__,
           communicator::bcast, METH_VARARGS, communicator::bcast__doc__ },
-        { communicator::sum__name__, 
+        { communicator::sum__name__,
           communicator::sum, METH_VARARGS, communicator::sum__doc__ },
-        { communicator::product__name__, 
+        { communicator::product__name__,
           communicator::product, METH_VARARGS, communicator::product__doc__ },
-        { communicator::max__name__, 
+        { communicator::max__name__,
           communicator::max, METH_VARARGS, communicator::max__doc__ },
-        { communicator::min__name__, 
+        { communicator::min__name__,
           communicator::min, METH_VARARGS, communicator::min__doc__ },
 
         { cartesian::create__name__, cartesian::create, METH_VARARGS, cartesian::create__doc__ },
-        { cartesian::coordinates__name__, cartesian::coordinates, METH_VARARGS, 
+        { cartesian::coordinates__name__, cartesian::coordinates, METH_VARARGS,
           cartesian::coordinates__doc__ },
-        
+
         // groups
         { group::isEmpty__name__, group::isEmpty, METH_VARARGS, group::isEmpty__doc__ },
         { group::create__name__, group::create, METH_VARARGS, group::create__doc__ },
@@ -69,17 +69,17 @@ namespace mpi {
         { group::add__name__, group::add, METH_VARARGS, group::add__doc__ },
         { group::subtract__name__, group::subtract, METH_VARARGS, group::subtract__doc__ },
         { group::intersect__name__, group::intersect, METH_VARARGS, group::intersect__doc__ },
-        
+
         // ports
         { port::sendBytes__name__, port::sendBytes, METH_VARARGS, port::sendBytes__doc__ },
         { port::recvBytes__name__, port::recvBytes, METH_VARARGS, port::recvBytes__doc__ },
         { port::sendString__name__, port::sendString, METH_VARARGS, port::sendString__doc__ },
         { port::recvString__name__, port::recvString, METH_VARARGS, port::recvString__doc__ },
-        
+
         // sentinel
         {0, 0, 0, 0}
     };
-    
+
     // the module documentation string
     const char * const __doc__ = "access to the MPI interface";
 
@@ -88,7 +88,7 @@ namespace mpi {
         // header
         PyModuleDef_HEAD_INIT,
         // the name of the module
-        "mpi", 
+        "mpi",
         // the module documentation string
         __doc__,
         // size of the per-interpreter state of the module; -1 if this state is global

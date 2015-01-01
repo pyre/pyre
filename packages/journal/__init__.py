@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -32,11 +32,11 @@ def version():
 # license
 _journal_version = (1, 0, 0)
 
-_journal_copyright = "pyre journal: Copyright (c) 1998-2014 Michael A.G. Aïvázis"
+_journal_copyright = "pyre journal: Copyright (c) 1998-2015 Michael A.G. Aïvázis"
 
 _journal_license = """
     pyre journal 1.0
-    Copyright (c) 1998-2014 Michael A.G. Aïvázis
+    Copyright (c) 1998-2015 Michael A.G. Aïvázis
     All Rights Reserved
 
 
@@ -136,7 +136,7 @@ from .Error import Error as error
 # devices
 from .Console import Console as console
 from .File import File as file
-    
+
 # the package exception
 from .exceptions import FirewallError
 
@@ -144,4 +144,4 @@ from .exceptions import FirewallError
 extension = boot()
 
 
-# end of file 
+# end of file

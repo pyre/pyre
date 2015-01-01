@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -41,7 +41,7 @@ def test():
 
     # check the answer
     # print("π =", 4*integral)
-    error = (π - 4*integral)/π 
+    error = (π - 4*integral)/π
     # print("error =", π - 4*integral)
     assert error < 1.0e-2
 
@@ -53,4 +53,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_mpi_Handle_h)
@@ -36,7 +36,7 @@ public:
     inline Handle(handle_t, bool);
     inline Handle(const Handle &);
     inline Handle & operator=(const Handle &);
-    
+
     // data members
 private:
     shared_t * _shared;

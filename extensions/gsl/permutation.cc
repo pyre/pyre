@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 #include <portinfo>
@@ -18,7 +18,7 @@
 const char * const gsl::permutation::alloc__name__ = "permutation_alloc";
 const char * const gsl::permutation::alloc__doc__ = "allocate a permutation";
 
-PyObject * 
+PyObject *
 gsl::permutation::alloc(PyObject *, PyObject * args) {
     // place holders for the python arguments
     size_t shape;
@@ -39,7 +39,7 @@ gsl::permutation::alloc(PyObject *, PyObject * args) {
 const char * const gsl::permutation::init__name__ = "permutation_init";
 const char * const gsl::permutation::init__doc__ = "initialize a permutation";
 
-PyObject * 
+PyObject *
 gsl::permutation::init(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -63,7 +63,7 @@ gsl::permutation::init(PyObject *, PyObject * args) {
         // std::cout << " " << gsl_permutation_get(p, i);
     // }
     // std::cout << std::endl;
-    
+
     // return None
     Py_INCREF(Py_None);
     return Py_None;
@@ -74,14 +74,14 @@ gsl::permutation::init(PyObject *, PyObject * args) {
 const char * const gsl::permutation::copy__name__ = "permutation_copy";
 const char * const gsl::permutation::copy__doc__ = "build a copy of a permutation";
 
-PyObject * 
+PyObject *
 gsl::permutation::copy(PyObject *, PyObject * args) {
     // the arguments
     PyObject * sourceCapsule;
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:permutation_copy", 
+                                  args, "O!O!:permutation_copy",
                                   &PyCapsule_Type, &destinationCapsule,
                                   &PyCapsule_Type, &sourceCapsule
                                   );
@@ -116,7 +116,7 @@ gsl::permutation::copy(PyObject *, PyObject * args) {
 const char * const gsl::permutation::get__name__ = "permutation_get";
 const char * const gsl::permutation::get__doc__ = "get the value of a permutation element";
 
-PyObject * 
+PyObject *
 gsl::permutation::get(PyObject *, PyObject * args) {
     // the arguments
     size_t index;
@@ -146,7 +146,7 @@ gsl::permutation::get(PyObject *, PyObject * args) {
 const char * const gsl::permutation::swap__name__ = "permutation_swap";
 const char * const gsl::permutation::swap__doc__ = "swap the value of a permutation element";
 
-PyObject * 
+PyObject *
 gsl::permutation::swap(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -179,7 +179,7 @@ gsl::permutation::swap(PyObject *, PyObject * args) {
 const char * const gsl::permutation::size__name__ = "permutation_size";
 const char * const gsl::permutation::size__doc__ = "return the size of a permutation";
 
-PyObject * 
+PyObject *
 gsl::permutation::size(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -208,7 +208,7 @@ gsl::permutation::size(PyObject *, PyObject * args) {
 const char * const gsl::permutation::valid__name__ = "permutation_valid";
 const char * const gsl::permutation::valid__doc__ = "check whether the permutation is valid";
 
-PyObject * 
+PyObject *
 gsl::permutation::valid(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -238,7 +238,7 @@ gsl::permutation::valid(PyObject *, PyObject * args) {
 const char * const gsl::permutation::reverse__name__ = "permutation_reverse";
 const char * const gsl::permutation::reverse__doc__ = "reverse a permutation";
 
-PyObject * 
+PyObject *
 gsl::permutation::reverse(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -267,7 +267,7 @@ gsl::permutation::reverse(PyObject *, PyObject * args) {
 const char * const gsl::permutation::inverse__name__ = "permutation_inverse";
 const char * const gsl::permutation::inverse__doc__ = "invert a permutation";
 
-PyObject * 
+PyObject *
 gsl::permutation::inverse(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -297,7 +297,7 @@ gsl::permutation::inverse(PyObject *, PyObject * args) {
 const char * const gsl::permutation::next__name__ = "permutation_next";
 const char * const gsl::permutation::next__doc__ = "compute the next permutation";
 
-PyObject * 
+PyObject *
 gsl::permutation::next(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -327,7 +327,7 @@ gsl::permutation::next(PyObject *, PyObject * args) {
 const char * const gsl::permutation::prev__name__ = "permutation_prev";
 const char * const gsl::permutation::prev__doc__ = "compute the prev permutation";
 
-PyObject * 
+PyObject *
 gsl::permutation::prev(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -354,13 +354,13 @@ gsl::permutation::prev(PyObject *, PyObject * args) {
 
 
 // destructor
-void 
+void
 gsl::permutation::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::permutation::capsule_t)) return;
     // get the permutation
-    gsl_permutation * v = 
+    gsl_permutation * v =
         static_cast<gsl_permutation *>(PyCapsule_GetPointer(capsule, gsl::permutation::capsule_t));
     // deallocate
     gsl_permutation_free(v);

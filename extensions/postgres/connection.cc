@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <iostream>
@@ -35,7 +35,7 @@ const char * const
 pyre::extensions::postgres::
 connect__name__ = "connect";
 
-const char * const 
+const char * const
 pyre::extensions::postgres::
 connect__doc__ = "establish a connection to the postgres back end";
 
@@ -51,7 +51,7 @@ connect(PyObject *, PyObject * args) {
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.connection");
-    debug 
+    debug
         << pyre::journal::at(__HERE__)
         << "connecting with specification: '" << specification << "'"
         << pyre::journal::endl;
@@ -70,7 +70,7 @@ connect(PyObject *, PyObject * args) {
 }
 
 
-const char * const 
+const char * const
 pyre::extensions::postgres::
 disconnect__name__ = "disconnect";
 
@@ -94,9 +94,9 @@ disconnect(PyObject *, PyObject * args) {
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.connection");
-    debug 
+    debug
         << pyre::journal::at(__HERE__)
-        << "disconnected" 
+        << "disconnected"
         << pyre::journal::endl;
 
     // all done
@@ -106,7 +106,7 @@ disconnect(PyObject *, PyObject * args) {
 
 
 // shutdown an existing connection
-void 
+void
 pyre::extensions::postgres::
 finish(PyObject * capsule) {
     // bail if the capsule is not valid
@@ -119,12 +119,12 @@ finish(PyObject * capsule) {
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.connection");
-    debug 
+    debug
         << pyre::journal::at(__HERE__)
-        << "closing the connection to the server" 
+        << "closing the connection to the server"
         << pyre::journal::endl;
 
-    // shutdown 
+    // shutdown
     PQfinish(connection);
     // all done
     return;

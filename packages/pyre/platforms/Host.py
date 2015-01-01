@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -68,4 +68,4 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
         return (1,1)
 
 
-# end of file 
+# end of file

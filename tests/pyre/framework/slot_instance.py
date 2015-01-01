@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -21,7 +21,7 @@ def test():
     key = None
     # and a value
     value = 4
-    
+
     # make a slot
     return Slot.variable(key=key, value=value)
 
@@ -34,4 +34,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

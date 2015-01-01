@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -38,7 +38,7 @@ def test():
     except linker.FrameworkError as error:
         pass
 
-    # request a file 
+    # request a file
     shelf = linker.loadShelf(executive=executive, uri="file:sample.py")
     # make sure it got imported correctly
     assert shelf.retrieveSymbol('factory')
@@ -72,4 +72,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

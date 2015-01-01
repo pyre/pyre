@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_journal_Error_h)
@@ -18,9 +18,9 @@ namespace pyre {
 
 
 // declaration
-class pyre::journal::Error : 
+class pyre::journal::Error :
     public pyre::journal::Diagnostic<Error>,
-    public pyre::journal::Channel<Error, true> 
+    public pyre::journal::Channel<Error, true>
 {
     // befriend my superclass so it can invoke my recording hooks
     friend class Diagnostic<Error>;

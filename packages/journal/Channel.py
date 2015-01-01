@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -107,7 +107,7 @@ class Channel(Named):
 
     # implementation details
     # private class data
-    _index = None 
+    _index = None
 
     # subclasses must supply a non-trivial implementation of the mechanism by which state
     # shared among channel instances is managed. when the C++ extension is not available at
@@ -128,4 +128,4 @@ class Channel(Named):
         device = None
 
 
-# end of file 
+# end of file

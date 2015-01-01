@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -33,7 +33,7 @@ class FieldReference(descriptors.stem.variable):
         """
         # get my field to do this
         return self.field.coerce(**kwds)
-        
+
 
     def project(self, table):
         """
@@ -72,4 +72,4 @@ class FieldReference(descriptors.stem.variable):
 
 
 
-# end of file 
+# end of file

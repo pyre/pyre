@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -27,4 +27,4 @@ class Query(records.record, hidden=True, metaclass=Selector):
     pyre_tables = {} # a map of local names to referenced tables
 
 
-# end of file 
+# end of file

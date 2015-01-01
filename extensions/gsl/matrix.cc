@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 #include <portinfo>
@@ -21,7 +21,7 @@
 const char * const gsl::matrix::alloc__name__ = "matrix_alloc";
 const char * const gsl::matrix::alloc__doc__ = "allocate a matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::alloc(PyObject *, PyObject * args) {
     // place holders for the python arguments
     size_t s0, s1;
@@ -43,14 +43,14 @@ gsl::matrix::alloc(PyObject *, PyObject * args) {
 const char * const gsl::matrix::view_alloc__name__ = "matrix_view_alloc";
 const char * const gsl::matrix::view_alloc__doc__ = "allocate a matrix view";
 
-PyObject * 
+PyObject *
 gsl::matrix::view_alloc(PyObject *, PyObject * args) {
     // place holders for the python arguments
     size_t origin0, origin1;
     size_t s0, s1;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, 
+    int status = PyArg_ParseTuple(args,
                                   "O!(kk)(kk):matrix_view_alloc",
                                   &PyCapsule_Type, &capsule,
                                   &origin0, &origin1,
@@ -86,7 +86,7 @@ gsl::matrix::view_alloc(PyObject *, PyObject * args) {
 const char * const gsl::matrix::zero__name__ = "matrix_zero";
 const char * const gsl::matrix::zero__doc__ = "zero out the elements of a matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::zero(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -116,7 +116,7 @@ gsl::matrix::zero(PyObject *, PyObject * args) {
 const char * const gsl::matrix::fill__name__ = "matrix_fill";
 const char * const gsl::matrix::fill__doc__ = "set all elements of a matrix to a value";
 
-PyObject * 
+PyObject *
 gsl::matrix::fill(PyObject *, PyObject * args) {
     // the arguments
     double value;
@@ -147,7 +147,7 @@ gsl::matrix::fill(PyObject *, PyObject * args) {
 const char * const gsl::matrix::identity__name__ = "matrix_identity";
 const char * const gsl::matrix::identity__doc__ = "build an identity matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::identity(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -177,14 +177,14 @@ gsl::matrix::identity(PyObject *, PyObject * args) {
 const char * const gsl::matrix::copy__name__ = "matrix_copy";
 const char * const gsl::matrix::copy__doc__ = "build a copy of a matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::copy(PyObject *, PyObject * args) {
     // the arguments
     PyObject * sourceCapsule;
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:matrix_copy", 
+                                  args, "O!O!:matrix_copy",
                                   &PyCapsule_Type, &destinationCapsule,
                                   &PyCapsule_Type, &sourceCapsule
                                   );
@@ -220,7 +220,7 @@ gsl::matrix::copy(PyObject *, PyObject * args) {
 const char * const gsl::matrix::read__name__ = "matrix_read";
 const char * const gsl::matrix::read__doc__ = "read the values of a matrix from a file";
 
-PyObject * 
+PyObject *
 gsl::matrix::read(PyObject *, PyObject * args) {
     // the arguments
     char * filename;
@@ -264,7 +264,7 @@ gsl::matrix::read(PyObject *, PyObject * args) {
 const char * const gsl::matrix::write__name__ = "matrix_write";
 const char * const gsl::matrix::write__doc__ = "write the values of a matrix to a file";
 
-PyObject * 
+PyObject *
 gsl::matrix::write(PyObject *, PyObject * args) {
     // the arguments
     char * filename;
@@ -307,14 +307,14 @@ gsl::matrix::write(PyObject *, PyObject * args) {
 const char * const gsl::matrix::transpose__name__ = "matrix_transpose";
 const char * const gsl::matrix::transpose__doc__ = "build a transpose of a matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::transpose(PyObject *, PyObject * args) {
     // the arguments
     PyObject * sourceCapsule;
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O:matrix_transpose", 
+                                  args, "O!O:matrix_transpose",
                                   &PyCapsule_Type, &sourceCapsule,
                                   &destinationCapsule
                                   );
@@ -362,7 +362,7 @@ gsl::matrix::transpose(PyObject *, PyObject * args) {
 const char * const gsl::matrix::get__name__ = "matrix_get";
 const char * const gsl::matrix::get__doc__ = "get the value of a matrix element";
 
-PyObject * 
+PyObject *
 gsl::matrix::get(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -413,7 +413,7 @@ gsl::matrix::get(PyObject *, PyObject * args) {
     // get the value
     double value = gsl_matrix_get(m, i1, i2);
     // std::cout
-        // << " gsl.matrix_get: matrix@" << m << ", index=" << index << ", value=" << value 
+        // << " gsl.matrix_get: matrix@" << m << ", index=" << index << ", value=" << value
         // << std::endl;
 
     // return the value
@@ -424,7 +424,7 @@ gsl::matrix::get(PyObject *, PyObject * args) {
 const char * const gsl::matrix::set__name__ = "matrix_set";
 const char * const gsl::matrix::set__doc__ = "set the value of a matrix element";
 
-PyObject * 
+PyObject *
 gsl::matrix::set(PyObject *, PyObject * args) {
     // the arguments
     double value;
@@ -445,7 +445,7 @@ gsl::matrix::set(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout
-        // << " gsl.matrix_set: matrix@" << m << ", index=" << index << ", value=" << value 
+        // << " gsl.matrix_set: matrix@" << m << ", index=" << index << ", value=" << value
         // << std::endl;
 
     // reflect negative indices about the end of the matrix
@@ -489,7 +489,7 @@ gsl::matrix::set(PyObject *, PyObject * args) {
 const char * const gsl::matrix::get_col__name__ = "matrix_get_col";
 const char * const gsl::matrix::get_col__doc__ = "return a column of a matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::get_col(PyObject *, PyObject * args) {
     // the arguments
     long index;
@@ -539,7 +539,7 @@ gsl::matrix::get_col(PyObject *, PyObject * args) {
 const char * const gsl::matrix::get_row__name__ = "matrix_get_row";
 const char * const gsl::matrix::get_row__doc__ = "return a row of a matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::get_row(PyObject *, PyObject * args) {
     // the arguments
     long index;
@@ -589,7 +589,7 @@ gsl::matrix::get_row(PyObject *, PyObject * args) {
 const char * const gsl::matrix::set_col__name__ = "matrix_set_col";
 const char * const gsl::matrix::set_col__doc__ = "set a col of a matrix to the given vector";
 
-PyObject * 
+PyObject *
 gsl::matrix::set_col(PyObject *, PyObject * args) {
     // the arguments
     size_t index;
@@ -616,10 +616,10 @@ gsl::matrix::set_col(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // get the vector
-    gsl_vector * v = 
+    gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
 
     // set the col
@@ -635,7 +635,7 @@ gsl::matrix::set_col(PyObject *, PyObject * args) {
 const char * const gsl::matrix::set_row__name__ = "matrix_set_row";
 const char * const gsl::matrix::set_row__doc__ = "set a row of a matrix to the given vector";
 
-PyObject * 
+PyObject *
 gsl::matrix::set_row(PyObject *, PyObject * args) {
     // the arguments
     size_t index;
@@ -662,10 +662,10 @@ gsl::matrix::set_row(PyObject *, PyObject * args) {
     }
 
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // get the vector
-    gsl_vector * v = 
+    gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vCapsule, gsl::vector::capsule_t));
 
     // set the row
@@ -681,7 +681,7 @@ gsl::matrix::set_row(PyObject *, PyObject * args) {
 const char * const gsl::matrix::contains__name__ = "matrix_contains";
 const char * const gsl::matrix::contains__doc__ = "check whether a given value appears in matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::contains(PyObject *, PyObject * args) {
     // the arguments
     double value;
@@ -699,7 +699,7 @@ gsl::matrix::contains(PyObject *, PyObject * args) {
     // get the matrix
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout
-        // << " gsl.matrix_contains: matrix@" << m << ", index=" << index << ", value=" << value 
+        // << " gsl.matrix_contains: matrix@" << m << ", index=" << index << ", value=" << value
         // << std::endl;
 
     // the answer
@@ -728,7 +728,7 @@ gsl::matrix::contains(PyObject *, PyObject * args) {
 const char * const gsl::matrix::max__name__ = "matrix_max";
 const char * const gsl::matrix::max__doc__ = "find the largest value contained";
 
-PyObject * 
+PyObject *
 gsl::matrix::max(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -759,7 +759,7 @@ gsl::matrix::max(PyObject *, PyObject * args) {
 const char * const gsl::matrix::min__name__ = "matrix_min";
 const char * const gsl::matrix::min__doc__ = "find the smallest value contained";
 
-PyObject * 
+PyObject *
 gsl::matrix::min(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -786,10 +786,10 @@ gsl::matrix::min(PyObject *, PyObject * args) {
 
 
 const char * const gsl::matrix::minmax__name__ = "matrix_minmax";
-const char * const gsl::matrix::minmax__doc__ = 
+const char * const gsl::matrix::minmax__doc__ =
     "find both the smallest and the largest value contained";
 
-PyObject * 
+PyObject *
 gsl::matrix::minmax(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -807,8 +807,8 @@ gsl::matrix::minmax(PyObject *, PyObject * args) {
     gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
     double small, large;
     gsl_matrix_minmax(m, &small, &large);
-    // std::cout 
-        // << " gsl.matrix_max: matrix@" << m << ", min=" << small << ", max=" << large 
+    // std::cout
+        // << " gsl.matrix_max: matrix@" << m << ", min=" << small << ", max=" << large
         // << std::endl;
 
     // build the answer
@@ -824,14 +824,14 @@ gsl::matrix::minmax(PyObject *, PyObject * args) {
 const char * const gsl::matrix::equal__name__ = "matrix_equal";
 const char * const gsl::matrix::equal__doc__ = "check two matrices for equality";
 
-PyObject * 
+PyObject *
 gsl::matrix::equal(PyObject *, PyObject * args) {
     // the arguments
     PyObject * leftCapsule;
     PyObject * rightCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:matrix_equal", 
+                                  args, "O!O!:matrix_equal",
                                   &PyCapsule_Type, &rightCapsule,
                                   &PyCapsule_Type, &leftCapsule
                                   );
@@ -858,8 +858,8 @@ gsl::matrix::equal(PyObject *, PyObject * args) {
     PyObject * answer;
     // check
     answer = gsl_matrix_equal(left, right) ? Py_True : Py_False;
-    
-    // return 
+
+    // return
     Py_INCREF(answer);
     return answer;
 }
@@ -869,7 +869,7 @@ gsl::matrix::equal(PyObject *, PyObject * args) {
 const char * const gsl::matrix::add__name__ = "matrix_add";
 const char * const gsl::matrix::add__doc__ = "in-place addition of two matrices";
 
-PyObject * 
+PyObject *
 gsl::matrix::add(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
@@ -902,7 +902,7 @@ gsl::matrix::add(PyObject *, PyObject * args) {
 const char * const gsl::matrix::sub__name__ = "matrix_sub";
 const char * const gsl::matrix::sub__doc__ = "in-place subtraction of two matrices";
 
-PyObject * 
+PyObject *
 gsl::matrix::sub(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
@@ -935,7 +935,7 @@ gsl::matrix::sub(PyObject *, PyObject * args) {
 const char * const gsl::matrix::mul__name__ = "matrix_mul";
 const char * const gsl::matrix::mul__doc__ = "in-place multiplication of two matrices";
 
-PyObject * 
+PyObject *
 gsl::matrix::mul(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
@@ -968,7 +968,7 @@ gsl::matrix::mul(PyObject *, PyObject * args) {
 const char * const gsl::matrix::div__name__ = "matrix_div";
 const char * const gsl::matrix::div__doc__ = "in-place division of two matrices";
 
-PyObject * 
+PyObject *
 gsl::matrix::div(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
@@ -1001,7 +1001,7 @@ gsl::matrix::div(PyObject *, PyObject * args) {
 const char * const gsl::matrix::shift__name__ = "matrix_shift";
 const char * const gsl::matrix::shift__doc__ = "in-place addition of a constant to a matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::shift(PyObject *, PyObject * args) {
     // the arguments
     double value;
@@ -1033,7 +1033,7 @@ gsl::matrix::shift(PyObject *, PyObject * args) {
 const char * const gsl::matrix::scale__name__ = "matrix_scale";
 const char * const gsl::matrix::scale__doc__ = "in-place scaling of a matrix by a constant";
 
-PyObject * 
+PyObject *
 gsl::matrix::scale(PyObject *, PyObject * args) {
     // the arguments
     double value;
@@ -1067,7 +1067,7 @@ const char * const gsl::matrix::eigen_symmetric__name__ = "matrix_eigen_symmetri
 const char * const gsl::matrix::eigen_symmetric__doc__ =
     "compute the eigenvalues and eigenvectors of a real symmetric matrix";
 
-PyObject * 
+PyObject *
 gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
     // the arguments
     size_t sort;
@@ -1144,13 +1144,13 @@ gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
 
 
 // destructors
-void 
+void
 gsl::matrix::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::matrix::capsule_t)) return;
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
     // std::cout << " gsl.matrix_free: matrix@" << m << std::endl;
     // deallocate
@@ -1160,13 +1160,13 @@ gsl::matrix::free(PyObject * capsule)
 }
 
 
-void 
+void
 gsl::matrix::freeview(PyObject * capsule)
 {
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::matrix::view_t)) return;
     // get the matrix view
-    gsl_matrix_view * m = 
+    gsl_matrix_view * m =
         static_cast<gsl_matrix_view *>(PyCapsule_GetPointer(capsule, gsl::matrix::view_t));
     // deallocate
     delete m;

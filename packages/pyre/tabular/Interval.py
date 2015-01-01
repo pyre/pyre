@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -46,7 +46,7 @@ class Interval(Dimension):
         def __init__(self, chart, dimension, **kwds):
             # chain up
             super().__init__(**kwds)
-            
+
             # get the sheet
             sheet = chart.sheet
             # the measure
@@ -95,4 +95,4 @@ class Interval(Dimension):
             return self.bins[bin]
 
 
-# end of file 
+# end of file

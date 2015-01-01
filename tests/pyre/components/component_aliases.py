@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -26,12 +26,12 @@ def declare():
 
         spread = pyre.properties.float(default="0.01")
         spread.aliases.add("σ")
-       
+
         # behaviors
         @pyre.export
         def eval(self, x):
             return x
-      
+
     return gaussian
 
 
@@ -97,4 +97,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

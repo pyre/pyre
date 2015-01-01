@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -48,4 +48,4 @@ __init__.py: __init__py
 	@sed -e "s:BZR_REVNO:$$(bzr revno):g" __init__py > __init__.py
 
 
-# end of file 
+# end of file

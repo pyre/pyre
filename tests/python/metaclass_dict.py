@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -13,7 +13,7 @@ Verify that we understand attribute storage in the presence of a custom containe
 
 
 class mydict(dict):
-   
+
     def __setitem__(self, key, value):
         # print("setting {0!r} -> {1!r}".format(key, value))
         return super().__setitem__(key, value)
@@ -77,6 +77,6 @@ def test():
 # main
 if __name__ == "__main__":
     test()
-   
 
-# end of file 
+
+# end of file

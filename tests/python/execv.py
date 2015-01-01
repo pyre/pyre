@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -14,7 +14,7 @@ Fork and exec the same script
 
 def test():
     import sys
-    # if this is the forked child 
+    # if this is the forked child
     if "--child" in sys.argv:
         # spit out the command line
         # print("child:", sys.argv)
@@ -45,4 +45,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

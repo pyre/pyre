@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -11,7 +11,7 @@
 Exercise node algebra
 """
 
-    
+
 def test():
     # access the various operator
     import operator
@@ -45,7 +45,7 @@ def check_binary(expression, operator, op1, op2):
     assert expression.operands[1] is op2
     return
 
-    
+
 def check_left(expression, operator, value, node):
     assert expression.evaluator is operator
     assert expression.operands[0].value == value
@@ -68,4 +68,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

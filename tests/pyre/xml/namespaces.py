@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 """
@@ -47,7 +47,7 @@ def test():
     reader = pyre.xml.newReader()
     # parse the sample document
     reader.read(
-        stream=open("sample-namespaces.xml"), 
+        stream=open("sample-namespaces.xml"),
         document=document,
         features=[(reader.feature_namespaces, True)]
         )
@@ -63,4 +63,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

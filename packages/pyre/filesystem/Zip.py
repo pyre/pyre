@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -51,7 +51,7 @@ class Zip(Filesystem):
             if name[-1] == '/':
                 node = self.folder()
                 metadata = self.ZipFolder(uri=name, zipinfo=info)
-            else: 
+            else:
                 node = self.node()
                 metadata = self.ZipNode(uri=name, zipinfo=info)
             # insert the node
@@ -59,7 +59,7 @@ class Zip(Filesystem):
         # all done
         return self
 
-    
+
     # meta methods
     def __init__(self, metadata, **kwds):
         super().__init__(metadata=metadata, **kwds)
@@ -73,4 +73,4 @@ class Zip(Filesystem):
     __slots__ = 'zipfile',
 
 
-# end of file 
+# end of file

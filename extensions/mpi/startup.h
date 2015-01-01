@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 #if !defined(pyre_extensions_mpi_startup_h)
@@ -19,7 +19,7 @@ namespace mpi {
     extern const char * const finalize__name__;
     extern const char * const finalize__doc__;
     PyObject * finalize(PyObject *, PyObject *);
-    
+
 } // of namespace mpi
 
 #endif

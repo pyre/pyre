@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -30,7 +30,7 @@ def test():
     model.alias(base="χρήστης", alias="όνομα", target="pyre.user.name")
 
     # here are the canonical names
-    names = { 
+    names = {
         "pyre.user." + tag
         for tag in ("name", "email", "affiliation", "signature", "telephone") }
 
@@ -47,7 +47,7 @@ def test():
     for key, node in model.children(key=target):
         # check that we got the correct node
         assert model._nodes[key] is node
-        
+
     # visual check
     # model.dump()
     return
@@ -61,4 +61,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

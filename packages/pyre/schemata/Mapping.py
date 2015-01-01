@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -63,4 +63,4 @@ class Mapping(Container):
         raise self.CastingError(value=value, description="unknown type: value={0.value!r}")
 
 
-# end of file 
+# end of file

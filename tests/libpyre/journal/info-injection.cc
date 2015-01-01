@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 
@@ -23,7 +23,7 @@ int main() {
     info.deactivate();
 
     // inject all the standard manipulators and built in types
-    info 
+    info
         << pyre::journal::at(__HERE__)
         << pyre::journal::set("key", "value")
         << "Hello world!" << pyre::journal::newline

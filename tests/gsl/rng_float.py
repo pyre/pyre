@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -18,7 +18,7 @@ def test():
 
     # pick an algorithm
     algorithm = 'ranlxs2'
-    
+
     # instantiate the rng
     rng = gsl.rng(algorithm=algorithm)
     # check its name
@@ -37,4 +37,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

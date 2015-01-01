@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -32,7 +32,7 @@ def test():
             "file='sample-badAttribute.pml', line=12, column=2: decoding error:"
             " node 'bind': unknown attribute 'property'"
             )
- 
+
     return m, reader
 
 
@@ -44,4 +44,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -11,8 +11,8 @@ from ..patterns.Named import Named
 
 class Descriptor(Named):
     """
-    The base class for AttributeDescriptor and ElementDescriptor 
+    The base class for AttributeDescriptor and ElementDescriptor
     """
 
 
-# end of file 
+# end of file

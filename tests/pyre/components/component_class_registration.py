@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -26,7 +26,7 @@ def test():
         @pyre.provides
         def do(self):
             """behave"""
-        
+
     # declare a component
     class component(pyre.component, family="test", implements=protocol):
         """a component"""
@@ -50,7 +50,7 @@ def test():
     assert registrar.implementors[protocol] == {component}
 
     return component
-     
+
 
 # main
 if __name__ == "__main__":
@@ -60,4 +60,4 @@ if __name__ == "__main__":
     assert tuple(pyre.executive.registrar.components[component]) == ()
 
 
-# end of file 
+# end of file

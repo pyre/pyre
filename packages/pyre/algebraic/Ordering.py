@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -12,7 +12,7 @@ import operator
 # declaration
 class Ordering:
     """
-    This is a mix-in class that traps comparisons 
+    This is a mix-in class that traps comparisons
 
     The point is to redirect comparisons among instances of subclasses of {Ordering} to methods
     defined in these subclasses. These methods then build and return representations of the
@@ -56,7 +56,7 @@ class Ordering:
             other = self.literal(value=other)
         # build a representation of {<=}
         return self.operator(evaluator=operator.le, operands=[self, other])
-        
+
 
     def __ge__(self, other):
         # if {other} is not a node
@@ -65,7 +65,7 @@ class Ordering:
             other = self.literal(value=other)
         # build a representation of the equality test
         return self.operator(evaluator=operator.ge, operands=[self, other])
-        
+
 
     def __lt__(self, other):
         # if {other} is not a node
@@ -74,7 +74,7 @@ class Ordering:
             other = self.literal(value=other)
         # build a representation of the equality test
         return self.operator(evaluator=operator.lt, operands=[self, other])
-        
+
 
     def __gt__(self, other):
         # if {other} is not a node
@@ -83,6 +83,6 @@ class Ordering:
             other = self.literal(value=other)
         # build a representation of the equality test
         return self.operator(evaluator=operator.gt, operands=[self, other])
-        
 
-# end of file 
+
+# end of file

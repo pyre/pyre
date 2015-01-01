@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 #include <portinfo>
@@ -37,7 +37,7 @@ PyObject * mpi::group::isEmpty(PyObject *, PyObject * args)
     }
 
     // get the group
-    pyre::mpi::group_t * group = 
+    pyre::mpi::group_t * group =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_group, capsule_t));
 
     // check and return
@@ -65,7 +65,7 @@ PyObject * mpi::group::create(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -103,7 +103,7 @@ PyObject * mpi::group::size(PyObject *, PyObject * args)
     }
 
     // get the group
-    pyre::mpi::group_t * group = 
+    pyre::mpi::group_t * group =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_group, capsule_t));
 
     // extract the group size and return it
@@ -132,7 +132,7 @@ PyObject * mpi::group::rank(PyObject *, PyObject * args)
     }
 
     // get the group
-    pyre::mpi::group_t * group = 
+    pyre::mpi::group_t * group =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_group, capsule_t));
 
     // extract the group size and return it
@@ -150,7 +150,7 @@ PyObject * mpi::group::include(PyObject *, PyObject * args)
     PyObject * rankSeq;
 
     if (!PyArg_ParseTuple(
-                          args, 
+                          args,
                           "O!O:groupInclude",
                           &PyCapsule_Type, &py_group,
                           &rankSeq)) {
@@ -168,7 +168,7 @@ PyObject * mpi::group::include(PyObject *, PyObject * args)
     }
 
     // get the communicator group
-    pyre::mpi::group_t * group = 
+    pyre::mpi::group_t * group =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_group, capsule_t));
 
     // store the ranks in a vector
@@ -196,7 +196,7 @@ PyObject * mpi::group::exclude(PyObject *, PyObject * args)
     PyObject * rankSeq;
 
     if (!PyArg_ParseTuple(
-                          args, 
+                          args,
                           "O!O:groupExclude",
                           &PyCapsule_Type, &py_group,
                           &rankSeq)) {
@@ -214,7 +214,7 @@ PyObject * mpi::group::exclude(PyObject *, PyObject * args)
     }
 
     // get the communicator group
-    pyre::mpi::group_t * group = 
+    pyre::mpi::group_t * group =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_group, capsule_t));
 
     // store the ranks in a vector
@@ -242,7 +242,7 @@ PyObject * mpi::group::add(PyObject *, PyObject * args)
     PyObject * py_g2;
 
     if (!PyArg_ParseTuple(
-                          args, 
+                          args,
                           "O!O!:groupUnion",
                           &PyCapsule_Type, &py_g1,
                           &PyCapsule_Type, &py_g2)) {
@@ -259,9 +259,9 @@ PyObject * mpi::group::add(PyObject *, PyObject * args)
     }
 
     // get the communicator groups
-    pyre::mpi::group_t * g1 = 
+    pyre::mpi::group_t * g1 =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_g1, capsule_t));
-    pyre::mpi::group_t * g2 = 
+    pyre::mpi::group_t * g2 =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_g2, capsule_t));
 
 
@@ -284,7 +284,7 @@ PyObject * mpi::group::intersect(PyObject *, PyObject * args)
     PyObject * py_g2;
 
     if (!PyArg_ParseTuple(
-                          args, 
+                          args,
                           "O!O!:groupIntersection",
                           &PyCapsule_Type, &py_g1,
                           &PyCapsule_Type, &py_g2)) {
@@ -301,9 +301,9 @@ PyObject * mpi::group::intersect(PyObject *, PyObject * args)
     }
 
     // get the communicator groups
-    pyre::mpi::group_t * g1 = 
+    pyre::mpi::group_t * g1 =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_g1, capsule_t));
-    pyre::mpi::group_t * g2 = 
+    pyre::mpi::group_t * g2 =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_g2, capsule_t));
 
 
@@ -317,7 +317,7 @@ PyObject * mpi::group::intersect(PyObject *, PyObject * args)
 
 // build a group out of the difference of two others
 const char * const mpi::group::subtract__name__ = "groupDifference";
-const char * const mpi::group::subtract__doc__ = 
+const char * const mpi::group::subtract__doc__ =
     "build a group out of the difference of two others";
 
 PyObject * mpi::group::subtract(PyObject *, PyObject * args)
@@ -326,7 +326,7 @@ PyObject * mpi::group::subtract(PyObject *, PyObject * args)
     PyObject * py_g2;
 
     if (!PyArg_ParseTuple(
-                          args, 
+                          args,
                           "O!O!:groupDifference",
                           &PyCapsule_Type, &py_g1,
                           &PyCapsule_Type, &py_g2)) {
@@ -343,9 +343,9 @@ PyObject * mpi::group::subtract(PyObject *, PyObject * args)
     }
 
     // get the communicator groups
-    pyre::mpi::group_t * g1 = 
+    pyre::mpi::group_t * g1 =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_g1, capsule_t));
-    pyre::mpi::group_t * g2 = 
+    pyre::mpi::group_t * g2 =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_g2, capsule_t));
 
     // make the MPI call
@@ -366,7 +366,7 @@ free(PyObject * py_group)
         return;
     }
     // get the pointer
-    pyre::mpi::group_t * group = 
+    pyre::mpi::group_t * group =
         static_cast<pyre::mpi::group_t *>(PyCapsule_GetPointer(py_group, capsule_t));
 
     pyre::journal::debug_t info("mpi.fini");

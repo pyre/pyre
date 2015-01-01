@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -24,7 +24,7 @@ def test():
 
     # access the same channel through another object
     clone = journal.debug("activation")
-    # verify that it is off 
+    # verify that it is off
     assert clone.active == False
     # enable it
     clone.active = True
@@ -41,4 +41,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

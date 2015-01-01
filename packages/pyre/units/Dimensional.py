@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -17,7 +17,7 @@ class Dimensional:
 
     # exceptions
     from .exceptions import CompatibilityError, ConversionError
-            
+
 
     # public data
     # representational choices
@@ -168,7 +168,7 @@ class Dimensional:
         derivation = tuple(map(operator.mul, [other]*7, self.derivation))
         # build a new dimensional and return it
         return Dimensional(value=value, derivation=derivation)
-        
+
 
     # unary plus
     def __pos__(self):
@@ -422,7 +422,7 @@ class Dimensional:
         if not label:
             # render my value
             return format(self/base, value)
-        # otherwise, we have a label; attempt 
+        # otherwise, we have a label; attempt
         try:
             # extract the singular and plural forms
             singular, plural = label.split('|')
@@ -452,11 +452,11 @@ class Dimensional:
         return '*'.join(
             "{}**{}".format(label,exponent) if exponent != 1 else label
             for label, exponent in zip(self.fundamental, self.derivation) if exponent)
-              
+
 
 # instances
 zero = Dimensional(0, Dimensional.zero)
 one = dimensionless = Dimensional(1, Dimensional.zero)
 
 
-# end of file 
+# end of file

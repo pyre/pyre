@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -17,8 +17,8 @@ def test():
     import pyre.ipc
     # instantiate a scheduler
     s = pyre.ipc.scheduler()
-    
-    # get select 
+
+    # get select
     import select
     # get time
     from time import time as now
@@ -74,4 +74,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

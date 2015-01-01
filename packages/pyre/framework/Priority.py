@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -38,7 +38,7 @@ class Priority:
     # ordering
     def __eq__(self, other):
         return (self.category, self.rank) == (other.category, other.rank)
-        
+
     def __lt__(self, other):
         return (self.category, self.rank) < (other.category, other.rank)
 
@@ -50,7 +50,7 @@ class Priority:
 
     # private data
     collator = collections.defaultdict(itertools.count)
-    # narrow the footprint 
+    # narrow the footprint
     __slots__ = ("category", "rank")
 
 
@@ -130,4 +130,4 @@ Priority.explicit = Explicit
 Priority.framework = Framework
 
 
-# end of file 
+# end of file

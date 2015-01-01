@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -28,34 +28,34 @@ mol = mole
 cd = candela
 
 # the 22 derived SI units with special names
-radian = dimensionless                 #  plane angle                                
-steradian = dimensionless              #  solid angle                                
-                                                                                     
-hertz = 1/second                       #  frequency                                  
-                                                                                     
-newton = meter*kilogram/second**2      #  force                                      
-pascal = newton/meter**2               #  pressure                                   
-joule = newton*meter                   #  work, heat                                 
-watt = joule/second                    #  power, radiant flux                        
-                                                                                     
-coulomb = ampere*second                #  electric charge                            
-volt = watt/ampere                     #  electric potential difference              
-farad = coulomb/volt                   #  capacitance                                
-ohm = volt/ampere                      #  electric resistance                        
-siemens = ampere/volt                  #  electric conductance                       
-weber = volt*second                    #  magnetic flux                              
-tesla = weber/meter**2                 #  magnetic flux density                      
-henry = weber/ampere                   #  inductance                                 
-                                                                                     
-celcius = kelvin                       #  Celcius temperature                        
-                                                                                     
-lumen = candela*steradian              #  luminus flux                               
-lux = lumen/meter**2                   #  illuminance                                
-                                                                                     
-becquerel = 1/second                   #  radioactivity                              
-gray = joule/kilogram                  #  absorbed dose                              
-sievert = joule/kilogram               #  dose equivalent                            
-katal = mole/second                    #  catalytic activity                            
+radian = dimensionless                 #  plane angle
+steradian = dimensionless              #  solid angle
+
+hertz = 1/second                       #  frequency
+
+newton = meter*kilogram/second**2      #  force
+pascal = newton/meter**2               #  pressure
+joule = newton*meter                   #  work, heat
+watt = joule/second                    #  power, radiant flux
+
+coulomb = ampere*second                #  electric charge
+volt = watt/ampere                     #  electric potential difference
+farad = coulomb/volt                   #  capacitance
+ohm = volt/ampere                      #  electric resistance
+siemens = ampere/volt                  #  electric conductance
+weber = volt*second                    #  magnetic flux
+tesla = weber/meter**2                 #  magnetic flux density
+henry = weber/ampere                   #  inductance
+
+celcius = kelvin                       #  Celcius temperature
+
+lumen = candela*steradian              #  luminus flux
+lux = lumen/meter**2                   #  illuminance
+
+becquerel = 1/second                   #  radioactivity
+gray = joule/kilogram                  #  absorbed dose
+sievert = joule/kilogram               #  dose equivalent
+katal = mole/second                    #  catalytic activity
 
 # prefixes
 yotta = 1e24
@@ -79,7 +79,7 @@ atto = 1e-18
 zepto = 1e-21
 yocto = 1e-24
 
-# binary prefixes 
+# binary prefixes
 # thanks to Elaine Chapin for pointing them out
 kibi = 2**10
 mebi = kibi**2
@@ -89,4 +89,4 @@ pebi = kibi**5
 exbi = kibi**6
 
 
-# end of file 
+# end of file

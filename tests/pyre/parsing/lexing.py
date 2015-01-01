@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -34,7 +34,7 @@ def test():
     scanner = Simple()
     # and a sink
     sink = pyre.patterns.accumulator()
-    
+
 
     # tokenize
     scanner.pyre_tokenize(uri=uri, stream=stream, client=sink)
@@ -48,7 +48,7 @@ def test():
         Simple.comment, Simple.whitespace,
         Simple.comment, Simple.whitespace,
         Simple.whitespace,
-        Simple.whitespace, Simple.identifier, Simple.separator, 
+        Simple.whitespace, Simple.identifier, Simple.separator,
         Simple.whitespace, Simple.identifier, Simple.delimiter,
         Simple.whitespace, Simple.identifier, Simple.delimiter,
         Simple.whitespace, Simple.identifier, Simple.terminator, Simple.whitespace,
@@ -73,4 +73,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

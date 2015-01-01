@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -126,7 +126,7 @@ class Histogram:
         # fill the vector data
         data = gsl.histogram_vector(self.data)
         # allocate the vector and return it
-        return self.vector(shape=self.bins, data=data) 
+        return self.vector(shape=self.bins, data=data)
 
 
     # operations

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -39,7 +39,7 @@ class Folder(Node):
         # return my contents
         return self.contents.items()
 
-        
+
     # searching for specific contents
     def find(self, pattern=None):
         """
@@ -55,7 +55,7 @@ class Folder(Node):
         f = finder()
         # and start the search
         return f.explore(folder=self, pattern=pattern)
-        
+
 
     # populating filesystems
     def discover(self, **kwds):
@@ -103,7 +103,7 @@ class Folder(Node):
         self.contents = {}
         # and return
         return
-        
+
 
     def __getitem__(self, uri):
         """
@@ -182,7 +182,7 @@ class Folder(Node):
         for name in names[:-1]:
             # add {name} to the {path}
             path.append(name)
-            # attempt to 
+            # attempt to
             try:
                 # get the node pointed to by {name}
                 current = current.contents[name]
@@ -198,7 +198,7 @@ class Folder(Node):
                 current = folder
             # if it is there
             else:
-                # check that it is a folder 
+                # check that it is a folder
                 if not current.isFolder:
                     # if not, raise an error
                     raise self.FolderInsertionError(
@@ -221,4 +221,4 @@ class Folder(Node):
     __slots__ = 'contents',
 
 
-# end of file 
+# end of file

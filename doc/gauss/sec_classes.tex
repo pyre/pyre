@@ -3,7 +3,7 @@
 %
 % michael a.g. aïvázis
 % orthologue
-% (c) 1998-2014 all rights reserved
+% (c) 1998-2015 all rights reserved
 %
 
 \section{The hunt for objects}
@@ -190,7 +190,7 @@ Note that we were careful to avoid injecting the context of our exercise into th
 \class{Shape} and \class{Disk}. They appear rather generic and their intended use to perform
 Monte Carlo integration is not explicit. It is natural to ask a \class{Shape} whether it
 contains a given point, regardless of the context for the question. It is not always possible
-to avoid this type of pollution, but careful refactoring of the initial design often helps. 
+to avoid this type of pollution, but careful refactoring of the initial design often helps.
 
 \subsection{The first draft of the object oriented driver}
 \label{sec:classes:driver:draft}
@@ -215,7 +215,7 @@ of work still left to do.
 \[
 \begin{array}{rd{3}d{3}d{3}d{3}d{3}}
 % headersep
-  & 
+  &
   \multicolumn{1}{c}{\cpp} &
   \multicolumn{1}{c}{\mbox{\rm python}} &
   \multicolumn{1}{c}{\mbox{\rm na\"ive OO}} &
@@ -240,14 +240,14 @@ of work still left to do.
   10^{7} &   2.277 &  12.624 &  61.583 & 188.318 &  38.242 \\
   10^{8} &  22.749 & 130.430 &         &         &         \\
   10^{9} & 227.735 &         &         &         &         \\
-\end{array}        
+\end{array}
 \]
 \caption{Comparison of the cost of the various implementations
   \label{tab:classes:simple}}
 \end{table}
 %
 The object solution is an order of magnitude slower than our previous python implementation,
-and almost two orders of magnitude slower than the \cpp\ implementation. 
+and almost two orders of magnitude slower than the \cpp\ implementation.
 
 \subsection{Improving performance}
 \label{sec:classes:improved-performane}
@@ -604,4 +604,4 @@ involves editing the script and rerunning it; in the next section, I will show y
 \pyre\ makes it possible to have the end user make these choices without touching the source
 code to our application script.
 
-% end of file 
+% end of file

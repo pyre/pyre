@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -27,17 +27,17 @@ def test():
     class ok(pyre.protocol):
         """one that doesn't derive but has the right public protocol"""
         common = pyre.property()
-        
+
     class notok(pyre.protocol):
         """one that doesn't provide the right public protocol"""
         what = pyre.property()
-        
+
     class badtype(pyre.protocol):
         """one that has the right trait but of the wrong type"""
         @pyre.provides
         def common(self):
             """method, not property"""
-        
+
     class shadow(base):
         """one that derives but shadows the trait in an incompatible way"""
         @pyre.provides
@@ -125,7 +125,7 @@ def test():
     assert len(report.incompatibilities) == 1
     error = report.incompatibilities[ok_common][0]
     assert isinstance(error, shadow.CategoryMismatchError)
-        
+
     return base, derived, ok, notok, badtype, shadow
 
 
@@ -134,4 +134,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

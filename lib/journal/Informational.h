@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_journal_Informational_h)
@@ -18,9 +18,9 @@ namespace pyre {
 
 
 // declaration
-class pyre::journal::Informational : 
+class pyre::journal::Informational :
     public pyre::journal::Diagnostic<Informational>,
-    public pyre::journal::Channel<Informational, true> 
+    public pyre::journal::Channel<Informational, true>
 {
     // types
 public:

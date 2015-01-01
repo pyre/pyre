@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -25,7 +25,7 @@ def test():
     s = pyre.calc.sequence(*nodes)
     # check
     assert tuple(s.value) == tuple(range(1, 11))
-    
+
     # make a mapping
     m = pyre.calc.mapping(**{ 'n{}'.format(i): n for i,n in enumerate(nodes)})
     # check
@@ -50,4 +50,4 @@ if __name__ == "__main__":
     assert tuple(Node._pyre_extent) == ()
 
 
-# end of file 
+# end of file

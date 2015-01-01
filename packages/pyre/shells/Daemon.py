@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -20,7 +20,7 @@ class Daemon(Fork, family="pyre.shells.daemon"):
     parent and has no access to a terminal
     """
 
-   
+
     # user configurable state
     capture = pyre.properties.bool(default=False) # to override the default from {Fork}
     capture.doc = "control whether to create communication channels to the daemon process"
@@ -108,9 +108,9 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         except Exception as error:
             # show me
             print(error, file=sys.stderr)
-        
+
         # all done
         return
 
 
-# end of file 
+# end of file

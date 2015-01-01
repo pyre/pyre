@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -54,7 +54,7 @@ class ComponentNotFoundError(FrameworkError):
         super().__init__(description="could not resolve {0.uri} into a component", **kwds)
         self.uri = uri
         return
-                 
+
 
 class ExternalNotFoundError(FrameworkError):
     """
@@ -68,4 +68,4 @@ class ExternalNotFoundError(FrameworkError):
         return
 
 
-# end of file 
+# end of file

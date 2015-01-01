@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 #include <portinfo>
@@ -21,7 +21,7 @@
 const char * const gsl::linalg::LU_decomp__name__ = "linalg_LU_decomp";
 const char * const gsl::linalg::LU_decomp__doc__ = "compute the LU decomposition of a matrix";
 
-PyObject * 
+PyObject *
 gsl::linalg::LU_decomp(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -35,7 +35,7 @@ gsl::linalg::LU_decomp(PyObject *, PyObject * args) {
         return 0;
     }
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
 
     // the other arguments
@@ -50,7 +50,7 @@ gsl::linalg::LU_decomp(PyObject *, PyObject * args) {
     // return a tuple
     PyObject * answer = PyTuple_New(3);
     PyTuple_SET_ITEM(answer, 0, capsule);
-    PyTuple_SET_ITEM(answer, 1, 
+    PyTuple_SET_ITEM(answer, 1,
                      PyCapsule_New(p, gsl::permutation::capsule_t, gsl::permutation::free));
     PyTuple_SET_ITEM(answer, 2, PyLong_FromLong(sign));
 
@@ -63,7 +63,7 @@ gsl::linalg::LU_decomp(PyObject *, PyObject * args) {
 const char * const gsl::linalg::LU_invert__name__ = "linalg_LU_invert";
 const char * const gsl::linalg::LU_invert__doc__ = "invert a matrix from its LU decomposition";
 
-PyObject * 
+PyObject *
 gsl::linalg::LU_invert(PyObject *, PyObject * args) {
     // the arguments
     PyObject * mcapsule;
@@ -85,10 +85,10 @@ gsl::linalg::LU_invert(PyObject *, PyObject * args) {
         return 0;
     }
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(mcapsule, gsl::matrix::capsule_t));
     // get the permutation
-    gsl_permutation * p = 
+    gsl_permutation * p =
         static_cast<gsl_permutation *>(PyCapsule_GetPointer(pcapsule, gsl::permutation::capsule_t));
     // allocate space for the inverse
     gsl_matrix * inverse = gsl_matrix_alloc(m->size1, m->size2);
@@ -103,10 +103,10 @@ gsl::linalg::LU_invert(PyObject *, PyObject * args) {
 
 // LU_det
 const char * const gsl::linalg::LU_det__name__ = "linalg_LU_det";
-const char * const gsl::linalg::LU_det__doc__ = 
+const char * const gsl::linalg::LU_det__doc__ =
     "compute the determinant of a matrix from its LU decomposition";
 
-PyObject * 
+PyObject *
 gsl::linalg::LU_det(PyObject *, PyObject * args) {
     // the arguments
     int sign;
@@ -121,7 +121,7 @@ gsl::linalg::LU_det(PyObject *, PyObject * args) {
         return 0;
     }
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
 
     // compute the determinant
@@ -134,10 +134,10 @@ gsl::linalg::LU_det(PyObject *, PyObject * args) {
 
 // LU_lndet
 const char * const gsl::linalg::LU_lndet__name__ = "linalg_LU_lndet";
-const char * const gsl::linalg::LU_lndet__doc__ = 
+const char * const gsl::linalg::LU_lndet__doc__ =
     "compute the determinant of a matrix from its LU decomposition";
 
-PyObject * 
+PyObject *
 gsl::linalg::LU_lndet(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -151,7 +151,7 @@ gsl::linalg::LU_lndet(PyObject *, PyObject * args) {
         return 0;
     }
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
 
     // compute the log of the determinant
@@ -164,10 +164,10 @@ gsl::linalg::LU_lndet(PyObject *, PyObject * args) {
 
 // linalg::cholesky_decomp
 const char * const gsl::linalg::cholesky_decomp__name__ = "linalg_cholesky_decomp";
-const char * const gsl::linalg::cholesky_decomp__doc__ = 
+const char * const gsl::linalg::cholesky_decomp__doc__ =
     "compute the Cholesky decomposition of a matrix";
 
-PyObject * 
+PyObject *
 gsl::linalg::cholesky_decomp(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -181,7 +181,7 @@ gsl::linalg::cholesky_decomp(PyObject *, PyObject * args) {
         return 0;
     }
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, gsl::matrix::capsule_t));
 
     // compute the decomposition

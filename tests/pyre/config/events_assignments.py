@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -21,7 +21,7 @@ def test():
         Assignment(key=("pyre", "user", "name"), value="michael aïvázis", locator=None))
     configuration.append(
         Assignment(
-            key=("pyre", "user", "email"), value="michael.aivazis@orthologue.com", 
+            key=("pyre", "user", "email"), value="michael.aivazis@orthologue.com",
             locator=None))
     configuration.append(
         Assignment(key=("pyre", "user", "affiliation"), value="orthologue", locator=None))
@@ -42,4 +42,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -30,7 +30,7 @@ class Typed:
         # otherwise, do the normal thing
         return super().__new__(cls, **kwds)
 
-        
+
     def __init__(self, schemata=schemata, **kwds):
         """
         Build an instance of this decorator.
@@ -78,7 +78,7 @@ class Typed:
             typedClient = type(schema.typename, ancestors, {"__doc__": doc})
             # and attach it to the client
             setattr(client, schema.typename, typedClient)
-            
+
         # return the new class record
         return client
 
@@ -150,6 +150,6 @@ class Typed:
 
         # all done
         return
-                
+
 
 # end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -19,7 +19,7 @@ class gaussian(pyre.component):
     # properties
     mean = pyre.properties.float(default=0)
     spread = pyre.properties.float(default=.25)
-       
+
 
 def test():
 
@@ -72,4 +72,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

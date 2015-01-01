@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -63,8 +63,8 @@ def test():
     assert identical(pricing.pyre_localFields, (pricing.price,))
     assert identical(pricing.pyre_fields, (
         pricing.cost, pricing.overhead,
-        pricing.sku, pricing.description, 
-        pricing.price, 
+        pricing.sku, pricing.description,
+        pricing.price,
         ))
     assert identical(pricing.pyre_measures, pricing.pyre_fields)
     assert identical(pricing.pyre_derivations, ())
@@ -96,4 +96,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

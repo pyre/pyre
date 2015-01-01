@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -63,11 +63,11 @@ class Selector(records.templater):
 
         # prime the table aliases
         attributes["pyre_tables"] = aliases
-                
+
         # return the attribute container
         return attributes
 
-        
+
     def __new__(cls, name, bases, attributes, hidden=False, **kwds):
         # chain up
         query = super().__new__(cls, name, bases, attributes, **kwds)
@@ -91,4 +91,4 @@ class Selector(records.templater):
         return query
 
 
-# end of file 
+# end of file

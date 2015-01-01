@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -47,7 +47,7 @@ class URI(Schema):
                 # complain
                 msg = 'unrecognizable URI {0.value!r}'
                 raise self.CastingError(value=value, description=msg)
-                
+
         # otherwise
         msg = 'unrecognizable URI {0.value!r}'
         raise self.CastingError(value=value, description=msg)
@@ -65,4 +65,4 @@ class URI(Schema):
         return
 
 
-# end of file 
+# end of file

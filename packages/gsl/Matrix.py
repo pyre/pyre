@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -251,7 +251,7 @@ class Matrix:
     # matrix operations
     def transpose(self, destination=None):
         """
-        Compute the transpose of a matrix. 
+        Compute the transpose of a matrix.
 
         If {destination} is {None} and the matrix is square, the operation happens
         in-place. Otherwise, the transpose is stored in {destination}, which is assumed to be
@@ -488,4 +488,4 @@ class Matrix:
     shape = (0,0)
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -42,9 +42,9 @@ class Error(Diagnostic, Channel):
         error = self.ApplicationError(error=self)
         # don't raise it; let the caller decide what to do with it
         return error
-        
+
 
     # class private data
     stackdepth = -3 # there is an extra stack level for application errors...
 
-# end of file 
+# end of file

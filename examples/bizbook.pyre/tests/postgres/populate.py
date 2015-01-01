@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -21,7 +21,7 @@ def test():
     # access the postgres package
     import pyre.db
 
-    # build a database component 
+    # build a database component
     db = pyre.db.postgres(name="bizbook")
     # check that we are connected to the right database
     assert db.database == 'bizbook'
@@ -247,7 +247,7 @@ def test():
         )
     # add them to their table
     db.insert(*people)
-    
+
 
     # make some books
     book = bizbook.schema.Book
@@ -511,7 +511,7 @@ def test():
         )
     # add them to their table
     db.insert(*invoices)
-    
+
     # make some line items
     item = bizbook.schema.InvoiceItem
     items = (
@@ -539,7 +539,7 @@ def test():
         )
     # add them to their table
     db.insert(*items)
-    
+
     # and return the component
     return db
 
@@ -549,4 +549,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -23,7 +23,7 @@ def test():
     class derived(base):
         """the derived one"""
         extra = pyre.property()
-        
+
     # check the basics
     assert base.__name__ == "base"
     assert base.__bases__ == (pyre.protocol,)
@@ -66,4 +66,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

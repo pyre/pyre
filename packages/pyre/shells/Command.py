@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -41,7 +41,7 @@ class Command(pyre.component, implements=Action):
     @pyre.export(tip='show this help screen')
     def help(self, plexus, **kwds):
         """
-        Show a help screen 
+        Show a help screen
         """
         # hardwired (for now?)
         indent = '    '
@@ -152,5 +152,5 @@ class Command(pyre.component, implements=Action):
     # private data
     pyre_spec = None
 
-        
-# end of file 
+
+# end of file

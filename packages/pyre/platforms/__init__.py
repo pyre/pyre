@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -20,4 +20,4 @@ from .RedHat import RedHat as redhat
 from .Ubuntu import Ubuntu as ubuntu
 
 
-# end of file 
+# end of file

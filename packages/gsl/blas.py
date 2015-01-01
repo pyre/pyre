@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 """
 Support for the BLAS interface
@@ -166,7 +166,7 @@ def dgemm(tranA, tranB, α, A, B, β, C):
     return C
 
 
-def dtrmm(sideA, uplo, transpose, diag, α, A, B): 
+def dtrmm(sideA, uplo, transpose, diag, α, A, B):
     """
     Compute {B = α op(A) B} or {B = α B op(A)} depending on the value of {sideA}
     """
@@ -176,4 +176,4 @@ def dtrmm(sideA, uplo, transpose, diag, α, A, B):
     return B
 
 
-# end of file 
+# end of file

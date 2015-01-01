@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 // for the build system
@@ -24,9 +24,9 @@
 
 // interface
 // record a diagnostic
-void 
+void
 pyre::journal::Console::
-record(entry_t & entry, metadata_t & metadata) 
+record(entry_t & entry, metadata_t & metadata)
 {
     // get the renderer to convert the diagnostic parts into a string
     string_t text = _renderer->render(entry, metadata);

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -26,7 +26,7 @@ def test():
     # figure out its geometry
     rank = world.rank
     tasks = world.size
-    
+
     # decide which task is the source
     source = 0
     # at the source task
@@ -36,7 +36,7 @@ def test():
         # initialize it
         for task in range(tasks):
             for sample in range(samplesPerTask):
-                offset = task*samplesPerTask + sample 
+                offset = task*samplesPerTask + sample
                 θ[offset] = offset
         # print it out
         # θ.print(format="{}")
@@ -63,4 +63,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

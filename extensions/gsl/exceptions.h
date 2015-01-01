@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #if !defined(gsl_extension_exceptions_h)
 #define gsl_extension_exceptions_h
@@ -14,7 +14,7 @@ namespace gsl {
     // base class for gsl errors
     extern PyObject * Error;
     extern const char * const Error__name__;
-    
+
 } // of namespace gsl
 
 #endif

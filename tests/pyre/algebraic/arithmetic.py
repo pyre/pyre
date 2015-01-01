@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -68,14 +68,14 @@ def check_unary(expression, operator, operand):
     assert expression.evaluator is operator
     assert expression.operands[0] is operand
     return
-    
+
 
 def check_binary(expression, operator, op1, op2):
     assert expression.evaluator is operator
     assert expression.operands[0] is op1
     assert expression.operands[1] is op2
     return
-    
+
 def check_ternary(expression, operator1, operator2, op1, op2, op3):
     assert expression.evaluator is operator1
     assert expression.operands[0] is op1
@@ -83,7 +83,7 @@ def check_ternary(expression, operator1, operator2, op1, op2, op3):
     assert expression.operands[1].operands[0] is op2
     assert expression.operands[1].operands[1] is op3
     return
-    
+
 def check_left(expression, operator, value, node):
     assert expression.evaluator is operator
     assert expression.operands[0].value == value
@@ -105,4 +105,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

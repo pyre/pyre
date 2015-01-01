@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -22,14 +22,14 @@ def test():
     fs["/home/users/mga/dv/tools/src/hello.c"] = fs.node()
     fs["/home/users/mga/dv/tools/src/hello.h"] = fs.node()
     fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.node()
-    
+
     # dump the contents
     fs.dump(False) # switch to True to see the dump
 
     # explore
     finder = pyre.filesystem.finder()
     contents = [ path for node, path in finder.explore(folder=fs, pattern=r".*\.h")]
-    
+
     # check
     assert contents == [
         "home/users/mga/dv/tools/src/hello.h",
@@ -46,4 +46,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

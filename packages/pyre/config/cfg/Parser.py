@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -180,7 +180,7 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
-   
+
     def assignment(self, current):
         """
         Process a key assignment
@@ -212,7 +212,7 @@ class Parser(pyre.parsing.parser):
                 locator = locator)
         # otherwise
         else:
-            # build an unconditional assignment 
+            # build an unconditional assignment
             event = self.Assignment(key = self.family + key, value = value, locator = locator)
         # in any case, add it to the pile
         self.configuration.append(event)

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -15,4 +15,4 @@ from .Counter import Counter as counter
 from .Printer import Printer as printer
 
 
-# end of file 
+# end of file

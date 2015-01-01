@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -51,7 +51,7 @@ class ExtentAware(AbstractMetaclass):
         # makes it easy to check that descendants have been garbage collected as well. if you
         # want to keep track of the extent at some other point in a class hierarchy, declare
         # that class with {pyre_extentRoot} set to {True}
-        if pyre_extentRoot or not hasattr(self, "_pyre_extent"): 
+        if pyre_extentRoot or not hasattr(self, "_pyre_extent"):
             # build the instance registry
             self._pyre_extent = weakref.WeakSet()
         # all done
@@ -69,6 +69,6 @@ class ExtentAware(AbstractMetaclass):
         self._pyre_extent.add(instance)
         # and return it
         return instance
-        
 
-# end of file 
+
+# end of file

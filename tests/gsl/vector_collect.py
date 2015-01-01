@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -32,7 +32,7 @@ def test():
     # and initialize it
     for index in range(samplesPerTask):
         θ[index] = rank*samplesPerTask + index
-    
+
     # decide on the destination task
     destination = 0
     # exercise it
@@ -43,7 +43,7 @@ def test():
         # verify that i got the correct parts
         for task in range(tasks):
             for index in range(samplesPerTask):
-                offset = task*samplesPerTask+index 
+                offset = task*samplesPerTask+index
                 assert result[offset] == offset
         # print it out
         # result.print(format='{}')
@@ -58,4 +58,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_journal_Channel)
@@ -54,7 +54,7 @@ protected:
 private:
     inline Channel(const Channel &);
     inline const Channel & operator=(const Channel &);
-    
+
     // data members
 private:
     string_t _name;

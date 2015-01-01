@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_journal_Firewall_h)
@@ -18,9 +18,9 @@ namespace pyre {
 
 
 // declaration
-class pyre::journal::Firewall : 
+class pyre::journal::Firewall :
     public pyre::journal::Diagnostic<Firewall>,
-    public pyre::journal::Channel<Firewall, true> 
+    public pyre::journal::Channel<Firewall, true>
 {
     // befriend my superclass so it can invoke my recording hooks
     friend class Diagnostic<Firewall>;

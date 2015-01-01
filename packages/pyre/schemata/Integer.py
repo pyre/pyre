@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -29,7 +29,7 @@ class Integer(Numeric):
         # get the interpreter to evaluate simple expressions
         if isinstance(value, str): value = eval(value)
 
-        # attempt to 
+        # attempt to
         try:
             # cast {value} into an integer
             return int(value)
@@ -47,4 +47,4 @@ class Integer(Numeric):
         return
 
 
-# end of file 
+# end of file

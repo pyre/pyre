@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -17,26 +17,26 @@
 // copyright
 const char * const gsl::copyright__name__ = "copyright";
 const char * const gsl::copyright__doc__ = "the module copyright string";
-PyObject * 
+PyObject *
 gsl::
 copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "gsl: (c) 1998-2014 orthologue";
+    const char * const copyright_note = "gsl: (c) 1998-2015 orthologue";
     return Py_BuildValue("s", copyright_note);
 }
-    
+
 
 // license
 const char * const gsl::license__name__ = "license";
 const char * const gsl::license__doc__ = "the module license string";
-PyObject * 
+PyObject *
 gsl::
 license(PyObject *, PyObject *)
 {
-    const char * const license_string = 
+    const char * const license_string =
         "\n"
         "    gsl " GSL_VERSION "\n"
-        "    Copyright (c) 1998-2014 orthologue\n"
+        "    Copyright (c) 1998-2015 orthologue\n"
         "    All Rights Reserved\n"
         "\n"
         "    Redistribution and use in source and binary forms, with or without\n"
@@ -71,11 +71,11 @@ license(PyObject *, PyObject *)
     return Py_BuildValue("s", license_string);
 }
 
-    
+
 // version
 const char * const gsl::version__name__ = "version";
 const char * const gsl::version__doc__ = "the module version string";
-PyObject * 
+PyObject *
 gsl::
 version(PyObject *, PyObject *)
 {
@@ -83,5 +83,5 @@ version(PyObject *, PyObject *)
     return Py_BuildValue("s", version_string);
 }
 
-    
+
 // end of file

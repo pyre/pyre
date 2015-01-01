@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -13,7 +13,7 @@ updated. Consult the SQL standard for their meaning
 
 # produce an error indicating that the change would create foreign key constraint violation; if
 # the constraint is deferred; this is the default
-noAction = "NO ACTION" 
+noAction = "NO ACTION"
 
 # produce an error indicating that the change would create foreign key constraint violation
 restrict = "RESTRICT"
@@ -29,4 +29,4 @@ setNull = "SET NULL"
 setDefault = "SET DEFAULT"
 
 
-# end of file 
+# end of file

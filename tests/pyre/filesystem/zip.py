@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -24,7 +24,7 @@ def test(interactive=False): # set to True to see the dump
     target = zipfile.ZipFile(file=archive, mode="w", compression=zipfile.ZIP_DEFLATED)
     with target:
         for filename in os.listdir('.'): target.write(filename)
-    
+
     # open it as a filesystem
     home = pyre.filesystem.zip(root=archive)
     home.discover()
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     assert len(Node._pyre_extent) == 0
 
 
-# end of file 
+# end of file

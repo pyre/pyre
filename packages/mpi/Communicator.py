@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -20,7 +20,7 @@ class Communicator(Object):
     """
 
 
-    # types 
+    # types
     from .Port import Port
 
 
@@ -61,7 +61,7 @@ class Communicator(Object):
             return Communicator(capsule=capsule)
         # otherwise
         return None
-        
+
 
     def exclude(self, processes):
         """
@@ -87,7 +87,7 @@ class Communicator(Object):
         from .Cartesian import Cartesian
         # build one and return it
         return Cartesian(capsule=self.capsule, axes=axes, periods=periods, reorder=reorder)
-        
+
 
     # interface
     def barrier(self):
@@ -189,4 +189,4 @@ class Communicator(Object):
     capsule = None
 
 
-# end of file 
+# end of file

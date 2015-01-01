@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -15,7 +15,7 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
     """
     Protocol definition for components that monitor communication channels and invoke handlers
     when activity is detected
-    """ 
+    """
 
 
     # default implementation
@@ -71,4 +71,4 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
         """
 
 
-# end of file 
+# end of file

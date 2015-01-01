@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 #include <portinfo>
@@ -22,7 +22,7 @@
 const char * const gsl::blas::ddot__name__ = "blas_ddot";
 const char * const gsl::blas::ddot__doc__ = "compute the scalar product of two vectors";
 
-PyObject * 
+PyObject *
 gsl::blas::ddot(PyObject *, PyObject * args) {
     // the arguments
     PyObject * v1c;
@@ -59,7 +59,7 @@ gsl::blas::ddot(PyObject *, PyObject * args) {
 const char * const gsl::blas::dnrm2__name__ = "blas_dnrm2";
 const char * const gsl::blas::dnrm2__doc__ = "compute the Euclidean norm of a vector";
 
-PyObject * 
+PyObject *
 gsl::blas::dnrm2(PyObject *, PyObject * args) {
     // the arguments
     PyObject * vc;
@@ -87,10 +87,10 @@ gsl::blas::dnrm2(PyObject *, PyObject * args) {
 
 // blas::dasum
 const char * const gsl::blas::dasum__name__ = "blas_dasum";
-const char * const gsl::blas::dasum__doc__ = 
+const char * const gsl::blas::dasum__doc__ =
     "compute the sum of the absolute values of the vector entries";
 
-PyObject * 
+PyObject *
 gsl::blas::dasum(PyObject *, PyObject * args) {
     // the arguments
     PyObject * vc;
@@ -119,10 +119,10 @@ gsl::blas::dasum(PyObject *, PyObject * args) {
 
 // blas::idamax
 const char * const gsl::blas::idamax__name__ = "blas_idamax";
-const char * const gsl::blas::idamax__doc__ = 
+const char * const gsl::blas::idamax__doc__ =
     "find the index of the largest element in a vector";
 
-PyObject * 
+PyObject *
 gsl::blas::idamax(PyObject *, PyObject * args) {
     // the arguments
     PyObject * vc;
@@ -152,7 +152,7 @@ gsl::blas::idamax(PyObject *, PyObject * args) {
 const char * const gsl::blas::dswap__name__ = "blas_dswap";
 const char * const gsl::blas::dswap__doc__ = "swap the contents of two vectors";
 
-PyObject * 
+PyObject *
 gsl::blas::dswap(PyObject *, PyObject * args) {
     // the arguments
     PyObject * xc;
@@ -193,7 +193,7 @@ gsl::blas::dswap(PyObject *, PyObject * args) {
 const char * const gsl::blas::dcopy__name__ = "blas_dcopy";
 const char * const gsl::blas::dcopy__doc__ = "copy the contents of one vector into another";
 
-PyObject * 
+PyObject *
 gsl::blas::dcopy(PyObject *, PyObject * args) {
     // the arguments
     PyObject * xc;
@@ -234,7 +234,7 @@ gsl::blas::dcopy(PyObject *, PyObject * args) {
 const char * const gsl::blas::daxpy__name__ = "blas_daxpy";
 const char * const gsl::blas::daxpy__doc__ = "compute the scalar product of two vectors";
 
-PyObject * 
+PyObject *
 gsl::blas::daxpy(PyObject *, PyObject * args) {
     // the arguments
     double a;
@@ -273,7 +273,7 @@ gsl::blas::daxpy(PyObject *, PyObject * args) {
 const char * const gsl::blas::dscal__name__ = "blas_dscal";
 const char * const gsl::blas::dscal__doc__ = "scale a vector by a number";
 
-PyObject * 
+PyObject *
 gsl::blas::dscal(PyObject *, PyObject * args) {
     // the arguments
     double a;
@@ -307,7 +307,7 @@ gsl::blas::dscal(PyObject *, PyObject * args) {
 const char * const gsl::blas::drotg__name__ = "blas_drotg";
 const char * const gsl::blas::drotg__doc__ = "compute the Givens rotation for two vectors";
 
-PyObject * 
+PyObject *
 gsl::blas::drotg(PyObject *, PyObject * args) {
     // the arguments
     double x, y;
@@ -337,7 +337,7 @@ gsl::blas::drotg(PyObject *, PyObject * args) {
 const char * const gsl::blas::drot__name__ = "blas_drot";
 const char * const gsl::blas::drot__doc__ = "apply a Givens rotation to two vectors";
 
-PyObject * 
+PyObject *
 gsl::blas::drot(PyObject *, PyObject * args) {
     // the arguments
     double c, s;
@@ -379,7 +379,7 @@ gsl::blas::drot(PyObject *, PyObject * args) {
 const char * const gsl::blas::dgemv__name__ = "blas_dgemv";
 const char * const gsl::blas::dgemv__doc__ = "compute y = a op(A) x + b y";
 
-PyObject * 
+PyObject *
 gsl::blas::dgemv(PyObject *, PyObject * args) {
     // the arguments
     int op;
@@ -444,7 +444,7 @@ gsl::blas::dgemv(PyObject *, PyObject * args) {
 const char * const gsl::blas::dtrmv__name__ = "blas_dtrmv";
 const char * const gsl::blas::dtrmv__doc__ = "compute x = op(A) x";
 
-PyObject * 
+PyObject *
 gsl::blas::dtrmv(PyObject *, PyObject * args) {
     // the arguments
     int uplo, op, unitDiag;
@@ -502,7 +502,7 @@ gsl::blas::dtrmv(PyObject *, PyObject * args) {
 const char * const gsl::blas::dtrsv__name__ = "blas_dtrsv";
 const char * const gsl::blas::dtrsv__doc__ = "compute x = inv(op(A)) x";
 
-PyObject * 
+PyObject *
 gsl::blas::dtrsv(PyObject *, PyObject * args) {
     // the arguments
     int uplo, op, unitDiag;
@@ -560,7 +560,7 @@ gsl::blas::dtrsv(PyObject *, PyObject * args) {
 const char * const gsl::blas::dsymv__name__ = "blas_dsymv";
 const char * const gsl::blas::dsymv__doc__ = "compute y = a A x + b y";
 
-PyObject * 
+PyObject *
 gsl::blas::dsymv(PyObject *, PyObject * args) {
     // the arguments
     int uplo;
@@ -614,7 +614,7 @@ gsl::blas::dsymv(PyObject *, PyObject * args) {
 const char * const gsl::blas::dsyr__name__ = "blas_dsyr";
 const char * const gsl::blas::dsyr__doc__ = "compute A = a x x^T + A";
 
-PyObject * 
+PyObject *
 gsl::blas::dsyr(PyObject *, PyObject * args) {
     // the arguments
     int uplo;
@@ -660,7 +660,7 @@ gsl::blas::dsyr(PyObject *, PyObject * args) {
 const char * const gsl::blas::dgemm__name__ = "blas_dgemm";
 const char * const gsl::blas::dgemm__doc__ = "compute y = a op(A) x + b y";
 
-PyObject * 
+PyObject *
 gsl::blas::dgemm(PyObject *, PyObject * args) {
     // the arguments
     int opA, opB;
@@ -738,7 +738,7 @@ gsl::blas::dgemm(PyObject *, PyObject * args) {
 const char * const gsl::blas::dtrmm__name__ = "blas_dtrmm";
 const char * const gsl::blas::dtrmm__doc__ = "compute B = a op(A) B";
 
-PyObject * 
+PyObject *
 gsl::blas::dtrmm(PyObject *, PyObject * args) {
     // the arguments
     double a;

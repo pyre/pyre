@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -28,7 +28,7 @@ def test():
     m = pyre.ipc.pickler()
     # and the communication channels
     server, client = pyre.ipc.pipe()
-    
+
     # fork
     pid = os.fork()
     # in the server process
@@ -54,7 +54,7 @@ def onServer(clientPid, marshaller, pipe):
 
     def getMessage(selector, channel, **kwds):
         message = marshaller.recv(channel)
-        serverdbg.log("server: received {!r}".format(message)) 
+        serverdbg.log("server: received {!r}".format(message))
         # check it
         assert message == "Hello from {}".format(clientPid)
         return False
@@ -101,7 +101,7 @@ def onClient(clientPid, marshaller, pipe):
         clientdbg.log("client: receiving address")
         address = marshaller.recv(channel)
         clientdbg.log("client: address={}".format(address))
-        
+
         # make a connection
         tcp = pyre.ipc.tcp(address=address)
         # send a message
@@ -125,11 +125,11 @@ def onClient(clientPid, marshaller, pipe):
 
     # all done
     return
-    
+
 
 # main
 if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

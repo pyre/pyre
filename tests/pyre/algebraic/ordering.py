@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -44,7 +44,7 @@ def check_binary(expression, operator, op1, op2):
     assert expression.operands[1] is op2
     return
 
-    
+
 # main
 if __name__ == "__main__":
     # skip pyre initialization since we don't rely on the executive
@@ -53,4 +53,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

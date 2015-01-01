@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 # get the toys
@@ -15,7 +15,7 @@ def test():
     # startup stuff
     # print("person.friends:\n  {}\n  {}".format(toy.person.friends, type(toy.person.friends)))
     # print("student.friends:\n  {}\n  {}".format(toy.student.friends, type(toy.student.friends)))
-    
+
     michael = toy.person(name='michael')
     # here is a generic student
     jane = toy.student(name='jane')
@@ -58,7 +58,7 @@ def test():
     # augment some relationships
     alec.friends.update({'joe': "#joe"})
     alec.friends['joe'] is joe
- 
+
     # show me
     # print("person.friends:\n  {}\n  {}".format(toy.person.friends, type(toy.person.friends)))
     # print("student.friends:\n  {}\n  {}".format(toy.student.friends, type(toy.student.friends)))
@@ -74,4 +74,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

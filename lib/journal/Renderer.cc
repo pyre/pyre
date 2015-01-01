@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 // for the build system
@@ -21,11 +21,11 @@
 
 // interface
 // rendering of diagnostic entries
-pyre::journal::Renderer::string_t 
+pyre::journal::Renderer::string_t
 pyre::journal::Renderer::
 render(
        pyre::journal::Renderer::entry_t & entry,
-       pyre::journal::Renderer::metadata_t & metadata) 
+       pyre::journal::Renderer::metadata_t & metadata)
 {
     // build the string stream
     stream_t stream;
@@ -51,11 +51,11 @@ pyre::journal::Renderer::
 header(
        pyre::journal::Renderer::stream_t & stream,
        pyre::journal::Renderer::entry_t & entry,
-       pyre::journal::Renderer::metadata_t & metadata) 
+       pyre::journal::Renderer::metadata_t & metadata)
 {
     string_t marker(" >> ");
     // render the diagnostic severity and channel
-    stream 
+    stream
         << marker
         // the severity
         <<  metadata["severity"]
@@ -95,7 +95,7 @@ pyre::journal::Renderer::
 body(
        pyre::journal::Renderer::stream_t & stream,
        pyre::journal::Renderer::entry_t & entry,
-       pyre::journal::Renderer::metadata_t & metadata) 
+       pyre::journal::Renderer::metadata_t & metadata)
 {
     // iterate over the strings in {entry}
     for (entry_t::const_iterator line = entry.begin(); line != entry.end(); ++line) {
@@ -113,7 +113,7 @@ pyre::journal::Renderer::
 footer(
        pyre::journal::Renderer::stream_t & stream,
        pyre::journal::Renderer::entry_t & entry,
-       pyre::journal::Renderer::metadata_t & metadata) 
+       pyre::journal::Renderer::metadata_t & metadata)
 {}
 
 // end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -15,7 +15,7 @@ Sanity check: verify that the extension module is accessible
 def test():
     # access the extension module
     from cuda import cuda
-    
+
     # all done
     return
 
@@ -25,4 +25,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

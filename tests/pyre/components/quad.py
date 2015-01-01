@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -60,10 +60,10 @@ def test():
     # instantiations
     zero = const(name='zero')
     assert zero.c == 0
-        
+
     two = const(name='two')
     assert two.c == 2.0
-        
+
     # a default integrator
     nameless = integrator(name='nameless')
     assert nameless.pyre_name == 'nameless'
@@ -100,11 +100,11 @@ def test():
 
     # all done
     return
-        
+
 
 # main
 if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

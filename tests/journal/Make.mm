@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -48,4 +48,4 @@ devices:
 	${PYTHON} ./debug-injection.py --journal.device=import:journal.console
 	${PYTHON} ./debug-injection.py --journal.device=import:journal.file --journal.device.log="journal.log"
 
-# end of file 
+# end of file

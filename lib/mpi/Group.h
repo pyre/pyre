@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_mpi_Group_h)
@@ -59,7 +59,7 @@ public:
 private:
     inline operator handle_t () const throw();
     static inline void free(MPI_Group *) throw(Error);
-    
+
     // data members
 private:
     storage_t _handle;

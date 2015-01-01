@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -30,4 +30,4 @@ init:
 	$(PYTHON) $(MERLIN) init $(TEST_DIR)/merlin.one $(TEST_DIR)/merlin.two
 	$(PYTHON) $(MERLIN) init --create-prefix $(TEST_DIR)/merlin.deep/ly/burried
 
-# end of file 
+# end of file

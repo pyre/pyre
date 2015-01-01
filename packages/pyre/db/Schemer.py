@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -17,7 +17,7 @@ class Schemer(records.templater):
     its attributes to the fields of the underlying table in the database back end
     """
 
-    
+
     # types
     from .FieldSelector import FieldSelector as pyre_selector
 
@@ -67,4 +67,4 @@ class Schemer(records.templater):
         return table
 
 
-# end of file 
+# end of file

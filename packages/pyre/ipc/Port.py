@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -11,7 +11,7 @@ class Port:
     """
     A mechanism that enables peer processes to draw the attention of the process owning the
     port
-    """ 
+    """
 
 
     # interface
@@ -34,4 +34,4 @@ class Port:
             "class {.__name__!r} must implement 'install'".format(type(self)))
 
 
-# end of file 
+# end of file

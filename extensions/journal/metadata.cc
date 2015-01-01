@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -12,7 +12,7 @@
 
 
 // copyright
-const char * const 
+const char * const
 pyre::extensions::journal::
 copyright__name__ = "copyright";
 
@@ -20,14 +20,14 @@ const char * const
 pyre::extensions::journal::
 copyright__doc__ = "the module copyright string";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "journal: (c) 1998-2014 Michael A.G. Aïvázis";
+    const char * const copyright_note = "journal: (c) 1998-2015 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
 }
-    
+
 
 // version
 const char * const
@@ -38,7 +38,7 @@ const char * const
 pyre::extensions::journal::
 version__doc__ = "the module version string";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 version(PyObject *, PyObject *)
 {
@@ -46,5 +46,5 @@ version(PyObject *, PyObject *)
     return Py_BuildValue("s", version_string);
 }
 
-    
+
 // end of file

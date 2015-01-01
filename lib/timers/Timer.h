@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 
@@ -46,8 +46,8 @@ public:
     inline void stop();
     inline void reset();
 
-    inline double lap();  // read the elapsed time 
-    inline double read(); // return the accumulated time 
+    inline double lap();  // read the elapsed time
+    inline double read(); // return the accumulated time
 
     // meta methods
 public:

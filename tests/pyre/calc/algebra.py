@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -47,7 +47,7 @@ def test():
     assert ((n1**2 + 2*n1*n2 + n2**2)).value == ((n1+n2)**2).value
     assert ((n1**2 - 2*n1*n2 + n2**2)).value == ((n1-n2)**2).value
     assert (2*(.5 - n1*n2 + n2**2)*n1).value == 2*(.5 - 1*2 + 2**2)*1
-    
+
     return
 
 
@@ -59,4 +59,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

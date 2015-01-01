@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -111,7 +111,7 @@ class Sheet(records.record, metaclass=Tabulator):
         Retrieve the portion of the sheet that corresponds to {address}
         """
         # by definition, string addresses refer to my columns
-        if isinstance(address, str): 
+        if isinstance(address, str):
             # let my descriptor do the work
             return getattr(self, address)
 

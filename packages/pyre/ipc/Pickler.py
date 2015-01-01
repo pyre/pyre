@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -23,7 +23,7 @@ class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=
     with the length of the payload. Similarly, {read} first extracts the length of the byte
     string and uses that information to pull the object representation from the input
     channel. This is necessary to simplify interacting with buffered streams.
-    """ 
+    """
 
 
     # public data
@@ -58,7 +58,7 @@ class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=
         # get the body
         body = channel.read(length)
         # extract the object and return it
-        return pickle.loads(body) 
-                             
+        return pickle.loads(body)
 
-# end of file 
+
+# end of file

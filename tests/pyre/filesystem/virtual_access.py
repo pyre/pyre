@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -40,7 +40,7 @@ def test(interactive=False): # switch to True to see the dumps
 
     # dump the contents
     fs.dump(interactive)
-    
+
     return fs
 
 
@@ -60,4 +60,4 @@ if __name__ == "__main__":
     assert len(Node._pyre_extent) == 0
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -44,5 +44,5 @@ class ANSI(pyre.component, family='pyre.shells.terminals.ansi', implements=termi
         "white": esc.format("1;37"),
         }
 
-    
-# end of file 
+
+# end of file

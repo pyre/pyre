@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -34,7 +34,7 @@ def test():
         employee = pyre.db.reference(key=person.eid).notNull()
         employer = pyre.db.reference(key=company.eid).notNull()
         rate = pyre.db.float()
-        
+
     # the model
     class Employee(pyre.db.object):
         """
@@ -65,4 +65,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -21,7 +21,7 @@ class Script(Executive, family="pyre.shells.script"):
     # the help markers
     helpon = pyre.properties.strings(default=['?', 'h', 'help'])
     helpon.doc = "the list of markers that indicate the user has asked for help"
-    
+
     # a marker that enables applications to deduce the type of shell that is hosting them
     model = pyre.properties.str(default='script')
     model.doc = "the programming model"
@@ -42,9 +42,9 @@ class Script(Executive, family="pyre.shells.script"):
             if marker in nameserver:
                 # get help
                 return application.help(*args, **kwds)
-        
+
         # otherwise, launch the application
         return application.main(*args, **kwds)
 
 
-# end of file 
+# end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 # get access to the random munber generator functions
@@ -24,4 +24,4 @@ for i in range(N):
 # print the result:
 print("π: {:.8f}".format(4*interior/N))
 
-# end of file 
+# end of file

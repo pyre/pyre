@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -21,7 +21,7 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
 
 
     # constants
-    providesHeaders = False # sqlite queries do not return column headers 
+    providesHeaders = False # sqlite queries do not return column headers
 
 
     # public state
@@ -78,4 +78,4 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
     cursor = None
     connection = None
 
-# end of file 
+# end of file

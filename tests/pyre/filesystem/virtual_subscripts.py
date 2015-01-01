@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -27,11 +27,11 @@ def test():
     assert len(root.contents) == 1
     assert "home" in root.contents
 
-    home = root["home"] 
+    home = root["home"]
     assert len(home.contents) == 1
     assert "users" in home.contents
 
-    users = home["users"] 
+    users = home["users"]
     assert len(users.contents) == 1
     assert "mga" in users.contents
 
@@ -52,4 +52,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

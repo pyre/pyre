@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -38,7 +38,7 @@ def test():
         for task in range(tasks):
             for sample in range(samplesPerTask):
                 for dof in range(sampleSize):
-                    offset = task*samplesPerTask + sample 
+                    offset = task*samplesPerTask + sample
                     θ[offset, dof] = offset*sampleSize + dof
         # print it out
         # θ.print(format="{}")
@@ -67,4 +67,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

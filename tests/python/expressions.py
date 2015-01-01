@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -30,7 +30,7 @@ class Calculator(object):
 
     def replace(self, match):
         identifier = match.group("identifier")
-        
+
         try:
             return self.symbolTable[identifier]
         except KeyError:
@@ -38,21 +38,21 @@ class Calculator(object):
             self.symbolTable[identifier] = symbol
             self.symbols += 1
             return symbol
-        
+
     def __init__(self):
         self.symbols = 0
         self.valueTable = {}
         self.symbolTable = {}
         return
 
-    
+
 def test():
     e = Calculator()
     e.valueTable = {
         "my value": 4,
         "your value": 2,
         }
-    
+
     expression = "{my value} * {your value}"
     expression = e.compile(expression)
 
@@ -66,4 +66,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

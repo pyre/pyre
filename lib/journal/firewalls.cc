@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // build system
 #include <portinfo>
@@ -47,7 +47,7 @@ void firewall_hit(const char * channel, __HERE_DECL__, const char * fmt, ...)
     va_start(args, fmt);
     std::vsprintf(buffer, fmt, args);
     va_end(args);
-    
+
     // create a firewall channel
     firewall_t firewall(channel);
 
@@ -74,7 +74,7 @@ void firewall_check(const char * channel, int condition, __HERE_DECL__, const ch
         va_start(args, fmt);
         std::vsprintf(buffer, fmt, args);
         va_end(args);
-    
+
         // create a firewall channel
         firewall_t firewall(channel);
 

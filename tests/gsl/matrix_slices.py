@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -47,7 +47,7 @@ def test():
     columns = 200
     # make another matrix
     m = gsl.matrix(shape=(rows,columns)).zero()
-    
+
     # make a vector of ones
     ones = gsl.vector(shape=columns).fill(1.0)
     # set the middle column
@@ -71,4 +71,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2012 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -23,7 +23,7 @@ def test():
     host = socket.gethostname()
 
     print("{0.rank:03}/{0.size:03}: {1}".format(world, host))
-    
+
     # all done
     return
 
@@ -33,4 +33,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

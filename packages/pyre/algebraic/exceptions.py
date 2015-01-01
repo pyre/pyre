@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -24,7 +24,7 @@ class CircularReferenceError(NodeError):
     """
     Signal a circular reference in the evaluation graph
     """
-    
+
     def __init__(self, node, path=(), **kwds):
         msg = "the evaluation graph has a cycle at {0.node}"
         super().__init__(description=msg, **kwds)
@@ -33,4 +33,4 @@ class CircularReferenceError(NodeError):
         return
 
 
-# end of file 
+# end of file

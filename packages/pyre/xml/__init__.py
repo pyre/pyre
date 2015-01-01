@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -62,10 +62,10 @@ def newReader(**kwds):
 
 def newLocator(saxlocator):
     """
-    Convert a locator from the SAX parser to a pyre.tracking.FileLocator 
+    Convert a locator from the SAX parser to a pyre.tracking.FileLocator
     """
     return pyre.tracking.file(
-        source=saxlocator.getSystemId(), 
+        source=saxlocator.getSystemId(),
         line=saxlocator.getLineNumber(), column=saxlocator.getColumnNumber())
 
 
@@ -94,4 +94,4 @@ IMPLIED = "#IMPLIED"
 FIXED = "#FIXED"
 
 
-# end of file 
+# end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -47,7 +47,7 @@ def test():
     assert identical(shipping.pyre_fields, ( shipping.shipping, ))
     assert identical(shipping.pyre_fields, ( shipping.shipping, ))
     assert shipping.pyre_derivations == ()
-    
+
     # check the subclass
     assert pricing.pyre_name == "pricing"
     assert identical(pricing.pyre_localFields, (
@@ -68,7 +68,7 @@ def test():
     assert identical(pricing.pyre_derivations, (
         pricing.cost, pricing.msrp, pricing.price
         ))
-    
+
     return pricing, shipping, production
 
 
@@ -80,7 +80,7 @@ def identical(s1, s2):
     for n1, n2 in zip(s1, s2):
         if n1 is not n2: return False
     return True
-            
+
 
 # main
 if __name__ == "__main__":
@@ -90,4 +90,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

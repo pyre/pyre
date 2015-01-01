@@ -3,7 +3,7 @@
 %
 % michael a.g. aïvázis
 % orthologue
-% (c) 1998-2014 all rights reserved
+% (c) 1998-2015 all rights reserved
 %
 
 % language
@@ -74,35 +74,35 @@
 \lstset{
   columns=flexible,
   upquote=true,
-  % 
+  %
   aboveskip=\medskipamount,
   belowskip=\medskipamount,
   % abovecaptionskip=\medskipamount,
   % belowcaptionskip=\medskipamount,
-  % 
+  %
   numbers=left,
   numberstyle=\color{linenumbercolor}\tiny,
   firstnumber=auto,
   stepnumber=1,
   numbersep=5pt,
   numberblanklines=true,
-  % 
+  %
   basicstyle=\tt\scriptsize,
   keywordstyle=\color{keywordcolor},
   commentstyle=\color{commentcolor}\slshape,
   stringstyle=\color{stringcolor}\slshape,
   showstringspaces=false,
-  % 
+  %
   %frame=tb,
   captionpos=t,
   backgroundcolor=\color{listingbgcolor},
   xleftmargin=0em,
   xrightmargin=0em,
-  % 
+  %
   literate=
       {μ}{{$\mu$}}1 {π}{{$\pi$}}1 {σ}{{$\sigma$}}1 {ω}{{$\omega$}}1
       {ö}{{\"o}}1
-} 
+}
 
 \def\python#1#2{
   \lstinputlisting[%
@@ -110,7 +110,7 @@
   morekeywords={as,self,yield,False,True,None},
   escapeinside={\#@}{@},#1]
   {#2}}
-  
+
 \def\Cpp#1#2{
   \lstinputlisting[%
     language=C++,
@@ -161,7 +161,7 @@
   language=cfg,
   escapeinside={\;@}{@},#1]
   {#2}}
-  
+
 % references
 \usepackage[numbers]{natbib}
 \bibliographystyle{unsrtnat}
@@ -260,4 +260,4 @@
     filecolor=pyre@sand,    % color of file links
     urlcolor=pyre@stone     % color of external links
 }
-% end of file 
+% end of file

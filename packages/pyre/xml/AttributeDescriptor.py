@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -24,10 +24,10 @@ class AttributeDescriptor(Descriptor):
 
     # the attriibute type
     # may be one of CDATA, ID, IDREFS, NMTOKEN, NMTOKENS, ENTITY, ENTITIES, NOTATION, XML
-    # or a tuple of valid choices; see pyre.xml.enumerated() 
-    type = None 
-    
-    # attribute requirements: 
+    # or a tuple of valid choices; see pyre.xml.enumerated()
+    type = None
+
+    # attribute requirements:
     #   pyre.xml.IMPLIED:
     #     the attribute is optional
     #   pyre.xml.REQUIRED:
@@ -42,4 +42,4 @@ class AttributeDescriptor(Descriptor):
     default = None # the default value for the attribute
 
 
-# end of file 
+# end of file

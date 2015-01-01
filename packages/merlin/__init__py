@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -49,7 +49,7 @@ def copyright(**kwds):
     print(_merlin_copyright)
     # and return
     return
-    
+
 
 def license(**kwds):
     """
@@ -61,17 +61,17 @@ def license(**kwds):
     return
 
 
-# the actual text 
+# the actual text
 # NYI: add localized versions of all this
 _merlin_version = (1, 0, BZR_REVNO)
 
 _merlin_tag = "merlin {}.{} build {}".format(*_merlin_version)
 
-_merlin_copyright = "{}: Copyright (c) 1998-2014 Michael A.G. Aïvázis".format(_merlin_tag)
+_merlin_copyright = "{}: Copyright (c) 1998-2015 Michael A.G. Aïvázis".format(_merlin_tag)
 
 _merlin_header = """
     {}
-    Copyright (c) 1998-2014 Michael A.G. Aïvázis
+    Copyright (c) 1998-2015 Michael A.G. Aïvázis
     All rights reserved
     """.format(_merlin_tag)
 
@@ -131,7 +131,7 @@ def boot():
         # the user
         import __main__
         # has indicated we should skip booting
-        if __main__.merlin_noboot: 
+        if __main__.merlin_noboot:
             # in which case, do not build a plexus
             return None
     # if anything goes wrong
@@ -206,7 +206,7 @@ def info(message):
     info = journal.info('merlin')
     # log and return
     return info.log(message)
-        
+
 
 # the package
 package = None
@@ -220,4 +220,4 @@ defaults = None
 # the singleton
 merlin = boot()
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -33,7 +33,7 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
         import functools, operator
         # compute and return the volume
         return functools.reduce(
-            operator.mul, 
+            operator.mul,
             ((right-left) for left,right in self.intervals))
 
 
@@ -60,4 +60,4 @@ class Box(pyre.component, family="gauss.shapes.box", implements=Shape):
         return
 
 
-# end of file 
+# end of file

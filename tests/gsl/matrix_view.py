@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2012 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -57,4 +57,4 @@ def test():
 if __name__ == '__main__':
     test()
 
-# end of file 
+# end of file

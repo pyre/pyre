@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -25,14 +25,14 @@ class Importer(Loader):
 
         from package.subpackage import factory
         factory(name=name)
-    
+
     had been issued to the interpreter. {factory} is expected to be either a component class or
     a function that returns a component class. This class is then instantiated using {name} as
     the sole argument to the constructor. If {name} is not present, the component class is
     returned.
     """
 
- 
+
     # types
     from .Shelf import Shelf as shelf
 
@@ -52,7 +52,7 @@ class Importer(Loader):
         source = uri.address
         # build a simple locator
         locator = tracking.simple(source=str(uri))
-        # attempt to 
+        # attempt to
         try:
             # import the module
             module = __import__(source)
@@ -112,7 +112,7 @@ class Importer(Loader):
                 break
         # no more
         return
-            
+
 
     # initialization
     @classmethod
@@ -137,7 +137,7 @@ class Importer(Loader):
         except AttributeError:
             # no worries
             return
-        
+
         # make a uri
         uri = linker.uri.locator(scheme='file', address=os.path.abspath(filename))
         # and a locator
@@ -153,4 +153,4 @@ class Importer(Loader):
         return
 
 
-# end of file 
+# end of file

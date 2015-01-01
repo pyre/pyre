@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -22,7 +22,7 @@ class Scanner(metaclass=Lexer):
 
 
     # types
-    # exceptions 
+    # exceptions
     from .exceptions import ParsingError, TokenizationError
     # the descriptor factory
     from .Descriptor import Descriptor as pyre_token
@@ -68,7 +68,7 @@ class Scanner(metaclass=Lexer):
                 for token in self.pyre_cache: client.send(token)
                 # and flush it
                 self.pyre_cache = []
-                    
+
                 # attempt to recognize the contents of the line
                 match = self.pyre_recognizer.match(text, pos=column)
                 # if i failed to recognize a valid token
@@ -140,7 +140,7 @@ class Scanner(metaclass=Lexer):
             except self.ParsingError as error:
                 # forward it to my client
                 client.throw(type(error), error)
-            
+
             # if it is not whitespace
             if not isinstance(token, self.whitespace):
                 # pass it along
@@ -167,4 +167,4 @@ class Scanner(metaclass=Lexer):
     pyre_recognizer = None # the compiled regex constructed out the patterns of my tokens
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -42,7 +42,7 @@ class DTD(AttributeClassifier):
         # the rules, here is the strategy: if a nested element is in the same namespace as its
         # direct parent, it goes into the _pyre_nodeIndex. otherwise it goes into the
         # _pyre_nodeQIndex of namespace qualified tags
-        
+
         # in the Reader, {start|end}Element look up tags directly in the _pyre_nodeIndex, which
         # is the only possible implementation since there is no additional information
         # available beyond the tag name. this is equivalent to assuming that the nested tag
@@ -53,7 +53,7 @@ class DTD(AttributeClassifier):
         # build a (element name -> handler) map
         index = { element.name: element for element in dtd }
 
-        # now, build the dtd for each handler 
+        # now, build the dtd for each handler
         for element in dtd:
             # get the class that handles this element
             handler = element.handler
@@ -80,4 +80,4 @@ class DTD(AttributeClassifier):
         return node
 
 
-# end of file 
+# end of file

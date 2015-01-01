@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -28,7 +28,7 @@ class base(object, metaclass=meta):
 
 class derived(base):
     """a derived class"""
-        
+
 
 def test():
     # check attribute assignment in the base class
@@ -42,7 +42,7 @@ def test():
         derived.foo = "derived"
     except here as marker:
         assert str(marker) == "derived.foo"
-        
+
     # verify instances are unaffected
     # the base
     b = base()
@@ -61,4 +61,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

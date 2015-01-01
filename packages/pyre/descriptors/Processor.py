@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -31,4 +31,4 @@ class Processor:
             "class {.__name__!r} must implement '__call__'".format(type(self)))
 
 
-# end of file 
+# end of file

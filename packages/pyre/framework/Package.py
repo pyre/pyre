@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -25,11 +25,11 @@ class Package(Named):
     home = None # the path to the package importable (as given by its {__file__})
     prefix = None # the home of the package installation
     defaults = None # the location of the package configuration files
-    # bookkeeping 
+    # bookkeeping
     sources = None
     protocols = None # the collection of encountered protocols
     components = None # the collection of encountered components
-    
+
 
     # interface
     def register(self, executive, file):
@@ -119,4 +119,4 @@ class Package(Named):
     DEFAULTS = 'defaults' # the path to the configuration folder relative to {prefix}
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -70,4 +70,4 @@ from .Scheduler import Scheduler as scheduler
 from .Selector import Selector as selector
 
 
-# end of file 
+# end of file

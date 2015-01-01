@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -26,7 +26,7 @@ def test():
     # exercise the behavior
     for v, check in zip(bell.eval(points), answers):
         assert abs(v-check) < 1.0e-3
-    
+
     return bell
 
 
@@ -35,4 +35,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

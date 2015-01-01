@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -23,4 +23,4 @@ class Recognizer:
             "class {.__name__!r} must implement 'recognize'".format(type(self)))
 
 
-# end of file 
+# end of file

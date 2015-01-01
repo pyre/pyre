@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -55,12 +55,12 @@ def test():
     assert address.family == unix.family
     assert address.path == "/tmp/.s.5394"
     assert address.value == "/tmp/.s.5394"
-    
+
     address = inet.coerce("local:/tmp/.s.5394")
     assert address.family == unix.family
     assert address.path == "/tmp/.s.5394"
     assert address.value == "/tmp/.s.5394"
-    
+
     return
 
 
@@ -72,4 +72,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

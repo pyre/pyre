@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_mpi_Communicator_h)
@@ -54,7 +54,7 @@ public:
     inline Communicator(handle_t, bool = false) throw();
     inline Communicator(const Communicator &) throw();
     inline const Communicator & operator=(const Communicator &) throw();
-    
+
     // hidden
 private:
     static inline void free(MPI_Comm *) throw(Error);

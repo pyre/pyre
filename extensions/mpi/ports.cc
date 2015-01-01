@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #define PY_SSIZE_T_CLEAN
@@ -46,7 +46,7 @@ PyObject * mpi::port::sendBytes(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -95,7 +95,7 @@ PyObject * mpi::port::recvBytes(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -160,7 +160,7 @@ PyObject * mpi::port::sendString(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 
@@ -209,7 +209,7 @@ PyObject * mpi::port::recvString(PyObject *, PyObject * args)
     }
 
     // convert into the pyre::mpi object
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
 

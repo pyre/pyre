@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -67,7 +67,7 @@ def local(root, listdir=None, recognizer=None, **kwds):
         from .Zip import Zip
         # build one and return it
         return Zip(metadata=info)
-    
+
     # out of ideas
     raise MountPointError(uri=root, error='invalid mount point')
 
@@ -167,7 +167,7 @@ def split(path):
     return Node.split(path)
 
 
-# debugging support: 
+# debugging support:
 #     import the package and set to something else, e.g. pyre.patterns.ExtentAware
 #     to change the runtime behavior of these objects
 _metaclass_Node = type
@@ -185,6 +185,6 @@ def debug():
     _metaclass_Node = ExtentAware
 
     return
-    
 
-# end of file 
+
+# end of file

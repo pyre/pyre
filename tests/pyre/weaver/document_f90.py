@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -25,7 +25,7 @@ def test():
         '!',
         '! Michael A.G. Aïvázis',
         '! Orthologue',
-        '! (c) 1998-2014 All Rights Reserved',
+        '! (c) 1998-2015 All Rights Reserved',
         '!',
         '',
         '',
@@ -40,4 +40,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

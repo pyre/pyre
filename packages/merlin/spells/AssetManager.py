@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -46,7 +46,7 @@ class AssetManager(merlin.spell):
         # starting with the current directory
         folder = local
         # drill down until we reach the target folder
-        for name in names: 
+        for name in names:
             # attempt to
             try:
                 # populate the current folder
@@ -80,11 +80,11 @@ class AssetManager(merlin.spell):
             (classifier.classify(root=root, node=folder)
              for classifier in self.merlin.assetClassifiers))
         # iterate over the returned assets and persist them
-        for asset in assets: 
+        for asset in assets:
             self.merlin.curator.saveAsset(asset)
 
         # all done
         return
 
 
-# end of file 
+# end of file

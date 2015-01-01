@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 # externals
@@ -91,7 +91,7 @@ class Octree:
         # all done
         return index
 
-            
+
     def __init__(self, intervals, **kwds):
         super().__init__(**kwds)
         self.point = None
@@ -101,4 +101,4 @@ class Octree:
         return
 
 
-# end of file 
+# end of file

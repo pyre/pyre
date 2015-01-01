@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -33,7 +33,7 @@ class AbstractNode:
 
     # the node types
     literal = None # nodes that capture foreign values
-    variable = None # base class my native nodes 
+    variable = None # base class my native nodes
     operator = None # operations among my native nodes
 
 
@@ -52,7 +52,7 @@ class AbstractNode:
         # iterating over all nodes. this must be done carefully so as not to trigger the
         # overloaded operator __eq__
         for node in self.span:
-            # if it matches {obsolete} 
+            # if it matches {obsolete}
             if node is obsolete:
                 # report the error
                 raise self.CircularReferenceError(node=obsolete)
@@ -64,6 +64,6 @@ class AbstractNode:
     def dump(self, name, indent):
         print('{}{}: {}'.format(indent, name, self.value))
         return self
-        
 
-# end of file 
+
+# end of file

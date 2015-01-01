@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -24,7 +24,7 @@ class C(BlockMill, Expression):
     languageMarker = pyre.properties.str(default='C')
     languageMarker.doc = "the variant to use in the language marker"
 
-    
+
     # meta methods
     def __init__(self, **kwds):
         # chain up
@@ -54,11 +54,11 @@ class C(BlockMill, Expression):
         # and return my string
         return "pow({},{})".format(op1, op2)
 
-        
+
     # private data
     startBlock = '/*'
     commentMarker = ' *'
     endBlock = '*/'
 
 
-# end of file 
+# end of file

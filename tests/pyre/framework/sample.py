@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 import pyre
@@ -18,4 +18,4 @@ class d1(base):
 class d2(base):
     """A trivial component subclass"""
 
-# end of file 
+# end of file

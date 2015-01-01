@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -100,7 +100,7 @@ class Enabled:
     def __init__(self, capsule):
         self.capsule = capsule
         return
-        
+
 class Disabled:
     """Wrapper around {pyre::journal::Inventory<false>}"""
 
@@ -119,6 +119,6 @@ class Disabled:
     def __init__(self, capsule):
         self.capsule = capsule
         return
-        
 
-# end of file 
+
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -34,13 +34,13 @@ class Algebra(Category):
 
 
     # meta-methods
-    def __new__(cls, name, bases, attributes, 
-                arithmetic=True, ordering=True, boolean=True, 
+    def __new__(cls, name, bases, attributes,
+                arithmetic=True, ordering=True, boolean=True,
                 ignore=False,
                 **kwds):
         """
         Build a new class record
-        """ 
+        """
         # specially marked classes
         if ignore or cls.isIgnorable(bases):
             # bypass any of my processing
@@ -119,7 +119,7 @@ class Algebra(Category):
         Contribute to the list of ancestors of the representation of operators
         """
         # if the class record specifies a operator mix-in use it
-        if record.operator: yield record.operator 
+        if record.operator: yield record.operator
         # must also derive from the default
         yield cls.operator
         # get the classes necessary to make composites
@@ -153,6 +153,6 @@ class Algebra(Category):
                 return True
         # all good
         return False
-        
 
-# end of file 
+
+# end of file

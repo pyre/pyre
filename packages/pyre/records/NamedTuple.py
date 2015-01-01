@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -32,10 +32,10 @@ class NamedTuple(tuple):
         values = cls.pyre_extract(record=record, source=source)
         # and invoke the tuple constructor; {pyre_isConst} is set to {True} by default
         return super().__new__(cls, values)
-        
+
 
     # private data
     __slots__ = ()
-        
 
-# end of file 
+
+# end of file

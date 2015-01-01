@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -63,7 +63,7 @@ class TextRenderer(pyre.component, family="journal.renderers.plain", implements=
             header.append(" in {function!r}:".format(**metadata))
         except KeyError:
             pass
-                          
+
         # return the header
         yield "".join(header)
         # and the body
@@ -74,4 +74,4 @@ class TextRenderer(pyre.component, family="journal.renderers.plain", implements=
         return
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -31,7 +31,7 @@ class PortTCP(Port, Channel):
     channel = None
     address = None
 
-    
+
     # factories
     @classmethod
     def open(cls, address, **kwds):
@@ -78,7 +78,7 @@ class PortTCP(Port, Channel):
 
         # start listening
         listener.listen(socket.SOMAXCONN)
-        
+
         # wrap the socket up
         port = cls(channel=listener, address=address)
         # and return it
@@ -125,4 +125,4 @@ class PortTCP(Port, Channel):
         return
 
 
-# end of file 
+# end of file

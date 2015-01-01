@@ -3,7 +3,7 @@
 %
 % michael a.g. aïvázis
 % orthologue
-% (c) 1998-2014 all rights reserved
+% (c) 1998-2015 all rights reserved
 %
 
 \section{Two simple implementations}
@@ -37,7 +37,7 @@ bins. Note that $\Theta(\Omega)$ in \eqref{mc} corresponds to the conditional in
 \alglineref{pi:check}, and the dimensionality of the integrand is reflected in the number of
 calls to the random number generator it takes to build a point. Further, our sampling box $B$
 has unit area, so there is no need for any extra normalization of the result.
-% 
+%
 \begin{algorithm}
 \caption{$\pi_{N}$: the Monte Carlo estimate of $\pi$ \label{alg:pi}}
 %
@@ -94,9 +94,9 @@ points $N$, and record the result and the time it took, as shown in \tabref{simp
 \[
 \begin{array}{rd{8}cd{4}}
 % headersep
-  \multicolumn{1}{c}{N} & 
-  \multicolumn{1}{c}{\pi_{N}} & 
-  \multicolumn{1}{c}{\Delta} & 
+  \multicolumn{1}{c}{N} &
+  \multicolumn{1}{c}{\pi_{N}} &
+  \multicolumn{1}{c}{\Delta} &
   \multicolumn{1}{c}{t \mbox{(sec)}} \\
   \hline \\ [-1.5ex]
 % body
@@ -108,7 +108,7 @@ points $N$, and record the result and the time it took, as shown in \tabref{simp
   10^{5} &  3.14496    & 1.07 \times 10^{-3} &    .144  \\
   10^{6} &  3.144028   & 7.75 \times 10^{-4} &   1.265  \\
   10^{7} &  3.142112   & 1.65 \times 10^{-4} &  12.624  \\
-  10^{8} &  3.14170136 & 3.46 \times 10^{-5} & 130.430 
+  10^{8} &  3.14170136 & 3.46 \times 10^{-5} & 130.430
 \end{array}
 \]
 \caption{Estimating $\pi$: accuracy and cost of the python implementation
@@ -158,9 +158,9 @@ this variable to the end user; we will address this issue in \secref{pyreapp}.
 \[
 \begin{array}{rd{8}cd{4}}
 % headers
-  \multicolumn{1}{c}{N} & 
-  \multicolumn{1}{c}{\pi_{N}} & 
-  \multicolumn{1}{c}{\Delta} & 
+  \multicolumn{1}{c}{N} &
+  \multicolumn{1}{c}{\pi_{N}} &
+  \multicolumn{1}{c}{\Delta} &
   \multicolumn{1}{c}{t \mbox{(sec)}} \\
   \hline \\ [-1.5ex]
 % body
@@ -173,7 +173,7 @@ this variable to the end user; we will address this issue in \secref{pyreapp}.
   10^{6} &  3.140756   & 2.66 \times 10^{-4} &    .230  \\
   10^{7} &  3.141948   & 1.13 \times 10^{-4} &   2.277  \\
   10^{8} &  3.1417769  & 5.86 \times 10^{-5} &  22.749  \\
-  10^{9} &  3.1415631  & 9.41 \times 10^{-6} & 227.735   
+  10^{9} &  3.1415631  & 9.41 \times 10^{-6} & 227.735
 \end{array}
 \]
 \caption{Estimating $\pi$: accuracy and cost of the \cpp\ implementation
@@ -190,4 +190,4 @@ performance hit; for others it is unacceptable. However, as we will see later, a
 some common sense, and some careful profiling will make it possible to have the best of both
 worlds.
 
-% end of file 
+% end of file

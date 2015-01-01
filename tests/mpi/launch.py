@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -26,7 +26,7 @@ def test():
             import mpi
             # get the world communicator
             world = mpi.world
-            # print("Hello from {0.rank} of {0.size}".format(world)) 
+            # print("Hello from {0.rank} of {0.size}".format(world))
             # check
             assert world.size == 8
             assert world.rank in range(world.size)
@@ -47,4 +47,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

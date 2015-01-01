@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -37,7 +37,7 @@ class Gaussian(Functor):
             r2 = sum((p_i - mean_i)**2 for p_i, mean_i in zip(p, mean))
             # yield the value at the current p
             yield normalization * exp(- r2/scaling)
-        # all done    
+        # all done
         return
 
     # meta methods
@@ -47,4 +47,4 @@ class Gaussian(Functor):
         return
 
 
-# end of file 
+# end of file

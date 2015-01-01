@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -31,7 +31,7 @@ class Application(pyre.component, metaclass=Director):
     """
 
 
-    # constants 
+    # constants
     DEFAULTS = 'defaults' # the name of the folder with my configuration files
 
     # the default name for pyre applications; subclasses are expected to provide a more
@@ -48,10 +48,10 @@ class Application(pyre.component, metaclass=Director):
 
     dependencies = externals.dependencies()
     dependencies.doc = 'the map of requirements to package instances that satisfy them'
-    
+
     DEBUG = pyre.properties.bool(default=False)
     DEBUG.doc = 'debugging mode'
-    
+
     interactive = pyre.properties.bool(default=False)
     interactive.doc = "go interactive when no command line arguments are provided"
 
@@ -116,7 +116,7 @@ class Application(pyre.component, metaclass=Director):
         """
         # what should i do?
         return self.pyre_interactiveSession()
-        
+
 
     @pyre.export
     def help(self, **kwds):
@@ -167,7 +167,7 @@ class Application(pyre.component, metaclass=Director):
         self.info.log()
         # and indicate success
         return 0
-        
+
 
     # meta methods
     def __init__(self, name=None, **kwds):
@@ -291,7 +291,7 @@ class Application(pyre.component, metaclass=Director):
         # get/create the top level of my private namespace
         pfs = vfs.getFolder(namespace)
 
-        # check whether 
+        # check whether
         try:
             # the user directory is already mounted
             pfs['user']
@@ -303,12 +303,12 @@ class Application(pyre.component, metaclass=Director):
         # get my prefix
         prefix = self.prefix
         # if i don't have one
-        if not prefix: 
+        if not prefix:
             # attach an empty folder; must use {pfs} to do this to guarantee filesystem consistency
             pfs['system'] = pfs.folder()
             # and return
             return pfs
-            
+
         # otherwise, get the associated filesystem
         home = vfs.retrieveFilesystem(root=prefix)
         # and mount my folders in my namespace
@@ -368,7 +368,7 @@ class Application(pyre.component, metaclass=Director):
 
         # all done
         return
-    
+
 
     def pyre_resolveDependencies(self):
         """
@@ -396,7 +396,7 @@ class Application(pyre.component, metaclass=Director):
         """
         Convert this session to an interactive one
         """
-        # try to 
+        # try to
         try:
             # get readline
             import readline
@@ -468,8 +468,8 @@ class Application(pyre.component, metaclass=Director):
         """
         # just me, by default
         return {'self': self}
-        
-        
+
+
     def pyre_banner(self):
         """
         Print an identifying message
@@ -477,4 +477,4 @@ class Application(pyre.component, metaclass=Director):
         return 'entering interactive mode'
 
 
-# end of file 
+# end of file

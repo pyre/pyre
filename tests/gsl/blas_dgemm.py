@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -34,7 +34,7 @@ def test():
 
     # compute the form
     gsl.blas.dgemm(A.opNoTrans, B.opNoTrans, α, A, B, β, C)
-    
+
     # check
     # print(tuple(y))
     assert tuple(C) == (14, 24, 14, 8, 14, 8)
@@ -48,4 +48,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

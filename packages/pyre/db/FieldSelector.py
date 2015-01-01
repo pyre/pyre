@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -30,4 +30,4 @@ class FieldSelector(records.selector):
         return self.fieldReference(table=cls, field=self.field)
 
 
-# end of file 
+# end of file

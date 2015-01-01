@@ -3,19 +3,19 @@
 !
 ! michael a.g. aïvázis
 ! orthologue
-! (c) 1998-2014 all rights reserved
+! (c) 1998-2015 all rights reserved
 !
 -->
 
 <config>
 
   <package name="gauss">
-    <bind property="name">gauss</bind> 
+    <bind property="name">gauss</bind>
 
     <component name="mc">
       <bind property="samples">10**6</bind>
       <bind property="integrand">import:gauss.fuctors.gaussian</bind>
-    
+
       <component name="box">
         <bind property="diagonal">((-1,-1), (1,1))</bind>
       </component>

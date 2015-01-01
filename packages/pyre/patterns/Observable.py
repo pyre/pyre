@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -12,7 +12,7 @@ import weakref
 class Observable:
     """
     Provide notification support for classes that maintain dynamic associations with multiple
-    clients. 
+    clients.
 
     Observers, i.e. clients of the Observable, register event handlers that will be invoked to
     notify them whenever something interesting happens to the Observable. The nature of what is
@@ -28,13 +28,13 @@ class Observable:
       addObserver: registers its callable argument with the list of handlers to invoke
       removeObserver: remove an event handler from the list of handlers to invoke
       notifyObservers: invoke the registered handlers in the order in which they were registered
-    
+
     """
 
 
     # public data
     observers = None
-    
+
 
     # interface
     def notifyObservers(self):
@@ -50,7 +50,7 @@ class Observable:
             method(instance, self)
         # all done
         return self
-            
+
 
     # callback management
     def addObserver(self, callback):
@@ -85,4 +85,4 @@ class Observable:
         return
 
 
-# end of file 
+# end of file

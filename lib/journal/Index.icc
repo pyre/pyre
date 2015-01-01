@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #if !defined(pyre_journal_Index_icc)
 #error This header file contains implementation details of class Index
@@ -14,7 +14,7 @@
 template <typename Value>
 typename pyre::journal::Index<Value>::value_t &
 pyre::journal::Index<Value>::
-lookup(const pyre::journal::Index<Value>::string_t & channel) 
+lookup(const pyre::journal::Index<Value>::string_t & channel)
 {
     return _index[channel];
 }

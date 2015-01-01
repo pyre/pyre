@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -95,10 +95,10 @@ class INet(Schema):
 
     # types
     from .exceptions import CastingError
-    # the address base class 
+    # the address base class
     address = Address
     # the more specialized types
-    ip = ip4 = ipv4 = IPv4 
+    ip = ip4 = ipv4 = IPv4
     unix = local = Unix
 
 
@@ -183,4 +183,4 @@ class INet(Schema):
         )
 
 
-# end of file 
+# end of file

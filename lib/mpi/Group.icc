@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #if !defined(pyre_mpi_Group_icc)
 #error This header file contains implementation details of class Group
@@ -18,7 +18,7 @@ pyre::mpi::groupUnion(const Group & g1, const Group & g2) throw(Error)
     MPI_Group group;
     // build it
     int status = MPI_Group_union(g1, g2, &group);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -35,7 +35,7 @@ pyre::mpi::groupIntersection(const Group & g1, const Group & g2) throw(Error)
     MPI_Group group;
     // build it
     int status = MPI_Group_intersection(g1, g2, &group);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -52,7 +52,7 @@ pyre::mpi::groupDifference(const Group & g1, const Group & g2) throw(Error)
     MPI_Group group;
     // build it
     int status = MPI_Group_difference(g1, g2, &group);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -77,7 +77,7 @@ pyre::mpi::Group::
 free(MPI_Group * handle) throw(Error)
 {
     int status = MPI_Group_free(handle);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -93,7 +93,7 @@ rank() const throw(Error)
 {
     int rank;
     int status = MPI_Group_rank(_handle, &rank);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -109,7 +109,7 @@ size() const throw(Error)
 {
     int size;
     int status = MPI_Group_size(_handle, &size);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -129,7 +129,7 @@ include(const pyre::mpi::Group::ranklist_t & ranks) const throw(Error)
     MPI_Group group;
     // build it
     int status = MPI_Group_incl(_handle, size, const_cast<int *>(&ranks[0]), &group);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -149,7 +149,7 @@ exclude(const pyre::mpi::Group::ranklist_t & ranks) const throw(Error)
     MPI_Group group;
     // build it
     int status = MPI_Group_excl(_handle, size, const_cast<int *>(&ranks[0]), &group);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -160,7 +160,7 @@ exclude(const pyre::mpi::Group::ranklist_t & ranks) const throw(Error)
 
 // cast to MPI_Group
 pyre::mpi::Group::
-operator pyre::mpi::Group::handle_t () const throw() 
+operator pyre::mpi::Group::handle_t () const throw()
 {
     return _handle;
 }

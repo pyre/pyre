@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -31,7 +31,7 @@ def test():
         assert str(error) == (
             "file='sample-unknownNode.pml', line=12, column=2: decoding error: unknown tag 'BIND'"
             )
- 
+
     return m, reader
 
 
@@ -43,4 +43,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

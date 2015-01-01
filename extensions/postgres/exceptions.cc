@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -39,7 +39,7 @@ registerExceptions__name__ = "registerExceptions";
 
 const char * const
 pyre::extensions::postgres::
-registerExceptions__doc__ = 
+registerExceptions__doc__ =
     "register the classes that represent the standard exceptions raised by"
     "DB API 2.0 compliant implementations";
 

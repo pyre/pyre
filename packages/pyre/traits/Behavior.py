@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -16,7 +16,7 @@ class Behavior(Trait):
     The base class for component methods that are part of its external interface
     """
 
-    
+
     # public data
     method = None # the actual callable in the component declaration
 
@@ -54,7 +54,7 @@ class Behavior(Trait):
 
         # to hand over
         return build
-        
+
 
     def __init__(self, method, tip=None, **kwds):
         # chain up
@@ -86,4 +86,4 @@ class Behavior(Trait):
             .format(self, instance))
 
 
-# end of file 
+# end of file

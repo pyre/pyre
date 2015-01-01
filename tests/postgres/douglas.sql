@@ -2,7 +2,7 @@
 --
 -- michael a.g. aïvázis
 -- orthologue
--- (c) 1998-2014 all rights reserved
+-- (c) 1998-2015 all rights reserved
 --
 
 -- sample database from "Postgresql" by Douglas & Douglas
@@ -35,13 +35,13 @@ CREATE TABLE "rentals" (
 -- data
 
 INSERT INTO customers
-  VALUES 
+  VALUES
     (3, 'Panky, Henry', '555-1221', '1968-01-21', 0.00),
     (1, 'Jones, Henry', '555-1212', '1970-10-10', 0.00),
     (4, 'Wonderland, Alice N.', '555-1122', '1969-03-05', 3.00),
     (2, 'Rubin, William', '555-2211', '1972-07-10', 15.00);
 
-INSERT INTO tapes 
+INSERT INTO tapes
   VALUES
     ('AB-12345', 'The Godfather'),
     ('AB-67472', 'The Godfather'),

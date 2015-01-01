@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -73,7 +73,7 @@ class PublicInventory(Inventory):
         """
         # get the locator
         locator = component.pyre_locator
-                               
+
         # register the class with the executive
         key = component.pyre_executive.registerComponentClass(family=family, component=component)
         # register with the component registrar
@@ -230,8 +230,8 @@ class PublicInventory(Inventory):
             name = trait.name
             # build the trait full name
             fullname = nameserver.join(base, name)
-            # place the slot with the nameserver 
-            traitKey = nameserver.insert(name=fullname, value=value, 
+            # place the slot with the nameserver
+            traitKey = nameserver.insert(name=fullname, value=value,
                                          factory=factory, locator=locator, priority=priority())
             # register the trait aliases
             for alias in trait.aliases:
@@ -243,7 +243,7 @@ class PublicInventory(Inventory):
             yield trait, traitKey
         # all done
         return
-            
+
 
     # meta-methods
     def __init__(self, key, **kwds):
@@ -260,10 +260,10 @@ class PublicInventory(Inventory):
         key = super().__getitem__(trait)
         # ask the nameserver for the slot and return it
         return self.pyre_nameserver.getNode(key)
-        
+
 
     def __str__(self):
         return "public inventory at {:#x}".format(id(self))
 
 
-# end of file 
+# end of file

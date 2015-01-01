@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -110,7 +110,7 @@ class Local(Filesystem):
             # create the directory
             folder = self.mkdir(parent=parent, name=name)
             # add the children to my work list
-            todo.extend( 
+            todo.extend(
                 (folder, name, child)
                 for name, child in source.contents.items()
                 # NYI: don't know how to handle regular files just yet; must take into account
@@ -201,4 +201,4 @@ class Local(Filesystem):
         return
 
 
-# end of file 
+# end of file

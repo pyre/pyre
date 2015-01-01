@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -34,7 +34,7 @@ def test():
 
     # create the reader
     csv = pyre.records.csv()
-    # read the csv data 
+    # read the csv data
     source = csv.immutable(layout=item, uri="vegetables.csv")
     # check
     for given, loaded in zip(target, source):
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

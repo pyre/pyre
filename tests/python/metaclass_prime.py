@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -22,7 +22,7 @@ class mydict(dict):
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self["decorate"] = self.decorate
-   
+
 
 class meta(type):
     # print("declaring the metaclassclass __prepare__")
@@ -48,6 +48,6 @@ def test():
 # main
 if __name__ == "__main__":
     test()
-   
 
-# end of file 
+
+# end of file

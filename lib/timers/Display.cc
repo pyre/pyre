@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 // for the build system
@@ -19,9 +19,9 @@ using namespace pyre::timers;
 Display::index_t Display::_index;
 
 
-// lookup a timer in the index and return it 
+// lookup a timer in the index and return it
 Display::timer_t & Display::retrieveTimer(name_t name) {
-    // 
+    //
     // lookup <name> in the _index and return the associated timer
     // if not found, create a new one and index it under <name>
     timer_t * timer;

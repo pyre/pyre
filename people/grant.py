@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -23,13 +23,13 @@ class Grant(pyre.application):
     """
     Build the {authorized_keys} file that grants write access to the repository
     """
-    
+
 
     # public state
     repository = pyre.properties.str()
     readers = pyre.properties.list(schema=pyre.properties.str())
     writers = pyre.properties.list(schema=pyre.properties.str())
-    
+
 
     @pyre.export
     def main(self, *args, **kwds):
@@ -56,7 +56,7 @@ class Grant(pyre.application):
             # build the line without write privileges
             authorized.writelines(
                 command.format('', key) for key in self.readKeys(user))
-                    
+
         # all done
         return 0
 
@@ -84,4 +84,4 @@ if __name__ == "__main__":
     grant.run()
 
 
-# end of file 
+# end of file

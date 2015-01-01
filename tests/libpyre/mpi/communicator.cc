@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 
@@ -42,7 +42,7 @@ int main() {
 
         // build the new group
         group_t sliced = whole.include(ranks);
-        // and a new communicator 
+        // and a new communicator
         communicator_t newcom = world.communicator(sliced);
 
         // if my world rank is even

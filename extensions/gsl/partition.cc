@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -31,11 +31,11 @@ const char * const
 gsl::mpi::
 bcastMatrix__doc__ = "broadcast a matrix to all members of a communicator";
 
-PyObject * 
+PyObject *
 gsl::mpi::
 bcastMatrix(PyObject *, PyObject * args)
 {
-    // place holders 
+    // place holders
     int source;
     PyObject *communicatorCapsule, *matrixCapsule;
 
@@ -55,7 +55,7 @@ bcastMatrix(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
@@ -128,11 +128,11 @@ bcastMatrix(PyObject *, PyObject * args)
     PyObject * result = PyTuple_New(2);
     PyTuple_SET_ITEM(result, 0, capsule);
     PyTuple_SET_ITEM(result, 1, shape);
-    
+
     // and return it
     return result;
 }
-    
+
 
 // gather
 const char * const
@@ -143,11 +143,11 @@ const char * const
 gsl::mpi::
 gatherMatrix__doc__ = "gather a matrix from the members of a communicator";
 
-PyObject * 
+PyObject *
 gsl::mpi::
 gatherMatrix(PyObject *, PyObject * args)
 {
-    // place holders 
+    // place holders
     int destination;
     PyObject *communicatorCapsule, *matrixCapsule;
 
@@ -166,7 +166,7 @@ gatherMatrix(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
@@ -231,26 +231,26 @@ gatherMatrix(PyObject *, PyObject * args)
     PyObject * result = PyTuple_New(2);
     PyTuple_SET_ITEM(result, 0, capsule);
     PyTuple_SET_ITEM(result, 1, shape);
-    
+
     // and return it
     return result;
 }
-    
+
 
 // scatter
 const char * const
 gsl::mpi::
 scatterMatrix__name__ = "scatterMatrix";
 
-const char * const 
+const char * const
 gsl::mpi::
 scatterMatrix__doc__ = "scatter a matrix to the members of a communicator";
 
-PyObject * 
+PyObject *
 gsl::mpi::
 scatterMatrix(PyObject *, PyObject * args)
 {
-    // place holders 
+    // place holders
     int source;
     PyObject *communicatorCapsule, *matrixCapsule, *destinationCapsule;
 
@@ -276,11 +276,11 @@ scatterMatrix(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
     // get the destination matrix
-    gsl_matrix * destination = 
+    gsl_matrix * destination =
         static_cast<gsl_matrix *>
         (PyCapsule_GetPointer(destinationCapsule, gsl::matrix::capsule_t));
 
@@ -323,7 +323,7 @@ scatterMatrix(PyObject *, PyObject * args)
     return Py_None;
 }
 
-    
+
 // vector operations
 // bcast
 const char * const
@@ -334,11 +334,11 @@ const char * const
 gsl::mpi::
 bcastVector__doc__ = "broadcast a vector to all members of a communicator";
 
-PyObject * 
+PyObject *
 gsl::mpi::
 bcastVector(PyObject *, PyObject * args)
 {
-    // place holders 
+    // place holders
     int source;
     PyObject *communicatorCapsule, *vectorCapsule;
 
@@ -358,7 +358,7 @@ bcastVector(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
@@ -421,11 +421,11 @@ bcastVector(PyObject *, PyObject * args)
     PyObject * result = PyTuple_New(2);
     PyTuple_SET_ITEM(result, 0, capsule);
     PyTuple_SET_ITEM(result, 1, PyLong_FromLong(dim));
-    
+
     // and return it
     return result;
 }
-    
+
 
 // gather
 const char * const
@@ -436,11 +436,11 @@ const char * const
 gsl::mpi::
 gatherVector__doc__ = "gather a vector from the members of a communicator";
 
-PyObject * 
+PyObject *
 gsl::mpi::
 gatherVector(PyObject *, PyObject * args)
 {
-    // place holders 
+    // place holders
     int destination;
     PyObject *communicatorCapsule, *vectorCapsule;
 
@@ -459,7 +459,7 @@ gatherVector(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
 
@@ -516,26 +516,26 @@ gatherVector(PyObject *, PyObject * args)
     PyObject * result = PyTuple_New(2);
     PyTuple_SET_ITEM(result, 0, capsule);
     PyTuple_SET_ITEM(result, 1, PyLong_FromLong(bertha->size));
-    
+
     // and return it
     return result;
 }
-    
+
 
 // scatter
 const char * const
 gsl::mpi::
 scatterVector__name__ = "scatterVector";
 
-const char * const 
+const char * const
 gsl::mpi::
 scatterVector__doc__ = "scatter a vector to the members of a communicator";
 
-PyObject * 
+PyObject *
 gsl::mpi::
 scatterVector(PyObject *, PyObject * args)
 {
-    // place holders 
+    // place holders
     int source;
     PyObject *communicatorCapsule, *vectorCapsule, *destinationCapsule;
 
@@ -561,11 +561,11 @@ scatterVector(PyObject *, PyObject * args)
         return 0;
     }
     // get the communicator
-    pyre::mpi::communicator_t * comm = 
+    pyre::mpi::communicator_t * comm =
         static_cast<pyre::mpi::communicator_t *>
         (PyCapsule_GetPointer(communicatorCapsule, ::mpi::communicator::capsule_t));
     // get the destination vector
-    gsl_vector * destination = 
+    gsl_vector * destination =
         static_cast<gsl_vector *>
         (PyCapsule_GetPointer(destinationCapsule, gsl::vector::capsule_t));
 
@@ -607,5 +607,5 @@ scatterVector(PyObject *, PyObject * args)
     return Py_None;
 }
 
-    
+
 // end of file

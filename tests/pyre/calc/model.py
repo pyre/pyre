@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -42,7 +42,7 @@ def test():
     assert model["price"] == model["margin"]+model["overhead"]+model["cost"]
     assert model["discount"] == .2
     assert model["total"] == (1-model["discount"])*model["price"]
-    
+
     # change and check
     newcost = 100.
     model["production"] = newcost
@@ -54,7 +54,7 @@ def test():
     assert model["price"] == model["margin"]+model["overhead"]+model["cost"]
     assert model["discount"] == .2
     assert model["total"] == (1-model["discount"])*model["price"]
-    
+
     # change and check again
     newdiscount = .45
     model["discount"] = newdiscount
@@ -85,4 +85,4 @@ if __name__ == "__main__":
     assert tuple(Node._pyre_extent) == ()
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -24,7 +24,7 @@ class Group(Object):
     rank = 0 # my rank in this group
     size = 0 # the size of this group
 
-    
+
     # check whether a group is empty
     def isEmpty(self):
         """
@@ -124,4 +124,4 @@ class Group(Object):
     capsule = None
 
 
-# end of file 
+# end of file

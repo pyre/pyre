@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -12,14 +12,14 @@ class Codec:
     The base class for readers/writers of the pyre configuration files
     """
 
-    
+
     # types
     # exceptions
     from .exceptions import EncodingError, DecodingError, ShelfError, SymbolNotFoundError
 
 
     # public data: descendants must specify these
-    encoding = None 
+    encoding = None
 
 
     # abstract interface
@@ -30,7 +30,7 @@ class Codec:
         """
         raise NotImplementedError(
             "class {.__name__!r} must override 'encode'".format(type(self)))
-    
+
 
     @classmethod
     def decode(self, client, scheme, source, locator=None):
@@ -41,4 +41,4 @@ class Codec:
             "class {.__name__!r} must override 'decode'".format(type(self)))
 
 
-# end of file 
+# end of file

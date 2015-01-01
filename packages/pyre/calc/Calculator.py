@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -54,7 +54,7 @@ class Calculator(algebraic.algebra):
     def __new__(cls, name, bases, attributes, ignore=False, **kwds):
         """
         Build a new class record
-        """ 
+        """
         # build the record
         record = super().__new__(cls, name, bases, attributes, ignore=ignore, **kwds)
         # for specially marked classes, we are all done
@@ -95,27 +95,27 @@ class Calculator(algebraic.algebra):
         ancestors = tuple(cls.injectComposite(cls.average, record))
         # make one
         record.average = cls('average', ancestors, {}, ignore=True)
-        
+
         # build the list of base classes for count
         ancestors = tuple(cls.injectComposite(cls.count, record))
         # make one
         record.count = cls('count', ancestors, {}, ignore=True)
-        
+
         # build the list of base classes for max
         ancestors = tuple(cls.injectComposite(cls.maximum, record))
         # make one
         record.max = cls('max', ancestors, {}, ignore=True)
-        
+
         # build the list of base classes for min
         ancestors = tuple(cls.injectComposite(cls.minimum, record))
         # make one
         record.min = cls('min', ancestors, {}, ignore=True)
-        
+
         # build the list of base classes for product
         ancestors = tuple(cls.injectComposite(cls.product, record))
         # make one
         record.product = cls('product', ancestors, {}, ignore=True)
-        
+
         # build the list of base classes for sum
         ancestors = tuple(cls.injectComposite(cls.sum, record))
         # make one
@@ -338,4 +338,4 @@ class Calculator(algebraic.algebra):
         return
 
 
-# end of file 
+# end of file

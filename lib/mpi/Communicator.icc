@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #if !defined(pyre_mpi_Communicator_icc)
 #error This header file contains implementation details of class Communicator
@@ -33,7 +33,7 @@ pyre::mpi::Communicator::
 barrier() const throw(Error)
 {
     int status = MPI_Barrier(_handle);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -49,7 +49,7 @@ rank() const throw(Error)
 {
     int rank;
     int status = MPI_Comm_rank(_handle, &rank);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -65,7 +65,7 @@ size() const throw(Error)
 {
     int size;
     int status = MPI_Comm_size(_handle, &size);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -135,7 +135,7 @@ cartesian(const ranklist_t & ranks, const ranklist_t & periods, int reorder) con
     MPI_Comm cartesian;
     // construct it
     int status = MPI_Cart_create(
-                                 _handle, size, 
+                                 _handle, size,
                                  const_cast<int *>(&ranks[0]),
                                  const_cast<int *>(&periods[0]),
                                  reorder, &cartesian);
@@ -157,7 +157,7 @@ coordinates(int rank) const throw(Error)
     int dim;
     // ask the cartesian communicator for this information
     int status = MPI_Cartdim_get(_handle, &dim);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);
@@ -166,7 +166,7 @@ coordinates(int rank) const throw(Error)
     int * raw = new int[dim];
     // extract them
     status = MPI_Cart_coords(_handle, rank, dim, raw);
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // deallocate
         delete [] raw;
@@ -183,7 +183,7 @@ coordinates(int rank) const throw(Error)
     delete [] raw;
     // and return
     return coordinates;
-            
+
 
 }
 
@@ -195,7 +195,7 @@ free(MPI_Comm * handle) throw(Error)
 {
     int status = MPI_Comm_free(handle);
     //
-    // check the return status 
+    // check the return status
     if (status != MPI_SUCCESS) {
         // throw an exception if something went wrong
         throw Error(status);

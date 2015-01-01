@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -27,7 +27,7 @@ def test():
     # read the contents
     events = reader.decode(uri=uri, source=sample, locator=None)
     # check that we got a non-trivial instance
-    assert events 
+    assert events
 
     # verify its contents
     event = events[0]
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

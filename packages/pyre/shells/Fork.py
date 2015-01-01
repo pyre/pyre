@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -10,7 +10,7 @@
 import os
 import sys
 import pyre # the framework
-from .Executive import Executive # my superclass 
+from .Executive import Executive # my superclass
 
 
 # declaration
@@ -45,7 +45,7 @@ class Fork(Executive, family='pyre.shells.fork'):
         if pid > 0:
             # build and return the parent side channels
             return self.parentChannels(pipes)
-            
+
         # in the child process, convert {stdout} and {stderr} into channels
         channels = self.childChannels(pipes)
         # launch the application
@@ -100,7 +100,7 @@ class Fork(Executive, family='pyre.shells.fork'):
         import pyre.ipc
         # unpack
         stdin, stdout, stderr = pipes
-        # convert {stdout} and {stderr} into channels 
+        # convert {stdout} and {stderr} into channels
         # careful to identify the read/write ends correctly
         stdout = pyre.ipc.pipe(descriptors=(stdin[0], stdout[1]))
         stderr = pyre.ipc.pipe(descriptors=(stdin[0], stderr[1]))
@@ -108,4 +108,4 @@ class Fork(Executive, family='pyre.shells.fork'):
         return stdout, stderr
 
 
-# end of file 
+# end of file

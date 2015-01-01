@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -39,7 +39,7 @@ class Literal:
         self._value = value
         # all done
         return
-        
+
 
     # support for graph traversals
     def identify(self, authority, **kwds):
@@ -48,4 +48,4 @@ class Literal:
         return authority.onLiteral(descriptor=self, **kwds)
 
 
-# end of file 
+# end of file

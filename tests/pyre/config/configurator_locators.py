@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -14,7 +14,7 @@ Sanity check: verify that the configurator factory is accessible
 
 def test():
     import pyre
-    
+
     # gain access to the configurator
     cfg = pyre.executive.configurator
     # load a configuration file
@@ -23,7 +23,7 @@ def test():
     # get a configuration node
     node = cfg.resolve(name="sample.user.name")
     node.dump()
-    
+
     return
 
 
@@ -32,4 +32,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -37,6 +37,6 @@ class exp(pyre.component, family="gauss.functors.exp", implements=gauss.interfac
             yield a * exp(exponent)
         # all done
         return
-            
 
-# end of file 
+
+# end of file

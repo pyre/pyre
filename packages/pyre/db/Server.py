@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -134,7 +134,7 @@ class Server(pyre.component, implements=datastore):
             self.execute(*sql)
         # all done
         return
-        
+
 
     def delete(self, table, condition):
         """
@@ -165,7 +165,7 @@ class Server(pyre.component, implements=datastore):
             yield query.pyre_immutable(data=row)
         # all done
         return
-        
+
 
     # meta methods
     # context manager support
@@ -184,4 +184,4 @@ class Server(pyre.component, implements=datastore):
         return False
 
 
-# end of file 
+# end of file

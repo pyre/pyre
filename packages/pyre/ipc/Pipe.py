@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -31,7 +31,7 @@ class Pipe(Channel):
         # build two matching pairs of file descriptors
         from_child, to_parent = os.pipe()
         from_parent, to_child = os.pipe()
-        # dress them up as {Pipe} instances 
+        # dress them up as {Pipe} instances
         parent = cls(infd=from_child, outfd=to_child, **kwds)
         child = cls(infd=from_parent, outfd=to_parent, **kwds)
         # and return them
@@ -96,6 +96,6 @@ class Pipe(Channel):
     # private data
     infd = None
     outfd = None
-        
 
-# end of file 
+
+# end of file

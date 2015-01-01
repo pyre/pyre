@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -20,7 +20,7 @@ and clients are expected to build timers through it. For example, the sequence
     .
     t.stop()
     elapsed = t.read()
-    
+
 produces a timer, and registers it under the name "test". Timers must be started before any
 readings can take place. Stopping a timer prevents it from accumulating time, while {t.read}
 returns the total number of seconds the timer has been active. You can only {read} timers that
@@ -42,4 +42,4 @@ def newTimerRegistrar():
     return Registrar()
 
 
-# end of file 
+# end of file

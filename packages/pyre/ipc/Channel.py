@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -12,7 +12,7 @@ class Channel:
     A wrapper around the lower level IPC mechanisms that normalizes the sending and receiving
     of messages. See {Pipe} and {Socket} for concrete examples of encapsulation of the
     operating system services.
-    """ 
+    """
 
 
     # interface
@@ -66,4 +66,4 @@ class Channel:
             "class {.__name__!r} must implement 'write'".format(type(self)))
 
 
-# end of file 
+# end of file

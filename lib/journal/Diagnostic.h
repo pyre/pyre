@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_journal_Diagnostic_h)
@@ -55,7 +55,7 @@ protected:
 private:
     inline Diagnostic(const Diagnostic &);
     inline Diagnostic & operator=(const Diagnostic &);
-    
+
     // data members
 private:
     entry_t _entry;

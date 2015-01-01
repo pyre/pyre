@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -26,7 +26,7 @@ def test():
     min = pyre.calc.min(*nodes)
     max = pyre.calc.max(*nodes)
     average = pyre.calc.average(*nodes)
-    
+
     # check
     assert count.value == 10
     assert sum.value == 45
@@ -52,4 +52,4 @@ if __name__ == "__main__":
     assert tuple(Node._pyre_extent) == ()
 
 
-# end of file 
+# end of file

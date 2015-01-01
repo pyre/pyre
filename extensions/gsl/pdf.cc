@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 #include <portinfo>
@@ -19,10 +19,10 @@
 
 // uniform::sample
 const char * const gsl::pdf::uniform::sample__name__ = "uniform_sample";
-const char * const gsl::pdf::uniform::sample__doc__ = 
+const char * const gsl::pdf::uniform::sample__doc__ =
     "return a sample from the uniform distribution";
 
-PyObject * 
+PyObject *
 gsl::pdf::uniform::sample(PyObject *, PyObject * args) {
     // the arguments
     double a, b;
@@ -49,7 +49,7 @@ gsl::pdf::uniform::sample(PyObject *, PyObject * args) {
 const char * const gsl::pdf::uniform::density__name__ = "uniform_density";
 const char * const gsl::pdf::uniform::density__doc__ = "return the uniform distribution density";
 
-PyObject * 
+PyObject *
 gsl::pdf::uniform::density(PyObject *, PyObject * args) {
     // the arguments
     double x, a, b;
@@ -66,7 +66,7 @@ gsl::pdf::uniform::density(PyObject *, PyObject * args) {
 const char * const gsl::pdf::uniform::vector__name__ = "uniform_vector";
 const char * const gsl::pdf::uniform::vector__doc__ = "fill a vector with random values";
 
-PyObject * 
+PyObject *
 gsl::pdf::uniform::vector(PyObject *, PyObject * args) {
     // the arguments
     double a, b;
@@ -94,7 +94,7 @@ gsl::pdf::uniform::vector(PyObject *, PyObject * args) {
     gsl_rng * rng =
         static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
     // get the vector
-    gsl_vector * v = 
+    gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
     // fill
     for (size_t i = 0; i < v->size; i++) {
@@ -111,7 +111,7 @@ gsl::pdf::uniform::vector(PyObject *, PyObject * args) {
 const char * const gsl::pdf::uniform::matrix__name__ = "uniform_matrix";
 const char * const gsl::pdf::uniform::matrix__doc__ = "fill a matrix with random values";
 
-PyObject * 
+PyObject *
 gsl::pdf::uniform::matrix(PyObject *, PyObject * args) {
     // the arguments
     double a, b;
@@ -139,7 +139,7 @@ gsl::pdf::uniform::matrix(PyObject *, PyObject * args) {
     gsl_rng * rng =
         static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
     // fill
     for (size_t i = 0; i < m->size1; i++) {
@@ -156,10 +156,10 @@ gsl::pdf::uniform::matrix(PyObject *, PyObject * args) {
 
 // gaussian::sample
 const char * const gsl::pdf::gaussian::sample__name__ = "gaussian_sample";
-const char * const gsl::pdf::gaussian::sample__doc__ = 
+const char * const gsl::pdf::gaussian::sample__doc__ =
     "return a sample from the gaussian distribution";
 
-PyObject * 
+PyObject *
 gsl::pdf::gaussian::sample(PyObject *, PyObject * args) {
     // the arguments
     double sigma;
@@ -190,7 +190,7 @@ gsl::pdf::gaussian::sample(PyObject *, PyObject * args) {
 const char * const gsl::pdf::gaussian::density__name__ = "gaussian_density";
 const char * const gsl::pdf::gaussian::density__doc__ = "return the gaussian distribution density";
 
-PyObject * 
+PyObject *
 gsl::pdf::gaussian::density(PyObject *, PyObject * args) {
     // the arguments
     double x, sigma;
@@ -211,7 +211,7 @@ gsl::pdf::gaussian::density(PyObject *, PyObject * args) {
 const char * const gsl::pdf::gaussian::vector__name__ = "gaussian_vector";
 const char * const gsl::pdf::gaussian::vector__doc__ = "fill a vector with random values";
 
-PyObject * 
+PyObject *
 gsl::pdf::gaussian::vector(PyObject *, PyObject * args) {
     // the arguments
     double sigma;
@@ -239,7 +239,7 @@ gsl::pdf::gaussian::vector(PyObject *, PyObject * args) {
     gsl_rng * rng =
         static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
     // get the vector
-    gsl_vector * v = 
+    gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
     // fill
     for (size_t i = 0; i < v->size; i++) {
@@ -256,7 +256,7 @@ gsl::pdf::gaussian::vector(PyObject *, PyObject * args) {
 const char * const gsl::pdf::gaussian::matrix__name__ = "gaussian_matrix";
 const char * const gsl::pdf::gaussian::matrix__doc__ = "fill a matrix with random values";
 
-PyObject * 
+PyObject *
 gsl::pdf::gaussian::matrix(PyObject *, PyObject * args) {
     // the arguments
     double sigma;
@@ -284,7 +284,7 @@ gsl::pdf::gaussian::matrix(PyObject *, PyObject * args) {
     gsl_rng * rng =
         static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
     // fill
     for (size_t i = 0; i < m->size1; i++) {
@@ -301,10 +301,10 @@ gsl::pdf::gaussian::matrix(PyObject *, PyObject * args) {
 
 // ugaussian::sample
 const char * const gsl::pdf::ugaussian::sample__name__ = "ugaussian_sample";
-const char * const gsl::pdf::ugaussian::sample__doc__ = 
+const char * const gsl::pdf::ugaussian::sample__doc__ =
     "return a sample from the unit gaussian distribution";
 
-PyObject * 
+PyObject *
 gsl::pdf::ugaussian::sample(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -332,10 +332,10 @@ gsl::pdf::ugaussian::sample(PyObject *, PyObject * args) {
 
 // ugaussian::density
 const char * const gsl::pdf::ugaussian::density__name__ = "ugaussian_density";
-const char * const gsl::pdf::ugaussian::density__doc__ = 
+const char * const gsl::pdf::ugaussian::density__doc__ =
     "return the unit gaussian distribution density";
 
-PyObject * 
+PyObject *
 gsl::pdf::ugaussian::density(PyObject *, PyObject * args) {
     // the arguments
     double x;
@@ -356,7 +356,7 @@ gsl::pdf::ugaussian::density(PyObject *, PyObject * args) {
 const char * const gsl::pdf::ugaussian::vector__name__ = "ugaussian_vector";
 const char * const gsl::pdf::ugaussian::vector__doc__ = "fill a vector with random values";
 
-PyObject * 
+PyObject *
 gsl::pdf::ugaussian::vector(PyObject *, PyObject * args) {
     // the arguments
     PyObject * rngCapsule;
@@ -382,7 +382,7 @@ gsl::pdf::ugaussian::vector(PyObject *, PyObject * args) {
     gsl_rng * rng =
         static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
     // get the vector
-    gsl_vector * v = 
+    gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
     // fill
     for (size_t i = 0; i < v->size; i++) {
@@ -399,7 +399,7 @@ gsl::pdf::ugaussian::vector(PyObject *, PyObject * args) {
 const char * const gsl::pdf::ugaussian::matrix__name__ = "ugaussian_matrix";
 const char * const gsl::pdf::ugaussian::matrix__doc__ = "fill a matrix with random values";
 
-PyObject * 
+PyObject *
 gsl::pdf::ugaussian::matrix(PyObject *, PyObject * args) {
     // the arguments
     PyObject * rngCapsule;
@@ -425,7 +425,7 @@ gsl::pdf::ugaussian::matrix(PyObject *, PyObject * args) {
     gsl_rng * rng =
         static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
     // fill
     for (size_t i = 0; i < m->size1; i++) {
@@ -444,7 +444,7 @@ gsl::pdf::ugaussian::matrix(PyObject *, PyObject * args) {
 const char * const gsl::pdf::dirichlet::vector__name__ = "dirichlet_vector";
 const char * const gsl::pdf::dirichlet::vector__doc__ = "fill a vector with random values";
 
-PyObject * 
+PyObject *
 gsl::pdf::dirichlet::vector(PyObject *, PyObject * args) {
     // the arguments
     PyObject * rngCapsule;
@@ -478,10 +478,10 @@ gsl::pdf::dirichlet::vector(PyObject *, PyObject * args) {
     gsl_rng * rng =
         static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
     // get the vector
-    gsl_vector * alpha = 
+    gsl_vector * alpha =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(alphaCapsule, gsl::vector::capsule_t));
     // get the vector
-    gsl_vector * v = 
+    gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
 
     // get the order of the pdf
@@ -504,7 +504,7 @@ gsl::pdf::dirichlet::vector(PyObject *, PyObject * args) {
 const char * const gsl::pdf::dirichlet::matrix__name__ = "dirichlet_matrix";
 const char * const gsl::pdf::dirichlet::matrix__doc__ = "fill a matrix with random values";
 
-PyObject * 
+PyObject *
 gsl::pdf::dirichlet::matrix(PyObject *, PyObject * args) {
     // the arguments
     PyObject * rngCapsule;
@@ -537,10 +537,10 @@ gsl::pdf::dirichlet::matrix(PyObject *, PyObject * args) {
     gsl_rng * rng =
         static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
     // get the vector
-    gsl_vector * alpha = 
+    gsl_vector * alpha =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(alphaCapsule, gsl::vector::capsule_t));
     // get the matrix
-    gsl_matrix * m = 
+    gsl_matrix * m =
         static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
 
     // get the order of the pdf

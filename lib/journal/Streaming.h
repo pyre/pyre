@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_journal_Streaming_h)
@@ -31,7 +31,7 @@ private:
     // disallow
     inline Streaming(const Streaming &);
     inline const Streaming & operator=(const Streaming &);
-    
+
     // data members
 private:
     stream_t & _stream;

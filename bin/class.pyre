@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -44,7 +44,7 @@ class cxxcls(pyre.application):
         # build and return the absolute path to the {class} template
         return os.path.join(pyre.prefix, 'templates', 'class.{.language}'.format(self))
 
-    
+
     # application obligations
     @pyre.export
     def main(self, *args, **kwds):
@@ -57,7 +57,7 @@ class cxxcls(pyre.application):
         targets = tuple(
             (nameserver.interpolate(expression=entry), node)
             for entry, node in template.contents.items() )
-        
+
         # check whether any of the target files exist already
         for filename,_ in targets:
             # if the file exists already
@@ -66,7 +66,7 @@ class cxxcls(pyre.application):
                 self.error.log("{!r} exists already".format(filename))
                 # report failure
                 return 1
-            
+
         # make a local filesystem rooted at the current directory
         cwd = self.vfs.local(root='.')
         # go through all the files
@@ -98,4 +98,4 @@ if __name__ == '__main__':
     sys.exit(status)
 
 
-# end of file 
+# end of file

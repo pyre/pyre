@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -51,13 +51,13 @@ class study(activity, family='toy.tasks.study'):
 
     description = 'studying'
     duration = pyre.properties.dimensional(default=2*task.hour)
-    
+
 
 class patrol(activity, family='toy.tasks.patrol'):
 
     description = 'patrolling'
     duration = pyre.properties.dimensional(default=1.5*task.hour)
-    
+
 
 # people
 class people(pyre.protocol, family='toy.people'):
@@ -85,11 +85,11 @@ class person(pyre.component, family='toy.people.person', implements=people):
         """perform my activities"""
         # print("{.pyre_spec!r}:".format(self))
         # print("  friends:")
-        # for name, friend in self.friends.items(): 
+        # for name, friend in self.friends.items():
             # print("    {!r}: {.pyre_spec!r}".format(name, friend))
             #print("    {0.pyre_spec!r}: {0}".format(friend))
         # print("  activities:", self.activities)
-        # for activity in self.activities: 
+        # for activity in self.activities:
             # print("    {0.pyre_spec!r}: {0}".format(activity))
         # perform each activity
         for activity in self.activities: yield activity.perform()
@@ -109,4 +109,4 @@ class policeman(person, family='toy.people.policeman'):
     activities = pyre.properties.list(schema=task(default=patrol))
 
 
-# end of file 
+# end of file

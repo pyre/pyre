@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -43,7 +43,7 @@ class Executive:
     externals = None # the manager of external tools and libraries
 
     # the runtime environment; patched during discovery
-    host = None 
+    host = None
     user = None
     terminal = None
     environ = None
@@ -119,9 +119,9 @@ class Executive:
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
 
-        {uri} encodes the descriptor using the URI specification 
+        {uri} encodes the descriptor using the URI specification
             scheme://authority/address#name
-        where 
+        where
             {scheme}: the resolution mechanism
             {authority}: the process that will perform the resolution
             {address}: the location of the component descriptor
@@ -334,7 +334,7 @@ class Executive:
         package.register(executive=self, file=file)
         # configure it
         package.configure(executive=self, locator=locator)
-        
+
         # all done
         return package
 
@@ -386,7 +386,7 @@ class Executive:
         """
         # access the factory
         from .Linker import Linker
-        # build one 
+        # build one
         linker = Linker(**kwds)
         # initialize it
         linker.prime(executive=self)
@@ -402,7 +402,7 @@ class Executive:
         from ..config.CommandLineParser import CommandLineParser
         # build one
         parser = CommandLineParser(**kwds)
-        # register the local handlers 
+        # register the local handlers
         parser.handlers['config'] = self._configurationLoader
         # and return the parser
         return parser
@@ -496,7 +496,7 @@ class Executive:
         for info, slot in knownHosts:
             # get the regular expression from the slot value
             regex = slot.value
-            # if my hostname matches 
+            # if my hostname matches
             if re.match(regex, host.hostname):
                 # extract the nickname as the last part of the key name
                 host.nickname = nameserver.split(info.name)[-1]
@@ -514,7 +514,7 @@ class Executive:
         stem = 'pyre/hosts/{}'.format(host.nickname)
         # attempt to load any matching configuration files
         self.configure(stem=stem, priority=self.priority.user, locator=here)
-        
+
         # instantiate the host information store and attach it
         self.host = host(name='pyre.host')
 
@@ -563,4 +563,4 @@ class Executive:
         return
 
 
-# end of file 
+# end of file

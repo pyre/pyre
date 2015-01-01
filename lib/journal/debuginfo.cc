@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // build system
 #include <portinfo>
@@ -79,7 +79,7 @@ void debuginfo_out(const char * channel, __HERE_DECL__, const char * fmt, ...)
         va_start(args, fmt);
         std::vsprintf(buffer, fmt, args);
         va_end(args);
-    
+
         // log the message
         debug
             << pyre::journal::Locator(__HERE_ARGS__)

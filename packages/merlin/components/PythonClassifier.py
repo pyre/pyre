@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -44,7 +44,7 @@ class PythonClassifier(merlin.component):
             if not ext == '.py': return None
             # otherwise
             return self.pythonmodule(name=name, uri=uri)
-            
+
         # otherwise it is a folder
         if node.isFolder:
             # go through the contents looking for a filename that matches my init recognizer
@@ -67,9 +67,9 @@ class PythonClassifier(merlin.component):
                 package.contents[asset.name] = asset
             # and hand it to the caller
             return package
-    
+
         # if everything fails, return empty handed
         return None
 
 
-# end of file 
+# end of file

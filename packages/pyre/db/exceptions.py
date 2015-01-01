@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -66,7 +66,7 @@ class InternalError(DatabaseError):
     """
     Exception raised when the back end reports an internal error
     """
-    
+
 
 class ProgrammingError(DatabaseError):
     """
@@ -88,4 +88,4 @@ class NotSupportedError(DatabaseError):
     """
 
 
-# end of file 
+# end of file

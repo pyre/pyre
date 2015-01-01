@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 
@@ -40,7 +40,7 @@ buildResultTuple(PGresult * result)
     PyObject * data = PyTuple_New(tuples+1);
 
     // build a tuple to hold the names of the fields
-    PyObject * header = PyTuple_New(fields); 
+    PyObject * header = PyTuple_New(fields);
     // populate the header tuple with the names of the fields
     for (int field = 0; field < fields; field++) {
         // add the field name to the tuple
@@ -90,7 +90,7 @@ buildResultTuple(PGresult * result)
     // iterate over the rows
     for (int tuple = 0; tuple < tuples; tuple++) {
         // build a tuple to hold this row
-        PyObject * row = PyTuple_New(fields); 
+        PyObject * row = PyTuple_New(fields);
         // iterate over the data fields
         for (int field = 0; field < fields; field++) {
 
@@ -125,7 +125,7 @@ processResult(string_t command, PGresult * result, resultProcessor_t processor)
 {
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug 
+    debug
         << pyre::journal::at(__HERE__)
         << "analyzing result set"
         << pyre::journal::endl;
@@ -146,7 +146,7 @@ processResult(string_t command, PGresult * result, resultProcessor_t processor)
         // the command was executed successfully
         // diagnostics
         if (debug.isActive()) {
-            debug 
+            debug
                 << pyre::journal::at(__HERE__)
                 << "success: " << PQcmdStatus(result)
                 << pyre::journal::endl;
@@ -160,9 +160,9 @@ processResult(string_t command, PGresult * result, resultProcessor_t processor)
         if (debug.isActive()) {
             int fields = PQnfields(result);
             int tuples = PQntuples(result);
-            debug 
+            debug
                 << pyre::journal::at(__HERE__)
-                << "success: " 
+                << "success: "
                 << tuples << " tuple" << (tuples == 1 ? "" : "s")
                 << " with " << fields << " field" << (fields == 1 ? "" : "s") << " each"
                 << pyre::journal::endl;
@@ -206,7 +206,7 @@ pyre::extensions::postgres::
 raiseProgrammingError(string_t description, string_t command)
 {
     PyObject * args = PyTuple_New(0);
-    PyObject * kwds = Py_BuildValue("{s:s, s:s}", 
+    PyObject * kwds = Py_BuildValue("{s:s, s:s}",
                                     "description", description,
                                     "command", command
                                     );

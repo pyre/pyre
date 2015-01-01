@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -56,4 +56,4 @@ class Renderer(pyre.protocol, family="journal.renderers"):
     ansi = {'ansi', 'vt102', 'vt220', 'vt320', 'vt420', 'xterm', 'xterm-color'}
 
 
-# end of file 
+# end of file

@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -24,11 +24,11 @@ const char * const
 pyre::extensions::journal::
 lookupDebug__name__ = "lookupDebugInventory";
 
-const char * const 
+const char * const
 pyre::extensions::journal::
 lookupDebug__doc__ = "get the channel state from the debug index";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 lookupDebug(PyObject *, PyObject * args)
 {
@@ -50,11 +50,11 @@ const char * const
 pyre::extensions::journal::
 lookupFirewall__name__ = "lookupFirewallInventory";
 
-const char * const 
+const char * const
 pyre::extensions::journal::
 lookupFirewall__doc__ = "get the channel state from the firewall index";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 lookupFirewall(PyObject *, PyObject * args)
 {
@@ -76,11 +76,11 @@ const char * const
 pyre::extensions::journal::
 lookupInfo__name__ = "lookupInfoInventory";
 
-const char * const 
+const char * const
 pyre::extensions::journal::
 lookupInfo__doc__ = "get the channel state from the info index";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 lookupInfo(PyObject *, PyObject * args)
 {
@@ -102,11 +102,11 @@ const char * const
 pyre::extensions::journal::
 lookupWarning__name__ = "lookupWarningInventory";
 
-const char * const 
+const char * const
 pyre::extensions::journal::
 lookupWarning__doc__ = "get the channel state from the warning index";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 lookupWarning(PyObject *, PyObject * args)
 {
@@ -128,11 +128,11 @@ const char * const
 pyre::extensions::journal::
 lookupError__name__ = "lookupErrorInventory";
 
-const char * const 
+const char * const
 pyre::extensions::journal::
 lookupError__doc__ = "get the channel state from the error index";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 lookupError(PyObject *, PyObject * args)
 {
@@ -158,7 +158,7 @@ const char * const
 pyre::extensions::journal::
 setEnabledState__doc__ = "set the state of a normally enabled channel";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 setEnabledState(PyObject *, PyObject * args)
 {
@@ -197,7 +197,7 @@ const char * const
 pyre::extensions::journal::
 getEnabledState__doc__ = "get the state of a normally enabled channel";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 getEnabledState(PyObject *, PyObject * args)
 {
@@ -229,7 +229,7 @@ const char * const
 pyre::extensions::journal::
 setDisabledState__doc__ = "set the state of a normally disabled channel";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 setDisabledState(PyObject *, PyObject * args)
 {
@@ -268,7 +268,7 @@ const char * const
 pyre::extensions::journal::
 getDisabledState__doc__ = "get the state of a normally disabled channel";
 
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 getDisabledState(PyObject *, PyObject * args)
 {

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -38,7 +38,7 @@ class Linker:
         codec = self.codecs[uri.scheme]
         # get it load the shelf and return it
         return codec.load(executive=executive, uri=uri)
-        
+
 
     def resolve(self, executive, protocol, uri, **kwds):
         """
@@ -72,7 +72,7 @@ class Linker:
                 executive=executive, protocol=protocol, uri=candidate, **kwds)
 
         # out of ideas
-        return 
+        return
 
 
     # meta-methods
@@ -120,6 +120,6 @@ class Linker:
 
     # constants
     SCHEMES = [ 'vfs', 'import' ]
-        
-        
-# end of file 
+
+
+# end of file

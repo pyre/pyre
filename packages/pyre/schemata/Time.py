@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -18,7 +18,7 @@ class Time(Schema):
     A type declarator for timestamps
     """
 
-    
+
     # constants
     format = "%Y-%m-%d %H:%M:%S" # the default format
     typename = 'time' # the name of my type
@@ -37,7 +37,7 @@ class Time(Schema):
             # in which case just return it
             return value
 
-        # otherwise attempt to 
+        # otherwise attempt to
         try:
            # cast {value} into a timestamp
             return datetime.datetime.strptime(value, self.format)
@@ -57,4 +57,4 @@ class Time(Schema):
         return
 
 
-# end of file 
+# end of file

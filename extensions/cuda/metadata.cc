@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -14,34 +14,34 @@
 #define CUDA_VERSION "1.0"
 
 // copyright
-PyObject * 
+PyObject *
 pyre::extensions::cuda::
 copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "cuda: (c) 1998-2014 orthologue";
+    const char * const copyright_note = "cuda: (c) 1998-2015 orthologue";
     return Py_BuildValue("s", copyright_note);
 }
-    
+
 
 // version
-PyObject * 
+PyObject *
 pyre::extensions::cuda::
 version(PyObject *, PyObject *)
 {
     const char * const version_string = "1.0";
     return Py_BuildValue("s", version_string);
 }
-    
+
 
 // license
-PyObject * 
+PyObject *
 pyre::extensions::cuda::
 license(PyObject *, PyObject *)
 {
-    const char * const license_string = 
+    const char * const license_string =
         "\n"
         "    cuda " CUDA_VERSION "\n"
-        "    Copyright (c) 1998-2014 orthologue\n"
+        "    Copyright (c) 1998-2015 orthologue\n"
         "    All Rights Reserved\n"
         "\n"
         "    Redistribution and use in source and binary forms, with or without\n"
@@ -75,6 +75,6 @@ license(PyObject *, PyObject *)
 
     return Py_BuildValue("s", license_string);
 }
-    
+
 
 // end of file

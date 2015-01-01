@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -20,4 +20,4 @@ class sample(merlin.spell, family="merlin.spells.sample"):
         return "{.pyre_name}: main".format(self)
 
 
-# end of file 
+# end of file

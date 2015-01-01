@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -83,7 +83,7 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
 
         # add python, the command line arguments to this script, and the autospawn marker
         argv += [interpreter] + sys.argv + ['--{.pyre_name}.autospawn=no'.format(self)]
-        
+
         # set the subprocess options
         options = {
             'args': argv,

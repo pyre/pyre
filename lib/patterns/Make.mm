@@ -4,7 +4,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 PROJECT = pyre
@@ -22,4 +22,4 @@ release:: release-package-headers
 EXPORT_PKG_HEADERS = \
     Registrar.h Registrar.icc
 
-# end of file 
+# end of file

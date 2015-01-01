@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 // for the build system
@@ -70,7 +70,7 @@ namespace gsl {
         { histogram::uniform__name__, histogram::uniform, METH_VARARGS, histogram::uniform__doc__ },
         { histogram::ranges__name__, histogram::ranges, METH_VARARGS, histogram::ranges__doc__ },
         { histogram::reset__name__, histogram::reset, METH_VARARGS, histogram::reset__doc__ },
-        { histogram::increment__name__, histogram::increment, METH_VARARGS, 
+        { histogram::increment__name__, histogram::increment, METH_VARARGS,
           histogram::increment__doc__ },
         { histogram::accumulate__name__, histogram::accumulate, METH_VARARGS,
           histogram::accumulate__doc__ },

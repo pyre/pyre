@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -28,7 +28,7 @@ def test():
     odd = whole.difference(even)
     # and the matching communicator
     new = world.restrict(odd)
-   
+
     # check
     # if I have even rank
     if world.rank % 2 == 0:
@@ -42,7 +42,7 @@ def test():
         assert new.size == world.size // 2
         # and my ranks must be related
         assert new.rank == world.rank // 2
-        
+
     return
 
 
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -2,12 +2,12 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
 """
-This file collects the table declarations for the {bizbook} database from 
+This file collects the table declarations for the {bizbook} database from
 
     "The Practical SQL Handbook", Second Edition
     Judith S. Bowman
@@ -128,4 +128,4 @@ class InvoiceItem(pyre.db.table, id="invoice_item"):
     date = pyre.db.str()
 
 
-# end of file 
+# end of file

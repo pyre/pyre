@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -19,4 +19,4 @@ from .Gaussian import Gaussian as gaussian
 from .One import One as one
 
 
-# end of file 
+# end of file

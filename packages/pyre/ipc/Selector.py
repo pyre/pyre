@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -129,7 +129,7 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
             # raise the overdue alarms
             self._debug.log('    raising the alarms')
             self.awaken()
-            
+
         # all done
         return
 
@@ -143,7 +143,7 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         for active in entities:
             # invoke the event handlers and save the events whose handlers return {True}
             events = list(
-                event for event in index[active] 
+                event for event in index[active]
                 if event.handler(selector=self, channel=event.channel)
                 )
             # if no handlers requested to be rescheduled
@@ -193,4 +193,4 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
     del journal
 
 
-# end of file 
+# end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -76,7 +76,7 @@ def identical(s1, s2):
         if n1 is not n2: return False
     # all done
     return True
-            
+
 
 # main
 if __name__ == "__main__":
@@ -86,4 +86,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

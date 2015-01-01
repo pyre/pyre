@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -45,7 +45,7 @@ class Chart(metaclass=Surveyor):
         bins = (getattr(self, name)[value] for name, value in kwds.items())
         # build and return the restriction
         return set.intersection(*bins)
-        
+
 
     # meta-methods
     def __init__(self, sheet, **kwds):
@@ -57,4 +57,4 @@ class Chart(metaclass=Surveyor):
         return
 
 
-# end of file 
+# end of file

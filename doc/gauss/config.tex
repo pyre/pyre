@@ -3,7 +3,7 @@
 %
 % michael a.g. aïvázis
 % orthologue
-% (c) 1998-2014 all rights reserved
+% (c) 1998-2015 all rights reserved
 %
 
 % language
@@ -74,31 +74,31 @@
 \lstset{
   columns=flexible,
   upquote=true,
-  % 
+  %
   aboveskip=\medskipamount,
   belowskip=\bigskipamount,
   % abovecaptionskip=\medskipamount,
   % belowcaptionskip=\medskipamount,
-  % 
+  %
   numbers=left,
   numberstyle=\color{linenumbercolor}\tiny,
   firstnumber=auto,
   stepnumber=1,
   numbersep=5pt,
   numberblanklines=true,
-  % 
+  %
   basicstyle=\tt\scriptsize,
   keywordstyle=\color{keywordcolor},
   commentstyle=\color{commentcolor}\slshape,
   stringstyle=\color{stringcolor}\slshape,
   showstringspaces=false,
-  % 
+  %
   frame=tb,
   captionpos=t,
   backgroundcolor=\color{listingbgcolor},
   xleftmargin=0em,
   xrightmargin=0em,
-  % 
+  %
   literate={π}{{$\pi$}}1 {μ}{{$\mu$}}1 {σ}{{$\sigma$}}1 {ö}{{\"o}}1
 }
 
@@ -108,13 +108,13 @@
   morekeywords={as,self,yield,False,True,None},
   escapeinside={\#@}{@},#1]
   {#2}}
-  
+
 \def\cfg#1#2{
   \lstinputlisting[%
   language=cfg,
   escapeinside={\;@}{@},#1]
   {#2}}
-  
+
 \def\C#1#2{
   \lstinputlisting[%
     language=C++,
@@ -162,4 +162,4 @@
   }}{#2}
 
 
-% end of file 
+% end of file

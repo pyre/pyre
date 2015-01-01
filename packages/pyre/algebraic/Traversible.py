@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -122,10 +122,10 @@ class Traversible:
             # otherwise, perform the substitution
             node._substitute(current=current, replacement=replacement)
             # mark this node as clean
-            clean.add(node)        
-            
+            clean.add(node)
+
         # all done
         return
 
 
-# end of file 
+# end of file

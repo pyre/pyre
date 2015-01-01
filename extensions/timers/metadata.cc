@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -12,23 +12,23 @@
 
 
 // copyright
-PyObject * 
+PyObject *
 pyre::extensions::timers::
 copyright(PyObject *, PyObject *)
 {
-    const char * const copyright_note = "timers: (c) 1998-2014 Michael A.G. Aïvázis";
+    const char * const copyright_note = "timers: (c) 1998-2015 Michael A.G. Aïvázis";
     return Py_BuildValue("s", copyright_note);
 }
-    
+
 
 // version
-PyObject * 
+PyObject *
 pyre::extensions::timers::
 version(PyObject *, PyObject *)
 {
     const char * const version_string = "1.0";
     return Py_BuildValue("s", version_string);
 }
-    
+
 
 // end of file

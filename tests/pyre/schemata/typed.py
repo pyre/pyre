@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2012 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 """
@@ -42,7 +42,7 @@ def test():
     # check it
     assert b.coerce('y,n,yes,no,on,off') == [True, False, True, False, True, False]
     # check that it doesn't have the other types
-    try: 
+    try:
         # by accessing one of them
         t3.int
         assert False
@@ -63,4 +63,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

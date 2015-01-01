@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 # externals
@@ -17,19 +17,19 @@ class Info(merlin.spell):
 
 
     # public state
-    all = merlin.properties.bool(default=False) 
+    all = merlin.properties.bool(default=False)
     all.doc = 'display all available information'
 
-    assets = merlin.properties.bool(default=False) 
+    assets = merlin.properties.bool(default=False)
     assets.doc = 'controls whether to display asset information'
 
-    project = merlin.properties.bool(default=True) 
+    project = merlin.properties.bool(default=True)
     project.doc = 'controls whether to display project information'
 
-    user = merlin.properties.bool(default=False) 
+    user = merlin.properties.bool(default=False)
     user.doc = 'controls whether to display user information'
 
-    host = merlin.properties.bool(default=False) 
+    host = merlin.properties.bool(default=False)
     host.doc = 'controls whether to display host information'
 
 
@@ -100,11 +100,11 @@ class Info(merlin.spell):
                 asset = merlin.curator.load(node)
                 # print a marker
                 self.info.line('  {}: {}'.format(asset.name, asset.category))
-            # no more assets    
+            # no more assets
             self.info.log()
 
         # all done
         return
 
 
-# end of file 
+# end of file

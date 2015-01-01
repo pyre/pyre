@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -39,7 +39,7 @@ def test():
     except interval.ConstraintViolationError as error:
         assert error.constraint is interval.left.validators[0]
         assert error.value == 1
-        
+
     # and again
     try:
         invalid.right
@@ -47,7 +47,7 @@ def test():
     except interval.ConstraintViolationError as error:
         assert error.constraint is interval.right.validators[0]
         assert error.value == -1
-        
+
     return interval
 
 
@@ -59,4 +59,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -11,7 +11,7 @@
 Verify that the implementation of Observable works as advertised
 """
 
-  
+
 def test():
     from pyre.patterns.Observable import Observable
 
@@ -49,7 +49,7 @@ def test():
         def _update(self, node):
             self.cache = node.value
             return
-    
+
     n = node(0)
     p = probe(n)
     n.value = 3.14159
@@ -67,4 +67,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

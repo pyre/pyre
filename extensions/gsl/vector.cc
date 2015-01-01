@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 #include <portinfo>
@@ -24,7 +24,7 @@
 const char * const gsl::vector::alloc__name__ = "vector_alloc";
 const char * const gsl::vector::alloc__doc__ = "allocate a vector";
 
-PyObject * 
+PyObject *
 gsl::vector::alloc(PyObject *, PyObject * args) {
     // place holders for the python arguments
     size_t shape;
@@ -46,14 +46,14 @@ gsl::vector::alloc(PyObject *, PyObject * args) {
 const char * const gsl::vector::view_alloc__name__ = "vector_view_alloc";
 const char * const gsl::vector::view_alloc__doc__ = "allocate a vector view";
 
-PyObject * 
+PyObject *
 gsl::vector::view_alloc(PyObject *, PyObject * args) {
     // place holders for the python arguments
     size_t origin;
     size_t shape;
     PyObject * capsule;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, 
+    int status = PyArg_ParseTuple(args,
                                   "O!kk:vector_view_alloc",
                                   &PyCapsule_Type, &capsule,
                                   &origin, &shape);
@@ -88,7 +88,7 @@ gsl::vector::view_alloc(PyObject *, PyObject * args) {
 const char * const gsl::vector::zero__name__ = "vector_zero";
 const char * const gsl::vector::zero__doc__ = "zero out the elements of a vector";
 
-PyObject * 
+PyObject *
 gsl::vector::zero(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -117,7 +117,7 @@ gsl::vector::zero(PyObject *, PyObject * args) {
 const char * const gsl::vector::fill__name__ = "vector_fill";
 const char * const gsl::vector::fill__doc__ = "set all elements of a vector to a value";
 
-PyObject * 
+PyObject *
 gsl::vector::fill(PyObject *, PyObject * args) {
     // the arguments
     double value;
@@ -148,7 +148,7 @@ gsl::vector::fill(PyObject *, PyObject * args) {
 const char * const gsl::vector::basis__name__ = "vector_basis";
 const char * const gsl::vector::basis__doc__ = "build a basis vector";
 
-PyObject * 
+PyObject *
 gsl::vector::basis(PyObject *, PyObject * args) {
     // the arguments
     size_t index;
@@ -179,14 +179,14 @@ gsl::vector::basis(PyObject *, PyObject * args) {
 const char * const gsl::vector::copy__name__ = "vector_copy";
 const char * const gsl::vector::copy__doc__ = "build a copy of a vector";
 
-PyObject * 
+PyObject *
 gsl::vector::copy(PyObject *, PyObject * args) {
     // the arguments
     PyObject * sourceCapsule;
     PyObject * destinationCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:vector_copy", 
+                                  args, "O!O!:vector_copy",
                                   &PyCapsule_Type, &destinationCapsule,
                                   &PyCapsule_Type, &sourceCapsule
                                   );
@@ -221,7 +221,7 @@ gsl::vector::copy(PyObject *, PyObject * args) {
 const char * const gsl::vector::read__name__ = "vector_read";
 const char * const gsl::vector::read__doc__ = "read the values of a vector from a file";
 
-PyObject * 
+PyObject *
 gsl::vector::read(PyObject *, PyObject * args) {
     // the arguments
     char * filename;
@@ -263,7 +263,7 @@ gsl::vector::read(PyObject *, PyObject * args) {
 const char * const gsl::vector::write__name__ = "vector_write";
 const char * const gsl::vector::write__doc__ = "write the values of a vector to a file";
 
-PyObject * 
+PyObject *
 gsl::vector::write(PyObject *, PyObject * args) {
     // the arguments
     char * filename;
@@ -306,7 +306,7 @@ gsl::vector::write(PyObject *, PyObject * args) {
 const char * const gsl::vector::get__name__ = "vector_get";
 const char * const gsl::vector::get__doc__ = "get the value of a vector element";
 
-PyObject * 
+PyObject *
 gsl::vector::get(PyObject *, PyObject * args) {
     // the arguments
     long index;
@@ -341,7 +341,7 @@ gsl::vector::get(PyObject *, PyObject * args) {
     // get the value
     double value = gsl_vector_get(v, i);
     // std::cout
-        // << " gsl.vector_get: vector@" << v << ", index=" << index << ", value=" << value 
+        // << " gsl.vector_get: vector@" << v << ", index=" << index << ", value=" << value
         // << std::endl;
 
     // return the value
@@ -352,7 +352,7 @@ gsl::vector::get(PyObject *, PyObject * args) {
 const char * const gsl::vector::set__name__ = "vector_set";
 const char * const gsl::vector::set__doc__ = "set the value of a vector element";
 
-PyObject * 
+PyObject *
 gsl::vector::set(PyObject *, PyObject * args) {
     // the arguments
     long index;
@@ -373,7 +373,7 @@ gsl::vector::set(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout
-        // << " gsl.vector_set: vector@" << v << ", index=" << index << ", value=" << value 
+        // << " gsl.vector_set: vector@" << v << ", index=" << index << ", value=" << value
         // << std::endl;
 
     // reflect negative indices about the end of the vector
@@ -402,7 +402,7 @@ gsl::vector::set(PyObject *, PyObject * args) {
 const char * const gsl::vector::contains__name__ = "vector_contains";
 const char * const gsl::vector::contains__doc__ = "check whether a given value appears in vector";
 
-PyObject * 
+PyObject *
 gsl::vector::contains(PyObject *, PyObject * args) {
     // the arguments
     double value;
@@ -420,7 +420,7 @@ gsl::vector::contains(PyObject *, PyObject * args) {
     // get the vector
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     // std::cout
-        // << " gsl.vector_contains: vector@" << v << ", index=" << index << ", value=" << value 
+        // << " gsl.vector_contains: vector@" << v << ", index=" << index << ", value=" << value
         // << std::endl;
 
     // the answer
@@ -447,7 +447,7 @@ gsl::vector::contains(PyObject *, PyObject * args) {
 const char * const gsl::vector::max__name__ = "vector_max";
 const char * const gsl::vector::max__doc__ = "find the largest value contained";
 
-PyObject * 
+PyObject *
 gsl::vector::max(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -475,7 +475,7 @@ gsl::vector::max(PyObject *, PyObject * args) {
 const char * const gsl::vector::min__name__ = "vector_min";
 const char * const gsl::vector::min__doc__ = "find the smallest value contained";
 
-PyObject * 
+PyObject *
 gsl::vector::min(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -502,10 +502,10 @@ gsl::vector::min(PyObject *, PyObject * args) {
 
 
 const char * const gsl::vector::minmax__name__ = "vector_minmax";
-const char * const gsl::vector::minmax__doc__ = 
+const char * const gsl::vector::minmax__doc__ =
     "find both the smallest and the largest value contained";
 
-PyObject * 
+PyObject *
 gsl::vector::minmax(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -523,8 +523,8 @@ gsl::vector::minmax(PyObject *, PyObject * args) {
     gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     double small, large;
     gsl_vector_minmax(v, &small, &large);
-    // std::cout 
-        // << " gsl.vector_max: vector@" << v << ", min=" << small << ", max=" << large 
+    // std::cout
+        // << " gsl.vector_max: vector@" << v << ", min=" << small << ", max=" << large
         // << std::endl;
 
     // build the answer
@@ -540,14 +540,14 @@ gsl::vector::minmax(PyObject *, PyObject * args) {
 const char * const gsl::vector::equal__name__ = "vector_equal";
 const char * const gsl::vector::equal__doc__ = "check two vectors for equality";
 
-PyObject * 
+PyObject *
 gsl::vector::equal(PyObject *, PyObject * args) {
     // the arguments
     PyObject * leftCapsule;
     PyObject * rightCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:vector_equal", 
+                                  args, "O!O!:vector_equal",
                                   &PyCapsule_Type, &rightCapsule,
                                   &PyCapsule_Type, &leftCapsule
                                   );
@@ -573,7 +573,7 @@ gsl::vector::equal(PyObject *, PyObject * args) {
     // the answer
     PyObject * answer = gsl_vector_equal(left, right) ? Py_True : Py_False;
 
-    // return 
+    // return
     Py_INCREF(answer);
     return answer;
 }
@@ -583,7 +583,7 @@ gsl::vector::equal(PyObject *, PyObject * args) {
 const char * const gsl::vector::add__name__ = "vector_add";
 const char * const gsl::vector::add__doc__ = "in-place addition of two vectors";
 
-PyObject * 
+PyObject *
 gsl::vector::add(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
@@ -617,14 +617,14 @@ gsl::vector::add(PyObject *, PyObject * args) {
 const char * const gsl::vector::sub__name__ = "vector_sub";
 const char * const gsl::vector::sub__doc__ = "in-place subtraction of two vectors";
 
-PyObject * 
+PyObject *
 gsl::vector::sub(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
     PyObject * other;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "O!O!:vector_sub", 
+                                  args, "O!O!:vector_sub",
                                   &PyCapsule_Type, &self, &PyCapsule_Type, &other);
     // if something went wrong
     if (!status) return 0;
@@ -651,7 +651,7 @@ gsl::vector::sub(PyObject *, PyObject * args) {
 const char * const gsl::vector::mul__name__ = "vector_mul";
 const char * const gsl::vector::mul__doc__ = "in-place multiplication of two vectors";
 
-PyObject * 
+PyObject *
 gsl::vector::mul(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
@@ -685,7 +685,7 @@ gsl::vector::mul(PyObject *, PyObject * args) {
 const char * const gsl::vector::div__name__ = "vector_div";
 const char * const gsl::vector::div__doc__ = "in-place division of two vectors";
 
-PyObject * 
+PyObject *
 gsl::vector::div(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
@@ -719,7 +719,7 @@ gsl::vector::div(PyObject *, PyObject * args) {
 const char * const gsl::vector::shift__name__ = "vector_shift";
 const char * const gsl::vector::shift__doc__ = "in-place addition of a constant to a vector";
 
-PyObject * 
+PyObject *
 gsl::vector::shift(PyObject *, PyObject * args) {
     // the arguments
     double value;
@@ -750,7 +750,7 @@ gsl::vector::shift(PyObject *, PyObject * args) {
 const char * const gsl::vector::scale__name__ = "vector_scale";
 const char * const gsl::vector::scale__doc__ = "in-place scaling of a vector by a constant";
 
-PyObject * 
+PyObject *
 gsl::vector::scale(PyObject *, PyObject * args) {
     // the arguments
     double value;
@@ -783,7 +783,7 @@ gsl::vector::scale(PyObject *, PyObject * args) {
 const char * const gsl::vector::sort__name__ = "vector_sort";
 const char * const gsl::vector::sort__doc__ = "in-place sort the elements of a vector";
 
-PyObject * 
+PyObject *
 gsl::vector::sort(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -811,10 +811,10 @@ gsl::vector::sort(PyObject *, PyObject * args) {
 
 // sortIndex
 const char * const gsl::vector::sortIndex__name__ = "vector_sortIndex";
-const char * const gsl::vector::sortIndex__doc__ = 
+const char * const gsl::vector::sortIndex__doc__ =
     "construct the permutation that would sort the elements of a vector";
 
-PyObject * 
+PyObject *
 gsl::vector::sortIndex(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -845,7 +845,7 @@ gsl::vector::sortIndex(PyObject *, PyObject * args) {
 const char * const gsl::vector::mean__name__ = "vector_mean";
 const char * const gsl::vector::mean__doc__ = "compute the mean of the elements of a vector";
 
-PyObject * 
+PyObject *
 gsl::vector::mean(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -889,10 +889,10 @@ gsl::vector::mean(PyObject *, PyObject * args) {
 
 // median
 const char * const gsl::vector::median__name__ = "vector_median";
-const char * const gsl::vector::median__doc__ = 
+const char * const gsl::vector::median__doc__ =
     "compute the median of the elements of a pre-sorted vector";
 
-PyObject * 
+PyObject *
 gsl::vector::median(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -922,7 +922,7 @@ const char * const gsl::vector::variance__name__ = "vector_variance";
 const char * const gsl::vector::variance__doc__ =
     "compute the variance of the elements of a vector";
 
-PyObject * 
+PyObject *
 gsl::vector::variance(PyObject *, PyObject * args) {
     // the arguments
     PyObject * mean;
@@ -964,7 +964,7 @@ const char * const gsl::vector::sdev__name__ = "vector_sdev";
 const char * const gsl::vector::sdev__doc__ =
     "compute the standard deviation of the elements of a vector";
 
-PyObject * 
+PyObject *
 gsl::vector::sdev(PyObject *, PyObject * args) {
     // the arguments
     PyObject * mean;
@@ -1002,13 +1002,13 @@ gsl::vector::sdev(PyObject *, PyObject * args) {
 
 
 // destructors
-void 
+void
 gsl::vector::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::vector::capsule_t)) return;
     // get the vector
-    gsl_vector * v = 
+    gsl_vector * v =
         static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, gsl::vector::capsule_t));
     // std::cout << " gsl.vector_free: vector@" << v << std::endl;
     // deallocate
@@ -1018,13 +1018,13 @@ gsl::vector::free(PyObject * capsule)
 }
 
 
-void 
+void
 gsl::vector::freeview(PyObject * capsule)
 {
     // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, gsl::vector::view_t)) return;
     // get the vector view
-    gsl_vector_view * v = 
+    gsl_vector_view * v =
         static_cast<gsl_vector_view *>(PyCapsule_GetPointer(capsule, gsl::vector::view_t));
     // deallocate
     delete v;

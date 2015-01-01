@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -59,7 +59,7 @@ class SymbolTable:
         # otherwise, build an expression
         return self.node.expression(
             model=self, expression=value, program=program, operands=operands, **kwds)
-            
+
 
     def interpolation(self, value, **kwds):
         """
@@ -108,7 +108,7 @@ class SymbolTable:
         # easy enough
         return self.node.variable(**kwds)
 
-            
+
     def literal(self, **kwds):
         """
         Build a literal node
@@ -219,4 +219,4 @@ class SymbolTable:
     _nodes = None
 
 
-# end of file 
+# end of file

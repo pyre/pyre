@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -55,7 +55,7 @@ class Loader:
                                      **kwds):
             # got one; attempt to
             try:
-                # look for our symbol 
+                # look for our symbol
                 descriptor = shelf.retrieveSymbol(symbol)
             # if not there
             except shelf.SymbolNotFoundError:
@@ -83,7 +83,7 @@ class Loader:
                 package = implementor.pyre_package()
                 # and yield ones whose package name matches our symbol
                 if package and package.name == symbol: yield implementor
-            
+
         # out of ideas
         return
 
@@ -144,4 +144,4 @@ class Loader:
         return
 
 
-# end of file 
+# end of file

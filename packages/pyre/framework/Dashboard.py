@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -15,7 +15,7 @@ class Dashboard:
 
     # public data
     # the executive
-    pyre_executive = None 
+    pyre_executive = None
 
     # framework parts
     pyre_fileserver = None
@@ -32,4 +32,4 @@ class Dashboard:
     pyre_user = None # the current user
 
 
-# end of file 
+# end of file

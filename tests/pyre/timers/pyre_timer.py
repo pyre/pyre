@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -21,7 +21,7 @@ def test():
 
     # start it
     t.start()
-    # stop it 
+    # stop it
     t.stop()
     # read it
     assert t.read() != 0
@@ -36,7 +36,7 @@ def test():
     # reset it
     t.reset()
     assert t.read() == 0
-    
+
     return t
 
 
@@ -45,4 +45,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

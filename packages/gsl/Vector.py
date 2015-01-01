@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -159,7 +159,7 @@ class Vector:
         from .VectorView import VectorView
         # build and return one
         return VectorView(vector=self, start=start, shape=shape)
-        
+
 
     def read(self, filename):
         """
@@ -343,7 +343,7 @@ class Vector:
         # we have a slice; assume {value} is a compatible iterable
         try:
             # iterate over the slice and the values
-            for i,v in zip(range(*index.indices(self.shape)), value):    
+            for i,v in zip(range(*index.indices(self.shape)), value):
                 # and set the corresponding vector element
                 gsl.vector_set(self.data, i, v)
         except TypeError:
@@ -463,4 +463,4 @@ class Vector:
     data = None
 
 
-# end of file 
+# end of file

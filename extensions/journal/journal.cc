@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -67,7 +67,7 @@ namespace pyre {
                 // header
                 PyModuleDef_HEAD_INIT,
                 // the name of the module
-                "journal", 
+                "journal",
                 // the module documentation string
                 __doc__,
                 // size of the per-interpreter state of the module; -1 if this state is global

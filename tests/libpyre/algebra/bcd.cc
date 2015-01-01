@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 // build system
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     // exercise the overflow logic
     bcd almost(0,9);
     assert(almost + almost == 1.8);
-    
+
     // all done
     return 0;
 }

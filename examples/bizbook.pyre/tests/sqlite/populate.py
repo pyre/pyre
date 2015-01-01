@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -235,7 +235,7 @@ def test():
         )
     # add them to their table
     for member in people: db.insert(member)
-    
+
     # make some books
     book = bizbook.schema.Book
     books = (
@@ -498,7 +498,7 @@ def test():
         )
     # add them to their table
     for invoice in invoices: db.insert(invoice)
-    
+
     # make some line items
     item = bizbook.schema.InvoiceItem
     items = (
@@ -528,7 +528,7 @@ def test():
     for item in items: db.insert(item)
 
     db.connection.commit()
-    
+
     # and return the component
     return db
 
@@ -538,4 +538,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

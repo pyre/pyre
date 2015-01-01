@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -46,7 +46,7 @@ class Node:
         except KeyError as error:
            msg = "unknown tag {0!r}".format(name)
            raise self.DTDError(description=msg) from error
- 
+
         # invoke it to get a new node for the parsing context
         try:
             node = factory(parent=self, attributes=attributes, locator=locator)
@@ -74,7 +74,7 @@ class Node:
         except KeyError as error:
            msg = "unknown tag {0!r}".format(name)
            raise self.DTDError(description=msg) from error
- 
+
         # invoke it to get a new node for the parsingcontext
         try:
             node = factory(parent=self, attributes=attributes, locator=locator)
@@ -91,7 +91,7 @@ class Node:
 
     def notify(self, *, parent, locator):
         """
-        The handler that is invoked when the parser encounters my closing tag 
+        The handler that is invoked when the parser encounters my closing tag
         """
         raise NotImplementedError(
             "class {.__name__!r} must override 'notify'".format(type(self)))
@@ -111,4 +111,4 @@ class Node:
     _pyre_nodeQIndex = None
 
 
-# end of file 
+# end of file

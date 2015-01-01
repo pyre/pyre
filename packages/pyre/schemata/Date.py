@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -41,7 +41,7 @@ class Date(Schema):
             # in which case extract its date component
             return value.date()
 
-        # otherwise, assume it is a string and attempt to 
+        # otherwise, assume it is a string and attempt to
         try:
            # cast {value} into a date
             return datetime.datetime.strptime(value, self.format).date()
@@ -61,4 +61,4 @@ class Date(Schema):
         return
 
 
-# end of file 
+# end of file

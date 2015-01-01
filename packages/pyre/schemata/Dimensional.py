@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -32,14 +32,14 @@ class Dimensional(Numeric):
         """
         Attempt to convert {value} into a dimensional
         """
-        # use the unit parser to convert strings to dimensionals 
+        # use the unit parser to convert strings to dimensionals
         if isinstance(value, str): return self.parser.parse(value)
         # dimensionals go right through
         if isinstance(value, units.dimensional): return value
         # everything else is an error
         msg="could not convert {0.value!r} into a dimensional quantity"
         raise self.CastingError(value=value, description=msg)
-        
+
 
     # meta-methods
     def __init__(self, default=units.zero, **kwds):
@@ -49,4 +49,4 @@ class Dimensional(Numeric):
         return
 
 
-# end of file 
+# end of file

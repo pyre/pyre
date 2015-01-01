@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -12,7 +12,7 @@ from .Functor import Functor
 
 class One(pyre.component, family="gauss.functors.one", implements=Functor):
     """
-    The unit function 
+    The unit function
     """
 
 
@@ -28,4 +28,4 @@ class One(pyre.component, family="gauss.functors.one", implements=Functor):
         return
 
 
-# end of file 
+# end of file

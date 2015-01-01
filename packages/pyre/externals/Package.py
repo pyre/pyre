@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -63,4 +63,4 @@ class Package(pyre.component, implements=category):
         return cls(name="{}-{}-default".format(cls.category, host.distribution))
 
 
-# end of file 
+# end of file

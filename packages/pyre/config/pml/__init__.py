@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -12,7 +12,7 @@ This package contains the implementation of the pml reader and writer
 A well formed pml document is an XML document that contains the following tags:
 
   <config>: the top level tag that corresponds to the entire document
-  <package>: establishes a namespace for the bindings it contains. 
+  <package>: establishes a namespace for the bindings it contains.
   <component>: introduces the configuration section for a component
   <bind>: establishes the value of a property
 
@@ -51,7 +51,7 @@ example, consider the package {gauss} from the examples directory. It contains a
 provided by pyre. If you look at the component {Constant} in this package, you will find it has
 a single property named {value}, with a default value of 1. To override this default and set it
 to 0 you would create a file {gauss.pml} with the following contents:
-   
+
    <?xml version="1.0" encoding="utf-8"?>
    <config>
        <component family="gauss.functors.constant">
@@ -96,7 +96,7 @@ declaration. You can override this default for components named {π} by placing
 
 in a configuration file. You should be aware that component names live in the same namespace as
 everything else in the framework, so it is important to establish a naming scheme for your
-application components and avoid name collisions. 
+application components and avoid name collisions.
 
 The above configuration file will force the framework to attempt to set a property named
 {value} for every component named {π}, regardless of whether it has such a property or not. In

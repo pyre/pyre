@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -64,9 +64,9 @@ class Merlin(pyre.plexus, family='merlin.components.plexus', action=spell):
         from ..schema.Project import Project
         # build the object
         project = Project(name=name)
-        # and return it 
+        # and return it
         return project
-        
+
 
     # meta methods
     def __init__(self, name, **kwds):
@@ -160,4 +160,4 @@ class Merlin(pyre.plexus, family='merlin.components.plexus', action=spell):
         return None, None
 
 
-# end of file 
+# end of file

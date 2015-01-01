@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -25,7 +25,7 @@ def test():
         marker = "base"
         dscr = descriptor()
 
-    class derived(base): 
+    class derived(base):
 
         marker = "derived"
         def __init__(self): self.marker = "instance of derived"
@@ -46,4 +46,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

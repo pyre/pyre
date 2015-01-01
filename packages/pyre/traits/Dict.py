@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -28,7 +28,7 @@ class Dict(Slotted):
         """
         # whatever my schema says
         return self.schema.macro
-        
+
 
     def native(self, value, **kwds):
         """
@@ -191,7 +191,7 @@ class Dict(Slotted):
         for assignment, priority in configurator.retrieveDeferredAssignments(key):
             # store them
             catalog.insert(
-                name=assignment.key[0], value=assignment.value, 
+                name=assignment.key[0], value=assignment.value,
                 priority=priority, locator=assignment.locator)
 
         # get the my current slot value
@@ -199,7 +199,7 @@ class Dict(Slotted):
         # if non-trivial, use it to initialize my catalog; i expect it to be a dictionary
         # this must happen after direct and indirect assignments to avoid changing the
         # nameserver model while the update is taking place
-        if current: 
+        if current:
             # raise NotImplementedError("NYI: priorities/locators?")
             catalog.update(current)
         # one more special case: no settings in the store and {None} value
@@ -212,9 +212,9 @@ class Dict(Slotted):
 
         # attach my new value
         client.pyre_inventory.setTrait(
-            trait=self, factory=myFactory, 
+            trait=self, factory=myFactory,
             value=catalog, priority=userPriority(), locator=here)
-        
+
         # all done
         return self
 
@@ -235,7 +235,7 @@ class Map(collections.abc.MutableMapping, Dashboard):
 
     # public data
     schema = None
-    factory = None # information necessary to make slots 
+    factory = None # information necessary to make slots
 
     # meta-methods
     def __init__(self, schema, factory, *args, **kwds):
@@ -384,4 +384,4 @@ class NameMap(Map):
         return
 
 
-# end of file 
+# end of file

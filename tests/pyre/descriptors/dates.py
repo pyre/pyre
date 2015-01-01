@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -40,7 +40,7 @@ def test():
         date.coerce(value='1992-12-21')
         assert False
     # it should fail
-    except date.CastingError: 
+    except date.CastingError:
         # so no problem
         pass
 
@@ -56,4 +56,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

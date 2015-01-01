@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -24,7 +24,7 @@ def test():
     # order
     class invalid(pyre.db.table):
         order = pyre.db.str()
-    
+
     try:
         db.createTable(invalid)
         assert False
@@ -34,7 +34,7 @@ def test():
     # where
     class invalid(pyre.db.table):
         where = pyre.db.str()
-    
+
     try:
         db.createTable(invalid)
         assert False
@@ -44,7 +44,7 @@ def test():
     # group
     class invalid(pyre.db.table):
         group = pyre.db.str()
-    
+
     try:
         db.createTable(invalid)
         assert False
@@ -60,4 +60,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -22,7 +22,7 @@
 
 
 // device discovery
-PyObject * 
+PyObject *
 pyre::extensions::cuda::
 discover(PyObject *, PyObject *args)
 {
@@ -36,7 +36,7 @@ discover(PyObject *, PyObject *args)
         // raise an exception
         return 0;
     }
-    
+
     // the cuda flag
     cudaError_t status;
 
@@ -50,7 +50,7 @@ discover(PyObject *, PyObject *args)
     }
     // show me
     // info << "CUDA devices: " << count << journal::endl;
-    
+
     // build the device tuple
     PyObject * result = PyTuple_New(count);
 
@@ -115,6 +115,6 @@ discover(PyObject *, PyObject *args)
     // return the device tuple
     return result;
 }
-    
+
 
 // end of file

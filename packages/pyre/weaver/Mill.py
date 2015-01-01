@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -80,7 +80,7 @@ class Mill(pyre.component, Indenter, implements=Language):
         # the file text they have already prepared
         yield from document
 
-                                          
+
     @pyre.export
     def footer(self):
         """
@@ -123,4 +123,4 @@ class Mill(pyre.component, Indenter, implements=Language):
         return
 
 
-# end of file 
+# end of file

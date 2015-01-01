@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 #include <portinfo>
@@ -29,7 +29,7 @@ namespace gsl {
 const char * const gsl::rng::avail__name__ = "rng_avail";
 const char * const gsl::rng::avail__doc__ = "return the set of all known generators";
 
-PyObject * 
+PyObject *
 gsl::rng::avail(PyObject *, PyObject * args) {
     // unpack the argument tuple
     int status = PyArg_ParseTuple(args, ":rng_avail");
@@ -56,7 +56,7 @@ gsl::rng::avail(PyObject *, PyObject * args) {
 const char * const gsl::rng::alloc__name__ = "rng_alloc";
 const char * const gsl::rng::alloc__doc__ = "allocate a rng";
 
-PyObject * 
+PyObject *
 gsl::rng::alloc(PyObject *, PyObject * args) {
     // place holders for the python arguments
     char * name;
@@ -87,7 +87,7 @@ gsl::rng::alloc(PyObject *, PyObject * args) {
 const char * const gsl::rng::set__name__ = "rng_set";
 const char * const gsl::rng::set__doc__ = "seed a random number generator";
 
-PyObject * 
+PyObject *
 gsl::rng::set(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -118,7 +118,7 @@ gsl::rng::set(PyObject *, PyObject * args) {
 const char * const gsl::rng::name__name__ = "rng_name";
 const char * const gsl::rng::name__doc__ = "look up the name of the generator";
 
-PyObject * 
+PyObject *
 gsl::rng::name(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -144,12 +144,12 @@ gsl::rng::name(PyObject *, PyObject * args) {
 }
 
 
-// get the range of generated values 
+// get the range of generated values
 const char * const gsl::rng::range__name__ = "rng_range";
-const char * const gsl::rng::range__doc__ = 
+const char * const gsl::rng::range__doc__ =
     "return a tuple (min, max) describing the range of values generated";
 
-PyObject * 
+PyObject *
 gsl::rng::range(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -186,10 +186,10 @@ gsl::rng::range(PyObject *, PyObject * args) {
 
 // get the next random integer
 const char * const gsl::rng::get__name__ = "rng_get";
-const char * const gsl::rng::get__doc__ = 
+const char * const gsl::rng::get__doc__ =
     "return the next random integer with the range of the generator";
 
-PyObject * 
+PyObject *
 gsl::rng::get(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -217,10 +217,10 @@ gsl::rng::get(PyObject *, PyObject * args) {
 
 // a random double in [0,1)
 const char * const gsl::rng::uniform__name__ = "rng_uniform";
-const char * const gsl::rng::uniform__doc__ = 
+const char * const gsl::rng::uniform__doc__ =
     "return the next random integer with the range of the generator";
 
-PyObject * 
+PyObject *
 gsl::rng::uniform(PyObject *, PyObject * args) {
     // the arguments
     PyObject * capsule;
@@ -248,7 +248,7 @@ gsl::rng::uniform(PyObject *, PyObject * args) {
 
 // helpers
 // initialization of the known generators
-void 
+void
 gsl::rng::initialize()
 {
     // std::cout << " ++ gsl.rng.initialize:" << std::endl;
@@ -269,7 +269,7 @@ gsl::rng::initialize()
 
 
 // destructor
-void 
+void
 gsl::rng::free(PyObject * capsule)
 {
     // bail out if the capsule is not valid

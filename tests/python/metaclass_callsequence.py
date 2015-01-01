@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -76,7 +76,7 @@ def test():
         'declaration: base.__new__',
         'declaration: base.__init__',
         'declaration: end of base',
-        'running: meta.__new__', 
+        'running: meta.__new__',
         'running:  meta.__init__',
         'declaration: test',
         'running: test',
@@ -84,7 +84,7 @@ def test():
         'running: meta.__call__',
         'running:   base.__new__',
         'running:   base.__init__',
-        'running: instantiating another', 
+        'running: instantiating another',
         'running: meta.__call__',
         'running:   base.__new__',
         'running:   base.__init__']
@@ -98,4 +98,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 - calc:
@@ -57,7 +57,7 @@
 
 - filesystem:
 
-  - the factories in __init__ are kind of ugly. fix 
+  - the factories in __init__ are kind of ugly. fix
 
   - sync should not be done by default, especially now that it supports the number of levels to
     expand; this should speed up {import pyre} in directories with deep structures. this means
@@ -96,7 +96,7 @@
 
     - how does python help work? who/how generates the formatted output?
 
-    - inspect: 
+    - inspect:
       properties, facilities: doc, tip, current value, default value, history?
       interface: doc, arg list, annotations, return value
 
@@ -106,8 +106,8 @@
 
 - db:
 
-  - db Query and View as Components 
-  
+  - db Query and View as Components
+
     ? not sure what i meant with this. records, sheets and views are now closer to this
 
 - opal: make
@@ -118,7 +118,7 @@
 
   - while i am dreaming: i want my own coverage tool...
 
-- tabular: 
+- tabular:
 
   - give records some of the aggregator capabilities that tables have so that streams of data
     with no associated storage can be binned; of course, no storage implies that the charts
@@ -177,7 +177,7 @@
 
 - shells:
 
-  - let "pyre" be the hosting script: 
+  - let "pyre" be the hosting script:
 
     - hosting options are command line options to this script
 
@@ -190,4 +190,4 @@
     channels after launch?
 
 
-# end of file 
+# end of file

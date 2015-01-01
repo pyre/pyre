@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #if !defined(pyre_extensions_mpi_capsules_h)
 #define pyre_extensions_mpi_capsules_h
@@ -13,12 +13,12 @@ namespace mpi {
 
     // communicator
     namespace communicator {
-        const char * const capsule_t = "mpi.communicator"; 
+        const char * const capsule_t = "mpi.communicator";
         void free(PyObject *);
     }
     // group
-    namespace group { 
-        const char * const capsule_t = "mpi.group"; 
+    namespace group {
+        const char * const capsule_t = "mpi.group";
         void free(PyObject *);
     }
 

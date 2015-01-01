@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -34,7 +34,7 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
         """
         # if the page is empty, there's nothing to do
         if not page: return
-        
+
         # my colors; hardwired for now
         marker = self.palette[metadata['severity']]
         blue = self.terminal.colors['blue']
@@ -54,7 +54,7 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
         yield "{}: {}: {}".format(channel, severity, page[0])
         # and render the rest
         for line in page[1:]: yield line
-            
+
         # all done
         return
 
@@ -77,4 +77,4 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
         return
 
 
-# end of file 
+# end of file

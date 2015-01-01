@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -94,11 +94,11 @@ _pyre_version = (1, 0, BZR_REVNO)
 
 _pyre_tag = "pyre {}.{} revision {}".format(*_pyre_version)
 
-_pyre_copyright = "{}: Copyright (c) 1998-2014 Michael A.G. Aïvázis".format(_pyre_tag)
+_pyre_copyright = "{}: Copyright (c) 1998-2015 Michael A.G. Aïvázis".format(_pyre_tag)
 
 _pyre_header = """
     {}
-    Copyright (c) 1998-2014 Michael A.G. Aïvázis
+    Copyright (c) 1998-2015 Michael A.G. Aïvázis
     All Rights Reserved
     """.format(_pyre_tag)
 
@@ -147,7 +147,7 @@ _pyre_acknowledgments = _pyre_header + """
 
     Raúl Radovitzky, Brad Aagaard and Patrick Hung taught me a lot about
     the needs of massively parallel applications.
-    
+
     Jiao Lin has built a very sophisticated web application framework by
     stretching pyre beyond its limits, and contributing countless use cases
     that have had a significant impact on the current implementation.
@@ -269,6 +269,6 @@ def shutdown():
     executive = None
     # that should be enough
     return
-    
 
-# end of file 
+
+# end of file

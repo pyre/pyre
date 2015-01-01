@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -194,7 +194,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # all done
         return
 
-                                    
+
     def __str__(self):
         # accumulate the name fragments here
         fragments = []
@@ -241,7 +241,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
             import journal
             # complain
             raise journal.firewall('pyre.components').log(str(error))
-            
+
         # if we got this far, restart the attribute lookup using the canonical name
         # N.B.: don't be smart here; let {getattr} do its job, which involves invoking the
         # trait descriptors if necessary
@@ -273,11 +273,11 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # set the priority
         priority = self.pyre_executive.priority.explicit()
         # set the value
-        self.pyre_inventory.setTrait(trait=trait, factory=trait.instanceSlot, 
+        self.pyre_inventory.setTrait(trait=trait, factory=trait.instanceSlot,
                                      value=value, priority=priority, locator=locator)
 
         # all done
         return
 
 
-# end of file 
+# end of file

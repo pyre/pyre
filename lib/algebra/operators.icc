@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 
@@ -13,7 +13,7 @@
 
 // binary operators
 template <typename numeric_t>
-numeric_t 
+numeric_t
 pyre::algebra::operator+(const numeric_t & a, const numeric_t & b)
 {
     numeric_t result(a);
@@ -23,7 +23,7 @@ pyre::algebra::operator+(const numeric_t & a, const numeric_t & b)
 
 
 template <typename numeric_t>
-numeric_t 
+numeric_t
 pyre::algebra::operator-(const numeric_t & a, const numeric_t & b)
 {
     numeric_t result(a);
@@ -33,7 +33,7 @@ pyre::algebra::operator-(const numeric_t & a, const numeric_t & b)
 
 
 template <typename numeric_t>
-numeric_t 
+numeric_t
 pyre::algebra::operator*(const numeric_t & a, const numeric_t & b)
 {
     numeric_t result(a);
@@ -43,7 +43,7 @@ pyre::algebra::operator*(const numeric_t & a, const numeric_t & b)
 
 
 template <typename numeric_t>
-numeric_t 
+numeric_t
 pyre::algebra::operator/(const numeric_t & a, const numeric_t & b)
 {
     numeric_t result(a);

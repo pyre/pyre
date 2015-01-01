@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <iostream>
@@ -17,7 +17,7 @@ using namespace pyre::extensions::journal;
 
 
 // initialize
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 registerJournal(PyObject *, PyObject * args)
 {
@@ -30,7 +30,7 @@ registerJournal(PyObject *, PyObject * args)
 
     // build a new device handler
     DeviceProxy * device = new DeviceProxy(journal);
-    
+
     // attach it as the default device
     pyre::journal::Chronicler::defaultDevice(device);
 
@@ -38,6 +38,6 @@ registerJournal(PyObject *, PyObject * args)
     Py_INCREF(Py_None);
     return Py_None;
 }
-    
+
 
 // end of file

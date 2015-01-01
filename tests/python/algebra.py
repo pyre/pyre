@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -35,49 +35,49 @@ class Node:
         else:
             value = self.value - other
         return type(self)(value=value)
-    
+
     def __mul__(self, other):
         if isinstance(other, Node):
             value = self.value * other.value
         else:
             value = self.value * other
         return type(self)(value=value)
-    
+
     def __truediv__(self, other):
         if isinstance(other, Node):
             value = self.value / other.value
         else:
             value = self.value / other
         return type(self)(value=value)
-    
+
     def __floordiv__(self, other):
         if isinstance(other, Node):
             value = self.value // other.value
         else:
             value = self.value // other
         return type(self)(value=value)
-    
+
     def __mod__(self, other):
         if isinstance(other, Node):
             value = self.value % other.value
         else:
             value = self.value % other
         return type(self)(value=value)
-    
+
     def __divmod__(self, other):
         if isinstance(other, Node):
             d, m = divmod(self.value, other.value)
         else:
             d, m = divmod(self.value, other)
         return type(self)(value=d), type(self)(value=m)
-    
+
     def __pow__(self, other):
         if isinstance(other, Node):
             value = self.value ** other.value
         else:
             value = self.value ** other
         return type(self)(value=value)
-    
+
     def __radd__(self, other):
         value = self.value + other
         return type(self)(value=value)
@@ -85,27 +85,27 @@ class Node:
     def __rsub__(self, other):
         value = other - self.value
         return type(self)(value=value)
-    
+
     def __rmul__(self, other):
         value = self.value * other
         return type(self)(value=value)
-    
+
     def __rtruediv__(self, other):
         value = other / self.value
         return type(self)(value=value)
-    
+
     def __rfloordiv__(self, other):
         value = other // self.value
         return type(self)(value=value)
-    
+
     def __rmod__(self, other):
         value = other % self.value
         return type(self)(value=value)
-    
+
     def __rdivmod__(self, other):
         d, m = divmod(other, self.value)
         return type(self)(value=d), type(self)(value=m)
-    
+
     def __rpow__(self, other):
         value = other ** self.value
         return type(self)(value=value)
@@ -117,23 +117,23 @@ class Node:
     def __isub__(self, other):
         self.value -= other
         return self
-    
+
     def __imul__(self, other):
         self.value *= other
         return self
-    
+
     def __itruediv__(self, other):
         self.value /= other
         return self
-    
+
     def __ifloordiv__(self, other):
         self.value //= other
         return self
-    
+
     def __imod__(self, other):
         self.value %= other
         return self
-    
+
     def __ipow__(self, other):
         self.value **= other
         return self
@@ -182,7 +182,7 @@ def test():
     assert ((n1**2 + 2*n1*n2 + n2**2)).value == ((n1+n2)**2).value
     assert ((n1**2 - 2*n1*n2 + n2**2)).value == ((n1-n2)**2).value
     assert (2*(.5 - n1*n2 + n2**2)*n1).value == 2*(.5 - 1*2 + 2**2)*1
-    
+
     return
 
 
@@ -191,4 +191,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_journal_Debug_h)
@@ -18,9 +18,9 @@ namespace pyre {
 
 
 // declaration
-class pyre::journal::Debug : 
+class pyre::journal::Debug :
     public pyre::journal::Diagnostic<Debug>,
-    public pyre::journal::Channel<Debug, false> 
+    public pyre::journal::Channel<Debug, false>
 {
     // types
 public:

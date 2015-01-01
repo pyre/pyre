@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -26,7 +26,7 @@ class InputStream(Schema, Dashboard):
 
     # types
     from . import uri
-    
+
 
     # interface
     def coerce(self, value, **kwds):
@@ -43,7 +43,7 @@ class InputStream(Schema, Dashboard):
             return self.pyre_fileserver.open(uri=value, mode=self.mode)
         # otherwise, leave it alone
         return value
-        
+
 
     # meta-methods
     def __init__(self, default='stdin', mode=mode, **kwds):
@@ -55,4 +55,4 @@ class InputStream(Schema, Dashboard):
         return
 
 
-# end of file 
+# end of file

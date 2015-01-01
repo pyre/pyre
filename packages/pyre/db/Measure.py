@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -41,7 +41,7 @@ class Measure(records.measure):
         """
         Mark a field as a primary key
         """
-        # mark 
+        # mark
         self._primary = True
         # primary keys do not get default values
         self.default = None
@@ -53,7 +53,7 @@ class Measure(records.measure):
         """
         Mark a field as containing values that are unique across the table rows
         """
-        # mark 
+        # mark
         self._unique = True
         # and return
         return self
@@ -63,7 +63,7 @@ class Measure(records.measure):
         """
         Mark a field as not accepting a NULL value
         """
-        # mark 
+        # mark
         self._notNull = True
         # and return
         return self
@@ -98,7 +98,7 @@ class Measure(records.measure):
             return super().coerce(value=value, **kwds)
 
 
- 
+
     # mixins for the various supported types
     class bool(measure):
         """Mixin for booleans"""
@@ -137,7 +137,7 @@ class Measure(records.measure):
             # all done
             return
 
-        
+
     class decimal(measure):
         """Mixin for fixed point numbers"""
 
@@ -164,7 +164,7 @@ class Measure(records.measure):
             # all done
             return
 
-        
+
     class float(measure):
         """Mixin for floating point numbers"""
 
@@ -176,7 +176,7 @@ class Measure(records.measure):
             """SQL rendering of my value"""
             # easy enough
             return str(value)
-            
+
 
     class int(measure):
         """Mixin for integers"""
@@ -189,7 +189,7 @@ class Measure(records.measure):
             """SQL rendering of my value"""
             # easy enough
             return str(value)
-            
+
 
     class str(measure):
         """Mixin for strings"""
@@ -217,7 +217,7 @@ class Measure(records.measure):
             self.maxlen = maxlen
             # all done
             return
-            
+
 
     class time(measure):
         """Mixin for timestamps"""
@@ -266,7 +266,7 @@ class Measure(records.measure):
         # render
         return " DEFAULT {}".format(value)
 
-        
+
     # private data
     # the following markers interpret {None} as 'unspecified'
     _primary = None # am i a primary key?
@@ -275,4 +275,4 @@ class Measure(records.measure):
     _foreign = None # foreign key: a tuple (foreign_table, field_descriptor)
 
 
-# end of file 
+# end of file

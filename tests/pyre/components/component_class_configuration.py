@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -25,7 +25,7 @@ def declare():
         @pyre.export
         def do(self):
             """behave"""
-      
+
     return component
 
 
@@ -33,7 +33,7 @@ def test():
     # declare the components
     component = declare()
 
-    # print out the configuration 
+    # print out the configuration
     # import pyre
     # for error in pyre.executive.errors: print(error)
     # pyre.executive.nameserver.dump(pattern='sample')
@@ -45,11 +45,11 @@ def test():
     assert component.p2 == "sample - p2"
     # and return the component
     return component
-    
+
 
 # main
 if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

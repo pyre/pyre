@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 
 // for the build system
@@ -88,27 +88,27 @@ namespace pyre {
     namespace journal {
         // firewall
         template <>
-        firewallindex_t 
+        firewallindex_t
         firewall_t::channel_t::_index = firewallindex_t();
 
         // debug
         template <>
-        debugindex_t 
+        debugindex_t
         debug_t::channel_t::_index = initializeDebugIndex();
 
         // error
         template <>
-        errorindex_t 
+        errorindex_t
         error_t::channel_t::_index = errorindex_t();
 
         // info
         template <>
-        infoindex_t 
+        infoindex_t
         info_t::channel_t::_index = infoindex_t();
 
         // warning
         template <>
-        warningindex_t 
+        warningindex_t
         warning_t::channel_t::_index = warningindex_t();
     }
 }

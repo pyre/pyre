@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -44,7 +44,7 @@ class Component(Schema):
             msg = 'could not convert {0.value} into a component'
             # and complain
             raise self.CastingError(value=value, description=msg) from None
-            
+
         # ok, we have a string; ask the protocol
         try:
             # to have a pass at resolving the uri into a compatible component; this handles
@@ -55,7 +55,7 @@ class Component(Schema):
         except protocol.ResolutionError:
             # no worries; more to try
             pass
-        
+
         # convert the {value} into a uri; if the conversion is not successful, the {uri} schema
         # will complain
         uri = self.uri().coerce(value)
@@ -71,7 +71,7 @@ class Component(Schema):
             candidate = default(name=instanceName)
             # and return it
             return candidate
-          
+
         # out of ideas; build an error message and complain
         raise protocol.ResolutionError(protocol=protocol, value=value) from None
 
@@ -86,4 +86,4 @@ class Component(Schema):
         return
 
 
-# end of file 
+# end of file

@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #if !defined(pyre_mpi_Shareable_icc)
 #error This header file contains implementation details of class pyre::mpi::Shareable
@@ -24,7 +24,7 @@ int
 pyre::mpi::Shareable<Resource>::
 release()
 {
-    // decrement the reference count 
+    // decrement the reference count
     if (--_count == 0 && !_immortal) {
         // if the count reached zero, free the handle
         Resource::free(&_handle);

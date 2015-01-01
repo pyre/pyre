@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -42,7 +42,7 @@ def declare():
                 assert self.p1 == 'sample - p1'
                 assert self.p2 == 'sample - p2'
 
-      
+
     return component
 
 
@@ -62,11 +62,11 @@ def test():
 
     # and return the component instance
     return c
-    
+
 
 # main
 if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

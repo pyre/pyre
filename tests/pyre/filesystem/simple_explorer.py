@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -25,7 +25,7 @@ def test():
     explorer = pyre.filesystem.simpleExplorer()
     contents = list(explorer.explore(node=fs, label='/'))
     # for line in contents: print(line)
-    
+
     # check
     assert contents == [
         "(d) /",
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

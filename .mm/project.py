@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # california institute of technology
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -24,4 +24,4 @@ def requirements(package):
     return { package.name: package for package in packages }
 
 
-# end of file 
+# end of file

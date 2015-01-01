@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -52,7 +52,7 @@ def test():
 
     # compute the average production cost and check we got it right
     assert pyre.patterns.average(p.production) == sum(entry[2] for entry in data)/len(data)
-        
+
     # and return the data set
     return p
 
@@ -65,4 +65,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

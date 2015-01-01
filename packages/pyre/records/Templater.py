@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -108,7 +108,7 @@ class Templater(AttributeClassifier):
         record.pyre_measures = tuple(measures)
         # and the derivations
         record.pyre_derivations = tuple(derivations)
-        
+
         # finally, some clients need a map from fields to their index in our underlying tuple
         record.pyre_index = dict((field, index) for index, field in enumerate(fields))
 
@@ -200,6 +200,6 @@ class Templater(AttributeClassifier):
         """
         # easy...
         return field.category == 'operator'
-        
+
 
 # end of file

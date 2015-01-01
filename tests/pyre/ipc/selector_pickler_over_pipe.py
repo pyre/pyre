@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -28,7 +28,7 @@ def test():
     m = pyre.ipc.pickler()
     # and the communication channels
     parent, child = pyre.ipc.pipe()
-    
+
     # fork
     pid = os.fork()
     # in the parent process
@@ -43,7 +43,7 @@ def test():
 def onParent(child_pid, marshaller, channel):
     # observe the parent selector at work
     # journal.debug("pyre.ipc.selector").active = True
-    
+
     # write-ready handler
     def parent_send(selector, channel, **kwds):
         """send a string to the child"""
@@ -145,11 +145,11 @@ def onChild(marshaller, channel):
 
     # all done
     return
-    
+
 
 # main
 if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

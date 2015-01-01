@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -19,7 +19,7 @@ class FirewallError(PyreError):
 
     def __init__(self, firewall, **kwds):
         # build the info
-        reason = "firewall breached; aborting..." 
+        reason = "firewall breached; aborting..."
         locator = firewall.locator
         # chain up
         super().__init__(description=reason, locator=locator, **kwds)
@@ -38,7 +38,7 @@ class ApplicationError(PyreError):
 
     def __init__(self, error, **kwds):
         # build the info
-        reason = "firewall breached; aborting..." 
+        reason = "firewall breached; aborting..."
         locator = error.locator
         # chain up
         super().__init__(description=reason, locator=locator, **kwds)
@@ -48,4 +48,4 @@ class ApplicationError(PyreError):
         return
 
 
-# end of file 
+# end of file

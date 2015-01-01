@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 
@@ -27,7 +27,7 @@ int main() {
         communicator_t world(MPI_COMM_WORLD, true);
         // get its group
         group_t whole = world.group();
-        
+
         // compute the size of the world group
         int size = whole.size();
         // and my rank
@@ -37,7 +37,7 @@ int main() {
         assert(size == 4);
         assert(rank >= 0 && rank < 4);
     }
-        
+
     // shutdown
     MPI_Finalize();
 

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -14,7 +14,7 @@ from .Functor import Functor
 
 class Gaussian(pyre.component, family="gauss.functors.gaussian", implements=Functor):
     r"""
-    Component that implements the normal distribution with mean μ and variance σ^2 
+    Component that implements the normal distribution with mean μ and variance σ^2
 
         g(x; μ,σ) = \frac{1}{\sqrt{2π} σ} e^{-\frac{|x-μ|^2}{2σ^2}}
 
@@ -54,8 +54,8 @@ class Gaussian(pyre.component, family="gauss.functors.gaussian", implements=Func
             r2 = sum((x_i - μ_i)**2 for x_i, μ_i in zip(x, μ))
             # yield the value at the current x
             yield normalization * exp(- r2 / scaling)
-        # all done    
+        # all done
         return
 
 
-# end of file 
+# end of file

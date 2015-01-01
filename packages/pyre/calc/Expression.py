@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -45,7 +45,7 @@ class Expression:
             # report it
             raise
         # other errors
-        except Exception as error: 
+        except Exception as error:
             # are reported as evaluation errors
             raise self.EvaluationError(node=self, error=error) from None
         # otherwise, just return the value
@@ -157,4 +157,4 @@ class Expression:
         )
 
 
-# end of file 
+# end of file

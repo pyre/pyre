@@ -3,14 +3,14 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
 """
 Verify that extent awareness tracks the extent of classes correctly
 """
-    
+
 
 def create_instances():
     """build some instances"""
@@ -71,4 +71,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

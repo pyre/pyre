@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -20,4 +20,4 @@ release:: release-package-headers
 EXPORT_PKG_HEADERS = \
     Clock.h Clock.icc
 
-# end of file 
+# end of file

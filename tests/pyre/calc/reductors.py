@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -22,7 +22,7 @@ def test():
         nodes.append(node)
 
     product = pyre.calc.product(*nodes)
-    
+
     # check
     assert product.value == 3628800
 
@@ -44,4 +44,4 @@ if __name__ == "__main__":
     assert tuple(Node._pyre_extent) == ()
 
 
-# end of file 
+# end of file

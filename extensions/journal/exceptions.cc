@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -24,7 +24,7 @@ namespace pyre {
 
 
 // exception registration
-PyObject * 
+PyObject *
 pyre::extensions::journal::
 registerExceptionHierarchy(PyObject * module) {
 

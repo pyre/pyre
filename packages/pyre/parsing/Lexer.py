@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -85,7 +85,7 @@ class Lexer(AttributeClassifier):
                     patterns.append(regex)
             # in any case, add all the local names to the known pile
             names.update(base.__dict__)
-                    
+
         # attach the recognizer
         scanner.pyre_recognizer = re.compile('|'.join(patterns))
         # return the scanner record
@@ -93,4 +93,4 @@ class Lexer(AttributeClassifier):
         return scanner
 
 
-# end of file 
+# end of file

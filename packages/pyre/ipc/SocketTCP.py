@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis, leif strand
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -52,4 +52,4 @@ class SocketTCP(Socket):
     __slots__ = () # socket has it, so why not...
 
 
-# end of file 
+# end of file

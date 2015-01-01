@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -38,14 +38,14 @@ class Simplifier(object):
         if match.group("surrounding"):
             return match.group("operator")
         return ""
-        
+
     def __init__(self):
         self.symbols = 0
         self.valueTable = {}
         self.symbolTable = {}
         return
 
-    
+
 def test():
     s = Simplifier()
 
@@ -60,4 +60,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

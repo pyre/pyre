@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -32,11 +32,11 @@ def version():
 # license
 _mpi_version = (1, 0, 0)
 
-_mpi_copyright = "pyre mpi: Copyright (c) 1998-2014 Michael A.G. Aïvázis"
+_mpi_copyright = "pyre mpi: Copyright (c) 1998-2015 Michael A.G. Aïvázis"
 
 _mpi_license = """
     pyre mpi 1.0
-    Copyright (c) 1998-2014 Michael A.G. Aïvázis
+    Copyright (c) 1998-2015 Michael A.G. Aïvázis
     All Rights Reserved
 
 
@@ -123,4 +123,4 @@ package = pyre.executive.registerPackage(name='mpi', file=__file__)
 # record the layout
 home, prefix, defaults = package.layout()
 
-# end of file 
+# end of file

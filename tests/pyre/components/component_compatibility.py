@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -27,17 +27,17 @@ def test():
     class ok(pyre.component):
         """one that doesn't derive but has the right public component"""
         common = pyre.property()
-        
+
     class notok(pyre.component):
         """one that doesn't provide the right public component"""
         what = pyre.property()
-        
+
     class badtype(pyre.component):
         """one that has the right trait but of the wrong type"""
         @pyre.provides
         def common(self):
             """method, not property"""
-        
+
     class shadow(base):
         """one that derives but shadows the trait in an incompatible way"""
         @pyre.provides
@@ -60,7 +60,7 @@ def test():
     assert not shadow.pyre_isCompatible(base)
     assert not shadow.pyre_isCompatible(derived)
     assert not shadow.pyre_isCompatible(ok)
-        
+
     return base, derived, ok, notok, badtype, shadow
 
 
@@ -69,4 +69,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

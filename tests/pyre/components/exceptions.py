@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -14,7 +14,7 @@ Tests for all the exceptions raised by this package
 def test():
     import pyre
     from pyre.components.exceptions import (
-        ComponentError, 
+        ComponentError,
         CategoryMismatchError, ImplementationSpecificationError, ProtocolError,
         TraitNotFoundError)
 
@@ -57,4 +57,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

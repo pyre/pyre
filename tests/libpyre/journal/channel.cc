@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 
@@ -42,7 +42,7 @@ public:
 namespace pyre {
     namespace journal {
 
-        template<> 
+        template<>
         typename trueref_t::index_t Channel<trueref_t>::_index = trueref_t::index_t();
         template<>
         typename falseref_t::index_t Channel<falseref_t,false>::_index = falseref_t::index_t();

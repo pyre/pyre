@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -52,7 +52,7 @@ def test():
         db.createTable(Weather)
         # verify it is there
         assert db.execute(sql) == (('tablename',), ('weather',))
-        # drop the table    
+        # drop the table
         db.dropTable(Weather)
         # verify it is not there
         assert db.execute(sql) == (('tablename',),)
@@ -66,4 +66,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

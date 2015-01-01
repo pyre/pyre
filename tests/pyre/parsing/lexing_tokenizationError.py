@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -37,7 +37,7 @@ def test():
             # if this were a TokenizationError:
             if errorTp is Simple.TokenizationError:
                 # ignore it
-                return 
+                return
             # pass everything else on
             super().throw(errorTp, error, traceback)
 
@@ -81,7 +81,7 @@ def test():
     assert error.locator.source == filename
     assert error.locator.line == 8
     assert error.locator.column == 24
-    
+
     return
 
 
@@ -93,4 +93,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

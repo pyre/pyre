@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -15,8 +15,8 @@ class PointCloud:
     def points(self, n, box):
         """
         Generate {n} random points on the interior of {box}
-        
-        parameters: 
+
+        parameters:
             {n}: the number of points to generate
             {box}: a pair of points that specify the computational domain
         """
@@ -24,4 +24,4 @@ class PointCloud:
             "class {.__name__!r} should implement 'points'".format(type(self)))
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -44,11 +44,11 @@ class Firewall(Diagnostic, Channel):
         if not self.fatal: return error
         # otherwise, raise it
         raise error
-        
+
 
     # class private data
     _index = collections.defaultdict(Channel.Enabled)
     stackdepth = -3 # there is an extra stack level for firewalls...
 
 
-# end of file 
+# end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -24,7 +24,7 @@ def test():
 
     # compute the form
     y = gsl.blas.dtrmv(A.upperTriangular, A.opTrans, A.unitDiagonal, A, x.clone())
-    
+
     # check
     # print(tuple(y))
     assert tuple(y) == tuple(x)
@@ -38,4 +38,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -22,4 +22,4 @@ class Set(Sequence):
     container = set # the container I represent
 
 
-# end of file 
+# end of file

@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -29,7 +29,7 @@ def declare():
         @pyre.provides
         def do(self):
             """behave"""
-        
+
     # declare a component
     class component(pyre.component, implements=protocol):
         """a component"""
@@ -64,11 +64,11 @@ def test():
 
     return
 
-     
+
 
 # main
 if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

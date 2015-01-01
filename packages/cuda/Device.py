@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -20,7 +20,7 @@ class Device:
     runtimeVersion = ()
 
     globalMemory = 0
-    
+
 
     # debugging
     def dump(self, indent=''):
@@ -33,9 +33,9 @@ class Device:
         print("{}  runtime version: {.runtimeVersion}".format(indent, self))
         print("{}  compute capability: {.capability}".format(indent, self))
         print("{}  global memory: {.globalMemory} bytes".format(indent, self))
-    
+
         # all done
         return
 
 
-# end of file 
+# end of file

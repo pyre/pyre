@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -29,8 +29,8 @@ class Mersenne(PointCloud):
             ]
         # note the *interval notation in the call to uniform: it unpacks the interval and
         # supplies uniform with as many arguments as there are entities in interval
-                
+
         return sample
 
 
-# end of file 
+# end of file

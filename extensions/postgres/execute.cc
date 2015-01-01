@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 #include <portinfo>
 
@@ -25,7 +25,7 @@ const char * const
 pyre::extensions::postgres::
 execute__doc__ = "execute a single command";
 
-PyObject * 
+PyObject *
 pyre::extensions::postgres::
 execute(PyObject *, PyObject * args) {
     // the connection specification
@@ -41,12 +41,12 @@ execute(PyObject *, PyObject * args) {
         return 0;
     }
     // get the connection object
-    PGconn * connection = 
+    PGconn * connection =
         static_cast<PGconn *>(PyCapsule_GetPointer(py_connection, connectionCapsuleName));
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug 
+    debug
         << pyre::journal::at(__HERE__)
         << "executing '" << command << "'"
         << pyre::journal::endl;
@@ -76,7 +76,7 @@ const char * const
 pyre::extensions::postgres::
 submit__doc__ = "submit a command for asynchronous execution";
 
-PyObject * 
+PyObject *
 pyre::extensions::postgres::
 submit(PyObject *, PyObject * args) {
     // the connection specification
@@ -92,12 +92,12 @@ submit(PyObject *, PyObject * args) {
         return 0;
     }
     // get the connection object
-    PGconn * connection = 
+    PGconn * connection =
         static_cast<PGconn *>(PyCapsule_GetPointer(py_connection, connectionCapsuleName));
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug 
+    debug
         << pyre::journal::at(__HERE__)
         << "submitting '" << command << "'"
         << pyre::journal::endl;
@@ -129,7 +129,7 @@ const char * const
 pyre::extensions::postgres::
 consume__doc__ = "check with the server for any partial results and fetch them if available";
 
-PyObject * 
+PyObject *
 pyre::extensions::postgres::
 consume(PyObject *, PyObject * args) {
     // the connection specification
@@ -144,12 +144,12 @@ consume(PyObject *, PyObject * args) {
         return 0;
     }
     // get the connection object
-    PGconn * connection = 
+    PGconn * connection =
         static_cast<PGconn *>(PyCapsule_GetPointer(py_connection, connectionCapsuleName));
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug 
+    debug
         << pyre::journal::at(__HERE__)
         << "consuming partial results from the server"
         << pyre::journal::endl;
@@ -172,7 +172,7 @@ const char * const
 pyre::extensions::postgres::
 retrieve__doc__ = "retrieve a result set from a previously submitted asynchronous query";
 
-PyObject * 
+PyObject *
 pyre::extensions::postgres::
 retrieve(PyObject *, PyObject * args) {
     // the connection specification
@@ -187,7 +187,7 @@ retrieve(PyObject *, PyObject * args) {
         return 0;
     }
     // get the connection object
-    PGconn * connection = 
+    PGconn * connection =
         static_cast<PGconn *>(PyCapsule_GetPointer(py_connection, connectionCapsuleName));
 
     // retrieve the result
@@ -207,7 +207,7 @@ const char * const
 pyre::extensions::postgres::
 busy__doc__ = "check the availability of a result set from a previously submitted query";
 
-PyObject * 
+PyObject *
 pyre::extensions::postgres::
 busy(PyObject *, PyObject * args) {
     // the connection specification
@@ -222,12 +222,12 @@ busy(PyObject *, PyObject * args) {
         return 0;
     }
     // get the connection object
-    PGconn * connection = 
+    PGconn * connection =
         static_cast<PGconn *>(PyCapsule_GetPointer(py_connection, connectionCapsuleName));
 
     // in case someone is listening...
     pyre::journal::debug_t debug("postgres.execution");
-    debug 
+    debug
         << pyre::journal::at(__HERE__)
         << "checking for query completion"
         << pyre::journal::endl;

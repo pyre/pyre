@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -34,4 +34,4 @@ class Measure(records.measure):
     _primary = False # {True} when this measure is a primary key used to create an index
 
 
-# end of file 
+# end of file

@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -34,7 +34,7 @@ class NodeInfo:
         elif split and not name:
             # get the name
             name = model.join(*split)
-        
+
         # if I don't know the key but I know the split
         if split and not key:
             # look up the key
@@ -63,4 +63,4 @@ class NodeInfo:
         return
 
 
-# end of file 
+# end of file

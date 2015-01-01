@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -22,7 +22,7 @@ class Port(Object):
 
     # per-instance public data
     peer = None # my peer process
-    tag = 0 # the default message tag 
+    tag = 0 # the default message tag
     communicator = Object.mpi.world # the communicator my peer and I belong to
 
 
@@ -36,7 +36,7 @@ class Port(Object):
         data = self.mpi.recvBytes(self.communicator.capsule, self.peer, self.tag)
         # extract the object and return it
         return pickle.loads(data)
-        
+
 
     def send(self, item):
         """
@@ -78,4 +78,4 @@ class Port(Object):
         return
 
 
-# end of file 
+# end of file

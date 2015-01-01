@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -72,10 +72,10 @@ class Requirement(AttributeClassifier):
             configurable.pyre_getLocalTraits(attributes))
 
         # harvest the inherited traits: this must be done from scratch for every new
-        # configurable class, since multiple inheritance messes with the __mro__; 
+        # configurable class, since multiple inheritance messes with the __mro__;
         configurable.pyre_inheritedTraits = tuple(
             configurable.pyre_getInheritedTraits(shadowed=set(attributes)))
-            
+
         # extract the ancestors listed in the mro of the configurable that are themselves
         # configurable; N.B.: since {Requirement} is not the direct metaclass of any class, the
         # chain here stops at either {Component} or {Protocol}, depending on whether {Actor}
@@ -184,4 +184,4 @@ class Requirement(AttributeClassifier):
         return
 
 
-# end of file 
+# end of file

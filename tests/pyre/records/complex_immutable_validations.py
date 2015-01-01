@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -32,7 +32,7 @@ def test():
         # build an invalid record
         record.pyre_immutable(data=("9-4013", "1.0"))
         assert False
-    # it should fail 
+    # it should fail
     except record.ConstraintViolationError as error:
         # check
         assert error.constraint is record.price.validators[0]
@@ -49,4 +49,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

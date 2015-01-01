@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -17,7 +17,7 @@ def gauss():
     # inputs
     N = 10**5
     box = [(0,1), (0,1)]
-    # the point cloud 
+    # the point cloud
     cloud = Mersenne()
     # the region of integration
     disk = Disk(center=(0,0), radius=1)
@@ -47,4 +47,4 @@ def count(iterable): #@\label{line:driver:generators:count}@
 if __name__ == "__main__":
     gauss()
 
-# end of file 
+# end of file

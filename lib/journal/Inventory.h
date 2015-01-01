@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
+//
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
-// 
+// (c) 1998-2015 all rights reserved
+//
 
 // code guard
 #if !defined(pyre_journal_Inventory)
@@ -43,7 +43,7 @@ public:
     inline Inventory(state_t = DefaultState, device_t * = 0);
     inline Inventory(const Inventory &);
     inline const Inventory & operator=(const Inventory &);
-    
+
     // data members
 private:
     state_t _state;

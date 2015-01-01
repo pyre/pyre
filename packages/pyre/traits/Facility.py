@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -100,4 +100,4 @@ class Facility(Slotted, schemata.component):
         return "{0.name}: a facility with {0.protocol}".format(self)
 
 
-# end of file 
+# end of file

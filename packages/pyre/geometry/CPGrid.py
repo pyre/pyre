@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -95,7 +95,7 @@ class CPGrid(Grid):
         h = min(abs(t[dim] - b[dim]) for t,b in zip(top, bottom))
 
         # guard against slivers
-        if h == 0: 
+        if h == 0:
             # save the info
             self.bad.append((idx, dim, cell))
             # reset h

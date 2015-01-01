@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -48,12 +48,12 @@ class Token:
         # otherwise
         return "{{{0.name}}}".format(self)
 
-    
+
     # implementation details
     __slots__ = (
         'lexeme', # the body of the token
         'locator', # marks the location of the lexeme in the input stream
         )
-    
 
-# end of file 
+
+# end of file

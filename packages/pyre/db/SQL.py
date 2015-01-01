@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -83,7 +83,7 @@ class SQL(Mill, family="pyre.db.sql"):
                 table = query.pyre_tables[tableName]
                 # do we need a terminator?
                 # if we have more tables
-                if index + 1 < tables: 
+                if index + 1 < tables:
                     # make it a comma
                     terminator = ','
                 # if there are no other clauses in the query
@@ -351,9 +351,9 @@ class SQL(Mill, family="pyre.db.sql"):
                 yield self.place(dangling + ',') # add a comma since we know there are more...
             # collect the values
             values = (
-                value.value 
-                if value is table.default or value is table.null 
-                else field.sql(value=value) 
+                value.value
+                if value is table.default or value is table.null
+                else field.sql(value=value)
                 for field, value in zip(table.pyre_fields, record))
             # render them
             dangling = "({})".format(", ".join(values))
@@ -452,7 +452,7 @@ class SQL(Mill, family="pyre.db.sql"):
     def __init__(self, **kwds):
         # get the field definition
         from . import field
-        # chain up 
+        # chain up
         super().__init__(nodeType=field, **kwds)
 
         # local expressions
@@ -585,14 +585,14 @@ class SQL(Mill, family="pyre.db.sql"):
             separator = ',' if (comma and not foreign.delete) else ''
             # record it
             yield self.place("ON UPDATE {}{}".format(foreign.update, separator))
-            
+
         # if there is a registered delete action
         if foreign.delete:
             # comma?
             separator = ',' if comma else ''
             # record it
             yield self.place("ON DELETE {}{}".format(foreign.delete, separator))
-            
+
         # all done
         self.outdent()
         return

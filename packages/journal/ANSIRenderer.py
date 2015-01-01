@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -103,7 +103,7 @@ class ANSIRenderer(pyre.component, family="journal.renderers.ansi", implements=R
         scheme = self.scheme
         # build my palette
         self.palette = {
-            trait.name: self.colors[getattr(scheme, trait.name)] 
+            trait.name: self.colors[getattr(scheme, trait.name)]
             for trait in self.scheme.pyre_traits()
             }
 
@@ -140,4 +140,4 @@ class ANSIRenderer(pyre.component, family="journal.renderers.ansi", implements=R
         }
 
 
-# end of file 
+# end of file

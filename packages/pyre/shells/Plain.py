@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -22,4 +22,4 @@ class Plain(pyre.component, family='pyre.shells.terminals.plain', implements=ter
     colors = collections.defaultdict(str) # all color decorations are empty strings...
 
 
-# end of file 
+# end of file

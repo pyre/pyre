@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -84,7 +84,7 @@ class Configurator:
         # easy enough
         return self.codecs[encoding]
 
-    
+
     def register(self, codec):
         """
         Add {codec} to my registry
@@ -298,7 +298,7 @@ class Configurator:
         cfgpath = properties.paths(name=name, default=value)
 
         # place the trait in the model
-        nameserver.insert(name=name, value=value, 
+        nameserver.insert(name=name, value=value,
                           factory=cfgpath.instanceSlot, priority=priority, locator=locator)
 
         # all done
@@ -344,4 +344,4 @@ class Configurator:
         return index
 
 
-# end of file 
+# end of file

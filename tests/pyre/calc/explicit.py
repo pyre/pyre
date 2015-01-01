@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -19,7 +19,7 @@ def test():
     v = 80.
     production = pyre.calc.var(value=v)
     assert production.value == v
-    
+
     # once more
     v = 100.
     production.value = v
@@ -43,4 +43,4 @@ if __name__ == "__main__":
     assert tuple(Node._pyre_extent) == ()
 
 
-# end of file 
+# end of file

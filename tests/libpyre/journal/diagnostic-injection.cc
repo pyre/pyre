@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2014 all rights reserved
+// (c) 1998-2015 all rights reserved
 //
 
 
@@ -34,9 +34,9 @@
 
 
 // a simple channel class
-class Debug : 
+class Debug :
     public pyre::journal::Diagnostic<Debug>,
-    public pyre::journal::Channel<Debug, false> 
+    public pyre::journal::Channel<Debug, false>
 {
     // types
 public:

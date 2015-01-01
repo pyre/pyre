@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -47,7 +47,7 @@ class Surveyor(AttributeClassifier):
 
         # remove all the sheets from {kwds}
         for name in sheets: del kwds[name]
-        
+
         # make the attribute container
         attributes = super().__prepare__(name, bases, **kwds)
         # add the sheets as individual variables

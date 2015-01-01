@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -59,7 +59,7 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         if self.application is not None: spec.append(('application_name', self.application))
         # put it all together
         spec = ' '.join('='.join(entry) for entry in spec)
-        
+
         # establish the connection
         self.connection = self.postgres.connect(spec)
 
@@ -167,4 +167,4 @@ class Postgres(Server, family="pyre.db.server.postgres"):
 
 
 
-# end of file 
+# end of file

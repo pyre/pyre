@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -45,7 +45,7 @@ def test():
 # the greetings
 hello = "hello"
 goodbye = "goodbye"
-    
+
 
 def onServer(marshaller, pipe):
     """Send a simple message and wait for the response"""
@@ -93,11 +93,11 @@ def onClient(marshaller, pipe):
 
     # all done
     return
-    
-    
+
+
 # main
 if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file

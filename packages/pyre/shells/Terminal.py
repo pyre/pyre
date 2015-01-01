@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -54,9 +54,9 @@ class Terminal(pyre.protocol, family='pyre.shells.terminals'):
 
     # implementation details
     ansi = {
-        'ansi', 
-        'vt102', 'vt220', 'vt320', 'vt420', 
+        'ansi',
+        'vt102', 'vt220', 'vt320', 'vt420',
         'xterm', 'xterm-color', 'xterm-16color', 'xterm-256color'}
-            
 
-# end of file 
+
+# end of file

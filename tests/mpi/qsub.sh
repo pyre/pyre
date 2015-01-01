@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# michael a.g. aïvázis
+# orthologue
+# (c) 1998-2015 all rights reserved
+#
 #PBS -j oe
 #PBS -N ip
 #PBS -V
@@ -12,4 +17,3 @@ nprocs=$(wc -l < ${PBS_NODEFILE})
 cd ${PBS_O_WORKDIR}
 # execute
 mpirun python3.3 ip.py
-

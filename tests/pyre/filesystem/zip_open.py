@@ -3,7 +3,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2014 all rights reserved
+# (c) 1998-2015 all rights reserved
 #
 
 
@@ -25,7 +25,7 @@ def test():
     for filename in os.listdir('.'):
         target.write(filename)
     target.close()
-    
+
     # open it as a filesystem
     home = pyre.filesystem.zip(root=archive).discover()
     # locate this file
