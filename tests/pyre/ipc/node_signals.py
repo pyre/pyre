@@ -109,7 +109,6 @@ def onParent(childpid, channel):
             self.dispatcher.notifyOnReadReady(channel=self.channel, handler=self.recvReloaded)
             # issue the 'reload' signal
             os.kill(childpid, signal.SIGHUP)
-            
             # don't reschedule this handler
             return False
 
@@ -120,7 +119,7 @@ def onParent(childpid, channel):
             # receive
             message = self.marshaller.recv(channel)
             # check it
-            pdbg.log("checking it")
+            pdbg.log("child said {!r}".format(message))
             assert message == "reloaded"
             # now, send a 'terminate' to my child
             pdbg.log("sending 'terminate'")
@@ -128,7 +127,6 @@ def onParent(childpid, channel):
             # and stop my dispatcher
             self.dispatcher.stop()
             pdbg.log("all good")
-            
             # don't reschedule this handler
             return False
 
@@ -147,14 +145,14 @@ def onParent(childpid, channel):
     # create a node
     pdbg.log("instantiating my node")
     parent = node(name="parent", channel=channel)
-    
+
     # register my 'sendReload' to be invoked when the pipe is channel is ready for write
     # watch for events
     pdbg.log("entering event loop")
     parent.dispatcher.watch()
     # wait for it to die
-    pid, status = os.wait()
     pdbg.log("waiting for child to die")
+    pid, status = os.wait()
     # check the pid
     pdbg.log("checking pid")
     assert pid == childpid
@@ -176,7 +174,7 @@ def onChild(channel):
     overrides the 'reload' signal handler to send an acknowledgment to the parent, and goes
     back to its indefinite loop. Eventually, the parent sends a SIGTERM, which kills the child
     """
-    
+
     # debug
     cdbg = journal.debug("child")
     journal.debug("pyre.ipc.selector").active = False
@@ -195,7 +193,7 @@ def onChild(channel):
             self.marshaller.send(item='ready', channel=self.channel)
             # don't reschedule this handler
             return False
-            
+
         def sendReloaded(self, *uargs, **ukwds):
             # show me
             cdbg.log("sending 'reloaded' to my parent")
@@ -238,7 +236,7 @@ def onChild(channel):
             self.dispatcher.alarm(interval=self.dispatcher.second, handler=self.alarm)
             # let my parent know I am ready
             self.dispatcher.notifyOnWriteReady(channel=channel, handler=self.sendReady)
-            # all done 
+            # all done
             return
 
     # instantiate
@@ -251,7 +249,7 @@ def onChild(channel):
     assert child.cleanExit
     # show me
     cdbg.log("exiting")
-    # return it 
+    # return it
     return child
 
 
@@ -266,4 +264,4 @@ if __name__ == "__main__":
     test()
 
 
-# end of file 
+# end of file
