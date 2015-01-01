@@ -16,7 +16,7 @@ def test():
     # get the package
     import pyre.weaver
     # instantiate a weaver
-    weaver = pyre.weaver.newWeaver(name="sanity")
+    weaver = pyre.weaver.weaver(name="sanity")
     # by default, there is no language setting
     assert weaver.language == None
     # and return it

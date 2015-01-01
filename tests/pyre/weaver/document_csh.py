@@ -16,7 +16,7 @@ def test():
     # get the package
     import pyre.weaver
     # instantiate a weaver
-    weaver = pyre.weaver.newWeaver(name="sanity")
+    weaver = pyre.weaver.weaver(name="sanity")
     weaver.language = "csh"
 
     text = list(weaver.weave())

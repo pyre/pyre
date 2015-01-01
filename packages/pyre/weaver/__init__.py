@@ -13,8 +13,8 @@ The primary target is human readable formats, such source code for programming l
 """
 
 
-# access to the main component in this package
-from .Weaver import Weaver as newWeaver
+# access to the main components in this package
+from .Weaver import Weaver as weaver
 # the language interface
 from .Language import Language as language
 
@@ -40,5 +40,12 @@ from .Sh import Sh as sh
 from .TeX import TeX as tex
 from .XML import XML as xml
 
+# the templater
+from .Smith import Smith as smith
+# the protocol that captures the project metadata
+from .Project import Project as project
+# the templated project implementations
+from .Plexus import Plexus as plexus
 
-# end of file 
+
+# end of file

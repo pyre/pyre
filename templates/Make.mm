@@ -11,7 +11,7 @@ PROJECT = pyre
 TEMPLATES = \
     class.c++ \
     class.python \
-    plexus
+    plexus \
 
 #
 all: export

@@ -38,9 +38,12 @@ EXPORT_PYTHON_MODULES = \
     Mill.py \
     MixedComments.py \
     Perl.py \
+    Plexus.py \
+    Project.py \
     Python.py \
     SQL.py \
     SVG.py \
+    Smith.py \
     Sh.py \
     Stationery.py \
     TeX.py \
@@ -51,4 +54,4 @@ EXPORT_PYTHON_MODULES = \
 
 export:: export-package-python-modules
 
-# end of file 
+# end of file

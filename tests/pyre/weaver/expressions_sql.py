@@ -17,7 +17,7 @@ def test():
     import pyre.weaver
     import pyre.calc
     # instantiate a weaver
-    weaver = pyre.weaver.newWeaver(name="sanity")
+    weaver = pyre.weaver.weaver(name="sanity")
     weaver.language = "sql"
     # access its mill
     mill = weaver.language
