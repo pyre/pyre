@@ -47,12 +47,16 @@ class IPv4(Address):
 
     # meta methods
     def __init__(self, host='', port=None, **kwds):
-        # don't chain up; there are keys in {kwds} that are not meant for me
+        # chain up
+        super().__init__(**kwds)
+        # store my state
         self.host = host
         self.port = 0 if port is None else int(port)
+        # all done
         return
 
     def __str__(self):
+        # easy enough
         return "{!r}:{}".format(self.host, self.port)
 
 
@@ -74,11 +78,15 @@ class Unix(Address):
 
     # meta methods
     def __init__(self, path, **kwds):
-        # don't chain up; there are keys in {kwds} that are not meant for me
+        # chain up
+        super().__init__(**kwds)
+        # save my path
         self.path = path
+        # all done
         return
 
     def __str__(self):
+        # easy enough
         return self.path
 
 
@@ -157,14 +165,24 @@ class INet(Schema):
             msg = "could not convert {0.value!r} into an internet address"
             # bail out
             raise self.CastingError(value=value, description=msg)
-        # we have a match; get the address family
-        family = match.group('ip') or match.group('unix')
-        # if no family were specified
-        if family is None:
-            # build an ipv4 address
-            return self.ipv4(**match.groupdict())
-        # otherwise, use it to find the appropriate factory to build and return an address
-        return getattr(self, family)(**match.groupdict())
+
+        # check whether this an IP address
+        family = match.group('ip')
+        # and if so
+        if family:
+            # invoke the correct constructor
+            return getattr(self, family)(host=match.group('host'), port=match.group('port'))
+
+        # check whether this is a UNIX address
+        family = match.group('unix')
+        # and if so
+        if family:
+            # invoke the correct constructor
+            return getattr(self, family)(path=match.group('path'))
+
+        # if we get this far, there was no explicit family name in the address, in which case
+        # just build an ipv4 address
+        return self.ipv4(host=match.group('host'), port=match.group('port'))
 
 
     # meta-methods
