@@ -15,7 +15,6 @@ MODULE = {project.name}
 include std-pythonmodule.def
 
 # adjust the build parameters
-PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
 PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
 
 # the list of extension source files
@@ -28,5 +27,11 @@ PROJ_LIBRARIES += -l{project.name} -ljournal
 
 # register the dependence on {{lib{project.name}}} so I get recompiled when it changes
 PROJ_OTHER_DEPENDENCIES = $(BLD_LIBDIR)/lib{project.name}.$(EXT_AR)
+
+# the pile of things to clean
+PROJ_CLEAN += \
+    $(PROJ_CXX_LIB) \
+    $(MODULE_DLL) \
+    $(EXPORT_BINDIR)/$(MODULE).abi3.$(EXT_SO)
 
 # end of file

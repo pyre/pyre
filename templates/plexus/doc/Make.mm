@@ -10,6 +10,10 @@ include {project.name}.def
 # the package name
 PACKAGE = doc
 
+# the pile of things to clean
+PROJ_CLEAN += \
+    $(PROJ_DOCDIR)
+
 all: tidy
 
-# end of file 
+# end of file

@@ -8,9 +8,4 @@
 # global options for {{{project.name}}}
 PROJECT = {project.name}
 
-# default locations
-PROJ_TMPDIR = $(BLD_TMPDIR)/$(PACKAGE)
-PROJ_CLEAN += $(EXPORT_MODULEDIR)/$(PACKAGE)
-
-
-# end of file 
+# end of file

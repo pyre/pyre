@@ -23,8 +23,16 @@ EXPORT_HEADERS = \
 # the library
 EXPORT_LIBS = $(PROJ_LIB)
 
+# the stuff to clean up
+PROJ_CLEAN += \
+    $(PROJ_INCDIR) \
+    $(PROJ_LIB) \
+    $(PROJ_TMPDIR) \
+    $(EXPORT_INCDIR) \
+    $(EXPORT_LIBDIR)/lib{project.name}.$(EXT_LIB)
+
 # the default target compiles this library and exports it
 all: export-headers proj-lib export-libraries
 
 
-# end of file 
+# end of file
