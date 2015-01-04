@@ -15,6 +15,7 @@ EXPORT_PYTHON_MODULES = \
     Command.py \
     Copyright.py \
     Credits.py \
+    Info.py \
     License.py \
     Version.py \
     __init__.py

@@ -19,6 +19,10 @@ def credits():
     from .Credits import Credits
     return Credits
 
+def info():
+    from .Info import Info
+    return Info
+
 def license():
     from .License import License
     return License
