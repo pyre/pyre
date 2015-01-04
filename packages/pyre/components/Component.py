@@ -30,7 +30,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
     # framework data
     pyre_inventory = None # my inventory management strategy
-    pyre_implements = None # the lists of protocols i implement
+    pyre_implements = None # my protocol
 
 
     # introspection

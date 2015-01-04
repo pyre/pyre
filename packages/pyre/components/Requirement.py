@@ -184,4 +184,23 @@ class Requirement(AttributeClassifier):
         return
 
 
+    def pyre_getEigenPedigree(self):
+        """
+        Build a sequence of my ancestors that are configurable and NOT related to each other
+        through inheritance
+        """
+        # make a pile of known ancestors
+        known = set()
+        # loop over my pedigree
+        for base in self.pyre_getPedigree():
+            # ignore the trivial ones
+            if base.pyre_internal or base in known: continue
+            # got one
+            yield base
+            # put its pedigree in the known pile
+            known.update(base.pyre_getPedigree())
+        # all done
+        return
+
+
 # end of file
