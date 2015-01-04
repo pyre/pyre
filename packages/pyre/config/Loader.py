@@ -101,7 +101,8 @@ class Loader:
             executive=executive, protocol=protocol, uri=uri, symbol=symbol, **kwds)
         # go through each of them
         for uri in candidates:
-            # print("Loader.loadShelves: uri={.uri!r}".format(uri))
+            # show me
+            # print("Loader.loadShelves: candidate={.uri!r}".format(uri))
             # does this uri correspond to a known shelf
             try:
                 # if yes, grab it
@@ -109,7 +110,8 @@ class Loader:
                 # print("    shelf {!r} previously loaded".format(uri.uri))
             # otherwise
             except KeyError:
-                # print(" new shelf; loading") make an empty shelf and register it with the
+                # print(" new shelf; loading")
+                # make an empty shelf and register it with the
                 # linker to prevent it from attempting to load this shelf again, in case there
                 # are loading side effects
                 linker.shelves[uri.uri] =  cls.shelf(uri=uri)

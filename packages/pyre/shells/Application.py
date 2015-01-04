@@ -32,6 +32,8 @@ class Application(pyre.component, metaclass=Director):
 
 
     # constants
+    USER = 'user' # the name of the folder with user settings
+    SYSTEM = 'system' # the name of the folder with the global settings
     DEFAULTS = 'defaults' # the name of the folder with my configuration files
 
     # the default name for pyre applications; subclasses are expected to provide a more
@@ -294,18 +296,18 @@ class Application(pyre.component, metaclass=Director):
         # check whether
         try:
             # the user directory is already mounted
-            pfs['user']
+            pfs[self.USER]
         # if not
         except pfs.NotFoundError:
             # make it
-            pfs['user'] = vfs.getFolder(vfs.USER_DIR, namespace)
+            pfs[self.USER] = vfs.getFolder(vfs.USER_DIR, namespace)
 
         # get my prefix
         prefix = self.prefix
         # if i don't have one
         if not prefix:
             # attach an empty folder; must use {pfs} to do this to guarantee filesystem consistency
-            pfs['system'] = pfs.folder()
+            pfs[self.SYSTEM] = pfs.folder()
             # and return
             return pfs
 
@@ -313,6 +315,35 @@ class Application(pyre.component, metaclass=Director):
         home = vfs.retrieveFilesystem(root=prefix)
         # and mount my folders in my namespace
         self.pyre_mountApplicationFolders(pfs=pfs, prefix=home)
+
+        # now, build the protocol resolution folders by assembling the contents of the
+        # configuration folders in priority order
+        for root in [self.SYSTEM, self.USER]:
+            # build the work list: triplets of {name}, {source}, {destination}
+            todo = [ (root, pfs[root], pfs) ]
+            # now, for each triplet in the work list
+            for path, source, destination in todo:
+                # go through all the children of {source}
+                for name, node in source.contents.items():
+                    # if the node is a folder
+                    if node.isFolder:
+                        # gingerly attempt to
+                        try:
+                            # grab the associated folder in {destination}
+                            link = destination[name]
+                        # if not there
+                        except destination.NotFoundError:
+                            # no worries, make it
+                            link = destination.folder()
+                            # and attach it
+                            destination[name] = link
+                        # add it to the work list
+                        todo.append( (name, node, link) )
+                    # otherwise
+                    else:
+                        # link the file into the destination folder
+                        destination[name] = node
+
         # all done
         return pfs
 
@@ -332,7 +363,14 @@ class Application(pyre.component, metaclass=Director):
             # make an empty folder; must use {pfs} to do this to guarantee filesystem consistency
             cfgdir = pfs.folder()
         # attach it
-        pfs['system'] = cfgdir
+        pfs[self.SYSTEM] = cfgdir
+
+        # now, my runtime folders
+        folders = [ 'etc', 'var' ]
+        # go through them
+        for folder in folders:
+            # and mount each one
+            self.pyre_mountPrivateFolder(pfs=pfs, prefix=prefix, folder=folder)
 
         # all done
         return pfs

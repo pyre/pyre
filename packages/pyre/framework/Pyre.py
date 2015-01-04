@@ -55,7 +55,7 @@ class Pyre(Executive):
         """
         Report and boot time errors
         """
-        # bail out if no errors were detetcted
+        # bail out if no errors were detected
         if not self.errors: return
 
         # report the boot time errors
