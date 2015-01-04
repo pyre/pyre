@@ -24,7 +24,6 @@ class Requirement(AttributeClassifier):
       * identifies the specially marked attributes
       * creates the namemap that handles trait name aliasing
     """
-
     # the presence of a family/component name determines the slot storage strategy: if a
     # configurable is to be registered with the nameserver, it delegates storage of its slot to
     # it, which allows me to maintain only one slot for each component trait. if a configurable
@@ -159,9 +158,9 @@ class Requirement(AttributeClassifier):
         # instance of my metaclass. it turns out that this algorithm fails for subclasses of
         # configurables that have their own metaclass, such as {pyre.shells.Application} whose
         # metaclass {pyre.shells.Director} fails to recognize {Component} subclasses as its
-        # instances. The net effect was that any trait defined in an {Application} ancestor
+        # instances. the net effect was that any trait defined in an {Application} ancestor
         # component would be ignored during the computation of inherited traits, making certain
-        # factorization impossible
+        # factorizations impossible
 
         # for each class in the chain
         for base in self.__mro__:
@@ -192,13 +191,13 @@ class Requirement(AttributeClassifier):
         # make a pile of known ancestors
         known = set()
         # loop over my pedigree
-        for base in self.pyre_getPedigree():
-            # ignore the trivial ones
+        for base in self.pyre_pedigree:
+            # ignore the trivial and the known
             if base.pyre_internal or base in known: continue
             # got one
             yield base
             # put its pedigree in the known pile
-            known.update(base.pyre_getPedigree())
+            known.update(base.pyre_pedigree)
         # all done
         return
 
