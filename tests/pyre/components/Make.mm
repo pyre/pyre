@@ -51,6 +51,7 @@ component-basics:
 	${PYTHON} ./component_compatibility.py
 	${PYTHON} ./component_compatibility_reports.py
 	${PYTHON} ./component_implements.py
+	${PYTHON} ./component_bad_implementations.py
 
 component-class:
 	${PYTHON} ./component_class_registration.py
@@ -82,7 +83,6 @@ component-instance:
 	${PYTHON} ./component_instance_binding_existing.py
 	${PYTHON} ./component_instance_binding_deferred.py
 	${PYTHON} ./component_instance_validation.py
-	${PYTHON} ./component_bad_implementations.py
 	${PYTHON} ./component_aliases.py --functor.μ=0.10 --gaussian.σ=0.10
 
 component-multi:
