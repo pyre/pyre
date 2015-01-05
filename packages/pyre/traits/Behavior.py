@@ -42,12 +42,12 @@ class Behavior(Trait):
         # if we don't know the method, we were invoked with keyword arguments; the strategy
         # here is to return a {Behavior} constructor as the value of this invocation, which
         # accomplishes two things: it gives python something to call when the method
-        # declaration is done, and prevent my {__init__} from getting invoked prematurely
+        # declaration is done, and prevents my {__init__} from getting invoked prematurely
 
         # here is the constructor closure
         def build(method):
             """
-            Covert a component method into a behavior
+            Convert a component method into a behavior
             """
             # just build one of my instance
             return cls(method=method, tip=tip, **kwds)

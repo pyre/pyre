@@ -141,9 +141,9 @@ class Configurable(Dashboard):
         least the properties and behaviors specified by {other}
 
         If {fast} is True, this method will return as soon as it encounters the first
-        incompatibility issue, without performing an exhaustive check of all traits. This is
-        the default behavior. If {fast} is False, a thorough check of all traits will be
-        performed resulting in a detailed compatibility report.
+        incompatibility issue, without performing an exhaustive check of all traits. If {fast}
+        is False, a thorough check of all traits will be performed resulting in a detailed
+        compatibility report.
         """
         # gain access to the report factory
         from .CompatibilityReport import CompatibilityReport
