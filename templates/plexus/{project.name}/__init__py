@@ -10,7 +10,7 @@
 # import and publish pyre symbols
 from pyre import (
     # protocols, components and traits
-    schemata, constraints, properties, protocol, component,
+    schemata, constraints, properties, protocol, component, foundry,
     # decorators
     export, provides,
     # the manager of the pyre runtime
