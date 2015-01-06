@@ -6,6 +6,8 @@
 #
 
 
+# the marker of component factories
+from .. import foundry
 # the protocol for external packages
 from .Category import Category as category
 
@@ -55,8 +57,9 @@ from .Library import Library as library
 # package managers in functions to prevent importing them prematurely. This has the important
 # side-effect of making the plug-ins from user space higher priority than the built-in support
 
-def mpi():
 
+@foundry(implements=category)
+def mpi():
     """
     The package manager for MPI installations
     """
@@ -66,6 +69,7 @@ def mpi():
     return MPI
 
 
+@foundry(implements=category)
 def mpich():
     """
     The package manager for MPICH installations
@@ -76,6 +80,7 @@ def mpich():
     return MPICH
 
 
+@foundry(implements=category)
 def openmpi():
     """
     The package manager for OpenMPI installations
@@ -86,6 +91,7 @@ def openmpi():
     return OpenMPI
 
 
+@foundry(implements=category)
 def python():
     """
     Package manager for the python interpreter

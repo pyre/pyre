@@ -6,12 +6,11 @@
 #
 
 
-# externals
-from ... import tracking
-
+# my base class
+from ..Shelf import Shelf as base
 
 # declaration
-class Shelf(dict):
+class Shelf(base):
     """
     Shelves are symbol tables that map component record factories to their names.
 
@@ -35,33 +34,27 @@ class Shelf(dict):
     """
 
 
-    # exceptions
-    from ..exceptions import SymbolNotFoundError
-
-
-    # interface
-    def retrieveSymbol(self, symbol):
-        """
-        Retrieve {symbol} from this shelf
-        """
-        try:
-            return self[symbol]
-        except KeyError as error:
-            raise self.SymbolNotFoundError(shelf=self, symbol=symbol) from error
-
-        # unreachable
-        import journal
-        raise journal.firewall('pyre.config.native').log("UNREACHABLE")
-
-
     # meta methods
-    def __init__(self, uri, locator=None, **kwds):
-        super().__init__(**kwds)
-        # save my state
-        self.uri = uri
-        self.locator = locator
-        # load the global symbols so they are available to the execution context
-        self.update(__builtins__)
+    def __init__(self, stream=None, **kwds):
+        # no stream
+        if not stream:
+            # no symbols
+            symbols = ()
+        # otherwise
+        else:
+            # prepare to parse the stream: build an execution context
+            context = {}
+            # load the global symbols so they are available to the execution context
+            context.update(__builtins__)
+            # read the stream contents
+            contents = stream.read()
+            # invoke the interpreter to parse
+            exec(contents, context)
+            # get the symbols
+            symbols = context.items()
+
+        # chain up
+        super().__init__(symbols=symbols, **kwds)
         # ready to go
         return
 

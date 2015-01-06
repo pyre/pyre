@@ -38,6 +38,7 @@ EXPORT_PYTHON_MODULES = \
     CommandLineParser.py \
     Configurator.py \
     Loader.py \
+    Shelf.py \
     events.py \
     exceptions.py \
     __init__.py

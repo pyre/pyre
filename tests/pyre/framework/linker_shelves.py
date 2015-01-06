@@ -19,11 +19,6 @@ def test():
     # access the linker
     linker = executive.linker
 
-    # request a python module
-    shelf = linker.loadShelf(executive=executive, uri="import:math")
-    # make sure it got imported correctly
-    assert shelf.retrieveSymbol('pi')
-
     # request a non-existent python module
     try:
         shelf = linker.loadShelf(executive=executive, uri="import:foo")

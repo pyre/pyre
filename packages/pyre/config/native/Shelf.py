@@ -6,10 +6,14 @@
 #
 
 
+# my base class
+from ..Shelf import Shelf as base
+
+
 # declaration
-class Shelf:
+class Shelf(base):
     """
-    A symbol table built on top of a native python module
+    A symbol table primed by extracting symbols from a native python module
     """
 
     # N.B: shelves used to build their locators using the {__file__} attribute of modules;
@@ -21,39 +25,12 @@ class Shelf:
     from ..exceptions import SymbolNotFoundError
 
 
-    # public data
-    uri = None
-    module = None
-    locator = None
-
-
-    # interface
-    def retrieveSymbol(self, symbol):
-        """
-        Retrieve {symbol} from this shelf
-        """
-        # if the {symbol} is exported by my module
-        try:
-            # grab and return it
-            return getattr(self.module, symbol)
-        # otherwise
-        except AttributeError as error:
-            # complain
-            raise self.SymbolNotFoundError(shelf=self, symbol=symbol) from error
-        # unreachable
-        import journal
-        raise journal.firewall('pyre.config.native').log("UNREACHABLE")
-
-
     # meta methods
-    def __init__(self, uri, module=None, locator=None,  **kwds):
-        super().__init__(**kwds)
-        # record the module
-        self.module = module
-        # the {uri} that caused it to get loaded
-        self.uri = uri
-        # and the locator
-        self.locator = locator
+    def __init__(self, module=None, **kwds):
+        # no module, no symbols
+        symbols = module.__dict__.items() if module else ()
+        # chain up
+        super().__init__(symbols=symbols, **kwds)
         # all done
         return
 

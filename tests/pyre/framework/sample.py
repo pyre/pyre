@@ -7,6 +7,7 @@
 
 import pyre
 
+@pyre.foundry
 def factory(): pass
 
 class base(pyre.component):

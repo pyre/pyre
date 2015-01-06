@@ -165,7 +165,7 @@ def boot():
 
 
 # the framework entities
-from pyre import export, properties, protocol
+from pyre import foundry, export, properties, protocol
 from .components.Component import Component as component
 
 # factories

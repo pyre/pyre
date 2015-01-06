@@ -51,13 +51,9 @@ class ODB(Loader):
         except fs.GenericError as error:
             # report it as a loading error
             raise cls.LoadingError(codec=cls, uri=uri) from error
-        # now, read the contents
-        contents = stream.read()
         # build a new shelf
-        shelf = cls.shelf(uri=uri, locator=tracking.file(source=str(uri)))
-        # invoke the interpreter to parse its contents and place them in the shelf
-        exec(contents, shelf)
-        # return the shelf
+        shelf = cls.shelf(stream=stream, uri=uri, locator=tracking.file(source=str(uri)))
+        # and return it
         return shelf
 
 

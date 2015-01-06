@@ -202,9 +202,9 @@ class Executive:
         for candidate in self.retrieveComponentDescriptor(uri=uri, protocol=protocol, **kwds):
             # if the candidate is neither a component class nor a component instance
             if not (isinstance(candidate, actor) or isinstance(candidate, component)):
-                # it must be a callable the returns one
+                # it must be a foundry
                 try:
-                    # evaluate it
+                    # so invoke it
                     candidate = candidate()
                 # if this fails
                 except TypeError:
@@ -227,6 +227,16 @@ class Executive:
 
         # totally out of ideas
         return
+
+
+    def retrieveComponents(self, uri):
+        """
+        Retrieve all component classes from the shelf at {uri}
+        """
+        # get the shelf
+        shelf = self.linker.loadShelf(executive=self, uri=uri)
+        # and return its contents
+        return shelf.items()
 
 
     def retrieveComponentDescriptor(self, uri, protocol, **kwds):
