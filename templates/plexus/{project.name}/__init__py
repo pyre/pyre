@@ -26,8 +26,7 @@ package = executive.registerPackage(name='{project.name}', file=__file__)
 home, prefix, defaults = package.layout()
 
 # plexus support
-from .components import plexus, action
-from .actions import command
+from .components import plexus, action, command
 
 # publish local modules
 from . import (

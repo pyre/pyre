@@ -13,6 +13,7 @@ PACKAGE = components
 # the list of python modules
 EXPORT_PYTHON_MODULES = \
     Action.py \
+    Command.py \
     Plexus.py \
     __init__.py
 

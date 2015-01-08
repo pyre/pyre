@@ -12,7 +12,6 @@ PACKAGE = actions
 
 # the list of python modules
 EXPORT_PYTHON_MODULES = \
-    Command.py \
     Copyright.py \
     Credits.py \
     Info.py \

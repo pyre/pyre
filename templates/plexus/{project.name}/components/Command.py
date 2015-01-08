@@ -9,11 +9,11 @@
 # access the pyre framework
 import pyre
 # my protocol
-from .. import components
+from .Action import Action as action
 
 
 # class declaration
-class Command(pyre.panel, implements=components.action):
+class Command(pyre.panel, implements=action):
     """
     Base class for {{{project.name}}} commands
     """

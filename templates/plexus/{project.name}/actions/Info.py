@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# [ replace with the list of authors ]
-# [ replace with the author affiliations ]
-# (c) [ replace with the project duration ] all rights reserved
+# {project.authors}
+# {project.affiliations}
+# (c) {project.span} all rights reserved
 #
 
 

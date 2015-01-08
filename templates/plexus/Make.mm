@@ -17,9 +17,7 @@ RECURSE_DIRS = \
     tests \
     doc \
 
-#--------------------------------------------------------------------------
-#
-
+# standard targets
 all:
 	BLD_ACTION="all" $(MM) recurse
 
@@ -33,31 +31,17 @@ distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
 
-#--------------------------------------------------------------------------
-#  shortcuts to building in my subdirectories
-.PHONY: {project.name} defaults extension lib tests doc
-
-{project.name}:
-	(cd {project.name}; $(MM))
-
-defaults:
-	(cd defaults; $(MM))
-
-doc:
-	(cd doc; $(MM))
-
-extension:
-	(cd extension; $(MM))
-
-lib:
-	(cd lib; $(MM))
-
-tests:
-	(cd tests; $(MM))
-
+# convenience
 build: {project.name} lib extension defaults
 
 test: build tests
+
+
+#  shortcuts for building specific subdirectories
+.PHONY: $(RECURSE_DIRS)
+
+$(RECURSE_DIRS):
+	(cd $@; $(MM))
 
 
 # end of file
