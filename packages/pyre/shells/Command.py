@@ -43,79 +43,17 @@ class Command(pyre.component, implements=Action):
         """
         Show a help screen
         """
-        # hardwired (for now?)
+        # indentation level
         indent = '    '
+        # my specification
+        spec = '{.pyre_namespace} {.pyre_spec}'.format(plexus, self)
         # tell the user what they typed
-        self.info.line('{.pyre_namespace} {.pyre_spec}'.format(plexus, self))
+        self.info.line(spec)
 
-        # if i have a docstring
-        if self.__doc__:
-            # split my docstring into lines
-            for line in self.__doc__.splitlines():
-                # indent each one and print it out
-                self.info.line('{}{}'.format(indent, line.strip()))
-
-        # the pile of my behaviors
-        behaviors = []
-        # collect them
-        for behavior in self.pyre_behaviors():
-            # get the name
-            name = behavior.name
-            # get the tip
-            tip = behavior.tip
-            # if there is no tip, assume it is internal and skip it
-            if not tip: continue
-            # everything else gets saved
-            behaviors.append((name, tip))
-
-        # if we were able to find any usage information
-        if behaviors:
-            # the {usage} section
-            self.info.line('usage:')
-            # a banner with all the commands
-            self.info.line('{}{.pyre_namespace} {.pyre_spec} [{}]'.format(
-                indent, plexus, self, " | ".join(name for name,_ in behaviors)))
-            # leave some space
-            self.info.line()
-            # the beginning of the section with more details
-            self.info.line('where')
-            # figure out how much space we need
-            width = max(len(name) for name,_ in behaviors)
-            # for each behavior
-            for behavior, tip in behaviors:
-                # show the details
-                self.info.line("{}{:>{}}: {}".format(indent, behavior, width, tip))
-            # leave some space
-            self.info.line()
-
-        # my public state
-        public = []
-        # collect them
-        for trait in self.pyre_configurables():
-            # get the name
-            name = trait.name
-            # get the type
-            schema = trait.typename
-            # and the tip
-            tip = trait.tip or trait.doc
-            # skip nameless undocumented ones
-            if not name or not tip: continue
-            # pile the rest
-            public.append((name, schema, tip))
-
-        # if we were able to find any trait info
-        if public:
-            # the {options} section
-            self.info.line('options:')
-            # figure out how much space we need
-            width = max(len(name) for name,_,_ in public) + 2 # for the dashes
-            # for each behavior
-            for name, schema, tip in public:
-                # show the details
-                self.info.line("{}{:>{}}: {} [{}]".format(indent, '--'+name, width, tip, schema))
-            # leave some space
-            self.info.line()
-
+        # generate a simple help screen
+        for line in self.pyre_help(spec=spec, indent=indent):
+            # and push it to my info channel
+            self.info.line(line)
         # flush
         self.info.log()
         # and indicate success
@@ -145,8 +83,22 @@ class Command(pyre.component, implements=Action):
         """
         Commands are callable
         """
-        # wire it to invoking {main}
+        # delegate to {main}
         return self.main(plexus=plexus, argv=argv)
+
+
+    def pyre_help(self, spec, indent=' '*4, **kwds):
+        """
+        Hook for the application help system
+        """
+        # my summary
+        yield from self.pyre_showSummary(indent=indent, **kwds)
+        # my behaviors
+        yield from self.pyre_showBehaviors(spec=spec, indent=indent, **kwds)
+        # my public state
+        yield from self.pyre_showConfigurables(indent=indent, **kwds)
+        # all done
+        return
 
 
     # private data

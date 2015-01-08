@@ -125,45 +125,13 @@ class Application(pyre.component, metaclass=Director):
         """
         Hook for the application help system
         """
-        # hardwired (for now?)
-        indent = '    '
         # tell the user what they typed
         self.info.line('{.pyre_namespace}'.format(self))
 
-        # if i have a docstring
-        if self.__doc__:
-            # split my docstring into lines
-            for line in self.__doc__.splitlines():
-                # indent each one and print it out
-                self.info.line('{}{}'.format(indent, line.strip()))
-
-        # my public state
-        public = []
-        # collect them
-        for trait in self.pyre_configurables():
-            # get the name
-            name = trait.name
-            # get the type
-            schema = trait.typename
-            # and the tip
-            tip = trait.tip or trait.doc
-            # skip nameless undocumented ones
-            if not name or not tip: continue
-            # pile the rest
-            public.append((name, schema, tip))
-
-        # if we were able to find any trait info
-        if public:
-            # the {options} section
-            self.info.line('options:')
-            # figure out how much space we need
-            width = max(len(name) for name,_,_ in public) + 2 # for the dashes
-            # for each behavior
-            for name, schema, tip in public:
-                # show the details
-                self.info.line("{}{:>{}}: {} [{}]".format(indent, '--'+name, width, tip, schema))
-            # leave some space
-            self.info.line()
+        # build the simple description of what i do
+        for line in self.pyre_help():
+            # and push it to my info channel
+            self.info.line(line)
 
         # flush
         self.info.log()
