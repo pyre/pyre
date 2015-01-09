@@ -16,13 +16,18 @@ class debug({project.name}.command, family='{project.name}.actions.debug'):
     """
 
 
+    # meta-data
+    pyre_tip = "an example of a user supplied command"
+
+
+    # behaviors
     @{project.name}.export(tip='convenience action for debugging the plexus')
     def test(self, plexus):
         """
         Convenient resting point for debugging code during development
         """
         # show me
-        self.info.log(self.pyre_name)
+        plexus.info.log(self.pyre_name)
         # all done
         return
 

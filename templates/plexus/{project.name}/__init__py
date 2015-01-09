@@ -40,36 +40,40 @@ def credits():
     """
     Print the acknowledgments
     """
-    yield from _{project.name}_acknowledgments.splitlines()
+    # generate the message
+    print(_{project.name}_acknowledgments)
+    # all done
+    return
 
 
 def copyright():
     """
     Return the {project.name} copyright note
     """
-    yield from _{project.name}_copyright.splitlines()
+    # generate the message
+    print(_{project.name}_copyright)
+    # all done
+    return
 
 
 def license():
     """
     Print the {project.name} license
     """
-    yield from _{project.name}_license.splitlines()
+    # generate the message
+    print(_{project.name}_license)
+    # all done
+    return
 
 
 def version():
     """
     Return the {project.name} version
     """
-    yield from _{project.name}_version
-
-
-def usage():
-    """
-    Basic usage information
-    """
-    # print the usage screen
-    yield from _{project.name}_usage.splitlines()
+    # generate the message
+    print(_{project.name}_version)
+    # all done
+    return
 
 
 # constants
@@ -81,23 +85,19 @@ _{project.name}_copyright = "{{}}: Copyright (c) {project.span} All rights reser
 
 _{project.name}_header = """
     {{}}
-
-    Authors:
-      {project.authors}
-
     Copyright (c) {project.span} All Rights Reserved
+
+authors:
+    {project.authors}
     """.format(_{project.name}_tag)
 
 _{project.name}_license = _{project.name}_header + """
+license:
     The complete usage terms can be found in the file LICENSE.txt
     """
 
 _{project.name}_acknowledgments = _{project.name}_header + """
-    """
-
-_{project.name}_usage = _{project.name}_header + """
-    Basic commands:
-        {project.name} info           display package information
+acknowledgments:
     """
 
 

@@ -11,7 +11,7 @@ import {project.name}
 
 
 # declaration
-class Info({project.name}.command, family='{project.name}.actions.info'):
+class About({project.name}.command, family='{project.name}.actions.about'):
     """
     Display information about this application
     """
@@ -29,7 +29,7 @@ class Info({project.name}.command, family='{project.name}.actions.info'):
         Print the copyright note of the {project.name} package
         """
         # get the lines
-        for line in {project.name}.copyright():
+        for line in {project.name}._{project.name}_copyright.splitlines():
             # and push them to the plexus info channel
             plexus.info.line(line)
         # flush
@@ -43,8 +43,10 @@ class Info({project.name}.command, family='{project.name}.actions.info'):
         """
         Print out the license and terms of use of the {project.name} package
         """
+        # make some space
+        plexus.info.line()
         # get the lines
-        for line in {project.name}.credits():
+        for line in {project.name}._{project.name}_acknowledgments.splitlines():
             # and push them to the plexus info channel
             plexus.info.line(line)
         # flush
@@ -58,8 +60,10 @@ class Info({project.name}.command, family='{project.name}.actions.info'):
         """
         Print out the license and terms of use of the {project.name} package
         """
+        # make some space
+        plexus.info.line()
         # get the lines
-        for line in {project.name}.license():
+        for line in {project.name}._{project.name}_license.splitlines():
             # and push them to the plexus info channel
             plexus.info.line(line)
         # flush
@@ -86,6 +90,8 @@ class Info({project.name}.command, family='{project.name}.actions.info'):
         """
         Print the version of the {project.name} package
         """
+        # make some space
+        plexus.info.line()
         # invoke the package header and push it to the plexus info channel
         plexus.info.log({project.name}._{project.name}_header)
         # all done

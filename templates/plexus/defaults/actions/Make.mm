@@ -21,6 +21,6 @@ PROJ_CLEAN = $(EXPORT_ETCDIR)/$(PACKAGE)
 # the standard build targets
 all: export
 
-export:: export-etc
+export:: export-package-etc
 
 # end of file

@@ -10,10 +10,13 @@
 from .. import foundry, action
 
 # help
-@foundry(implements=action)
-def info():
-    from .Info import Info
-    return Info
+@foundry(implements=action, tip="display information about this application")
+def about():
+    """
+    Display information about this application
+    """
+    from .About import About
+    return About
 
 
 # end of file

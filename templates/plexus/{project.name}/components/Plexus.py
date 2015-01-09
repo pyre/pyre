@@ -33,9 +33,37 @@ class Plexus(pyre.plexus, family='{project.name}.components.plexus'):
         """
         # get the package
         import {project.name}
-        # show me
-        self.info.log({project.name}._{project.name}_usage)
-        # all done
+        # set the indentation
+        indent = ' '*4
+        # make some space
+        self.info.line()
+        # get the help header
+        for line in {project.name}._{project.name}_header.splitlines():
+            # and display it
+            self.info.line(line)
+
+        # reset the pile of actions
+        actions = []
+        # get the documented commands
+        for uri, name, action, tip in self.pyre_action.pyre_documentedActions():
+            # and put them on the pile
+            actions.append((name, tip))
+        # if there were any
+        if actions:
+            # figure out how much space we need
+            width = max(len(name) for name, _ in actions)
+            # introduce this section
+            self.info.line('commands:')
+            # for each documented action
+            for name, tip in actions:
+                # show the details
+                self.info.line('{{}}{{:>{{}}}}: {{}}'.format(indent, name, width, tip))
+            # some space
+            self.info.line()
+
+        # flush
+        self.info.log()
+        # and indicate success
         return 0
 
 

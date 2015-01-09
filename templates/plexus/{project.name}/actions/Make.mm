@@ -12,7 +12,7 @@ PACKAGE = actions
 
 # the list of python modules
 EXPORT_PYTHON_MODULES = \
-    Info.py \
+    About.py \
     __init__.py
 
 # the standard build targets
