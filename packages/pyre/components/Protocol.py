@@ -26,6 +26,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
     from ..schemata import uri
     from .exceptions import ResolutionError
     from .Actor import Actor as actor
+    from .Foundry import Foundry as foundry
     from .Component import Component as component
 
 
@@ -235,6 +236,123 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         yield ''
         # out of ideas
         return
+
+
+    @classmethod
+    def pyre_locateAllImplementers(cls):
+        """
+        Retrieve all visible components that are compatible with me
+
+        For components to be visible, their location has to be deducible based only on the
+        information available to this protocol; other compatible components may be provided by
+        packages that have not been imported yet, or live in files outside the canonical layout
+        """
+        # all loadable implementors
+        yield from cls.pyre_locateAllLoadableImplementors()
+        # all importable implementors
+        yield from cls.pyre_locateAllImportableImplementors()
+
+
+    @classmethod
+    def pyre_locateAllImportableImplementors(cls):
+        """
+        Retrieve all implementors registered in a namespace derivable from my family name
+        """
+        # construct the uri
+        uri = 'import:{}'.format('.'.join(cls.pyre_familyFragments()))
+        # and delegate
+        yield from cls.pyre_implementers(uri=uri)
+        # all done
+        return
+
+
+    @classmethod
+    def pyre_locateAllLoadableImplementors(cls):
+        """
+        Retrieve all implementors that live in files and folders derivable from my family name
+        """
+        # get the file server
+        vfs = cls.pyre_fileserver
+        # construct the base uri
+        uri = vfs.join(*cls.pyre_familyFragments())
+        # try to
+        try:
+            # get the associated node
+            node = vfs[uri]
+        # if it's not there
+        except vfs.NotFoundError:
+            # no worries
+            pass
+        # if it is there
+        else:
+            # reset the workload
+            todo = [ (uri, node) ]
+            # go through all nodes
+            for path, folder in todo:
+                # grab the contents
+                for name, child in folder.open():
+                    # if the child is a folder
+                    if child.isFolder:
+                        # put it on the todo
+                        todo.append((vfs.join(path,name), child))
+                    # otherwise
+                    else:
+                        # treat it as a shelf
+                        yield from cls.pyre_implementers(uri=vfs.join('vfs:', path, name))
+
+        # the last thing to try is a shelf named after my family
+        uri += '.py'
+        # check whether
+        try:
+            # such a node exists
+            node = vfs[uri]
+        # if not
+        except vfs.NotFoundError:
+            # no worries
+            pass
+        # otherwise
+        else:
+            # yield its contents
+            yield from cls.pyre_implementers(uri=vfs.join('vfs:', uri))
+
+        # all done
+        return
+
+
+    @classmethod
+    def pyre_implementers(cls, uri):
+        """
+        Retrieve components that are compatible with me from the shelf in {uri}
+        """
+        # get the shelf contents
+        for name, entity in cls.pyre_executive.retrieveComponents(uri=uri):
+            # if the entity is a component
+            if isinstance(entity, cls.actor):
+                # if it is compatible with me
+                if entity.pyre_isCompatible(cls, fast=True):
+                    # pass it along
+                    yield uri, name, entity
+                # grab the next one
+                continue
+            # if the entity is a foundry
+            if isinstance(entity, cls.foundry):
+                # check whether any of its protocols
+                for protocol in entity.pyre_implements:
+                    # is compatible with me
+                    if protocol.pyre_isCompatible(cls, fast=True):
+                        # in which case, pass it along
+                        yield uri, name, entity
+                        # stop checking other protocols
+                        break
+                # grab the next one
+                continue
+            # other kinds?
+            import journal
+            return journal.firewall.log("new kind of symbol in shelf {!r}".format(str(uri)))
+
+        # all done
+        return
+
 
 
     # constants
