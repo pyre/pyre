@@ -12,11 +12,7 @@ PACKAGE = actions
 
 # the list of python modules
 EXPORT_PYTHON_MODULES = \
-    Copyright.py \
-    Credits.py \
     Info.py \
-    License.py \
-    Version.py \
     __init__.py
 
 # the standard build targets

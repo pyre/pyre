@@ -40,28 +40,28 @@ def credits():
     """
     Print the acknowledgments
     """
-    return _{project.name}_acknowledgments
+    yield from _{project.name}_acknowledgments.splitlines()
 
 
 def copyright():
     """
     Return the {project.name} copyright note
     """
-    return _{project.name}_copyright
+    yield from _{project.name}_copyright.splitlines()
 
 
 def license():
     """
     Print the {project.name} license
     """
-    return _{project.name}_license
+    yield from _{project.name}_license.splitlines()
 
 
 def version():
     """
     Return the {project.name} version
     """
-    return _{project.name}_version
+    yield from _{project.name}_version
 
 
 def usage():
@@ -69,9 +69,7 @@ def usage():
     Basic usage information
     """
     # print the usage screen
-    print(_{project.name}_usage)
-    # all done
-    return
+    yield from _{project.name}_usage.splitlines()
 
 
 # constants
@@ -93,15 +91,13 @@ _{project.name}_header = """
 _{project.name}_license = _{project.name}_header + """
     The complete usage terms can be found in the file LICENSE.txt
     """
+
 _{project.name}_acknowledgments = _{project.name}_header + """
     """
 
 _{project.name}_usage = _{project.name}_header + """
     Basic commands:
-        {project.name} credits        acknowledgments
-        {project.name} license        terms of use
-        {project.name} version        current version of the package
-        {project.name} copyright      the copyright note
+        {project.name} info           display package information
     """
 
 

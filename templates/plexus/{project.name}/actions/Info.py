@@ -23,13 +23,47 @@ class Info({project.name}.command, family='{project.name}.actions.info'):
 
 
     # class interface
-    @{project.name}.export(tip='convenience action for debugging the plexus')
-    def test(self, plexus):
+    @{project.name}.export(tip="print the copyright note")
+    def copyright(self, plexus):
         """
-        Convenient resting point for debugging code during development
+        Print the copyright note of the {project.name} package
         """
-        # show me
-        plexus.info.log('debugging...')
+        # get the lines
+        for line in {project.name}.copyright():
+            # and push them to the plexus info channel
+            plexus.info.line(line)
+        # flush
+        plexus.info.log()
+        # all done
+        return
+
+
+    @{project.name}.export(tip="print out the acknowledgments")
+    def credits(self, plexus):
+        """
+        Print out the license and terms of use of the {project.name} package
+        """
+        # get the lines
+        for line in {project.name}.credits():
+            # and push them to the plexus info channel
+            plexus.info.line(line)
+        # flush
+        plexus.info.log()
+        # all done
+        return
+
+
+    @{project.name}.export(tip="print out the license and terms of use")
+    def license(self, plexus):
+        """
+        Print out the license and terms of use of the {project.name} package
+        """
+        # get the lines
+        for line in {project.name}.license():
+            # and push them to the plexus info channel
+            plexus.info.line(line)
+        # flush
+        plexus.info.log()
         # all done
         return
 
@@ -43,6 +77,17 @@ class Info({project.name}.command, family='{project.name}.actions.info'):
         prefix = self.prefix or '{project.name}'
         # show me
         plexus.pyre_nameserver.dump(prefix)
+        # all done
+        return
+
+
+    @{project.name}.export(tip="print the version number")
+    def version(self, plexus):
+        """
+        Print the version of the {project.name} package
+        """
+        # invoke the package header and push it to the plexus info channel
+        plexus.info.log({project.name}._{project.name}_header)
         # all done
         return
 
