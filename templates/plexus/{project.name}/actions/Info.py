@@ -29,7 +29,7 @@ class Info({project.name}.command, family='{project.name}.actions.info'):
         Convenient resting point for debugging code during development
         """
         # show me
-        self.info.log('debugging...')
+        plexus.info.log('debugging...')
         # all done
         return
 

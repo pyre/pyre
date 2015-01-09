@@ -30,7 +30,6 @@ EXPORT_PYTHON_MODULES = \
     Layout.py \
     Panel.py \
     Plain.py \
-    Plector.py \
     Plexus.py \
     Renderer.py \
     Repertoir.py \

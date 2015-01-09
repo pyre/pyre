@@ -47,7 +47,7 @@ class Initializer(merlin.spell):
         # if there is more than one
         if len(folders) > 1:
             # issue a warning
-            self.warning.log(
+            plexus.warning.log(
                 'cannot initialize multiple project folders; ignoring all but the first')
         # extract the folder
         folder = folders[0]
@@ -57,12 +57,12 @@ class Initializer(merlin.spell):
         # if it is
         if root and not self.force:
             # complain
-            return self.error.log('{!r} is already within an existing project'.format(folder))
+            return plexus.error.log('{!r} is already within an existing project'.format(folder))
 
         # if the directory does not exist
         if not os.path.isdir(folder):
             # notify the user
-            self.info.log('target folder {!r} does not exist; creating'.format(folder))
+            plexus.info.log('target folder {!r} does not exist; creating'.format(folder))
             # were we asked to build all parent directories?
             if self.createPrefix:
                 # yes, do it
@@ -76,7 +76,7 @@ class Initializer(merlin.spell):
                 # if that fails
                 except OSError:
                     # complain
-                    return self.error.log('could not create folder {!r}'.format(folder))
+                    return plexus.error.log('could not create folder {!r}'.format(folder))
 
         # now that it's there, build a local filesystem around it
         pfs = self.vfs.local(root=folder)
@@ -94,7 +94,7 @@ class Initializer(merlin.spell):
         # if it fails
         except OSError as error:
             # complain
-            return self.error.log(str(error))
+            return plexus.error.log(str(error))
 
         # mount it
         self.vfs['/project'] = pfs

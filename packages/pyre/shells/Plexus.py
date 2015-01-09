@@ -10,12 +10,10 @@
 import pyre
 # superclass
 from .Application import Application
-# metaclass
-from .Plector import Plector
 
 
 # class declaration
-class Plexus(Application, metaclass=Plector):
+class Plexus(Application):
     """
     Base class for applications that interpret their first non-configurational command line
     argument as an action that should be executed.
@@ -26,9 +24,9 @@ class Plexus(Application, metaclass=Plector):
 
     causes the {merlin} plexus to locate an action named {version} and invoke it.
 
-    Subclasses are expected to declare a trait {action} that implements a subclass of the
-    {Action} protocol defined in this package. This responsibility is left to subclasses so
-    that there is no bias on the category names of the actions induced by a choice of family
+    Subclasses are expected to declare a class variable {pyre_action} that points to a subclass
+    of the {Action} protocol defined in this package. This responsibility is left to subclasses
+    so that there is no bias on the category names of the actions induced by a choice of family
     name by the framework. This way the language used to specify the actions and their behavior
     can remain natural to the context of the application.
     """

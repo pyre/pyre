@@ -13,7 +13,7 @@ from .Action import Action
 
 
 # declaration
-class Plexus(pyre.plexus, family='{project.name}.components.plexus', action=Action):
+class Plexus(pyre.plexus, family='{project.name}.components.plexus'):
     """
     The main action dispatcher
     """
@@ -21,6 +21,8 @@ class Plexus(pyre.plexus, family='{project.name}.components.plexus', action=Acti
 
     # constants
     pyre_namespace = '{project.name}'
+    # types
+    from .Action import Action as pyre_action
 
 
     # plexus obligations

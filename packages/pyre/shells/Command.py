@@ -28,12 +28,12 @@ class Command(pyre.component, implements=Action):
 
     # expected interface
     @pyre.export
-    def main(self, **kwds):
+    def main(self, plexus, **kwds):
         """
         This is the implementation of the action
         """
         # just print a message
-        self.info.log('main: missing implementation')
+        plexus.info.log('main: missing implementation')
         # and indicate success
         return 0
 
@@ -48,14 +48,13 @@ class Command(pyre.component, implements=Action):
         # my specification
         spec = '{.pyre_namespace} {.pyre_spec}'.format(plexus, self)
         # tell the user what they typed
-        self.info.line(spec)
-
+        plexus.info.line(spec)
         # generate a simple help screen
         for line in self.pyre_help(spec=spec, indent=indent):
             # and push it to my info channel
-            self.info.line(line)
+            plexus.info.line(line)
         # flush
-        self.info.log()
+        plexus.info.log()
         # and indicate success
         return 0
 
@@ -66,14 +65,6 @@ class Command(pyre.component, implements=Action):
         super().__init__(name=name, **kwds)
         # save my short name
         self.pyre_spec = spec
-        # give me journal
-        import journal
-        # build my channels
-        self.debug = plexus.debug
-        self.firewall = plexus.firewall
-        self.info = plexus.info
-        self.warning = plexus.warning
-        self.error = plexus.error
         # all done
         return
 

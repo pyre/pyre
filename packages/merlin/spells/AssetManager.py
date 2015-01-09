@@ -32,7 +32,7 @@ class AssetManager(merlin.spell):
         # if it isn't
         except self.vfs.NotFoundError:
             # complain
-            return self.error.log("not a merlin project; did you forget to cast 'merlin init'?")
+            return plexus.error.log("not a merlin project; did you forget to cast 'merlin init'?")
         # get hold of my local filesystem
         local = self.vfs['pyre/startup']
         # dump it
@@ -59,14 +59,14 @@ class AssetManager(merlin.spell):
                 error = local.NotFoundError(
                     filesystem=local, node=folder, uri=target, fragment=name)
                 # notify the user
-                return self.error.log(str(error))
+                return plexus.error.log(str(error))
             # if not a folder
             except AttributeError:
                 # build an error message
                 error = local.FolderError(
                     filesystem=local, node=folder, uri=target, fragment=folder.uri)
                 # notify the user
-                return self.error.log(str(error))
+                return plexus.error.log(str(error))
         # if it is a folder
         if folder.isFolder:
             # make sure it is fully populated

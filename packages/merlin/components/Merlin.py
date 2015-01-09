@@ -10,18 +10,19 @@
 import os
 # access the pyre framework
 import pyre
-# and my action protocol
-from .Spell import Spell as spell
 
 
 # class declaration; merlin is a plexus app
-class Merlin(pyre.plexus, family='merlin.components.plexus', action=spell):
+class Merlin(pyre.plexus, family='merlin.components.plexus'):
     """
     The merlin executive and application wrapper
     """
 
 
+    # constants
+    pyre_namespace = 'merlin'
     # types
+    from .Spell import Spell as pyre_action
     # exceptions
     from .exceptions import MerlinError, SpellNotFoundError
 

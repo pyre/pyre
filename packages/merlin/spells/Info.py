@@ -53,55 +53,55 @@ class Info(merlin.spell):
             # if that fails
             except vfs.NotFoundError:
                 # no worries
-                self.warning.log('no project information found')
+                plexus.warning.log('no project information found')
             # otherwise
             else:
                 # print
-                self.info.line('project:')
-                self.info.line('  name: {}'.format(project.name))
-                self.info.line('  root: {}'.format(vfs['/project'].uri))
-                self.info.log('  merlin configuration: {}'.format(vfs['/merlin/project'].uri))
+                plexus.info.line('project:')
+                plexus.info.line('  name: {}'.format(project.name))
+                plexus.info.line('  root: {}'.format(vfs['/project'].uri))
+                plexus.info.log('  merlin configuration: {}'.format(vfs['/merlin/project'].uri))
 
         # user information
         if self.user or self.all:
             # access the user metadata
             user = merlin.pyre_user
             # print
-            self.info.line('user:')
-            self.info.line('  name: {}'.format(user.name))
-            self.info.line('  email: {}'.format(user.email))
-            self.info.line('  affiliation: {}'.format(user.affiliation))
-            self.info.line('  uid: {}'.format(user.uid))
-            self.info.line('  username: {}'.format(user.username))
-            self.info.line('  home: {}'.format(user.home))
-            self.info.log('  merlin configuration: {}'.format(vfs['/merlin/user'].uri))
+            plexus.info.line('user:')
+            plexus.info.line('  name: {}'.format(user.name))
+            plexus.info.line('  email: {}'.format(user.email))
+            plexus.info.line('  affiliation: {}'.format(user.affiliation))
+            plexus.info.line('  uid: {}'.format(user.uid))
+            plexus.info.line('  username: {}'.format(user.username))
+            plexus.info.line('  home: {}'.format(user.home))
+            plexus.info.log('  merlin configuration: {}'.format(vfs['/merlin/user'].uri))
 
         # host information
         if self.host or self.all:
             # access the host metadata
             host = merlin.pyre_host
             # print
-            self.info.line('host:')
-            self.info.line('  name: {}'.format(host.hostname))
-            self.info.line('  platform: {}'.format(host.platform))
-            self.info.line('  release: {}'.format(host.release))
-            self.info.line('  codename: {}'.format(host.codename))
-            self.info.log('  merlin configuration: {}'.format(vfs['/merlin/system'].uri))
+            plexus.info.line('host:')
+            plexus.info.line('  name: {}'.format(host.hostname))
+            plexus.info.line('  platform: {}'.format(host.platform))
+            plexus.info.line('  release: {}'.format(host.release))
+            plexus.info.line('  codename: {}'.format(host.codename))
+            plexus.info.log('  merlin configuration: {}'.format(vfs['/merlin/system'].uri))
 
         # asset information
         if self.assets or self.all:
             # access the asset folder
             assets = vfs["/merlin/project/assets"]
             # print
-            self.info.line('assets:')
+            plexus.info.line('assets:')
             # grab each asset pickle
             for name, node in assets.contents.items():
                 # load it
                 asset = merlin.curator.load(node)
                 # print a marker
-                self.info.line('  {}: {}'.format(asset.name, asset.category))
+                plexus.info.line('  {}: {}'.format(asset.name, asset.category))
             # no more assets
-            self.info.log()
+            plexus.info.log()
 
         # all done
         return
