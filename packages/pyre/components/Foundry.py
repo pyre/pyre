@@ -18,11 +18,13 @@ class Foundry:
 
 
     # public data
-    factory = None # the actual callable that returns the component class
+    pyre_tip = '' # a short description of what this component does
+    pyre_factory = None # the actual callable that returns the component class
+    pyre_implements = None # the protocols implemented by this component
 
 
     # meta-methods
-    def __new__(cls, factory=None, implements=None, **kwds):
+    def __new__(cls, factory=None, implements=None, tip='', **kwds):
         """
         Trap the invocation with meta-data and delay the decoration of the callable
         """
@@ -45,26 +47,30 @@ class Foundry:
             Convert a component factory into a foundry
             """
             # just build one of my instance
-            return cls(factory=factory, implements=implements, **kwds)
+            return cls(factory=factory, implements=implements, tip=tip, **kwds)
 
         # to hand over
         return build
 
 
-    def __init__(self, factory, implements=None, **kwds):
+    def __init__(self, factory, implements=None, tip='', **kwds):
         # chain up
         super().__init__(**kwds)
+        # appropriate the factory's docstring
+        self.__doc__ = factory.__doc__
         # save the original callable
-        self.factory = factory
+        self.pyre_factory = factory
+        # the tip
+        self.pyre_tip = tip or self.__doc__
         # and the list of implemented protocols
-        self.implements = self.sequify(implements)
+        self.pyre_implements = self.sequify(implements)
         # all done
         return
 
 
     def __call__(self, *args, **kwds):
         # invoke the factory and return the result
-        return self.factory(*args, **kwds)
+        return self.pyre_factory(*args, **kwds)
 
 
     # implementation details
