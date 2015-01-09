@@ -62,4 +62,21 @@ class Action(pyre.protocol, family='pyre.actions'):
         return
 
 
+    @classmethod
+    def pyre_documentedActions(cls):
+        """
+        Retrieve all visible implementations that are documented
+        """
+        # get all visible implementations
+        for uri, name, action in cls.pyre_locateAllImplementers():
+            # get the tip
+            tip = action.pyre_tip
+            # if there is one
+            if tip:
+                # pass this one along
+                yield uri, name, action, tip
+        # all done
+        return
+
+
 # end of file
