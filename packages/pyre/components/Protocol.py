@@ -258,10 +258,12 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Retrieve all implementors registered in a namespace derivable from my family name
         """
-        # construct the uri
-        uri = 'import:{}'.format('.'.join(cls.pyre_familyFragments()))
-        # and delegate
-        yield from cls.pyre_implementers(uri=uri)
+        # splice my family name together to form a module name
+        uri = '.'.join(cls.pyre_familyFragments())
+        # if i don't have a public name, there is nothing to do
+        if not uri: return
+        # hunt the implementors down
+        yield from cls.pyre_implementers(uri='import:{}'.format(uri))
         # all done
         return
 
@@ -275,6 +277,8 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         vfs = cls.pyre_fileserver
         # construct the base uri
         uri = vfs.join(*cls.pyre_familyFragments())
+        # if i don't have a public name, there is nothing to do
+        if not uri: return
         # try to
         try:
             # get the associated node
