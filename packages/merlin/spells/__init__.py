@@ -7,41 +7,36 @@
 
 
 # built-in spells
-from .. import foundry
-from .Spell import Spell as spell
+from .. import foundry, action
+
 
 # meta activities
-@foundry(implements=spell)
-def info():
-    from .Info import Info
-    return Info
-
-@foundry(implements=spell)
+@foundry(implements=action, tip="create a new merlin project")
 def init():
+    """
+    Create a new merlin project
+    """
     from .Initializer import Initializer
     return Initializer
 
-@foundry(implements=spell)
+
+@foundry(implements=action, tip="add the contents of the current directory to the project")
 def add():
+    """
+    Add the contents of the current directory to the project
+    """
     from .AssetManager import AssetManager
     return AssetManager
 
 
 # administrivia
-@foundry(implements=spell)
-def copyright():
-    from .Copyright import Copyright
-    return Copyright
-
-@foundry(implements=spell)
-def license():
-    from .License import License
-    return License
-
-@foundry(implements=spell)
-def version():
-    from .Version import Version
-    return Version
+@foundry(implements=action, tip="display information about the current machine, user and project")
+def about():
+    """
+    Display information about the current machine, user and project
+    """
+    from .About import About
+    return About
 
 
 # end of file

@@ -22,7 +22,7 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
     # constants
     pyre_namespace = 'merlin'
     # types
-    from .Spell import Spell as pyre_action
+    from .Action import Action as pyre_action
     # exceptions
     from .exceptions import MerlinError, SpellNotFoundError
 
@@ -35,24 +35,45 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
     searchpath = pyre.properties.paths(default=PATH)
 
 
-    # interface
+    # plexus obligations
     @pyre.export
-    def help(self, *topics):
+    def help(self, **kwds):
         """
-        Provide help on {topics}
+        Hook for the application help system
         """
-        # if not topics were specified
-        if not topics:
-            # get the usage message from the packages
-            from .. import usage
-            # invoke it
-            usage()
-            # indicate success
-            return 0
+        # get the package
+        import merlin
+        # set the indentation
+        indent = ' '*4
+        # make some space
+        self.info.line()
+        # get the help header
+        for line in merlin._merlin_header.splitlines():
+            # and display it
+            self.info.line(line)
 
-        # otherwise, invoke the help system
-        print('help:', topics)
-        # all done
+        # reset the pile of actions
+        actions = []
+        # get the documented commands
+        for uri, name, action, tip in self.pyre_action.pyre_documentedActions():
+            # and put them on the pile
+            actions.append((name, tip))
+        # if there were any
+        if actions:
+            # figure out how much space we need
+            width = max(len(name) for name, _ in actions)
+            # introduce this section
+            self.info.line('commands:')
+            # for each documented action
+            for name, tip in actions:
+                # show the details
+                self.info.line('{}{:>{}}: {}'.format(indent, name, width, tip))
+            # some space
+            self.info.line()
+
+        # flush
+        self.info.log()
+        # and indicate success
         return 0
 
 
@@ -71,6 +92,7 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
 
     # meta methods
     def __init__(self, name, **kwds):
+        # chain up
         super().__init__(name=name, **kwds)
 
         # the spell manager is built during the construction of superclass; local alias

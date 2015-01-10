@@ -6,6 +6,8 @@
 #
 
 
+# the spell protocol
+from .Action import Action as action
 # the spell component
 from .Spell import Spell as spell
 # the locally enhanced component base class

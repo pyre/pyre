@@ -6,10 +6,7 @@
 #
 
 
-from pyre.framework.Dashboard import Dashboard as pyre_dashboard
-
-
-class Dashboard(pyre_dashboard):
+class Dashboard:
     """
     Resting place for the {merlin} singletons
     """

@@ -19,6 +19,7 @@ class Asset:
 
     # meta methods
     def __init__(self, name, uri, **kwds):
+        # chain up
         super().__init__(**kwds)
         # save my properties
         self.name = name # my name

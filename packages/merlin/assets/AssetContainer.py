@@ -20,12 +20,10 @@ class AssetContainer(Asset):
     # constants
     category = "asset container"
 
-    # public data
-    contants = None # the assets i contain
-
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
         # initialize my container
         self.contents = {}

@@ -20,13 +20,9 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    About.py \
     AssetManager.py \
-    Copyright.py \
-    Info.py \
     Initializer.py \
-    License.py \
-    Spell.py \
-    Version.py \
     __init__.py
 
 

@@ -6,37 +6,29 @@
 #
 
 
-# access the framework
+# framework access
 import pyre
-# and the merlin singletons
-from .Dashboard import Dashboard as dashboard
+# my superclass
+from .Dashboard import Dashboard
+# my protocol
+from .Action import Action
 
 
-# declaration
-class Spell(pyre.action, dashboard, family="merlin.spells"):
+# class declaration
+class Spell(pyre.panel, Dashboard, implements=Action):
     """
-    Protocol declaration for merlin spells
+    Base class for merlin spell implementations
     """
 
 
-    # support for framework requests
-    @classmethod
-    def pyre_contextPath(cls):
+    # public data
+    @property
+    def vfs(self):
         """
-        Return an iterable over the starting point for hunting down spells
+        Access to the fileserver
         """
         # merlin knows
-        return cls.merlin.searchpath
-
-
-    @classmethod
-    def pyre_contextFolders(cls):
-        """
-        Return an iterable over portions of my family name
-        """
-        # spells are in the 'spells' folder
-        return [ 'spells' ]
-
+        return self.merlin.vfs
 
 
 # end of file

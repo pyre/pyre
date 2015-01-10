@@ -26,38 +26,43 @@ def main():
 
 
 # administrative
-def usage(**kwds):
-    # print the usage screen
-    print(_merlin_usage)
-    # and return
+def credits():
+    """
+    Print the acknowledgments
+    """
+    # generate the message
+    print(_merlin_acknowledgments)
+    # all done
     return
 
 
-def version(**kwds):
-    """
-    Return the merlin version
-    """
-    # return the merlin version
-    return _merlin_version
-
-
-def copyright(**kwds):
+def copyright():
     """
     Return the merlin copyright note
     """
-    # print the copyright note
+    # generate the message
     print(_merlin_copyright)
-    # and return
+    # all done
     return
 
 
-def license(**kwds):
+def license():
     """
     Print the merlin license
     """
-    # print the license text
+    # generate the message
     print(_merlin_license)
-    # and return
+    # all done
+    return
+
+
+def version():
+    """
+    Return the merlin version
+    """
+    # generate the message
+    print(_merlin_version)
+    # all done
     return
 
 
@@ -65,7 +70,7 @@ def license(**kwds):
 # NYI: add localized versions of all this
 _merlin_version = (1, 0, BZR_REVNO)
 
-_merlin_tag = "merlin {}.{} build {}".format(*_merlin_version)
+_merlin_tag = "merlin {}.{} revision {}".format(*_merlin_version)
 
 _merlin_copyright = "{}: Copyright (c) 1998-2015 Michael A.G. Aïvázis".format(_merlin_tag)
 
@@ -124,6 +129,9 @@ _merlin_license = _merlin_header + """
     POSSIBILITY OF SUCH DAMAGE.
     """
 
+_merlin_acknowledgments = _merlin_header + """
+    """
+
 # bootstrapping
 def boot():
     # check whether
@@ -166,11 +174,7 @@ def boot():
 
 # the framework entities
 from pyre import foundry, export, properties, protocol
-from .components.Component import Component as component
-
-# factories
-# for spells
-from .spells.Spell import Spell as spell
+from .components import component, action, spell
 
 
 # convenience

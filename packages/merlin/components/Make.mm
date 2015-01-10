@@ -20,6 +20,7 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
+    Action.py \
     Component.py \
     Curator.py \
     Dashboard.py \
