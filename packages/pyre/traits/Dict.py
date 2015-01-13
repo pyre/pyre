@@ -293,6 +293,13 @@ class Map(collections.abc.MutableMapping, Dashboard):
         # delegate
         return self.insert(name=name, value=value, priority=priority, locator=locator)
 
+    def __str__(self):
+        """
+        Build a simple string representation of my contents
+        """
+        return "{{{}}}".format(
+            ", ".join(["{}: {}".format(key, value) for key,value in self.items()]))
+
     # private data
     map = None
 
