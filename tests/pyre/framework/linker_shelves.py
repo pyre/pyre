@@ -21,13 +21,6 @@ def test():
 
     # request a non-existent python module
     try:
-        shelf = linker.loadShelf(executive=executive, uri="import:foo")
-        assert False
-    except linker.FrameworkError as error:
-        pass
-
-    # request a non-existent python module
-    try:
         shelf = linker.loadShelf(executive=executive, uri="import:nomodule.nosymbol")
         assert False
     except linker.FrameworkError as error:
