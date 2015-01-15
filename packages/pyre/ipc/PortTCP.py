@@ -125,4 +125,9 @@ class PortTCP(Port, Channel):
         return
 
 
+    def __str__(self):
+        # show me
+        return "port at {.address}".format(self)
+
+
 # end of file

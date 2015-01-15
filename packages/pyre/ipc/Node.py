@@ -9,6 +9,7 @@
 # externals
 import pyre
 import journal
+import signal
 # my protocols
 from . import protocols
 
@@ -24,22 +25,26 @@ class Node(pyre.component):
 
 
     # interface
-    # signal handling
-    def registerSignalHandlers(self):
+    def serve(self):
         """
-        By default, nodes register handlers for process termination and configuration reload
+        Start processing requests
         """
-        # get the {signal} package
-        import signal
-        # register the three basic handlers
-        signal.signal(signal.SIGHUP, self.onReload)
-        signal.signal(signal.SIGINT, self.onTerminate)
-        signal.signal(signal.SIGTERM, self.onTerminate)
-        # all done
-        return
+        # easy: delegate to my dispatcher
+        return self.dispatcher.watch()
 
 
-    def onReload(self, *uargs, **ukwds):
+    # event handlers
+    def onConnectionAttempt(self, selector=None, channel=None):
+        """
+        A peer has attempted to connect to my port
+        """
+        # log the request
+        self.info.log("received 'connection' request from {}".format(channel.address))
+        # reschedule this handler
+        return True
+
+
+    def onReload(self, selector=None, channel=None, signal=None, frame=None):
         """
         Reload the nodal configuration for a distributed application
         """
@@ -50,7 +55,7 @@ class Node(pyre.component):
         return
 
 
-    def onTerminate(self, *uargs, **ukwds):
+    def onTerminate(self, selector=None, channel=None, signal=None, frame=None):
         """
         Terminate the event processing loop
         """
@@ -62,14 +67,16 @@ class Node(pyre.component):
         return
 
 
-    def onConnectionAttempt(self, channel, **kwds):
+    def onSignal(self, signal, frame):
         """
-        A peer has attempted to connect to my port
+        Dispatch {signal} to the registered handler
         """
         # log the request
-        self.info.log("received 'connection' request from {}".format(channel.address))
-        # reschedule this handler
-        return True
+        self.info.log("received signal {}".format(signal))
+        # locate the handler
+        handler = self.signals[signal]
+        # and invoke it
+        return handler(signal=signal, frame=frame)
 
 
     # meta methods
@@ -77,7 +84,7 @@ class Node(pyre.component):
         # chain up
         super().__init__(**kwds)
         # register my signal handlers
-        self.registerSignalHandlers()
+        self.signals = self.registerSignalHandlers()
         # build my port
         self.port = self.newPort()
         # register it with my dispatcher
@@ -97,6 +104,35 @@ class Node(pyre.component):
         port = PortTCP.install(address=self.address)
         # and return it
         return port
+
+
+    # signal handling
+    def newSignalIndex(self):
+        """
+        By default, nodes register handlers for process termination and configuration reload
+        """
+        # build my signal index
+        signals = {
+            signal.SIGHUP: self.onReload,
+            signal.SIGINT: self.onTerminate,
+            signal.SIGTERM: self.onTerminate,
+            }
+        # and return it
+        return signals
+
+
+    def registerSignalHandlers(self):
+        """
+        By default, nodes register handlers for process termination and configuration reload
+        """
+        # build my signal index
+        signals = self.newSignalIndex()
+        # register the signal demultiplexer
+        for name in signals.keys():
+            # register the three basic handlers
+            signal.signal(name, self.onSignal)
+        # all done
+        return signals
 
 
     # private data

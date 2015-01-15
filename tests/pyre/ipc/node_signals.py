@@ -97,7 +97,7 @@ def onParent(childpid, channel):
     # subclass Node
     class node(Node):
 
-        def recvReady(self, *uargs, **ukwds):
+        def recvReady(self, **kwds):
             # log
             pdbg.log("receiving message from child")
             # receive
@@ -112,7 +112,7 @@ def onParent(childpid, channel):
             # don't reschedule this handler
             return False
 
-        def recvReloaded(self, *uargs, **ukwds):
+        def recvReloaded(self, **kwds):
             """check the response to 'reload' and send 'terminate'"""
             # log
             pdbg.log("receiving message from child")
@@ -186,7 +186,7 @@ def onChild(channel):
     # subclass Node
     class node(Node):
 
-        def sendReady(self, *uargs, **ukwds):
+        def sendReady(self, **kwds):
             # log
             cdbg.log("sending 'ready'")
             # get it
@@ -194,7 +194,7 @@ def onChild(channel):
             # don't reschedule this handler
             return False
 
-        def sendReloaded(self, *uargs, **ukwds):
+        def sendReloaded(self, **kwds):
             # show me
             cdbg.log("sending 'reloaded' to my parent")
             # send a message to the parent
@@ -202,12 +202,12 @@ def onChild(channel):
             # don't reschedule
             return False
 
-        def alarm(self, *uargs, **kwds):
+        def alarm(self, **kwds):
             cdbg.log("  timeout")
             self.dispatcher.alarm(interval=10*self.dispatcher.second, handler=self.alarm)
             return
 
-        def onReload(self, *uargs, **ukwds):
+        def onReload(self, *args, **kwds):
             # show me
             cdbg.log("schedule 'sendReloaded'")
             # schedule to send a message to the parent
@@ -215,13 +215,13 @@ def onChild(channel):
             # all done
             return
 
-        def onTerminate(self, *uargs, **ukwds):
+        def onTerminate(self, **kwds):
             # show me
             cdbg.log("marking clean exit and stopping the dispatcher")
             # mark me
             self.cleanExit = True
             # delegate
-            return super().onTerminate(*uargs, **ukwds)
+            return super().onTerminate(**kwds)
 
         def __init__(self, channel, **kwds):
             # chain up

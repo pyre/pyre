@@ -99,6 +99,7 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
         # the list of alarms; kept sorted in descending order by alarm time, i.e. with the next
         # alarm to go off at the end of the list

@@ -85,6 +85,7 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         self._watching = True
         # until someone says otherwise
         while self._watching:
+            # show me
             self._debug.line('watching:')
             # compute how long i am allowed to be asleep
             self._debug.line('    computing the allowed sleep interval')
@@ -160,7 +161,7 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
 
     # meta methods
     def __init__(self, **kwds):
-        # delegate
+        # chain up
         super().__init__(**kwds)
 
         # my file descriptor event indices
