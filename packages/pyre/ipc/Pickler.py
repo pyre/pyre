@@ -10,25 +10,27 @@
 import pyre
 import pickle
 import struct
-
+# my protocol
 from .protocols import marshaller
 
 
+# class declaration
 class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=marshaller):
     """
     A marshaller that uses the native python services in {pickle} to serialize python objects
     for transmission to other processes.
 
     The {send} protocol pickles an object into the payload byte stream, and builds a header
-    with the length of the payload. Similarly, {read} first extracts the length of the byte
+    with the length of the payload. Similarly, {recv} first extracts the length of the byte
     string and uses that information to pull the object representation from the input
-    channel. This is necessary to simplify interacting with buffered streams.
+    channel. This is necessary to simplify interacting with streams that may make only portions
+    of their contents available at a time.
     """
 
 
     # public data
     packing = "<L" # the struct format for encoding the payload length
-
+    headerSize = struct.calcsize(packing)
 
     # interface
     @pyre.export
@@ -52,7 +54,7 @@ class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=
         Extract and return a single item from {channel}
         """
         # get the length
-        header = channel.read(struct.calcsize(self.packing))
+        header = channel.read(self.headerSize)
         # unpack it
         length, = struct.unpack(self.packing, header)
         # get the body

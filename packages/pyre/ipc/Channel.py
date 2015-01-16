@@ -50,9 +50,9 @@ class Channel:
             "class {.__name__!r} must implement 'outbound'".format(type(self)))
 
     # input/output
-    def read(self, count):
+    def read(self, minlen, maxlen):
         """
-        Read {count} bytes from my input channel
+        Read up to {count} bytes from my input channel
         """
         raise NotImplementedError(
             "class {.__name__!r} must implement 'read'".format(type(self)))

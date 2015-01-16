@@ -26,15 +26,20 @@ class SocketTCP(Socket):
 
 
     # input/output
-    def read(self, count):
+    def read(self, minlen=0, maxlen=0):
         """
         Read {count} bytes from my input channel
         """
-        # read bytes
-        bstr = self.recv(count)
-        # in as many attempts as it takes
-        while len(bstr) < count: bstr += self.recv(count-len(bstr))
-        # and return them
+        # {minlen} must be the first argument for the following to work correctly
+        # reset the result
+        bstr = b''
+        # adjust the inputs
+        if maxlen < minlen: maxlen = minlen
+        # try as many times as it takes
+        while len(bstr) < minlen:
+            # to pull data from the stream
+            bstr += self.recv(maxlen-len(bstr))
+        # return the bytes
         return bstr
 
 
