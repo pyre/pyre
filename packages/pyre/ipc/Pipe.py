@@ -69,7 +69,7 @@ class Pipe(Channel):
 
 
     # input/output
-    def read(self, minlen=0, maxlen=0):
+    def read(self, minlen, maxlen=0):
         """
         Read {count} bytes from my input channel
         """
