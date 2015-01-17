@@ -45,29 +45,29 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
 
     # event scheduling
     @pyre.provides
-    def alarm(self, interval, handler):
+    def alarm(self, interval, call):
         """
-        Schedule {handler} to be invoked after {interval} elapses. {interval} is expected to be
+        Schedule {call} to be invoked after {interval} elapses. {interval} is expected to be
         a dimensional quantity from {pyre.units} with units of time
         """
 
     @pyre.export
-    def notifyOnReadReady(self, fd, handler):
+    def whenReadReady(self, channel, call):
         """
-        Add {handler} to the list of routines to call when {fd} is ready to be read
-        """
-
-    @pyre.export
-    def notifyOnWriteReady(self, fd, handler):
-        """
-        Add {handler} to the list of routines to call when {fd} is ready to be written
+        Add {call} to the list of routines to call when {channel} is ready to be read
         """
 
     @pyre.export
-    def notifyOnException(self, fd, handler):
+    def whenWriteReady(self, channel, call):
         """
-        Add {handler} to the list of routines to call when something exceptional has happened
-        to {fd}
+        Add {call} to the list of routines to call when {channel} is ready to be written
+        """
+
+    @pyre.export
+    def whenException(self, channel, call):
+        """
+        Add {call} to the list of routines to call when something exceptional has happened
+        to {channel}
         """
 
 

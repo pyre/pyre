@@ -23,6 +23,10 @@ class Socket(socket.socket, Channel):
     """
 
 
+    # types
+    from ..schemata import inet
+
+
     # access to the individual channel end points
     @property
     def inbound(self):
@@ -40,6 +44,18 @@ class Socket(socket.socket, Channel):
         """
         # easy enough
         return self
+
+
+    # access to the socket properties
+    @property
+    def peer(self):
+        """
+        Return the address of my peer, i.e. the remote endpoint of the socket
+        """
+        # get the raw address
+        address = self.getpeername()
+        # parse it, decorate it and return it
+        return self.inet().recognize(family=self.family, address=address)
 
 
     # interface

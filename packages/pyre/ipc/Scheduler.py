@@ -25,7 +25,7 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
 
     # interface
     @pyre.export
-    def alarm(self, interval, handler):
+    def alarm(self, interval, call):
         """
         Schedule {handler} to be invoked after {interval} elapses.
 
@@ -36,7 +36,7 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
                        invoked the handler, and the current time
         """
         # create a new alarm instance
-        alarm = self._alarm(time=now()+interval/self.second, handler=handler)
+        alarm = self._alarm(time=now()+interval/self.second, handler=call)
         # add it to my list
         self._alarms.append(alarm)
         # sort

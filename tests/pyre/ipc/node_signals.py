@@ -106,7 +106,7 @@ def onParent(childpid, channel):
             pdbg.log("child said {!r}".format(message))
             assert message == 'ready'
             # register the handler for the response to 'reload'
-            self.dispatcher.notifyOnReadReady(channel=self.channel, handler=self.recvReloaded)
+            self.dispatcher.whenReadReady(channel=self.channel, call=self.recvReloaded)
             # issue the 'reload' signal
             os.kill(childpid, signal.SIGHUP)
             # don't reschedule this handler
@@ -138,7 +138,7 @@ def onParent(childpid, channel):
             # show me
             pdbg.log("registering 'recvReady'")
             # register my handler
-            self.dispatcher.notifyOnReadReady(channel=channel, handler=self.recvReady)
+            self.dispatcher.whenReadReady(channel=channel, call=self.recvReady)
             # all done
             return
 
@@ -204,14 +204,14 @@ def onChild(channel):
 
         def alarm(self, **kwds):
             cdbg.log("  timeout")
-            self.dispatcher.alarm(interval=10*self.dispatcher.second, handler=self.alarm)
+            self.dispatcher.alarm(interval=10*self.dispatcher.second, call=self.alarm)
             return
 
         def onReload(self, *args, **kwds):
             # show me
             cdbg.log("schedule 'sendReloaded'")
             # schedule to send a message to the parent
-            self.dispatcher.notifyOnWriteReady(channel=self.channel, handler=self.sendReloaded)
+            self.dispatcher.whenWriteReady(channel=self.channel, call=self.sendReloaded)
             # all done
             return
 
@@ -233,9 +233,9 @@ def onChild(channel):
             # marker that my {onTerminate} was called
             self.cleanExit = False
             # set up an alarm to keep the process alive
-            self.dispatcher.alarm(interval=self.dispatcher.second, handler=self.alarm)
+            self.dispatcher.alarm(interval=self.dispatcher.second, call=self.alarm)
             # let my parent know I am ready
-            self.dispatcher.notifyOnWriteReady(channel=channel, handler=self.sendReady)
+            self.dispatcher.whenWriteReady(channel=channel, call=self.sendReady)
             # all done
             return
 

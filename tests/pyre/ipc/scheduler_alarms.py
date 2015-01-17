@@ -34,13 +34,13 @@ def test():
         return
 
     # setup some alarms
-    s.alarm(interval=0*second, handler=handler)
-    s.alarm(interval=1*second, handler=handler)
-    s.alarm(interval=0.5*second, handler=handler)
-    s.alarm(interval=0.25*second, handler=handler)
-    s.alarm(interval=0.75*second, handler=handler)
-    s.alarm(interval=0.3*second, handler=handler)
-    s.alarm(interval=0.5*second, handler=handler)
+    s.alarm(interval=0*second, call=handler)
+    s.alarm(interval=1*second, call=handler)
+    s.alarm(interval=0.5*second, call=handler)
+    s.alarm(interval=0.25*second, call=handler)
+    s.alarm(interval=0.75*second, call=handler)
+    s.alarm(interval=0.3*second, call=handler)
+    s.alarm(interval=0.5*second, call=handler)
     # how many?
     alarms = len(s._alarms)
 

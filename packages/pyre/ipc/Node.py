@@ -19,6 +19,7 @@ class Node(pyre.component):
 
 
     # public state
+    port = None
     address = pyre.properties.inet() # just one, for now
     marshaller = protocols.marshaller()
     dispatcher = protocols.dispatcher()
@@ -33,18 +34,76 @@ class Node(pyre.component):
         return self.dispatcher.watch()
 
 
-    # event handlers
-    def onConnectionAttempt(self, selector=None, channel=None):
+    def activate(self, now=True):
         """
-        A peer has attempted to connect to my port
+        Get ready to listen for incoming connections
+
+        This can be done at construction time by passing {activate=True}
         """
-        # log the request
-        self.info.log("received 'connection' request from {}".format(channel.address))
-        # reschedule this handler
+        # if i already have a port, or i am not ready, bail
+        if self.port or not now: return self.port
+        # otherwise, build my port
+        port = self.newPort()
+        # register it with my dispatcher
+        self.dispatcher.whenReadReady(channel=port, call=self.onConnectionAttempt)
+        # and return it
+        return port
+
+
+    # high level event handlers
+    def newPeer(self, channel, address):
+        """
+        Prepare to start accepting requests from a new peer
+        """
+        # place the channel on the read list
+        self.dispatcher.whenReadReady(channel=channel, call=self.processRequest)
+        # indicate that i would like to continue receiving connection requests
         return True
 
 
-    def onReload(self, selector=None, channel=None, signal=None, frame=None):
+    def validateConnection(self, channel, address):
+        """
+        Examine the {address} of the connection requester and determine whether to keep talking to
+        him or not
+        """
+        # be friendly, by default
+        return True
+
+
+    def shutdown(self):
+        """
+        Shut everything down and exit gracefully
+        """
+        # notify my dispatcher to exit its event loop
+        self.dispatcher.stop()
+        # all done
+        return
+
+
+    # low level event handlers
+    def onConnectionAttempt(self, dispatcher, channel):
+        """
+        A peer has attempted to connect to my port
+        """
+        # accept the connection
+        newChannel, peerAddress = channel.accept()
+        # log the request
+        self.info.log("received 'connection' request from {}".format(peerAddress))
+
+        # if this is not a valid connection
+        if not self.validateConnection(channel=newChannel, address=peerAddress):
+            # show me
+            self.info.log("  invalid connection; closing")
+            # get rid of it
+            newChannel.close()
+            # and bail
+            return True
+        # process the connection; reschedule this handler to process more connection attempts
+        # if {newPeer} returns {True}
+        return self.newPeer(channel=newChannel, address=peerAddress)
+
+
+    def onReload(self, signal, frame):
         """
         Reload the nodal configuration for a distributed application
         """
@@ -55,14 +114,14 @@ class Node(pyre.component):
         return
 
 
-    def onTerminate(self, selector=None, channel=None, signal=None, frame=None):
+    def onTerminate(self, signal, frame):
         """
         Terminate the event processing loop
         """
         # log the request
         self.info.log("received 'terminate' request")
-        # notify my dispatcher to exit its event loop
-        self.dispatcher.stop()
+        # shut down
+        self.shutdown()
         # and return
         return
 
@@ -80,15 +139,15 @@ class Node(pyre.component):
 
 
     # meta methods
-    def __init__(self, **kwds):
+    def __init__(self, activate=True, **kwds):
         # chain up
         super().__init__(**kwds)
         # register my signal handlers
         self.signals = self.registerSignalHandlers()
         # build my port
-        self.port = self.newPort()
+        self.port = self.activate(now=activate)
         # register it with my dispatcher
-        self.dispatcher.notifyOnReadReady(channel=self.port, handler=self.onConnectionAttempt)
+        self.dispatcher.whenReadReady(channel=self.port, call=self.onConnectionAttempt)
         # all done
         return
 

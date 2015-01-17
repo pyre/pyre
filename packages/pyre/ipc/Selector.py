@@ -30,36 +30,36 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
 
     # interface
     @pyre.export
-    def notifyOnReadReady(self, channel, handler):
+    def whenReadReady(self, channel, call):
         """
-        Add {handler} to the list of routines to call when {channel} is ready to be read
+        Add {call} to the list of routines to call when {channel} is ready to be read
         """
         # add it to the pile
-        self._read[channel.inbound].append(self._event(channel=channel, handler=handler))
+        self._read[channel.inbound].append(self._event(channel=channel, handler=call))
         # and return
         return
 
 
     @pyre.export
-    def notifyOnWriteReady(self, channel, handler):
+    def whenWriteReady(self, channel, call):
         """
-        Add {handler} to the list of routines to call when {channel} is ready to be written
+        Add {call} to the list of routines to call when {channel} is ready to be written
         """
         # add it to the pile
-        self._write[channel.outbound].append(self._event(channel=channel, handler=handler))
+        self._write[channel.outbound].append(self._event(channel=channel, handler=call))
         # and return
         return
 
 
     @pyre.export
-    def notifyOnException(self, channel, handler):
+    def whenException(self, channel, call):
         """
-        Add {handler} to the list of routines to call when something exceptional has happened
+        Add {call} to the list of routines to call when something exceptional has happened
         to {channel}
         """
         # add both endpoints to the pile
-        self._exception[channel.inbound].append(self._event(channel=channel, handler=handler))
-        self._exception[channel.outbound].append(self._event(channel=channel, handler=handler))
+        self._exception[channel.inbound].append(self._event(channel=channel, handler=call))
+        self._exception[channel.outbound].append(self._event(channel=channel, handler=call))
         # and return
         return
 
@@ -107,15 +107,17 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
                 self._debug.log('** no registered handlers left; exiting')
                 return
 
+            # show me
+            self._debug.line('    calling select; timeout={!r}'.format(timeout))
             # wait for an event
             try:
-                self._debug.line('    calling select; timeout={!r}'.format(timeout))
                 reads, writes, excepts = select.select(iwtd, owtd, ewtd, timeout)
             # when a signal is delivered to a handler registered by the application, the select
-            # call is interrupted and raises a {select.error}
-            except select.error as error:
+            # call is interrupted and raises {InterruptedError}, a subclass of {OSError}
+            except InterruptedError as error:
                 # unpack
-                errno, msg = error.args
+                errno = error.errno
+                msg = error.strerror
                 # log
                 self._debug.log('    signal received: errno={}: {}'.format(errno, msg))
                 # keep going
@@ -145,7 +147,7 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
             # invoke the event handlers and save the events whose handlers return {True}
             events = list(
                 event for event in index[active]
-                if event.handler(selector=self, channel=event.channel)
+                if event.handler(dispatcher=self, channel=event.channel)
                 )
             # if no handlers requested to be rescheduled
             if not events:

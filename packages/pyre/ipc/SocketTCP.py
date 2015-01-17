@@ -19,8 +19,6 @@ class SocketTCP(Socket):
     """
 
 
-    # types
-    from ..schemata import inet
     # constants
     type = socket.SOCK_STREAM
 
