@@ -8,23 +8,12 @@
 # access the project defaults
 include pyre.def
 # the package name
-PACKAGE = ipc
+PACKAGE = nexus/http
 
 # my local packages
 EXPORT_PYTHON_MODULES = \
-    Channel.py \
-    Dispatcher.py \
-    Marshaller.py \
-    Pickler.py \
-    Pipe.py \
-    Port.py \
-    PortTCP.py \
-    Scheduler.py \
-    Selector.py \
-    Socket.py \
-    SocketTCP.py \
+    Server.py \
     __init__.py
-
 
 # the standard build targets
 all: export

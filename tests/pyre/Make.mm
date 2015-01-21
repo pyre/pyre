@@ -30,6 +30,7 @@ RECURSE_DIRS = \
     weaver \
     db \
     ipc \
+    nexus \
     platforms \
     shells \
     externals \

@@ -11,7 +11,7 @@ import pyre
 import select
 import collections
 # my interface
-from .protocols import dispatcher
+from . import dispatcher
 # my base class
 from .Scheduler import Scheduler
 
@@ -171,6 +171,10 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         self._write = collections.defaultdict(list)
         self._exception = collections.defaultdict(list)
 
+        # my debug aspect
+        import journal
+        self._debug = journal.debug('pyre.ipc.selector')
+
         # all done
         return
 
@@ -189,11 +193,6 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
 
     # private data
     _watching = True # controls whether to continue monitoring the event sources
-
-    # my debug aspect
-    import journal
-    _debug = journal.debug('pyre.ipc.selector')
-    del journal
 
 
 # end of file

@@ -8,13 +8,13 @@
 
 
 """
-Verify that the node base class can be instantiated
+Sanity check: verify that the package is accessible
 """
 
 
 def test():
-    from pyre.ipc.Node import Node
-    return Node()
+    import pyre.nexus
+    return
 
 
 # main

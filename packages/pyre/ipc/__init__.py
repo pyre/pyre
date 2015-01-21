@@ -16,7 +16,7 @@ def pipe(descriptors=None, **kwds):
     """
     # access the channel
     from .Pipe import Pipe
-    # if we were handed already opened descriptors
+    # if we were handed already open descriptors
     if descriptors:
         # unpack
         infd, outfd = descriptors
@@ -61,12 +61,12 @@ def inet(spec=''):
     return schemata.inet.coerce(value=spec)
 
 
-# marshaller access
+# my protocols
+from .Dispatcher import Dispatcher as dispatcher
+from .Marshaller import Marshaller as marshaller
+# my components
 from .Pickler import Pickler as pickler
-
-# access to the scheduler
 from .Scheduler import Scheduler as scheduler
-# access to the selector
 from .Selector import Selector as selector
 
 

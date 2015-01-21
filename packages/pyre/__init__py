@@ -255,6 +255,8 @@ if executive:
     executive.discover()
     # application shells
     from .shells import application, action, plexus, command, panel
+    # the interprocess communication mechanisms
+    from . import ipc, nexus
 
 
 # clean up the executive instance when the interpreter shuts down

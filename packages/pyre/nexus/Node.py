@@ -8,10 +8,7 @@
 
 # externals
 import pyre
-import journal
 import signal
-# my protocols
-from . import protocols
 
 
 # declaration
@@ -21,8 +18,7 @@ class Node(pyre.component):
     # public state
     port = None
     address = pyre.properties.inet() # just one, for now
-    marshaller = protocols.marshaller()
-    dispatcher = protocols.dispatcher()
+    dispatcher = pyre.ipc.dispatcher()
 
 
     # interface
@@ -58,7 +54,7 @@ class Node(pyre.component):
         # place the channel on the read list
         self.dispatcher.whenReadReady(channel=channel, call=self.processRequest)
         # indicate that i would like to continue receiving connection requests
-        return True
+        return False
 
 
     def validateConnection(self, channel, address):
@@ -88,7 +84,7 @@ class Node(pyre.component):
         # accept the connection
         newChannel, peerAddress = channel.accept()
         # log the request
-        self.info.log("received 'connection' request from {}".format(peerAddress))
+        self.info.log("{}: received 'connection' request from {}".format(channel, peerAddress))
 
         # if this is not a valid connection
         if not self.validateConnection(channel=newChannel, address=peerAddress):
@@ -148,6 +144,11 @@ class Node(pyre.component):
         self.port = self.activate(now=activate)
         # register it with my dispatcher
         self.dispatcher.whenReadReady(channel=self.port, call=self.onConnectionAttempt)
+
+        # my debug aspect
+        import journal
+        self.info = journal.info("pyre.nexus")
+
         # all done
         return
 
@@ -157,10 +158,8 @@ class Node(pyre.component):
         """
         Build and install a port that listens to my address for incoming connections
         """
-        # access the port factory
-        from .PortTCP import PortTCP
         # make one
-        port = PortTCP.install(address=self.address)
+        port = pyre.ipc.port(address=self.address)
         # and return it
         return port
 
@@ -193,9 +192,6 @@ class Node(pyre.component):
         # all done
         return signals
 
-
-    # private data
-    info = journal.info("pyre.ipc.nodes")
 
 
 # end of file

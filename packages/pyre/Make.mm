@@ -24,6 +24,7 @@ RECURSE_DIRS = \
     framework \
     geometry \
     ipc \
+    nexus \
     parsing \
     patterns \
     platforms \

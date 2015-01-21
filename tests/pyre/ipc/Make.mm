@@ -6,14 +6,13 @@
 #
 
 
-PROJECT = pyre
+# project defaults
+include pyre.def
 
-#--------------------------------------------------------------------------
-#
 
 all: test
 
-test: sanity channels scheduler selector nodes clean
+test: sanity channels scheduler selector clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -36,11 +35,6 @@ selector:
 	${PYTHON} ./selector_alarms.py
 	${PYTHON} ./selector_pickler_over_pipe.py
 	${PYTHON} ./selector_pickler_over_tcp.py
-
-nodes:
-	${PYTHON} ./node.py
-	${PYTHON} ./node_instantiation.py
-	${PYTHON} ./node_signals.py
 
 
 # end of file

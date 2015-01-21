@@ -93,9 +93,11 @@ def onParent(childpid, channel):
     pdbg.log("in the parent process")
 
     # base class
-    from pyre.ipc.Node import Node
+    from pyre.nexus.Node import Node
     # subclass Node
     class node(Node):
+
+        marshaller = pyre.ipc.marshaller()
 
         def recvReady(self, **kwds):
             # log
@@ -182,9 +184,11 @@ def onChild(channel):
     cdbg.log("in the child process: channel={}".format(channel))
 
     # base class
-    from pyre.ipc.Node import Node
+    from pyre.nexus.Node import Node
     # subclass Node
     class node(Node):
+
+        marshaller = pyre.ipc.marshaller()
 
         def sendReady(self, **kwds):
             # log
@@ -259,7 +263,7 @@ if __name__ == "__main__":
     import journal
     journal.debug("child").active = False
     journal.debug("parent").active = False
-    journal.info("pyre.ipc.nodes").active = False
+    journal.info("pyre.nexus").active = False
     # do...
     test()
 
