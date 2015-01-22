@@ -27,4 +27,13 @@ class Service(pyre.protocol, family="pyre.nexus.services"):
         return None
 
 
+    # behaviors
+    @pyre.provides
+    def activate(self, nexus):
+        """
+        Register with the {nexus} and make it possible for me to start receiving information from
+        the network
+        """
+
+
 # end of file

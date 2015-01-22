@@ -6,4 +6,15 @@
 #
 
 
+# externals
+import pyre
+
+
+# my declaration
+class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
+    """
+    A server that understands HTTP
+    """
+
+
 # end of file

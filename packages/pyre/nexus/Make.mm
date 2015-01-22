@@ -15,8 +15,11 @@ RECURSE_DIRS = \
     http \
 # my local packages
 EXPORT_PYTHON_MODULES = \
+    Nexus.py \
     Node.py \
+    Server.py \
     Service.py \
+    services.py \
     __init__.py
 
 # the standard build targets

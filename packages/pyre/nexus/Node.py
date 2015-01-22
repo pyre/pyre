@@ -9,16 +9,18 @@
 # externals
 import pyre
 import signal
+# my protocols
+from .Nexus import Nexus
+from .Service import Service
 
 
 # declaration
-class Node(pyre.component):
+class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
 
-    # public state
-    port = None
-    address = pyre.properties.inet() # just one, for now
+    # user configurable state
     dispatcher = pyre.ipc.dispatcher()
+    services = pyre.properties.dict(schema=Service())
 
 
     # interface
@@ -36,36 +38,17 @@ class Node(pyre.component):
 
         This can be done at construction time by passing {activate=True}
         """
-        # if i already have a port, or i am not ready, bail
-        if self.port or not now: return self.port
-        # otherwise, build my port
-        port = self.newPort()
-        # register it with my dispatcher
-        self.dispatcher.whenReadReady(channel=port, call=self.onConnectionAttempt)
-        # and return it
-        return port
+        # go through my services
+        for name, service in self.services.items():
+            # show me
+            self.info.log('{}: activating {!r}'.format(self, name))
+            # activate it
+            service.activate(nexus=self)
+        # all done
+        return
 
 
     # high level event handlers
-    def newPeer(self, channel, address):
-        """
-        Prepare to start accepting requests from a new peer
-        """
-        # place the channel on the read list
-        self.dispatcher.whenReadReady(channel=channel, call=self.processRequest)
-        # indicate that i would like to continue receiving connection requests
-        return False
-
-
-    def validateConnection(self, channel, address):
-        """
-        Examine the {address} of the connection requester and determine whether to keep talking to
-        him or not
-        """
-        # be friendly, by default
-        return True
-
-
     def shutdown(self):
         """
         Shut everything down and exit gracefully
@@ -77,28 +60,6 @@ class Node(pyre.component):
 
 
     # low level event handlers
-    def onConnectionAttempt(self, dispatcher, channel):
-        """
-        A peer has attempted to connect to my port
-        """
-        # accept the connection
-        newChannel, peerAddress = channel.accept()
-        # log the request
-        self.info.log("{}: received 'connection' request from {}".format(channel, peerAddress))
-
-        # if this is not a valid connection
-        if not self.validateConnection(channel=newChannel, address=peerAddress):
-            # show me
-            self.info.log("  invalid connection; closing")
-            # get rid of it
-            newChannel.close()
-            # and bail
-            return True
-        # process the connection; reschedule this handler to process more connection attempts
-        # if {newPeer} returns {True}
-        return self.newPeer(channel=newChannel, address=peerAddress)
-
-
     def onReload(self, signal, frame):
         """
         Reload the nodal configuration for a distributed application
@@ -138,32 +99,21 @@ class Node(pyre.component):
     def __init__(self, activate=True, **kwds):
         # chain up
         super().__init__(**kwds)
-        # register my signal handlers
-        self.signals = self.registerSignalHandlers()
-        # build my port
-        self.port = self.activate(now=activate)
-        # register it with my dispatcher
-        self.dispatcher.whenReadReady(channel=self.port, call=self.onConnectionAttempt)
 
         # my debug aspect
         import journal
         self.info = journal.info("pyre.nexus")
+
+        # register my signal handlers
+        self.signals = self.registerSignalHandlers()
+        # activate my services
+        self.activate(now=activate)
 
         # all done
         return
 
 
     # implementation details
-    def newPort(self):
-        """
-        Build and install a port that listens to my address for incoming connections
-        """
-        # make one
-        port = pyre.ipc.port(address=self.address)
-        # and return it
-        return port
-
-
     # signal handling
     def newSignalIndex(self):
         """
@@ -191,7 +141,6 @@ class Node(pyre.component):
             signal.signal(name, self.onSignal)
         # all done
         return signals
-
 
 
 # end of file
