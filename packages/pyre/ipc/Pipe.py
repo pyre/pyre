@@ -69,21 +69,32 @@ class Pipe(Channel):
 
 
     # input/output
-    def read(self, minlen, maxlen=0):
+    def read(self, minlen=0, maxlen=64*1024):
         """
         Read {count} bytes from my input channel
         """
-        # {minlen} must be the first argument for the following to work correctly
-        # reset the result
-        bstr = b''
         # adjust the inputs
         if maxlen < minlen: maxlen = minlen
-        # try as many times as it takes
-        while len(bstr) < minlen:
-            # to pull data from the stream
-            bstr += os.read(self.infd, maxlen-len(bstr))
-        # return the bytes
-        return bstr
+        # reset the byte count
+        total = 0
+        # initialize the packet pile
+        packets = []
+        # for as long as it takes
+        while True:
+            # pull something from the channel
+            packet = os.read(self.infd, maxlen-total)
+            # get its length
+            got = len(packet)
+            # if we got nothing, the channel is closed; bail
+            if got == 0: break
+            # otherwise, update the total
+            total += got
+            # and save the packet
+            packets.append(packet)
+            # if we have reached our goal, bail
+            if total >= minlen: break
+        # assemble the byte string and return it
+        return b''.join(packets)
 
 
     def write(self, bstr):
