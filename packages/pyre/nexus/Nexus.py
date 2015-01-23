@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis, leif strand
+# michael a.g. aïvázis
 # orthologue
 # (c) 1998-2015 all rights reserved
 #
@@ -21,7 +21,7 @@ class Nexus(pyre.protocol, family="pyre.nexus.servers"):
     @classmethod
     def pyre_default(cls, **kwds):
         """
-        The suggested implementation of the {Service} protocol
+        The suggested implementation of the {Nexus} protocol
         """
         # my favorite
         from .Node import Node

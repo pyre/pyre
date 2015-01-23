@@ -19,6 +19,7 @@ EXPORT_PYTHON_MODULES = \
     Node.py \
     Server.py \
     Service.py \
+    exceptions.py \
     services.py \
     __init__.py
 
