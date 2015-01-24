@@ -11,6 +11,7 @@ PROJECT = pyre
 TEMPLATES = \
     class.c++ \
     class.python \
+    django \
     plexus \
 
 #

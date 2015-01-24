@@ -45,6 +45,7 @@ from .Smith import Smith as smith
 # the protocol that captures the project metadata
 from .Project import Project as project
 # the templated project implementations
+from .Django import Django as django
 from .Plexus import Plexus as plexus
 
 

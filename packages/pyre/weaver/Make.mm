@@ -26,6 +26,7 @@ EXPORT_PYTHON_MODULES = \
     CSh.py \
     Cfg.py \
     Cxx.py \
+    Django.py \
     Expression.py \
     F77.py \
     F90.py \

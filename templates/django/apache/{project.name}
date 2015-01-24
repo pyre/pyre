@@ -1,0 +1,36 @@
+# -*- apache -*-
+#
+# {project.authors}
+# {project.affiliations}
+# (c) {project.span} all rights reserved
+#
+
+# {project.name} virtual host definition file
+
+<VirtualHost *:80>
+    ServerName {project.host.name}
+    ServerAdmin {project.host.admin}
+
+    # application support
+    WSGIScriptAlias / {project.host.webroot}/apache/{project.name}.wsgi
+
+    # the web
+    DocumentRoot {project.host.documentroot}
+    <Directory />
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    # what to log; possible values include:
+    #    debug, info, notice, warn, error, crit, alert, emerg
+    LogLevel warn
+
+    # the log files
+    ErrorLog /var/log/apache2/error-{project.name}.log
+    CustomLog /var/log/apache2/access-{project.name}.log combined
+
+</VirtualHost>
+
+# end of file
