@@ -1,4 +1,4 @@
-{
+{{
   "name": "{project.name}",
   "version": "0.0.0",
   "authors": [
@@ -14,7 +14,7 @@
     "test",
     "tests"
   ],
-  "dependencies": {
+  "dependencies": {{
     "jquery": "~2.1.3"
-  }
-}
+  }}
+}}

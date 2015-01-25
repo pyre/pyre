@@ -13,15 +13,15 @@ extends base
 
 append css
 
-  {% compress css %}
+  {{% compress css %}}
   link(rel="stylesheet", type="text/stylus", href="{{% static 'styles/default.styl' %}}")
-  {% endcompress %}
+  {{% endcompress %}}
   
 
 append js
-  {% compress js %}
+  {{% compress js %}}
   script(src="{{% static 'scripts/core.coffee' %}}", type="text/coffeescript")
-  {% endcompress }
+  {{% endcompress }}
 
 append content
 

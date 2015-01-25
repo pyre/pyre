@@ -75,7 +75,7 @@ COMPRESS_ROOT = RESOURCES
 COMPRESS_OUTPUT_DIR = "cache"
 
 stylus_conf = ('-u jeet -u axis -u rupture -I ' +
-               os.path.join(RESOURCES,'styles') +' < {infile} > {outfile}')
+               os.path.join(RESOURCES,'styles') +' < {{infile}} > {{outfile}}')
 
 COMPRESS_PRECOMPILERS = (
     ('text/stylus', 'stylus '+ stylus_conf),
