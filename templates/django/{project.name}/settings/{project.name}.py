@@ -72,12 +72,14 @@ TEMPLATE_DIRS = (
 # django compressor settings
 
 COMPRESS_ROOT = RESOURCES
+COMPRESS_OUTPUT_DIR = "cache"
+
+stylus_conf = ('-u jeet -u axis -u rupture -I ' +
+               os.path.join(RESOURCES,'styles') +' < {infile} > {outfile}')
 
 COMPRESS_PRECOMPILERS = (
-    ('text/stylus', 'stylus < {{infile}} > {{outfile}}'),
+    ('text/stylus', 'stylus '+ stylus_conf),
     ('text/coffeescript', 'coffee --compile --stdio -b'),
 )
-
-COMPRESS_OUTPUT_DIR = "cache"
 
 # end of file
