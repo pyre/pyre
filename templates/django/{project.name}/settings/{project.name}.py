@@ -26,7 +26,7 @@ third_party_apps = (
  )
 
 {project.name}_apps = (
-    'base',
+    '{project.name}.base',
 )
 
 INSTALLED_APPS = django_apps + third_party_apps + {project.name}_apps
