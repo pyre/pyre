@@ -76,6 +76,11 @@ class Socket(socket.socket, Channel):
         return channel, address
 
 
+    # meta-methods
+    def __str__(self):
+        return "socket to {.peer}".format(self)
+
+
     # implementation details
     __slots__ = () # socket has it, so why not...
 

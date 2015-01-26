@@ -97,9 +97,20 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
             iwtd = self._read.keys()
             owtd = self._write.keys()
             ewtd = self._exception.keys()
-            self._debug.line('      read: {}'.format(iwtd))
-            self._debug.line('      write: {}'.format(owtd))
-            self._debug.line('      exception: {}'.format(ewtd))
+
+            if self._debug.active:
+                if iwtd: self._debug.line('      read:')
+                for fd in iwtd:
+                    for event in self._read[fd]:
+                        self._debug.line('        {}'.format(event.channel))
+                if owtd: self._debug.line('      write:')
+                for fd in owtd:
+                    for event in self._write[fd]:
+                        self._debug.line('        {}'.format(event.channel))
+                if ewtd: self._debug.line('      exception:')
+                for channel in ewtd:
+                    for event in self._exception[fd]:
+                        self._debug.line('        {}'.format(event.channel))
 
             # check for indefinite block
             self._debug.line('    checking for indefinite block')
@@ -108,7 +119,7 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
                 return
 
             # show me
-            self._debug.line('    calling select; timeout={!r}'.format(timeout))
+            self._debug.log('    calling select; timeout={!r}'.format(timeout))
             # wait for an event
             try:
                 reads, writes, excepts = select.select(iwtd, owtd, ewtd, timeout)
@@ -125,9 +136,9 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
 
             # dispatch to the handlers of file events
             self._debug.line('    dispatching to handlers')
-            self.dispatch(self._exception, excepts)
-            self.dispatch(self._write, writes)
-            self.dispatch(self._read, reads)
+            self.dispatch(index=self._exception, entities=excepts)
+            self.dispatch(index=self._write, entities=writes)
+            self.dispatch(index=self._read, entities=reads)
 
             # raise the overdue alarms
             self._debug.log('    raising the alarms')

@@ -62,6 +62,11 @@ class SocketTCP(Socket):
         return len(bstr)
 
 
+    # meta-methods
+    def __str__(self):
+        return "tcp socket to {.peer}".format(self)
+
+
     # implementation details
     __slots__ = () # socket has it, so why not...
 
