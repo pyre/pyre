@@ -17,7 +17,7 @@ class Request:
 
 
     # exceptions
-    from .exceptions import BadRequestSyntaxError
+    from . import exceptions
 
 
     # public state
@@ -58,7 +58,7 @@ class Request:
             # if it didn't match
             if not match:
                 # complain
-                raise self.BadRequestSyntaxError()
+                raise self.exceptions.BadRequestSyntaxError()
             # otherwise, unpack
             command, url, major, minor = match.groups()
             # and store
@@ -93,7 +93,7 @@ class Request:
         # if it doesn't match
         if not match:
             # complain
-            raise self.BadRequestSyntaxError()
+            raise self.exceptions.BadRequestSyntaxError()
         # mark me as having processed success
         self.described = True
 
@@ -135,7 +135,7 @@ class Request:
         # if storing this chunk would go over the limit
         if actual > size:
             # complain
-            raise self.EntityTooLargeError()
+            raise self.exceptions.EntityTooLargeError()
         # otherwise, store
         self.payload.append(chunk if offset == 0 else chunk[offset:])
         # check whether this was enough bytes
