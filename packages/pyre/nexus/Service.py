@@ -58,9 +58,9 @@ class Service(pyre.protocol, family="pyre.nexus.services"):
 
 
     @pyre.provides(tip='try to understand and respond to the peer request')
-    def respond(self, dispatcher, channel):
+    def process(self, dispatcher, channel):
         """
-        Say something to the peer
+        Start or continue a conversation with a peer over {channel}
         """
 
 

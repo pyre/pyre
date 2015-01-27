@@ -75,25 +75,31 @@ class Server(pyre.component, implements=Service):
         return True
 
 
-    @pyre.export(tip='indicate interest in continuing to interact with the peer')
+    @pyre.export(tip='prepare to accept connections from peers')
     def connect(self, dispatcher, channel, address):
         """
-        Prepare to start accepting requests from a new peer
+        Prepare to start accepting requests from peers
         """
+        # N.B.: override this to implement a different connection handling strategy, i.e. fork
+        # or spawn a thread; this implementation just adds the {channel} to the read pile and
+        # processes client requests in the same process space
+
         # place the channel on the read list
-        dispatcher.whenReadReady(channel=channel, call=self.respond)
+        dispatcher.whenReadReady(channel=channel, call=self.process)
         # indicate that i would like to continue receiving connection requests from other peers
         return True
 
 
-    @pyre.export(tip='try to understand and respond to the peer request')
-    def respond(self, dispatcher, channel):
+    @pyre.export(tip='process and respond to the peer request')
+    def process(self, dispatcher, channel):
         """
         Say something to the peer
         """
+        # close the connection
+        channel.close()
         # and prevent this from getting rescheduled; this is bad behavior because it can
         # potentially leave data in the channel, and it ignores the event raised when the peer
-        # closes the connection
+        # closes the connection. subclasses should override this and not chain
         return False
 
 
@@ -106,5 +112,6 @@ class Server(pyre.component, implements=Service):
         self.info = journal.info("pyre.nexus")
         # all done
         return
+
 
 # end of file
