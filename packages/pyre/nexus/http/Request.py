@@ -1,0 +1,170 @@
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis
+# orthologue
+# (c) 1998-2015 all rights reserved
+#
+
+
+# externals
+import re
+import urllib.parse
+# class declaration
+class Request:
+    """
+    Parse and analyze an HTTP request
+    """
+
+
+    # exceptions
+    from .exceptions import BadRequestSyntaxError
+
+
+    # public state
+    url = None # the url the peer requested
+    command = None # the type of request
+    version = None # the http protocol version requested
+
+    headers = None # dictionary of request headers
+    payload = None # the request payload
+
+
+    # interface
+    def process(self, chunk):
+        """
+        Process a {chunk} of bytes
+        """
+        # if we are still doing headers, pull them from the chunk
+        offset = self.processHeaders(chunk)
+        # whatever is left is request payload
+        return self.processPayload(chunk, offset)
+
+
+    # implementation details
+    def processHeaders(self, chunk):
+        """
+        Extract RFC2822 headers from the bytes sent by the peer
+        """
+        # if i am done processing headers
+        if self.described:
+            # bail and indicate that no bytes from {chunk} were consumed
+            return 0
+        # a cursor into {chunk}
+        offset = 0
+        # if i don't know my command yet
+        if not self.command:
+            # this is a brand new request
+            match = self.protocol.match(chunk)
+            # if it didn't match
+            if not match:
+                # complain
+                raise self.BadRequestSyntaxError()
+            # otherwise, unpack
+            command, url, major, minor = match.groups()
+            # and store
+            self.command = command.decode(self.HEADER_ENCODING)
+            self.url = urllib.parse.unquote(url.decode(self.HEADER_ENCODING))
+            self.version = (int(major), int(minor))
+            # initialize my headers
+            self.headers = {}
+            # update the cursor
+            offset = match.end()
+
+        # until something happens
+        while True:
+            # look for a header
+            match = self.keyval.match(chunk, offset)
+            # if it didn't match
+            if not match:
+                # bail
+                break
+            # otherwise, unpack
+            key, value = match.groups()
+            # decode
+            key = key.decode(self.HEADER_ENCODING)
+            value = value.decode(self.HEADER_ENCODING)
+            # store
+            self.headers[key] = value
+            # update the cursor
+            offset = match.end()
+
+        # the next entry must be a blank line
+        match = self.blank.match(chunk, offset)
+        # if it doesn't match
+        if not match:
+            # complain
+            raise self.BadRequestSyntaxError()
+        # mark me as having processed success
+        self.described = True
+
+        # and pass on how much of {chunk} i took care of
+        return match.end()
+
+
+    def processPayload(self, chunk, offset):
+        """
+        Extract a {chunk} of bytes and store them
+        """
+        # if i am done, i am done
+        if self.complete: return True
+
+        # compute the actual size of the unprocessed part of {chunk}
+        actual = len(chunk) - offset
+
+        # check whether
+        try:
+            # the client specified what my payload size is
+            size = self.headers['Content-Length']
+        # if not
+        except (KeyError, TypeError) as error:
+            # the only option is that this is the end of the chunk
+            if actual == 0:
+                # in which case mark me as done
+                self.complete = True
+                # and get out of here
+                return True
+
+        # initialize the storage for my payload
+        if self.payload is None: self.payload = []
+
+        # compute the total payload size, including what I have gathered so far
+        for portion in self.payload:
+            # by adding the length of each portion to the unprocessed {chunk}
+            actual += len(portion)
+
+        # if storing this chunk would go over the limit
+        if actual > size:
+            # complain
+            raise self.EntityTooLargeError()
+        # otherwise, store
+        self.payload.append(chunk if offset == 0 else chunk[offset:])
+        # check whether this was enough bytes
+        self.complete = True if actual == size else False
+        # and pass this info on
+        return self.complete
+
+
+    # implementation details
+    # state
+    described = False # am i done processing the request meta-data
+    complete = False # have i received everything i expect from the client?
+
+    # constants
+    # the expected encoding of the headers
+    HEADER_ENCODING = 'iso-8859-1'
+    # upper limits
+    MAX_LINE = 64 * 1024
+    MAX_HEADERS = 100
+    # scanners
+    blank = re.compile(b"\r?\n")
+    keyval = re.compile(
+        br"(?P<key>[^:]+):\s+(?P<value>[^\r\n]+)" +
+        b"\r?\n")
+    protocol = re.compile(
+        br"(?P<command>[^\s]+)" +
+        br"\s+(?P<url>[^\s]+)" +
+        br"(?:\s+HTTP/(?P<major>\d+).(?P<minor>\d+))" +
+        b"\r?\n")
+
+
+# end of file

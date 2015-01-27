@@ -12,7 +12,10 @@ PACKAGE = nexus/http
 
 # my local packages
 EXPORT_PYTHON_MODULES = \
+    Request.py \
+    Response.py \
     Server.py \
+    exceptions.py \
     __init__.py
 
 # the standard build targets
