@@ -6,8 +6,9 @@
 #
 
 
-PROJECT = pyre
-
+# project global settings
+include pyre.def
+# my subdirectories
 RECURSE_DIRS = \
     lib \
     packages \
@@ -21,7 +22,7 @@ RECURSE_DIRS = \
     web \
     bot \
     people \
-
+# the pyre install archive
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-1.0.zip
 
 # the standard targets

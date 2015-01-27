@@ -7,17 +7,16 @@
 #
 
 
-PROJECT = pyre
-
+# project global settings
+include pyre.def
+# my subdirectories
 RECURSE_DIRS = \
     design \
     diagrams \
     overview \
     gauss \
 
-#--------------------------------------------------------------------------
-#
-
+# the standard targets
 all:
 	BLD_ACTION="all" $(MM) recurse
 
@@ -29,6 +28,12 @@ clean::
 
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
+
+# shortcuts for building specific subdirectories
+.PHONY: $(RECURSE_DIRS)
+
+$(RECURSE_DIRS):
+	(cd $@; $(MM))
 
 
 # end of file
