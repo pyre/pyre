@@ -10,17 +10,18 @@ include {project.name}.def
 # the package name
 PACKAGE = defaults/{project.name}/actions
 
-# the configuration files
+# actions
 EXPORT_ETC = \
     debug.py
 
 # add these to the clean pile
 PROJ_CLEAN += $(EXPORT_ETCDIR)
 
-
 # the standard build targets
 all: export
 
 export:: export-etc
+
+live: live-etc
 
 # end of file

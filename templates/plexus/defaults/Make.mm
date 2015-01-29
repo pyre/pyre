@@ -9,20 +9,16 @@
 include {project.name}.def
 # the package name
 PACKAGE = defaults
-
-# the list of subdirectories
+# my subdirectories
 RECURSE_DIRS = \
     actions
-
 # the configuration files
 EXPORT_ETC = \
     {project.name}.cfg
-
 # add these to the clean pile
 PROJ_CLEAN += ${{addprefix $(EXPORT_ETCDIR)/, $(EXPORT_ETC)}}
 
-
-# the standard build targets
+# the standard targets
 all: export
 
 tidy::
@@ -36,5 +32,8 @@ distclean::
 
 export:: export-etc
 	BLD_ACTION="export" $(MM) recurse
+
+live: live-etc
+	BLD_ACTION="live" $(MM) recurse
 
 # end of file

@@ -16,4 +16,6 @@ PROJ_CLEAN += \
 
 all: tidy
 
+live:
+
 # end of file

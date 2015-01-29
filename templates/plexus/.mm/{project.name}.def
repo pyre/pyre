@@ -7,5 +7,7 @@
 
 # global options for {{{project.name}}}
 PROJECT = {project.name}
+# the live host
+PROJ_LIVE_HOST = {project.host.name}
 
 # end of file

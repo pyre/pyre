@@ -22,4 +22,6 @@ all: export
 
 export:: export-package-python-modules
 
+live: live-package-python-modules
+
 # end of file

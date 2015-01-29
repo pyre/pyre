@@ -5,7 +5,6 @@
 # (c) {project.span} all rights reserved
 #
 
-
 # access the project defaults
 include {project.name}.def
 # the package name
@@ -18,10 +17,11 @@ EXPORT_BINS = \
 # add these to the clean pile
 PROJ_CLEAN = ${{addprefix $(EXPORT_BINDIR)/, $(EXPORT_BINS)}}
 
-
 # standard targets
 all: export
 
 export:: export-binaries
+
+live: live-bin
 
 # end of file

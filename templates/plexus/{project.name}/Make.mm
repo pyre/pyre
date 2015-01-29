@@ -45,6 +45,9 @@ export:: __init__.py export-python-modules
 	BLD_ACTION="export" $(MM) recurse
 	@$(RM) __init__.py
 
+live: live-python-modules
+	BLD_ACTION="live" $(MM) recurse
+
 # construct my {{__init__.py}}
 __init__.py: __init__py
 	@sed -e "s:REVISION:$(REVISION):g" __init__py > __init__.py

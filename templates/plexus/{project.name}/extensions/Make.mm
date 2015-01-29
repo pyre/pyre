@@ -19,4 +19,6 @@ all: export
 
 export:: export-package-python-modules
 
-# end of file 
+live: live-package-python-modules
+
+# end of file

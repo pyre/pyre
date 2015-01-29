@@ -34,5 +34,6 @@ PROJ_CLEAN += \
 # the default target compiles this library and exports it
 all: export-headers proj-lib export-libraries
 
+live: live-headers live-libraries
 
 # end of file

@@ -5,18 +5,17 @@
 # (c) {project.span} all rights reserved
 #
 
-# get the global defaults for the {{{project.name}}} project
+# projet defaults
 include {project.name}.def
-# the local package
+# the package
 PACKAGE = extensions
+# the module
 MODULE = {project.name}
-
-# support for making python extensions
+# build a python extension
 include std-pythonmodule.def
 
 # adjust the build parameters
 PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
-
 # the list of extension source files
 PROJ_SRCS = \
     exceptions.cc \

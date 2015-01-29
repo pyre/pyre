@@ -19,4 +19,6 @@ sanity:
 	${{PYTHON}} ./sanity.py
 	${{PYTHON}} ./extension.py
 
-# end of file 
+live:
+
+# end of file
