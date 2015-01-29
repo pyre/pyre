@@ -5,8 +5,8 @@
 # (c) 1998-2015 all rights reserved
 #
 
-# global options for pyre
-PROJECT = pyre
+# global options for journal
+PROJECT = journal
 # the live host
 PROJ_LIVE_HOST = pyre.orthologue.com
 PROJ_LIVE_HOMEDIR = /home/projects/pyre/1.0
