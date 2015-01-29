@@ -52,6 +52,9 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+live:
+	BLD_ACTION="live" $(MM) recurse
+
 # convenience
 zip:
 	for package in $(PACKAGES); do { \

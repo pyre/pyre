@@ -8,19 +8,19 @@
 # project defaults
 include {project.name}.def
 # the package name
-PACKAGE = {project.name}/actions
+PACKAGE = defaults/{project.name}/actions
 
 # the configuration files
 EXPORT_ETC = \
     debug.py
 
 # add these to the clean pile
-PROJ_CLEAN = $(EXPORT_ETCDIR)/$(PACKAGE)
+PROJ_CLEAN += $(EXPORT_ETCDIR)
 
 
 # the standard build targets
 all: export
 
-export:: export-package-etc
+export:: export-etc
 
 # end of file

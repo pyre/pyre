@@ -6,25 +6,16 @@
 # (c) 1998-2015 all rights reserved
 #
 
+# get mpi
 include MPI/default.def
-
-PROJECT = pyre
+# the project defaults
+include pyre.def
+# the package name
 PACKAGE = mpi
-
-PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
-
-#--------------------------------------------------------------------------
-#
-
-all: export
-
-export:: export-headers export-package-headers
-
-release:: release-headers release-package-headers
-
+# top level header
 EXPORT_HEADERS = \
     mpi.h \
-
+# headers scoped by the package name
 EXPORT_PKG_HEADERS = \
     Communicator.h Communicator.icc \
     Error.h Error.icc \
@@ -32,5 +23,11 @@ EXPORT_PKG_HEADERS = \
     Handle.h Handle.icc \
     Shareable.h Shareable.icc \
 
+# standard targets
+all: export
+
+export:: export-headers export-package-headers
+
+live: live-headers live-package-headers
 
 # end of file

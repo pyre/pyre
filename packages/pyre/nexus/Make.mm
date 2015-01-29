@@ -9,11 +9,10 @@
 include pyre.def
 # the package name
 PACKAGE = nexus
-
 # my folders
 RECURSE_DIRS = \
     http \
-# my local packages
+# python packages
 EXPORT_PYTHON_MODULES = \
     Nexus.py \
     Node.py \
@@ -38,6 +37,8 @@ distclean::
 export:: export-package-python-modules
 	BLD_ACTION="export" $(MM) recurse
 
+live: live-package-python-modules
+	BLD_ACTION="live" $(MM) recurse
 
 #  shortcuts for building specific subdirectories
 .PHONY: $(RECURSE_DIRS)

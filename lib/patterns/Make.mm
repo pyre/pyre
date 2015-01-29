@@ -7,19 +7,19 @@
 # (c) 1998-2015 all rights reserved
 #
 
-PROJECT = pyre
+# project defaults
+include pyre.def
+# package name
 PACKAGE = patterns
+# headers that are scoped by the package name
+EXPORT_PKG_HEADERS = \
+    Registrar.h Registrar.icc
 
-PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
-
-#
+# the standard targets
 all: export
 
 export:: export-package-headers
 
-release:: release-package-headers
-
-EXPORT_PKG_HEADERS = \
-    Registrar.h Registrar.icc
+live: live-package-headers
 
 # end of file

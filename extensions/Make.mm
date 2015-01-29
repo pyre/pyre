@@ -6,8 +6,9 @@
 #
 
 
-PROJECT = pyre
-
+# project defaults
+include pyre.def
+# my subdirectories
 RECURSE_DIRS = \
     host \
     journal \
@@ -38,9 +39,7 @@ ifneq ($(strip $(LIBPQ_DIR)),)
   RECURSE_DIRS += postgres
 endif
 
-#--------------------------------------------------------------------------
-#
-
+# standard targets
 all:
 	BLD_ACTION="all" $(MM) recurse
 
@@ -52,5 +51,8 @@ clean::
 
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
+
+live:
+	BLD_ACTION="live" $(MM) recurse
 
 # end of file

@@ -7,20 +7,20 @@
 # (c) 1998-2015 all rights reserved
 #
 
-PROJECT = pyre
+# project defaults
+include pyre.def
+# the package name
 PACKAGE = algebra
+# the package headers
+EXPORT_PKG_HEADERS = \
+    operators.h operators.icc \
+    BCD.h BCD.icc
 
-PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
-
-#
+# standard targets
 all: export
 
 export:: export-package-headers
 
-release:: release-package-headers
-
-EXPORT_PKG_HEADERS = \
-    operators.h operators.icc \
-    BCD.h BCD.icc
+live: live-package-headers
 
 # end of file

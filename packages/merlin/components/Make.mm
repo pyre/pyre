@@ -5,20 +5,11 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = merlin
+# project defaults
+include merlin.def
+# package name
 PACKAGE = components
-PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
-
-
-#--------------------------------------------------------------------------
-#
-
-all: export
-
-#--------------------------------------------------------------------------
-# export
-
+# the python modules
 EXPORT_PYTHON_MODULES = \
     Action.py \
     Component.py \
@@ -32,6 +23,11 @@ EXPORT_PYTHON_MODULES = \
     __init__.py
 
 
+# standard targets
+all: export
+
 export:: export-package-python-modules
+
+live: live-package-python-modules
 
 # end of file

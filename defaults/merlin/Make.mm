@@ -5,35 +5,17 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = pyre
+# project defaults
+include pyre.def
+# the package
 PACKAGE = defaults/merlin
+# add these to the clean pile
+PROJ_CLEAN += \
+    $(EXPORT_ETCDIR)/$(PROJECT)
 
-RECURSE_DIRS = \
+# the standard targets
+all: tidy
 
-#--------------------------------------------------------------------------
-#
-
-all: export
-
-tidy::
-	BLD_ACTION="tidy" $(MM) recurse
-
-clean::
-	BLD_ACTION="clean" $(MM) recurse
-
-distclean::
-	BLD_ACTION="distclean" $(MM) recurse
-
-
-#--------------------------------------------------------------------------
-#
-
-export:: # export-etc
-	BLD_ACTION="export" $(MM) recurse
-
-release:: # release-etc
-	BLD_ACTION="release" $(MM) recurse
-
+live: # nothing to do for now
 
 # end of file

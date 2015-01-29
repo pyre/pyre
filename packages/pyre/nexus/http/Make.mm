@@ -9,8 +9,7 @@
 include pyre.def
 # the package name
 PACKAGE = nexus/http
-
-# my local packages
+# python packages
 EXPORT_PYTHON_MODULES = \
     Request.py \
     Response.py \
@@ -22,5 +21,7 @@ EXPORT_PYTHON_MODULES = \
 all: export
 
 export:: export-package-python-modules
+
+live: live-package-python-modules
 
 # end of file

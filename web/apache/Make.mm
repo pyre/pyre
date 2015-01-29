@@ -6,16 +6,19 @@
 #
 
 
-PROJECT = pyre
-PACKAGE = apache
+# project globals
+include pyre.def
+# the package
+PACKAGE = web/apache
 
-
-WWW_SERVER=root@orthologue.com
-
+# standard targets
 all: tidy
 
-deploy:
-	ssh $(WWW_SERVER) 'service apache2 restart'
+live: live-apache-conf live-apache-restart
 
+# there is another target that might be useful:
+#
+#    live-apache-conf: make a link to the configuration file in the apache {sites-available}
+#                      directory, followed by enabling the site
 
 # end of file

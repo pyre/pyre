@@ -5,20 +5,28 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = pyre
+# project defaults
+include pyre.def
+# the package
 PACKAGE = config
-PROJ_CLEAN += $(EXPORT_MODULEDIR)/$(PACKAGE)
-
+# my subdirectories
 RECURSE_DIRS = \
     cfg \
     native \
     odb \
     pml \
+# the python modules
+EXPORT_PYTHON_MODULES = \
+    Codec.py \
+    CommandLineParser.py \
+    Configurator.py \
+    Loader.py \
+    Shelf.py \
+    events.py \
+    exceptions.py \
+    __init__.py
 
-#--------------------------------------------------------------------------
-#
-
+# standard targets
 all: export
 
 tidy::
@@ -30,22 +38,10 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-#--------------------------------------------------------------------------
-# export
-
-EXPORT_PYTHON_MODULES = \
-    Codec.py \
-    CommandLineParser.py \
-    Configurator.py \
-    Loader.py \
-    Shelf.py \
-    events.py \
-    exceptions.py \
-    __init__.py
-
-
 export:: export-package-python-modules
 	BLD_ACTION="export" $(MM) recurse
 
+live: live-package-python-modules
+	BLD_ACTION="live" $(MM) recurse
 
 # end of file

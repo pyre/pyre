@@ -6,23 +6,20 @@
 #
 
 
-PROJECT = pyre
+# project defaults
+include pyre.def
+# package name
 PACKAGE = schema
-
-#--------------------------------------------------------------------------
-#
-
-all: tidy
-
-#--------------------------------------------------------------------------
-#
-
+# the files
 EXPORT_ETC = \
     config.html \
     config.xsd \
 
+# standard targets
+all: tidy
 
 export:: export-etc
 
+live: live-etc
 
 # end of file

@@ -5,15 +5,17 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = opal
+# project defaults
+include opal.def
+# package name
 PACKAGE = opal
-PROJ_CLEAN += $(EXPORT_MODULEDIR)
-
+# my sibfolders
 RECURSE_DIRS = \
     html \
     shells \
-
+# the python modules
+EXPORT_PYTHON_MODULES = \
+    __init__.py
 
 # standard targets
 all: export
@@ -27,14 +29,10 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-
-# export
-
-EXPORT_PYTHON_MODULES = \
-    __init__.py
-
 export:: export-python-modules
 	BLD_ACTION="export" $(MM) recurse
 
+live: live-python-modules
+	BLD_ACTION="live" $(MM) recurse
 
 # end of file

@@ -5,18 +5,25 @@
 # (c) 1998-2015 all rights reserved
 #
 
-PROJECT = gsl
+# project defaults
+include gsl.def
+# package name
 PACKAGE =
+# the module
 MODULE = gsl
-
+# get gsl support
 include gsl/default.def
+# build a python extension
 include std-pythonmodule.def
-
+# my headers live here
 PROJ_INCDIR = $(BLD_INCDIR)/pyre/$(PROJECT)
+# use a tmp directory that knows the name of the module
 PROJ_TMPDIR = $(BLD_TMPDIR)/extensions/$(PROJECT)
+# point to the location of my libraries
 PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
+# link against these
 PROJ_LIBRARIES = -ljournal
-
+# the sources
 PROJ_SRCS = \
     blas.cc \
     exceptions.cc \

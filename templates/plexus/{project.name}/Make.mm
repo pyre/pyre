@@ -10,7 +10,7 @@ include {project.name}.def
 # the package name
 PACKAGE = {project.name}
 # clean up
-PROJ_CLEAN = $(EXPORT_MODULEDIR)
+PROJ_CLEAN += $(EXPORT_MODULEDIR)
 
 # the list of directories to visit
 RECURSE_DIRS = \

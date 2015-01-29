@@ -6,15 +6,14 @@
 #
 
 
-PROJECT = pyre
-
+# project defaults
+include pyre.def
+# my subdirectories
 RECURSE_DIRS = \
     master \
     slaves \
 
-#--------------------------------------------------------------------------
-#
-
+# standard targets
 all:
 	BLD_ACTION="all" $(MM) recurse
 
@@ -27,5 +26,6 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+live:
 
 # end of file

@@ -5,25 +5,20 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = pyre
+# project defaults
+include pyre.def
+# package name
 PACKAGE = people
-
+# add this to the clean pile
 PROJ_CLEAN += authorized_keys
 
-
+# standard targets
 all: tidy
-
+# make the autorized keys file
 authorized_keys:
 	./grant.py
 
-SCP = scp
-SERVER = orthologue.com
-MANAGER = root
-DESTINATION = /home/projects/pyre/.ssh
-
-deploy: authorized_keys
-	$(SCP) $< $(MANAGER)@$(SERVER):$(DESTINATION)
-
+live: authorized_keys
+	$(SCP) $< $(PROJ_LIVE_ADMIN)@$(PROJ_LIVE_HOST):$(PROJ_LIVE_DIR)/.ssh
 
 # end of file

@@ -19,9 +19,7 @@ EXPORT_ETC = \
     {project.name}.cfg
 
 # add these to the clean pile
-PROJ_CLEAN = \
-    $(EXPORT_ETCDIR)/$(PROJECT) \
-    ${{addprefix $(EXPORT_ETCDIR)/, $(EXPORT_ETC)}} \
+PROJ_CLEAN += ${{addprefix $(EXPORT_ETCDIR)/, $(EXPORT_ETC)}}
 
 
 # the standard build targets

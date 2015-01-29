@@ -5,27 +5,22 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = merlin
+# project defaults
+include merlin.def
+# package name
 PACKAGE = spells
-PROJ_CLEAN = $(EXPORT_MODULEDIR)/$(PACKAGE)
-
-
-#--------------------------------------------------------------------------
-#
-
-all: export
-
-#--------------------------------------------------------------------------
-# export
-
+# the python modules
 EXPORT_PYTHON_MODULES = \
     About.py \
     AssetManager.py \
     Initializer.py \
     __init__.py
 
+# standard targets
+all: export
 
 export:: export-package-python-modules
+
+live: live-package-python-modules
 
 # end of file

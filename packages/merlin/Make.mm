@@ -6,20 +6,21 @@
 #
 
 
-PROJECT = merlin
+# project defaults
+include merlin.def
+# package name
 PACKAGE = merlin
-PROJ_CLEAN = $(EXPORT_MODULEDIR)
-
+# my subfolders
 RECURSE_DIRS = \
     assets \
     components \
     schema \
     spells \
+# the python modules
+EXPORT_PYTHON_MODULES = \
+    __init__.py
 
-
-#--------------------------------------------------------------------------
-#
-
+# standard targets
 all: export
 
 tidy::
@@ -31,21 +32,15 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-
-#--------------------------------------------------------------------------
-# export
-
-EXPORT_PYTHON_MODULES = \
-    __init__.py
-
-
 export:: __init__.py export-python-modules
 	BLD_ACTION="export" $(MM) recurse
 	@$(RM) __init__.py
 
+live: live-python-modules
+	BLD_ACTION="live" $(MM) recurse
+
 # construct my {__init__.py}
 __init__.py: __init__py
 	@sed -e "s:BZR_REVNO:$$(bzr revno):g" __init__py > __init__.py
-
 
 # end of file

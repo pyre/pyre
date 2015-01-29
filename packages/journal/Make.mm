@@ -5,19 +5,11 @@
 # (c) 1998-2015 all rights reserved
 #
 
-PROJECT = journal
+# project defaults
+include journal.def
+# package name
 PACKAGE = journal
-PROJ_CLEAN = $(EXPORT_MODULEDIR)
-
-
-#--------------------------------------------------------------------------
-#
-
-all: export
-
-#--------------------------------------------------------------------------
-# export
-
+# the python modules
 EXPORT_PYTHON_MODULES = \
     ANSIRenderer.py \
     Channel.py \
@@ -39,7 +31,11 @@ EXPORT_PYTHON_MODULES = \
     schemes.py \
     __init__.py
 
+# standard targets
+all: export
 
 export:: export-python-modules
+
+live: live-python-modules
 
 # end of file

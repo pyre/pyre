@@ -6,24 +6,29 @@
 #
 
 
-PROJECT = pyre
-
+# project defaults
+include pyre.def
+# the templates
 TEMPLATES = \
     class.c++ \
     class.python \
     django \
     plexus \
-
-#
+# the destination
+TEMPLATE_DIR = $(EXPORT_ROOT)/templates
+# standard targets
 all: export
 
-#
-TEMPLATE_DIR = $(EXPORT_ROOT)/templates
 export::
 	@find . -name \*~ -delete
 	@$(RM_RF) $(TEMPLATE_DIR)
 	@$(MKDIR) $(MKPARENTS) $(TEMPLATE_DIR)
 	@$(CP_R) $(TEMPLATES) $(TEMPLATE_DIR)
 
+LIVE_TEMPLATES = ${addprefix $(PROJ_LIVE_TPLDIR),$(TEMPLATES)}
+live:
+	$(SSH) $(PROJ_LIVE_USERURL) '$(MKDIRP) $(PROJ_LIVE_TPLDIR)'
+	$(SSH) $(PROJ_LIVE_USERURL) '$(RM_RF) $(LIVE_TEMPLATES)'
+	$(SCP) -r $(TEMPLATES) $(PROJ_LIVE_USERURL):$(PROJ_LIVE_TPLDIR)
 
 # end of file

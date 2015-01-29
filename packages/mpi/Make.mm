@@ -5,19 +5,11 @@
 # (c) 1998-2015 all rights reserved
 #
 
-PROJECT = mpi
+# project defaults
+include mpi.def
+# package name
 PACKAGE = mpi
-PROJ_CLEAN = $(EXPORT_MODULEDIR)
-
-
-#--------------------------------------------------------------------------
-#
-
-all: export
-
-#--------------------------------------------------------------------------
-# export
-
+# the python modules
 EXPORT_PYTHON_MODULES = \
     Cartesian.py \
     Communicator.py \
@@ -28,7 +20,11 @@ EXPORT_PYTHON_MODULES = \
     TrivialCommunicator.py \
     __init__.py
 
+# standard targets
+all: export
 
 export:: export-python-modules
+
+live: live-python-modules
 
 # end of file

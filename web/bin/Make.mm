@@ -5,12 +5,14 @@
 # (c) 1998-2015 all rights reserved
 #
 
+# project defaults
+include pyre.def
+# the package
+PACKAGE = web/bin
 
-PROJECT = pyre
-PACKAGE = bin
-
-
+# the standard targets
 all: tidy
 
+live: tidy
 
 # end of file

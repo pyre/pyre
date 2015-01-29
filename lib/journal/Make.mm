@@ -6,15 +6,16 @@
 # (c) 1998-2015 all rights reserved
 #
 
+# get the machinery for building shared objects
 include shared/target.def
-
-PROJECT = pyre
+# project defaults
+include pyre.def
+# the package name
 PACKAGE = journal
-
-PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
+# the products
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SAR)
 PROJ_DLL = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SO)
-
+# the sources
 PROJ_SRCS = \
     debuginfo.cc \
     firewalls.cc \
@@ -24,23 +25,13 @@ PROJ_SRCS = \
     Device.cc \
     Renderer.cc \
     Streaming.cc \
-
-
-#--------------------------------------------------------------------------
-#
-
-all: $(PROJ_DLL) export
-
-export:: export-headers export-package-headers export-libraries
-
-release:: release-headers release-package-headers release-libraries
-
-
+# what to export
+# the library
 EXPORT_LIBS = $(PROJ_DLL)
-
+# the top level header
 EXPORT_HEADERS = \
     journal.h
-
+# the headers that are scoped by my project name
 EXPORT_PKG_HEADERS = \
     debuginfo.h \
     firewalls.h \
@@ -64,5 +55,11 @@ EXPORT_PKG_HEADERS = \
     Streaming.h Streaming.icc \
     Warning.h Warning.icc \
 
+# the standard targets
+all: $(PROJ_DLL) export
+
+export:: export-headers export-package-headers export-libraries
+
+live: live-headers live-package-headers live-libraries
 
 # end of file

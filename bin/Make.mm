@@ -5,19 +5,11 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = pyre
+# project defaults
+include pyre.def
+# the package name
 PACKAGE = bin
-
-#--------------------------------------------------------------------------
-#
-
-all: export
-
-
-#--------------------------------------------------------------------------
-# export
-
+# the files
 EXPORT_BINS = \
     class.pyre \
     listdir.py \
@@ -25,9 +17,11 @@ EXPORT_BINS = \
     smith.pyre \
     pyre
 
+# the standard targets
+all: export
+
 export:: export-binaries
 
-release:: release-binaries
-
+live: live-bin
 
 # end of file

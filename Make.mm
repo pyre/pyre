@@ -38,6 +38,9 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+live:
+	BLD_ACTION="live" $(MM) recurse
+
 # other targets
 build: lib packages extensions defaults bin
 

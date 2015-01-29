@@ -9,8 +9,7 @@
 include pyre.def
 # the package name
 PACKAGE = ipc
-
-# my local packages
+# python packages
 EXPORT_PYTHON_MODULES = \
     Channel.py \
     Dispatcher.py \
@@ -25,10 +24,11 @@ EXPORT_PYTHON_MODULES = \
     SocketTCP.py \
     __init__.py
 
-
-# the standard build targets
+# standard targets
 all: export
 
 export:: export-package-python-modules
+
+live: live-package-python-modules
 
 # end of file

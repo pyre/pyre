@@ -5,17 +5,21 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = pyre
-PACKAGE = pyre/platforms
-
+# project defaults
+include pyre.def
+# the package
+PACKAGE = defaults/$(PROJECT)/platforms
+# the files
 EXPORT_ETC = \
     macports.cfg \
+# add these to the clean pile
+PROJ_CLEAN += $(EXPORT_ETCDIR)
 
-#--------------------------------------------------------------------------
+# the standard targets
 all: export
 
-export:: export-package-etc
+export:: export-etc
 
+live: live-etc
 
 # end of file

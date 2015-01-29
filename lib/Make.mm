@@ -5,9 +5,9 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = pyre
-
+# project defaults
+include pyre.def
+# my dibdirectories
 RECURSE_DIRS = \
     journal \
     algebra \
@@ -22,9 +22,7 @@ ifneq ($(strip $(MPI_DIR)),)
 endif
 
 
-#--------------------------------------------------------------------------
-#
-
+# the standard targets
 all:
 	BLD_ACTION="all" $(MM) recurse
 
@@ -40,8 +38,7 @@ distclean::
 export::
 	BLD_ACTION="export" $(MM) recurse
 
-release::
-	BLD_ACTION="release" $(MM) recurse
-
+live:
+	BLD_ACTION="live" $(MM) recurse
 
 # end of file

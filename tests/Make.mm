@@ -56,6 +56,7 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+live:
 
 # shortcuts for building specific subdirectories
 .PHONY: $(RECURSE_DIRS)

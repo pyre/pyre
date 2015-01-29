@@ -5,20 +5,11 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
-PROJECT = pyre
+# project defaults
+include pyre.def
+# package name
 PACKAGE = patterns
-PROJ_CLEAN += $(EXPORT_MODULEDIR)/$(PACKAGE)
-
-
-#--------------------------------------------------------------------------
-#
-
-all: export
-
-#--------------------------------------------------------------------------
-# export
-
+# the python modules
 EXPORT_PYTHON_MODULES = \
     AbstractMetaclass.py \
     Accumulator.py \
@@ -33,7 +24,11 @@ EXPORT_PYTHON_MODULES = \
     Tee.py \
     __init__.py
 
+# standard targets
+all: export
 
 export:: export-package-python-modules
+
+live: live-package-python-modules
 
 # end of file
