@@ -11,17 +11,13 @@
     ServerName {project.host.name}
     ServerAdmin {project.host.admin}
 
-    # application support
-    WSGIScriptAlias / {project.host.webroot}/apache/{project.name}.wsgi
+    # make sure there is a usable locale
+    SetEnv LANG en_US.UTF-8
+    # and a python path
+    SetEnv PYTHONPATH {project.host.live}/packages
 
-    # the web
-    DocumentRoot {project.host.documentroot}
-    <Directory />
-        Options Indexes FollowSymLinks MultiViews
-        AllowOverride None
-        Order allow,deny
-        Allow from all
-    </Directory>
+    # application support
+    WSGIScriptAlias / {project.host.web}/apache/{project.name}.wsgi
 
     # what to log; possible values include:
     #    debug, info, notice, warn, error, crit, alert, emerg

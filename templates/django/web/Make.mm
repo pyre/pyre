@@ -7,7 +7,9 @@
 
 # project settings
 include {project.name}.def
-
+# the package
+PACKAGE=web/www
+# the package
 EXPORT_WEB = \
     resources \
     templates
@@ -16,5 +18,7 @@ EXPORT_WEB = \
 all: export
 
 export:: export-web
+
+live: live-web
 
 # end of file

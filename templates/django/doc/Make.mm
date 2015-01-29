@@ -13,4 +13,6 @@ PACKAGE = doc
 # the standard build targets
 all: tidy
 
+live:
+
 # end of file

@@ -13,9 +13,14 @@ PACKAGE = bin
 EXPORT_BINS = \
     {project.name}
 
+# add these to the clean pile
+PROJ_CLEAN = ${{addprefix $(EXPORT_BINDIR)/, $(EXPORT_BINS)}}
+
 # the standard build targets
 all: export
 
 export:: export-binaries
+
+live: live-bin
 
 # end of file

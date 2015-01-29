@@ -10,7 +10,7 @@ include {project.name}.def
 # the package name
 PACKAGE = base/migrations
 
-# the list of python modules
+# the python modules
 EXPORT_PYTHON_MODULES = \
     __init__.py
 
@@ -18,5 +18,7 @@ EXPORT_PYTHON_MODULES = \
 all: export
 
 export:: export-package-python-modules
+
+live: live-package-python-modules
 
 # end of file

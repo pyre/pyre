@@ -9,8 +9,7 @@
 include {project.name}.def
 # the package name
 PACKAGE = settings
-
-# the list of python modules
+# the python modules
 EXPORT_PYTHON_MODULES = \
     base.py \
     local.py \
@@ -21,5 +20,7 @@ EXPORT_PYTHON_MODULES = \
 all: export
 
 export:: export-package-python-modules
+
+live: live-package-python-modules
 
 # end of file

@@ -6,17 +6,9 @@
 # (c) {project.span} all rights reserved
 #
 
-
 # the project name
 PROJECT = {project.name}
-
-# deployment settings for web servers
-APACHE_HOST = {project.host.name}
-APACHE_USER = www-data
-APACHE_SUPERUSER = root
-APACHE_USERURL = $(APACHE_SUPERUSER)@$(APACHE_HOST)
-APACHE_CONFIGDIR = /etc/apache2/sites-available
-APACHE_CONFIGURL = $(APACHE_USERURL):$(APACHE_CONFIGDIR)
-
+# the live host
+PROJ_LIVE_HOST = {project.host.name}
 
 # end of file

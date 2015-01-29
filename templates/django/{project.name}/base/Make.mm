@@ -9,12 +9,10 @@
 include {project.name}.def
 # the package name
 PACKAGE = base
-
-# the list of directories to visit
+# my subdirectories
 RECURSE_DIRS = \
     migrations \
-
-# the list of python modules
+# the python modules
 EXPORT_PYTHON_MODULES = \
     admin.py \
     models.py \
@@ -37,6 +35,9 @@ distclean::
 
 export:: export-package-python-modules
 	BLD_ACTION="export" $(MM) recurse
+
+live: live-package-python-modules
+	BLD_ACTION="live" $(MM) recurse
 
 
 # end of file
