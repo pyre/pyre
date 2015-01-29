@@ -36,12 +36,10 @@
         Allow from all
     </Directory>
 
-    ErrorLog /var/log/apache2/error-pyre.log
-
-    # Possible values include: debug, info, notice, warn, error, crit,
-    # alert, emerg.
+    # logs
+    # possible values include: debug, info, notice, warn, error, crit, alert, emerg
     LogLevel warn
-
+    ErrorLog /var/log/apache2/error-pyre.log
     CustomLog /var/log/apache2/access-pyre.log combined
 
 </VirtualHost>
