@@ -53,9 +53,9 @@ zipit:
 	(cd $(EXPORT_ROOT); zip -r ${PYRE_ZIP} * )
 
 # shortcuts for building specific subdirectories
-.PHONY: $(RECURSE_DIRS)
+.PHONY: $(RECURSE_DIRS) doc
 
-$(RECURSE_DIRS):
+$(RECURSE_DIRS) doc:
 	(cd $@; $(MM))
 
 

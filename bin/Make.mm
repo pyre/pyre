@@ -17,6 +17,9 @@ EXPORT_BINS = \
     smith.pyre \
     pyre
 
+# add these to the clean pile
+PROJ_CLEAN = ${{addprefix $(EXPORT_BINDIR)/, $(EXPORT_BINS)}}
+
 # the standard targets
 all: export
 
