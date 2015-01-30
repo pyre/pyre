@@ -13,6 +13,7 @@ RECURSE_DIRS = \
     {project.name} \
     web \
     bin \
+    var \
     apache \
     doc \
     access \
