@@ -5,9 +5,14 @@
 # (c) {project.span} all rights reserved
 #
 
-# global options for {{{project.name}}}
+# the project name
 PROJECT = {project.name}
+
 # the live host
-PROJ_LIVE_HOST = {project.host.name}
+PROJ_LIVE_HOST = {project.hostname}
+PROJ_LIVE_ADMIN = {project.admin}
+PROJ_LIVE_HOME = {project.home}
+PROJ_LIVE_ROOT = {project.root}
+PROJ_LIVE_WEB = {project.web}
 
 # end of file

@@ -11,6 +11,8 @@ include {project.name}.def
 PACKAGE = access
 # add this to the clean pile
 PROJ_CLEAN += authorized_keys
+# the list of public keys
+PUBLIC_KEYS = $(wildcard *.pub)
 
 # standard targets
 all: tidy
@@ -20,7 +22,7 @@ authorized_keys: $(PUBLIC_KEYS) grant.py grant.cfg Make.mm
 	./grant.py
 
 live: authorized_keys
-	$(SCP) $< $(PROJ_LIVE_ADMIN)@$(PROJ_LIVE_HOST):$(PROJ_LIVE_DIR)/.ssh
+	$(SCP) $< $(PROJ_LIVE_ADMIN)@$(PROJ_LIVE_HOST):$(PROJ_LIVE_HOME)/.ssh
 
 # convenience (and for checking before deploying)
 keys: authorized_keys

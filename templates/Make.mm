@@ -5,7 +5,6 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
 # project defaults
 include pyre.def
 # the templates
