@@ -240,10 +240,10 @@ class NameServer(Hierarchical):
             node = self._nodes[key]
         # otherwise
         except KeyError:
-            # build an error marker
-            node = self.node.unresolved(key=key, request=name)
             # fill out the node info
             name, split, key = self.info.fillNodeId(model=self, key=key, name=name)
+            # build an error marker
+            node = self.node.unresolved(key=key, request=name)
             # add it to the pile
             self._nodes[key] = node
             self._metadata[key] = self.info(name=name, split=split, key=key)
