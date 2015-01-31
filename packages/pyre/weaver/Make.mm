@@ -33,6 +33,7 @@ EXPORT_PYTHON_MODULES = \
     Perl.py \
     Plexus.py \
     Project.py \
+    ProjectTemplate.py \
     Python.py \
     SQL.py \
     SVG.py \

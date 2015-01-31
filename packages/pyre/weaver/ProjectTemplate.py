@@ -8,10 +8,12 @@
 
 # the framework
 import pyre
+# my protocol
+from .Project import Project
 
 
 # declaration
-class Project(pyre.protocol, family='pyre.smith.projects'):
+class ProjectTemplate(pyre.component, implements=Project):
     """
     Encapsulation of the project information
     """
@@ -30,6 +32,9 @@ class Project(pyre.protocol, family='pyre.smith.projects'):
     span = pyre.properties.str(default='[ replace with the project duration ]')
     span.doc = "the project duration for the copyright message"
 
+    template = pyre.properties.str(default=None)
+    template.doc = "the project template"
+
     hostname = pyre.properties.str(default='localhost')
     hostname.doc = "the name of the machine that hosts the live application"
 
@@ -44,17 +49,6 @@ class Project(pyre.protocol, family='pyre.smith.projects'):
 
     admin = pyre.properties.str(default='root')
     admin.doc = "the username of the remote administrator"
-
-
-    # framework obligations
-    @classmethod
-    def pyre_default(cls, **kwds):
-        """
-        Build the preferred host implementation
-        """
-        # the default project is a plexus
-        from .Plexus import Plexus
-        return Plexus
 
 
 # end of file

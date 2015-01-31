@@ -8,30 +8,18 @@
 
 # the framework
 import pyre
-# my protocol
-from .Project import Project
+# my superclass
+from .ProjectTemplate import ProjectTemplate
 
 
 # declaration
-class Django(pyre.component, family='pyre.smith.projects.django', implements=Project):
+class Django(ProjectTemplate, family='pyre.smith.projects.django'):
     """
     Encapsulation of the project information
     """
 
 
-    # user configurable state
-    name = pyre.properties.str(default='project')
-    name.doc = "the name of the project"
-
-    authors = pyre.properties.str(default=None)
-    authors.doc = "the list of project authors"
-
-    affiliations = pyre.properties.str(default=None)
-    affiliations.doc = "the author affiliations"
-
-    span = pyre.properties.str(default=None)
-    span.doc = "the project duration for the copyright message"
-
+    # additional user configurable state
     template = pyre.properties.str(default='django')
     template.doc = "the project template"
 
