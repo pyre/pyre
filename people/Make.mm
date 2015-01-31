@@ -11,14 +11,16 @@ include pyre.def
 PACKAGE = people
 # add this to the clean pile
 PROJ_CLEAN += authorized_keys
+# the list of public keys
+PUBLIC_KEYS = $(wildcard *.pub)
 
 # standard targets
 all: tidy
 # make the autorized keys file
-authorized_keys:
+authorized_keys: $(PUBLIC_KEYS) grant.py grant.cfg Make.mm
 	./grant.py
 
 live: authorized_keys
-	$(SCP) $< $(PROJ_LIVE_ADMIN)@$(PROJ_LIVE_HOST):$(PROJ_LIVE_DIR)/.ssh
+	$(SCP) $< $(PROJ_LIVE_ADMIN)@$(PROJ_LIVE_HOST):$(PROJ_LIVE_HOME)/.ssh
 
 # end of file

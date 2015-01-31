@@ -9,6 +9,6 @@
 PROJECT = cuda
 # the live host
 PROJ_LIVE_HOST = pyre.orthologue.com
-PROJ_LIVE_HOMEDIR = /home/projects/pyre/1.0
+PROJ_LIVE_ROOT = /home/projects/pyre/1.0
 
 # end of file
