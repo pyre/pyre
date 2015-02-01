@@ -17,6 +17,6 @@ all: export
 
 export:: export-etcdir
 
-live: live-var
+live: live-vardir
 
 # end of file

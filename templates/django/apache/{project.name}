@@ -18,6 +18,11 @@
 
     # application support
     WSGIScriptAlias / {project.live.web}/apache/{project.name}.wsgi
+    # permissions
+    <Location "/">
+        Options Indexes FollowSymLinks MultiViews
+        Require all granted
+    </Location>
 
     # what to log; possible values include:
     #    debug, info, notice, warn, error, crit, alert, emerg

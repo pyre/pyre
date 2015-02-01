@@ -22,7 +22,7 @@ import {project.name}
 
 # folder definitions
 BASE = os.path.abspath(os.path.join({project.name}.home, os.pardir, os.pardir))
-WEB = os.path.join(BASE, 'web', '{project.name}')
+WEB = os.path.join(BASE, 'web', 'www', '{project.name}')
 # important folder definitions
 TEMPLATES = os.path.join(WEB, 'templates')
 RESOURCES = os.path.join(WEB, 'resources')

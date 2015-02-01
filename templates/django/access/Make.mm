@@ -17,11 +17,14 @@ PUBLIC_KEYS = $(wildcard *.pub)
 # standard targets
 all: tidy
 
-# make the autorized keys file
+# do nothing by default
+live:
+
+# make the authorized keys file
 authorized_keys: $(PUBLIC_KEYS) grant.py grant.cfg Make.mm
 	./grant.py
 
-live: authorized_keys
+deploy: authorized_keys
 	$(SCP) $< $(PROJ_LIVE_ADMIN)@$(PROJ_LIVE_HOST):$(PROJ_LIVE_HOME)/.ssh
 
 # convenience (and for checking before deploying)
