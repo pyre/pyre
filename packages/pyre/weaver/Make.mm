@@ -23,7 +23,9 @@ EXPORT_PYTHON_MODULES = \
     F77.py \
     F90.py \
     HTML.py \
+    Host.py \
     Indenter.py \
+    Installation.py \
     Language.py \
     LineComments.py \
     LineMill.py \

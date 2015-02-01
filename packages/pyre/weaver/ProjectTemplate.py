@@ -10,6 +10,8 @@
 import pyre
 # my protocol
 from .Project import Project
+# my traits
+from .Installation import Installation
 
 
 # declaration
@@ -35,20 +37,8 @@ class ProjectTemplate(pyre.component, implements=Project):
     template = pyre.properties.str(default=None)
     template.doc = "the project template"
 
-    hostname = pyre.properties.str(default='localhost')
-    hostname.doc = "the name of the machine that hosts the live application"
-
-    home = pyre.properties.str(default='~')
-    home.doc = "the home directory of the remote user hosting the installation"
-
-    root = pyre.properties.str(default='{project.home}/live')
-    root.doc = "the home directory of the remote user hosting the installation"
-
-    web = pyre.properties.str(default='{project.root}/web')
-    web.doc = "the location of web related directories at the remote machine"
-
-    admin = pyre.properties.str(default='root')
-    admin.doc = "the username of the remote administrator"
+    live = Installation()
+    live.doc = "information about the remote host"
 
 
 # end of file

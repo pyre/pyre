@@ -43,6 +43,8 @@ class Smith(pyre.application, family='pyre.applications.smith'):
     def main(self, *args, **kwds):
         # get the name of the project
         project = self.project.name
+        # instantiate my host configuration so that its settings materialize
+        host = self.project.live
         # get the nameserver
         nameserver = self.pyre_nameserver
         # make local filesystem rooted at the model template directory
