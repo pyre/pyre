@@ -21,6 +21,9 @@ class Installation(pyre.protocol, family='pyre.smith.installations'):
     hostname = pyre.properties.str()
     hostname.doc = "the name of the machine that hosts the live application"
 
+    virtual = pyre.properties.str()
+    virtual.doc = "the virtual name of the web server"
+
     home = pyre.properties.str()
     home.doc = "the home directory of the remote user hosting the installation"
 

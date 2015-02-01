@@ -25,6 +25,9 @@ class Host(pyre.component, family='pyre.smith.installations.host', implements=In
     hostname = pyre.properties.str(default='localhost')
     hostname.doc = "the name of the machine that hosts the live application"
 
+    virtual = pyre.properties.str(default="{project.live.hostname}")
+    virtual.doc = "the virtual name of the web server"
+
     home = pyre.properties.str(default='~')
     home.doc = "the home directory of the remote user hosting the installation"
 
