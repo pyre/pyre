@@ -137,9 +137,9 @@ class NameServer(Hierarchical):
             # evaluate the expression
             return self.node.expression.expand(model=self, expression=expression)
         # with empty expressions
-        except self.EmptyExpressionError:
-            # just return the input
-            return expression
+        except self.EmptyExpressionError as error:
+            # return the expanded text, since it the input may have contained escaped braces
+            return error.expression
 
 
     def interpolate(self, expression):
@@ -151,9 +151,9 @@ class NameServer(Hierarchical):
             # evaluate the expression
             return self.node.interpolation.expand(model=self, expression=expression)
         # with empty expressions
-        except self.EmptyExpressionError:
-            # just return the input
-            return expression
+        except self.EmptyExpressionError as error:
+            # return the expanded text, since it the input may have contained escaped braces
+            return error.expression
 
 
     # override superclass methods
