@@ -99,7 +99,9 @@ class Expression:
             # unmatched braces
             if match.group("lone_open") or match.group("lone_closed"):
                 # are errors
-                raise cls.ExpressionSyntaxError(formula=expression, error="unmatched brace")
+                raise cls.ExpressionSyntaxError(
+                    formula=expression,
+                    error="unmatched {!r}".format(match.group()))
             # only one case left: a valid node reference
             # extract the name from the match
             identifier = match.group('identifier')

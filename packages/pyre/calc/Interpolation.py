@@ -99,7 +99,9 @@ class Interpolation:
                 fragment += '}'
             # unmatched braces
             elif match.group("lone_open") or match.group("lone_closed"):
-                raise cls.ExpressionSyntaxError(formula=expression, error="unmatched brace")
+                raise cls.ExpressionSyntaxError(
+                    formula=expression,
+                    error="unmatched {!r}".format(match.group()))
             # otherwise
             else:
                 # it must be an identifier
