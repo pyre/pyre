@@ -44,7 +44,7 @@ class Grant(pyre.application):
             )
 
         # create the output file
-        with open('authorized_keys', 'w') as authorized
+        with open('authorized_keys', 'w') as authorized:
             # team members with login privileges
             for user in self.admin:
                 # copy the keys
