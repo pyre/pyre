@@ -5,6 +5,9 @@
 # (c) {project.span} all rights reserved
 #
 
+# tell compilers to generate relocatable code
+include shared/target.def
+
 # the project name
 PROJECT = {project.name}
 
