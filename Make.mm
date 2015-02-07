@@ -21,7 +21,8 @@ RECURSE_DIRS = \
     examples \
     web \
     bot \
-    people \
+    people
+
 # the pyre install archive
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-1.0.zip
 
