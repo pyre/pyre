@@ -23,6 +23,7 @@ EXPORT_PYTHON_MODULES = \
     F77.py \
     F90.py \
     HTML.py \
+    HTTP.py \
     Host.py \
     Indenter.py \
     Installation.py \

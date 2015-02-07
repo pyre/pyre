@@ -9,6 +9,8 @@
 # externals
 import re
 import urllib.parse
+
+
 # class declaration
 class Request:
     """
@@ -30,18 +32,18 @@ class Request:
 
 
     # interface
-    def process(self, chunk):
+    def process(self, server, chunk):
         """
         Process a {chunk} of bytes
         """
         # if we are still doing headers, pull them from the chunk
-        offset = self.processHeaders(chunk)
+        offset = self.processHeaders(server=server, chunk=chunk)
         # whatever is left is request payload
-        return self.processPayload(chunk, offset)
+        return self.processPayload(server=server, chunk=chunk, offset=offset)
 
 
     # implementation details
-    def processHeaders(self, chunk):
+    def processHeaders(self, server, chunk):
         """
         Extract RFC2822 headers from the bytes sent by the peer
         """
@@ -58,7 +60,7 @@ class Request:
             # if it didn't match
             if not match:
                 # complain
-                raise self.exceptions.BadRequestSyntaxError()
+                raise self.exceptions.BadRequestSyntaxError(server=server)
             # otherwise, unpack
             command, url, major, minor = match.groups()
             # and store
@@ -93,7 +95,7 @@ class Request:
         # if it doesn't match
         if not match:
             # complain
-            raise self.exceptions.BadRequestSyntaxError()
+            raise self.exceptions.BadRequestSyntaxError(server=server)
         # mark me as having processed success
         self.described = True
 
@@ -101,7 +103,7 @@ class Request:
         return match.end()
 
 
-    def processPayload(self, chunk, offset):
+    def processPayload(self, server, chunk, offset):
         """
         Extract a {chunk} of bytes and store them
         """
@@ -135,7 +137,7 @@ class Request:
         # if storing this chunk would go over the limit
         if actual > size:
             # complain
-            raise self.exceptions.EntityTooLargeError()
+            raise self.exceptions.RequestEntityTooLargeError(server=server)
         # otherwise, store
         self.payload.append(chunk if offset == 0 else chunk[offset:])
         # check whether this was enough bytes

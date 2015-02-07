@@ -17,13 +17,33 @@ class ProtocolError(NexusError):
     """
 
     # meta-methods
-    def __init__(self, description, **kwds):
+    def __init__(self, server, **kwds):
         # chain up
         super().__init__(**kwds)
-        # store
-        self.description = description
+        # save the server reference
+        self.server = server
         # all done
         return
+
+
+    def __str__(self):
+        """
+        The default rendering of protocol errors
+        """
+        return """
+        <head>
+          <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+          <title>Unhappy web server - {0.server.name}</title>
+        </head>
+        <body>
+          <h1>Something went very wrong</h1>
+          <p>
+            The server <em>{0.server.name}</em> is very unhappy and returned error code {0.code}.
+          </p>
+          <p>The standard description for this error is: {0.__doc__}</p>
+          <p>{0.description}</p>
+        </body>
+        """.format(self)
 
 
 # specific errors
@@ -283,7 +303,7 @@ class TemporaryRedirectError(ProtocolError):
         return
 
 
-class BadRequestError(ProtocolError):
+class BadRequestSyntaxError(ProtocolError):
     """
     Bad Request
     """

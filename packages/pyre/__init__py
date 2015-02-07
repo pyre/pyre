@@ -255,6 +255,8 @@ if executive:
     executive.discover()
     # application shells
     from .shells import application, action, plexus, command, panel
+    # document rendering
+    from . import weaver
     # the interprocess communication mechanisms
     from . import ipc, nexus
 

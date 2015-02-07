@@ -31,6 +31,7 @@ from .Cxx import Cxx as cxx
 from .F77 import F77 as f77
 from .F90 import F90 as f90
 from .HTML import HTML as html
+from .HTTP import HTTP as http
 from .Make import Make as make
 from .Perl import Perl as perl
 from .Python import Python as python

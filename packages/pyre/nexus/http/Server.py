@@ -21,7 +21,31 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
     from .Request import Request as request
     from .Response import Response as response
     # exceptions
-    from .exceptions import ProtocolError
+    from . import exceptions
+
+
+    # user configurable state
+    renderer = pyre.weaver.language(default='http')
+    renderer.doc = 'the renderer of the server responses to client requests'
+
+
+    # public state
+    @property
+    def name(self):
+        """
+        Server identification
+        """
+        # build an identification string
+        return "pyre/{}.{}.{}".format(*self.version)
+
+
+    @property
+    def version(self):
+        """
+        Server version
+        """
+        # inherit the version of the framework
+        return pyre.version()
 
 
     # protocol obligations
@@ -41,7 +65,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         #   every time without closing the connection
 
         # show me
-        self.info.log('pulling data from {}'.format(channel.peer))
+        self.info.log('reading data from {}'.format(channel.peer))
         # get whatever data is available at this point
         chunk = channel.read(maxlen=self.MAX_BYTES)
 
@@ -74,13 +98,11 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # attempt to
         try:
             # hand the chunk to the request
-            complete = request.process(chunk)
+            complete = request.process(server=self, chunk=chunk)
         # if something wrong happened
-        except self.ProtocolError as error:
+        except self.exceptions.ProtocolError as error:
             # send an error report to the client
-            self.complain(error)
-            # and reschedule the channel for more data
-            return True
+            return self.complain(channel=channel, error=error)
 
         # if collecting the request is not finished
         if not complete:
@@ -95,43 +117,23 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
             # fulfill the request
             response = self.fulfill(request)
         # if something bad happened
-        except self.ProtocolError as error:
+        except self.exceptions.ProtocolError as error:
             # send an error report to the client
-            self.complain(error)
-            # and reschedule the channel for more data
-            return True
+            return self.complain(channel=channel, error=error)
 
         # if all goes well, respond
-        # return self.respond(response)
-        # get the peer address
-        peer = channel.peer
-
-        # show me
-        self.info.line()
-        self.info.line("method: {.command}".format(request))
-        self.info.line("url: {.url}".format(request))
-        self.info.line("version: {.version}".format(request))
-        # print the headers
-        self.info.line('headers from {}'.format(peer))
-        for key, value in request.headers.items():
-            self.info.line("{}: {}".format(key, value))
-        self.info.log()
-
-        # make a response
-        self.info.log('preparing response for {}'.format(peer))
-        response = self.response()
-        self.info.log('sending response to {}'.format(peer))
-        channel.write(response.error(404))
-        self.info.log('done sending response to {}'.format(peer))
-
-        return True
+        return self.respond(response)
 
 
     # interface
-    def  fulfill(self, request):
+    def fulfill(self, request):
         """
         Fulfill the given fully formed client {request}
         """
+        # oops
+        raise self.exceptions.InternalServerError(
+            server=self,
+            description="The server would like you to know that it is still under development")
         # build a response
         response = self.response()
         # and return it
@@ -139,14 +141,25 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
 
 
     def respond(self, response):
-        # all done
+        # ask the renderer to put together the byte stream
+        stream = b'\r\n'.join(self.renderer.render(server=self, document=response))
+        # send it to the client
+        channel.write(stream)
+        # keep the channel alive
         return True
 
 
-    def complain(self, error):
+    def complain(self, channel, error):
         """
         Send an error message to the client
         """
+        # ask the renderer to put together the byte stream
+        stream = b'\r\n'.join(self.renderer.error(server=self, error=error))
+        # send it to the client
+        channel.write(stream)
+        # keep the channel alive
+        return True
+
 
     # meta-methods
     def __init__(self, **kwds):
