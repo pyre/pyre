@@ -24,11 +24,11 @@ class HTML(BlockMill):
     doctype.doc = "the doctype variant to use on the first line"
 
 
-    # interface
+    # mill obligations
     @pyre.export
     def header(self):
         """
-        Layout the {document} using my stationery for the header and footer
+        Layout the {document} using my stationery for the header
         """
         # if I have doctype
         if self.doctype:
@@ -36,6 +36,36 @@ class HTML(BlockMill):
             yield "<!doctype html{}>".format(self.doctypes[self.doctype])
         # render the rest
         yield from super().header()
+        # the outer tag
+        yield '<html>'
+        # all done
+        return
+
+
+    @pyre.export
+    def body(self, document=(), **kwds):
+        """
+        The body of the document
+        """
+        # check whether the document is a simple string
+        if isinstance(document, str):
+            # in which case the caller has done all the rendering; just return it
+            yield document
+            # all done
+            return
+        # otherwise, chain up
+        yield from super().body(document=document, **kwds)
+
+
+    @pyre.export
+    def footer(self):
+        """
+        Layout the {document} using my stationery for the footer
+        """
+        # close the top level tag
+        yield '</html>'
+        # chain up
+        yield from super().footer()
         # all done
         return
 

@@ -17,9 +17,11 @@ def test():
     import pyre.weaver
     # instantiate a weaver
     weaver = pyre.weaver.weaver(name="sanity")
+    # with the right language
     weaver.language = "html"
-
+    # render
     text = list(weaver.weave())
+    # check
     assert text == [
         '<!doctype html>',
         '<!--',
@@ -29,11 +31,13 @@ def test():
         ' ! (c) 1998-2015 All Rights Reserved',
         ' ! ',
         ' -->',
+        '<html>',
         '',
         '',
+        '</html>',
         '<!-- end of file -->'
         ]
-
+    # all done
     return
 
 
