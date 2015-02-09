@@ -12,6 +12,9 @@ include opal.def
 PACKAGE = html
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    Element.py \
+    ElementContainer.py \
+    Literal.py \
     __init__.py
 
 # standard targets
