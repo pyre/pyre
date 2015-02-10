@@ -21,7 +21,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
     from .Request import Request as request
     from .Response import Response as response
     # exceptions
-    from . import exceptions
+    from . import exceptions, responses
 
 
     # user configurable state
@@ -98,7 +98,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # attempt to
         try:
             # hand the chunk to the request
-            complete = request.process(server=self, chunk=chunk)
+            complete = request.extract(server=self, chunk=chunk)
         # if something wrong happened
         except self.exceptions.ProtocolError as error:
             # send an error report to the client
@@ -130,8 +130,20 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         """
         Fulfill the given fully formed client {request}
         """
+        # print the top line
+        self.info.line()
+        self.info.line("request:")
+        self.info.line("  type: {.command!r}".format(request))
+        self.info.line("  path: {.url!r}".format(request))
+        self.info.line("  verion: {.version!r}".format(request))
+        # print the headers
+        self.info.line("headers:")
+        for key, value in request.headers.items():
+            self.info.line(" -- {!r}:{!r}".format(key, value))
+        self.info.log()
+
         # oops
-        raise self.exceptions.InternalServerError(
+        raise self.responses.InternalServerError(
             server=self,
             description="The server would like you to know that it is still under development")
         # build a response

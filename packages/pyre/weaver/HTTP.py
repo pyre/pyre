@@ -36,7 +36,7 @@ class HTTP(pyre.component, implements=Language):
 
     # mill obligations
     @pyre.export
-    def render(self):
+    def render(self, document, server, **kwds):
         """
         Render the document
         """

@@ -19,7 +19,7 @@ class Request:
 
 
     # exceptions
-    from . import exceptions
+    from . import responses
 
 
     # public state
@@ -32,18 +32,18 @@ class Request:
 
 
     # interface
-    def process(self, server, chunk):
+    def extract(self, server, chunk):
         """
         Process a {chunk} of bytes
         """
         # if we are still doing headers, pull them from the chunk
-        offset = self.processHeaders(server=server, chunk=chunk)
+        offset = self.extractHeaders(server=server, chunk=chunk)
         # whatever is left is request payload
-        return self.processPayload(server=server, chunk=chunk, offset=offset)
+        return self.extractPayload(server=server, chunk=chunk, offset=offset)
 
 
     # implementation details
-    def processHeaders(self, server, chunk):
+    def extractHeaders(self, server, chunk):
         """
         Extract RFC2822 headers from the bytes sent by the peer
         """
@@ -51,6 +51,10 @@ class Request:
         if self.described:
             # bail and indicate that no bytes from {chunk} were consumed
             return 0
+
+        # get my header encoding
+        encoding = self.HEADER_ENCODING
+
         # a cursor into {chunk}
         offset = 0
         # if i don't know my command yet
@@ -60,12 +64,12 @@ class Request:
             # if it didn't match
             if not match:
                 # complain
-                raise self.exceptions.BadRequestSyntaxError(server=server)
+                raise self.responses.BadRequestSyntax(server=server)
             # otherwise, unpack
             command, url, major, minor = match.groups()
             # and store
-            self.command = command.decode(self.HEADER_ENCODING)
-            self.url = urllib.parse.unquote(url.decode(self.HEADER_ENCODING))
+            self.command = command.decode(encoding)
+            self.url = urllib.parse.unquote(url.decode(encoding))
             self.version = (int(major), int(minor))
             # initialize my headers
             self.headers = {}
@@ -83,8 +87,8 @@ class Request:
             # otherwise, unpack
             key, value = match.groups()
             # decode
-            key = key.decode(self.HEADER_ENCODING)
-            value = value.decode(self.HEADER_ENCODING)
+            key = key.decode(encoding)
+            value = value.decode(encoding)
             # store
             self.headers[key] = value
             # update the cursor
@@ -95,7 +99,7 @@ class Request:
         # if it doesn't match
         if not match:
             # complain
-            raise self.exceptions.BadRequestSyntaxError(server=server)
+            raise self.responses.BadRequestSyntax(server=server)
         # mark me as having processed success
         self.described = True
 
@@ -103,7 +107,7 @@ class Request:
         return match.end()
 
 
-    def processPayload(self, server, chunk, offset):
+    def extractPayload(self, server, chunk, offset):
         """
         Extract a {chunk} of bytes and store them
         """
@@ -125,6 +129,8 @@ class Request:
                 self.complete = True
                 # and get out of here
                 return True
+            # otherwise, complain
+            raise self.responses.BadRequestSyntax(server=server) from error
 
         # initialize the storage for my payload
         if self.payload is None: self.payload = []
@@ -137,7 +143,7 @@ class Request:
         # if storing this chunk would go over the limit
         if actual > size:
             # complain
-            raise self.exceptions.RequestEntityTooLargeError(server=server)
+            raise self.responses.RequestEntityTooLarge(server=server)
         # otherwise, store
         self.payload.append(chunk if offset == 0 else chunk[offset:])
         # check whether this was enough bytes
@@ -154,9 +160,6 @@ class Request:
     # constants
     # the expected encoding of the headers
     HEADER_ENCODING = 'iso-8859-1'
-    # upper limits
-    MAX_LINE = 64 * 1024
-    MAX_HEADERS = 100
     # scanners
     blank = re.compile(b"\r?\n")
     keyval = re.compile(

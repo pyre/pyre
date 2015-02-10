@@ -15,6 +15,7 @@ EXPORT_PYTHON_MODULES = \
     Response.py \
     Server.py \
     exceptions.py \
+    responses.py \
     __init__.py
 
 # the standard build targets
