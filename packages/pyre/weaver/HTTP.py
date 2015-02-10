@@ -24,14 +24,15 @@ class HTTP(pyre.component, implements=Language):
 
 
     # user configurable state
-    headerEncoding = pyre.properties.str(default='iso-8859-1')
-    headerEncoding.doc = 'the encoding for HTTP headers'
-
-    bodyEncoding = pyre.properties.str(default='utf-8')
-    bodyEncoding.doc = 'the encoding for the HTTP payload'
+    encoding = pyre.properties.str(default='iso-8859-1')
+    encoding.doc = 'the encoding for HTTP headers'
 
     html = Language(default=HTML)
     html.doc = 'the renderer of my payload'
+
+
+    # public data
+    version = 1,0 # my preferred protocol version
 
 
     # mill obligations
@@ -40,23 +41,57 @@ class HTTP(pyre.component, implements=Language):
         """
         Render the document
         """
-        yield
+        # the string used to assemble the output
+        splicer = '\r\n'
+        # unpack
+        code = document.code
+        status = document.status
+        headers = document.headers
+        version = document.version
+        encoding = document.encoding
+
+        # decide which protocol to use
+        protocol = self.version if self.version < version else version
+        # the protocol version
+        protocol = "{}.{}".format(*protocol)
+        # start the response
+        yield "HTTP/{} {} {}".format(protocol, code, status).encode(self.encoding, 'strict')
+
+        # assemble the payload
+        page = splicer.join(self.body(document=document, **kwds)).encode(encoding, 'strict')
+        # inform the client about the size of the payload
+        headers['Content-Length'] = len(page)
+
+        # assemble the headers and send them off
+        yield splicer.join(self.header(document=document)).encode(self.encoding, 'strict')
+        # mark the end of the headers
+        yield b''
+        # send the page
+        yield page
+        # all done
+        return
 
 
     @pyre.export
-    def header(self):
+    def header(self, document):
         """
         Render the header of the document
         """
-        yield ''
+        # render the headers
+        yield from ("{}: {}".format(key, value) for key,value in document.headers.items())
+        # all done
+        return
 
 
     @pyre.export
-    def body(self):
+    def body(self, document, **kwds):
         """
         Render the body of the document
         """
-        yield ''
+        # get my html renderer to do his thing
+        yield from self.html.render(document=document, **kwds)
+        # all done
+        return
 
 
     @pyre.export
@@ -65,61 +100,6 @@ class HTTP(pyre.component, implements=Language):
         Render the footer of the document
         """
         yield ''
-
-
-    # interface
-    def error(self, server, error):
-        """
-        Something bad has happened, so bypass the normal document rendering to display an error
-        """
-        # assemble the payload
-        page = '\n'.join(self.html.render(document=str(error))).encode(self.bodyEncoding, 'strict')
-        # build the headers
-        yield '\r\n'.join([
-            # the top line
-            "HTTP/1.1 {0.code} {0.__doc__}".format(error),
-            # the server identification string
-            "Server: {}".format(server.name),
-            # the date
-            "Date: {}".format(self.timestamp()),
-            # the error content type
-            "Content-Type: text/html;charset=utf-8",
-            # what to do with the connection
-            "Connection: close",
-            # how much stuff we are sending
-            "Content-Length: {}".format(len(page)),
-            ]).encode(self.headerEncoding, 'strict')
-        # mark the end of headers
-        yield b''
-        # send the payload
-        yield page
-        # all done
-        return
-
-
-
-    # implementation details
-    def timestamp(self, tick=None):
-        """
-        Generate a conforming timestamp
-        """
-        # use now if necessary
-        if tick is None: tick = time.time()
-        # unpack
-        year, month, day, hh, mm, ss, wd, y, z = time.gmtime(tick)
-        # render and return
-        return "{}, {:02} {} {} {:02}:{:02}:{:02} GMT".format(
-            self.weekdays[wd], day, self.months[month], year,
-            hh, mm, ss
-            )
-
-
-    # private data
-    months = (
-        None,
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
-
-    weekdays = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
 
 
 # end of file

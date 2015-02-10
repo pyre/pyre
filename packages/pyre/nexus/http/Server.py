@@ -102,7 +102,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # if something wrong happened
         except self.exceptions.ProtocolError as error:
             # send an error report to the client
-            return self.complain(channel=channel, error=error)
+            return self.respond(channel=channel, response=error)
 
         # if collecting the request is not finished
         if not complete:
@@ -119,10 +119,10 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # if something bad happened
         except self.exceptions.ProtocolError as error:
             # send an error report to the client
-            return self.complain(channel=channel, error=error)
+            return self.respond(channel=channel, response=error)
 
         # if all goes well, respond
-        return self.respond(response)
+        return self.respond(channel=channel, response=response)
 
 
     # interface
@@ -142,31 +142,18 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
             self.info.line(" -- {!r}:{!r}".format(key, value))
         self.info.log()
 
+        # make a message
         # oops
-        raise self.responses.InternalServerError(
+        response = self.responses.OK(
             server=self,
-            description="The server would like you to know that it is still under development")
-        # build a response
-        response = self.response()
+            description="{.name} is still under development".format(self))
         # and return it
         return response
 
 
-    def respond(self, response):
+    def respond(self, channel, response):
         # ask the renderer to put together the byte stream
         stream = b'\r\n'.join(self.renderer.render(server=self, document=response))
-        # send it to the client
-        channel.write(stream)
-        # keep the channel alive
-        return True
-
-
-    def complain(self, channel, error):
-        """
-        Send an error message to the client
-        """
-        # ask the renderer to put together the byte stream
-        stream = b'\r\n'.join(self.renderer.error(server=self, error=error))
         # send it to the client
         channel.write(stream)
         # keep the channel alive

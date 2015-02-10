@@ -7,21 +7,26 @@
 
 
 # exceptions
-from ..exceptions import NexusError
+from .Response import Response
 
 
 # local anchor for all package exceptions
-class ProtocolError(NexusError):
+class ProtocolError(Response):
     """
     Base exceptions for all error conditions detected by http components
     """
 
+
     # meta-methods
-    def __init__(self, server, **kwds):
+    def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # save the server reference
-        self.server = server
+        # get my headers so i can add the standard headers for an error condition
+        headers = self.headers
+        # the error content type
+        headers['Content-Type'] = 'text/html;charset={.encoding}'.format(self)
+        # tell the client what to do with the connection
+        headers['Connection'] = 'close'
         # all done
         return
 

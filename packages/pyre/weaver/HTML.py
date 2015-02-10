@@ -47,12 +47,20 @@ class HTML(BlockMill):
         """
         The body of the document
         """
-        # check whether the document is a simple string
+        # if the document is a simple string
         if isinstance(document, str):
-            # in which case the caller has done all the rendering; just return it
+            # the caller has done all the rendering; just return it
             yield document
             # all done
             return
+
+        # if it is some kind of exception
+        if isinstance(document, Exception):
+            # convert it into a string
+            yield str(document)
+            # all done
+            return
+
         # otherwise, chain up
         yield from super().body(document=document, **kwds)
 

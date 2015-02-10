@@ -7,7 +7,7 @@
 
 
 # exceptions
-from .exceptions import ProtocolError
+from .exceptions import Response, ProtocolError
 
 
 # specific responses
@@ -17,6 +17,7 @@ class Continue(ProtocolError):
     """
     # state
     code = 100
+    status = __doc__
     description = "Request received, please continue"
 
     # meta-methods
@@ -33,6 +34,7 @@ class SwitchingProtocols(ProtocolError):
     """
     # state
     code = 101
+    status = __doc__
     description = "Switching to new protocol; obey Upgrade header"
 
     # meta-methods
@@ -43,12 +45,13 @@ class SwitchingProtocols(ProtocolError):
         return
 
 
-class OK(ProtocolError):
+class OK(Response):
     """
     OK
     """
     # state
     code = 200
+    status = __doc__
     description = "Request fulfilled, document follows"
 
     # meta-methods
@@ -65,6 +68,7 @@ class Created(ProtocolError):
     """
     # state
     code = 201
+    status = __doc__
     description = "Document created, URL follows"
 
     # meta-methods
@@ -81,6 +85,7 @@ class Accepted(ProtocolError):
     """
     # state
     code = 202
+    status = __doc__
     description = "Request accepted, processing continues off-line"
 
     # meta-methods
@@ -97,6 +102,7 @@ class NonAuthoritativeInformation(ProtocolError):
     """
     # state
     code = 203
+    status = __doc__
     description = "Request fulfilled from cache"
 
     # meta-methods
@@ -113,6 +119,7 @@ class NoContent(ProtocolError):
     """
     # state
     code = 204
+    status = __doc__
     description = "Request fulfilled, nothing follows"
 
     # meta-methods
@@ -129,6 +136,7 @@ class ResetContent(ProtocolError):
     """
     # state
     code = 205
+    status = __doc__
     description = "Clear input form for further input."
 
     # meta-methods
@@ -145,6 +153,7 @@ class PartialContent(ProtocolError):
     """
     # state
     code = 206
+    status = __doc__
     description = "Partial content follows."
 
     # meta-methods
@@ -161,6 +170,7 @@ class MultipleChoices(ProtocolError):
     """
     # state
     code = 300
+    status = __doc__
     description = "Object has several resources -- see URI list"
 
     # meta-methods
@@ -177,6 +187,7 @@ class MovedPermanently(ProtocolError):
     """
     # state
     code = 301
+    status = __doc__
     description = "Object moved permanently -- see URI list"
 
     # meta-methods
@@ -193,6 +204,7 @@ class Found(ProtocolError):
     """
     # state
     code = 302
+    status = __doc__
     description = "Object moved temporarily -- see URI list"
 
     # meta-methods
@@ -209,6 +221,7 @@ class SeeOther(ProtocolError):
     """
     # state
     code = 303
+    status = __doc__
     description = "Object moved -- see Method and URL list"
 
     # meta-methods
@@ -225,6 +238,7 @@ class NotModified(ProtocolError):
     """
     # state
     code = 304
+    status = __doc__
     description = "Document has not changed since given time"
 
     # meta-methods
@@ -241,6 +255,7 @@ class UseProxy(ProtocolError):
     """
     # state
     code = 305
+    status = __doc__
     description = "You must use proxy specified in Location to access this resource."
 
     # meta-methods
@@ -257,6 +272,7 @@ class TemporaryRedirect(ProtocolError):
     """
     # state
     code = 307
+    status = __doc__
     description = "Object moved temporarily -- see URI list"
 
     # meta-methods
@@ -273,6 +289,7 @@ class BadRequestSyntax(ProtocolError):
     """
     # state
     code = 400
+    status = __doc__
     description = "Bad request syntax or unsupported method"
 
     # meta-methods
@@ -289,6 +306,7 @@ class Unauthorized(ProtocolError):
     """
     # state
     code = 401
+    status = __doc__
     description = "No permission -- see authorization schemes"
 
     # meta-methods
@@ -305,6 +323,7 @@ class PaymentRequired(ProtocolError):
     """
     # state
     code = 402
+    status = __doc__
     description = "No payment -- see charging schemes"
 
     # meta-methods
@@ -321,6 +340,7 @@ class Forbidden(ProtocolError):
     """
     # state
     code = 403
+    status = __doc__
     description = "Request forbidden -- authorization will not help"
 
     # meta-methods
@@ -337,6 +357,7 @@ class NotFound(ProtocolError):
     """
     # state
     code = 404
+    status = __doc__
     description = "Nothing matches the given URI"
 
     # meta-methods
@@ -353,6 +374,7 @@ class MethodNotAllowed(ProtocolError):
     """
     # state
     code = 405
+    status = __doc__
     description = "Specified method is invalid for this resource."
 
     # meta-methods
@@ -369,6 +391,7 @@ class NotAcceptable(ProtocolError):
     """
     # state
     code = 406
+    status = __doc__
     description = "URI not available in preferred format."
 
     # meta-methods
@@ -385,6 +408,7 @@ class ProxyAuthenticationRequired(ProtocolError):
     """
     # state
     code = 407
+    status = __doc__
     description = "You must authenticate with this proxy before proceeding."
 
     # meta-methods
@@ -401,6 +425,7 @@ class RequestTimeout(ProtocolError):
     """
     # state
     code = 408
+    status = __doc__
     description = "Request timed out; try again later."
 
     # meta-methods
@@ -417,6 +442,7 @@ class Conflict(ProtocolError):
     """
     # state
     code = 409
+    status = __doc__
     description = "Request conflict."
 
     # meta-methods
@@ -433,6 +459,7 @@ class Gone(ProtocolError):
     """
     # state
     code = 410
+    status = __doc__
     description = "URI no longer exists and has been permanently removed."
 
     # meta-methods
@@ -449,6 +476,7 @@ class LengthRequired(ProtocolError):
     """
     # state
     code = 411
+    status = __doc__
     description = "Client must specify Content-Length."
 
     # meta-methods
@@ -465,6 +493,7 @@ class PreconditionFailed(ProtocolError):
     """
     # state
     code = 412
+    status = __doc__
     description = "Precondition in headers is false."
 
     # meta-methods
@@ -481,6 +510,7 @@ class RequestEntityTooLarge(ProtocolError):
     """
     # state
     code = 413
+    status = __doc__
     description = "Entity is too large."
 
     # meta-methods
@@ -497,6 +527,7 @@ class RequestURITooLong(ProtocolError):
     """
     # state
     code = 414
+    status = __doc__
     description = "URI is too long."
 
     # meta-methods
@@ -513,6 +544,7 @@ class UnsupportedMediaType(ProtocolError):
     """
     # state
     code = 415
+    status = __doc__
     description = "Entity body in unsupported format."
 
     # meta-methods
@@ -529,6 +561,7 @@ class RequestedRangeNotSatisfiable(ProtocolError):
     """
     # state
     code = 416
+    status = __doc__
     description = "Cannot satisfy request range."
 
     # meta-methods
@@ -545,6 +578,7 @@ class ExpectationFailed(ProtocolError):
     """
     # state
     code = 417
+    status = __doc__
     description = "Expect condition could not be satisfied."
 
     # meta-methods
@@ -561,6 +595,7 @@ class PreconditionRequired(ProtocolError):
     """
     # state
     code = 428
+    status = __doc__
     description = "The origin server requires the request to be conditional."
 
     # meta-methods
@@ -577,6 +612,7 @@ class TooManyRequests(ProtocolError):
     """
     # state
     code = 429
+    status = __doc__
     description = "The user has sent too many requests in a given amount of time (rate limiting)."
 
     # meta-methods
@@ -593,6 +629,7 @@ class RequestHeaderFieldsTooLarge(ProtocolError):
     """
     # state
     code = 431
+    status = __doc__
     description = ("The server is unwilling to process the request because its header fields "
                   "are too large.")
 
@@ -610,6 +647,7 @@ class InternalServerError(ProtocolError):
     """
     # state
     code = 500
+    status = __doc__
     description = "Server got itself in trouble"
 
     # meta-methods
@@ -626,6 +664,7 @@ class NotImplemented(ProtocolError):
     """
     # state
     code = 501
+    status = __doc__
     description = "Server does not support this operation"
 
     # meta-methods
@@ -642,6 +681,7 @@ class BadGateway(ProtocolError):
     """
     # state
     code = 502
+    status = __doc__
     description = "Invalid responses from another server/proxy."
 
     # meta-methods
@@ -658,6 +698,7 @@ class ServiceUnavailable(ProtocolError):
     """
     # state
     code = 503
+    status = __doc__
     description = "The server cannot process the request due to a high load"
 
     # meta-methods
@@ -674,6 +715,7 @@ class GatewayTimeout(ProtocolError):
     """
     # state
     code = 504
+    status = __doc__
     description = "The gateway server did not receive a timely response"
 
     # meta-methods
@@ -690,6 +732,7 @@ class HTTPVersionNotSupported(ProtocolError):
     """
     # state
     code = 505
+    status = __doc__
     description = "Cannot fulfill request."
 
     # meta-methods
@@ -706,6 +749,7 @@ class NetworkAuthenticationRequired(ProtocolError):
     """
     # state
     code = 511
+    status = __doc__
     description = "The client needs to authenticate to gain network access."
 
     # meta-methods
