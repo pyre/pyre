@@ -55,7 +55,7 @@ class Plexus(Application):
             return self.help()
 
         # invoke the command
-        return self.invoke(action=name, argv=argv)
+        return self.repertoir.invoke(plexus=self, action=name, argv=argv)
 
 
     # meta-methods
@@ -69,35 +69,6 @@ class Plexus(Application):
 
 
     # implementation details
-    # data
-    repertoir = None
-
-
-    # implementation details
-    def invoke(self, action, argv):
-        """
-        Locate and invoke the named {action}
-        """
-        # get the manager of actions
-        repertoir = self.repertoir
-        # attempt to
-        try:
-            # resolve the name into an actual command component
-            command = repertoir.resolve(plexus=self, spec=action)
-        # if this failed
-        except repertoir.ResolutionError as error:
-            # report it
-            self.error.log('could not locate action {!r}'.format(action))
-            # and if we are in DEBUG mode
-            if self.DEBUG:
-                # show me what actually happened
-                self.error.log(str(error))
-            # indicate failure
-            return 1
-        # otherwise, invoke it
-        return command(plexus=self, argv=argv)
-
-
     # hooks
     def newRepertoir(self):
         """
@@ -107,6 +78,10 @@ class Plexus(Application):
         from .Repertoir import Repertoir
         # build one and return it
         return Repertoir(protocol=self.pyre_action)
+
+
+    # data
+    repertoir = None
 
 
 # end of file
