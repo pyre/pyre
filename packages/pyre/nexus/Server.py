@@ -103,6 +103,15 @@ class Server(pyre.component, implements=Service):
         return False
 
 
+    @pyre.export(tip='shutdown')
+    def shutdown(self):
+        """
+        Clean up and shutdown
+        """
+        # not much to do
+        return
+
+
     # meta-methods
     def __init__(self, **kwds):
         # chain up
