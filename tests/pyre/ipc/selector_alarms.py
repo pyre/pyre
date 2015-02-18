@@ -29,7 +29,7 @@ def test():
     import itertools
     counter = itertools.count()
     # build a handler
-    def handler(scheduler, timestamp):
+    def handler(dispatcher, timestamp):
         n = next(counter)
         # print("n={}, time={}".format(n, timestamp))
         return

@@ -91,7 +91,7 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
                 # no need to look any further
                 return
             # otherwise, this alarm is overdue; invoke the handler
-            alarm.handler(scheduler=self, timestamp=time)
+            alarm.handler(dispatcher=self, timestamp=time)
 
         # all done
         return
