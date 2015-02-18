@@ -43,7 +43,7 @@ class About(merlin.spell, family='merlin.spells.about'):
     @merlin.export(tip="print out the acknowledgments")
     def credits(self, plexus):
         """
-        Print out the license and terms of use of the merlin package
+        Print the acknowledgments
         """
         # make some space
         plexus.info.line()
@@ -60,7 +60,7 @@ class About(merlin.spell, family='merlin.spells.about'):
     @merlin.export(tip="print out the license and terms of use")
     def license(self, plexus):
         """
-        Print out the license and terms of use of the merlin package
+        Print the license and terms of use of the merlin package
         """
         # make some space
         plexus.info.line()
