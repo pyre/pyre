@@ -25,7 +25,7 @@ class Nexus(pyre.protocol, family="pyre.nexus.servers"):
         """
 
     @pyre.provides
-    def serve(self, **kwds):
+    def serve(self, plexus, **kwds):
         """
         Wait for events in registered channels and dispatch them to associated services
         """
@@ -41,9 +41,9 @@ class Nexus(pyre.protocol, family="pyre.nexus.servers"):
     @classmethod
     def pyre_default(cls, **kwds):
         """
-        The suggested implementation of the {Nexus} protocol
+        The default implementation of the {Nexus} protocol
         """
-        # my favorite
+        # get my favorite
         from .Node import Node
         # return it
         return Node

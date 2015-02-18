@@ -28,15 +28,6 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
     # interface
     @pyre.export
-    def serve(self):
-        """
-        Start processing requests
-        """
-        # easy: delegate to my dispatcher
-        return self.dispatcher.watch()
-
-
-    @pyre.export
     def activate(self, now=True):
         """
         Get ready to listen for incoming connections
@@ -53,7 +44,21 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         return
 
 
-    # high level event handlers
+    @pyre.export
+    def serve(self, plexus):
+        """
+        Start processing requests
+        """
+        # remember my application host
+        self.plexus = plexus
+        # enter the event loop of the dispatcher
+        status = self.dispatcher.watch()
+        # disconnect
+        del self.plexus
+        # status report
+        return status
+
+
     @pyre.export
     def shutdown(self):
         """
@@ -61,6 +66,12 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         # notify my dispatcher to exit its event loop
         self.dispatcher.stop()
+        # go through my services
+        for name, service in self.services.items():
+            # show me
+            self.info.log('{}: shutting down {!r}'.format(self, name))
+            # shut it down
+            service.shutdown()
         # all done
         return
 
@@ -147,6 +158,10 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
             signal.signal(name, self.signal)
         # all done
         return signals
+
+
+    # private data
+    plexus = None
 
 
 # end of file
