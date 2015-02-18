@@ -20,10 +20,14 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
     # user configurable state
     dispatcher = pyre.ipc.dispatcher()
+    dispatcher.doc = 'the component responsible for monitor my communication channels'
+
     services = pyre.properties.dict(schema=Service())
+    services.doc = 'the table of available services'
 
 
     # interface
+    @pyre.export
     def serve(self):
         """
         Start processing requests
@@ -32,6 +36,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         return self.dispatcher.watch()
 
 
+    @pyre.export
     def activate(self, now=True):
         """
         Get ready to listen for incoming connections
@@ -49,6 +54,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
 
     # high level event handlers
+    @pyre.export
     def shutdown(self):
         """
         Shut everything down and exit gracefully
@@ -60,7 +66,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
 
     # low level event handlers
-    def onReload(self, signal, frame):
+    def reload(self, signal, frame):
         """
         Reload the nodal configuration for a distributed application
         """
@@ -71,7 +77,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         return
 
 
-    def onTerminate(self, signal, frame):
+    def terminate(self, signal, frame):
         """
         Terminate the event processing loop
         """
@@ -83,7 +89,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         return
 
 
-    def onSignal(self, signal, frame):
+    def signal(self, signal, frame):
         """
         Dispatch {signal} to the registered handler
         """
@@ -121,9 +127,9 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         # build my signal index
         signals = {
-            signal.SIGHUP: self.onReload,
-            signal.SIGINT: self.onTerminate,
-            signal.SIGTERM: self.onTerminate,
+            signal.SIGHUP: self.reload,
+            signal.SIGINT: self.terminate,
+            signal.SIGTERM: self.terminate,
             }
         # and return it
         return signals
@@ -138,7 +144,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         # register the signal demultiplexer
         for name in signals.keys():
             # register the three basic handlers
-            signal.signal(name, self.onSignal)
+            signal.signal(name, self.signal)
         # all done
         return signals
 

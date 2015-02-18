@@ -17,6 +17,26 @@ class Nexus(pyre.protocol, family="pyre.nexus.servers"):
     """
 
 
+    #  obligations
+    @pyre.provides
+    def activate(self, **kwds):
+        """
+        Prepare to receive events by pairing services with communication channels
+        """
+
+    @pyre.provides
+    def serve(self, **kwds):
+        """
+        Wait for events in registered channels and dispatch them to associated services
+        """
+
+    @pyre.provides
+    def shutdown(self):
+        """
+        Shut down the event loop
+        """
+
+
     # default implementation
     @classmethod
     def pyre_default(cls, **kwds):

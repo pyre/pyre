@@ -211,7 +211,7 @@ def onChild(channel):
             self.dispatcher.alarm(interval=10*self.dispatcher.second, call=self.alarm)
             return
 
-        def onReload(self, *args, **kwds):
+        def reload(self, *args, **kwds):
             # show me
             cdbg.log("schedule 'sendReloaded'")
             # schedule to send a message to the parent
@@ -219,13 +219,13 @@ def onChild(channel):
             # all done
             return
 
-        def onTerminate(self, **kwds):
+        def terminate(self, **kwds):
             # show me
             cdbg.log("marking clean exit and stopping the dispatcher")
             # mark me
             self.cleanExit = True
             # delegate
-            return super().onTerminate(**kwds)
+            return super().terminate(**kwds)
 
         def __init__(self, channel, **kwds):
             # chain up
@@ -234,7 +234,7 @@ def onChild(channel):
             cdbg.log("dispatcher: {}".format(self.dispatcher))
             # my communication channel
             self.channel = channel
-            # marker that my {onTerminate} was called
+            # marker that my {terminate} was called
             self.cleanExit = False
             # set up an alarm to keep the process alive
             self.dispatcher.alarm(interval=self.dispatcher.second, call=self.alarm)

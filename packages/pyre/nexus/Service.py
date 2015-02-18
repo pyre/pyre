@@ -13,7 +13,7 @@ import pyre
 # declaration
 class Service(pyre.protocol, family="pyre.nexus.services"):
     """
-    Protocol definition for components that handle network events
+    Protocol definition for components that handle events in communication channels
     """
 
 
