@@ -47,35 +47,36 @@ def onServer(clientPid, marshaller, pipe):
     # observe the server selector at work
     # journal.debug("pyre.ipc.selector").active = True
 
+    # build my selector
+    serverdbg.log("server: building a selector")
+    s = pyre.ipc.selector()
+
     # establish a network presence
     port = pyre.ipc.port()
     # report what it was bound to
     serverdbg.log("server: listening at {}".format(port.address))
 
-    def getMessage(dispatcher, channel, **kwds):
+    def getMessage(channel, **kwds):
         message = marshaller.recv(channel)
         serverdbg.log("server: received {!r}".format(message))
         # check it
         assert message == "Hello from {}".format(clientPid)
         return False
 
-    def sendAddress(dispatcher, channel, **kwds):
+    def sendAddress(channel, **kwds):
         serverdbg.log("server: sending address {}".format(port.address))
         marshaller.send(channel=channel, item=port.address)
         serverdbg.log("server: done sending address")
         return False
 
-    def connectionAttempt(dispatcher, channel, **kwds):
+    def connectionAttempt(channel, **kwds):
         peer, address = channel.accept()
         serverdbg.log("server: connection attempt from {}".format(address))
         # schedule the receiving of the message
-        dispatcher.whenReadReady(channel=peer, call=getMessage)
+        s.whenReadReady(channel=peer, call=getMessage)
         # and stop waiting for any further connections
         return False
 
-    # build my selector
-    serverdbg.log("server: building a selector")
-    s = pyre.ipc.selector()
     # let me know when the pipe to the client is ready for writing so i can send my port
     serverdbg.log("server: registering the port notification routine")
     s.whenWriteReady(channel=pipe, call=sendAddress)
@@ -95,8 +96,12 @@ def onClient(clientPid, marshaller, pipe):
     # observe the client selector at work
     # journal.debug("pyre.ipc.selector").active = True
 
+    # build my selector
+    clientdbg.log("client: building a selector")
+    s = pyre.ipc.selector()
+
     # the port notification routine
-    def recvAddress(dispatcher, channel, **kwds):
+    def recvAddress(channel, **kwds):
         # get the port
         clientdbg.log("client: receiving address")
         address = marshaller.recv(channel)
@@ -111,9 +116,6 @@ def onClient(clientPid, marshaller, pipe):
         # all done
         return False
 
-    # build my selector
-    clientdbg.log("client: building a selector")
-    s = pyre.ipc.selector()
     # let me know when the pipe to the client is ready for writing so i can send my port
     clientdbg.log("client: registering the port notification routine")
     s.whenReadReady(channel=pipe, call=recvAddress)

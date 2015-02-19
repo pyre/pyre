@@ -73,6 +73,8 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
         """
         # get my alarms
         alarms = self._alarms
+        # initialize the reschedule pile
+        reschedule = []
         # get the time
         time = now()
 
@@ -89,9 +91,29 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
                 # put it back at the end of the list
                 alarms.append(alarm)
                 # no need to look any further
-                return
+                break
             # otherwise, this alarm is overdue; invoke the handler
-            alarm.handler(dispatcher=self, timestamp=time)
+            delta = alarm.handler(timestamp=time)
+            # if the handler indicated that it wants to reschedule this alarm
+            if delta:
+                # save it
+                reschedule.append((delta, handler))
+
+        # if there is nothing to reschedule
+        if not reschedule:
+            # all done
+            return
+
+        # otherwise, get a fresh timestamp
+        time = now()
+        # go through the pile
+        for interval, call in reschedule:
+            # create a new alarm instance
+            alarm = self._alarm(time=now()+interval/self.second, handler=call)
+            # add it to my list
+            self._alarms.append(alarm)
+        # sort
+        self._alarms.sort(key=operator.attrgetter('time'), reverse=True)
 
         # all done
         return

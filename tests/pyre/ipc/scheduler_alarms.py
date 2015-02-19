@@ -28,7 +28,7 @@ def test():
     import itertools
     counter = itertools.count()
     # build a handler
-    def handler(dispatcher, timestamp):
+    def handler(timestamp):
         n = next(counter)
         # print("n={}, time={}".format(n, timestamp))
         return

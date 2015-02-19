@@ -158,7 +158,7 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
             # invoke the event handlers and save the events whose handlers return {True}
             events = list(
                 event for event in index[active]
-                if event.handler(dispatcher=self, channel=event.channel)
+                if event.handler(channel=event.channel)
                 )
             # if no handlers requested to be rescheduled
             if not events:

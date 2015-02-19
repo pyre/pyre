@@ -44,13 +44,17 @@ def onParent(child_pid, marshaller, channel):
     # observe the parent selector at work
     # journal.debug("pyre.ipc.selector").active = True
 
+    # instantiate a selector
+    parentdbg.log("parent: building a selector")
+    s = pyre.ipc.selector()
+
     # write-ready handler
-    def parent_send(dispatcher, channel, **kwds):
+    def parent_send(channel, **kwds):
         """send a string to the child"""
 
         # register the response handler; do this early to avoid race conditions
         parentdbg.log("parent: registering the response handler")
-        dispatcher.whenReadReady(channel=channel, call=parent_get)
+        s.whenReadReady(channel=channel, call=parent_get)
 
         parentdbg.log("parent: preparing the message")
         # prepare the message
@@ -65,7 +69,7 @@ def onParent(child_pid, marshaller, channel):
         return False
 
     # read-ready handler
-    def parent_get(dispatcher, channel, **kwds):
+    def parent_get(channel, **kwds):
         """receive the response from the child"""
 
         parentdbg.log("parent: getting response from child")
@@ -79,9 +83,6 @@ def onParent(child_pid, marshaller, channel):
         # and return {False} so the selector stops watching the input channel
         return False
 
-    # instantiate a selector
-    parentdbg.log("parent: building a selector")
-    s = pyre.ipc.selector()
     # let me know when my pipe TO the child is ready for writing
     parentdbg.log("parent: registering the child response handler")
     s.whenWriteReady(channel=channel, call=parent_send)
@@ -98,11 +99,15 @@ def onChild(marshaller, channel):
     # observe the child selector at work
     # journal.debug("pyre.ipc.selector").active = True
 
+    # instantiate a selector
+    childdbg.log("child: building a selector")
+    s = pyre.ipc.selector()
+
     # get my pid
     child_pid = os.getpid()
 
     # read-read handler
-    def child_get(dispatcher, channel, **kwds):
+    def child_get(channel, **kwds):
         """receive a message from my parent"""
         childdbg.log("child: receiving message from parent")
         message = marshaller.recv(channel)
@@ -113,11 +118,11 @@ def onChild(marshaller, channel):
         childdbg.log("child: all good")
         # register the response handler
         parentdbg.log("child: registering the response sender")
-        dispatcher.whenWriteReady(channel=channel, call=child_send)
+        s.whenWriteReady(channel=channel, call=child_send)
         # and return {False} so the selector stops watching the input channel
         return False
 
-    def child_send(dispatcher, channel, **kwds):
+    def child_send(channel, **kwds):
         """send a response to my parent"""
 
         childdbg.log("child: preparing the response")
@@ -132,9 +137,6 @@ def onChild(marshaller, channel):
         # and return {False} so the selector stops watching the output channel
         return False
 
-    # instantiate a selector
-    childdbg.log("child: building a selector")
-    s = pyre.ipc.selector()
     # let me know when my pipe FROM my parent is ready for writing
     childdbg.log("child: registering the child response handler")
     s.whenReadReady(channel=channel, call=child_get)
