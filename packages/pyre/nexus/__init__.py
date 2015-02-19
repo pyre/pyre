@@ -8,14 +8,11 @@
 
 # the protocols
 from .Nexus import Nexus as nexus
-from .Service import Service as Service
+from .Service import Service as service
 
 # the implementations
 from .Node import Node as node
 from .Server import Server as server
-
-# the service implementations
-from . import services
 
 
 # end of file

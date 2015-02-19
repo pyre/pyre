@@ -8,7 +8,8 @@
 # access the project defaults
 include pyre.def
 # the package name
-PACKAGE = nexus/http
+PACKAGE = http
+
 # python packages
 EXPORT_PYTHON_MODULES = \
     Request.py \

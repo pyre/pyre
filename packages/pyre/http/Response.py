@@ -10,7 +10,7 @@
 import time # to generate timestamps
 import collections # for ordered dict
 # my superclass
-from ..exceptions import NexusError
+from ..nexus.exceptions import NexusError
 
 
 # the base class for all responses

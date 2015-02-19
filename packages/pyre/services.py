@@ -7,12 +7,12 @@
 
 
 # markup support
-from .. import foundry
-from . import Service as service
+from . import foundry
+from . import nexus
 
 
 # the http service
-@foundry(implements=service)
+@foundry(implements=nexus.service)
 def http():
     # get the component
     from .http.Server import Server

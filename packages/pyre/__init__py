@@ -258,7 +258,7 @@ if executive:
     # document rendering
     from . import weaver
     # the interprocess communication mechanisms
-    from . import ipc, nexus
+    from . import ipc, nexus, services
 
 
 # clean up the executive instance when the interpreter shuts down

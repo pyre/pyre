@@ -25,6 +25,7 @@ RECURSE_DIRS = \
     filesystem \
     framework \
     geometry \
+    http \
     ipc \
     nexus \
     parsing \
@@ -40,9 +41,11 @@ RECURSE_DIRS = \
     traits \
     units \
     weaver \
-    xml \
+    xml
+
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    services.py \
     __init__.py
 
 # standard targets
