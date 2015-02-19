@@ -19,7 +19,7 @@ class Nexus(pyre.protocol, family="pyre.nexus.servers"):
 
     #  obligations
     @pyre.provides
-    def activate(self, **kwds):
+    def activate(self, application, **kwds):
         """
         Prepare to receive events by pairing services with communication channels
         """

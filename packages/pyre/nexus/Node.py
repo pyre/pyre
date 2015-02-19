@@ -9,6 +9,7 @@
 # externals
 import pyre
 import signal
+import weakref
 # my protocols
 from .Nexus import Nexus
 from .Service import Service
@@ -28,35 +29,32 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
     # interface
     @pyre.export
-    def activate(self, now=True):
+    def activate(self, application, now=True):
         """
         Get ready to listen for incoming connections
 
         This can be done at construction time by passing {activate=True}
         """
+        # save a weak reference to the application context
+        self.application = weakref.proxy(application)
+
         # go through my services
         for name, service in self.services.items():
             # show me
             self.info.log('{}: activating {!r}'.format(self, name))
             # activate it
-            service.activate(nexus=self)
+            service.activate(application=application)
         # all done
         return
 
 
     @pyre.export
-    def serve(self, plexus):
+    def serve(self):
         """
         Start processing requests
         """
-        # remember my application host
-        self.plexus = plexus
         # enter the event loop of the dispatcher
-        status = self.dispatcher.watch()
-        # disconnect
-        del self.plexus
-        # status report
-        return status
+        return self.dispatcher.watch()
 
 
     @pyre.export
@@ -117,14 +115,12 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         # chain up
         super().__init__(**kwds)
 
-        # my debug aspect
+        # set up my debug aspect
         import journal
         self.info = journal.info("pyre.nexus")
 
         # register my signal handlers
         self.signals = self.registerSignalHandlers()
-        # activate my services
-        self.activate(now=activate)
 
         # all done
         return
@@ -161,7 +157,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
 
     # private data
-    plexus = None
+    application = None
 
 
 # end of file

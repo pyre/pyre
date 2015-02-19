@@ -8,6 +8,7 @@
 
 # externals
 import pyre
+import weakref
 # my protocol
 from .Service import Service
 
@@ -29,23 +30,23 @@ class Server(pyre.component, implements=Service):
 
     # behaviors
     @pyre.export(tip='register this service with the nexus')
-    def activate(self, nexus):
+    def activate(self, application):
         """
         Register with the {nexus} and make it possible for me to start receiving information from
         the network
         """
+        # save the application context
+        self.application = weakref.proxy(application)
         # build a port
         port = pyre.ipc.port(address=self.address)
-        # get the nexus dispatcher
-        dispatcher = nexus.dispatcher
-        # ask it to monitor my port
-        dispatcher.whenReadReady(channel=port, call=self.acknowledge)
+        # ask the application dispatcher to monitor my port
+        application.nexus.dispatcher.whenReadReady(channel=port, call=self.acknowledge)
         # all done
         return
 
 
     @pyre.export(tip='acknowledge a peer that has initiated a connection')
-    def acknowledge(self, dispatcher, channel):
+    def acknowledge(self, channel):
         """
         A peer has attempted to establish a connection
         """
@@ -63,7 +64,7 @@ class Server(pyre.component, implements=Service):
 
         # process the connection; reschedule this handler to process more connection attempts
         # if {newPeer} returns {True}
-        return self.connect(dispatcher=dispatcher, channel=newChannel, address=peerAddress)
+        return self.connect(channel=newChannel, address=peerAddress)
 
 
     @pyre.export(tip='determine whether to start a conversation with the peer')
@@ -76,7 +77,7 @@ class Server(pyre.component, implements=Service):
 
 
     @pyre.export(tip='prepare to accept connections from peers')
-    def connect(self, dispatcher, channel, address):
+    def connect(self, channel, address):
         """
         Prepare to start accepting requests from peers
         """
@@ -84,6 +85,8 @@ class Server(pyre.component, implements=Service):
         # or spawn a thread; this implementation just adds the {channel} to the read pile and
         # processes client requests in the same process space
 
+        # get the dispatcher
+        dispatcher = self.application.nexus.dispatcher
         # place the channel on the read list
         dispatcher.whenReadReady(channel=channel, call=self.process)
         # indicate that i would like to continue receiving connection requests from other peers
@@ -91,11 +94,11 @@ class Server(pyre.component, implements=Service):
 
 
     @pyre.export(tip='process and respond to the peer request')
-    def process(self, dispatcher, channel):
+    def process(self, channel):
         """
         Say something to the peer
         """
-        # close the connection
+        # don't have anything useful to do here, so just close the connection
         channel.close()
         # and prevent this from getting rescheduled; this is bad behavior because it can
         # potentially leave data in the channel, and it ignores the event raised when the peer
@@ -121,6 +124,11 @@ class Server(pyre.component, implements=Service):
         self.info = journal.info("pyre.nexus")
         # all done
         return
+
+
+    # implementation details
+    # private data
+    application = None
 
 
 # end of file

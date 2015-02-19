@@ -50,11 +50,11 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
 
     # protocol obligations
     @pyre.export(tip='respond to the peer request')
-    def process(self, dispatcher, channel):
+    def process(self, channel):
         """
         Initiate or continue a conversation with a peer over {channel}
         """
-        # we are here because the {dispatcher} has data in {channel}; one of the following is true
+        # we are here because the {channel} has data for me; one of the following is true
         #
         # - this is the notification that the connection has been closed by the peer; in this
         #   case the channel contains exactly zero bytes for us; we check for this one early
