@@ -29,7 +29,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
     # interface
     @pyre.export
-    def activate(self, application, now=True):
+    def activate(self, application):
         """
         Get ready to listen for incoming connections
 
@@ -41,7 +41,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         # go through my services
         for name, service in self.services.items():
             # show me
-            self.info.log('{}: activating {!r}'.format(self, name))
+            self.application.debug.log('{}: activating {!r}'.format(self, name))
             # activate it
             service.activate(application=application)
         # all done
@@ -67,7 +67,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         # go through my services
         for name, service in self.services.items():
             # show me
-            self.info.log('{}: shutting down {!r}'.format(self, name))
+            self.application.debug.log('{}: shutting down {!r}'.format(self, name))
             # shut it down
             service.shutdown()
         # all done
@@ -79,8 +79,6 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         Reload the nodal configuration for a distributed application
         """
-        # log the request
-        self.info.log("received 'reload' request")
         # NYI: what does 'reload' mean? does it involve the configuration store, or just the
         # layout of the distributed application?
         return
@@ -90,8 +88,6 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         Terminate the event processing loop
         """
-        # log the request
-        self.info.log("received 'terminate' request")
         # shut down
         self.shutdown()
         # and return
@@ -102,8 +98,6 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         Dispatch {signal} to the registered handler
         """
-        # log the request
-        self.info.log("received signal {}".format(signal))
         # locate the handler
         handler = self.signals[signal]
         # and invoke it
@@ -111,17 +105,11 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
 
     # meta methods
-    def __init__(self, activate=True, **kwds):
+    def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-
-        # set up my debug aspect
-        import journal
-        self.info = journal.info("pyre.nexus")
-
         # register my signal handlers
         self.signals = self.registerSignalHandlers()
-
         # all done
         return
 

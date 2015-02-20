@@ -39,6 +39,8 @@ class Server(pyre.component, implements=Service):
         self.application = weakref.proxy(application)
         # build a port
         port = pyre.ipc.port(address=self.address)
+        # adjust my address
+        self.address = port.address
         # ask the application dispatcher to monitor my port
         application.nexus.dispatcher.whenReadReady(channel=port, call=self.acknowledge)
         # all done
@@ -53,7 +55,8 @@ class Server(pyre.component, implements=Service):
         # accept the connection
         newChannel, peerAddress = channel.accept()
         # log the request
-        self.info.log("{}: received 'connection' request from {}".format(channel, peerAddress))
+        self.application.debug.log(
+            "{}: received 'connection' request from {}".format(channel, peerAddress))
 
         # if this is not a valid connection
         if not self.validate(channel=newChannel, address=peerAddress):
@@ -112,17 +115,6 @@ class Server(pyre.component, implements=Service):
         Clean up and shutdown
         """
         # not much to do
-        return
-
-
-    # meta-methods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # build my log aspect
-        import journal
-        self.info = journal.info("pyre.nexus")
-        # all done
         return
 
 

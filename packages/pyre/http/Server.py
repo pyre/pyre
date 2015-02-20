@@ -63,16 +63,18 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # - this is a known peer whose previous request was handled but has kept the connection
         #   alive; this case may not survive as it can be handled by starting a new request
         #   every time without closing the connection
+        # - the client has pipelined its requests; currently, this case is not handled
+        #   correctly because it involves saving the local buffers
 
         # show me
-        self.info.log('reading data from {}'.format(channel.peer))
+        self.application.debug.log('reading data from {}'.format(channel.peer))
         # get whatever data is available at this point
         chunk = channel.read(maxlen=self.MAX_BYTES)
 
         # if there was nothing to read
         if len(chunk) == 0:
             # show me
-            self.info.log('connection from {} was closed'.format(channel.peer))
+            self.application.debug.log('connection from {} was closed'.format(channel.peer))
             # close the connection
             channel.close()
             # check whether we know this peer
@@ -104,10 +106,10 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
             # send an error report to the client
             return self.respond(channel=channel, response=error)
 
-        # if collecting the request is not finished
+        # if request assembly is not finished yet
         if not complete:
-            # we expect more data to arrive later, so register this request so we can continue
-            # the processing next time there are data for it
+            # we expect more data to arrive later; register this request so we can continue the
+            # processing next time there are data for it
             self.requests[channel] = request
             # and reschedule this channel
             return True
@@ -131,19 +133,21 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         Fulfill the given fully formed client {request}
         """
         # print the top line
-        self.info.line()
-        self.info.line("request:")
-        self.info.line("  type: {.command!r}".format(request))
-        self.info.line("  path: {.url!r}".format(request))
-        self.info.line("  verion: {.version!r}".format(request))
+        self.application.debug.line()
+        self.application.debug.line("server: {}".format(self))
+        self.application.debug.line("  app: {.application}".format(self))
+        self.application.debug.line("  nexus: {.application.nexus}".format(self))
+        self.application.debug.line("request:")
+        self.application.debug.line("  type: {.command!r}".format(request))
+        self.application.debug.line("  path: {.url!r}".format(request))
+        self.application.debug.line("  verion: {.version!r}".format(request))
         # print the headers
-        self.info.line("headers:")
+        self.application.debug.line("headers:")
         for key, value in request.headers.items():
-            self.info.line(" -- {!r}:{!r}".format(key, value))
-        self.info.log()
+            self.application.debug.line(" -- {!r}:{!r}".format(key, value))
+        self.application.debug.log()
 
-        # make a message
-        # oops
+        # build a response a message
         response = self.responses.OK(
             server=self,
             description="{.name} is still under development".format(self))
