@@ -30,19 +30,20 @@ class Server(pyre.component, implements=Service):
 
     # behaviors
     @pyre.export(tip='register this service with the nexus')
-    def activate(self, application):
+    def activate(self, application, dispatcher):
         """
-        Register with the {nexus} and make it possible for me to start receiving information from
-        the network
+        Grab a port and register it with the event dispatcher
         """
         # save the application context
         self.application = weakref.proxy(application)
+        # and the dispatcher
+        self.dispatcher = weakref.proxy(dispatcher)
         # build a port
         port = pyre.ipc.port(address=self.address)
         # adjust my address
         self.address = port.address
         # ask the application dispatcher to monitor my port
-        application.nexus.dispatcher.whenReadReady(channel=port, call=self.acknowledge)
+        dispatcher.whenReadReady(channel=port, call=self.acknowledge)
         # all done
         return
 
@@ -89,7 +90,7 @@ class Server(pyre.component, implements=Service):
         # processes client requests in the same process space
 
         # get the dispatcher
-        dispatcher = self.application.nexus.dispatcher
+        dispatcher = self.dispatcher
         # place the channel on the read list
         dispatcher.whenReadReady(channel=channel, call=self.process)
         # indicate that i would like to continue receiving connection requests from other peers
@@ -114,6 +115,9 @@ class Server(pyre.component, implements=Service):
         """
         Clean up and shutdown
         """
+        # remove my references to the application and the dispatcher
+        del self.dispatcher
+        del self.application
         # not much to do
         return
 
@@ -121,6 +125,7 @@ class Server(pyre.component, implements=Service):
     # implementation details
     # private data
     application = None
+    dispatcher = None
 
 
 # end of file

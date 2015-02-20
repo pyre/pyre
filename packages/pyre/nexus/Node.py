@@ -37,13 +37,12 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         # save a weak reference to the application context
         self.application = weakref.proxy(application)
-
         # go through my services
         for name, service in self.services.items():
             # show me
             self.application.debug.log('{}: activating {!r}'.format(self, name))
-            # activate it
-            service.activate(application=application)
+            # and activate them
+            service.activate(application=application, dispatcher=self.dispatcher)
         # all done
         return
 

@@ -29,10 +29,9 @@ class Service(pyre.protocol, family="pyre.services"):
 
     # behaviors
     @pyre.provides
-    def activate(self, nexus):
+    def activate(self, application, dispatcher):
         """
-        Register with the {nexus} and make it possible for me to start receiving information from
-        the network
+        Prepare to start receiving information from the network
         """
 
     @pyre.provides(tip='acknowledge a peer that has initiated a connection')

@@ -66,15 +66,17 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # - the client has pipelined its requests; currently, this case is not handled
         #   correctly because it involves saving the local buffers
 
+        # get the application context
+        application = self.application
         # show me
-        self.application.debug.log('reading data from {}'.format(channel.peer))
+        application.debug.log('reading data from {}'.format(channel.peer))
         # get whatever data is available at this point
         chunk = channel.read(maxlen=self.MAX_BYTES)
 
         # if there was nothing to read
         if len(chunk) == 0:
             # show me
-            self.application.debug.log('connection from {} was closed'.format(channel.peer))
+            application.debug.log('connection from {} was closed'.format(channel.peer))
             # close the connection
             channel.close()
             # check whether we know this peer
@@ -132,20 +134,22 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         """
         Fulfill the given fully formed client {request}
         """
+        # get the application context
+        application = self.application
         # print the top line
-        self.application.debug.line()
-        self.application.debug.line("server: {}".format(self))
-        self.application.debug.line("  app: {.application}".format(self))
-        self.application.debug.line("  nexus: {.application.nexus}".format(self))
-        self.application.debug.line("request:")
-        self.application.debug.line("  type: {.command!r}".format(request))
-        self.application.debug.line("  path: {.url!r}".format(request))
-        self.application.debug.line("  verion: {.version!r}".format(request))
+        application.debug.line()
+        application.debug.line("server: {}".format(self))
+        application.debug.line("  app: {.application}".format(self))
+        application.debug.line("  nexus: {.application.nexus}".format(self))
+        application.debug.line("request:")
+        application.debug.line("  type: {.command!r}".format(request))
+        application.debug.line("  path: {.url!r}".format(request))
+        application.debug.line("  verion: {.version!r}".format(request))
         # print the headers
-        self.application.debug.line("headers:")
+        application.debug.line("headers:")
         for key, value in request.headers.items():
-            self.application.debug.line(" -- {!r}:{!r}".format(key, value))
-        self.application.debug.log()
+            application.debug.line(" -- {!r}:{!r}".format(key, value))
+        application.debug.log()
 
         # build a response a message
         response = self.responses.OK(
