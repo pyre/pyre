@@ -54,7 +54,13 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         Start processing requests
         """
         # enter the event loop of the dispatcher
-        return self.dispatcher.watch()
+        status = self.dispatcher.watch()
+        # when done, tell me
+        self.application.debug.log('done')
+        # and shut everything down
+        self.shutdown()
+        # and report the status
+        return status
 
 
     @pyre.export
@@ -62,14 +68,14 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         Shut everything down and exit gracefully
         """
-        # notify my dispatcher to exit its event loop
-        self.dispatcher.stop()
         # go through my services
         for name, service in self.services.items():
             # show me
-            self.application.debug.log('{}: shutting down {!r}'.format(self, name))
+            self.application.debug.line('shutting down {!r}'.format(name))
             # shut it down
             service.shutdown()
+        # flush
+        self.application.debug.log()
         # all done
         return
 
@@ -88,8 +94,8 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         Terminate the event processing loop
         """
-        # shut down
-        self.shutdown()
+        # notify my dispatcher to exit its event loop
+        self.dispatcher.stop()
         # and return
         return
 
