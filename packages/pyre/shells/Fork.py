@@ -8,7 +8,6 @@
 
 # externals
 import os
-import sys
 import pyre # the framework
 from .Executive import Executive # my superclass
 
@@ -44,14 +43,18 @@ class Fork(Executive, family='pyre.shells.fork'):
         # in the parent process
         if pid > 0:
             # build and return the parent side channels
-            return self.parentChannels(pipes)
+            channels = self.parentChannels(pipes)
+            # invoke the parent behavior
+            status = application.launched(*args, channels=channels, **kwds)
+            # and return its status
+            return status
 
         # in the child process, convert {stdout} and {stderr} into channels
         channels = self.childChannels(pipes)
         # launch the application
         status = application.main(*args, channels=channels, **kwds)
         # and exit
-        return sys.exit(status)
+        raise SystemExit(status)
 
 
     # implementation details

@@ -22,6 +22,7 @@ def test():
 
         @pyre.export
         def main(self, channels, **kwds):
+            """The behavior of the child process"""
             # unpack
             stdout, stderr = channels
             # say something
@@ -29,28 +30,28 @@ def test():
             # all done
             return 0
 
+
+        # implementation details
+        @pyre.export
+        def launched(self, channels, **kwds):
+            """The behavior of the parent process"""
+            # unpack the channels to the child
+            stdout, stderr = channels
+            # make sure we can read its output correctly
+            assert stdout.read(13) == b"Hello father!"
+            # all done
+            return 0
+
+
     # instantiate it
     app = application(name='κάστωρ')
     # check that its shell was configured correctly
     assert app.shell.pyre_name == 'λήδα'
-
-    # if it is in debugging mode
-    if app.DEBUG:
-        print("in debugging mode")
-        # launch it
-        status = app.run()
-        # check it
-        assert status == 0
-        # and return the app
-        return app
-
-    # otherwise, launch it and get the channels to the child
-    stdout, stderr = app.run()
-
-    # make sure we can read its output correctly
-    assert stdout.read(13) == b"Hello father!"
-
-    # and return the app
+    # launch it
+    status = app.run()
+    # check it
+    assert status == 0
+    # and return the application instance
     return app
 
 

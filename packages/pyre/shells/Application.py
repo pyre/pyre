@@ -51,11 +51,11 @@ class Application(pyre.component, metaclass=Director):
     dependencies = externals.dependencies()
     dependencies.doc = 'the map of requirements to package instances that satisfy them'
 
-    DEBUG = pyre.properties.bool(default=False)
-    DEBUG.doc = 'debugging mode'
-
     interactive = pyre.properties.bool(default=False)
     interactive.doc = "go interactive when no command line arguments are provided"
+
+    DEBUG = pyre.properties.bool(default=False)
+    DEBUG.doc = 'debugging mode'
 
     # per-instance public data
     # geography
@@ -116,8 +116,17 @@ class Application(pyre.component, metaclass=Director):
         """
         The main entry point of an application component
         """
-        # what should i do?
+        # go interactive
         return self.pyre_interactiveSession()
+
+
+    @pyre.export
+    def launched(self, *args, **kwds):
+        """
+        Notification issued by some shells that application launching is complete
+        """
+        # nothing to do but indicate success
+        return 0
 
 
     @pyre.export

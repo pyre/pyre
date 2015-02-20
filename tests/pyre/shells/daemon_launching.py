@@ -25,36 +25,26 @@ def test():
             print("Hello")
             return 0
 
+        # implementation details
+        @pyre.export
+        def launched(self, channels, **kwds):
+            """The behavior in the parent process"""
+            # unpack the channels
+            stdout, stderr = channels
+            # make sure we can read the child output correctly
+            assert stdout.read(6) == b"Hello\n"
+            # all done
+            return 0
+
+
     # instantiate it
     app = application(name='μέδουσα')
     # check that its shell was configured correctly
     assert app.shell.pyre_name == 'κητώ'
-
-    # if it is in debugging mode
-    if app.DEBUG:
-        print("in debugging mode")
-        # launch it
-        status = app.run()
-        # check it
-        assert status == 0
-        # and return the app
-        return app
-
-    # if this is the re-invocation  of the daemon spawn
-    if app.shell.daemon:
-        # launch it
-        status = app.run()
-        # check it
-        assert status == 0
-        # and return the status
-        return status
-
-    # otherwise, launch it and get the channels to the child
-    stdout, stderr = app.run()
-
-    # make sure we can read its output correctly
-    assert stdout.read(6) == b"Hello\n"
-
+    # launch it
+    status = app.run()
+    # check it
+    assert status == 0
     # and return the app
     return app
 

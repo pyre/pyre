@@ -50,9 +50,10 @@ class Daemon(Fork, family="pyre.shells.daemon"):
             home = self.home or '/'
             # go there
             os.chdir(home)
-            # launch the application and return its exit code
-            return application.main(*args, **kwds)
-
+            # launch the application
+            status = application.main(*args, **kwds)
+            # and return its exit code
+            raise SystemExit(status)
 
         # otherwise, build the communication channels
         pipes = self.openCommunicationPipes()
@@ -60,7 +61,13 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         pid = os.fork()
 
         # in the parent process, build and return the parent side channels
-        if pid > 0: return self.parentChannels(pipes)
+        if pid > 0:
+            # create the channels to the child
+            channels = self.parentChannels(pipes)
+            # invoke the parent behavior
+            status = application.launched(*args, channels=channels, **kwds)
+            # and return its status
+            return status
 
         # in the intermediate child, decouple from the parent environment; don't change the
         # {cwd} just yet so {exec} below can find the script that launched the application
@@ -70,8 +77,10 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         # respawn
         pid = os.fork()
 
-        # in the intermediate process, just exit
-        if pid > 0: return os._exit(0)
+        # in the intermediate process
+        if pid > 0:
+            # exit immediately and unconditionally
+            return os._exit(0)
 
         # in the final child process, convert {stdout} and {stderr} into channels
         stdout, stderr = self.childChannels(pipes)
