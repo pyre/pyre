@@ -7,6 +7,7 @@
 
 
 # externals
+import re
 import itertools
 from .. import tracking
 
@@ -78,22 +79,27 @@ class CommandLineParser:
         for index,arg in enumerate(argv):
             # look for an assignment
             match = self.assignmentScanner.match(arg)
-            # process it if it matches
+            # if we have one
             if match:
                 # get the tokens from the scanner
                 key = match.group("key")
                 value = match.group("value") or ''
+                # if there is a key
                 if key:
-                    # if a key were specified
+                    # process this
                     self._processAssignments(
                         configuration, key,value, self.locator(arg=match.string))
+                # if not, something special happened
                 else:
                     # we ran in to a '-' or '--' that signals the end of configuration options
                     index += 1
+                    # record the rest of the command line
                     self._processArguments(configuration, index, *argv[index:])
+                    # not our problem any more
                     break
             # else it must be a regular command line argument
             else:
+                # record it
                 self._processArguments(configuration, index, arg)
         # all done; return the configuration
         return configuration
@@ -104,14 +110,13 @@ class CommandLineParser:
         Build the command line recognizers that are used to detect the supported command line
         argument syntactical forms
         """
-        import re
-
         # the assignment recognizer regular expression
         regex = []
-        # add the prefix
+        # if i have a special character that indicates the beginning of a cofiguration
         if self.prefix:
+            # incorporate it into the regex
             regex.append(r'(?P<prefix>' + self.prefix + r'{1,2})')
-        # and the 'key=value' form
+        # add the 'key=value' form
         regex += [
             # the key
             r'(?P<key>[^', self.assignment, r']*)',
@@ -122,13 +127,13 @@ class CommandLineParser:
             ]
         # compile this pattern
         self.assignmentScanner = re.compile("".join(regex))
-
         # all done
         return
 
 
     # meta methods
     def __init__(self, handlers=None, **kwds):
+        # chain up
         super().__init__(**kwds)
         # build the scanners
         self.buildScanners()
@@ -145,20 +150,25 @@ class CommandLineParser:
 
         Look for the supported shorthands and unfold them into canonical forms.
         """
-        # split the key on the field separator identify the various fields
+        # reset the pile of parts
         fields = []
+
+        # split the key on the field separator to identify the various fields
         for field in key.split(self.fieldSeparator):
             # check for field distribution
             if field[0] == self.groupStart and field[-1] == self.groupEnd:
                 # got one; split on the group separator
                 fields.append(field[1:-1].split(self.groupSeparator))
+            # otherwise
             else:
-                # otherwise, just store the field name
+                # just store the field name
                 fields.append([field])
+
         # now, form all the specified addresses by computing the Cartesian product
         for spec in itertools.product(*fields):
-            # check whether there is a handler registered for this spec
+            # check whether
             try:
+                # there is a handler registered for this spec
                 handler = self.handlers[spec[0]]
             # nope, not there
             except KeyError:
@@ -166,9 +176,11 @@ class CommandLineParser:
                 event = self.Assignment(key=spec, value=value, locator=locator)
                 # add it to the pile
                 configuration.append(event)
-            # got it
+            # if there is
             else:
+                # invoke it
                 handler(key=spec, value=value, locator=locator)
+
         # all done
         return
 
