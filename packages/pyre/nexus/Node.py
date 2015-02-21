@@ -32,15 +32,13 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
     def activate(self, application):
         """
         Get ready to listen for incoming connections
-
-        This can be done at construction time by passing {activate=True}
         """
         # save a weak reference to the application context
         self.application = weakref.proxy(application)
         # go through my services
         for name, service in self.services.items():
             # show me
-            self.application.debug.log('{}: activating {!r}'.format(self, name))
+            application.debug.log('{}: activating {!r}'.format(self, name))
             # and activate them
             service.activate(application=application, dispatcher=self.dispatcher)
         # all done
@@ -67,14 +65,16 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         Shut everything down and exit gracefully
         """
+        # get the application context
+        application = self.application
         # go through my services
         for name, service in self.services.items():
             # show me
-            self.application.debug.line('shutting down {!r}'.format(name))
+            application.debug.line('shutting down {!r}'.format(name))
             # shut it down
             service.shutdown()
         # flush
-        self.application.debug.log()
+        application.debug.log()
         # all done
         return
 
