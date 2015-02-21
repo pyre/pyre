@@ -30,6 +30,7 @@ EXPORT_PYTHON_MODULES = \
     Terminal.py \
     User.py \
     VFS.py \
+    Web.py \
     __init__.py
 
 # standard targets
