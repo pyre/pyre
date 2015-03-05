@@ -16,14 +16,19 @@ class Token:
     name = '' # the name of the token
     head = '' # a pattern for text required for a match but not part of the lexeme
     tail = '' # a pattern for text required for a match but not part of the lexeme
-    pattern = '' # the regular expression that extracts the lexeme
+    pattern = None # the regular expression that extracts the lexeme
+    regex = '' # the assembled regular expression
+    scanner = None # the compiled form of the regular expression of this token
 
 
     # meta methods
     def __init__(self, lexeme='', locator=None, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save my presence in the input stream
         self.lexeme = lexeme
         self.locator = locator
+        # all done
         return
 
 
@@ -34,6 +39,7 @@ class Token:
         N.B.: this is not the same as the footprint of the token in the input stream, which
         includes the {head} and {tail} of the token
         """
+        # easy enough
         return len(self.lexeme)
 
 
@@ -45,7 +51,7 @@ class Token:
         if self.lexeme:
             # render it along with the token name
             return "{{{0.name}: {0.lexeme!r}}}".format(self)
-        # otherwise
+        # otherwise, just show me the name of the token
         return "{{{0.name}}}".format(self)
 
 

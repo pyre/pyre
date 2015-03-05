@@ -36,12 +36,29 @@ class Lexer(AttributeClassifier):
         # harvest the token descriptors
         for name, descriptor in cls.pyre_harvest(attributes, cls.descriptor):
             # print('    {}: "{}"'.format(name, descriptor.pattern))
+            # unpack the descriptor parts
+            head = descriptor.head
+            pattern = descriptor.pattern
+            tail = descriptor.tail
+            # if there is a non-trivial pattern
+            if pattern is not None:
+                # assemble the regular expression and compile it
+                regex = '{}(?P<{}>{}){}'.format(head, name, pattern, tail)
+                # compile it
+                scanner = re.compile(regex)
+            # otherwise, stub it out
+            else:
+                regex = ''
+                scanner = None
+
             # initialize the attributes of the token class
             fields = {
                 'name': name,
-                'head': descriptor.head,
-                'pattern': descriptor.pattern,
-                'tail': descriptor.tail,
+                'head': head,
+                'pattern': pattern,
+                'tail': tail,
+                'regex': regex,
+                'scanner': scanner,
                 '__slots__': (),
                 }
             # build it
@@ -72,16 +89,11 @@ class Lexer(AttributeClassifier):
                     name = token.name
                     # skip shadowed tokens
                     if name in names: continue
-                    # get the token pattern
-                    pattern = token.pattern
-                    # skip tokens with no patterns
-                    if not pattern: continue
-                    # for the rest, get the remaining pattern parts
-                    head = token.head
-                    tail = token.tail
-                    # assemble the regular expression
-                    regex = '{}(?P<{}>{}){}'.format(head, name, pattern, tail)
-                    # add it to the pattern pile
+                    # get the token regex
+                    regex = token.regex
+                    # skip tokens with trivial expressions
+                    if not regex: continue
+                    # add the expression to the pattern pile
                     patterns.append(regex)
             # in any case, add all the local names to the known pile
             names.update(base.__dict__)

@@ -21,15 +21,21 @@ class Descriptor:
 
 
     # meta methods
-    def __init__(self, pattern='', head='', tail='', **kwds):
+    def __init__(self, pattern=None, head='', tail='', **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save my parts
         self.head = head
         self.tail = tail
         self.pattern = pattern
+        # all done
         return
 
 
     def __str__(self):
+        """
+        Build a representation of the descriptor, mostly for debugging purposes
+        """
         return "{{head: '{}', pattern: '{}', tail: '{}'}}".format(
             self.head, self.pattern, self.tail)
 
