@@ -7,7 +7,6 @@
 
 
 # externals
-import io
 from ..patterns import coroutine
 from ..tracking import file as fileloc # i make file locators
 # my superclass
@@ -26,6 +25,8 @@ class Scanner(metaclass=Lexer):
     from .exceptions import ParsingError, TokenizationError
     # the descriptor factory
     from .Descriptor import Descriptor as pyre_token
+    # the stream wrapper
+    from .InputStream import InputStream as pyre_inputStream
     # the default tokens; all scanners have these
     start = pyre_token()
     finish = pyre_token()
@@ -42,13 +43,6 @@ class Scanner(metaclass=Lexer):
         # print('      uri={}'.format(uri))
         # print('      stream={}'.format(stream))
         # print('      client={}'.format(client))
-
-        # if the {stream} is not open in text mode
-        if not isinstance(stream, io.TextIOBase):
-            # wrap a {io.TextIOWrapper} around it
-            stream = io.TextIOWrapper(stream)
-            # show me
-            # print('        now open in text mode')
 
         # flush the token cache
         self.pyre_cache = []
@@ -119,8 +113,8 @@ class Scanner(metaclass=Lexer):
         """
         Pull and number lines from my stream
         """
-        # easy enough, by default
-        return enumerate(self.pyre_stream)
+        # my input stream wrapper knows what to do
+        return self.pyre_stream
 
 
     def pyre_start(self, uri, client, stream):
@@ -129,7 +123,7 @@ class Scanner(metaclass=Lexer):
         """
         # save the source information
         self.pyre_uri = uri
-        self.pyre_stream = stream
+        self.pyre_stream = self.pyre_inputStream(stream=stream)
         self.pyre_client = client
         # to get things going, build a {start} token
         start = self.start(locator=fileloc(source=uri, line=1, column=0))

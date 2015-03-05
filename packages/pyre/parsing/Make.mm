@@ -12,8 +12,10 @@ PACKAGE = parsing
 # the python modules
 EXPORT_PYTHON_MODULES = \
     Descriptor.py \
+    InputStream.py \
     Lexer.py \
     Parser.py \
+    SWScanner.py \
     Scanner.py \
     Token.py \
     exceptions.py \
