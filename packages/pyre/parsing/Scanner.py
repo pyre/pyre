@@ -34,6 +34,9 @@ class Scanner(metaclass=Lexer):
 
     # interface
     def pyre_tokenize(self, uri, stream, client):
+        """
+        Extract lines from {stream}, convert them into token streams and send them to {client}
+        """
         # show me
         # print(' ++ pyre.parsing.Scanner:')
         # print('      uri={}'.format(uri))
@@ -50,20 +53,21 @@ class Scanner(metaclass=Lexer):
         # flush the token cache
         self.pyre_cache = []
 
-        # to get things going, build a {start} token
-        start = self.start(locator=fileloc(source=uri, line=1, column=0))
-        # and send it along
-        client.send(start)
+        # to get things going, build a {start} token and pass it along to the {client}
+        self.pyre_start(client=client, uri=uri, stream=stream)
 
         # fault detection
         fault = None
         # iterate over the contents of the stream
-        for line, text in enumerate(stream):
+        for line, text in self.pyre_readlines():
             # reset the column number
-            column = 0
+            column = self.pyre_newline(line=line, text=text)
             # scan until then end of the line
             while column != len(text):
+                # show me where I am
                 # print('at line={}, column={}'.format(line+1, column))
+                # and what is in the cache
+                # print('token cache: {.pyre_cache}'.format(self))
                 # send all tokens currently in the token cache
                 for token in self.pyre_cache: client.send(token)
                 # and flush it
@@ -104,10 +108,53 @@ class Scanner(metaclass=Lexer):
                 # if all went well, update the column counter and move on
                 column = match.end()
 
-        # all done; make a {finish} token
-        finish = self.finish(locator=fileloc(source=uri, line=line+1, column=0))
-        # and send it
-        client.send(finish)
+        # wrap up by sending a {finish} token to the {client}
+        self.pyre_finish(line=line)
+
+        # all done
+        return
+
+
+    def pyre_readlines(self):
+        """
+        Pull and number lines from my stream
+        """
+        # easy enough, by default
+        yield from enumerate(self.pyre_stream)
+        # all done
+        return
+
+
+    def pyre_start(self, uri, client, stream):
+        """
+        Indicate the beginning of scanning
+        """
+        # save the source information
+        self.pyre_uri = uri
+        self.pyre_stream = stream
+        self.pyre_client = client
+        # to get things going, build a {start} token
+        start = self.start(locator=fileloc(source=uri, line=1, column=0))
+        # and send it along
+        self.pyre_client.send(start)
+        # all done
+        return
+
+
+    def pyre_finish(self, line):
+        """
+        Indicate that scanning is complete
+        """
+        # to wrap things up, build a {finish} token
+        finish = self.finish(locator=fileloc(source=self.pyre_uri, line=line+1, column=0))
+        # and send it along
+        self.pyre_client.send(finish)
+
+        # reset the state
+        self.pyre_uri = None
+        self.pyre_stream = None
+        self.pyre_client = None
+
         # all done
         return
 
@@ -120,6 +167,14 @@ class Scanner(metaclass=Lexer):
         self.pyre_cache.append(token)
         # all done
         return self
+
+
+    def pyre_newline(self, line, text):
+        """
+        Hook invoked when a new line of text is pulled from the input stream
+        """
+        # nothing to do by default; just reset the column number
+        return 0
 
 
     # helpers
@@ -140,7 +195,6 @@ class Scanner(metaclass=Lexer):
             except self.ParsingError as error:
                 # forward it to my client
                 client.throw(type(error), error)
-
             # if it is not whitespace
             if not isinstance(token, self.whitespace):
                 # pass it along
@@ -149,22 +203,16 @@ class Scanner(metaclass=Lexer):
         return
 
 
-    # meta methods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # storage for pushed back tokens
-        self.pyre_cache = []
-        # all done
-        return
-
-
     # implementation details
-    # private data
-    pyre_cache = [] # the list of tokens that have been pushed back
-    # set by {Lexer}
+    # set by my meta-class
     pyre_tokens = None # a list of my tokens
     pyre_recognizer = None # the compiled regex constructed out the patterns of my tokens
+
+    # tokenizing state
+    pyre_uri = None
+    pyre_stream = None
+    pyre_client = None
+    pyre_cache = [] # the list of tokens that have been pushed back
 
 
 # end of file
