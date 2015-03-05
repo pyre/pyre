@@ -120,9 +120,7 @@ class Scanner(metaclass=Lexer):
         Pull and number lines from my stream
         """
         # easy enough, by default
-        yield from enumerate(self.pyre_stream)
-        # all done
-        return
+        return enumerate(self.pyre_stream)
 
 
     def pyre_start(self, uri, client, stream):
