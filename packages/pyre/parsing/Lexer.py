@@ -79,7 +79,7 @@ class Lexer(AttributeClassifier):
         patterns = []
         # and the known token names
         names = set()
-        # iterate over all ancestors to build the recognizer
+        # iterate over all ancestors to build the tokenizer
         for base in scanner.__mro__:
             # for classes that are {Lexer} instances
             if isinstance(base, cls):
@@ -98,8 +98,8 @@ class Lexer(AttributeClassifier):
             # in any case, add all the local names to the known pile
             names.update(base.__dict__)
 
-        # attach the recognizer
-        scanner.pyre_recognizer = re.compile('|'.join(patterns))
+        # attach the tokenizer
+        scanner.pyre_tokenizer = re.compile('|'.join(patterns))
         # return the scanner record
         # print('  done')
         return scanner

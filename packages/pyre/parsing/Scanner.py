@@ -47,8 +47,8 @@ class Scanner(metaclass=Lexer):
         self.pyre_client = client
         # build and save the input stream
         stream = self.pyre_stream = self.pyre_inputStream(uri=uri, stream=stream)
-        # my recognizer
-        recognizer = self.pyre_recognizer
+        # my tokenizer
+        tokenizer = self.pyre_tokenizer
 
         # get the token cache
         cache = self.pyre_cache = []
@@ -70,7 +70,7 @@ class Scanner(metaclass=Lexer):
             # try to
             try:
                 # to get a token match
-                match = stream.match(scanner=self, recognizer=recognizer)
+                match = stream.match(scanner=self, tokenizer=tokenizer)
             # if the stream ran out of text
             except StopIteration:
                 # wrap up by sending a {finish} token to the client
@@ -181,7 +181,7 @@ class Scanner(metaclass=Lexer):
     # implementation details
     # set by my meta-class
     pyre_tokens = None # a list of my tokens
-    pyre_recognizer = None # the compiled regex constructed out the patterns of my tokens
+    pyre_tokenizer = None # the compiled regex constructed out the patterns of my tokens
 
     # tokenizing state
     pyre_stream = None

@@ -29,8 +29,8 @@ def test():
     # check that the token descriptors have been turned into subclasses of Token
     assert issubclass(Simple.comment, Token)
     assert issubclass(Simple.separator, Token)
-    # check that the recognizer was built correctly
-    assert Simple.pyre_recognizer.pattern == '|'.join([
+    # check that the tokenizer was built correctly
+    assert Simple.pyre_tokenizer.pattern == '|'.join([
         "(?P<comment>#)",
         "(?P<separator>:)",
         "(?P<whitespace>\s+)",

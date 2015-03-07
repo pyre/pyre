@@ -41,14 +41,14 @@ class InputStream:
 
 
     # interface
-    def match(self, scanner, recognizer):
+    def match(self, scanner, tokenizer):
         """
         Attempt to match the text at my current position using the given regular expression
         """
         # check whether i need to consume more input
         self.update(client=scanner)
         # attempt a match
-        match = recognizer.match(self.text, pos=self.column)
+        match = tokenizer.match(self.text, pos=self.column)
         # if there is no match
         if not match:
             # build an error descriptor
