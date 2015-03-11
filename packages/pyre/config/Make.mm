@@ -14,7 +14,9 @@ RECURSE_DIRS = \
     cfg \
     native \
     odb \
-    pml \
+    pfg \
+    pml
+
 # the python modules
 EXPORT_PYTHON_MODULES = \
     Codec.py \

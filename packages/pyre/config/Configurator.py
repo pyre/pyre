@@ -332,6 +332,10 @@ class Configurator:
         # make an empty index
         index = collections.OrderedDict()
 
+        # add the {pfg} codec
+        from .pfg import pfg
+        index[pfg.encoding] = pfg
+
         # add the {cfg} codec
         from .cfg import cfg
         index[cfg.encoding] = cfg

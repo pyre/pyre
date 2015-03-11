@@ -12,6 +12,9 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
+work:
+	${PYTHON} ./configurator_load_pfg.py
+
 all: test
 
 test: sanity events configurator commandline
@@ -29,6 +32,7 @@ configurator:
 	${PYTHON} ./configurator_assignments.py
 	${PYTHON} ./configurator_load_pml.py
 	${PYTHON} ./configurator_load_cfg.py
+	${PYTHON} ./configurator_load_pfg.py
 
 commandline:
 	${PYTHON} ./command.py
