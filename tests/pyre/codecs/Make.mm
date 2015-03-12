@@ -6,11 +6,7 @@
 #
 #
 
-
-PROJECT = pyre
-
-#--------------------------------------------------------------------------
-#
+include pyre.def
 
 all: test
 
@@ -21,7 +17,7 @@ sanity:
 	${PYTHON} ./exceptions.py
 	${PYTHON} ./manager.py
 
-formats: pml cfg
+formats: pml cfg pfg
 
 pml:
 	${PYTHON} ./pml.py
@@ -46,5 +42,15 @@ cfg:
 	${PYTHON} ./cfg_open.py
 	${PYTHON} ./cfg_close.py
 
+pfg:
+	${PYTHON} ./pfg.py
+	${PYTHON} ./pfg_empty.py
+	${PYTHON} ./pfg_package.py
+	${PYTHON} ./pfg_packageNested.py
+	${PYTHON} ./pfg_componentFamily.py
+	${PYTHON} ./pfg_componentName.py
+	${PYTHON} ./pfg_componentConditional.py
+	${PYTHON} ./pfg_componentConditionalNested.py
+	${PYTHON} ./pfg_sample.py
 
 # end of file

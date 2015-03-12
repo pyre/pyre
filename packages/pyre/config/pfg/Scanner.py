@@ -22,7 +22,7 @@ class Scanner(pyre.parsing.sws):
     pyre_token = pyre.parsing.sws.pyre_token
 
     # my tokens, in addition to the three inherited from {pyre.parsing.scanner}
-    section = pyre_token(pattern=r'\w[-.\w]*', tail='\s*:')
+    section = pyre_token(pattern=r'\w[-.\w]*(\s*#\s*\w[-.\w]*)?', tail='\s*:')
     assignment = pyre_token(pattern=r'\w[-.\w]*', tail='\s*=')
     comment = pyre_token(head=r'(?<!\\);', pattern='.*', tail='$')
 

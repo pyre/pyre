@@ -77,7 +77,7 @@ class Section(EventContainer):
             event.conditions.append((name, family))
 
         # store this with my other conditionals
-        self.conditionalAssignment.append(event)
+        self.conditionalAssignments.append(event)
         # all done
         return
 
@@ -98,12 +98,10 @@ class Section(EventContainer):
     def __init__(self, token, **kwds):
         # chain up
         super().__init__(**kwds)
-
         # get my tag and split it on the fragment marker
         spec = (tag.strip() for tag in token.lexeme.split('#'))
         # and extract the scope levels from each one
         spec = tuple(tag.split('.') for tag in spec)
-
         # if there is only one part to this specification
         if len(spec) == 1:
             # it's my name
