@@ -9,14 +9,17 @@
 include pyre.def
 # the package
 PACKAGE = defaults
+
 # my subfolders
 RECURSE_DIRS = \
     merlin \
-    pyre \
+    pyre
+
 # the files
 EXPORT_ETC = \
-    merlin.cfg \
-    pyre.cfg
+    merlin.pfg \
+    pyre.pfg
+
 # add these to the clean pile
 PROJ_CLEAN += ${addprefix $(EXPORT_ETCDIR)/, $(EXPORT_ETC)}
 

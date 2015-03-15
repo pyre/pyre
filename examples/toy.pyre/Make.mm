@@ -5,17 +5,15 @@
 # (c) 1998-2015 all rights reserved
 #
 
+# project settings
+include pyre.def
 
-PROJECT = pyre
+# add these to the clean pile
 PROJ_TIDY += __pycache__
-
-#--------------------------------------------------------------------------
-#
 
 all: test clean
 
 test:
 	${PYTHON} ./run.py
-
 
 # end of file

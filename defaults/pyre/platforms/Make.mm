@@ -9,9 +9,11 @@
 include pyre.def
 # the package
 PACKAGE = defaults/$(PROJECT)/platforms
+
 # the files
 EXPORT_ETC = \
-    macports.cfg \
+    macports.pfg
+
 # add these to the clean pile
 PROJ_CLEAN += $(EXPORT_ETCDIR)
 

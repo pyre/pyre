@@ -9,6 +9,7 @@
 include pyre.def
 # the package
 PACKAGE = defaults/merlin
+
 # add these to the clean pile
 PROJ_CLEAN += \
     $(EXPORT_ETCDIR)/$(PROJECT)

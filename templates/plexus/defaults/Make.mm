@@ -12,9 +12,11 @@ PACKAGE = defaults
 # my subdirectories
 RECURSE_DIRS = \
     actions
+
 # the configuration files
 EXPORT_ETC = \
-    {project.name}.cfg
+    {project.name}.pfg
+
 # add these to the clean pile
 PROJ_CLEAN += ${{addprefix $(EXPORT_ETCDIR)/, $(EXPORT_ETC)}}
 

@@ -23,24 +23,24 @@ sanity:
 channels:
 	${PYTHON} ./debug.py
 	${PYTHON} ./debug-activation.py --journal.debug.activation
-	${PYTHON} ./debug-activation.py --config=activation.cfg
+	${PYTHON} ./debug-activation.py --config=activation.pfg
 	DEBUG_OPT=activation ${PYTHON} ./debug-activation.py
 	${PYTHON} ./debug-injection.py
 	${PYTHON} ./firewall.py
 	${PYTHON} ./firewall-activation.py --journal.firewall.activation=off
-	${PYTHON} ./firewall-activation.py --config=activation.cfg
+	${PYTHON} ./firewall-activation.py --config=activation.pfg
 	${PYTHON} ./firewall-injection.py
 	${PYTHON} ./info.py
 	${PYTHON} ./info-activation.py --journal.info.activation
-	${PYTHON} ./info-activation.py --config=activation.cfg
+	${PYTHON} ./info-activation.py --config=activation.pfg
 	${PYTHON} ./info-injection.py
 	${PYTHON} ./warning.py
 	${PYTHON} ./warning-activation.py --journal.warning.activation=off
-	${PYTHON} ./warning-activation.py --config=activation.cfg
+	${PYTHON} ./warning-activation.py --config=activation.pfg
 	${PYTHON} ./warning-injection.py
 	${PYTHON} ./error.py
 	${PYTHON} ./error-activation.py --journal.error.activation=off
-	${PYTHON} ./error-activation.py --config=activation.cfg
+	${PYTHON} ./error-activation.py --config=activation.pfg
 	${PYTHON} ./error-injection.py
 	${PYTHON} ./crosstalk.py
 

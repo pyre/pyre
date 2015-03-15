@@ -9,19 +9,12 @@
 PROJECT = gauss.pyre
 PACKAGE = defaults
 
-#--------------------------------------------------------------------------
-#
-
 all: export
 
-#--------------------------------------------------------------------------
-#
 
 EXPORT_ETC = \
-    gauss.cfg
-
+    gauss.pfg
 
 export:: export-etc
-
 
 # end of file

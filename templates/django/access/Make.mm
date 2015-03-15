@@ -21,7 +21,7 @@ all: tidy
 live:
 
 # make the authorized keys file
-authorized_keys: $(PUBLIC_KEYS) grant.py grant.cfg Make.mm
+authorized_keys: $(PUBLIC_KEYS) grant.py grant.pfg Make.mm
 	./grant.py
 
 deploy: authorized_keys
