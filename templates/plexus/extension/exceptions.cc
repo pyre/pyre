@@ -1,9 +1,9 @@
 // -*- C++ -*-
-// 
-// {pyre.user.name}
-// {pyre.user.affiliation}
+//
+// {project.authors}
+// {project.affiliations}
 // (c) {project.span} all rights reserved
-// 
+//
 
 #include <portinfo>
 #include <Python.h>
@@ -21,7 +21,7 @@ namespace {project.name} {{
 
 
 // exception registration
-PyObject * 
+PyObject *
 {project.name}::extension::
 registerExceptionHierarchy(PyObject * module) {{
 

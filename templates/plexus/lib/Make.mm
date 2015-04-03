@@ -1,8 +1,8 @@
 # -*- Makefile -*-
 # -*- coding: utf-8 -*-
 #
-# {pyre.user.name}
-# {pyre.user.affiliation}
+# {project.authors}
+# {project.affiliations}
 # (c) {project.span} all rights reserved
 #
 
