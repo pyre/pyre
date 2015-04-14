@@ -24,7 +24,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # types
     from ..schemata import uri
-    from .exceptions import ResolutionError
+    from .exceptions import FrameworkError, ResolutionError
     from .Actor import Actor as actor
     from .Foundry import Foundry as foundry
     from .Component import Component as component
@@ -262,8 +262,14 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         uri = '.'.join(cls.pyre_familyFragments())
         # if i don't have a public name, there is nothing to do
         if not uri: return
-        # hunt the implementors down
-        yield from cls.pyre_implementers(uri='import:{}'.format(uri))
+        # attempt to
+        try:
+            # hunt the implementors down
+            yield from cls.pyre_implementers(uri='import:{}'.format(uri))
+        # if anything goes wrong
+        except cls.FrameworkError:
+            # skip this step
+            pass
         # all done
         return
 
