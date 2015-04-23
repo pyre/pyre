@@ -18,6 +18,7 @@ class Parser:
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
         # build my scanner
         self.scanner = self.lexer()

@@ -193,7 +193,7 @@ class Application(pyre.component, metaclass=Director):
     # initialization hooks
     def pyre_loadLayout(self):
         """
-        Create my application layout object, typically an derivative of {pyre.shells.Layout}
+        Create my application layout object, typically a subclass of {pyre.shells.Layout}
         """
         # access the factory
         from .Layout import Layout

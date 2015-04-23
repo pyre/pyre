@@ -64,7 +64,7 @@ class Configurable(Dashboard):
         return
 
 
-    def pyre_showConfigurables(self, indent, **kwds):
+    def pyre_showConfigurables(self, indent='', **kwds):
         """
         Generate a description of my configurable state
         """
