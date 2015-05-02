@@ -105,6 +105,14 @@ class Folder(Node):
         return
 
 
+    def __iter__(self):
+        """
+        Return an iterator over my {contents}
+        """
+        # easy enough
+        return iter(self.contents)
+
+
     def __getitem__(self, uri):
         """
         Retrieve a node given its {uri} as the subscript
