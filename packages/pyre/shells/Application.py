@@ -219,10 +219,12 @@ class Application(pyre.component, metaclass=Director):
                 # split the folder name and save it; that's where i am from...
                 home = os.path.dirname(argv0)
 
+        # get my namespace
+        namespace = self.pyre_namespace
         # if i have my own home and my own namespace
-        if home and self.pyre_namespace:
+        if home and namespace:
             # my configuration directory should be at {home}/../defaults/{namespace}
-            cfg = os.path.join(home, os.path.pardir, self.DEFAULTS, self.pyre_namespace)
+            cfg = os.path.join(home, os.path.pardir, self.DEFAULTS, namespace)
             # if this exists
             if os.path.isdir(cfg):
                 # form my prefix
@@ -234,7 +236,6 @@ class Application(pyre.component, metaclass=Director):
 
         # let's try to work with my package and my namespace
         package = self.pyre_package()
-        namespace = self.pyre_namespace
         # if they both exist
         if package and namespace:
             # get the package prefix
