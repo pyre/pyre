@@ -17,11 +17,10 @@ class Gauss(pyre.application):
     """
 
     # types
-    from gauss.interfaces import integrator
-    from gauss.integrators import montecarlo
+    from gauss.integrators import integrator, montecarlo
 
     # public state
-    integrator = pyre.facility(interface=integrator, default=montecarlo)
+    engine = integrator()
 
     # interface
     @pyre.export
@@ -30,28 +29,30 @@ class Gauss(pyre.application):
         Invoke my {integrator} to perform some integral
         """
         # carry out the integration and print out the result
-        print(self.integrator.integrate())
+        self.info.line("integral = {}".format(self.engine.integrate()))
         # return with success
         return 0
 
 
 # main
 if __name__ == "__main__":
-    # get the name of the application
-    name = pyre.executive.configurator.get(name="name")
+    # check whether the user supplied a name for the application
+    name = pyre.executive.nameserver.get(name='name', default='sample')
     # instantiate
     app = Gauss(name=name)
+    # get the engine
+    engine = app.engine
     # print out the application configuration
-    integrator = app.integrator
-    print("application {!r}".format(app.pyre_name))
-    print("  integrator: {!r}".format(integrator.pyre_getFamilyName()))
-    print("  region: {!r}".format(integrator.region.pyre_getFamilyName()))
-    print("  integrand: {!r}".format(integrator.integrand.pyre_getFamilyName()))
+    app.info.line("application {!r}".format(app.pyre_name))
+    app.info.line("  integrator: {!r}".format(engine.pyre_family()))
+    app.info.line("  region: {!r}".format(engine.region.pyre_family()))
+    app.info.line("  integrand: {!r}".format(engine.integrand.pyre_family()))
     # invoke
     status = app.main()
+    # flush
+    app.info.log()
     # return the status to the os
-    import sys
-    sys.exit(status)
+    raise SystemExit(status)
 
 
 # end of file
