@@ -15,8 +15,7 @@ RECURSE_DIRS = \
     defaults \
     tests
 
-#--------------------------------------------------------------------------
-#
+# standard targets
 
 all:
 	BLD_ACTION="all" $(MM) recurse
@@ -30,6 +29,9 @@ clean::
 
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
+
+build:
+	BLD_ACTION="all" $(MM) recurse
 
 
 # end of file
