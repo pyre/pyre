@@ -73,6 +73,7 @@ from .Server import Server as server
 from .Client import Client as client
 
 # supported servers
+from .Backup import Backup as backup
 from .SQLite import SQLite as sqlite
 from .Postgres import Postgres as postgres
 

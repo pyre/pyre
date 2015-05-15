@@ -11,6 +11,7 @@ include pyre.def
 PACKAGE = db
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    Backup.py \
     Client.py \
     Collation.py \
     DataStore.py \
