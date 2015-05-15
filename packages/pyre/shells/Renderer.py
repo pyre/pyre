@@ -43,17 +43,10 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
         channel = '{}{}{}'.format(blue, metadata['channel'], normal)
         severity = '{}{}{}'.format(marker, metadata['severity'].upper(), normal)
 
-        # if the message has only one line
-        if len(page) == 1:
-            # construct the one liner
-            yield "{}: {}: {}".format(channel, severity, page[0])
-            # all done
-            return
-
-        # otherwise, build the first line of the message
+        # decorate the first line
         yield "{}: {}: {}".format(channel, severity, page[0])
         # and render the rest
-        for line in page[1:]: yield line
+        yield from page[1:]
 
         # all done
         return
