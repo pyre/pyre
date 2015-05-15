@@ -42,7 +42,7 @@ class OutputStream(Schema, Dashboard):
             # return the process stderr
             return sys.stderr
         # if the {value} is a string or a uri
-        if isinstance(value, str) or isintance(value, self.uri.locator):
+        if isinstance(value, str) or isinstance(value, self.uri.locator):
             # assume that the framework fileserver knows how to deal with it
             return self.pyre_fileserver.open(uri=value, mode=self.mode)
         # otherwise, leave it alone
