@@ -6,27 +6,26 @@
 #
 
 
+# the framework
+from pyre import db
 # the schema
 from . import schema
 
+
 # connect to the bizbook database under postgres
 def pg():
-    # access the package
-    import pyre.db
     # make a data store and connect to it
-    db = pyre.db.postgres(name="bizbook").attach()
+    datastore = db.postgres(name="bizbook").attach()
     # and return it
-    return db
+    return datastore
 
 
 # connect to the bizbook database under sqlite
 def sqlite():
-    # access the package
-    import pyre.db
     # make a data store and connect to it
-    db = pyre.db.sqlite(name="bizbook").attach()
+    datastore = db.sqlite(name="bizbook").attach()
     # and return it
-    return db
+    return datastore
 
 
 # end of file

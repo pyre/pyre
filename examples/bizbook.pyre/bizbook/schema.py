@@ -17,115 +17,115 @@ This file collects the table declarations for the {bizbook} database from
 
 
 # access the package
-import pyre.db
+import bizbook
 
 
-class Location(pyre.db.table, id="locations"):
+class Location(bizbook.db.table, id="locations"):
     """
     The table of locations
     """
-    id = pyre.db.str().primary()
-    address = pyre.db.str()
-    city = pyre.db.str()
-    state = pyre.db.str()
-    zip = pyre.db.str()
+    id = bizbook.db.str().primary()
+    address = bizbook.db.str()
+    city = bizbook.db.str()
+    state = bizbook.db.str()
+    zip = bizbook.db.str()
 
 
-class Person(pyre.db.table, id="persons"):
+class Person(bizbook.db.table, id="persons"):
     """
     The table of people
     """
-    ssn = pyre.db.str().primary()
-    lastname = pyre.db.str()
-    firstname = pyre.db.str()
+    ssn = bizbook.db.str().primary()
+    lastname = bizbook.db.str()
+    firstname = bizbook.db.str()
 
 
-class Publisher(pyre.db.table, id="publishers"):
+class Publisher(bizbook.db.table, id="publishers"):
     """
     The book publishers
     """
-    id = pyre.db.str().primary()
-    name = pyre.db.str()
-    headquarters = pyre.db.reference(key=Location.id)
+    id = bizbook.db.str().primary()
+    name = bizbook.db.str()
+    headquarters = bizbook.db.reference(key=Location.id)
 
 
-class Address(pyre.db.table, id="addresses"):
+class Address(bizbook.db.table, id="addresses"):
     """
     The table of addresses
     """
-    person = pyre.db.reference(key=Person.ssn)
-    address = pyre.db.reference(key=Location.id)
+    person = bizbook.db.reference(key=Person.ssn)
+    address = bizbook.db.reference(key=Location.id)
 
 
-class Staff(pyre.db.table, id="staff"):
+class Staff(bizbook.db.table, id="staff"):
     """
     Information about employee roles
     """
-    person = pyre.db.reference(key=Person.ssn)
-    position = pyre.db.str()
+    person = bizbook.db.reference(key=Person.ssn)
+    position = bizbook.db.str()
 
 
-class ContactMethod(pyre.db.table, id="contact_methods"):
+class ContactMethod(bizbook.db.table, id="contact_methods"):
     """
     Contact information
     """
-    uid = pyre.db.str()
-    method = pyre.db.str()
-    person = pyre.db.reference(key=Person.ssn)
+    uid = bizbook.db.str()
+    method = bizbook.db.str()
+    person = bizbook.db.reference(key=Person.ssn)
 
 
-class Book(pyre.db.table, id="books"):
+class Book(bizbook.db.table, id="books"):
     """
     Books
     """
-    id = pyre.db.str().primary()
-    title = pyre.db.str()
-    category = pyre.db.str()
-    publisher = pyre.db.reference(key=Publisher.id)
-    date = pyre.db.str()
-    price = pyre.db.decimal(precision=11, scale=2)
-    advance = pyre.db.decimal(precision=8, scale=2)
-    description = pyre.db.str()
+    id = bizbook.db.str().primary()
+    title = bizbook.db.str()
+    category = bizbook.db.str()
+    publisher = bizbook.db.reference(key=Publisher.id)
+    date = bizbook.db.str()
+    price = bizbook.db.decimal(precision=11, scale=2)
+    advance = bizbook.db.decimal(precision=8, scale=2)
+    description = bizbook.db.str()
 
 
-class Author(pyre.db.table, id="authors"):
+class Author(bizbook.db.table, id="authors"):
     """
     Author information
     """
-    author = pyre.db.reference(key=Person.ssn)
-    book = pyre.db.reference(key=Book.id)
-    ordinal = pyre.db.int()
-    share = pyre.db.decimal(precision=4, scale=3)
+    author = bizbook.db.reference(key=Person.ssn)
+    book = bizbook.db.reference(key=Book.id)
+    ordinal = bizbook.db.int()
+    share = bizbook.db.decimal(precision=4, scale=3)
 
 
-class Editor(pyre.db.table, id="editors"):
+class Editor(bizbook.db.table, id="editors"):
     """
     Editor information
     """
-    editor = pyre.db.reference(key=Person.ssn)
-    book = pyre.db.reference(key=Book.id)
-    ordinal = pyre.db.int()
+    editor = bizbook.db.reference(key=Person.ssn)
+    book = bizbook.db.reference(key=Book.id)
+    ordinal = bizbook.db.int()
 
 
-class Invoice(pyre.db.table, id="invoices"):
+class Invoice(bizbook.db.table, id="invoices"):
     """
     Invoices
     """
-    id = pyre.db.str().primary()
-    client = pyre.db.str()
-    po = pyre.db.str()
-    date = pyre.db.str()
+    id = bizbook.db.str().primary()
+    client = bizbook.db.str()
+    po = bizbook.db.str()
+    date = bizbook.db.str()
 
 
-class InvoiceItem(pyre.db.table, id="invoice_item"):
+class InvoiceItem(bizbook.db.table, id="invoice_item"):
     """
     Invoice line items
     """
-    invoice = pyre.db.reference(key=Invoice.id)
-    book = pyre.db.reference(key=Book.id)
-    ordered = pyre.db.int()
-    shipped = pyre.db.int()
-    date = pyre.db.str()
+    invoice = bizbook.db.reference(key=Invoice.id)
+    book = bizbook.db.reference(key=Book.id)
+    ordered = bizbook.db.int()
+    shipped = bizbook.db.int()
+    date = bizbook.db.str()
 
 
 # end of file

@@ -18,18 +18,15 @@ def test():
     # journal.debug("postgres.execute").active = True
     # journal.debug("postgres.connection").active = True
 
-    # access the postgres package
-    import pyre.db
+    # get the bizbook schema
+    import bizbook
 
     # build a database component
-    db = pyre.db.postgres(name="bizbook")
+    db = bizbook.db.postgres(name="bizbook")
     # check that we are connected to the right database
     assert db.database == 'bizbook'
     # connect to the bizbook database
     db.attach()
-
-    # get the bizbook schema
-    import bizbook
 
     # build some locations
     location = bizbook.schema.Location

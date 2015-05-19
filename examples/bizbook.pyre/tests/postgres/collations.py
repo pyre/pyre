@@ -14,12 +14,11 @@ Sanity check: verify that the package is accessible
 
 def test():
     # access the packages
-    import pyre.db
     import bizbook
     import operator
 
     # build a simple projection
-    class titles(pyre.db.query, book=bizbook.schema.Book):
+    class titles(bizbook.db.query, book=bizbook.schema.Book):
         """A short query on the book table"""
         id = book.id
         title = book.title
@@ -30,7 +29,7 @@ def test():
     class collated(titles):
         """Extend the 'titles' query with a collation order"""
         # collation
-        order = (titles.category, pyre.db.descending(titles.price), titles.title)
+        order = (titles.category, bizbook.db.descending(titles.price), titles.title)
 
     # build datastore
     db = bizbook.pg()

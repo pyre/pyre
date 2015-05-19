@@ -14,12 +14,11 @@ Sanity check: verify that the package is accessible
 
 def test():
     # access the packages
-    import pyre.db
     import bizbook
 
 
     # build a simple projection
-    class titles(pyre.db.query, book=bizbook.schema.Book):
+    class titles(bizbook.db.query, book=bizbook.schema.Book):
         """A short query on the book table"""
         id = book.id
         title = book.title
