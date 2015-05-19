@@ -8,7 +8,6 @@
 # global options for mpi
 PROJECT = mpi
 # the live host
-PROJ_LIVE_HOST = pyre.orthologue.com
-PROJ_LIVE_ROOT = /home/projects/pyre/1.0
+include live.def
 
 # end of file
