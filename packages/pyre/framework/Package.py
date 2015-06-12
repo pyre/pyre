@@ -26,6 +26,7 @@ class Package(Named):
     prefix = None # the home of the package installation
     defaults = None # the location of the package configuration files
     # bookkeeping
+    locator = None # my birthplace
     sources = None
     protocols = None # the collection of encountered protocols
     components = None # the collection of encountered components
@@ -88,21 +89,21 @@ class Package(Named):
         return self.home, self.prefix, self.defaults
 
 
-    def configure(self, executive, locator=None):
+    def configure(self, executive):
         """
         Locate and ask the executive to load my configuration files
         """
         # my configuration priority
         priority = executive.priority.package
-        # if I were not given a {locator}, make one
-        locator = tracking.here(level=1) if locator is None else locator
         # get the executive to do the rest
-        return executive.configure(stem=self.name, priority=priority, locator=locator)
+        return executive.configure(stem=self.name, priority=priority, locator=self.locator)
 
 
     # meta-methods
-    def __init__(self, **kwds):
+    def __init__(self, locator, **kwds):
         super().__init__(**kwds)
+        # remember the location of the package registration
+        self.locator = locator
         # initialize my attributes
         self.sources = []
         self.protocols = set()

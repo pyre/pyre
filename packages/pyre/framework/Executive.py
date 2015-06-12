@@ -343,7 +343,7 @@ class Executive:
         # register it
         package.register(executive=self, file=file)
         # configure it
-        package.configure(executive=self, locator=locator)
+        package.configure(executive=self)
 
         # all done
         return package

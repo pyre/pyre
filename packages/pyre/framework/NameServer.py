@@ -64,7 +64,7 @@ class NameServer(Hierarchical):
         return key
 
 
-    def package(self, name, executive, locator=None):
+    def package(self, name, executive, locator):
         """
         Retrieve the named package from the model. If there is no such package, instantiate one,
         configure it, and add it to the model.
@@ -84,7 +84,7 @@ class NameServer(Hierarchical):
             # make one
             package = self.createPackage(name=name, locator=locator)
             # configure it
-            package.configure(executive=executive, locator=locator)
+            package.configure(executive=executive)
         # if it's there
         else:
             # get the value of the node
@@ -103,16 +103,14 @@ class NameServer(Hierarchical):
 
 
     # auxiliary object management
-    def createPackage(self, name, locator=None):
+    def createPackage(self, name, locator):
         """
         Build a new package node and attach it to the model
         """
         # make one
-        package = self.Package(name=name)
+        package = self.Package(name=name, locator=locator)
         # hash the name
         key = self._hash[name]
-        # if I were not given a locator, point to my caller
-        locator = tracking.here(level=1) if locator is None else locator
         # get the right priority
         priority = self.priority.package()
         # attach it to a slot
@@ -122,7 +120,7 @@ class NameServer(Hierarchical):
         # store it in the model
         self._nodes[key] = slot
         self._metadata[key] = self.info(name=name, key=key, split=split,
-                                        locator=locator, priority=priority)
+                                        locator=package.locator, priority=priority)
         # and return it
         return package
 
