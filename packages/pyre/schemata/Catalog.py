@@ -13,7 +13,7 @@ from .Mapping import Mapping
 # declaration
 class Catalog(Mapping):
     """
-    The list type declarator
+    The catalog type declarator
     """
 
 
