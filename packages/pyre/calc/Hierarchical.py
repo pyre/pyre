@@ -136,7 +136,7 @@ class Hierarchical(SymbolTable):
         # if {name} is a string
         if isinstance(name, str):
             # hash it
-            return context.hash(items=name.split(self.separator))
+            return context.hash(items=self.split(name=name))
         # if it is an iterable
         if isinstance(name, collections.Iterable):
             # skip the split, just hash
