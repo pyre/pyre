@@ -33,28 +33,11 @@
 // type aliases
 typedef std::string string_t;
 
-// firewall
-typedef pyre::journal::Firewall firewall_t;
-typedef firewall_t::index_t firewallindex_t;
-// debug
-typedef pyre::journal::Debug debug_t;
-typedef debug_t::index_t debugindex_t;
-// error
-typedef pyre::journal::Error error_t;
-typedef error_t::index_t errorindex_t;
-// informational
-typedef pyre::journal::Informational info_t;
-typedef info_t::index_t infoindex_t;
-// warning
-typedef pyre::journal::Warning warning_t;
-typedef warning_t::index_t warningindex_t;
-
-
 // initialization routines
-static debugindex_t initializeDebugIndex()
+static pyre::journal::Debug::index_t initializeDebugIndex()
 {
     // instantiate the map
-    debugindex_t channels;
+    pyre::journal::Debug::index_t channels;
     // read the magic environment variable
     const char * var = std::getenv("DEBUG_OPT");
     // if set
@@ -88,28 +71,28 @@ namespace pyre {
     namespace journal {
         // firewall
         template <>
-        firewallindex_t
-        firewall_t::channel_t::_index = firewallindex_t();
+        pyre::journal::Firewall::index_t
+        pyre::journal::Firewall::channel_t::_index = pyre::journal::Firewall::index_t();
 
         // debug
         template <>
-        debugindex_t
-        debug_t::channel_t::_index = initializeDebugIndex();
+        pyre::journal::Debug::index_t
+        pyre::journal::Debug::channel_t::_index = initializeDebugIndex();
 
         // error
         template <>
-        errorindex_t
-        error_t::channel_t::_index = errorindex_t();
+        pyre::journal::Error::index_t
+        pyre::journal::Error::channel_t::_index = pyre::journal::Error::index_t();
 
         // info
         template <>
-        infoindex_t
-        info_t::channel_t::_index = infoindex_t();
+        pyre::journal::Informational::index_t
+        pyre::journal::Informational::channel_t::_index = pyre::journal::Informational::index_t();
 
         // warning
         template <>
-        warningindex_t
-        warning_t::channel_t::_index = warningindex_t();
+        pyre::journal::Warning::index_t
+        pyre::journal::Warning::channel_t::_index = pyre::journal::Warning::index_t();
     }
 }
 
