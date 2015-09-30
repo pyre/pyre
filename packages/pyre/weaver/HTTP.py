@@ -27,9 +27,6 @@ class HTTP(pyre.component, implements=Language):
     encoding = pyre.properties.str(default='iso-8859-1')
     encoding.doc = 'the encoding for HTTP headers'
 
-    html = Language(default=HTML)
-    html.doc = 'the renderer of my payload'
-
 
     # public data
     version = 1,0 # my preferred protocol version
@@ -37,7 +34,7 @@ class HTTP(pyre.component, implements=Language):
 
     # mill obligations
     @pyre.export
-    def render(self, document, server, **kwds):
+    def render(self, document, **kwds):
         """
         Render the document
         """
@@ -48,7 +45,6 @@ class HTTP(pyre.component, implements=Language):
         status = document.status
         headers = document.headers
         version = document.version
-        encoding = document.encoding
 
         # decide which protocol to use
         protocol = self.version if self.version < version else version
@@ -58,7 +54,7 @@ class HTTP(pyre.component, implements=Language):
         yield "HTTP/{} {} {}".format(protocol, code, status).encode(self.encoding, 'strict')
 
         # assemble the payload
-        page = splicer.join(self.body(document=document, **kwds)).encode(encoding, 'strict')
+        page = self.body(document=document, **kwds)
         # inform the client about the size of the payload
         headers['Content-Length'] = len(page)
 
@@ -88,10 +84,8 @@ class HTTP(pyre.component, implements=Language):
         """
         Render the body of the document
         """
-        # get my html renderer to do his thing
-        yield from self.html.render(document=document, **kwds)
-        # all done
-        return
+        # ask the document to present itself
+        return document.render(**kwds)
 
 
     @pyre.export
