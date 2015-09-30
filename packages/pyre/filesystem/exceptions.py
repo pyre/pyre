@@ -21,7 +21,7 @@ class GenericError(FrameworkError):
     """
 
     def __init__(self, uri, **kwds):
-        #chain up
+        # chain up
         super().__init__(**kwds)
         # save the uri and a string version of it
         self.uri = uri
@@ -35,10 +35,16 @@ class DirectoryListingError(GenericError):
     Exception raised when something goes wrong with listing the contents of a local directory
     """
 
+    # public data
+    description = "error while accessing {0.uri!r}: {0.error}"
+
+    # meta-methods
     def __init__(self, error, **kwds):
-        msg = "error while accessing {0.uri!r}: {0.error}"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.error = error
+        # all done
         return
 
 
@@ -47,10 +53,16 @@ class MountPointError(GenericError):
     Exception generated when the root of a filesystem is invalid
     """
 
+    # public data
+    description = "error while mounting {0.uri!r}: {0.error}"
+
+    # meta-methods
     def __init__(self, error, **kwds):
-        msg = "error while mounting {0.uri!r}: {0.error}"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.error = error
+        # all done
         return
 
 
@@ -62,9 +74,12 @@ class FilesystemError(GenericError):
     """
 
     def __init__(self, filesystem, node, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the error info
         self.filesystem = filesystem
         self.node = node
+        # all done
         return
 
 
@@ -73,10 +88,16 @@ class NotFoundError(FilesystemError):
     Exception raised when attempting to find a node and the supplied URI does not exist
     """
 
+    # public data
+    description = "while looking for {0.rep!r}: {0.fragment!r} not found"
+
+    # meta-methods
     def __init__(self, fragment, **kwds):
-        msg = "while looking for {0.rep!r}: {0.fragment!r} not found"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.fragment = fragment
+        # all done
         return
 
 
@@ -85,10 +106,8 @@ class SourceNotFoundError(FilesystemError):
     Exception raised when attempting to find a node and the supplied URI does not exist
     """
 
-    def __init__(self, **kwds):
-        msg = "while looking for {0.rep!r}: file not found"
-        super().__init__(description=msg, **kwds)
-        return
+    # public data
+    description = "while looking for {0.rep!r}: file not found"
 
 
 class FolderError(FilesystemError):
@@ -96,10 +115,16 @@ class FolderError(FilesystemError):
     Exception raised when a request is made for the contents of a node that is not a folder
     """
 
+    # public data
+    description = "while looking for {0.rep!r}: {0.fragment!r} is not a folder"
+
+    # meta-methods
     def __init__(self, fragment, **kwds):
-        msg = "while looking for {0.rep!r}: {0.fragment!r} is not a folder"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.fragment = fragment
+        # all done
         return
 
 
@@ -108,10 +133,8 @@ class IsFolderError(FilesystemError):
     Exception raised when a request is made to open a folder
     """
 
-    def __init__(self, **kwds):
-        msg = "while opening {0.rep!r}: can't open; it is a folder"
-        super().__init__(description=msg, **kwds)
-        return
+    # public data
+    description = "while opening {0.rep!r}: can't open; it is a folder"
 
 
 class FolderInsertionError(FilesystemError):
@@ -120,10 +143,16 @@ class FolderInsertionError(FilesystemError):
     a folder
     """
 
+    # public data
+    description = "error while inserting {0.rep!r}: {0.target!r} is not a folder"
+
+    # meta-methods
     def __init__(self, target, **kwds):
-        msg = "error while inserting {0.rep!r}: {0.target!r} is not a folder"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.target = target
+        # all done
         return
 
 
@@ -132,10 +161,16 @@ class URISpecificationError(GenericError):
     Exception raised when the supplied uri cannot be decoded
     """
 
+    # public data
+    description = "{0.rep!r}: {0.reason}"
+
+    # meta-methods
     def __init__(self, reason, **kwds):
-        msg = "{0.rep!r}: {0.reason}"
-        super().__init__(description=msg , **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.reason = reason
+        # all done
         return
 
 

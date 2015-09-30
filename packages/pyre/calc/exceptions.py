@@ -20,11 +20,17 @@ class EvaluationError(NodeError):
     Base class for node evaluation exceptions
     """
 
+    # public data
+    description = "evaluation error: {0.error}"
+
+    # meta-methods
     def __init__(self, error, node=None, **kwds):
-        msg = "evaluation error: {0.error}"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.node = node
         self.error = error
+        # all done
         return
 
 
@@ -40,10 +46,16 @@ class EmptyExpressionError(ExpressionError):
     other nodes
     """
 
+    # public data
+    description = "while parsing {0.expression!r}: no references found"
+
+    # meta-methods
     def __init__(self, formula, **kwds):
-        msg = "while parsing {0.expression!r}: no references found"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.expression = formula
+        # all done
         return
 
 
@@ -53,11 +65,17 @@ class ExpressionSyntaxError(ExpressionError):
     expression
     """
 
+    # public data
+    description = "while evaluating {0.expression!r}: {0.error}"
+
+    # meta-methods
     def __init__(self, formula, error, **kwds):
-        msg = "while evaluating {0.expression!r}: {0.error}"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.expression = formula
         self.error = error
+        # all done
         return
 
 
@@ -66,11 +84,17 @@ class UnresolvedNodeError(NodeError):
     Signal a value request from an unresolved node
     """
 
+    # public data
+    description = "node {0.name!r} is unresolved"
+
+    # meta-methods
     def __init__(self, name, node=None, **kwds):
-        msg = "node {0.name!r} is unresolved"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.name = name
         self.node = node
+        # all done
         return
 
 
@@ -79,13 +103,14 @@ class AliasingError(NodeError):
     Signal that an alias was requested among names that were associated with existing nodes
     """
 
-    def __init__(self,
-                 key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo, **kwds):
-        # build the error format string
-        msg = "both {0.target!r} and {0.alias!r} have existing nodes"
+    # public data
+    description = "both {0.target!r} and {0.alias!r} have existing nodes"
+
+    # meta-methods
+    def __init__(self, key, target, alias, targetNode, targetInfo, aliasNode, aliasInfo, **kwds):
         # chain up
-        super().__init__(description=msg, **kwds)
-        # save the information
+        super().__init__(**kwds)
+        # save the error info
         self.key = key
         self.target = target
         self.alias = alias

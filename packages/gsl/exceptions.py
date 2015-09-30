@@ -11,11 +11,7 @@ class GSLError(Exception):
     Base class for all GSL related errors
     """
 
-    def __init__(self, description, **kwds):
-        super().__init__(**kwds)
-        self.description = description
-        return
-
+    # meta-methods
     def __str__(self):
         # return the error description
         return self.description

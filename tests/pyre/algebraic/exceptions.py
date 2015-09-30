@@ -17,7 +17,7 @@ def test():
     from pyre.algebraic.exceptions import NodeError, CircularReferenceError
 
     try:
-        raise NodeError(description="generic error")
+        raise NodeError()
     except NodeError as error:
         pass
 

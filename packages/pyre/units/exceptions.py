@@ -23,9 +23,16 @@ class ConversionError(UnitError):
     argument
     """
 
+    # public data
+    description = "cannot convert unit instance to float"
+
+    # meta-methods
     def __init__(self, operand, **kwds):
-        super().__init__(description="cannot convert unit instance to float", **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.op = operand
+        # all done
         return
 
 
@@ -35,12 +42,18 @@ class CompatibilityError(UnitError):
     adding lengths to times
     """
 
+    # public data
+    description = "{0.operation}: {0.op1} and {0.op2} are incompatible"
+
+    # meta-methods
     def __init__(self, operation, op1, op2, **kwds):
-        msg = "{0.operation}: {0.op1} and {0.op2} are incompatible"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.operation = operation
         self.op1 = op1
         self.op2 = op2
+        # all done
         return
 
 

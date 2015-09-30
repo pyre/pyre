@@ -27,11 +27,13 @@ class ConstraintViolationError(FrameworkError):
     to handle the failure.
     """
 
+    # public data
+    description  = "{0.value!r} violates the constraint ({0.constraint})"
+
+    # meta-methods
     def __init__(self, constraint, value, **kwds):
-        # build the message
-        msg  = "{0.value!r} violates the constraint ({0.constraint})"
         # chain  up
-        super().__init__(description=msg, **kwds)
+        super().__init__(**kwds)
         # save some context
         self.constraint = constraint
         self.value = value

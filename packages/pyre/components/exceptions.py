@@ -26,14 +26,18 @@ class CategoryMismatchError(ComponentError):
     categories
     """
 
-    def __init__(self, configurable, target, name, **kwds):
-        reason = "category mismatch in trait {0.name!r} between {0.configurable} and {0.target}"
-        super().__init__(description=reason, **kwds)
+    # public data
+    description = "category mismatch in trait {0.name!r} between {0.configurable} and {0.target}"
 
+    # meta-methods
+    def __init__(self, configurable, target, name, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.configurable = configurable
         self.target = target
         self.name = name
-
+        # all done
         return
 
 
@@ -43,13 +47,17 @@ class ImplementationSpecificationError(ComponentError):
     errors, e.g. classes that don't derive from Protocol
     """
 
-    def __init__(self, name, errors, **kwds):
-        msg = '{0.name}: poorly formed implementation specification'
-        super().__init__(description=msg, **kwds)
+    # public data
+    description = '{0.name}: poorly formed implementation specification'
 
+    # meta-methods
+    def __init__(self, name, errors, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.name = name
         self.errors = errors
-
+        # all done
         return
 
 
@@ -59,22 +67,24 @@ class ProtocolError(ComponentError):
     implementation specification
     """
 
+    # meta-methods
     def __init__(self, component, protocol, report, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # and record the error conditions for whomever may be catching this exception
+        self.component = component
+        self.protocol = protocol
+        self.report = report
         # extract the actual protocols, skipping {object}
         protocols = tuple(str(base) for base in protocol.pyre_pedigree)
         # support for singular/plural
         s = '' if len(protocols) == 1 else 's'
         # here is the error description
-        reason = (
+        self.description = (
             "{{0.component}} does not implement correctly the following protocol{}: {}"
             .format(s, ", ".join(protocols)))
-        # pass this information along to my superclass
-        super().__init__(description=reason, **kwds)
-        # and record the error conditions for whomever may be catching this exception
-        self.component = component
-        self.protocol = protocol
-        self.report = report
 
+        # all done
         return
 
 
@@ -83,16 +93,17 @@ class TraitNotFoundError(ComponentError):
     Exception raised when a request for a trait fails
     """
 
-    def __init__(self, configurable, name, **kwds):
-        # build the reason
-        reason = "{0.configurable} has no trait named {0.name!r}"
-        # pass it on
-        super().__init__(description=reason, **kwds)
+    # public data
+    description = "{0.configurable} has no trait named {0.name!r}"
 
+    # meta-methods
+    def __init__(self, configurable, name, **kwds):
+        # pass it on
+        super().__init__(**kwds)
         # save the source of the error
         self.configurable = configurable
         self.name = name
-
+        # all done
         return
 
 
@@ -101,14 +112,19 @@ class FacilitySpecificationError(ComponentError):
     Exception raised when a facility cannot instantiate its configuration specification
     """
 
+    # public data
+    description = "{0.__name__}.{0.trait.name}: could not instantiate {0.value!r}"
+
+    # meta-methods
     def __init__(self, configurable, trait, value, **kwds):
-        reason = "{0.__name__}.{0.trait.name}: could not instantiate {0.value!r}"
-        super().__init__(description=reason, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
 
         self.configurable = configurable
         self.trait = trait
         self.value = value
-
+        # all done
         return
 
 
@@ -117,11 +133,13 @@ class ResolutionError(ComponentError):
     Exception raised when a protocol cannot resolve a string into a component
     """
 
+    # public data
+    description = '{0.protocol} could not resolve {0.value!r} into a component'
+
+    # meta-methods
     def __init__(self, protocol, value, **kwds):
-        # build a description
-        reason = '{0.protocol} could not resolve {0.value!r} into a component'
         # chain up
-        super().__init__(description=reason, **kwds)
+        super().__init__(**kwds)
         # store my context
         self.protocol = protocol
         self.value = value

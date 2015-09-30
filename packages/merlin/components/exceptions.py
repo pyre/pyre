@@ -22,11 +22,13 @@ class SpellNotFoundError(MerlinError):
     Exception raised when the requested spell cannot be located
     """
 
+    # public data
+    description = "spell {.spell!r} not found"
+
+    # meta-methods
     def __init__(self, spell, **kwds):
-        # set up the message
-        msg = "spell {.spell!r} not found"
         # chain up
-        super().__init__(description=msg, **kwds)
+        super().__init__(**kwds)
         # save the missing spell name
         self.spell = spell
         # all done

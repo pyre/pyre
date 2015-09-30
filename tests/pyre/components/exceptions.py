@@ -25,7 +25,7 @@ def test():
     c2 = component(name="c2")
 
     try:
-        raise ComponentError(description=None)
+        raise ComponentError()
     except ComponentError as error:
         pass
 

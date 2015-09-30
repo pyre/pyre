@@ -16,13 +16,13 @@ class FirewallError(PyreError):
     Exception raised whenever a fatal firewall is encountered
     """
 
+    # public data
+    description = "firewall breached; aborting..."
 
+    # meta-methods
     def __init__(self, firewall, **kwds):
-        # build the info
-        reason = "firewall breached; aborting..."
-        locator = firewall.locator
         # chain up
-        super().__init__(description=reason, locator=locator, **kwds)
+        super().__init__(locator=firewall.locator, **kwds)
         # record the error
         self.firewall = firewall
         # all done
@@ -36,12 +36,13 @@ class ApplicationError(PyreError):
     """
 
 
+    # public data
+    description = "firewall breached; aborting..."
+
+    # meta-methods
     def __init__(self, error, **kwds):
-        # build the info
-        reason = "firewall breached; aborting..."
-        locator = error.locator
         # chain up
-        super().__init__(description=reason, locator=locator, **kwds)
+        super().__init__(locator=error.locator, **kwds)
         # record the error
         self.error = error
         # all done

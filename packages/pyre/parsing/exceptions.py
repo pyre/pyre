@@ -28,21 +28,21 @@ class IndentationError(ParsingError):
     Exception raised when the scanner detects an inconsistent indentation pattern in the source
     """
 
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(description="bad indentation", **kwds)
-        # all done
-        return
+    # public data
+    description = "bad indentation"
 
 
 class SyntaxError(ParsingError):
     """
     Exception raised when a syntax error is detected
     """
+    # public data
+    description = "syntax error: {0.token.lexeme!r}"
 
+    # meta-methods
     def __init__(self, token, **kwds):
         # chain up
-        super().__init__(description="syntax error: {0.token.lexeme!r}", **kwds)
+        super().__init__(**kwds)
         # save the out of place token
         self.token = token
         # all done
@@ -54,9 +54,13 @@ class TokenizationError(ParsingError):
     Exception raised when the scanner fails to extract a token from the input stream
     """
 
+    # public data
+    description = "could not match {0.text!r}"
+
+    # meta-methods
     def __init__(self, text, **kwds):
         # chain up
-        super().__init__(description="could not match {0.text!r}", **kwds)
+        super().__init__(**kwds)
         # save the text we couldn't tokenize
         self.text = text
         # all done

@@ -18,7 +18,7 @@ def test():
         )
 
     try:
-        raise ParsingError(description=None, locator=None)
+        raise ParsingError()
     except ParsingError as error:
         pass
 

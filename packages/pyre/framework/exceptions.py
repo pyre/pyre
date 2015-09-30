@@ -18,10 +18,10 @@ class PyreError(Exception):
     def __init__(self, description=None, locator=None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # check whether there is a non-trivial error description to store
-        if description: self.description = description
         # attach the locator
         self.locator = locator
+        # check whether we have to attach a special error description
+        if description is not None: self.description = description
         # all done
         return
 

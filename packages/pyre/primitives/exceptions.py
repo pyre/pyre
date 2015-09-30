@@ -15,9 +15,13 @@ class ParsingError(FrameworkError):
     Exception raised on failed attempts to convert a string value to one of the primitive types
     """
 
+    # meta-methods
     def __init__(self, value, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the error info
         self.value = value
+        # all done
         return
 
 

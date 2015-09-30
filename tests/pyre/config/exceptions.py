@@ -17,7 +17,7 @@ def test():
     from pyre.config.exceptions import ConfigurationError
 
     try:
-        raise ConfigurationError(description=None)
+        raise ConfigurationError()
     except ConfigurationError as error:
         pass
 

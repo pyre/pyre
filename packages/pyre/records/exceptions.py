@@ -29,10 +29,8 @@ class SourceSpecificationError(RecordError):
     specification
     """
 
-    def __init__(self, **kwds):
-        reason = "invalid input source specification"
-        super().__init__(description=reason, **kwds)
-        return
+    # public data
+    description = "invalid input source specification"
 
 
 # end of file

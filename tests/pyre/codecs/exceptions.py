@@ -17,17 +17,17 @@ def test():
     from pyre.config.exceptions import CodecError, DecodingError, EncodingError
 
     try:
-        raise CodecError(codec=None, uri=None, locator=None, description=None)
+        raise CodecError(codec=None, uri=None, locator=None)
     except CodecError as error:
         pass
 
     try:
-        raise DecodingError(codec=None, uri=None, locator=None, description=None)
+        raise DecodingError(codec=None, uri=None, locator=None)
     except DecodingError as error:
         pass
 
     try:
-        raise EncodingError(codec=None, uri=None, locator=None, description=None)
+        raise EncodingError(codec=None, uri=None, locator=None)
     except EncodingError as error:
         pass
 

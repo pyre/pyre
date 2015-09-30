@@ -25,10 +25,17 @@ class CodecError(ConfigurationError):
     Base class for codec errors
     """
 
-    def __init__(self, codec, uri="", description="generic codec error", **kwds):
-        super().__init__(description=description, **kwds)
+    # public data
+    description = "generic codec error"
+
+    # meta-methods
+    def __init__(self, codec, uri="",  **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.codec = codec
         self.uri = uri
+        # all done
         return
 
 
@@ -37,10 +44,16 @@ class UnknownEncodingError(CodecError):
     A request for an unknown codec was made
     """
 
+    # public data
+    description = '{0.uri.uri!r}: unknown encoding {0.encoding!r}'
+
+    # meta-methods
     def __init__(self, encoding, **kwds):
-        description = '{0.uri.uri!r}: unknown encoding {0.encoding!r}'
-        super().__init__(codec=None, description=description, **kwds)
+        # chain up
+        super().__init__(codec=None, **kwds)
+        # save the error info
         self.encoding = encoding
+        # all done
         return
 
 
@@ -64,18 +77,28 @@ class LoadingError(CodecError):
 
 class ShelfError(ConfigurationError):
 
+    # meta-methods
     def __init__(self, shelf, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the error info
         self.shelf = shelf
+        # all done
         return
 
 
 class SymbolNotFoundError(ShelfError):
 
+    # meta-methods
+    description = "symbol {0.symbol!r} not found in {0.shelf!r}"
+
+    # meta-methods
     def __init__(self, symbol, **kwds):
-        msg = "symbol {0.symbol!r} not found in {0.shelf!r}"
-        super().__init__(description=msg, **kwds)
+        # chain up
+        super().__init__(**kwds)
+        # save the error info
         self.symbol = symbol
+        # all done
         return
 
 

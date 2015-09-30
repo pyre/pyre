@@ -21,9 +21,13 @@ class CastingError(SchemaError):
     Exception raised on failed attempts to convert a value to one of the supported types
     """
 
+    # meta-methods
     def __init__(self, value, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the error info
         self.value = value
+        # all done
         return
 
 
