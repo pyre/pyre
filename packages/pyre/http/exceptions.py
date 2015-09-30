@@ -17,6 +17,17 @@ class ProtocolError(Response):
     """
 
 
+    # interface
+    def render(self, **kwds):
+        """
+        Create a representation of the error suitable for transporting to the user agent
+        """
+        # assemble the page
+        page = str(self).encode(self.encoding, 'strict')
+        # and send it off
+        return page
+
+
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -45,7 +56,7 @@ class ProtocolError(Response):
           <p>
             The server <em>{0.server.name}</em> is very unhappy and returned error code {0.code}.
           </p>
-          <p>The standard description for this error is: {0.__doc__}</p>
+          <p>The standard description for this error is: <em>{0.__doc__}</em></p>
           <p>{0.description}</p>
         </body>
         """.format(self)

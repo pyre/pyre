@@ -23,10 +23,12 @@ class Response(NexusError):
     # correct behavior, derive from {Exception}. The motivation is flow control rather than
     # signaling erroneous conditions. The process of assembling the correct response is rather
     # complex, and the server may need to bail out from arbitrarily deeply in the work flow. I
-    # don't think that explicit unwinding of th stack is the right way to go; let python do the
-    # work...
+    # do not think that explicit unwinding of the stack is the right way to go; let python do
+    # the work...
 
     # public data
+    code = None # a numeric code indicating the type of HTTP response
+    status = '' # a very short description of the type of HTTP response
     server = None # the server that accepted the client request
     headers = None # meta data about the response
     encoding = 'utf-8' # the default encoding for the response payload
