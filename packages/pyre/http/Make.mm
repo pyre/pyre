@@ -15,6 +15,7 @@ EXPORT_PYTHON_MODULES = \
     Request.py \
     Response.py \
     Server.py \
+    documents.py \
     exceptions.py \
     responses.py \
     __init__.py

@@ -7,7 +7,7 @@
 
 
 # exceptions
-from .exceptions import Response, ProtocolError
+from .exceptions import ProtocolError
 
 
 # specific responses
@@ -20,13 +20,6 @@ class Continue(ProtocolError):
     status = __doc__
     description = "Request received, please continue"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class SwitchingProtocols(ProtocolError):
     """
@@ -36,30 +29,6 @@ class SwitchingProtocols(ProtocolError):
     code = 101
     status = __doc__
     description = "Switching to new protocol; obey Upgrade header"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
-
-class OK(Response):
-    """
-    OK
-    """
-    # state
-    code = 200
-    status = __doc__
-    description = "Request fulfilled, document follows"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class Created(ProtocolError):
@@ -71,13 +40,6 @@ class Created(ProtocolError):
     status = __doc__
     description = "Document created, URL follows"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class Accepted(ProtocolError):
     """
@@ -87,13 +49,6 @@ class Accepted(ProtocolError):
     code = 202
     status = __doc__
     description = "Request accepted, processing continues off-line"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class NonAuthoritativeInformation(ProtocolError):
@@ -105,13 +60,6 @@ class NonAuthoritativeInformation(ProtocolError):
     status = __doc__
     description = "Request fulfilled from cache"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class NoContent(ProtocolError):
     """
@@ -121,13 +69,6 @@ class NoContent(ProtocolError):
     code = 204
     status = __doc__
     description = "Request fulfilled, nothing follows"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class ResetContent(ProtocolError):
@@ -139,12 +80,6 @@ class ResetContent(ProtocolError):
     status = __doc__
     description = "Clear input form for further input."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class PartialContent(ProtocolError):
@@ -156,13 +91,6 @@ class PartialContent(ProtocolError):
     status = __doc__
     description = "Partial content follows."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class MultipleChoices(ProtocolError):
     """
@@ -172,13 +100,6 @@ class MultipleChoices(ProtocolError):
     code = 300
     status = __doc__
     description = "Object has several resources -- see URI list"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class MovedPermanently(ProtocolError):
@@ -190,13 +111,6 @@ class MovedPermanently(ProtocolError):
     status = __doc__
     description = "Object moved permanently -- see URI list"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class Found(ProtocolError):
     """
@@ -206,13 +120,6 @@ class Found(ProtocolError):
     code = 302
     status = __doc__
     description = "Object moved temporarily -- see URI list"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class SeeOther(ProtocolError):
@@ -224,13 +131,6 @@ class SeeOther(ProtocolError):
     status = __doc__
     description = "Object moved -- see Method and URL list"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class NotModified(ProtocolError):
     """
@@ -240,13 +140,6 @@ class NotModified(ProtocolError):
     code = 304
     status = __doc__
     description = "Document has not changed since given time"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class UseProxy(ProtocolError):
@@ -258,13 +151,6 @@ class UseProxy(ProtocolError):
     status = __doc__
     description = "You must use proxy specified in Location to access this resource."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class TemporaryRedirect(ProtocolError):
     """
@@ -274,13 +160,6 @@ class TemporaryRedirect(ProtocolError):
     code = 307
     status = __doc__
     description = "Object moved temporarily -- see URI list"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class BadRequestSyntax(ProtocolError):
@@ -292,13 +171,6 @@ class BadRequestSyntax(ProtocolError):
     status = __doc__
     description = "Bad request syntax or unsupported method"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class Unauthorized(ProtocolError):
     """
@@ -308,13 +180,6 @@ class Unauthorized(ProtocolError):
     code = 401
     status = __doc__
     description = "No permission -- see authorization schemes"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class PaymentRequired(ProtocolError):
@@ -326,13 +191,6 @@ class PaymentRequired(ProtocolError):
     status = __doc__
     description = "No payment -- see charging schemes"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class Forbidden(ProtocolError):
     """
@@ -342,13 +200,6 @@ class Forbidden(ProtocolError):
     code = 403
     status = __doc__
     description = "Request forbidden -- authorization will not help"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class NotFound(ProtocolError):
@@ -360,13 +211,6 @@ class NotFound(ProtocolError):
     status = __doc__
     description = "Nothing matches the given URI"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class MethodNotAllowed(ProtocolError):
     """
@@ -376,13 +220,6 @@ class MethodNotAllowed(ProtocolError):
     code = 405
     status = __doc__
     description = "Specified method is invalid for this resource."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class NotAcceptable(ProtocolError):
@@ -394,13 +231,6 @@ class NotAcceptable(ProtocolError):
     status = __doc__
     description = "URI not available in preferred format."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class ProxyAuthenticationRequired(ProtocolError):
     """
@@ -410,13 +240,6 @@ class ProxyAuthenticationRequired(ProtocolError):
     code = 407
     status = __doc__
     description = "You must authenticate with this proxy before proceeding."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class RequestTimeout(ProtocolError):
@@ -428,13 +251,6 @@ class RequestTimeout(ProtocolError):
     status = __doc__
     description = "Request timed out; try again later."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class Conflict(ProtocolError):
     """
@@ -444,13 +260,6 @@ class Conflict(ProtocolError):
     code = 409
     status = __doc__
     description = "Request conflict."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class Gone(ProtocolError):
@@ -462,13 +271,6 @@ class Gone(ProtocolError):
     status = __doc__
     description = "URI no longer exists and has been permanently removed."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class LengthRequired(ProtocolError):
     """
@@ -478,13 +280,6 @@ class LengthRequired(ProtocolError):
     code = 411
     status = __doc__
     description = "Client must specify Content-Length."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class PreconditionFailed(ProtocolError):
@@ -496,13 +291,6 @@ class PreconditionFailed(ProtocolError):
     status = __doc__
     description = "Precondition in headers is false."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class RequestEntityTooLarge(ProtocolError):
     """
@@ -512,13 +300,6 @@ class RequestEntityTooLarge(ProtocolError):
     code = 413
     status = __doc__
     description = "Entity is too large."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class RequestURITooLong(ProtocolError):
@@ -530,13 +311,6 @@ class RequestURITooLong(ProtocolError):
     status = __doc__
     description = "URI is too long."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class UnsupportedMediaType(ProtocolError):
     """
@@ -546,13 +320,6 @@ class UnsupportedMediaType(ProtocolError):
     code = 415
     status = __doc__
     description = "Entity body in unsupported format."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class RequestedRangeNotSatisfiable(ProtocolError):
@@ -564,13 +331,6 @@ class RequestedRangeNotSatisfiable(ProtocolError):
     status = __doc__
     description = "Cannot satisfy request range."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class ExpectationFailed(ProtocolError):
     """
@@ -580,13 +340,6 @@ class ExpectationFailed(ProtocolError):
     code = 417
     status = __doc__
     description = "Expect condition could not be satisfied."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class PreconditionRequired(ProtocolError):
@@ -598,13 +351,6 @@ class PreconditionRequired(ProtocolError):
     status = __doc__
     description = "The origin server requires the request to be conditional."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class TooManyRequests(ProtocolError):
     """
@@ -614,13 +360,6 @@ class TooManyRequests(ProtocolError):
     code = 429
     status = __doc__
     description = "The user has sent too many requests in a given amount of time (rate limiting)."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class RequestHeaderFieldsTooLarge(ProtocolError):
@@ -633,13 +372,6 @@ class RequestHeaderFieldsTooLarge(ProtocolError):
     description = ("The server is unwilling to process the request because its header fields "
                   "are too large.")
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class InternalServerError(ProtocolError):
     """
@@ -649,13 +381,6 @@ class InternalServerError(ProtocolError):
     code = 500
     status = __doc__
     description = "Server got itself in trouble"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class NotImplemented(ProtocolError):
@@ -667,13 +392,6 @@ class NotImplemented(ProtocolError):
     status = __doc__
     description = "Server does not support this operation"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class BadGateway(ProtocolError):
     """
@@ -683,13 +401,6 @@ class BadGateway(ProtocolError):
     code = 502
     status = __doc__
     description = "Invalid responses from another server/proxy."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class ServiceUnavailable(ProtocolError):
@@ -701,13 +412,6 @@ class ServiceUnavailable(ProtocolError):
     status = __doc__
     description = "The server cannot process the request due to a high load"
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class GatewayTimeout(ProtocolError):
     """
@@ -717,13 +421,6 @@ class GatewayTimeout(ProtocolError):
     code = 504
     status = __doc__
     description = "The gateway server did not receive a timely response"
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 class HTTPVersionNotSupported(ProtocolError):
@@ -735,13 +432,6 @@ class HTTPVersionNotSupported(ProtocolError):
     status = __doc__
     description = "Cannot fulfill request."
 
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
-
 
 class NetworkAuthenticationRequired(ProtocolError):
     """
@@ -751,13 +441,6 @@ class NetworkAuthenticationRequired(ProtocolError):
     code = 511
     status = __doc__
     description = "The client needs to authenticate to gain network access."
-
-    # meta-methods
-    def __init__(self, description=description, **kwds):
-        # chain up
-        super().__init__(description=description, **kwds)
-        # all done
-        return
 
 
 # end of file
