@@ -21,7 +21,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
     from .Request import Request as request
     from .Response import Response as response
     # exceptions
-    from . import exceptions, responses
+    from . import exceptions, responses, documents
 
 
     # user configurable state
@@ -134,35 +134,21 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         """
         Fulfill the given fully formed client {request}
         """
-        # get the application context
-        application = self.application
-        # print the top line
-        application.debug.line()
-        application.debug.line("server: {}".format(self))
-        application.debug.line("  app: {.application}".format(self))
-        application.debug.line("  nexus: {.application.nexus}".format(self))
-        application.debug.line("request:")
-        application.debug.line("  type: {.command!r}".format(request))
-        application.debug.line("  path: {.url!r}".format(request))
-        application.debug.line("  verion: {.version!r}".format(request))
-        # print the headers
-        application.debug.line("headers:")
-        for key, value in request.headers.items():
-            application.debug.line(" -- {!r}:{!r}".format(key, value))
-        application.debug.log()
-
-        # build a response a message
-        response = self.responses.OK(
-            server=self,
-            description="{.name} is still under development".format(self))
-        # and return it
-        return response
+        # delegate to the app to build a response a message and return it
+        return self.application.pyre_fullfillRequest(server=self, request=request)
 
 
     def respond(self, channel, response):
-        # ask the renderer to put together the byte stream
-        stream = b'\r\n'.join(self.renderer.render(server=self, document=response))
-        # send it to the client
+        # attempt to
+        try:
+            # ask the renderer to put together the byte stream
+            stream = b'\r\n'.join(self.renderer.render(server=self, document=response))
+        # if something goes wrong
+        except self.exceptions.ProtocolError as error:
+            # render the error
+            stream = b'\r\n'.join(self.renderer.render(server=self, document=error))
+
+        # either way, send the bytes to the client
         channel.write(stream)
         # keep the channel alive
         return True

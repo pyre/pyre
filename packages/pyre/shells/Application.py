@@ -493,4 +493,31 @@ class Application(pyre.component, metaclass=Director):
         return 'entering interactive mode'
 
 
+    def pyre_fullfillRequest(self, server, request):
+        """
+        Fulfill a request from an HTTP {server}
+        """
+        # print the top line
+        self.debug.line()
+        self.debug.line("server: {}".format(server))
+        self.debug.line("  app: {.application}".format(server))
+        self.debug.line("  nexus: {.application.nexus}".format(server))
+        self.debug.line("request:")
+        self.debug.line("  type: {.command!r}".format(request))
+        self.debug.line("  path: {.url!r}".format(request))
+        self.debug.line("  version: {.version!r}".format(request))
+        # print the headers
+        self.debug.line("headers:")
+        for key, value in request.headers.items():
+            self.debug.line(" -- {!r}:{!r}".format(key, value))
+        self.debug.log()
+
+        # build a default response
+        response = server.responses.OK(
+            server=server,
+            description="{.pyre_name} does not support web deployment".format(self))
+        # and return it
+        return response
+
+
 # end of file
