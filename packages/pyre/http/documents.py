@@ -20,6 +20,14 @@ class OK(Response):
     status = __doc__
     description = "Request fulfilled, document follows"
 
+    # interface
+    def render(self, **kwds):
+        """
+        Generate the payload
+        """
+        # nothing to do
+        return b''
+
 
 # document responses
 class Document(OK):
