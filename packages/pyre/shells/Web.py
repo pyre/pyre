@@ -42,10 +42,10 @@ class Web(Executive, family='pyre.shells.web'):
         # launch the browser
         webbrowser.open(url)
         # get the nexus to do its thing
-        nexus.serve()
-        # and when the user is done interacting, launch the application
-        status = application.main(*args, **kwds)
-        # and exit
+        # N.B. this is an infinite loop; it is the responsibility of the application to
+        # terminate the interaction with the user and exit gracefully
+        status = nexus.serve()
+        # all done
         return status
 
 

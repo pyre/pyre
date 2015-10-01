@@ -54,7 +54,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         status = self.dispatcher.watch()
         # when done, tell me
         self.application.debug.log('done')
-        # and shut everything down
+        # shut everything down
         self.shutdown()
         # and report the status
         return status
