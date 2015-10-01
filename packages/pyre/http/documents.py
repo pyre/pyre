@@ -6,7 +6,9 @@
 #
 
 
-# exceptions
+# externals
+import json
+# the base class
 from .Response import Response
 
 
@@ -27,6 +29,59 @@ class OK(Response):
         """
         # nothing to do
         return b''
+
+
+# simple documents
+class Literal(OK):
+    """
+    A response built out of a literal string
+    """
+
+    # public data
+    encoding = 'utf-8' # the encoding to use when converting to bytes
+
+    # interface
+    def render(self, server, **kwds):
+        """
+        Pack the contents of the file into a binary buffer
+        """
+        # return my value as a byte stream
+        return self.value.encode(self.encoding)
+
+    # meta-methods
+    def __init__(self, value, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the value
+        self.value = value
+        # all done
+        return
+
+
+class JSON(OK):
+    """
+    A response built out of the JSON encoding of a python object
+    """
+
+    # public data
+    encoding = 'utf-8' # the encoding to use when converting to bytes
+
+    # interface
+    def render(self, server, **kwds):
+        """
+        Pack the contents of the file into a binary buffer
+        """
+        # return my value as a byte stream
+        return json.dumps(self.value).encode(self.encoding)
+
+    # meta-methods
+    def __init__(self, value, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the value
+        self.value = value
+        # all done
+        return
 
 
 # document responses
@@ -75,7 +130,7 @@ class File(Document):
 
     # meta-methods
     def __init__(self, uri, **kwds):
-        # chain yp
+        # chain up
         super().__init__(**kwds)
         # save the uri
         self.uri = uri
