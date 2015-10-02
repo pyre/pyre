@@ -290,6 +290,8 @@ class NameServer(Hierarchical):
         if newInfo.priority > oldInfo.priority:
             # replace the old node in its evaluation graph
             newNode.replace(oldNode)
+            # adjust the key in the new node
+            newNode.key = key
             # adjust the post-processor
             newNode.postprocessor = oldNode.postprocessor
             # attach it to the store

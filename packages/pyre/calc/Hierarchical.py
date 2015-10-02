@@ -313,9 +313,9 @@ class Hierarchical(SymbolTable):
 
     def merge(self, source, canonical, destination, name):
         """
-        Merge the information associated with {source} into {context} under {name}.
+        Merge the information associated with {source} into {destination} under {name}.
 
-        Both {source} and {context} are assumed to be valid hash keys, while {name} is a
+        Both {source} and {destination} are assumed to be valid hash keys, while {name} is a
         string with no key structure.
         """
         # attempt to
