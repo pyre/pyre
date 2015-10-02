@@ -131,6 +131,10 @@ class Request:
                 return True
             # otherwise, complain
             raise self.responses.BadRequestSyntax(server=server) from error
+        # if all goes well
+        else:
+            # convert into an integer
+            size = int(size)
 
         # initialize the storage for my payload
         if self.payload is None: self.payload = []
