@@ -29,7 +29,13 @@ class Array(Schema):
         Convert {value} into a tuple
         """
         # evaluate the string
-        if isinstance(value, str): value = eval(value)
+        if isinstance(value, str):
+            # strip it
+            value = value.strip()
+            # if there is nothing left, return an empty tuple
+            if not value: return ()
+            # otherwise, ask python to process
+            value = eval(value)
         # if {value} is an iterable, convert it to a tuple and return it
         if  isinstance(value, collections.Iterable): return tuple(value)
         # otherwise flag it as bad input
