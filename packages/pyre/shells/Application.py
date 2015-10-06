@@ -513,7 +513,7 @@ class Application(pyre.component, metaclass=Director):
         self.debug.log()
 
         # build a default response
-        response = server.responses.OK(
+        response = server.responses.NotFound(
             server=server,
             description="{.pyre_name} does not support web deployment".format(self))
         # and return it
