@@ -83,43 +83,49 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
         """
         # reset my state
         self._watching = True
+        # cache my debug channel
+        debug = self._debug
         # until someone says otherwise
         while self._watching:
             # show me
-            self._debug.line('watching:')
+            debug.line('watching:')
             # compute how long i am allowed to be asleep
-            self._debug.line('    computing the allowed sleep interval')
+            debug.line('    computing the allowed sleep interval')
             timeout = self.poll()
-            self._debug.line('    max sleep: {}'.format(timeout))
+            debug.line('    max sleep: {}'.format(timeout))
 
             # construct the descriptor containers
-            self._debug.line('    collecting the event sources')
+            debug.line('    collecting the event sources')
             iwtd = self._read.keys()
             owtd = self._write.keys()
             ewtd = self._exception.keys()
 
-            if self._debug.active:
-                if iwtd: self._debug.line('      read:')
+            # if my debug channel is active
+            if debug:
+                # show me the channels that have data to read
+                if iwtd: debug.line('      read:')
                 for fd in iwtd:
                     for event in self._read[fd]:
-                        self._debug.line('        {}'.format(event.channel))
-                if owtd: self._debug.line('      write:')
+                        debug.line('        {}'.format(event.channel))
+                # show me the channels that are ready to be written
+                if owtd: debug.line('      write:')
                 for fd in owtd:
                     for event in self._write[fd]:
-                        self._debug.line('        {}'.format(event.channel))
-                if ewtd: self._debug.line('      exception:')
+                        debug.line('        {}'.format(event.channel))
+                # show me the channels with exceptions
+                if ewtd: debug.line('      exception:')
                 for channel in ewtd:
                     for event in self._exception[fd]:
-                        self._debug.line('        {}'.format(event.channel))
+                        debug.line('        {}'.format(event.channel))
 
             # check for indefinite block
-            self._debug.line('    checking for indefinite block')
+            debug.line('    checking for indefinite block')
             if not iwtd and not owtd and not ewtd and timeout is None:
-                self._debug.log('** no registered handlers left; exiting')
+                debug.log('** no registered handlers left; exiting')
                 return
 
             # show me
-            self._debug.log('    calling select; timeout={!r}'.format(timeout))
+            debug.log('    calling select; timeout={!r}'.format(timeout))
             # wait for an event
             try:
                 reads, writes, excepts = select.select(iwtd, owtd, ewtd, timeout)
@@ -129,19 +135,28 @@ class Selector(Scheduler, family='pyre.ipc.dispatchers.selector', implements=dis
                 # unpack
                 errno = error.errno
                 msg = error.strerror
-                # log
-                self._debug.log('    signal received: errno={}: {}'.format(errno, msg))
+                # show me
+                debug.log('signal received: errno={}: {}'.format(errno, msg))
                 # keep going
                 continue
 
+            # if my debug channel is active
+            if debug:
+                # show me
+                debug.line('activity detected:')
+                # some details
+                debug.line('      read clients: {}'.format(len(reads)))
+                debug.line('      write clients: {}'.format(len(writes)))
+                debug.line('      except clients: {}'.format(len(excepts)))
+
             # dispatch to the handlers of file events
-            self._debug.line('    dispatching to handlers')
+            debug.line('    dispatching to handlers')
             self.dispatch(index=self._exception, entities=excepts)
             self.dispatch(index=self._write, entities=writes)
             self.dispatch(index=self._read, entities=reads)
 
             # raise the overdue alarms
-            self._debug.log('    raising the alarms')
+            debug.log('    raising alarms')
             self.awaken()
 
         # all done

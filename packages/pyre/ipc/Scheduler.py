@@ -16,6 +16,15 @@ from time import time as now
 class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
     """
     Support for invoking event handlers at specified times
+
+    Clients create alarms by invoking {alarm} and supplying an event handler to be invoked and
+    specifying the number of seconds before the alarm comes due. The time interval is expected
+    to be a dimensional quantity with units of time.
+
+    The current implementation converts the time interval before the alarm comes due into an
+    absolute time, and pairs it with the handler into an {_alarm} instance. The {_alarm} is
+    then stored into a list of such {_alarms}, and the list is sorted in reverse order,
+    i.e. with the alarm that is due next at the end of the list.
     """
 
 
@@ -27,13 +36,11 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
     @pyre.export
     def alarm(self, interval, call):
         """
-        Schedule {handler} to be invoked after {interval} elapses.
+        Schedule {call} to be invoked after {interval} elapses.
 
         parameters:
-           {interval}: expected to be a dimensional quantity from {pyre.units} with units of
-                       time
-           {handler}: a function that accepts two arguments, the scheduler instance that
-                       invoked the handler, and the current time
+           {call}: a function that takes the current time and returns a reschedule interval
+           {interval}: a dimensional quantity from {pyre.units} with units of time
         """
         # create a new alarm instance
         alarm = self._alarm(time=now()+interval/self.second, handler=call)
@@ -50,20 +57,23 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
         Compute the number of seconds until the next alarm comes due.
 
         If there are no scheduled alarms, {poll} returns {None}; if alarms are overdue, it
-        returns 0.
+        returns 0. This slightly strange logic is designed to satisfy the requirements for
+        calling {select}.
         """
         # the necessary information is in the last entry in my {_alarms}, since they are
-        # always in descending order; try to grab it
+        # always in descending order
         try:
+            # try to grab it
             alarm = self._alarms[-1]
-        # if this raised an {IndexError}
+        # if there is nothing there
         except IndexError:
-            # no scheduled alarms
+            # we have no scheduled alarms
             return None
         # if it succeeded
         else:
+            # get the scheduled time
             due = alarm.time
-        # bound from below and return the number of seconds
+        # return the number of seconds until it comes due, bound from below
         return max(0, due - now())
 
 
@@ -109,7 +119,7 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
         # go through the pile
         for interval, call in reschedule:
             # create a new alarm instance
-            alarm = self._alarm(time=now()+interval/self.second, handler=call)
+            alarm = self._alarm(time=time+interval/self.second, handler=call)
             # add it to my list
             self._alarms.append(alarm)
         # sort
