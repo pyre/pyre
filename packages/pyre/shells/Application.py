@@ -408,6 +408,17 @@ class Application(pyre.component, metaclass=Director):
         return dependencies
 
 
+    # other behaviors
+    def pyre_interrupted(self, **kwds):
+        """
+        The user issued a keyboard interrupt
+        """
+        # show me
+        self.warning.log("interrupted; exiting")
+        # indicate something went wrong
+        return 1
+
+
     def pyre_interactiveSession(self):
         """
         Convert this session to an interactive one

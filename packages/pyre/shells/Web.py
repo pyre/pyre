@@ -41,11 +41,19 @@ class Web(Executive, family='pyre.shells.web'):
         url = 'http://localhost:{.port}/'.format(address)
         # launch the browser
         webbrowser.open(url)
-        # get the nexus to do its thing
-        # N.B. this is an infinite loop; it is the responsibility of the application to
-        # terminate the interaction with the user and exit gracefully
-        status = nexus.serve()
-        # all done
+
+        # set up a net
+        try:
+            # get the nexus to do its thing
+            # N.B. this is an infinite loop; it is the responsibility of the application to
+            # terminate the interaction with the user and exit gracefully
+            status = nexus.serve()
+        # if the user interrupted
+        except KeyboardInterrupt as event:
+            # launch the handler
+            status = application.pyre_interrupted(info=event)
+
+        # in any case, we are all done
         return status
 
 

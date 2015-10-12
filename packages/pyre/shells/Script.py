@@ -43,8 +43,16 @@ class Script(Executive, family="pyre.shells.script"):
                 # get help
                 return application.help(*args, **kwds)
 
-        # otherwise, launch the application
-        return application.main(*args, **kwds)
+        # set up a net
+        try:
+            # launch the application
+            status = application.main(*args, **kwds)
+        # if the user interrupted
+        except KeyboardInterrupt as event:
+            # launch the handler
+            status = application.pyre_interrupted(info=event)
+        # in any case, we are all done
+        return status
 
 
 # end of file
