@@ -46,12 +46,10 @@ class Diagnostic:
         # if {message} is non-empty, add it to the pile
         if message is not None: self.text.append(message)
 
-        # adjust the stack depth
-        stackdepth += self.stackdepth
-
-        # infer some more meta data
-        trace = traceback.extract_stack()
-        filename, line, function, source = trace[stackdepth]
+        # use the stack
+        trace = traceback.extract_stack(limit=self.stackdepth+stackdepth)
+        # to infer some more meta data
+        filename, line, function, source = trace[0]
         # decorate
         meta = self.meta
         meta["filename"] = filename
@@ -92,8 +90,8 @@ class Diagnostic:
 
 
     # implementation details
-    # per class private data
-    stackdepth = -2
+    # the stack depth of my clients
+    stackdepth = pyre.computeCallerStackDepth()
 
 
 # end of file

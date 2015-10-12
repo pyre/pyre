@@ -42,6 +42,15 @@ def loadConfiguration(uri):
     return executive.loadConfiguration(uri=uri, locator=here)
 
 
+# version dependent constants
+def computeCallerStackDepth():
+    """
+    Compute the stack depth offset to get to the caller of a function
+    """
+    # computed in {tracking}
+    return tracking.callerStackDepth
+
+
 # administrative
 def copyright():
     """
@@ -54,7 +63,9 @@ def license():
     """
     Print the pyre license
     """
+    # print it
     print(_pyre_license)
+    # all done
     return
 
 

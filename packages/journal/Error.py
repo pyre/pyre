@@ -45,6 +45,6 @@ class Error(Diagnostic, Channel):
 
 
     # class private data
-    stackdepth = -3 # there is an extra stack level for application errors...
+    stackdepth = Diagnostic.stackdepth + 1 # there is an extra stack level for firewalls...
 
 # end of file

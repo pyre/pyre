@@ -48,7 +48,7 @@ class Firewall(Diagnostic, Channel):
 
     # class private data
     _index = collections.defaultdict(Channel.Enabled)
-    stackdepth = -3 # there is an extra stack level for firewalls...
+    stackdepth = Diagnostic.stackdepth + 1 # there is an extra stack level for firewalls...
 
 
 # end of file
