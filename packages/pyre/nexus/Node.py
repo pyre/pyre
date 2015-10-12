@@ -80,7 +80,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
 
     # low level event handlers
-    def reload(self, signal, frame):
+    def reload(self):
         """
         Reload the nodal configuration for a distributed application
         """
@@ -89,7 +89,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         return
 
 
-    def terminate(self, signal, frame):
+    def terminate(self):
         """
         Terminate the event processing loop
         """
@@ -101,12 +101,12 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
 
     def signal(self, signal, frame):
         """
-        Dispatch {signal} to the registered handler
+        An adaptor that dispatches {signal} to the registered handler
         """
         # locate the handler
         handler = self.signals[signal]
         # and invoke it
-        return handler(signal=signal, frame=frame)
+        return handler()
 
 
     # meta methods
@@ -125,10 +125,12 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         By default, nodes register handlers for process termination and configuration reload
         """
-        # build my signal index
+        # build my signal index; allow {INT} bubble up to the app by not registering a handler
+        # for it
         signals = {
+            # on {HUP}, reload
             signal.SIGHUP: self.reload,
-            signal.SIGINT: self.terminate,
+            # on {TERM}, terminate
             signal.SIGTERM: self.terminate,
             }
         # and return it
@@ -143,7 +145,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         signals = self.newSignalIndex()
         # register the signal demultiplexer
         for name in signals.keys():
-            # register the three basic handlers
+            # as a handler for every signal in my index
             signal.signal(name, self.signal)
         # all done
         return signals
