@@ -94,8 +94,10 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
             try:
                 # to grab one
                 alarm = alarms.pop()
-            # if none are left, we are all done
-            except IndexError: return
+            # if none are left
+            except IndexError:
+                # we are all done raising alarms
+                break
             # if this alarm is not due yet
             if time < alarm.time:
                 # put it back at the end of the list
@@ -107,7 +109,7 @@ class Scheduler(pyre.component, family='pyre.ipc.dispatchers.scheduler'):
             # if the handler indicated that it wants to reschedule this alarm
             if delta:
                 # save it
-                reschedule.append((delta, handler))
+                reschedule.append((delta, alarm.handler))
 
         # if there is nothing to reschedule
         if not reschedule:
