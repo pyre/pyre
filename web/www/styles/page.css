@@ -1,0 +1,49 @@
+/*  -*- CSS -*-  */
+/*
+ * michael a.g. aïvázis
+ * orthologue
+ * (c) 1998-2015 all rights reserved
+ *
+ */
+
+* {
+    margin: 0.0em;
+    padding: 0.0em;
+}
+
+body {
+
+    font-family: "century gothic", "corbel", "geneva", "arial", "helvetica", sans-serif;
+    font-size: 20px;
+
+    margin: 0.25em auto 0.25em auto;
+    padding: 0.25em;
+    width: 38.0em;
+    align: center;
+
+    color: #666;
+    color: #633;
+
+}
+
+a:link {
+    color: #666;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #666;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #666;
+    text-decoration: none;
+}
+
+a:active {
+    color: #666;
+    text-decoration: none;
+}
+
+/* end of file */

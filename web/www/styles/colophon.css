@@ -1,0 +1,57 @@
+/*  -*- CSS -*-  */
+/*
+ * michael a.g. aïvázis
+ * orthologue
+ * (c) 1998-2015 all rights reserved
+ *
+ */
+
+/* colophon */
+div#colophon {
+    font-size: 50%;
+    margin-top: 0.0em;
+    margin-right: 1.0em;
+    /* color: #bd905f; */
+    color: #ddd;
+    text-align: right;
+}
+
+div#colophon span.copyright {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+div#colophon a:link {
+    text-transform: uppercase;
+    padding-left: 0.15em;
+    padding-right: 0.15em;
+    color: #aaa;
+}
+
+div#colophon a:visited {
+    color: #aaa;
+    border-bottom: 1px dotted #ccc;
+}
+
+div#colophon a:hover {
+    color: #aaa;
+    border-bottom: 1px dotted #bbb;
+}
+
+div#colophon a:active {
+    color: #aaa;
+    border-bottom: 1px solid #888;
+}
+
+div#colophon span.social {
+    margin-left: 1.5em;
+}
+
+div#colophon span.social img {
+    height: 7em;
+    margin: 0em;
+    padding: 0em;
+}
+
+
+/* end of file */

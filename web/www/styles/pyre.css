@@ -1,0 +1,141 @@
+/*  -*- CSS -*-  */
+/*
+ * michael a.g. aïvázis
+ * orthologue
+ * (c) 1998-2015 all rights reserved
+ *
+ */
+
+div#pyre {
+    font-size: 60%;
+    margin: 2.0em 1.0em 2.0em 16.0em;
+}
+
+div#pyre p {
+    margin-top: 2.0em;
+}
+
+/* control layout */
+table.pyre-controls {
+    margin-left: 3.0em;
+}
+
+table.pyre-controls tr {
+    line-height: 2.0em;
+}
+
+table.pyre-controls td {
+}
+
+table.pyre-controls tr td.prompt {
+    padding-left: 2.0em;
+    padding-right: 0.5em;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+table.pyre-controls tr td.field {
+    padding-left: 0.5em;
+}
+
+table.pyre-controls tr th {
+    padding: 1.0em 0.5em 0.0em 0.5em;
+
+    text-align: right;
+    font-weight: normal;
+    color: #5c2813;
+
+    border-bottom: 1px solid #ccc;
+}
+
+table.pyre-controls input {
+    appearance: none;
+}
+
+table.pyre-controls input.float {
+    width: 2.0em;
+    padding-right: 0.5em;
+    text-align: right;
+}
+
+table.pyre-controls input.list {
+    width: 30.0em;
+    padding-left: 0.5em;
+}
+
+table.pyre-controls h2 {
+    padding-left: 1.0em;
+    color: #1b56b4;
+}
+
+/* action layout */
+table.pyre-actions {
+    margin-left: 3.0em;
+}
+
+table.pyre-actions tr {
+    line-height: 2.0em;
+}
+
+table.pyre-actions tr th {
+    marging-right: 0.5em;
+    padding: 1.0em 0.5em 0.0em 0.5em;
+
+    text-align: right;
+    font-weight: normal;
+    color: #5c2813;
+
+    border-bottom: 1px solid #ccc;
+}
+
+table.pyre-actions tr td.action {
+    padding-left: 2.0em;
+    padding-right: 0.5em;
+    text-align: left;
+    text-transform: lowercase;
+}
+
+table.pyre-actions tr td.prompt {
+    padding-left: 2.0em;
+    padding-right: 0.5em;
+    text-align: right;
+    text-transform: uppercase;
+    color: #5c2813;
+}
+
+table.pyre-actions td.action {
+    padding-left: 2.0em;
+    padding-right: 0.5em;
+    text-align: left;
+    text-transform: lowercase;
+}
+
+table.pyre-actions td.action span[action].done {
+    border-bottom: 1px solid #fa0;
+}
+
+table.pyre-actions td.action span[action].disabled {
+    color: #eee;
+    border-bottom: none;
+}
+
+table.pyre-actions td.action span[action].active {
+    color: #fa0;
+}
+
+table.pyre-actions td.action span[action]:hover {
+    cursor: pointer;
+    color: #fa0;
+    border-bottom: 1px dotted #666;
+}
+
+table.pyre-actions a:hover {
+    color: #fa0;
+    border-bottom: 1px dotted #666;
+}
+
+table.pyre-actions a:visited {
+    border-bottom: 1px solid #fa0;
+}
+
+/* end of file */
