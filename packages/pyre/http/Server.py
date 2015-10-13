@@ -135,7 +135,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         Fulfill the given fully formed client {request}
         """
         # delegate to the app to build a response a message and return it
-        return self.application.pyre_fullfillRequest(server=self, request=request)
+        return self.application.pyre_respond(server=self, request=request)
 
 
     def respond(self, channel, response):

@@ -504,7 +504,7 @@ class Application(pyre.component, metaclass=Director):
         return 'entering interactive mode'
 
 
-    def pyre_fullfillRequest(self, server, request):
+    def pyre_respond(self, server, request):
         """
         Fulfill a request from an HTTP {server}
         """
