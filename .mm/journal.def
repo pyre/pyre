@@ -11,6 +11,6 @@ PROJECT = journal
 include live.def
 
 # project settings
-PROJ_CXX_FLAGS = $(COMPILER_CXX_STD11)
+PROJ_CXX_FLAGS += $(COMPILER_CXX_STD11)
 
 # end of file
