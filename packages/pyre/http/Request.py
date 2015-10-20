@@ -156,6 +156,38 @@ class Request:
         return self.complete
 
 
+    # debugging support
+    def dump(self, channel, indent='', showHeaders=True, showPayload=True):
+        """
+        Place debugging information in the given channel
+        """
+        # meta-data
+        channel.line("{}request:".format(indent))
+        channel.line("{}  type: {.command!r}".format(indent, self))
+        channel.line("{}  path: {.url!r}".format(indent, self))
+        channel.line("{}  version: {.version!r}".format(indent, self))
+
+        # print the headers
+        if showHeaders:
+            channel.line("{}  headers:".format(indent))
+            for key, value in self.headers.items():
+                channel.line("{}    {}: {!r}".format(indent, key, value))
+        # print the payload
+        if showPayload:
+            # if there is a payload
+            if self.payload:
+                channel.line("{}  payload:".format(indent))
+                channel.line("{}    {} bytes".format(indent, len(payload)))
+                channel.line(self.payload)
+            # otherwise
+            else:
+                # let me know
+                channel.line("{}  payload: none".format(indent))
+
+        # all done
+        return
+
+
     # implementation details
     # state
     described = False # am i done processing the request meta-data

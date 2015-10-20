@@ -508,30 +508,17 @@ class Application(pyre.component, metaclass=Director):
         """
         Fulfill a request from an HTTP {server}
         """
+        # grab my debug channel
+        channel = self.debug
         # print the top line
-        self.debug.line("request info:")
-        self.debug.line("  server: {}".format(server))
-        self.debug.line("    app: {.application}".format(server))
-        self.debug.line("    nexus: {.application.nexus}".format(server))
-        self.debug.line("  request:")
-        self.debug.line("    type: {.command!r}".format(request))
-        self.debug.line("    path: {.url!r}".format(request))
-        self.debug.line("    version: {.version!r}".format(request))
-        # print the headers
-        self.debug.line("  headers:")
-        for key, value in request.headers.items():
-            self.debug.line("   -- {!r}:{!r}".format(key, value))
-        # if there is a payload
-        if request.payload:
-            self.debug.line("  payload:")
-            self.debug.line(request.payload)
-        # otherwise
-        else:
-            # let me know
-            self.debug.line("  no payload")
-
+        channel.line("responding to HTTP request:")
+        channel.line("  app: {}".format(self))
+        channel.line("  nexus: {.nexus}".format(self))
+        channel.line("  server: {}".format(server))
+        # dump the request contents
+        request.dump(channel=channel, indent='  ')
         # flush
-        self.debug.log()
+        channel.log()
 
         # build a default response
         response = server.responses.NotFound(
