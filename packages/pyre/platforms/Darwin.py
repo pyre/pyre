@@ -68,10 +68,8 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         import platform
         # for the release number
         release, _, _ = platform.mac_ver()
-        # extract {major.minor}
-        marker, _ = release.rsplit('.', 1)
-        # use the marker to get the codename
-        codename = cls.codenames.get(marker, 'unknown')
+        # use it to get the codename
+        codename = cls.codenames.get(release, 'unknown')
         # and return
         return release, codename
 
@@ -79,6 +77,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     # private data
     # the known code names
     codenames = {
+        '10.11': 'el capitan',
         '10.10': 'yosemite',
         '10.9': 'mavericks',
         '10.8': 'mountain lion',
