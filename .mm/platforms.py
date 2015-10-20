@@ -96,6 +96,7 @@ def platform(builder):
             systemdir, 'Library/Frameworks/Python.framework/Versions', pythonVersion)
         builder.requirements['python'].environ = {
             'PYTHON': python,
+            'PYTHON_LIB': 'python' + pythonVersion,
             'PYTHON_PYCFLAGS': '-b',
             'PYTHON_DIR': systemdir,
             'PYTHON_LIBDIR': os.path.join(pythonHome, 'lib'),
@@ -201,6 +202,7 @@ def platform(builder):
         python = 'python' + pythonVersion
         builder.requirements['python'].environ = {
             'PYTHON': python,
+            'PYTHON_LIB':  python + pythonMemoryModel,
             'PYTHON_PYCFLAGS': '-b',
             'PYTHON_DIR': systemdir,
             'PYTHON_LIBDIR': os.path.join(systemdir, 'lib', python),
