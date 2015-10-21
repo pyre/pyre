@@ -7,9 +7,8 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
 # version check
-# python version information is in {{sys.version}
+# python version information is in {sys.version}
 import sys
 # unwrap
 major, minor, _, _, _ = sys.version_info
