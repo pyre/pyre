@@ -121,12 +121,11 @@ class Configurable(Dashboard):
             # the {usage} section
             yield 'usage:'
             # a banner with all the commands
-            yield '{}{} [{}]'.format(
-                indent, spec, " | ".join(name for name,_ in behaviors))
+            yield '{}{} [command]'.format(indent, spec)
             # leave some space
             yield ''
             # the beginning of the section with more details
-            yield 'where'
+            yield 'where [command] is one of'
             # figure out how much space we need
             width = max(len(name) for name,_ in behaviors)
             # for each behavior
