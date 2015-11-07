@@ -191,7 +191,7 @@ pyre::extensions::postgres::
 raiseOperationalError(string_t description)
 {
     PyObject * args = PyTuple_New(0);
-    PyObject * kwds = Py_BuildValue("{s:s}", "diagnostic", description);
+    PyObject * kwds = Py_BuildValue("{s:s}", "description", description);
     PyObject * exception = PyObject_Call(OperationalError, args, kwds);
     // prepare to raise an instance of OperationalError
     PyErr_SetObject(OperationalError, exception);
