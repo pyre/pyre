@@ -199,6 +199,7 @@ def platform(builder):
 
         # set up {python}
         pythonVersion = '3.4'
+        pythonMemoryModel = 'm'
         python = 'python' + pythonVersion
         builder.requirements['python'].environ = {
             'PYTHON': python,
