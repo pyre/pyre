@@ -19,7 +19,6 @@ class Catalog(Mapping):
 
     # constants
     typename = 'catalog' # the name of my type
-    container = dict # the container i represent
 
 
 # end of file
