@@ -33,6 +33,7 @@ types:
 	${PYTHON} ./inets.py
 	${PYTHON} ./integers.py
 	${PYTHON} ./lists.py
+	${PYTHON} ./mappings.py
 	${PYTHON} ./sets.py
 	${PYTHON} ./strings.py
 	${PYTHON} ./times.py
