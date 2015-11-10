@@ -12,18 +12,15 @@ Verify that the node base class handles signals properly
 """
 
 # externals
-import os
-import sys
-import pyre
-import signal
-# access the ipc package
-import pyre.ipc
+import os, sys, signal
+# framework parts
+import pyre, journal
 
 
 # the launcher
 def test():
-    # testing the delivery of signals is a bit tricky. {fork} is not sufficient: there must be
-    # an {exec} as well, otherwise signals do not get delivered properly
+    # N.B.: testing the delivery of signals is a bit tricky. {fork} is not sufficient: there
+    # must be an {exec} as well, otherwise signals do not get delivered properly
 
     # grab the nameserver
     ns = pyre.executive.nameserver
@@ -179,7 +176,6 @@ def onChild(channel):
 
     # debug
     cdbg = journal.debug("child")
-    journal.debug("pyre.ipc.selector").active = False
     # log
     cdbg.log("in the child process: channel={}".format(channel))
 
@@ -206,12 +202,13 @@ def onChild(channel):
             # don't reschedule
             return False
 
-        def alarm(self, **kwds):
-            cdbg.log("  timeout")
-            self.dispatcher.alarm(interval=10*self.dispatcher.second, call=self.alarm)
-            return
+        def alarm(self, timestamp):
+            # show me
+            cdbg.log("timeout on {}".format(timestamp))
+            # raise again after 10 seconds
+            return 1*self.dispatcher.second
 
-        def reload(self, *args, **kwds):
+        def reload(self):
             # show me
             cdbg.log("schedule 'sendReloaded'")
             # schedule to send a message to the parent
@@ -219,13 +216,13 @@ def onChild(channel):
             # all done
             return
 
-        def terminate(self, **kwds):
+        def terminate(self):
             # show me
             cdbg.log("marking clean exit and stopping the dispatcher")
             # mark me
             self.cleanExit = True
-            # delegate
-            return super().terminate(**kwds)
+            # chain up
+            return super().terminate()
 
         def __init__(self, channel, **kwds):
             # chain up
@@ -237,7 +234,7 @@ def onChild(channel):
             # marker that my {terminate} was called
             self.cleanExit = False
             # set up an alarm to keep the process alive
-            self.dispatcher.alarm(interval=self.dispatcher.second, call=self.alarm)
+            self.dispatcher.alarm(interval=1*self.dispatcher.second, call=self.alarm)
             # let my parent know I am ready
             self.dispatcher.whenWriteReady(channel=channel, call=self.sendReady)
             # all done
@@ -246,6 +243,7 @@ def onChild(channel):
     # instantiate
     cdbg.log("instantiating my node")
     child = node(name="child", channel=channel)
+    cdbg.log("child: {}".format(child))
     # enter the event loop
     cdbg.log("entering the event loop")
     child.dispatcher.watch()
@@ -260,10 +258,9 @@ def onChild(channel):
 # main
 if __name__ == "__main__":
     # progress logging
-    import journal
     journal.debug("child").active = False
     journal.debug("parent").active = False
-    journal.info("pyre.nexus").active = False
+    journal.debug("pyre.ipc.selector").active = False
     # do...
     test()
 
