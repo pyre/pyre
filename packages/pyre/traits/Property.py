@@ -23,46 +23,50 @@ class Property(Slotted):
 
     # mixins to be included to my type offering
     class schema:
-        """Mixin for handling decimal values"""
+        """Mixin for handling generic values"""
 
         # override the default expression handler
-        def macro(self, **kwds):
+        @property
+        def macro(self):
             """
             The default strategy for handling macros in slot values
             """
             # by default, build interpolations
-            return self.pyre_nameserver.interpolation(**kwds)
+            return self.pyre_nameserver.interpolation
 
-        def native(self, **kwds):
+        @property
+        def native(self):
             """
             The strategy for building slots from more complex input values
             """
-            return self.pyre_nameserver.variable(**kwds)
+            return self.pyre_nameserver.variable
 
 
     class numeric:
         """Mixin for handling numeric types"""
 
         # override the default expression handler
-        def macro(self, **kwds):
+        @property
+        def macro(self):
             """
             Access to the default strategy for handling macros for numeric types
             """
             # build expressions
-            return self.pyre_nameserver.expression(**kwds)
+            return self.pyre_nameserver.expression
 
 
     class sequences:
         """Mixin for handling typed containers"""
 
         # override the default expression handler
-        def macro(self, **kwds):
+        @property
+        def macro(self):
             """
             The default strategy for handling slot values that are strings and therefore
             subject to some kind of evaluation in the context of the configuration store
             """
             # whatever my schema says
-            return self.schema.macro(**kwds)
+            return self.schema.macro
 
         def native(self, value, **kwds):
             """
