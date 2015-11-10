@@ -62,6 +62,8 @@ def test():
 if __name__ == "__main__":
     # run the test
     component = test()
+    # give the executive a chance to clean up
+    pyre.executive.shutdown()
     # verify that all instances of {component} have been destroyed
     assert tuple(pyre.executive.registrar.components[component]) == ()
 

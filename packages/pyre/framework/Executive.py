@@ -68,14 +68,14 @@ class Executive:
         # if that fails
         except self.PyreError as error:
             # save it
-            # self.errors.append(error)
+            self.errors.append(error)
             # and bail out
             return
         # ask the configurator to process the stream
         errors = self.configurator.loadConfiguration(
             uri=uri, source=source, locator=locator, priority=priority)
         # add any errors to my pile
-        # self.errors.extend(errors)
+        self.errors.extend(errors)
         # all done
         return
 
@@ -558,6 +558,16 @@ class Executive:
         self.fileserver.initializeNamespace()
         # initialize my configurator
         self.configurator.initializeNamespace()
+        # all done
+        return self
+
+
+    def shutdown(self):
+        """
+        Clean up
+        """
+        # my error pile is probably full of circular references
+        self.errors = []
         # all done
         return self
 

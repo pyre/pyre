@@ -281,8 +281,12 @@ def shutdown():
     """
     # access the executive
     global executive
-    # zero out the global reference
-    executive = None
+    # if there is one
+    if executive:
+        # ask it to clean up after itself
+        executive.shutdown()
+        # zero out the global reference
+        executive = None
     # that should be enough
     return
 
