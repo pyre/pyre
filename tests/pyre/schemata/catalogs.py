@@ -8,7 +8,7 @@
 
 
 """
-Check that list conversions work as expected
+Check that catalogs work as expected
 """
 
 
