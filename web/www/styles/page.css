@@ -16,13 +16,10 @@ body {
     font-family: "century gothic", "corbel", "geneva", "arial", "helvetica", sans-serif;
     font-size: 20px;
 
-    margin: 0.25em auto 0.25em auto;
+    margin: 0.25em;
     padding: 0.25em;
-    width: 38.0em;
-    align: center;
-
-    color: #666;
     color: #633;
+    color: #444;
 
 }
 

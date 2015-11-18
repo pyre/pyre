@@ -21,6 +21,7 @@
     <link href="styles/page.css" type="text/css" rel="stylesheet" media="all" />
     <link href="styles/banner.css" type="text/css" rel="stylesheet" media="all" />
     <link href="styles/pyre.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="styles/component.css" type="text/css" rel="stylesheet" media="all" />
     <link href="styles/colophon.css" type="text/css" rel="stylesheet" media="all" />
 
     <!-- javascript -->
@@ -29,36 +30,38 @@
     <!-- pyre -->
     <script type="text/javascript" src="scripts/boot.js"></script>
     <script type="text/javascript" src="scripts/pyre.js"></script>
+    <script type="text/javascript" src="scripts/component.js"></script>
   </head>
 
   <!-- basic document structure -->
   <body>
     <!-- the banner -->
-    <div id="banner">
+    <section id="banner">
       <!-- logo -->
       <img id="logo" src="graphics/logo.png"/>
       <!-- app id -->
-      <p id="app">
+      <p>
         pyre application testbed
       </p>
-    </div>
+    </section>
 
     <!-- the blank frame -->
-    <div id="pyre">
-      <!-- a blurb -->
-      <p>
+    <section id="app">
+      <!-- a generic blurb; gets replaced at runtim -->
+      <p id="app-blurb">
         Welcome to the pyre application testbed. This is an exploration of invoking the various
         actions of <em>pyre</em> applications through a web based interface.
       </p>
 
       <!-- the interface -->
-      <p id="pyre-configuration">
-        Placeholder for the simulation controls; if you can see this, something went wrong...
+      <p id="app-control">
+        Placeholder for the application configuration controls; if you can see this, something
+        went wrong...
       </p>
-    </div>
+    </section>
 
     <!-- colophon -->
-    <div id="colophon">
+    <section id="colophon">
       <span class="copyright">
         copyright &copy; 1998-2015
         <a href="http://www.orthologue.com/michael.aivazis">michael aïvázis</a>
@@ -66,7 +69,7 @@
       </span>
       <span class="social">
       </span>
-    </div>
+    </section>
   </body>
 
 </html>
