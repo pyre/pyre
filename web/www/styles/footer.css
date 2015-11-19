@@ -7,7 +7,7 @@
  */
 
 /* colophon */
-#colophon {
+footer {
     font-size: 50%;
     margin-top: 0.0em;
     margin-right: 1.0em;
@@ -16,38 +16,38 @@
     text-align: right;
 }
 
-#colophon span.copyright {
+footer span.copyright {
     font-weight: normal;
     font-size: 100%;
 }
 
-#colophon a:link {
+footer a:link {
     text-transform: uppercase;
     padding-left: 0.15em;
     padding-right: 0.15em;
     color: #aaa;
 }
 
-#colophon a:visited {
+footer a:visited {
     color: #aaa;
     border-bottom: 1px dotted #ccc;
 }
 
-#colophon a:hover {
+footer a:hover {
     color: #aaa;
     border-bottom: 1px dotted #bbb;
 }
 
-#colophon a:active {
+footer a:active {
     color: #aaa;
     border-bottom: 1px solid #888;
 }
 
-#colophon span.social {
+footer span.social {
     margin-left: 1.5em;
 }
 
-#colophon span.social img {
+footer span.social img {
     height: 7em;
     margin: 0em;
     padding: 0em;

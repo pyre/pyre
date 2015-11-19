@@ -7,7 +7,7 @@
  */
 
 /* the page banner */
-#banner {
+header {
     font-size: 60%;
 
     margin: 0.0em 0.0em 0.0em 1.0em;
@@ -21,13 +21,13 @@
 }
 
 /* logo */
-#banner img#logo {
+header img#logo {
     float: left;
     height: 4.0em;
 }
 
 /* access portal */
-#banner p {
+header p {
     font-size: 200%;
     text-align: center;
     color: #f37f18;
@@ -37,7 +37,7 @@
 }
 
 /* navigation bar */
-#banner ul {
+header ul {
     list-style-type: none;
 
     text-align: right;
@@ -48,7 +48,7 @@
     */
 }
 
-#banner ul li {
+header ul li {
     display: inline;
     cursor: pointer;
 
@@ -64,20 +64,20 @@
     border-right: 1px solid #c8c8c8;
 }
 
-#banner ul li.last {
+header ul li.last {
     border-right: none;
 }
 
-#banner ul li:hover {
+header ul li:hover {
     color: #ff6600;
 }
 
-#banner ul li.current {
+header ul li.current {
     cursor: default;
     color: #ff6600;
 }
 
-#banner ul[name="company-links"] {
+header ul[name="company-links"] {
     padding-top: 5.0em;
 }
 
