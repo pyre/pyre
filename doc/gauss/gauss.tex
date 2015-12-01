@@ -6,10 +6,17 @@
 % (c) 1998-2015 all rights reserved
 %
 
+% adjust the paths
+\makeatletter
+\providecommand*{\input@path}{}
+\edef\input@path{{sections/}{config/}\input@path}
+\makeatother
+
+% here we go
 \documentclass[titlepage]{article}
 
 % packages, setup, macros, etc.
-\input{config}
+\input{setup}
 \input{meta}
 \input{macros}
 
@@ -35,25 +42,25 @@
 %\setcounter{page}{1}
 
 % the body
-\input{sec_introduction}
+\input{introduction}
 
 % a bit of theory
-\input{sec_montecarlo}
+\input{montecarlo}
 
 % the simple solutions
-\input{sec_simple}
+\input{simple}
 % going object oriented
-\input{sec_classes}
+\input{classes}
 % component mining
-\input{sec_components}
+\input{components}
 
 % NYI
-\input{sec_pyreapp}
+\input{pyreapp}
 %\input{sec_web}
 %\input{sec_gui}
 %\input{sec_services}
 
-\input{sec_epilogue}
+\input{epilogue}
 
 % references
 \newpage

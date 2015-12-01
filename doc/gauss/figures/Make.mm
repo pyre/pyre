@@ -8,11 +8,14 @@
 
 PROJECT = pyre
 
+# punt upstairs
+all:
+	(cd ..; $(MM))
 
-#--------------------------------------------------------------------------
-#
+osx:
+	(cd ..; $(MM) osx)
 
-all: tidy
-
+xpdf:
+	(cd ..; $(MM) xpdf)
 
 # end of file

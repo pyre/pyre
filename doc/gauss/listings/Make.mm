@@ -15,9 +15,7 @@ RECURSE_DIRS = \
     containers \
     generators \
 
-#--------------------------------------------------------------------------
 #
-
 all:
 	BLD_ACTION="all" $(MM) recurse
 

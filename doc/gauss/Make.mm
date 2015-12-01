@@ -9,25 +9,21 @@ PROJECT = pyre
 PACKAGE = doc/gauss
 
 RECURSE_DIRS = \
+   config \
    diagrams \
    figures \
    listings \
-
-#--------------------------------------------------------------------------
-#
+   sections \
 
 DOCUMENT = gauss
 
 INCLUDES = \
-    titlepage.sty \
-    config.tex \
-    macros.tex \
-    meta.tex \
-    references.bib
+    config/*.sty \
+    config/*.tex \
 
 SECTIONS = \
     $(DOCUMENT).tex \
-    sec_*.tex \
+    sections/*.tex \
 
 FIGURES = \
     figures/*.pdf \
@@ -44,9 +40,7 @@ LISTINGS = \
     ../../examples/gauss.pyre/gauss/meshes/*.py \
     ../../examples/gauss.pyre/gauss/shapes/*.py \
 
-#--------------------------------------------------------------------------
 #
-
 all: $(DOCUMENT).pdf
 
 tidy::
@@ -60,9 +54,6 @@ distclean::
 
 test:
 	BLD_ACTION="all" $(MM) recurse
-
-#--------------------------------------------------------------------------
-#
 
 # preview types
 osx: $(DOCUMENT).pdf
