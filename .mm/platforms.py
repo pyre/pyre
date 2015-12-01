@@ -135,7 +135,7 @@ def platform(builder):
 
         # do we have {gsl}?
         haveGSL = (
-            os.path.isfile(os.path.join(systemlibdir, 'libgsl.so'))
+            os.path.isfile(os.path.join(systemlibdir, 'x86_64-linux-gnu', 'libgsl.so'))
             and
             os.path.isdir(os.path.join(systemincdir, 'gsl'))
             )
@@ -156,7 +156,7 @@ def platform(builder):
         libpqVersion = 'postgresql'
         # do we have postgres?
         havePostgres = (
-            os.path.isfile(os.path.join(systemlibdir, 'libpq.so'))
+            os.path.isfile(os.path.join(systemlibdir, 'x86_64-linux-gnu', 'libpq.so'))
             and
             os.path.isdir(os.path.join(systemincdir, libpqVersion))
             )
@@ -198,7 +198,7 @@ def platform(builder):
             mpi.ldpath = systemlibdir
 
         # set up {python}
-        pythonVersion = '3.4'
+        pythonVersion = '3.5'
         pythonMemoryModel = 'm'
         python = 'python' + pythonVersion
         builder.requirements['python'].environ = {
