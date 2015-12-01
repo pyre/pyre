@@ -9,25 +9,24 @@ PROJECT = pyre
 PACKAGE = overview
 
 RECURSE_DIRS = \
+   config \
    figures \
    listings \
+   sections \
 
 OTHERS = \
-
-#--------------------------------------------------------------------------
-#
 
 DOCUMENT = overview
 
 PACKAGES =
 
 INCLUDES = \
-    pyre.sty \
-    setup.tex \
-    references.bib
+    config/*.sty \
+    config/*.tex \
 
 SECTIONS = \
-    sec-*.tex \
+    sections/*.tex \
+    sections/*.bib \
 
 LISTINGS = \
     listings/*.py \
@@ -40,11 +39,8 @@ LISTINGS = \
 FIGURES = \
     figures/*.pdf \
 
-#--------------------------------------------------------------------------
 #
-
 all: $(DOCUMENT).pdf
-	BLD_ACTION="all" $(MM) recurse
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -55,9 +51,6 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-
-#--------------------------------------------------------------------------
-#
 
 # preview types
 osx: $(DOCUMENT).pdf

@@ -9,7 +9,14 @@
 PROJECT = pyre
 PACKAGE = doc/overview/listings
 
-all: tidy
+# punt upstairs
+all:
+	(cd ..; $(MM))
 
+osx:
+	(cd ..; $(MM) osx)
+
+xpdf:
+	(cd ..; $(MM) xpdf)
 
 # end of file

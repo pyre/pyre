@@ -6,6 +6,13 @@
 % (c) 1998-2015 all rights reserved
 %
 
+% where things are
+\makeatletter
+\providecommand*{\input@path}{}
+\edef\input@path{{sections/}{config/}\input@path}
+\makeatother
+
+% here we go
 \documentclass[10pt,compress,t]{beamer}
 
 % packages, setup, macros, etc.
@@ -39,10 +46,10 @@
 }
 
 % the sections
-\input{sec-introduction}
-\input{sec-montecarlo}
-\input{sec-components}
-\input{sec-applications}
+\input{introduction}
+\input{montecarlo}
+\input{components}
+\input{applications}
 
 % references
 \begin{frame}[allowframebreaks]{references}

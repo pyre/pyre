@@ -7,7 +7,7 @@
 #
 
 PROJECT = pyre
-PACKAGE = doc/overview/figures
+PACKAGE = doc/overview/config
 
 # punt upstairs
 all:
