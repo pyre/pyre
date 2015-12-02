@@ -45,7 +45,14 @@ class Component(Schema):
             # and complain
             raise self.CastingError(value=value, description=msg) from None
 
-        # ok, we have a string; ask the protocol
+        # ok, we have a string; strip it
+        value = value.strip()
+        # check for none
+        if value.lower() == "none":
+            # and do as instructed
+            return None
+
+        # ask the protocol
         try:
             # to have a pass at resolving the uri into a compatible component; this handles
             # both uris that point to a retrievable component and uris that point to existing

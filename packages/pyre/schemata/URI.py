@@ -37,7 +37,9 @@ class URI(Schema):
             return value
         # if it is a string
         if isinstance(value, str):
-            # attempt to
+            # check for "none"
+            if value.strip().lower() == "none": return None
+            # otherwise, attempt to
             try:
                 # get my basic type to parse it
                 return self.locator.parse(

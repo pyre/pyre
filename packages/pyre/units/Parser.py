@@ -21,7 +21,11 @@ class Parser(metaclass=Singleton):
         """
         Convert the string representation in {text} into a dimensional quantity
         """
-        # evaluate the expression and return the result
+        # check for "none"
+        if text.strip().lower() == "none":
+            # do as told
+            return None
+        # otherwise, evaluate the expression and return the result
         return eval(text, self.context)
 
 

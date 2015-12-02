@@ -26,9 +26,16 @@ class Integer(Numeric):
         """
         Attempt to convert {value} into a float
         """
-        # get the interpreter to evaluate simple expressions
-        if isinstance(value, str): value = eval(value)
-
+        # for strings
+        if isinstance(value, str):
+            # strip
+            value = value.strip()
+            # check for "none"
+            if value.lower() == "none":
+                # do as told
+                return None
+            # otherwise, get the interpreter to evaluate simple expressions
+            value = eval(value)
         # attempt to
         try:
             # cast {value} into an integer

@@ -27,7 +27,11 @@ class Fraction(Numeric):
         """
         Attempt to convert {value} into a fraction
         """
-        # let the constructor do its job
+        # check for "none"
+        if isinstance(value, str) and value.strip().lower() == "none":
+            # do as told
+            return None
+        # otherwise, let the constructor do its job
         return fractions.Fraction(value)
 
 

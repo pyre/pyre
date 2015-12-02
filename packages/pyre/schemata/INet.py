@@ -123,7 +123,7 @@ class INet(Schema):
         # {address} instances go right through
         if isinstance(value, self.address): return value
         # use the address parser to convert strings
-        if isinstance(value, str): return self.parse(value)
+        if isinstance(value, str): return self.parse(value.strip())
         # everything else is an error
         msg="could not convert {0.value!r} into an internet address"
         raise self.CastingError(value=value, description=msg)
@@ -153,6 +153,10 @@ class INet(Schema):
         """
         Convert {value}, expected to be a string, into an inet address
         """
+        # check for "none"
+        if value.lower() == "none":
+            # and do as told
+            return None
         # interpret an empty {value}
         if not value:
             # as an ip4 address, on the local host at some random port

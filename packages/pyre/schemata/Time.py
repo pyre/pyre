@@ -39,10 +39,16 @@ class Time(Schema):
 
         # otherwise attempt to
         try:
+            # otherwise, assume it is a string; strip
+            value = value.strip()
+            # check for "none"
+            if value.lower() == "none":
+                # do as told
+                return None
            # cast {value} into a timestamp
             return datetime.datetime.strptime(value, self.format)
         # if this fails
-        except ValueError as error:
+        except (AttributeError, TypeError, ValueError) as error:
             # complain
             raise self.CastingError(value=value, description=str(error))
 

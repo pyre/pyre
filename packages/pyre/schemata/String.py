@@ -27,7 +27,11 @@ class String(Schema):
         Attempt to convert {value} into a string
         """
         # let the constructor do its job
-        return str(value)
+        value = str(value)
+        # now, check for "none"
+        if value.strip().lower() == "none": return None
+        # otherwise
+        return value
 
 
     # meta-methods

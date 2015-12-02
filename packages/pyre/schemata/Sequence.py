@@ -34,6 +34,8 @@ class Sequence(Container):
         """
         # string processing
         if isinstance(value, str):
+            # check for "nonw"
+            if value.strip().lower() == "none": return None
             # strip opening and closing delimiters
             if value and value[0] in self.open: value = value[1:]
             if value and value[-1] in self.close: value = value[:-1]

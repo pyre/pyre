@@ -34,6 +34,10 @@ class Array(Schema):
             value = value.strip()
             # if there is nothing left, return an empty tuple
             if not value: return ()
+            # if it is the string "none"
+            if value.lower() == "none":
+                # do as told
+                return None
             # otherwise, ask python to process
             value = eval(value)
         # if {value} is an iterable, convert it to a tuple and return it

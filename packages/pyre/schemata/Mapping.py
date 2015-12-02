@@ -31,7 +31,9 @@ class Mapping(Container):
         """
         # string processing
         if isinstance(value, str):
-            # not supported
+            # check for "none"
+            if value.strip().lower() == "none": return None
+            # otherwise, not supported
             raise NotImplementedError(
                 "class {.__name__} cannot coerce strings".format(type(self)))
 

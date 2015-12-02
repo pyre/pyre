@@ -26,9 +26,14 @@ class Float(Numeric):
         """
         Attempt to convert {value} into a float
         """
-        # get the interpreter to evaluate simple expressions
-        if isinstance(value, str): value = eval(value)
-
+        # if it is a string
+        if isinstance(value, str):
+            # check for none
+            if value.strip().lower() == "none":
+                # and do as told
+                return None
+            # otherwise, get the interpreter to evaluate simple expressions
+            value = eval(value)
         # attempt to
         try:
             # cast {value} into a float

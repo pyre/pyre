@@ -27,6 +27,10 @@ class Decimal(Numeric):
         """
         Attempt to convert {value} into a decimal
         """
+        # check for "none"
+        if isinstance(value, str) and value.strip().lower() == "none":
+            # do as told
+            return None
         # let the constructor do its job
         return decimal.Decimal(value)
 
