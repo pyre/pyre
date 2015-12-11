@@ -22,10 +22,19 @@ class POSIX(Host, family='pyre.platforms.posix'):
     # public data
     platform = 'posix'
     distribution = 'unknown'
-    systemdirs = ['/usr'] # canonical package installation locations
 
 
     # interface
+    def systemdirs(self):
+        """
+        Generate a sequence of directories with system wide package installations
+        """
+        # the default u*ix locations
+        yield '/usr'
+        # and nothing else
+        return
+
+
     def which(self, filename):
         """
         Search for {filename} through the list of path prefixes in the {PATH} environment variable
