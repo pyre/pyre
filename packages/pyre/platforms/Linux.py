@@ -126,8 +126,8 @@ class Linux(POSIX, family='pyre.platforms.linux'):
             # that's all for now
             return physical, logical
 
-        # otherwise, we are on a single core host
-        return (1,1)
+        # otherwise, punt
+        return super().cpuSurvey()
 
 
     # implementation details: workhorses

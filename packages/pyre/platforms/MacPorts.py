@@ -18,54 +18,50 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
     Encapsulation of a darwin host that runs macports
     """
 
-    # public data
+    # constants
     manager = 'port'
     distribution = 'macports'
 
 
     # interface
-    def systemdirs(self):
+    @classmethod
+    def systemdirs(cls):
         """
         Generate a sequence of directories with system wide package installations
         """
         # first my prefix
-        yield self.prefix()
+        yield cls.prefix()
         # then whatever my ancestors have to say
         yield from super().systemdirs()
         # all done
         return
 
 
-    def prefix(self):
+    @classmethod
+    def prefix(cls):
         """
         The package manager install location
         """
         # check my cache
-        prefix = self._prefix
+        prefix = cls._prefix
         # for whether I have done this before
         if prefix:
             # in which case I'm done
             return prefix
         # locate the full path to the port manager
-        port = self.which(self.manager)
-        # extract the directory with the tools
+        port = cls.which(cls.manager)
+        # if not there
+        if not port:
+            # return an empty string
+            return ''
+        # otherwise, extract the directory with the tools
         bin, _ = os.path.split(port)
         # and finally the prefix
         prefix, _ = os.path.split(bin)
         # set it
-        self._prefix = prefix
+        cls._prefix = prefix
         # and return it
         return prefix
-
-
-    # meta-methods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # storage for my prefix, which gets discovered dynamically
-        self._prefix = None
-        # all done
-        return
 
 
     # implementation details
@@ -109,6 +105,10 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
                 yield package, version, variants
         # all done
         return
+
+
+    # implementation details
+    _prefix = None
 
 
 # end of file

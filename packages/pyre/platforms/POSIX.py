@@ -25,7 +25,8 @@ class POSIX(Host, family='pyre.platforms.posix'):
 
 
     # interface
-    def systemdirs(self):
+    @classmethod
+    def systemdirs(cls):
         """
         Generate a sequence of directories with system wide package installations
         """
@@ -35,7 +36,8 @@ class POSIX(Host, family='pyre.platforms.posix'):
         return
 
 
-    def which(self, filename):
+    @classmethod
+    def which(cls, filename):
         """
         Search for {filename} through the list of path prefixes in the {PATH} environment variable
         """

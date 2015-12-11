@@ -33,12 +33,12 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         # set the release and the codename
         cls.release, cls.codename = cls.getOSInfo()
 
-        # if the macports directory exists
-        if os.path.isdir('/opt/local/var/macports'):
-            # load the class record
-            from .MacPorts import MacPorts
-            # and return it
-            return MacPorts
+        # get the macports package manager
+        from .MacPorts import MacPorts as macports
+        # if this is a macports system
+        if macports.prefix():
+            # return it as the flavor
+            return macports
 
         # otherwise, act like a generic darwin system
         return cls
@@ -57,7 +57,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         # which may not be accessible, e.g. if pyre is executed from within a zipfile
         except ImportError:
             # revert to defaults
-            return 1,1
+            return super().cpuSurvey()
         # otherwise, return the information given by OSX
         return host.physicalMax(), host.logicalMax()
 
@@ -68,8 +68,10 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         import platform
         # for the release number
         release, _, _ = platform.mac_ver()
+        # extract the major release
+        major = '.'.join(release.split('.')[:2])
         # use it to get the codename
-        codename = cls.codenames.get(release, 'unknown')
+        codename = cls.codenames.get(major, 'unknown')
         # and return
         return release, codename
 
