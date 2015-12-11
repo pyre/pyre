@@ -102,7 +102,7 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
                 # and has two parts
                 version, macrev = vinfo[1:].split('_')
                 # hand it to the caller
-                yield package, version, variants
+                yield package, version, set(variants)
         # all done
         return
 
