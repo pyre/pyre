@@ -65,14 +65,15 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
 
 
     # implementation details
-    def installed(self):
+    @classmethod
+    def installed(cls, *packages):
         """
         Generate a sequence of all installed ports
         """
-        # options
+        # set up the shell command
         settings = {
-            'executable': self.manager,
-            'args': [self.manager, 'installed'],
+            'executable': cls.manager,
+            'args': (cls.manager, '-q', 'installed') + packages,
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
@@ -81,10 +82,6 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
         with subprocess.Popen(**settings) as pipe:
             # get the text source
             stream = pipe.stdout
-            # get the first line
-            line = stream.readline().strip()
-            # check it
-            assert line == "The following ports are currently installed:"
             # grab the rest
             for line in pipe.stdout.readlines():
                 # strip it
