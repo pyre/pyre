@@ -13,6 +13,7 @@ PACKAGE = platforms
 EXPORT_PYTHON_MODULES = \
     CentOS.py \
     Darwin.py \
+    Debian.py \
     Host.py \
     Linux.py \
     MacPorts.py \

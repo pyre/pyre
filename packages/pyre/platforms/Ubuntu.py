@@ -6,20 +6,17 @@
 #
 
 
-# externals
-import re
 # superclass
-from .Linux import Linux
+from .Debian import Debian
 
 
 # declaration
-class Ubuntu(Linux, family='pyre.platforms.ubuntu'):
+class Ubuntu(Debian, family='pyre.platforms.ubuntu'):
     """
     Encapsulation of a host running linux on the ubuntu distribution
     """
 
     # constants
-    manager = 'dpkg'
     distribution = 'ubuntu'
 
 
