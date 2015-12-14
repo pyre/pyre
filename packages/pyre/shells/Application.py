@@ -175,7 +175,7 @@ class Application(pyre.component, metaclass=Director):
         # mount my folders
         self.pfs = self.pyre_makePrivateFilespace()
         # go through my requirements and build my dependency map
-        self.dependencies = self.pyre_resolveDependencies()
+        # self.dependencies = self.pyre_resolveDependencies()
 
         # all done
         return

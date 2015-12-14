@@ -6,8 +6,6 @@
 #
 
 
-# externals
-import os
 # access to the framework
 import pyre
 # superclass

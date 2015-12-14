@@ -60,6 +60,9 @@ class simple(pyre.application, family='simple.app'):
         for category, package in self.dependencies.items():
             self.info.line("      {}: {.pyre_spec}".format(category, package))
 
+        self.info.log()
+        return 0
+
         # my python
         python = self.dependencies['python']
         self.info.line()

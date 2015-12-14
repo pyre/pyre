@@ -8,8 +8,6 @@
 
 # the marker of component factories
 from .. import foundry
-# the protocol for external packages
-from .Category import Category as category
 
 
 # a trait descriptor suitable for collecting package categories and instance specifications
@@ -21,7 +19,7 @@ def catalog(**kwds):
     # get the trait descriptors
     from ..traits import properties
     # a catalog is a dictionary mapping package categories to list of packages
-    return properties.catalog(schema=category(), **kwds)
+    return properties.catalog(schema=package(), **kwds)
 
 
 def dependencies(**kwds):
@@ -32,7 +30,7 @@ def dependencies(**kwds):
     # get the trait descriptors
     from ..traits import properties
     # {dependencies} is a dictionary mapping package categories to package instances
-    return properties.dict(schema=category(), **kwds)
+    return properties.dict(schema=package(), **kwds)
 
 
 def requirements(**kwds):
@@ -52,24 +50,18 @@ from .Tool import Tool as tool
 from .Library import Library as library
 
 
+# the package abstractions
+from .MPI import MPI as mpi
+from .Python import Python as python
+
+
 # the packages with built-in support
 # N.B.: do not use the usual pattern for exporting package symbols; hide the import of the
 # package managers in functions to prevent importing them prematurely. This has the important
 # side-effect of making the plug-ins from user space higher priority than the built-in support
 
 
-@foundry(implements=category)
-def mpi():
-    """
-    The package manager for MPI installations
-    """
-    # get the class record
-    from .MPI import MPI
-    # and return it
-    return MPI
-
-
-@foundry(implements=category)
+@foundry(implements=mpi)
 def mpich():
     """
     The package manager for MPICH installations
@@ -80,7 +72,7 @@ def mpich():
     return MPICH
 
 
-@foundry(implements=category)
+@foundry(implements=mpi)
 def openmpi():
     """
     The package manager for OpenMPI installations
@@ -91,15 +83,15 @@ def openmpi():
     return OpenMPI
 
 
-@foundry(implements=category)
-def python():
+@foundry(implements=python)
+def python3():
     """
     Package manager for the python interpreter
     """
     # get the class record
-    from .Python import Python
+    from .Python3 import Python3
     # and return it
-    return Python
+    return Python3
 
 
 # end of file

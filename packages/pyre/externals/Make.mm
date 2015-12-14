@@ -11,13 +11,14 @@ include pyre.def
 PACKAGE = externals
 # the python modules
 EXPORT_PYTHON_MODULES = \
-    Category.py \
     Library.py \
     MPI.py \
     MPICH.py \
     OpenMPI.py \
     Package.py \
     Python.py \
+    Python2.py \
+    Python3.py \
     Tool.py \
     __init__.py
 

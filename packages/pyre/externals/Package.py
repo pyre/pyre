@@ -6,42 +6,32 @@
 #
 
 
-# access the framework
+# access the pyre framework
 import pyre
-# my protocol and the trait descriptor for external dependencies
-from . import category, requirements
 
 
-# the base class for package managers
-class Package(pyre.component, implements=category):
+# protocol declaration
+class Package(pyre.protocol, family='pyre.externals'):
     """
-    The base class for all package managers
+    The protocol that all external package managers must implement
     """
 
 
     # configurable state
-    requirements = requirements()
-    requirements.doc = 'the list of package categories on which I depend'
-
     home = pyre.properties.str()
     home.doc = 'the package installation directory'
 
-    # public data
-    category = None # overridden by subclasses
+    requirements = pyre.properties.list(schema=pyre.properties.str())
+    requirements.doc = 'the list of package categories on which I depend'
 
 
-    # package factories
+    # constants
+    category = None # the common name for this package category
+
+
+    # framewrok support
     @classmethod
-    def pyre_select(cls):
-        """
-        Select the default package manager for this package and ask for a package instance
-        """
-        # easy enough
-        return cls.pyre_newPackage()
-
-
-    @classmethod
-    def pyre_newPackage(cls):
+    def pyre_default(cls, **kwds):
         """
         Build a package instance
         """

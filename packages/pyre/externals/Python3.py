@@ -6,16 +6,18 @@
 #
 
 
+# externals
+import sys
 # framework
 import pyre
 # superclass
-from .MPI import MPI
+from .Python import Python
 
 
-# the mpich package manager
-class MPICH(pyre.component, family='pyre.externals.mpich', implements=MPI):
+# the openmpi package manager
+class Python3(pyre.component, family='pyre.externals.python3', implements=Python):
     """
-    The package manager for MPICH packages
+    The package manager for python 3.x instances
     """
 
     # public state
@@ -40,11 +42,11 @@ class MPICH(pyre.component, family='pyre.externals.mpich', implements=MPI):
     ldpath = pyre.properties.strings()
     ldpath.doc = "directories to add to the user's {LD_LIBRARY_PATH} environment variable"
 
-    launcher = pyre.properties.str(default='mpirun')
-    launcher.doc = 'the name of the launcher of MPI jobs'
+    interpreter = pyre.properties.str(default=sys.executable)
+    interpreter.doc = 'the name of the python interpreter'
 
     # constants
-    category = MPI.category
+    category = Python.category
 
 
 # end of file

@@ -7,7 +7,6 @@
 
 
 # externals
-import os
 import sys
 # access to the framework
 import pyre

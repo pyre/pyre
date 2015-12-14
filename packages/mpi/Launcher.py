@@ -7,13 +7,15 @@
 
 
 # externals
-import sys
+import sys, subprocess
+# the framework
 import pyre
-from pyre.shells.Executive import Executive # my superclass
+# my superclass
+from pyre.shells.Script import Script
 
 
 # declaration
-class Launcher(Executive, family='mpi.shells.mpirun'):
+class Launcher(Script, family='mpi.shells.mpirun'):
     """
     Encapsulation of launching an MPI job using {mpirun}
     """
@@ -25,6 +27,12 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
 
     autospawn = pyre.properties.bool(default=True)
     autospawn.doc = 'set to {True} to re-launch this script under {mpirun}'
+
+    mpi = pyre.externals.mpi()
+    mpi.doc = 'the mpi runtime of choice'
+
+    python = pyre.externals.python()
+    python.doc = 'the python interpreter to use while respawning the node tasks'
 
     # a marker that enables applications to deduce the type of shell that is hosting them
     model = pyre.properties.str(default='mpi')
@@ -61,15 +69,10 @@ class Launcher(Executive, family='mpi.shells.mpirun'):
         """
         Invoke {mpirun} with the correct arguments to create the  parallel machine
         """
-        # externals
-        import subprocess
-
         # figure out which mpi we are using
-        mpi = self.pyre_externals.locate(category='mpi')
-        launcher = mpi.launcher
+        launcher = self.mpi.launcher
         # and which python
-        python = self.pyre_externals.locate(category='python')
-        interpreter = python.interpreter
+        interpreter = self.python.interpreter
 
         # NYI: check these and raise some exceptions if they are no good
 

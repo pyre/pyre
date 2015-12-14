@@ -20,28 +20,18 @@ def test():
     # get the registered package manager
     manager = pyre.executive.externals
 
-    # look for python; it's built-in so it must be there
-    python = manager.locate(category='python')
-    # check it
+    # look for python; it's built-in so at least one instance must be there
+    python = manager.locate(category=pyre.externals.python)
+    # check that we got something
     assert python
+    # check that we pulled packages from the right category
     assert python.category == 'python'
-    # show me
+    # show me where they are from
     print('python: {.pyre_spec}'.format(python))
     print('  path: {.path}'.format(python))
     print('  ldpath: {.ldpath}'.format(python))
     print('  include: {.include}'.format(python))
     print('  interpreter: {.interpreter}'.format(python))
-
-    # attempt to
-    try:
-        # look for something that shouldn't exist
-        manager.locate(category='<unsupported>')
-        # verify that an exception was raised
-        assert False
-    # catch the right exception
-    except manager.ExternalNotFoundError as error:
-        # verify that the error message captured the category name
-        assert error.category == '<unsupported>'
 
     # all done
     return manager
