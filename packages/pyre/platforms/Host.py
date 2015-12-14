@@ -68,4 +68,12 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
         return (1,1)
 
 
+    def identify(self, authority):
+        """
+        Invoke the caller's host specific method
+        """
+        # hunt down the host specific method and invoke it
+        return getattr(authority, self.distribution)(host=self)
+
+
 # end of file

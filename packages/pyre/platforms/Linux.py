@@ -30,9 +30,12 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         """
         Return a suitable default encapsulation of the runtime host
         """
-        # identify the platform characteristics; careful not to set the distribution attribute
-        # here; the subclasses set the distribution name to the pyre canonical nickname
-        distribution, cls.release, cls.codename = cls.identify()
+        # get the platform package
+        import platform
+        # identify the platform characteristics; careful not to set the {distribution}
+        # attribute here; the subclasses set the distribution name to the pyre canonical
+        # nickname
+        distribution, cls.release, cls.codename = platform.linux_distribution()
 
         # check for ubuntu
         if distribution.lower().startswith('ubuntu'):
@@ -58,17 +61,6 @@ class Linux(POSIX, family='pyre.platforms.linux'):
 
 
     # implementation details: explorers
-    @classmethod
-    def identify(cls):
-        """
-        Return information about the linux distribution
-        """
-        # ask the platform package
-        import platform
-        # for distribution details
-        return platform.linux_distribution()
-
-
     @classmethod
     def cpuSurvey(cls):
         """
