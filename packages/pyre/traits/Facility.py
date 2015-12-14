@@ -59,6 +59,8 @@ class Facility(Slotted, schemata.component):
         if value is None: return None
         # run the value through my regular coercion
         value = self.process(value=value, node=node, **kwds)
+        # if {value} results in {None} after initial processing, leave it alone too
+        if value is None: return None
         # if what I got back is a component instance, we are all done
         if isinstance(value, self.protocol.component): return value
 
