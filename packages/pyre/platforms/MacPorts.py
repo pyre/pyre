@@ -64,7 +64,7 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
         return prefix
 
 
-    # implementation details
+    # package management
     @classmethod
     def installed(cls, *packages):
         """
@@ -100,6 +100,73 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
                 version, macrev = vinfo[1:].split('_')
                 # hand it to the caller
                 yield package, version, set(variants)
+        # all done
+        return
+
+
+    @classmethod
+    def selected(cls, *groups):
+        """
+        Generate a sequence of alternatives for a particular port group
+        """
+        # template for the command line args
+        # common settings for the shell command
+        settings = {
+            'executable': cls.manager,
+            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
+            'universal_newlines': True,
+            'shell': False
+        }
+
+        # if we were not given any group names
+        if not groups:
+            # ask for a summary report
+            settings['args'] = [ cls.manager, 'select', '--summary']
+            # run the command
+            with subprocess.Popen(**settings) as pipe:
+                # get the text source
+                stream = pipe.stdout
+                # the first two lines are headers; skip them
+                next(stream)
+                next(stream)
+                # process the rest
+                for line in stream:
+                    # strip, split, and unpack
+                    group, selection, alternatives = line.strip().split(maxsplit=2)
+                    # hand to the caller
+                    yield group, selection, set(alternatives.split())
+
+            return
+
+        # if we were given group names, set up the command line
+        args = [ cls.manager, '-q', 'select' ]
+        # iterate over all of them
+        for group in groups:
+            # ask for the current group
+            settings['args'] = args + [group]
+            # run the command
+            with subprocess.Popen(**settings) as pipe:
+                # reset the selection
+                selection = 'none'
+                # reset the alternatives
+                alternatives = []
+                # get the text source
+                stream = pipe.stdout
+                # grab the output
+                for line in stream.readlines():
+                    # strip it and split it
+                    fields = line.strip().split()
+                    # the package name is always an alternative, whether it is selected or not
+                    alternatives.append(fields[0])
+                    # if there is another field
+                    if len(fields) > 1:
+                        # if it is marked "active"
+                        if fields[1] == "(active)":
+                            # it is the selected package
+                            selection = fields[0]
+                # hand to the caller
+                yield group, selection, set(alternatives)
+
         # all done
         return
 
