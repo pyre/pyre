@@ -12,6 +12,9 @@ class Dashboard:
     Mix-in class that provides access to the pyre executive and its managers
     """
 
+    # grab the base of all pyre exceptions
+    from .exceptions import PyreError
+
 
     # public data
     # the executive
