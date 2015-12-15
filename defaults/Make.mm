@@ -13,7 +13,6 @@ PACKAGE = defaults
 # my subfolders
 RECURSE_DIRS = \
     merlin \
-    pyre
 
 # the files
 EXPORT_ETC = \
