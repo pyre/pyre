@@ -51,6 +51,12 @@ class Script(Executive, family="pyre.shells.script"):
         except KeyboardInterrupt as event:
             # launch the handler
             status = application.pyre_interrupted(info=event)
+        # if the framework complained about something
+        except self.PyreError as error:
+            # log it
+            application.error.log(str(error))
+            # indicate a failure
+            status = 1
         # in any case, we are all done
         return status
 
