@@ -29,6 +29,10 @@ class Package(pyre.protocol, family='pyre.externals'):
     category = None # the common name for this package category
 
 
+    # exceptions
+    from pyre.framework.exceptions import ExternalNotFoundError
+
+
     # framewrok support
     @classmethod
     def pyre_default(cls, **kwds):
