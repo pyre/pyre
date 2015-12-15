@@ -24,6 +24,56 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
 
 
     # interface
+    def installed(self, package):
+        """
+        Return the version and variants of the installed {package}
+        """
+        # grab the index
+        installed = self._installed
+        # if it has not been initialized
+        if not installed:
+            # build the installed package index
+            installed = {
+                package: (version, variants)
+                for package, version, variants in self.installedPackages()
+            }
+            # attach it
+            self._installed = installed
+        # ask it
+        return installed[package]
+
+
+    def selected(self, group):
+        """
+        Return the selected package and all alternatives for the given package {group}
+        """
+        # grab the index
+        selected = self._selected
+        # if it has not been initialized
+        if not selected:
+            # build the selected package index
+            selected = {
+                group: (selection, alternatives)
+                for group, selection, alternatives in self.selectedPackages()
+            }
+            # attach it
+            self._selected = selected
+        # ask it
+        return selected[group]
+
+
+    # meta methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # empty out the indices
+        self._selected = None
+        self._installed = None
+        # all done
+        return
+
+
+    # implementation details
     @classmethod
     def systemdirs(cls):
         """
@@ -66,7 +116,7 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
 
     # package management
     @classmethod
-    def installed(cls, *packages):
+    def installedPackages(cls, *packages):
         """
         Generate a sequence of all installed ports
         """
@@ -105,7 +155,7 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
 
 
     @classmethod
-    def selected(cls, *groups):
+    def selectedPackages(cls, *groups):
         """
         Generate a sequence of alternatives for a particular port group
         """
@@ -171,7 +221,7 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
         return
 
 
-    # implementation details
+    # private data
     _prefix = None
 
 
