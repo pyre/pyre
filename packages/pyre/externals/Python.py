@@ -29,4 +29,16 @@ class Python(Tool, Library, family='pyre.externals.python'):
     interpreter.doc = 'the name of the interpreter; may be the full path to the executable'
 
 
+    # framework hooks
+    @classmethod
+    def pyre_default(cls, **kwds):
+        """
+        Identify the default python installation
+        """
+        # grab the support for python 3.x
+        from .Python3 import Python3
+        # and return it
+        return Python3
+
+
 # end of file

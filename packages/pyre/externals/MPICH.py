@@ -19,26 +19,17 @@ class MPICH(pyre.component, family='pyre.externals.mpich', implements=MPI):
     """
 
     # public state
-    home = pyre.properties.str()
-    home.doc = 'the package installation directory'
+    prefix = pyre.properties.str()
+    prefix.doc = 'the package installation directory'
 
-    requirements = pyre.properties.list(schema=pyre.properties.str())
-    requirements.doc = 'the list of package categories on which I depend'
+    bindir = pyre.properties.str()
+    bindir.doc = "the location of my binaries"
 
-    bin = pyre.properties.str()
-    bin.doc = "the location of my binaries"
+    incdir = pyre.properties.str()
+    incdir.doc = "the location of my headers; for the compiler command line"
 
-    lib = pyre.properties.strings()
-    lib.doc = "the locations of my libraries; for the linker command path"
-
-    include = pyre.properties.strings()
-    include.doc = "the locations of my headers; for the compiler command line"
-
-    path = pyre.properties.strings()
-    path.doc = "directories to add to the user's {PATH} environment variable"
-
-    ldpath = pyre.properties.strings()
-    ldpath.doc = "directories to add to the user's {LD_LIBRARY_PATH} environment variable"
+    libdir = pyre.properties.str()
+    libdir.doc = "the location of my libraries; for the linker command path"
 
     launcher = pyre.properties.str(default='mpirun')
     launcher.doc = 'the name of the launcher of MPI jobs'

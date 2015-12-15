@@ -20,14 +20,8 @@ class Tool(Package):
 
 
     # user configurable state
-    bin = pyre.properties.str()
-    bin.doc = "the location of my binaries"
-
-    path = pyre.properties.strings()
-    path.doc = "directories to add to the user's {PATH} environment variable"
-
-    ldpath = pyre.properties.strings()
-    ldpath.doc = "directories to add to the user's {LD_LIBRARY_PATH} environment variable"
+    bindir = pyre.properties.str()
+    bindir.doc = "the location of my binaries"
 
 
 # end of file

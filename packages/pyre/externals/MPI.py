@@ -31,21 +31,45 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
     @classmethod
     def pyre_default(cls, **kwds):
         """
-        Build a package instance
+        Identify the default implementation of MPI
         """
-        # get the os distribution
-        distribution = cls.pyre_host.distribution
+        # get the host
+        host = cls.pyre_host
+        # attempt to
+        try:
+            # dispatch to my host specific handlers
+            package = host.identify(authority=cls)
+        # if something goes wrong
+        except AttributeError:
+            # use a generic mpich as the default
+            from .MPICH import MPICH as package
+        # and return it
+        return package
 
-        # the default for {macports} machines
-        if distribution == 'macports':
-            # is to use openmpi
-            from .OpenMPI import OpenMPI as default
-        # for all others, just chain up and let my superclass hunt the right package down
-        else:
-            default = super().pyre_default(**kwds)
 
-        # all done
-        return default
+    @classmethod
+    def macports(cls, host):
+        """
+        Identify the default implementation of MPI on macports machines
+        """
+        # this is a macports host; ask it for the selected mpi package
+        selection, alternatives = host.selected(cls.category)
+        # if the selection is an openmpi variant
+        if selection.startswith('openmpi'):
+            # get the support for OpenMPI
+            from .OpenMPI import OpenMPI
+            # and return it
+            return OpenMPI
+
+        # if the selection is an mpich variant
+        if selection.startswith('mpich'):
+            # get the support for MPICH
+            from .MPICH import MPICH
+            # and return it
+            return MPICH
+
+        # anything else is an error
+        raise cls.ExternalNotFoundError(category=cls.category)
 
 
 # end of file

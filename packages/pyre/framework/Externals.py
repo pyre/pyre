@@ -23,7 +23,7 @@ class Externals:
         Locate a package from the given {category} suitable for {platform} subject to the
         {user} choices
         """
-        # build the trait descriptor and ask it find us an instance
+        # return the default package manager for this category
         return category.pyre_default()
 
 
