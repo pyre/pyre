@@ -26,11 +26,13 @@ def test():
     assert python
     # check that we pulled packages from the right category
     assert python.category == 'python'
+    # instantiate
+    python = python(name="default")
     # show me where they are from
     print('python: {.pyre_spec}'.format(python))
-    print('  path: {.path}'.format(python))
-    print('  ldpath: {.ldpath}'.format(python))
-    print('  include: {.include}'.format(python))
+    print('  binaries: {.bindir}'.format(python))
+    print('  headers: {.incdir}'.format(python))
+    print('  libraries: {.libdir}'.format(python))
     print('  interpreter: {.interpreter}'.format(python))
 
     # all done
