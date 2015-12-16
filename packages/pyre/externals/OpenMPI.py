@@ -40,30 +40,31 @@ class OpenMPI(pyre.component, family='pyre.externals.openmpi', implements=MPI):
     category = MPI.category
 
 
+    # meta-methods
+    def __init__(self, name, **kwds):
+        # chain up
+        super().__init__(name=name, **kwds)
+        # get my configuration errors
+        errors = self.pyre_configurationErrors
+        # if there were errors
+        if errors:
+            # complain
+            raise self.ConfigurationError(component=self, errors=errors)
+        # all done
+        return
+
+
     # framework hooks
     def pyre_configured(self):
         """
         Verify and correct the package configuration
         """
-        # check in
-        print("pyre.externals.OpenMPI.pyre_configured:")
-        print("  host: {.pyre_host}".format(self))
-
-        # do i need help?
-        errors = tuple(self.checkConfiguration())
-        # if there were no errors:
-        if not errors:
-            # move on
-            print("  status: cool")
-        # otherwise
-        else:
-            # complain
-            print("  encountered the following errors:")
-            for error in errors:
-                print("    {}".format(error))
-
-        # all done
-        return
+        # initialize the list of errors
+        errors = super().pyre_configured()
+        # check the configuration and record any reported errors
+        errors += list(self.checkConfiguration())
+        # return the list of errors
+        return errors
 
 
     # configuration validation
