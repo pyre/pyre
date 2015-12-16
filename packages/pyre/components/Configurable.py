@@ -24,7 +24,9 @@ class Configurable(Dashboard):
     """
 
     # types
-    from .exceptions import FrameworkError, CategoryMismatchError, TraitNotFoundError
+    from .exceptions import (
+        FrameworkError, CategoryMismatchError, TraitNotFoundError, ConfigurationError
+        )
 
 
     # framework data; every class record gets a fresh set of these values

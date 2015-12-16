@@ -85,7 +85,7 @@ class PrivateInventory(Inventory):
         instance.pyre_inventory = cls(slots=cls.instanceSlots(instance=instance))
 
         # invoke the configuration hook
-        instance.pyre_configured()
+        instance.pyre_configurationErrors += instance.pyre_configured()
 
         # all done
         return

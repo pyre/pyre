@@ -127,7 +127,7 @@ class PublicInventory(Inventory):
         # configure the instance
         cls.pyre_configurator.configureComponentInstance(instance=instance)
         # invoke the configuration hook
-        instance.pyre_configured()
+        instance.pyre_configurationErrors += instance.pyre_configured()
 
         # all done
         return

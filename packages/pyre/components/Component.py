@@ -88,7 +88,8 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Hook that gets invoked by the framework after the component instance has been
         configured but before the binding of any of its traits
         """
-        return self
+        # return the list of errors encountered while checking the configuration
+        return []
 
 
     def pyre_bound(self):
@@ -178,6 +179,8 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
         # record the locator
         instance.pyre_locator = locator
+        # initialize the configuration error pile
+        instance.pyre_configurationErrors = []
 
         # deduce the visibility of this instance
         visibility = cls.PrivateInventory if name is None else cls.PublicInventory

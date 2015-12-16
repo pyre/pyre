@@ -147,4 +147,24 @@ class ResolutionError(ComponentError):
         return
 
 
+class ConfigurationError(ComponentError):
+    """
+    Exception raised when something bad happens during component configuration
+    """
+
+    # public data
+    description = 'while configuring {0.component.pyre_name!r}: {0.errors}'
+
+    # meta-methods
+    def __init__(self, component, errors, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store my context
+        self.component = component
+        self.errors = "\n    ".join([''] + errors)
+        # all done
+        return
+
+
+
 # end of file
