@@ -22,7 +22,7 @@ class Weaver(pyre.component, family="pyre.weaver"):
 
 
     # public state
-    language = Language()
+    language = Language(default=None)
     language.doc = "the desired output language"
 
 

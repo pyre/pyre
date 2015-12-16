@@ -36,7 +36,7 @@ class Facility(Slotted, schemata.component):
         # if it is still at its trivial value
         if default is schemata.component.default:
             # ask my protocol
-            return self.protocol.pyre_default()
+            return self.protocol.pyre_default
         # otherwise, return it
         return default
 

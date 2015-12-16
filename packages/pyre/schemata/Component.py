@@ -36,7 +36,12 @@ class Component(Schema):
         # and the component type
         component = protocol.component
 
-        # first, give {value} a try
+        # if {value} is my protocol's {pyre_default} classmethod
+        if value == protocol.pyre_default:
+            # evaluate it
+            value = value()
+
+        # give {value} a try
         if isinstance(value, actor) or isinstance(value, component): return value
 
         # the only remaining case that i can handle is {value} being a string; if it's not

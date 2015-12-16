@@ -490,7 +490,7 @@ class Executive:
         from ..platforms import platform
         # get the host class record; the default value already contains all we could discover
         # about the type of machine we are running on
-        host = platform().default
+        host = platform().default()
 
         # hunt down the distribution configuration file and load it
         # make a locator
