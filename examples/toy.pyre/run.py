@@ -34,22 +34,23 @@ def test():
         'studying for 2.0 hours', 'relaxing for 3.0 hours',
         'studying for 1.0 hour', 'relaxing for 1.5 hours'
         )
+    # print(alec.friends)
     # print(alec.friends['girlfriend'].pyre_name)
     # print(alec.friends['girlfriend'].friends)
     assert alec.friends['teacher'] is michael
 
-    jessica = toy.student(name='jessica')
-    activities = tuple(jessica.perform())
+    ally = toy.student(name='ally')
+    activities = tuple(ally.perform())
     assert activities == (
         'studying for 0.5 hours', 'relaxing for 3.0 hours',
         'studying for 1.5 hours', 'relaxing for 1.5 hours'
         )
-    # print(jessica.friends)
-    assert jessica.friends['teacher'] is michael
+    # print(ally.friends)
+    assert ally.friends['teacher'] is michael
 
     # check the relationships
-    assert alec.friends['girlfriend'] is jessica
-    assert jessica.friends['boyfriend'] is alec
+    assert alec.friends['girlfriend'] is ally
+    assert ally.friends['boyfriend'] is alec
 
     joe = toy.policeman(name='joe')
     activities = tuple(joe.perform())
@@ -63,10 +64,10 @@ def test():
     # print("person.friends:\n  {}\n  {}".format(toy.person.friends, type(toy.person.friends)))
     # print("student.friends:\n  {}\n  {}".format(toy.student.friends, type(toy.student.friends)))
     # print("alec.friends:\n  {}\n  {}".format(alec.friends, type(alec.friends)))
-    # print("jessica.friends:\n  {}\n  {}".format(jessica.friends, type(jessica.friends)))
+    # print("ally.friends:\n  {}\n  {}".format(ally.friends, type(ally.friends)))
 
     # all done
-    return jane, alec, jessica, joe
+    return jane, alec, ally, joe
 
 
 # main
