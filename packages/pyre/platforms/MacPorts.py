@@ -137,9 +137,9 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
                 # strip it
                 line = line.strip()
                 # split on whitespace
-                package, info, status = line.split()
+                package, info, *status = line.split()
                 # of this is not an active port
-                if status != "(active)":
+                if not status or status[0] != "(active)":
                     # skip it
                     continue
                 # unpack the info
