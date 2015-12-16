@@ -17,10 +17,11 @@ class Component(Schema):
     """
 
 
-    # constants
-    typename = 'component' # the name of my type
     # types
     from . import uri
+    # constants
+    default = object()
+    typename = 'component' # the name of my type
 
 
     # interface
@@ -84,9 +85,9 @@ class Component(Schema):
 
 
     # meta-methods
-    def __init__(self, protocol, **kwds):
+    def __init__(self, protocol, default=default, **kwds):
         # chain up
-        super().__init__(**kwds)
+        super().__init__(default=default, **kwds)
         # save my protocol
         self.protocol = protocol
         # all done

@@ -31,8 +31,14 @@ class Facility(Slotted, schemata.component):
         """
         Access to my default value
         """
-        # if the client provided one, use it; otherwise, ask my protocol
-        return self._default or self.protocol.pyre_default()
+        # get my default value
+        default = self._default
+        # if it is still at its trivial value
+        if default is schemata.component.default:
+            # ask my protocol
+            return self.protocol.pyre_default()
+        # otherwise, return it
+        return default
 
 
     def macro(self, **kwds):
