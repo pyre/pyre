@@ -212,11 +212,11 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # if i have one
         if family:
             # use it
-            fragments.append('instance of {!r} at {:#x}'.format(family, id(self)))
+            fragments.append('an instance of {!r}'.format(family))
         # otherwise
         else:
             # leave a marker
-            fragments.append('instance of {!r} at {:#x}'.format(type(self).__name__, id(self)))
+            fragments.append('an instance of {!r}'.format(type(self).__name__))
         # assemble
         return ', '.join(fragments)
 

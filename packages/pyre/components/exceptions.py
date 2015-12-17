@@ -153,7 +153,7 @@ class ConfigurationError(ComponentError):
     """
 
     # public data
-    description = 'while configuring {0.component.pyre_name!r}: {0.errors}'
+    description = 'while configuring {0.component}: {0.errors}'
 
     # meta-methods
     def __init__(self, component, errors, **kwds):
