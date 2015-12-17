@@ -30,6 +30,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     template_staticLibrary = "{0.prefix_library}{1}{0.extension_staticLibrary}"
     template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
 
+
     # protocol obligations
     @classmethod
     def flavor(cls):

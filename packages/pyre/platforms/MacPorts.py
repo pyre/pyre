@@ -7,7 +7,7 @@
 
 
 # externals
-import os, subprocess
+import os, re, subprocess
 # superclass
 from .Darwin import Darwin
 
@@ -133,7 +133,7 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
             # get the text source
             stream = pipe.stdout
             # grab the rest
-            for line in pipe.stdout.readlines():
+            for line in stream.readlines():
                 # strip it
                 line = line.strip()
                 # split on whitespace
@@ -221,8 +221,88 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
         return
 
 
+    @classmethod
+    def contents(cls, package):
+        """
+        Generate a sequence with the contents of {package}
+        """
+        # set up the shell command
+        settings = {
+            'executable': cls.manager,
+            'args': (cls.manager, 'contents', package),
+            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
+            'universal_newlines': True,
+            'shell': False
+        }
+        # make a pipe
+        with subprocess.Popen(**settings) as pipe:
+            # grab the rest
+            for line in pipe.stdout.readlines():
+                # strip it and hand it to the caller
+                yield line.strip()
+        # all done
+        return
+
+
+    @classmethod
+    def selectionMap(cls, group, alternative):
+        """
+        Generate a map from {base} settings to the provided {alternative} for the given {group}
+        """
+        # get the folder with the group files
+        folder = os.path.join(cls.prefix(), 'etc', 'select', group)
+        # if this is not a valid folder
+        if not os.path.isdir(folder):
+            # bail
+            return {}
+
+        # get the {base} file
+        base = open(os.path.join(folder, 'base'))
+        # and put its contents in a list
+        keys = [ line.strip() for line in base.readlines() ]
+
+        # get the file with the alternatives
+        selection = open(os.path.join(folder, alternative))
+        # and put its contents in a list
+        values = [ line.strip() for line in selection.readlines() ]
+
+        # build the map
+        map = { base: value if value != '-' else None for base, value in zip(keys, values) }
+        # and return it
+        return map
+
+
+    @classmethod
+    def provides(cls, filename):
+        """
+        Find the package that owns the given filename
+        """
+        # set up the shell command
+        settings = {
+            'executable': cls.manager,
+            'args': (cls.manager, 'provides', filename),
+            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
+            'universal_newlines': True,
+            'shell': False
+        }
+        # make a pipe
+        with subprocess.Popen(**settings) as pipe:
+            # grab the rest
+            line = pipe.stdout.readline().strip()
+            # check whether this filename belongs to a package
+            match = cls._provides.match(line)
+            # if it does
+            if match:
+                # extract the package name and return it
+                return match.group('package')
+
+        # if we got this far, we couldn't figure it out
+        return
+
+
     # private data
     _prefix = None
+    _provides = re.compile(r".* is provided by: (?P<package>.*)")
 
 
 # end of file
