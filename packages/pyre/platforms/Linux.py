@@ -22,6 +22,14 @@ class Linux(POSIX, family='pyre.platforms.linux'):
 
     # public data
     platform = 'linux'
+    distribution = 'generic'
+
+    prefix_library = 'lib'
+    extension_staticLibrary = '.a'
+    extension_dynamicLibrary = '.so'
+
+    template_staticLibrary = "{0.prefix_library}{1}.{0.extension_staticLibrary}"
+    template_dynamicLibrary = "{0.prefix_library}{1}.{0.extension_dynamicLibrary}"
 
 
     # protocol obligations

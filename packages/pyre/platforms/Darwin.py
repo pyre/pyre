@@ -19,10 +19,16 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     """
 
 
-    # public data
+    # constants
     platform = 'darwin'
     distribution = 'apple'
 
+    prefix_library = 'lib'
+    extension_staticLibrary = '.a'
+    extension_dynamicLibrary = '.dylib'
+
+    template_staticLibrary = "{0.prefix_library}{1}{0.extension_staticLibrary}"
+    template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
 
     # protocol obligations
     @classmethod
@@ -92,5 +98,6 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         '10.1': 'puma',
         '10.0': 'cheetah',
         }
+
 
 # end of file
