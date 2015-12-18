@@ -46,23 +46,4 @@ class POSIX(Host, family='pyre.platforms.posix'):
         return shutil.which(filename)
 
 
-    # feature support
-    @classmethod
-    def dynamicLibraries(cls, stems):
-        """
-        Convert the sequence of stems into likely filenames for shared objects
-        """
-        # go through each one
-        return (cls.template_dynamicLibrary.format(cls, stem) for stem in stems)
-
-
-    @classmethod
-    def staticLibraries(cls, stems):
-        """
-        Convert the sequence of stems into likely filenames for shared objects
-        """
-        # go through each one
-        return (cls.template_staticLibrary.format(cls, stem) for stem in stems)
-
-
 # end of file

@@ -68,12 +68,49 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
         return (1,1)
 
 
-    def identify(self, authority):
+    def identifyDistribution(self, package):
         """
         Invoke the caller's host specific method
         """
         # hunt down the host specific method and invoke it
-        return getattr(authority, self.distribution)(host=self)
+        return getattr(package, self.distribution)(host=self)
+
+
+    # feature support
+    @classmethod
+    def dynamicLibrary(cls, stem):
+        """
+        Convert the sequence of stems into likely filenames for shared objects
+        """
+        # go through each one
+        return cls.template_dynamicLibrary.format(cls, stem)
+
+
+    @classmethod
+    def staticLibrary(cls, stem):
+        """
+        Convert the sequence of stems into likely filenames for shared objects
+        """
+        # go through each one
+        return cls.template_staticLibrary.format(cls, stem)
+
+
+    @classmethod
+    def dynamicLibraries(cls, stems):
+        """
+        Convert the sequence of stems into likely filenames for shared objects
+        """
+        # go through each one
+        return (cls.template_dynamicLibrary.format(cls, stem) for stem in stems)
+
+
+    @classmethod
+    def staticLibraries(cls, stems):
+        """
+        Convert the sequence of stems into likely filenames for shared objects
+        """
+        # go through each one
+        return (cls.template_staticLibrary.format(cls, stem) for stem in stems)
 
 
 # end of file
