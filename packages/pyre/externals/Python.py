@@ -104,14 +104,8 @@ class Python(Tool, Library, family='pyre.externals.python'):
                 raise cls.ConfigurationError(
                     component=package, errors=package.pyre_configurationErrors)
 
-        # get my selection map
-        smap = host.selectionMap(group=package.flavor, alternative=name)
-        # form a filename that belongs to my package; this should be non-empty
-        filename = os.path.join(prefix, next(filter(None, smap.values())))
-        # get the host to tell me where it came from
-        packageName = host.provides(filename=filename)
-        # get the package contents
-        contents = set(host.contents(package=packageName))
+        # get my selection info
+        packageName, contents, smap = host.provider(group=package.flavor, alternative=name)
 
         # find my {interpreter}
         interpreter = os.path.join(prefix, smap['bin/python3'])
@@ -161,4 +155,6 @@ class Python(Tool, Library, family='pyre.externals.python'):
 
         # all done
         return
+
+
 # end of file
