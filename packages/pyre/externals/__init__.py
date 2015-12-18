@@ -51,6 +51,7 @@ from .Library import Library as library
 
 
 # the package abstractions
+from .GSL import GSL as gsl
 from .MPI import MPI as mpi
 from .Python import Python as python
 
@@ -97,12 +98,23 @@ def genericmpi():
 @foundry(implements=python)
 def python3():
     """
-    Package manager for the python interpreter
+    Package manager for version 3.x of the python interpreter
     """
     # get the class record
     from .Python3 import Python3
     # and return it
     return Python3
+
+
+@foundry(implements=python)
+def python2():
+    """
+    Package manager for version 2.x of the python interpreter
+    """
+    # get the class record
+    from .Python2 import Python2
+    # and return it
+    return Python2
 
 
 # end of file
