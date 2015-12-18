@@ -300,6 +300,23 @@ class MacPorts(Darwin, family='pyre.platforms.macports'):
         return
 
 
+    @classmethod
+    def provider(cls, group, alternative):
+        """
+        Identify the package in the {group} that provides the selected {alternative}
+        """
+        # get the selection map
+        smap = cls.selectionMap(group=group, alternative=alternative)
+        # form a filename that belongs to the target package
+        filename = os.path.join(cls.prefix(), next(filter(None, smap.values())))
+        # find out where it came from
+        package = cls.provides(filename=filename)
+        # get the package contents
+        contents = tuple(cls.contents(package=package))
+        # return the package, its contents, and the selection map
+        return package, contents, smap
+
+
     # private data
     _prefix = None
     _provides = re.compile(r".* is provided by: (?P<package>.*)")
