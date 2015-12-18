@@ -11,6 +11,7 @@ include pyre.def
 PACKAGE = externals
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    Installation.py \
     Library.py \
     MPI.py \
     MPICH.py \

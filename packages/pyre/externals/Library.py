@@ -27,4 +27,27 @@ class Library(Package):
     libdir.doc = "the location of my libraries; for the linker command path"
 
 
+    # configuration validation
+    @classmethod
+    def checkIncdir(cls, package, filenames):
+        """
+        Verify that the {incdir} trait points to a good location
+        """
+        # chain up
+        yield from cls.checkFolder(category='incdir', folder=package.incdir, filenames=filenames)
+        # all done
+        return
+
+
+    @classmethod
+    def checkLibdir(cls, package, filenames):
+        """
+        Verify that the {libdir} trait points to a good location
+        """
+        # chain up
+        yield from cls.checkFolder(category='libdir', folder=package.libdir, filenames=filenames)
+        # all done
+        return
+
+
 # end of file

@@ -9,11 +9,13 @@
 # framework
 import pyre
 # superclass
+from .Installation import Installation
+# my package category
 from .MPI import MPI
 
 
 # the mpich package manager
-class MPICH(pyre.component, family='pyre.externals.mpich', implements=MPI):
+class MPICH(Installation, family='pyre.externals.mpich', implements=MPI):
     """
     The package manager for MPICH packages
     """
@@ -35,6 +37,7 @@ class MPICH(pyre.component, family='pyre.externals.mpich', implements=MPI):
     launcher.doc = 'the name of the launcher of MPI jobs'
 
     # constants
+    flavor = "mpich"
     category = MPI.category
 
 

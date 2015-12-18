@@ -24,4 +24,16 @@ class Tool(Package):
     bindir.doc = "the location of my binaries"
 
 
+    # configuration validation
+    @classmethod
+    def checkBindir(cls, package, filenames):
+        """
+        Verify that the {bindir} trait points to a good location
+        """
+        # chain up
+        yield from cls.checkFolder(category='bindir', folder=package.bindir, filenames=filenames)
+        # all done
+        return
+
+
 # end of file
