@@ -19,6 +19,9 @@ class configure(pyre.application):
     mpi = pyre.externals.mpi()
     mpi.doc = "the mpi installation to use"
 
+    python = pyre.externals.python()
+    python.doc = "the python installation to use"
+
 
     @pyre.export
     def main(self, *args, **kwds):
@@ -30,10 +33,35 @@ class configure(pyre.application):
         # show me
         info.line("{.pyre_name}:".format(self))
 
+        # get my python
+        python = self.python
+        # show me
+        info.line("  python: {}".format(python))
+        # if i have one
+        if python:
+            # locations
+            info.line("    locations:")
+            info.line("      prefix: {}".format(python.prefix))
+            info.line("      bindir: {}".format(python.bindir))
+            info.line("      incdir: {}".format(python.incdir))
+            info.line("      libdir: {}".format(python.libdir))
+            info.line("      interpreter: {}".format(python.interpreter))
+            # link line
+            info.line("    link:")
+            # info.log("      libraries: {}".format(tuple(python.libraries())))
+
+            # get the configuration errors
+            errors = python.pyre_configurationErrors
+            # if there were any
+            if errors:
+                # tell me
+                info.line("    configuration errors that were auto-corrected:")
+                # and show me
+                for index, error in enumerate(errors):
+                    info.line("        {}: {}".format(index+1, error))
+
         # get my mpi
-        # print("--------------------------------------------------")
         mpi = self.mpi
-        # print("--------------------------------------------------")
         # show me
         info.line("  mpi: {}".format(mpi))
         # if i have one

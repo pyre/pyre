@@ -11,33 +11,27 @@ import sys
 # framework
 import pyre
 # superclass
+from .ToolInstallation import ToolInstallation
+from .LibraryInstallation import LibraryInstallation
+# my package category
 from .Python import Python
 
 
 # the openmpi package manager
-class Python3(pyre.component, family='pyre.externals.python3', implements=Python):
+class Python3(
+        ToolInstallation, LibraryInstallation,
+        family='pyre.externals.python3', implements=Python):
     """
     The package manager for python 3.x instances
     """
 
-    # public state
-    prefix = pyre.properties.str()
-    prefix.doc = 'the package installation directory'
-
-    bindir = pyre.properties.str()
-    bindir.doc = "the location of my binaries"
-
-    incdir= pyre.properties.str()
-    incdir.doc = "the location of my headers; for the compiler command line"
-
-    libdir = pyre.properties.str()
-    libdir.doc = "the location of my libraries; for the linker command path"
-
-    interpreter = pyre.properties.str(default=sys.executable)
-    interpreter.doc = 'the name of the python interpreter'
-
     # constants
     category = Python.category
+    flavor = category + '3'
 
+
+    # public state
+    interpreter = pyre.properties.str(default=flavor)
+    interpreter.doc = 'the name of the python interpreter'
 
 # end of file
