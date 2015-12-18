@@ -53,7 +53,7 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         """
         Provide a default implementation of MPI on platforms that are not explicitly handled
         """
-        print("    going generic")
+        # print("    going generic")
         # attempt to provide something; it will probably fail during configuration...
         from .MPICH import MPICH
         # and return it
@@ -68,8 +68,8 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         # this is a macports host; ask it for the selected mpi package
         selection, alternatives = host.selected(cls.category)
         # show me
-        print("    selection: {!r}".format(selection))
-        print("    alternatives: {}".format(alternatives))
+        # print("    selection: {!r}".format(selection))
+        # print("    alternatives: {}".format(alternatives))
 
         # try to identify the selected port, hence the one the user considers the default on
         # this host
@@ -77,7 +77,7 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         # if the selection is an openmpi variant
         if selection.startswith('openmpi'):
             # show me
-            print("    using the selected 'openmpi' installation: {!r}".format(selection))
+            # print("    using the selected 'openmpi' installation: {!r}".format(selection))
             # get the support for OpenMPI
             from .OpenMPI import OpenMPI
             # and return it
@@ -85,7 +85,7 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         # if the selection is an mpich variant
         if selection.startswith('mpich'):
             # show me
-            print("    using the selected 'mpich' installation: {!r}".format(selection))
+            # print("    using the selected 'mpich' installation: {!r}".format(selection))
             # get the support for MPICH
             from .MPICH import MPICH
             # and return it
@@ -100,7 +100,7 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
                 # attempt to
                 try:
                     # show me
-                    print("    attempting to use the alternative {!r}".format(alternative))
+                    # print("    attempting to use the alternative {!r}".format(alternative))
                     # instantiate it and return it
                     return OpenMPI(name=alternative)
                 # if it couldn't be configured properly
@@ -117,7 +117,7 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
                 # attempt to
                 try:
                     # show me
-                    print("    attempting to use the alternative {!r}".format(alternative))
+                    # print("    attempting to use the alternative {!r}".format(alternative))
                     # instantiate it and return it
                     return MPICH(name=alternative)
                 # if it couldn't be configured properly

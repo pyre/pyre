@@ -36,7 +36,7 @@ class Package(pyre.protocol, family='pyre.externals'):
         """
         Identify the default implementation of a package
         """
-        print("{.__name__}.pyre_default:".format(cls))
+        # print("{.__name__}.pyre_default:".format(cls))
         # get the user
         user = cls.pyre_user
         # check whether there is a registered preference for this category
@@ -59,7 +59,7 @@ class Package(pyre.protocol, family='pyre.externals'):
             # use a generic mpich as the default
             package = cls.generic(host=host)
 
-        print(" .. done")
+        # print(" .. done")
         # and return it
         return package
 
