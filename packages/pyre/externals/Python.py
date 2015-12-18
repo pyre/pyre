@@ -86,6 +86,8 @@ class Python(Tool, Library, family='pyre.externals.python'):
         prefix = host.prefix()
         # ask the package manager for information about my category
         selection, alternatives = host.selected(group=package.flavor)
+        # get the package info
+        version, variants = host.installed(package=selection)
         # get my name
         name = package.pyre_name
         # if my name is not one of the alternatives:
@@ -147,6 +149,7 @@ class Python(Tool, Library, family='pyre.externals.python'):
             libdir = ''
 
         # apply the configuration
+        package.version = version
         package.prefix = prefix
         package.bindir = bindir
         package.incdir = incdir

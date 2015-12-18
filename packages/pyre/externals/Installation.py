@@ -16,6 +16,9 @@ class Installation(pyre.component):
     Base class for all package installations
     """
 
+    # constants
+    version = "unknown"
+
     # public state
     prefix = pyre.properties.str()
     prefix.doc = 'the package installation directory'

@@ -158,6 +158,8 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
 
         # get my selection info
         packageName, contents, smap = host.provider(group=cls.category, alternative=name)
+        # get the version info
+        version, variants = host.installed(package=packageName)
 
         # find my {launcher}
         launcher = os.path.join(prefix, smap['bin/mpirun'])
@@ -199,6 +201,7 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
             libdir = ''
 
         # apply the configuration
+        package.version = version
         package.prefix = prefix
         package.bindir = bindir
         package.incdir = incdir

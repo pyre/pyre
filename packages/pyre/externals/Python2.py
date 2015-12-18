@@ -29,9 +29,9 @@ class Python2(
     category = Python.category
     flavor = category + '2'
 
-
     # public state
     interpreter = pyre.properties.str(default=flavor)
     interpreter.doc = 'the name of the python interpreter'
+
 
 # end of file
