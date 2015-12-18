@@ -125,8 +125,8 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
                     # carry on
                     continue
 
-        # anything else is an error
-        raise cls.generic(host=host)
+        # if we get this far, not much else to do
+        return cls.generic(host=host)
 
 
     @classmethod
@@ -156,17 +156,11 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
                 raise cls.ConfigurationError(
                     component=package, errors=package.pyre_configurationErrors)
 
-        # get my selection map
-        map = host.selectionMap(group=cls.category, alternative=name)
-        # form a filename that belongs to my package; this should be non-empty
-        filename = os.path.join(prefix, next(filter(None, map.values())))
-        # get the host to tell me where it came from
-        packageName = host.provides(filename=filename)
-        # get the package contents
-        contents = set(host.contents(package=packageName))
+        # get my selection info
+        packageName, contents, smap = host.provider(group=cls.category, alternative=name)
 
         # find my {launcher}
-        launcher = os.path.join(prefix, map['bin/mpirun'])
+        launcher = os.path.join(prefix, smap['bin/mpirun'])
         # extract my {bindir}
         bindir,_ = os.path.split(launcher)
 

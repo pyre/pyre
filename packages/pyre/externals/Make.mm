@@ -13,6 +13,7 @@ PACKAGE = externals
 EXPORT_PYTHON_MODULES = \
     Installation.py \
     Library.py \
+    LibraryInstallation.py \
     MPI.py \
     MPICH.py \
     OpenMPI.py \
@@ -21,6 +22,7 @@ EXPORT_PYTHON_MODULES = \
     Python2.py \
     Python3.py \
     Tool.py \
+    ToolInstallation.py \
     __init__.py
 
 # standard targets

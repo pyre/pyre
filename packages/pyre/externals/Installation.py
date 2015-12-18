@@ -16,6 +16,10 @@ class Installation(pyre.component):
     Base class for all package installations
     """
 
+    # public state
+    prefix = pyre.properties.str()
+    prefix.doc = 'the package installation directory'
+
     # meta-methods
     def __init__(self, name, **kwds):
         # chain up

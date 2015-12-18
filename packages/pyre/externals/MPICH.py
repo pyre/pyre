@@ -9,30 +9,21 @@
 # framework
 import pyre
 # superclass
-from .Installation import Installation
+from .ToolInstallation import ToolInstallation
+from .LibraryInstallation import LibraryInstallation
 # my package category
 from .MPI import MPI
 
 
 # the mpich package manager
-class MPICH(Installation, family='pyre.externals.mpich', implements=MPI):
+class MPICH(
+        ToolInstallation, LibraryInstallation,
+        family='pyre.externals.mpich', implements=MPI):
     """
     The package manager for MPICH packages
     """
 
     # public state
-    prefix = pyre.properties.str()
-    prefix.doc = 'the package installation directory'
-
-    bindir = pyre.properties.str()
-    bindir.doc = "the location of my binaries"
-
-    incdir = pyre.properties.str()
-    incdir.doc = "the location of my headers; for the compiler command line"
-
-    libdir = pyre.properties.str()
-    libdir.doc = "the location of my libraries; for the linker command path"
-
     launcher = pyre.properties.str(default='mpirun')
     launcher.doc = 'the name of the launcher of MPI jobs'
 
