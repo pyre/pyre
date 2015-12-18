@@ -55,9 +55,9 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         """
         # print("    going generic")
         # attempt to provide something; it will probably fail during configuration...
-        from .MPICH import MPICH
+        from .GenericMPI import GenericMPI
         # and return it
-        return MPICH
+        return GenericMPI
 
 
     @classmethod
