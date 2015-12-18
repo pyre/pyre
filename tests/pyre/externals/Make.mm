@@ -23,6 +23,9 @@ manager:
 
 applications:
 	${PYTHON} ./simple.py
+	${PYTHON} ./configure.py
+	${PYTHON} ./configure.py --mpi=openmpi
+	${PYTHON} ./configure.py --mpi=mpich
 
 
 # end of file

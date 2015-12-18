@@ -22,6 +22,12 @@ class simple(pyre.application, family='simple.app'):
     The simple application
     """
 
+    mpi = pyre.externals.mpi()
+    mpi.doc = 'the mpi support'
+
+    python = pyre.externals.python()
+    python.doc = 'the python support'
+
     # obligations
     @pyre.export
     def main(self, *args, **kwds):
@@ -61,27 +67,24 @@ class simple(pyre.application, family='simple.app'):
             self.info.line("      {}: {.pyre_spec}".format(category, package))
 
         self.info.log()
-        return 0
 
         # my python
-        python = self.dependencies['python']
+        python = self.python
         self.info.line()
         self.info.line("  python: {.pyre_spec}".format(python))
-        self.info.line("    bin: {.bin}".format(python))
-        self.info.line("    include: {.include}".format(python))
+        self.info.line("    bin: {.bindir}".format(python))
+        self.info.line("    inc: {.incdir}".format(python))
+        self.info.line("    lib: {.libdir}".format(python))
         self.info.line("    interpreter: {.interpreter}".format(python))
-        self.info.line("    path: {.path}".format(python))
 
         # my mpi
-        mpi = self.dependencies['mpi']
+        mpi = self.mpi
         self.info.line()
         self.info.line("  mpi: {.pyre_spec}".format(mpi))
-        self.info.line("    bin: {.bin}".format(mpi))
-        self.info.line("    lib: {.lib}".format(mpi))
-        self.info.line("    include: {.include}".format(mpi))
+        self.info.line("    bin: {.bindir}".format(mpi))
+        self.info.line("    inc: {.incdir}".format(mpi))
+        self.info.line("    lib: {.libdir}".format(mpi))
         self.info.line("    launcher: {.launcher}".format(mpi))
-        self.info.line("    path: {.path}".format(mpi))
-        self.info.line("    ldpath: {.ldpath}".format(mpi))
 
         # all done
         self.info.log()
