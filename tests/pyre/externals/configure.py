@@ -16,11 +16,14 @@ class configure(pyre.application):
     A sample configuration utility
     """
 
+    gsl = pyre.externals.gsl()
+    gsl.doc = "the GSL installation"
+
     mpi = pyre.externals.mpi()
-    mpi.doc = "the mpi installation to use"
+    mpi.doc = "the mpi installation"
 
     python = pyre.externals.python()
-    python.doc = "the python installation to use"
+    python.doc = "the python installation"
 
 
     @pyre.export
@@ -39,13 +42,15 @@ class configure(pyre.application):
         info.line("  python: {}".format(python))
         # if i have one
         if python:
+            # version info
+            info.line("    version: {.version}".format(python))
             # locations
             info.line("    locations:")
-            info.line("      prefix: {}".format(python.prefix))
-            info.line("      bindir: {}".format(python.bindir))
-            info.line("      incdir: {}".format(python.incdir))
-            info.line("      libdir: {}".format(python.libdir))
-            info.line("      interpreter: {}".format(python.interpreter))
+            info.line("      prefix: {.prefix}".format(python))
+            info.line("      bindir: {.bindir}".format(python))
+            info.line("      incdir: {.incdir}".format(python))
+            info.line("      libdir: {.libdir}".format(python))
+            info.line("      interpreter: {.interpreter}".format(python))
             # link line
             info.line("    link:")
             # info.log("      libraries: {}".format(tuple(python.libraries())))
@@ -59,6 +64,8 @@ class configure(pyre.application):
                 # and show me
                 for index, error in enumerate(errors):
                     info.line("        {}: {}".format(index+1, error))
+        # flush
+        info.log()
 
         # get my mpi
         mpi = self.mpi
@@ -66,13 +73,15 @@ class configure(pyre.application):
         info.line("  mpi: {}".format(mpi))
         # if i have one
         if mpi:
+            # version info
+            info.line("    version: {.version}".format(mpi))
             # locations
             info.line("    locations:")
-            info.line("      prefix: {}".format(mpi.prefix))
-            info.line("      bindir: {}".format(mpi.bindir))
-            info.line("      incdir: {}".format(mpi.incdir))
-            info.line("      libdir: {}".format(mpi.libdir))
-            info.line("      launcher: {}".format(mpi.launcher))
+            info.line("      prefix: {.prefix}".format(mpi))
+            info.line("      bindir: {.bindir}".format(mpi))
+            info.line("      incdir: {.incdir}".format(mpi))
+            info.line("      libdir: {.libdir}".format(mpi))
+            info.line("      launcher: {.launcher}".format(mpi))
             # link line
             info.line("    link:")
             # info.log("      libraries: {}".format(tuple(mpi.libraries())))
@@ -86,9 +95,38 @@ class configure(pyre.application):
                 # and show me
                 for index, error in enumerate(errors):
                     info.line("        {}: {}".format(index+1, error))
-
         # flush
         info.log()
+
+        # get my gsl
+        gsl = self.gsl
+        # show me
+        info.line("  gsl: {}".format(gsl))
+        # if i have one
+        if gsl:
+            # version info
+            info.line("    version: {.version}".format(gsl))
+            # locations
+            info.line("    locations:")
+            info.line("      prefix: {.prefix}".format(gsl))
+            info.line("      incdir: {.incdir}".format(gsl))
+            info.line("      libdir: {.libdir}".format(gsl))
+            # link line
+            info.line("    link:")
+            # info.log("      libraries: {}".format(tuple(gsl.libraries())))
+
+            # get the configuration errors
+            errors = gsl.pyre_configurationErrors
+            # if there were any
+            if errors:
+                # tell me
+                info.line("    configuration errors that were auto-corrected:")
+                # and show me
+                for index, error in enumerate(errors):
+                    info.line("        {}: {}".format(index+1, error))
+        # flush
+        info.log()
+
         # all done
         return 0
 
