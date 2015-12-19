@@ -70,6 +70,8 @@ def version():
 # NYI: add localized versions of all this
 _merlin_version = (1, 0, BZR_REVNO)
 
+_merlin_date = "DATE_COMPILED"
+
 _merlin_tag = "merlin {}.{} revision {}".format(*_merlin_version)
 
 _merlin_copyright = "{}: Copyright (c) 1998-2015 Michael A.G. Aïvázis".format(_merlin_tag)

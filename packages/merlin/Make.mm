@@ -40,7 +40,10 @@ live: live-python-modules
 	BLD_ACTION="live" $(MM) recurse
 
 # construct my {__init__.py}
-__init__.py: __init__py
-	@sed -e "s:BZR_REVNO:$$(bzr revno):g" __init__py > __init__.py
+__init__.py: __init__py Make.mm
+	@sed \
+          -e "s:BZR_REVNO:$$(bzr revno):g" \
+          -e "s|DATE_COMPILED|$$(date -u)|g" \
+          __init__py > __init__.py
 
 # end of file

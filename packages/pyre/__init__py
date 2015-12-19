@@ -103,6 +103,8 @@ def where(configurable, attribute=None):
 # constants
 _pyre_version = (1, 0, BZR_REVNO)
 
+_pyre_date = "DATE_COMPILED"
+
 _pyre_tag = "pyre {}.{} revision {}".format(*_pyre_version)
 
 _pyre_copyright = "{}: Copyright (c) 1998-2015 Michael A.G. Aïvázis".format(_pyre_tag)
