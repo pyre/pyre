@@ -36,7 +36,6 @@ class Package(pyre.protocol, family='pyre.externals'):
         """
         Identify the default implementation of a package
         """
-        # print("{.__name__}.pyre_default:".format(cls))
         # get the user
         user = cls.pyre_user
         # check whether there is a registered preference for this category
@@ -48,20 +47,15 @@ class Package(pyre.protocol, family='pyre.externals'):
             # moving on
             pass
 
-        # get the host
-        host = cls.pyre_host
-        # attempt to
-        try:
-            # dispatch to my host specific handlers
-            package = host.identifyDistribution(package=cls)
-        # if something goes wrong
-        except AttributeError as error:
-            # use a generic mpich as the default
-            package = cls.generic(host=host)
+        # get the package manager
+        packager = cls.pyre_externals
+        # go through my host specific choices
+        for package in packager.choices(category=cls):
+            # i only care about the first one
+            return package
 
-        # print(" .. done")
-        # and return it
-        return package
+        # if i get this far...
+        return cls.generic()
 
 
     # configuration validation

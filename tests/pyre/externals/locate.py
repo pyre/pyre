@@ -21,19 +21,17 @@ def test():
     manager = pyre.executive.externals
 
     # look for python; it's built-in so at least one instance must be there
-    python = manager.locate(category=pyre.externals.python)
-    # check that we got something
-    assert python
-    # check that we pulled packages from the right category
-    assert python.category == 'python'
-    # instantiate
-    python = python(name="default")
-    # show me where they are from
-    print('python: {.pyre_spec}'.format(python))
-    print('  binaries: {.bindir}'.format(python))
-    print('  headers: {.incdir}'.format(python))
-    print('  libraries: {.libdir}'.format(python))
-    print('  interpreter: {.interpreter}'.format(python))
+    for python in manager.choices(category=pyre.externals.python):
+        # check that we got something
+        assert python
+        # check that we pulled packages from the right category
+        assert python.category == 'python'
+        # show me where it's from
+        print('python: {.pyre_spec}'.format(python))
+        print('  binaries: {.bindir}'.format(python))
+        print('  headers: {.incdir}'.format(python))
+        print('  libraries: {.libdir}'.format(python))
+        print('  interpreter: {.interpreter}'.format(python))
 
     # all done
     return manager

@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import sys
 # the framework
 import pyre
 
@@ -24,7 +26,6 @@ class Platform(pyre.protocol, family='pyre.platforms'):
         Build the preferred host implementation
         """
         # get the platform id
-        import sys
         platform = sys.platform
 
         # if we are on darwin
@@ -32,7 +33,7 @@ class Platform(pyre.protocol, family='pyre.platforms'):
             # get the {Darwin} host wrapper
             from .Darwin import Darwin
             # and ask it for a suitable default implementation
-            return Darwin.flavor()
+            return Darwin
 
         # if we are on a linux derivative
         if platform.startswith('linux'):

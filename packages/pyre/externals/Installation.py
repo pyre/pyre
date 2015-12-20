@@ -23,25 +23,30 @@ class Installation(pyre.component):
     prefix = pyre.properties.str()
     prefix.doc = 'the package installation directory'
 
+
     # meta-methods
     def __init__(self, name, **kwds):
         # chain up
         super().__init__(name=name, **kwds)
         # if there were any configuration errors
         if self.pyre_configurationErrors:
-            # ask the host for a dispatch to the platform specific handler and attempt to repair
-            self.pyre_host.identifyDistribution(package=self)
+            # get the package manager
+            packager = self.pyre_externals
+            # and ask to dispatch to the platform specific handler so we can attempt to repair
+            packager.configure(packageInstance=self)
         # all done
         return
 
 
     # platform specific configuration strategies
-    def macports(self, host):
+    def macports(self, macports):
         """
         Attempt to repair the configuration of this instance assuming a macports host
         """
+        # get my category manager
+        category = self.pyre_implements
         # ask my protocol to configure me for a macports host
-        self.pyre_implements.macportsConfigureInstance(host=host, package=self)
+        category.macportsConfigureImplementation(macports=macports, instance=self)
         # check my configuration again
         errors = self.pyre_configured()
         # and if there are errors

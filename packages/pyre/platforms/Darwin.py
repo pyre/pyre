@@ -8,8 +8,12 @@
 
 # externals
 import os
+# the framework
+import pyre
 # superclass
 from .POSIX import POSIX
+# the default package manager
+from .MacPorts import MacPorts
 
 
 # declaration
@@ -21,7 +25,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
 
     # constants
     platform = 'darwin'
-    distribution = 'apple'
+    distribution = 'osx'
 
     prefix_library = 'lib'
     extension_staticLibrary = '.a'
@@ -30,25 +34,9 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     template_staticLibrary = "{0.prefix_library}{1}{0.extension_staticLibrary}"
     template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
 
-
-    # protocol obligations
-    @classmethod
-    def flavor(cls):
-        """
-        Return a suitable default encapsulation of the runtime host
-        """
-        # set the release and the codename
-        cls.release, cls.codename = cls.getOSInfo()
-
-        # get the macports package manager
-        from .MacPorts import MacPorts as macports
-        # if this is a macports system
-        if macports.prefix():
-            # return it as the flavor
-            return macports
-
-        # otherwise, act like a generic darwin system
-        return cls
+    # user configurable state
+    externals = pyre.platforms.packager(default=MacPorts)
+    externals.doc = 'the manager of external packages installed on this host'
 
 
     # implementation details: explorers
@@ -81,6 +69,16 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         codename = cls.codenames.get(major, 'unknown')
         # and return
         return release, codename
+
+
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # deduce the OS release and codename
+        self.release, self.codename = self.getOSInfo()
+        # all done
+        return
 
 
     # private data

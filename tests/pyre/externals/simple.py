@@ -42,11 +42,8 @@ class simple(pyre.application, family='simple.app'):
         self.info.line("    nickname: {.nickname}".format(host))
         self.info.line("    hostname: {.hostname}".format(host))
         self.info.line("    distribution: {.distribution}".format(host))
-        self.info.line("    available packages:")
-        for category in host.externals.keys():
-            self.info.line("      {}:".format(category))
-            for package in host.externals[category]:
-                self.info.line("        {.pyre_spec}".format(package))
+        # flush
+        self.info.log()
 
         # the user choices
         self.info.line()
@@ -58,14 +55,7 @@ class simple(pyre.application, family='simple.app'):
         self.info.line("    package choices:")
         for category, package in user.externals.items():
             self.info.line("      {}: {.pyre_spec}".format(category, package))
-
-        # my requirements
-        self.info.line()
-        self.info.line("  requirements: {.requirements}".format(self))
-        self.info.line("  dependencies:")
-        for category, package in self.dependencies.items():
-            self.info.line("      {}: {.pyre_spec}".format(category, package))
-
+        # flush
         self.info.log()
 
         # my python
@@ -76,6 +66,8 @@ class simple(pyre.application, family='simple.app'):
         self.info.line("    inc: {.incdir}".format(python))
         self.info.line("    lib: {.libdir}".format(python))
         self.info.line("    interpreter: {.interpreter}".format(python))
+        # flush
+        self.info.log()
 
         # my mpi
         mpi = self.mpi
@@ -85,8 +77,7 @@ class simple(pyre.application, family='simple.app'):
         self.info.line("    inc: {.incdir}".format(mpi))
         self.info.line("    lib: {.libdir}".format(mpi))
         self.info.line("    launcher: {.launcher}".format(mpi))
-
-        # all done
+        # flush
         self.info.log()
 
         # indicate success

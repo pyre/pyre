@@ -47,7 +47,7 @@ class Python(Tool, Library, family='pyre.externals.python'):
 
     # support for specific package managers
     @classmethod
-    def generic(cls, host):
+    def generic(cls):
         """
         Provide a default implementation of python on platforms that are not handled explicitly
         """
@@ -58,44 +58,44 @@ class Python(Tool, Library, family='pyre.externals.python'):
 
 
     @classmethod
-    def macports(cls, host):
+    def macportsChooseImplementations(cls, macports):
         """
-        Identify the default implementation of python on macports machines
+        Provide alternative compatible implementations of python on macports machines, starting
+        with the package the user has selected as the default
         """
         # grab the support for python 3.x
         from .Python3 import Python3
         # form the python3 flavor
-        python3 = Python3.flavor
-        # this is a macports host; ask it for the selected python3 package
-        selection, alternatives = host.selected(python3)
-        # if the selection is a python3 installation
-        if selection.startswith(python3):
-            # and return it
-            return Python3
+        flavor = Python3.flavor
+        # this is a macports host; ask it for all the python3 package choices
+        for package in macports.alternatives(group=flavor):
+            # instantiate each one using the package name and hand it to the caller
+            yield Python3(name=package)
 
-        # if we get this far, not much else to do
-        return cls.generic(host=host)
+        # if we get this far, try this
+        yield cls.generic()
+
+        # out of ideas
+        return
 
 
     @classmethod
-    def macportsConfigureInstance(cls, package, host):
+    def macportsConfigureImplementation(cls, macports, instance):
         """
         Configure a python package instance on a macports host
         """
-        # ask the package manager for its installation location
-        prefix = host.prefix()
+        # get the package group
+        group = instance.flavor
         # ask the package manager for information about my category
-        selection, alternatives = host.selected(group=package.flavor)
-        # get the package info
-        version, variants = host.installed(package=selection)
+        alternatives = macports.alternatives(group=group)
         # get my name
-        name = package.pyre_name
+        name = instance.pyre_name
         # if my name is not one of the alternatives:
         if name not in alternatives:
             # go through what's there
             for alternative in alternatives:
                 # and check whether any of them are implementations of my flavor
-                if alternative.startswith(package.flavor):
+                if alternative.startswith(group):
                     # set the target package name to this alternative
                     name = alternative
                     # and bail out
@@ -104,57 +104,37 @@ class Python(Tool, Library, family='pyre.externals.python'):
             else:
                 # this must be a poorly user configured instance; complain
                 raise cls.ConfigurationError(
-                    component=package, errors=package.pyre_configurationErrors)
+                    component=instance, errors=instance.pyre_configurationErrors)
 
-        # get my selection info
-        packageName, contents, smap = host.provider(group=package.flavor, alternative=name)
+        # get the selection info
+        packageName, contents, smap = macports.getSelectionInfo(group=group, alternative=name)
+        # get the package info
+        version, variants = macports.info(package=packageName)
 
+        # ask macports for its installation location
+        prefix = macports.prefix()
         # find my {interpreter}
-        interpreter = os.path.join(prefix, smap['bin/python3'])
+        interpreter = os.path.join(prefix, smap['bin/{}'.format(group)])
         # extract my {bindir}
         bindir,_ = os.path.split(interpreter)
 
-        # find my header
-        header = "Python.h"
+        # the header regex
+        header = "(?P<incdir>.*)/Python.h$"
         # search for it in contents
-        for path in contents:
-            # split it
-            folder, filename = os.path.split(path)
-            # if the filename is a match
-            if filename == header:
-                # save the folder
-                incdir = folder
-                # and bail
-                break
-        # otherwise
-        else:
-            # leave it blank; we will complain below
-            incdir = ''
+        incdir = macports.incdir(regex=header, contents=contents)
 
-        # find my library
-        libpython = 'libpython'
-        # search for it in contents
-        for path in contents:
-            # split it
-            folder, filename = os.path.split(path)
-            # if the filename is a match
-            if filename.startswith(libpython):
-                # save the folder
-                libdir = folder
-                # and bail
-                break
-        # otherwise
-        else:
-            # leave it blank; we will complain below
-            libdir = ''
+        # my library regex
+        libpython = '(?P<libdir>.*)/lib{}.+\.dylib$'.format(group)
+        # find the folder
+        libdir = macports.libdir(regex=libpython, contents=contents)
 
         # apply the configuration
-        package.version = version
-        package.prefix = prefix
-        package.bindir = bindir
-        package.incdir = incdir
-        package.libdir = libdir
-        package.interpreter = interpreter
+        instance.version = version
+        instance.prefix = prefix
+        instance.bindir = bindir
+        instance.incdir = incdir
+        instance.libdir = libdir
+        instance.interpreter = interpreter
 
         # all done
         return

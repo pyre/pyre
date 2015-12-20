@@ -39,6 +39,7 @@ def test():
     # print('  release: {.release}'.format(host))
     # print('  codename: {.codename}'.format(host))
     # print('  distribution: {.distribution}'.format(host))
+    # print('  package manager: {.externals}'.format(host))
 
     # and return
     return one

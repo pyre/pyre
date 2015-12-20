@@ -34,22 +34,13 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
     distribution = None # a clue about the package manager on this machine
 
     # user configurable state
-    externals = pyre.externals.catalog()
-    externals.doc = 'the database of external packages installed on this host'
-
-
-    # protocol obligations
-    @classmethod
-    def flavor(cls):
-        """
-        Return a suitable default encapsulation of the runtime host
-        """
-        # the default; override in subclasses
-        return cls
+    externals = pyre.platforms.packager()
+    externals.doc = 'the manager of external packages installed on this host'
 
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
         # discover the number of cpus
         self.cpus = self.cpuSurvey()
@@ -66,14 +57,6 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
         # by default, we know nothing; so assume one single core cpu with no hyper-threading
         # subclasses should override with their platform dependent survey code
         return (1,1)
-
-
-    def identifyDistribution(self, package):
-        """
-        Invoke the caller's host specific method
-        """
-        # hunt down the host specific method and invoke it
-        return getattr(package, self.distribution)(host=self)
 
 
     # feature support

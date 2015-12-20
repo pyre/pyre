@@ -18,9 +18,11 @@ EXPORT_PYTHON_MODULES = \
     Linux.py \
     MacPorts.py \
     POSIX.py \
+    PackageManager.py \
     Platform.py \
     RedHat.py \
     Ubuntu.py \
+    Unmanaged.py \
     __init__.py
 
 # standard targets

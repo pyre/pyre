@@ -44,7 +44,7 @@ class GSL(Library, family='pyre.externals.gsl'):
 
     # support for specific package managers
     @classmethod
-    def generic(cls, host):
+    def generic(cls):
         """
         Provide a default implementation of GSL
         """
@@ -53,38 +53,38 @@ class GSL(Library, family='pyre.externals.gsl'):
 
 
     @classmethod
-    def macports(cls, host):
+    def macportsChooseImplementations(cls, macports):
         """
         Identify the default implementation of GSL on macports machines
         """
         # there is only one variation of this
-        return cls.generic(host=host)(name=cls.category)
+        yield cls.generic()(name=cls.category)
+
+        # and nothing else
+        return
 
 
     @classmethod
-    def macportsConfigureInstance(cls, package, host):
+    def macportsConfigureImplementation(cls, macports, instance):
         """
         Configure an GSL package instance on a macports host
         """
         # attempt to
         try:
             # get my package info
-            version, variants = host.installed(package=cls.category)
+            version, variants = macports.info(package=cls.category)
         # if this fails
         except KeyError:
             # not much to do...
             return
 
         # get the prefix
-        prefix = host.prefix()
-        # set the prefix
-        package.prefix = prefix
-        # set incdir
-        package.incdir = os.path.join(prefix, 'include')
-        # set libdir
-        package.libdir = os.path.join(prefix, 'lib')
-        # set the version
-        package.version = version
+        prefix = macports.prefix()
+        # apply the configuration
+        instance.prefix = prefix
+        instance.incdir = os.path.join(prefix, 'include')
+        instance.libdir = os.path.join(prefix, 'lib')
+        instance.version = version
 
         # all done
         return

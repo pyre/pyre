@@ -35,6 +35,10 @@ class configure(pyre.application):
         info = self.info
         # show me
         info.line("{.pyre_name}:".format(self))
+        info.line("  host: {.pyre_host}".format(self))
+        info.line("  package manager: {.pyre_externals}".format(self))
+        # flush
+        info.log()
 
         # get my python
         python = self.python
