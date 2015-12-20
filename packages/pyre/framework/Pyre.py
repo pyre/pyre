@@ -109,11 +109,6 @@ class Pyre(Executive):
         # the timer registry
         self.timekeeper = self.newTimerRegistry()
 
-        # the manager of external tools and libraries
-        self.externals = self.newExternalsManager()
-        # attach
-        dashboard.pyre_externals = weakref.proxy(self.externals)
-
         # all done
         return
 

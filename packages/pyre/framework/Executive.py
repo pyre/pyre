@@ -438,16 +438,6 @@ class Executive:
         return Registrar(**kwds)
 
 
-    def newExternalsManager(self, **kwds):
-        """
-        Build a new manager for external tools and libraries available to pyre applications
-        """
-        # access the factory
-        from .Externals import Externals
-        # build one and return it
-        return Externals(**kwds)
-
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -527,6 +517,8 @@ class Executive:
 
         # instantiate the host information store and attach it
         self.host = host(name='pyre.host')
+        # save a reference to the package manager
+        self.externals = self.host.externals
 
         # now the user and the terminal
         from ..shells import user, terminal
@@ -543,8 +535,9 @@ class Executive:
         from .Dashboard import Dashboard as dashboard
 
         # build weak references to the managers of the runtime environment
-        dashboard.pyre_host = weakref.proxy(self.host)
         dashboard.pyre_user = weakref.proxy(self.user)
+        dashboard.pyre_host = weakref.proxy(self.host)
+        dashboard.pyre_externals = weakref.proxy(self.externals)
 
         # all done
         return self

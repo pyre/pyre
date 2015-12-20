@@ -14,7 +14,6 @@ EXPORT_PYTHON_MODULES = \
     Dashboard.py \
     Environ.py \
     Executive.py \
-    Externals.py \
     FileServer.py \
     Linker.py \
     NameServer.py \
