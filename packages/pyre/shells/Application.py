@@ -45,12 +45,6 @@ class Application(pyre.component, metaclass=Director):
     shell = Shell()
     shell.doc = 'my hosting strategy'
 
-    requirements = externals.requirements()
-    requirements.doc = 'the list of package categories on which I depend'
-
-    dependencies = externals.dependencies()
-    dependencies.doc = 'the map of requirements to package instances that satisfy them'
-
     interactive = pyre.properties.bool(default=False)
     interactive.doc = "go interactive when no command line arguments are provided"
 
