@@ -69,7 +69,8 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
     @pyre.provides
     def configure(self, packageInstance):
         """
-        Dispatch to the {packageInstance} configuration procedure that is specific to macports
+        Dispatch to the {packageInstance} configuration procedure that is specific to a host
+        without a specific package manager
         """
         # what she said...
         return packageInstance.generic(manager=self)
