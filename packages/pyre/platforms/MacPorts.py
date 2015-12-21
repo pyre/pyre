@@ -149,7 +149,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         # grab the index
         selections = self.getSelections()
         # look up the given {group} and pass on the package alternatives
-        return selections[group]
+        return selections.get(group, ())
 
 
     def getSelections(self):
@@ -187,7 +187,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         with subprocess.Popen(**settings) as pipe:
             # get the text source
             stream = pipe.stdout
-            # grab the rest
+            # grab each line
             for line in stream.readlines():
                 # strip it
                 line = line.strip()
