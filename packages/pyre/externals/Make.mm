@@ -13,6 +13,7 @@ PACKAGE = externals
 EXPORT_PYTHON_MODULES = \
     GCC.py \
     GSL.py \
+    HDF5.py \
     Installation.py \
     Library.py \
     LibraryInstallation.py \

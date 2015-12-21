@@ -18,13 +18,16 @@ sanity:
 manager:
 	${PYTHON} ./locate.py
 
-configurations: gcc gsl mpi python
+configurations: gcc gsl hdf5 mpi python
 
 gcc:
 	${PYTHON} ./gcc.py
 
 gsl:
 	${PYTHON} ./gsl.py
+
+hdf5:
+	${PYTHON} ./hdf5.py
 
 mpi:
 	${PYTHON} ./mpi.py
