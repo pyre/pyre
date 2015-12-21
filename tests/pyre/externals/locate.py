@@ -32,6 +32,8 @@ def test():
         print('  headers: {.incdir}'.format(python))
         print('  libraries: {.libdir}'.format(python))
         print('  interpreter: {.interpreter}'.format(python))
+        # look no further
+        break
 
     # all done
     return manager
