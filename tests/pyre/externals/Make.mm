@@ -18,7 +18,12 @@ sanity:
 manager:
 	${PYTHON} ./locate.py
 
-configurations: cython gcc gsl hdf5 mpi python
+configurations: blas cython gcc gsl hdf5 mpi python
+
+blas:
+	${PYTHON} ./blas.py
+	${PYTHON} ./blas.py --blas=gsl
+	${PYTHON} ./blas.py --blas=atlas
 
 cython:
 	${PYTHON} ./cython.py
