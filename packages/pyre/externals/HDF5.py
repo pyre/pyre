@@ -99,8 +99,18 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
     """
 
     # constants
-    version = 'unknown'
     category = HDF5.category
+
+    # public state
+    prefix = pyre.properties.str(default='/usr')
+    prefix.doc = 'the package installation directory'
+
+    incdir = pyre.properties.str(default='/usr/include')
+    incdir.doc = "the location of my headers; for the compiler command line"
+
+    libdir = pyre.properties.str(default='/usr/lib')
+    libdir.doc = "the location of my libraries; for the linker command path"
+
 
 
 # end of file

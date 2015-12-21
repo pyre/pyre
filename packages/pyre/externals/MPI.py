@@ -174,7 +174,14 @@ class Default(
     The package manager for unknown MPI installations
     """
 
+    # constants
+    flavor = "mpi"
+    category = MPI.category
+
     # public state
+    prefix = pyre.properties.str(default='/usr')
+    prefix.doc = 'the package installation directory'
+
     bindir = pyre.properties.str(default='/usr/bin')
     bindir.doc = "the location of my binaries"
 
@@ -186,10 +193,6 @@ class Default(
 
     launcher = pyre.properties.str(default='mpirun')
     launcher.doc = 'the name of the launcher of MPI jobs'
-
-    # constants
-    flavor = "mpi"
-    category = MPI.category
 
 
 # end of file
