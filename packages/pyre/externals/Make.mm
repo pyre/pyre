@@ -11,6 +11,7 @@ include pyre.def
 PACKAGE = externals
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    Cython.py \
     GCC.py \
     GSL.py \
     HDF5.py \

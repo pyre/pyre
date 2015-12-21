@@ -18,7 +18,10 @@ sanity:
 manager:
 	${PYTHON} ./locate.py
 
-configurations: gcc gsl hdf5 mpi python
+configurations: cython gcc gsl hdf5 mpi python
+
+cython:
+	${PYTHON} ./cython.py
 
 gcc:
 	${PYTHON} ./gcc.py

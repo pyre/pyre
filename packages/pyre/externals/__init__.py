@@ -51,6 +51,7 @@ from .Library import Library as library
 
 
 # the package abstractions
+from .Cython import Cython as cython
 from .GCC import GCC as gcc
 from .GSL import GSL as gsl
 from .HDF5 import HDF5 as hdf5
