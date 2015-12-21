@@ -8,12 +8,9 @@
 
 PROJECT = pyre
 
-#--------------------------------------------------------------------------
-#
-
 all: test
 
-test: sanity manager applications
+test: sanity manager configurations
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -21,11 +18,21 @@ sanity:
 manager:
 	${PYTHON} ./locate.py
 
-applications:
-	${PYTHON} ./simple.py
-	${PYTHON} ./configure.py
-	${PYTHON} ./configure.py --mpi=openmpi
-	${PYTHON} ./configure.py --mpi=mpich
+configurations: gcc gsl mpi python
+
+gcc:
+	${PYTHON} ./gcc.py
+
+gsl:
+	${PYTHON} ./gsl.py
+
+mpi:
+	${PYTHON} ./mpi.py
+	${PYTHON} ./mpi.py --mpi=openmpi
+	${PYTHON} ./mpi.py --mpi=mpich
+
+python:
+	${PYTHON} ./python.py
 
 
 # end of file
