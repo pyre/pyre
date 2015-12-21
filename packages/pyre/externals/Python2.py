@@ -17,7 +17,7 @@ from .LibraryInstallation import LibraryInstallation
 from .Python import Python
 
 
-# the openmpi package manager
+# the python 2.x package manager
 class Python2(
         ToolInstallation, LibraryInstallation,
         family='pyre.externals.python2', implements=Python):
