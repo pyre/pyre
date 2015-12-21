@@ -28,7 +28,7 @@ class GSL(Library, family='pyre.externals.gsl'):
     @classmethod
     def checkConfiguration(cls, package):
         """
-        Verify that package ins configured correctly
+        Verify that the {package} is configured correctly
         """
         # get the host
         host = cls.pyre_host
@@ -49,7 +49,7 @@ class GSL(Library, family='pyre.externals.gsl'):
         Provide a default implementation of GSL
         """
         # there is only one...
-        return GSLSTD
+        return Default
 
 
     @classmethod
@@ -67,7 +67,7 @@ class GSL(Library, family='pyre.externals.gsl'):
     @classmethod
     def macportsConfigureImplementation(cls, macports, instance):
         """
-        Configure an GSL package instance on a macports host
+        Configure a GSL package instance on a macports host
         """
         # attempt to
         try:
@@ -82,9 +82,9 @@ class GSL(Library, family='pyre.externals.gsl'):
         prefix = macports.prefix()
         # apply the configuration
         instance.prefix = prefix
+        instance.version = version
         instance.incdir = os.path.join(prefix, 'include')
         instance.libdir = os.path.join(prefix, 'lib')
-        instance.version = version
 
         # all done
         return
@@ -93,7 +93,7 @@ class GSL(Library, family='pyre.externals.gsl'):
 # superclass
 from .LibraryInstallation import LibraryInstallation
 # the implementation
-class GSLSTD(LibraryInstallation, family='pyre.externals.gslstd', implements=GSL):
+class Default(LibraryInstallation, family='pyre.externals.gsl.default', implements=GSL):
     """
     A generic GSL installation
     """

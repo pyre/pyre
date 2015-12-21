@@ -107,13 +107,13 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         """
         Configure an MPI package instance on a macports host
         """
+        # get the name of the {instance}
+        name = instance.pyre_name
         # get the package group
         group = cls.category
-        # ask the package manager for information about my category
+        # ask macports for information about my category
         alternatives = macports.alternatives(group=group)
-        # get my name
-        name = instance.pyre_name
-        # if my name is not one of the alternatives:
+        # if the instance name is not one of the alternatives:
         if name not in alternatives:
             # go through what's there
             for alternative in alternatives:
