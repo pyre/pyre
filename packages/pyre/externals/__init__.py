@@ -51,6 +51,7 @@ from .Library import Library as library
 
 
 # the package abstractions
+from .GCC import GCC as gcc
 from .GSL import GSL as gsl
 from .MPI import MPI as mpi
 from .Python import Python as python

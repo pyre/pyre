@@ -11,6 +11,7 @@ include pyre.def
 PACKAGE = externals
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    GCC.py \
     GSL.py \
     GenericMPI.py \
     Installation.py \
