@@ -13,7 +13,6 @@ PACKAGE = externals
 EXPORT_PYTHON_MODULES = \
     GCC.py \
     GSL.py \
-    GenericMPI.py \
     Installation.py \
     Library.py \
     LibraryInstallation.py \

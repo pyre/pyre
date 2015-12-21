@@ -54,9 +54,7 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         Provide a default implementation of MPI on platforms that are not explicitly handled
         """
         # attempt to provide something; it will probably fail during configuration...
-        from .GenericMPI import GenericMPI
-        # and return it
-        return GenericMPI
+        return Default
 
 
     @classmethod
@@ -161,6 +159,37 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
 
         # all done
         return
+
+
+# superclass
+from .ToolInstallation import ToolInstallation
+from .LibraryInstallation import LibraryInstallation
+
+
+# the openmpi package manager
+class Default(
+        ToolInstallation, LibraryInstallation,
+        family='pyre.externals.mpi.generic', implements=MPI):
+    """
+    The package manager for unknown MPI installations
+    """
+
+    # public state
+    bindir = pyre.properties.str(default='/usr/bin')
+    bindir.doc = "the location of my binaries"
+
+    incdir = pyre.properties.str(default='/usr/include')
+    incdir.doc = "the location of my headers; for the compiler command line"
+
+    libdir = pyre.properties.str(default='/usr/lib')
+    libdir.doc = "the location of my libraries; for the linker command path"
+
+    launcher = pyre.properties.str(default='mpirun')
+    launcher.doc = 'the name of the launcher of MPI jobs'
+
+    # constants
+    flavor = "mpi"
+    category = MPI.category
 
 
 # end of file

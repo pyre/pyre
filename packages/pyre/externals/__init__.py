@@ -85,17 +85,6 @@ def openmpi():
     return OpenMPI
 
 
-@foundry(implements=mpi)
-def genericmpi():
-    """
-    The package manager for OpenMPI installations
-    """
-    # get the class record
-    from .GenericMPI import GenericMPI
-    # and return it
-    return GenericMPI
-
-
 @foundry(implements=python)
 def python3():
     """
