@@ -169,7 +169,7 @@ from .LibraryInstallation import LibraryInstallation
 # the openmpi package manager
 class Default(
         ToolInstallation, LibraryInstallation,
-        family='pyre.externals.mpi.generic', implements=MPI):
+        family='pyre.externals.mpi.default', implements=MPI):
     """
     The package manager for unknown MPI installations
     """
