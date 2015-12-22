@@ -73,6 +73,19 @@ class BLAS(Library, family='pyre.externals.blas'):
             # get atlas support and return it
             yield Atlas(name='atlas')
 
+        # next up, OpenBlas
+        try:
+            # get the package info
+            macports.info(package='OpenBLAS')
+        # if this fails
+        except KeyError:
+            # no problem; moving on
+            pass
+        # if it succeeds
+        else:
+            # get atlas support and return it
+            yield OpenBLAS(name='OpenBLAS')
+
         # next up, gsl
         try:
             # get the package info
@@ -144,6 +157,38 @@ class Atlas(LibraryInstallation, family='pyre.externals.blas.atlas', implements=
             filenames=[
                 host.staticLibrary(stem='cblas'),
                 host.staticLibrary(stem='atlas'),
+            ]))
+        # all done
+        return errors
+
+
+# OpenBLAS
+class OpenBLAS(LibraryInstallation, family='pyre.externals.blas.openblas', implements=BLAS):
+    """
+    OpenBLAS support
+    """
+
+    # constants
+    category = BLAS.category
+
+    # framework hooks
+    def pyre_configured(self):
+        """
+        Verify my configuration
+        """
+        # initialize my error list
+        errors = []
+        # get the host
+        host = self.pyre_host
+
+        # check the location of the headers
+        errors += list(BLAS.checkIncdir(
+            package=self, filenames=["cblas_openblas.h"]))
+        # check the location of the libraries
+        errors += list(BLAS.checkLibdir(
+            package=self,
+            filenames=[
+                host.dynamicLibrary(stem='openblas'),
             ]))
         # all done
         return errors
