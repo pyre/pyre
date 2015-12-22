@@ -63,8 +63,7 @@ class BLAS(Library, family='pyre.externals.blas'):
         # start with atlas
         try:
             # get the package info
-             macports.info(package='atilas')
-             for line in macports.contents(package='atlas'): print(line)
+             macports.info(package='atlas')
         # if this fails
         except KeyError:
             # no problem; moving on
