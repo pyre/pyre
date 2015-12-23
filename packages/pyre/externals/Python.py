@@ -51,9 +51,7 @@ class Python(Tool, Library, family='pyre.externals.python'):
         """
         Provide a default implementation of python on platforms that are not handled explicitly
         """
-        # grab the support for python 3.x
-        from .Python3 import Python3
-        # and return it
+        # grab the support for python 3.x and return it
         return Python3
 
 
@@ -63,8 +61,6 @@ class Python(Tool, Library, family='pyre.externals.python'):
         Provide alternative compatible implementations of python on macports machines, starting
         with the package the user has selected as the default
         """
-        # grab the support for python 3.x
-        from .Python3 import Python3
         # form the python3 flavor
         flavor = Python3.flavor
         # this is a macports host; ask it for all the python3 package choices
@@ -138,6 +134,45 @@ class Python(Tool, Library, family='pyre.externals.python'):
 
         # all done
         return
+
+
+# implementation superclasses
+from .ToolInstallation import ToolInstallation
+from .LibraryInstallation import LibraryInstallation
+
+
+# the python 2.x package manager
+class Python2(
+        ToolInstallation, LibraryInstallation,
+        family='pyre.externals.python2', implements=Python):
+    """
+    The package manager for python 2.x instances
+    """
+
+    # constants
+    category = Python.category
+    flavor = category + '2'
+
+    # public state
+    interpreter = pyre.properties.str(default=flavor)
+    interpreter.doc = 'the name of the python interpreter'
+
+
+# the python 3.x package manager
+class Python3(
+        ToolInstallation, LibraryInstallation,
+        family='pyre.externals.python3', implements=Python):
+    """
+    The package manager for python 3.x instances
+    """
+
+    # constants
+    category = Python.category
+    flavor = category + '3'
+
+    # public state
+    interpreter = pyre.properties.str(default=flavor)
+    interpreter.doc = 'the name of the python interpreter'
 
 
 # end of file

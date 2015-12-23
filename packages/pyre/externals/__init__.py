@@ -73,7 +73,7 @@ def mpich():
     The package manager for MPICH installations
     """
     # get the class record
-    from .MPICH import MPICH
+    from .MPI import MPICH
     # and return it
     return MPICH
 
@@ -84,7 +84,7 @@ def openmpi():
     The package manager for OpenMPI installations
     """
     # get the class record
-    from .OpenMPI import OpenMPI
+    from .MPI import OpenMPI
     # and return it
     return OpenMPI
 
@@ -95,7 +95,7 @@ def python3():
     Package manager for version 3.x of the python interpreter
     """
     # get the class record
-    from .Python3 import Python3
+    from .Python import Python3
     # and return it
     return Python3
 
@@ -106,7 +106,7 @@ def python2():
     Package manager for version 2.x of the python interpreter
     """
     # get the class record
-    from .Python2 import Python2
+    from .Python import Python2
     # and return it
     return Python2
 

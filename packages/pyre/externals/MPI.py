@@ -63,20 +63,16 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         Provide alternative compatible implementations of MPI on macports machines, starting with
         the package the user has selected as the default
         """
-        # get the MPI implementations known to macports
-        from .MPICH import MPICH as mpich
-        from .OpenMPI import OpenMPI as openmpi
-
         # on macports, mpi is a package group
         for package in macports.alternatives(group=cls.category):
             # if the package name starts with 'openmpi'
-            if package.startswith(openmpi.flavor):
+            if package.startswith(OpenMPI.flavor):
                 # use OpenMPI
-                factory = openmpi
+                factory = OpenMPI
             # if it starts with 'mpich'
-            elif package.startswith(mpich.flavor):
+            elif package.startswith(MPICH.flavor):
                 # use MPICH
-                factory = mpich
+                factory = MPICH
             # otherwise
             else:
                 # this is a bug...
@@ -193,6 +189,40 @@ class Default(
 
     launcher = pyre.properties.str(default='mpirun')
     launcher.doc = 'the name of the launcher of MPI jobs'
+
+
+# the openmpi package manager
+class OpenMPI(
+        ToolInstallation, LibraryInstallation,
+        family='pyre.externals.openmpi', implements=MPI):
+    """
+    The package manager for OpenMPI packages
+    """
+
+    # public state
+    launcher = pyre.properties.str(default='mpirun')
+    launcher.doc = 'the name of the launcher of MPI jobs'
+
+    # constants
+    flavor = "openmpi"
+    category = MPI.category
+
+
+# the mpich package manager
+class MPICH(
+        ToolInstallation, LibraryInstallation,
+        family='pyre.externals.mpich', implements=MPI):
+    """
+    The package manager for MPICH packages
+    """
+
+    # public state
+    launcher = pyre.properties.str(default='mpirun')
+    launcher.doc = 'the name of the launcher of MPI jobs'
+
+    # constants
+    flavor = "mpich"
+    category = MPI.category
 
 
 # end of file
