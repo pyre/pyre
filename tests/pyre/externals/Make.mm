@@ -18,7 +18,7 @@ sanity:
 manager:
 	${PYTHON} ./locate.py
 
-configurations: blas cython gcc gsl hdf5 mpi python
+configurations: blas cython gcc gsl hdf5 mpi postgres python
 
 blas:
 	${PYTHON} ./blas.py
@@ -41,6 +41,9 @@ mpi:
 	${PYTHON} ./mpi.py
 	${PYTHON} ./mpi.py --mpi=openmpi
 	${PYTHON} ./mpi.py --mpi=mpich
+
+postgres:
+	${PYTHON} ./postgres.py
 
 python:
 	${PYTHON} ./python.py
