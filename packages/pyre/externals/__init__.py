@@ -57,6 +57,7 @@ from .GCC import GCC as gcc
 from .GSL import GSL as gsl
 from .HDF5 import HDF5 as hdf5
 from .MPI import MPI as mpi
+from .Postgres import Postgres as postgres
 from .Python import Python as python
 
 

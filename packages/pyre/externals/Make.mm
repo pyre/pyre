@@ -23,6 +23,7 @@ EXPORT_PYTHON_MODULES = \
     MPICH.py \
     OpenMPI.py \
     Package.py \
+    Postgres.py \
     Python.py \
     Python2.py \
     Python3.py \
