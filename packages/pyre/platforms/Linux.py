@@ -28,8 +28,8 @@ class Linux(POSIX, family='pyre.platforms.linux'):
     extension_staticLibrary = '.a'
     extension_dynamicLibrary = '.so'
 
-    template_staticLibrary = "{0.prefix_library}{1}.{0.extension_staticLibrary}"
-    template_dynamicLibrary = "{0.prefix_library}{1}.{0.extension_dynamicLibrary}"
+    template_staticLibrary = "{0.prefix_library}{1}{0.extension_staticLibrary}"
+    template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
 
 
     # protocol obligations
