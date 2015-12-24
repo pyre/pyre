@@ -18,7 +18,7 @@ sanity:
 manager:
 	${PYTHON} ./locate.py
 
-configurations: blas cython gcc gsl hdf5 mpi postgres python
+configurations: blas cython gcc gsl hdf5 mpi postgres python vtk
 
 blas:
 	${PYTHON} ./blas.py
@@ -47,6 +47,9 @@ postgres:
 
 python:
 	${PYTHON} ./python.py
+
+vtk:
+	${PYTHON} ./vtk.py
 
 
 # end of file

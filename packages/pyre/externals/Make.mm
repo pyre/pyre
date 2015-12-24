@@ -29,6 +29,7 @@ EXPORT_PYTHON_MODULES = \
     Python3.py \
     Tool.py \
     ToolInstallation.py \
+    VTK.py \
     __init__.py
 
 # standard targets

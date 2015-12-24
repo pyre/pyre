@@ -59,6 +59,7 @@ from .HDF5 import HDF5 as hdf5
 from .MPI import MPI as mpi
 from .Postgres import Postgres as postgres
 from .Python import Python as python
+from .VTK import VTK as vtk
 
 
 # the packages with built-in support
