@@ -17,13 +17,12 @@ from .Unmanaged import Unmanaged
 # declaration
 class MacPorts(Unmanaged, family='pyre.packagers.macports'):
     """
-    Encapsulation of a host that uses macports as its package manager
+    Support for the macport package manager
     """
 
 
     # constants
     manager = 'port'
-    distribution = 'macports'
 
 
     # interface obligations

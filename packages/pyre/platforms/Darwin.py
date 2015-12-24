@@ -19,7 +19,7 @@ from .MacPorts import MacPorts
 # declaration
 class Darwin(POSIX, family='pyre.platforms.darwin'):
     """
-    Encapsulation of a generic darwin host
+    Encapsulation of a darwin host
     """
 
 
