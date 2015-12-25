@@ -57,6 +57,23 @@ class Installation(pyre.component):
         return
 
 
+    def dpkg(self, dpkg):
+        """
+        Attempt to repair the configuration of this instance assuming a dpkg host
+        """
+        print("Installation.dpkg: {}".format(self))
+        # ask my protocol to configure me for a dpkg host
+        self.pyre_implements.dpkgConfigureImplementation(dpkg=dpkg, instance=self)
+        # check my configuration again
+        errors = self.pyre_configured()
+        # and if there are errors
+        if errors:
+            # complain
+            raise self.ConfigurationError(component=self, errors=errors)
+        # all done
+        return
+
+
     # framework hooks
     def pyre_configured(self):
         """
