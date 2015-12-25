@@ -157,6 +157,50 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         return
 
 
+    # dpkg
+    @classmethod
+    def dpkgChooseImplementations(cls, dpkg):
+        """
+        Identify the default implementation of MPI on dpkg machines
+        """
+        # the list of the necessary openmpi packages
+        openmpi = ["openmpi-bin", "libopenmpi-dev"]
+        # check
+        for package in openmpi:
+            # attempt to
+            try:
+                # locate it
+                dpkg.info(package)
+            # if not there
+            except KeyError:
+                # look no further
+                break
+        # if they are all present
+        else:
+            # get openmpi and return it
+            yield OpenMPI
+
+        # the list of the necessary mpich packages
+        mpich = ["mpich-bin", "libmpich-dev"]
+        # check
+        for package in mpich:
+            # attempt to
+            try:
+                # locate it
+                dpkg.info(package)
+            # if not there
+            except KeyError:
+                # look no further
+                break
+        # if they are all present
+        else:
+            # get mpich and return it
+            yield MPICH
+
+        # if all else fails, go generic
+        return cls.generic()
+
+
 # superclass
 from .ToolInstallation import ToolInstallation
 from .LibraryInstallation import LibraryInstallation
@@ -194,35 +238,87 @@ class Default(
 # the openmpi package manager
 class OpenMPI(
         ToolInstallation, LibraryInstallation,
-        family='pyre.externals.openmpi', implements=MPI):
+        family='pyre.externals.mpi.openmpi', implements=MPI):
     """
     The package manager for OpenMPI packages
     """
-
-    # public state
-    launcher = pyre.properties.str(default='mpirun')
-    launcher.doc = 'the name of the launcher of MPI jobs'
 
     # constants
     flavor = "openmpi"
     category = MPI.category
 
+    # public state
+    launcher = pyre.properties.str(default='mpirun')
+    launcher.doc = 'the name of the launcher of MPI jobs'
+
+
+    # configuration strategies for specific package managers
+    def dpkg(self, dpkg):
+        """
+        Attempt to repair the configuration of this instance assuming a dpkg host
+        """
+        # get the version
+        self.version, _ = dpkg.info(package='libopenmpi-dev')
+
+        # point directly to my own directories to bypass the links set up by {update-alternatives}
+        prefix = '/usr/lib/openmpi'
+        self.prefix = prefix
+        self.bindir = os.path.join('/usr/bin')
+        self.incdir = os.path.join(prefix, 'include')
+        self.libdir = os.path.join(prefix, 'lib')
+        self.launcher = os.path.join(self.bindir, 'mpirun.openmpi')
+
+        # check my configuration again
+        errors = self.pyre_configured()
+        # and if there are errors
+        if errors:
+            # complain
+            raise self.ConfigurationError(component=self, errors=errors)
+        # all done
+        return
+
 
 # the mpich package manager
 class MPICH(
         ToolInstallation, LibraryInstallation,
-        family='pyre.externals.mpich', implements=MPI):
+        family='pyre.externals.mpi.mpich', implements=MPI):
     """
     The package manager for MPICH packages
     """
+
+    # constants
+    flavor = "mpich"
+    category = MPI.category
 
     # public state
     launcher = pyre.properties.str(default='mpirun')
     launcher.doc = 'the name of the launcher of MPI jobs'
 
-    # constants
-    flavor = "mpich"
-    category = MPI.category
+
+    # configuration strategies for specific package managers
+    def dpkg(self, dpkg):
+        """
+        Attempt to repair the configuration of this instance assuming a dpkg host
+        """
+        # get the version
+        self.version, _ = dpkg.info(package='libmpich-dev')
+
+        # point directly to my own directories to bypass the links set up by {update-alternatives}
+        prefix = '/usr/lib/mpich'
+        self.prefix = prefix
+        self.bindir = os.path.join('/usr/bin')
+        self.incdir = os.path.join(prefix, 'include')
+        self.libdir = os.path.join(prefix, 'lib')
+        self.launcher = os.path.join(self.bindir, 'mpirun.mpich')
+
+        # check my configuration again
+        errors = self.pyre_configured()
+        # and if there are errors
+        if errors:
+            # complain
+            raise self.ConfigurationError(component=self, errors=errors)
+        # all done
+        return
 
 
 # end of file
