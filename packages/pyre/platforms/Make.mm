@@ -12,6 +12,7 @@ PACKAGE = platforms
 # the python modules
 EXPORT_PYTHON_MODULES = \
     CentOS.py \
+    DPkg.py \
     Darwin.py \
     Debian.py \
     Host.py \

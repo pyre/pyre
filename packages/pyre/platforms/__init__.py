@@ -15,7 +15,18 @@ from .PackageManager import PackageManager as packager
 
 # the various implementations
 # package managers
-@foundry(implements=platform)
+@foundry(implements=packager)
+def dpkg():
+    """
+    Support for the Debian packager
+    """
+    # get the class record
+    from .DPkg import DPkg
+    # and return it
+    return DPkg
+
+
+@foundry(implements=packager)
 def macports():
     """
     Support for macports
