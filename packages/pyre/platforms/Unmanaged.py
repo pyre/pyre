@@ -31,23 +31,6 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
 
 
     @pyre.export
-    def info(self, package):
-        """
-        Return information about the given {package}
-        """
-        # don't know anything
-        raise KeyError(package)
-
-    @pyre.export
-    def contents(self, package):
-        """
-        Generate a sequence of the contents of the {package}
-        """
-        # don't know anything
-        raise KeyError(package)
-
-
-    @pyre.export
     def installed(self):
         """
         Retrieve available information for all installed packages
@@ -64,6 +47,23 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
         """
         # don't have any
         return ()
+
+
+    @pyre.export
+    def info(self, package):
+        """
+        Return information about the given {package}
+        """
+        # don't know anything
+        raise KeyError(package)
+
+    @pyre.export
+    def contents(self, package):
+        """
+        Generate a sequence of the contents of the {package}
+        """
+        # don't know anything
+        raise KeyError(package)
 
 
     @pyre.provides
@@ -87,6 +87,7 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
         """
         # compile the target regex
         regex = re.compile(target)
+
         # go through the pile
         for item in pile:
             # check

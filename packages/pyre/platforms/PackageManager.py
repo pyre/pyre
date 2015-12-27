@@ -25,6 +25,21 @@ class PackageManager(pyre.protocol, family='pyre.packagers'):
         """
 
     @pyre.provides
+    def installed(self):
+        """
+        Retrieve available information for all installed packages
+        """
+
+    @pyre.provides
+    def choices(self, category):
+        """
+        Provide a sequence of package names that provide compatible installations for the given
+        package {category}. If the package manager provides a way for the user to select a
+        specific installation as the default, care should be taken to rank the sequence
+        appropriately.
+        """
+
+    @pyre.provides
     def info(self, package):
         """
         Return information about the given {package}
@@ -38,23 +53,10 @@ class PackageManager(pyre.protocol, family='pyre.packagers'):
         """
         Generate a sequence of the contents of {package}
 
-        The type of information returned is determined by the package manager. This method
-        should return a non-empty sequence if and only if {pakage} is actually fully installed
-        """
-
-    @pyre.provides
-    def installed(self):
-        """
-        Retrieve available information for all installed packages
-        """
-
-    @pyre.provides
-    def choices(self, category):
-        """
-        Provide a sequence of package names that provide compatible installations for the given
-        package {category}. If the package manager provides a way for the user to select a
-        specific installation as the default, care should be taken to rank the sequence
-        appropriately.
+        The type of information returned is determined by the package manager. Typically, it
+        contains the list of files that are installed by this package, but it may contain other
+        filesystem entities as well. This method should return a non-empty sequence if and only
+        if {pakage} is actually fully installed
         """
 
     @pyre.provides

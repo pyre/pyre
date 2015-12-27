@@ -35,26 +35,6 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
         return '/usr'
 
 
-    @pyre.export
-    def info(self, package):
-        """
-        Return the available information about {package}
-        """
-        # send what is maintained by the index
-        return self.getInstalledPackages()[package]
-
-
-    @pyre.export
-    def contents(self, package):
-        """
-        Retrieve the contents of the {package}
-        """
-        # ask port for the package contents
-        yield from self.retrievePackageContents(package=package)
-        # all done
-        return
-
-
     @pyre.provides
     def installed(self):
         """
@@ -72,6 +52,26 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
         """
         # ask the package category to do dpkg specific hunting
         yield from category.dpkgChooseImplementations(dpkg=self)
+        # all done
+        return
+
+
+    @pyre.export
+    def info(self, package):
+        """
+        Return the available information about {package}
+        """
+        # send what is maintained by the index
+        return self.getInstalledPackages()[package]
+
+
+    @pyre.export
+    def contents(self, package):
+        """
+        Retrieve the contents of the {package}
+        """
+        # ask port for the package contents
+        yield from self.retrievePackageContents(package=package)
         # all done
         return
 

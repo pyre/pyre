@@ -35,26 +35,6 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         return self.getPrefix()
 
 
-    @pyre.export
-    def info(self, package):
-        """
-        Return the available information about {package}
-        """
-        # send what the index has
-        return self.getInstalledPackages()[package]
-
-
-    @pyre.export
-    def contents(self, package):
-        """
-        Retrieve the contents of the {package}
-        """
-        # ask port for the package contents
-        yield from self.retrievePackageContents(package=package)
-        # all done
-        return
-
-
     @pyre.provides
     def installed(self):
         """
@@ -74,6 +54,26 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         # ask the package category to do macports specific hunting
         yield from category.macportsChooseImplementations(macports=self)
+        # all done
+        return
+
+
+    @pyre.export
+    def info(self, package):
+        """
+        Return the available information about {package}
+        """
+        # send what the index has
+        return self.getInstalledPackages()[package]
+
+
+    @pyre.export
+    def contents(self, package):
+        """
+        Retrieve the contents of the {package}
+        """
+        # ask port for the package contents
+        yield from self.retrievePackageContents(package=package)
         # all done
         return
 
