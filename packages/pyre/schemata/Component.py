@@ -40,6 +40,8 @@ class Component(Schema):
         if value == protocol.pyre_default:
             # evaluate it
             value = value()
+            # and if it's none, we are done
+            if value is None: return None
 
         # give {value} a try
         if isinstance(value, actor) or isinstance(value, component): return value
