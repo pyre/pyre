@@ -24,6 +24,7 @@ blas:
 	${PYTHON} ./blas.py
 	${PYTHON} ./blas.py --blas=gsl
 	${PYTHON} ./blas.py --blas=atlas
+	${PYTHON} ./blas.py --blas=openblas
 
 cython:
 	${PYTHON} ./cython.py

@@ -37,31 +37,32 @@ class configure(pyre.application):
         # get my python
         python = self.python
         # show me
-        info.line("  python: {}".format(python))
+        info.line("python:")
+        info.line("  package: {}".format(python))
         # if i have one
         if python:
             # version info
-            info.line("    version: {.version}".format(python))
+            info.line("  version: {.version}".format(python))
             # locations
-            info.line("    locations:")
-            info.line("      prefix: {.prefix}".format(python))
-            info.line("      bindir: {.bindir}".format(python))
-            info.line("      incdir: {.incdir}".format(python))
-            info.line("      libdir: {.libdir}".format(python))
-            info.line("      interpreter: {.interpreter}".format(python))
+            info.line("  locations:")
+            info.line("    prefix: {.prefix}".format(python))
+            info.line("    bindir: {.bindir}".format(python))
+            info.line("    incdir: {.incdir}".format(python))
+            info.line("    libdir: {.libdir}".format(python))
+            info.line("    interpreter: {.interpreter}".format(python))
             # link line
-            info.line("    link:")
-            # info.log("      libraries: {}".format(tuple(python.libraries())))
+            info.line("  link:")
+            # info.log("    libraries: {}".format(tuple(python.libraries())))
 
             # get the configuration errors
             errors = python.pyre_configurationErrors
             # if there were any
             if errors:
                 # tell me
-                info.line("    configuration errors that were auto-corrected:")
+                info.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("        {}: {}".format(index+1, error))
+                    info.line("      {}: {}".format(index+1, error))
         # flush
         info.log()
 

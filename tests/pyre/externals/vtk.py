@@ -37,29 +37,30 @@ class configure(pyre.application):
         # get my vtk
         vtk = self.vtk
         # show me
-        info.line("  vtk: {}".format(vtk))
+        info.line("vtk:")
+        info.line("  package: {}".format(vtk))
         # if i have one
         if vtk:
             # version info
-            info.line("    version: {.version}".format(vtk))
+            info.line("  version: {.version}".format(vtk))
             # locations
-            info.line("    locations:")
-            info.line("      prefix: {.prefix}".format(vtk))
-            info.line("      incdir: {.incdir}".format(vtk))
-            info.line("      libdir: {.libdir}".format(vtk))
+            info.line("  locations:")
+            info.line("    prefix: {.prefix}".format(vtk))
+            info.line("    incdir: {.incdir}".format(vtk))
+            info.line("    libdir: {.libdir}".format(vtk))
             # link line
-            info.line("    link:")
-            # info.log("      libraries: {}".format(tuple(vtk.libraries())))
+            info.line("  link:")
+            # info.log("    libraries: {}".format(tuple(vtk.libraries())))
 
             # get the configuration errors
             errors = vtk.pyre_configurationErrors
             # if there were any
             if errors:
                 # tell me
-                info.line("    configuration errors that were auto-corrected:")
+                info.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("        {}: {}".format(index+1, error))
+                    info.line("      {}: {}".format(index+1, error))
         # flush
         info.log()
 

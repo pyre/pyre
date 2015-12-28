@@ -42,29 +42,16 @@ class GCC(Tool, family='pyre.externals.gcc'):
 
     # support for specific package managers
     @classmethod
-    def generic(cls):
-        """
-        Provide a default implementation of GCC
-        """
-        # there is only one...
-        return Suite
-
-
-    @classmethod
     def macportsChooseImplementations(cls, macports):
         """
         Identify the default implementation of GCC on macports machines
         """
+        # get my category
+        category = cls.category
         # on macports, gcc is a package group
-        for package in macports.alternatives(group=cls.category):
-            # if the package name starts with 'mp-gcc'
-            if package.startswith('mp-gcc'):
-                # it's a good GCC installation
-                yield Suite(name=package)
-
-        # if we get this far, we are stuck with the system GCC, which recently is a wrapper
-        # around clang
-        yield CLang
+        for package in macports.alternatives(group=category):
+            # assume it's a good GCC installation and hand it to the caller
+            yield Suite(name=package)
 
         # and nothing else
         return
@@ -75,30 +62,39 @@ class GCC(Tool, family='pyre.externals.gcc'):
         """
         Configure a GCC package instance on a macports host
         """
-        # get the {instance} name
-        name = instance.pyre_name
-        # get my group
-        group = cls.category
-        # ask macports for information about my category
-        alternatives = macports.alternatives(group=group)
-        # if the instance name is not one of the alternatives
-        if name not in alternatives:
-            # we have a problem: the user has specified a value, it is one of mine, it is
-            # misconfigured, and I know nothing about it. complain...
-            raise cls.ConfigurationError(
-                component=instance, errors=instance.pyre_configurationErrors)
 
-        # get my selection info
-        packageName, contents, smap = macports.getSelectionInfo(group=group, alternative=name)
-        # ask macport for its installation location
+        # get my category
+        category = cls.category
+        # attempt to identify the package name from the {instance}
+        package = macports.identifyPackage(package=instance)
+        # get and save the package contents
+        contents = tuple(macports.contents(package=package))
+        # and the version info
+        version, variants = macports.info(package=package)
+
+        # get the macports prefix
         prefix = macports.prefix()
-        # find my wrapper
-        wrapper = os.path.join(prefix, smap['bin/gcc'])
-        # extract my {bindir}
-        bindir, _ = os.path.split(wrapper)
+        # the {bindir} is always known
+        bindir = os.path.join(prefix, 'bin')
+
+        # my wrapper starts with
+        pattern = os.path.join(bindir, 'gcc-mp-')
+        # go through the contents of the package
+        for item in contents:
+            # if this item matches my patter
+            if item.startswith(pattern):
+                # save it
+                wrapper = item
+                # and bail
+                break
+        # otherwise
+        else:
+            # i know nothing; this will cause a configuration failure elsewhere
+            warpper = None
 
         # apply the configuration
         instance.prefix = prefix
+        instance.version = version
         instance.bindir = bindir
         instance.wrapper = wrapper
 
@@ -121,22 +117,15 @@ class Suite(ToolInstallation, family='pyre.externals.gcc.default', implements=GC
     category = GCC.category
 
     # public state
-    wrapper = pyre.properties.str(default='gcc')
+    wrapper = pyre.properties.str()
     wrapper.doc = "the name of the compiler front end"
-
-    # meta-methods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # get the version
-        self.version = self.retrieveVersion()
-        # all done
-        return
 
     # implementation details
     def retrieveVersion(self):
         """
-        Get my version number
+        Get my version number directly from the compiler
+
+        In general, this is not needed except on hosts with no package managers to help me
         """
         # set up the shell command
         settings = {

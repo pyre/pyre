@@ -37,29 +37,30 @@ class configure(pyre.application):
         # get my hdf5
         hdf5 = self.hdf5
         # show me
-        info.line("  hdf5: {}".format(hdf5))
+        info.line("hdf5:")
+        info.line("  package: {}".format(hdf5))
         # if i have one
         if hdf5:
             # version info
-            info.line("    version: {.version}".format(hdf5))
+            info.line("  version: {.version}".format(hdf5))
             # locations
-            info.line("    locations:")
-            info.line("      prefix: {.prefix}".format(hdf5))
-            info.line("      incdir: {.incdir}".format(hdf5))
-            info.line("      libdir: {.libdir}".format(hdf5))
+            info.line("  locations:")
+            info.line("    prefix: {.prefix}".format(hdf5))
+            info.line("    incdir: {.incdir}".format(hdf5))
+            info.line("    libdir: {.libdir}".format(hdf5))
             # link line
-            info.line("    link:")
-            # info.log("      libraries: {}".format(tuple(hdf5.libraries())))
+            info.line("  link:")
+            # info.log("    libraries: {}".format(tuple(hdf5.libraries())))
 
             # get the configuration errors
             errors = hdf5.pyre_configurationErrors
             # if there were any
             if errors:
                 # tell me
-                info.line("    configuration errors that were auto-corrected:")
+                info.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("        {}: {}".format(index+1, error))
+                    info.line("      {}: {}".format(index+1, error))
         # flush
         info.log()
 

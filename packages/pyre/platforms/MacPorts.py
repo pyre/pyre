@@ -156,18 +156,18 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         Return the selected package and all alternatives for the given package {group}
         """
         # grab the index
-        selected = self._selected
+        selections = self._selections
         # if it has not been initialized
-        if selected is None:
+        if selections is None:
             # build the selected package index
-            selected = {
+            selections = {
                 group: alternatives
                 for group, alternatives in self.retrieveSelectedPackages()
             }
             # attach it
-            self._selected = selected
+            self._selections = selections
         # ask it
-        return selected
+        return selections
 
 
     def retrieveInstalledPackages(self):
@@ -278,20 +278,20 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         return
 
 
-    def getSelectionInfo(self, group, alternative):
+    def getSelectionInfo(self, group, alternative, smap=None):
         """
         Identify the package in the {group} that provides the selected {alternative}
         """
-        # get the selection map
-        smap = self.getSelectionMap(group=group, alternative=alternative)
+        # if we were not handed a specific selection map to use
+        if smap is None:
+            # get it
+            smap = self.getSelectionMap(group=group, alternative=alternative)
         # form a filename that belongs to the target package
         filename = os.path.join(self.prefix(), next(filter(None, smap.values())))
         # find out where it came from
         package = self.getFileProvider(filename=filename)
-        # get the package contents
-        contents = tuple(self.contents(package=package))
-        # return the package, its contents, and the selection map
-        return package, contents, smap
+        # return the package and the selection map
+        return package
 
 
     def getSelectionMap(self, group, alternative):
@@ -334,7 +334,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         }
         # make a pipe
         with subprocess.Popen(**settings) as pipe:
-            # grab the rest
+            # read a line and clean it up
             line = pipe.stdout.readline().strip()
             # check whether this filename belongs to a package
             match = self._provides.match(line)
@@ -343,14 +343,85 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
                 # extract the package name and return it
                 return match.group('package')
 
-        # if we got this far, we couldn't figure it out
+        # if we got this far, the filename does not belong to a package
         return
 
 
+    def identifyPackage(self, package):
+        """
+        Attempt to map the {package} installation to the name of an installed package
+        """
+        # get the name of the {package} instance
+        name = package.pyre_name
+        # grab the index of installed packages
+        installed = self.getInstalledPackages()
+
+        # if {name} is the actual name of an installed package
+        if name in installed:
+            # we are done
+            return name
+
+        # initialize the list of errors we may encounter
+        errors = []
+        # another possibility is that {name} is one of the selection alternatives for a package
+        # group; interpret the {package} category as the group name
+        group = package.category
+        # get the alternatives
+        alternatives = self.alternatives(group=group)
+        # and if we have a match
+        if name in alternatives:
+            # find which package provides it
+            return self.getSelectionInfo(group=group, alternative=name)
+
+        # another approach is to attempt to find a selection that is related to the package
+        # flavor; let's check
+        try:
+            # whether the package has a flavor
+            flavor = package.flavor
+        # if it doesn't
+        except AttributeError:
+            # describe what went wrong
+            msg = "could not deduce a package based on {!r}; please select one of {}".format(
+                name, alternatives)
+            # and save it
+            errors.append(msg)
+        # if it does
+        else:
+            # collect all alternatives whose names start with the flavor
+            candidates = [ tag for tag in alternatives if tag.startswith(flavor) ]
+            # if there is exactly one candidate
+            if len(candidates) == 1:
+                # it's our best bet
+                candidate = candidates[0]
+                # find out which package implements it and return it
+                return self.getSelectionInfo(group=group, alternative=candidate)
+            # if there were no viable candidates
+            elif not candidates:
+                # describe what went wrong
+                msg = "no viable candidates for {.category!r}; please select one of {}".format(
+                    package, alternatives)
+                # and save it
+                errors.append(msg)
+            # otherwise, there were more than one candidate
+            else:
+                # describe what went wrong
+                msg = 'multiple candidates for {!r}: {}; please select one'.format(
+                    flavor, candidates)
+                # and save it
+                errors.append(msg)
+
+        # complain
+        raise package.ConfigurationError(component=package, errors=[msg])
+
+
     # private data
+    # the root of the macports package library
     _prefix = None
-    _selected = None
+    # the index of installed packages: (package name -> package info)
     _installed = None
+    # the index of package groups: (package group -> tuple of alternatives)
+    _selections = None
+    # the parser of the macports response to provider queries
     _provides = re.compile(r".* is provided by: (?P<package>.*)")
 
 

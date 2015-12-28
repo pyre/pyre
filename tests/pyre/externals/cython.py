@@ -37,29 +37,30 @@ class configure(pyre.application):
         # get my cython
         cython = self.cython
         # show me
-        info.line("  cython: {}".format(cython))
+        info.line("cython:")
+        info.line("  package: {}".format(cython))
         # if i have one
         if cython:
             # version info
-            info.line("    version: {.version}".format(cython))
+            info.line("  version: {.version}".format(cython))
             # locations
-            info.line("    locations:")
-            info.line("      prefix: {.prefix}".format(cython))
-            info.line("      bindir: {.bindir}".format(cython))
-            info.line("      compiler: {.compiler}".format(cython))
+            info.line("  locations:")
+            info.line("    prefix: {.prefix}".format(cython))
+            info.line("    bindir: {.bindir}".format(cython))
+            info.line("    compiler: {.compiler}".format(cython))
             # link line
-            info.line("    link:")
-            # info.log("      libraries: {}".format(tuple(cython.libraries())))
+            info.line("  link:")
+            # info.log("    libraries: {}".format(tuple(cython.libraries())))
 
             # get the configuration errors
             errors = cython.pyre_configurationErrors
             # if there were any
             if errors:
                 # tell me
-                info.line("    configuration errors that were auto-corrected:")
+                info.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("        {}: {}".format(index+1, error))
+                    info.line("      {}: {}".format(index+1, error))
         # flush
         info.log()
 

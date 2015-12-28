@@ -20,6 +20,7 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
     Support for un*x systems that don't have package management facilities
     """
 
+
     # protocol obligations
     @pyre.export
     def prefix(self):
@@ -73,11 +74,11 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
         without a specific package manager
         """
         # what she said...
-        return packageInstance.generic(manager=self)
+        return packageInstance.unmanaged(manager=self)
 
 
     # interface
-    def locate(self, target, pile):
+    def find(self, target, pile):
         """
         Interpret {target} as a regular expression and return a sequence of the contents of {pile}
         that match it.
@@ -101,38 +102,16 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
         return
 
 
-    def bindir(self, regex, contents):
+    def findfirst(self, target, contents):
         """
-        Use {regex} to identify the {bindir} setting for a package
+        Locate the path to {target} in the {contents} of some package
         """
+        # form the regex
+        regex = '(?P<path>.*)/{}$'.format(target)
         # search for it in contents
-        for match in self.locate(target=regex, pile=contents):
+        for match in self.find(target=regex, pile=contents):
             # extract the folder
-            return match.group('bindir')
-        # otherwise, leave it blank
-        return ''
-
-
-    def incdir(self, regex, contents):
-        """
-        Use {regex} to identify the {incdir} setting for a package
-        """
-        # search for it in contents
-        for match in self.locate(target=regex, pile=contents):
-            # extract the folder
-            return match.group('incdir')
-        # otherwise, leave it blank
-        return ''
-
-
-    def libdir(self, regex, contents):
-        """
-        Use {regex} to identify the {libdir} setting for a package
-        """
-        # search for it in contents
-        for match in self.locate(target=regex, pile=contents):
-            # extract the folder
-            return match.group('libdir')
+            return match.group('path')
         # otherwise, leave it blank
         return ''
 

@@ -37,20 +37,21 @@ class configure(pyre.application):
         # get my mpi
         mpi = self.mpi
         # show me
-        info.line("  mpi: {}".format(mpi))
+        info.line("mpi:")
+        info.line("  package: {}".format(mpi))
         # if i have one
         if mpi:
             # version info
-            info.line("    version: {.version}".format(mpi))
+            info.line("  version: {.version}".format(mpi))
             # locations
-            info.line("    locations:")
-            info.line("      prefix: {.prefix}".format(mpi))
-            info.line("      bindir: {.bindir}".format(mpi))
-            info.line("      incdir: {.incdir}".format(mpi))
-            info.line("      libdir: {.libdir}".format(mpi))
-            info.line("      launcher: {.launcher}".format(mpi))
+            info.line("  locations:")
+            info.line("    prefix: {.prefix}".format(mpi))
+            info.line("    bindir: {.bindir}".format(mpi))
+            info.line("    incdir: {.incdir}".format(mpi))
+            info.line("    libdir: {.libdir}".format(mpi))
+            info.line("    launcher: {.launcher}".format(mpi))
             # link line
-            info.line("    link:")
+            info.line("  link:")
             # info.log("      libraries: {}".format(tuple(mpi.libraries())))
 
             # get the configuration errors
@@ -58,10 +59,10 @@ class configure(pyre.application):
             # if there were any
             if errors:
                 # tell me
-                info.line("    configuration errors that were auto-corrected:")
+                info.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("        {}: {}".format(index+1, error))
+                    info.line("      {}: {}".format(index+1, error))
         # flush
         info.log()
 

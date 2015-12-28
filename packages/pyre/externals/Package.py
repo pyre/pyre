@@ -7,7 +7,7 @@
 
 
 # externals
-import os
+import os, glob
 # access the pyre framework
 import pyre
 
@@ -54,8 +54,8 @@ class Package(pyre.protocol, family='pyre.externals'):
             # i only care about the first one
             return package
 
-        # if i get this far...
-        return cls.generic()
+        # if i get this far, no one knows what to do
+        return
 
 
     # configuration validation
@@ -80,8 +80,10 @@ class Package(pyre.protocol, family='pyre.externals'):
         for filename in filenames:
             # form the path
             path = os.path.join(folder, filename)
+            # expand
+            candidates = glob.glob(path)
             # check
-            if not os.path.exists(path):
+            if not candidates:
                 # complain
                 yield "couldn't locate {!r} in {}".format(filename, folder)
                 # and stop

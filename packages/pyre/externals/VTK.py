@@ -39,7 +39,7 @@ class VTK(Library, family='pyre.externals.vtk'):
         yield from cls.checkLibdir(
             package=package,
             filenames=[
-                host.dynamicLibrary('{0.category}CommonCore-{0.eigenversion}'.format(package))
+                host.dynamicLibrary('{0.category}CommonCore-*'.format(package))
             ])
         # all done
         return
@@ -47,22 +47,12 @@ class VTK(Library, family='pyre.externals.vtk'):
 
     # support for specific package managers
     @classmethod
-    def generic(cls):
-        """
-        Provide a default implementation of VTK
-        """
-        # there is only one...
-        return Default
-
-
-    @classmethod
     def macportsChooseImplementations(cls, macports):
         """
         Identify the default implementation of VTK on macports machines
         """
         # there is only one variation of this
-        yield cls.generic()(name=cls.category)
-
+        yield Default(name=cls.category)
         # and nothing else
         return
 
@@ -72,29 +62,22 @@ class VTK(Library, family='pyre.externals.vtk'):
         """
         Configure a VTK package instance on a macports host
         """
-        # get the instance name
-        name = instance.pyre_name
-        # attempt to
-        try:
-            # interpret the name as an installed package
-            version, variants = macports.info(package=name)
-        # if this fails
-        except KeyError:
-            # not much to do...
-            return
-
-        # this is an installed package; get its contents
-        contents = macports.contents(package=name)
+        # attempt to identify the package name from the {instance}
+        package = macports.identifyPackage(package=instance)
+        # get and save the package contents
+        contents = tuple(macports.contents(package=package))
+        # and the version info
+        version, variants = macports.info(package=package)
 
         # look for
-        header = "(?P<incdir>.*)/vtkVersion.h"
+        header = "vtkVersion.h"
         # to identify the include path
-        incdir = macports.incdir(regex=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
 
         # find my library
-        libvtk = "(?P<libdir>.*)/{}".format(cls.pyre_host.dynamicLibrary('vtkCommonCore.*'))
+        libvtk = cls.pyre_host.dynamicLibrary('vtkCommonCore.*')
         # find the folder
-        libdir = macports.libdir(regex=libvtk, contents=contents)
+        libdir = macports.findfirst(target=libvtk, contents=contents)
 
         # get the prefix
         prefix = macports.prefix()
@@ -103,23 +86,6 @@ class VTK(Library, family='pyre.externals.vtk'):
         instance.version = version
         instance.incdir = incdir
         instance.libdir = libdir
-
-        # on macports, the version numbers of the installed libraries do not match the package
-        # version, so we build a truncate version number (major, minor) to use while verifying
-        # the configuration
-
-        # attempt to
-        try:
-            # split the version
-            major, minor, *_ = version.split('.')
-        # if it can't be done
-        except ValueError:
-            # no worries
-            instance.eigenversion = version
-        # otherwise
-        else:
-            # assemble
-            instance.eigenversion = "{}.{}".format(major, minor)
 
         # all done
         return
@@ -135,17 +101,30 @@ class Default(LibraryInstallation, family='pyre.externals.vtk.default', implemen
 
     # constants
     category = VTK.category
-    eigenversion = 'unknown'
 
     # public state
-    prefix = pyre.properties.str(default='/usr')
+    prefix = pyre.properties.str()
     prefix.doc = 'the package installation directory'
 
-    incdir = pyre.properties.str(default='/usr/include')
+    incdir = pyre.properties.str()
     incdir.doc = "the location of my headers; for the compiler command line"
 
-    libdir = pyre.properties.str(default='/usr/lib')
+    libdir = pyre.properties.str()
     libdir.doc = "the location of my libraries; for the linker command path"
+
+    # interface
+    def sigver(self, version=None):
+        """
+        Extract the portion of a version number that is used to label my parts
+        """
+        # if the user didn't specify
+        if version is None:
+            # use mine
+            version = self.version
+        # split it into major, minor and the rest
+        major, minor, *rest = version.split('.')
+        # assemble the significant part
+        return '{}.{}'.format(major, minor)
 
 
 # end of file

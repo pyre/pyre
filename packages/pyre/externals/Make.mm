@@ -20,13 +20,9 @@ EXPORT_PYTHON_MODULES = \
     Library.py \
     LibraryInstallation.py \
     MPI.py \
-    MPICH.py \
-    OpenMPI.py \
     Package.py \
     Postgres.py \
     Python.py \
-    Python2.py \
-    Python3.py \
     Tool.py \
     ToolInstallation.py \
     VTK.py \

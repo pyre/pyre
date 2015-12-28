@@ -37,29 +37,30 @@ class configure(pyre.application):
         # get my blas
         blas = self.blas
         # show me
-        info.line("  blas: {}".format(blas))
+        info.line("blas:")
+        info.line("  package: {}".format(blas))
         # if i have one
         if blas:
             # version info
-            info.line("    version: {.version}".format(blas))
+            info.line("  version: {.version}".format(blas))
             # locations
-            info.line("    locations:")
-            info.line("      prefix: {.prefix}".format(blas))
-            info.line("      incdir: {.incdir}".format(blas))
-            info.line("      libdir: {.libdir}".format(blas))
+            info.line("  locations:")
+            info.line("    prefix: {.prefix}".format(blas))
+            info.line("    incdir: {.incdir}".format(blas))
+            info.line("    libdir: {.libdir}".format(blas))
             # link line
-            info.line("    link:")
-            # info.log("      libraries: {}".format(tuple(blas.libraries())))
+            info.line("  link:")
+            # info.log("    libraries: {}".format(tuple(blas.libraries())))
 
             # get the configuration errors
             errors = blas.pyre_configurationErrors
             # if there were any
             if errors:
                 # tell me
-                info.line("    configuration errors that were auto-corrected:")
+                info.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("        {}: {}".format(index+1, error))
+                    info.line("      {}: {}".format(index+1, error))
         # flush
         info.log()
 

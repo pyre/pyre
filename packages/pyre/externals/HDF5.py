@@ -44,22 +44,12 @@ class HDF5(Library, family='pyre.externals.hdf5'):
 
     # support for specific package managers
     @classmethod
-    def generic(cls):
-        """
-        Provide a default implementation of HDF5
-        """
-        # there is only one...
-        return Default
-
-
-    @classmethod
     def macportsChooseImplementations(cls, macports):
         """
         Identify the default implementation of HDF5 on macports machines
         """
         # there is only one variation of this
-        yield cls.generic()(name=cls.category)
-
+        yield Default(name=cls.category)
         # and nothing else
         return
 
@@ -102,15 +92,14 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
     category = HDF5.category
 
     # public state
-    prefix = pyre.properties.str(default='/usr')
+    prefix = pyre.properties.str()
     prefix.doc = 'the package installation directory'
 
-    incdir = pyre.properties.str(default='/usr/include')
+    incdir = pyre.properties.str()
     incdir.doc = "the location of my headers; for the compiler command line"
 
-    libdir = pyre.properties.str(default='/usr/lib')
+    libdir = pyre.properties.str()
     libdir.doc = "the location of my libraries; for the linker command path"
-
 
 
 # end of file

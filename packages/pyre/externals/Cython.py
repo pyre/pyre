@@ -43,27 +43,17 @@ class Cython(Tool, family='pyre.externals.cython'):
 
     # support for specific package managers
     @classmethod
-    def generic(cls):
-        """
-        Provide a default implementation of cython on platforms that are not handled explicitly
-        """
-        # return the support for cython
-        return Default
-
-
-    @classmethod
     def macportsChooseImplementations(cls, macports):
         """
         Provide alternative compatible implementations of cython on macports machines, starting
         with the package the user has selected as the default
         """
         # this is a macports host; ask it for all the cython3 package choices
-        for package in macports.alternatives(group=cls.category):
+        for alternative in macports.alternatives(group=cls.category):
+            # convert the selection alias into the package name that provides it
+            package = macports.getSelectionInfo(group=cls.category, alternative=alternative)
             # instantiate each one using the package name and hand it to the caller
             yield Default(name=package)
-
-        # if we get this far, try this
-        yield cls.generic()
 
         # out of ideas
         return
@@ -75,44 +65,27 @@ class Cython(Tool, family='pyre.externals.cython'):
         Configure a cython package instance on a macports host
         """
         # get the package group
-        group = cls.category
-        # ask the package manager for information about my category
-        alternatives = macports.alternatives(group=group)
-        # get my name
-        name = instance.pyre_name
-        # if my name is not one of the alternatives:
-        if name not in alternatives:
-            # go through what's there
-            for alternative in alternatives:
-                # and check whether any of them are implementations of my flavor
-                if alternative.startswith(group):
-                    # set the target package name to this alternative
-                    name = alternative
-                    # and bail out
-                    break
-            # if we run out of options
-            else:
-                # this must be a poorly user configured instance; complain
-                raise cls.ConfigurationError(
-                    component=instance, errors=instance.pyre_configurationErrors)
+        category = cls.category
+        # attempt to identify the package name from the {instance}
+        package = macports.identifyPackage(package=instance)
+        # get and save the package contents
+        contents = tuple(macports.contents(package=package))
+        # and the version info
+        version, variants = macports.info(package=package)
 
-        # get the selection info
-        packageName, contents, smap = macports.getSelectionInfo(group=group, alternative=name)
-        # get the package info
-        version, variants = macports.info(package=packageName)
-
-        # ask macports for its installation location
-        prefix = macports.prefix()
         # find my {compiler}
-        compiler = os.path.join(prefix, smap['bin/{}'.format(group)])
+        compiler = category
         # extract my {bindir}
-        bindir,_ = os.path.split(compiler)
+        bindir = macports.findfirst(target=compiler, contents=contents)
+
+        # compute the prefix
+        prefix, _ = os.path.split(bindir)
 
         # apply the configuration
         instance.version = version
         instance.prefix = prefix
         instance.bindir = bindir
-        instance.compiler = compiler
+        instance.compiler = os.path.join(bindir, compiler)
 
         # all done
         return
@@ -133,7 +106,7 @@ class Default(
     category = Cython.category
 
     # public state
-    compiler = pyre.properties.str(default=category)
+    compiler = pyre.properties.str()
     compiler.doc = 'the name of the cython compiler'
 
 

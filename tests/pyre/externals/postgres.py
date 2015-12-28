@@ -37,29 +37,30 @@ class configure(pyre.application):
         # get my postgres
         postgres = self.postgres
         # show me
-        info.line("  postgres: {}".format(postgres))
+        info.line("postgres:")
+        info.line("  package: {}".format(postgres))
         # if i have one
         if postgres:
             # version info
-            info.line("    version: {.version}".format(postgres))
+            info.line("  version: {.version}".format(postgres))
             # locations
-            info.line("    locations:")
-            info.line("      prefix: {.prefix}".format(postgres))
-            info.line("      incdir: {.incdir}".format(postgres))
-            info.line("      libdir: {.libdir}".format(postgres))
+            info.line("  locations:")
+            info.line("    prefix: {.prefix}".format(postgres))
+            info.line("    incdir: {.incdir}".format(postgres))
+            info.line("    libdir: {.libdir}".format(postgres))
             # link line
-            info.line("    link:")
-            # info.log("      libraries: {}".format(tuple(postgres.libraries())))
+            info.line("  link:")
+            # info.log("    libraries: {}".format(tuple(postgres.libraries())))
 
             # get the configuration errors
             errors = postgres.pyre_configurationErrors
             # if there were any
             if errors:
                 # tell me
-                info.line("    configuration errors that were auto-corrected:")
+                info.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("        {}: {}".format(index+1, error))
+                    info.line("      {}: {}".format(index+1, error))
         # flush
         info.log()
 

@@ -42,67 +42,25 @@ class BLAS(Library, family='pyre.externals.blas'):
         return
 
 
-    # support for specific package managers
-    @classmethod
-    def generic(cls):
-        """
-        Provide a default implementation of BLAS
-        """
-        # there is only one...
-        return Default
-
-
     @classmethod
     def macportsChooseImplementations(cls, macports):
         """
         Identify the default implementation of BLAS on macports machines
         """
         # on macports, the following possible packages provide support for BLAS, ranked by
-        # their performance: atlas, gsl
+        # their performance: atlas, openblas, gsl
+        versions = [ Atlas, OpenBLAS, GSLCBLAS ]
+        # get the index of installed packages
+        installed = macports.getInstalledPackages()
 
-        # start with atlas
-        try:
-            # get the package info
-             macports.info(package='atlas')
-        # if this fails
-        except KeyError:
-            # no problem; moving on
-            pass
-        # if it succeeds
-        else:
-            # get atlas support and return it
-            yield Atlas(name='atlas')
+        # go through each one
+        for version in versions:
+            # look for an installation
+            if version.flavor in installed:
+                # build an instance and return it
+                yield version(name=version.flavor)
 
-        # next up, OpenBlas
-        try:
-            # get the package info
-            macports.info(package='OpenBLAS')
-        # if this fails
-        except KeyError:
-            # no problem; moving on
-            pass
-        # if it succeeds
-        else:
-            # get atlas support and return it
-            yield OpenBLAS(name='OpenBLAS')
-
-        # next up, gsl
-        try:
-            # get the package info
-            macports.info(package='gsl')
-        # if this fails
-        except KeyError:
-            # no problem; moving on
-            pass
-        # if it succeeds
-        else:
-            # get atlas support and return it
-            yield GSLCBLAS(name='gsl')
-
-        # when all else fails
-        yield cls.generic()(name=cls.category)
-
-        # and nothing else
+        # out of ideas
         return
 
 
@@ -129,14 +87,35 @@ class BLAS(Library, family='pyre.externals.blas'):
 from .LibraryInstallation import LibraryInstallation
 
 
+# the base class
+class Default(LibraryInstallation, family='pyre.externals.blas.default', implements=BLAS):
+    """
+    A generic BLAS installation
+    """
+
+    # constants
+    flavor = 'unknown'
+    category = BLAS.category
+
+    # public state
+    prefix = pyre.properties.str()
+    prefix.doc = 'the package installation directory'
+
+    incdir = pyre.properties.str()
+    incdir.doc = "the location of my headers; for the compiler command line"
+
+    libdir = pyre.properties.str()
+    libdir.doc = "the location of my libraries; for the linker command path"
+
+
 # atlas
-class Atlas(LibraryInstallation, family='pyre.externals.blas.atlas', implements=BLAS):
+class Atlas(Default, family='pyre.externals.blas.atlas'):
     """
     Atlas BLAS support
     """
 
     # constants
-    category = BLAS.category
+    flavor = 'atlas'
 
     # framework hooks
     def pyre_configured(self):
@@ -163,13 +142,13 @@ class Atlas(LibraryInstallation, family='pyre.externals.blas.atlas', implements=
 
 
 # OpenBLAS
-class OpenBLAS(LibraryInstallation, family='pyre.externals.blas.openblas', implements=BLAS):
+class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
     """
     OpenBLAS support
     """
 
     # constants
-    category = BLAS.category
+    flavor = 'openblas'
 
     # framework hooks
     def pyre_configured(self):
@@ -195,13 +174,13 @@ class OpenBLAS(LibraryInstallation, family='pyre.externals.blas.openblas', imple
 
 
 # gslcblas
-class GSLCBLAS(LibraryInstallation, family='pyre.externals.blas.gsl', implements=BLAS):
+class GSLCBLAS(Default, family='pyre.externals.blas.gsl'):
     """
     GSL BLAS support
     """
 
     # constants
-    category = BLAS.category
+    flavor = 'gsl'
 
     # framework hooks
     def pyre_configured(self):
@@ -221,26 +200,6 @@ class GSLCBLAS(LibraryInstallation, family='pyre.externals.blas.gsl', implements
             package=self, filenames=[host.dynamicLibrary(stem='gslcblas')]))
         # all done
         return errors
-
-
-# the default implementation
-class Default(LibraryInstallation, family='pyre.externals.blas.default', implements=BLAS):
-    """
-    A generic BLAS installation
-    """
-
-    # constants
-    category = BLAS.category
-
-    # public state
-    prefix = pyre.properties.str(default='/usr')
-    prefix.doc = 'the package installation directory'
-
-    incdir = pyre.properties.str(default='/usr/include')
-    incdir.doc = "the location of my headers; for the compiler command line"
-
-    libdir = pyre.properties.str(default='/usr/lib')
-    libdir.doc = "the location of my libraries; for the linker command path"
 
 
 # end of file

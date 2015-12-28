@@ -37,26 +37,27 @@ class configure(pyre.application):
         # get my gcc
         gcc = self.gcc
         # show me
-        info.line("  gcc: {}".format(gcc))
+        info.line("gcc:")
+        info.line("  package: {}".format(gcc))
         # if i have one
         if gcc:
             # version info
-            info.line("    version: {.version}".format(gcc))
+            info.line("  version: {.version}".format(gcc))
             # locations
-            info.line("    locations:")
-            info.line("      prefix: {.prefix}".format(gcc))
-            info.line("      bindir: {.bindir}".format(gcc))
-            info.line("      wrapper: {.wrapper}".format(gcc))
+            info.line("  locations:")
+            info.line("    prefix: {.prefix}".format(gcc))
+            info.line("    bindir: {.bindir}".format(gcc))
+            info.line("    wrapper: {.wrapper}".format(gcc))
 
             # get the configuration errors
             errors = gcc.pyre_configurationErrors
             # if there were any
             if errors:
                 # tell me
-                info.line("    configuration errors that were auto-corrected:")
+                info.line("  configuration errors that were auto-corrected:")
                 # and show me
                 for index, error in enumerate(errors):
-                    info.line("        {}: {}".format(index+1, error))
+                    info.line("      {}: {}".format(index+1, error))
         # flush
         info.log()
 

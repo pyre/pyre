@@ -47,29 +47,20 @@ class Python(Tool, Library, family='pyre.externals.python'):
 
     # support for specific package managers
     @classmethod
-    def generic(cls):
-        """
-        Provide a default implementation of python on platforms that are not handled explicitly
-        """
-        # grab the support for python 3.x and return it
-        return Python3
-
-
-    @classmethod
     def macportsChooseImplementations(cls, macports):
         """
         Provide alternative compatible implementations of python on macports machines, starting
         with the package the user has selected as the default
         """
-        # form the python3 flavor
-        flavor = Python3.flavor
-        # this is a macports host; ask it for all the python3 package choices
-        for package in macports.alternatives(group=flavor):
-            # instantiate each one using the package name and hand it to the caller
-            yield Python3(name=package)
-
-        # if we get this far, try this
-        yield cls.generic()
+        # on macports, {python3} and {python2} are separate package groups; try python3.x
+        # installations followed by python 2.x
+        versions = [ Python3, Python2 ]
+        # go through my choices
+        for version in versions:
+            # ask macports for all available alternatives
+            for package in macports.alternatives(group=version.flavor):
+                # instantiate each one using the package name and hand it to the caller
+                yield version(name=package)
 
         # out of ideas
         return
@@ -80,49 +71,32 @@ class Python(Tool, Library, family='pyre.externals.python'):
         """
         Configure a python package instance on a macports host
         """
-        # get the package group
-        group = instance.flavor
-        # ask the package manager for information about my category
-        alternatives = macports.alternatives(group=group)
-        # get my name
-        name = instance.pyre_name
-        # if my name is not one of the alternatives:
-        if name not in alternatives:
-            # go through what's there
-            for alternative in alternatives:
-                # and check whether any of them are implementations of my flavor
-                if alternative.startswith(group):
-                    # set the target package name to this alternative
-                    name = alternative
-                    # and bail out
-                    break
-            # if we run out of options
-            else:
-                # this must be a poorly user configured instance; complain
-                raise cls.ConfigurationError(
-                    component=instance, errors=instance.pyre_configurationErrors)
+        # get my category
+        category = cls.category
+        # attempt to identify the package name from the {instance}
+        package = macports.identifyPackage(package=instance)
+        # get and save the package contents
+        contents = tuple(macports.contents(package=package))
+        # and the version info
+        version, variants = macports.info(package=package)
 
-        # get the selection info
-        packageName, contents, smap = macports.getSelectionInfo(group=group, alternative=name)
-        # get the package info
-        version, variants = macports.info(package=packageName)
+        # look for the interpreter executable
+        interpreter = instance.flavor
+        # to identify the {bindir}
+        bindir = macports.findfirst(target=interpreter, contents=contents)
 
-        # ask macports for its installation location
-        prefix = macports.prefix()
-        # find my {interpreter}
-        interpreter = os.path.join(prefix, smap['bin/{}'.format(group)])
-        # extract my {bindir}
-        bindir,_ = os.path.split(interpreter)
+        # look for the main header file
+        header = 'Python.h'
+        # to identify the {incdir}
+        incdir = macports.findfirst(target=header, contents=contents)
 
-        # the header regex
-        header = "(?P<incdir>.*)/Python.h$"
-        # search for it in contents
-        incdir = macports.incdir(regex=header, contents=contents)
+        # look for my library
+        libpython = cls.pyre_host.dynamicLibrary(category + instance.sigver(version))
+        # to identify the {libdir}
+        libdir = macports.findfirst(target=libpython, contents=contents)
 
-        # my library regex
-        libpython = '(?P<libdir>.*)/lib{}.+\.dylib$'.format(group)
-        # find the folder
-        libdir = macports.libdir(regex=libpython, contents=contents)
+        # compute the prefix
+        prefix = os.path.commonpath([bindir, incdir, libdir])
 
         # apply the configuration
         instance.version = version
@@ -130,7 +104,7 @@ class Python(Tool, Library, family='pyre.externals.python'):
         instance.bindir = bindir
         instance.incdir = incdir
         instance.libdir = libdir
-        instance.interpreter = interpreter
+        instance.interpreter = os.path.join(bindir, interpreter)
 
         # all done
         return
@@ -140,39 +114,55 @@ class Python(Tool, Library, family='pyre.externals.python'):
 from .ToolInstallation import ToolInstallation
 from .LibraryInstallation import LibraryInstallation
 
+# the base class for python installations
+class Default(
+        ToolInstallation, LibraryInstallation,
+        family='pyre.externals.python.default', implements=Python):
+    """
+    The base class for for python instances
+    """
+
+    # constants
+    flavor = 'unknown'
+    category = Python.category
+
+    # public state
+    interpreter = pyre.properties.str()
+    interpreter.doc = 'the name of the python interpreter'
+
+    # interface
+    def sigver(self, version=None):
+        """
+        Extract the portion of a version number that is used to label my parts
+        """
+        # if the user didn't specify
+        if version is None:
+            # use mine
+            version = self.version
+        # split it into major, minor and the rest
+        major, minor, *rest = version.split('.')
+        # assemble the significant part
+        return '{}.{}'.format(major, minor)
+
 
 # the python 2.x package manager
-class Python2(
-        ToolInstallation, LibraryInstallation,
-        family='pyre.externals.python2', implements=Python):
+class Python2(Default, family='pyre.externals.python.python2'):
     """
     The package manager for python 2.x instances
     """
 
     # constants
-    category = Python.category
-    flavor = category + '2'
-
-    # public state
-    interpreter = pyre.properties.str(default=flavor)
-    interpreter.doc = 'the name of the python interpreter'
+    flavor = Default.category + '2'
 
 
 # the python 3.x package manager
-class Python3(
-        ToolInstallation, LibraryInstallation,
-        family='pyre.externals.python3', implements=Python):
+class Python3(Default, family='pyre.externals.python.python3'):
     """
     The package manager for python 3.x instances
     """
 
     # constants
-    category = Python.category
-    flavor = category + '3'
-
-    # public state
-    interpreter = pyre.properties.str(default=flavor)
-    interpreter.doc = 'the name of the python interpreter'
+    flavor = Default.category + '3'
 
 
 # end of file
