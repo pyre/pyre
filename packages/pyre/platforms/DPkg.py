@@ -51,7 +51,7 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
         package {category}
         """
         # ask the package category to do dpkg specific hunting
-        yield from category.dpkgChooseImplementations(dpkg=self)
+        yield from category.dpkgChoices(dpkg=self)
         # all done
         return
 

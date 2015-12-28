@@ -53,7 +53,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         sequence.
         """
         # ask the package category to do macports specific hunting
-        yield from category.macportsChooseImplementations(macports=self)
+        yield from category.macportsChoices(macports=self)
         # all done
         return
 
