@@ -162,15 +162,14 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
         # record the locator
         instance.pyre_locator = locator
-        # initialize the configuration error pile
-        instance.pyre_configurationErrors = []
-
         # deduce the visibility of this instance
         visibility = cls.PrivateInventory if name is None else cls.PublicInventory
-        # invoke it
-        visibility.initializeInstance(instance=instance, name=name)
+        # invoke it to initialize the instance and collect configuration errors
+        instance.pyre_configurationErrors = list(
+            visibility.initializeInstance(instance=instance, name=name)
+            )
 
-        # and return the new instance
+        # all done
         return instance
 
 

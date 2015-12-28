@@ -115,8 +115,14 @@ class Actor(Requirement):
         locator = tracking.here(1) if locator is None else locator
         # build the instance
         instance = super().__call__(name=name, locator=locator, **kwds)
-        # invoke the instantiation hook
-        instance.pyre_configurationErrors += instance.pyre_initialized()
+        # get access to the configuration errors
+        errors = instance.pyre_configurationErrors
+        # invoke the instantiation hook and harvest any further errors
+        errors.extend(instance.pyre_initialized())
+        # if there have been any
+        if errors:
+            # complain
+            raise instance.ConfigurationError(component=instance, errors=errors)
         # and return it
         return instance
 

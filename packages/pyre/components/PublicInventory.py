@@ -123,12 +123,10 @@ class PublicInventory(Inventory):
         slots = cls.registerSlots(key=key, slots=slots, locator=instance.pyre_locator)
         # build the inventory out of the instance slots and attach it
         instance.pyre_inventory = cls(key=key, slots=slots)
-
         # configure the instance
         cls.pyre_configurator.configureComponentInstance(instance=instance)
-        # invoke the configuration hook
-        instance.pyre_configurationErrors += instance.pyre_configured()
-
+        # invoke the configuration hook and pass on any errors
+        yield from instance.pyre_configured()
         # all done
         return
 

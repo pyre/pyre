@@ -80,13 +80,10 @@ class PrivateInventory(Inventory):
         cls.pyre_registrar.registerComponentInstance(instance=instance)
         # invoke the registration hook
         instance.pyre_registered()
-
         # build the inventory out of the instance slots and attach it
         instance.pyre_inventory = cls(slots=cls.instanceSlots(instance=instance))
-
-        # invoke the configuration hook
-        instance.pyre_configurationErrors += instance.pyre_configured()
-
+        # invoke the configuration hook and pass on any errors
+        yield from instance.pyre_configured()
         # all done
         return
 
