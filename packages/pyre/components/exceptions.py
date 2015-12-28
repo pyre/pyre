@@ -134,7 +134,7 @@ class ResolutionError(ComponentError):
     """
 
     # public data
-    description = '{0.protocol} could not resolve {0.value!r} into a component'
+    description = 'could not resolve {0.value!r} into a component that implements {0.protocol}'
 
     # meta-methods
     def __init__(self, protocol, value, **kwds):
