@@ -92,25 +92,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return []
 
 
-    def pyre_bound(self):
-        """
-        Hook that gets invoked by the framework after all the properties of this component
-        instance have been assigned their final values, but before any validation has been
-        performed
-        """
-        return self
-
-
-    def pyre_validated(self):
-        """
-        Hook that gets invoked by the framework after the properties of this component instance
-        have been validated. It is an opportunity to perform checks that involve the values of
-        more than one property at a time, and hence could not have been attached to any one
-        property
-        """
-        return self
-
-
     def pyre_initialized(self):
         """
         Hook that gets invoked by the framework right before the component is put into
@@ -118,7 +99,9 @@ class Component(Configurable, metaclass=Actor, internal=True):
         bound and validated. This is the place where the component should acquire whatever
         further resources it requires.
         """
-        return self
+        # return the list of errors encountered while checking the instance state and acquiring
+        # resources
+        return []
 
 
     def pyre_finalized(self):
