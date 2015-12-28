@@ -166,5 +166,4 @@ class ConfigurationError(ComponentError):
         return
 
 
-
 # end of file
