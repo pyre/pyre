@@ -379,9 +379,20 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         # if it doesn't
         except AttributeError:
             # describe what went wrong
-            msg = "could not deduce a package based on {!r}; please select one of {}".format(
-                name, alternatives)
+            msg = "could not deduce a package for {!r}".format(name)
             # and report it
+            raise package.ConfigurationError(component=self, errors=[msg])
+
+        # perhaps the flavor is the package name
+        if flavor in installed:
+            # in which case we are done
+            return flavor
+
+        # beyond this point, nothing works unless this package belongs to a selection group
+        if not alternatives:
+            # it isn't
+            msg = 'could not locate a {.category!r} package for {!r}'.format(package, name)
+            # so complain
             raise package.ConfigurationError(component=self, errors=[msg])
 
         # if has a flavor, collect all alternatives whose names start with the flavor
