@@ -37,7 +37,7 @@ class LibraryInstallation(Installation):
         # extract the {incdir}
         self.incdir = set(
             macports.findfirst(target=target, contents=contents)
-            for target in self.headers())
+            for target in self.headers(packager=macports))
 
         # get the host
         host = self.pyre_host
@@ -46,7 +46,7 @@ class LibraryInstallation(Installation):
         # extract the {libdir}
         self.libdir = set(
             macports.findfirst(target=xform(target), contents=contents)
-            for target in self.libraries())
+            for target in self.libraries(packager=macports))
 
         # all done
         return package, contents
@@ -61,17 +61,45 @@ class LibraryInstallation(Installation):
         yield from super().pyre_configured()
 
         # grab my headers
-        headers = self.headers()
+        headers = self.headers(packager=self.pyre_externals)
         # check my {incdir}
         yield from self.verifyFolder(category='incdir', folder=self.incdir, filenames=headers)
 
         # grab my libraries
-        libraries = self.libraries()
+        libraries = self.libraries(packager=self.pyre_externals)
         # check my {libdir}
         yield from self.verifyFolder(category='libdir', folder=self.libdir, filenames=libraries)
 
         # all done
         return
+
+
+    # protocol obligations
+    @pyre.export
+    def defines(self):
+        """
+        Generate a sequence of compile time macros that identify my presence
+        """
+        # don't know very much
+        return ()
+
+
+    @pyre.export
+    def headers(self, **kwds):
+        """
+        A sequence of names of header files to look for
+        """
+        # don't know very much
+        return ()
+
+
+    @pyre.export
+    def liraries(self, **kwds):
+        """
+        A sequence of names of library files to look for
+        """
+        # don't know very much
+        return ()
 
 
 # end of file

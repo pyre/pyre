@@ -23,6 +23,16 @@ class ToolInstallation(Installation):
     bindir.doc = "the location of my binaries"
 
 
+    # protocol obligations
+    @pyre.export
+    def binaries(self, **kwds):
+        """
+        A sequence of names of binaries to look for
+        """
+        # must have one
+        return ()
+
+
     # configuration
     def macports(self, macports, **kwds):
         """
@@ -34,7 +44,7 @@ class ToolInstallation(Installation):
         # extract the {bindir}
         self.bindir = set(
             macports.findfirst(target=target, contents=contents)
-            for target in self.binaries())
+            for target in self.binaries(packager=macports))
 
         # all done
         return package, contents
@@ -49,7 +59,7 @@ class ToolInstallation(Installation):
         yield from super().pyre_configured()
 
         # grab my binaries
-        binaries = self.binaries()
+        binaries = self.binaries(packager=self.pyre_externals)
         # check my {bindir}
         yield from self.verifyFolder(category='bindir', folder=self.bindir, filenames=binaries)
 

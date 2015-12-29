@@ -23,4 +23,12 @@ class Tool(Package):
     bindir.doc = "the locations of my binaries"
 
 
+    # obligations
+    @pyre.provides
+    def binaries(self, **kwds):
+        """
+        A sequence of names of binaries to look for
+        """
+
+
 # end of file

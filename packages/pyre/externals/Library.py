@@ -26,4 +26,26 @@ class Library(Package):
     libdir.doc = "the locations of my libraries; for the linker command path"
 
 
+    # protocol obligations
+    @pyre.export
+    def defines(self):
+        """
+        A sequence of compile time macros that identify my presence
+        """
+
+
+    @pyre.provides
+    def headers(self, **kwds):
+        """
+        A sequence of names of header files to look for
+        """
+
+
+    @pyre.provides
+    def liraries(self, **kwds):
+        """
+        A sequence of names of library files to look for
+        """
+
+
 # end of file
