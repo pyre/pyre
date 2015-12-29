@@ -7,7 +7,7 @@
 
 
 # externals
-import re
+import os, re
 # the framework
 import pyre
 # my protocol
@@ -114,6 +114,26 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
             return match.group('path')
         # otherwise, leave it blank
         return ''
+
+
+    def locate(self, targets, paths):
+        """
+        Generate a sequence of the full {paths} to the {targets}
+        """
+        # go through the targets
+        for target in targets:
+            # and each of paths
+            for path in paths:
+                # form the combination
+                candidate = os.path.join(path, target)
+                # check whether it exists
+                if os.path.exists(candidate):
+                    # got one
+                    yield candidate
+                    # grab the next
+                    break
+        # all done
+        return
 
 
 # end of file
