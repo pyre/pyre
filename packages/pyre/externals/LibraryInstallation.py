@@ -32,7 +32,7 @@ class LibraryInstallation(Installation):
         Attempt to repair my configuration
         """
         # chain up
-        package, contents = super().macports(macports=macports)
+        package, contents = super().macports(macports=macports, **kwds)
 
         # extract the {incdir}
         self.incdir = set(

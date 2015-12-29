@@ -28,12 +28,14 @@ class Installation(pyre.component):
     # managers; families that require package manager specific configuration can override. the
     # default implementation invokes a category method
 
-    def macports(self, macports):
+    def macports(self, macports, package=None):
         """
         Attempt to repair the configuration of this instance assuming a macports host
         """
-        # attempt to deduce the package name
-        package = macports.identifyPackage(package=self)
+        # if no {package} was specified explicitly
+        if package is None:
+        # attempt to deduce it
+            package = macports.identifyPackage(package=self)
         # get the version info
         self.version, _ = macports.info(package=package)
         # get the package contents

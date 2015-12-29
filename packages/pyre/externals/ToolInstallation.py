@@ -29,7 +29,7 @@ class ToolInstallation(Installation):
         Attempt to repair my configuration
         """
         # chain up
-        package, contents = super().macports(macports=macports)
+        package, contents = super().macports(macports=macports, **kwds)
 
         # extract the {bindir}
         self.bindir = set(
