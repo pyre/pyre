@@ -10,7 +10,7 @@
 import pyre
 
 
-# the openmpi package manager
+# the base manager of specific package installations
 class Installation(pyre.component):
     """
     Base class for all package installations
@@ -24,67 +24,98 @@ class Installation(pyre.component):
     prefix.doc = 'the package installation directory'
 
 
-    # meta-methods
-    def __init__(self, name, **kwds):
-        # chain up
-        super().__init__(name=name, **kwds)
-        # if there were any configuration errors
-        if self.pyre_configurationErrors:
-            # get the package manager
-            packager = self.pyre_externals
-            # and ask to dispatch to the platform specific handler so we can attempt to repair
-            packager.configure(packageInstance=self)
-        # all done
-        return
+    # platform specific configuration strategies: these are invoked by the specific package
+    # managers; families that require package manager specific configuration can override. the
+    # default implementation invokes a category method
 
-
-    # platform specific configuration strategies
     def macports(self, macports):
         """
         Attempt to repair the configuration of this instance assuming a macports host
         """
-        # get my category manager
-        category = self.pyre_implements
-        # ask my protocol to configure me for a macports host
-        category.macportsConfigureImplementation(macports=macports, instance=self)
-        # check my configuration again
-        errors = self.pyre_configured()
-        # and if there are errors
-        if errors:
-            # complain
-            raise self.ConfigurationError(component=self, errors=errors)
-        # all done
-        return
+        # attempt to deduce the package name
+        package = macports.identifyPackage(package=self)
+        # get the version info
+        self.version, _ = macports.info(package=package)
+        # get the package contents
+        contents = tuple(macports.contents(package=package))
 
-
-    def dpkg(self, dpkg):
-        """
-        Attempt to repair the configuration of this instance assuming a dpkg host
-        """
-        print("Installation.dpkg: {}".format(self))
-        # ask my protocol to configure me for a dpkg host
-        self.pyre_implements.dpkgConfigureImplementation(dpkg=dpkg, instance=self)
-        # check my configuration again
-        errors = self.pyre_configured()
-        # and if there are errors
-        if errors:
-            # complain
-            raise self.ConfigurationError(component=self, errors=errors)
         # all done
-        return
+        return package, contents
 
 
     # framework hooks
     def pyre_configured(self):
         """
-        Verify and correct the package configuration
+        Verify the package configuration
         """
-        # initialize the list of errors
-        errors = super().pyre_configured()
-        # check the configuration and record any reported errors
-        errors += list(self.pyre_implements.checkConfiguration(package=self))
-        # return the list of errors
-        return errors
+        # chain up
+        yield from super().pyre_configured()
+        # if i don't have a good version
+        if self.version == 'unknown':
+            # complain
+            yield 'unknown version'
+
+        # check my prefix
+        yield from self.verifyFolder(category='prefix', folder=self.prefix)
+
+        # all done
+        return
+
+
+    def pyre_initialized(self):
+        """
+        Attempt to repair broken configurations
+        """
+        # grab my configuration errors
+        if not self.pyre_configurationErrors:
+            # if there weren't any, we are done
+            return
+        # otherwise, we have work to do; grab the package manager
+        manager = self.pyre_externals
+        # and attempt
+        try:
+            # get him to help me repair this configuration
+            manager.configure(packageInstance=self)
+        # if something went wrong
+        except self.ConfigurationError as error:
+            # report my errors
+            yield from error.errors
+
+        # all done
+        return
+
+
+    # configuration validation
+    def verifyFolder(self, category, folder, filenames=()):
+        """
+        Verify that the folder exists and contains the given {filenames}
+        """
+        # check there is a value
+        if not folder:
+            # complain
+            yield "no {!r} setting".format(category)
+            # and stop
+            return
+        # check that it is a valid directory
+        if not os.path.isdir(folder):
+            # complain
+            yield "{!r} is not a valid directory".format(folder)
+            # and stop
+            return
+        # verify that the given list of filenames exist
+        for filename in filenames:
+            # form the path
+            path = os.path.join(folder, filename)
+            # expand
+            candidates = glob.glob(path)
+            # check
+            if not candidates:
+                # complain
+                yield "couldn't locate {!r} in {}".format(filename, folder)
+                # and stop
+                return
+        # all done
+        return
 
 
 # end of file

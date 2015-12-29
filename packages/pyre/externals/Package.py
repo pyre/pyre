@@ -58,38 +58,4 @@ class Package(pyre.protocol, family='pyre.externals'):
         return
 
 
-    # configuration validation
-    @classmethod
-    def checkFolder(cls, category, folder, filenames):
-        """
-        Verify that the folder exists and contains the given {filenames}
-        """
-        # check there is a value
-        if not folder:
-            # complain
-            yield "no {!r} setting".format(category)
-            # and stop
-            return
-        # check that it is a valid directory
-        if not os.path.isdir(folder):
-            # complain
-            yield "{!r} is not a valid directory".format(folder)
-            # and stop
-            return
-        # verify that the given list of filenames exist
-        for filename in filenames:
-            # form the path
-            path = os.path.join(folder, filename)
-            # expand
-            candidates = glob.glob(path)
-            # check
-            if not candidates:
-                # complain
-                yield "couldn't locate {!r} in {}".format(filename, folder)
-                # and stop
-                return
-        # all done
-        return
-
-
 # end of file

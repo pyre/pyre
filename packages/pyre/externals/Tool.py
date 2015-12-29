@@ -18,22 +18,9 @@ class Tool(Package):
     Base class for external tools
     """
 
-
     # user configurable state
-    bindir = pyre.properties.str()
-    bindir.doc = "the location of my binaries"
-
-
-    # configuration validation
-    @classmethod
-    def checkBindir(cls, package, filenames):
-        """
-        Verify that the {bindir} trait points to a good location
-        """
-        # chain up
-        yield from cls.checkFolder(category='bindir', folder=package.bindir, filenames=filenames)
-        # all done
-        return
+    bindir = pyre.properties.strings()
+    bindir.doc = "the locations of my binaries"
 
 
 # end of file
