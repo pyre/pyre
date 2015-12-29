@@ -153,7 +153,14 @@ class ConfigurationError(ComponentError):
     """
 
     # public data
-    description = 'while configuring {0.component}: {0.errors}'
+    description = 'while configuring {0.component}: {0.report}'
+
+    @property
+    def report(self):
+        """
+        Splice my errors together
+        """
+        return "\n    ".join([''] + self.errors)
 
     # meta-methods
     def __init__(self, component, errors, **kwds):
@@ -161,7 +168,7 @@ class ConfigurationError(ComponentError):
         super().__init__(**kwds)
         # store my context
         self.component = component
-        self.errors = "\n    ".join([''] + errors)
+        self.errors = errors
         # all done
         return
 
