@@ -32,7 +32,7 @@ class ToolInstallation(Installation):
         package, contents = super().macports(macports=macports)
 
         # extract the {bindir}
-        self.bindir = (
+        self.bindir = set(
             macports.findfirst(target=target, contents=contents)
             for target in self.binaries())
 

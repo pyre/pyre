@@ -35,7 +35,7 @@ class LibraryInstallation(Installation):
         package, contents = super().macports(macports=macports)
 
         # extract the {incdir}
-        self.incdir = (
+        self.incdir = set(
             macports.findfirst(target=target, contents=contents)
             for target in self.headers())
 
@@ -44,7 +44,7 @@ class LibraryInstallation(Installation):
         # deduce the type of libraries we are looking for
         xform = host.dynamicLibrary if dynamic else host.staticLibrary
         # extract the {libdir}
-        self.libdir = (
+        self.libdir = set(
             macports.findfirst(target=xform(target), contents=contents)
             for target in self.libraries())
 
