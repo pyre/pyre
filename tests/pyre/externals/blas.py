@@ -34,8 +34,17 @@ class configure(pyre.application):
         # flush
         info.log()
 
-        # get my blas
-        blas = self.blas
+        # attempt to
+        try:
+            # get my blas
+            blas = self.blas
+        # if something went wrong
+        except self.ConfigurationError as error:
+            # show me
+            self.error.log(str(error))
+            # and bail
+            return 0
+
         # show me
         info.line("blas:")
         info.line("  package: {}".format(blas))
@@ -48,9 +57,14 @@ class configure(pyre.application):
             info.line("    prefix: {.prefix}".format(blas))
             info.line("    incdir: {.incdir}".format(blas))
             info.line("    libdir: {.libdir}".format(blas))
+            # compile line
+            info.line("  compile:")
+            info.line("    defines: {}".format(', '.join(blas.defines())))
+            info.line("    headers: {}".format(' '.join(blas.incdir)))
             # link line
             info.line("  link:")
-            # info.log("    libraries: {}".format(tuple(blas.libraries())))
+            info.line("    paths: {}".format(' '.join(blas.libdir)))
+            info.line("    libraries: {}".format(' '.join(blas.libraries())))
 
             # get the configuration errors
             errors = blas.pyre_configurationErrors
