@@ -29,21 +29,9 @@ class Cython(Tool, family='pyre.externals.cython'):
     compiler.doc = 'the name of the compiler; may be the full path to the executable'
 
 
-    # configuration verification
-    @classmethod
-    def checkConfiguration(cls, package):
-        """
-        Verify that package ins configured correctly
-        """
-        # check the location of the binaries
-        yield from cls.checkBindir(package=package, filenames=[package.compiler])
-        # all done
-        return
-
-
     # support for specific package managers
     @classmethod
-    def macportsChooseImplementations(cls, macports):
+    def macportsChoices(cls, macports):
         """
         Provide alternative compatible implementations of cython on macports machines, starting
         with the package the user has selected as the default
@@ -56,38 +44,6 @@ class Cython(Tool, family='pyre.externals.cython'):
             yield Default(name=package)
 
         # out of ideas
-        return
-
-
-    @classmethod
-    def macportsConfigureImplementation(cls, macports, instance):
-        """
-        Configure a cython package instance on a macports host
-        """
-        # get the package group
-        category = cls.category
-        # attempt to identify the package name from the {instance}
-        package = macports.identifyPackage(package=instance)
-        # get and save the package contents
-        contents = tuple(macports.contents(package=package))
-        # and the version info
-        version, variants = macports.info(package=package)
-
-        # find my {compiler}
-        compiler = category
-        # extract my {bindir}
-        bindir = macports.findfirst(target=compiler, contents=contents)
-
-        # compute the prefix
-        prefix, _ = os.path.split(bindir)
-
-        # apply the configuration
-        instance.version = version
-        instance.prefix = prefix
-        instance.bindir = bindir
-        instance.compiler = os.path.join(bindir, compiler)
-
-        # all done
         return
 
 
@@ -109,6 +65,41 @@ class Default(
     compiler = pyre.properties.str()
     compiler.doc = 'the name of the cython compiler'
 
+
+    # configuration
+    def dpkg(self, dpkg):
+        """
+        Attempt to repair my configuration
+        """
+        # NYI
+        raise NotImplementedError('NYI!')
+
+
+    def macports(self, macports):
+        """
+        Attempt to repair my configuration
+        """
+        # chain up
+        package, contents = super().macports(macports=macports)
+
+        # compute the prefix
+        self.prefix, _ = os.path.split(self.bindir[0])
+        # find my interpreter
+        self.compiler, *_ = macports.locate(targets=self.binaries(), paths=self.bindir)
+
+        # all done
+        return package, contents
+
+
+    # interface
+    def binaries(self):
+        """
+        Generate a sequence of required executables
+        """
+        # the compiler
+        yield self.category
+        # all done
+        return
 
 
 # end of file

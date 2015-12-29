@@ -34,8 +34,17 @@ class configure(pyre.application):
         # flush
         info.log()
 
-        # get my cython
-        cython = self.cython
+        # attempt to
+        try:
+            # get my cython
+            cython = self.cython
+        # if something goes wrong
+        except self.ConfigurationError as error:
+            # show me
+            self.error.log(str(error))
+            # and bail
+            return 0
+
         # show me
         info.line("cython:")
         info.line("  package: {}".format(cython))
@@ -48,9 +57,6 @@ class configure(pyre.application):
             info.line("    prefix: {.prefix}".format(cython))
             info.line("    bindir: {.bindir}".format(cython))
             info.line("    compiler: {.compiler}".format(cython))
-            # link line
-            info.line("  link:")
-            # info.log("    libraries: {}".format(tuple(cython.libraries())))
 
             # get the configuration errors
             errors = cython.pyre_configurationErrors
