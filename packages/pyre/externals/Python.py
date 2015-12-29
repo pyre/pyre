@@ -5,7 +5,6 @@
 # (c) 1998-2015 all rights reserved
 #
 
-
 # externals
 import os, sys
 # access to the framework
@@ -25,29 +24,13 @@ class Python(Tool, Library, family='pyre.externals.python'):
     category = 'python'
 
     # user configurable state
-    interpreter = pyre.properties.str(default=sys.executable)
-    interpreter.doc = 'the name of the interpreter; may be the full path to the executable'
-
-
-    # configuration verification
-    @classmethod
-    def checkConfiguration(cls, package):
-        """
-        Verify that package ins configured correctly
-        """
-        # get the host
-        host = cls.pyre_host
-        # check the location of the binaries
-        yield from cls.checkBindir(package=package, filenames=[package.interpreter])
-        # check the location of the headers
-        yield from cls.checkIncdir(package=package, filenames=["Python.h"])
-        # all done
-        return
+    interpreter = pyre.properties.str()
+    interpreter.doc = 'the full path to the interpreter'
 
 
     # support for specific package managers
     @classmethod
-    def macportsChooseImplementations(cls, macports):
+    def macportsChoices(cls, macports):
         """
         Provide alternative compatible implementations of python on macports machines, starting
         with the package the user has selected as the default
@@ -66,50 +49,6 @@ class Python(Tool, Library, family='pyre.externals.python'):
         return
 
 
-    @classmethod
-    def macportsConfigureImplementation(cls, macports, instance):
-        """
-        Configure a python package instance on a macports host
-        """
-        # get my category
-        category = cls.category
-        # attempt to identify the package name from the {instance}
-        package = macports.identifyPackage(package=instance)
-        # get and save the package contents
-        contents = tuple(macports.contents(package=package))
-        # and the version info
-        version, variants = macports.info(package=package)
-
-        # look for the interpreter executable
-        interpreter = instance.flavor
-        # to identify the {bindir}
-        bindir = macports.findfirst(target=interpreter, contents=contents)
-
-        # look for the main header file
-        header = 'Python.h'
-        # to identify the {incdir}
-        incdir = macports.findfirst(target=header, contents=contents)
-
-        # look for my library
-        libpython = cls.pyre_host.dynamicLibrary(category + instance.sigver(version))
-        # to identify the {libdir}
-        libdir = macports.findfirst(target=libpython, contents=contents)
-
-        # compute the prefix
-        prefix = os.path.commonpath([bindir, incdir, libdir])
-
-        # apply the configuration
-        instance.version = version
-        instance.prefix = prefix
-        instance.bindir = bindir
-        instance.incdir = incdir
-        instance.libdir = libdir
-        instance.interpreter = os.path.join(bindir, interpreter)
-
-        # all done
-        return
-
-
 # implementation superclasses
 from .ToolInstallation import ToolInstallation
 from .LibraryInstallation import LibraryInstallation
@@ -123,25 +62,98 @@ class Default(
     """
 
     # constants
-    flavor = 'unknown'
+    flavor = Python.category
     category = Python.category
 
     # public state
     interpreter = pyre.properties.str()
-    interpreter.doc = 'the name of the python interpreter'
+    interpreter.doc = 'the full path to the python interpreter'
+
+
+    # configuration
+    def dpkg(self, dpkg):
+        """
+        Attempt to repair my configuration
+        """
+        # NYI
+        raise NotImplementedError('NYI!')
+
+
+    def macports(self, macports):
+        """
+        Attempt to repair my configuration
+        """
+        # chain up
+        package, contents = super().macports(macports=macports)
+
+        # compute the prefix
+        self.prefix = os.path.commonpath(self.bindir + self.incdir + self.libdir)
+        # find my interpreter
+        self.interpreter, *_ = macports.locate(targets=self.binaries(), paths=self.bindir)
+
+        # all done
+        return package, contents
+
 
     # interface
-    def sigver(self, version=None):
+    def binaries(self):
+        """
+        Generate a sequence of required executables
+        """
+        # only one, typically named after my flavor
+        yield self.flavor
+        # all done
+        return
+
+
+    def defines(self):
+        """
+        Generate a sequence of compile time macros that identify my presence
+        """
+        # the python marker
+        yield "WITH_" + self.flavor.upper()
+        # all done
+        return
+
+
+    def headers(self):
+        """
+        Generate a sequence of required header files
+        """
+        # only one
+        yield 'Python.h'
+        # all done
+        return
+
+
+    def libraries(self):
+        """
+        Generate a sequence of required libraries
+        """
+        # get the host
+        host = self.pyre_host
+        # build my library name and hand it over
+        yield self.category + self.sigver()
+        # all done
+        return
+
+
+    # implementation details
+    def sigver(self):
         """
         Extract the portion of a version number that is used to label my parts
         """
-        # if the user didn't specify
-        if version is None:
-            # use mine
-            version = self.version
-        # split it into major, minor and the rest
-        major, minor, *rest = version.split('.')
-        # assemble the significant part
+        # get my version
+        version = self.version
+        # attempt to
+        try:
+            # split my version into major, minor and the rest
+            major, minor, *rest = version.split('.')
+        # if i don't have enough fields
+        except ValueError:
+            # can't do much
+            return version
+        # otherwise, assemble the significant part and return it
         return '{}.{}'.format(major, minor)
 
 
@@ -152,7 +164,7 @@ class Python2(Default, family='pyre.externals.python.python2'):
     """
 
     # constants
-    flavor = Default.category + '2'
+    flavor = Default.flavor + '2'
 
 
 # the python 3.x package manager
@@ -162,7 +174,7 @@ class Python3(Default, family='pyre.externals.python.python3'):
     """
 
     # constants
-    flavor = Default.category + '3'
+    flavor = Default.flavor + '3'
 
 
 # end of file

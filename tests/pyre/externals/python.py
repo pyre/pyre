@@ -34,8 +34,17 @@ class configure(pyre.application):
         # flush
         info.log()
 
-        # get my python
-        python = self.python
+        # attempt to
+        try:
+            # get my python
+            python = self.python
+        # if something went wrong
+        except self.ConfigurationError as error:
+            # show me
+            self.error.log(str(error))
+            # and bail
+            return 0
+
         # show me
         info.line("python:")
         info.line("  package: {}".format(python))
@@ -50,9 +59,14 @@ class configure(pyre.application):
             info.line("    incdir: {.incdir}".format(python))
             info.line("    libdir: {.libdir}".format(python))
             info.line("    interpreter: {.interpreter}".format(python))
+            # compile line
+            info.line("  compile:")
+            info.line("    defines: {}".format(', '.join(python.defines())))
+            info.line("    headers: {}".format(' '.join(python.incdir)))
             # link line
             info.line("  link:")
-            # info.log("    libraries: {}".format(tuple(python.libraries())))
+            info.line("    paths: {}".format(' '.join(python.libdir)))
+            info.line("    libraries: {}".format(' '.join(python.libraries())))
 
             # get the configuration errors
             errors = python.pyre_configurationErrors

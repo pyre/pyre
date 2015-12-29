@@ -48,6 +48,9 @@ postgres:
 
 python:
 	${PYTHON} ./python.py
+	${PYTHON} ./python.py --python=python3
+	${PYTHON} ./python.py --python=python2
+	${PYTHON} ./python.py --python=python2#python27
 
 vtk:
 	${PYTHON} ./vtk.py
