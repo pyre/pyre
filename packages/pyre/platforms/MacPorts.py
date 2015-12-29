@@ -22,6 +22,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
 
 
     # constants
+    name = 'macports'
     manager = 'port'
 
 

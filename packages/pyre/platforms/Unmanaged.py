@@ -21,6 +21,10 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
     """
 
 
+    # constants
+    name = 'bare'
+
+
     # protocol obligations
     @pyre.export
     def prefix(self):

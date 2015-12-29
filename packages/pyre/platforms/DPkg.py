@@ -22,6 +22,7 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
 
 
     # constants
+    name = 'dpkg'
     manager = 'dpkg-query'
 
 
