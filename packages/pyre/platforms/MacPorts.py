@@ -361,8 +361,6 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             # we are done
             return name
 
-        # initialize the list of errors we may encounter
-        errors = []
         # another possibility is that {name} is one of the selection alternatives for a package
         # group; interpret the {package} category as the group name
         group = package.category
@@ -383,35 +381,32 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             # describe what went wrong
             msg = "could not deduce a package based on {!r}; please select one of {}".format(
                 name, alternatives)
-            # and save it
-            errors.append(msg)
-        # if it does
-        else:
-            # collect all alternatives whose names start with the flavor
-            candidates = [ tag for tag in alternatives if tag.startswith(flavor) ]
-            # if there is exactly one candidate
-            if len(candidates) == 1:
-                # it's our best bet
-                candidate = candidates[0]
-                # find out which package implements it and return it
-                return self.getSelectionInfo(group=group, alternative=candidate)
-            # if there were no viable candidates
-            elif not candidates:
-                # describe what went wrong
-                msg = "no viable candidates for {.category!r}; please select one of {}".format(
-                    package, alternatives)
-                # and save it
-                errors.append(msg)
-            # otherwise, there were more than one candidate
-            else:
-                # describe what went wrong
-                msg = 'multiple candidates for {!r}: {}; please select one'.format(
-                    flavor, candidates)
-                # and save it
-                errors.append(msg)
+            # and report it
+            raise package.ConfigurationError(component=self, errors=[msg])
 
-        # complain
-        raise package.ConfigurationError(component=package, errors=[msg])
+        # if has a flavor, collect all alternatives whose names start with the flavor
+        candidates = [ tag for tag in alternatives if tag.startswith(flavor) ]
+
+        # if there is exactly one candidate
+        if len(candidates) == 1:
+            # it's our best bet
+            candidate = candidates[0]
+            # find out which package implements it and return it
+            return self.getSelectionInfo(group=group, alternative=candidate)
+
+        # if there were no viable candidates
+        if not candidates:
+            # describe what went wrong
+            msg = "no viable candidates for {.category!r}; please select one of {}".format(
+                package, alternatives)
+            # and report it
+            raise package.ConfigurationError(component=self, errors=[msg])
+
+        # otherwise, there were more than one candidate; describe what went wrong
+        msg = 'multiple candidates for {!r}: {}; please select one'.format(
+        flavor, candidates)
+        # and report it
+        raise package.ConfigurationError(component=self, errors=[msg])
 
 
     # private data
