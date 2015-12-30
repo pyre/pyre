@@ -14,7 +14,7 @@ import pyre
 from .Library import Library
 
 
-# the mpi package manager
+# the blas package manager
 class BLAS(Library, family='pyre.externals.blas'):
     """
     The package manager for BLAS packages
@@ -24,7 +24,7 @@ class BLAS(Library, family='pyre.externals.blas'):
     category = 'cblas'
 
 
-    # support ofr specific package managers
+    # support for specific package managers
     @classmethod
     def macportsChoices(cls, macports):
         """
@@ -85,6 +85,7 @@ class Default(LibraryInstallation, family='pyre.externals.blas.default', impleme
 
 
     # interface
+    @pyre.export
     def defines(self):
         """
         Generate a sequence of compile time macros that identify my presence
@@ -110,14 +111,13 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         """
         Attempt to repair my configuration
         """
-        # chain up
-        package, contents = super().macports(macports=macports, dynamic=False)
-        # all done
-        return package, contents
+        # chain up, looking for static libraries
+        return super().macports(macports=macports, dynamic=False)
 
 
     # interface
-    def headers(self):
+    @pyre.export
+    def headers(self, **kwds):
         """
         Generate a sequence of required header files
         """
@@ -127,7 +127,8 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         return
 
 
-    def libraries(self):
+    @pyre.export
+    def libraries(self, **kwds):
         """
         Generate a sequence of required libraries
         """
@@ -146,11 +147,21 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
     """
 
     # constants
-    flavor = 'OpenBLAS'
+    flavor = 'openblas'
+
+
+    # configuration
+    def macports(self, macports):
+        """
+        Attempt to repair my configuration
+        """
+        # chain up, looking for static libraries
+        return super().macports(macports=macports, package='OpenBLAS')
 
 
     # interface
-    def headers(self):
+    @pyre.export
+    def headers(self, **kwds):
         """
         Generate a sequence of required header files
         """
@@ -160,7 +171,8 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         return
 
 
-    def libraries(self):
+    @pyre.export
+    def libraries(self, **kwds):
         """
         Generate a sequence of required libraries
         """
@@ -179,8 +191,10 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gsl'):
     # constants
     flavor = 'gsl'
 
+
     # interface
-    def headers(self):
+    @pyre.export
+    def headers(self, **kwds):
         """
         Generate a sequence of required header files
         """
@@ -190,7 +204,8 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gsl'):
         return
 
 
-    def libraries(self):
+    @pyre.export
+    def libraries(self, **kwds):
         """
         Generate a sequence of required libraries
         """

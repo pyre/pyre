@@ -53,6 +53,7 @@ class Python(Tool, Library, family='pyre.externals.python'):
 from .ToolInstallation import ToolInstallation
 from .LibraryInstallation import LibraryInstallation
 
+
 # the base class for python installations
 class Default(
         ToolInstallation, LibraryInstallation,
@@ -89,14 +90,17 @@ class Default(
         # compute the prefix
         self.prefix = os.path.commonpath(self.bindir + self.incdir + self.libdir)
         # find my interpreter
-        self.interpreter, *_ = macports.locate(targets=self.binaries(), paths=self.bindir)
+        self.interpreter, *_ = macports.locate(
+            targets = self.binaries(packager=macports),
+            paths = self.bindir)
 
         # all done
         return package, contents
 
 
     # interface
-    def binaries(self):
+    @pyre.export
+    def binaries(self, **kwds):
         """
         Generate a sequence of required executables
         """
@@ -106,6 +110,7 @@ class Default(
         return
 
 
+    @pyre.export
     def defines(self):
         """
         Generate a sequence of compile time macros that identify my presence
@@ -116,7 +121,8 @@ class Default(
         return
 
 
-    def headers(self):
+    @pyre.export
+    def headers(self, **kwds):
         """
         Generate a sequence of required header files
         """
@@ -126,7 +132,8 @@ class Default(
         return
 
 
-    def libraries(self):
+    @pyre.export
+    def libraries(self, **kwds):
         """
         Generate a sequence of required libraries
         """

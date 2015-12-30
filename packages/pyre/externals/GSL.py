@@ -14,7 +14,7 @@ import pyre
 from .Library import Library
 
 
-# the mpi package manager
+# the gsl package manager
 class GSL(Library, family='pyre.externals.gsl'):
     """
     The package manager for GSL packages
@@ -24,60 +24,15 @@ class GSL(Library, family='pyre.externals.gsl'):
     category = 'gsl'
 
 
-    # configuration verification
-    @classmethod
-    def checkConfiguration(cls, package):
-        """
-        Verify that the {package} is configured correctly
-        """
-        # get the host
-        host = cls.pyre_host
-        # check the location of the headers
-        yield from cls.checkIncdir(
-            package=package, filenames=["{0}/{0}_version.h".format(cls.category)])
-        # check the location of the libraries
-        yield from cls.checkLibdir(
-            package=package, filenames=[host.dynamicLibrary(stem=cls.category)])
-        # all done
-        return
-
-
     # support for specific package managers
     @classmethod
-    def macportsChooseImplementations(cls, macports):
+    def macportsChoices(cls, macports):
         """
         Identify the default implementation of GSL on macports machines
         """
         # there is only one variation of this
         yield Default(name=cls.category)
-
         # and nothing else
-        return
-
-
-    @classmethod
-    def macportsConfigureImplementation(cls, macports, instance):
-        """
-        Configure a GSL package instance on a macports host
-        """
-        # attempt to
-        try:
-            # get my package info
-            version, variants = macports.info(package=cls.category)
-        # if this fails
-        except KeyError:
-            # not much to do...
-            return
-
-        # get the prefix
-        prefix = macports.prefix()
-        # apply the configuration
-        instance.prefix = prefix
-        instance.version = version
-        instance.incdir = os.path.join(prefix, 'include')
-        instance.libdir = os.path.join(prefix, 'lib')
-
-        # all done
         return
 
 
@@ -92,14 +47,61 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
     # constants
     category = GSL.category
 
-    prefix = pyre.properties.str()
-    prefix.doc = 'the package installation directory'
 
-    incdir = pyre.properties.str()
-    incdir.doc = "the location of my headers; for the compiler command line"
+    # configuration
+    def dpkg(self, dpkg):
+        """
+        Attempt to repair my configuration
+        """
+        # NYI
+        raise NotImplementedError('NYI!')
 
-    libdir = pyre.properties.str()
-    libdir.doc = "the location of my libraries; for the linker command path"
+
+    def macports(self, macports, **kwds):
+        """
+        Attempt to repair my configuration
+        """
+        # chain up
+        package, contents = super().macports(macports=macports, package=self.category, **kwds)
+        # compute the prefix
+        self.prefix = macports.prefix()
+        # all done
+        return package, contents
+
+
+    # interface
+    @pyre.export
+    def defines(self):
+        """
+        Generate a sequence of compile time macros that identify my presence
+        """
+        # just one
+        yield "WITH_" + self.category.upper()
+        # all done
+        return
+
+
+    # interface
+    @pyre.export
+    def headers(self, **kwds):
+        """
+        Generate a sequence of required header files
+        """
+        # my main header
+        yield 'gsl/gsl_version.h'
+        # all done
+        return
+
+
+    @pyre.export
+    def libraries(self, **kwds):
+        """
+        Generate a sequence of required libraries
+        """
+        # my implementations
+        yield 'gsl'
+        # all done
+        return
 
 
 # end of file

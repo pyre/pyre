@@ -57,7 +57,6 @@ class ToolInstallation(Installation):
         """
         # chain up
         yield from super().pyre_configured()
-
         # grab my binaries
         binaries = self.binaries(packager=self.pyre_externals)
         # check my {bindir}

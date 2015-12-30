@@ -36,7 +36,7 @@ class Cython(Tool, family='pyre.externals.cython'):
         Provide alternative compatible implementations of cython on macports machines, starting
         with the package the user has selected as the default
         """
-        # this is a macports host; ask it for all the cython3 package choices
+        # this is a macports host; ask it for all the cython package choices
         for alternative in macports.alternatives(group=cls.category):
             # convert the selection alias into the package name that provides it
             package = macports.getSelectionInfo(group=cls.category, alternative=alternative)
@@ -84,15 +84,18 @@ class Default(
 
         # compute the prefix
         self.prefix, _ = os.path.split(self.bindir[0])
-        # find my interpreter
-        self.compiler, *_ = macports.locate(targets=self.binaries(), paths=self.bindir)
+        # find my compiler
+        self.compiler, *_ = macports.locate(
+            targets = self.binaries(packager=macports),
+            paths = self.bindir)
 
         # all done
         return package, contents
 
 
     # interface
-    def binaries(self):
+    @pyre.export
+    def binaries(self, **kwds):
         """
         Generate a sequence of required executables
         """

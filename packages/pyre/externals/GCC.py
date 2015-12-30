@@ -14,7 +14,7 @@ import pyre
 from .Tool import Tool
 
 
-# the mpi package manager
+# the gcc package manager
 class GCC(Tool, family='pyre.externals.gcc'):
     """
     The package manager for GCC installations
@@ -28,21 +28,9 @@ class GCC(Tool, family='pyre.externals.gcc'):
     wrapper.doc = "the name of the compiler front end"
 
 
-    # configuration verification
-    @classmethod
-    def checkConfiguration(cls, package):
-        """
-        Verify that the {package} is configured correctly
-        """
-        # check the location of the binaries
-        yield from cls.checkBindir(package=package, filenames=[package.wrapper])
-        # all done
-        return
-
-
     # support for specific package managers
     @classmethod
-    def macportsChooseImplementations(cls, macports):
+    def macportsChoices(cls, macports):
         """
         Identify the default implementation of GCC on macports machines
         """
@@ -50,55 +38,10 @@ class GCC(Tool, family='pyre.externals.gcc'):
         category = cls.category
         # on macports, gcc is a package group
         for package in macports.alternatives(group=category):
-            # assume it's a good GCC installation and hand it to the caller
-            yield Suite(name=package)
+            # assume it's a good gcc installation and hand it to the caller
+            yield Default(name=package)
 
         # and nothing else
-        return
-
-
-    @classmethod
-    def macportsConfigureImplementation(cls, macports, instance):
-        """
-        Configure a GCC package instance on a macports host
-        """
-
-        # get my category
-        category = cls.category
-        # attempt to identify the package name from the {instance}
-        package = macports.identifyPackage(package=instance)
-        # get and save the package contents
-        contents = tuple(macports.contents(package=package))
-        # and the version info
-        version, variants = macports.info(package=package)
-
-        # get the macports prefix
-        prefix = macports.prefix()
-        # the {bindir} is always known
-        bindir = os.path.join(prefix, 'bin')
-
-        # my wrapper starts with
-        pattern = os.path.join(bindir, 'gcc-mp-')
-        # go through the contents of the package
-        for item in contents:
-            # if this item matches my patter
-            if item.startswith(pattern):
-                # save it
-                wrapper = item
-                # and bail
-                break
-        # otherwise
-        else:
-            # i know nothing; this will cause a configuration failure elsewhere
-            warpper = None
-
-        # apply the configuration
-        instance.prefix = prefix
-        instance.version = version
-        instance.bindir = bindir
-        instance.wrapper = wrapper
-
-        # all done
         return
 
 
@@ -107,18 +50,60 @@ from .ToolInstallation import ToolInstallation
 
 
 # the implementation of a GCC installation
-class Suite(ToolInstallation, family='pyre.externals.gcc.default', implements=GCC):
+class Default(ToolInstallation, family='pyre.externals.gcc.default', implements=GCC):
     """
     A generic GCC installation
     """
 
     # constants
-    version = 'unknown'
     category = GCC.category
 
     # public state
     wrapper = pyre.properties.str()
     wrapper.doc = "the name of the compiler front end"
+
+
+    # configuration
+    def dpkg(self, dpkg):
+        """
+        Attempt to repair my configuration
+        """
+        # NYI
+        raise NotImplementedError('NYI!')
+
+
+    def macports(self, macports):
+        """
+        Attempt to repair my configuration
+        """
+        # chain up
+        package, contents = super().macports(macports=macports)
+
+        # compute the prefix
+        self.prefix = macports.prefix()
+
+        # form the target
+        target = os.path.join(self.bindir[0], 'gcc-mp-.+')
+        # find my wrapper
+        for match in macports.find(target=target, pile=contents):
+            # pull the body
+            self.wrapper = match.group()
+
+        # all done
+        return package, contents
+
+
+    # interface
+    @pyre.export
+    def binaries(self, packager, **kwds):
+        """
+        Generate a sequence of required executables
+        """
+        # try this
+        yield 'gcc-mp-.+'
+        # all done
+        return
+
 
     # implementation details
     def retrieveVersion(self):
@@ -154,6 +139,7 @@ class Suite(ToolInstallation, family='pyre.externals.gcc.default', implements=GC
         # all done
         return 'unknown'
 
+
     # private data
     _versionRegex = re.compile(r"gcc\s+\([^)]+\)\s+(?P<version>[.0-9]+)")
 
@@ -167,15 +153,11 @@ class CLang(ToolInstallation, family='pyre.externals.gcc.clang', implements=GCC)
     # constants
     category = GCC.category
 
+
     # public state
-    prefix = pyre.properties.str(default='/usr')
-    prefix.doc = 'the package installation directory'
-
-    bindir = pyre.properties.str(default='/usr/bin')
-    bindir.doc = "the location of my binaries"
-
     wrapper = pyre.properties.str(default='/usr/bin/gcc')
     wrapper.doc = "the name of the compiler front end"
+
 
     # meta-methods
     def __init__(self, **kwds):
@@ -185,6 +167,7 @@ class CLang(ToolInstallation, family='pyre.externals.gcc.clang', implements=GCC)
         self.version = self.retrieveVersion()
         # all done
         return
+
 
     # implementation details
     def retrieveVersion(self):
@@ -217,6 +200,7 @@ class CLang(ToolInstallation, family='pyre.externals.gcc.clang', implements=GCC)
 
         # all done
         return
+
 
     # private data
     _versionRegex = re.compile(r"Apple LLVM version [.0-9]+\s\(clang-(?P<version>[.0-9]+)\)$")

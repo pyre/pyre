@@ -29,27 +29,9 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
     launcher.doc = 'the name of the launcher of MPI jobs'
 
 
-    # configuration verification
-    @classmethod
-    def checkConfiguration(cls, package):
-        """
-        Verify that package ins configured correctly
-        """
-        # get the host
-        host = cls.pyre_host
-        # check the location of the binaries
-        yield from cls.checkBindir(package=package, filenames=[package.launcher])
-        # check the location of the headers
-        yield from cls.checkIncdir(package=package, filenames=["mpi.h"])
-        # check the location of the libraries
-        yield from cls.checkLibdir(package=package, filenames=[host.dynamicLibrary(stem='mpi')])
-        # all done
-        return
-
-
     # support for specific package managers
     @classmethod
-    def macportsChooseImplementations(cls, macports):
+    def macportsChoices(cls, macports):
         """
         Provide alternative compatible implementations of MPI on macports machines, starting with
         the package the user has selected as the default
@@ -72,67 +54,16 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
                 raise journal.firewall('pyre.externals.MPI').log(
                     "unknown MPI flavor for package {!r}".format(alternative))
 
-            # attempt to
-            try:
-                # show me
-                # instantiate the package and return it
-                yield factory(name=alternative)
-            # if this fails
-            except factory.ConfigurationError:
-                # try something else
-                continue
+            # instantiate the package and return it
+            yield factory(name=alternative)
 
         # out of ideas
         return
 
 
-    @classmethod
-    def macportsConfigureImplementation(cls, macports, instance):
-        """
-        Configure an MPI package instance on a macports host
-        """
-        # get my category
-        category = cls.category
-        # attempt to identify the package name from the {instance}
-        package = macports.identifyPackage(package=instance)
-        # get and save the package contents
-        contents = tuple(macports.contents(package=package))
-        # and the version info
-        version, variants = macports.info(package=package)
-
-        # look for 'mpirun'; all MPI implementations have one
-        launcher = 'mpirun-{}'.format(package)
-        # to identify the {bindir}
-        bindir = macports.findfirst(target=launcher, contents=contents)
-
-        # look for the main header file
-        header = 'mpi.h'
-        # to identify the {incdir}
-        incdir = macports.findfirst(target=header, contents=contents)
-
-        # look for my library
-        libmpi = cls.pyre_host.dynamicLibrary(category)
-        # to identify the {libdir}
-        libdir = macports.findfirst(target=libmpi, contents=contents)
-
-        # compute the prefix
-        prefix = os.path.commonpath([bindir, incdir, libdir])
-
-        # apply the configuration
-        instance.version = version
-        instance.prefix = prefix
-        instance.bindir = bindir
-        instance.incdir = incdir
-        instance.libdir = libdir
-        instance.launcher = os.path.join(bindir, 'mpirun')
-
-        # all done
-        return
-
-
     # dpkg
     @classmethod
-    def dpkgChooseImplementations(cls, dpkg):
+    def dpkgChoices(cls, dpkg):
         """
         Identify the default implementation of MPI on dpkg machines
         """
@@ -179,7 +110,7 @@ from .ToolInstallation import ToolInstallation
 from .LibraryInstallation import LibraryInstallation
 
 
-# the openmpi package manager
+# the base class
 class Default(
         ToolInstallation, LibraryInstallation,
         family='pyre.externals.mpi.default', implements=MPI):
@@ -192,8 +123,70 @@ class Default(
     category = MPI.category
 
     # public state
-    launcher = pyre.properties.str(default='mpirun')
+    launcher = pyre.properties.str()
     launcher.doc = 'the name of the launcher of MPI jobs'
+
+
+    # configuration
+    def dpkg(self, dpkg):
+        """
+        Attempt to repair my configuration
+        """
+        # NYI
+        raise NotImplementedError('NYI!')
+
+
+    def macports(self, macports):
+        """
+        Attempt to repair my configuration
+        """
+        # chain up
+        package, contents = super().macports(macports=macports)
+        # compute the prefix
+        self.prefix = os.path.commonpath(self.bindir + self.incdir + self.libdir)
+        # find my launcher
+        self.launcher, *_ = macports.locate(
+            targets = self.binaries(packager=macports),
+            paths = self.bindir)
+
+        # all done
+        return package, contents
+
+
+    # interface
+    @pyre.export
+    def defines(self):
+        """
+        Generate a sequence of compile time macros that identify my presence
+        """
+        # the category marker
+        yield "WITH_" + self.category.upper()
+        # the flavor marker
+        yield "WITH_" + self.flavor.upper()
+        # all done
+        return
+
+
+    @pyre.export
+    def headers(self, **kwds):
+        """
+        Generate a sequence of required header files
+        """
+        # only one
+        yield 'mpi.h'
+        # all done
+        return
+
+
+    @pyre.export
+    def libraries(self, **kwds):
+        """
+        Generate a sequence of required libraries
+        """
+        # build my library name and hand it over
+        yield self.category
+        # all done
+        return
 
 
 # the openmpi package manager
@@ -233,6 +226,18 @@ class OpenMPI(Default, family='pyre.externals.mpi.openmpi'):
         return
 
 
+    # protocol obligations
+    @pyre.export
+    def binaries(self, **kwds):
+        """
+        Generate a sequence of required executables
+        """
+        # look for the launcher
+        yield 'mpirun-openmpi-gcc5'
+        # all done
+        return
+
+
 # the mpich package manager
 class MPICH(Default, family='pyre.externals.mpi.mpich'):
     """
@@ -242,10 +247,6 @@ class MPICH(Default, family='pyre.externals.mpi.mpich'):
     # constants
     flavor = "mpich"
     category = MPI.category
-
-    # public state
-    launcher = pyre.properties.str(default='mpirun')
-    launcher.doc = 'the name of the launcher of MPI jobs'
 
 
     # configuration strategies for specific package managers
@@ -270,6 +271,21 @@ class MPICH(Default, family='pyre.externals.mpi.mpich'):
         if errors:
             # complain
             raise self.ConfigurationError(component=self, errors=errors)
+        # all done
+        return
+
+
+    # protocol obligations
+    @pyre.export
+    def binaries(self, packager, **kwds):
+        """
+        Generate a sequence of required executables
+        """
+        if packager.name == 'macports':
+            print('hola: {.pyre_name}'.format(self))
+
+        # look for the launcher
+        yield 'mpirun-mpich-gcc5'
         # all done
         return
 

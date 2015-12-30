@@ -14,7 +14,7 @@ import pyre
 from .Library import Library
 
 
-# the mpi package manager
+# the vtk package manager
 class VTK(Library, family='pyre.externals.vtk'):
     """
     The package manager for VTK packages
@@ -24,70 +24,15 @@ class VTK(Library, family='pyre.externals.vtk'):
     category = 'vtk'
 
 
-    # configuration verification
-    @classmethod
-    def checkConfiguration(cls, package):
-        """
-        Verify that the {package} is configured correctly
-        """
-        # get the host
-        host = cls.pyre_host
-        # check the location of the headers
-        yield from cls.checkIncdir(
-            package=package, filenames=["vtkVersion.h".format(cls.category)])
-        # check the location of the libraries
-        yield from cls.checkLibdir(
-            package=package,
-            filenames=[
-                host.dynamicLibrary('{0.category}CommonCore-*'.format(package))
-            ])
-        # all done
-        return
-
-
     # support for specific package managers
     @classmethod
-    def macportsChooseImplementations(cls, macports):
+    def macportsChoices(cls, macports):
         """
         Identify the default implementation of VTK on macports machines
         """
         # there is only one variation of this
         yield Default(name=cls.category)
         # and nothing else
-        return
-
-
-    @classmethod
-    def macportsConfigureImplementation(cls, macports, instance):
-        """
-        Configure a VTK package instance on a macports host
-        """
-        # attempt to identify the package name from the {instance}
-        package = macports.identifyPackage(package=instance)
-        # get and save the package contents
-        contents = tuple(macports.contents(package=package))
-        # and the version info
-        version, variants = macports.info(package=package)
-
-        # look for
-        header = "vtkVersion.h"
-        # to identify the include path
-        incdir = macports.findfirst(target=header, contents=contents)
-
-        # find my library
-        libvtk = cls.pyre_host.dynamicLibrary('vtkCommonCore.*')
-        # find the folder
-        libdir = macports.findfirst(target=libvtk, contents=contents)
-
-        # get the prefix
-        prefix = macports.prefix()
-        # apply the configuration
-        instance.prefix = prefix
-        instance.version = version
-        instance.incdir = incdir
-        instance.libdir = libdir
-
-        # all done
         return
 
 
@@ -102,27 +47,80 @@ class Default(LibraryInstallation, family='pyre.externals.vtk.default', implemen
     # constants
     category = VTK.category
 
-    # public state
-    prefix = pyre.properties.str()
-    prefix.doc = 'the package installation directory'
 
-    incdir = pyre.properties.str()
-    incdir.doc = "the location of my headers; for the compiler command line"
+    # configuration
+    def dpkg(self, dpkg):
+        """
+        Attempt to repair my configuration
+        """
+        # NYI
+        raise NotImplementedError('NYI!')
 
-    libdir = pyre.properties.str()
-    libdir.doc = "the location of my libraries; for the linker command path"
+
+    def macports(self, macports, **kwds):
+        """
+        Attempt to repair my configuration
+        """
+        # chain up
+        package, contents = super().macports(macports=macports, package=self.category, **kwds)
+        # compute the prefix
+        self.prefix = macports.prefix()
+        # all done
+        return package, contents
+
 
     # interface
-    def sigver(self, version=None):
+    @pyre.export
+    def defines(self):
+        """
+        Generate a sequence of compile time macros that identify my presence
+        """
+        # just one
+        yield "WITH_" + self.category.upper() + self.major()
+        # all done
+        return
+
+
+    # interface
+    @pyre.export
+    def headers(self, **kwds):
+        """
+        Generate a sequence of required header files
+        """
+        # my main header
+        yield 'vtkVersion.h'
+        # all done
+        return
+
+
+    @pyre.export
+    def libraries(self, **kwds):
+        """
+        Generate a sequence of required libraries
+        """
+        # my implementations
+        yield 'vtkCommonCore-{}'.format(self.sigver())
+        # all done
+        return
+
+
+    # interface
+    def major(self):
         """
         Extract the portion of a version number that is used to label my parts
         """
-        # if the user didn't specify
-        if version is None:
-            # use mine
-            version = self.version
         # split it into major, minor and the rest
-        major, minor, *rest = version.split('.')
+        major, *rest = self.version.split('.')
+        # assemble the significant part
+        return major
+
+
+    def sigver(self):
+        """
+        Extract the portion of a version number that is used to label my parts
+        """
+        # split it into major, minor and the rest
+        major, minor, *rest = self.version.split('.')
         # assemble the significant part
         return '{}.{}'.format(major, minor)
 
