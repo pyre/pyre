@@ -34,8 +34,17 @@ class configure(pyre.application):
         # flush
         info.log()
 
-        # get my vtk
-        vtk = self.vtk
+        # attempt to
+        try:
+            # get my vtk
+            vtk = self.vtk
+        # if something went wrong
+        except self.ConfigurationError as error:
+            # show me
+            self.error.log(str(error))
+            # and bail
+            return 0
+
         # show me
         info.line("vtk:")
         info.line("  package: {}".format(vtk))
@@ -48,9 +57,14 @@ class configure(pyre.application):
             info.line("    prefix: {.prefix}".format(vtk))
             info.line("    incdir: {.incdir}".format(vtk))
             info.line("    libdir: {.libdir}".format(vtk))
+            # compile line
+            info.line("  compile:")
+            info.line("    defines: {}".format(', '.join(vtk.defines())))
+            info.line("    headers: {}".format(' '.join(vtk.incdir)))
             # link line
             info.line("  link:")
-            # info.log("    libraries: {}".format(tuple(vtk.libraries())))
+            info.line("    paths: {}".format(' '.join(vtk.libdir)))
+            info.line("    libraries: {}".format(' '.join(vtk.libraries())))
 
             # get the configuration errors
             errors = vtk.pyre_configurationErrors

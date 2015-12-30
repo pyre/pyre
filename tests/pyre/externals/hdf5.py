@@ -34,8 +34,17 @@ class configure(pyre.application):
         # flush
         info.log()
 
-        # get my hdf5
-        hdf5 = self.hdf5
+        # attempt to
+        try:
+            # get my hdf5
+            hdf5 = self.hdf5
+        # if something went wrong
+        except self.ConfigurationError as error:
+            # show me
+            self.error.log(str(error))
+            # and bail
+            return 0
+
         # show me
         info.line("hdf5:")
         info.line("  package: {}".format(hdf5))
@@ -48,9 +57,14 @@ class configure(pyre.application):
             info.line("    prefix: {.prefix}".format(hdf5))
             info.line("    incdir: {.incdir}".format(hdf5))
             info.line("    libdir: {.libdir}".format(hdf5))
+            # compile line
+            info.line("  compile:")
+            info.line("    defines: {}".format(', '.join(hdf5.defines())))
+            info.line("    headers: {}".format(' '.join(hdf5.incdir)))
             # link line
             info.line("  link:")
-            # info.log("    libraries: {}".format(tuple(hdf5.libraries())))
+            info.line("    paths: {}".format(' '.join(hdf5.libdir)))
+            info.line("    libraries: {}".format(' '.join(hdf5.libraries())))
 
             # get the configuration errors
             errors = hdf5.pyre_configurationErrors

@@ -34,8 +34,17 @@ class configure(pyre.application):
         # flush
         info.log()
 
-        # get my gsl
-        gsl = self.gsl
+        # attempt to
+        try:
+            # get my gsl
+            gsl = self.gsl
+        # if something went wrong
+        except self.ConfigurationError as error:
+            # show me
+            self.error.log(str(error))
+            # and bail
+            return 0
+
         # show me
         info.line("gsl:")
         info.line("  package: {}".format(gsl))
@@ -48,9 +57,14 @@ class configure(pyre.application):
             info.line("    prefix: {.prefix}".format(gsl))
             info.line("    incdir: {.incdir}".format(gsl))
             info.line("    libdir: {.libdir}".format(gsl))
+            # compile line
+            info.line("  compile:")
+            info.line("    defines: {}".format(', '.join(gsl.defines())))
+            info.line("    headers: {}".format(' '.join(gsl.incdir)))
             # link line
             info.line("  link:")
-            # info.log("    libraries: {}".format(tuple(gsl.libraries())))
+            info.line("    paths: {}".format(' '.join(gsl.libdir)))
+            info.line("    libraries: {}".format(' '.join(gsl.libraries())))
 
             # get the configuration errors
             errors = gsl.pyre_configurationErrors

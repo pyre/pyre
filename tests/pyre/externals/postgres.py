@@ -34,8 +34,17 @@ class configure(pyre.application):
         # flush
         info.log()
 
-        # get my postgres
-        postgres = self.postgres
+        # attempt to
+        try:
+            # get my postgres
+            postgres = self.postgres
+        # if something went wrong
+        except self.ConfigurationError as error:
+            # show me
+            self.error.log(str(error))
+            # and bail
+            return 0
+
         # show me
         info.line("postgres:")
         info.line("  package: {}".format(postgres))
@@ -48,9 +57,15 @@ class configure(pyre.application):
             info.line("    prefix: {.prefix}".format(postgres))
             info.line("    incdir: {.incdir}".format(postgres))
             info.line("    libdir: {.libdir}".format(postgres))
+            info.line("    client: {.psql}".format(postgres))
+            # compile line
+            info.line("  compile:")
+            info.line("    defines: {}".format(', '.join(postgres.defines())))
+            info.line("    headers: {}".format(' '.join(postgres.incdir)))
             # link line
             info.line("  link:")
-            # info.log("    libraries: {}".format(tuple(postgres.libraries())))
+            info.line("    paths: {}".format(' '.join(postgres.libdir)))
+            info.line("    libraries: {}".format(' '.join(postgres.libraries())))
 
             # get the configuration errors
             errors = postgres.pyre_configurationErrors

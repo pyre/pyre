@@ -34,8 +34,17 @@ class configure(pyre.application):
         # flush
         info.log()
 
-        # get my gcc
-        gcc = self.gcc
+        # attempt to
+        try:
+            # get my gcc
+            gcc = self.gcc
+        # if something goes wrong
+        except self.ConfigurationError as error:
+            # show me
+            self.error.log(str(error))
+            # and bail
+            return 0
+
         # show me
         info.line("gcc:")
         info.line("  package: {}".format(gcc))

@@ -34,8 +34,17 @@ class configure(pyre.application):
         # flush
         info.log()
 
-        # get my mpi
-        mpi = self.mpi
+        # attempt to
+        try:
+            # get my mpi
+            mpi = self.mpi
+        # if something went wrong
+        except self.ConfigurationError as error:
+            # show me
+            self.error.log(str(error))
+            # and bail
+            return 0
+
         # show me
         info.line("mpi:")
         info.line("  package: {}".format(mpi))
@@ -50,9 +59,14 @@ class configure(pyre.application):
             info.line("    incdir: {.incdir}".format(mpi))
             info.line("    libdir: {.libdir}".format(mpi))
             info.line("    launcher: {.launcher}".format(mpi))
+            # compile line
+            info.line("  compile:")
+            info.line("    defines: {}".format(', '.join(mpi.defines())))
+            info.line("    headers: {}".format(' '.join(mpi.incdir)))
             # link line
             info.line("  link:")
-            # info.log("      libraries: {}".format(tuple(mpi.libraries())))
+            info.line("    paths: {}".format(' '.join(mpi.libdir)))
+            info.line("    libraries: {}".format(' '.join(mpi.libraries())))
 
             # get the configuration errors
             errors = mpi.pyre_configurationErrors
