@@ -7,7 +7,7 @@
 
 
 # externals
-import os, re, subprocess
+import os, re, collections, subprocess
 # framework
 import pyre
 # superclass
@@ -88,6 +88,16 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         return packageInstance.macports(macports=self)
 
 
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # initialize my normalization map
+        self._normalizations = collections.defaultdict(dict)
+        # all done
+        return
+
+
     # implementation details
     def getPrefix(self):
         """
@@ -147,28 +157,28 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         selection
         """
         # grab the index
-        selections = self.getSelections()
+        alternatives = self.getAlternatives()
         # look up the given {group} and pass on the package alternatives
-        return selections.get(group, ())
+        return alternatives.get(group, ())
 
 
-    def getSelections(self):
+    def getAlternatives(self):
         """
         Return the selected package and all alternatives for the given package {group}
         """
         # grab the index
-        selections = self._selections
+        alternatives = self._alternatives
         # if it has not been initialized
-        if selections is None:
+        if alternatives is None:
             # build the selected package index
-            selections = {
-                group: alternatives
-                for group, alternatives in self.retrieveSelectedPackages()
+            alternatives = {
+                group: candidates
+                for group, candidates in self.retrievePackageAlternates()
             }
             # attach it
-            self._selections = selections
+            self._alternatives = alternatives
         # ask it
-        return selections
+        return alternatives
 
 
     def retrieveInstalledPackages(self):
@@ -231,7 +241,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         return
 
 
-    def retrieveSelectedPackages(self):
+    def retrievePackageAlternates(self):
         """
         Retrieve selection information for all known package groups
         """
@@ -279,46 +289,69 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         return
 
 
-    def getSelectionInfo(self, group, alternative, smap=None):
+    def getSelectionInfo(self, group, alternative):
         """
         Identify the package in the {group} that provides the selected {alternative}
         """
-        # if we were not handed a specific selection map to use
-        if smap is None:
-            # get it
-            smap = self.getSelectionMap(group=group, alternative=alternative)
+        # get the package normalization map
+        _, target = self.getNormalization(group=group, alternative=alternative)
         # form a filename that belongs to the target package
-        filename = os.path.join(self.prefix(), next(filter(None, smap.values())))
+        filename = os.path.join(self.prefix(), target[0])
         # find out where it came from
         package = self.getFileProvider(filename=filename)
         # return the package and the selection map
         return package
 
 
-    def getSelectionMap(self, group, alternative):
+    def getNormalization(self, group, alternative):
         """
-        Generate a map from {base} settings to the provided {alternative} for the given {group}
+        Retrieve the normalization map for {alternative} from {group}
         """
-        # get the folder with the group files
-        folder = os.path.join(self.prefix(), 'etc', 'select', group)
-        # if this is not a valid folder
-        if not os.path.isdir(folder):
-            # bail
-            return {}
-        # get the {base} file
-        base = open(os.path.join(folder, 'base'))
-        # and put its contents in a list
-        keys = [ line.strip() for line in base.readlines() ]
+        # get the table for {group}
+        table = self._normalizations[group]
 
-        # get the file with the alternatives
-        selection = open(os.path.join(folder, alternative))
-        # and put its contents in a list
-        values = [ line.strip() for line in selection.readlines() ]
+        # attempt to
+        try:
+            # get the canonical filenames from 'base'
+            base = table['base']
+        # if its not there
+        except KeyError:
+            # pull in the sequence of files from 'base'
+            base = tuple(self.retrieveNormalizationTable(group=group, alternative='base'))
+            # record it for next time
+            table['base'] = base
 
-        # build the map
-        map = { base: value if value != '-' else None for base, value in zip(keys, values) }
-        # and return it
-        return map
+        # next, attempt to
+        try:
+            # get the sequence of files from alternative
+            target = table[alternative]
+        # if not there
+        except KeyError:
+            # pull in the list of files from {alternative}
+            target = tuple(self.retrieveNormalizationTable(group=group, alternative=alternative))
+            # record it
+            table[alternative] = target
+
+        # return the pair
+        return base, target
+
+
+    def retrieveNormalizationTable(self, group, alternative):
+        """
+        Populate the {group} normalization table with the selections for {alternative}
+        """
+        # form the filename
+        name = os.path.join(self.prefix(), 'etc', 'select', group, alternative)
+        # open it
+        with open(name) as stream:
+            # pull the contents
+            for line in stream.readlines():
+                # strip
+                line = line.strip()
+                # interpret it and pass it on
+                yield line if line != '-' else None
+        # all done
+        return
 
 
     def getFileProvider(self, filename):
@@ -396,7 +429,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             # so complain
             raise package.ConfigurationError(component=self, errors=[msg])
 
-        # if has a flavor, collect all alternatives whose names start with the flavor
+        # collect all alternatives whose names start with the flavor
         candidates = [ tag for tag in alternatives if tag.startswith(flavor) ]
 
         # if there is exactly one candidate
@@ -427,7 +460,13 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
     # the index of installed packages: (package name -> package info)
     _installed = None
     # the index of package groups: (package group -> tuple of alternatives)
-    _selections = None
+    _alternatives = None
+
+    # the table of package normalizations; this is a map from a selection group to a another
+    # map, one that takes alternatives to the list of files they replace; the canonical package
+    # interface is provided by the special key 'base'
+    _normalizations = None
+
     # the parser of the macports response to provider queries
     _provides = re.compile(r".* is provided by: (?P<package>.*)")
 
