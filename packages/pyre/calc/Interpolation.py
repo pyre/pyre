@@ -38,7 +38,7 @@ class Interpolation:
         Compute and return my value
         """
         # compute the values of my operands
-        values = (op.value for op in self.operands)
+        values = (str(op.value) for op in self.operands)
         # apply my operator
         return functools.reduce(operator.add, values)
 
