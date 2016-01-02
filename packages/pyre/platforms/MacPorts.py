@@ -7,7 +7,7 @@
 
 
 # externals
-import os, re, collections, subprocess
+import re, collections, subprocess
 # framework
 import pyre
 # superclass
@@ -50,11 +50,25 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         Provide a sequence of package names that provide compatible installations for the given
         package {category}. MacPorts provides a way for the user to select a specific
-        installation as the default, so it the default selection is the first package in the
+        installation as the default, so the default selection is the first package in the
         sequence.
         """
-        # ask the package category to do macports specific hunting
-        yield from category.macportsChoices(macports=self)
+        # check whether this package category can interact with me
+        try:
+            # by looking for my handler
+            choices = category.macportsChoices
+        # if it can't
+        except AttributeError:
+            # the error message template
+            template = "the package {.category!r} does not support {.name!r}"
+            # build the message
+            msg = template.format(category, self)
+            # complain
+            raise self.ConfigurationError(configurable=self, errors=[msg])
+
+        # otherwise, ask the package category to do macports specific hunting
+        yield from choices(macports=self)
+
         # all done
         return
 
@@ -111,16 +125,23 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             return prefix
         # locate the full path to the port manager
         port = self.pyre_host.which(self.manager)
-        # if there
+        # if not there
         if not port:
             # maybe it's not on the path; try the default
             port = '/opt/local/bin/port'
             # if it's not there
             if not os.path.exists(port):
+                # build the message
+                msg = 'could not locate {.manager}'.format(self)
                 # complain
-                raise self.ConfigurationError('could not locate {.manager}'.format(self))
+                raise self.ConfigurationError(configurable=self, errors=[msg])
             # found it; let's remember its location
             self.manager = port
+        # otherwise
+        else:
+            # pathify
+            port = pathlib.Path(port)
+
 
         # extract the directory with the tools
         bin, _ = os.path.split(port)
@@ -187,8 +208,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         # set up the shell command
         settings = {
-            'executable': self.manager,
-            'args': (self.manager, '-q', 'installed', 'active'),
+            'executable': str(self.manager),
+            'args': (str(self.manager), '-q', 'installed', 'active'),
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
@@ -225,8 +246,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         # set up the shell command
         settings = {
-            'executable': self.manager,
-            'args': (self.manager, 'contents', package),
+            'executable': str(self.manager),
+            'args': (str(self.manager), 'contents', package),
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
@@ -247,8 +268,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         # template for the command line args
         settings = {
-            'executable': self.manager,
-            'args': ( self.manager, 'select', '--summary'),
+            'executable': str(self.manager),
+            'args': ( str(self.manager), 'select', '--summary'),
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
@@ -360,8 +381,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         # set up the shell command
         settings = {
-            'executable': self.manager,
-            'args': (self.manager, 'provides', filename),
+            'executable': str(self.manager),
+            'args': (str(self.manager), 'provides', str(filename)),
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
@@ -413,9 +434,9 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         # if it doesn't
         except AttributeError:
             # describe what went wrong
-            msg = "could not deduce a package for {!r}".format(name)
+            msg = "could not find a package installation for {!r}".format(name)
             # and report it
-            raise package.ConfigurationError(component=self, errors=[msg])
+            raise package.ConfigurationError(configurable=self, errors=[msg])
 
         # perhaps the flavor is the package name
         if flavor in installed:
@@ -427,7 +448,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             # it isn't
             msg = 'could not locate a {.category!r} package for {!r}'.format(package, name)
             # so complain
-            raise package.ConfigurationError(component=self, errors=[msg])
+            raise package.ConfigurationError(configurable=self, errors=[msg])
 
         # collect all alternatives whose names start with the flavor
         candidates = [ tag for tag in alternatives if tag.startswith(flavor) ]
@@ -445,13 +466,13 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             msg = "no viable candidates for {.category!r}; please select one of {}".format(
                 package, alternatives)
             # and report it
-            raise package.ConfigurationError(component=self, errors=[msg])
+            raise package.ConfigurationError(configurable=self, errors=[msg])
 
         # otherwise, there were more than one candidate; describe what went wrong
         msg = 'multiple candidates for {!r}: {}; please select one'.format(
         flavor, candidates)
         # and report it
-        raise package.ConfigurationError(component=self, errors=[msg])
+        raise package.ConfigurationError(configurable=self, errors=[msg])
 
 
     # private data

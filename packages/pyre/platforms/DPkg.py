@@ -51,8 +51,22 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
         Provide a sequence of package names that provide compatible installations for the given
         package {category}
         """
-        # ask the package category to do dpkg specific hunting
-        yield from category.dpkgChoices(dpkg=self)
+        # check whether this package category can interact with me
+        try:
+            # by looking for my handler
+            choices = category.dpkgChoices
+        # if it can't
+        except AttributeError:
+            # the error message template
+            template = "the package {.category!r} does not support {.name!r}"
+            # build the message
+            msg = template.format(category, self)
+            # complain
+            raise self.ConfigurationError(configurable=category, errors=[msg])
+
+        # otherwise, ask the package category to do dpkg specific hunting
+        yield from choices(dpkg=self)
+
         # all done
         return
 
