@@ -41,9 +41,9 @@ class Date(Schema):
             # in which case extract its date component
             return value.date()
 
-        # otherwise, and attempt to
+        # otherwise, assume it is a string; attempt to
         try:
-            # otherwise, assume it is a string; strip
+            # strip
             value = value.strip()
             # check for "none"
             if value.lower() == "none":
