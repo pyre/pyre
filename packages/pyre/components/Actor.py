@@ -127,7 +127,7 @@ class Actor(Requirement):
             configurationErrors = instance.pyre_configurationErrors
             # complain about everything
             raise instance.ConfigurationError(
-                component = instance,
+                configurable = instance,
                 errors = configurationErrors+initializationErrors)
 
         # and return it
