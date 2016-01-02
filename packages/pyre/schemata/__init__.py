@@ -20,6 +20,7 @@ from .String import String as str
 # more complex types
 from .Date import Date as date
 from .Dimensional import Dimensional as dimensional
+from .Path import Path as path
 from .Time import Time as time
 from .URI import URI as uri
 
@@ -41,7 +42,7 @@ from .OutputStream import OutputStream as ostream
 
 # put the schemata in piles
 basic = (identity, bool, decimal, float, fraction, inet, int, str)
-composite = (date, dimensional, time, uri)
+composite = (date, dimensional, path, time, uri)
 containers = (sequence, array, list, set, tuple, mapping, catalog)
 meta = (istream, ostream)
 # all of them

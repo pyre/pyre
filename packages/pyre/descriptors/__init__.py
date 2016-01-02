@@ -35,6 +35,7 @@ str = descriptor.str
 # more complex types
 date = descriptor.date
 dimensional = descriptor.dimensional
+path = descriptor.path
 time = descriptor.time
 uri = descriptor.uri
 

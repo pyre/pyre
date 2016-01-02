@@ -26,6 +26,7 @@ str = property.str
 # the more complex types
 date = property.date
 dimensional = property.dimensional
+path = property.path
 time = property.time
 uri = property.uri
 
@@ -56,6 +57,14 @@ def strings(**kwds):
     """
     # build a descriptor that describes a list of strings
     return list(schema=str(), **kwds)
+
+
+def paths(**kwds):
+    """
+    A list of paths
+    """
+    # build a descriptor that describes a list of uris and return it
+    return list(schema=path(), **kwds)
 
 
 def uris(**kwds):

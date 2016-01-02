@@ -28,6 +28,7 @@ EXPORT_PYTHON_MODULES = \
     Mapping.py \
     Numeric.py \
     OutputStream.py \
+    Path.py \
     Schema.py \
     Sequence.py \
     Set.py \

@@ -33,6 +33,7 @@ basic:
 complex:
 	${PYTHON} ./dates.py
 	${PYTHON} ./dimensionals.py
+	${PYTHON} ./paths.py
 	${PYTHON} ./times.py
 	${PYTHON} ./uris.py
 
