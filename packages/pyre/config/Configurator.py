@@ -295,7 +295,7 @@ class Configurator:
         # build a priority
         priority = nameserver.priority.defaults()
         # make a trait; give it a name since it won't be attached to anybody
-        cfgpath = properties.paths(name=name, default=value)
+        cfgpath = properties.uris(name=name, default=value)
 
         # place the trait in the model
         nameserver.insert(name=name, value=value,

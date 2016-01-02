@@ -32,7 +32,7 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
     PATH = ['vfs:/merlin/project', 'vfs:/merlin/user', 'vfs:/merlin/system']
 
     # user configurable state
-    searchpath = pyre.properties.paths(default=PATH)
+    searchpath = pyre.properties.uris(default=PATH)
 
 
     # plexus obligations

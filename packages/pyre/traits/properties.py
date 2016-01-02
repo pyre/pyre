@@ -58,7 +58,7 @@ def strings(**kwds):
     return list(schema=str(), **kwds)
 
 
-def paths(**kwds):
+def uris(**kwds):
     """
     A list of URIs
     """
