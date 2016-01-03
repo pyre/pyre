@@ -19,7 +19,7 @@ class ToolInstallation(Installation):
     """
 
     # public state
-    bindir = pyre.properties.strings()
+    bindir = pyre.properties.paths()
     bindir.doc = "the location of my binaries"
 
 
@@ -57,10 +57,8 @@ class ToolInstallation(Installation):
         """
         # chain up
         yield from super().pyre_configured()
-        # grab my binaries
-        binaries = self.binaries(packager=self.pyre_externals)
-        # check my {bindir}
-        yield from self.verifyFolder(category='bindir', folder=self.bindir, filenames=binaries)
+        # check that my {bindir} exists
+        yield from self.verify(trait='bindir', folders=self.bindir)
 
         # all done
         return

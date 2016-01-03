@@ -26,6 +26,15 @@ class GSL(Library, family='pyre.externals.gsl'):
 
     # support for specific package managers
     @classmethod
+    def dpkgChoices(cls, dpkg):
+        """
+        Identify the default implementation of GSL on dpkg machines
+        """
+        # complain
+        raise NotImplementedError("NYI!")
+
+
+    @classmethod
     def macportsChoices(cls, macports):
         """
         Identify the default implementation of GSL on macports machines
@@ -38,6 +47,8 @@ class GSL(Library, family='pyre.externals.gsl'):
 
 # superclass
 from .LibraryInstallation import LibraryInstallation
+
+
 # the implementation
 class Default(LibraryInstallation, family='pyre.externals.gsl.default', implements=GSL):
     """
@@ -46,6 +57,14 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
 
     # constants
     category = GSL.category
+    falvor = category
+
+    # public state
+    defines = pyre.properties.strings(default="WITH_GSL")
+    defines.doc = "the compile time markers that indicate my presence"
+
+    libraries = pyre.properties.strings()
+    libraries.doc = 'the libraries to place on the link line'
 
 
     # configuration
@@ -57,49 +76,42 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         raise NotImplementedError('NYI!')
 
 
-    def macports(self, macports, **kwds):
+    def macports(self, macports):
         """
         Attempt to repair my configuration
         """
-        # chain up
-        package, contents = super().macports(macports=macports, package=self.category, **kwds)
-        # compute the prefix
-        self.prefix = macports.prefix()
-        # all done
-        return package, contents
+        # the name of the macports package
+        package = 'gsl'
+        # attempt to
+        try:
+            # get the version info
+            self.version, _ = macports.info(package=package)
+        # if this fails
+        except KeyError:
+            # this package is not installed
+            msg = 'the package {!r} is not installed'.format(package)
+            # clear any previous configuration errors; they are now irrelevant
+            self.pyre_configurationErrors = []
+            # complain
+            raise self.ConfigurationError(configurable=self, errors=[msg])
+        # otherwise, grab the package contents
+        contents = tuple(macports.contents(package=package))
 
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'gsl/gsl_version.h'
+        # find it
+        self.incdir = macports.findfirst(target=header, contents=contents)
 
-    # interface
-    @pyre.export
-    def defines(self):
-        """
-        Generate a sequence of compile time macros that identify my presence
-        """
-        # just one
-        yield "WITH_" + self.category.upper()
-        # all done
-        return
+        # in order to identify my {libdir}, search for one of my libraries
+        libgsl = self.pyre_host.dynamicLibrary('gsl')
+        # find it
+        self.libdir = macports.findfirst(target=libgsl, contents=contents)
+        # set my library
+        self.libraries = 'gsl'
 
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
 
-    # interface
-    @pyre.export
-    def headers(self, **kwds):
-        """
-        Generate a sequence of required header files
-        """
-        # my main header
-        yield 'gsl/gsl_version.h'
-        # all done
-        return
-
-
-    @pyre.export
-    def libraries(self, **kwds):
-        """
-        Generate a sequence of required libraries
-        """
-        # my implementations
-        yield 'gsl'
         # all done
         return
 

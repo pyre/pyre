@@ -19,10 +19,13 @@ class LibraryInstallation(Installation):
     """
 
     # public state
-    incdir = pyre.properties.strings()
+    defines = pyre.properties.strings()
+    defines.doc = "the compile time markers that indicate my presence"
+
+    incdir = pyre.properties.paths()
     incdir.doc = "the locations of my headers; for the compiler command line"
 
-    libdir = pyre.properties.strings()
+    libdir = pyre.properties.paths()
     libdir.doc = "the locations of my libraries; for the linker command path"
 
 
@@ -59,47 +62,13 @@ class LibraryInstallation(Installation):
         """
         # chain up
         yield from super().pyre_configured()
-
-        # grab my headers
-        headers = self.headers(packager=self.pyre_externals)
-        # check my {incdir}
-        yield from self.verifyFolder(category='incdir', folder=self.incdir, filenames=headers)
-
-        # grab my libraries
-        libraries = self.libraries(packager=self.pyre_externals)
-        # check my {libdir}
-        yield from self.verifyFolder(category='libdir', folder=self.libdir, filenames=libraries)
+        # check that my {incdir} exists
+        yield from self.verify(trait='incdir', folders=self.incdir)
+        # check that my {libdir} exists
+        yield from self.verify(trait='libdir', folders=self.libdir)
 
         # all done
         return
-
-
-    # protocol obligations
-    @pyre.export
-    def defines(self):
-        """
-        Generate a sequence of compile time macros that identify my presence
-        """
-        # don't know very much
-        return ()
-
-
-    @pyre.export
-    def headers(self, **kwds):
-        """
-        A sequence of names of header files to look for
-        """
-        # don't know very much
-        return ()
-
-
-    @pyre.export
-    def liraries(self, **kwds):
-        """
-        A sequence of names of library files to look for
-        """
-        # don't know very much
-        return ()
 
 
 # end of file

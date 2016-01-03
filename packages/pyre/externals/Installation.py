@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import os
 # framework
 import pyre
 
@@ -17,32 +19,53 @@ class Installation(pyre.component):
     """
 
     # constants
-    version = "unknown"
+    category = 'unknown'
 
     # public state
-    prefix = pyre.properties.str()
+    version = pyre.properties.str(default="unknown")
+    version.doc = 'the package version'
+
+    prefix = pyre.properties.path()
     prefix.doc = 'the package installation directory'
 
 
-    # platform specific configuration strategies: these are invoked by the specific package
-    # managers; families that require package manager specific configuration can override. the
-    # default implementation invokes a category method
-
-    def macports(self, macports, package=None):
+    # public data
+    @property
+    def majorver(self):
         """
-        Attempt to repair the configuration of this instance assuming a macports host
+        Extract the portion of a version number that is used to label my parts
         """
-        # if no {package} was specified explicitly
-        if package is None:
-        # attempt to deduce it
-            package = macports.identifyPackage(package=self)
-        # get the version info
-        self.version, _ = macports.info(package=package)
-        # get the package contents
-        contents = tuple(macports.contents(package=package))
+        # get my version
+        version = self.version
+        # attempt to
+        try:
+            # split my version into major, minor and the rest
+            major, *rest = version.split('.')
+        # if i don't have enough fields
+        except ValueError:
+            # can't do much
+            return version
+        # otherwise, assemble the significant part and return it
+        return major
 
-        # all done
-        return package, contents
+
+    @property
+    def sigver(self):
+        """
+        Extract the portion of a version number that is used to label my parts
+        """
+        # get my version
+        version = self.version
+        # attempt to
+        try:
+            # split my version into major, minor and the rest
+            major, minor, *rest = version.split('.')
+        # if i don't have enough fields
+        except ValueError:
+            # can't do much
+            return version
+        # otherwise, assemble the significant part and return it
+        return '{}.{}'.format(major, minor)
 
 
     # framework hooks
@@ -57,8 +80,18 @@ class Installation(pyre.component):
             # complain
             yield 'unknown version'
 
-        # check my prefix
-        yield from self.verifyFolder(category='prefix', folder=self.prefix)
+        # get my prefix
+        prefix = self.prefix
+        # if it's empty
+        if not prefix:
+            # complain
+            yield "empty prefix"
+        # if not but set to something that's not a directory
+        elif not prefix.is_dir():
+            # mark as bad attempt to configure
+            self._misconfigured = True
+            # complain
+            yield "invalid prefix '{}'".format(prefix)
 
         # all done
         return
@@ -72,12 +105,20 @@ class Installation(pyre.component):
         if not self.pyre_configurationErrors:
             # if there weren't any, we are done
             return
+        # if the configuration errors were caused by the user
+        if self._misconfigured:
+            # don't try to repair the user's mess since there is no way of knowing how to do
+            # it; indicate we are giving up
+            yield "automatic configuration aborted"
+            # and do nothing else
+            return
+
         # otherwise, we have work to do; grab the package manager
         manager = self.pyre_externals
-        # and attempt
+        # and attempt to
         try:
             # get him to help me repair this configuration
-            manager.configure(packageInstance=self)
+            manager.configure(installation=self)
         # if something went wrong
         except self.ConfigurationError as error:
             # report my errors
@@ -88,36 +129,75 @@ class Installation(pyre.component):
 
 
     # configuration validation
-    def verifyFolder(self, category, folder, filenames=()):
+    def verify(self, trait, patterns=(), folders=()):
         """
-        Verify that the folder exists and contains the given {filenames}
+        Verify that {trait} properly configured by checking that every file name in {patterns}
+        exists in one of the {folders}
         """
-        # check there is a value
-        if not folder:
+        # if the list of {folders} is empty
+        if not folders:
             # complain
-            yield "no {!r} setting".format(category)
+            yield "empty {}".format(trait)
             # and stop
             return
-        # check that it is a valid directory
-        if not os.path.isdir(folder):
-            # complain
-            yield "{!r} is not a valid directory".format(folder)
-            # and stop
-            return
-        # verify that the given list of filenames exist
-        for filename in filenames:
-            # form the path
-            path = os.path.join(folder, filename)
-            # expand
-            candidates = glob.glob(path)
-            # check
-            if not candidates:
+        # put all the folders in a set
+        good = set(folders)
+        # check that all the {folders}
+        for folder in folders:
+            # are valid
+            if not folder.is_dir():
+                # mark as bad attempt to configure
+                self._misconfigured = True
+                # if not, complain
+                yield "'{}' is not a valid directory".format(folder)
+                # and remove it from the good pile
+                good.remove(folder)
+
+        # go through the list of filenames
+        for pattern in patterns:
+            # check whether each of the good folders
+            for folder in good:
+                # contains
+                try:
+                    # files that match
+                    next(folder.glob(pattern))
+                # if not
+                except StopIteration:
+                    # move on
+                    continue
+                # if it's there
+                break
+            # if we couldn't locate this file
+            else:
+                # mark as bad attempt to configure
+                self._misconfigured = True
                 # complain
-                yield "couldn't locate {!r} in {}".format(filename, folder)
-                # and stop
-                return
+                yield "couldn't locate {!r}".format(pattern)
+
         # all done
         return
+
+
+    def commonpath(self, folders):
+        """
+        Find the longest prefix common to the given {folders}
+        """
+        # convert the paths into a sequence of strings
+        folders = tuple(map(str, folders))
+        # compute and return the longest common prefix
+        return os.path.commonpath(folders)
+
+
+    def join(self, folders, prefix=''):
+        """
+        Render the sequence of {folders} as a flat string with each one prefixed by {prefix}
+        """
+        # splice it all together and return it
+        return " ".join("{}{}".format(prefix, folder) for folder in folders)
+
+
+    # private data
+    _misconfigured = False
 
 
 # end of file

@@ -5,8 +5,6 @@
 # (c) 1998-2016 all rights reserved
 #
 
-# externals
-import os, sys
 # access to the framework
 import pyre
 # superclass
@@ -67,11 +65,20 @@ class Default(
     category = Python.category
 
     # public state
+    libraries = pyre.properties.strings()
+    libraries.doc = 'the libraries to place on the link line'
+
     interpreter = pyre.properties.str()
     interpreter.doc = 'the full path to the python interpreter'
 
 
     # configuration
+
+    # these methods are invoked after construction if the instance is determined to be in
+    # invalid state that was not the user's fault. typically this means that the package
+    # configuration is still in its default state. the dispatcher determines the correct
+    # package manager and forwards to one of the handlers in this section
+
     def dpkg(self, dpkg):
         """
         Attempt to repair my configuration
@@ -84,84 +91,37 @@ class Default(
         """
         Attempt to repair my configuration
         """
-        # chain up
-        package, contents = super().macports(macports=macports)
+        # ask macports for help; start by finding out which package is related to me
+        package = macports.identify(installation=self)
+        # get the version info
+        self.version, _ = macports.info(package=package)
+        # and the package contents
+        contents = tuple(macports.contents(package=package))
 
-        # compute the prefix
-        self.prefix = os.path.commonpath(self.bindir + self.incdir + self.libdir)
-        # find my interpreter
-        self.interpreter, *_ = macports.locate(
-            targets = self.binaries(packager=macports),
-            paths = self.bindir)
+        # the name of the interpreter
+        self.interpreter = '{0.category}{0.sigver}'.format(self)
+        # find it in order to identify my {bindir}
+        self.bindir = macports.findfirst(target=self.interpreter, contents=contents)
 
-        # all done
-        return package, contents
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'Python.h'
+        # find it
+        self.incdir = macports.findfirst(target=header, contents=contents)
 
+        # in order to identify my {libdir}, search for one of my libraries
+        stem = '{0.category}{0.sigver}m'.format(self)
+        # convert it into the actual file name
+        libpython = self.pyre_host.dynamicLibrary(stem)
+        # find it
+        self.libdir = macports.findfirst(target=libpython, contents=contents)
+        # set my library
+        self.libraries = stem
 
-    # interface
-    @pyre.export
-    def binaries(self, **kwds):
-        """
-        Generate a sequence of required executables
-        """
-        # only one, typically named after my flavor
-        yield self.flavor
-        # all done
-        return
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.bindir+self.incdir+self.libdir)
 
-
-    @pyre.export
-    def defines(self):
-        """
-        Generate a sequence of compile time macros that identify my presence
-        """
-        # the python marker
-        yield "WITH_" + self.flavor.upper()
         # all done
         return
-
-
-    @pyre.export
-    def headers(self, **kwds):
-        """
-        Generate a sequence of required header files
-        """
-        # only one
-        yield 'Python.h'
-        # all done
-        return
-
-
-    @pyre.export
-    def libraries(self, **kwds):
-        """
-        Generate a sequence of required libraries
-        """
-        # get the host
-        host = self.pyre_host
-        # build my library name and hand it over
-        yield self.category + self.sigver()
-        # all done
-        return
-
-
-    # implementation details
-    def sigver(self):
-        """
-        Extract the portion of a version number that is used to label my parts
-        """
-        # get my version
-        version = self.version
-        # attempt to
-        try:
-            # split my version into major, minor and the rest
-            major, minor, *rest = version.split('.')
-        # if i don't have enough fields
-        except ValueError:
-            # can't do much
-            return version
-        # otherwise, assemble the significant part and return it
-        return '{}.{}'.format(major, minor)
 
 
 # the python 2.x package manager
@@ -173,6 +133,10 @@ class Python2(Default, family='pyre.externals.python.python2'):
     # constants
     flavor = Default.flavor + '2'
 
+    # public state
+    defines = pyre.properties.strings(default="WITH_PYTHON2")
+    defines.doc = "the compile time markers that indicate my presence"
+
 
 # the python 3.x package manager
 class Python3(Default, family='pyre.externals.python.python3'):
@@ -182,6 +146,10 @@ class Python3(Default, family='pyre.externals.python.python3'):
 
     # constants
     flavor = Default.flavor + '3'
+
+    # public state
+    defines = pyre.properties.strings(default="WITH_PYTHON3")
+    defines.doc = "the compile time markers that indicate my presence"
 
 
 # end of file

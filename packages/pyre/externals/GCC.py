@@ -7,7 +7,7 @@
 
 
 # externals
-import os, re, subprocess
+import os, re, pathlib, subprocess
 # access to the framework
 import pyre
 # superclass
@@ -34,14 +34,16 @@ class GCC(Tool, family='pyre.externals.gcc'):
         """
         Identify the default implementation of GCC on macports machines
         """
-        # get my category
-        category = cls.category
-        # on macports, gcc is a package group
-        for package in macports.alternatives(group=category):
-            # assume it's a good gcc installation and hand it to the caller
-            yield Default(name=package)
+        # the list of supported versions
+        versions = [ GCC5 ]
+        # go through my choices
+        for version in versions:
+            # ask macports for all available alternatives
+            for package in macports.alternatives(group=version.flavor):
+                # instantiate each one using the package name and hand it to the caller
+                yield version(name=package)
 
-        # and nothing else
+        # out of ideas
         return
 
 
@@ -50,13 +52,14 @@ from .ToolInstallation import ToolInstallation
 
 
 # the implementation of a GCC installation
-class Default(ToolInstallation, family='pyre.externals.gcc.default', implements=GCC):
+class GCC5(ToolInstallation, family='pyre.externals.gcc.gcc5', implements=GCC):
     """
-    A generic GCC installation
+    Support for GCC 5.x installations
     """
 
     # constants
     category = GCC.category
+    flavor = category + '5'
 
     # public state
     wrapper = pyre.properties.str()
@@ -76,31 +79,33 @@ class Default(ToolInstallation, family='pyre.externals.gcc.default', implements=
         """
         Attempt to repair my configuration
         """
-        # chain up
-        package, contents = super().macports(macports=macports)
+        # ask macports for help; start by finding out which package supports me
+        package = macports.identify(installation=self)
+        # get the version info
+        self.version, _ = macports.info(package=package)
+        # and the package contents
+        contents = tuple(macports.contents(package=package))
 
-        # compute the prefix
-        self.prefix = macports.prefix()
+        # {gcc} is a selection group
+        group = self.category
+        # the package deposits its selection alternative here
+        selection = str(macports.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
+        # so find it
+        match = next(macports.find(target=selection, pile=contents))
+        # extract the name of the alternative
+        alternative = match.group('alternate')
+        # ask for the normalization data
+        normalization = macports.getNormalization(group=group, alternative=alternative)
+        # build the map
+        nmap = { base: target for base,target in zip(*normalization) }
+        # find the binary that supports {gcc} and use it to set my wrapper
+        self.wrapper = nmap[pathlib.Path('bin/gcc')].name
+        # set my {bindir}
+        self.bindir = macports.findfirst(target=self.wrapper, contents=contents)
 
-        # form the target
-        target = os.path.join(self.bindir[0], 'gcc-mp-.+')
-        # find my wrapper
-        for match in macports.find(target=target, pile=contents):
-            # pull the body
-            self.wrapper = match.group()
+        # now that we have everything, compute the prefix
+        self.prefix = self.bindir[0].parent
 
-        # all done
-        return package, contents
-
-
-    # interface
-    @pyre.export
-    def binaries(self, packager, **kwds):
-        """
-        Generate a sequence of required executables
-        """
-        # try this
-        yield 'gcc-mp-.+'
         # all done
         return
 

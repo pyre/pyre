@@ -13,39 +13,20 @@ from .Package import Package
 
 
 # my declaration
-class Library(Package):
+class Library(Package, family='pyre.externals.libraries'):
     """
     Base class for third party libraries
     """
 
     # user configurable state
-    incdir = pyre.properties.strings()
+    defines = pyre.properties.strings()
+    defines.doc = "the compile time markers that indicate my presence"
+
+    incdir = pyre.properties.paths()
     incdir.doc = "the locations of my headers; for the compiler command line"
 
-    libdir = pyre.properties.strings()
+    libdir = pyre.properties.paths()
     libdir.doc = "the locations of my libraries; for the linker command path"
-
-
-    # protocol obligations
-    @pyre.export
-    def defines(self):
-        """
-        A sequence of compile time macros that identify my presence
-        """
-
-
-    @pyre.provides
-    def headers(self, **kwds):
-        """
-        A sequence of names of header files to look for
-        """
-
-
-    @pyre.provides
-    def liraries(self, **kwds):
-        """
-        A sequence of names of library files to look for
-        """
 
 
 # end of file

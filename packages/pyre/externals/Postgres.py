@@ -7,7 +7,7 @@
 
 
 # externals
-import os
+import os, pathlib
 # access to the framework
 import pyre
 # superclass
@@ -22,7 +22,7 @@ class Postgres(Tool, Library, family='pyre.externals.postgres'):
     """
 
     # constants
-    category = 'pq'
+    category = 'postgresql'
 
     # user configurable state
     psql = pyre.properties.str()
@@ -61,10 +61,17 @@ class Default(
 
     # constants
     category = Postgres.category
+    flavor = category
 
     # user configurable state
     psql = pyre.properties.str()
     psql.doc = 'the full path to the postgres client'
+
+    defines = pyre.properties.strings(default="WITH_PQ")
+    defines.doc = "the compile time markers that indicate my presence"
+
+    libraries = pyre.properties.strings()
+    libraries.doc = 'the libraries to place on the link line'
 
 
     # configuration
@@ -80,60 +87,45 @@ class Default(
         """
         Attempt to repair my configuration
         """
-        # chain up
-        package, contents = super().macports(macports=macports, **kwds)
-        # compute the prefix
-        self.prefix = macports.prefix()
-        # find my client
-        self.psql, *_ = macports.locate(
-            targets = self.binaries(packager=macports),
-            paths = self.bindir)
-        # all done
-        return package, contents
+        # ask macports for help; start by finding out which package supports me
+        package = macports.identify(installation=self)
+        # get the version info
+        self.version, _ = macports.info(package=package)
+        # and the package contents
+        contents = tuple(macports.contents(package=package))
 
+        # {postgresql} is a selection group
+        group = self.category
+        # the package deposits its selection alternative here
+        selection = str(macports.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
+        # so find it
+        match = next(macports.find(target=selection, pile=contents))
+        # extract the name of the alternative
+        alternative = match.group('alternate')
+        # ask for the normalization data
+        normalization = macports.getNormalization(group=group, alternative=alternative)
+        # build the normalization map
+        nmap = { base: target for base,target in zip(*normalization) }
+        # find the binary that supports {psql} and use it to set my launcher
+        self.psql = nmap[pathlib.Path('bin/psql')].name
+        # set my {bindir}
+        self.bindir = macports.findfirst(target=self.psql, contents=contents)
 
-    # protocol obligations
-    @pyre.export
-    def binaries(self, **kwds):
-        """
-        Generate a sequence of required executables
-        """
-        # the name of the client executable
-        yield 'psql'
-        # all done
-        return
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'libpq-fe.h'
+        # find it
+        self.incdir = macports.findfirst(target=header, contents=contents)
 
+        # in order to identify my {libdir}, search for one of my libraries
+        libpq = self.pyre_host.dynamicLibrary('pq')
+        # find it
+        self.libdir = macports.findfirst(target=libpq, contents=contents)
+        # set my library
+        self.libraries = 'pq'
 
-    @pyre.export
-    def defines(self):
-        """
-        Generate a sequence of compile time macros that identify my presence
-        """
-        # just one
-        yield "WITH_" + self.category.upper()
-        # all done
-        return
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.bindir+self.incdir+self.libdir)
 
-
-    # interface
-    @pyre.export
-    def headers(self, **kwds):
-        """
-        Generate a sequence of required header files
-        """
-        # my main header
-        yield 'libpq-fe.h'
-        # all done
-        return
-
-
-    @pyre.export
-    def libraries(self, **kwds):
-        """
-        Generate a sequence of required libraries
-        """
-        # my implementations
-        yield 'pq'
         # all done
         return
 

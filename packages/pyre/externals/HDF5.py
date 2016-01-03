@@ -38,6 +38,8 @@ class HDF5(Library, family='pyre.externals.hdf5'):
 
 # superclass
 from .LibraryInstallation import LibraryInstallation
+
+
 # the implementation
 class Default(LibraryInstallation, family='pyre.externals.hdf5.default', implements=HDF5):
     """
@@ -46,6 +48,14 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
 
     # constants
     category = HDF5.category
+    flavor = category
+
+    # public state
+    defines = pyre.properties.strings(default="WITH_HDF5")
+    defines.doc = "the compile time markers that indicate my presence"
+
+    libraries = pyre.properties.strings()
+    libraries.doc = 'the libraries to place on the link line'
 
 
     # configuration
@@ -61,45 +71,38 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         """
         Attempt to repair my configuration
         """
-        # chain up
-        package, contents = super().macports(macports=macports, package=self.category, **kwds)
-        # compute the prefix
-        self.prefix = macports.prefix()
-        # all done
-        return package, contents
+        # the name of the macports package
+        package = 'hdf5'
+        # attempt to
+        try:
+            # get the version info
+            self.version, _ = macports.info(package=package)
+        # if this fails
+        except KeyError:
+            # this package is not installed
+            msg = 'the package {!r} is not installed'.format(package)
+            # clear any previous configuration errors; they are now irrelevant
+            self.pyre_configurationErrors = []
+            # complain
+            raise self.ConfigurationError(configurable=self, errors=[msg])
+        # otherwise, grab the package contents
+        contents = tuple(macports.contents(package=package))
 
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'hdf5.h'
+        # find it
+        self.incdir = macports.findfirst(target=header, contents=contents)
 
-    # interface
-    @pyre.export
-    def defines(self):
-        """
-        Generate a sequence of compile time macros that identify my presence
-        """
-        # just one
-        yield "WITH_" + self.category.upper()
-        # all done
-        return
+        # in order to identify my {libdir}, search for one of my libraries
+        libhdf5 = self.pyre_host.dynamicLibrary('hdf5')
+        # find it
+        self.libdir = macports.findfirst(target=libhdf5, contents=contents)
+        # set my library
+        self.libraries = 'hdf5'
 
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
 
-    # interface
-    @pyre.export
-    def headers(self, **kwds):
-        """
-        Generate a sequence of required header files
-        """
-        # my main header
-        yield 'hdf5.h'
-        # all done
-        return
-
-
-    @pyre.export
-    def libraries(self, **kwds):
-        """
-        Generate a sequence of required libraries
-        """
-        # my implementations
-        yield 'hdf5'
         # all done
         return
 

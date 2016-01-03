@@ -18,16 +18,15 @@ class Package(pyre.protocol, family='pyre.externals'):
     The protocol that all external package managers must implement
     """
 
-
     # configurable state
-    prefix = pyre.properties.str()
+    version = pyre.properties.str(default="unknown")
+    version.doc = 'the package version'
+
+    prefix = pyre.properties.path()
     prefix.doc = 'the package installation directory'
 
     # constants
     category = None # the common name for this package category
-
-    # exceptions
-    from pyre.framework.exceptions import ExternalNotFoundError
 
 
     # framework support

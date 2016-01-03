@@ -6,8 +6,6 @@
 #
 
 
-# externals
-import os
 # access to the framework
 import pyre
 # superclass
@@ -26,12 +24,21 @@ class BLAS(Library, family='pyre.externals.blas'):
 
     # support for specific package managers
     @classmethod
+    def dpkgChoices(cls, dpkg):
+        """
+        Identify the default implementation of BLAS on dpkg machines
+        """
+        # complain
+        raise NotImplementedError("NYI!")
+
+
+    @classmethod
     def macportsChoices(cls, macports):
         """
         Identify the default implementation of BLAS on macports machines
         """
-        # on macports, the following possible packages provide support for BLAS, ranked by
-        # their performance: atlas, openblas, gsl
+        # on macports, the following packages provide support for BLAS, ranked by their
+        # performance: atlas, openblas, gsl
         versions = [ Atlas, OpenBLAS, GSLCBLAS ]
         # get the index of installed packages
         installed = macports.getInstalledPackages()
@@ -45,7 +52,6 @@ class BLAS(Library, family='pyre.externals.blas'):
 
         # out of ideas
         return
-
 
 
 # superclass
@@ -62,38 +68,9 @@ class Default(LibraryInstallation, family='pyre.externals.blas.default', impleme
     flavor = 'unknown'
     category = BLAS.category
 
-
-    # configuration
-    def dpkg(self, dpkg):
-        """
-        Attempt to repair my configuration
-        """
-        # NYI
-        raise NotImplementedError('NYI!')
-
-
-    def macports(self, macports, **kwds):
-        """
-        Attempt to repair my configuration
-        """
-        # chain up
-        package, contents = super().macports(macports=macports, **kwds)
-        # compute the prefix
-        self.prefix = os.path.commonpath(self.incdir + self.libdir)
-        # all done
-        return package, contents
-
-
-    # interface
-    @pyre.export
-    def defines(self):
-        """
-        Generate a sequence of compile time macros that identify my presence
-        """
-        # just one
-        yield "WITH_" + self.flavor.upper()
-        # all done
-        return
+    # public state
+    libraries = pyre.properties.strings()
+    libraries.doc = 'the libraries to place on the link line'
 
 
 # atlas
@@ -105,37 +82,48 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
     # constants
     flavor = 'atlas'
 
+    # public state
+    defines = pyre.properties.strings(default="WITH_ATLAS")
+    defines.doc = "the compile time markers that indicate my presence"
+
 
     # configuration
     def macports(self, macports):
         """
         Attempt to repair my configuration
         """
-        # chain up, looking for static libraries
-        return super().macports(macports=macports, dynamic=False)
+        # the name of the macports package
+        package = 'atlas'
+        # attempt to
+        try:
+            # get the version info
+            self.version, _ = macports.info(package=package)
+        # if this fails
+        except KeyError:
+            # this package is not installed
+            msg = 'the package {!r} is not installed'.format(package)
+            # clear any previous configuration errors; they are now irrelevant
+            self.pyre_configurationErrors = []
+            # complain
+            raise self.ConfigurationError(configurable=self, errors=[msg])
+        # otherwise, grab the package contents
+        contents = tuple(macports.contents(package=package))
 
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'cblas.h'
+        # find it and extract the directory
+        self.incdir = macports.findfirst(target=header, contents=contents)
 
-    # interface
-    @pyre.export
-    def headers(self, **kwds):
-        """
-        Generate a sequence of required header files
-        """
-        # my main header
-        yield 'cblas.h'
-        # all done
-        return
+        # in order to identify my {libdir}, search for one of my libraries
+        libatlas = self.pyre_host.staticLibrary('atlas')
+        # find it
+        self.libdir = macports.findfirst(target=libatlas, contents=contents)
+        # set my library list
+        self.libraries = 'cblas', 'atlas'
 
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
 
-    @pyre.export
-    def libraries(self, **kwds):
-        """
-        Generate a sequence of required libraries
-        """
-        # the blas interface
-        yield 'cblas'
-        # my implementation
-        yield 'atlas'
         # all done
         return
 
@@ -149,35 +137,48 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
     # constants
     flavor = 'openblas'
 
+    # public state
+    defines = pyre.properties.strings(default="WITH_OPENBLAS")
+    defines.doc = "the compile time markers that indicate my presence"
+
 
     # configuration
     def macports(self, macports):
         """
         Attempt to repair my configuration
         """
-        # chain up, looking for static libraries
-        return super().macports(macports=macports, package='OpenBLAS')
+        # the name of the macports package
+        package = 'OpenBLAS'
+        # attempt to
+        try:
+            # get the version info
+            self.version, _ = macports.info(package=package)
+        # if this fails
+        except KeyError:
+            # this package is not installed
+            msg = 'the package {!r} is not installed'.format(package)
+            # clear any previous configuration errors; they are now irrelevant
+            self.pyre_configurationErrors = []
+            # complain
+            raise self.ConfigurationError(configurable=self, errors=[msg])
+        # otherwise, grab the package contents
+        contents = tuple(macports.contents(package=package))
 
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'cblas_openblas.h'
+        # find it
+        self.incdir = macports.findfirst(target=header, contents=contents)
 
-    # interface
-    @pyre.export
-    def headers(self, **kwds):
-        """
-        Generate a sequence of required header files
-        """
-        # my main header
-        yield 'cblas_openblas.h'
-        # all done
-        return
+        # in order to identify my {libdir}, search for one of my libraries
+        libopenblas = self.pyre_host.dynamicLibrary('openblas')
+        # find it
+        self.libdir = macports.findfirst(target=libopenblas, contents=contents)
+        # set my library
+        self.libraries = 'openblas'
 
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
 
-    @pyre.export
-    def libraries(self, **kwds):
-        """
-        Generate a sequence of required libraries
-        """
-        # my implementations
-        yield 'openblas'
         # all done
         return
 
@@ -191,26 +192,48 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gsl'):
     # constants
     flavor = 'gsl'
 
-
-    # interface
-    @pyre.export
-    def headers(self, **kwds):
-        """
-        Generate a sequence of required header files
-        """
-        # my main header
-        yield 'gsl/gsl_cblas.h'
-        # all done
-        return
+    # public state
+    defines = pyre.properties.strings(default="WITH_GSLCBLAS")
+    defines.doc = "the compile time markers that indicate my presence"
 
 
-    @pyre.export
-    def libraries(self, **kwds):
+    # configuration
+    def macports(self, macports):
         """
-        Generate a sequence of required libraries
+        Attempt to repair my configuration
         """
-        # my implementations
-        yield 'gslcblas'
+        # the name of the macports package
+        package = 'gsl'
+        # attempt to
+        try:
+            # get the version info
+            self.version, _ = macports.info(package=package)
+        # if this fails
+        except KeyError:
+            # this package is not installed
+            msg = 'the package {!r} is not installed'.format(package)
+            # clear any previous configuration errors; they are now irrelevant
+            self.pyre_configurationErrors = []
+            # complain
+            raise self.ConfigurationError(configurable=self, errors=[msg])
+        # otherwise, grab the package contents
+        contents = tuple(macports.contents(package=package))
+
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'gsl/gsl_cblas.h'
+        # find it
+        self.incdir = macports.findfirst(target=header, contents=contents)
+
+        # in order to identify my {libdir}, search for one of my libraries
+        libgsl = self.pyre_host.dynamicLibrary('gslcblas')
+        # find it
+        self.libdir = macports.findfirst(target=libgsl, contents=contents)
+        # set my library
+        self.libraries = 'gslcblas'
+
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+
         # all done
         return
 

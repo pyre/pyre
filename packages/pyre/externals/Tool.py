@@ -13,22 +13,14 @@ from .Package import Package
 
 
 # my declaration
-class Tool(Package):
+class Tool(Package, family='pyre.externals.tools'):
     """
     Base class for external tools
     """
 
     # user configurable state
-    bindir = pyre.properties.strings()
+    bindir = pyre.properties.paths()
     bindir.doc = "the locations of my binaries"
-
-
-    # obligations
-    @pyre.provides
-    def binaries(self, **kwds):
-        """
-        A sequence of names of binaries to look for
-        """
 
 
 # end of file

@@ -7,7 +7,7 @@
 
 
 # externals
-import os, sys
+import os, pathlib
 # access to the framework
 import pyre
 # superclass
@@ -36,12 +36,15 @@ class Cython(Tool, family='pyre.externals.cython'):
         Provide alternative compatible implementations of cython on macports machines, starting
         with the package the user has selected as the default
         """
-        # this is a macports host; ask it for all the cython package choices
-        for alternative in macports.alternatives(group=cls.category):
-            # convert the selection alias into the package name that provides it
-            package = macports.getSelectionInfo(group=cls.category, alternative=alternative)
-            # instantiate each one using the package name and hand it to the caller
-            yield Default(name=package)
+        # on macports, {cython3} and {cython2} are in the same package group; try cython3.x
+        # installations followed by cython 2.x
+        versions = [ Cython3, Cython2 ]
+        # go through my choices
+        for version in versions:
+            # ask macports for all available alternatives
+            for package in macports.alternatives(group=version.category):
+                # instantiate each one using the package name and hand it to the caller
+                yield version(name=package)
 
         # out of ideas
         return
@@ -49,6 +52,7 @@ class Cython(Tool, family='pyre.externals.cython'):
 
 # superclass
 from .ToolInstallation import ToolInstallation
+
 
 # the cython package manager
 class Default(
@@ -60,6 +64,7 @@ class Default(
 
     # constants
     category = Cython.category
+    flavor = category
 
     # public state
     compiler = pyre.properties.str()
@@ -79,30 +84,55 @@ class Default(
         """
         Attempt to repair my configuration
         """
-        # chain up
-        package, contents = super().macports(macports=macports)
+        # ask macports for help; start by finding out which package is related to me
+        package = macports.identify(installation=self)
+        # get the version info
+        self.version, _ = macports.info(package=package)
+        # and the package contents
+        contents = tuple(macports.contents(package=package))
 
-        # compute the prefix
-        self.prefix, _ = os.path.split(self.bindir[0])
-        # find my compiler
-        self.compiler, *_ = macports.locate(
-            targets = self.binaries(packager=macports),
-            paths = self.bindir)
+        # {cython} is a selection group
+        group = self.category
+        # the package deposits its selection alternative here
+        selection = str(macports.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
+        # so find it
+        match = next(macports.find(target=selection, pile=contents))
+        # extract the name of the alternative
+        alternative = match.group('alternate')
+        # ask for the normalization data
+        normalization = macports.getNormalization(group=group, alternative=alternative)
+        # build the normalization map
+        nmap = { base: target for base,target in zip(*normalization) }
+        # find the binary that supports {cython} and use it to set my compiler
+        self.compiler = nmap[pathlib.Path('bin/cython')].name
+        # set my {bindir}
+        self.bindir = macports.findfirst(target=self.compiler, contents=contents)
 
-        # all done
-        return package, contents
+        # now that we have everything, compute the prefix
+        self.prefix = self.bindir[0].parent
 
-
-    # interface
-    @pyre.export
-    def binaries(self, **kwds):
-        """
-        Generate a sequence of required executables
-        """
-        # the compiler
-        yield self.category
         # all done
         return
+
+
+# cython 2
+class Cython2(Default, family='pyre.externals.cython.cython2'):
+    """
+    The package manager for cython 2.x instances
+    """
+
+    # constants
+    flavor = Default.flavor + '2'
+
+
+# cython 3
+class Cython3(Default, family='pyre.externals.cython.cython3'):
+    """
+    The package manager for cython 3.x instances
+    """
+
+    # constants
+    flavor = Default.flavor + '3'
 
 
 # end of file
