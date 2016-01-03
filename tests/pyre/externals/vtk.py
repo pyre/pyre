@@ -52,19 +52,15 @@ class configure(pyre.application):
         if vtk:
             # version info
             info.line("  version: {.version}".format(vtk))
-            # locations
-            info.line("  locations:")
-            info.line("    prefix: {.prefix}".format(vtk))
-            info.line("    incdir: {.incdir}".format(vtk))
-            info.line("    libdir: {.libdir}".format(vtk))
+            info.line("  prefix: {.prefix}".format(vtk))
             # compile line
             info.line("  compile:")
-            info.line("    defines: {}".format(', '.join(vtk.defines())))
-            info.line("    headers: {}".format(' '.join(vtk.incdir)))
+            info.line("    defines: {}".format(vtk.join(vtk.defines)))
+            info.line("    headers: {}".format(vtk.join(vtk.incdir)))
             # link line
             info.line("  link:")
-            info.line("    paths: {}".format(' '.join(vtk.libdir)))
-            info.line("    libraries: {}".format(' '.join(vtk.libraries())))
+            info.line("    paths: {}".format(vtk.join(vtk.libdir)))
+            info.line("    libraries: {}".format(vtk.join(vtk.libraries)))
 
             # get the configuration errors
             errors = vtk.pyre_configurationErrors

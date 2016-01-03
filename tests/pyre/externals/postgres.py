@@ -52,20 +52,19 @@ class configure(pyre.application):
         if postgres:
             # version info
             info.line("  version: {.version}".format(postgres))
-            # locations
-            info.line("  locations:")
-            info.line("    prefix: {.prefix}".format(postgres))
-            info.line("    incdir: {.incdir}".format(postgres))
-            info.line("    libdir: {.libdir}".format(postgres))
-            info.line("    client: {.psql}".format(postgres))
+            info.line("  prefix: {.prefix}".format(postgres))
+            # tools
+            info.line("  tool:")
+            info.line("    path: {}".format(postgres.join(postgres.bindir)))
+            info.line("    psql: {.psql}".format(postgres))
             # compile line
             info.line("  compile:")
-            info.line("    defines: {}".format(', '.join(postgres.defines())))
-            info.line("    headers: {}".format(' '.join(postgres.incdir)))
+            info.line("    defines: {}".format(', '.join(postgres.defines)))
+            info.line("    headers: {}".format(postgres.join(postgres.incdir)))
             # link line
             info.line("  link:")
-            info.line("    paths: {}".format(' '.join(postgres.libdir)))
-            info.line("    libraries: {}".format(' '.join(postgres.libraries())))
+            info.line("    paths: {}".format(postgres.join(postgres.libdir)))
+            info.line("    libraries: {}".format(postgres.join(postgres.libraries)))
 
             # get the configuration errors
             errors = postgres.pyre_configurationErrors

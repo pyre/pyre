@@ -29,8 +29,8 @@ class configure(pyre.application):
         info = self.info
         # show me
         info.line("{.pyre_name}:".format(self))
-        info.line("  host: {.pyre_host}".format(self))
-        info.line("  package manager: {.pyre_externals}".format(self))
+        info.line("  host: {.pyre_host.nickname!r}".format(self))
+        info.line("  package manager: {.pyre_externals.name!r}".format(self))
         # flush
         info.log()
 
@@ -52,21 +52,19 @@ class configure(pyre.application):
         if mpi:
             # version info
             info.line("  version: {.version}".format(mpi))
+            info.line("  prefix: {.prefix}".format(mpi))
             # locations
-            info.line("  locations:")
-            info.line("    prefix: {.prefix}".format(mpi))
-            info.line("    bindir: {.bindir}".format(mpi))
-            info.line("    incdir: {.incdir}".format(mpi))
-            info.line("    libdir: {.libdir}".format(mpi))
+            info.line("  tools:")
+            info.line("    path: {}".format(mpi.join(mpi.bindir)))
             info.line("    launcher: {.launcher}".format(mpi))
             # compile line
             info.line("  compile:")
-            info.line("    defines: {}".format(', '.join(mpi.defines())))
-            info.line("    headers: {}".format(' '.join(mpi.incdir)))
+            info.line("    defines: {}".format(mpi.join(mpi.defines)))
+            info.line("    headers: {}".format(mpi.join(mpi.incdir)))
             # link line
             info.line("  link:")
-            info.line("    paths: {}".format(' '.join(mpi.libdir)))
-            info.line("    libraries: {}".format(' '.join(mpi.libraries())))
+            info.line("    paths: {}".format(mpi.join(mpi.libdir)))
+            info.line("    libraries: {}".format(mpi.join(mpi.libraries)))
 
             # get the configuration errors
             errors = mpi.pyre_configurationErrors

@@ -52,10 +52,10 @@ class configure(pyre.application):
         if gcc:
             # version info
             info.line("  version: {.version}".format(gcc))
+            info.line("  prefix: {.prefix}".format(gcc))
             # locations
-            info.line("  locations:")
-            info.line("    prefix: {.prefix}".format(gcc))
-            info.line("    bindir: {.bindir}".format(gcc))
+            info.line("  tool:")
+            info.line("    path: {}".format(gcc.join(gcc.bindir)))
             info.line("    wrapper: {.wrapper}".format(gcc))
 
             # get the configuration errors

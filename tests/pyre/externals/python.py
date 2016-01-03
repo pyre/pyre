@@ -29,8 +29,8 @@ class configure(pyre.application):
         info = self.info
         # show me
         info.line("{.pyre_name}:".format(self))
-        info.line("  host: {.pyre_host}".format(self))
-        info.line("  package manager: {.pyre_externals}".format(self))
+        info.line("  host: {.pyre_host.nickname!r}".format(self))
+        info.line("  package manager: {.pyre_externals.name!r}".format(self))
         # flush
         info.log()
 
@@ -52,21 +52,19 @@ class configure(pyre.application):
         if python:
             # version info
             info.line("  version: {.version}".format(python))
+            info.line("  prefix: {.prefix}".format(python))
             # locations
-            info.line("  locations:")
-            info.line("    prefix: {.prefix}".format(python))
-            info.line("    bindir: {.bindir}".format(python))
-            info.line("    incdir: {.incdir}".format(python))
-            info.line("    libdir: {.libdir}".format(python))
+            info.line("  tools:")
+            info.line("    path: {}".format(python.join(python.bindir)))
             info.line("    interpreter: {.interpreter}".format(python))
             # compile line
             info.line("  compile:")
-            info.line("    defines: {}".format(', '.join(python.defines())))
-            info.line("    headers: {}".format(' '.join(python.incdir)))
+            info.line("    defines: {}".format(python.join(python.defines)))
+            info.line("    headers: {}".format(python.join(python.incdir)))
             # link line
             info.line("  link:")
-            info.line("    paths: {}".format(' '.join(python.libdir)))
-            info.line("    libraries: {}".format(' '.join(python.libraries())))
+            info.line("    paths: {}".format(python.join(python.libdir)))
+            info.line("    libraries: {}".format(python.join(python.libraries)))
 
             # get the configuration errors
             errors = python.pyre_configurationErrors

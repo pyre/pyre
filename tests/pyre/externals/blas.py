@@ -29,8 +29,8 @@ class configure(pyre.application):
         info = self.info
         # show me
         info.line("{.pyre_name}:".format(self))
-        info.line("  host: {.pyre_host}".format(self))
-        info.line("  package manager: {.pyre_externals}".format(self))
+        info.line("  host: {.pyre_host.nickname!r}".format(self))
+        info.line("  package manager: {.pyre_externals.name!r}".format(self))
         # flush
         info.log()
 
@@ -52,19 +52,15 @@ class configure(pyre.application):
         if blas:
             # version info
             info.line("  version: {.version}".format(blas))
-            # locations
-            info.line("  locations:")
-            info.line("    prefix: {.prefix}".format(blas))
-            info.line("    incdir: {.incdir}".format(blas))
-            info.line("    libdir: {.libdir}".format(blas))
+            info.line("  prefix: {.prefix}".format(blas))
             # compile line
             info.line("  compile:")
-            info.line("    defines: {}".format(', '.join(blas.defines())))
-            info.line("    headers: {}".format(' '.join(blas.incdir)))
+            info.line("    defines: {}".format(blas.join(blas.defines)))
+            info.line("    headers: {}".format(blas.join(blas.incdir)))
             # link line
             info.line("  link:")
-            info.line("    paths: {}".format(' '.join(blas.libdir)))
-            info.line("    libraries: {}".format(' '.join(blas.libraries())))
+            info.line("    paths: {}".format(blas.join(blas.libdir)))
+            info.line("    libraries: {}".format(blas.join(blas.libraries)))
 
             # get the configuration errors
             errors = blas.pyre_configurationErrors

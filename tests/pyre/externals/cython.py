@@ -29,8 +29,8 @@ class configure(pyre.application):
         info = self.info
         # show me
         info.line("{.pyre_name}:".format(self))
-        info.line("  host: {.pyre_host}".format(self))
-        info.line("  package manager: {.pyre_externals}".format(self))
+        info.line("  host: {.pyre_host.nickname!r}".format(self))
+        info.line("  package manager: {.pyre_externals.name!r}".format(self))
         # flush
         info.log()
 
@@ -52,10 +52,10 @@ class configure(pyre.application):
         if cython:
             # version info
             info.line("  version: {.version}".format(cython))
+            info.line("  prefix: {.prefix}".format(cython))
             # locations
-            info.line("  locations:")
-            info.line("    prefix: {.prefix}".format(cython))
-            info.line("    bindir: {.bindir}".format(cython))
+            info.line("  tool:")
+            info.line("    path: {}".format(cython.join(cython.bindir)))
             info.line("    compiler: {.compiler}".format(cython))
 
             # get the configuration errors

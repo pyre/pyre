@@ -52,19 +52,15 @@ class configure(pyre.application):
         if hdf5:
             # version info
             info.line("  version: {.version}".format(hdf5))
-            # locations
-            info.line("  locations:")
-            info.line("    prefix: {.prefix}".format(hdf5))
-            info.line("    incdir: {.incdir}".format(hdf5))
-            info.line("    libdir: {.libdir}".format(hdf5))
+            info.line("  prefix: {.prefix}".format(hdf5))
             # compile line
             info.line("  compile:")
-            info.line("    defines: {}".format(', '.join(hdf5.defines())))
-            info.line("    headers: {}".format(' '.join(hdf5.incdir)))
+            info.line("    defines: {}".format(hdf5.join(hdf5.defines)))
+            info.line("    headers: {}".format(hdf5.join(hdf5.incdir)))
             # link line
             info.line("  link:")
-            info.line("    paths: {}".format(' '.join(hdf5.libdir)))
-            info.line("    libraries: {}".format(' '.join(hdf5.libraries())))
+            info.line("    paths: {}".format(hdf5.join(hdf5.libdir)))
+            info.line("    libraries: {}".format(hdf5.join(hdf5.libraries)))
 
             # get the configuration errors
             errors = hdf5.pyre_configurationErrors

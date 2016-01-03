@@ -52,19 +52,15 @@ class configure(pyre.application):
         if gsl:
             # version info
             info.line("  version: {.version}".format(gsl))
-            # locations
-            info.line("  locations:")
-            info.line("    prefix: {.prefix}".format(gsl))
-            info.line("    incdir: {.incdir}".format(gsl))
-            info.line("    libdir: {.libdir}".format(gsl))
+            info.line("  prefix: {.prefix}".format(gsl))
             # compile line
             info.line("  compile:")
-            info.line("    defines: {}".format(', '.join(gsl.defines())))
-            info.line("    headers: {}".format(' '.join(gsl.incdir)))
+            info.line("    defines: {}".format(gsl.join(gsl.defines)))
+            info.line("    headers: {}".format(gsl.join(gsl.incdir)))
             # link line
             info.line("  link:")
-            info.line("    paths: {}".format(' '.join(gsl.libdir)))
-            info.line("    libraries: {}".format(' '.join(gsl.libraries())))
+            info.line("    paths: {}".format(gsl.join(gsl.libdir)))
+            info.line("    libraries: {}".format(gsl.join(gsl.libraries)))
 
             # get the configuration errors
             errors = gsl.pyre_configurationErrors
