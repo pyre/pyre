@@ -435,6 +435,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         except AttributeError:
             # describe what went wrong
             msg = "could not find a package installation for {!r}".format(name)
+            # clear any previous configuration errors; they are now irrelevant
+            installation.pyre_configurationErrors = []
             # and report it
             raise package.ConfigurationError(configurable=self, errors=[msg])
 
@@ -447,7 +449,9 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         if not alternatives:
             # it isn't
             msg = 'could not locate a {.category!r} package for {!r}'.format(installation, name)
-            # so complain
+            # clear any previous configuration errors; they are now irrelevant
+            installation.pyre_configurationErrors = []
+            # complain
             raise installation.ConfigurationError(configurable=self, errors=[msg])
 
         # collect all alternatives whose names start with the flavor
@@ -465,12 +469,15 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             # describe what went wrong
             msg = "no viable candidates for {.category!r}; please select one of {}".format(
                 installation, alternatives)
+            # clear any previous configuration errors; they are now irrelevant
+            installation.pyre_configurationErrors = []
             # and report it
             raise installation.ConfigurationError(configurable=self, errors=[msg])
 
         # otherwise, there were more than one candidate; describe what went wrong
-        msg = 'multiple candidates for {!r}: {}; please select one'.format(
-        flavor, candidates)
+        msg = 'multiple candidates for {!r}: {}; please select one'.format(flavor, candidates)
+        # clear any previous configuration errors; they are now irrelevant
+        installation.pyre_configurationErrors = []
         # and report it
         raise installation.ConfigurationError(configurable=self, errors=[msg])
 
