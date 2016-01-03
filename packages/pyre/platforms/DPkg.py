@@ -7,7 +7,7 @@
 
 
 # externals
-import re, subprocess
+import re, pathlib, subprocess
 # framework
 import pyre
 # superclass
@@ -33,7 +33,7 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
         The location of installed packages
         """
         # always in the same spot
-        return '/usr'
+        return pathlib.Path('/usr')
 
 
     @pyre.provides
@@ -92,12 +92,12 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
 
 
     @pyre.provides
-    def configure(self, packageInstance):
+    def configure(self, installation):
         """
-        Dispatch to the {packageInstance} configuration procedure that is specific to macports
+        Dispatch to the {installation} configuration procedure that is specific to macports
         """
         # what she said...
-        return packageInstance.dpkg(dpkg=self)
+        return installation.dpkg(dpkg=self)
 
 
     # implementation details

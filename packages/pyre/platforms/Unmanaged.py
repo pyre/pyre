@@ -129,9 +129,9 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
             # and each of paths
             for path in paths:
                 # form the combination
-                candidate = os.path.join(path, target)
+                candidate = path / target
                 # check whether it exists
-                if os.path.exists(candidate):
+                if candidate.exists():
                     # got one
                     yield candidate
                     # grab the next

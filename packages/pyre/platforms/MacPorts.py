@@ -7,7 +7,7 @@
 
 
 # externals
-import re, collections, subprocess
+import re, collections, pathlib, subprocess
 # framework
 import pyre
 # superclass
@@ -94,12 +94,12 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
 
 
     @pyre.provides
-    def configure(self, packageInstance):
+    def configure(self, installation):
         """
-        Dispatch to the {packageInstance} configuration procedure that is specific to macports
+        Dispatch to the {installation} configuration procedure that is specific to macports
         """
         # what she said...
-        return packageInstance.macports(macports=self)
+        return installation.macports(macports=self)
 
 
     # meta-methods
@@ -128,9 +128,9 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         # if not there
         if not port:
             # maybe it's not on the path; try the default
-            port = '/opt/local/bin/port'
+            port = pathlib.Path('/opt/local/bin/port')
             # if it's not there
-            if not os.path.exists(port):
+            if not port.exists():
                 # build the message
                 msg = 'could not locate {.manager}'.format(self)
                 # complain
@@ -144,9 +144,9 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
 
 
         # extract the directory with the tools
-        bin, _ = os.path.split(port)
+        bin = port.parent
         # and now the prefix
-        prefix, _ = os.path.split(bin)
+        prefix = bin.parent
         # set it
         self._prefix = prefix
         # and return it
@@ -194,7 +194,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             # build the selected package index
             alternatives = {
                 group: candidates
-                for group, candidates in self.retrievePackageAlternates()
+                for group, candidates in self.retrievePackageAlternatives()
             }
             # attach it
             self._alternatives = alternatives
@@ -262,7 +262,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         return
 
 
-    def retrievePackageAlternates(self):
+    def retrievePackageAlternatives(self):
         """
         Retrieve selection information for all known package groups
         """
@@ -317,7 +317,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         # get the package normalization map
         _, target = self.getNormalization(group=group, alternative=alternative)
         # form a filename that belongs to the target package
-        filename = os.path.join(self.prefix(), target[0])
+        filename = self.prefix() / target[0]
         # find out where it came from
         package = self.getFileProvider(filename=filename)
         # return the package and the selection map
@@ -362,15 +362,15 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         Populate the {group} normalization table with the selections for {alternative}
         """
         # form the filename
-        name = os.path.join(self.prefix(), 'etc', 'select', group, alternative)
+        name = self.prefix() / 'etc' / 'select' / group / alternative
         # open it
-        with open(name) as stream:
+        with name.open() as stream:
             # pull the contents
             for line in stream.readlines():
                 # strip
                 line = line.strip()
                 # interpret it and pass it on
-                yield line if line != '-' else None
+                yield pathlib.Path(line) if line != '-' else None
         # all done
         return
 
@@ -402,12 +402,12 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         return
 
 
-    def identifyPackage(self, package):
+    def identify(self, installation):
         """
-        Attempt to map the {package} installation to the name of an installed package
+        Attempt to map the package {installation} to the name of an installed package
         """
-        # get the name of the {package} instance
-        name = package.pyre_name
+        # get the name of the {installation} instance
+        name = installation.pyre_name
         # grab the index of installed packages
         installed = self.getInstalledPackages()
 
@@ -417,8 +417,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             return name
 
         # another possibility is that {name} is one of the selection alternatives for a package
-        # group; interpret the {package} category as the group name
-        group = package.category
+        # group; interpret the {installation} category as the group name
+        group = installation.category
         # get the alternatives
         alternatives = self.alternatives(group=group)
         # and if we have a match
@@ -429,8 +429,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         # another approach is to attempt to find a selection that is related to the package
         # flavor; let's check
         try:
-            # whether the package has a flavor
-            flavor = package.flavor
+            # whether the installation has a flavor
+            flavor = installation.flavor
         # if it doesn't
         except AttributeError:
             # describe what went wrong
@@ -446,9 +446,9 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         # beyond this point, nothing works unless this package belongs to a selection group
         if not alternatives:
             # it isn't
-            msg = 'could not locate a {.category!r} package for {!r}'.format(package, name)
+            msg = 'could not locate a {.category!r} package for {!r}'.format(installation, name)
             # so complain
-            raise package.ConfigurationError(configurable=self, errors=[msg])
+            raise installation.ConfigurationError(configurable=self, errors=[msg])
 
         # collect all alternatives whose names start with the flavor
         candidates = [ tag for tag in alternatives if tag.startswith(flavor) ]
@@ -464,15 +464,15 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         if not candidates:
             # describe what went wrong
             msg = "no viable candidates for {.category!r}; please select one of {}".format(
-                package, alternatives)
+                installation, alternatives)
             # and report it
-            raise package.ConfigurationError(configurable=self, errors=[msg])
+            raise installation.ConfigurationError(configurable=self, errors=[msg])
 
         # otherwise, there were more than one candidate; describe what went wrong
         msg = 'multiple candidates for {!r}: {}; please select one'.format(
         flavor, candidates)
         # and report it
-        raise package.ConfigurationError(configurable=self, errors=[msg])
+        raise installation.ConfigurationError(configurable=self, errors=[msg])
 
 
     # private data
