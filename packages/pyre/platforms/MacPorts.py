@@ -142,7 +142,6 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
             # pathify
             port = pathlib.Path(port)
 
-
         # extract the directory with the tools
         bin = port.parent
         # and now the prefix
@@ -314,12 +313,10 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         Identify the package in the {group} that provides the selected {alternative}
         """
-        # get the package normalization map
-        _, target = self.getNormalization(group=group, alternative=alternative)
-        # form a filename that belongs to the target package
-        filename = self.prefix() / target[0]
+        # the selection file is known to belong to the package
+        selection = str(self.prefix() / 'etc' / 'select' / group / alternative)
         # find out where it came from
-        package = self.getFileProvider(filename=filename)
+        package = self.getFileProvider(filename=selection)
         # return the package and the selection map
         return package
 
