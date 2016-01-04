@@ -102,8 +102,6 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         except KeyError:
             # this package is not installed
             msg = 'the package {!r} is not installed'.format(package)
-            # clear any previous configuration errors; they are now irrelevant
-            self.pyre_configurationErrors = []
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
@@ -157,8 +155,6 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         except KeyError:
             # this package is not installed
             msg = 'the package {!r} is not installed'.format(package)
-            # clear any previous configuration errors; they are now irrelevant
-            self.pyre_configurationErrors = []
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
@@ -212,8 +208,6 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gsl'):
         except KeyError:
             # this package is not installed
             msg = 'the package {!r} is not installed'.format(package)
-            # clear any previous configuration errors; they are now irrelevant
-            self.pyre_configurationErrors = []
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents

@@ -123,12 +123,8 @@ class Actor(Requirement):
 
         # if there were any
         if initializationErrors:
-            # get access to the configuration errors
-            configurationErrors = instance.pyre_configurationErrors
-            # complain about everything
-            raise instance.ConfigurationError(
-                configurable = instance,
-                errors = configurationErrors+initializationErrors)
+            # complain; no need to include the now obsolete configuration errors
+            raise instance.ConfigurationError(configurable=instance, errors=initializationErrors)
 
         # and return it
         return instance

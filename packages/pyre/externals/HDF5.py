@@ -81,8 +81,6 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         except KeyError:
             # this package is not installed
             msg = 'the package {!r} is not installed'.format(package)
-            # clear any previous configuration errors; they are now irrelevant
-            self.pyre_configurationErrors = []
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents

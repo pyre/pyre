@@ -83,8 +83,6 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
         except KeyError:
             # this package is not installed
             msg = 'the package {!r} is not installed'.format(package)
-            # clear any previous configuration errors; they are now irrelevant
-            self.pyre_configurationErrors = []
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # grab the package contents
@@ -152,8 +150,6 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
         except KeyError:
             # this package is not installed
             msg = 'the package {!r} is not installed'.format(package)
-            # clear any previous configuration errors; they are now irrelevant
-            self.pyre_configurationErrors = []
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
