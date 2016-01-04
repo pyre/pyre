@@ -68,22 +68,6 @@ class Installation(pyre.component):
         return '{}.{}'.format(major, minor)
 
 
-    def dpkg(self, dpkg):
-        """
-        Attempt to repair the configuration of this instance assuming a dpkg host
-        """
-        # ask my protocol to configure me for a dpkg host
-        self.pyre_implements.dpkgConfigureImplementation(dpkg=dpkg, instance=self)
-        # check my configuration again
-        errors = self.pyre_configured()
-        # and if there are errors
-        if errors:
-            # complain
-            raise self.ConfigurationError(component=self, errors=errors)
-        # all done
-        return
-
-
     # framework hooks
     def pyre_configured(self):
         """
@@ -162,9 +146,9 @@ class Installation(pyre.component):
         for folder in folders:
             # are valid
             if not folder.is_dir():
-                # mark as bad attempt to configure
+                # if not, mark this as a bad attempt to configure
                 self._misconfigured = True
-                # if not, complain
+                #  complain
                 yield "'{}' is not a valid directory".format(folder)
                 # and remove it from the good pile
                 good.remove(folder)
