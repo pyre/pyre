@@ -28,9 +28,9 @@ def test():
         assert python.category == 'python'
         # show me where it's from
         print('python: {.pyre_spec}'.format(python))
-        print('  binaries: {.bindir}'.format(python))
-        print('  headers: {.incdir}'.format(python))
-        print('  libraries: {.libdir}'.format(python))
+        print('  binaries: {}'.format(python.join(python.bindir)))
+        print('  headers: {}'.format(python.join(python.incdir)))
+        print('  libraries: {}'.format(python.join(python.libdir)))
         print('  interpreter: {.interpreter}'.format(python))
         # look no further
         break
