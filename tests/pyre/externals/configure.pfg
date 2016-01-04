@@ -136,7 +136,7 @@ pyre.externals.python.python2 # mga:
     ; the name of the python interpreter
     interpreter = python2
     ; the list of libraries to put on the link line
-    libraries = python3.5m
+    libraries = python2.7m
     ; directory layout
     prefix = prefix
     bindir = {mga.prefix}/bin
