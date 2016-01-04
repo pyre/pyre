@@ -7,7 +7,7 @@
 
 
 # externals
-import os
+import re
 # access to the framework
 import pyre
 # superclass
@@ -25,6 +25,60 @@ class VTK(Library, family='pyre.externals.vtk'):
 
 
     # support for specific package managers
+    @classmethod
+    def dpkgAlternatives(cls, dpkg):
+        """
+        Go through the installed packages and identify those that are relevant for providing
+        support for my installations
+        """
+        # get the index of installed packages
+        installed = dpkg.installed()
+        # the package regex
+        rgx = r"^libvtk(?P<version>[0-9])-dev$"
+        # the recognizer of python dev packages
+        scanner = re.compile(rgx)
+
+        # go through the names of all installed packages
+        for key in installed.keys():
+            # looking for ones that match my pattern
+            match = scanner.match(key)
+            # once we have a match
+            if match:
+                # extract the version
+                version = match.group('version')
+                # fold it into the installation name
+                name = cls.category + version
+                # place the package name into a tuple
+                packages = match.group(),
+                # hand them to the caller
+                yield name, packages
+
+        # all done
+        return
+
+
+    @classmethod
+    def dpkgChoices(cls, dpkg):
+        """
+        Identify the default implementation of HDF5 on dpkg machines
+        """
+        # ask {dpkg} for my options
+        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        # the supported versions
+        versions = VTK6, VTK5
+        # go through the versions
+        for version in versions:
+           # scan through the alternatives
+            for name in alternatives:
+                # if it is match
+                if name.startswith(version.flavor):
+                    # build an instance and return it
+                    yield version(name=name)
+
+        # out of ideas
+        return
+
+
     @classmethod
     def macportsChoices(cls, macports):
         """
@@ -65,8 +119,34 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
         """
         Attempt to repair my configuration
         """
-        # NYI
-        raise NotImplementedError('NYI!')
+        # get the names of the packages that support me
+        dev, *_ = dpkg.identify(installation=self)
+        # get the version info
+        self.version, _ = dpkg.info(package=dev)
+
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'vtkVersion.h'
+        # find the header
+        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        # which is inside the atlas directory; save the parent
+        self.incdir = [ incdir ] if incdir else []
+
+        # in order to identify my {libdir}, search for one of my libraries
+        stem = 'CommonCore'
+        # convert it into a library
+        libvtk = self.pyre_host.dynamicLibrary(stem)
+        # find it
+        libdir = dpkg.findfirst(target=libvtk, contents=dpkg.contents(package=dev))
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
+        # set my library
+        self.libraries = stem
+
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+
+        # all done
+        return
 
 
     def macports(self, macports, **kwds):
@@ -136,8 +216,34 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
         """
         Attempt to repair my configuration
         """
-        # NYI
-        raise NotImplementedError('NYI!')
+        # get the names of the packages that support me
+        dev, *_ = dpkg.identify(installation=self)
+        # get the version info
+        self.version, _ = dpkg.info(package=dev)
+
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'vtkVersion.h'
+        # find the header
+        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        # which is inside the atlas directory; save the parent
+        self.incdir = [ incdir ] if incdir else []
+
+        # in order to identify my {libdir}, search for one of my libraries
+        stem = self.libgen('CommonCore')
+        # convert it into a library
+        libvtk = self.pyre_host.dynamicLibrary(stem)
+        # find it
+        libdir = dpkg.findfirst(target=libvtk, contents=dpkg.contents(package=dev))
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
+        # set my library
+        self.libraries = stem
+
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+
+        # all done
+        return
 
 
     def macports(self, macports, **kwds):

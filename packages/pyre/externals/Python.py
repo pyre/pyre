@@ -38,24 +38,38 @@ class Python(Tool, Library, family='pyre.externals.python'):
         """
         # get the index of installed packages
         installed = dpkg.installed()
-        # look for python packages
-        scanner = re.compile(r"^lib(?P<package>python(?P<major>[0-9])\.(?P<minor>[0-9]))-dev$")
+        # the package regex
+        rgx = r"^(?P<lib>lib(?P<base>python(?P<version>(?P<major>[0-9])\.(?P<minor>[0-9]))))-dev$"
+        # the recognizer of python dev packages
+        scanner = re.compile(rgx)
 
         # go through the names of all installed packages
         for key in installed.keys():
-            # looking for ones that match my patter
+            # looking for ones that match my pattern
             match = scanner.match(key)
             # once we have a match
             if match:
-                # get the package name
-                package = match.group('package')
-                # get the major and minor versions
-                major = int(match.group('major'))
-                minor = int(match.group('minor'))
-                # form the installation name by removing the dots
-                name = 'python{}{}'.format(major, minor)
-                # hand back the pyre safe name and the name of the actual package
-                yield name, package
+                # extract the dev package
+                dev = match.group()
+                # the base package name
+                base = match.group('base')
+                # and the lib package
+                libpython = match.group('lib')
+                # form the minimal package name
+                minimal = base + '-minimal'
+                # put all the packages in a pile
+                packages = base, minimal, libpython, dev
+                # find the missing ones
+                missing = [ pkg for pkg in packages if pkg not in installed ]
+                # if there are no missing ones
+                if not missing:
+                    # extract the version and collapse it
+                    version = ''.join(match.group('version').split('.'))
+                    # form the pyre happy installation name
+                    name = cls.category + version
+                    # hand back the pyre safe name and the pile of packages
+                    yield name, packages
+
         # all done
         return
 
@@ -66,25 +80,18 @@ class Python(Tool, Library, family='pyre.externals.python'):
         Provide alternative compatible implementations of python on dpkg machines, starting
         with the package the user has selected as the default
         """
-        # ask dpkg for the index of alternatives
-        alternatives = dpkg.alternatives(group=cls)
-        # now let's go through them
-        for name in sorted(alternatives):
-            # if this is a 3.x installation
-            if name.startswith('python3'):
-                # make a package and return it
-                yield Python3(name=name)
-            # if it's a 2.x installation
-            elif name.startswith('python2'):
-                # make a package and return it
-                yield Python2(name=name)
-            # otherwise
-            else:
-                # this is a bug
-                import journal
-                # so report it
-                journal.firewall('pyre.externals.python').log(
-                    "unknown python flavor for package {!r}".format(package))
+        # ask {dpkg} for my options
+        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        # the supported versions
+        versions = Python3, Python2
+        # go through the versions
+        for version in versions:
+           # scan through the alternatives
+            for name in alternatives:
+                # if it is match
+                if name.startswith(version.flavor):
+                    # build an instance and return it
+                    yield version(name=name)
 
         # out of ideas
         return
@@ -147,38 +154,18 @@ class Default(
         Attempt to repair my configuration
         """
         # ask dpkg for help; start by finding out which package supports me
-        base = dpkg.identify(installation=self)
-        # the actual interpreter executable is in
-        minimal = base + '-minimal'
-        # the shared library is in
-        libpython = 'lib' + base
-        #
-        # and the headers are in
-        dev = libpython + '-dev'
-
-        # ask for the index of installed packages
-        installed = dpkg.installed()
-        # put them all in a pile
-        packages = [ base, minimal, libpython, dev ]
-        # find the missing ones
-        missing = [ pkg for pkg in packages if pkg not in installed ]
-        # if there any missing ones
-        if missing:
-            # create a report
-            msg = '{!r} is not fully installed; please install: {}'.format(
-                base, ','.join(missing))
-            # and complain
-            raise self.ConfigurationError(configurable=self, errors=[msg])
-
+        base, minimal, libpython, dev = dpkg.identify(installation=self)
         # get the version info
         self.version, _ = dpkg.info(package=base)
 
         # the name of the interpreter
         self.interpreter = '{0.category}{0.sigver}m'.format(self)
+        # our search target for the bindir is in a bin directory to avoid spurious matches
+        interpreter = "bin/{.interpreter}".format(self)
         # find it in order to identify my {bindir}
-        bindir = dpkg.findfirst(target=self.interpreter, contents=dpkg.contents(package=minimal))
+        bindir = dpkg.findfirst(target=interpreter, contents=dpkg.contents(package=minimal))
         # and save it
-        self.bindir = [ bindir ] if bindir else []
+        self.bindir = [ bindir / 'bin' ] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'Python.h'

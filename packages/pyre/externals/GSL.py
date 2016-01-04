@@ -26,12 +26,46 @@ class GSL(Library, family='pyre.externals.gsl'):
 
     # support for specific package managers
     @classmethod
+    def dpkgAlternatives(cls, dpkg):
+        """
+        Go through the installed packages and identify those that are relevant for providing
+        support for my installations
+        """
+        # get the index of installed packages
+        installed = dpkg.installed()
+
+        # the GSL development packages
+        gsl = 'libgsl0-dev',
+        # find the missing ones
+        missing = [ pkg for pkg in gsl if pkg not in installed ]
+        # if there are no missing ones
+        if not missing:
+            # hand back a pyre safe name and the list of packages
+            yield Default.flavor, gsl
+
+        # all done
+        return
+
+
+    @classmethod
     def dpkgChoices(cls, dpkg):
         """
         Identify the default implementation of GSL on dpkg machines
         """
-        # complain
-        raise NotImplementedError("NYI!")
+        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        # the supported versions
+        versions = Default,
+        # go through the versions
+        for version in versions:
+           # scan through the alternatives
+            for name in alternatives:
+                # if it is match
+                if name.startswith(version.flavor):
+                    # build an instance and return it
+                    yield version(name=name)
+
+        # out of ideas
+        return
 
 
     @classmethod
@@ -57,7 +91,7 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
 
     # constants
     category = GSL.category
-    falvor = category
+    flavor = category
 
     # public state
     defines = pyre.properties.strings(default="WITH_GSL")
@@ -72,8 +106,33 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         """
         Attempt to repair my configuration
         """
-        # NYI
-        raise NotImplementedError('NYI!')
+        # get the names of the packages that support me
+        dev, *_ = dpkg.identify(installation=self)
+        # get the version info
+        self.version, _ = dpkg.info(package=dev)
+
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'gsl/gsl_version.h'
+        # find the header
+        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        # which is inside the atlas directory; save the parent
+        self.incdir = [ incdir ] if incdir else []
+
+        # in order to identify my {libdir}, search for one of my libraries
+        stem = self.flavor
+        # convert it into the actual file name
+        libgsl = self.pyre_host.dynamicLibrary('gslcblas')
+        # find it
+        libdir = dpkg.findfirst(target=libgsl, contents=dpkg.contents(package=dev))
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
+        # set my library
+        self.libraries = stem
+
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+        # all done
+        return
 
 
     def macports(self, macports):
@@ -103,13 +162,15 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
-        libgsl = self.pyre_host.dynamicLibrary('gsl')
+        stem = self.flavor
+        # in order to identify my {libdir}, search for one of my libraries
+        libgsl = self.pyre_host.dynamicLibrary(stem)
         # find it
         libdir = macports.findfirst(target=libgsl, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
-        self.libraries = 'gsl'
+        self.libraries = stem
 
         # now that we have everything, compute the prefix
         self.prefix = self.commonpath(folders=self.incdir+self.libdir)

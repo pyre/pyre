@@ -107,8 +107,9 @@ class Installation(pyre.component):
             return
         # if the configuration errors were caused by the user
         if self._misconfigured:
-            # don't try to repair the user's mess since there is no way of knowing how to do
-            # it; indicate we are giving up
+            # don't try to repair the user's mess since there is no way of knowing what to do
+            yield from self.pyre_configurationErrors
+            # indicate we are giving up
             yield "automatic configuration aborted"
             # and do nothing else
             return

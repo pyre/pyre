@@ -7,7 +7,7 @@
 
 
 # externals
-import os, pathlib
+import pathlib
 # access to the framework
 import pyre
 # superclass
@@ -31,6 +31,59 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
 
     # support for specific package managers
     @classmethod
+    def dpkgAlternatives(cls, dpkg):
+        """
+        Identify the default implementation of MPI on dpkg machines
+        """
+        # get the index of installed packages
+        installed = dpkg.installed()
+
+        # the OpenMPI development packages
+        openmpi = "openmpi-bin", "libopenmpi-dev"
+        # find the missing ones
+        missing = [ pkg for pkg in openmpi if pkg not in installed ]
+        # if there are no missing ones
+        if not missing:
+            # hand back a pyre safe name and the list of packages
+            yield OpenMPI.flavor, openmpi
+
+        # the MPICH development packages
+        mpich = "mpich", "libmpich-dev"
+        # find the missing ones
+        missing = [ pkg for pkg in mpich if pkg not in installed ]
+        # if there are no missing ones
+        if not missing:
+            # hand back a pyre safe name and the list of packages
+            yield MPICH.flavor, mpich
+
+        # all done
+        return
+
+
+    @classmethod
+    def dpkgChoices(cls, dpkg):
+        """
+        Provide alternative compatible implementations of python on dpkg machines, starting
+        with the package the user has selected as the default
+        """
+        # ask {dpkg} for my options
+        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        # the supported versions
+        versions = OpenMPI, MPICH
+        # go through the versions
+        for version in versions:
+           # scan through the alternatives
+            for name in alternatives:
+                # if it is match
+                if name.startswith(version.flavor):
+                    # build an instance and return it
+                    yield version(name=name)
+
+        # out of ideas
+        return
+
+
+    @classmethod
     def macportsChoices(cls, macports):
         """
         Provide alternative compatible implementations of MPI on macports machines, starting with
@@ -53,50 +106,6 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
                     # so complain
                     raise journal.firewall('pyre.externals.MPI').log(
                         "unknown MPI flavor for package {!r}".format(alternative))
-
-        # out of ideas
-        return
-
-
-    # dpkg
-    @classmethod
-    def dpkgChoices(cls, dpkg):
-        """
-        Identify the default implementation of MPI on dpkg machines
-        """
-        # the list of the necessary openmpi packages
-        openmpi = ["openmpi-bin", "libopenmpi-dev"]
-        # check
-        for package in openmpi:
-            # attempt to
-            try:
-                # locate it
-                dpkg.info(package)
-            # if not there
-            except KeyError:
-                # look no further
-                break
-        # if they are all present
-        else:
-            # get openmpi and return it
-            yield OpenMPI
-
-        # the list of the necessary mpich packages
-        mpich = ["mpich-bin", "libmpich-dev"]
-        # check
-        for package in mpich:
-            # attempt to
-            try:
-                # locate it
-                dpkg.info(package)
-            # if not there
-            except KeyError:
-                # look no further
-                break
-        # if they are all present
-        else:
-            # get mpich and return it
-            yield MPICH
 
         # out of ideas
         return
@@ -128,20 +137,6 @@ class Default(
 
 
     # configuration
-
-    # these methods are invoked after construction if the instance is determined to be in
-    # invalid state that was not the user's fault. typically this means that the package
-    # configuration is still in its default state. the dispatcher determines the correct
-    # package manager and forwards to one of the handlers in this section
-
-    def dpkg(self, dpkg):
-        """
-        Attempt to repair my configuration
-        """
-        # NYI
-        raise NotImplementedError('NYI!')
-
-
     def macports(self, macports):
         """
         Attempt to repair my configuration
@@ -210,21 +205,44 @@ class OpenMPI(Default, family='pyre.externals.mpi.openmpi'):
     defines.doc = "the compile time markers that indicate my presence"
 
 
-    # configuration strategies for specific package managers
     def dpkg(self, dpkg):
         """
-        Attempt to repair the configuration of this instance assuming a dpkg host
+        Attempt to repair my configuration
         """
-        # get the version
-        self.version, _ = dpkg.info(package='libopenmpi-dev')
+        # ask dpkg for help; start by finding out which package supports me
+        bin, dev = dpkg.identify(installation=self)
+        # get the version info
+        self.version, _ = dpkg.info(package=dev)
 
-        # point directly to my own directories to bypass the links set up by {update-alternatives}
-        prefix = '/usr/lib/openmpi'
-        self.prefix = prefix
-        self.bindir = os.path.join('/usr/bin')
-        self.incdir = os.path.join(prefix, 'include')
-        self.libdir = os.path.join(prefix, 'lib')
-        self.launcher = os.path.join(self.bindir, 'mpirun.openmpi')
+        # the name of the launcher
+        self.launcher = 'mpirun.{.flavor}'.format(self)
+        # our search target for the bindir is in a bin directory to avoid spurious matches
+        launcher = "bin/{.launcher}".format(self)
+        # find it in order to identify my {bindir}
+        bindir = dpkg.findfirst(target=launcher, contents=dpkg.contents(package=bin))
+        # and save it
+        self.bindir = [ bindir / 'bin' ] if bindir else []
+
+        # in order to identify my {incdir}, search for the top-level header file
+        header = r'mpi\.h'
+        # find it
+        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        # and save it
+        self.incdir = [ incdir ] if incdir else []
+
+        # in order to identify my {libdir}, search for one of my libraries
+        stem = '{0.category}'.format(self)
+        # convert it into the actual file name
+        libpython = self.pyre_host.dynamicLibrary(stem)
+        # find it
+        libdir = dpkg.findfirst(target=libpython, contents=dpkg.contents(package=dev))
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
+        # set my library
+        self.libraries = stem
+
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.bindir+self.incdir+self.libdir)
 
         # all done
         return
@@ -245,21 +263,44 @@ class MPICH(Default, family='pyre.externals.mpi.mpich'):
     defines.doc = "the compile time markers that indicate my presence"
 
 
-    # configuration strategies for specific package managers
     def dpkg(self, dpkg):
         """
-        Attempt to repair the configuration of this instance assuming a dpkg host
+        Attempt to repair my configuration
         """
-        # get the version
-        self.version, _ = dpkg.info(package='libmpich-dev')
+        # ask dpkg for help; start by finding out which package supports me
+        bin, dev = dpkg.identify(installation=self)
+        # get the version info
+        self.version, _ = dpkg.info(package=dev)
 
-        # point directly to my own directories to bypass the links set up by {update-alternatives}
-        prefix = '/usr/lib/mpich'
-        self.prefix = prefix
-        self.bindir = os.path.join('/usr/bin')
-        self.incdir = os.path.join(prefix, 'include')
-        self.libdir = os.path.join(prefix, 'lib')
-        self.launcher = os.path.join(self.bindir, 'mpirun.mpich')
+        # the name of the launcher
+        self.launcher = 'mpirun.{.flavor}'.format(self)
+        # our search target for the bindir is in a bin directory to avoid spurious matches
+        launcher = "bin/{.launcher}".format(self)
+        # find it in order to identify my {bindir}
+        bindir = dpkg.findfirst(target=launcher, contents=dpkg.contents(package=bin))
+        # and save it
+        self.bindir = [ bindir / 'bin' ] if bindir else []
+
+        # in order to identify my {incdir}, search for the top-level header file
+        header = r'mpi\.h'
+        # find it
+        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        # and save it
+        self.incdir = [ incdir ] if incdir else []
+
+        # in order to identify my {libdir}, search for one of my libraries
+        stem = self.flavor # on dpkg, mpich doesn't come with a libmpi.so
+        # convert it into the actual file name
+        libpython = self.pyre_host.dynamicLibrary(stem)
+        # find it
+        libdir = dpkg.findfirst(target=libpython, contents=dpkg.contents(package=dev))
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
+        # set my library
+        self.libraries = stem
+
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.bindir+self.incdir+self.libdir)
 
         # all done
         return

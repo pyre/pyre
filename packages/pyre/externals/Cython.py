@@ -7,7 +7,7 @@
 
 
 # externals
-import os, pathlib
+import pathlib
 # access to the framework
 import pyre
 # superclass
@@ -30,6 +30,59 @@ class Cython(Tool, family='pyre.externals.cython'):
 
 
     # support for specific package managers
+    @classmethod
+    def dpkgAlternatives(cls, dpkg):
+        """
+        Go through the installed packages and identify those that are relevant for providing
+        support for my installations
+        """
+        # get the index of installed packages
+        installed = dpkg.installed()
+
+        # the cython 3.x development packages
+        cython3 = 'cython3',
+        # find the missing ones
+        missing = [ pkg for pkg in cython3 if pkg not in installed ]
+        # if there are no missing ones
+        if not missing:
+            # hand back a pyre safe name and the list of packages
+            yield Cython3.flavor, cython3
+
+        # the cython 2.x development packages
+        cython2 = 'cython',
+        # find the missing ones
+        missing = [ pkg for pkg in cython2 if pkg not in installed ]
+        # if there are no missing ones
+        if not missing:
+            # hand back a pyre safe name and the list of packages
+            yield Cython2.flavor, cython2
+
+        # all done
+        return
+
+
+    @classmethod
+    def dpkgChoices(cls, dpkg):
+        """
+        Identify the default implementation of BLAS on dpkg machines
+        """
+        # ask {dpkg} for my options
+        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        # the order of preference of these implementations
+        versions = Cython3, Cython2
+        # go through the versions
+        for version in versions:
+           # scan through the alternatives
+            for name in alternatives:
+                # if it is match
+                if name.startswith(version.flavor):
+                    # build an instance and return it
+                    yield version(name=name)
+
+        # out of ideas
+        return
+
+
     @classmethod
     def macportsChoices(cls, macports):
         """
@@ -76,8 +129,27 @@ class Default(
         """
         Attempt to repair my configuration
         """
-        # NYI
-        raise NotImplementedError('NYI!')
+        # get the names of the packages that support me
+        bin, *_ = dpkg.identify(installation=self)
+        # get the version info
+        self.version, _ = dpkg.info(package=bin)
+
+        # get my flavor
+        flavor = self.flavor
+        # the name of the interpreter
+        self.compiler = 'cython' if flavor == 'cython2' else flavor
+        # look for it in the bin directory so we don't pick up something else
+        compiler = 'bin/{}'.format(self.compiler)
+        # find it in order to identify my {bindir}
+        prefix = dpkg.findfirst(target=compiler, contents=dpkg.contents(package=bin))
+        # and save it
+        self.bindir = [ prefix / 'bin' ] if prefix else []
+
+        # set the prefix
+        self.prefix = prefix
+
+        # all done
+        return
 
 
     def macports(self, macports):

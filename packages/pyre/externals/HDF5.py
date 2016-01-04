@@ -7,7 +7,7 @@
 
 
 # externals
-import os
+import re
 # access to the framework
 import pyre
 # superclass
@@ -25,6 +25,60 @@ class HDF5(Library, family='pyre.externals.hdf5'):
 
 
     # support for specific package managers
+    @classmethod
+    def dpkgAlternatives(cls, dpkg):
+        """
+        Go through the installed packages and identify those that are relevant for providing
+        support for my installations
+        """
+        # get the index of installed packages
+        installed = dpkg.installed()
+        # the package regex
+        rgx = r"^libhdf5(?P<variant>-[a-z]+)?-dev$"
+        # the recognizer of python dev packages
+        scanner = re.compile(rgx)
+
+        # go through the names of all installed packages
+        for key in installed.keys():
+            # looking for ones that match my pattern
+            match = scanner.match(key)
+            # once we have a match
+            if match:
+                # extract the variant
+                variant = match.group('variant')
+                # fold it into the installation name
+                name = 'hdf5' + (variant if variant else '')
+                # place the package name into a tuple
+                packages = match.group(),
+                # hand them to the caller
+                yield name, packages
+
+        # all done
+        return
+
+
+    @classmethod
+    def dpkgChoices(cls, dpkg):
+        """
+        Identify the default implementation of HDF5 on dpkg machines
+        """
+        # ask {dpkg} for my options
+        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        # the supported versions
+        versions = Default,
+        # go through the versions
+        for version in versions:
+           # scan through the alternatives
+            for name in alternatives:
+                # if it is match
+                if name.startswith(version.flavor):
+                    # build an instance and return it
+                    yield version(name=name)
+
+        # out of ideas
+        return
+
+
     @classmethod
     def macportsChoices(cls, macports):
         """
@@ -63,8 +117,34 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         """
         Attempt to repair my configuration
         """
-        # NYI
-        raise NotImplementedError('NYI!')
+        # get the names of the packages that support me
+        dev, *_ = dpkg.identify(installation=self)
+        # get the version info
+        self.version, _ = dpkg.info(package=dev)
+
+        # in order to identify my {incdir}, search for the top-level header file
+        header = 'hdf5.h'
+        # find the header
+        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        # which is inside the atlas directory; save the parent
+        self.incdir = [ incdir ] if incdir else []
+
+        # in order to identify my {libdir}, search for one of my libraries
+        stem = self.flavor
+        # convert it into the actual file name
+        libhdf5 = self.pyre_host.dynamicLibrary('hdf5')
+        # find it
+        libdir = dpkg.findfirst(target=libhdf5, contents=dpkg.contents(package=dev))
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
+        # set my library
+        self.libraries = stem
+
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.incdir+self.libdir)
+
+        # all done
+        return
 
 
     def macports(self, macports, **kwds):

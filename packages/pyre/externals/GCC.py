@@ -7,7 +7,7 @@
 
 
 # externals
-import os, re, pathlib, subprocess
+import re, pathlib, subprocess
 # access to the framework
 import pyre
 # superclass
@@ -29,6 +29,61 @@ class GCC(Tool, family='pyre.externals.gcc'):
 
 
     # support for specific package managers
+    @classmethod
+    def dpkgAlternatives(cls, dpkg):
+        """
+        Go through the installed packages and identify those that are relevant for providing
+        support for my installations
+        """
+        # get the index of installed packages
+        installed = dpkg.installed()
+        # the package regex
+        rgx = r"^gcc-(?P<version>(?P<major>[0-9]+)(\.(?P<minor>[0-9]+))?)$"
+        # the recognizer of python dev packages
+        scanner = re.compile(rgx)
+
+        # go through the names of all installed packages
+        for key in installed.keys():
+            # looking for ones that match my pattern
+            match = scanner.match(key)
+            # once we have a match
+            if match:
+                # extract the version and collapse it
+                version = ''.join(match.group('version').split('.'))
+                # form the pyre happy name
+                name = 'gcc' + version
+                # and the sequence of packages
+                packages = match.group(),
+                # hand them to the caller
+                yield name, packages
+
+        # all done
+        return
+
+
+    @classmethod
+    def dpkgChoices(cls, dpkg):
+        """
+        Provide alternative compatible implementations of python on dpkg machines, starting
+        with the package the user has selected as the default
+        """
+        # ask dpkg for the index of alternatives
+        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        # the supported versions in order of preference
+        versions = GCC5, GCC4
+        # go through the versions
+        for version in versions:
+           # scan through the alternatives
+            for name in alternatives:
+                # if it is match
+                if name.startswith(version.flavor):
+                    # build an instance and return it
+                    yield version(name=name)
+
+        # out of ideas
+        return
+
+
     @classmethod
     def macportsChoices(cls, macports):
         """
@@ -52,14 +107,14 @@ from .ToolInstallation import ToolInstallation
 
 
 # the implementation of a GCC installation
-class GCC5(ToolInstallation, family='pyre.externals.gcc.gcc5', implements=GCC):
+class Default(ToolInstallation, family='pyre.externals.gcc.gcc', implements=GCC):
     """
-    Support for GCC 5.x installations
+    Support for GCC installations
     """
 
     # constants
     category = GCC.category
-    flavor = category + '5'
+    flavor = category
 
     # public state
     wrapper = pyre.properties.str()
@@ -71,8 +126,27 @@ class GCC5(ToolInstallation, family='pyre.externals.gcc.gcc5', implements=GCC):
         """
         Attempt to repair my configuration
         """
-        # NYI
-        raise NotImplementedError('NYI!')
+        # ask dpkg for help; start by finding out which package supports me
+        gcc, *_ = dpkg.identify(installation=self)
+        # get the version info
+        self.version, _ = dpkg.info(package=gcc)
+
+        # get my flavor
+        flavor = self.flavor
+        # set the name of the compiler
+        self.wrapper = gcc
+        # the search target specifies a {bin} directory to avoid spurious matches
+        wrapper = 'bin/{.wrapper}'.format(self)
+        # find it in order to identify my {bindir}
+        prefix = dpkg.findfirst(target=wrapper, contents=dpkg.contents(package=gcc))
+        # and save it
+        self.bindir = [ prefix / 'bin' ] if prefix else []
+
+        # set the prefix
+        self.prefix = prefix
+
+        # all done
+        return
 
 
     def macports(self, macports):
@@ -149,6 +223,25 @@ class GCC5(ToolInstallation, family='pyre.externals.gcc.gcc5', implements=GCC):
 
     # private data
     _versionRegex = re.compile(r"gcc\s+\([^)]+\)\s+(?P<version>[.0-9]+)")
+
+
+# specific versions
+class GCC4(Default, family='pyre.externals.gcc.gcc4'):
+    """
+    Support for GCC 4.x installations
+    """
+
+    # constants
+    flavor = Default.category + '4'
+
+
+class GCC5(Default, family='pyre.externals.gcc.gcc5'):
+    """
+    Support for GCC 5.x installations
+    """
+
+    # constants
+    flavor = Default.category + '5'
 
 
 # Apple's clang

@@ -147,11 +147,6 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
         # grab the index of installed packages
         installed = self.getInstalledPackages()
 
-        # if {name} is the actual name of an installed package
-        if name in installed:
-            # we are all done
-            return name
-
         # another possibility is that this instance belongs to a selection group; we build
         # these for some packages whenever we have to provide package choices to support the
         # computation of the package protocol default

@@ -7,7 +7,7 @@
 
 
 # externals
-import os, pathlib
+import re, pathlib
 # access to the framework
 import pyre
 # superclass
@@ -30,6 +30,65 @@ class Postgres(Tool, Library, family='pyre.externals.postgres'):
 
 
     # support for specific package managers
+    @classmethod
+    def dpkgAlternatives(cls, dpkg):
+        """
+        Go through the installed packages and identify those that are relevant for providing
+        support for my installations
+        """
+        # get the index of installed packages
+        installed = dpkg.installed()
+        # the package regex
+        rgx = r"^postgresql-client-(?P<version>(?P<major>[0-9]+)(\.(?P<minor>[0-9]+))?)$"
+        # the recognizer of python dev packages
+        scanner = re.compile(rgx)
+
+        # go through the names of all installed packages
+        for key in installed.keys():
+            # looking for ones that match my pattern
+            match = scanner.match(key)
+            # once we have a match
+            if match:
+                # and the sequence of packages
+                packages = match.group(), 'libpq-dev'
+                # find the missing ones
+                missing = [ pkg for pkg in packages if pkg not in installed ]
+                # if there are no missing ones
+                if not missing:
+                    # extract the version and collapse it
+                    version = ''.join(match.group('version').split('.'))
+                    # form the pyre happy name
+                    name = cls.category + version
+                    # hand back the pyre safe name and the pile of packages
+                    yield name, packages
+
+        # all done
+        return
+
+
+    @classmethod
+    def dpkgChoices(cls, dpkg):
+        """
+        Provide alternative compatible implementations of python on dpkg machines, starting
+        with the package the user has selected as the default
+        """
+        # ask {dpkg} for my options
+        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        # the supported versions
+        versions = Default,
+        # go through the versions
+        for version in versions:
+           # scan through the alternatives
+            for name in alternatives:
+                # if it is match
+                if name.startswith(version.flavor):
+                    # build an instance and return it
+                    yield version(name=name)
+
+        # out of ideas
+        return
+
+
     @classmethod
     def macportsChoices(cls, macports):
         """
@@ -79,8 +138,43 @@ class Default(
         """
         Attempt to repair my configuration
         """
-        # NYI
-        raise NotImplementedError('NYI!')
+        # ask dpkg for help; start by finding out which package supports me
+        bin, dev = dpkg.identify(installation=self)
+        # get the version info
+        self.version, _ = dpkg.info(package=dev)
+
+        # the name of the client
+        self.psql = 'psql'
+        # our search target for the bindir is in a bin directory to avoid spurious matches
+        launcher = "bin/{.psql}".format(self)
+        # find it in order to identify my {bindir}
+        bindir = dpkg.findfirst(target=launcher, contents=dpkg.contents(package=bin))
+        # and save it
+        self.bindir = [ bindir / 'bin' ] if bindir else []
+
+        # in order to identify my {incdir}, search for the top-level header file
+        header = r'libpq-fe\.h'
+        # find it
+        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        # and save it
+        self.incdir = [ incdir ] if incdir else []
+
+        # in order to identify my {libdir}, search for one of my libraries
+        stem = 'pq'
+        # convert it into the actual file name
+        libpython = self.pyre_host.dynamicLibrary(stem)
+        # find it
+        libdir = dpkg.findfirst(target=libpython, contents=dpkg.contents(package=dev))
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
+        # set my library
+        self.libraries = stem
+
+        # now that we have everything, compute the prefix
+        self.prefix = self.commonpath(folders=self.bindir+self.incdir+self.libdir)
+
+        # all done
+        return
 
 
     def macports(self, macports, **kwds):
