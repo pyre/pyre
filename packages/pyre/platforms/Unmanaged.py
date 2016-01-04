@@ -7,7 +7,7 @@
 
 
 # externals
-import os, re
+import os, re, pathlib
 # the framework
 import pyre
 # my protocol
@@ -115,9 +115,9 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
         # search for it in contents
         for match in self.find(target=regex, pile=contents):
             # extract the folder
-            return match.group('path')
+            return pathlib.Path(match.group('path'))
         # otherwise, leave it blank
-        return ''
+        return
 
 
     def locate(self, targets, paths):
