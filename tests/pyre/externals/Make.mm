@@ -67,6 +67,7 @@ python:
 	${PYTHON} ./python.py
 	${PYTHON} ./python.py --python=python3
 	${PYTHON} ./python.py --python=python2 # this fails correctly on macports
+	${PYTHON} ./python.py --python=python3#python35
 	${PYTHON} ./python.py --python=python2#python27
 	${PYTHON} ./python.py --python=python3#mga
 	${PYTHON} ./python.py --python=python2#mga

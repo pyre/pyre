@@ -159,13 +159,13 @@ pyre.externals.python.python3 # mga:
 
 ; VTK
 ; my vtk installation
-pyre.externals.vtk.default # mga:
+pyre.externals.vtk.vtk6 # mga:
     ; the package version
     version = 6.3-mga
     libraries = vtkCommonCore-6.3
     ; directory layout
     prefix = prefix
-    incdir = {mga.prefix}/include/vtk6.3
+    incdir = {mga.prefix}/include/vtk-6.3
     libdir = {mga.prefix}/lib
 
 ; end of file
