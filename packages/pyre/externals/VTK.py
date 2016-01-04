@@ -93,7 +93,7 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
         # find it
         incdir = macports.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [incdir.parent] if incdir else []
+        self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = 'vtkCommonCore'
@@ -166,7 +166,7 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
         # find it
         incdir = macports.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [incdir.parent] if incdir else []
+        self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.libgen('CommonCore')

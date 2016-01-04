@@ -185,7 +185,7 @@ class Default(
         # find it
         incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
         # and save it
-        self.incdir = [incdir.parent] if incdir else []
+        self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = '{0.category}{0.sigver}m'.format(self)
@@ -228,7 +228,7 @@ class Default(
         # find it
         incdir = macports.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [incdir.parent] if incdir else []
+        self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = '{0.category}{0.sigver}m'.format(self)

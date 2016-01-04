@@ -177,7 +177,7 @@ class Default(
         # find it
         incdir = macports.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [incdir.parent] if incdir else []
+        self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libmpi = self.pyre_host.dynamicLibrary('mpi')

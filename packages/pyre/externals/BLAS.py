@@ -108,11 +108,11 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         contents = tuple(macports.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'atlas_buildinfo.h'
+        header = 'atlas/atlas_buildinfo.h'
         # look for it
         incdir = macports.findfirst(target=header, contents=contents)
         # it is inside the atlas directory; save the parent
-        self.incdir = [incdir.parent] if incdir else []
+        self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libatlas = self.pyre_host.staticLibrary('atlas')
@@ -169,7 +169,7 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         # find it
         incdir = macports.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [incdir.parent] if incdir else []
+        self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libopenblas = self.pyre_host.dynamicLibrary('openblas')
@@ -226,7 +226,7 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gsl'):
         # find it
         incdir = macports.findfirst(target=header, contents=contents)
         # and save it
-        self.incdir = [incdir.parent] if incdir else []
+        self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libgsl = self.pyre_host.dynamicLibrary('gslcblas')
