@@ -62,6 +62,7 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
         # don't know anything
         raise KeyError(package)
 
+
     @pyre.export
     def contents(self, package):
         """
@@ -72,13 +73,13 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
 
 
     @pyre.provides
-    def configure(self, packageInstance):
+    def configure(self, installation):
         """
         Dispatch to the {packageInstance} configuration procedure that is specific to a host
         without a specific package manager
         """
         # what she said...
-        return packageInstance.unmanaged(manager=self)
+        return installation.bare(manager=self)
 
 
     # interface
