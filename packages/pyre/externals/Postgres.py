@@ -109,17 +109,23 @@ class Default(
         # find the binary that supports {psql} and use it to set my launcher
         self.psql = nmap[pathlib.Path('bin/psql')].name
         # set my {bindir}
-        self.bindir = macports.findfirst(target=self.psql, contents=contents)
+        bindir = macports.findfirst(target=self.psql, contents=contents)
+        # and save it
+        self.bindir = [ bindir ] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'libpq-fe.h'
         # find it
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libpq = self.pyre_host.dynamicLibrary('pq')
         # find it
-        self.libdir = macports.findfirst(target=libpq, contents=contents)
+        libdir = macports.findfirst(target=libpq, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = 'pq'
 

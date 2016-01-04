@@ -167,18 +167,24 @@ class Default(
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {mpirun} and use it to set my launcher
         self.launcher = nmap[pathlib.Path('bin/mpirun')].name
-        # set my {bindir}
-        self.bindir = macports.findfirst(target=self.launcher, contents=contents)
+        # extract my {bindir}
+        bindir = macports.findfirst(target=self.launcher, contents=contents)
+        # and save it
+        self.bindir = [ bindir ] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'mpi.h'
         # find it
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libmpi = self.pyre_host.dynamicLibrary('mpi')
         # find it
-        self.libdir = macports.findfirst(target=libmpi, contents=contents)
+        libdir = macports.findfirst(target=libmpi, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = 'mpi_cxx', 'mpi'
 

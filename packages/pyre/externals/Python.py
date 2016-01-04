@@ -176,22 +176,25 @@ class Default(
         # the name of the interpreter
         self.interpreter = '{0.category}{0.sigver}m'.format(self)
         # find it in order to identify my {bindir}
-        self.bindir = dpkg.findfirst(
-            target=self.interpreter, contents=dpkg.contents(package=minimal))
+        bindir = dpkg.findfirst(target=self.interpreter, contents=dpkg.contents(package=minimal))
+        # and save it
+        self.bindir = [ bindir ] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'Python.h'
         # find it
-        self.incdir = dpkg.findfirst(
-            target=header, contents=dpkg.contents(package=dev))
+        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = '{0.category}{0.sigver}m'.format(self)
         # convert it into the actual file name
         libpython = self.pyre_host.dynamicLibrary(stem)
         # find it
-        self.libdir = dpkg.findfirst(
-            target=libpython, contents=dpkg.contents(package=dev))
+        libdir = dpkg.findfirst(target=libpython, contents=dpkg.contents(package=dev))
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = stem
 
@@ -216,19 +219,25 @@ class Default(
         # the name of the interpreter
         self.interpreter = '{0.category}{0.sigver}m'.format(self)
         # find it in order to identify my {bindir}
-        self.bindir = macports.findfirst(target=self.interpreter, contents=contents)
+        bindir = macports.findfirst(target=self.interpreter, contents=contents)
+        # and save it
+        self.bindir = [ bindir ] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'Python.h'
         # find it
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = '{0.category}{0.sigver}m'.format(self)
         # convert it into the actual file name
         libpython = self.pyre_host.dynamicLibrary(stem)
         # find it
-        self.libdir = macports.findfirst(target=libpython, contents=contents)
+        libdir = macports.findfirst(target=libpython, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = stem
 

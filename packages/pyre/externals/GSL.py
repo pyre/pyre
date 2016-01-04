@@ -98,12 +98,16 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         # in order to identify my {incdir}, search for the top-level header file
         header = 'gsl/gsl_version.h'
         # find it
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libgsl = self.pyre_host.dynamicLibrary('gsl')
         # find it
-        self.libdir = macports.findfirst(target=libgsl, contents=contents)
+        libdir = macports.findfirst(target=libgsl, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = 'gsl'
 

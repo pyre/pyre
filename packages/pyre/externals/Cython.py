@@ -105,8 +105,10 @@ class Default(
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {cython} and use it to set my compiler
         self.compiler = nmap[pathlib.Path('bin/cython')].name
-        # set my {bindir}
-        self.bindir = macports.findfirst(target=self.compiler, contents=contents)
+        # look for it to get my {bindir}
+        bindir = macports.findfirst(target=self.compiler, contents=contents)
+        # and save it
+        self.bindir = [ bindir ] if bindir else []
 
         # now that we have everything, compute the prefix
         self.prefix = self.bindir[0].parent

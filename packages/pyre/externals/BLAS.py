@@ -108,14 +108,18 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         contents = tuple(macports.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
-        header = 'cblas.h'
-        # find it and extract the directory
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        header = 'atlas_buildinfo.h'
+        # look for it
+        incdir = macports.findfirst(target=header, contents=contents)
+        # it is inside the atlas directory; save the parent
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libatlas = self.pyre_host.staticLibrary('atlas')
-        # find it
-        self.libdir = macports.findfirst(target=libatlas, contents=contents)
+        # look for
+        libdir = macports.findfirst(target=libatlas, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library list
         self.libraries = 'cblas', 'atlas'
 
@@ -163,12 +167,16 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         # in order to identify my {incdir}, search for the top-level header file
         header = 'cblas_openblas.h'
         # find it
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libopenblas = self.pyre_host.dynamicLibrary('openblas')
         # find it
-        self.libdir = macports.findfirst(target=libopenblas, contents=contents)
+        libdir = macports.findfirst(target=libopenblas, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = 'openblas'
 
@@ -216,12 +224,16 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gsl'):
         # in order to identify my {incdir}, search for the top-level header file
         header = 'gsl/gsl_cblas.h'
         # find it
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libgsl = self.pyre_host.dynamicLibrary('gslcblas')
         # find it
-        self.libdir = macports.findfirst(target=libgsl, contents=contents)
+        libdir = macports.findfirst(target=libgsl, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = 'gslcblas'
 

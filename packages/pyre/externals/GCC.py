@@ -100,8 +100,10 @@ class GCC5(ToolInstallation, family='pyre.externals.gcc.gcc5', implements=GCC):
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {gcc} and use it to set my wrapper
         self.wrapper = nmap[pathlib.Path('bin/gcc')].name
-        # set my {bindir}
-        self.bindir = macports.findfirst(target=self.wrapper, contents=contents)
+        # look for it to get my {bindir}
+        bindir = macports.findfirst(target=self.wrapper, contents=contents)
+        # and save it
+        self.bindir = [ bindir ] if bindir else []
 
         # now that we have everything, compute the prefix
         self.prefix = self.bindir[0].parent

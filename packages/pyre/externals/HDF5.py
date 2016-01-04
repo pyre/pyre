@@ -89,12 +89,16 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         # in order to identify my {incdir}, search for the top-level header file
         header = 'hdf5.h'
         # find it
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libhdf5 = self.pyre_host.dynamicLibrary('hdf5')
         # find it
-        self.libdir = macports.findfirst(target=libhdf5, contents=contents)
+        libdir = macports.findfirst(target=libhdf5, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = 'hdf5'
 

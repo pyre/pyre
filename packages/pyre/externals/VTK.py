@@ -91,14 +91,18 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
         # in order to identify my {incdir}, search for the top-level header file
         header = 'vtkVersion.h'
         # find it
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = 'vtkCommonCore'
         # convert it into a library
         libvtk = self.pyre_host.dynamicLibrary(stem)
         # find it
-        self.libdir = macports.findfirst(target=libvtk, contents=contents)
+        libdir = macports.findfirst(target=libvtk, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = stem
 
@@ -160,14 +164,18 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
         # in order to identify my {incdir}, search for the top-level header file
         header = 'vtkVersion.h'
         # find it
-        self.incdir = macports.findfirst(target=header, contents=contents)
+        incdir = macports.findfirst(target=header, contents=contents)
+        # and save it
+        self.incdir = [incdir.parent] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.libgen('CommonCore')
         # convert it into a library
         libvtk = self.pyre_host.dynamicLibrary(stem)
         # find it
-        self.libdir = macports.findfirst(target=libvtk, contents=contents)
+        libdir = macports.findfirst(target=libvtk, contents=contents)
+        # and save it
+        self.libdir = [ libdir ] if libdir else []
         # set my library
         self.libraries = stem
 
