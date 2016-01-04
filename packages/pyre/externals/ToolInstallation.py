@@ -33,23 +33,6 @@ class ToolInstallation(Installation):
         return ()
 
 
-    # configuration
-    def macports(self, macports, **kwds):
-        """
-        Attempt to repair my configuration
-        """
-        # chain up
-        package, contents = super().macports(macports=macports, **kwds)
-
-        # extract the {bindir}
-        self.bindir = set(
-            macports.findfirst(target=target, contents=contents)
-            for target in self.binaries(packager=macports))
-
-        # all done
-        return package, contents
-
-
     # framework hooks
     def pyre_configured(self):
         """

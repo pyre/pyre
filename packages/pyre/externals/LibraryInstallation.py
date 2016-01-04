@@ -29,32 +29,6 @@ class LibraryInstallation(Installation):
     libdir.doc = "the locations of my libraries; for the linker command path"
 
 
-    # configuration
-    def macports(self, macports, dynamic=True, **kwds):
-        """
-        Attempt to repair my configuration
-        """
-        # chain up
-        package, contents = super().macports(macports=macports, **kwds)
-
-        # extract the {incdir}
-        self.incdir = set(
-            macports.findfirst(target=target, contents=contents)
-            for target in self.headers(packager=macports))
-
-        # get the host
-        host = self.pyre_host
-        # deduce the type of libraries we are looking for
-        xform = host.dynamicLibrary if dynamic else host.staticLibrary
-        # extract the {libdir}
-        self.libdir = set(
-            macports.findfirst(target=xform(target), contents=contents)
-            for target in self.libraries(packager=macports))
-
-        # all done
-        return package, contents
-
-
     # framework hooks
     def pyre_configured(self):
         """
