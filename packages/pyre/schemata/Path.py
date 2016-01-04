@@ -32,6 +32,11 @@ class Path(Schema):
         """
         Attempt to convert {value} into a path
         """
+        # respect None
+        if value is None:
+            # by leaving it alone
+            return None
+
         # perhaps it is already a path
         if isinstance(value, pathlib.PurePath):
             # in which case, just leave it alone
@@ -40,7 +45,7 @@ class Path(Schema):
         # the rest assume {value} is a string; if it isn't
         if not isinstance(value, str):
             # build the error message
-            msg = "cannot cast {!} into a path".format(value)
+            msg = "cannot cast {!r} into a path".format(value)
             # and complain
             raise self.CastingError(value=value, description=msg)
 
