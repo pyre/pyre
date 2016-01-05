@@ -19,7 +19,7 @@ class BLAS(Library, family='pyre.externals.blas'):
     """
 
     # constants
-    category = 'cblas'
+    category = 'blas'
 
 
     # support for specific package managers
@@ -308,7 +308,7 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
 
 
 # gslcblas
-class GSLCBLAS(Default, family='pyre.externals.blas.gsl'):
+class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
     """
     GSL BLAS support
     """
