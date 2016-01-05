@@ -30,7 +30,7 @@ def test():
     # check that task was bound according to our expectations from sample.py
     assert issubclass(worker.job, pyre.component)
     assert worker.job.__name__ == "relax"
-    assert task.pyre_isCompatible(worker.job)
+    assert worker.job.pyre_isCompatible(task)
 
     return worker, task
 

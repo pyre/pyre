@@ -5,12 +5,8 @@
 # (c) 1998-2016 all rights reserved
 #
 
-
 PROJECT = pyre
 PROJ_TIDY += __pycache__
-
-#--------------------------------------------------------------------------
-#
 
 all: test
 
