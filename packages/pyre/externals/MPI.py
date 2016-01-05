@@ -99,14 +99,6 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
                 if alternative.startswith(installation.flavor):
                     # instantiate the package and return it
                     yield installation(name=alternative)
-                # otherwise
-                else:
-                    # this is a bug...
-                    import journal
-                    # so complain
-                    raise journal.firewall('pyre.externals.MPI').log(
-                        "unknown MPI flavor for package {!r}".format(alternative))
-
         # out of ideas
         return
 
