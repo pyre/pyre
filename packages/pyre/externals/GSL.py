@@ -121,7 +121,7 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
         # convert it into the actual file name
-        libgsl = self.pyre_host.dynamicLibrary('gslcblas')
+        libgsl = self.pyre_host.dynamicLibrary(stem)
         # find it
         libdir = dpkg.findfirst(target=libgsl, contents=dpkg.contents(package=dev))
         # and save it
