@@ -70,7 +70,7 @@ class DarkBackground(NoColor, family="journal.schemes.dark"):
     filename = pyre.properties.str(default="light-green")
     line = pyre.properties.str(default="light-green")
     function = pyre.properties.str(default="light-purple")
-    stackTrace = pyre.properties.str(default="none")
+    stackTrace = pyre.properties.str(default="<none>")
 
     src = pyre.properties.str(default="yellow")
 
@@ -94,7 +94,7 @@ class LightBackground(NoColor, family="journal.schemes.light"):
     filename = pyre.properties.str(default="blue")
     line = pyre.properties.str(default="blue")
     function = pyre.properties.str(default="blue")
-    stackTrace = pyre.properties.str(default="none")
+    stackTrace = pyre.properties.str(default="<none>")
 
     src = pyre.properties.str(default="blue")
 

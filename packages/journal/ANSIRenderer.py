@@ -97,8 +97,8 @@ class ANSIRenderer(pyre.component, family="journal.renderers.ansi", implements=R
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
-
         # grab my scheme
         scheme = self.scheme
         # build my palette
@@ -106,7 +106,6 @@ class ANSIRenderer(pyre.component, family="journal.renderers.ansi", implements=R
             trait.name: self.colors[getattr(scheme, trait.name)]
             for trait in self.scheme.pyre_traits()
             }
-
         # all done
         return
 
@@ -114,8 +113,8 @@ class ANSIRenderer(pyre.component, family="journal.renderers.ansi", implements=R
     # private data
     esc = "[{}m"
     colors = {
-        "": "", # no color given
-        "none": "", # no color
+        "": "", # no color name was given
+        "<none>": "", # no color
         "normal": esc.format("0"), # reset back to whatever is the default for the terminal
 
         # regular colors
