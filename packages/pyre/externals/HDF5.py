@@ -132,13 +132,13 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         # in order to identify my {libdir}, search for one of my libraries
         stem = self.flavor
         # convert it into the actual file name
-        libhdf5 = self.pyre_host.dynamicLibrary('hdf5')
+        libhdf5 = self.pyre_host.dynamicLibrary(stem)
         # find it
         libdir = dpkg.findfirst(target=libhdf5, contents=dpkg.contents(package=dev))
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
-        self.libraries = stem
+        self.libraries = stem, stem+'_cpp'
 
         # now that we have everything, compute the prefix
         self.prefix = self.commonpath(folders=self.incdir+self.libdir)
@@ -174,13 +174,15 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
-        libhdf5 = self.pyre_host.dynamicLibrary('hdf5')
+        stem = self.flavor
+        # convert it into the actual file name
+        libhdf5 = self.pyre_host.dynamicLibrary(stem)
         # find it
         libdir = macports.findfirst(target=libhdf5, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
-        self.libraries = 'hdf5'
+        self.libraries = stem, stem+'_cpp'
 
         # now that we have everything, compute the prefix
         self.prefix = self.commonpath(folders=self.incdir+self.libdir)
