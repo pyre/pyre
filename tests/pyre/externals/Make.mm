@@ -22,10 +22,10 @@ configurations: blas cython gcc gsl hdf5 mpi postgres python vtk
 
 blas:
 	${PYTHON} ./blas.py
-	${PYTHON} ./blas.py --blas=gsl
+	${PYTHON} ./blas.py --blas=gslcblas
 	${PYTHON} ./blas.py --blas=atlas
 	${PYTHON} ./blas.py --blas=openblas
-	${PYTHON} ./blas.py --blas=gsl#mga
+	${PYTHON} ./blas.py --blas=gslcblas#mga
 	${PYTHON} ./blas.py --blas=atlas#mga
 	${PYTHON} ./blas.py --blas=openblas#mga
 
