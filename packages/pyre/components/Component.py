@@ -31,9 +31,18 @@ class Component(Configurable, metaclass=Actor, internal=True):
     # framework data
     pyre_inventory = None # my inventory management strategy
     pyre_implements = None # my protocol
-
+    pyre_isComponent = True
 
     # introspection
+    @property
+    def pyre_key(self):
+        """
+        Look up my key
+        """
+        # ask my inventory
+        return self.pyre_inventory.key
+
+
     @property
     def pyre_name(self):
         """
@@ -264,5 +273,60 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # all done
         return
 
+
+    # compatibility check
+    @classmethod
+    def pyre_isCompatible(cls, spec, fast=True):
+        """
+        Check whether {cls} is assignment compatible with {spec}, i.e. whether it provides at
+        least the properties and behaviors specified by {spec}
+        """
+        # print("CP: me={}, other={}".format(cls, spec))
+        # chain up
+        report = super().pyre_isCompatible(spec=spec, fast=fast)
+        # if an incompatibility were detected and we are not interested in the full picture
+        if fast and not report.isClean:
+            # print(' ** early exit: {}'.format(report.incompatibilities))
+            # we are done
+            return report
+
+        # if {spec} is not a protocol
+        if not spec.pyre_isProtocol:
+            # we are done
+            return report
+
+        # grab my protocol
+        protocol = cls.pyre_implements
+        # if i don't have one, or i'm checking my own
+        if not protocol or protocol == spec:
+            # we are done
+            return report
+
+        # now, check that my protocol and {spec} are type compatible
+        if not protocol.pyre_isTypeCompatible(spec):
+            # build an error description
+            error = cls.ProtocolCompatibilityError(configurable=cls, protocol=spec)
+            # add it to the report
+            report.incompatibilities[spec].append(error)
+            # bail out if we are in fast mode
+            if fast: return report
+
+        # all done
+        return report
+
+"""
+            # grab the spec's key
+            specKey = spec.pyre_key
+            # go through each of the ancestors of my protocol
+            for ancestor in protocol.pyre_pedigree:
+                # if the ancestor is not a protocol, move on
+                if not ancestor.pyre_isProtocol: continue
+                # if it is a protocol get its family name
+                key = ancestor.pyre_key
+                # if they are the same
+                if key == specKey:
+                    # we have a match
+                    break
+"""
 
 # end of file

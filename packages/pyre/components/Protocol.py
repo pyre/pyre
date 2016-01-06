@@ -32,6 +32,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # framework data
     pyre_key = None
+    pyre_isProtocol = True
 
 
     # override this in your protocols to provide the default implementation
@@ -63,10 +64,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Look up my family name
         """
-        # if i don't have a key, i don't have a family
-        if cls.pyre_key is None: return None
-        # otherwise, ask the nameserver
-        return cls.pyre_nameserver.getName(cls.pyre_key)
+        # get my key
+        key = cls.pyre_key
+        # if i don't have a key, i don't have a family; otherwise, ask the nameserver
+        return cls.pyre_nameserver.getName(cls.pyre_key) if key is not None else None
 
 
     @classmethod
@@ -74,10 +75,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Look up my family name
         """
-        # if i don't have a key, i don't have a family
-        if cls.pyre_key is None: return ()
-        # otherwise, ask the nameserver
-        return cls.pyre_nameserver.getSplitName(cls.pyre_key)
+        # get my key
+        key = cls.pyre_key
+        # if i don't have a key, i don't have a family, otherwise, ask the nameserver
+        return cls.pyre_nameserver.getSplitName(cls.pyre_key) if key is not None else None
 
 
     @classmethod
@@ -110,8 +111,15 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # uris that resolve to a retrievable component, as well as uris that mention an
         # existing instance
         for candidate in executive.resolve(uri=spec, protocol=cls, **kwds):
+            # we have a candidate; now it's time to decide whether it is acceptable. the
+            # definition of what's acceptable is somewhat complicated because there are many
+            # sensible use cases to support. the first step is to check whether the candidate
+            # fulfills the obligations defined my this protocol, i.e. it has the correct
+            # properties and behaviors. then, there are issues of pedigree that must be resoved
+            # on a case by case basis
+
             # if it is compatible with my protocol
-            if candidate.pyre_isCompatible(cls):
+            if candidate.pyre_isCompatible(spec=cls):
                 # we are done
                 return candidate
 
@@ -338,24 +346,26 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         for name, entity in cls.pyre_executive.retrieveComponents(uri=uri):
             # if the entity is a component
             if isinstance(entity, cls.actor):
-                # if it is compatible with me
-                if entity.pyre_isCompatible(cls, fast=True):
+                # and it is compatible with me
+                if entity.pyre_isCompatible(spec=cls, fast=True):
                     # pass it along
                     yield uri, name, entity
                 # grab the next one
                 continue
+
             # if the entity is a foundry
             if isinstance(entity, cls.foundry):
                 # check whether any of its protocols
                 for protocol in entity.pyre_implements:
                     # is compatible with me
-                    if protocol.pyre_isCompatible(cls, fast=True):
+                    if protocol.pyre_isCompatible(spec=cls, fast=True):
                         # in which case, pass it along
                         yield uri, name, entity
                         # stop checking other protocols
                         break
                 # grab the next one
                 continue
+
             # other kinds?
             import journal
             return journal.firewall.log("new kind of symbol in shelf {!r}".format(str(uri)))
@@ -363,6 +373,105 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # all done
         return
 
+
+    # compatibility checks
+    @classmethod
+    def pyre_isCompatible(cls, spec, fast=True):
+        """
+        Check whether {this} protocol is compatible with the {other}
+        """
+        # print("PP: me={}, other={}".format(cls, spec))
+        # first, the easy cases am i looking in the mirror?
+        if cls == spec:
+            # easy; no need to build a report since the rest of the code is not supposed to
+            # touch the report unless it evaluates to {False}
+            return True
+
+        # i am never compatible with components...
+        if spec.pyre_isComponent:
+            # in fact, let's treat asking the question as a bug
+            import journal
+            # so complain
+            raise journal.firewall('pyre.components').log(
+                'PC compatibility checks are not supported')
+
+        # do the assignment compatibility check
+        report = super().pyre_isCompatible(spec=spec, fast=fast)
+        # if we are in fast mode and got an error
+        if fast and report:
+            # all done
+            return report
+
+        # all done
+        return report
+
+
+    @classmethod
+    def pyre_isTypeCompatible(cls, protocol):
+        """
+        Decide whether {cls} is type compatible with the given {protocol}
+
+        The intent here is to enable protocols to tighten or loosen this definition to fit
+        their specific use cases. The implementation is based on pedigree comparisons between
+        {cls} and {protocol}
+        """
+        # show me
+        # print("me: {}, other: {}".format(cls, protocol))
+
+        # I am automatically compatible with my ancestors
+        if issubclass(cls, protocol):
+            # print('  ** subclass **')
+            # we are compatible
+            return True
+
+        # it is possible for protocol to be an ancestor, yet the subclass check fails; this
+        # happens when protocols and components are dynamically imported from the filesystem as
+        # part of the specification resolution process; we need an additional check in this case
+
+        # the following works well enough for protocols with families; we can use the hash key
+        # to identify ancestor classes
+
+        # grab the hash key of the target
+        key = protocol.pyre_key
+        # if it's a public protocol
+        if key:
+            # go through each of my ancestors
+            for ancestor in cls.pyre_pedigree:
+                # get my key
+                mine = ancestor.pyre_key
+                # if they are the same
+                if mine == key:
+                    # we have a match
+                    return True
+
+        # in order to support downward compatibility by packages that subclass protocols for
+        # administrative reasons without adding any new requirements, we permit the reveres of
+        # the above; it may sound strange, but it should be safe. we have already done the
+        # trait check, so we can relax the type check a little bit
+
+        # case in point are actions, which currently do some framework magic to ensure that
+        # actions inherited from ancestral packages are retrievable. we may drop this
+        # stretching here as soon as that's implemented in a better way
+
+        # we can't stretch too far though; we should not allow {cls} and {protocol} to be
+        # compatible if they have a common ancestor; you don't want a blas instance to satisfy
+        # the hdf5 requirement, just because they are both libraries...
+
+        # grab my hash key
+        mine = cls.pyre_key
+        # if i am a public protocol
+        if mine:
+            # go through each of the target's ancestors
+            for ancestor in protocol.pyre_pedigree:
+                # get her key
+                hers = ancestor.pyre_key
+                # if they are the same
+                if mine == hers:
+                    # we have a match
+                    return True
+
+        # otherwise
+        return False
 
 
     # constants

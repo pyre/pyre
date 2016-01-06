@@ -20,6 +20,14 @@ class CompatibilityReport:
     other = None # the specification we are trying to match
 
 
+    @property
+    def isClean(self):
+        """
+        Check whether there are any incompatibilities to report
+        """
+        return len(self.incompatibilities) == 0
+
+
     # meta methods
     def __init__(self, this, other, **kwds):
         super().__init__(**kwds)
@@ -35,7 +43,8 @@ class CompatibilityReport:
         """
         Convert to True if no incompatibilities were reported
         """
-        return len(self.incompatibilities) == 0
+        # easy enough
+        return self.isClean
 
 
 # end of file

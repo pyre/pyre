@@ -128,6 +128,25 @@ class FacilitySpecificationError(ComponentError):
         return
 
 
+class ProtocolCompatibilityError(ComponentError):
+    """
+    Exception raised when a configurable is incompatible with a suggested protocol
+    """
+
+    # public data
+    description = '{0.configurable} is incompatible with {0.protocol}'
+
+    # meta-methods
+    def __init__(self, configurable, protocol, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store my context
+        self.configurable = configurable
+        self.protocol = protocol
+        # all done
+        return
+
+
 class ResolutionError(ComponentError):
     """
     Exception raised when a protocol cannot resolve a string into a component

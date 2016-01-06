@@ -25,7 +25,8 @@ class Configurable(Dashboard):
 
     # types
     from .exceptions import (
-        FrameworkError, CategoryMismatchError, TraitNotFoundError, ConfigurationError
+        FrameworkError, CategoryMismatchError, TraitNotFoundError, ConfigurationError,
+        ProtocolCompatibilityError, ResolutionError
         )
 
 
@@ -37,6 +38,9 @@ class Configurable(Dashboard):
     pyre_traitmap = None # the map of trait names to trait descriptors
     pyre_locator = None # the location of the configurable declaration
     pyre_internal = True # mark this configurable as not visible to end users
+
+    pyre_isProtocol = False
+    pyre_isComponent = False
 
 
     # basic support for the help system
@@ -238,46 +242,54 @@ class Configurable(Dashboard):
 
     # compatibility check
     @classmethod
-    def pyre_isCompatible(this, other, fast=False):
+    def pyre_isCompatible(cls, spec, fast=True):
         """
-        Check whether {this} is assignment compatible with {other}, i.e. whether it provides at
-        least the properties and behaviors specified by {other}
+        Check whether {cls} is assignment compatible with {spec}
+
+        Here, we confine ourselves to the part of the problem that involves assignment
+        compatibility, i.e. whether {cls} provides at least the properties and behaviors
+        specified by {spec}. More general compatibility notions are supported by the
+        subclasses.
 
         If {fast} is True, this method will return as soon as it encounters the first
         incompatibility issue, without performing an exhaustive check of all traits. If {fast}
         is False, a thorough check of all traits will be performed resulting in a detailed
         compatibility report.
         """
-        # gain access to the report factory
+        # get the report factory
         from .CompatibilityReport import CompatibilityReport
-        # build an empty one
-        report = CompatibilityReport(this, other)
-        # iterate over the traits of {other}
-        for hers in other.pyre_traits():
-            # check existence
+        # to build an empty one
+        report = CompatibilityReport(cls, spec)
+
+        # iterate over the traits of {spec}
+        for hers in spec.pyre_traits():
+            # if i have a trait by this name
             try:
-                # here is mine
-                mine = this.pyre_traitmap[hers.name]
-            # oops
+                # grab it
+                mine = cls.pyre_traitmap[hers.name]
+            # if i don't, we have an incompatibility
             except KeyError:
                 # build an error description
-                error = this.TraitNotFoundError(configurable=this, name=hers.name)
+                error = cls.TraitNotFoundError(configurable=cls, name=hers.name)
                 # add it to the report
                 report.incompatibilities[hers].append(error)
-                # bail out if we are in fast mode
+                # if we are in fast mode, we have done enough
                 if fast: return report
-                # otherwise move on to the next trait
+                # move on to the next trait
                 continue
+
             # are the two traits instances of compatible classes?
             if not issubclass(type(mine), type(hers)):
                 # build an error description
-                error = this.CategoryMismatchError(configurable=this, target=other, name=hers.name)
+                error = cls.CategoryMismatchError(configurable=cls, target=spec, name=hers.name)
                 # add it to the report
                 report.incompatibilities[hers].append(error)
-                # bail out if we are in fast mode
+                # if we are in fast mode, we have done enough
                 if fast: return report
-                # otherwise move on to the next trait
+                # otherwise move on to the next trait. N.B. the superfluous {continue} is here
+                # in case more checking is added after this paragraph
                 continue
+
         # all done
         return report
 

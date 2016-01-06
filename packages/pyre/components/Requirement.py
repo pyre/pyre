@@ -202,4 +202,39 @@ class Requirement(AttributeClassifier):
         return
 
 
+    # type checks
+    @classmethod
+    def pyre_isComponent(self, configurable):
+        """
+        Check whether {configurable} is a component
+        """
+        # try to
+        try:
+            # ask it
+            flag = configurable.pyre_isComponent
+        # if it doesn't know how to answer the question
+        except AttributeError:
+            # it isn't
+            flag = False
+        # all done
+        return flag
+
+
+    @classmethod
+    def pyre_isProtocol(self, configurable):
+        """
+        Check whether {configurable} is a protocol
+        """
+        # try to
+        try:
+            # ask it
+            flag = configurable.pyre_isProtocol
+        # if it doesn't know how to answer the question
+        except AttributeError:
+            # it isn't
+            flag = False
+        # all done
+        return flag
+
+
 # end of file

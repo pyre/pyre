@@ -82,7 +82,7 @@ class Foundry:
         # take care of {None} and anything false or empty
         if not items: return ()
         # if {items} is any iterable
-        if isinstance(items, collections.Iterable):
+        if isinstance(items, collections.abc.Iterable):
             # turn it into a tuple
             return tuple(items)
         # otherwise, place the lone item into a tuple

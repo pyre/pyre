@@ -7,7 +7,7 @@
 
 
 # externals
-import collections
+import collections, itertools
 from .. import tracking
 # superclass
 from .Requirement import Requirement
@@ -76,12 +76,12 @@ class Actor(Requirement):
         protocol = self.pyre_implements
         # if one was derivable from the declaration, check protocol compatibility
         if protocol:
-            # check whether the requirements were implemented correctly
-            check = self.pyre_isCompatible(protocol)
-            # if not
-            if not check:
+            # generate a compatibility report
+            report = self.pyre_isCompatible(protocol)
+            # if it's not a clean sheet
+            if not report:
                 # complain
-                raise self.ProtocolError(self, protocol, check)
+                raise self.ProtocolError(self, protocol, report)
 
         # all done
         return
@@ -181,40 +181,39 @@ class Actor(Requirement):
         Build a class that describes the implementation requirements imposed on this
         {component}, given its class record and the list of protocols it {implements}
         """
-        # initialize the list of protocols
-        protocols = collections.OrderedDict()
-
         # try to understand what the component author specified
         if implements is not None:
-            # accumulator for the protocols {component} doesn't implement correctly
-            errors = []
-            # if {implements} is a single protocol, add it to the pile
-            if isinstance(implements, cls.Role): protocols[implements] = None
+            # if {implements} is a single protocol
+            if cls.pyre_isProtocol(implements):
+                # make a pile with one entry
+                mine = implements,
             # the only legal alternative is an iterable of {Protocol} subclasses
+            elif isinstance(implements, collections.abc.Iterable):
+                # go through its contents and collect the ones that are not protocols
+                errors = tuple(itertools.filterfalse(cls.pyre_isProtocol, implements))
+                # if there were any
+                if errors:
+                    # complain
+                    raise cls.ImplementationSpecificationError(name=name, errors=errors)
+                # otherwise, they were all protocols; put them on a pile
+                mine = tuple(implements)
+            # in any other case
             else:
-                try:
-                    for protocol in implements:
-                        # if it's an actual {Protocol} subclass
-                        if isinstance(protocol, cls.Role):
-                            # add it to the pile
-                            protocols[protocol] = None
-                        # otherwise, place it in the error bin
-                        else:
-                            errors.append(protocol)
-                # if {implemenents} is not iterable
-                except TypeError as error:
-                    # put it in the error bin
-                    errors.append(implements)
-            # report the errors we encountered
-            if errors: raise cls.ImplementationSpecificationError(name=name, errors=errors)
+                # the entire specification is unrecognizable, so complain
+                raise cls.ImplementationSpecificationError(name=name, errors=[implements])
+        # otherwise
+        else:
+            # i don't have an implementation specification
+            mine = ()
 
         # now, add the commitments made by my immediate ancestors
-        protocols.update(
-            (base.pyre_implements, None) for base in bases
-            if isinstance(base, cls) and base.pyre_implements is not None)
+        inherited = tuple(
+            base.pyre_implements
+            for base in bases
+            if cls.pyre_isComponent(base) and base.pyre_implements is not None)
 
-        # convert to a tuple
-        protocols = tuple(protocols.keys())
+        # assemble the full set
+        protocols = mine + inherited
         # bail out if we didn't manage to find any protocols
         if not protocols: return None
         # if there is only one protocol on my pile
