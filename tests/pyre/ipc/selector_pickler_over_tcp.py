@@ -25,7 +25,7 @@ clientdbg = journal.debug("selector.client")
 
 def test():
     # build the marshaller
-    m = pyre.ipc.pickler()
+    m = pyre.ipc.newPickler()
     # and the communication channels
     server, client = pyre.ipc.pipe()
 
@@ -49,7 +49,7 @@ def onServer(clientPid, marshaller, pipe):
 
     # build my selector
     serverdbg.log("server: building a selector")
-    s = pyre.ipc.selector()
+    s = pyre.ipc.newSelector()
 
     # establish a network presence
     port = pyre.ipc.port()
@@ -98,7 +98,7 @@ def onClient(clientPid, marshaller, pipe):
 
     # build my selector
     clientdbg.log("client: building a selector")
-    s = pyre.ipc.selector()
+    s = pyre.ipc.newSelector()
 
     # the port notification routine
     def recvAddress(channel, **kwds):

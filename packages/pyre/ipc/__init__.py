@@ -5,6 +5,8 @@
 # (c) 1998-2016 all rights reserved
 #
 
+# the marker of component factories
+from .. import foundry
 
 # channel access
 def pipe(descriptors=None, **kwds):
@@ -64,10 +66,65 @@ def inet(spec=''):
 # my protocols
 from .Dispatcher import Dispatcher as dispatcher
 from .Marshaller import Marshaller as marshaller
-# my components
-from .Pickler import Pickler as pickler
-from .Scheduler import Scheduler as scheduler
-from .Selector import Selector as selector
+
+# my component foundries
+@foundry(implements=marshaller)
+def pickler():
+    """
+    A marshaller that uses native python services to serialize objects
+    """
+    # grab the component class record
+    from .Pickler import Pickler as pickler
+    # and return it
+    return pickler
+
+@foundry
+def scheduler():
+    """
+    A component that enables the construction of applications with event loops
+    """
+    # grab the component class record
+    from .Scheduler import Scheduler as scheduler
+    # and return it
+    return scheduler
+
+@foundry
+def selector():
+    """
+    A scheduler that can listen to file objects
+    """
+    # grab the component class record
+    from .Selector import Selector as selector
+    # and return it
+    return selector
+
+# my component factories; use to build an actual istance
+def newPickler(**kwds):
+    """
+    A marshaller that uses native python services to serialize objects
+    """
+    # grab the component class record
+    from .Pickler import Pickler as pickler
+    # and return it
+    return pickler(**kwds)
+
+def newScheduler(**kwds):
+    """
+    A component that enables the construction of applications with event loops
+    """
+    # grab the component class record
+    from .Scheduler import Scheduler as scheduler
+    # and return it
+    return scheduler(**kwds)
+
+def newSelector(**kwds):
+    """
+    A scheduler that can listen to file objects
+    """
+    # grab the component class record
+    from .Selector import Selector as selector
+    # and return it
+    return selector(**kwds)
 
 
 # end of file

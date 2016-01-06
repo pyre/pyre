@@ -19,7 +19,7 @@ def test():
     # access the package
     import pyre.ipc
     # instantiate a selector
-    s = pyre.ipc.selector()
+    s = pyre.ipc.newSelector()
 
     # get time
     from time import time as now

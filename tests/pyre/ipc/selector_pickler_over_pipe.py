@@ -25,7 +25,7 @@ childdbg = journal.debug("selector.child")
 
 def test():
     # build the marshaller
-    m = pyre.ipc.pickler()
+    m = pyre.ipc.newPickler()
     # and the communication channels
     parent, child = pyre.ipc.pipe()
 
@@ -46,7 +46,7 @@ def onParent(child_pid, marshaller, channel):
 
     # instantiate a selector
     parentdbg.log("parent: building a selector")
-    s = pyre.ipc.selector()
+    s = pyre.ipc.newSelector()
 
     # write-ready handler
     def parent_send(channel, **kwds):
@@ -101,7 +101,7 @@ def onChild(marshaller, channel):
 
     # instantiate a selector
     childdbg.log("child: building a selector")
-    s = pyre.ipc.selector()
+    s = pyre.ipc.newSelector()
 
     # get my pid
     child_pid = os.getpid()

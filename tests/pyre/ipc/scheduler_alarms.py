@@ -16,7 +16,7 @@ def test():
     # access the package
     import pyre.ipc
     # instantiate a scheduler
-    s = pyre.ipc.scheduler()
+    s = pyre.ipc.newScheduler()
 
     # get select
     import select
