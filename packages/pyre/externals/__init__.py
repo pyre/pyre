@@ -51,15 +51,86 @@ from .Library import Library as library
 
 
 # the package abstractions
-from .BLAS import BLAS as blas
-from .Cython import Cython as cython
-from .GCC import GCC as gcc
-from .GSL import GSL as gsl
-from .HDF5 import HDF5 as hdf5
-from .MPI import MPI as mpi
-from .Postgres import Postgres as postgres
-from .Python import Python as python
-from .VTK import VTK as vtk
+def blas():
+    """
+    The BLAS package manager
+    """
+    # grab the protocol
+    from .BLAS import BLAS as blas
+    # and generate a facility
+    return blas()
+
+def cython():
+    """
+    The Cython package manager
+    """
+    # grab the protocol
+    from .Cython import Cython as cython
+    # and generate a facility
+    return cython()
+
+def gcc():
+    """
+    The GCC package manager
+    """
+    # grab the protocol
+    from .GCC import GCC as gcc
+    # and generate a facility
+    return gcc()
+
+def gsl():
+    """
+    The GSL package manager
+    """
+    # grab the protocol
+    from .GSL import GSL as gsl
+    # and generate a facility
+    return gsl()
+
+def hdf5():
+    """
+    The HDF5 package manager
+    """
+    # grab the protocol
+    from .HDF5 import HDF5 as hdf5
+    # and generate a facility
+    return hdf5()
+
+def mpi():
+    """
+    The MPI package manager
+    """
+    # grab the protocol
+    from .MPI import MPI as mpi
+    # and generate a facility
+    return mpi()
+
+def postgres():
+    """
+    The Postgres package manager
+    """
+    # grab the protocol
+    from .Postgres import Postgres as postgres
+    # and generate a facility
+    return postgres()
+
+def python():
+    """
+    The Python package manager
+    """
+    # grab the protocol
+    from .Python import Python as python
+    # and generate a facility
+    return python()
+
+def vtk():
+    """
+    The VTK package manager
+    """
+    # grab the protocol
+    from .VTK import VTK as vtk
+    # and generate a facility
+    return vtk()
 
 
 # end of file

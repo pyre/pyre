@@ -19,9 +19,11 @@ def test():
     import pyre
     # get the registered package manager
     manager = pyre.executive.externals
+    # get the python package manage
+    from pyre.externals.Python import Python
 
     # look for python; it's built-in so at least one instance must be there
-    for python in manager.choices(category=pyre.externals.python):
+    for python in manager.choices(category=Python):
         # check that we got something
         assert python
         # check that we pulled packages from the right category
