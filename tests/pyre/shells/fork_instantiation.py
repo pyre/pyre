@@ -16,7 +16,7 @@ def test():
     # access the package
     import pyre
     # build a fork and return it
-    return pyre.shells.fork(name="test")
+    return pyre.shells.fork()(name="test")
 
 
 # main

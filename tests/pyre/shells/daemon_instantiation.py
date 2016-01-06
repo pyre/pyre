@@ -16,7 +16,7 @@ def test():
     # access the framework
     import pyre
     # instantiate a daemon and return it
-    return pyre.shells.daemon(name="daemon")
+    return pyre.shells.daemon()(name="daemon")
 
 
 # main

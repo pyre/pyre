@@ -33,25 +33,103 @@ strategies. For a sophisticated example, see the {mpi} package, which provides s
 running concurrent applications using {MPI}.
 """
 
+# the marker of component factories
+from .. import foundry
 
-# the protocols
-from .Shell import Shell as shell
+# command support
 from .Action import Action as action
 
 # command implementations
-from .Command import Command as command
-from .Panel import Panel as panel
+@foundry(implements=action)
+def command():
+    """
+    The command base component
+    """
+    # grab the component class record
+    from .Command import Command as command
+    # and return it
+    return command
+
+@foundry(implements=action)
+def panel():
+    """
+    The command panel base component
+    """
+    # grab the component class record
+    from .Panel import Panel as panel
+    # and return it
+    return panel
+
+
+# application hosting support
+from .Shell import Shell as shell
 
 # the hosting strategies
-from .Script import Script as script
-from .Fork import Fork as fork
-from .Daemon import Daemon as daemon
-from .Web import Web as web
+@foundry(implements=shell)
+def script():
+    """
+    The basic application shell
+    """
+    # grab the component class record
+    from .Script import Script as script
+    # and return it
+    return script
+
+@foundry(implements=shell)
+def fork():
+    """
+    The fork shell: a shell that invokes the application main entry point in a child process
+    """
+    # grab the component class record
+    from .Fork import Fork as fork
+    # and return it
+    return fork
+
+@foundry(implements=shell)
+def daemon():
+    """
+    The daemon shell: a shell that invokes the application main entry point as long lived
+    independent process that has detached completely from its parent
+    """
+    # grab the component class record
+    from .Daemon import Daemon as daemon
+    # and return it
+    return daemon
+
+@foundry(implements=shell)
+def web():
+    """
+    The web shell: an interactive shell that presents the user with an initial web page
+    """
+    # grab the component class record
+    from .Web import Web as web
+    # and return it
+    return web
+
 
 # terminal support
 from .Terminal import Terminal as terminal
-from .ANSI import ANSI as ansi
-from .Plain import Plain as plain
+
+@foundry(implements=shell)
+def ansi():
+    """
+    A terminal that supports color control using ANSI escpae sequences
+    """
+    # grab the component class record
+    from .ANSI import ANSI as ansi
+    # and return it
+    return ansi
+
+@foundry(implements=shell)
+def plain():
+    """
+    A plain terminal with no special capabilities
+    """
+    # grab the component class record
+    from .Plain import Plain as plain
+    # and return it
+    return plain
+
 
 # the base application components
 from .Application import Application as application
