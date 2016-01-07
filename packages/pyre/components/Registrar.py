@@ -40,6 +40,10 @@ class Registrar:
         """
         # add to the pile
         self.protocols.add(protocol)
+        # notify all observers
+        for observer in self.protocolObservers:
+            # by invoking the hook
+            observer.pyre_newProtocolRegistration(protocol=protocol)
         # and hand the protocol back to the caller
         return protocol
 
@@ -54,6 +58,10 @@ class Registrar:
         for protocol in self.findRegisteredProtocols(component):
             # by registering this component as an implementor
             self.implementors[protocol].add(component)
+        # notify all observers
+        for observer in self.componentObservers:
+            # by invoking the hook
+            observer.pyre_newComponentRegistration(component=component)
         # and hand the component back to the caller
         return component
 
@@ -64,8 +72,42 @@ class Registrar:
         """
         # add this instance to the set of instances of its class
         self.components[type(instance)].add(instance)
+        # notify all observers
+        for observer in self.instanceObservers:
+            # by invoking the hook
+            observer.pyre_newInstanceRegistration(instance=instance)
         # and return it
         return instance
+
+
+    def observeProtocols(self, observer):
+        """
+        Add {observer} to the set of entities interested in the registration of new protocols
+        """
+        # add {observer} to the pile
+        self.protocolObservers.add(observer)
+        # all done
+        return self
+
+
+    def observeComponents(self, observer):
+        """
+        Add {observer} to the set of entities interested in the registration of new components
+        """
+        # add {observer} to the pile
+        self.componentObservers.add(observer)
+        # all done
+        return self
+
+
+    def observeInstances(self, observer):
+        """
+        Add {observer} to the set of entities interested in the registration of new instances
+        """
+        # add {observer} to the pile
+        self.instanceObservers.add(observer)
+        # all done
+        return self
 
 
     # implementation details
@@ -101,6 +143,7 @@ class Registrar:
 
     # meta-methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
         # map: components -> their instances
         self.components = {}
@@ -108,6 +151,12 @@ class Registrar:
         self.protocols = set()
         # map: protocols -> components that implement them
         self.implementors = collections.defaultdict(set)
+
+        # listeners
+        self.protocolObservers = weakref.WeakSet()
+        self.componentObservers = weakref.WeakSet()
+        self.instanceObservers = weakref.WeakSet()
+
         # all done
         return
 
