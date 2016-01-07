@@ -159,14 +159,6 @@ class Configurable(Dashboard):
 
 
     @classmethod
-    def pyre_behaviors(cls):
-        """
-        Generate a sequence of all my trait descriptors that are marked as configurable.
-        """
-        return filter(lambda trait: trait.isBehavior, cls.pyre_traits())
-
-
-    @classmethod
     def pyre_configurables(cls):
         """
         Generate a sequence of all my trait descriptors that are marked as configurable.
@@ -175,11 +167,59 @@ class Configurable(Dashboard):
 
 
     @classmethod
-    def pyre_localConfigurables(cls):
+    def pyre_behaviors(cls):
         """
         Generate a sequence of all my trait descriptors that are marked as configurable.
         """
+        return filter(lambda trait: trait.isBehavior, cls.pyre_traits())
+
+
+    @classmethod
+    def pyre_properties(cls):
+        """
+        Generate a sequence of all my trait descriptors that are marked as properties
+        """
+        return filter(lambda trait: trait.isProperty, cls.pyre_traits())
+
+
+    @classmethod
+    def pyre_facilities(cls):
+        """
+        Generate a sequence of all my trait descriptors that are marked as facilities
+        """
+        return filter(lambda trait: trait.isFacility, cls.pyre_traits())
+
+
+    @classmethod
+    def pyre_localConfigurables(cls):
+        """
+        Generate a sequence of my local trait descriptors that are marked as configurable.
+        """
         return filter(lambda trait: trait.isConfigurable, cls.pyre_localTraits)
+
+
+    @classmethod
+    def pyre_localBehaviors(cls):
+        """
+        Generate a sequence of my local trait descriptors that are marked as behaviors
+        """
+        return filter(lambda trait: trait.isBehavior, cls.pyre_localTraits)
+
+
+    @classmethod
+    def pyre_localProperties(cls):
+        """
+        Generate a sequence of my local trait descriptors that are marked as properties
+        """
+        return filter(lambda trait: trait.isProperty, cls.pyre_localTraits)
+
+
+    @classmethod
+    def pyre_localFacilities(cls):
+        """
+        Generate a sequence of all my trait descriptors that are marked as facilities
+        """
+        return filter(lambda trait: trait.isFacility, cls.pyre_localTraits)
 
 
     @classmethod

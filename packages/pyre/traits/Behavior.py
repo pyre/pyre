@@ -86,4 +86,8 @@ class Behavior(Trait):
             .format(self, instance))
 
 
+    def __str__(self):
+        return "{0.name!r}: a behavior".format(self)
+
+
 # end of file

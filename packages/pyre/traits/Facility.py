@@ -16,13 +16,16 @@ class Facility(Slotted, schemata.component):
     """
     The descriptor for traits that are components
     """
-
-
     # Facility is faced with the following problem: the expected results of coercing are
     # different depending on whether the object whose trait is being processed is a component
     # class or a component instance. In the latter case, we want to cast the trait value into
     # an actual component instance that is compatible with the facility requirements; in the
     # former we are happy with either a compatible component declaration or an instance.
+
+
+    # framework data
+    # predicate that indicates whether this trait is a facility
+    isFacility = True
 
 
     # public data
@@ -105,7 +108,7 @@ class Facility(Slotted, schemata.component):
 
 
     def __str__(self):
-        return "{0.name}: a facility with {0.protocol}".format(self)
+        return "{0.name!r}: a facility with {0.protocol}".format(self)
 
 
 # end of file

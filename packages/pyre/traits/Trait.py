@@ -35,6 +35,10 @@ class Trait(stem.variable, Dashboard):
     # framework data
     # predicate that indicates whether this trait is a behavior
     isBehavior = False
+    # predicate that indicates whether this trait is a property
+    isProperty = False
+    # predicate that indicates whether this trait is a facility
+    isFacility = False
     # predicate that indicates whether this trait is subject to runtime configuration
     isConfigurable = False
 

@@ -21,6 +21,11 @@ class Property(Slotted):
     """
 
 
+    # framework data
+    # predicate that indicates whether this trait is a property
+    isProperty = True
+
+
     # mixins to be included to my type offering
     class schema:
         """Mixin for handling generic values"""

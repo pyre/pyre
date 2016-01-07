@@ -86,11 +86,11 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Deduce my package name
         """
-        # get the name server
-        ns = cls.pyre_executive.nameserver
         # if i don't have a key, i don't have a package
         if cls.pyre_key is None: return None
-        # otherwise, ask the nameserver for the split family name
+        # otherwise, get the name server
+        ns = cls.pyre_executive.nameserver
+        # ask in for the split family name
         family = ns.getSplitName(cls.pyre_key)
         # the package name is the zeroth entry
         pkgName = family[0]
