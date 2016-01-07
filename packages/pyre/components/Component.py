@@ -39,8 +39,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         Look up my key
         """
-        # ask my inventory
-        return self.pyre_inventory.key
+        # get my inventory
+        inventory = self.pyre_inventory
+        # and ask it for my key; if i don't have one bail
+        return inventory.key if inventory is not None else None
 
 
     @property
@@ -48,8 +50,21 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         Look up my name
         """
-        # ask my inventory
-        return self.pyre_inventory.name
+        # get my inventory
+        inventory = self.pyre_inventory
+        # and ask it for my name; if i don't have one bail
+        return inventory.name if inventory is not None else None
+
+
+    @classmethod
+    def pyre_family(cls):
+        """
+        Deduce my family name
+        """
+        # get my inventory
+        inventory = cls.pyre_inventory
+        # ask it for my name; if i don't have one, bail
+        return inventory.name if inventory is not None else None
 
 
     @property
@@ -63,15 +78,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         family = self.pyre_family() or "<none>"
         # build the spec and return it
         return "{} # {}".format(family, name)
-
-
-    @classmethod
-    def pyre_family(cls):
-        """
-        Deduce my family name
-        """
-        # get my inventory to answer this
-        return cls.pyre_inventory.name
 
 
     @classmethod
@@ -198,7 +204,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         if name is not None:
             # use it
             fragments.append('component {!r}'.format(name))
-        # otherwise, get my family name
+        # get my family name
         family = self.pyre_family()
         # if i have one
         if family:
@@ -314,19 +320,5 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # all done
         return report
 
-"""
-            # grab the spec's key
-            specKey = spec.pyre_key
-            # go through each of the ancestors of my protocol
-            for ancestor in protocol.pyre_pedigree:
-                # if the ancestor is not a protocol, move on
-                if not ancestor.pyre_isProtocol: continue
-                # if it is a protocol get its family name
-                key = ancestor.pyre_key
-                # if they are the same
-                if key == specKey:
-                    # we have a match
-                    break
-"""
 
 # end of file
