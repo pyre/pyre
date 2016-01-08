@@ -13,7 +13,7 @@ from .Package import Package
 
 
 # my declaration
-class Tool(Package, family='pyre.externals.tools'):
+class Tool(Package):
     """
     Base class for external tools
     """

@@ -13,7 +13,7 @@ from .Package import Package
 
 
 # my declaration
-class Library(Package, family='pyre.externals.libraries'):
+class Library(Package):
     """
     Base class for third party libraries
     """
