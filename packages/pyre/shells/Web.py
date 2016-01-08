@@ -8,7 +8,6 @@
 
 # externals
 import pyre
-import webbrowser
 # my superclass
 from .Executive import Executive
 
@@ -18,6 +17,10 @@ class Web(Executive, family='pyre.shells.web'):
     """
     A shell enables application interactivity over the web
     """
+
+    # user configurable state
+    auto = pyre.properties.bool(default=True)
+    auto.doc = 'controls whether to automatically launch the browser'
 
 
     # interface
@@ -37,10 +40,16 @@ class Web(Executive, family='pyre.shells.web'):
 
         # get the address of the web server
         address = nexus.services['web'].address
-        # form a url
-        url = 'http://localhost:{.port}/'.format(address)
-        # launch the browser
-        webbrowser.open(url)
+        # show me
+        application.info.log('web server on {}'.format(address))
+        # if we were asked to launch a browser
+        if self.auto:
+            # grab the package with the browser selection logic
+            import webbrowser
+            # form a url
+            url = 'http://localhost:{.port}/'.format(address)
+            # launch the browser
+            webbrowser.open(url)
 
         # set up a net
         try:
