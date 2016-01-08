@@ -32,10 +32,10 @@ class Console(pyre.component, family="journal.devices.console", implements=Devic
         """
         Record a journal entry
         """
-        # get the renderer to produce the text
-        for line in self.renderer.render(page, metadata):
-            # print it to stdout
-            print(line)
+        # assemble the text
+        text = '\n'.join(self.renderer.render(page, metadata))
+        # print it to stdout
+        print(text, flush=True)
         # and return
         return self
 
