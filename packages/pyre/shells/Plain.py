@@ -15,7 +15,7 @@ from .Terminal import Terminal as terminal
 
 
 # declaration
-class Plain(pyre.component, family='pyre.shells.terminals.plain', implements=terminal):
+class Plain(pyre.component, family='pyre.terminals.plain', implements=terminal):
 
 
     # implementation details

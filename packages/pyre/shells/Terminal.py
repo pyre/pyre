@@ -11,7 +11,7 @@ import pyre
 
 
 # declaration
-class Terminal(pyre.protocol, family='pyre.shells.terminals'):
+class Terminal(pyre.protocol, family='pyre.terminals'):
     """
     An abstraction for the capabilities of user terminals
     """
