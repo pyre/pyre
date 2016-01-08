@@ -46,7 +46,7 @@ class Foundry:
             """
             Convert a component factory into a foundry
             """
-            # just build one of my instance
+            # just build one of my instances
             return cls(factory=factory, implements=implements, tip=tip, **kwds)
 
         # to hand over

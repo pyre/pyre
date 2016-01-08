@@ -132,16 +132,14 @@ class Executive:
         The "import" scheme requires that the component descriptor is accessible on the python
         path. The corresponding codec interprets {address} as two parts: {package}.{symbol},
         with {symbol} being the trailing part of {address} after the last '.'. The codec then
-        uses the interpreter to import the symbol {symbol} using {address} to access the
-        containing module. For example, the {uri}
+        uses the interpreter to import the {symbol} using {address} to access the containing
+        module. For example, the {uri}
 
             import:gauss.shapes.box
 
         is treated as if the following statement had been issued to the interpreter
 
             from gauss.shapes import box
-
-        See below for the requirements myFactory must satisfy
 
         Any other scheme specification is interpreted as a request for a file based component
         factory. The {address} is again split into two parts: {path}/{symbol}, where {symbol}
@@ -153,19 +151,20 @@ class Executive:
             vfs:/local/shapes.odb/box
 
         implies that the fileserver can resolve the address {local/shapes.odb} into a valid
-        file within the virtual filesystem that forms the application namespace. The symbol
-        referenced by the {symbol} fragment must be a callable that can produce component class
-        records when called. For example, the file {shapes.odb} might contain
+        file within the virtual filesystem that forms the application namespace. The referenced
+        {symbol} must be a callable that can produce component class records when called. For
+        example, the file {shapes.odb} might contain
 
             import pyre
             class box(pyre.component): pass
 
         which exposes a component class {box} that has the right name and whose constructor can
         be invoked to produce component instances. If you prefer to place such declarations
-        inside functions, e.g. to avoid certain name collisions, you can use constructs such as
+        inside functions, e.g. to avoid certain name collisions, you can use mark your function
+        as a component {foundry} by decorating as follows:
 
+            @pyre.foundry(implements=())
             def box():
-                import pyre
                 class box(pyre.component): pass
                 return box
         """

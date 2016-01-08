@@ -59,9 +59,9 @@ def c():
     """
     The C weaver
     """
-    # grab the protocol
+    # grab the component class
     from .C import C as c
-    # build a facility and return it
+    # and return it
     return c
 
 @foundry(implements=language)
@@ -69,9 +69,9 @@ def csh():
     """
     The csh weaver
     """
-    # grab the protocol
+    # grab the component class
     from .CSh import CSh as csh
-    # build a facility and return it
+    # and return it
     return csh
 
 @foundry(implements=language)
@@ -79,9 +79,9 @@ def cfg():
     """
     The cfg weaver
     """
-    # grab the protocol
+    # grab the component class
     from .Cfg import Cfg as cfg
-    # build a facility and return it
+    # and return it
     return cfg
 
 @foundry(implements=language)
@@ -89,9 +89,9 @@ def cxx():
     """
     The C++ weaver
     """
-    # grab the protocol
+    # grab the component class
     from .Cxx import Cxx as cxx
-    # build a facility and return it
+    # and return it
     return cxx
 
 @foundry(implements=language)
@@ -99,9 +99,9 @@ def f77():
     """
     The FORTRAN weaver
     """
-    # grab the protocol
+    # grab the component class
     from .F77 import F77 as f77
-    # build a facility and return it
+    # and return it
     return f77
 
 @foundry(implements=language)
@@ -109,9 +109,9 @@ def f90():
     """
     The F90 weaver
     """
-    # grab the protocol
+    # grab the component class
     from .F90 import F90 as f90
-    # build a facility and return it
+    # and return it
     return f90
 
 @foundry(implements=language)
@@ -119,9 +119,8 @@ def html():
     """
     The HTML weaver
     """
-    # grab the protocol
+    # grab the component class
     from .HTML import HTML as html
-    # build a facility and return it
     return html
 
 @foundry(implements=language)
@@ -129,9 +128,9 @@ def http():
     """
     The HTTP weaver
     """
-    # grab the protocol
+    # grab the component class
     from .HTTP import HTTP as http
-    # build a facility and return it
+    # and return it
     return http
 
 @foundry(implements=language)
@@ -139,9 +138,9 @@ def make():
     """
     The make weaver
     """
-    # grab the protocol
+    # grab the component class
     from .Make import Make as make
-    # build a facility and return it
+    # and return it
     return make
 
 @foundry(implements=language)
@@ -149,9 +148,9 @@ def perl():
     """
     The perl weaver
     """
-    # grab the protocol
+    # grab the component class
     from .Perl import Perl as perl
-    # build a facility and return it
+    # and return it
     return perl
 
 @foundry(implements=language)
@@ -159,9 +158,9 @@ def python():
     """
     The python weaver
     """
-    # grab the protocol
+    # grab the component class
     from .Python import Python as python
-    # build a facility and return it
+    # and return it
     return python
 
 @foundry(implements=language)
@@ -169,9 +168,9 @@ def sql():
     """
     The SQL weaver
     """
-    # grab the protocol
+    # grab the component class
     from .SQL import SQL as sql
-    # build a facility and return it
+    # and return it
     return sql
 
 @foundry(implements=language)
@@ -179,9 +178,9 @@ def svg():
     """
     The SVG weaver
     """
-    # grab the protocol
+    # grab the component class
     from .SVG import SVG as svg
-    # build a facility and return it
+    # and return it
     return svg
 
 @foundry(implements=language)
@@ -189,9 +188,9 @@ def sh():
     """
     The sh weaver
     """
-    # grab the protocol
+    # grab the component class
     from .Sh import Sh as sh
-    # build a facility and return it
+    # and return it
     return sh
 
 @foundry(implements=language)
@@ -199,9 +198,9 @@ def tex():
     """
     The TeX weaver
     """
-    # grab the protocol
+    # grab the component class
     from .TeX import TeX as tex
-    # build a facility and return it
+    # and return it
     return tex
 
 @foundry(implements=language)
@@ -209,9 +208,9 @@ def xml():
     """
     The XML weaver
     """
-    # grab the protocol
+    # grab the component class
     from .XML import XML as xml
-    # build a facility and return it
+    # and return it
     return xml
 
 
@@ -222,7 +221,7 @@ def smith():
     """
     # grab the protocol
     from .Smith import Smith as smith
-    # build facility and return it
+    # build a facility and return it
     return smith()
 
 # the protocol that captures the project metadata
@@ -234,9 +233,9 @@ def django():
     """
     The django project type
     """
-    # grab the protocol
+    # grab the component class
     from .Django import Django as django
-    # make a facility and return it
+    # and return it
     return django
 
 @foundry(implements=project)
@@ -244,9 +243,9 @@ def plexus():
     """
     The plexus project type
     """
-    # grab the protocol
+    # grab the component class
     from .Plexus import Plexus as plexus
-    # make a facility and return it
+    # and return it
     return plexus
 
 
