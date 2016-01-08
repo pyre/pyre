@@ -110,7 +110,7 @@ def web():
 # terminal support
 from .Terminal import Terminal as terminal
 
-@foundry(implements=shell)
+@foundry(implements=terminal)
 def ansi():
     """
     A terminal that supports color control using ANSI escpae sequences
@@ -120,7 +120,7 @@ def ansi():
     # and return it
     return ansi
 
-@foundry(implements=shell)
+@foundry(implements=terminal)
 def plain():
     """
     A plain terminal with no special capabilities
