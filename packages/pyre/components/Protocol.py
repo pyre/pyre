@@ -98,6 +98,15 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         return ns[pkgName]
 
 
+    @classmethod
+    def pyre_public(cls):
+        """
+        Generate the sequence of my public ancestors, i.e. the ones that have a non-trivial family
+        """
+        # filter and return
+        return filter(lambda x: x.pyre_key, cls.pyre_pedigree)
+
+
     # support for framework requests
     @classmethod
     def pyre_resolveSpecification(cls, spec, **kwds):
@@ -157,9 +166,12 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             # assemble the address portion of the uri; we are only looking for files, so it's
             # ok to hardwire the extension
             path = resolver.join(prefix.address, folder, spec, container) + cls.EXTENSION
+            # show me the candidate path
             # print('trying {!r}'.format(path))
             # build a better uri
             uri = cls.uri.locator(scheme=prefix.scheme, address=path)
+            # show me the full uri
+            # print('candidate uri {!r}'.format(str(uri)))
             # and yield it
             yield uri
 

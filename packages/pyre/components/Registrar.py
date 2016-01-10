@@ -110,6 +110,20 @@ class Registrar:
         return self
 
 
+    def publicProtocols(self):
+        """
+        Generate a topologically sorted sequence of registered public protocols
+        """
+        # the previously visited protocols
+        visited = set()
+        # go through all the public registered protocols
+        for protocol in filter(lambda x: x.pyre_key, self.protocols):
+            # visit them and sort them
+            yield from self.depthFirst(configurable=protocol, visited=visited)
+        # all done
+        return
+
+
     # implementation details
     def findRegisteredProtocols(self, component):
         """
@@ -157,6 +171,29 @@ class Registrar:
         self.componentObservers = weakref.WeakSet()
         self.instanceObservers = weakref.WeakSet()
 
+        # all done
+        return
+
+
+    # implementation details
+    def depthFirst(self, configurable, visited):
+        """
+        Workhorse for the protocol traversal in topologically sorted order
+        """
+        # if we have visited this {configurable} before
+        if configurable in visited:
+            # we are done
+            return
+        # otherwise, grab the public ancestors
+        for base in configurable.pyre_public():
+            # skip the one we are working with
+            if base is configurable: continue
+            # visit the rest
+            yield from self.depthFirst(configurable=base, visited=visited)
+        # add this one to the pile
+        visited.add(configurable)
+        # and send it to the caller
+        yield configurable
         # all done
         return
 
