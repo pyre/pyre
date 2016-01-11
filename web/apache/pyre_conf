@@ -6,26 +6,26 @@
 # pyre virtual host definition file
 
 <VirtualHost *:80>
-    ServerName pyre.orthologue.com
+    ServerName PROJ_LIVE_HOST
     ServerAdmin web@orthologue.com
 
     # the web
-    DocumentRoot /home/projects/pyre/1.0/web/www
+    DocumentRoot PROJ_LIVE_DOCROOT
     <Directory />
         Options Indexes FollowSymLinks MultiViews
         Require all granted
     </Directory>
 
     # the applications
-    ScriptAlias /bin/ /home/projects/pyre/1.0/web/bin/
-    <Directory "/home/projects/pyre/1.0/web/bin">
+    ScriptAlias /bin/ PROJ_LIVE_WEBDIR/bin/
+    <Directory "PROJ_LIVE_WEBDIR/bin">
         Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
         Require all granted
     </Directory>
 
     # the repository
-    Alias /1.0/ /home/projects/pyre/repository/1.0/
-    <Directory /home/projects/pyre/repository/1.0/>
+    Alias /PYRE_MAJOR.PYRE_MINOR/ PROJ_LIVE_HOME/repository/PYRE_MAJOR.PYRE_MINOR/
+    <Directory PROJ_LIVE_HOME/repository/PYRE_MAJOR.PYRE_MINOR/>
         Options Indexes FollowSymLinks MultiViews
         Require all granted
     </Directory>
