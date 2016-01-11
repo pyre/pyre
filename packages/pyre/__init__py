@@ -101,7 +101,7 @@ def where(configurable, attribute=None):
 
 
 # constants
-_pyre_version = (1, 0, BZR_REVNO)
+_pyre_version = (PYRE_MAJOR, PYRE_MINOR, BZR_REVNO)
 
 _pyre_date = "DATE_COMPILED"
 

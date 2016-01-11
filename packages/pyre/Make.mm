@@ -70,6 +70,8 @@ live: live-python-modules
 # construct my {__init__.py}
 __init__.py: __init__py Make.mm
 	@sed \
+          -e "s:PYRE_MAJOR:$(PROJECT_MAJOR):g" \
+          -e "s:PYRE_MINOR:$(PROJECT_MINOR):g" \
           -e "s:BZR_REVNO:$$(bzr revno):g" \
           -e "s|DATE_COMPILED|$$(date -u)|g" \
           __init__py > __init__.py
