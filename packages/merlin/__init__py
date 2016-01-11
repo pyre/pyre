@@ -68,7 +68,7 @@ def version():
 
 # the actual text
 # NYI: add localized versions of all this
-_merlin_version = (1, 0, BZR_REVNO)
+_merlin_version = (MERLIN_MAJOR, MERLIN_MINOR, BZR_REVNO)
 
 _merlin_date = "DATE_COMPILED"
 
