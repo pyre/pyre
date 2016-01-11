@@ -39,29 +39,6 @@ class Action(pyre.protocol, family='pyre.actions'):
         """
 
 
-    # support for framework requests
-    @classmethod
-    def pyre_searchpath(cls):
-        """
-        Return an iterable over the action locations
-        """
-        # use the pyre configuration path
-        return (folder.address for folder in cls.pyre_configurator.configpath)
-
-
-    @classmethod
-    def pyre_actionFolders(cls):
-        """
-        Return an iterable over the action folder names
-        """
-        # get my context resolver
-        resolver = cls.pyre_contextResolver()
-        # ask it to build a path out of my family name fragments and return it
-        yield resolver.join(*cls.pyre_familyFragments())
-        # all done
-        return
-
-
     @classmethod
     def pyre_documentedActions(cls):
         """
