@@ -6,7 +6,8 @@
 #
 
 # the live host
-PROJ_LIVE_HOST = localhost
-PROJ_LIVE_ROOT = $(HOME)/tools
+PROJ_LIVE_HOST = pyre.orthologue.com
+PROJ_LIVE_HOME = /home/projects/$(PROJECT)
+PROJ_LIVE_ROOT = $(PROJ_LIVE_HOME)/$(PROJECT_MAJOR).$(PROJECT_MINOR)
 
 # end of file
