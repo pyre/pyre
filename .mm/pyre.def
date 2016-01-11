@@ -7,6 +7,11 @@
 
 # global options for pyre
 PROJECT = pyre
+
+# version info
+PROJECT_MAJOR = 1
+PROJECT_MINOR = 0
+
 # the live host
 include live.def
 
