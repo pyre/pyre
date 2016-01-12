@@ -14,6 +14,7 @@ include Python/default.def
 
 # the files
 EXPORT_BINS = \
+    abi.py \
     cache_tag.py \
     class.pyre \
     listdir.py \
