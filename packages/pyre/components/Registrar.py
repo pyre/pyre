@@ -30,7 +30,7 @@ class Registrar:
     # public data
     protocols = None # the set of known protocols
     components = None # the map of component classes to their instances
-    implementors = None # a map of protocols to component classes that implements them
+    implementers = None # a map of protocols to component classes that implements them
 
 
     # interface
@@ -57,7 +57,7 @@ class Registrar:
         # update the map of protocols it implements
         for protocol in self.findRegisteredProtocols(component):
             # by registering this component as an implementor
-            self.implementors[protocol].add(component)
+            self.implementers[protocol].add(component)
         # notify all observers
         for observer in self.componentObservers:
             # by invoking the hook
@@ -124,6 +124,23 @@ class Registrar:
         return
 
 
+    def publicImplementers(self, protocol):
+        """
+        Generate a sequence of public components that implement the given {protocol}
+        """
+        # go through all the implementers and filter out the ones that don't have a public key
+        yield from (
+            # grab components
+            component
+            # by picking from the implementers of the protocol
+            for component in self.implementers[protocol]
+            # the ones with a public key only
+            if component.pyre_isPublicClass()
+            )
+        # all done
+        return
+
+
     # implementation details
     def findRegisteredProtocols(self, component):
         """
@@ -164,7 +181,7 @@ class Registrar:
         # the known interfaces
         self.protocols = set()
         # map: protocols -> components that implement them
-        self.implementors = collections.defaultdict(set)
+        self.implementers = collections.defaultdict(set)
 
         # listeners
         self.protocolObservers = weakref.WeakSet()
