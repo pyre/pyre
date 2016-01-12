@@ -5357,7 +5357,7 @@ initialize its extent in
 \f1\i0 \cf3 components
 \f0\i \cf4 \
 \cf2 update 
-\f1\i0 \cf3 implementors 
+\f1\i0 \cf3 implementers 
 \f0\i \cf2 with the\
     interfaces it implements}</string>
 				<key>VerticalPad</key>
@@ -11790,7 +11790,7 @@ __prepare__}</string>
 families\
 interfaces\
 components\
-implementors}</string>
+implementers}</string>
 				<key>VerticalPad</key>
 				<integer>0</integer>
 			</dict>

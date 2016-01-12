@@ -77,12 +77,12 @@ class Loader:
             pass
         # if loading succeeds
         else:
-            # look through its implementors
-            for implementor in executive.registrar.implementors[protocol]:
+            # look through its implementers
+            for implementer in executive.registrar.implementers[protocol]:
                 # get its package
-                package = implementor.pyre_package()
+                package = implementer.pyre_package()
                 # and yield ones whose package name matches our symbol
-                if package and package.name == symbol: yield implementor
+                if package and package.name == symbol: yield implementer
 
         # out of ideas
         return

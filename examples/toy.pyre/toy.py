@@ -31,7 +31,7 @@ class task(pyre.protocol, family='toy.tasks'):
         return relax
 
 
-# the base class for task implementors
+# the base class for task implementers
 class activity(pyre.component, implements=task):
 
     duration = pyre.properties.dimensional(default=1*task.hour)

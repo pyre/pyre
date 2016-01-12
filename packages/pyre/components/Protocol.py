@@ -267,16 +267,16 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         information available to this protocol; other compatible components may be provided by
         packages that have not been imported yet, or live in files outside the canonical layout
         """
-        # all loadable implementors
+        # all loadable implementers
         yield from cls.pyre_locateAllLoadableImplementors()
-        # all importable implementors
+        # all importable implementers
         yield from cls.pyre_locateAllImportableImplementors()
 
 
     @classmethod
     def pyre_locateAllImportableImplementors(cls):
         """
-        Retrieve all implementors registered in a namespace derivable from my family name
+        Retrieve all implementers registered in a namespace derivable from my family name
         """
         # splice my family name together to form a module name
         uri = '.'.join(cls.pyre_familyFragments())
@@ -284,7 +284,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         if not uri: return
         # attempt to
         try:
-            # hunt the implementors down
+            # hunt the implementers down
             yield from cls.pyre_implementers(uri='import:{}'.format(uri))
         # if anything goes wrong
         except cls.FrameworkError:
@@ -297,7 +297,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
     @classmethod
     def pyre_locateAllLoadableImplementors(cls):
         """
-        Retrieve all implementors that live in files and folders derivable from my family name
+        Retrieve all implementers that live in files and folders derivable from my family name
         """
         # get the file server
         vfs = cls.pyre_fileserver
