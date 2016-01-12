@@ -46,8 +46,8 @@ def test():
     assert protocol in registrar.protocols
     # check that the component is correctly registered
     assert component in registrar.components
-    # check that the set of {protocol} implementors is correct
-    assert registrar.implementors[protocol] == {component}
+    # check that the set of {protocol} implementers is correct
+    assert registrar.implementers[protocol] == {component}
 
     return component
 
