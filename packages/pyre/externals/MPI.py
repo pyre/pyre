@@ -67,17 +67,16 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         with the package the user has selected as the default
         """
         # ask {dpkg} for my options
-        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
         # the supported versions
-        versions = OpenMPI, MPICH
+        flavors = OpenMPI, MPICH
         # go through the versions
-        for version in versions:
+        for flavor in flavors:
            # scan through the alternatives
-            for name in alternatives:
+            for alternative in sorted(dpkg.alternatives(group=cls), reverse=True):
                 # if it is match
-                if name.startswith(version.flavor):
+                if alternative.startswith(version.flavor):
                     # build an instance and return it
-                    yield version(name=name)
+                    yield flavor(name=alternative)
 
         # out of ideas
         return
@@ -90,15 +89,15 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         the package the user has selected as the default
         """
         # known installations
-        known = [ OpenMPI, MPICH ]
+        flavors = OpenMPI, MPICH
         # on macports, mpi is a package group
         for alternative in macports.alternatives(group=cls.category):
             # go through the known installations
-            for installation in known:
+            for flavor in flavors:
                 # if the package name starts with the installation flavor
-                if alternative.startswith(installation.flavor):
+                if alternative.startswith(flavor.flavor):
                     # instantiate the package and return it
-                    yield installation(name=alternative)
+                    yield flavor(name=alternative)
         # out of ideas
         return
 
@@ -109,9 +108,7 @@ from .LibraryInstallation import LibraryInstallation
 
 
 # the base class
-class Default(
-        ToolInstallation, LibraryInstallation,
-        family='pyre.externals.mpi.default', implements=MPI):
+class Default(ToolInstallation, LibraryInstallation, implements=MPI):
     """
     The package manager for unknown MPI installations
     """
