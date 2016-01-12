@@ -74,7 +74,7 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
            # scan through the alternatives
             for alternative in sorted(dpkg.alternatives(group=cls), reverse=True):
                 # if it is match
-                if alternative.startswith(version.flavor):
+                if alternative.startswith(flavor.flavor):
                     # build an instance and return it
                     yield flavor(name=alternative)
 
