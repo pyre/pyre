@@ -33,8 +33,8 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     template_dynamicLibrary = "{0.prefix_library}{1}{0.extension_dynamicLibrary}"
 
     # user configurable state
-    externals = pyre.platforms.packager(default=MacPorts)
-    externals.doc = 'the manager of external packages installed on this host'
+    packager = pyre.platforms.packager(default=MacPorts)
+    packager.doc = 'the manager of external packages installed on this host'
 
 
     # implementation details: explorers

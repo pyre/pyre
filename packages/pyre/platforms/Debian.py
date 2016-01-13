@@ -25,8 +25,8 @@ class Debian(Linux, family='pyre.platforms.debian'):
 
 
     # user configurable state
-    externals = pyre.platforms.packager(default=DPkg)
-    externals.doc = 'the manager of external packages installed on this host'
+    packager = pyre.platforms.packager(default=DPkg)
+    packager.doc = 'the manager of external packages installed on this host'
 
 
 # end of file

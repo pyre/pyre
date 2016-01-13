@@ -17,7 +17,7 @@ def test():
     from merlin import merlin
 
     # get the package manager
-    packages = merlin.pyre_host.externals
+    packages = merlin.pyre_host.packager
     # check it is accessible
     assert packages
 

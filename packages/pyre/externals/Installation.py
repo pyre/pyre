@@ -115,11 +115,11 @@ class Installation(pyre.component):
             return
 
         # otherwise, we have work to do; grab the package manager
-        manager = self.pyre_host.externals
+        packager = self.pyre_host.packager
         # and attempt to
         try:
             # get him to help me repair this configuration
-            manager.configure(installation=self)
+            packager.configure(installation=self)
         # if something went wrong
         except self.ConfigurationError as error:
             # report my errors
