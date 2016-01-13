@@ -248,7 +248,7 @@ class Executive:
         # and the address
         address = uri.address
         # if no {scheme} was specified, assume it is {import} and look for possible
-        # interpretation of the uri that have been loaded previously
+        # interpretations of the uri that have been loaded previously
         if not scheme:
             # check whether the {address} points to a component that has been loaded
             # previously; if there
