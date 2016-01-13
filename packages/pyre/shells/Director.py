@@ -7,7 +7,6 @@
 
 
 # externals
-import os
 import weakref
 # framework access
 import pyre

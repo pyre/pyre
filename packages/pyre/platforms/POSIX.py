@@ -6,8 +6,6 @@
 #
 
 
-# externals
-import os
 # superclass
 from .Host import Host
 

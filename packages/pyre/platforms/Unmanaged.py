@@ -7,7 +7,7 @@
 
 
 # externals
-import os, re, pathlib
+import re, pathlib
 # the framework
 import pyre
 # my protocol

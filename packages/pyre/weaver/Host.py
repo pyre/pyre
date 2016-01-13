@@ -6,8 +6,6 @@
 #
 
 
-# externals
-import os
 # the framework
 import pyre
 # my protocol
