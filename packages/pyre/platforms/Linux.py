@@ -7,7 +7,7 @@
 
 
 # externals
-import collectios, operator
+import collections, operator
 # superclass
 from .POSIX import POSIX
 
