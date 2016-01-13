@@ -45,6 +45,13 @@ def computeCallerStackDepth():
     """
     Compute the stack depth offset to get to the caller of a function
     """
+    # at one point, i though that python 3.5 placed an extra level on the stack frame; however,
+    # it doesn't seem to be the case, so we are back to treating all versions in the same
+    # way. i have left the previous version of the code untouched, just in case...
+    return 2
+
+    # this is how the code stood from revno 2327 to 2521
+
     # the depth of the stack to the caller of {log} depends on the version of python
     import sys
     # so get the version
@@ -55,7 +62,7 @@ def computeCallerStackDepth():
         return 3
     # for 3.4 and below
     if major == 3 and minor <= 4:
-        # drop 3 levels
+        # drop 2 levels
         return 2
 
     # now what
