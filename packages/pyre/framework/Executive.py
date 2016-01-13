@@ -114,7 +114,7 @@ class Executive:
         return
 
 
-    def resolve(self, uri, protocol=None, **kwds):
+    def resolve(self, uri, node=None, protocol=None, **kwds):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
 
@@ -192,12 +192,17 @@ class Executive:
 
         # make a locator
         locator = tracking.simple('while resolving {!r}'.format(uri.uri))
+        # if we have a valid node and it has a public key
+        if node and node.key:
+            # chain its locator to mine
+            locator = tracking.chain(this=locator, next=self.nameserver._metadata[node.key].locator)
         # load the component recognizers
         from ..components.Actor import Actor as actor
         from ..components.Component import Component as component
 
         # the easy things didn't work out; look for matching descriptors
-        for candidate in self.retrieveComponentDescriptor(uri=uri, protocol=protocol, **kwds):
+        for candidate in self.retrieveComponentDescriptor(
+                uri=uri, node=node, protocol=protocol, **kwds):
             # if the candidate is neither a component class nor a component instance
             if not (isinstance(candidate, actor) or isinstance(candidate, component)):
                 # it must be a foundry
