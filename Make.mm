@@ -52,15 +52,18 @@ PYRE_BOOTPKGS = pyre journal merlin
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION).$(PYTHON_ABITAG).zip
 PYRE_BOOTZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION)-boot.$(PYTHON_TAG).zip
 
-zip: build zipit
+zip: build cleanit zipit pushit cleanit
+
+cleanit:
+	$(RM_F) $(PYRE_ZIP)
 
 zipit:
-	$(RM_F) $(PYRE_ZIP)
 	for x in bin lib packages defaults etc templates web; do { \
             (cd $$x; PYRE_ZIP=$(PYRE_ZIP) $(MM) zipit) \
         } done
+
+pushit:
 	scp $(PYRE_ZIP) $(PROJ_LIVE_USERURL):$(PROJ_LIVE_DOCROOT)
-	@$(RM_F) $(PYRE_ZIP)
 
 boot:
 	@$(RM_F) $(PYRE_BOOTZIP)
