@@ -24,7 +24,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # types
     from ..schemata import uri
-    from .exceptions import FrameworkError, ResolutionError
+    from .exceptions import FrameworkError, DefaultError, ResolutionError
     from .Actor import Actor as actor
     from .Foundry import Foundry as foundry
     from .Component import Component as component

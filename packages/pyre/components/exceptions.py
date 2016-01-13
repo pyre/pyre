@@ -166,6 +166,24 @@ class ResolutionError(ComponentError):
         return
 
 
+class DefaultError(ComponentError):
+    """
+    Exception raised when a protocol cannot determine a valid default value
+    """
+
+    # public data
+    description = 'no valid default binding for {0.protocol}'
+
+    # meta-methods
+    def __init__(self, protocol, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store my context
+        self.protocol = protocol
+        # all done
+        return
+
+
 class ConfigurationError(ComponentError):
     """
     Exception raised when something bad happens during component configuration
