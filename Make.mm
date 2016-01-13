@@ -46,20 +46,25 @@ test: build tests examples
 
 # the pyre install archives
 PYTHON_TAG = ${shell $(PYTHON) bin/cache_tag.py}
+PYTHON_ABITAG = ${shell $(PYTHON) bin/abi.py}
 PYRE_VERSION = $(PROJECT_MAJOR).$(PROJECT_MINOR)
 PYRE_BOOTPKGS = pyre journal merlin
-PYRE_ZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION).$(PYTHON_TAG).zip
+PYRE_ZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION).$(PYTHON_ABITAG).zip
 PYRE_BOOTZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION)-boot.$(PYTHON_TAG).zip
 
 zip: build zipit
 
 zipit:
 	$(RM_F) $(PYRE_ZIP)
-	(cd $(EXPORT_ROOT); zip -r ${PYRE_ZIP} * )
+	for x in bin lib packages defaults etc templates web; do { \
+            (cd $$x; PYRE_ZIP=$(PYRE_ZIP) $(MM) zipit) \
+        } done
+	scp $(PYRE_ZIP) $(PROJ_LIVE_USERURL):$(PROJ_LIVE_DOCROOT)
+	@$(RM_F) $(PYRE_ZIP)
 
 boot:
 	@$(RM_F) $(PYRE_BOOTZIP)
-	@(cd $(EXPORT_ROOT)/packages; zip -r ${PYRE_BOOTZIP} $(PYRE_BOOTPKGS)--include \*.pyc)
+	@(cd $(EXPORT_ROOT)/packages; zip -r ${PYRE_BOOTZIP} $(PYRE_BOOTPKGS) --include \*.pyc)
 	scp $(PYRE_BOOTZIP) $(PROJ_LIVE_USERURL):$(PROJ_LIVE_DOCROOT)
 	@$(RM_F) $(PYRE_BOOTZIP)
 

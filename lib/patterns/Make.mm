@@ -22,4 +22,9 @@ export:: export-package-headers
 
 live: live-package-headers
 
+# archiving support
+zipit:
+	cd $(EXPORT_ROOT); \
+        zip -r $(PYRE_ZIP) include/pyre/$(PACKAGE)
+
 # end of file

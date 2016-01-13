@@ -30,4 +30,8 @@ distclean::
 live:
 	BLD_ACTION="live" $(MM) recurse
 
+# archiving support
+zipit:
+	cd $(EXPORT_ROOT); zip -r $(PYRE_ZIP) web/www/$(PROJECT)
+
 # end of file

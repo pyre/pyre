@@ -30,4 +30,8 @@ live:
 	$(SSH) $(PROJ_LIVE_USERURL) '$(RM_RF) $(LIVE_TEMPLATES)'
 	$(SCP) -r $(TEMPLATES) $(PROJ_LIVE_USERURL):$(PROJ_LIVE_TPLDIR)
 
+# archiving support
+zipit:
+	cd $(EXPORT_ROOT); zip -r $(PYRE_ZIP) templates
+
 # end of file

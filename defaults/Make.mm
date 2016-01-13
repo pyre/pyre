@@ -40,4 +40,8 @@ export:: export-etc
 live: live-etc
 	BLD_ACTION="live" $(MM) recurse
 
+# archiving support
+zipit:
+	cd $(EXPORT_ROOT); zip -r $(PYRE_ZIP) ${addprefix defaults/, $(EXPORT_ETC) $(RECURSE_DIRS)}
+
 # end of file

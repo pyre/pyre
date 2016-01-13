@@ -37,4 +37,8 @@ live: live-bin
 python.pyre: python.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LCXXFLAGS) -l$(PYTHON_LIB)
 
+# archiving support
+zipit:
+	cd $(EXPORT_ROOT); zip -r $(PYRE_ZIP) ${addprefix bin/, $(EXPORT_BINS)}
+
 # end of file

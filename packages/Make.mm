@@ -8,8 +8,6 @@
 
 # project global settings
 include pyre.def
-# the pyre archive
-PYRE_ZIP = $(EXPORT_ROOT)/pyre-${PYRE_VERSION}.zip
 # my subdirectories
 RECURSE_DIRS = \
     $(PACKAGES)
@@ -55,11 +53,9 @@ distclean::
 live:
 	BLD_ACTION="live" $(MM) recurse
 
-# convenience
-zip:
-	for package in $(PACKAGES); do { \
-	    ( cd $${package}; zip -r ${PYRE_ZIP} $${package}; ) \
-	} done
+# archiving support
+zipit:
+	cd $(EXPORT_ROOT); zip -r $(PYRE_ZIP) ${addprefix packages/, $(PACKAGES)}
 
 # shortcuts for building specific subdirectories
 .PHONY: $(RECURSE_DIRS)

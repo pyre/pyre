@@ -41,4 +41,8 @@ export::
 live:
 	BLD_ACTION="live" $(MM) recurse
 
+# archiving support
+zipit:
+	PYRE_ZIP=$(PYRE_ZIP) BLD_ACTION="zipit" $(MM) recurse
+
 # end of file

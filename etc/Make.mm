@@ -11,4 +11,7 @@ include pyre.def
 # standard targets
 all: tidy
 
+# archiving support
+zipit:
+
 # end of file
