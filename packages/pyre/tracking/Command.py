@@ -14,7 +14,7 @@ class Command:
 
 
     # constant
-    source = 'command line: {!r}'
+    source = 'from the command line argument {!r}'
 
 
     # meta methods

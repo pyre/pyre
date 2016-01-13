@@ -17,7 +17,7 @@ def script():
 
     locator = pyre.tracking.command(arg='--help')
 
-    assert str(locator) == "command line: '--help'"
+    assert str(locator) == "from the command line argument '--help'"
 
     return locator
 
