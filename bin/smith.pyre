@@ -19,8 +19,7 @@ if __name__ == '__main__':
     status = app.run()
 
     # return the exit code to the shell
-    import sys
-    sys.exit(status)
+    raise SystemExit(status)
 
 
 # end of file

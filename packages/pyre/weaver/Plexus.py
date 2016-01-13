@@ -13,7 +13,7 @@ from .ProjectTemplate import ProjectTemplate
 
 
 # declaration
-class Plexus(ProjectTemplate, family='pyre.smith.projects.plexus'):
+class Plexus(ProjectTemplate, family='pyre.weaver.projects.plexus'):
     """
     Encapsulation of the project information
     """

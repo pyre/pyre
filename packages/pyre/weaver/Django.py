@@ -13,7 +13,7 @@ from .ProjectTemplate import ProjectTemplate
 
 
 # declaration
-class Django(ProjectTemplate, family='pyre.smith.projects.django'):
+class Django(ProjectTemplate, family='pyre.weaver.projects.django'):
     """
     Encapsulation of the project information
     """

@@ -215,14 +215,14 @@ def xml():
 
 
 # the templater
-def smith():
+def smith(**kwds):
     """
     The templater facility
     """
     # grab the protocol
     from .Smith import Smith as smith
     # build a facility and return it
-    return smith()
+    return smith(**kwds)
 
 # the protocol that captures the project metadata
 from .Project import Project as project
