@@ -34,6 +34,9 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
     distribution = None # a clue about the package manager on this machine
 
     # user configurable state
+    externals = pyre.properties.dict(schema=pyre.properties.str())
+    externals.doc = 'a map of package categories to installation instances'
+
     packager = pyre.platforms.packager()
     packager.doc = 'the manager of external packages installed on this host'
 

@@ -46,8 +46,19 @@ class Package(pyre.protocol, family='pyre.externals'):
             # moving on
             pass
 
-        # get the package manager
-        packager = cls.pyre_host.packager
+        # next, get the host
+        host = cls.pyre_host
+        # check whether there is a registered preference for this category
+        try:
+            # if so, we are done
+            return host.externals[cls.category]
+        # if not
+        except (KeyError, AttributeError):
+            # moving on
+            pass
+
+        # finally, get the package manager
+        packager = host.packager
         # go through my host specific choices
         for package in packager.choices(category=cls):
             # i only care about the first one
