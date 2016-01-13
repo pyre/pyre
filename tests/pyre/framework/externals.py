@@ -18,7 +18,7 @@ def test():
     executive = pyre.executive
 
     # access the external package manager
-    assert executive.externals is not None
+    assert executive.host.externals is not None
 
     # all done
     return executive

@@ -394,7 +394,7 @@ class Application(pyre.component, metaclass=Director):
         # do the easy thing, for now
         for category in self.requirements:
             # ask the external manager for a matching package
-            package = self.pyre_externals.locate(category=category)
+            package = self.pyre_host.externals.locate(category=category)
             # store the instance
             dependencies[category] = package
 

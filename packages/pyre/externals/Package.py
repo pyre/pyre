@@ -47,7 +47,7 @@ class Package(pyre.protocol, family='pyre.externals'):
             pass
 
         # get the package manager
-        packager = cls.pyre_externals
+        packager = cls.pyre_host.externals
         # go through my host specific choices
         for package in packager.choices(category=cls):
             # i only care about the first one

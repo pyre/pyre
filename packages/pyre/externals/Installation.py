@@ -115,7 +115,7 @@ class Installation(pyre.component):
             return
 
         # otherwise, we have work to do; grab the package manager
-        manager = self.pyre_externals
+        manager = self.pyre_host.externals
         # and attempt to
         try:
             # get him to help me repair this configuration

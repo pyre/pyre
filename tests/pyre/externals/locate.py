@@ -18,7 +18,7 @@ def test():
     # get the framework
     import pyre
     # get the registered package manager
-    manager = pyre.executive.externals
+    manager = pyre.executive.host.externals
     # get the python package manage
     from pyre.externals.Python import Python
 

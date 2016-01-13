@@ -40,7 +40,6 @@ class Executive:
     configurator = None # configuration sources and events
     linker = None # the pyre plug-in manager
     timekeeper = None # the timer registry
-    externals = None # the manager of external tools and libraries
 
     # the runtime environment; patched during discovery
     host = None
@@ -514,10 +513,8 @@ class Executive:
         # attempt to load any matching configuration files
         self.configure(stem=stem, priority=self.priority.user, locator=here)
 
-        # instantiate the host information store and attach it
+        # get the host information
         self.host = host(name='pyre.host')
-        # save a reference to the package manager
-        self.externals = self.host.externals
 
         # now the user and the terminal
         from ..shells import user, terminal
@@ -536,7 +533,6 @@ class Executive:
         # build weak references to the managers of the runtime environment
         dashboard.pyre_user = weakref.proxy(self.user)
         dashboard.pyre_host = weakref.proxy(self.host)
-        dashboard.pyre_externals = weakref.proxy(self.externals)
 
         # all done
         return self

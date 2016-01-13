@@ -30,7 +30,7 @@ class configure(pyre.application):
         # show me
         info.line("{.pyre_name}:".format(self))
         info.line("  host: {.pyre_host}".format(self))
-        info.line("  package manager: {.pyre_externals}".format(self))
+        info.line("  package manager: {.pyre_host.externals}".format(self))
         # flush
         info.log()
 

@@ -27,7 +27,6 @@ class Dashboard:
 
     # infrastructure managers
     pyre_registrar = None # the component registrar
-    pyre_externals = None # the manager of external packages
     pyre_schema = None # the database schema
 
     # information about the runtime environment
