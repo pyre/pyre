@@ -24,12 +24,12 @@ class Error(Diagnostic, Channel):
     # types
     from .exceptions import ApplicationError
 
-
     # public data
     severity = "error"
 
     # class private data
     _index = collections.defaultdict(Channel.Enabled)
+
 
     # interface
     def log(self, message=None, stackdepth=0):
@@ -45,6 +45,7 @@ class Error(Diagnostic, Channel):
 
 
     # class private data
-    stackdepth = Diagnostic.stackdepth + 1 # there is an extra stack level for firewalls...
+    stackdepth = Diagnostic.stackdepth + 1 # there is an extra stack level for errors...
+
 
 # end of file
