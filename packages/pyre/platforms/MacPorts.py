@@ -33,7 +33,7 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         The package manager install location
         """
         # ask port
-        return self.getPrefix()
+        return self.getPrefix(default='/opt/local/bin')
 
 
     @pyre.provides
@@ -113,44 +113,6 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
 
 
     # implementation details
-    def getPrefix(self):
-        """
-        Identify the package manager install location
-        """
-        # check my cache
-        prefix = self._prefix
-        # for whether I have done this before
-        if prefix is not None:
-            # in which case I'm done
-            return prefix
-        # locate the full path to the port manager
-        port = self.pyre_host.which(self.manager)
-        # if not there
-        if not port:
-            # maybe it's not on the path; try the default
-            port = pathlib.Path('/opt/local/bin/port')
-            # if it's not there
-            if not port.exists():
-                # build the message
-                msg = 'could not locate {.manager}'.format(self)
-                # complain
-                raise self.ConfigurationError(configurable=self, errors=[msg])
-            # found it; let's remember its location
-            self.manager = port
-        # otherwise
-        else:
-            # pathify
-            port = pathlib.Path(port)
-
-        # extract the directory with the tools
-        bin = port.parent
-        # and now the prefix
-        prefix = bin.parent
-        # set it
-        self._prefix = prefix
-        # and return it
-        return prefix
-
 
     def getInstalledPackages(self):
         """

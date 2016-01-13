@@ -33,7 +33,7 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
         The location of installed packages
         """
         # always in the same spot
-        return pathlib.Path('/usr')
+        return self.getPrefix(default='/usr/bin')
 
 
     @pyre.provides

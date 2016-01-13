@@ -141,4 +141,46 @@ class Unmanaged(pyre.component, family='pyre.packagers.unmanaged', implements=Pa
         return
 
 
+    # implementation details and support for my subclasses
+    def getPrefix(self, default):
+        """
+        Identify the package manager install location
+        """
+        # check my cache
+        prefix = self._prefix
+        # for whether I have done this before
+        if prefix is not None:
+            # in which case I'm done
+            return prefix
+        # grab the shell utilities
+        import shutil
+        # locate the full path to the package manager client
+        client = shutil.which(self.manager)
+        # if we found it
+        if client:
+            # pathify
+            client = pathlib.Path(client)
+        # otherwise
+        else:
+            # maybe it's not on the path; try the default
+            client = pathlib.Path(default) / self.manager
+            # if it's not there
+            if not client.exists():
+                # build the message
+                msg = 'could not locate {.manager!r}'.format(self)
+                # complain
+                raise self.ConfigurationError(configurable=self, errors=[msg])
+            # found it; let's remember its location
+            self.manager = client
+
+        # extract the parent directory
+        bin = client.parent
+        # and once again to get the prefix
+        prefix = bin.parent
+        # set it
+        self._prefix = prefix
+        # and return it
+        return prefix
+
+
 # end of file
