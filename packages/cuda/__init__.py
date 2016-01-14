@@ -9,7 +9,7 @@
 # attempt to
 try:
     # load the extension module
-    from pyre.extensions import cuda
+    from . import cuda
 # if this fails
 except ImportError:
     # not much to do...
