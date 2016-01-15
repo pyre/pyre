@@ -40,7 +40,7 @@ live:
 	BLD_ACTION="live" $(MM) recurse
 
 # other targets
-build: lib packages extensions defaults bin
+build: lib packages extensions defaults bin templates web
 
 test: build tests examples
 
@@ -58,7 +58,7 @@ cleanit:
 	$(RM_F) $(PYRE_ZIP)
 
 zipit:
-	for x in bin lib packages defaults etc templates web; do { \
+	for x in bin lib packages defaults templates web; do { \
             (cd $$x; PYRE_ZIP=$(PYRE_ZIP) $(MM) zipit) \
         } done
 
