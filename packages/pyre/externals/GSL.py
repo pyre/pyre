@@ -46,11 +46,11 @@ class GSL(Library, family='pyre.externals.gsl'):
 
 
     @classmethod
-    def dpkgChoices(cls, dpkg):
+    def dpkgPackages(cls, packager):
         """
         Identify the default implementation of GSL on dpkg machines
         """
-        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions
         versions = Default,
         # go through the versions
@@ -67,7 +67,7 @@ class GSL(Library, family='pyre.externals.gsl'):
 
 
     @classmethod
-    def macportsChoices(cls, macports):
+    def macportsPackages(cls, packager):
         """
         Identify the default implementation of GSL on macports machines
         """
@@ -100,19 +100,19 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
 
 
     # configuration
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # get the names of the packages that support me
-        dev, *_ = dpkg.identify(installation=self)
+        dev, *_ = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=dev)
+        self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'gsl/gsl_version.h'
         # find the header
-        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # which is inside the atlas directory; save the parent
         self.incdir = [ incdir ] if incdir else []
 
@@ -121,7 +121,7 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         # convert it into the actual file name
         libgsl = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = dpkg.findfirst(target=libgsl, contents=dpkg.contents(package=dev))
+        libdir = packager.findfirst(target=libgsl, contents=packager.contents(package=dev))
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -133,7 +133,7 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         return
 
 
-    def macports(self, macports):
+    def macports(self, packager):
         """
         Attempt to repair my configuration
         """
@@ -142,7 +142,7 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         # attempt to
         try:
             # get the version info
-            self.version, _ = macports.info(package=package)
+            self.version, _ = packager.info(package=package)
         # if this fails
         except KeyError:
             # this package is not installed
@@ -150,12 +150,12 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'gsl/gsl_version.h'
         # find it
-        incdir = macports.findfirst(target=header, contents=contents)
+        incdir = packager.findfirst(target=header, contents=contents)
         # and save it
         self.incdir = [ incdir ] if incdir else []
 
@@ -164,7 +164,7 @@ class Default(LibraryInstallation, family='pyre.externals.gsl.default', implemen
         # in order to identify my {libdir}, search for one of my libraries
         libgsl = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = macports.findfirst(target=libgsl, contents=contents)
+        libdir = packager.findfirst(target=libgsl, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library

@@ -11,11 +11,11 @@ import re, collections, pathlib, subprocess
 # framework
 import pyre
 # superclass
-from .Unmanaged import Unmanaged
+from .Managed import Managed
 
 
 # declaration
-class MacPorts(Unmanaged, family='pyre.packagers.macports'):
+class MacPorts(Managed, family='pyre.packagers.macports'):
     """
     Support for the macport package manager
     """
@@ -23,83 +23,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
 
     # constants
     name = 'macports'
-    manager = 'port'
-
-
-    # interface obligations
-    @pyre.export
-    def prefix(self):
-        """
-        The package manager install location
-        """
-        # ask port
-        return self.getPrefix(default='/opt/local/bin')
-
-
-    @pyre.provides
-    def installed(self):
-        """
-        Retrieve available information for all installed packages
-        """
-        # ask the index...
-        return self.getInstalledPackages().items()
-
-
-    @pyre.provides
-    def choices(self, category):
-        """
-        Provide a sequence of package names that provide compatible installations for the given
-        package {category}. MacPorts provides a way for the user to select a specific
-        installation as the default, so the default selection is the first package in the
-        sequence.
-        """
-        # check whether this package category can interact with me
-        try:
-            # by looking for my handler
-            choices = category.macportsChoices
-        # if it can't
-        except AttributeError:
-            # the error message template
-            template = "the package {.category!r} does not support {.name!r}"
-            # build the message
-            msg = template.format(category, self)
-            # complain
-            raise self.ConfigurationError(configurable=self, errors=[msg])
-
-        # otherwise, ask the package category to do macports specific hunting
-        yield from choices(macports=self)
-
-        # all done
-        return
-
-
-    @pyre.export
-    def info(self, package):
-        """
-        Return the available information about {package}
-        """
-        # send what the index has
-        return self.getInstalledPackages()[package]
-
-
-    @pyre.export
-    def contents(self, package):
-        """
-        Retrieve the contents of the {package}
-        """
-        # ask port for the package contents
-        yield from self.retrievePackageContents(package=package)
-        # all done
-        return
-
-
-    @pyre.provides
-    def configure(self, installation):
-        """
-        Dispatch to the {installation} configuration procedure that is specific to macports
-        """
-        # what she said...
-        return installation.macports(macports=self)
+    client = 'port'
+    defaultLocation = pathlib.Path('/opt/local/bin')
 
 
     # meta-methods
@@ -113,7 +38,6 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
 
 
     # implementation details
-
     def getInstalledPackages(self):
         """
         Grant access to the installed package indexx
@@ -169,8 +93,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         # set up the shell command
         settings = {
-            'executable': str(self.manager),
-            'args': (str(self.manager), '-q', 'installed', 'active'),
+            'executable': str(self.client),
+            'args': (str(self.client), '-q', 'installed', 'active'),
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
@@ -207,8 +131,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         # set up the shell command
         settings = {
-            'executable': str(self.manager),
-            'args': (str(self.manager), 'contents', package),
+            'executable': str(self.client),
+            'args': (str(self.client), 'contents', package),
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
@@ -229,8 +153,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         # template for the command line args
         settings = {
-            'executable': str(self.manager),
-            'args': ( str(self.manager), 'select', '--summary'),
+            'executable': str(self.client),
+            'args': ( str(self.client), 'select', '--summary'),
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
@@ -340,8 +264,8 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
         """
         # set up the shell command
         settings = {
-            'executable': str(self.manager),
-            'args': (str(self.manager), 'provides', str(filename)),
+            'executable': str(self.client),
+            'args': (str(self.client), 'provides', str(filename)),
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False
@@ -434,8 +358,6 @@ class MacPorts(Unmanaged, family='pyre.packagers.macports'):
 
 
     # private data
-    # the root of the macports package library
-    _prefix = None
     # the index of installed packages: (package name -> package info)
     _installed = None
     # the index of package groups: (package group -> tuple of alternatives)

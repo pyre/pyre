@@ -64,12 +64,12 @@ class BLAS(Library, family='pyre.externals.blas'):
 
 
     @classmethod
-    def dpkgChoices(cls, dpkg):
+    def dpkgPackages(cls, packager):
         """
         Identify the default implementation of BLAS on dpkg machines
         """
         # ask {dpkg} for my options
-        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the order of preference of these implementations
         versions = Atlas, OpenBLAS, GSLCBLAS
         # go through each one
@@ -86,7 +86,7 @@ class BLAS(Library, family='pyre.externals.blas'):
 
 
     @classmethod
-    def macportsChoices(cls, macports):
+    def macportsPackages(cls, packager):
         """
         Identify the default implementation of BLAS on macports machines
         """
@@ -94,7 +94,7 @@ class BLAS(Library, family='pyre.externals.blas'):
         # performance: atlas, openblas, gsl
         versions = Atlas, OpenBLAS, GSLCBLAS
         # get the index of installed packages
-        installed = macports.getInstalledPackages()
+        installed = packager.getInstalledPackages()
         # go through each one
         for version in versions:
             # get the flavor
@@ -142,19 +142,19 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
 
 
     # configuration
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # get the names of the packages that support me
-        lib, headers = dpkg.identify(installation=self)
+        lib, headers = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=lib)
+        self.version, _ = packager.info(package=lib)
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'atlas/atlas_buildinfo.h'
         # find the header
-        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=headers))
+        incdir = packager.findfirst(target=header, contents=packager.contents(package=headers))
         # which is inside the atlas directory; save the parent
         self.incdir = [ incdir ] if incdir else []
 
@@ -163,7 +163,7 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         # convert it into the actual file name
         libatlas = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = dpkg.findfirst(target=libatlas, contents=dpkg.contents(package=lib))
+        libdir = packager.findfirst(target=libatlas, contents=packager.contents(package=lib))
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -175,7 +175,7 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         return
 
 
-    def macports(self, macports):
+    def macports(self, packager):
         """
         Attempt to repair my configuration
         """
@@ -184,7 +184,7 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         # attempt to
         try:
             # get the version info
-            self.version, _ = macports.info(package=package)
+            self.version, _ = packager.info(package=package)
         # if this fails
         except KeyError:
             # this package is not installed
@@ -192,19 +192,19 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'atlas/atlas_buildinfo.h'
         # look for it
-        incdir = macports.findfirst(target=header, contents=contents)
+        incdir = packager.findfirst(target=header, contents=contents)
         # it is inside the atlas directory; save the parent
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libatlas = self.pyre_host.staticLibrary('atlas')
         # look for
-        libdir = macports.findfirst(target=libatlas, contents=contents)
+        libdir = packager.findfirst(target=libatlas, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library list
@@ -232,19 +232,19 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
 
 
     # configuration
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # get the names of the packages that support me
-        dev, *_ = dpkg.identify(installation=self)
+        dev, *_ = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=dev)
+        self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'openblas/openblas_config.h'
         # find the header
-        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # which is inside the atlas directory; save the parent
         self.incdir = [ incdir ] if incdir else []
 
@@ -253,7 +253,7 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         # convert it into the actual file name
         libatlas = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = dpkg.findfirst(target=libatlas, contents=dpkg.contents(package=dev))
+        libdir = packager.findfirst(target=libatlas, contents=packager.contents(package=dev))
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -265,7 +265,7 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         return
 
 
-    def macports(self, macports):
+    def macports(self, packager):
         """
         Attempt to repair my configuration
         """
@@ -274,7 +274,7 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         # attempt to
         try:
             # get the version info
-            self.version, _ = macports.info(package=package)
+            self.version, _ = packager.info(package=package)
         # if this fails
         except KeyError:
             # this package is not installed
@@ -282,19 +282,19 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'cblas_openblas.h'
         # find it
-        incdir = macports.findfirst(target=header, contents=contents)
+        incdir = packager.findfirst(target=header, contents=contents)
         # and save it
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libopenblas = self.pyre_host.dynamicLibrary('openblas')
         # find it
-        libdir = macports.findfirst(target=libopenblas, contents=contents)
+        libdir = packager.findfirst(target=libopenblas, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -322,19 +322,19 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
 
 
     # configuration
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # get the names of the packages that support me
-        dev, *_ = dpkg.identify(installation=self)
+        dev, *_ = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=dev)
+        self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'gsl/gsl_cblas.h'
         # find the header
-        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # which is inside the atlas directory; save the parent
         self.incdir = [ incdir ] if incdir else []
 
@@ -343,7 +343,7 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
         # convert it into the actual file name
         libgsl = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = dpkg.findfirst(target=libgsl, contents=dpkg.contents(package=dev))
+        libdir = packager.findfirst(target=libgsl, contents=packager.contents(package=dev))
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -356,7 +356,7 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
         return
 
 
-    def macports(self, macports):
+    def macports(self, packager):
         """
         Attempt to repair my configuration
         """
@@ -365,7 +365,7 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
         # attempt to
         try:
             # get the version info
-            self.version, _ = macports.info(package=package)
+            self.version, _ = packager.info(package=package)
         # if this fails
         except KeyError:
             # this package is not installed
@@ -373,12 +373,12 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'gsl/gsl_cblas.h'
         # find it
-        incdir = macports.findfirst(target=header, contents=contents)
+        incdir = packager.findfirst(target=header, contents=contents)
         # and save it
         self.incdir = [ incdir ] if incdir else []
 
@@ -387,7 +387,7 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
         # convert it into the actual file name
         libgsl = self.pyre_host.dynamicLibrary('gslcblas')
         # find it
-        libdir = macports.findfirst(target=libgsl, contents=contents)
+        libdir = packager.findfirst(target=libgsl, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library

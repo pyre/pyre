@@ -11,11 +11,11 @@ import re, pathlib, subprocess
 # framework
 import pyre
 # superclass
-from .Unmanaged import Unmanaged
+from .Managed import Managed
 
 
 # declaration
-class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
+class DPkg(Managed, family='pyre.packagers.dpkg'):
     """
     Support for the debian package manager
     """
@@ -23,81 +23,8 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
 
     # constants
     name = 'dpkg'
-    manager = 'dpkg-query'
-
-
-    # interface obligations
-    @pyre.export
-    def prefix(self):
-        """
-        The location of installed packages
-        """
-        # always in the same spot
-        return self.getPrefix(default='/usr/bin')
-
-
-    @pyre.provides
-    def installed(self):
-        """
-        Retrieve available information for all installed packages
-        """
-        # ask the index...
-        return self.getInstalledPackages()
-
-
-    @pyre.provides
-    def choices(self, category):
-        """
-        Provide a sequence of package names that provide compatible installations for the given
-        package {category}
-        """
-        # check whether this package category can interact with me
-        try:
-            # by looking for my handler
-            choices = category.dpkgChoices
-        # if it can't
-        except AttributeError:
-            # the error message template
-            template = "the package {.category!r} does not support {.name!r}"
-            # build the message
-            msg = template.format(category, self)
-            # complain
-            raise self.ConfigurationError(configurable=category, errors=[msg])
-
-        # otherwise, ask the package category to do dpkg specific hunting
-        yield from choices(dpkg=self)
-
-        # all done
-        return
-
-
-    @pyre.export
-    def info(self, package):
-        """
-        Return the available information about {package}
-        """
-        # send what is maintained by the index
-        return self.getInstalledPackages()[package]
-
-
-    @pyre.export
-    def contents(self, package):
-        """
-        Retrieve the contents of the {package}
-        """
-        # ask port for the package contents
-        yield from self.retrievePackageContents(package=package)
-        # all done
-        return
-
-
-    @pyre.provides
-    def configure(self, installation):
-        """
-        Dispatch to the {installation} configuration procedure that is specific to macports
-        """
-        # what she said...
-        return installation.dpkg(dpkg=self)
+    client = 'dpkg-query'
+    defaultLocation = pathlib.Path('/usr/bin')
 
 
     # meta-methods
@@ -243,9 +170,9 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
         """
         # set up the shell command
         settings = {
-            'executable': self.manager,
+            'executable': str(self.client),
             'args': (
-                self.manager,
+                str(self.client),
                 '--show',
                 '--showformat=${binary:Package}\t${Version}\t${db:Status-Abbrev}\n',
             ),
@@ -277,8 +204,8 @@ class DPkg(Unmanaged, family='pyre.packagers.dpkg'):
         """
         # set up the shell command
         settings = {
-            'executable': self.manager,
-            'args': (self.manager, '--listfiles', package),
+            'executable': str(self.client),
+            'args': (str(self.client), '--listfiles', package),
             'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
             'universal_newlines': True,
             'shell': False

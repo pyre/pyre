@@ -67,13 +67,13 @@ class Postgres(Tool, Library, family='pyre.externals.postgres'):
 
 
     @classmethod
-    def dpkgChoices(cls, dpkg):
+    def dpkgPackages(cls, packager):
         """
         Provide alternative compatible implementations of python on dpkg machines, starting
         with the package the user has selected as the default
         """
         # ask {dpkg} for my options
-        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions
         versions = Default,
         # go through the versions
@@ -90,12 +90,12 @@ class Postgres(Tool, Library, family='pyre.externals.postgres'):
 
 
     @classmethod
-    def macportsChoices(cls, macports):
+    def macportsPackages(cls, packager):
         """
         Identify the default implementation of postgres on macports machines
         """
         # on macports, postgres is a package group
-        for package in macports.alternatives(group='postgresql'):
+        for package in packager.alternatives(group='postgresql'):
             # if the package name starts with 'postgresql'
             if package.startswith('postgresql'):
                 # use the default implementation
@@ -134,28 +134,28 @@ class Default(
 
 
     # configuration
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # ask dpkg for help; start by finding out which package supports me
-        bin, dev = dpkg.identify(installation=self)
+        bin, dev = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=dev)
+        self.version, _ = packager.info(package=dev)
 
         # the name of the client
         self.psql = 'psql'
         # our search target for the bindir is in a bin directory to avoid spurious matches
         launcher = "bin/{.psql}".format(self)
         # find it in order to identify my {bindir}
-        bindir = dpkg.findfirst(target=launcher, contents=dpkg.contents(package=bin))
+        bindir = packager.findfirst(target=launcher, contents=packager.contents(package=bin))
         # and save it
         self.bindir = [ bindir / 'bin' ] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
         header = r'libpq-fe\.h'
         # find it
-        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # and save it
         self.incdir = [ incdir ] if incdir else []
 
@@ -164,7 +164,7 @@ class Default(
         # convert it into the actual file name
         libpython = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = dpkg.findfirst(target=libpython, contents=dpkg.contents(package=dev))
+        libdir = packager.findfirst(target=libpython, contents=packager.contents(package=dev))
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -177,47 +177,47 @@ class Default(
         return
 
 
-    def macports(self, macports, **kwds):
+    def macports(self, packager, **kwds):
         """
         Attempt to repair my configuration
         """
         # ask macports for help; start by finding out which package supports me
-        package = macports.identify(installation=self)
+        package = packager.identify(installation=self)
         # get the version info
-        self.version, _ = macports.info(package=package)
+        self.version, _ = packager.info(package=package)
         # and the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # {postgresql} is a selection group
         group = self.category
         # the package deposits its selection alternative here
-        selection = str(macports.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
+        selection = str(packager.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
         # so find it
-        match = next(macports.find(target=selection, pile=contents))
+        match = next(packager.find(target=selection, pile=contents))
         # extract the name of the alternative
         alternative = match.group('alternate')
         # ask for the normalization data
-        normalization = macports.getNormalization(group=group, alternative=alternative)
+        normalization = packager.getNormalization(group=group, alternative=alternative)
         # build the normalization map
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {psql} and use it to set my launcher
         self.psql = nmap[pathlib.Path('bin/psql')].name
         # set my {bindir}
-        bindir = macports.findfirst(target=self.psql, contents=contents)
+        bindir = packager.findfirst(target=self.psql, contents=contents)
         # and save it
         self.bindir = [ bindir ] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'libpq-fe.h'
         # find it
-        incdir = macports.findfirst(target=header, contents=contents)
+        incdir = packager.findfirst(target=header, contents=contents)
         # and save it
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
         libpq = self.pyre_host.dynamicLibrary('pq')
         # find it
-        libdir = macports.findfirst(target=libpq, contents=contents)
+        libdir = packager.findfirst(target=libpq, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library

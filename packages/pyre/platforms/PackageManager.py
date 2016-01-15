@@ -31,7 +31,7 @@ class PackageManager(pyre.protocol, family='pyre.packagers'):
         """
 
     @pyre.provides
-    def choices(self, category):
+    def packages(self, category):
         """
         Provide a sequence of package names that provide compatible installations for the given
         package {category}. If the package manager provides a way for the user to select a

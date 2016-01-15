@@ -58,12 +58,12 @@ class VTK(Library, family='pyre.externals.vtk'):
 
 
     @classmethod
-    def dpkgChoices(cls, dpkg):
+    def dpkgPackages(cls, packager):
         """
         Identify the default implementation of HDF5 on dpkg machines
         """
         # ask {dpkg} for my options
-        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions
         versions = VTK6, VTK5
         # go through the versions
@@ -80,7 +80,7 @@ class VTK(Library, family='pyre.externals.vtk'):
 
 
     @classmethod
-    def macportsChoices(cls, macports):
+    def macportsPackages(cls, packager):
         """
         Identify the default implementation of VTK on macports machines
         """
@@ -115,19 +115,19 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
 
 
     # configuration
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # get the names of the packages that support me
-        dev, *_ = dpkg.identify(installation=self)
+        dev, *_ = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=dev)
+        self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'vtkVersion.h'
         # find the header
-        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # which is inside the atlas directory; save the parent
         self.incdir = [ incdir ] if incdir else []
 
@@ -136,7 +136,7 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
         # convert it into a library
         libvtk = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = dpkg.findfirst(target=libvtk, contents=dpkg.contents(package=dev))
+        libdir = packager.findfirst(target=libvtk, contents=packager.contents(package=dev))
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -149,7 +149,7 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
         return
 
 
-    def macports(self, macports, **kwds):
+    def macports(self, packager, **kwds):
         """
         Attempt to repair my configuration
         """
@@ -158,7 +158,7 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
         # attempt to
         try:
             # get the version info
-            self.version, _ = macports.info(package=package)
+            self.version, _ = packager.info(package=package)
         # if this fails
         except KeyError:
             # this package is not installed
@@ -166,12 +166,12 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # grab the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'vtkVersion.h'
         # find it
-        incdir = macports.findfirst(target=header, contents=contents)
+        incdir = packager.findfirst(target=header, contents=contents)
         # and save it
         self.incdir = [ incdir ] if incdir else []
 
@@ -180,7 +180,7 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
         # convert it into a library
         libvtk = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = macports.findfirst(target=libvtk, contents=contents)
+        libdir = packager.findfirst(target=libvtk, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -212,19 +212,19 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
 
 
     # configuration
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # get the names of the packages that support me
-        dev, *_ = dpkg.identify(installation=self)
+        dev, *_ = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=dev)
+        self.version, _ = packager.info(package=dev)
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'vtkVersion.h'
         # find the header
-        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # which is inside the atlas directory; save the parent
         self.incdir = [ incdir ] if incdir else []
 
@@ -233,7 +233,7 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
         # convert it into a library
         libvtk = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = dpkg.findfirst(target=libvtk, contents=dpkg.contents(package=dev))
+        libdir = packager.findfirst(target=libvtk, contents=packager.contents(package=dev))
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -246,7 +246,7 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
         return
 
 
-    def macports(self, macports, **kwds):
+    def macports(self, packager, **kwds):
         """
         Attempt to repair my configuration
         """
@@ -255,7 +255,7 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
         # attempt to
         try:
             # get the version info
-            self.version, _ = macports.info(package=package)
+            self.version, _ = packager.info(package=package)
         # if this fails
         except KeyError:
             # this package is not installed
@@ -263,14 +263,14 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
             # complain
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
-        self.version, _ = macports.info(package=package)
+        self.version, _ = packager.info(package=package)
         # and the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'vtkVersion.h'
         # find it
-        incdir = macports.findfirst(target=header, contents=contents)
+        incdir = packager.findfirst(target=header, contents=contents)
         # and save it
         self.incdir = [ incdir ] if incdir else []
 
@@ -279,7 +279,7 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
         # convert it into a library
         libvtk = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = macports.findfirst(target=libvtk, contents=contents)
+        libdir = packager.findfirst(target=libvtk, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library

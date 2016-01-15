@@ -60,12 +60,13 @@ class Package(pyre.protocol, family='pyre.externals'):
         # finally, get the package manager
         packager = host.packager
         # go through my host specific choices
-        for package in packager.choices(category=cls):
+        for package in packager.packages(category=cls):
             # i only care about the first one
             return package
 
         # if i get this far, no one knows what to do
         return
+        raise cls.DefaultError(protocol=cls)
 
 
 # end of file

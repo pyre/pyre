@@ -75,13 +75,13 @@ class Python(Tool, Library, family='pyre.externals.python'):
 
 
     @classmethod
-    def dpkgChoices(cls, dpkg):
+    def dpkgPackages(cls, packager):
         """
         Provide alternative compatible implementations of python on dpkg machines, starting
         with the package the user has selected as the default
         """
         # ask {dpkg} for my options
-        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions
         versions = Python3, Python2
         # go through the versions
@@ -98,7 +98,7 @@ class Python(Tool, Library, family='pyre.externals.python'):
 
 
     @classmethod
-    def macportsChoices(cls, macports):
+    def macportsPackages(cls, packager):
         """
         Provide alternative compatible implementations of python on macports machines, starting
         with the package the user has selected as the default
@@ -109,7 +109,7 @@ class Python(Tool, Library, family='pyre.externals.python'):
         # go through my choices
         for version in versions:
             # ask macports for all available alternatives
-            for package in macports.alternatives(group=version.flavor):
+            for package in packager.alternatives(group=version.flavor):
                 # instantiate each one using the package name and hand it to the caller
                 yield version(name=package)
 
@@ -149,28 +149,28 @@ class Default(
     # configuration is still in its default state. the dispatcher determines the correct
     # package manager and forwards to one of the handlers in this section
 
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # ask dpkg for help; start by finding out which package supports me
-        base, minimal, libpython, dev = dpkg.identify(installation=self)
+        base, minimal, libpython, dev = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=base)
+        self.version, _ = packager.info(package=base)
 
         # the name of the interpreter
         self.interpreter = '{0.category}{0.sigver}m'.format(self)
         # our search target for the bindir is in a bin directory to avoid spurious matches
         interpreter = "bin/{.interpreter}".format(self)
         # find it in order to identify my {bindir}
-        bindir = dpkg.findfirst(target=interpreter, contents=dpkg.contents(package=minimal))
+        bindir = packager.findfirst(target=interpreter, contents=packager.contents(package=minimal))
         # and save it
         self.bindir = [ bindir / 'bin' ] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'Python.h'
         # find it
-        incdir = dpkg.findfirst(target=header, contents=dpkg.contents(package=dev))
+        incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
         # and save it
         self.incdir = [ incdir ] if incdir else []
 
@@ -179,7 +179,7 @@ class Default(
         # convert it into the actual file name
         libpython = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = dpkg.findfirst(target=libpython, contents=dpkg.contents(package=dev))
+        libdir = packager.findfirst(target=libpython, contents=packager.contents(package=dev))
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library
@@ -192,28 +192,28 @@ class Default(
         return
 
 
-    def macports(self, macports):
+    def macports(self, packager):
         """
         Attempt to repair my configuration
         """
         # ask macports for help; start by finding out which package is related to me
-        package = macports.identify(installation=self)
+        package = packager.identify(installation=self)
         # get the version info
-        self.version, _ = macports.info(package=package)
+        self.version, _ = packager.info(package=package)
         # and the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # the name of the interpreter
         self.interpreter = '{0.category}{0.sigver}m'.format(self)
         # find it in order to identify my {bindir}
-        bindir = macports.findfirst(target=self.interpreter, contents=contents)
+        bindir = packager.findfirst(target=self.interpreter, contents=contents)
         # and save it
         self.bindir = [ bindir ] if bindir else []
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'Python.h'
         # find it
-        incdir = macports.findfirst(target=header, contents=contents)
+        incdir = packager.findfirst(target=header, contents=contents)
         # and save it
         self.incdir = [ incdir ] if incdir else []
 
@@ -222,7 +222,7 @@ class Default(
         # convert it into the actual file name
         libpython = self.pyre_host.dynamicLibrary(stem)
         # find it
-        libdir = macports.findfirst(target=libpython, contents=contents)
+        libdir = packager.findfirst(target=libpython, contents=contents)
         # and save it
         self.libdir = [ libdir ] if libdir else []
         # set my library

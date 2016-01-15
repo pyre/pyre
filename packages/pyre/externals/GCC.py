@@ -62,13 +62,13 @@ class GCC(Tool, family='pyre.externals.gcc'):
 
 
     @classmethod
-    def dpkgChoices(cls, dpkg):
+    def dpkgPackages(cls, packager):
         """
         Provide alternative compatible implementations of python on dpkg machines, starting
         with the package the user has selected as the default
         """
         # ask dpkg for the index of alternatives
-        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the supported versions in order of preference
         versions = GCC5, GCC4
         # go through the versions
@@ -85,7 +85,7 @@ class GCC(Tool, family='pyre.externals.gcc'):
 
 
     @classmethod
-    def macportsChoices(cls, macports):
+    def macportsPackages(cls, packager):
         """
         Identify the default implementation of GCC on macports machines
         """
@@ -94,7 +94,7 @@ class GCC(Tool, family='pyre.externals.gcc'):
         # go through my choices
         for version in versions:
             # ask macports for all available alternatives
-            for package in macports.alternatives(group=version.flavor):
+            for package in packager.alternatives(group=version.flavor):
                 # instantiate each one using the package name and hand it to the caller
                 yield version(name=package)
 
@@ -122,14 +122,14 @@ class Default(ToolInstallation, family='pyre.externals.gcc.gcc', implements=GCC)
 
 
     # configuration
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # ask dpkg for help; start by finding out which package supports me
-        gcc, *_ = dpkg.identify(installation=self)
+        gcc, *_ = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=gcc)
+        self.version, _ = packager.info(package=gcc)
 
         # get my flavor
         flavor = self.flavor
@@ -138,7 +138,7 @@ class Default(ToolInstallation, family='pyre.externals.gcc.gcc', implements=GCC)
         # the search target specifies a {bin} directory to avoid spurious matches
         wrapper = 'bin/{.wrapper}'.format(self)
         # find it in order to identify my {bindir}
-        prefix = dpkg.findfirst(target=wrapper, contents=dpkg.contents(package=gcc))
+        prefix = packager.findfirst(target=wrapper, contents=packager.contents(package=gcc))
         # and save it
         self.bindir = [ prefix / 'bin' ] if prefix else []
 
@@ -149,33 +149,33 @@ class Default(ToolInstallation, family='pyre.externals.gcc.gcc', implements=GCC)
         return
 
 
-    def macports(self, macports):
+    def macports(self, packager):
         """
         Attempt to repair my configuration
         """
         # ask macports for help; start by finding out which package supports me
-        package = macports.identify(installation=self)
+        package = packager.identify(installation=self)
         # get the version info
-        self.version, _ = macports.info(package=package)
+        self.version, _ = packager.info(package=package)
         # and the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # {gcc} is a selection group
         group = self.category
         # the package deposits its selection alternative here
-        selection = str(macports.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
+        selection = str(packager.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
         # so find it
-        match = next(macports.find(target=selection, pile=contents))
+        match = next(packager.find(target=selection, pile=contents))
         # extract the name of the alternative
         alternative = match.group('alternate')
         # ask for the normalization data
-        normalization = macports.getNormalization(group=group, alternative=alternative)
+        normalization = packager.getNormalization(group=group, alternative=alternative)
         # build the map
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {gcc} and use it to set my wrapper
         self.wrapper = nmap[pathlib.Path('bin/gcc')].name
         # look for it to get my {bindir}
-        bindir = macports.findfirst(target=self.wrapper, contents=contents)
+        bindir = packager.findfirst(target=self.wrapper, contents=contents)
         # and save it
         self.bindir = [ bindir ] if bindir else []
 

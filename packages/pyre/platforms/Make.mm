@@ -11,6 +11,7 @@ include pyre.def
 PACKAGE = platforms
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    Bare.py \
     CentOS.py \
     DPkg.py \
     Darwin.py \
@@ -18,12 +19,12 @@ EXPORT_PYTHON_MODULES = \
     Host.py \
     Linux.py \
     MacPorts.py \
+    Managed.py \
     POSIX.py \
     PackageManager.py \
     Platform.py \
     RedHat.py \
     Ubuntu.py \
-    Unmanaged.py \
     __init__.py
 
 # standard targets

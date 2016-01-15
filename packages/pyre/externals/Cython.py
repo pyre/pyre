@@ -62,12 +62,12 @@ class Cython(Tool, family='pyre.externals.cython'):
 
 
     @classmethod
-    def dpkgChoices(cls, dpkg):
+    def dpkgPackages(cls, packager):
         """
         Identify the default implementation of BLAS on dpkg machines
         """
         # ask {dpkg} for my options
-        alternatives = sorted(dpkg.alternatives(group=cls), reverse=True)
+        alternatives = sorted(packager.alternatives(group=cls), reverse=True)
         # the order of preference of these implementations
         versions = Cython3, Cython2
         # go through the versions
@@ -84,7 +84,7 @@ class Cython(Tool, family='pyre.externals.cython'):
 
 
     @classmethod
-    def macportsChoices(cls, macports):
+    def macportsPackages(cls, packager):
         """
         Provide alternative compatible implementations of cython on macports machines, starting
         with the package the user has selected as the default
@@ -95,7 +95,7 @@ class Cython(Tool, family='pyre.externals.cython'):
         # go through my choices
         for version in versions:
             # ask macports for all available alternatives
-            for package in macports.alternatives(group=version.category):
+            for package in packager.alternatives(group=version.category):
                 # instantiate each one using the package name and hand it to the caller
                 yield version(name=package)
 
@@ -125,14 +125,14 @@ class Default(
 
 
     # configuration
-    def dpkg(self, dpkg):
+    def dpkg(self, packager):
         """
         Attempt to repair my configuration
         """
         # get the names of the packages that support me
-        bin, *_ = dpkg.identify(installation=self)
+        bin, *_ = packager.identify(installation=self)
         # get the version info
-        self.version, _ = dpkg.info(package=bin)
+        self.version, _ = packager.info(package=bin)
 
         # get my flavor
         flavor = self.flavor
@@ -141,7 +141,7 @@ class Default(
         # look for it in the bin directory so we don't pick up something else
         compiler = 'bin/{}'.format(self.compiler)
         # find it in order to identify my {bindir}
-        prefix = dpkg.findfirst(target=compiler, contents=dpkg.contents(package=bin))
+        prefix = packager.findfirst(target=compiler, contents=packager.contents(package=bin))
         # and save it
         self.bindir = [ prefix / 'bin' ] if prefix else []
 
@@ -152,33 +152,33 @@ class Default(
         return
 
 
-    def macports(self, macports):
+    def macports(self, packager):
         """
         Attempt to repair my configuration
         """
         # ask macports for help; start by finding out which package is related to me
-        package = macports.identify(installation=self)
+        package = packager.identify(installation=self)
         # get the version info
-        self.version, _ = macports.info(package=package)
+        self.version, _ = packager.info(package=package)
         # and the package contents
-        contents = tuple(macports.contents(package=package))
+        contents = tuple(packager.contents(package=package))
 
         # {cython} is a selection group
         group = self.category
         # the package deposits its selection alternative here
-        selection = str(macports.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
+        selection = str(packager.prefix() / 'etc' / 'select' / group / '(?P<alternate>.*)')
         # so find it
-        match = next(macports.find(target=selection, pile=contents))
+        match = next(packager.find(target=selection, pile=contents))
         # extract the name of the alternative
         alternative = match.group('alternate')
         # ask for the normalization data
-        normalization = macports.getNormalization(group=group, alternative=alternative)
+        normalization = packager.getNormalization(group=group, alternative=alternative)
         # build the normalization map
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {cython} and use it to set my compiler
         self.compiler = nmap[pathlib.Path('bin/cython')].name
         # look for it to get my {bindir}
-        bindir = macports.findfirst(target=self.compiler, contents=contents)
+        bindir = packager.findfirst(target=self.compiler, contents=contents)
         # and save it
         self.bindir = [ bindir ] if bindir else []
 
