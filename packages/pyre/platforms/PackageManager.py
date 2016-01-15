@@ -75,9 +75,9 @@ class PackageManager(pyre.protocol, family='pyre.packagers'):
         """
         # the host should specify a sensible default; if there is nothing there, this is an
         # unmanaged system that relies on environment variables and standard locations
-        from .Unmanaged import Unmanaged
+        from .Bare import Bare
         # return the support for unmanaged systems
-        return Unmanaged
+        return Bare
 
 
 # end of file
