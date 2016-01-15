@@ -50,6 +50,8 @@ class configure(pyre.application):
         info.line("  package: {}".format(mpi))
         # if i have one
         if mpi:
+            # how did i get this
+            info.line("  locator: {}".format(mpi.pyre_where()))
             # version info
             info.line("  version: {.version}".format(mpi))
             info.line("  prefix: {.prefix}".format(mpi))

@@ -50,6 +50,8 @@ class configure(pyre.application):
         info.line("  package: {}".format(vtk))
         # if i have one
         if vtk:
+            # how did i get this
+            info.line("  locator: {}".format(vtk.pyre_where()))
             # version info
             info.line("  version: {.version}".format(vtk))
             info.line("  prefix: {.prefix}".format(vtk))

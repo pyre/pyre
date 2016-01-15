@@ -50,6 +50,8 @@ class configure(pyre.application):
         info.line("  package: {}".format(hdf5))
         # if i have one
         if hdf5:
+            # how did i get this
+            info.line("  locator: {}".format(hdf5.pyre_where()))
             # version info
             info.line("  version: {.version}".format(hdf5))
             info.line("  prefix: {.prefix}".format(hdf5))

@@ -50,6 +50,8 @@ class configure(pyre.application):
         info.line("  package: {}".format(postgres))
         # if i have one
         if postgres:
+            # how did i get this
+            info.line("  locator: {}".format(postgres.pyre_where()))
             # version info
             info.line("  version: {.version}".format(postgres))
             info.line("  prefix: {.prefix}".format(postgres))

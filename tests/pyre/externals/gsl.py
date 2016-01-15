@@ -50,6 +50,8 @@ class configure(pyre.application):
         info.line("  package: {}".format(gsl))
         # if i have one
         if gsl:
+            # how did i get this
+            info.line("  locator: {}".format(gsl.pyre_where()))
             # version info
             info.line("  version: {.version}".format(gsl))
             info.line("  prefix: {.prefix}".format(gsl))

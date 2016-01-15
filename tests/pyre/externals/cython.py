@@ -50,6 +50,8 @@ class configure(pyre.application):
         info.line("  package: {}".format(cython))
         # if i have one
         if cython:
+            # how did i get this
+            info.line("  locator: {}".format(cython.pyre_where()))
             # version info
             info.line("  version: {.version}".format(cython))
             info.line("  prefix: {.prefix}".format(cython))

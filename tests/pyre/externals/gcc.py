@@ -50,6 +50,8 @@ class configure(pyre.application):
         info.line("  package: {}".format(gcc))
         # if i have one
         if gcc:
+            # how did i get this
+            info.line("  locator: {}".format(gcc.pyre_where()))
             # version info
             info.line("  version: {.version}".format(gcc))
             info.line("  prefix: {.prefix}".format(gcc))
