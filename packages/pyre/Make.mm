@@ -76,4 +76,11 @@ __init__.py: __init__py Make.mm
           -e "s|DATE_COMPILED|$$(date -u)|g" \
           __init__py > __init__.py
 
+# shortcuts for building specific subdirectories
+.PHONY: $(RECURSE_DIRS)
+
+$(RECURSE_DIRS):
+	(cd $@; $(MM))
+
+
 # end of file
