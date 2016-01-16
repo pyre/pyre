@@ -7,8 +7,7 @@
 
 
 # externals
-import os
-import sys
+import sys, pathlib
 # access to the framework
 import pyre
 # my metaclass
@@ -207,24 +206,24 @@ class Application(pyre.component, metaclass=Director):
         # if it's not empty
         if argv0:
             # turn into an absolute path
-            argv0 = os.path.abspath(argv0)
+            argv0 = pathlib.Path(argv0).resolve()
             # if it is a valid file
-            if os.path.exists(argv0):
+            if argv0.exists():
                 # split the folder name and save it; that's where i am from...
-                home = os.path.dirname(argv0)
+                home = argv0.parent
 
         # get my namespace
         namespace = self.pyre_namespace
         # if i have my own home and my own namespace
         if home and namespace:
             # my configuration directory should be at {home}/../defaults/{namespace}
-            cfg = os.path.join(home, os.path.pardir, self.DEFAULTS, namespace)
+            cfg = home.parent / self.DEFAULTS / namespace
             # if this exists
-            if os.path.isdir(cfg):
+            if cfg.is_dir():
                 # form my prefix
-                prefix = os.path.abspath(os.path.join(home, os.path.pardir))
+                prefix = home.parent
                 # and normalize my configuration directory
-                defaults = os.path.abspath(cfg)
+                defaults = cfg
                 # all done
                 return home, prefix, defaults
 
@@ -237,11 +236,11 @@ class Application(pyre.component, metaclass=Director):
             # if it exists
             if prefix:
                 # my configuration directory should be at {prefix}/defaults/{namespace}
-                cfg = os.path.join(prefix, package.DEFAULTS, namespace)
+                cfg = prefix / package.DEFAULTS / namespace
                 # if this exists
-                if os.path.isdir(cfg):
+                if cfg.is_dir():
                     # and normalize my configuration directory
-                    defaults = os.path.abspath(cfg)
+                    defaults = cfg
                     # all done
                     return home, prefix, defaults
 
@@ -284,7 +283,7 @@ class Application(pyre.component, metaclass=Director):
             return pfs
 
         # otherwise, get the associated filesystem
-        home = vfs.retrieveFilesystem(root=prefix)
+        home = vfs.retrieveFilesystem(root=str(prefix))
         # and mount my folders in my namespace
         self.pyre_mountApplicationFolders(pfs=pfs, prefix=home)
 

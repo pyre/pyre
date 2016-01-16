@@ -7,8 +7,8 @@
 
 
 # externals
-import os
-import weakref
+import pathlib, weakref
+# pyre types
 from .. import schemata
 # superclass
 from ..filesystem.Filesystem import Filesystem
@@ -162,7 +162,7 @@ class FileServer(Filesystem):
         if not prefix: return package
 
         # otherwise, mount/get the associated filesystem
-        fs = self.retrieveFilesystem(root=prefix)
+        fs = self.retrieveFilesystem(root=str(prefix))
         # attempt to
         try:
             # look for the configuration folder
@@ -233,11 +233,11 @@ class FileServer(Filesystem):
 
         # now, mount the user's home directory
         # the default location of user preferences is in ~/.pyre
-        userdir = os.path.expanduser(self.DOT_PYRE)
+        userdir = pathlib.Path(self.DOT_PYRE).expanduser()
         # if that exists
         try:
             # make filesystem out of the preference directory
-            user = self.local(root=userdir).discover()
+            user = self.local(root=str(userdir)).discover(levels=1)
         # otherwise
         except self.GenericError:
             # make an empty folder

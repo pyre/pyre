@@ -6,8 +6,9 @@
 #
 
 
-# support
-import os
+# externals
+import pathlib
+# locators
 from .. import tracking
 # superclass
 from ..patterns.Named import Named
@@ -44,17 +45,17 @@ class Package(Named):
         # redundant filesystems in the virtual namespace.
 
         # compute {home}; guaranteed to exist
-        home = os.path.dirname(file)
+        home = file.parent
 
         # the prefix is the root of the package installation; in {pyre} standard form, that's
         # two levels up from {home}: {prefix}/packages/{home}/{file}
-        prefix = os.path.abspath(os.path.join(home, os.path.pardir, os.path.pardir))
+        prefix = home.parent.parent
         # hopefully, it also exists
-        if os.path.isdir(prefix):
+        if prefix.is_dir():
             # in which case, here is the location of the package configuration files
-            defaults = os.path.abspath(os.path.join(prefix, self.DEFAULTS, self.name))
+            defaults = prefix / self.DEFAULTS / self.name
             # if this doesn't exist
-            if not os.path.isdir(defaults):
+            if not defaults.is_dir():
                 # we have no configuration folder
                 defaults = None
         # if {prefix} does not exist
@@ -66,9 +67,9 @@ class Package(Named):
 
         # show me
         # print('pyre.framework.Package.register: name={.name!r}'.format(self))
-        # print('  home={!r}'.format(home))
-        # print('  prefix={!r}'.format(prefix))
-        # print('  defaults={!r}'.format(defaults))
+        # print('  home={!r}'.format(str(home)))
+        # print('  prefix={!r}'.format(str(prefix)))
+        # print('  defaults={!r}'.format(str(defaults)))
 
         # attach
         self.home = home
@@ -86,6 +87,7 @@ class Package(Named):
         """
         Easy access to the package folders
         """
+        # form a triplet and return it
         return self.home, self.prefix, self.defaults
 
 
@@ -101,6 +103,7 @@ class Package(Named):
 
     # meta-methods
     def __init__(self, locator, **kwds):
+        # chain up
         super().__init__(**kwds)
         # remember the location of the package registration
         self.locator = locator

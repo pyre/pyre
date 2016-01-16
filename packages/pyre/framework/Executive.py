@@ -7,10 +7,8 @@
 
 
 # externals
-import re
-import weakref
-import operator # for the sorting key
-import itertools # for product
+import re, pathlib, weakref, operator, itertools
+# locators
 from .. import tracking
 
 
@@ -344,7 +342,7 @@ class Executive:
         # get the nameserver to build one
         package = self.nameserver.createPackage(name=name, locator=locator)
         # register it
-        package.register(executive=self, file=file)
+        package.register(executive=self, file=pathlib.Path(file).resolve())
         # configure it
         package.configure(executive=self)
 
