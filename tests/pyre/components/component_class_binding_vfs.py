@@ -25,7 +25,7 @@ def test():
     # declare a component
     class worker(pyre.component):
         """a component"""
-        # job = task(default="vfs:/pyre/startup/sample/relax")
+        # job = task(default="vfs:{}/sample/relax".format(pyre.executive.fileserver.STARTUP_DIR))
         job = task(default="sample/relax")
 
     # check that task was bound according to our expectations from sample.py

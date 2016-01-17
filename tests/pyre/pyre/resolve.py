@@ -15,6 +15,8 @@ Exercise component resolution
 def test():
     # access the framework
     import pyre
+    # get the fileserver
+    fs = pyre.executive.fileserver
 
     # resolve a trivial component
     c = pyre.resolve(uri='import:pyre.component')
@@ -28,7 +30,7 @@ def test():
     assert joe.pyre_name == 'joe'
 
     # through the vfs
-    barry = pyre.resolve(uri='vfs:/pyre/startup/sample.py/worker#barry')
+    barry = pyre.resolve(uri='vfs:{}/sample.py/worker#barry'.format(fs.STARTUP_DIR))
     # check it
     assert isinstance(barry, pyre.component)
     assert barry.pyre_name == 'barry'

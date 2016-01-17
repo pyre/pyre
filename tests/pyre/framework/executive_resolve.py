@@ -15,12 +15,13 @@ Verify that the binder can retrieve components from odb files
 def test():
     import pyre
     executive = pyre.executive
+    fileserver = executive.fileserver
 
     # retrieve a component descriptor from the python path
     bases = tuple(executive.resolve(uri="import:pyre.component"))
     for base in bases: assert base is pyre.component
     # retrieve a component descriptor from a file using the virtual filesystem
-    d1, = executive.resolve(uri="vfs:/pyre/startup/sample.py/d1")
+    d1, = executive.resolve(uri="vfs:{}/sample.py/d1".format(fileserver.STARTUP_DIR))
     # check that one derives from the other
     assert issubclass(d1, base)
     # retrieve a component descriptor from a file using the physical filesystem

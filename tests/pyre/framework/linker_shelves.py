@@ -18,6 +18,8 @@ def test():
     executive = pyre.executive
     # access the linker
     linker = executive.linker
+    # and the fileserver
+    fs = executive.fileserver
 
     # request a non-existent python module
     try:
@@ -46,10 +48,9 @@ def test():
         pass
 
     # request the same file through vfs
-    shelf = linker.loadShelf(executive=executive, uri="vfs:/pyre/startup/sample.py")
+    shelf = linker.loadShelf(executive=executive, uri="vfs:{}/sample.py".format(fs.STARTUP_DIR))
     # make sure it got imported correctly
     assert shelf.retrieveSymbol('factory')
-
 
     # all done
     return executive

@@ -23,11 +23,11 @@ def test():
     fs.initializeNamespace()
 
     # get hold of the package node
-    packages = fs["/pyre/packages"]
+    packages = fs[fs.PACKAGES_DIR]
     assert packages is not None
 
     # get hold of the user node
-    user = fs["/pyre/user"]
+    user = fs[fs.USER_DIR]
     assert user is not None
 
     # dump the filesystem

@@ -9,12 +9,7 @@
 PROJECT = pyre
 PROJ_TIDY += __pycache__
 
-#--------------------------------------------------------------------------
-#
-
-working:
-	${PYTHON} ./defaults.py
-
+# the standard targets
 all: test clean
 
 test: sanity api regressions

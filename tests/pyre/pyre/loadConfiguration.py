@@ -16,11 +16,14 @@ def test():
     # access the framework
     import pyre
 
-    # load the configuration file
-    pyre.loadConfiguration('vfs:/pyre/startup/sample.cfg')
-
     # access the nameserver
     ns = pyre.executive.nameserver
+    # and the fileserver
+    fs = pyre.executive.fileserver
+
+    # load the configuration file
+    pyre.loadConfiguration('vfs:{}/sample.cfg'.format(fs.STARTUP_DIR))
+
 
     # verify that the configuration settings were read properly
     assert ns["package.home"] == "home"
