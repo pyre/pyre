@@ -32,14 +32,6 @@ class Configurator:
     # public data
     codecs = None
 
-    @property
-    def configpath(self):
-        """
-        Return an iterable over my configuration path
-        """
-        # the nameserver knows...
-        return self.executive.nameserver.configpath
-
 
     # interface
     def loadConfiguration(self, uri, source, locator, priority):
@@ -295,11 +287,11 @@ class Configurator:
         # build a priority
         priority = nameserver.priority.defaults()
         # make a trait; give it a name since it won't be attached to anybody
-        cfgpath = properties.uris(name=name, default=value)
+        configpath = properties.uris(name=name, default=value)
 
         # place the trait in the model
         nameserver.insert(name=name, value=value,
-                          factory=cfgpath.instanceSlot, priority=priority, locator=locator)
+                          factory=configpath.instanceSlot, priority=priority, locator=locator)
 
         # all done
         return self
