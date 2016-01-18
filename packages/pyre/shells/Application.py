@@ -283,7 +283,7 @@ class Application(pyre.component, metaclass=Director):
             return pfs
 
         # otherwise, get the associated filesystem
-        home = vfs.retrieveFilesystem(root=str(prefix))
+        home = vfs.retrieveFilesystem(root=prefix)
         # and mount my folders in my namespace
         self.pyre_mountApplicationFolders(pfs=pfs, prefix=home)
 
@@ -363,6 +363,8 @@ class Application(pyre.component, metaclass=Director):
         except prefix.NotFoundError:
             # create it
             parent = prefix.mkdir(parent=prefix, name=folder)
+        # look for content
+        parent.discover(levels=1)
         # now, check whether there is a subdirectory named after me
         try:
             # if so get it
@@ -371,6 +373,10 @@ class Application(pyre.component, metaclass=Director):
         except prefix.NotFoundError as error:
             # create it
             mine = prefix.mkdir(parent=parent, name=namespace)
+        # if all went well
+        else:
+            # look deeply
+            mine.discover()
 
         # attach it to my private filespace
         pfs[folder] = mine

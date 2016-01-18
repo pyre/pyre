@@ -27,12 +27,12 @@ class FileServer(Filesystem):
     their physical locations at runtime. For example, during the bootstrapping process the
     framework looks for user preferences for pyre applications. On Unix like machines, these
     are stored in '~/.pyre' and its subfolders. The entire hierarchy is mounted in the virtual
-    filesystem under '/pyre/user'. This has the following advantages:
+    filesystem under '/-/user'. This has the following advantages:
 
-    * applications can navigate through the contents of '/user' as if it were an actual
+    * applications can navigate through the contents of '/-/user' as if it were an actual
       filesystem
 
-    * configuration settings that require references to entries in '/pyre/user' can now be
+    * configuration settings that require references to entries in '/_/user' can now be
       expressed portably, since there is no need to hardwire actual paths
 
     Applications are encouraged to lay out their own custom namespaces. The application
@@ -43,9 +43,9 @@ class FileServer(Filesystem):
 
     # constants
     DOT_PYRE = '~/.pyre'
-    USER_DIR = '/pyre/user'
-    STARTUP_DIR = '/pyre/startup'
-    PACKAGES_DIR = '/pyre/packages'
+    USER_DIR = '/-/user'
+    STARTUP_DIR = '/-/startup'
+    PACKAGES_DIR = '/-/packages'
 
 
     # public data
@@ -133,7 +133,7 @@ class FileServer(Filesystem):
         # access the factory
         from .. import filesystem
         # invoke it
-        return filesystem.local(root=root, **kwds)
+        return filesystem.local(root=str(root), **kwds)
 
 
     def virtual(self, **kwds):
@@ -147,6 +147,30 @@ class FileServer(Filesystem):
 
 
     # framework support
+    def initializeNamespace(self):
+        """
+        Construct the initial layout of my virtual filesystem
+        """
+        # at boot time, we target two directories: the user's private configuration folder, and
+        # the current working directory. mounting either one may fail: the folder may not
+        # exist, or it may not have the correct permissions. so we have to be careful. the
+        # runtime relies on the existence of the virtual folders, so me mount empty folders on
+        # failure
+
+        # get the current working directory
+        startup = pathlib.Path().resolve()
+        # and mount it
+        self[self.STARTUP_DIR] = self.retrieveFilesystem(root=startup)
+
+        # the user's private folder, typically at{~/.pyre}
+        userdir = pathlib.Path(self.DOT_PYRE).expanduser().resolve()
+        # and mount it
+        self[self.USER_DIR] = self.retrieveFilesystem(root=userdir)
+
+        # all done
+        return
+
+
     def registerPackage(self, package):
         """
         Make the package configuration folder accessible in the virtual filesystem`
@@ -154,7 +178,8 @@ class FileServer(Filesystem):
         # This should be done very carefully because multiple packages may share a common
         # installation folder. For example, this is true of the packages that ship with the
         # standard pyre distribution. The registration procedure takes care not to mount
-        # redundant filesystems in the virtual namespace.
+        # redundant local filesystems in the virtual namespace to make sure that {vfs} nodes
+        # that are related to each other are resolved by the same local filesystem
 
         # grab the package prefix
         prefix = package.prefix
@@ -162,7 +187,7 @@ class FileServer(Filesystem):
         if not prefix: return package
 
         # otherwise, mount/get the associated filesystem
-        fs = self.retrieveFilesystem(root=str(prefix))
+        fs = self.retrieveFilesystem(root=prefix)
         # attempt to
         try:
             # look for the configuration folder
@@ -171,6 +196,11 @@ class FileServer(Filesystem):
         except fs.NotFoundError:
             # nothing else to do
             return package
+
+        # if the configuration folder is empty
+        if not defaults.contents:
+            # it might be because we haven't explored it yet
+            defaults.discover(levels=1)
 
         # look for configuration files
         for encoding in self.executive.configurator.encodings():
@@ -204,67 +234,10 @@ class FileServer(Filesystem):
         return package
 
 
-    def retrieveFilesystem(self, root):
-        """
-        Retrieve {root} if it is an already mounted filesystem; if not, mount it and return it
-        """
-        # check whether
-        try:
-            # i have seen this path before
-            fs = self.mounts[root]
-        # if not
-        except KeyError:
-            # no problem; make it
-            fs = self.local(root=root).discover()
-            # and remember it
-            self.mounts[root] = fs
-
-        # either way, return it
-        return fs
-
-
-    # framework requests
-    def initializeNamespace(self):
-        """
-        Construct the initial layout of my virtual filesystem
-        """
-        # build a place holder for package configuration hierarchies and mount it
-        self[self.PACKAGES_DIR] = self.folder()
-
-        # now, mount the user's home directory
-        # the default location of user preferences is in ~/.pyre
-        userdir = pathlib.Path(self.DOT_PYRE).expanduser()
-        # if that exists
-        try:
-            # make filesystem out of the preference directory
-            user = self.local(root=str(userdir)).discover(levels=1)
-        # otherwise
-        except self.GenericError:
-            # make an empty folder
-            user = self.folder()
-        # mount this directory as {/pyre/user}
-        self[self.USER_DIR] = user
-
-        # finally, mount the current working directory
-        try:
-            # make a filesystem out of the configuration directory
-            startup = self.local(root=".").discover(levels=1)
-        # if that fails
-        except self.GenericError:
-            # make an empty folder
-            startup = self.folder()
-       # mount this directory as {/pyre/startup}
-        self[self.STARTUP_DIR] = startup
-
-        # all done
-        return
-
-
     # meta-methods
     def __init__(self, executive=None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # print("pyre.FileServer:")
         # remember my executive
         self.executive = None if executive is None else weakref.proxy(executive)
         # initialize the table of known mount points
@@ -273,23 +246,69 @@ class FileServer(Filesystem):
         return
 
 
-    # debugging
-    def draw(self, *paths):
+    # implementation details
+    def retrieveFilesystem(self, root, levels=1):
         """
-        Draw the contents of the nodes in {paths}
+        Retrieve {root} if it is an already mounted filesystem; if not, mount it and return it
         """
-        # assess the workload
-        paths = paths if paths else [ '/']
-        # go through the pile
-        for path in paths:
-            # get the associated node
-            node = self[path]
-            # leave a marker
-            print(" ** {}:".format(path))
-            # draw the contents
-            node.dump(indent=' '*4)
-        # all done
-        return
+        # check whether
+        try:
+            # i have seen this path before
+            return self.mounts[root]
+        # if i haven't
+        except KeyError:
+            # no problem
+            pass
+
+        # is it a child of one of my mounted filesystems
+        for path in self.mounts:
+            # attempt to
+            try:
+                # figure out whether it is contained in the tree rooted at {path}
+                diff = root.relative_to(path)
+            # if not
+            except ValueError:
+                # no problem, grab the next one
+                continue
+
+            # we got one; let's find the anchor folder to park {root}
+            folder = self.mounts[path]
+            # go through each level in the relative path
+            for level in diff.parts:
+                # try to
+                try:
+                    # get the associated folder
+                    folder = folder[level]
+                # if this fails
+                except self.NotFoundError:
+                    # and the the folder has any contents
+                    if folder.contents:
+                        # it's impossible
+                        import journal
+                        # build a report
+                        msg = 'could not reach {} from {}'.format(root, path)
+                        # and complain
+                        raise journal.firewall('pyre.framework.fileserver').log(msg)
+                    # otherwise, it must be that the folder hasn't been explored yet
+                    folder.discover(levels=1)
+                    # try again
+                    folder = folder[level]
+            # if we get this far, we have what we are looking for
+            return folder.discover(levels=levels)
+
+        # let's try
+        try:
+            # to make it
+            folder = self.local(root=root).discover(levels=levels)
+        # if that fails
+        except self.GenericError:
+            # make an empty folder
+            folder = self.folder()
+
+        # if all goes well; remember it
+        self.mounts[root] = folder
+        # and return it
+        return folder
 
 
 # end of file
