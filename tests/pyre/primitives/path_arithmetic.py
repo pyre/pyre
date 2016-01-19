@@ -15,6 +15,7 @@ Exercise the path primitive
 def test():
     # the home of the factory
     import pyre.primitives
+
     # start with
     root = pyre.primitives.path('/')
     # my development area
@@ -31,6 +32,14 @@ def test():
     total = '/' / pyre.primitives.path(home) / str(here)
     # check
     assert str(total) == '/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py'
+
+    # we have one more way to do all this
+    total = root.join(home, here)
+    # check
+    assert str(total) == '/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py'
+
+    # check we compute relative paths correctly
+    assert str(total.relative_to(root / home)) == str(here)
 
     # all done
     return

@@ -15,6 +15,7 @@ Exercise the path primitive
 def test():
     # the home of the factory
     import pyre.primitives
+
     # make one
     root = pyre.primitives.path('/')
     # check
@@ -29,6 +30,19 @@ def test():
     total = pyre.primitives.path(root, 'Users/mga/dv', here)
     # check
     assert str(total) == '/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path.py'
+
+    # check that construction fails when handed the wrong argument type
+    try:
+        # by making a bad one
+        pyre.primitives.path(1)
+        # and making sure we don't get here
+        assert False
+    # if it fails, as it should
+    except TypeError as error:
+        # show me
+        # print(error)
+        # and check
+        assert str(error) == "can't parse '1', of type <class 'int'>"
 
     # all done
     return
