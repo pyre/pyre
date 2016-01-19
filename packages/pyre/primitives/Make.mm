@@ -11,6 +11,7 @@ include pyre.def
 PACKAGE = primitives
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    Path.py \
     URI.py \
     exceptions.py \
     __init__.py

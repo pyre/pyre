@@ -9,6 +9,7 @@
 PROJECT = pyre
 
 RECURSE_DIRS = \
+    primitives \
     patterns \
     parsing \
     units \
