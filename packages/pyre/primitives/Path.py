@@ -261,12 +261,17 @@ class Path(tuple):
         # otherwise, build a path with my stem and the given suffix
         return self.with_name(name=stem+suffix)
 
+
     # meta-methods
     def __new__(cls, *args):
         """
         Build a new path out of strings or other paths
         """
-        # chain up to build my instance
+        # if i have only one argument and it is a path
+        if len(args) == 1 and isinstance(args[0], cls):
+            # return it
+            return args[0]
+        # otherwise, parse the arguments and chain up to build my instance
         return super().__new__(cls, cls._parse(args))
 
 
@@ -296,6 +301,7 @@ class Path(tuple):
         return '{}{}'.format(marker, sep.join(rev))
 
 
+    # arithmetic; pure sugar but slower than other methods of assembling paths
     def __truediv__(self, other):
         """
         Syntactic sugar for assembling paths
