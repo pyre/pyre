@@ -53,7 +53,11 @@ class Script(Executive, family="pyre.shells.script"):
             status = application.pyre_interrupted(info=event)
         # if the framework complained about something
         except self.PyreError as error:
-            # log it
+            # if we are in debug mode
+            if application.DEBUG:
+                # let the error through
+                raise
+            # otherwise, log it
             application.error.log(str(error))
             # indicate a failure
             status = 1
