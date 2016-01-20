@@ -87,7 +87,7 @@ class Installation(pyre.component):
             # complain
             yield "empty prefix"
         # if not but set to something that's not a directory
-        elif not prefix.is_dir():
+        elif not prefix.isDirectory():
             # mark as bad attempt to configure
             self._misconfigured = True
             # complain
@@ -146,7 +146,7 @@ class Installation(pyre.component):
         # check that all the {folders}
         for folder in folders:
             # are valid
-            if not folder.is_dir():
+            if not folder.isDirectory():
                 # if not, mark this as a bad attempt to configure
                 self._misconfigured = True
                 #  complain
