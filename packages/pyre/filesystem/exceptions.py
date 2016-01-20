@@ -36,7 +36,7 @@ class DirectoryListingError(GenericError):
     """
 
     # public data
-    description = "error while accessing {0.uri!r}: {0.error}"
+    description = "error while accessing '{0.uri}': {0.error}"
 
     # meta-methods
     def __init__(self, error, **kwds):
@@ -54,7 +54,7 @@ class MountPointError(GenericError):
     """
 
     # public data
-    description = "error while mounting {0.uri!r}: {0.error}"
+    description = "error while mounting '{0.uri}': {0.error}"
 
     # meta-methods
     def __init__(self, error, **kwds):
@@ -154,6 +154,16 @@ class FolderInsertionError(FilesystemError):
         self.target = target
         # all done
         return
+
+
+class NotRootError(FilesystemError):
+    """
+    Exception raised when attempting to insert a node with an absolute uri at a location other
+    than the root of the filesystem a folder
+    """
+
+    # public data
+    description = "cannot insert absolute path {0.rep!r} in node {0.target!r}"
 
 
 class URISpecificationError(GenericError):

@@ -13,6 +13,9 @@ Verify that the metadata associated with node are maintained properly
 
 
 def test():
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
 
     # build a virtual filesystem
@@ -22,8 +25,8 @@ def test():
     root['home/users/mga'] = root.folder()
 
     # check their uris
-    assert root['home/users'].uri == '/home/users'
-    assert root['home/users/mga'].uri == '/home/users/mga'
+    assert str(root['home/users'].uri) == '/home/users'
+    assert str(root['home/users/mga'].uri) == '/home/users/mga'
 
     # all done
     return root

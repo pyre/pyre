@@ -28,11 +28,11 @@ def test():
 
     # explore
     finder = pyre.filesystem.finder()
-    contents = [ path for node, path in finder.explore(folder=fs, pattern=r".*\.h")]
+    contents = [ str(path) for node, path in finder.explore(folder=fs, pattern=r".*\.h")]
 
     # check
     assert contents == [
-        "home/users/mga/dv/tools/src/hello.h",
+        "/home/users/mga/dv/tools/src/hello.h",
         ]
 
     return fs, finder

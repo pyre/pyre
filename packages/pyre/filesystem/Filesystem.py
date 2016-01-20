@@ -8,6 +8,8 @@
 
 # externals
 import weakref # for {vnodes}, the weak key dictionary
+# support
+from .. import primitives
 # base class
 from .Folder import Folder
 
@@ -51,10 +53,10 @@ class Filesystem(Folder):
         folder does not exist, create it and mount it
         """
         # make the path
-        path = self.join(*args)
-        # if
+        path = primitives.path(*args)
+        # attempt to
         try:
-            # the folder exists, get it
+            # get the node at the specified location
             target = self[path]
         # if not
         except self.NotFoundError:
@@ -62,11 +64,13 @@ class Filesystem(Folder):
             target = self.folder()
             # and mount it
             self[path] = target
+        # if the folder exists
+        else:
+            # check that the {target} is a folder
+            if not target.isFolder:
+                # and if not, complain
+                raise self.FolderError(uri=path, fragment=path, filesystem=self, node=target)
 
-        # if the {target} is not a folder
-        if not target.isFolder:
-            # complain
-            raise self.FolderError(uri=path, fragment=path, filesystem=self, node=target)
         # otherwise, all good
         return target
 
@@ -98,7 +102,7 @@ class Filesystem(Folder):
         # my vnode table: a map from nodes to info structures
         self.vnodes = weakref.WeakKeyDictionary()
         # build an info structure for myself
-        metadata = self.metadata(uri='/') if metadata is None else metadata
+        metadata = self.metadata(uri=primitives.path('/')) if metadata is None else metadata
         # add it to my vnode table
         self.vnodes[self] = metadata
         # all done

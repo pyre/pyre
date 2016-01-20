@@ -13,6 +13,7 @@ Exercise the simple filesystem explorer
 
 
 def test():
+    # my package
     import pyre.filesystem
 
     # make a filesystem

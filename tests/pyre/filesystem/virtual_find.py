@@ -13,6 +13,9 @@ Verify searching through folders for named nodes
 
 
 def test():
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
 
     # build a folder
@@ -21,10 +24,10 @@ def test():
     mga = root.node()
 
     # add it to the folder
-    root._insert(uri="home/users/mga", node=mga)
+    root._insert(uri=pyre.primitives.path("home/users/mga"), node=mga)
 
     # now retrieve it
-    target = root._retrieve(uri="/home/users/mga")
+    target = root._retrieve(uri=pyre.primitives.path("/home/users/mga"))
 
     # make sure it is the same node
     assert mga is target

@@ -19,10 +19,6 @@ class Finder(Explorer):
     """
 
 
-    # constants
-    from . import separator
-
-
     # interface
     def explore(self, folder, pattern=None):
         """
@@ -30,6 +26,18 @@ class Finder(Explorer):
         """
         # build the regular expression
         if pattern: pattern = re.compile(pattern)
+
+        # now traverse the contents
+        for node in self._explore(node=folder):
+            # get the node uri
+            path = node.uri
+            # if there's no regular expression filter, or the path passes the filter
+            if not pattern or pattern.match(str(path)):
+                # return the pair
+                yield node, path
+
+        # all done
+        return
 
         # now traverse the contents and build the pathnames
         for node, trace in self._explore(node=folder, path=[]):
@@ -45,23 +53,19 @@ class Finder(Explorer):
 
 
     # implementation details
-    def _explore(self, node, path):
+    def _explore(self, node):
         """
         The recursive workhorse for folder exploration
         """
         # first, return the current node and its path
-        yield (node, path)
+        yield node
         # if {node} is not a folder, we are done
         if not node.isFolder: return
         # otherwise, traverse its contents
-        for name, child in node.contents.items():
-            # add the name of this child to the path trace
-            path.append(name)
+        for child in node.contents.values():
             # explore it
-            for node, path in self._explore(node=child, path=path): yield (node, path)
-            # remove the name of the child from the trace
-            path.pop()
-
+            yield from self._explore(node=child)
+        # all done
         return
 
 

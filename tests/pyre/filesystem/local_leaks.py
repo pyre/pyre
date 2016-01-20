@@ -12,12 +12,16 @@ Verify that clearing the contents of filesystems destroys the nodes
 """
 
 
-def test(interactive=False):
-    import os
+def test():
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
+
     # build a filesystem and populate it
     tests = pyre.filesystem.local(root="../..").discover()
-    tests.dump(interactive)
+    # show me
+    # print('\n'.join(tests.dump()))
     # now clear its contents explicitly
     tests.contents = {}
     # verify that all the nodes except the filesystem itself were destroyed

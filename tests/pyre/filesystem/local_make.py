@@ -11,17 +11,17 @@
 Create and dump a local filesystem
 """
 
-# externals
-import os
 
-
-def test(interactive=False): # change to True to see the dump
-    # access the package
+def test():
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
+
     # make a local filesystem
     home = pyre.filesystem.local(root=".")
     home.discover()
-    home.dump(interactive) # change to True to see the dump
+    # print('\n'.join(home.dump()))
 
     # create a template
     tmp = pyre.filesystem.virtual()
@@ -31,15 +31,16 @@ def test(interactive=False): # change to True to see the dump
     # realize it
     home.make(name="local-make", tree=tmp)
     home.discover()
-    home.dump(interactive) # change to True to see the dump
+    # print('\n'.join(home.dump()))
 
     # check that what we expect is there
-    cwd = os.getcwd()
+    cwd = pyre.primitives.path.cwd()
     path = 'local-make/sample/one'
-    assert home[path].uri == os.path.join(cwd,path)
+    assert home[path].uri == cwd / path
     path = 'local-make/sample/two'
-    assert home[path].uri == os.path.join(cwd,path)
+    assert home[path].uri == cwd / path
 
+    # all done
     return home
 
 

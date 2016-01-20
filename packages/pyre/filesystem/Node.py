@@ -24,7 +24,6 @@ class Node(metaclass=_metaclass_Node):
 
     # constants
     isFolder = False
-    from . import separator
 
 
     # types
@@ -54,41 +53,6 @@ class Node(metaclass=_metaclass_Node):
 
 
     # interface
-    @classmethod
-    def join(cls, *paths, separator=None):
-        """
-        Concatenate the collection of path names in {paths} using the path separator.
-
-        Absolute path names cause all previous path components to be discarded, just like
-        {os.path.join}
-        """
-        # initialize the separator
-        if separator is None: separator = cls.separator
-        # prime the result
-        fragments = []
-        # iterate over the given names
-        for path in paths:
-            # disregard empty path fragments
-            if not path: continue
-            # discard the current state if this is an absolute path
-            if path[0] == separator: fragments = []
-            # convert a lone separator into an empty fragment
-            if path == separator: path = ''
-            # add this path to the pile
-            fragments.append(path)
-        # assemble the answer
-        return separator.join(fragments)
-
-
-    @classmethod
-    def split(cls, path, separator=None):
-        """
-        Take {path} apart using {separator} and return a sequence of the fragments
-        """
-        # take {path} apart while removing blank fragments
-        return filter(None, path.split(separator if separator is not None else cls.separator))
-
-
     def open(self, **kwds):
         """
         Access the contents of the physical resource with which I am associated
@@ -100,8 +64,7 @@ class Node(metaclass=_metaclass_Node):
     # meta methods
     def __init__(self, filesystem, **kwds):
         """
-        Build a node:
-            filesystem: one of the supported filesystems
+        Build a node that is contained in the given {filesystem}
         """
         # chain up
         super().__init__(**kwds)
@@ -116,20 +79,18 @@ class Node(metaclass=_metaclass_Node):
 
 
     # debugging support
-    def dump(self, interactive=True, indent=''):
+    def dump(self, indent=0):
         """
         Print out my contents using a tree explorer
         """
-        # bail out if not in interactive mode
-        if not interactive: return self
-
-        # build an explorer
+        # grab the tree explorer factory
         from . import treeExplorer
-        explorer = treeExplorer()
+        # build one
+        explorer = treeExplorer(indent=indent)
         # get the representation of my contents and dump it out
-        for line in explorer.explore(node=self, label=self.uri): print("{}{}".format(indent, line))
+        yield from explorer.explore(node=self, label=str(self.uri))
         # all done
-        return self
+        return
 
 
 # end of file

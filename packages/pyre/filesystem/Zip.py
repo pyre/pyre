@@ -8,6 +8,8 @@
 
 # externals
 import zipfile
+# support
+from .. import primitives
 # base class
 from .Filesystem import Filesystem
 
@@ -48,23 +50,32 @@ class Zip(Filesystem):
         for name, info in zip(self.zipfile.namelist(), self.zipfile.infolist()):
             # recognize the type of entry: directories end with a slash, everything else is a
             # file
+            # start by converting the name into a path
+            path = primitives.path(name)
+            # so if the name ends with a slash
             if name[-1] == '/':
+                # make folder
                 node = self.folder()
-                metadata = self.ZipFolder(uri=name, zipinfo=info)
+                # build the metadata
+                metadata = self.ZipFolder(uri=path, zipinfo=info)
+            # otherwise
             else:
+                # make a regular node
                 node = self.node()
-                metadata = self.ZipNode(uri=name, zipinfo=info)
+                # build the metadata
+                metadata = self.ZipNode(uri=path, zipinfo=info)
             # insert the node
-            self._insert(node=node, uri=name, metadata=metadata)
+            self._insert(node=node, uri=path, metadata=metadata)
         # all done
         return self
 
 
     # meta methods
     def __init__(self, metadata, **kwds):
+        # chain up
         super().__init__(metadata=metadata, **kwds)
         # create the zip file object for my archive
-        self.zipfile = zipfile.ZipFile(metadata.uri)
+        self.zipfile = zipfile.ZipFile(str(metadata.uri))
         # and return
         return
 

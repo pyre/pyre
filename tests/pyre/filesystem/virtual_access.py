@@ -13,26 +13,28 @@ Sanity check: verify that we can create virtual filesystem instances
 
 
 def test(interactive=False): # switch to True to see the dumps
-    # access the package
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
 
     # create a virtual filesystem
     fs = pyre.filesystem.virtual()
 
     # create a folder a few levels down from the root
-    mpath = "/home/users/mga"
+    mpath = pyre.primitives.path("/home/users/mga")
     mga = fs.folder()
     fs[mpath] = mga
     # check that we can retrieve it
     assert mga == fs[mpath]
 
     # add a subfolder
-    tpath = 'dv/tools'
+    tpath = pyre.primitives.path('dv/tools')
     tools = fs.folder()
-    fs[fs.join(mpath, tpath)] = tools
+    fs[mpath / tpath] = tools
 
     # and retrieve it
-    assert fs[fs.join(mpath, tpath)] == mga[tpath]
+    assert fs[mpath / tpath] == mga[tpath]
 
     # add a node
     hello = fs.node()

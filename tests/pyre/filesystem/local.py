@@ -12,12 +12,12 @@ Create and dump a local filesystem
 """
 
 
-def test(interactive=False): # change to True to see the dump
+def test():
     import pyre.filesystem
 
     home = pyre.filesystem.local(root="../..")
     home.discover()
-    home.dump(interactive) # change to True to see the dump
+    # print('\n'.join(home.dump()))
 
     return home
 

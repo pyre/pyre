@@ -7,12 +7,9 @@
 
 
 # external
-import os
 import re
-
-
-# constants
-separator = '/'
+# support
+from .. import primitives
 
 
 # factories
@@ -40,19 +37,20 @@ def local(root, listdir=None, recognizer=None, **kwds):
     # build a recognizer
     recognizer = stat() if recognizer is None else recognizer
 
+
     # ensure that {root} is an absolute path so that we can protect the filesystem
     # representation in case the application manipulates the current working directory of the
     # process
-    root = os.path.abspath(root)
-    # attempt to
     try:
-        # have the recognizer to take a look at our root
-        info = recognizer.recognize(root)
+        # convert the mount point into a path and check its existence
+        root = primitives.path(root).resolve()
     # if that fails
     except OSError as error:
-        # generate an error
-        raise MountPointError(uri=root, error='mount point not found') from error
+        # complain
+        raise MountPointError(uri=root, error='mount point not found')
 
+    # let the recognizer have a stub
+    info = recognizer.recognize(root)
     # if the root is a directory
     if info.isDirectory:
         # access the local filesystem factory
@@ -62,7 +60,8 @@ def local(root, listdir=None, recognizer=None, **kwds):
 
     # perhaps it is a zipfile
     import zipfile
-    if zipfile.is_zipfile(root):
+    # so check and if so
+    if zipfile.is_zipfile(str(root)):
         # access the zip filesystem factory
         from .Zip import Zip
         # build one and return it
@@ -78,11 +77,19 @@ def zip(root, **kwds):
     """
     # ensure {root} is an absolute path, just in case the application changes the current
     # working directory
-    root = os.path.abspath(root)
+    try:
+        # convert the mount point into a path and check its existence
+        root = primitives.path(root).resolve()
+    # if that fails
+    except FileNotFoundError as error:
+        # complain
+        raise MountPointError(uri=root, error='mount point not found')
+
     # access the zip package
     import zipfile
     # if {root} does not point to a valid archive
-    if not zipfile.is_zipfile(root):
+    if not zipfile.is_zipfile(str(root)):
+        # complain
         raise MountPointError(uri=root, error="mount point is not a zipfile")
 
     # otherwise, get a recognizer to build the metadata for the archive
@@ -150,28 +157,10 @@ def walker():
 from .exceptions import MountPointError
 
 
-# utilities
-def join(*fragments):
-    """
-    Splice {fragments} together to build a path
-    """
-    from .Node import Node
-    return Node.join(*fragments)
-
-
-def split(path):
-    """
-    Convert {path} into a sequence of fragments
-    """
-    from .Node import Node
-    return Node.split(path)
-
-
 # debugging support:
 #     import the package and set to something else, e.g. pyre.patterns.ExtentAware
 #     to change the runtime behavior of these objects
 _metaclass_Node = type
-
 
 def debug():
     """
@@ -183,7 +172,7 @@ def debug():
     from ..patterns.ExtentAware import ExtentAware
     global _metaclass_Node
     _metaclass_Node = ExtentAware
-
+    # all done
     return
 
 

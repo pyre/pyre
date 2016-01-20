@@ -13,18 +13,26 @@ Verify that attempts to create local filesystems with nonexistent roots fails as
 
 
 def test():
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
 
-    dummy = "./local_rootNotDirectory.py"
+    # make a path out of a regular file
+    dummy = pyre.primitives.path("./local_rootNotDirectory.py")
+    # attempt to
     try:
+        # mount a filesystem there
         pyre.filesystem.local(root=dummy)
+        # which should fail so we can't reach here
         assert False
+    # if it fails as expected
     except pyre.filesystem.MountPointError as error:
-        import os
-        target = os.path.abspath(dummy)
+        # check that the error message is correct
         assert str(error) == (
-            "error while mounting {!r}: invalid mount point".format(target))
+            "error while mounting '{}': invalid mount point".format(dummy.resolve()))
 
+    # all done
     return
 
 

@@ -5,6 +5,9 @@
 # (c) 1998-2016 all rights reserved
 #
 
+"""
+This module contains the base classes for the filesystem node meta-data
+"""
 
 # class declarations
 class Info:
@@ -14,8 +17,11 @@ class Info:
 
     # meta methods
     def __init__(self, uri, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the node uri
         self.uri = uri
+        # all done
         return
 
     # implementation details
@@ -53,8 +59,11 @@ class ZipNode(NodeInfo):
 
     # meta methods
     def __init__(self, zipinfo, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the information stored by the zip archive
         self.zipinfo = zipinfo
+        # all done
         return
 
     # implementation details
@@ -68,8 +77,11 @@ class ZipFolder(FolderInfo):
 
     # meta methods
     def __init__(self, zipinfo, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the information stored by the zip archive
         self.zipinfo = zipinfo
+        # all done
         return
 
     # implementation details

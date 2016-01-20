@@ -8,11 +8,9 @@
 
 PROJECT = pyre
 PROJ_CLEAN += \
-    local-make
+    local-make sample.zip
 
-#--------------------------------------------------------------------------
-#
-
+# standard targets
 all: test
 
 test: sanity virtual local zip explorers clean
@@ -21,7 +19,6 @@ sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./exceptions.py
 	${PYTHON} ./node.py
-	${PYTHON} ./join.py
 	${PYTHON} ./folder.py
 	${PYTHON} ./filesystem.py
 	${PYTHON} ./directory_walker.py
@@ -47,7 +44,7 @@ local:
 	${PYTHON} ./local_rootNotDirectory.py
 	${PYTHON} ./local_make.py
 
-zip:
+zip: scratch
 	${PYTHON} ./zip.py
 	${PYTHON} ./zip_open.py
 	${PYTHON} ./zip_rootNonexistent.py
@@ -58,5 +55,8 @@ explorers:
 	${PYTHON} ./finder_pattern.py
 	${PYTHON} ./simple_explorer.py
 	${PYTHON} ./tree_explorer.py
+
+scratch:
+	@zip -q sample.zip *
 
 # end of file

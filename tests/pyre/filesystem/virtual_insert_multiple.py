@@ -17,6 +17,9 @@ is as expected
 
 
 def test():
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
 
     # build a folder
@@ -26,8 +29,8 @@ def test():
     users = root.folder()
 
     # add them to the folder
-    root._insert(node=users, uri="/home/users")
-    root._insert(node=mga, uri="/home/users/mga")
+    root._insert(node=users, uri=pyre.primitives.path("/home/users"))
+    root._insert(node=mga, uri=pyre.primitives.path("/home/users/mga"))
 
     # check that it was done correctly
     assert len(root.contents) == 1

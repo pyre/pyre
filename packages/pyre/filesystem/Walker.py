@@ -6,10 +6,6 @@
 #
 
 
-# externals
-import os
-
-
 # class declaration
 class Walker:
     """
@@ -30,11 +26,11 @@ class Walker:
         # attempt
         try:
             # to get the contents
-            return os.listdir(path)
+             return path.contents
         # if this fails
-        except os.error as error:
+        except OSError as error:
             # raise a package specific exception
-            raise cls.DirectoryListingError(uri=path, error=error.strerror)
+            raise cls.DirectoryListingError(uri=path, error=str(serror))
 
 
 # end of file

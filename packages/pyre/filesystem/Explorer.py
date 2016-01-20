@@ -12,10 +12,6 @@ class Explorer:
     """
 
 
-    # constants
-    from . import separator
-
-
     # interface
     def explore(self, node, **kwds):
         """

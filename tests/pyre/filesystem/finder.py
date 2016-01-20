@@ -23,21 +23,21 @@ def test():
 
     # explore
     finder = pyre.filesystem.finder()
-    contents = list(sorted(path for node,path in finder.explore(fs)))
+    contents = list(sorted(str(path) for _,path in finder.explore(fs)))
     # for line in contents: print(line)
 
     # check
     assert contents == [
-        "", # the root, which is nameless
-        "home",
-        "home/users",
-        "home/users/mga",
-        "home/users/mga/dv",
-        "home/users/mga/dv/tools",
-        "home/users/mga/dv/tools/bin",
-        "home/users/mga/dv/tools/bin/hello",
-        "home/users/mga/dv/tools/lib",
-        "home/users/mga/dv/tools/lib/libhello.a",
+        "/",
+        "/home",
+        "/home/users",
+        "/home/users/mga",
+        "/home/users/mga/dv",
+        "/home/users/mga/dv/tools",
+        "/home/users/mga/dv/tools/bin",
+        "/home/users/mga/dv/tools/bin/hello",
+        "/home/users/mga/dv/tools/lib",
+        "/home/users/mga/dv/tools/lib/libhello.a",
         ]
 
     return fs, finder

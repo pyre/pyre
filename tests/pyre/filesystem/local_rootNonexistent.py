@@ -13,14 +13,23 @@ Verify that attempts to create local filesystems with nonexistent roots fails as
 
 
 def test():
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
 
+    # attempt to
     try:
+        # make a filesystem rooted at a non-existent directory
         pyre.filesystem.local(root="/@")
+        # which should fail, hence we can't reach here
         assert False
+    # if it fails as expected
     except pyre.filesystem.MountPointError as error:
+        # check that the error message is what i expect
         assert str(error) == "error while mounting '/@': mount point not found"
 
+    # all done
     return
 
 

@@ -19,20 +19,14 @@ def test(interactive=False): # set to True to see the dump
 
 
     # the name of the zipfile
-    archive = "/tmp/sample.zip"
-    # build the archive
-    target = zipfile.ZipFile(file=archive, mode="w", compression=zipfile.ZIP_DEFLATED)
-    with target:
-        for filename in os.listdir('.'): target.write(filename)
-
+    archive = "sample.zip"
     # open it as a filesystem
     home = pyre.filesystem.zip(root=archive)
+    # ingest the contents
     home.discover()
     home.dump(interactive)
 
-    # remove the zipfile
-    os.unlink(archive)
-
+    # all done
     return home
 
 

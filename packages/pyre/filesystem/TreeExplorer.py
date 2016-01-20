@@ -60,16 +60,25 @@ class TreeExplorer(Explorer):
 
 
     # meta methods
-    def __init__(self, **kwds):
+    def __init__(self, indent=0, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # initialize my state
+        self._indent = indent
         self._graphic = '' # the marker that goes in front of a rendered entry
         self._margin = '' # the leading string that encodes the structure of the tree
+        # all done
         return
 
 
     # implementation details
     def render(self, name, node):
-        return "{._graphic}{} ({})".format(self, name, node.marker)
+        # build a string and return it
+        return "{}{._graphic}{} ({})".format(self.INDENT*self._indent, self, name, node.marker)
+
+
+    # constants
+    INDENT = ' '*2
 
 
 # end of file

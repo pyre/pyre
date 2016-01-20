@@ -6,6 +6,10 @@
 #
 
 
+# externals
+import itertools
+# support
+from .. import primitives
 # base class
 from .Node import Node
 
@@ -28,7 +32,8 @@ class Folder(Node):
     # my metadata
     from .metadata import FolderInfo as metadata
     # exceptions
-    from .exceptions import FolderInsertionError, FolderError, IsFolderError, NotFoundError
+    from .exceptions import (
+        FolderInsertionError, NotRootError, FolderError, IsFolderError, NotFoundError)
 
 
     # interface
@@ -72,7 +77,7 @@ class Folder(Node):
         Make the root of {filesystem} available as {uri} within my filesystem
         """
         # easy enough: just insert {filesystem} at {uri}
-        return self._insert(uri=uri, node=filesystem)
+        return self._insert(uri=primitives.path(uri), node=filesystem)
 
 
     # node factories
@@ -118,7 +123,7 @@ class Folder(Node):
         Retrieve a node given its {uri} as the subscript
         """
         # invoke the implementation and return the result
-        return self._retrieve(uri)
+        return self._retrieve(uri=primitives.path(uri))
 
 
     def __setitem__(self, uri, node):
@@ -126,21 +131,21 @@ class Folder(Node):
         Attach {node} at {uri}
         """
         # invoke the implementation and return the result
-        return self._insert(node=node, uri=uri)
+        return self._insert(node=node, uri=primitives.path(uri))
 
 
     def __contains__(self, uri):
         """
         Check whether {uri} is one of my children
         """
-        # take the {uri} apart
-        names = filter(None, uri.split(self.separator))
+        # convert
+        uri = primitives.path(uri)
         # starting with me
         node = self
         # attempt to
         try:
             # iterate over the names
-            for name in names: node = node.contents[name]
+            for name in uri.names: node = node.contents[name]
         # if node is not a folder, report failure
         except AttributeError: return False
         # if {name} is not among the contents of node, report failure
@@ -154,14 +159,12 @@ class Folder(Node):
         """
         Locate the entry with address {uri}
         """
-        # take {uri} apart
-        names = filter(None, uri.split(self.separator))
         # starting with me
         node = self
         # attempt to
         try:
             # hunt down the target node
-            for name in names: node = node.contents[name]
+            for name in uri.names: node = node.contents[name]
         # if any of the folder lookups fail
         except KeyError:
             # notify the caller
@@ -180,48 +183,55 @@ class Folder(Node):
         """
         Attach {node} at the address {uri}, creating all necessary intermediate folders.
         """
-        # build the list of node names
-        names = tuple(filter(None, uri.split(self.separator)))
-        # keep track of the path fragment we have visited
-        path = [self.uri]
         # starting with me
         current = self
-        # visit all folders in {uri}
-        for name in names[:-1]:
-            # add {name} to the {path}
-            path.append(name)
+        # make an iterator over the directories in the parent of {uri}
+        names = uri.parent.names
+        # visit all the levels in {uri}
+        for name in names:
             # attempt to
             try:
-                # get the node pointed to by {name}
+                # get the node associated with this name
                 current = current.contents[name]
             # if not there
             except KeyError:
-                # no problem; let's make a folder
-                folder = current.folder()
-                # attach it
-                current.contents[name] = folder
-                # notify the filesystem
-                self.filesystem().attach(node=folder, uri=self.join(*path))
-                # and make it the current node
-                current = folder
-            # if it is there
-            else:
-                # check that it is a folder
-                if not current.isFolder:
-                    # if not, raise an error
-                    raise self.FolderInsertionError(
-                        filesystem=self.filesystem(), node=self, uri=uri, target=name)
+                # we have reached the edge of the contents of the filesystem; from here on,
+                # every access to the contents of {current} will raise an exception and send us
+                # here; so all we have to do is build folders until we exhaust {name} and
+                # {names}
+                for name in itertools.chain((name,), names):
+                    # make a folder
+                    folder = current.folder()
+                    # attach it
+                    current.contents[name] = folder
+                    # inform the filesystem
+                    current.filesystem().attach(node=folder, uri=(current.uri / name))
+                    # and advance the cursor
+                    current = folder
+                # we should have exhausted the loop iterator so there should be no reason
+                # to break out of the outer loop; check anyway
+                assert tuple(names) == ()
+            # if the {current} node doesn't have {contents}
+            except AttributeError:
+                # complain
+                raise self.FolderError(
+                    filesystem=current.filesystem(), node=current, uri=uri, fragment=name)
 
-        # at this point, all intermediate folders have been processed
-        # get the name of the node
-        name = names[-1]
-        # update the path
-        path.append(name)
-        # attach the node to its folder
-        current.contents[names[-1]] = node
-        # build the path of the node
-        self.filesystem().attach(node=node, uri=self.join(*path), metadata=metadata)
-        # and return it
+        # at this point, {current} points to the folder that should contain our {node}; get its
+        # name by asking the input {uri}
+        name = uri.name
+        # attempt to
+        try:
+            # insert it into the contents of the folder
+            current.contents[name] = node
+        # if the {current} node doesn't have {contents}
+        except AttributeError:
+            # complain
+            raise self.FolderInsertionError(
+                filesystem=current.filesystem(), node=node, target=current.uri.name, uri=uri)
+        # inform the filesystem
+        current.filesystem().attach(node=node, uri=(current.uri / name), metadata=metadata)
+        # and return the {node}
         return node
 
 

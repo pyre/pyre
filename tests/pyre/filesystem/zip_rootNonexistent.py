@@ -13,13 +13,19 @@ Verify that attempts to create local filesystems with nonexistent roots fails as
 
 
 def test():
+    # my package
     import pyre.filesystem
 
+    # attempt to
     try:
+        # mount a zip filesystem at nonexistent location
         pyre.filesystem.zip(root="/@")
+        # which should fail so we can't get here
         assert False
+    # if it fails as expected
     except pyre.filesystem.MountPointError as error:
-        assert str(error) == "error while mounting '/@': mount point is not a zipfile"
+        # check that the error message is corerct
+        assert str(error) == "error while mounting '/@': mount point not found"
 
     return
 

@@ -44,7 +44,8 @@ class Stat(Recognizer):
         and decorate it with all the metadata available on the disk.
         """
         # pull the information from the hard filesystem
-        meta = os.stat(entry)
+        meta = entry.stat()
+        # grab my mode
         mode = meta.st_mode
 
         # walk through the cases
@@ -60,9 +61,12 @@ class Stat(Recognizer):
             return cls.CharacterDevice(uri=entry, info=meta)
         elif stat.S_ISFIFO(mode):
             return cls.NamedPipe(uri=entry, info=meta)
-        # otherwise
+
+        # otherwise, we have a bug
         import journal
+        # build a message
         msg = "{!r}: unknown file type: mode={}".format(entry, mode)
+        # and complain
         return journal.firewall("pyre.filesystem").log(msg)
 
 

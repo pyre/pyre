@@ -13,6 +13,9 @@ Verify node insertion in folders
 
 
 def test():
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
 
     # build a virtual filesystem
@@ -22,7 +25,7 @@ def test():
     mga = fs.node()
 
     # add it to the folder
-    fs._insert(uri="/home/users/mga", node=mga)
+    fs._insert(uri=pyre.primitives.path("/home/users/mga"), node=mga)
 
     # check that it was done correctly
     assert len(fs.contents) == 1

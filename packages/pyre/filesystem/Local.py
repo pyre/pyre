@@ -7,9 +7,8 @@
 
 
 # externals
-import os # for the path utilities
-import time # for my timestamps
-# base class
+import time
+# superclass
 from .Filesystem import Filesystem
 
 
@@ -39,7 +38,7 @@ class Local(Filesystem):
         # attempt to
         try:
             # call the system {open} and return the result
-            return open(uri, **kwds)
+            return uri.open(**kwds)
         # if this fails
         except OSError as error:
             # complain
@@ -51,9 +50,9 @@ class Local(Filesystem):
         Create a subdirectory {name} in {parent}
         """
         # assemble the new folder uri
-        uri = self.join(parent.uri, name)
+        uri = parent.uri / name
         # create the directory
-        os.mkdir(uri)
+        uri.mkdir()
         # if we get this far, the directory has been created; update my internal structure
         folder = parent.folder()
         # insert the new node in its parent's contents
@@ -71,9 +70,9 @@ class Local(Filesystem):
         Create the file {name} in the folder {parent} with the given {contents}
         """
         # assemble the new file uri
-        uri = self.join(parent.uri, name)
+        uri = parent.uri / name
         # create the file
-        with open(uri, mode="w") as file:
+        with uri.open(mode="w") as file:
             # save its contents
             file.write(contents)
         # build a node
@@ -132,18 +131,93 @@ class Local(Filesystem):
         # print("    root: {!r}".format(root))
         # print("    levels: {!r}".format(levels))
         # print("  visiting:")
-        # create a timestamp
+        # create a timestamp so we know the last time the filesystem contents were refreshed
         timestamp = time.gmtime()
-        # use the supplied traversal support, if available
+        # use the supplied traversal support, if available; otherwise, use mine
         walker = self.walker if walker is None else walker
         recognizer = self.recognizer if recognizer is None else recognizer
+
         # establish the starting point
         root = self if root is None else root
         # print("    root uri: {!r}".format(root.uri))
-        # make sure {root} is a folder
+        # and make sure it is is a folder
         if not root.isFolder:
             # otherwise complain
             raise self.DirectoryListingError(uri=root.uri, error='not a directory')
+
+        # initialize the traversal: pairs made of the node we are working on, and the depth of
+        # the traversal at the level of this node
+        todo = [ (root, 0) ]
+        # start walking and recognizing
+        for folder, level in todo:
+            # if we have gotten deeper than the user requested
+            if levels is not None and level >= levels:
+                # do something else
+                continue
+            # compute the actual location of this folder
+            location = self.vnodes[folder].uri
+            # show me
+            # print("    uri: {}".format(location))
+            # put the current contents of the folder on a pile; once we recognize the actual
+            # contents of the folder, we will remove them from this pile; what's left are
+            # entries that disappeared since the last time we walked the folder and must be
+            # removed
+            dead = set(folder.contents)
+            # show me
+            # print("    contents: {}".format(dead))
+            # walk through the contents
+            for entry in walker.walk(location):
+                # show me
+                # print("      {}".format(entry))
+                # try to figure out what kind of entry this is
+                try:
+                    # by asking the recognizer for help
+                    meta = recognizer.recognize(entry)
+                # it is possible to have entries in a directory that are not real files: the
+                # walker can find them, but the recognizer fails; emacs auto-save files on OSX
+                # are such an example. so, if the recognizer failed
+                except OSError:
+                    # ignore this entry
+                    continue
+                # stamp the entry meta-data
+                meta.syncTime = timestamp
+                # get the entry name
+                name = entry.name
+                # remove from the pile of dead entries
+                dead.discard(name)
+                # attempt to
+                try:
+                    # get the node associated with {name} in this {folder}
+                    node = folder[name]
+                # if this fails
+                except self.NotFoundError:
+                    # make a new node; if we are building a folder
+                    if meta.isDirectory:
+                        # make it
+                        node = folder.folder()
+                        # and add its location to our {todo} pile
+                        todo.append( (node, level+1) )
+                    # otherwise
+                    else:
+                        # make a regular node
+                        node = folder.node()
+                    # either way, this is new contents for our folder
+                    folder[name] = node
+                # new or old, its meta-data must be updated
+                self.vnodes[node] = meta
+            # we are done with this folder; check whether there are any dead nodes
+            for entry in dead:
+                # remove the associated node from the vnode table
+                del self.vnodes[folder[entry]]
+                # and remove them from the folder contents
+                del folder[name]
+
+        # show me
+        # print("    after uri: {!r}".format(self.vnodes[root].uri))
+        # all done
+        return root
+
+
         # clear out the contents of {root}
         root.contents = {}
         # print("    before uri: {!r}".format(self.vnodes[root].uri))
@@ -155,7 +229,6 @@ class Local(Filesystem):
             if levels is not None and level >= levels: continue
             # compute the actual location of this directory
             location = self.vnodes[folder].uri
-            # print("    uri: {!r}".format(location))
             # walk through the contents
             for entry in walker.walk(location):
                 # build the absolute path of the entry
@@ -165,7 +238,7 @@ class Local(Filesystem):
                     # recognize the file
                     meta = recognizer.recognize(address)
                 # it is possible to have entries in a directory that are not real files: the
-                # walker can find them, but the recognizer fails; emacs autosave files on sox
+                # walker can find them, but the recognizer fails; emacs auto-save files on OSX
                 # are such an example. so, if the recognizer failed
                 except OSError:
                     # ignore this entry
@@ -193,11 +266,12 @@ class Local(Filesystem):
 
     # meta methods
     def __init__(self, walker, recognizer, **kwds):
+        # chain up
         super().__init__(**kwds)
-        # attach the content discovery mechanisms
+        # attach the default content discovery mechanisms
         self.walker = walker
         self.recognizer = recognizer
-
+        # all done
         return
 
 

@@ -13,6 +13,9 @@ Verify that node insertion fails when an intermediate path component is not a fo
 
 
 def test():
+    # support
+    import pyre.primitives
+    # my package
     import pyre.filesystem
 
     # build a folder
@@ -20,12 +23,12 @@ def test():
     # and a node
     mga = root.node()
     # add it to the folder
-    root._insert(uri="/home/users/mga", node=mga)
+    root._insert(uri=pyre.primitives.path("/home/users/mga"), node=mga)
     # now create another node
     tmp = root.node()
     # and attempt to add it to mga
     try:
-        root._insert(uri="/home/users/mga/tmp", node=tmp)
+        root._insert(uri=pyre.primitives.path("/home/users/mga/tmp"), node=tmp)
         assert False
     except root.FolderInsertionError as error:
         assert (

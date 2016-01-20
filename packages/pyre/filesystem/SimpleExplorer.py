@@ -44,13 +44,17 @@ class SimpleExplorer(Explorer):
 
     # meta methods
     def __init__(self, indent=0, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the starting indentation level
         self._indent = indent
+        # all done
         return
 
 
     # implementation details
     def render(self, name, node):
+        # build a string an return it
         return "{0}({1}) {2}".format(self.INDENT*self._indent, node.marker, name)
 
 
