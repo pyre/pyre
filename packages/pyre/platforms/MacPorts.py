@@ -7,7 +7,7 @@
 
 
 # externals
-import re, collections, pathlib, subprocess
+import re, collections, subprocess
 # framework
 import pyre
 # superclass
@@ -24,7 +24,7 @@ class MacPorts(Managed, family='pyre.packagers.macports'):
     # constants
     name = 'macports'
     client = 'port'
-    defaultLocation = pathlib.Path('/opt/local/bin')
+    defaultLocation = pyre.primitives.path('/opt/local/bin')
 
 
     # meta-methods
@@ -253,7 +253,7 @@ class MacPorts(Managed, family='pyre.packagers.macports'):
                 # strip
                 line = line.strip()
                 # interpret it and pass it on
-                yield pathlib.Path(line) if line != '-' else None
+                yield pyre.primitives.path(line) if line != '-' else None
         # all done
         return
 

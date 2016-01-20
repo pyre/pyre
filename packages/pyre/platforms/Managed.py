@@ -7,7 +7,7 @@
 
 
 # externals
-import re, pathlib
+import re
 # the framework
 import pyre
 # my protocol
@@ -67,7 +67,7 @@ class Managed(pyre.component, implements=PackageManager):
         # if we found it
         if client:
             # pathify
-            client = pathlib.Path(client)
+            client = pyre.primitives.path(client)
         # otherwise
         else:
             # maybe it's not on the path; try the default
@@ -203,7 +203,7 @@ class Managed(pyre.component, implements=PackageManager):
         # search for it in contents
         for match in self.find(target=regex, pile=contents):
             # extract the folder
-            return pathlib.Path(match.group('path'))
+            return pyre.primitives.path(match.group('path'))
         # otherwise, leave it blank
         return
 

@@ -7,7 +7,7 @@
 
 
 # externals
-import re, pathlib, subprocess
+import re, subprocess
 # framework
 import pyre
 # superclass
@@ -24,7 +24,7 @@ class DPkg(Managed, family='pyre.packagers.dpkg'):
     # constants
     name = 'dpkg'
     client = 'dpkg-query'
-    defaultLocation = pathlib.Path('/usr/bin')
+    defaultLocation = pyre.primitives.path('/usr/bin')
 
 
     # meta-methods
