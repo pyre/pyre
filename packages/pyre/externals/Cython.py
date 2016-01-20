@@ -6,8 +6,6 @@
 #
 
 
-# externals
-import pathlib
 # access to the framework
 import pyre
 # superclass
@@ -176,7 +174,7 @@ class Default(
         # build the normalization map
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {cython} and use it to set my compiler
-        self.compiler = nmap[pathlib.Path('bin/cython')].name
+        self.compiler = nmap[pyre.primitives.path('bin/cython')].name
         # look for it to get my {bindir}
         bindir = packager.findfirst(target=self.compiler, contents=contents)
         # and save it

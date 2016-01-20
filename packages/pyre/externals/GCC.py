@@ -7,7 +7,7 @@
 
 
 # externals
-import re, pathlib, subprocess
+import re, subprocess
 # access to the framework
 import pyre
 # superclass
@@ -173,7 +173,7 @@ class Default(ToolInstallation, family='pyre.externals.gcc.gcc', implements=GCC)
         # build the map
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {gcc} and use it to set my wrapper
-        self.wrapper = nmap[pathlib.Path('bin/gcc')].name
+        self.wrapper = nmap[pyre.primitives.path('bin/gcc')].name
         # look for it to get my {bindir}
         bindir = packager.findfirst(target=self.wrapper, contents=contents)
         # and save it

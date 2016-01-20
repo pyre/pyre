@@ -6,8 +6,6 @@
 #
 
 
-# externals
-import pathlib
 # access to the framework
 import pyre
 # superclass
@@ -88,6 +86,10 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         Provide alternative compatible implementations of MPI on macports machines, starting with
         the package the user has selected as the default
         """
+        print("-------------------------------------------------")
+        for implementor in cls.pyre_locateAllImplementers():
+            print(cls)
+        print("-------------------------------------------------")
         # build a locator
         locator = pyre.tracking.simple('while looking for {.category!r} choices'.format(cls))
         # known installations
@@ -152,7 +154,7 @@ class Default(ToolInstallation, LibraryInstallation, implements=MPI):
         # build the normalization map
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {mpirun} and use it to set my launcher
-        self.launcher = nmap[pathlib.Path('bin/mpirun')].name
+        self.launcher = nmap[pyre.primitives.path('bin/mpirun')].name
         # extract my {bindir}
         bindir = packager.findfirst(target=self.launcher, contents=contents)
         # and save it

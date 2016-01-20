@@ -7,7 +7,7 @@
 
 
 # externals
-import re, pathlib
+import re
 # access to the framework
 import pyre
 # superclass
@@ -201,7 +201,7 @@ class Default(
         # build the normalization map
         nmap = { base: target for base,target in zip(*normalization) }
         # find the binary that supports {psql} and use it to set my launcher
-        self.psql = nmap[pathlib.Path('bin/psql')].name
+        self.psql = nmap[pyre.primitives.path('bin/psql')].name
         # set my {bindir}
         bindir = packager.findfirst(target=self.psql, contents=contents)
         # and save it
