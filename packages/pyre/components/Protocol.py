@@ -268,13 +268,13 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         packages that have not been imported yet, or live in files outside the canonical layout
         """
         # all loadable implementers
-        yield from cls.pyre_locateAllLoadableImplementors()
+        yield from cls.pyre_locateAllLoadableImplementers()
         # all importable implementers
-        yield from cls.pyre_locateAllImportableImplementors()
+        yield from cls.pyre_locateAllImportableImplementers()
 
 
     @classmethod
-    def pyre_locateAllImportableImplementors(cls):
+    def pyre_locateAllImportableImplementers(cls):
         """
         Retrieve all implementers registered in a namespace derivable from my family name
         """
@@ -295,7 +295,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
 
     @classmethod
-    def pyre_locateAllLoadableImplementors(cls):
+    def pyre_locateAllLoadableImplementers(cls):
         """
         Retrieve all implementers that live in files and folders derivable from my family name
         """
@@ -327,8 +327,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                         todo.append((vfs.join(path,name), child))
                     # otherwise
                     else:
-                        # treat it as a shelf
-                        yield from cls.pyre_implementers(uri=vfs.join('vfs:', path, name))
+                        # treat it as a shelf; assemble its address
+                        uri = vfs.join('vfs:', path, name)
+                        # and get its contents
+                        yield from cls.pyre_implementers(uri=uri)
 
         # the last thing to try is a shelf named after my family
         uri += '.py'
