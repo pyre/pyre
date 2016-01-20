@@ -15,9 +15,11 @@ class File:
 
     # meta methods
     def __init__(self, source, line=None, column=None):
+        # save my info
         self.source = source
         self.line = line
         self.column = column
+        # all done
         return
 
 

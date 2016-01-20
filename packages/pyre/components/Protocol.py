@@ -8,6 +8,7 @@
 
 # externals
 import itertools
+# support
 from .. import tracking
 # metaclass
 from .Role import Role
@@ -165,7 +166,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             # print('{} : {!r} : {!r} : {!r}'.format(prefix, folder, spec, container))
             # assemble the address portion of the uri; we are only looking for files, so it's
             # ok to hardwire the extension
-            path = resolver.join(prefix.address, folder, spec, container) + cls.EXTENSION
+            path = str(resolver.path(prefix.address, folder, spec, container)) + cls.EXTENSION
             # show me the candidate path
             # print('trying {!r}'.format(path))
             # build a better uri
@@ -218,7 +219,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # build a progressively shorter sequence of portions of my family name
         for marker in reversed(range(0, len(path)+1)):
             # splice it together and return it
-            yield resolver.join(*path[:marker])
+            yield resolver.path(*path[:marker])
 
         # all done
         return
@@ -302,7 +303,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # get the file server
         vfs = cls.pyre_fileserver
         # construct the base uri
-        uri = vfs.join(*cls.pyre_familyFragments())
+        uri = vfs.path(*cls.pyre_familyFragments())
         # if i don't have a public name, there is nothing to do
         if not uri: return
         # try to
@@ -333,7 +334,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                         yield from cls.pyre_implementers(uri=uri)
 
         # the last thing to try is a shelf named after my family
-        uri += '.py'
+        uri.withSuffix(suffix='.py')
         # check whether
         try:
             # such a node exists
@@ -345,7 +346,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # otherwise
         else:
             # yield its contents
-            yield from cls.pyre_implementers(uri=vfs.join('vfs:', uri))
+            yield from cls.pyre_implementers(uri='vfs:'+str(uri))
 
         # all done
         return

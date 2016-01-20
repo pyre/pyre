@@ -7,9 +7,9 @@
 
 
 # externals
-import re, pathlib, weakref, operator, itertools
-# locators
-from .. import tracking
+import re, weakref, operator, itertools
+# primitives, locators
+from .. import primitives, tracking
 
 
 #  the class declaration
@@ -106,7 +106,7 @@ class Executive:
         # look for each one
         for root, filename, extension in scope:
             # build the uri
-            uri = fs.splice(root.uri, filename, extension)
+            uri = "{}/{}.{}".format(root.uri, filename, extension)
             # print(' ++ looking for {!r}'.format(uri))
             # load the settings from the associated file
             self.loadConfiguration(uri=uri, priority=priority, locator=locator)
@@ -251,7 +251,7 @@ class Executive:
         # get the uri scheme
         scheme = uri.scheme
         # and the address
-        address = uri.address
+        address = str(uri.address)
         # if no {scheme} was specified, assume it is {import} and look for possible
         # interpretations of the uri that have been loaded previously
         if not scheme:
@@ -344,7 +344,7 @@ class Executive:
         # get the nameserver to build one
         package = self.nameserver.createPackage(name=name, locator=locator)
         # register it
-        package.register(executive=self, file=pathlib.Path(file).resolve())
+        package.register(executive=self, file=primitives.path(file).resolve())
         # configure it
         package.configure(executive=self)
 

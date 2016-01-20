@@ -6,8 +6,6 @@
 #
 
 
-# externals
-import pathlib
 # locators
 from .. import tracking
 # superclass
@@ -51,11 +49,11 @@ class Package(Named):
         # two levels up from {home}: {prefix}/packages/{home}/{file}
         prefix = home.parent.parent
         # hopefully, it also exists
-        if prefix.is_dir():
+        if prefix.isDirectory():
             # in which case, here is the location of the package configuration files
             defaults = prefix / self.DEFAULTS / self.name
             # if this doesn't exist
-            if not defaults.is_dir():
+            if not defaults.isDirectory():
                 # we have no configuration folder
                 defaults = None
         # if {prefix} does not exist

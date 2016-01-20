@@ -90,9 +90,9 @@ class Curator(merlin.component, family="merlin.components.curator"):
             # FIXME - FILESERVER: this steps outside the file server abstraction, since file
             # creation is not supported yet
             # build the path to the file
-            path = folder.join(folder.uri, vname)
+            path = folder.uri / vname
             # and open it in write-binary mode
-            store = open(path, mode="wb")
+            store = path.open(mode="wb")
         # pickle the item
         pickle.dump(item, store)
         # and return

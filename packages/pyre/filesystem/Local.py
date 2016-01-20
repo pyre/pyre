@@ -218,52 +218,6 @@ class Local(Filesystem):
         return root
 
 
-        # clear out the contents of {root}
-        root.contents = {}
-        # print("    before uri: {!r}".format(self.vnodes[root].uri))
-        # initialize the traversal
-        todo = [ (root, 0) ]
-        # start walking and recognizing
-        for folder, level in todo:
-            # should we process this entry?
-            if levels is not None and level >= levels: continue
-            # compute the actual location of this directory
-            location = self.vnodes[folder].uri
-            # walk through the contents
-            for entry in walker.walk(location):
-                # build the absolute path of the entry
-                address = os.path.join(location, entry)
-                # attempt to
-                try:
-                    # recognize the file
-                    meta = recognizer.recognize(address)
-                # it is possible to have entries in a directory that are not real files: the
-                # walker can find them, but the recognizer fails; emacs auto-save files on OSX
-                # are such an example. so, if the recognizer failed
-                except OSError:
-                    # ignore this entry
-                    continue
-                # otherwise, time stamp it
-                meta.syncTime = timestamp
-                # if this is a directory
-                if meta.isDirectory:
-                    # build a new folder
-                    node = self.folder()
-                    # add this location to the {todo} list
-                    todo.append( (node, level+1) )
-                # otherwise
-                else:
-                    # build a regular node
-                    node = self.node()
-                # insert the new node in the parent folder
-                folder.contents[entry] = node
-                # and update my vnode table
-                self.vnodes[node] = meta
-        # all done
-        # print("    after uri: {!r}".format(self.vnodes[root].uri))
-        return root
-
-
     # meta methods
     def __init__(self, walker, recognizer, **kwds):
         # chain up

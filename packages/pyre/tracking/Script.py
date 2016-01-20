@@ -6,10 +6,6 @@
 #
 
 
-# externals
-import os
-
-
 # declaration
 class Script:
     """
@@ -21,9 +17,11 @@ class Script:
 
     # meta methods
     def __init__(self, source, line=None, function=None):
-        self.source = os.path.abspath(source)
+        # save my info
+        self.source = source
         self.line = line
         self.function = function
+        # all done
         return
 
 

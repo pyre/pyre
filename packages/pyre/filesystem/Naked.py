@@ -6,8 +6,8 @@
 #
 
 
-# externals
-import os
+# support
+from .. import primitives
 
 
 # declaration
@@ -41,7 +41,7 @@ class Naked:
         Open the file
         """
         # easy enough
-        return open(self.uri, **kwds)
+        return self.uri.open(**kwds)
 
 
     # filesystem obligations
@@ -59,8 +59,8 @@ class Naked:
         # chain up
         super().__init__(**kwds)
         # save my name
-        self.uri = os.path.abspath(uri)
-        # build my metadat
+        self.uri = primitives.path(uri).resolve()
+        # build my metadata
         self._metadata = self.recognizer.recognize(uri)
         # all done
         return

@@ -7,7 +7,6 @@
 
 
 # externals
-import os # for path
 import weakref # for access to my executive
 import collections # for defaultdict and OrderedDict
 from .. import tracking
@@ -42,10 +41,10 @@ class Configurator:
         # initialize the pile of encountered errors
         errors = []
 
-        # extract the file extension
-        _, extension = os.path.splitext(uri.address)
+        # get the address
+        address = uri.address
         # deduce the encoding
-        encoding = extension[1:]
+        encoding = address[address.rfind('.')+1:]
         # attempt to
         try:
             # find the appropriate reader
@@ -61,7 +60,7 @@ class Configurator:
             return errors
 
         # convert the input source into a stream of events
-        events = self.codecs[encoding].decode(uri, source, locator)
+        events = reader.decode(uri, source, locator)
         # process it
         errors.extend(self.processEvents(events=events, priority=priority))
         # and return the errors

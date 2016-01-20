@@ -8,8 +8,6 @@
 #
 
 
-# externals
-import os
 # access the framework
 import pyre
 # my protocols
@@ -35,7 +33,7 @@ class Smith(pyre.application, family='pyre.applications.smith'):
         Return the location of the project template directory
         """
         # build and  return the absolute path to the model template
-        return os.path.join(pyre.prefix, 'templates', self.project.template)
+        return pyre.prefix / 'templates' / self.project.template
 
 
     # application obligations
@@ -50,15 +48,14 @@ class Smith(pyre.application, family='pyre.applications.smith'):
         # make local filesystem rooted at the model template directory
         template = self.vfs.local(root=self.vault).discover()
 
+        # make a local filesystem rooted at the current directory
+        cwd = self.vfs.local(root='.').discover()
         # if the target path exists already
-        if os.path.exists(project):
+        if project in cwd:
             # complain
             self.error.log("the folder {!r} exists already".format(project))
             # report failure
             return 1
-
-        # make a local filesystem rooted at the current directory
-        cwd = self.vfs.local(root='.')
 
         # initialize the workload
         todo = [(cwd, project, template)]

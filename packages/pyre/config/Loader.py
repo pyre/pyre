@@ -31,17 +31,19 @@ class Loader:
         # called {shelves} here, and each {Loader} subclass has its own definition. They are
         # supposed to map the name of the symbol to an actual python object
 
+        # get the address part of the {uri}
+        address = str(uri.address)
         # attempt to
         try:
             # split the address into a package and a symbol; this should be done by every
             # loader since isolating the {symbol} requires knowledge of the separator
-            package, symbol = uri.address.rsplit(cls.separator, 1)
+            package, symbol = address.rsplit(cls.separator, 1)
         # if that fails
         except ValueError:
             # if there is no protocol, we are done
             if not protocol: return
             # use the address itself as the symbol
-            symbol = uri.address
+            symbol = address
             # the package will be filled out using the protocol family
             package = ''
 

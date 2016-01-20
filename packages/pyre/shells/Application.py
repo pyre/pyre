@@ -7,7 +7,7 @@
 
 
 # externals
-import sys, pathlib
+import sys
 # access to the framework
 import pyre
 # my metaclass
@@ -16,7 +16,7 @@ from .Director import Director
 from .Shell import Shell
 from .Renderer import Renderer
 # so i can describe my dependencies
-from .. import externals
+from .. import externals, primitives
 
 
 # declaration
@@ -206,7 +206,7 @@ class Application(pyre.component, metaclass=Director):
         # if it's not empty
         if argv0:
             # turn into an absolute path
-            argv0 = pathlib.Path(argv0).resolve()
+            argv0 = pyre.primitives.path(argv0).resolve()
             # if it is a valid file
             if argv0.exists():
                 # split the folder name and save it; that's where i am from...
@@ -219,7 +219,7 @@ class Application(pyre.component, metaclass=Director):
             # my configuration directory should be at {home}/../defaults/{namespace}
             cfg = home.parent / self.DEFAULTS / namespace
             # if this exists
-            if cfg.is_dir():
+            if cfg.isDirectory():
                 # form my prefix
                 prefix = home.parent
                 # and normalize my configuration directory
@@ -238,7 +238,7 @@ class Application(pyre.component, metaclass=Director):
                 # my configuration directory should be at {prefix}/defaults/{namespace}
                 cfg = prefix / package.DEFAULTS / namespace
                 # if this exists
-                if cfg.is_dir():
+                if cfg.isDirectory():
                     # and normalize my configuration directory
                     defaults = cfg
                     # all done
@@ -457,10 +457,10 @@ class Application(pyre.component, metaclass=Director):
                 # use 'pyre' by default
                 name = 'pyre'
 
-            # get {os.path}
-            import os
             # build the uri to the history file
-            history = os.path.join(os.path.expanduser('~'), '.{}-history'.format(name))
+            history = primitives.path('~', '.{}-history'.format(name)).expanduser().resolve()
+            # stringify
+            history = str(history)
             # attempt to
             try:
                 # read it

@@ -7,9 +7,9 @@
 
 
 # externals
-import pathlib, weakref
+import weakref
 # pyre types
-from .. import schemata
+from .. import primitives, schemata
 # superclass
 from ..filesystem.Filesystem import Filesystem
 
@@ -115,16 +115,6 @@ class FileServer(Filesystem):
         raise self.URISpecificationError(uri=uri, reason="unsupported scheme {!r}".format(scheme))
 
 
-    def splice(self, path, address, extension=None):
-        """
-        Join {path}, {address} and {extension} to form a valid pathname
-        """
-        # adjust the extension
-        extension = '.' + extension if extension else ""
-        # piece the parts together
-        return "{}{}{}{}".format(path, self.separator, address, extension)
-
-
     # convenience: access to the filesystem factories
     def local(self, root, **kwds):
         """
@@ -158,12 +148,12 @@ class FileServer(Filesystem):
         # failure
 
         # get the current working directory
-        startup = pathlib.Path().resolve()
+        startup = primitives.path.cwd()
         # and mount it
         self[self.STARTUP_DIR] = self.retrieveFilesystem(root=startup)
 
         # the user's private folder, typically at{~/.pyre}
-        userdir = pathlib.Path(self.DOT_PYRE).expanduser().resolve()
+        userdir = primitives.path(self.DOT_PYRE).expanduser().resolve()
         # and mount it
         self[self.USER_DIR] = self.retrieveFilesystem(root=userdir)
 
@@ -265,7 +255,7 @@ class FileServer(Filesystem):
             # attempt to
             try:
                 # figure out whether it is contained in the tree rooted at {path}
-                diff = root.relative_to(path)
+                diff = root.relativeTo(path)
             # if not
             except ValueError:
                 # no problem, grab the next one

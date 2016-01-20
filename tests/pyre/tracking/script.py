@@ -13,12 +13,13 @@ Verify that the script locator returns the correct location tag
 
 
 def script():
-    import os
+    # get the package
     import pyre.tracking
-
+    # make a locator
     locator = pyre.tracking.script(source=__file__, function="script", line=16)
-    assert str(locator) == "file={!r}, line=16, function='script'".format(os.path.abspath(__file__))
-
+    # check that the message is formatted correctly
+    assert str(locator) == "file={!r}, line=16, function='script'".format(__file__)
+    # all done
     return locator
 
 
