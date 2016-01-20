@@ -20,33 +20,21 @@ class Finder(Explorer):
 
 
     # interface
-    def explore(self, folder, pattern=None):
+    def explore(self, folder, pattern='.*'):
         """
-        Traverse the folder and print out its contents
+        Traverse the folder and return contents that match the given pattern
         """
         # build the regular expression
-        if pattern: pattern = re.compile(pattern)
+        pattern = re.compile(pattern)
 
         # now traverse the contents
         for node in self._explore(node=folder):
-            # get the node uri
-            path = node.uri
-            # if there's no regular expression filter, or the path passes the filter
-            if not pattern or pattern.match(str(path)):
+            # compare the node {uri} against the pattern
+            match =  pattern.match(str(node.uri))
+            # and if the path matches
+            if match:
                 # return the pair
-                yield node, path
-
-        # all done
-        return
-
-        # now traverse the contents and build the pathnames
-        for node, trace in self._explore(node=folder, path=[]):
-            # build the path out of the trace
-            path = self.separator.join(trace)
-            # if there's no regular expression, or it matches if it's there
-            if not pattern or pattern.match(path):
-                # return the path
-                yield node, path
+                yield node, match
 
         # all done
         return

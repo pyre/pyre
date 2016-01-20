@@ -24,11 +24,14 @@ def test():
     fs["/home/users/mga/dv/tools/lib/libhello.a"] = fs.node()
 
     # dump the contents
-    fs.dump(False) # switch to True to see the dump
+    # print('\n'.join(fs.dump()))
 
     # explore
     finder = pyre.filesystem.finder()
-    contents = [ str(path) for node, path in finder.explore(folder=fs, pattern=r".*\.h")]
+    # collect the contents of interest
+    contents = list(sorted(
+        str(node.uri)
+        for node, *_ in finder.explore(folder=fs, pattern=r".*\.h")))
 
     # check
     assert contents == [

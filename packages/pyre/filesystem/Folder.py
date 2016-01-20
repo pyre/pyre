@@ -46,7 +46,7 @@ class Folder(Node):
 
 
     # searching for specific contents
-    def find(self, pattern=None):
+    def find(self, pattern):
         """
         Generate pairs ({node}, {name}) that match the given pattern
 

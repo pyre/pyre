@@ -23,7 +23,11 @@ def test():
 
     # explore
     finder = pyre.filesystem.finder()
-    contents = list(sorted(str(path) for _,path in finder.explore(fs)))
+    # get the contents
+    contents = list(sorted(
+        str(node.uri)
+        for node, *_ in finder.explore(fs)))
+    # show me
     # for line in contents: print(line)
 
     # check

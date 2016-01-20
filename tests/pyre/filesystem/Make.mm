@@ -11,7 +11,7 @@ PROJ_CLEAN += \
     local-make sample.zip
 
 # standard targets
-all: test
+all: test clean
 
 test: sanity virtual local zip explorers clean
 
