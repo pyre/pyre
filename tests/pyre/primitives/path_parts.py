@@ -22,7 +22,7 @@ def test():
     assert list(here.parts) == ['/'] + str(here).split('/')[1:]
 
     # check that we can identify rooted paths
-    assert here.root == '/'
+    assert here.anchor == '/'
     assert here.anchor == '/'
 
     # check that we build the sequence of parents correctly
@@ -49,11 +49,11 @@ def test():
     assert here.stem == 'path_parts'
 
     # check that the path is absolute
-    assert here.is_absolute()
+    assert here.isAbsolute()
     # but that the cwd directory representation
     cwd = pyre.primitives.path()
     # isn't
-    assert cwd.is_absolute() is False
+    assert cwd.isAbsolute() is False
 
     # the former can be expressed as a URI
     assert here.as_uri() == 'file:///Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_parts.py'
