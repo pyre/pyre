@@ -23,8 +23,9 @@ def test():
     fs['cwd'] = local
     # check that this file is there
     assert fs['cwd/fileserver_mount.py']
+
     # dump the filesystem
-    fs.dump(False) # switch to True to see the dump
+    # print('\n'.join(fs.dump()))
 
     # all done
     return fs

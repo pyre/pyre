@@ -31,7 +31,7 @@ def test():
     assert user is not None
 
     # dump the filesystem
-    fs.dump(False) # switch to True to see the dump
+    # print('\n'.join(fs.dump()))
 
     # all done
     return fs
