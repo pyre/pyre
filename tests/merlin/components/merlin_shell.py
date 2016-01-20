@@ -24,12 +24,12 @@ def test():
     # retrieve project directory
     project = merlin.vfs['/project']
     # check it
-    assert project.uri == os.getcwd()
+    assert str(project.uri) == os.getcwd()
 
     # retrieve the location of the merlin settings
     cfg = merlin.vfs['/merlin/project']
     # check it
-    assert cfg.uri == os.path.join(os.getcwd(), '.merlin')
+    assert str(cfg.uri) == os.path.join(os.getcwd(), '.merlin')
     # verify that it is accessible through the {pfs]
     assert cfg is merlin.pfs['/project']
 
