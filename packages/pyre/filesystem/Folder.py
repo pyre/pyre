@@ -97,6 +97,16 @@ class Folder(Node):
         return Folder(filesystem=self.filesystem())
 
 
+    # a factory for paths
+    @staticmethod
+    def path(*args):
+        """
+        Assemble {args} into a path
+        """
+        # easy enough
+        return primitives.path(*args)
+
+
     # meta methods
     def __init__(self, **kwds):
         """
