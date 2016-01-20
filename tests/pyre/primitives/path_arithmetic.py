@@ -39,7 +39,7 @@ def test():
     assert str(total) == '/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py'
 
     # check we compute relative paths correctly
-    assert str(total.relative_to(root / home)) == str(here)
+    assert str(total.relativeTo(root / home)) == str(here)
 
     # all done
     return

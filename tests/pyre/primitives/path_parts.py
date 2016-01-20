@@ -70,13 +70,13 @@ def test():
 
     # part replacements
     # the name
-    assert str(here.with_name('path_arithmetic.py')) == (
+    assert str(here.withName('path_arithmetic.py')) == (
         '/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_arithmetic.py'
         )
     # replacement with an invalid name
     try:
         # which should fail
-        here.with_name('foo/bar')
+        here.withName('foo/bar')
         # so we can't get here
         assert False
     # and when it fails
@@ -85,13 +85,13 @@ def test():
         assert str(error) == "invalid name 'foo/bar'"
 
     # the suffix
-    assert str(here.with_suffix('.pyc')) == (
+    assert str(here.withSuffix('.pyc')) == (
         '/Users/mga/dv/pyre-1.0/tests/pyre/primitives/path_parts.pyc'
         )
     # replacement with an invalid suffix
     try:
         # which should fail
-        here.with_suffix('foo')
+        here.withSuffix('foo')
         # so we can't get here
         assert False
     # and when it fails

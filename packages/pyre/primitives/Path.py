@@ -7,7 +7,21 @@
 
 
 # externals
-import os, collections, pwd, stat
+import collections, functools, io, os, pwd, stat
+
+
+# helpers
+def _unary(f):
+    """
+    Wrapper for functions that require the string representation of path objects
+    """
+    # wrap
+    @functools.wraps(f)
+    def dispatch(self, *args, **kwds):
+        # build my rep and forward to the wrapped function
+        return f(str(self), *args, **kwds)
+    # build the method
+    return dispatch
 
 
 # declaration
@@ -233,7 +247,7 @@ class Path(tuple):
         return cls.__new__(cls, self, *others)
 
 
-    def relative_to(self, other):
+    def relativeTo(self, other):
         """
         Find a {path} such that {other} / {path} == {self}
         """
@@ -250,7 +264,7 @@ class Path(tuple):
         return super().__new__(type(self), self[:len(other)+1])
 
 
-    def with_name(self, name):
+    def withName(self, name):
         """
         Build a new path with my name replaced by {name}
         """
@@ -262,7 +276,7 @@ class Path(tuple):
         return super().__new__(type(self), (name,) + self[1:])
 
 
-    def with_suffix(self, suffix=None):
+    def withSuffix(self, suffix=None):
         """
         Build a new path with my suffix replaced by {suffix}
         """
@@ -282,12 +296,12 @@ class Path(tuple):
             # and i have one
             if mine:
                 # remove it
-                return self.with_name(stem)
+                return self.withName(stem)
             # otherwise,  clone me
             return self
 
         # if a suffix were supplied, append it to my stem and build a path
-        return self.with_name(name=stem+suffix)
+        return self.withName(name=stem+suffix)
 
 
     # real path interface
@@ -366,26 +380,6 @@ class Path(tuple):
 
 
     # real path introspection
-    def stat(self):
-        """
-        Retrieve my {stat} record
-        """
-        # get my textual representation
-        rep = str(self)
-        # get the stat record
-        return os.stat(rep)
-
-
-    def lstat(self):
-        """
-        Retrieve my {lstat} record
-        """
-        # get my textual representation
-        rep = str(self)
-        # get the stat record
-        return os.lstat(rep)
-
-
     def exists(self):
         """
         Check whether I exist
@@ -481,6 +475,12 @@ class Path(tuple):
         # otherwise, check with {mask}
         return mask(mode)
 
+
+    # forwarding to standard library functions
+    stat = _unary(os.stat)
+    lstat = _unary(os.lstat)
+    mkdir = _unary(os.mkdir)
+    open = _unary(io.open)
 
 
     # meta-methods
