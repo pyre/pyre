@@ -24,19 +24,19 @@ def test():
     # the default is the current working directory
     cwd = path.coerce('')
     # which always exists
-    assert cwd and cwd.exists()
+    assert cwd.exists()
     # and has a standard rep
     assert str(cwd) == '.'
 
     # resolve it
     cwd = cwd.resolve()
     # verify that it is the same path as the actual {cwd}
-    assert cwd == path.coerce(value=path.cwd)
+    assert cwd == path.coerce(value=path.cwd())
 
     # get its parent
     parent = cwd.parent
     # and verify that it is a child of its parent
-    assert cwd.name in (folder.name for folder in parent.iterdir())
+    assert cwd.name in (folder.name for folder in parent.contents)
 
     # all done
     return
