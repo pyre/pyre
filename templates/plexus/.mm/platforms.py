@@ -31,7 +31,7 @@ def platform(builder):
         # if yes
         if python:
             # set up {{python}}
-            pythonVersion = '3.4'
+            pythonVersion = '3.5'
             pythonMemoryModel = 'm'
             python = 'python' + pythonVersion
             pythonHome = os.path.join(
@@ -55,7 +55,7 @@ def platform(builder):
         systemincdir = os.path.join(systemdir, 'include')
 
         # set up {{python}}
-        pythonVersion = '3.4'
+        pythonVersion = '3.5'
         python = 'python' + pythonVersion
         builder.requirements['python'].environ = {{
             'PYTHON': python,
@@ -72,4 +72,4 @@ def platform(builder):
     return builder
 
 
-# end of file 
+# end of file
