@@ -53,7 +53,7 @@ class File(Info):
         Apply {permissions} to this file
         """
         # just do it...
-        return os.chmod(self.uri, permissions)
+        return self.uri.chmod(permissions)
 
 
     # debugging support
@@ -71,6 +71,8 @@ class File(Info):
         print("  access time:", time.asctime(time.localtime(self.accessTime)))
         print("  creation time:", time.asctime(time.localtime(self.creationTime)))
         print("  modification time:", time.asctime(time.localtime(self.modificationTime)))
+        # all done
+        return
 
 
     # meta methods

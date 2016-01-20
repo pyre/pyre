@@ -477,9 +477,10 @@ class Path(tuple):
 
 
     # forwarding to standard library functions
-    stat = _unary(os.stat)
-    lstat = _unary(os.lstat)
+    chmod = _unary(os.chmod)
     mkdir = _unary(os.mkdir)
+    lstat = _unary(os.lstat)
+    stat = _unary(os.stat)
     open = _unary(io.open)
 
 
