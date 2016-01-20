@@ -170,6 +170,19 @@ class Path(tuple):
         return name[:pos]
 
 
+    @property
+    def contents(self):
+        """
+        Generate a sequence of my contents
+        """
+        # go through my contents
+        for name in os.listdir(str(self)):
+            # make a path and hand it to the caller
+            yield self / name
+        # all done
+        return
+
+
     # introspection methods
     def as_posix(self):
         """
@@ -386,7 +399,7 @@ class Path(tuple):
             # stat is unhappy, so i don't exist
             return None
         # if i got this far, i exist
-        return self
+        return True
 
 
     def isBlockDevice(self):
@@ -554,8 +567,8 @@ class Path(tuple):
                 # path fragments that are absolute paths are supposed to reset the path; since
                 # we traverse the sequence in reverse order, this means we have to go no
                 # further
-                if arg[0] == sep:
-                    # mark and absolute path
+                if arg and arg[0] == sep:
+                    # mark as an absolute path
                     yield sep
                     # and terminate the sequence
                     return
