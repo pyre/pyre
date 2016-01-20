@@ -556,7 +556,7 @@ class Path(tuple):
                 # append its part to mine
                 yield from arg
                 # if this is an absolute path
-                if arg[-1] == sep:
+                if arg and arg[-1] == sep:
                     # and terminate the sequence
                     return
             # if {arg} is a string
