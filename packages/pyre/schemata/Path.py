@@ -6,8 +6,8 @@
 #
 
 
-# externals
-import pathlib
+# support
+from .. import primitives
 # superclass
 from .Schema import Schema
 
@@ -23,8 +23,9 @@ class Path(Schema):
     typename = 'path' # the name of my type
 
     # magic values
-    cwd = pathlib.Path.cwd()
-    home = pathlib.Path.home()
+    cwd = primitives.path.cwd
+    root = primitives.path.root
+    home = primitives.path.home()
 
 
     # interface
@@ -38,7 +39,7 @@ class Path(Schema):
             return None
 
         # perhaps it is already a path
-        if isinstance(value, pathlib.PurePath):
+        if isinstance(value, primitives.path):
             # in which case, just leave it alone
             return value
 
@@ -57,7 +58,7 @@ class Path(Schema):
             return None
 
         # cast {value} into a path
-        return pathlib.Path(value)
+        return primitives.path(value)
 
 
 # end of file
