@@ -7,7 +7,7 @@
 
 
 # externals
-import collections
+import os, collections, pwd, stat
 
 
 # declaration
@@ -16,10 +16,12 @@ class Path(tuple):
     A representation of a path
     """
 
-
-    # constants
+    # string constants
     _CWD = '.'
     _SEP = '/'
+
+    # path constants
+    root = None
 
 
     # interface
@@ -34,7 +36,22 @@ class Path(tuple):
 
 
     @property
-    def root(self):
+    def names(self):
+        """
+        Build an iterator over the names of my components, skipping the root marker, if present
+        """
+        # grab my parts
+        parts = self.parts
+        # if I am an absolute path
+        if self.anchor:
+            # advance the counter
+            next(parts)
+        # and return the iterator
+        return parts
+
+
+    @property
+    def anchor(self):
         """
         Return the representation of the root of the path, if present
         """
@@ -50,15 +67,6 @@ class Path(tuple):
             return last
         # otherwise, I don't
         return ''
-
-
-    @property
-    def anchor(self):
-        """
-        Return the representation of the root of the path, if present
-        """
-        # don't reimplement
-        return self.root
 
 
     @property
@@ -80,9 +88,16 @@ class Path(tuple):
     @property
     def parent(self):
         """
-        Generate a sequence of the logical ancestors of the path
+        Build a path that is my logical ancestor
+
+        Note that this is purely a lexical operation and is not guaranteed to yield correct
+        results unless this path has been fully resolved
         """
-        # generate a sequence of length one shorter than me and turn it into a path
+        # the root
+        if self == self.root:
+            # is it's own parent
+            return self
+        # for the rest, generate a sequence of length one shorter than me
         return super().__new__(type(self), self[1:])
 
 
@@ -169,7 +184,7 @@ class Path(tuple):
         Return a POSIX compliant representation
         """
         # if i am an absolute path
-        if self.root:
+        if self.anchor:
             # splice my representation into a valid 'file:' uri
             return "file://{}".format(self)
         # otherwise, build an error message
@@ -178,15 +193,15 @@ class Path(tuple):
         raise ValueError(msg)
 
 
-    def is_absolute(self):
+    def isAbsolute(self):
         """
         Check whether the path is absolute or not
         """
         # get my last part
-        return True if self.root else False
+        return True if self.anchor else False
 
 
-    def is_reserved(self):
+    def isReserved(self):
         """
         Check whether the path is reserved or not
         """
@@ -230,7 +245,7 @@ class Path(tuple):
         if self._SEP in name:
             # complain
             raise ValueError("invalid name {!r}".format(str(name)))
-        # drop my name and build a new one path to spec
+        # replace my name and build a new path
         return super().__new__(type(self), (name,) + self[1:])
 
 
@@ -256,10 +271,203 @@ class Path(tuple):
                 # remove it
                 return self.with_name(stem)
             # otherwise,  clone me
-            return super().__new__(type(self), self)
+            return self
 
-        # otherwise, build a path with my stem and the given suffix
+        # if a suffix were supplied, append it to my stem and build a path
         return self.with_name(name=stem+suffix)
+
+
+    # real path interface
+    @classmethod
+    def cwd(cls):
+        """
+        Build a path that points to the current working directory
+        """
+        # get the directory and turn it into a path
+        return cls(os.getcwd())
+
+
+    @classmethod
+    def home(cls, user=''):
+        """
+        Build a path that points to the {user}'s home directory
+        """
+        # grab the {pwd} support
+        import pwd
+        # if we don't have a user
+        if not user:
+            # assume the current user
+            dir = pwd.getpwuid(os.getuid()).pw_dir
+        # otherwise
+        else:
+            # attempt to
+            try:
+                # index the {passwd} database using the user
+                dir = pwd.getpwnam(user).pw_dir
+            # if this fails
+            except KeyError:
+                # most likely cause is
+                msg = "the user {!r} is not in the password database".format(user)
+                # so complain
+                raise RuntimeError(msg)
+        # if we get this far, we have the name of the path; build a path and return it
+        return cls(dir)
+
+
+    def resolve(self):
+        """
+        Build an equivalent absolute normalized path that is free of symbolic links
+        """
+        # if I'm empty
+        if not self:
+            # return the current working directory
+            return self.cwd()
+        # if I am the root
+        if self == self.root:
+            # I am already resolved
+            return self
+        # otherwise, get the guy to do his thing
+        resolution = self._resolve(resolved={})
+        # check that it exists
+        resolution.stat()
+        # and return it
+        return resolution
+
+
+    def expanduser(self):
+        """
+        Build a path with '~' and '~user' patterns expanded
+        """
+        # grab the user spec, which must be my leading path component
+        spec = self[-1]
+        # if it doesn't start with the magic character
+        if spec[0] != '~':
+            # we are done
+            return self
+        # otherwise, use it to look up the user's home directory; the user name is what follows
+        # the marker, and our implementation of {home} interprets a blank user name as the
+        # current user
+        home = self.home(user=spec[1:])
+        # build the new path and return it
+        return super().__new__(type(self), self[:-1] + home)
+
+
+    # real path introspection
+    def stat(self):
+        """
+        Retrieve my {stat} record
+        """
+        # get my textual representation
+        rep = str(self)
+        # get the stat record
+        return os.stat(rep)
+
+
+    def lstat(self):
+        """
+        Retrieve my {lstat} record
+        """
+        # get my textual representation
+        rep = str(self)
+        # get the stat record
+        return os.lstat(rep)
+
+
+    def exists(self):
+        """
+        Check whether I exist
+        """
+        # attempt to
+        try:
+            # get my stat record
+            self.stat()
+        # if i don't exist or i am a broken link
+        except (FileNotFoundError, NotADirectoryError):
+            # stat is unhappy, so i don't exist
+            return None
+        # if i got this far, i exist
+        return self
+
+
+    def isBlockDevice(self):
+        """
+        Check whether I am a block device
+        """
+        # check with {stat}
+        return self.amI(stat.S_ISBLK)
+
+
+    def isCharacterDevice(self):
+        """
+        Check whether I am a character device
+        """
+        # check with {stat}
+        return self.amI(stat.S_ISCHR)
+
+
+    def isDirectory(self):
+        """
+        Check whether I am a directory
+        """
+        # check with {stat}
+        return self.amI(stat.S_ISDIR)
+
+
+    def isFile(self):
+        """
+        Check whether I am a regular file
+        """
+        # check with {stat}
+        return self.amI(stat.S_ISREG)
+
+
+    def isNamedPipe(self):
+        """
+        Check whether I am a socket
+        """
+        # check with {stat}
+        return self.amI(stat.S_ISFIFO)
+
+
+    def isSocket(self):
+        """
+        Check whether I am a socket
+        """
+        # check with {stat}
+        return self.amI(stat.S_ISSOCK)
+
+
+    def isSymlink(self):
+        """
+        Check whether I am a symbolic link
+        """
+        # attempt to
+        try:
+            # get my stat record
+            mode = self.lstat().st_mode
+        # if anything goes wrong:
+        except (AttributeError, FileNotFoundError, NotADirectoryError):
+            # links are probably not supported here, so maybe not...
+            return False
+        # otherwise, check with my stat record
+        return stat.S_ISLNK(mode)
+
+
+    def amI(self, mask):
+        """
+        Get my stat record and filter me through {mask}
+        """
+        # attempt to
+        try:
+            # get my stat record
+            mode = self.stat().st_mode
+        # if i don't exist or i am a broken link
+        except (FileNotFoundError, NotADirectoryError):
+            # probably not...
+            return False
+        # otherwise, check with {mask}
+        return mask(mode)
+
 
 
     # meta-methods
@@ -343,15 +551,17 @@ class Path(tuple):
                 # split on separator, reverse the sequence of parts, and then remove blanks
                 # caused by multiple consecutive separators
                 yield from filter(None, reversed(arg.split(sep)))
-                # check whether this string started with a slash
+                # path fragments that are absolute paths are supposed to reset the path; since
+                # we traverse the sequence in reverse order, this means we have to go no
+                # further
                 if arg[0] == sep:
-                    # send the marker
+                    # mark and absolute path
                     yield sep
                     # and terminate the sequence
                     return
             # more general iterables
             elif isinstance(arg, collections.abc.Iterable):
-                # recurse
+                # recurse with their contents
                 yield from cls._parse(args=arg, sep=sep)
             # anything else
             else:
@@ -362,6 +572,82 @@ class Path(tuple):
 
         # all done
         return
+
+
+    def _resolve(self, base=None, resolved=None):
+        """
+        Workhorse for path resolution
+        """
+        # what's left to resolve
+        workload = self.parts
+        # if i am an absolute path
+        if self.anchor:
+            # set my starting point
+            base = self.root
+            # skip the leasing root marker
+            next(workload)
+        # if i am a relative path
+        else:
+            # my starting point is the current working directory, which is guaranteed to be
+            # free of symbolic links
+            base = self.cwd() if base is None else base
+
+        # at this point, {base} is known to be a fully resolved path
+        # go through my parts
+        for part in workload:
+            # empty or parts that are '.'
+            if not part or part=='.':
+                # are skipped
+                continue
+            # parent directory markers
+            if part == '..':
+                # back me up by one level
+                base = base.parent
+                # and carry on
+                continue
+            # splice the part onto base
+            newpath = base / part
+            # check
+            try:
+                # whether we have been here before
+                resolution = resolved[newpath]
+            # if not
+            except KeyError:
+                # carry on
+                pass
+            # if yes
+            else:
+                # if {base} has a null resolution
+                if resolution is None:
+                    # we got a loop
+                    msg = "while resolving '{}': symbolic link loop at '{}'".format(self, newpath)
+                    # so complain
+                    raise RuntimeError(msg)
+                # otherwise, replace {base} with its resolution
+                base = resolution
+                # and carry on
+                continue
+
+            # now we need to know whether what we have so far is a symbolic link
+            if newpath.isSymlink():
+                # add it to the pile, but mark it unresolved
+                resolved[newpath] = None
+                # find out what it points to
+                link = type(self)(os.readlink(str(newpath)))
+                # resolve it in my context
+                base = link._resolve(resolved=resolved, base=base)
+                # remember this
+                resolved[newpath] = base
+            # if not
+            else:
+                # save it and carry on
+                base = newpath
+
+        return base
+
+
+# patches
+Path.root = Path(Path._SEP)
 
 
 # end of file
