@@ -11,16 +11,16 @@ import collections, functools, io, os, pwd, stat
 
 
 # helpers
-def _unary(f):
+def _unaryDispatch(f):
     """
     Wrapper for functions that require the string representation of path objects
     """
-    # wrap
+    # declare and wrap my helper
     @functools.wraps(f)
     def dispatch(self, *args, **kwds):
         # build my rep and forward to the wrapped function
         return f(str(self), *args, **kwds)
-    # build the method
+    # return the function to leave behind
     return dispatch
 
 
@@ -408,7 +408,7 @@ class Path(tuple):
         Check whether I am a block device
         """
         # check with {stat}
-        return self.amI(stat.S_ISBLK)
+        return self.mask(stat.S_ISBLK)
 
 
     def isCharacterDevice(self):
@@ -416,7 +416,7 @@ class Path(tuple):
         Check whether I am a character device
         """
         # check with {stat}
-        return self.amI(stat.S_ISCHR)
+        return self.mask(stat.S_ISCHR)
 
 
     def isDirectory(self):
@@ -424,7 +424,7 @@ class Path(tuple):
         Check whether I am a directory
         """
         # check with {stat}
-        return self.amI(stat.S_ISDIR)
+        return self.mask(stat.S_ISDIR)
 
 
     def isFile(self):
@@ -432,7 +432,7 @@ class Path(tuple):
         Check whether I am a regular file
         """
         # check with {stat}
-        return self.amI(stat.S_ISREG)
+        return self.mask(stat.S_ISREG)
 
 
     def isNamedPipe(self):
@@ -440,7 +440,7 @@ class Path(tuple):
         Check whether I am a socket
         """
         # check with {stat}
-        return self.amI(stat.S_ISFIFO)
+        return self.mask(stat.S_ISFIFO)
 
 
     def isSocket(self):
@@ -448,7 +448,7 @@ class Path(tuple):
         Check whether I am a socket
         """
         # check with {stat}
-        return self.amI(stat.S_ISSOCK)
+        return self.mask(stat.S_ISSOCK)
 
 
     def isSymlink(self):
@@ -467,7 +467,7 @@ class Path(tuple):
         return stat.S_ISLNK(mode)
 
 
-    def amI(self, mask):
+    def mask(self, mask):
         """
         Get my stat record and filter me through {mask}
         """
@@ -483,12 +483,41 @@ class Path(tuple):
         return mask(mode)
 
 
+    # physical path interface
     # forwarding to standard library functions
-    chmod = _unary(os.chmod)
-    mkdir = _unary(os.mkdir)
-    lstat = _unary(os.lstat)
-    stat = _unary(os.stat)
-    open = _unary(io.open)
+    chmod = _unaryDispatch(os.chmod)
+    lstat = _unaryDispatch(os.lstat)
+    stat = _unaryDispatch(os.stat)
+    open = _unaryDispatch(io.open)
+
+
+    # local implementations of the physical path interface
+    def mkdir(self, parents=False, exist_ok=False, **kwds):
+        """
+        Create a directory at my location.
+
+        If {parents} is {True}, create all necessary intermediate levels; if {exist_ok} is
+        {True}, do not raise an exception if the directory exists already
+        """
+        # attempt to
+        try:
+            # create the directory
+            return os.mkdir(str(self), **kwds)
+        # if the directory exists already
+        except FileExistsError:
+            # and we care
+            if not exist_ok:
+                # complain
+                raise
+        # all done
+        return
+
+
+    def touch(self,  mode=0x666, exist_ok=True):
+        """
+        """
+        # all done
+        raise NotImplementedError('NYI!')
 
 
     # constructors
