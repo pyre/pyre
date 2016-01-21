@@ -41,16 +41,15 @@ def local(root, listdir=None, recognizer=None, **kwds):
     # ensure that {root} is an absolute path so that we can protect the filesystem
     # representation in case the application manipulates the current working directory of the
     # process
-    try:
-        # convert the mount point into a path and check its existence
-        root = primitives.path(root).resolve()
-    # if that fails
-    except OSError as error:
+    root = primitives.path(root).resolve()
+    # grab the location metadata
+    info = recognizer.recognize(root)
+
+    # if the location doesn't exist
+    if not info:
         # complain
         raise MountPointError(uri=root, error='mount point not found')
 
-    # let the recognizer have a stub
-    info = recognizer.recognize(root)
     # if the root is a directory
     if info.isDirectory:
         # access the local filesystem factory
@@ -60,7 +59,7 @@ def local(root, listdir=None, recognizer=None, **kwds):
 
     # perhaps it is a zipfile
     import zipfile
-    # so check and if so
+    # so check, and if so
     if zipfile.is_zipfile(str(root)):
         # access the zip filesystem factory
         from .Zip import Zip
@@ -77,12 +76,10 @@ def zip(root, **kwds):
     """
     # ensure {root} is an absolute path, just in case the application changes the current
     # working directory
-    try:
-        # convert the mount point into a path and check its existence
-        root = primitives.path(root).resolve()
-    # if that fails
-    except FileNotFoundError as error:
-        # complain
+    root = primitives.path(root).resolve()
+    # check whether the location exists
+    if not root.exists():
+        # and if not, complain
         raise MountPointError(uri=root, error='mount point not found')
 
     # access the zip package

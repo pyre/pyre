@@ -40,6 +40,9 @@ def test():
 
     # check we compute relative paths correctly
     assert str(total.relativeTo(root / home)) == str(here)
+    # and something a bit more complicated
+    print((home/here).relativeTo(home))
+    assert str((home/here).relativeTo(home)) == str(here)
 
     # all done
     return

@@ -251,17 +251,20 @@ class Path(tuple):
         """
         Find a {path} such that {other} / {path} == {self}
         """
+        # coerce {other} into a path
+        other = self.coerce(other)
         # the {path} exists iff {other} is a subsequence of {self}
         for mine, hers in zip(reversed(self), reversed(other)):
             # if they are not identical
             if mine != hers:
                 # build the message
-                msg = "{!r} does not start with {!r}".format(str(self), str(other))
+                error = "{!r} does not start with {!r}".format(str(self), str(other))
+                location = "{} doesn't match {}".format(mine, hers)
                 # and complain
-                raise ValueError(msg)
+                raise ValueError("{}: {}".format(error, location))
 
         # what's left is the answer
-        return super().__new__(type(self), self[:len(other)+1])
+        return super().__new__(type(self), self[:-len(other)])
 
 
     def withName(self, name):
@@ -353,12 +356,10 @@ class Path(tuple):
         if self == self.root:
             # I am already resolved
             return self
+        # show me
+        # print('{}: resolved but DID NOT stat'.format(self))
         # otherwise, get the guy to do his thing
-        resolution = self._resolve(resolved={})
-        # check that it exists
-        resolution.stat()
-        # and return it
-        return resolution
+        return self._resolve(resolved={})
 
 
     def expanduser(self):
@@ -384,6 +385,12 @@ class Path(tuple):
         """
         Check whether I exist
         """
+        # MGA - 20160121
+        # N.B. do not be tempted to return {self} on success and {None} on failure: our
+        # representation of the {cwd} is an empty tuple, and that would always fail the
+        # existence test. at least until we short circuit {__bool__} to always return
+        # {True}. an idea whose merits were not clear at the time of this note
+
         # attempt to
         try:
             # get my stat record
@@ -391,7 +398,7 @@ class Path(tuple):
         # if i don't exist or i am a broken link
         except (FileNotFoundError, NotADirectoryError):
             # stat is unhappy, so i don't exist
-            return None
+            return False
         # if i got this far, i exist
         return True
 
@@ -482,6 +489,16 @@ class Path(tuple):
     lstat = _unary(os.lstat)
     stat = _unary(os.stat)
     open = _unary(io.open)
+
+
+    # constructors
+    @classmethod
+    def coerce(cls, *args):
+        """
+        Build a path out of the given arguments
+        """
+        # my normal constructor does this
+        return cls(*args)
 
 
     # meta-methods
