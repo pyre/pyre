@@ -45,14 +45,14 @@ class Local(Filesystem):
             raise self.URISpecificationError(uri=uri, reason=str(error))
 
 
-    def mkdir(self, parent, name):
+    def mkdir(self, parent, name, **kwds):
         """
         Create a subdirectory {name} in {parent}
         """
         # assemble the new folder uri
         uri = parent.uri / name
         # create the directory
-        uri.mkdir()
+        uri.mkdir(**kwds)
         # if we get this far, the directory has been created; update my internal structure
         folder = parent.folder()
         # insert the new node in its parent's contents
