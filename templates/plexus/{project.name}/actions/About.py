@@ -108,9 +108,9 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         # build the report
         report = '\n'.join(plexus.vfs[prefix].dump())
         # sign in
-        plexus.line('vfs: prefix={!r}'.format(prefix))
+        plexus.info.line('vfs: prefix={{!r}}'.format(prefix))
         # dump
-        plexus.log(report)
+        plexus.info.log(report)
         # all done
         return
 
