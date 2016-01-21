@@ -178,9 +178,9 @@ class Path(tuple):
         pos = name.rfind('.')
         # if not there
         if pos == -1:
-            # we have nothing
-            return ''
-        # otherwise
+            # my stem is my name
+            return name
+        # otherwise, drop the suffix
         return name[:pos]
 
 
@@ -296,12 +296,8 @@ class Path(tuple):
 
         # if the suffix is {None}
         if suffix is None:
-            # and i have one
-            if mine:
-                # remove it
-                return self.withName(stem)
-            # otherwise,  clone me
-            return self
+            # and i have one, remove it; otherwise, clone me
+            return self.withName(stem) if mine else self
 
         # if a suffix were supplied, append it to my stem and build a path
         return self.withName(name=stem+suffix)
