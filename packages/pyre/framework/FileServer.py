@@ -43,9 +43,9 @@ class FileServer(Filesystem):
 
     # constants
     DOT_PYRE = '~/.pyre'
-    USER_DIR = '/-/user'
-    STARTUP_DIR = '/-/startup'
-    PACKAGES_DIR = '/-/packages'
+    USER_DIR = primitives.path('/__pyre/user')
+    STARTUP_DIR = primitives.path('/__pyre/startup')
+    PACKAGES_DIR = primitives.path('/__pyre/packages')
 
 
     # public data
@@ -171,6 +171,23 @@ class FileServer(Filesystem):
         # redundant local filesystems in the virtual namespace to make sure that {vfs} nodes
         # that are related to each other are resolved by the same local filesystem
 
+        # get the package name
+        name = package.name
+
+        # attempt to
+        try:
+            # hunt down the package directory in the user area
+            userdir = self[self.USER_DIR / name]
+        # if not there
+        except self.NotFoundError:
+            # nothing to do: the user directory discovered at level 1 during boot, so the
+            # directory really does not exist
+            pass
+        # if it is there
+        else:
+            # look deeply
+            userdir.discover()
+
         # grab the package prefix
         prefix = package.prefix
         # not much to do if there isn't one
@@ -195,7 +212,7 @@ class FileServer(Filesystem):
         # look for configuration files
         for encoding in self.executive.configurator.encodings():
             # build the configuration file name
-            filename = "{}.{}".format(package.name, encoding)
+            filename = "{}.{}".format(name, encoding)
             # look for
             try:
                 # the node that corresponds to the configuration file
@@ -204,13 +221,13 @@ class FileServer(Filesystem):
             except fs.NotFoundError:
                 # bail
                 continue
-            # if it is there, mount it at '/pyre/packages'
-            self['{}/{}'.format(self.PACKAGES_DIR, filename)] = cfgfile
+            # if it is there, mount it within the package directory
+            self[self.PACKAGES_DIR / filename] = cfgfile
 
         # look for the configuration folder
         try:
             # get the associated node
-            cfgdir = defaults[package.name]
+            cfgdir = defaults[name]
         # if it's not there
         except fs.NotFoundError:
             # no problem
@@ -218,7 +235,7 @@ class FileServer(Filesystem):
         # if it is there
         else:
             # attach it
-            self['{}/{}'.format(self.PACKAGES_DIR, package.name)] = cfgdir
+            self[self.PACKAGES_DIR / name] = cfgdir.discover(levels=None)
 
         # all done
         return package
