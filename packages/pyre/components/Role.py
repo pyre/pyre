@@ -41,6 +41,7 @@ class Role(Requirement):
         """
         Initialize a new protocol class record
         """
+        # chain up
         super().__init__(name, bases, attributes, **kwds)
         # if this protocol is not user visible, there is nothing else to do
         if self.pyre_internal: return
@@ -57,13 +58,10 @@ class Role(Requirement):
 
         # register with the protocol registrar
         self.pyre_executive.registrar.registerProtocolClass(protocol=self)
-
         # invoke the registration hook
         self.pyre_classRegistered()
-
         # invoke the configuration hook
         self.pyre_classConfigured()
-
         # invoke the initialization hook
         self.pyre_classInitialized()
 

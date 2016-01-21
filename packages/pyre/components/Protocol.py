@@ -329,12 +329,12 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                     # otherwise
                     else:
                         # treat it as a shelf; assemble its address
-                        uri = vfs.join('vfs:', path, name)
+                        shelf = 'vfs:' + str(vfs.path(path, name))
                         # and get its contents
-                        yield from cls.pyre_implementers(uri=uri)
+                        yield from cls.pyre_implementers(uri=shelf)
 
         # the last thing to try is a shelf named after my family
-        uri.withSuffix(suffix='.py')
+        uri = uri.withSuffix(suffix='.py')
         # check whether
         try:
             # such a node exists
