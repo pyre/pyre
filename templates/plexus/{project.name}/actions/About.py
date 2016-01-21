@@ -18,11 +18,24 @@ class About({project.name}.command, family='{project.name}.actions.about'):
 
 
     # user configurable state
-    prefix = {project.name}.properties.str()
+    prefix = {project.name}.properties.str(default='/')
     prefix.tip = "specify the portion of the namespace to display"
 
 
     # class interface
+    @{project.name}.export(tip="print the version number")
+    def version(self, plexus):
+        """
+        Print the version of the {project.name} package
+        """
+        # make some space
+        plexus.info.line()
+        # invoke the package header and push it to the plexus info channel
+        plexus.info.log({project.name}._{project.name}_header)
+        # all done
+        return
+
+
     @{project.name}.export(tip="print the copyright note")
     def copyright(self, plexus):
         """
@@ -85,15 +98,17 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         return
 
 
-    @{project.name}.export(tip="print the version number")
-    def version(self, plexus):
+    @{project.name}.export(tip='dump the application private filesystem')
+    def pfs(self, plexus):
         """
-        Print the version of the {project.name} package
+        Dump the application private filesystem
         """
-        # make some space
-        plexus.info.line()
-        # invoke the package header and push it to the plexus info channel
-        plexus.info.log({project.name}._{project.name}_header)
+        # build the report
+        report = '\n'.join(plexus.pfs.dump())
+        # sign in
+        plexus.info.line('pfs:')
+        # dump
+        plexus.info.log(report)
         # all done
         return
 
@@ -104,7 +119,7 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         Dump the application virtual filesystem
         """
         # get the prefix
-        prefix = self.prefix or '/{project.name}'
+        prefix = self.prefix
         # build the report
         report = '\n'.join(plexus.vfs[prefix].dump())
         # sign in
