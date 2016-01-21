@@ -94,18 +94,8 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         Check whether this component class is public
         """
-        # depends on what kind of inventory i have; if I have a public one
-        if isinstance(cls.pyre_inventory, cls.PublicInventory):
-            # i am public
-            return True
-        # if my inventory is  private
-        if isinstance(cls.pyre_inventory, cls.PrivateInventory):
-            # i am not public
-            return False
-        # oops, this is a bug
-        import journal
-        # complain
-        raise journal.firewall('pyre.components').log('unknown component class type')
+        # by definition, check the class inventory key
+        return cls.pyre_inventory.key is not None
 
 
     # framework notifications
