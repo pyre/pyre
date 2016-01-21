@@ -8,6 +8,8 @@
 #
 
 
+# externals
+import os
 # access the framework
 import pyre
 # my protocols
@@ -57,28 +59,34 @@ class Smith(pyre.application, family='pyre.applications.smith'):
             # report failure
             return 1
 
+        # show me
+        self.info.log('building the bzr repository')
+        # have {bazaar} create the directory
+        os.system("bzr init -q {}".format(project))
+
+        self.info.log('generating the source tree')
         # initialize the workload
         todo = [(cwd, project, template)]
         # as long as there are folders to visit
         for destination, name, source in todo:
             # show me
-            self.info.log('creating the folder {!r}'.format(name))
+            # self.info.log('creating the folder {!r}'.format(name))
             # create the new folder
-            folder = cwd.mkdir(parent=destination, name=name)
+            folder = cwd.mkdir(parent=destination, name=name, exist_ok=True)
             # go through the folder contents
-            for entry, node in source.contents.items():
+            for entry, child in source.contents.items():
                 # expand any macros in the name
                 entry = nameserver.interpolate(expression=entry)
                 # show me
-                self.info.log('generating {!r}'.format(entry))
-                # if the {node} is a folder
-                if node.isFolder:
+                # self.info.log('generating {!r}'.format(entry))
+                # if the {child} is a folder
+                if child.isFolder:
                     # add it to the workload
-                    todo.append((folder, entry, node))
+                    todo.append((folder, entry, child))
                     # and move on
                     continue
-                # otherwise, the {node} is a regular file; open it
-                with node.open() as raw:
+                # otherwise, the {child} is a regular file; open it
+                with child.open() as raw:
                     # pull the contents
                     body = raw.read()
                     # expand any macros
@@ -86,10 +94,22 @@ class Smith(pyre.application, family='pyre.applications.smith'):
                     # create the file
                     destination = cwd.write(parent=folder, name=entry, contents=body)
                     # get me the meta data
-                    metaold = template.info(node)
+                    metaold = template.info(child)
                     metanew = cwd.info(destination)
                     # adjust the permissions of the new file
                     metanew.chmod(metaold.permissions)
+
+        # tell me
+        self.info.log('committing the initial revision')
+        # build the commit command
+        command = (
+            "unset CDPATH; " # just in case the user has strange tastes
+            "cd {}; "
+            "bzr add -q; "
+            "bzr commit -q -m 'automatically generated source'; "
+            "cd ..").format(project)
+        # execute
+        os.system(command)
 
         # return success
         return 0
