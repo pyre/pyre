@@ -8,6 +8,8 @@
 
 # externals
 import re
+# support
+from .. import primitives
 # my superclass
 from .Explorer import Explorer
 
@@ -28,9 +30,9 @@ class Finder(Explorer):
         pattern = re.compile(pattern)
 
         # now traverse the contents
-        for node in self._explore(node=folder):
-            # compare the node {uri} against the pattern
-            match =  pattern.match(str(node.uri))
+        for node, path in self._explore(node=folder, path=primitives.path()):
+            # compare the node path against the pattern
+            match =  pattern.match(str(path))
             # and if the path matches
             if match:
                 # return the pair
@@ -41,18 +43,18 @@ class Finder(Explorer):
 
 
     # implementation details
-    def _explore(self, node):
+    def _explore(self, node, path):
         """
         The recursive workhorse for folder exploration
         """
         # first, return the current node and its path
-        yield node
+        yield node, path
         # if {node} is not a folder, we are done
         if not node.isFolder: return
         # otherwise, traverse its contents
-        for child in node.contents.values():
+        for name, child in node.contents.items():
             # explore it
-            yield from self._explore(node=child)
+            yield from self._explore(node=child, path=(path / name))
         # all done
         return
 
