@@ -86,10 +86,6 @@ class MPI(Tool, Library, family='pyre.externals.mpi'):
         Provide alternative compatible implementations of MPI on macports machines, starting with
         the package the user has selected as the default
         """
-        print("-------------------------------------------------")
-        for implementor in cls.pyre_locateAllImplementers():
-            print(cls)
-        print("-------------------------------------------------")
         # build a locator
         locator = pyre.tracking.simple('while looking for {.category!r} choices'.format(cls))
         # known installations
