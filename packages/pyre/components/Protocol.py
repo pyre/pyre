@@ -104,8 +104,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Generate the sequence of my public ancestors, i.e. the ones that have a non-trivial family
         """
-        # filter and return
-        return filter(lambda x: x.pyre_key, cls.pyre_pedigree)
+        # filter public ancestors from my pedigree
+        yield from (ancestor for ancestor in cls.pyre_pedigree if ancestor.pyre_key is not None)
+        # all done
+        return
 
 
     # support for framework requests
@@ -460,7 +462,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                     return True
 
         # in order to support downward compatibility by packages that subclass protocols for
-        # administrative reasons without adding any new requirements, we permit the reveres of
+        # administrative reasons without adding any new requirements, we permit the reverse of
         # the above; it may sound strange, but it should be safe. we have already done the
         # trait check, so we can relax the type check a little bit
 
