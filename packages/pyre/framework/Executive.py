@@ -225,7 +225,7 @@ class Executive:
             else:
                 # just mark it
                 candidate.pyre_locator = tracking.chain(candidate.pyre_locator, locator)
-            # ready to  hand it to our caller
+            # ready to hand it to our caller
             yield candidate
 
         # totally out of ideas
@@ -400,9 +400,7 @@ class Executive:
         # access the factory
         from .Linker import Linker
         # build one
-        linker = Linker(**kwds)
-        # initialize it
-        linker.prime(executive=self)
+        linker = Linker(executive=self, **kwds)
         # and return it
         return linker
 

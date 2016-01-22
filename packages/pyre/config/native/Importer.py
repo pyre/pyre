@@ -89,6 +89,8 @@ class Importer(Loader):
         package = uri.address
         # if there is something there
         if package:
+            # show me
+            # print("  trying uri={.uri!r}".format(uri))
             # try it first
             yield uri
         # otherwise
@@ -99,8 +101,9 @@ class Importer(Loader):
         while True:
             # set the address portion of the {uri} to the new package
             uri.address = package
+            # show me
+            # print("  trying uri={.uri!r}".format(uri))
             # and send it to the caller
-            # print("Importer.locateShelves: uri={.uri!r}".format(uri))
             yield uri
             # next, attempt to
             try:

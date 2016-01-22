@@ -28,7 +28,7 @@ class Linker:
 
 
     # support for framework requests
-    def loadShelf(self, executive, uri):
+    def loadShelf(self, uri, **kwds):
         """
         Load the shelf specified by {uri}
         """
@@ -36,17 +36,17 @@ class Linker:
         uri = self.uri().coerce(uri)
         # get the codec
         codec = self.codecs[uri.scheme]
-        # get it load the shelf and return it
-        return codec.load(executive=executive, uri=uri)
+        # ask it to load the shelf and return it
+        return codec.load(uri=uri, **kwds)
 
 
-    def resolve(self, executive, protocol, uri, **kwds):
+    def resolve(self, uri, **kwds):
         """
         Attempt to locate the component class specified by {uri}
         """
         # what should we try? don't be tempted to make this more dynamic by, say, initializing
         # {schemes} with the {codecs} keys; order is significant here, so is visiting codecs
-        # that register themselves under multiple schemes to be visited once...
+        # that register themselves under multiple schemes only once...
         schemes = [uri.scheme] if uri.scheme else self.SCHEMES
 
         # for each loading strategy
@@ -62,43 +62,36 @@ class Linker:
                 # and complain
                 raise self.BadResourceLocatorError(uri=uri, reason=reason)
 
-            # clone the input {uri} so we don't disturb it
-            candidate = uri.clone()
-            # make sure the candidate has a scheme
-            candidate.scheme = scheme
+            # clone the input {uri} so we don't disturb it; make sure the candidate has the
+            # scheme we are currently attempting
+            candidate = uri.clone(scheme=scheme)
 
-            # the codec is able to provide a sequence of matching symbols
-            yield from codec.locateSymbol(
-                executive=executive, protocol=protocol, uri=candidate, **kwds)
+            # ask the codec for a sequence of matching symbols
+            yield from codec.locateSymbol(uri=candidate, **kwds)
 
         # out of ideas
         return
 
 
     # meta-methods
-    def __init__(self, **kwds):
+    def __init__(self, executive, **kwds):
+        # chain up
         super().__init__(**kwds)
+
         # the map from uris to known shelves
         self.shelves = {}
         # initialize my codec index
         self.codecs = self.indexDefaultCodecs()
-        # all done
-        return
-
-
-    # implementation details
-    def prime(self, executive):
-        """
-        Initialize my codecs
-        """
         # go through the set of registered codecs
         for codec in {codec for codec in self.codecs.values()}:
             # and prime each one
             codec.prime(linker=self)
+
         # nothing else
         return
 
 
+    # implementation details
     def indexDefaultCodecs(self):
         """
         Initialize my codec index

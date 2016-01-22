@@ -166,7 +166,7 @@ class Application(pyre.component, metaclass=Director):
         # instantiate my layout
         self.layout = self.pyre_loadLayout()
         # mount my folders
-        self.pfs = self.pyre_makePrivateFilespace()
+        self.pfs = self.pyre_mountPrivateFilespace()
         # go through my requirements and build my dependency map
         # self.dependencies = self.pyre_resolveDependencies()
 
@@ -248,7 +248,7 @@ class Application(pyre.component, metaclass=Director):
         return home, prefix, defaults
 
 
-    def pyre_makePrivateFilespace(self):
+    def pyre_mountPrivateFilespace(self):
         """
         Build the private filesystem
         """
@@ -301,7 +301,6 @@ class Application(pyre.component, metaclass=Director):
             pfs[self.SYSTEM] = pfs.folder()
             # and return
             return pfs
-
         # otherwise, get the associated filesystem
         home = vfs.retrieveFilesystem(root=prefix)
         # and mount my folders in my namespace

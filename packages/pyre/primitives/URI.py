@@ -67,13 +67,18 @@ class URI:
             )
 
 
-    def clone(self):
+    def clone(self, scheme=None, authority=None, address=None, query=None, fragment=None):
         """
-        Make a copy of me
+        Make a copy of me with the indicated replacements
         """
+        # that's what my constructor does...
         return type(self)(
-            scheme=self.scheme, authority=self.authority, address=self.address,
-            query=self.query, fragment=self.fragment)
+            scheme=self.scheme if scheme is None else scheme,
+            authority=self.authority if authority is None else authority,
+            address=self.address if address is None else address,
+            query=self.query if query is None else query,
+            fragment=self.fragment if fragment is None else fragment
+        )
 
 
     # meta-methods
