@@ -115,6 +115,19 @@ pyre.externals.mpi.openmpi # mga:
     incdir = {mga.prefix}/include/openmpi
     libdir = {mga.prefix}/lib/openmpi
 
+; my vampich installation
+pyre.externals.mpi.vampich # mga:
+    ; the package version
+    version = 2.0.1-mga
+    ; the name of the launcher of parallel jobs
+    launcher = mpirun.vampich
+    libraries = mpi_cxx, mpi
+    ; directory layout
+    prefix = prefix
+    bindir = {mga.prefix}/bin
+    incdir = {mga.prefix}/include/vampich
+    libdir = {mga.prefix}/lib/vampich
+
 ; PostgreSQL
 ; my pq installation
 pyre.externals.postgres.default # mga:
