@@ -261,8 +261,16 @@ class Application(pyre.component, metaclass=Director):
             # make an empty virtual filesystem and return it
             return vfs.virtual()
 
-        # get/create the top level of my private namespace
-        pfs = vfs.getFolder(namespace)
+        # attempt to
+        try:
+            # get my private filespace
+            pfs = vfs[namespace]
+        # if not there
+        except vfs.NotFoundError:
+            # make it
+            pfs = vfs.folder()
+            # and mount it
+            vfs[namespace] = pfs
 
         # check whether
         try:
@@ -270,8 +278,20 @@ class Application(pyre.component, metaclass=Director):
             pfs[self.USER]
         # if not
         except pfs.NotFoundError:
-            # make it
-            pfs[self.USER] = vfs.getFolder(vfs.USER_DIR, namespace)
+            # check whether
+            try:
+                # i have a folder in the user area
+                userdir = vfs[vfs.USER_DIR, namespace]
+            # if not
+            except vfs.NotFoundError:
+                # make and mount an empty folder
+                pfs[self.USER] = pfs.folder()
+            # if it is there
+            else:
+                # look deeply
+                userdir.discover(levels=None)
+                # and mount it
+                pfs[self.USER] = userdir
 
         # get my prefix
         prefix = self.prefix

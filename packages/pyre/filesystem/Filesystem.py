@@ -44,35 +44,16 @@ class Filesystem(Folder):
         """
         # i don't know how to do it
         raise NotImplementedError(
-            "class {.__name__!r} must implement 'open'".format(type(self)))
+            "class {.__name__!r} does not implement 'open'".format(type(self)))
 
 
-    def getFolder(self, *args):
+    def discover(self, node, **kwds):
         """
-        Assemble a path by joining {args} together and return the folder at that location. If the
-        folder does not exist, create it and mount it
+        Fill my structure with nodes from an external source
         """
-        # make the path
-        path = primitives.path(*args)
-        # attempt to
-        try:
-            # get the node at the specified location
-            target = self[path]
-        # if not
-        except self.NotFoundError:
-            # make it
-            target = self.folder()
-            # and mount it
-            self[path] = target
-        # if the folder exists
-        else:
-            # check that the {target} is a folder
-            if not target.isFolder:
-                # and if not, complain
-                raise self.FolderError(uri=path, fragment=path, filesystem=self, node=target)
-
-        # otherwise, all good
-        return target
+        # i don't know how to do it
+        raise NotImplementedError(
+            "class {.__name__!r} does not implement 'discover'".format(type(self)))
 
 
     # implementation details
