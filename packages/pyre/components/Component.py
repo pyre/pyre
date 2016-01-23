@@ -98,6 +98,19 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return cls.pyre_inventory.key is not None
 
 
+    @classmethod
+    def pyre_public(cls):
+        """
+        Generate the sequence of my public ancestors, i.e. the ones that have a non-trivial family
+        """
+        # filter public ancestors from my pedigree
+        yield from (
+            ancestor
+            for ancestor in cls.pyre_pedigree if ancestor.pyre_isPublicClass())
+        # all done
+        return
+
+
     # framework notifications
     def pyre_registered(self):
         """
