@@ -40,7 +40,7 @@ class ColorTable(pyre.application):
                     # get the color sequence
                     color = term.rgb256(code, foreground=False)
                     # say hello
-                    print("{} {}".format(color, normal), end='')
+                    print("{}  {}".format(color, normal), end='')
                 print(end=' ')
             print()
 

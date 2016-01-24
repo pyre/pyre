@@ -20,6 +20,22 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
 
 
     # interface
+    def rgb(self, rgb, foreground=True):
+        """
+        Mix the 6 digit hex string into an ANSI 24-bit color
+        """
+        # the plane
+        plane = '38' if foreground else '48'
+        # unpack
+        r, g, b = (rgb[2*pos:2*(pos+1)] for pos in range(3))
+        # convert
+        r = int(r, 16)
+        g = int(g, 16)
+        b = int(b, 16)
+        # get the code
+        return self.esc24.format(plane, r,g,b)
+
+
     def rgb256(self, rgb, foreground=True):
         """
         Mix the three digit (r,g,b) base 6 string into an ANSI 256 color
@@ -34,6 +50,7 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
 
     # implementation details
     esc = "[{}m"
+    esc24 = "[{};2;{};{};{}m"
     esc256 = "[{};5;{}m"
 
     colors = {
