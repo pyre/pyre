@@ -26,14 +26,10 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
         """
         # the plane
         plane = '38' if foreground else '48'
-        # unpack
-        r, g, b = (rgb[2*pos:2*(pos+1)] for pos in range(3))
-        # convert
-        r = int(r, 16)
-        g = int(g, 16)
-        b = int(b, 16)
+        # unpack and convert
+        r, g, b = (int(rgb[2*pos:2*(pos+1)], 16) for pos in range(3))
         # get the code
-        return self.esc24.format(plane, r,g,b)
+        return self.csi_color24bit.format(plane, r,g,b)
 
 
     def rgb256(self, rgb, foreground=True):
@@ -45,38 +41,39 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
         # project
         code = 16 + int(rgb, 6)
         # escape and return
-        return self.esc256.format(plane, code)
+        return self.csi_color256.format(plane, code)
 
 
     # implementation details
-    esc = "[{}m"
-    esc24 = "[{};2;{};{};{}m"
-    esc256 = "[{};5;{}m"
+    esc = ""
+    csi_color8 = esc + "[{}m"
+    csi_color256 = esc + "[{};5;{}m"
+    csi_color24bit = esc + "[{};2;{};{};{}m"
 
     colors = {
         "": "", # no color given
         "none": "", # no color
-        "normal": esc.format("0"), # reset back to whatever is the default for the terminal
+        "normal": csi_color8.format("0"), # reset back to whatever is the default for the terminal
 
         # regular colors
-        "black": esc.format("0;30"),
-        "red": esc.format("0;31"),
-        "green": esc.format("0;32"),
-        "brown": esc.format("0;33"),
-        "blue": esc.format("0;34"),
-        "purple": esc.format("0;35"),
-        "cyan": esc.format("0;36"),
-        "light-gray": esc.format("0;37"),
+        "black": csi_color8.format("0;30"),
+        "red": csi_color8.format("0;31"),
+        "green": csi_color8.format("0;32"),
+        "brown": csi_color8.format("0;33"),
+        "blue": csi_color8.format("0;34"),
+        "purple": csi_color8.format("0;35"),
+        "cyan": csi_color8.format("0;36"),
+        "light-gray": csi_color8.format("0;37"),
 
         # bright colors
-        "dark-gray": esc.format("1;30"),
-        "light-red": esc.format("1;31"),
-        "light-green": esc.format("1;32"),
-        "yellow": esc.format("1;33"),
-        "light-blue": esc.format("1;34"),
-        "light-purple": esc.format("1;35"),
-        "light-cyan": esc.format("1;36"),
-        "white": esc.format("1;37"),
+        "dark-gray": csi_color8.format("1;30"),
+        "light-red": csi_color8.format("1;31"),
+        "light-green": csi_color8.format("1;32"),
+        "yellow": csi_color8.format("1;33"),
+        "light-blue": csi_color8.format("1;34"),
+        "light-purple": csi_color8.format("1;35"),
+        "light-cyan": csi_color8.format("1;36"),
+        "white": csi_color8.format("1;37"),
         }
 
 
