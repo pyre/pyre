@@ -33,11 +33,13 @@ class Component(Schema):
         protocol = self.protocol
         # which knows the actor type
         actor = protocol.actor
-        # and the component type
+        # the component type
         component = protocol.component
+        # and the factory of its default value
+        default = protocol.pyre_default
 
         # if {value} is my protocol's {pyre_default} classmethod
-        if value == protocol.pyre_default:
+        if value == default:
             # evaluate it
             value = value()
             # and if it's none, we are done
@@ -71,6 +73,13 @@ class Component(Schema):
             # no worries; more to try
             pass
 
+        # another valid possibility is a specification like
+        #
+        #   --facility=#name
+        #
+        # this is interpreted as a request to instantiate the default facility value with the
+        # given name
+
         # convert the {value} into a uri; if the conversion is not successful, the {uri} schema
         # will complain
         uri = self.uri().coerce(value)
@@ -80,12 +89,14 @@ class Component(Schema):
         componentSpec = uri.address
         # if we have an instance name but no component specification
         if instanceName and not componentSpec:
-            # get my default
-            default = self.default or protocol.pyre_default()
-            # use it to build a component instance
-            candidate = default(name=instanceName)
-            # and return it
-            return candidate
+            # get my default value
+            factory = self.default or default()
+            # and if it is a component class
+            if isinstance(factory, actor):
+                # use it to build a component instance
+                candidate = factory(name=instanceName)
+                # and return it
+                return candidate
 
         # out of ideas; build an error message and complain
         raise protocol.ResolutionError(protocol=protocol, value=value) from None
