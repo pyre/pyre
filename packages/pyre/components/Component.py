@@ -95,7 +95,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Check whether this component class is public
         """
         # by definition, check the class inventory key
-        return cls.pyre_inventory.key is not None
+        return cls.pyre_inventory and cls.pyre_inventory.key is not None
 
 
     @classmethod
