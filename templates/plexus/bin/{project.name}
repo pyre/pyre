@@ -14,7 +14,9 @@ import {project.name}
 # build an instance of the plexus
 app = {project.name}.plexus(name='{project.name}.plexus')
 # and run it
-app.run()
+status = app.run()
+# pass the status on to the shell
+raise SystemExit(status)
 
 
-# end of file 
+# end of file
