@@ -35,4 +35,24 @@ class Dashboard:
     pyre_application = None # the current application
 
 
+    # debugging support
+    @classmethod
+    def dashboard(cls):
+        """
+        Dump the status of the dashboard
+        """
+        # show me
+        yield "executive: {.pyre_executive}".format(cls)
+        yield "  fileserver: {.pyre_fileserver}".format(cls)
+        yield "  nameserver: {.pyre_nameserver}".format(cls)
+        yield "  configurator: {.pyre_configurator}".format(cls)
+        yield "  registrar: {.pyre_registrar}".format(cls)
+        yield "  schema: {.pyre_schema}".format(cls)
+        yield "  host: {.pyre_host}".format(cls)
+        yield "  user: {.pyre_user}".format(cls)
+        yield "  application: {.pyre_application}".format(cls)
+        # all done
+        return
+
+
 # end of file
