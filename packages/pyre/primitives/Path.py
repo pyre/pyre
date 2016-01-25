@@ -170,12 +170,12 @@ class Path(tuple):
     @property
     def stem(self):
         """
-        The final path component without the last suffix
+        The final path component without any suffixes
         """
         # grab my name
         name = self.name
         # look for the last '.'
-        pos = name.rfind('.')
+        pos = name.find('.')
         # if not there
         if pos == -1:
             # my stem is my name
