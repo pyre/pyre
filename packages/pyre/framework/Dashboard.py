@@ -32,6 +32,7 @@ class Dashboard:
     # information about the runtime environment
     pyre_host = None # the current host
     pyre_user = None # the current user
+    pyre_application = None # the current application
 
 
 # end of file
