@@ -103,6 +103,27 @@ class Application(pyre.component, metaclass=Director):
         return
 
 
+    @property
+    def searchpath(self):
+        """
+        Build a list of unique package names from my ancestry in mro order
+        """
+        # path
+        path = set()
+        # go through all my ancestors
+        for base in self.pyre_public():
+            # get the package name
+            name = base.pyre_package().name
+            # if the name has not been seen before
+            if name not in path:
+                # send it to the caller
+                yield name
+                # add it
+                path.add(name)
+        # all done
+        return
+
+
     # component interface
     @pyre.export
     def main(self, *args, **kwds):
