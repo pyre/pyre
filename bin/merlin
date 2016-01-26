@@ -6,7 +6,6 @@
 # (c) 1998-2016 all rights reserved
 #
 
-
 # version check
 # python version information is in {{sys.version}
 import sys
@@ -21,7 +20,8 @@ if major < 3 or (major == 3 and minor < 2):
 # package access
 import merlin
 # invoke its main entry point
-merlin.main()
-
+status = merlin.main()
+# and hand the status to the shell
+raise SystemExit(status)
 
 # end of file
