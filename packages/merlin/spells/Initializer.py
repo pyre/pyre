@@ -111,7 +111,7 @@ class Initializer(merlin.spell):
         merlin.curator.saveProject(project=project)
 
         # all done
-        return self
+        return 0
 
 
 # end of file

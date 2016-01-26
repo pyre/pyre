@@ -8,9 +8,6 @@
 
 PROJECT = pyre
 
-#--------------------------------------------------------------------------
-#
-
 all: test clean
 
 test: sanity slots nameserver fileserver registrar linker externals executive

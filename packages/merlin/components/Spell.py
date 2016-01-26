@@ -15,7 +15,7 @@ from .Action import Action
 
 
 # class declaration
-class Spell(pyre.panel(), Dashboard, implements=Action):
+class Spell(pyre.panel(), Dashboard):
     """
     Base class for merlin spell implementations
     """

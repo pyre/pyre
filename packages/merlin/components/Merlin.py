@@ -31,8 +31,27 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
     METAFOLDER = '.merlin'
     PATH = ['vfs:/merlin/project', 'vfs:/merlin/user', 'vfs:/merlin/system']
 
-    # user configurable state
-    searchpath = pyre.properties.uris(default=PATH)
+
+    @property
+    def searchpath(self):
+        """
+        Build a list of unique package names from my ancestry in mro order
+        """
+        # MGA: this should be unnecessary after spells gather themselves under the the correct
+        # folder in the {pfs}
+        path = set()
+        # the project library
+        yield 'merlin/project'
+        # the user's library
+        yield 'merlin/user'
+        # and the builtins
+        yield 'merlin/system'
+
+        # plus whatever else pyre applications are supposed to do
+        yield from super().searchpath
+
+        # all done
+        return
 
 
     # plexus obligations

@@ -35,7 +35,7 @@ class Linker:
         # coerce the uri
         uri = self.uri().coerce(uri)
         # get the codec
-        codec = self.codecs[uri.scheme]
+        codec = self.schemes[uri.scheme]
         # ask it to load the shelf and return it
         return codec.load(uri=uri, **kwds)
 
@@ -44,30 +44,23 @@ class Linker:
         """
         Attempt to locate the component class specified by {uri}
         """
-        # what should we try? don't be tempted to make this more dynamic by, say, initializing
-        # {schemes} with the {codecs} keys; order is significant here, so is visiting codecs
-        # that register themselves under multiple schemes only once...
-        schemes = [uri.scheme] if uri.scheme else self.SCHEMES
+        # if the {uri} has a scheme, we will find the associated codec and get it to interpret
+        # the resolution request. if the {uri} has no scheme, we will hand the request to each
+        # codec in the order they were registered
+        try:
+            # make the pile
+            codecs = [ self.schemes[uri.scheme] ] if uri.scheme else self.codecs
+        # and if the look up fails
+        except KeyError:
+            # it's because we don't recognize the scheme
+            reason = "unknown scheme {!r}".format(scheme)
+            # so complain
+            raise self.BadResourceLocatorError(uri=uri, reason=reason)
 
-        # for each loading strategy
-        for scheme in schemes:
-            # try to
-            try:
-                # locate the associated decoder
-                codec = self.codecs[scheme]
-            # if not there
-            except KeyError:
-                # construct the reason
-                reason = "unknown scheme {!r}".format(scheme)
-                # and complain
-                raise self.BadResourceLocatorError(uri=uri, reason=reason)
-
-            # clone the input {uri} so we don't disturb it; make sure the candidate has the
-            # scheme we are currently attempting
-            candidate = uri.clone(scheme=scheme)
-
-            # ask the codec for a sequence of matching symbols
-            yield from codec.locateSymbol(uri=candidate, **kwds)
+        # go through the relevant codecs
+        for codec in codecs:
+            # and form a sequence of matching symbols
+            yield from codec.locateSymbol(uri=uri, **kwds)
 
         # out of ideas
         return
@@ -80,10 +73,14 @@ class Linker:
 
         # the map from uris to known shelves
         self.shelves = {}
-        # initialize my codec index
-        self.codecs = self.indexDefaultCodecs()
+        # setup my default codecs and initialize my scheme index
+        codecs, schemes = self.indexDefaultCodecs()
+        # save them
+        self.codecs = codecs
+        self.schemes = schemes
+
         # go through the set of registered codecs
-        for codec in {codec for codec in self.codecs.values()}:
+        for codec in codecs:
             # and prime each one
             codec.prime(linker=self)
 
@@ -96,23 +93,21 @@ class Linker:
         """
         Initialize my codec index
         """
-        # make an empty one
-        index = collections.OrderedDict()
-
-        # add the native codec
-        from ..config.native import native
-        native.register(index=index)
-
-        # add the file loader
+        # get the codecs i know about
         from ..config.odb import odb
-        odb.register(index=index)
+        from ..config.native import native
+        # put them in a pile
+        codecs = [odb, native]
+
+        # make an empty index
+        schemes = collections.OrderedDict()
+        # register the native codec
+        native.register(index=schemes)
+        # register the file loader
+        odb.register(index=schemes)
 
         # all done
-        return index
-
-
-    # constants
-    SCHEMES = [ 'vfs', 'import' ]
+        return codecs, schemes
 
 
 # end of file

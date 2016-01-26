@@ -8,7 +8,7 @@
 
 
 """
-Verify that the binder can retrieve components from odb files
+Verify that the executive can retrieve components
 """
 
 

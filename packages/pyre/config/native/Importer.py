@@ -7,9 +7,9 @@
 
 
 # externals
-import os, sys
+import sys
 # support
-from ... import tracking
+from ... import primitives, tracking
 # superclass
 from ..Loader import Loader
 
@@ -38,8 +38,7 @@ class Importer(Loader):
 
 
     # public data
-    scheme = 'import'
-    separator = '.' # same as python...
+    schemes = ('import',)
 
 
     # interface
@@ -49,15 +48,19 @@ class Importer(Loader):
         Interpret {uri} as a module to be loaded
         """
         # get the module name
-        source = uri.address
+        source = str(uri.address)
         # build a simple locator
-        locator = tracking.simple(source=str(uri))
+        locator = tracking.simple(source=uri.uri)
+        # show me
+        # print("    importing: {!r}".format(source))
         # attempt to
         try:
             # import the module
             module = __import__(source)
         # the address portion of {uri} is not importable
         except (ImportError, TypeError) as error:
+            # show me
+            # print("      error: {}".format(str(error)))
             # complain
             raise cls.LoadingError(
                 codec=cls, uri=uri, locator=locator, description=str(error)) from error
@@ -67,54 +70,44 @@ class Importer(Loader):
         return cls.shelf(module=sys.modules[source], uri=uri, locator=locator)
 
 
-    # framework support
     @classmethod
-    def register(cls, index):
+    def locateShelves(cls, protocol, scheme, context, **kwds):
         """
-        Register the recognized schemes with {index}
+        Locate candidate shelves for the given {uri}
         """
-        # register my scheme
-        index[cls.scheme] = cls
+        # chain up for the rest
+        for candidate in super().locateShelves(
+                protocol=protocol, scheme=scheme, context=context, **kwds):
+            # make a uri
+            uri = cls.uri(scheme='import', address=candidate)
+            # and send it off
+            yield uri
+
         # all done
         return
 
 
+    # context handling
     @classmethod
-    def locateShelves(cls, protocol, uri, **kwds):
+    def interpret(cls, request):
         """
-        Locate candidate shelves for the given {uri}
+        Attempt to extract to extract a resolution context and a symbol from the {request}
         """
-        # print("Importer.locateShelves: uri={.uri!r}".format(uri))
-        # get the address part of the uri; it serves as the package specification
-        package = uri.address
-        # if there is something there
-        if package:
-            # show me
-            # print("  trying uri={.uri!r}".format(uri))
-            # try it first
-            yield uri
-        # otherwise
-        else:
-            # let the package be the protocol family name
-            package = protocol.pyre_family()
-        # while there is still something left
-        while True:
-            # set the address portion of the {uri} to the new package
-            uri.address = package
-            # show me
-            # print("  trying uri={.uri!r}".format(uri))
-            # and send it to the caller
-            yield uri
-            # next, attempt to
-            try:
-                # split it on the rightmost separator
-                package, _ = package.rsplit(cls.separator, 1)
-            # if it can't be done
-            except ValueError:
-                # we have exhausted the separators present in {address}
-                break
-        # no more
-        return
+        # i deal with python package specifications
+        context = request.address.split('.')
+        # the symbol is just the last entry
+        symbol = '' if not context else context[-1]
+        # return the pair
+        return context, symbol
+
+
+    @classmethod
+    def assemble(cls, context):
+        """
+        Assemble the sequence of directories in to a form suitable for the address part of a uri
+        """
+        # i make module paths
+        return '.'.join(context)
 
 
     # initialization
@@ -141,10 +134,12 @@ class Importer(Loader):
             # no worries
             return
 
+        # resolve the file name
+        filename = str(primitives.path(filename).resolve())
         # make a uri
-        uri = linker.uri.locator(scheme='file', address=os.path.abspath(filename))
+        uri = cls.uri(scheme='file', address=filename)
         # and a locator
-        here = tracking.simple('while priming the {.scheme} scheme'.format(cls))
+        here = tracking.simple('while priming the {.__name__} loader'.format(cls))
         # make a shelf
         shelf = cls.shelf(module=__main__, uri=uri, locator=here)
         # attach it to the linker

@@ -7,7 +7,7 @@
 
 
 # access to the locator factories
-from ... import tracking
+from ... import primitives, tracking
 # and my ancestors
 from ..Loader import Loader
 
@@ -30,7 +30,7 @@ class ODB(Loader):
 
 
     # constants
-    separator = '/'
+    suffix = '.py'
     schemes = ('vfs', 'file')
 
 
@@ -42,13 +42,16 @@ class ODB(Loader):
         """
         # get the fileserver
         fs = executive.fileserver
+        # show me
+        # print("    loading: {.uri!r}".format(uri))
         # ask it to
         try:
-            # print("ODB.load: uri={.uri!r}".format(uri))
             # open the {uri}
             stream = fs.open(uri=uri)
         # if anything goes wrong
         except fs.GenericError as error:
+            # show me
+            # print("      error: {}".format(str(error)))
             # report it as a loading error
             raise cls.LoadingError(codec=cls, uri=uri) from error
         # build a new shelf
@@ -58,43 +61,70 @@ class ODB(Loader):
 
 
     @classmethod
-    def register(cls, index):
+    def locateShelves(cls, executive, protocol, scheme, context, **kwds):
         """
-        Register my schemes with the {index}
+        Locate candidate shelves from the given {uri}
         """
-        # update the index with my schemes
-        index.update((scheme, cls) for scheme in cls.schemes)
+        # if there is no scheme
+        if not scheme:
+            # set it to the defaults
+            scheme = 'vfs'
+        # first, let's try what the user supplied
+        uri = cls.uri(scheme=scheme, address=cls.assemble(context))
+        # show me
+        # print("  trying the user's uri={.uri!r}".format(uri))
+        # and try it
+        yield uri
+
+        # collect the list of system folders maintained by the fileserver
+        cfgpath = list(str(folder) for folder in executive.fileserver.systemFolders)
+
+        # chain up for the rest
+        for candidate in super().locateShelves(
+                executive=executive, cfgpath=cfgpath,
+                protocol=protocol, scheme=scheme, context=context, **kwds):
+            # make a uri
+            uri = cls.uri(scheme=scheme, address=candidate)
+            # show me
+            # print("  candidate uri={.uri!r}".format(uri))
+            # and send it off
+            yield uri
+
         # all done
         return
 
 
+    # context handling
     @classmethod
-    def locateShelves(cls, protocol, uri, symbol, **kwds):
+    def interpret(cls, request):
         """
-        Locate candidate shelves from the given {uri}
+        Attempt to extract to extract a resolution context and a symbol from the {request}
         """
-        # if the {uri} has an {address}
-        if uri.address:
-            # try it first
-            # print("ODB.locateShelves: uri={.uri!r}".format(uri))
-            yield uri
-            # try adding a '.py' to it
-            extended = uri.clone()
-            extended.address += '.py'
-            yield extended
+        # i deal with paths, so attempt to coerce the request
+        path = primitives.path(request.address)
+        # the resolution context is the tuple of directories in the {request}, ignoring the
+        # root marker if any
+        context = list(path.names)
+        # and the symbol is just the path name with any suffixes
+        symbol = path.stem
+        # return the pair; perhaps i can skip the realization and hand back the generator...
+        return context, symbol
 
-        # if the uri scheme was 'file'
-        if uri.scheme == 'file':
-            # there is nothing else to try
-            return
 
-        # otherwise, if there is a valid {protocol}
-        if protocol:
-            # get it to provide some candidates from the virtual filesystem
-            yield from protocol.pyre_formCandidates(uri=uri, symbol=symbol, **kwds)
-
-        # no more ideas
-        return
+    @classmethod
+    def assemble(cls, context):
+        """
+        Assemble the sequence of directories in {context} to a form suitable for the address part
+        of a uri
+        """
+        # i make paths
+        path = primitives.path(context)
+        # if it has no suffix
+        if not path.suffix:
+            # give it one...
+            path = path.withSuffix(cls.suffix)
+        # turn it into a string and return it
+        return str(path)
 
 
 # end of file

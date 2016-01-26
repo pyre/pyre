@@ -6,8 +6,6 @@
 #
 
 
-# externals
-import itertools
 # support
 from .. import tracking
 # metaclass
@@ -140,124 +138,19 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
 
     @classmethod
-    def pyre_formCandidates(cls, uri, symbol, searchpath=None, **kwds):
-        """
-        Participate in the search for shelves consistent with {uri}
-        """
-        # print("Protocol.pyre_formCandidates:")
-        # print("    uri: {.uri!r}".format(uri))
-        # print("    symbol: {}".format(symbol))
-        # print("    searchpath: {}".format(searchpath))
-        # print("    kwds: {}".format(kwds))
-        # get my resolver
-        resolver = cls.pyre_contextResolver()
-        # if no {searchpath} is supplied, use my default
-        prefices = cls.pyre_contextPath() if searchpath is None else searchpath
-        # sub-folders to append
-        folders = cls.pyre_contextFolders()
-        # specification fragments
-        specs = cls.pyre_contextSpec(uri)
-        # and symbol containers
-        containers = cls.pyre_symbolContainers(symbol)
-
-        # form all possible combinations of these
-        product = itertools.product(prefices, folders, specs, containers)
-
-        # with all possible combinations of these three sequences
-        for prefix, folder, spec, container in product:
-            # print('{} : {!r} : {!r} : {!r}'.format(prefix, folder, spec, container))
-            # assemble the address portion of the uri; we are only looking for files, so it's
-            # ok to hardwire the extension
-            path = str(resolver.path(prefix.address, folder, spec, container)) + cls.EXTENSION
-            # show me the candidate path
-            # print('trying {!r}'.format(path))
-            # build a better uri
-            uri = cls.uri.locator(scheme=prefix.scheme, address=path)
-            # show me the full uri
-            # print('candidate uri {!r}'.format(str(uri)))
-            # and yield it
-            yield uri
-
-        # out of ideas
-        return
-
-
-    @classmethod
-    def pyre_contextResolver(cls):
-        """
-        Return the entity responsible for normalizing uris
-        """
-        # by default, it's my fileserver
-        return cls.pyre_fileserver
-
-
-    @classmethod
-    def pyre_contextPath(cls):
-        """
-        Return an iterable over the starting points for hunting down component implementations
-        """
-        # easy enough
-        return cls.pyre_nameserver.configpath
-
-
-    @classmethod
-    def pyre_contextFolders(cls):
+    def pyre_resolutionContext(cls):
         """
         Return an iterable over portions of my family name
         """
-        # get my family name split into fragments; empty family names must be converted to a
-        # sequence with an empty string, otherwise {itertools.product} does not work correctly
-        path = cls.pyre_familyFragments()
-        # check whether the path is empty
-        if not path:
-            # return a normalized sequence so that {itertools.product} works correctly
-            yield ''
-            # all done
-            return
-
-        # get my resolver
-        resolver = cls.pyre_contextResolver()
-
-        # build a progressively shorter sequence of portions of my family name
-        for marker in reversed(range(0, len(path)+1)):
-            # splice it together and return it
-            yield resolver.path(*path[:marker])
-
+        # initialize the pile of packages
+        packages = []
+        # and the pile of folders
+        folders = []
+        # go through my public ancestors
+        for base in cls.pyre_public():
+            # get the family name split into fragments and send it off
+            yield base.pyre_familyFragments()
         # all done
-        return
-
-
-    @classmethod
-    def pyre_contextSpec(cls, uri):
-        """
-        Build path contributions from the specification supplied by the resolution client
-        """
-        # get the address in the uri
-        address = uri.address
-        # if the address is empty
-        if not address:
-            # return a normalized sequence so that {itertools.product} works properly
-            yield ''
-            # all done
-            return
-
-        # otherwise, return the address
-        yield address
-        # do not attempt to transform this in any other way; it is conceptually wrong to ignore
-        # an explicit specification provided by the user....
-        return
-
-
-    @classmethod
-    def pyre_symbolContainers(cls, symbol):
-        """
-        Build a sequence of symbol containers to try
-        """
-        # first, involve the {symbol} in the uri search
-        yield symbol
-        # if that didn't work, let's see whether the 'parent' is not a folder but a container
-        yield ''
-        # out of ideas
         return
 
 

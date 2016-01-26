@@ -19,24 +19,4 @@ class Action(pyre.action, dashboard, family="merlin.spells"):
     """
 
 
-    # support for framework requests
-    @classmethod
-    def pyre_contextPath(cls):
-        """
-        Return an iterable over the starting point for hunting down spells
-        """
-        # merlin knows
-        return cls.merlin.searchpath
-
-
-    @classmethod
-    def pyre_contextFolders(cls):
-        """
-        Return an iterable over portions of my family name
-        """
-        # spells are in the 'spells' folder
-        return [ 'spells' ]
-
-
-
 # end of file
