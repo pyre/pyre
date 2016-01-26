@@ -25,6 +25,9 @@ class Executive:
     # types
     from ..schemata import uri
     from .Priority import Priority as priority
+    # get the client base class
+    from .Dashboard import Dashboard as dashboard
+
 
     # constants
     hostmapkey = 'pyre.hostmap' # the key with the nicknames of known hosts
@@ -147,12 +150,12 @@ class Executive:
         {executive.fileserver}, and that it contains executable python code that provides the
         definition of the required symbol.  For example, the {uri}
 
-            vfs:/local/shapes.odb/box
+            vfs:/local/shapes.py/box
 
-        implies that the fileserver can resolve the address {local/shapes.odb} into a valid
-        file within the virtual filesystem that forms the application namespace. The referenced
+        implies that the fileserver can resolve the address {local/shapes.py} into a valid file
+        within the virtual filesystem that forms the application namespace. The referenced
         {symbol} must be a callable that can produce component class records when called. For
-        example, the file {shapes.odb} might contain
+        example, the file {shapes.py} might contain
 
             import pyre
             class box(pyre.component): pass
@@ -530,12 +533,9 @@ class Executive:
         # instantiate and attach
         self.environ = Environ(executive=self)
 
-        # get the client base class
-        from .Dashboard import Dashboard as dashboard
-
         # build weak references to the managers of the runtime environment
-        dashboard.pyre_user = weakref.proxy(self.user)
-        dashboard.pyre_host = weakref.proxy(self.host)
+        self.dashboard.pyre_user = weakref.proxy(self.user)
+        self.dashboard.pyre_host = weakref.proxy(self.host)
 
         # all done
         return self
