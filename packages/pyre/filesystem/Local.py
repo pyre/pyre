@@ -169,14 +169,12 @@ class Local(Filesystem):
             for entry in walker.walk(location):
                 # show me
                 # print("      {}".format(entry))
-                # try to figure out what kind of entry this is
-                try:
-                    # by asking the recognizer for help
-                    meta = recognizer.recognize(entry)
+                # try to figure out what kind of entry this is by asking the recognizer
+                meta = recognizer.recognize(entry)
                 # it is possible to have entries in a directory that are not real files: the
                 # walker can find them, but the recognizer fails; emacs auto-save files on OSX
                 # are such an example. so, if the recognizer failed
-                except OSError:
+                if not meta:
                     # ignore this entry
                     continue
                 # stamp the entry meta-data
