@@ -142,14 +142,8 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Return an iterable over portions of my family name
         """
-        # initialize the pile of packages
-        packages = []
-        # and the pile of folders
-        folders = []
-        # go through my public ancestors
-        for base in cls.pyre_public():
-            # get the family name split into fragments and send it off
-            yield base.pyre_familyFragments()
+        # go through my public ancestors, get the family name fragments and send them off
+        yield from ( base.pyre_familyFragments() for base in cls.pyre_public() )
         # all done
         return
 

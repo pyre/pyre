@@ -35,7 +35,7 @@ class Loader:
         # print("    uri: {.uri!r}".format(uri))
         # print("    protocol: {}".format(protocol))
         # for key, value in kwds.items():
-            # print("    {}: {}".format(key, value))
+        # print("    {}: {}".format(key, value))
 
         # if we are here, we know that the uri either has no scheme, or its scheme is one
         # handled by this loader
@@ -58,7 +58,7 @@ class Loader:
             try:
                 # extract it
                 descriptor = shelf.retrieveSymbol(symbol)
-            # if it's not there
+                # if it's not there
             except shelf.SymbolNotFoundError as error:
                 # show me
                 # print(' ## error: {}'.format(str(error)))
@@ -78,7 +78,7 @@ class Loader:
         try:
             # load it
             shelf = cls.load(executive=executive, uri=cls.uri(address=symbol))
-        # if anything goes wrong
+            # if anything goes wrong
         except cls.LoadingError:
             # just ignore it
             pass
@@ -161,7 +161,7 @@ class Loader:
 
 
     @classmethod
-    def locateShelves(cls, executive, protocol, scheme, context, cfgpath=[], **kwds):
+    def locateShelves(cls, executive, protocol, scheme, context, cfgpath=None, **kwds):
         """
         Locate candidate shelves for the given {uri}
         """
@@ -203,44 +203,70 @@ class Loader:
                 if package not in prefixes:
                     # save it
                     prefixes.append(package)
-                # if we got a new flavor
-                if flavor not in flavors:
-                    # save it
+                # go through the flavors we've seen before and verify that the new flavor is
+                # not a subsequence of any of the others
+                for known in flavors:
+                    # pairwise check
+                    for new, old in zip(flavor, known):
+                        # for equality
+                        if new != old: break
+                    # if we didn't find any discrepancy
+                    else:
+                        # it means that we exhausted one of them with no mismatch; if the known
+                        # is longer
+                        if len(known) >= len(flavor):
+                            # ignore this one
+                            break
+                # if the search terminated normally
+                else:
+                    # add this flavor to the pile
                     flavors.append(flavor)
 
         # add any extra locations supplied by the subclass loader
-        prefixes += cfgpath
+        cfgpath = [[]] + (list([path] for path in cfgpath) if cfgpath else [])
         # convert {prefixes} into a list of lists
-        prefixes = list([prefix] for prefix in prefixes) if prefixes else [[]]
+        prefixes = [[]] + (list([prefix] for prefix in prefixes) if prefixes else [])
         # repeat with the flavors
         flavors = flavors if flavors else [[]]
 
+        # show me
+        # print("  prefixes: {}".format(prefixes))
+        # print("  flavors: {}".format(flavors))
+        # print("  context: {}".format(contexts))
+
         # keep track of what we have tried
         candidates = []
-        # go through all the prefixes; at the very least we have one entry
-        for prefix in prefixes:
-            # all the accumulated flavors
-            for flavor in flavors:
-                # and all the user contexts
-                for user in contexts:
-                    # now, slide a splicer through all positions in the flavor past the first slot
-                    for pos in reversed(range(len(flavor)+1)):
-                        # keep the front part
-                        front = flavor[:pos]
-                        # we use it to form a candidate
-                        candidate = cls.assemble(prefix + front + user)
-                        # show me
-                        # print("  formed candidate: {}".format(candidate))
-                        # and send it for inspection
-                        yield candidate
-                        # now for each flavor level we spliced off
-                        for spliced in flavor[pos:]:
-                            # use them to form candidates as well
-                            candidate = cls.assemble(prefix + front + [spliced])
-                            # show me
-                            # print("  formed candidate: {}".format(candidate))
-                            # and send it for inspection
-                            yield candidate
+        # here is the list of product arguments
+        combine = (cfgpath, prefixes, flavors, contexts)
+        # form all possible combinations of (prefix, flavor, context)
+        for path, prefix, flavor, user in itertools.product(*combine):
+            # print(' -- path: {}'.format(path))
+            # print(' -- prefix: {}'.format(prefix))
+            # print(' -- flavor: {}'.format(flavor))
+            # print(' -- user: {}'.format(user))
+            # now, slide a splicer through all positions in the flavor past the first slot
+            for pos in reversed(range(len(flavor)+1)):
+                # print(' ++ pos: {}'.format(pos))
+                # keep the front part
+                front = flavor[:pos]
+                # we use it to form a candidate
+                candidate = cls.assemble(path + prefix + front + user)
+                # show me
+                # print("    candidate: {}".format(candidate))
+                # and send it for inspection
+                yield candidate
+                # remember this one
+                candidates.append(candidate)
+                # now for each flavor level we spliced off
+                for spliced in reversed(flavor[pos:]):
+                    # use them to form candidates as well
+                    candidate = cls.assemble(path + prefix + front + [spliced])
+                    # show me
+                    # print("    candidate: {}".format(candidate))
+                    # and send it for inspection
+                    yield candidate
+                    # remember this one too
+                    candidates.append(candidate)
 
         # all done
         return

@@ -17,8 +17,8 @@ def test():
     executive =  pyre.executive
 
     # retrieve a component descriptor from a file
-    one, = executive.resolve(uri="file:sample.odb/one")
-    two, = executive.resolve(uri="file:sample.odb/one")
+    one, *_ = executive.resolve(uri="file:sample.odb/one")
+    two, *_ = executive.resolve(uri="file:sample.odb/one")
     # check that the two retrievals yield identical results
     assert one == two
 
