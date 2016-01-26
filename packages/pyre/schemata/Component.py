@@ -87,11 +87,16 @@ class Component(Schema):
         instanceName = uri.fragment
         # extract the address, which we use as the component specification; it's ok if it's {None}
         componentSpec = uri.address
+
         # if we have an instance name but no component specification
         if instanceName and not componentSpec:
             # get my default value
-            factory = self.default or default()
-            # and if it is a component class
+            factory = self.default
+            # if it is the protocol default method
+            if factory == default:
+                # invoke it
+                factory = factory()
+            # now, if it is a component constructor
             if isinstance(factory, actor):
                 # use it to build a component instance
                 candidate = factory(name=instanceName)

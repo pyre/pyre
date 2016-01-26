@@ -16,7 +16,11 @@ def test():
     # print("person.friends:\n  {}\n  {}".format(toy.person.friends, type(toy.person.friends)))
     # print("student.friends:\n  {}\n  {}".format(toy.student.friends, type(toy.student.friends)))
 
+    # make a person
     michael = toy.person(name='michael')
+    # he is the default teacher of all students
+    assert michael is toy.student.friends['teacher']
+
     # here is a generic student
     jane = toy.student(name='jane')
     jane.activities = toy.relax(), 'study#math', '#physics'
@@ -25,7 +29,7 @@ def test():
     assert activities == (
         'relaxing for 1.0 hour', 'studying for 1.0 hour', 'studying for 2.0 hours'
         )
-    # assert jane.friends['teacher'] is michael # are class defaults inherited?
+    assert jane.friends['teacher'] is michael # are class defaults inherited?
 
     # create persons named in the configuration file
     alec = toy.student(name='alec')
@@ -49,7 +53,9 @@ def test():
     assert ally.friends['teacher'] is michael
 
     # check the relationships
+    # print(alec.friends['girlfriend'])
     assert alec.friends['girlfriend'] is ally
+    # print(ally.friends['boyfriend'])
     assert ally.friends['boyfriend'] is alec
 
     joe = toy.policeman(name='joe')

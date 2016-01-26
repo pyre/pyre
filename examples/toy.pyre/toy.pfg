@@ -8,22 +8,18 @@
 toy.people.student # alec:
   activities = study#physics, relax#wow, study#math, relax#tv
   friends.teacher = #michael ; class defaults don't seem to be inherited
-  friends.girlfriend = toy.student#ally
+  friends.girlfriend = toy.people.student#ally
 
 toy.people.student # ally:
   activities = study#chemistry, relax#wow, study#english, relax#tv
   friends.teacher = #michael ; class defaults don't seem to be inherited
-  friends.boyfriend = #alec
+  friends.boyfriend = toy.people.student#alec
 
 toy.people.policeman # joe:
   activities = patrol#beat, relax#tv
 
-; MGA: TODO
-; had to comment this out for the test case to run correctly
-; noticed it after revno 2376 when we sarted the lazy evaluation of facilty defaults
-;
-;toy.people.student.friends:
-;  teacher = #michael
+toy.people.student.friends:
+  teacher = #michael
 
 ; activities
 toy.tasks.study # math:
