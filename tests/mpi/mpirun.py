@@ -28,7 +28,7 @@ def test():
             world = mpi.world
             # print("Hello from {0.rank} of {0.size}".format(world))
             # check
-            assert world.size == 8
+            assert world.size == self.shell.tasks
             assert world.rank in range(world.size)
             # all done
             return 0
