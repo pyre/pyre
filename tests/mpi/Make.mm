@@ -37,7 +37,12 @@ communications:
 	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./min.py
 	${MPI_EXECUTIVE} -np 7 ${PYTHON} ./port.py
 
-launch:
-	${PYTHON} ./launch.py
+launchers: mpirun slurm
+
+mpirun:
+	${PYTHON} ./mpirun.py
+
+slurm:
+	${PYTHON} ./slurm.py
 
 # end of file

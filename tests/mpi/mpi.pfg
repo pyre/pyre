@@ -5,10 +5,17 @@
 ;
 
 
-; for the application in {launch.py}
-mpi.application # sample:
+; for the application in {mpirun.py}
+mpi.application # mpirun:
   shell = mpi.mpirun
   shell.tasks = 8
+
+
+; for the application in {slurm.py}
+mpi.application # slurm:
+  shell = mpi.slurm
+  shell.tasks = 8
+  shell.queue = batch
 
 
 ; end of file

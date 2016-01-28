@@ -26,15 +26,15 @@ def test():
             import mpi
             # get the world communicator
             world = mpi.world
-            # print("Hello from {0.rank} of {0.size}".format(world))
+            print("Hello from {0.rank} of {0.size}".format(world))
             # check
-            assert world.size == 8
-            assert world.rank in range(world.size)
+            # assert world.size == 8
+            # assert world.rank in range(world.size)
             # all done
             return 0
 
     # instantiate it
-    app = application(name='sample')
+    app = application(name='slurm')
     # run it
     app.run()
 

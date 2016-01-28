@@ -48,7 +48,7 @@ class Launcher(Script, family='mpi.shells.mpirun'):
         # if we need to invoke {mpirun}
         if self.autospawn:
             # do it
-            return self.spawn()
+            return self.spawn(application=application)
 
         # otherwise, just launch the application
         return self.main(application, *args, **kwds)
@@ -65,7 +65,7 @@ class Launcher(Script, family='mpi.shells.mpirun'):
         return application.main(*args, **kwds)
 
 
-    def spawn(self):
+    def spawn(self, **kwds):
         """
         Invoke {mpirun} with the correct arguments to create the  parallel machine
         """
