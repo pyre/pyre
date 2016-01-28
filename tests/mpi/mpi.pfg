@@ -6,9 +6,9 @@
 
 
 ; for the application in {launch.py}
-[ mpi.application # sample ]
-shell = mpi
-shell.tasks = 8
+mpi.application # sample:
+  shell = mpi.mpirun
+  shell.tasks = 8
 
 
 ; end of file

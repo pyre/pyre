@@ -17,6 +17,7 @@ EXPORT_PYTHON_MODULES = \
     Launcher.py \
     Object.py \
     Port.py \
+    Slurm.py \
     TrivialCommunicator.py \
     __init__.py
 

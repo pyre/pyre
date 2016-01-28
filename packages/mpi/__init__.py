@@ -110,8 +110,26 @@ else:
     # the port factory
     from .Port import Port as port
 
-    # the default shell
-    from .Launcher import Launcher as mpirun
+    # grab the shell protocol form pyre
+    from pyre import foundry, shells
+
+    # the foundries for the shells in this package
+    # the default shell is raw {mpirun}
+    @foundry(implements=shells.shell)
+    def mpirun():
+        # get the class
+        from .Launcher import Launcher
+        # and return it
+        return Launcher
+
+    # support for SLURM
+    @foundry(implements=shells.shell)
+    def slurm():
+        # get the class
+        from .Slurm import Slurm
+        # and return it
+        return Slurm
+
 
     # build the world communicator
     world = communicator(mpi.world)
