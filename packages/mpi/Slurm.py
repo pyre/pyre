@@ -81,15 +81,12 @@ class Slurm(Launcher, family='mpi.shells.slurm'):
             }
         # invoke {sbatch}
         with subprocess.Popen(**options) as child:
-            # say something
+            # send it the script
             response, errors = child.communicate(script)
-            # how me
-            print('response: ---')
-            print(response)
-            print(' ---')
-            print('errors: ---')
-            print(errors)
-            print(' ---')
+            # if {sbatch} said anything
+            if response: application.info.log(response)
+            # if there was a problem
+            if errors: application.error.log(errors)
             # wait for it to finish
             status = child.wait()
         # and return its status
