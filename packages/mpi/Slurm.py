@@ -28,6 +28,8 @@ class Slurm(Launcher, family='mpi.shells.slurm'):
     queue = pyre.properties.str()
     queue.doc = 'the name of the queue that will receive this job'
 
+    submit = pyre.properties.bool(default=True)
+    submit.doc = 'if {True} invoke sbatch; otherwise just save the SLURM script in a file'
 
     # spawning the application
     def spawn(self, application):
@@ -68,6 +70,15 @@ class Slurm(Launcher, family='mpi.shells.slurm'):
             '',
             '# end of file'
             ])
+
+        # if we were asked not to invoke SLURM
+        if not self.submit:
+            # open a file named after the app
+            with open(application.pyre_name+'.slurm', 'w') as record:
+                # write the script
+                record.write(script)
+                # and return success
+                return 0
 
         # grab the launcher
         sbatch = str(self.sbatch)
