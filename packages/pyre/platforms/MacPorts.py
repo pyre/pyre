@@ -116,9 +116,17 @@ class MacPorts(Managed, family='pyre.packagers.macports'):
                 # unpack the info
                 vinfo, *variants = info.split('+')
                 # the version info starts with an @ sign
-                assert vinfo[0] == '@'
-                # and has two parts
-                version, macrev = vinfo[1:].split('_')
+                if vinfo[0] != '@':
+                    # something has changes in the macports versioning scheme
+                    import journal
+                    # describe the problem
+                    msg = 'unexpected character {!r} in macports version field'.format(vinfo[0])
+                    # and let me know
+                    raise journal.firewall(self.pyre_family()).log(msg)
+                # and has two parts; apparently there are ports with '_' in their version
+                # numbers, e.g. libproj4; just call everything to the left of the last '_' the
+                # version, until there is official word on the format of the version info field
+                version, macrev = vinfo[1:].rsplit('_', maxsplit=1)
                 # hand it to the caller
                 yield package, version, set(variants)
         # all done
