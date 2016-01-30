@@ -121,11 +121,20 @@ class Local(Filesystem):
         return tree
 
 
-    def discover(self, root=None, walker=None, recognizer=None, levels=None):
+    def discover(self, root=None, walker=None, recognizer=None, levels=None, **kwds):
         """
         Traverse the local filesystem starting with {root} and refresh my contents so that they
         match the underlying filesystem
         """
+        # deduce the filesystem to which {root} belongs
+        fs = root.filesystem() if root is not None else self
+        # if it is not one of my nodes
+        if fs is not self:
+            # ask the other guy to do the work
+            return fs.discover(
+                root=root,
+                walker=walker, recognizer=recognizer, levels=levels, **kwds)
+
         # print(" ** pyre.filesystem.Local")
         # print("  input:")
         # print("    root: {!r}".format(root))

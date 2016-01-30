@@ -47,13 +47,21 @@ class Filesystem(Folder):
             "class {.__name__!r} does not implement 'open'".format(type(self)))
 
 
-    def discover(self, node, **kwds):
+    def discover(self, root=None, **kwds):
         """
         Fill my structure with nodes from an external source
         """
-        # i don't know how to do it
-        raise NotImplementedError(
-            "class {.__name__!r} does not implement 'discover'".format(type(self)))
+        # N.B.: virtual filesystems do not have a physical entity to query regarding their
+        # contents; by definition, they are always fully explored so there is nothing to do
+
+        # deduce the filesystem to which {root} belongs
+        fs = root.filesystem() if root is not None else self
+        # if i were asked to discover myself or something that belongs to me
+        if fs is self:
+            # i'm already there...
+            return self
+        # otherwise, ask the other filesystem to do the work
+        return fs.discover(root=root, **kwds)
 
 
     # implementation details

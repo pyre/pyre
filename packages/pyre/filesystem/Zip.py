@@ -37,7 +37,7 @@ class Zip(Filesystem):
         return self.zipfile.open(metadata.zipinfo, **kwds)
 
 
-    def discover(self, **kwds):
+    def discover(self, root=None, **kwds):
         """
         Populate the filesystem with the contents of the zipfile
 
@@ -46,6 +46,12 @@ class Zip(Filesystem):
         object does not allow for efficient retrievals. This may change in a future
         implementation.
         """
+        # adjust the root
+        root = root if root is not None else self
+        # if i have any contents whatever
+        if self.contents:
+            # i have done this before; bail
+            return root
         # get the archive contents
         for name, info in zip(self.zipfile.namelist(), self.zipfile.infolist()):
             # recognize the type of entry: directories end with a slash, everything else is a
@@ -67,7 +73,7 @@ class Zip(Filesystem):
             # insert the node
             self._insert(node=node, uri=path, metadata=metadata)
         # all done
-        return self
+        return root
 
 
     # meta methods
