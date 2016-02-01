@@ -6,9 +6,11 @@
 #
 
 
-import operator
+# externals
+import collections, operator
 
 
+# declaration
 class Dimensional:
     """
     This class comprises the fundamental representation of quantities with units
@@ -100,7 +102,12 @@ class Dimensional:
         """
         Multiplication
         """
-        # get my value
+        # if {other} is iterable
+        if isinstance(other, collections.abc.Iterable):
+            # dispatch the operation to the individual entries
+            return type(other)(self*entry for entry in other)
+
+        # otherwise,  get my value
         value = self.value
         # attempt to interpret {other} as a dimensional
         try:
@@ -202,7 +209,12 @@ class Dimensional:
         """
         Right multiplication
         """
-        # interpret {other} as a numeric type
+        # if other is iterable
+        if isinstance(other, collections.abc.Iterable):
+            # assume it is an iterable of numeric types; dispatch the operation to the
+            # individual entries
+            return type(other)(entry*self for entry in other)
+        # the only other thing i can do is interpret {other} as a numeric type
         value = self.value * other
         # build a new one and return it
         return Dimensional(value=value, derivation=self.derivation)
@@ -213,6 +225,11 @@ class Dimensional:
         """
         Right division
         """
+        # if other is iterable
+        if isinstance(other, collections.abc.Iterable):
+            # assume it is an iterable of numeric types; dispatch the operation to the
+            # individual entries
+            return type(other)(entry/self for entry in other)
         # interpret {other} as a numeric type
         value = other / self.value
         # compute the dimensions
