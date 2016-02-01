@@ -52,8 +52,6 @@ class Scanner(metaclass=Lexer):
 
         # get the token cache
         cache = self.pyre_cache = []
-        # flush it
-        cache.clear()
         # to get things going, build a {start} token and pass it along to the {client}
         self.pyre_start()
 
@@ -186,7 +184,7 @@ class Scanner(metaclass=Lexer):
     # tokenizing state
     pyre_stream = None
     pyre_client = None
-    pyre_cache = [] # the list of tokens that have been pushed back
+    pyre_cache = None # the list of tokens that have been pushed back
 
 
 # end of file
