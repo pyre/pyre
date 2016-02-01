@@ -19,7 +19,6 @@ EXPORT_PYTHON_MODULES = \
     Parser.py \
     Scanner.py \
     Section.py \
-    exceptions.py \
     __init__.py
 
 # standard targets

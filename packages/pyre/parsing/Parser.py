@@ -13,7 +13,7 @@ class Parser:
 
 
     # types
-    from .exceptions import ParsingError
+    from .exceptions import ParsingError, SyntaxError, TokenizationError
 
 
     # meta methods

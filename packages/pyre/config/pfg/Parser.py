@@ -22,9 +22,6 @@ class Parser(pyre.parsing.parser):
     """
 
 
-    # types
-    from .exceptions import ParsingError, SyntaxError
-
     # the configuration object model
     from .Assignment import Assignment
     from .Configuration import Configuration
