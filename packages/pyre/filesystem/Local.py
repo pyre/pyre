@@ -7,7 +7,7 @@
 
 
 # externals
-import time
+import hashlib, time
 # superclass
 from .Filesystem import Filesystem
 
@@ -29,6 +29,20 @@ class Local(Filesystem):
 
 
     # interface
+    def checksum(self, node, **kwds):
+        """
+        Compute a checksum for the node
+        """
+        # open the file
+        with self.open(node) as stream:
+            # get the file contents
+            contents = stream.read().encode()
+            # pull the contents
+            return hashlib.sha256(contents).digest()
+        # if anything goes wrong, do something stupid
+        return id(ndoe)
+
+
     def open(self, node, **kwds):
         """
         Open the file associated with {node}

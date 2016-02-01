@@ -35,6 +35,15 @@ class Node(metaclass=_metaclass_Node):
 
     # public data
     @property
+    def info(self):
+        """
+        Return whatever metadata the filesystem maintains about me
+        """
+        # this much is guaranteed to exist for all well-formed filesystems
+        return self.filesystem().info(node=self)
+
+
+    @property
     def uri(self):
         """
         Return my location relative to the root of my filesystem
@@ -53,6 +62,14 @@ class Node(metaclass=_metaclass_Node):
 
 
     # interface
+    def checksum(self, **kwds):
+        """
+        Build a checksum that summarizes my contents
+        """
+        # delegate to the filesystem
+        return self.filesystem().checksum(node=self, **kwds)
+
+
     def open(self, **kwds):
         """
         Access the contents of the physical resource with which I am associated

@@ -38,6 +38,14 @@ class Filesystem(Folder):
         return self.vnodes[node]
 
 
+    def checksum(self, node, **kwds):
+        """
+        Compute a checksum for the node
+        """
+        # i don't know how to do anything smarter
+        return id(node)
+
+
     def open(self, node, **kwds):
         """
         Open the file associated with {node}
