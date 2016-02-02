@@ -7,7 +7,7 @@
 
 
 # externals
-import hashlib, time
+import hashlib, mmap, time
 # superclass
 from .Filesystem import Filesystem
 
@@ -34,13 +34,13 @@ class Local(Filesystem):
         Compute a checksum for the node
         """
         # open the file
-        with self.open(node) as stream:
+        with self.open(node, mode='rb') as stream:
             # get the file contents
-            contents = stream.read().encode()
+            contents = mmap.mmap(stream.fileno(), length=0, access=mmap.ACCESS_READ)
             # pull the contents
             return hashlib.sha256(contents).digest()
         # if anything goes wrong, do something stupid
-        return id(ndoe)
+        return 0
 
 
     def open(self, node, **kwds):
