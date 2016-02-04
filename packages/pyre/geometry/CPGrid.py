@@ -1,4 +1,3 @@
-# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -17,6 +16,66 @@ class CPGrid(Grid):
     A corner point grid is a collection of hexahedral cells each of which is defined by the
     corners of two of its faces
     """
+
+
+    # public data
+    @property
+    def dimension(self):
+        """
+        Compute the dimension of space
+        """
+        # easy enough: get the length of the first point from the first cell
+        return len(self[0][0])
+
+
+    @property
+    def numberOfPoints(self):
+        """
+        Compute the number of nodes in the grid
+        """
+        # it's the number of cells multiplied by the number of points per cell
+        return self.numberOfCells * len(self[0])
+
+
+    @property
+    def numberOfCells(self):
+        """
+        Compute the total number of cells in the grid
+        """
+        # initialize the counter
+        size = 1
+        # go through the extent of each axis
+        for axis in self.shape:
+            # and multiply it out
+            size *= axis
+        # all done
+        return size
+
+
+    @property
+    def points(self):
+        """
+        Return an iterator over all the nodes in the grid
+        """
+        # easy enough
+        yield from (point for cell in self for point in cell)
+
+
+    @property
+    def cells(self):
+        """
+        Return an iterator over the connectivity of my grid
+        """
+        # initialize the counter
+        index = 0
+        # go through each cell
+        for cell in self:
+            # i consist of the next n consecutive nodes
+            yield range(index, index+len(cell))
+            # update
+            index += len(cell)
+        # all done
+        return
 
 
     # interface

@@ -1,4 +1,3 @@
-# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -16,6 +15,43 @@ class Mesh:
 
     # types
     from .PointCloud import PointCloud
+
+
+    # public data
+    @property
+    def dimension(self):
+        """
+        Infer the dimension of space
+        """
+        # easy enough
+        return len(self.points[0])
+
+
+    @property
+    def numberOfPoints(self):
+        """
+        Compute the number of points in the mesh
+        """
+        # easy enough
+        return len(self.points)
+
+
+    @property
+    def numberOfCells(self):
+        """
+        Compute the number of elements in the mesh
+        """
+        # easy enough
+        return len(self.simplices)
+
+
+    @property
+    def cells(self):
+        """
+        Build an iterator over my simplices
+        """
+        # easy enough
+        return self.simplices
 
 
     # interface

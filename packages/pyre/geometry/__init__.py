@@ -1,4 +1,3 @@
-# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -7,8 +6,70 @@
 #
 
 
+# triangulated surfaces
+def surface(**kwds):
+    """
+    Create a surface
+    """
+    # get the factory
+    from .Surface import Surface
+    # make one and return it
+    return Surface(**kwds)
+
+
+# logically cartesian grids
+def grid(**kwds):
+    """
+    Create a grid
+    """
+    # get the factory
+    from .Grid import Grid
+    # make on and return it
+    return Grid(**kwds)
+
+
+# corner-point grids
+def cpg(**kwds):
+    """
+    Create a corner point grid
+    """
+    # get the factory
+    from .CPGrid import CPGrid
+    # make one and return it
+    return CPGrid(**kwds)
+
+
+# simple representation of a simplicial mesh
+def mesh(**kwds):
+    """
+    Create a mesh
+    """
+    # get the factory
+    from .Mesh import Mesh
+    # make one and return it
+    return Mesh(**kwds)
+
+
 # value storage
-from .Field import Field as field
+def field(**kwds):
+    """
+    Create a field over a one of the space discretizations
+    """
+    # get the factory
+    from .Field import Field
+    # make one and return it
+    return Field(**kwds)
+
+
+# converters
+def triangulation(**kwds):
+    """
+    Create a triangulation
+    """
+    # get the factory
+    from .Triangulation import Triangulation
+    # make one and return it
+    return Triangulation(**kwds)
 
 
 # utilities
@@ -21,15 +82,13 @@ def transfer(grid, fields, mesh):
 
     # get the dimension of the grid
     dim = len(grid.shape)
-    # and its shape
-    ni, nj, nk = grid.shape
 
     # here we go: for every tet
     for tetid, tet in enumerate(mesh.simplices):
         # get the coordinates of its nodes
         vertices = tuple(mesh.points[node] for node in tet)
         # compute the barycenter
-        bary = tuple(sum(point[i] for point in vertices)/4 for i in range(3))
+        bary = tuple(sum(point[i] for point in vertices)/len(vertices) for i in range(dim))
 
         # initialize the search bounds
         imin = [0] * dim
@@ -67,6 +126,22 @@ def transfer(grid, fields, mesh):
 
     # all done; return the map of transferred fields
     return xfer
+
+
+def boxUnion(b1, b2):
+    """
+    Compute a box big enough to contain both input boxes
+    """
+    # easy enough
+    return tuple(map(min, zip(b1[0], b2[0]))), tuple(map(max, zip(b1[1], b2[1])))
+
+
+def boxIntersection(b1, b2):
+    """
+    Compute a box small enough  to fit inside both input boxes
+    """
+    # easy enough
+    return tuple(map(max, zip(b1[0], b2[0]))), tuple(map(min, zip(b1[1], b2[1])))
 
 
 # end of file
