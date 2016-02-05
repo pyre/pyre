@@ -31,9 +31,6 @@ class Launcher(Script, family='mpi.shells.mpirun'):
     mpi = pyre.externals.mpi()
     mpi.doc = 'the mpi runtime of choice'
 
-    python = pyre.externals.python()
-    python.doc = 'the python interpreter to use while respawning the node tasks'
-
     # a marker that enables applications to deduce the type of shell that is hosting them
     model = pyre.properties.str(default='mpi')
     model.doc = "the programming model"
@@ -72,9 +69,7 @@ class Launcher(Script, family='mpi.shells.mpirun'):
         # figure out which mpi we are using
         launcher = self.mpi.launcher
         # and which python
-        interpreter = self.python.interpreter
-
-        # NYI: check these and raise some exceptions if they are no good
+        interpreter = sys.executable
 
         # start building the command line
         argv = [launcher]

@@ -39,7 +39,7 @@ class Slurm(Launcher, family='mpi.shells.slurm'):
         # figure out which mpi we are using
         launcher = self.mpi.launcher
         # and which python
-        interpreter = self.python.interpreter
+        interpreter = sys.executable
 
         # we have two things to build: the SLURM script, and the command line to {sbatch} to
         # submit the job to the queuing system
