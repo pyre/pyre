@@ -42,7 +42,7 @@ class FileServer(Filesystem):
 
 
     # constants
-    DOT_PYRE = '~/.pyre'
+    DOT_PYRE = primitives.path('~/.pyre')
     USER_DIR = primitives.path('/__pyre/user')
     STARTUP_DIR = primitives.path('/__pyre/startup')
     PACKAGES_DIR = primitives.path('/__pyre/packages')
@@ -147,14 +147,17 @@ class FileServer(Filesystem):
         # runtime relies on the existence of the virtual folders, so me mount empty folders on
         # failure
 
-        # get the current working directory
+        # get the current working directory; it is guaranteed to be an absolute path so there
+        # is no reason to resolve it
+
         startup = primitives.path.cwd()
-        # and mount it
+        # however, it is possible that it doesn't exist, or it has the wrong permissions; try to
+        # mount it, or mount an empty folder if anything goes wrong
         self[self.STARTUP_DIR] = self.retrieveFilesystem(root=startup)
 
-        # the user's private folder, typically at{~/.pyre}
-        userdir = primitives.path(self.DOT_PYRE).expanduser().resolve()
-        # and mount it
+        # the user's private folder, typically at {~/.pyre}
+        userdir = self.DOT_PYRE.expanduser().resolve()
+        # same deal: mount it or an empty folder
         self[self.USER_DIR] = self.retrieveFilesystem(root=userdir)
 
         # all done
@@ -171,25 +174,33 @@ class FileServer(Filesystem):
         # redundant local filesystems in the virtual namespace to make sure that {vfs} nodes
         # that are related to each other are resolved by the same local filesystem
 
+        # sign in
+        # print("pyre.framework.FileServer:")
         # get the package name
         name = package.name
+        # show me
+        # print("  package name: {}".format(name))
 
         # attempt to
         try:
+            # print("  looking for {}".format(self.USER_DIR / name))
             # hunt down the package directory in the user area
             userdir = self[self.USER_DIR / name]
         # if not there
         except self.NotFoundError:
             # nothing to do: the user directory discovered at level 1 during boot, so the
             # directory really does not exist
+            # print("    not there")
             pass
         # if it is there
         else:
+            # print("    found it")
             # look deeply
             userdir.discover()
 
         # grab the package prefix
         prefix = package.prefix
+        # print("  package prefix: {}".format(prefix))
         # not much to do if there isn't one
         if not prefix: return package
 
@@ -197,16 +208,20 @@ class FileServer(Filesystem):
         fs = self.retrieveFilesystem(root=prefix)
         # attempt to
         try:
+            # print("  looking for {}".format(package.DEFAULTS))
             # look for the configuration folder
             defaults = fs[package.DEFAULTS]
         # if not there
         except fs.NotFoundError:
+            # print("    not there")
             # nothing else to do
             return package
+        # print("    found it")
 
         # if the configuration folder is empty
         if not defaults.contents:
             # it might be because we haven't explored it yet
+            # print("    expanding it")
             defaults.discover(levels=1)
 
         # look for configuration files
@@ -222,19 +237,23 @@ class FileServer(Filesystem):
                 # bail
                 continue
             # if it is there, mount it within the package directory
+            # print("  mounting {}".format(self.PACKAGES_DIR / filename))
             self[self.PACKAGES_DIR / filename] = cfgfile
 
         # look for the configuration folder
         try:
             # get the associated node
+            # print("  looking for {}/{}".format(package.DEFAULTS, name))
             cfgdir = defaults[name]
         # if it's not there
         except fs.NotFoundError:
+            # print("    not there")
             # no problem
             pass
         # if it is there
         else:
             # attach it
+            # print("    mounting it")
             self[self.PACKAGES_DIR / name] = cfgdir.discover(levels=None)
 
         # all done
@@ -261,13 +280,21 @@ class FileServer(Filesystem):
         # check whether
         try:
             # i have seen this path before
-            return self.mounts[root]
+            fs = self.mounts[root]
         # if i haven't
         except KeyError:
             # no problem
             pass
+        # if i have
+        else:
+            # i promised to look, so do it; we assume that {discover} is safe to call on a
+            # previously explored filesystem
+            return fs.discover(levels=levels)
 
-        # is it a child of one of my mounted filesystems
+        # next, we go through the mount points of all filesystems that have been seen
+        # previously and check whether the path supplied by the caller is a child of one of my
+        # mounted filesystems; if it is, mount the missing directories to reach the target
+        # mount point; if not, mount it as a new filesystem
         for path in self.mounts:
             # attempt to
             try:
@@ -278,7 +305,7 @@ class FileServer(Filesystem):
                 # no problem, grab the next one
                 continue
 
-            # we got one; let's find the anchor folder to park {root}
+            # we got one; get the associated folder node where we will park {root}
             folder = self.mounts[path]
             # go through each level in the relative path
             for level in diff.parts:
@@ -290,20 +317,22 @@ class FileServer(Filesystem):
                 except self.NotFoundError:
                     # and the the folder has any contents
                     if folder.contents:
-                        # it's impossible
-                        import journal
-                        # build a report
-                        msg = 'could not reach {} from {}'.format(root, path)
-                        # and complain
-                        raise journal.firewall('pyre.framework.fileserver').log(msg)
+                        # {level} does not exist; not much else we can do but punt
+                        return self.folder()
                     # otherwise, it must be that the folder hasn't been explored yet
                     folder.discover(levels=1)
-                    # try again
-                    folder = folder[level]
+                    # look again
+                    try:
+                        # for the subdirectory
+                        folder = folder[level]
+                    # if it fails again after discovery
+                    except self.NotFoundError:
+                        # {level} does not exist; not much else we can do but punt
+                        return self.folder()
             # if we get this far, we have what we are looking for
             return folder.discover(levels=levels)
 
-        # let's try
+        # it wasn't there; let's try
         try:
             # to make it
             folder = self.local(root=root).discover(levels=levels)
