@@ -79,14 +79,14 @@ class Local(Filesystem):
         return folder
 
 
-    def write(self, parent, name, contents):
+    def write(self, parent, name, contents, mode='w'):
         """
         Create the file {name} in the folder {parent} with the given {contents}
         """
         # assemble the new file uri
         uri = parent.uri / name
         # create the file
-        with uri.open(mode="w") as file:
+        with uri.open(mode=mode) as file:
             # save its contents
             file.write(contents)
         # build a node
