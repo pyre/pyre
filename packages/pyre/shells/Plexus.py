@@ -58,6 +58,41 @@ class Plexus(Application):
         return self.repertoir.invoke(plexus=self, action=name, argv=argv)
 
 
+    @pyre.export
+    def help(self, **kwds):
+        """
+        Hook for the application help system
+        """
+        # grab my command line arguments
+        argv = self.argv
+        # and attempt to
+        try:
+            # get the name of a command
+            name = next(argv)
+        # if there wasn't one
+        except StopIteration:
+            # no worries, we handle this case below
+            pass
+        # if there was one
+        else:
+            # we have the name of a command; resolve it
+            command = self.repertoir.resolve(plexus=self, spec=name)
+            # and invoke its help
+            return command.help(plexus=self)
+
+        # if we get this far, the user has asked for help without specifying a particular
+        # command; we display the general help screen
+
+        # show the application banner
+        self.pyre_banner()
+        # show help on available actions
+        self.pyre_documentActions()
+        # flush
+        self.info.log()
+        # and indicate success
+        return 0
+
+
     # meta-methods
     def __init__(self, **kwds):
         # chain up
@@ -78,6 +113,34 @@ class Plexus(Application):
         from .Repertoir import Repertoir
         # build one and return it
         return Repertoir(protocol=self.pyre_action)
+
+
+    # support for the help system
+    def pyre_documentActions(self, indent=' '*4):
+        """
+        Place information about the available actions in my {info} channel
+        """
+        # reset the pile of actions
+        actions = []
+        # get the documented commands
+        for uri, name, action, tip in self.pyre_action.pyre_documentedActions():
+            # and put them on the pile
+            actions.append((name, tip))
+        # if there were any
+        if actions:
+            # figure out how much space we need
+            width = max(len(name) for name, _ in actions)
+            # introduce this section
+            self.info.line('commands:')
+            # for each documented action
+            for name, tip in actions:
+                # show the details
+                self.info.line('{}{:>{}}: {}'.format(indent, name, width, tip))
+            # some space
+            self.info.line()
+
+        # all done
+        return
 
 
     # data

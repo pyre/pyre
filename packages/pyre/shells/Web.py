@@ -9,11 +9,11 @@
 # externals
 import pyre
 # my superclass
-from .Executive import Executive
+from .Script import Script
 
 
 # declaration
-class Web(Executive, family='pyre.shells.web'):
+class Web(Script, family='pyre.shells.web'):
     """
     A shell enables application interactivity over the web
     """
@@ -22,6 +22,10 @@ class Web(Executive, family='pyre.shells.web'):
     auto = pyre.properties.bool(default=True)
     auto.doc = 'controls whether to automatically launch the browser'
 
+    # a marker that enables applications to deduce the type of shell that is hosting them
+    model = pyre.properties.str(default='web')
+    model.doc = "the programming model"
+
 
     # interface
     @pyre.export
@@ -29,7 +33,18 @@ class Web(Executive, family='pyre.shells.web'):
         """
         Invoke the {application} behavior
         """
-        # create a nexus
+        # before doing anything else, let's check whether the user has asked for help on the
+        # command line; if so, just invoke the application help behavior and exit
+        # get the nameserver
+        nameserver = self.pyre_nameserver
+        # go through the markers
+        for marker in self.helpon:
+            # if it is known by the configuration store
+            if marker in nameserver:
+                # get help
+                return application.help(*args, **kwds)
+
+        # ok, we are in business; create a nexus
         nexus = pyre.nexus.node()
         # attach it to the application
         application.nexus = nexus
