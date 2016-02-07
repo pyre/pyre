@@ -75,7 +75,10 @@ class Web(Script, family='pyre.shells.web'):
         # if the user interrupted
         except KeyboardInterrupt as event:
             # launch the handler
-            status = application.pyre_interrupted(info=event)
+            return application.pyre_interrupted(info=event)
+
+        # if all went well
+        application.pyre_shutdown(status=status)
 
         # in any case, we are all done
         return status

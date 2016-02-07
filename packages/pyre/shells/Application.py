@@ -448,6 +448,14 @@ class Application(pyre.component, metaclass=Director):
 
 
     # other behaviors
+    def pyre_shutdown(self, **kwds):
+        """
+        Release all resources and prepare to exit
+        """
+        # nothing to do...
+        return
+
+
     def pyre_interrupted(self, **kwds):
         """
         The user issued a keyboard interrupt

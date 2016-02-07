@@ -51,8 +51,20 @@ class Fork(Executive, family='pyre.shells.fork'):
 
         # in the child process, convert {stdout} and {stderr} into channels
         channels = self.childChannels(pipes)
-        # launch the application
-        status = application.main(*args, channels=channels, **kwds)
+        # set up a net
+        try:
+            # launch the application
+            status = application.main(*args, channels=channels, **kwds)
+        # if anything goes wrong
+        except self.PyreError as error:
+            # log it
+            application.error.log(str(error))
+            # set the status
+            status = 1
+        # if all went well
+        else:
+            # shutdown
+            application.pyre_shutdown(status=status)
         # and exit
         raise SystemExit(status)
 

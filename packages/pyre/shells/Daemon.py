@@ -50,9 +50,21 @@ class Daemon(Fork, family="pyre.shells.daemon"):
             home = self.home or '/'
             # go there
             os.chdir(home)
-            # launch the application
-            status = application.main(*args, **kwds)
-            # and return its exit code
+            # set up a net
+            try:
+                # launch the application
+                status = application.main(*args, **kwds)
+            # if anything goes wrong
+            except self.PyreError as error:
+                # log it
+                application.error.log(str(error))
+                # set the status
+                status = 1
+            # if all went well
+            else:
+                # shutdown
+                application.pyre_shutdown(status=status)
+            # return the exit code
             raise SystemExit(status)
 
         # otherwise, build the communication channels

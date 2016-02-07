@@ -61,6 +61,11 @@ class Script(Executive, family="pyre.shells.script"):
             application.error.log(str(error))
             # indicate a failure
             status = 1
+        # if all ended well
+        else:
+            # shutdown
+            application.pyre_shutdown(status=status)
+
         # in any case, we are all done
         return status
 
