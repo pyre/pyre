@@ -135,6 +135,18 @@ class Local(Filesystem):
         return tree
 
 
+    def unlink(self, node, **kwds):
+        """
+        Remove {node} and its associated file from this filesystem
+        """
+        # ask the path to delete itself
+        node.uri.unlink()
+        # remove the node from my vnode table
+        del self.vnodes[node]
+        # all done here; the parent folder will take care of updating its contents
+        return
+
+
     def discover(self, root=None, walker=None, recognizer=None, levels=None, **kwds):
         """
         Traverse the local filesystem starting with {root} and refresh my contents so that they

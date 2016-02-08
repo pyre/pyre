@@ -485,6 +485,8 @@ class Path(tuple):
     lstat = _unaryDispatch(os.lstat)
     stat = _unaryDispatch(os.stat)
     open = _unaryDispatch(io.open)
+    rmdir = _unaryDispatch(os.rmdir)
+    unlink = _unaryDispatch(os.unlink)
 
 
     # local implementations of the physical path interface
@@ -511,6 +513,7 @@ class Path(tuple):
 
     def touch(self,  mode=0x666, exist_ok=True):
         """
+        Create a file at his path
         """
         # all done
         raise NotImplementedError('NYI!')

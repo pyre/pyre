@@ -45,6 +45,41 @@ class Folder(Node):
         return self.contents.items()
 
 
+    def remove(self, node, name=None, **kwds):
+        """
+        Remove {node} from my contents and its filesystem
+        """
+        # if the node is a folder
+        if node.isFolder:
+            # we don't support that yet
+            raise NotImplemntedError("NYI: removing directories is not implemented yet")
+
+        # if we were not told the name by which the node is known
+        if name is None:
+            # look for it in my contents
+            for name, child in self.contents.items():
+                # look for a match
+                if child is node:
+                    # bail, we got the name
+                    break
+            # if we failed to find it
+            else:
+                # ignore it, for now?
+                return
+        # otherwise
+        else:
+            # verify that the node and the name match
+            assert self.contents[name] is node
+
+        # ask filesystem to update its persistent store
+        self.filesystem().unlink(node=node, **kwds)
+        # remove it from my contents
+        del self.contents[name]
+
+        # all done
+        return
+
+
     # searching for specific contents
     def find(self, pattern):
         """
