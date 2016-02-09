@@ -46,7 +46,7 @@ class Path(tuple):
         Build an iterator over my components
         """
         # easy enough
-        return reversed(self)
+        return iter(self)
 
 
     @property
@@ -70,15 +70,15 @@ class Path(tuple):
         Return the representation of the root of the path, if present
         """
         # if i am empty
-        if not self:
+        if len(self) == 0:
             # i can't be absolute
             return ''
-        # get my last part
-        last = self[-1]
+        # get my first part
+        first = self[0]
         # if it is my separator
-        if last == self._SEP:
+        if first == self._SEP:
             # i have a root
-            return last
+            return first
         # otherwise, I don't
         return ''
 
@@ -92,9 +92,8 @@ class Path(tuple):
         cls = type(self)
         # generate a sequence of lengths so i can build subsequences
         for pos in range(1,len(self)):
-            # build a path out of a subsequence that doesn't include the first level; get {new}
-            # from my superclass to do this so we can avoid the double reverse
-            yield super().__new__(type(self), self[pos:])
+            # build a path out of a subsequence that doesn't include the lasth level
+            yield super().__new__(type(self), self[:-pos])
         # all done
         return
 
@@ -112,7 +111,7 @@ class Path(tuple):
             # is it's own parent
             return self
         # for the rest, generate a sequence of length one shorter than me
-        return super().__new__(type(self), self[1:])
+        return super().__new__(type(self), self[:-1])
 
 
     @property
@@ -121,11 +120,11 @@ class Path(tuple):
         Return the final path component
         """
         # when i am empty
-        if not self:
+        if len(self) == 0:
             # the last component is the empty string
             return ''
-        # otherwise, get my first entry, which is the last part of the path
-        name = self[0]
+        # otherwise, get the last part of the path
+        name = self[-1]
         # return it, unless it's the separator, in which case return the empty string
         return name if name != self._SEP else ''
 
@@ -254,7 +253,7 @@ class Path(tuple):
         # coerce {other} into a path
         other = self.coerce(other)
         # the {path} exists iff {other} is a subsequence of {self}
-        for mine, hers in zip(reversed(self), reversed(other)):
+        for mine, hers in zip(self, other):
             # if they are not identical
             if mine != hers:
                 # build the message
@@ -264,7 +263,7 @@ class Path(tuple):
                 raise ValueError("{}: {}".format(error, location))
 
         # what's left is the answer
-        return super().__new__(type(self), self[:-len(other)])
+        return super().__new__(type(self), self[len(other):])
 
 
     def withName(self, name):
@@ -276,7 +275,7 @@ class Path(tuple):
             # complain
             raise ValueError("invalid name {!r}".format(str(name)))
         # replace my name and build a new path
-        return super().__new__(type(self), (name,) + self[1:])
+        return super().__new__(type(self), self[:-1] + (name,))
 
 
     def withSuffix(self, suffix=None):
@@ -345,7 +344,7 @@ class Path(tuple):
         Build an equivalent absolute normalized path that is free of symbolic links
         """
         # if I'm empty
-        if not self:
+        if len(self) == 0:
             # return the current working directory
             return self.cwd()
         # if I am the root
@@ -362,8 +361,8 @@ class Path(tuple):
         """
         Build a path with '~' and '~user' patterns expanded
         """
-        # grab the user spec, which must be my leading path component
-        spec = self[-1]
+        # grab the user spec, which must be the last path component
+        spec = self[:-1]
         # if it doesn't start with the magic character
         if spec[0] != '~':
             # we are done
@@ -373,7 +372,7 @@ class Path(tuple):
         # current user
         home = self.home(user=spec[1:])
         # build the new path and return it
-        return super().__new__(type(self), self[:-1] + home)
+        return super().__new__(type(self), home + self[1:])
 
 
     # real path introspection
@@ -539,7 +538,7 @@ class Path(tuple):
             # return it
             return args[0]
         # otherwise, parse the arguments and chain up to build my instance
-        return super().__new__(cls, cls._parse(args))
+        return super().__new__(cls, reversed(tuple(cls._parse(args))))
 
 
     def __str__(self):
@@ -547,17 +546,17 @@ class Path(tuple):
         Assemble my parts into a string
         """
         # if i am empty
-        if not self:
+        if len(self) == 0:
             # i represent the current working directory
             return self._CWD
         # grab my separator
         sep = self._SEP
-        # prime a reverse iterator over my parts
-        rev = reversed(self)
+        # set up an iterator over myparts
+        i = iter(self)
         # if i am an absolute path
-        if self[-1] == sep:
+        if self[0] == sep:
             # advance the iterator to skip the root marker
-            next(rev)
+            next(i)
             # but remember it
             marker = sep
         # otherwise
@@ -565,7 +564,15 @@ class Path(tuple):
             # leave no marker in the beginning
             marker = ''
         # ok, let's put this all together
-        return '{}{}'.format(marker, sep.join(rev))
+        return '{}{}'.format(marker, sep.join(i))
+
+
+    def __bool__(self):
+        """
+        Test for non null values
+        """
+        # there are no conditions under which I am false since empty tuple means '.'
+        return True
 
 
     # arithmetic; pure sugar but slower than other methods of assembling paths
@@ -600,9 +607,9 @@ class Path(tuple):
             # if {arg} is another path
             if isinstance(arg, cls):
                 # append its part to mine
-                yield from arg
+                yield from reversed(arg)
                 # if this is an absolute path
-                if arg and arg[-1] == sep:
+                if len(arg) != 0 and arg[0] == sep:
                     # and terminate the sequence
                     return
             # if {arg} is a string

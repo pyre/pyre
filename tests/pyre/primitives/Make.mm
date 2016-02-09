@@ -23,6 +23,7 @@ paths: prep
 	${PYTHON} ./path_arithmetic.py
 	${PYTHON} ./path_parts.py
 	${PYTHON} ./path_resolution.py
+	${PYTHON} ./path_tuple.py
 
 prep:
 	@$(RM_RF) scratch
