@@ -41,7 +41,7 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
         normal = self.terminal.colors['normal']
         # extract the information from the metadata
         channel = '{}{}{}'.format(blue, metadata['channel'], normal)
-        severity = '{}{}{}'.format(marker, metadata['severity'].upper(), normal)
+        severity = '{}{}{}'.format(marker, self.severityShort(metadata), normal)
 
         # decorate the first line
         yield "{}: {}: {}".format(channel, severity, page[0])
@@ -68,6 +68,33 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
 
         # all done
         return
+
+
+    # implementation details
+    def severityUpcase(self, metadata):
+        """
+        Return an uppercased severity
+        """
+        # easy...
+        return metadata['severity'].upper()
+
+
+    def severityShort(self, metadata):
+        """
+        Return a three letter abbreviation for the severity
+        """
+        # easy
+        return self.shortSeverities[metadata['severity']]
+
+
+    # private data
+    shortSeverities = {
+        'info': 'INF',
+        'warning': 'WRN',
+        'error': 'ERR',
+        'debug': 'DBG',
+        'firewall': 'FIREWALL', # don't shorten this one
+        }
 
 
 # end of file
