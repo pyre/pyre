@@ -181,6 +181,10 @@ class Application(pyre.component, metaclass=Director):
             self.info = journal.info(channel).activate()
             self.warning = journal.warning(channel).activate()
             self.error = journal.error(channel).activate()
+            # if i am in debugging mode
+            if self.DEBUG:
+                # activate the debug channel
+                self.debug.active = True
 
         # sniff around for my environment
         self.home, self.prefix, self.defaults = self.pyre_explore()
