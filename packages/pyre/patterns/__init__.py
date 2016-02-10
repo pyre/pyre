@@ -16,20 +16,22 @@ import itertools, collections
 
 
 # utilities
-def average(iterable):
+def mean(iterable):
     """
-    Compute the average value of the entries in {iterable}
+    Compute the mean value of the entries in {iterable}
     """
+    # make an iterator over the iterable
+    i = iter(iterable)
     # initialize the counters
-    total = 0
-    count = 0
+    count = 1
+    total = next(i)
     # loop
-    for item in iterable:
+    for item in i:
         # update the counters
         count += 1
         total += item
     # all done
-    return total/count
+    return total * 1/count
 
 
 def powerset(iterable):

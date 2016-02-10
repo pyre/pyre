@@ -51,7 +51,7 @@ def test():
     assert tuple(p.overhead) == tuple(record[5] for record in data)
 
     # compute the average production cost and check we got it right
-    assert pyre.patterns.average(p.production) == sum(entry[2] for entry in data)/len(data)
+    assert pyre.patterns.mean(p.production) == sum(entry[2] for entry in data)/len(data)
 
     # and return the data set
     return p
