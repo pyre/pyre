@@ -39,12 +39,18 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
         marker = self.palette[metadata['severity']]
         blue = self.terminal.colors['blue']
         normal = self.terminal.colors['normal']
-        # extract the information from the metadata
-        channel = '{}{}{}'.format(blue, metadata['channel'], normal)
-        severity = '{}{}{}'.format(marker, self.severityShort(metadata), normal)
 
+        # extract the information from the metadata
+        # channel = '{}{}{}'.format(blue, metadata['channel'], normal)
+        # severity = '{}{}{}'.format(marker, self.severityShort(metadata), normal)
         # decorate the first line
-        yield "{}: {}: {}".format(channel, severity, page[0])
+        # yield "{}: {}: {}".format(channel, severity, page[0])
+
+        # an alternate formatting
+        channel = '{}{}{}'.format(marker, metadata['channel'], normal)
+        # decorate the first line
+        yield "{}: {}".format(channel, page[0])
+
         # and render the rest
         yield from page[1:]
 
@@ -59,10 +65,11 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
         terminal = self.terminal
         # build my palette
         self.palette = {
-            'info': terminal.colors['green'],
-            'warning': terminal.colors['purple'],
-            'error': terminal.colors['red'],
-            'debug': terminal.colors['brown'],
+            'info': terminal.rgb256('115'),
+            'warning': terminal.rgb256('530'),
+            'error': terminal.rgb256('500'),
+            'debug': terminal.rgb256('124'),
+            'debug': terminal.rgb256('305'),
             'firewall': terminal.colors['light-red'],
             }
 
