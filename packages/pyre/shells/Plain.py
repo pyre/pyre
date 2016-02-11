@@ -20,6 +20,23 @@ class Plain(pyre.component, family='pyre.terminals.plain', implements=terminal):
     A terminal that provides no color capabilities
     """
 
+    # interface
+    def rgb(self, **kwds):
+        """
+        The 24-bit color request
+        """
+        # we don't do that...
+        return''
+
+
+    def rgb256(self, rgb, foreground=True):
+        """
+        The 256-color palette request
+        """
+        # we don't do that either...
+        return''
+
+
     # implementation details
     colors = collections.defaultdict(str) # all color decorations are empty strings...
 

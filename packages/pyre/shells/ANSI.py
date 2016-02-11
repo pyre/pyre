@@ -44,6 +44,16 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
         return self.csi_color256.format(plane, code)
 
 
+    # meta-methods
+    def __init__(self, emulation, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the emulation
+        self.emulation = emulation
+        # all done
+        return
+
+
     # implementation details
     esc = ""
     csi_color8 = esc + "[{}m"
