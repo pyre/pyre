@@ -144,4 +144,22 @@ def boxIntersection(b1, b2):
     return tuple(map(max, zip(b1[0], b2[0]))), tuple(map(min, zip(b1[1], b2[1])))
 
 
+def convexHull(points):
+    """
+    Compute the convex hull of the given {points}
+    """
+    # set up the two corners
+    p_min = []
+    p_max = []
+    # zip all the points together, forming as many streams of coordinates as there are
+    # dimensions
+    for axis in zip(*points):
+        # store the minimum value in p_min
+        p_min.append(min(axis))
+        # and the maximum value in p_max
+        p_max.append(max(axis))
+    # all done
+    return p_min, p_max
+
+
 # end of file
