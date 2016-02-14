@@ -65,11 +65,10 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
         terminal = self.terminal
         # build my palette
         self.palette = {
-            'info': terminal.rgb256('115'),
+            'info': terminal.rgb256('020'),
             'warning': terminal.rgb256('530'),
             'error': terminal.rgb256('500'),
-            'debug': terminal.rgb256('124'),
-            'debug': terminal.rgb256('305'),
+            'debug': terminal.rgb256('135'),
             'firewall': terminal.colors['light-red'],
             }
 
