@@ -90,7 +90,7 @@ class Local(Filesystem):
         # if we get this far, the file has been created; update my internal structure
         node = parent.node()
         # insert the new node in its parent's contents
-        parent.contents[name] = node
+        parent.contents[str(name)] = node
         # get the directory meta-data
         meta = self.recognizer.recognize(uri)
         # and update my {vnode} table
