@@ -174,7 +174,7 @@ class SWScanner(Scanner):
             # add the cdata token
             self.pyre_pushback(cdata)
             # all done
-            return
+            return cdata
 
         # get the current indentation level
         dent = self.pyre_dent
@@ -189,7 +189,7 @@ class SWScanner(Scanner):
                 # place the token in the cache
                 self.pyre_pushback(cdata)
                 # and bail
-                return
+                return cdata
 
             # get the line
             text = stream.text
@@ -217,7 +217,7 @@ class SWScanner(Scanner):
             # and add the tokens to the cache
             self.pyre_pushback(token)
         # all done
-        return
+        return cdata
 
 
     def pyre_trim(self, text):
