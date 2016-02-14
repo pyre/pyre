@@ -79,6 +79,26 @@ class Local(Filesystem):
         return folder
 
 
+    def touch(self, parent, name, **kwds):
+        """
+        Create a file {name} in directory {parent}
+        """
+        # assemble the new folder uri
+        uri = parent.uri / name
+        # create the file
+        uri.open(mode='w').close()
+        # if we get this far, the file has been created; update my internal structure
+        node = parent.node()
+        # insert the new node in its parent's contents
+        parent.contents[name] = node
+        # get the directory meta-data
+        meta = self.recognizer.recognize(uri)
+        # and update my {vnode} table
+        self.vnodes[node] = meta
+        # all done
+        return node
+
+
     def write(self, parent, name, contents, mode='w'):
         """
         Create the file {name} in the folder {parent} with the given {contents}
