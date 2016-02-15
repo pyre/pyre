@@ -89,8 +89,12 @@ class Grid(list):
         """
         Compute the bounding box of the grid
         """
-        # assume that the grid is properly oriented
-        return (self[0], self[-1])
+        # compute the smallest triplet of coordinates
+        bmin = tuple(map(min, zip(*self)))
+        # and the largest
+        bmax = tuple(map(max, zip(*self)))
+        # return them
+        return (bmin, bmax)
 
 
     # meta-methods
