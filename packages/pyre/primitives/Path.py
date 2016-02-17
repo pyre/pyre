@@ -610,7 +610,7 @@ class Path(tuple):
             # if {arg} is another path
             if isinstance(arg, cls):
                 # check whether it is an absolute path
-                if arg and arg[0] == sep:
+                if len(arg) > 0 and arg[0] == sep:
                     # clear out the current pile
                     fragments.clear()
                 # append its part to mine
