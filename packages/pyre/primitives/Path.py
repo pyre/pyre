@@ -351,8 +351,6 @@ class Path(tuple):
         if self == self.root:
             # I am already resolved
             return self
-        # show me
-        # print('{}: resolved but DID NOT stat'.format(self))
         # otherwise, get the guy to do his thing
         return self._resolve(resolved={})
 
@@ -403,7 +401,7 @@ class Path(tuple):
         Check whether I am a block device
         """
         # check with {stat}
-        return self.mask(stat.S_ISBLK)
+        return self.mask(stat.S_IFBLK)
 
 
     def isCharacterDevice(self):
@@ -411,7 +409,7 @@ class Path(tuple):
         Check whether I am a character device
         """
         # check with {stat}
-        return self.mask(stat.S_ISCHR)
+        return self.mask(stat.S_IFCHR)
 
 
     def isDirectory(self):
@@ -419,7 +417,7 @@ class Path(tuple):
         Check whether I am a directory
         """
         # check with {stat}
-        return self.mask(stat.S_ISDIR)
+        return self.mask(stat.S_IFDIR)
 
 
     def isFile(self):
@@ -427,7 +425,7 @@ class Path(tuple):
         Check whether I am a regular file
         """
         # check with {stat}
-        return self.mask(stat.S_ISREG)
+        return self.mask(stat.S_IFREG)
 
 
     def isNamedPipe(self):
@@ -435,7 +433,7 @@ class Path(tuple):
         Check whether I am a socket
         """
         # check with {stat}
-        return self.mask(stat.S_ISFIFO)
+        return self.mask(stat.S_IFIFO)
 
 
     def isSocket(self):
@@ -443,7 +441,7 @@ class Path(tuple):
         Check whether I am a socket
         """
         # check with {stat}
-        return self.mask(stat.S_ISSOCK)
+        return self.mask(stat.S_IFSOCK)
 
 
     def isSymlink(self):
@@ -475,7 +473,7 @@ class Path(tuple):
             # probably not...
             return False
         # otherwise, check with {mask}
-        return mask(mode)
+        return stat.S_IFMT(mode) == mask
 
 
     # physical path interface
@@ -538,7 +536,7 @@ class Path(tuple):
             # return it
             return args[0]
         # otherwise, parse the arguments and chain up to build my instance
-        return super().__new__(cls, reversed(tuple(cls._parse(args))))
+        return super().__new__(cls, cls._parse(args))
 
 
     def __str__(self):
@@ -598,37 +596,39 @@ class Path(tuple):
 
     # implementation details
     @classmethod
-    def _parse(cls, args, sep=_SEP):
+    def _parse(cls, args, sep=_SEP, fragments=None):
         """
         Recognize each entry in {args} and distill its contribution to the path under construction
         """
+        # initialize the pile
+        if fragments is None:
+            # empty it out
+            fragments = []
+
         # go through the {args}
-        for arg in reversed(args):
+        for arg in args:
             # if {arg} is another path
             if isinstance(arg, cls):
+                # check whether it is an absolute path
+                if arg and arg[0] == sep:
+                    # clear out the current pile
+                    fragments.clear()
                 # append its part to mine
-                yield from reversed(arg)
-                # if this is an absolute path
-                if len(arg) != 0 and arg[0] == sep:
-                    # and terminate the sequence
-                    return
+                fragments.extend(arg)
             # if {arg} is a string
             elif isinstance(arg, str):
-                # split on separator, reverse the sequence of parts, and then remove blanks
-                # caused by multiple consecutive separators
-                yield from filter(None, reversed(arg.split(sep)))
-                # path fragments that are absolute paths are supposed to reset the path; since
-                # we traverse the sequence in reverse order, this means we have to go no
-                # further
+                # check whether it starts with my separator
                 if arg and arg[0] == sep:
-                    # mark as an absolute path
-                    yield sep
-                    # and terminate the sequence
-                    return
+                    # in which case, clear out the current pile
+                    fragments.clear()
+                    # and start a new absolute path
+                    fragments.append(sep)
+                # split on separator and remove blanks caused by multiple consecutive separators
+                fragments.extend(filter(None, arg.split(sep)))
             # more general iterables
             elif isinstance(arg, collections.abc.Iterable):
                 # recurse with their contents
-                yield from cls._parse(args=arg, sep=sep)
+                cls._parse(args=arg, sep=sep, fragments=fragments)
             # anything else
             else:
                 # is an error
@@ -637,7 +637,7 @@ class Path(tuple):
                 raise TypeError(msg)
 
         # all done
-        return
+        return fragments
 
 
     def _resolve(self, base=None, resolved=None):
