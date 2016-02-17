@@ -19,8 +19,14 @@ class BlockDevice(File):
     # constant
     marker = 'b'
 
-    # implementation details
-    __slots__ = ()
+
+    # interface
+    def identify(self, explorer, **kwds):
+        """
+        Tell {explorer} that it is visiting a block device
+        """
+        # dispatch
+        return explorer.onBlockDevice(info=self, **kwds)
 
 
 # end of file

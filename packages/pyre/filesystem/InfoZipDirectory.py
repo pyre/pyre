@@ -7,14 +7,14 @@
 
 
 # superclass
-from .InfoStat import InfoStat
+from .InfoZip import InfoZip
 from .InfoDirectory import InfoDirectory
 
 
 # class declaration
-class Directory(InfoStat, InfoDirectory):
+class InfoZipDirectory(InfoZip, InfoDirectory):
     """
-    Representation of local filesystem folders
+    Representation of zip filesystem directories
     """
 
 

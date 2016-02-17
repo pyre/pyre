@@ -106,8 +106,4 @@ class Filesystem(Folder):
         return
 
 
-    # implementation details
-    __slots__ = ('vnodes')
-
-
 # end of file

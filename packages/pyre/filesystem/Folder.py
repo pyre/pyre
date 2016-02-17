@@ -30,7 +30,7 @@ class Folder(Node):
 
     # types
     # my metadata
-    from .metadata import FolderInfo as metadata
+    from .InfoDirectory import InfoDirectory as metadata
     # exceptions
     from .exceptions import (
         FolderInsertionError, NotRootError, FolderError, IsFolderError, NotFoundError)
@@ -278,10 +278,6 @@ class Folder(Node):
         current.filesystem().attach(node=node, uri=(current.uri / name), metadata=metadata)
         # and return the {node}
         return node
-
-
-    # private data
-    __slots__ = 'contents',
 
 
 # end of file

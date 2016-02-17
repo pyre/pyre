@@ -28,7 +28,7 @@ class Node(metaclass=_metaclass_Node):
 
     # types
     # my metadata
-    from .metadata import NodeInfo as metadata
+    from .InfoFile import InfoFile as metadata
     # exceptions
     from .exceptions import GenericError
 
@@ -89,10 +89,6 @@ class Node(metaclass=_metaclass_Node):
         self.filesystem = weakref.ref(filesystem)
         # and return
         return
-
-
-    # implementation details
-    __slots__ = '__weakref__', 'filesystem'
 
 
     # debugging support

@@ -18,8 +18,14 @@ class CharacterDevice(File):
     # constant
     marker = 'c'
 
-    # implementation details
-    __slots__ = ()
+
+    # interface
+    def identify(self, explorer, **kwds):
+        """
+        Tell {explorer} that it is visiting a serial device
+        """
+        # dispatch
+        return explorer.onCharacterDevice(info=self, **kwds)
 
 
 # end of file

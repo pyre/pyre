@@ -18,8 +18,14 @@ class NamedPipe(File):
     # constant
     marker = 'p'
 
-    # implementation details
-    __slots__ = ()
+
+    # interface
+    def identify(self, explorer, **kwds):
+        """
+        Tell {explorer} that it is visiting a FIFO
+        """
+        # dispatch
+        return explorer.onNamedPipe(info=self, **kwds)
 
 
 # end of file

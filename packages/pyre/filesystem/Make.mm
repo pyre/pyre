@@ -20,6 +20,14 @@ EXPORT_PYTHON_MODULES = \
     Finder.py \
     Folder.py \
     HDF5.py \
+    Info.py \
+    InfoFile.py \
+    InfoDirectory.py \
+    InfoStat.py \
+    InfoZip.py \
+    InfoZipDirectory.py \
+    InfoZipFile.py \
+    Link.py \
     Local.py \
     Naked.py \
     NamedPipe.py \
@@ -32,7 +40,6 @@ EXPORT_PYTHON_MODULES = \
     Walker.py \
     Zip.py \
     exceptions.py \
-    metadata.py \
     __init__.py
 
 # standard targets

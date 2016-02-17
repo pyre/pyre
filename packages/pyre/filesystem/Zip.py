@@ -22,7 +22,8 @@ class Zip(Filesystem):
 
 
     # node metadata
-    from .metadata import ZipNode, ZipFolder
+    from .InfoZipFile import InfoZipFile
+    from .InfoZipDirectory import InfoZipDirectory
 
 
     # interface
@@ -34,7 +35,7 @@ class Zip(Filesystem):
         metadata = self.vnodes[node]
         # and call the {zipfile} file factory, which accepts {ZipInfo} instances as well as
         # archive data members
-        return self.zipfile.open(metadata.zipinfo, **kwds)
+        return self.zipfile.open(metadata.info, **kwds)
 
 
     def discover(self, root=None, **kwds):
@@ -63,13 +64,13 @@ class Zip(Filesystem):
                 # make folder
                 node = self.folder()
                 # build the metadata
-                metadata = self.ZipFolder(uri=path, zipinfo=info)
+                metadata = self.InfoZipDirectory(uri=path, info=info)
             # otherwise
             else:
                 # make a regular node
                 node = self.node()
                 # build the metadata
-                metadata = self.ZipNode(uri=path, zipinfo=info)
+                metadata = self.InfoZipFile(uri=path, info=info)
             # insert the node
             self._insert(node=node, uri=path, metadata=metadata)
         # all done
@@ -84,10 +85,6 @@ class Zip(Filesystem):
         self.zipfile = zipfile.ZipFile(str(metadata.uri))
         # and return
         return
-
-
-    # private data
-    __slots__ = 'zipfile',
 
 
 # end of file

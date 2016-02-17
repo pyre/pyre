@@ -18,8 +18,14 @@ class Socket(File):
     # constant
     marker = 's'
 
-    # implementation details
-    __slots__ = ()
+
+    # interface
+    def identify(self, explorer, **kwds):
+        """
+        Tell {explorer} that it is visiting a socket
+        """
+        # dispatch
+        return explorer.onSocket(info=self, **kwds)
 
 
 # end of file
