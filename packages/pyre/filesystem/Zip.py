@@ -23,7 +23,7 @@ class Zip(Filesystem):
 
     # node metadata
     from .InfoZipFile import InfoZipFile
-    from .InfoZipDirectory import InfoZipDirectory
+    from .InfoZipFolder import InfoZipFolder
 
 
     # interface
@@ -64,7 +64,7 @@ class Zip(Filesystem):
                 # make folder
                 node = self.folder()
                 # build the metadata
-                metadata = self.InfoZipDirectory(uri=path, info=info)
+                metadata = self.InfoZipFolder(uri=path, info=info)
             # otherwise
             else:
                 # make a regular node

@@ -18,7 +18,7 @@ class InfoFile(Info):
 
     # constants
     marker = 'f'
-    isDirectory = False
+    isFolder = False
 
 
     # interface

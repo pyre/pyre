@@ -51,7 +51,7 @@ def local(root, listdir=None, recognizer=None, **kwds):
         raise MountPointError(uri=root, error='mount point not found')
 
     # if the root is a directory
-    if info.isDirectory:
+    if info.isFolder:
         # access the local filesystem factory
         from .Local import Local
         # build one

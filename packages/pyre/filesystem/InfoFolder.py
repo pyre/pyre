@@ -11,23 +11,23 @@ from .Info import Info
 
 
 # declaration
-class InfoDirectory(Info):
+class InfoFolder(Info):
     """
     Base class for encapsulating container meta-data for filesystem entries
     """
 
     # constants
     marker = 'd'
-    isDirectory = True
+    isFolder = True
 
 
     # interface
     def identify(self, explorer, **kwds):
         """
-        Tell {explorer} that it is visiting a file
+        Tell {explorer} that it is visiting a folder
         """
         # dispatch
-        return explorer.onFile(info=self, **kwds)
+        return explorer.onFolder(info=self, **kwds)
 
 
 # end of file

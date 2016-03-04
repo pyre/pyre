@@ -8,11 +8,11 @@
 
 # superclass
 from .InfoZip import InfoZip
-from .InfoDirectory import InfoDirectory
+from .InfoFolder import InfoFolder
 
 
 # class declaration
-class InfoZipDirectory(InfoZip, InfoDirectory):
+class InfoZipFolder(InfoZip, InfoFolder):
     """
     Representation of zip filesystem directories
     """

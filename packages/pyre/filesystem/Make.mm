@@ -22,10 +22,10 @@ EXPORT_PYTHON_MODULES = \
     HDF5.py \
     Info.py \
     InfoFile.py \
-    InfoDirectory.py \
+    InfoFolder.py \
     InfoStat.py \
     InfoZip.py \
-    InfoZipDirectory.py \
+    InfoZipFolder.py \
     InfoZipFile.py \
     Link.py \
     Local.py \

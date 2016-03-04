@@ -29,12 +29,12 @@ class Link(InfoStat, Info):
 
 
     @property
-    def isDirectory(self):
+    def isFolder(self):
         """
         Check whether this is a link to a directory
         """
         # ask...
-        return self.referent.isDirectory
+        return self.referent.isFolder
 
 
     # interface
@@ -57,6 +57,11 @@ class Link(InfoStat, Info):
 
         # all done
         return
+
+
+    def __bool__(self):
+        # check for broken links
+        return self.referent is not None
 
 
 # end of file

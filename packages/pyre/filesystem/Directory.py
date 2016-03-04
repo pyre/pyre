@@ -8,11 +8,11 @@
 
 # superclass
 from .InfoStat import InfoStat
-from .InfoDirectory import InfoDirectory
+from .InfoFolder import InfoFolder
 
 
 # class declaration
-class Directory(InfoStat, InfoDirectory):
+class Directory(InfoStat, InfoFolder):
     """
     Representation of local filesystem folders
     """

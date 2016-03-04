@@ -58,7 +58,7 @@ class Stat(Recognizer):
             # pull the information from the hard filesystem
             meta = entry.stat(follow_symlinks=follow_symlinks)
         # if something goes wrong
-        except (FileNotFoundError, NotADirectoryError):
+        except (FileNotFoundError, NotADirectoryError) as error:
             # there is nothing further to be done
             return None
 

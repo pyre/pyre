@@ -9,7 +9,7 @@
 # class declaration
 class Recognizer:
     """
-    Abstract base class for filesystem entry recognition.
+    Abstract base class for filesystem entry recognition
     """
 
 

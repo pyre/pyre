@@ -30,7 +30,7 @@ class Folder(Node):
 
     # types
     # my metadata
-    from .InfoDirectory import InfoDirectory as metadata
+    from .InfoFolder import InfoFolder as metadata
     # exceptions
     from .exceptions import (
         FolderInsertionError, NotRootError, FolderError, IsFolderError, NotFoundError)

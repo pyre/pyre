@@ -226,9 +226,10 @@ class Local(Filesystem):
                 # print("      {}".format(entry))
                 # try to figure out what kind of entry this is by asking the recognizer
                 meta = recognizer.recognize(entry)
-                # it is possible to have entries in a directory that are not real files: the
-                # walker can find them, but the recognizer fails; emacs auto-save files on OSX
-                # are such an example. so, if the recognizer failed
+                # broken links are recognized but don't have a valid state, so we ignore them.
+                # also, it is possible to have entries in a directory that are not real files:
+                # the walker can find them, but the recognizer fails; emacs auto-save files on
+                # OSX are such an example. so, if the recognizer failed
                 if not meta:
                     # ignore this entry
                     continue
@@ -245,7 +246,7 @@ class Local(Filesystem):
                 # if this fails
                 except self.NotFoundError:
                     # make a new node; if we are building a folder
-                    if meta.isDirectory:
+                    if meta.isFolder:
                         # make it
                         node = folder.folder()
                         # and add its location to our {todo} pile
