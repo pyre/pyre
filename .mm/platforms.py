@@ -44,7 +44,7 @@ def platform(builder):
             gsl.ldpath = systemlibdir
 
         # set up {libpq}
-        libpqVersion = 'postgresql94'
+        libpqVersion = 'postgresql95'
         # do we have postgres?
         havePostgres = (
             os.path.isdir(os.path.join(systemlibdir, libpqVersion))
