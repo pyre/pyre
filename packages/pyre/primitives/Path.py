@@ -30,6 +30,9 @@ class Path(tuple):
     A representation of a path
     """
 
+    # types
+    from .exceptions import PathError, SymbolicLinkLoopError
+
     # string constants
     _CWD = '.'
     _SEP = '/'
@@ -685,10 +688,8 @@ class Path(tuple):
             else:
                 # if {base} has a null resolution
                 if resolution is None:
-                    # we got a loop
-                    msg = "while resolving '{}': symbolic link loop at '{}'".format(self, newpath)
-                    # so complain
-                    raise RuntimeError(msg)
+                    # we probably got a loop, so complain
+                    raise self.SymbolicLinkLoopError(path=self, loop=newpath)
                 # otherwise, replace {base} with its resolution
                 base = resolution
                 # and carry on

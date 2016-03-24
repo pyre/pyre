@@ -46,9 +46,11 @@ def test():
         # so we can't reach here
         assert False
     # further, check that
-    except RuntimeError as error:
-        # that it generates the correct report
-        assert str(error) == "while resolving 'cycle': symbolic link loop at '{}'".format(cycle)
+    except cycle.SymbolicLinkLoopError as error:
+        # the message we expect
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
+        # is what we get
+        assert str(error) == msg
 
     # a loop
     loop = scratch / 'loop'
@@ -59,9 +61,11 @@ def test():
         # so we can't reach here
         assert False
     # further, check that
-    except RuntimeError as error:
-        # that it generates the correct report
-        assert str(error) == "while resolving '{0}': symbolic link loop at '{0}'".format(loop)
+    except loop.SymbolicLinkLoopError as error:
+        # the message we expect
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
+        # is what we get
+        assert str(error) == msg
 
     # a ramp
     ramp = scratch / 'ramp'
@@ -72,9 +76,11 @@ def test():
         # so we can't reach here
         assert False
     # further, check that
-    except RuntimeError as error:
-        # that it generates the correct report
-        assert str(error) == "while resolving 'cycle': symbolic link loop at '{0}'".format(cycle)
+    except ramp.SymbolicLinkLoopError as error:
+        # the message we expect
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
+        # is what we get
+        assert str(error) == msg
 
     # a two link cycle
     tic = scratch / 'tic'
@@ -85,9 +91,11 @@ def test():
         # so we can't reach here
         assert False
     # further, check that
-    except RuntimeError as error:
-        # that it generates the correct report
-        assert str(error) == "while resolving 'tic': symbolic link loop at '{0}'".format(tic)
+    except tic.SymbolicLinkLoopError as error:
+        # the message we expect
+        msg = "while resolving '{0.path}': symbolic link loop at '{0.loop}'".format(error)
+        # is what we get
+        assert str(error) == msg
 
     # all done
     return
