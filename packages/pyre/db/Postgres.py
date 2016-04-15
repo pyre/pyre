@@ -152,7 +152,7 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         # access the extension
         from ..extensions import postgres
 
-        # pull in the {NNULL} object rep
+        # pull in the {NULL} object rep
         from . import null
         # register it with the extension
         postgres.registerNULL(null)
