@@ -40,16 +40,19 @@ class Linker:
         return codec.load(uri=uri, **kwds)
 
 
-    def resolve(self, uri, **kwds):
+    def resolve(self, executive, uri, protocol, **kwds):
         """
         Attempt to locate the component class specified by {uri}
         """
-        # if the {uri} has a scheme, we will find the associated codec and get it to interpret
-        # the resolution request. if the {uri} has no scheme, we will hand the request to each
-        # codec in the order they were registered
+        # get the scheme
+        scheme = uri.scheme
+
+        # if the {uri} has a scheme, find the associated codec and get it to interpret the
+        # resolution request. if the {uri} has no scheme, hand the request to each codec in the
+        # order they were registered
         try:
             # make the pile
-            codecs = [ self.schemes[uri.scheme] ] if uri.scheme else self.codecs
+            codecs = [ self.schemes[scheme] ] if scheme else self.codecs
         # and if the look up fails
         except KeyError:
             # it's because we don't recognize the scheme
@@ -57,10 +60,59 @@ class Linker:
             # so complain
             raise self.BadResourceLocatorError(uri=uri, reason=reason)
 
+        # each codec will interpret the uri and provide a hint as to what the user is looking
+        # for; let's remember these attempts so we can try some non-obvious things when all
+        # else fails
+        symbols = set()
+
         # go through the relevant codecs
         for codec in codecs:
-            # and form a sequence of matching symbols
-            yield from codec.locateSymbol(uri=uri, **kwds)
+            # attempt to interpret the address as specifying a symbol from a candidate
+            # container. each codec has its own way of doing that. the wrong ones produce
+            # nonsense, so we have to be careful...
+            context, symbol = codec.interpret(request=uri)
+            # add the symbol to the pile
+            symbols.add(symbol)
+
+            # and ask each one for all relevant shelves
+            for shelf in codec.loadShelves(executive=executive, protocol=protocol, uri=uri,
+                                           scheme=scheme, context=context, symbol=symbol,
+                                           **kwds):
+                # got one; show me
+                # print('    shelf contents: {}'.format(shelf))
+                # check whether it contains our symbol by attempting to
+                try:
+                    # extract it
+                    descriptor = shelf.retrieveSymbol(symbol)
+                    # if it's not there
+                except shelf.SymbolNotFoundError as error:
+                    # show me
+                    # print(' ## error: {}'.format(str(error)))
+                    # not there; try the next match
+                    continue
+                # otherwise, we have a candidate; show me
+                # print(' ## got: {}'.format(descriptor))
+                # let the client evaluate it further
+                yield descriptor
+
+        # ok, no dice. can we get some help from the protocol?
+        if not protocol:
+            # not there; giving up
+            return
+
+        # we have exhausted all supported cases of looking at external sources; there is one
+        # more thing to try: in the process of interpreting the user request, we formed guesses
+        # regarding the name the user is looking for. perhaps there is an implementer of our
+        # protocol whose package name is the symbol we are looking for
+
+        # look through the protocol implementers
+        for implementer in executive.registrar.implementers[protocol]:
+            # get their package names
+            package = implementer.pyre_package()
+            # and yield ones whose package name matches our symbol candidates
+            if package and package.name in symbols:
+                # let the user evaluate further
+                yield implementer
 
         # out of ideas
         return

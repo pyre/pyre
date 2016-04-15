@@ -75,6 +75,9 @@ class Importer(Loader):
         """
         Locate candidate shelves for the given {uri}
         """
+        # sign in
+        # print("{.__name__}.locateShelves:".format(cls))
+
         # chain up for the rest
         for candidate in super().locateShelves(
                 protocol=protocol, scheme=scheme, context=context, **kwds):

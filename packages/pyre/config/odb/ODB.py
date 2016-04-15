@@ -65,16 +65,19 @@ class ODB(Loader):
         """
         Locate candidate shelves from the given {uri}
         """
+        # sign in
+        # print("{.__name__}.locateShelves:".format(cls))
+
         # if there is no scheme
         if not scheme:
             # set it to the defaults
             scheme = 'vfs'
         # first, let's try what the user supplied
-        uri = cls.uri(scheme=scheme, address=cls.assemble(context))
+        # uri = cls.uri(scheme=scheme, address=cls.assemble(context))
         # show me
-        # print("  trying the user's uri={.uri!r}".format(uri))
+        # print(" ++ trying the user's uri={.uri!r}".format(uri))
         # and try it
-        yield uri
+        # yield uri
 
         # collect the list of system folders maintained by the fileserver
         cfgpath = list(str(folder) for folder in executive.fileserver.systemFolders)

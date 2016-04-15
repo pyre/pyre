@@ -22,86 +22,6 @@ class Loader:
     from .exceptions import LoadingError
 
 
-    # interface
-    @classmethod
-    def locateSymbol(cls, executive, protocol, uri, **kwds):
-        """
-        Locate and load the symbol that corresponds to the given {uri}; if {uri} is not
-        sufficiently qualified to point to a unique location, use {protocol} to form candidates
-        until one of them results in a loadable shelf that can resolve the specification
-        """
-        # sign in
-        # print("{.__name__}.locateSymbol:".format(cls))
-        # print("    uri: {.uri!r}".format(uri))
-        # print("    protocol: {}".format(protocol))
-        # for key, value in kwds.items():
-        # print("    {}: {}".format(key, value))
-
-        # if we are here, we know that the uri either has no scheme, or its scheme is one
-        # handled by this loader
-        scheme = uri.scheme
-        # the goal here is to attempt to interpret the address as specifying a symbol from a
-        # candidate container. each subclass has its own way of doing that. the wrong ones
-        # produce nonsense, so we have to be careful...
-        context, symbol = cls.interpret(request=uri)
-
-        # look for matching shelves; the request may match more than one shelf, so we try them
-        # all   until we find all possible containers that resolve our symbol; the client may
-        # terminate the search by stopping the iteration prematurely. build the sequence
-        # and go through each of them
-        for shelf in cls.loadShelves(
-                executive=executive, protocol=protocol,
-                uri=uri, scheme=scheme, context=context, symbol=symbol, **kwds):
-            # got one; show me
-            # print('    shelf contents: {}'.format(shelf))
-            # check whether it contains our symbol by attempting to
-            try:
-                # extract it
-                descriptor = shelf.retrieveSymbol(symbol)
-                # if it's not there
-            except shelf.SymbolNotFoundError as error:
-                # show me
-                # print(' ## error: {}'.format(str(error)))
-                # not there; try the next match
-                continue
-            # otherwise, we have a candidate; show me
-            # print(' ## got: {}'.format(descriptor))
-            # let the client evaluate it further
-            yield descriptor
-
-        # ok, no dice. can we get some help from the protocol?
-        if not protocol:
-            # not there; giving up
-            return
-        # now, for my next trick: attempt to interpret the symbol itself as a shelf
-        # print(" ++ interpreting {!r} as a shelf".format(symbol))
-        try:
-            # load it
-            shelf = cls.load(executive=executive, uri=cls.uri(address=symbol))
-            # if anything goes wrong
-        except cls.LoadingError:
-            # just ignore it
-            pass
-        # print(" .. done")
-
-        # we have exhausted all supported cases of looking at external sources; there is one
-        # more thing to try: in the process of interpreting the user request, we formed a guess
-        # regarding the name the user is looking for. perhaps there is an implementer of our
-        # protocol whose package name is the symbol we are looking for
-
-        # look through the protocol implementers
-        for implementer in executive.registrar.implementers[protocol]:
-            # get their package names
-            package = implementer.pyre_package()
-            # and yield ones whose package name matches our symbol
-            if package and package.name == symbol:
-                # let the user evaluate further
-                yield implementer
-
-        # out of ideas
-        return
-
-
     @classmethod
     def loadShelves(cls, executive, protocol, uri, scheme, context, **kwds):
         """
@@ -118,9 +38,12 @@ class Loader:
 
         # access the linker
         linker = executive.linker
+        # print(" -- priming the search for shelves")
         # use {protocol} to build a sequence of candidate locations
-        candidates = cls.locateShelves(
-            executive=executive, protocol=protocol, scheme=scheme, context=context, **kwds)
+        candidates = cls.locateShelves(executive=executive, protocol=protocol,
+                                       scheme=scheme, context=context,
+                                       **kwds)
+        # print(" -- done priming the search for shelves")
         # go through each of them
         for candidate in candidates:
             # show me
@@ -133,7 +56,8 @@ class Loader:
                 # print("    shelf {!r} previously loaded".format(candidate.uri))
             # otherwise
             except KeyError:
-                # print("  new shelf; loading")
+                # show me
+                # print("    new shelf; loading")
                 # make an empty shelf and register it with the
                 # linker to prevent it from attempting to load this shelf again, in case there
                 # are loading side effects
@@ -145,7 +69,7 @@ class Loader:
                 # if it fails
                 except cls.LoadingError as error:
                     # show me
-                    # print("    skipping: {}".format(error))
+                    # print(" ## skipping: {}".format(error))
                     # remove the bogus registration
                     del linker.shelves[candidate.uri]
                     # move on to the next candidate
@@ -154,25 +78,33 @@ class Loader:
                 linker.shelves[candidate.uri] = shelf
                 # show me
                 # print("      success; registering {!r} with the linker".format(candidate.uri))
+
             # yield the shelf to my caller
             yield shelf
+
         # no more candidates
         return
 
 
     @classmethod
-    def locateShelves(cls, executive, protocol, scheme, context, cfgpath=None, **kwds):
+    def locateShelves(cls, executive, protocol, scheme, context, symbol, cfgpath=None, **kwds):
         """
         Locate candidate shelves for the given {uri}
         """
+        # sign in
+        # print("{.__name__}.locateShelves:".format(cls))
+
         # first, let's exhaust the user's specification; we build a tuple with progressively
         # shorter non-empty leading subsequences of the context. note that it includes the
-        # entity that we interpret as the {symbol}
+        # entity that we interpret as the {symbol}: see the comments at the bottom of this
+        # method
         contexts = list(
             # the subsequence
             context[:pos]
             # the indices
             for pos in reversed(range(1, len(context)+1)))
+        # show me
+        # print("    contexts: {}".format(contexts))
 
         # we will need this later; for now:
         for candidate in contexts:
@@ -240,12 +172,14 @@ class Loader:
         combine = (cfgpath, prefixes, flavors, contexts)
         # form all possible combinations of (prefix, flavor, context)
         for path, prefix, flavor, user in itertools.product(*combine):
+            # show me
             # print(' -- path: {}'.format(path))
             # print(' -- prefix: {}'.format(prefix))
             # print(' -- flavor: {}'.format(flavor))
             # print(' -- user: {}'.format(user))
             # now, slide a splicer through all positions in the flavor past the first slot
             for pos in reversed(range(len(flavor)+1)):
+                # show me
                 # print(' ++ pos: {}'.format(pos))
                 # keep the front part
                 front = flavor[:pos]
@@ -267,6 +201,16 @@ class Loader:
                     yield candidate
                     # remember this one too
                     candidates.append(candidate)
+
+        # MGA@20160415: the following trick doesn't seem to be necessary anymore, as it appears
+        # that the interpretation of the symbol as a shelf is now attempted during the normal
+        # expansion. i commented the section out, rather than removing it, just in case there
+        # is some corner case that i haven't considered here
+
+        # now, for my last trick: attempt to interpret the symbol itself as a shelf
+        # print(" ++ interpreting {!r} as a shelf".format(symbol))
+        # send it off
+        # yield symbol
 
         # all done
         return
