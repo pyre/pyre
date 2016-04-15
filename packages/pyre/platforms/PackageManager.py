@@ -11,7 +11,7 @@ import pyre
 
 
 # declaration
-class PackageManager(pyre.protocol, family='pyre.packagers'):
+class PackageManager(pyre.protocol, family='pyre.platforms.packagers'):
     """
     Encapsulation of host specific information
     """

@@ -15,7 +15,7 @@ from .Managed import Managed
 
 
 # declaration
-class MacPorts(Managed, family='pyre.packagers.macports'):
+class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
     """
     Support for the macport package manager
     """

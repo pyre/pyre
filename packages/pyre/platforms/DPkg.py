@@ -15,7 +15,7 @@ from .Managed import Managed
 
 
 # declaration
-class DPkg(Managed, family='pyre.packagers.dpkg'):
+class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
     """
     Support for the debian package manager
     """
