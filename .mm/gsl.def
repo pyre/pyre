@@ -11,6 +11,6 @@ PROJECT = gsl
 include live.def
 
 # project settings
-PROJ_CXX_FLAGS += $(COMPILER_CXX_STD11)
+PROJ_CXX_FLAGS += $(COMPILER_CXX_STD14)
 
 # end of file

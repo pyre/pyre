@@ -5,11 +5,6 @@
 # (c) 1998-2016 all rights reserved
 #
 
-# externals
-import os
-import re
-
-
 # the builder decorator
 def host(builder):
     """
@@ -17,6 +12,5 @@ def host(builder):
     """
     # nothing to do
     return builder
-
 
 # end of file
