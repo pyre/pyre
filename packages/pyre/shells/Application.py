@@ -470,7 +470,7 @@ class Application(pyre.component, metaclass=Director):
         return 1
 
 
-    def pyre_interactiveSession(self):
+    def pyre_interactiveSession(self, context=None):
         """
         Convert this session to an interactive one
         """
@@ -532,7 +532,7 @@ class Application(pyre.component, metaclass=Director):
         sys.ps1 = '{}: '.format(self.pyre_name)
         sys.ps2 = '  ... '
         # adjust the local namespace
-        context = self.pyre_interactiveSessionContext()
+        context = self.pyre_interactiveSessionContext(context=context)
         # enter interactive mode
         code.interact(banner=self.pyre_banner(), local=context)
 
@@ -540,12 +540,18 @@ class Application(pyre.component, metaclass=Director):
         return 0
 
 
-    def pyre_interactiveSessionContext(self):
+    def pyre_interactiveSessionContext(self, context):
         """
         Prepare the interactive context by granting access to application parts
         """
-        # just me, by default
-        return {'self': self}
+        # if the supplied context is empty
+        if context is None:
+            # then it's just me, by default
+            return {'self': self}
+        # otherwise, place me in it
+        context['self'] = self
+        # and return it
+        return context
 
 
     def pyre_banner(self):
