@@ -56,6 +56,46 @@ class Configurable(Dashboard):
         return
 
 
+    def pyre_showConfiguration(self, indent='', deep=False):
+        """
+        Traverse my configuration tree and display trait metadata
+        """
+        # prepare the indent levels
+        one = indent + ' '*2
+        two = one + ' '*2
+        three = two + ' '*2
+        # sign on
+        yield "{}{.pyre_name}:".format(indent, self)
+
+        # determine how deep to go
+        traits = self.pyre_configurables() if deep else self.pyre_localConfigurables()
+
+        # go through my traits
+        for trait in traits:
+            # grab the tip
+            tip = trait.tip or trait.doc
+            # the default value
+            default = trait.default
+            # and the current value
+            value = getattr(self, trait.name)
+
+            # show me
+            yield "{}{.name}:".format(one, trait)
+            yield "{}type: {}".format(two, trait.typename)
+            yield "{}value: {}".format(two, value)
+            yield "{}default: {}".format(two, default)
+            yield "{}tip: {}".format(two, tip)
+
+            # if the value itself is a configurable
+            if isinstance(value, Configurable):
+                # mark it
+                yield "{}configuration:".format(two)
+                # and describe it
+                yield from value.pyre_showConfiguration(indent=three)
+        # all done
+        return
+
+
     def pyre_showSummary(self, indent, **kwds):
         """
         Generate a short description of what I do
