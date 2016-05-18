@@ -130,6 +130,8 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
             # if it is compatible with my protocol
             if candidate.pyre_isCompatible(spec=cls):
+                # show me
+                # print('pyre.components.Protocol: compatible candidate: {}'.format(candidate))
                 # we are done
                 return candidate
 
@@ -161,6 +163,8 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         yield from cls.pyre_locateAllLoadableImplementers()
         # all importable implementers
         yield from cls.pyre_locateAllImportableImplementers()
+        # all done
+        return
 
 
     @classmethod

@@ -170,6 +170,9 @@ class Executive:
                 class box(pyre.component): pass
                 return box
         """
+        # print('pyre.framework.Executive.resolve:')
+        # print('    uri: {}'.format(uri))
+        # print('    protocol: {}'.format(protocol))
         # force a uri
         uri = self.uri().coerce(uri)
         # grab my nameserver
