@@ -47,15 +47,20 @@ class Plexus(Application):
             name = next(argv)
         # if there aren't any
         except StopIteration:
-            # if the user has requested an interactive session
-            if self.interactive:
-                # do it
-                return self.pyre_interactiveSession()
-            # otherwise, show the help screen
-            return self.help()
+            # we will deal with this case later; it is important to do as little as possible
+            # here so we can exit the exception block quickly and cleanly
+            pass
+        # if there is something to invoke
+        else:
+            # do it; typos and suck get handled by the {repertoir} itself
+            return self.repertoir.invoke(plexus=self, action=name, argv=argv)
 
-        # invoke the command
-        return self.repertoir.invoke(plexus=self, action=name, argv=argv)
+        # if the user has requested an interactive session
+        if self.interactive:
+            # jump to the interpreter
+            return self.pyre_interactiveSession()
+        # otherwise, show the help screen
+        return self.help()
 
 
     @pyre.export
@@ -84,7 +89,7 @@ class Plexus(Application):
         # command; we display the general help screen
 
         # show the application banner
-        self.pyre_banner()
+        self.info.line(self.pyre_banner())
         # show help on available actions
         self.pyre_documentActions()
         # flush

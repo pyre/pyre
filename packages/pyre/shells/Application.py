@@ -314,7 +314,7 @@ class Application(pyre.component, metaclass=Director):
             # if it is there
             else:
                 # look deeply
-                userdir.discover(levels=None)
+                userdir.discover()
                 # and mount it
                 pfs[self.USER] = userdir
 
@@ -398,6 +398,10 @@ class Application(pyre.component, metaclass=Director):
         """
         # get my namespace
         namespace = self.pyre_namespace
+        # sign in
+        # print("Application.pyre_mountPrivateFolder:")
+        # print("  looking for: {.uri}/{}/{}".format(prefix, folder, namespace))
+        # give me the context
 
         # check whether the parent folder exists
         try:
@@ -417,10 +421,15 @@ class Application(pyre.component, metaclass=Director):
         except prefix.NotFoundError as error:
             # create it
             mine = prefix.mkdir(parent=parent, name=namespace)
+            # mine = parent.mkdir(name=namespace)
+            # and show me
+            # print("  created {.uri}".format(mine))
         # if all went well
         else:
-            # look deeply
-            mine.discover()
+            # show me
+            # print("  mounted {.uri}".format(mine))
+            # look carefully; there may be large subdirectories beneath
+            mine.discover(levels=1)
 
         # attach it to my private filespace
         pfs[folder] = mine
@@ -529,15 +538,12 @@ class Application(pyre.component, metaclass=Director):
         # go live
         import code, sys
         # adjust the prompts
-        sys.ps1 = '{}: '.format(self.pyre_name)
+        sys.ps1 = '{}: '.format(self.pyre_namespace or self.pyre_name)
         sys.ps2 = '  ... '
         # adjust the local namespace
         context = self.pyre_interactiveSessionContext(context=context)
         # enter interactive mode
-        code.interact(banner=self.pyre_banner(), local=context)
-
-        # when the user terminates the session, all done
-        return 0
+        return code.interact(banner=self.pyre_banner(), local=context)
 
 
     def pyre_interactiveSessionContext(self, context):
@@ -546,10 +552,12 @@ class Application(pyre.component, metaclass=Director):
         """
         # if the supplied context is empty
         if context is None:
-            # then it's just me, by default
-            return {'self': self}
-        # otherwise, place me in it
+            # prime with an empty dict
+            context = {}
+
+        # put me in it
         context['self'] = self
+
         # and return it
         return context
 
