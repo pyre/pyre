@@ -43,8 +43,14 @@ class Panel(Command):
                 return self.help(plexus=plexus)
             # otherwise, all is well; attempt to
             try:
-                # execute the command
-                method(plexus=plexus)
+                # execute the command; hand it a reference to me, so that it has access to the
+                # application context, and the argument vector, in case it has opinions about
+                # how to interpret the unprocessed command line
+                status = method(plexus=plexus, argv=argv)
+                # N.B.: there is no need to translate {None} into a numeric value at this
+                # point; properly constructed {pyre} harnesses return control to the shell by
+                # raising {SystemExit}, which performs this translation
+
             # if anything goes wrong
             except Exception as error:
                 # if we are in debug mode, just let the exception go through
@@ -57,7 +63,7 @@ class Panel(Command):
                 return 1
 
         # all done
-        return 0
+        return status
 
 
 # end of file

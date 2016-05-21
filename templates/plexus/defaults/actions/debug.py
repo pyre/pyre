@@ -22,7 +22,7 @@ class debug({project.name}.command, family='{project.name}.actions.debug'):
 
     # behaviors
     @{project.name}.export(tip='convenience action for debugging the plexus')
-    def test(self, plexus):
+    def test(self, plexus, **kwds):
         """
         Convenient resting point for debugging code during development
         """
