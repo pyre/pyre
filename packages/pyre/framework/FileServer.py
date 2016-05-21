@@ -166,7 +166,7 @@ class FileServer(Filesystem):
 
     def registerPackage(self, package):
         """
-        Make the package configuration folder accessible in the virtual filesystem`
+        Make the package configuration folder accessible in the virtual filesystem
         """
         # This should be done very carefully because multiple packages may share a common
         # installation folder. For example, this is true of the packages that ship with the
@@ -188,13 +188,13 @@ class FileServer(Filesystem):
             userdir = self[self.USER_DIR / name]
         # if not there
         except self.NotFoundError:
-            # nothing to do: the user directory discovered at level 1 during boot, so the
+            # nothing to do: the user directory was discovered at level 1 during boot, so the
             # directory really does not exist
             # print("    not there")
             pass
         # if it is there
         else:
-            # print("    found it")
+            # print("    found it; exploring...")
             # look deeply
             userdir.discover()
 
@@ -254,7 +254,7 @@ class FileServer(Filesystem):
         else:
             # attach it
             # print("    mounting it")
-            self[self.PACKAGES_DIR / name] = cfgdir.discover(levels=None)
+            self[self.PACKAGES_DIR / name] = cfgdir.discover()
 
         # all done
         return package
