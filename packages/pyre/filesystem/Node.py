@@ -106,4 +106,12 @@ class Node(metaclass=_metaclass_Node):
         return
 
 
+    def print(self):
+        """
+        Display my contents
+        """
+        # easy...
+        return print('\n'.join(self.dump()))
+
+
 # end of file
