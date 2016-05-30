@@ -67,6 +67,17 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return inventory.name if inventory is not None else None
 
 
+    @classmethod
+    def pyre_familyFragments(cls):
+        """
+        Deduce my family name
+        """
+        # get my inventory
+        inventory = cls.pyre_inventory
+        # ask it for my name; if i don't have one, bail
+        return inventory.fragments if inventory is not None else ()
+
+
     @property
     def pyre_spec(self):
         """

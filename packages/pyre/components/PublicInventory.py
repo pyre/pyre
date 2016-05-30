@@ -35,6 +35,17 @@ class PublicInventory(Inventory):
 
 
     @property
+    def fragments(self):
+        """
+        Look up the family name of my client
+        """
+        # get the nameserver
+        nameserver = self.pyre_nameserver
+        # ask it for my full name and return it
+        return nameserver.getSplitName(key=self.key)
+
+
+    @property
     def package(self):
         """
         Return the package associated with this client
