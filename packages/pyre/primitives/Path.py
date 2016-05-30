@@ -497,18 +497,20 @@ class Path(tuple):
         If {parents} is {True}, create all necessary intermediate levels; if {exist_ok} is
         {True}, do not raise an exception if the directory exists already
         """
-        # attempt to
-        try:
-            # create the directory
-            return os.mkdir(str(self), **kwds)
-        # if the directory exists already
-        except FileExistsError:
-            # and we care
-            if not exist_ok:
-                # complain
-                raise
-        # all done
-        return
+        # if we were not asked to build the intermediate levels
+        if not parents:
+            # attempt to
+            try:
+                # create the directory
+                return os.mkdir(str(self), **kwds)
+            # if the directory exists already
+            except FileExistsError:
+                # and we care
+                if not exist_ok:
+                    # complain
+                    raise
+        # if we are supposed to build the intermediate levels, delegate to the system routine
+        return os.makedirs(str(self), exist_ok=exist_ok, **kwds)
 
 
     def touch(self,  mode=0x666, exist_ok=True):
