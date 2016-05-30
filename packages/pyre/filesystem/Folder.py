@@ -45,6 +45,11 @@ class Folder(Node):
         return self.contents.items()
 
 
+    def mkdir(self, name, parents=True, exist_ok=True):
+        # delegate to my filesystem
+        return self.filesystem().mkdir(parent=self, name=name, parents=parents, exist_ok=exist_ok)
+
+
     def remove(self, node, name=None, **kwds):
         """
         Remove {node} from my contents and its filesystem
