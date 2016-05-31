@@ -1,0 +1,35 @@
+# -*- Python -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 2003-2016 all rights reserved
+#
+
+# expansion placeholders
+date = "TODAY"
+major = MAJOR
+minor = MINOR
+revision = REVISION
+
+
+# assemble the version tuple
+version = (major, minor, revision)
+
+
+# decorations for the help system
+copyright = "copyright (c) {project.span} all rights reserved"
+
+header = """
+    {project.name} {{0}}.{{1}} revision {{2}}
+    {{3}}
+
+authors:
+    {project.authors}
+""".format(major, minor, revision, copyright)
+
+license = header + """
+license:
+    The complete usage terms can be found in the file LICENSE.txt
+"""
+
+# end of file

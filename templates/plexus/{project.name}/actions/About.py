@@ -22,16 +22,58 @@ class About({project.name}.command, family='{project.name}.actions.about'):
     root.tip = "specify the portion of the namespace to display"
 
 
-    # class interface
+    # commands
+    @{project.name}.export(tip="the name of the app for configuration purposes")
+    def name(self, plexus, **kwds):
+        """
+        Print the name of the app for configuration purposes
+        """
+        # show me
+        plexus.info.log("{{!r}}".format(plexus.pyre_name) or "unknown")
+        # all done
+        return
+
+
+    @{project.name}.export(tip="the application home directory")
+    def home(self, plexus, **kwds):
+        """
+        Print the application home directory
+        """
+        # show me
+        plexus.info.log("{{}}".format(plexus.home))
+        # all done
+        return
+
+
+    @{project.name}.export(tip="the application installation directory")
+    def prefix(self, plexus, **kwds):
+        """
+        Print the application installation directory
+        """
+        # show me
+        plexus.info.log("{{}}".format(plexus.prefix))
+        # all done
+        return
+
+
+    @{project.name}.export(tip="the application configuration directory")
+    def defaults(self, plexus, **kwds):
+        """
+        Print the application configuration directory
+        """
+        # show me
+        plexus.info.log("{{}}".format(plexus.defaults))
+        # all done
+        return
+
+
     @{project.name}.export(tip="print the version number")
     def version(self, plexus, **kwds):
         """
         Print the version of the {project.name} package
         """
         # make some space
-        plexus.info.line()
-        # invoke the package header and push it to the plexus info channel
-        plexus.info.log({project.name}._{project.name}_header)
+        plexus.info.log({project.name}.version.header)
         # all done
         return
 
@@ -41,12 +83,8 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         """
         Print the copyright note of the {project.name} package
         """
-        # get the lines
-        for line in {project.name}._{project.name}_copyright.splitlines():
-            # and push them to the plexus info channel
-            plexus.info.line(line)
-        # flush
-        plexus.info.log()
+        # show the copyright note
+        plexus.info.log({project.name}.version.copyright)
         # all done
         return
 
@@ -57,13 +95,7 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         Print out the license and terms of use of the {project.name} package
         """
         # make some space
-        plexus.info.line()
-        # get the lines
-        for line in {project.name}._{project.name}_acknowledgments.splitlines():
-            # and push them to the plexus info channel
-            plexus.info.line(line)
-        # flush
-        plexus.info.log()
+        plexus.info.log({project.name}.version.header)
         # all done
         return
 
@@ -74,13 +106,7 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         Print out the license and terms of use of the {project.name} package
         """
         # make some space
-        plexus.info.line()
-        # get the lines
-        for line in {project.name}._{project.name}_license.splitlines():
-            # and push them to the plexus info channel
-            plexus.info.line(line)
-        # flush
-        plexus.info.log()
+        plexus.info.log({project.name}.version.license)
         # all done
         return
 
@@ -91,9 +117,9 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         Dump the application configuration namespace
         """
         # get the prefix
-        root = self.root or '{project.name}'
+        prefix = self.root or '{project.name}'
         # show me
-        plexus.pyre_nameserver.dump(root)
+        plexus.pyre_nameserver.dump(prefix)
         # all done
         return
 
@@ -119,11 +145,11 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         Dump the application virtual filesystem
         """
         # get the prefix
-        root = self.root
+        prefix = self.root or '/{project.name}'
         # build the report
-        report = '\n'.join(plexus.vfs[root].dump())
+        report = '\n'.join(plexus.vfs[prefix].dump())
         # sign in
-        plexus.info.line('vfs: root={{!r}}'.format(root))
+        plexus.info.line('vfs: root={{!r}}'.format(prefix))
         # dump
         plexus.info.log(report)
         # all done
