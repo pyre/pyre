@@ -70,12 +70,8 @@ class Local(Filesystem):
         # if we get this far, the directory has been created; update my internal structure
         folder = parent.folder()
         # insert the new node in its parent's contents
-        parent.contents[name] = folder
-        # get the directory meta-data
-        meta = self.recognizer.recognize(uri)
-        # and update my {vnode} table
-        self.vnodes[folder] = meta
-        # all done
+        parent[name] = folder
+        # and return the new folder
         return folder
 
 
