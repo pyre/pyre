@@ -36,6 +36,15 @@ class Project(pyre.protocol, family='pyre.weaver.projects'):
     live.doc = "information about the remote host"
 
 
+    # interface
+    def blacklisted(self, filename):
+        """
+        Check whether {filename} is on the list of files to not expand
+        """
+        # nothing is blacklisted, by default
+        return False
+
+
     # framework obligations
     @classmethod
     def pyre_default(cls, **kwds):

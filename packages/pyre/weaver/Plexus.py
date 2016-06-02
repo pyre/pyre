@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import re
 # the framework
 import pyre
 # my superclass
@@ -22,6 +24,22 @@ class Plexus(ProjectTemplate, family='pyre.weaver.projects.plexus'):
     # additional user configurable state
     template = pyre.properties.str(default='plexus')
     template.doc = "the project template"
+
+
+    # interface
+    def blacklisted(self, filename):
+        """
+        Check whether {filename} is on the list of files to not expand
+        """
+        # check with my pile
+        return self.blacklist.match(filename)
+
+
+    # constants
+    blacklist = re.compile("|".join([
+        'jquery.js',
+        '.+\.png',
+        ]))
 
 
 # end of file

@@ -85,19 +85,27 @@ class Smith(pyre.application, family='pyre.applications.smith'):
                     todo.append((folder, entry, child))
                     # and move on
                     continue
-                # otherwise, the {child} is a regular file; open it
-                with child.open() as raw:
-                    # pull the contents
-                    body = raw.read()
+
+                # if the name is blacklisted
+                if self.project.blacklisted(filename=entry):
+                    # open the file in binary mode and read its contents
+                    body = child.open(mode='rb').read()
+                    # and copy it
+                    destination = cwd.write(parent=folder, name=entry, contents=body, mode='wb')
+                # otherwise
+                else:
+                    # the {child} is a regular file; open it and read its contents
+                    body = child.open().read()
                     # expand any macros
                     body = nameserver.interpolate(expression=body)
                     # create the file
                     destination = cwd.write(parent=folder, name=entry, contents=body)
-                    # get me the meta data
-                    metaold = template.info(child)
-                    metanew = cwd.info(destination)
-                    # adjust the permissions of the new file
-                    metanew.chmod(metaold.permissions)
+
+                # in any case, get me the meta data
+                metaold = template.info(child)
+                metanew = cwd.info(destination)
+                # adjust the permissions of the new file
+                metanew.chmod(metaold.permissions)
 
         # tell me
         self.info.log('committing the initial revision')
