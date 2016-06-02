@@ -1,0 +1,84 @@
+<!doctype html>
+
+<!--
+authors:
+    Michael Aïvázis <michael.aivazis@para-sim.com>
+    Raúl Radovitzky <raul.radovitzky@para-sim.com>
+
+(c) 2013-2016 all rights reserved
+-->
+
+<html lang="en">
+  <head>
+    <!-- meta -->
+    <meta charset="utf-8"/>
+    <title>{project.name}</title>
+
+    <!-- bookmark -->
+    <link href="graphics/icon.png" type="image/png" rel="icon" />
+
+    <!-- stylesheets -->
+    <link href="styles/page.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="styles/banner.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="styles/{project.name}.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="styles/colophon.css" type="text/css" rel="stylesheet" media="all" />
+
+    <!-- javascript -->
+    <!-- jquery -->
+    <script type="text/javascript" src="scripts/jquery.js"></script>
+    <!-- {project.name} -->
+    <script type="text/javascript" src="scripts/boot.js"></script>
+    <script type="text/javascript" src="scripts/{project.name}.js"></script>
+  </head>
+
+  <body>
+
+    <!-- the banner -->
+    <div id="banner">
+      <!-- logo -->
+      <img id="logo" src="graphics/logo.png"/>
+      <!-- app id -->
+      <p id="app">
+        {project.name} application testbed
+      </p>
+      <!-- navigation bar -->
+      <!--
+      <ul name="company-links">
+        <li>home</li>
+        <li>about us</li>
+        <li class="last">contact</li>
+      </ul>
+      -->
+    </div>
+
+    <!-- the blank frame -->
+    <div id="{project.name}">
+      <!-- a blurb -->
+      <p>
+        Welcome to the {project.name} application testbed. This is an exploration of controlling
+        {project.name} simulation parameters through a web based interface. The focus is on
+        control over the simulation parameters, with no representations regarding the
+        usability or aesthetics of this interface...
+      </p>
+
+      <!-- the interface -->
+      <p id="{project.name}-configuration">
+        Placeholder for the simulation controls; if you can see this, something went wrong...
+      </p>
+    </div>
+
+    <!-- colophon -->
+    <div id="colophon">
+      <span class="copyright">
+        Copyright &copy; 2013-2016
+        -- All rights reserved
+      </span>
+      <span class="social">
+      </span>
+    </div>
+
+  </body>
+
+</html>
+
+<!-- end of file -->

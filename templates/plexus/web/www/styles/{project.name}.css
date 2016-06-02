@@ -1,0 +1,142 @@
+/*  -*- CSS -*-  */
+/*
+ * authors:
+ *   Michael Aïvázis <michael.aivazis@para-sim.com>
+ *   Raúl Radovitzky <raul.radovitzky@para-sim.com>
+ *
+ * (c) 2013-2016 all rights reserved
+ */
+
+div#{project.name} {{
+    font-size: 60%;
+    margin: 2.0em 2.0em 2.0em 4.0em;
+}}
+
+div#{project.name} p {{
+    margin-top: 2.0em;
+}}
+
+/* control layout */
+table.{project.name}-controls {{
+    margin-left: 3.0em;
+}}
+
+table.{project.name}-controls tr {{
+    line-height: 2.0em;
+}}
+
+table.{project.name}-controls td {{
+}}
+
+table.{project.name}-controls tr td.prompt {{
+    padding-left: 2.0em;
+    padding-right: 0.5em;
+    text-align: right;
+    text-transform: uppercase;
+}}
+
+table.{project.name}-controls tr td.field {{
+    padding-left: 0.5em;
+}}
+
+table.{project.name}-controls tr th {{
+    padding: 1.0em 0.5em 0.0em 0.5em;
+
+    text-align: right;
+    font-weight: normal;
+    color: #f60;
+
+    border-bottom: 1px solid #ccc;
+}}
+
+table.{project.name}-controls input {{
+    appearance: none;
+}}
+
+table.{project.name}-controls input.float {{
+    width: 2.0em;
+    padding-right: 0.5em;
+    text-align: right;
+}}
+
+table.{project.name}-controls input.list {{
+    width: 30.0em;
+    padding-left: 0.5em;
+}}
+
+table.{project.name}-controls h2 {{
+    padding-left: 1.0em;
+    color: #1b56b4;
+}}
+
+/* action layout */
+table.{project.name}-actions {{
+    margin-left: 3.0em;
+}}
+
+table.{project.name}-actions tr {{
+    line-height: 2.0em;
+}}
+
+table.{project.name}-actions tr th {{
+    marging-right: 0.5em;
+    padding: 1.0em 0.5em 0.0em 0.5em;
+
+    text-align: right;
+    font-weight: normal;
+    color: #f40;
+
+    border-bottom: 1px solid #ccc;
+}}
+
+table.{project.name}-actions tr td.action {{
+    padding-left: 2.0em;
+    padding-right: 0.5em;
+    text-align: left;
+    text-transform: lowercase;
+}}
+
+table.{project.name}-actions tr td.prompt {{
+    padding-left: 2.0em;
+    padding-right: 0.5em;
+    text-align: right;
+    text-transform: uppercase;
+    color: #f40;
+}}
+
+table.{project.name}-actions td.action {{
+    padding-left: 2.0em;
+    padding-right: 0.5em;
+    text-align: left;
+    text-transform: lowercase;
+}}
+
+table.{project.name}-actions td.action span[action].done {{
+    border-bottom: 1px solid #fa0;
+}}
+
+table.{project.name}-actions td.action span[action].disabled {{
+    color: #eee;
+    border-bottom: none;
+}}
+
+table.{project.name}-actions td.action span[action].active {{
+    color: #fa0;
+}}
+
+table.{project.name}-actions td.action span[action]:hover {{
+    cursor: pointer;
+    color: #fa0;
+    border-bottom: 1px dotted #666;
+}}
+
+table.{project.name}-actions a:hover {{
+    color: #fa0;
+    border-bottom: 1px dotted #666;
+}}
+
+table.{project.name}-actions a:visited {{
+    border-bottom: 1px solid #fa0;
+}}
+
+/* end of file */

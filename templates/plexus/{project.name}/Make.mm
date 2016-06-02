@@ -46,7 +46,7 @@ distclean::
 
 export:: version.py export-python-modules
 	BLD_ACTION="export" $(MM) recurse
-	@$(RM) __init__.py
+	@$(RM) version.py
 
 live: live-python-modules
 	BLD_ACTION="live" $(MM) recurse
