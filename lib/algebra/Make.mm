@@ -16,6 +16,9 @@ EXPORT_PKG_HEADERS = \
     operators.h operators.icc \
     BCD.h BCD.icc
 
+# the tmp directory
+PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
+
 # standard targets
 all: export
 

@@ -15,6 +15,9 @@ PACKAGE = patterns
 EXPORT_PKG_HEADERS = \
     Registrar.h Registrar.icc
 
+# the tmp directory
+PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
+
 # the standard targets
 all: export
 

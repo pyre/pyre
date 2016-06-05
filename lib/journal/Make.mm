@@ -12,9 +12,6 @@ include shared/target.def
 include pyre.def
 # the package name
 PACKAGE = journal
-# the products
-PROJ_SAR = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SAR)
-PROJ_DLL = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SO)
 # the sources
 PROJ_SRCS = \
     debuginfo.cc \
@@ -25,6 +22,12 @@ PROJ_SRCS = \
     Device.cc \
     Renderer.cc \
     Streaming.cc \
+
+# the products
+PROJ_SAR = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SAR)
+PROJ_DLL = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SO)
+PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
+
 # what to export
 # the library
 EXPORT_LIBS = $(PROJ_DLL)

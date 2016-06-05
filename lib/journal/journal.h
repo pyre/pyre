@@ -43,17 +43,17 @@ namespace pyre {
     namespace journal {
 
         // debug
-#if defined(WITHOUT_JOURNAL_DEBUG)
-        typedef Null debug_t;
-#else
+#if defined(DEBUG)
         typedef Debug debug_t;
+#else
+        typedef Null debug_t;
 #endif
 
         // firewalls
-#if defined(WITHOUT_JOURNAL_FIREWALLS)
-        typedef Null firewall_t;
-#else
+#if defined(DEBUG)
         typedef Firewall firewall_t;
+#else
+        typedef Null firewall_t;
 #endif
     }
 }

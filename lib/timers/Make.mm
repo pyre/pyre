@@ -19,8 +19,9 @@ RECURSE_DIRS = \
     posix \
 
 # libraries
-PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT)-$(PACKAGE).$(EXT_SAR)
-PROJ_DLL = $(BLD_LIBDIR)/lib$(PROJECT)-$(PACKAGE).$(EXT_SO)
+PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SAR)
+PROJ_DLL = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SO)
+PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
 # sources
 PROJ_SRCS = \
     Display.cc \
@@ -57,7 +58,7 @@ live: live-headers live-package-headers live-libraries
 # archiving support
 zipit:
 	cd $(EXPORT_ROOT); \
-        zip -r $(PYRE_ZIP) lib/lib$(PROJECT)-$(PACKAGE).$(EXT_SO); \
+        zip -r $(PYRE_ZIP) lib/lib$(PROJECT).$(EXT_SO); \
         zip -r $(PYRE_ZIP) ${addprefix include/pyre/, $(EXPORT_HEADERS)} ; \
         zip -r $(PYRE_ZIP) include/pyre/$(PACKAGE)
 

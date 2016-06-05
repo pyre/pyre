@@ -14,6 +14,9 @@ PACKAGE = timers/posix
 EXPORT_PKG_HEADERS = \
     Clock.h Clock.icc
 
+# the tmp directory
+PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
+
 # the standard targets
 all: export
 
