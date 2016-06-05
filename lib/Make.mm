@@ -21,6 +21,8 @@ ifneq ($(strip $(MPI_DIR)),)
   RECURSE_DIRS += mpi
 endif
 
+# use a tmp directory that knows what we are bulding in this directory structure
+PROJ_TMPDIR = $(BLD_TMPDIR)/lib
 
 # the standard targets
 all:

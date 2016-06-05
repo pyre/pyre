@@ -39,6 +39,9 @@ ifneq ($(strip $(LIBPQ_DIR)),)
   RECURSE_DIRS += postgres
 endif
 
+# use a tmp directory that knows what we are bulding in this directory structure
+PROJ_TMPDIR = $(BLD_TMPDIR)/extensions
+
 # standard targets
 all:
 	BLD_ACTION="all" $(MM) recurse
