@@ -85,6 +85,14 @@ class Folder(Node):
         return
 
 
+    def write(self, name, contents, mode='w'):
+        """
+        Create a file with the given {name} and {contents}
+        """
+        # delegate to my filesystem
+        return self.filesystem().write(parent=self, name=name, contents=contents, mode=mode)
+
+
     # searching for specific contents
     def find(self, pattern):
         """
