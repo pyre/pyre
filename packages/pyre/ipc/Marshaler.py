@@ -11,7 +11,7 @@ import pyre
 
 
 # declaration
-class Marshaller(pyre.protocol, family="pyre.ipc.marshallers"):
+class Marshaler(pyre.protocol, family="pyre.ipc.marshalers"):
     """
     Protocol for components responsible for serializing python objects for transmission to
     other processes

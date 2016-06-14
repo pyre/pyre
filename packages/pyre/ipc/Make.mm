@@ -13,7 +13,7 @@ PACKAGE = ipc
 EXPORT_PYTHON_MODULES = \
     Channel.py \
     Dispatcher.py \
-    Marshaller.py \
+    Marshaler.py \
     Pickler.py \
     Pipe.py \
     Port.py \

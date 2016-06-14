@@ -94,13 +94,13 @@ def onParent(childpid, channel):
     # subclass Node
     class node(Node):
 
-        marshaller = pyre.ipc.marshaller()
+        marshaler = pyre.ipc.marshaler()
 
         def recvReady(self, **kwds):
             # log
             pdbg.log("receiving message from child")
             # receive
-            message = self.marshaller.recv(channel=self.channel)
+            message = self.marshaler.recv(channel=self.channel)
             # log and check
             pdbg.log("child said {!r}".format(message))
             assert message == 'ready'
@@ -116,7 +116,7 @@ def onParent(childpid, channel):
             # log
             pdbg.log("receiving message from child")
             # receive
-            message = self.marshaller.recv(channel)
+            message = self.marshaler.recv(channel)
             # check it
             pdbg.log("child said {!r}".format(message))
             assert message == "reloaded"
@@ -184,13 +184,13 @@ def onChild(channel):
     # subclass Node
     class node(Node):
 
-        marshaller = pyre.ipc.marshaller()
+        marshaler = pyre.ipc.marshaler()
 
         def sendReady(self, **kwds):
             # log
             cdbg.log("sending 'ready'")
             # get it
-            self.marshaller.send(item='ready', channel=self.channel)
+            self.marshaler.send(item='ready', channel=self.channel)
             # don't reschedule this handler
             return False
 
@@ -198,7 +198,7 @@ def onChild(channel):
             # show me
             cdbg.log("sending 'reloaded' to my parent")
             # send a message to the parent
-            self.marshaller.send(item="reloaded", channel=self.channel)
+            self.marshaler.send(item="reloaded", channel=self.channel)
             # don't reschedule
             return False
 

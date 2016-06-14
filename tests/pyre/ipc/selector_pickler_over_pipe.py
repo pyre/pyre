@@ -24,7 +24,7 @@ childdbg = journal.debug("selector.child")
 
 
 def test():
-    # build the marshaller
+    # build the marshaler
     m = pyre.ipc.newPickler()
     # and the communication channels
     parent, child = pyre.ipc.pipe()
@@ -34,13 +34,13 @@ def test():
     # in the parent process
     if pid > 0:
         # invoke the parent behavior
-        return onParent(child_pid=pid, marshaller=m, channel=child)
+        return onParent(child_pid=pid, marshaler=m, channel=child)
 
     # in the child process
-    return onChild(marshaller=m, channel=parent)
+    return onChild(marshaler=m, channel=parent)
 
 
-def onParent(child_pid, marshaller, channel):
+def onParent(child_pid, marshaler, channel):
     # observe the parent selector at work
     # journal.debug("pyre.ipc.selector").active = True
 
@@ -62,7 +62,7 @@ def onParent(child_pid, marshaller, channel):
 
         # send the message
         parentdbg.log("parent: sending the message")
-        marshaller.send(item=message, channel=channel)
+        marshaler.send(item=message, channel=channel)
         parentdbg.log("parent: done sending the message")
 
         # and return {False} so the selector stops watching the output channel
@@ -74,7 +74,7 @@ def onParent(child_pid, marshaller, channel):
 
         parentdbg.log("parent: getting response from child")
         # get the response
-        message = marshaller.recv(channel)
+        message = marshaler.recv(channel)
         parentdbg.log("message={!r}".format(message))
         # check it
         parentdbg.log("parent: checking child response")
@@ -94,7 +94,7 @@ def onParent(child_pid, marshaller, channel):
     return
 
 
-def onChild(marshaller, channel):
+def onChild(marshaler, channel):
 
     # observe the child selector at work
     # journal.debug("pyre.ipc.selector").active = True
@@ -110,7 +110,7 @@ def onChild(marshaller, channel):
     def child_get(channel, **kwds):
         """receive a message from my parent"""
         childdbg.log("child: receiving message from parent")
-        message = marshaller.recv(channel)
+        message = marshaler.recv(channel)
         childdbg.log("message={!r}".format(message))
         # check it
         childdbg.log("child: checking it")
@@ -131,7 +131,7 @@ def onChild(marshaller, channel):
 
         # send the message
         childdbg.log("child: sending the response")
-        marshaller.send(item=message, channel=channel)
+        marshaler.send(item=message, channel=channel)
         childdbg.log("child: done sending the response")
 
         # and return {False} so the selector stops watching the output channel

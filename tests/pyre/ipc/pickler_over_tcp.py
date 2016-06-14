@@ -37,9 +37,9 @@ def test():
     # in the parent process
     if pid > 0:
         # invoke the parent behavior
-        return onServer(marshaller=m, pipe=parent)
+        return onServer(marshaler=m, pipe=parent)
     # in the child, become the client
-    return onClient(marshaller=m, pipe=child)
+    return onClient(marshaler=m, pipe=child)
 
 
 # the greetings
@@ -47,7 +47,7 @@ hello = "hello"
 goodbye = "goodbye"
 
 
-def onServer(marshaller, pipe):
+def onServer(marshaler, pipe):
     """Send a simple message and wait for the response"""
 
     # build a port
@@ -55,18 +55,18 @@ def onServer(marshaller, pipe):
     # print what it was bound to
     # print("server: established port at {!r}:{}".format(*port.address.value))
     # send it in a message to the client
-    marshaller.send(item=port.address, channel=pipe)
+    marshaler.send(item=port.address, channel=pipe)
     # and wait for an incoming connection
     peer, address = port.accept()
     # print("server: connection from {}".format(address))
 
     # get the message
-    message = marshaller.recv(channel=peer)
+    message = marshaler.recv(channel=peer)
     # print("server: message={!r}".format(message))
     # check it
     assert message == hello
     # say goodbye
-    marshaller.send(item=goodbye, channel=peer)
+    marshaler.send(item=goodbye, channel=peer)
 
     # shut everything down
     port.close()
@@ -75,18 +75,18 @@ def onServer(marshaller, pipe):
     return
 
 
-def onClient(marshaller, pipe):
+def onClient(marshaler, pipe):
     """Wait for a message and send a response"""
     # get the port number
-    address = marshaller.recv(channel=pipe)
+    address = marshaler.recv(channel=pipe)
     # print it
     # print("client: address={}".format(address))
     # make a channel
     peer = pyre.ipc.tcp(address=address)
     # send a message
-    marshaller.send(item=hello, channel=peer)
+    marshaler.send(item=hello, channel=peer)
     # get the response
-    response = marshaller.recv(channel=peer)
+    response = marshaler.recv(channel=peer)
     # print("client: response={!r}".format(response))
     # check it
     assert response == goodbye

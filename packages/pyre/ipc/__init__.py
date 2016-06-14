@@ -65,13 +65,13 @@ def inet(spec=''):
 
 # my protocols
 from .Dispatcher import Dispatcher as dispatcher
-from .Marshaller import Marshaller as marshaller
+from .Marshaler import Marshaler as marshaler
 
 # my component foundries
-@foundry(implements=marshaller)
+@foundry(implements=marshaler)
 def pickler():
     """
-    A marshaller that uses native python services to serialize objects
+    A marshaler that uses native python services to serialize objects
     """
     # grab the component class record
     from .Pickler import Pickler as pickler
@@ -101,7 +101,7 @@ def selector():
 # my component factories; use to build an actual istance
 def newPickler(**kwds):
     """
-    A marshaller that uses native python services to serialize objects
+    A marshaler that uses native python services to serialize objects
     """
     # grab the component class record
     from .Pickler import Pickler as pickler

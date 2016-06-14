@@ -24,7 +24,7 @@ clientdbg = journal.debug("selector.client")
 
 
 def test():
-    # build the marshaller
+    # build the marshaler
     m = pyre.ipc.newPickler()
     # and the communication channels
     server, client = pyre.ipc.pipe()
@@ -34,16 +34,16 @@ def test():
     # in the server process
     if pid > 0:
         # invoke the server behavior
-        return onServer(clientPid=pid, marshaller=m, pipe=client)
+        return onServer(clientPid=pid, marshaler=m, pipe=client)
 
     # in the client process
     # get my pid
     clientPid = os.getpid()
     # invoke the behavior
-    return onClient(clientPid=clientPid, marshaller=m, pipe=server)
+    return onClient(clientPid=clientPid, marshaler=m, pipe=server)
 
 
-def onServer(clientPid, marshaller, pipe):
+def onServer(clientPid, marshaler, pipe):
     # observe the server selector at work
     # journal.debug("pyre.ipc.selector").active = True
 
@@ -57,7 +57,7 @@ def onServer(clientPid, marshaller, pipe):
     serverdbg.log("server: listening at {}".format(port.address))
 
     def getMessage(channel, **kwds):
-        message = marshaller.recv(channel)
+        message = marshaler.recv(channel)
         serverdbg.log("server: received {!r}".format(message))
         # check it
         assert message == "Hello from {}".format(clientPid)
@@ -65,7 +65,7 @@ def onServer(clientPid, marshaller, pipe):
 
     def sendAddress(channel, **kwds):
         serverdbg.log("server: sending address {}".format(port.address))
-        marshaller.send(channel=channel, item=port.address)
+        marshaler.send(channel=channel, item=port.address)
         serverdbg.log("server: done sending address")
         return False
 
@@ -92,7 +92,7 @@ def onServer(clientPid, marshaller, pipe):
     return
 
 
-def onClient(clientPid, marshaller, pipe):
+def onClient(clientPid, marshaler, pipe):
     # observe the client selector at work
     # journal.debug("pyre.ipc.selector").active = True
 
@@ -104,7 +104,7 @@ def onClient(clientPid, marshaller, pipe):
     def recvAddress(channel, **kwds):
         # get the port
         clientdbg.log("client: receiving address")
-        address = marshaller.recv(channel)
+        address = marshaler.recv(channel)
         clientdbg.log("client: address={}".format(address))
 
         # make a connection
@@ -112,7 +112,7 @@ def onClient(clientPid, marshaller, pipe):
         # send a message
         message = "Hello from {}".format(clientPid)
         clientdbg.log("client: sending {!r}".format(message))
-        marshaller.send(channel=tcp, item=message)
+        marshaler.send(channel=tcp, item=message)
         # all done
         return False
 

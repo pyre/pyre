@@ -28,9 +28,9 @@ def test():
     # in the parent process
     if pid > 0:
         # invoke the parent behavior
-        return onParent(marshaller=m, pipe=parent)
+        return onParent(marshaler=m, pipe=parent)
     # in the child
-    return onChild(marshaller=m, pipe=child)
+    return onChild(marshaler=m, pipe=child)
 
 
 # the trivial messages
@@ -38,26 +38,26 @@ hello = "hello"
 goodbye = "goodbye"
 
 
-def onParent(marshaller, pipe):
+def onParent(marshaler, pipe):
     """Send a simple message and wait for the response"""
     # send a message
-    marshaller.send(hello, pipe)
+    marshaler.send(hello, pipe)
     # get the response
-    response = marshaller.recv(pipe)
+    response = marshaler.recv(pipe)
     # check it
     assert response == goodbye
     # and return
     return
 
 
-def onChild(marshaller, pipe):
+def onChild(marshaler, pipe):
     """Wait for a message and send a response"""
     # get the message
-    message = marshaller.recv(pipe)
+    message = marshaler.recv(pipe)
     # check it
     assert message == hello
     # send the response
-    marshaller.send(goodbye, pipe)
+    marshaler.send(goodbye, pipe)
     # and return
     return
 

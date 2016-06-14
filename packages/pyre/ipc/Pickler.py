@@ -11,13 +11,13 @@ import pyre
 import pickle
 import struct
 # my protocol
-from . import marshaller
+from . import marshaler
 
 
 # class declaration
-class Pickler(pyre.component, family="pyre.ipc.marshallers.pickler", implements=marshaller):
+class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=marshaler):
     """
-    A marshaller that uses the native python services in {pickle} to serialize python objects
+    A marshaler that uses the native python services in {pickle} to serialize python objects
     for transmission to other processes.
 
     The {send} protocol pickles an object into the payload byte stream, and builds a header
