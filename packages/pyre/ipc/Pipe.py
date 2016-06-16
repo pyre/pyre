@@ -107,10 +107,16 @@ class Pipe(Channel):
 
     # meta methods
     def __init__(self, infd, outfd, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # and my file descriptors
         self.infd = infd
         self.outfd = outfd
         return
+
+
+    def __str__(self):
+        return '{{pipe: in={pipe.infd}, out={pipe.outfd}}}'.format(pipe=self)
 
 
     # private data

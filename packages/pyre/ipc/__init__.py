@@ -98,7 +98,8 @@ def selector():
     # and return it
     return selector
 
-# my component factories; use to build an actual istance
+
+# my component factories; use to build an actual instance
 def newPickler(**kwds):
     """
     A marshaler that uses native python services to serialize objects
