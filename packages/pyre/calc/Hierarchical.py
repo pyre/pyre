@@ -284,33 +284,6 @@ class Hierarchical(SymbolTable):
 
 
     # aliasing
-    def pushGlobalIntoScope(self, scope, symbols):
-        """
-        Merge settings for {traits} between global scope and the scope of {name}
-        """
-        # get the global scope
-        top = self._hash
-        # build the scope of the new instance
-        key = self.hash(scope)
-        # with each one
-        for symbol in symbols:
-            # if the name has never been hashed
-            if symbol not in top:
-                # nothing to do; no assignments have been made to it or its possible children
-                continue
-            # build the destination key
-            destination = key[symbol]
-            # make an alias
-            source = top.alias(alias=symbol, target=destination)
-            # construct the global name for the symbol
-            canonical = self.join(scope, symbol)
-            # and merge the information
-            self.merge(source=source, canonical=canonical, destination=destination, name=symbol)
-
-        # all done
-        return
-
-
     def merge(self, source, canonical, destination, name):
         """
         Merge the information associated with {source} into {destination} under {name}.

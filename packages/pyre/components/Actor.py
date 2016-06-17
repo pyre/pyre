@@ -109,7 +109,7 @@ class Actor(Requirement):
                 # build the set of names
                 aliases = { alias for trait in traits for alias in trait.aliases }
                 # merge global settings
-                nameserver.pushGlobalIntoScope(scope=name, symbols=aliases)
+                nameserver.pullGlobalIntoScope(scope=name, symbols=aliases)
 
         # otherwise, record the caller's location
         locator = tracking.here(1) if locator is None else locator

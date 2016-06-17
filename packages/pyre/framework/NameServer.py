@@ -304,4 +304,43 @@ class NameServer(Hierarchical):
         return
 
 
+    # aliasing
+    def pullGlobalIntoScope(self, scope, symbols):
+        """
+        Merge settings for {traits} between global scope and the scope of {name}
+        """
+        # get the global scope
+        top = self._hash
+        # build the scope of the new instance
+        key = self.hash(scope)
+        # with each one
+        for symbol in symbols:
+            # if the name has never been hashed
+            if symbol not in top:
+                # nothing to do; no assignments have been made to it or its possible children
+                continue
+            # if the scope and symbol are identical
+            if scope == symbol:
+                # merging will fail, so skip it before we damage the symbol table
+                continue
+            # build the destination key
+            destination = key[symbol]
+            # make an alias
+            source = top.alias(alias=symbol, target=destination)
+            # construct the global name for the symbol
+            canonical = self.join(scope, symbol)
+            # and try to
+            try:
+                # to merge the information
+                self.merge(source=source, canonical=canonical, destination=destination, name=symbol)
+            # if this fails
+            except Exception:
+                # there must be some residual naming conflict between this trait and a global
+                # object; issue a warning and ignore
+                continue
+
+        # all done
+        return
+
+
 # end of file
