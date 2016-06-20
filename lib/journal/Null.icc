@@ -45,6 +45,12 @@ deactivate() const
 
 
 // meta methods
+pyre::journal::Null::
+operator bool() const
+{
+    return false;
+}
+
 // destructor
 pyre::journal::Null::
 ~Null()

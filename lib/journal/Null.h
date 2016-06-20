@@ -42,6 +42,8 @@ public:
 
     // meta methods
 public:
+    inline operator bool() const;
+
     inline ~Null();
     inline Null(const string_t &);
     // disallow
