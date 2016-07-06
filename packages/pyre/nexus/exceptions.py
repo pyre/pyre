@@ -23,5 +23,11 @@ class ConnectionResetError(NexusError):
     The connection was closed by the peer
     """
 
+# a temporary error
+class RecoverableError(NexusError):
+    """
+    A recoverable error has occurred
+    """
+
 
 # end of file

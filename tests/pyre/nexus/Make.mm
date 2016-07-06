@@ -12,7 +12,7 @@ include pyre.def
 
 all: test
 
-test: sanity nodes clean
+test: sanity nodes teams clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -22,5 +22,7 @@ nodes:
 	${PYTHON} ./node_instantiation.py
 	${PYTHON} ./node_signals.py
 
+teams:
+	${PYTHON} ./pool.py
 
 # end of file

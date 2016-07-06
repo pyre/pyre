@@ -11,10 +11,20 @@ include pyre.def
 PACKAGE = nexus
 # python packages
 EXPORT_PYTHON_MODULES = \
+    Asynchronous.py \
+    Fork.py \
+    MemberStatus.py \
     Nexus.py \
     Node.py \
+    Peer.py \
+    Pool.py \
+    Recruiter.py \
     Server.py \
     Service.py \
+    Task.py \
+    TaskStatus.py \
+    Team.py \
+    TeamMember.py \
     exceptions.py \
     __init__.py
 

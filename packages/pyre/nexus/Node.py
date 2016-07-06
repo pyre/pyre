@@ -7,9 +7,9 @@
 
 
 # externals
+import signal, weakref
+# support
 import pyre
-import signal
-import weakref
 # my protocols
 from .Nexus import Nexus
 from .Service import Service
