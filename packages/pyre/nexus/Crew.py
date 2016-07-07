@@ -13,18 +13,18 @@ from .Peer import Peer
 
 
 # declaration
-class TeamMember(Peer, family='pyre.nexus.peers.member'):
+class Crew(Peer, family='pyre.nexus.peers.member'):
     """
     A member of a team that is executing a work plan
 
-    Team members use a communication {channel} to receive tasks to execute and return
-    responses. This class does not provide any mechanism for team members to communicate with
+    Crew members use a communication {channel} to receive tasks to execute and return
+    responses. This class does not provide any mechanism for crew members to communicate with
     each other.
     """
 
     # types
     from .TaskStatus import TaskStatus as taskcodes
-    from .MemberStatus import MemberStatus as membercodes
+    from .CrewStatus import CrewStatus as crewcodes
 
 
     # interface -- manager side
@@ -159,15 +159,15 @@ class TeamMember(Peer, family='pyre.nexus.peers.member'):
             # prepare a report with an error code for the task
             taskstatus = self.taskcodes.failed
             # a clean bill of health for the team member
-            memberstatus = self.membercodes.healthy
+            memberstatus = self.crewcodes.healthy
             # and a null result
             result = None
         # if anything else goes wrong
         except Exception as error:
             # prepare a report with an error code for the task
             taskstatus = self.taskcodes.aborted
-            # indicate that the team member as damaged
-            memberstatus = self.membercodes.damaged
+            # mark the team member as damaged
+            memberstatus = self.crewcodes.damaged
             # and a null result
             result = None
         # if all goes well
@@ -175,7 +175,7 @@ class TeamMember(Peer, family='pyre.nexus.peers.member'):
             # indicate task success
             taskstatus = self.taskcodes.completed
             # and a healthy the team member
-            memberstatus = self.membercodes.healthy
+            memberstatus = self.crewcodes.healthy
 
         # schedule the reporting of the execution of this task
         self.dispatcher.whenWriteReady(

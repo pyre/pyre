@@ -26,7 +26,7 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
 
 
     # types
-    from .TeamMember import TeamMember as member
+    from .Crew import Crew as crew
 
 
     # user configurable state
@@ -61,7 +61,7 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # if necessary, recruit some new team members
         self.recruit()
         # tell me
-        channel.line('recruiting new team member')
+        channel.line('recruited new team member')
         channel.line('  active team members: {}'.format(len(self.active)))
 
         # flush
@@ -96,7 +96,7 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         self.active = set()
         self.retired = set()
 
-        # my workplan is a the set of tasks that are pending
+        # my workplan is the set of tasks that are pending
         self.workplan = set()
 
         # all done

@@ -14,8 +14,8 @@ class Task:
 
     # types
     from .exceptions import RecoverableError
-    from .TaskStatus import TaskStatus as codes
-    from .MemberStatus import MemberStatus as membercodes
+    from .TaskStatus import TaskStatus as taskcodes
+    from .CrewStatus import CrewStatus as crewcodes
 
 
     # meta-methods

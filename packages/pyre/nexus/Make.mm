@@ -12,8 +12,9 @@ PACKAGE = nexus
 # python packages
 EXPORT_PYTHON_MODULES = \
     Asynchronous.py \
+    Crew.py \
+    CrewStatus.py \
     Fork.py \
-    MemberStatus.py \
     Nexus.py \
     Node.py \
     Peer.py \
@@ -24,7 +25,6 @@ EXPORT_PYTHON_MODULES = \
     Task.py \
     TaskStatus.py \
     Team.py \
-    TeamMember.py \
     exceptions.py \
     __init__.py
 
