@@ -9,7 +9,6 @@
 # project defaults
 include pyre.def
 
-
 all: test
 
 test: sanity nodes teams clean
@@ -24,5 +23,6 @@ nodes:
 
 teams:
 	${PYTHON} ./pool.py
+	${PYTHON} ./pool.py --tasks=4 --team.size=2
 
 # end of file

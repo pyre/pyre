@@ -62,7 +62,6 @@ class Application(pyre.application, family="samples.applications.pool"):
     """
 
     # user configurable state
-    #team = pyre.nexus.team(default=Pool)
     team = pyre.nexus.team(default=Pool)
     team.doc = "my team manager"
 
@@ -76,7 +75,13 @@ class Application(pyre.application, family="samples.applications.pool"):
         """
         The main entry point
         """
-        # grab a channel
+        # grab the journal
+        import journal
+        # control the channels of my components
+        # journal.debug('samples.teams.pool').activate()
+        # journal.debug('pyre.nexus.peers.member').activate()
+
+        # grab my channel
         channel = self.debug
         # show me
         channel.line()
@@ -87,12 +92,23 @@ class Application(pyre.application, family="samples.applications.pool"):
         # flush
         channel.log()
 
+        # get my team
+        team = self.team
         # make a workplan
         workplan = { Task() for _ in range(self.tasks) }
         # set it up for execution
-        self.team.execute(workplan=workplan)
+        team.execute(workplan=workplan)
         # and enter the event loop
-        self.team.serve()
+        team.serve()
+
+        # when it is all done, show me
+        channel.line()
+        channel.line("  workplan complete")
+        channel.line("    remaining tasks: {}".format(len(team.workplan)))
+        channel.line("    active workers: {}".format(len(team.active)))
+        channel.line("    retired workers: {}".format(len(team.retired)))
+        channel.log()
+
         # all done
         return 0
 
