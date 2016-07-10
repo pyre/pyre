@@ -216,13 +216,14 @@ def onChild(channel):
             # all done
             return
 
-        def terminate(self):
+        @pyre.export
+        def stop(self):
             # show me
             cdbg.log("marking clean exit and stopping the dispatcher")
             # mark me
             self.cleanExit = True
             # chain up
-            return super().terminate()
+            return super().stop()
 
         def __init__(self, channel, **kwds):
             # chain up
@@ -231,7 +232,7 @@ def onChild(channel):
             cdbg.log("dispatcher: {}".format(self.dispatcher))
             # my communication channel
             self.channel = channel
-            # marker that my {terminate} was called
+            # marker that my {stop} was called
             self.cleanExit = False
             # set up an alarm to keep the process alive
             self.dispatcher.alarm(interval=1*self.dispatcher.second, call=self.alarm)

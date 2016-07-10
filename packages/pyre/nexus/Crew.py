@@ -8,33 +8,79 @@
 
 # externals
 import functools
-# base class
+# my base class
 from .Peer import Peer
 
 
 # declaration
-class Crew(Peer, family='pyre.nexus.peers.member'):
+class Crew(Peer, family="pyre.nexus.peers.crew"):
     """
-    A member of a team that is executing a work plan
+    The base facilitator of asynchronous task execution in foreign processes, and one of the
+    building blocks of process based concurrency in pyre.
 
-    Crew members use a communication {channel} to receive tasks to execute and return
-    responses. This class does not provide any mechanism for crew members to communicate with
-    each other.
+    Crew members are typically instantiated by a {recruiter} in matching pairs that are
+    connected to each other via bidirectional {channels}. One member of the pair participates
+    in the event logic of the host application; this instance is referred to as the team side
+    crew member. The other is hosted by a remote pyre {shell} with its own event loop, and is
+    referred to as the worker side. Making the worker side functional typically involves
+    spinning up a new process, but this considered a {recruiter} implementation detail. The
+    pair of crew instances are responsible only for the babysitting of the task execution.
+
+    The team side crew member acts as a proxy for the worker side. The host application
+    schedules the execution of a {task} by invoking the team side interface. The crew instance
+    serializes the task and sends it off to its remote twin for execution, monitors progress,
+    and reports the task result back to the host application.
     """
 
     # types
-    from .TaskStatus import TaskStatus as taskcodes
     from .CrewStatus import CrewStatus as crewcodes
+    from .TaskStatus import TaskStatus as taskcodes
 
 
-    # interface -- manager side
+    # interface - team side
+    def join(self, team):
+        """
+        Join a team
+
+        This is invoked by my recruiter on the team side and it is part of team assembly. The
+        intent is to make crew members available to the team after they have reported ready to
+        receive tasks for execution
+        """
+        # schedule the handler of the worker side registration
+        self.dispatcher.whenReadReady(
+            channel = self.channel,
+            call = functools.partial(self.activate, team=team))
+        # all done
+        return self
+
+
+    def activate(self, channel, team):
+        """
+        My worker twin is reporting ready to work
+
+        N.B.: this is an event handler; careful with its return value
+        """
+        # check it's me we are talking about
+        assert channel is self.channel
+        # get the status of my twin
+        status = self.marshaler.recv(channel=channel)
+        # and if all is good
+        if status is self.crewcodes.healthy:
+            # let the team know
+            team.activate(crew=self)
+            # and add me to the execution schedule
+            team.schedule(crew=self)
+        # do not reschedule this handler
+        return False
+
+
     def execute(self, team, task):
         """
-        Send my worker half the {task} to be executed
+        Send my twin the {task} to be executed
         """
         # send the task
         self.marshaler.send(channel=self.channel, item=task)
-        # schedule the harvesting of the task status
+        # schedule the harvesting of the result
         self.dispatcher.whenReadReady(
             channel = self.channel,
             call = functools.partial(self.assess, team=team, task=task))
@@ -42,54 +88,6 @@ class Crew(Peer, family='pyre.nexus.peers.member'):
         return self
 
 
-    def dismissed(self):
-        """
-        My team manager has dismissed me
-        """
-        # send the end-of-tasks marker
-        self.marshaler.send(channel=self.channel, item=None)
-        # clean up
-        self.resign()
-        # leave a note
-        self.debug.log('{me.pid}: dismissed at {me.finish:.3f}'.format(me=self))
-        # all done
-        return self
-
-
-    # interface -- worker side
-    def join(self):
-        """
-        Notify the {team} that I am ready to accept tasks, carry out tasks as they become
-        available, and clean up when it's all done
-        """
-        # sign in with the team
-        self.register()
-        # process task assignments
-        status = self.participate()
-        # when everything is done
-        self.resign()
-        # leave a note
-        self.debug.log('{me.pid}: resigned at {me.finish:.3f}'.format(me=self))
-        # all done
-        return status
-
-
-    # meta-methods
-    def __init__(self, pid, channel, **kwds):
-        # chain up
-        super().__init__(**kwds)
-
-        # save my id
-        self.pid = pid
-        # and my channel
-        self.channel = channel
-
-        # NYI: what statistics do i maintain
-        # all done
-        return
-
-
-    # implementation details -- manager side
     def assess(self, channel, team, task, **kwds):
         """
         Harvest the task completion status
@@ -109,32 +107,49 @@ class Crew(Peer, family='pyre.nexus.peers.member'):
         # now, let's figure out what to do with the worker; if the process is not damaged
         if memberstatus is not self.taskcodes.damaged:
             # put the worker back in the queue
-            team.activate(member=self)
+            team.schedule(crew=self)
 
         # all done
         return False
 
 
-    # implementation details -- worker side
-    def register(self):
-        # record my start time
-        self.start = self.timer.lap()
+    def dismissed(self):
+        """
+        My team manager has dismissed me
+        """
+        # send the end-of-tasks marker
+        self.marshaler.send(channel=self.channel, item=None)
+        # clean up
+        self.resign()
         # leave a note
-        self.debug.log('{me.pid}: joined at {me.start:.3f}'.format(me=self))
-        # register my task handler with my event loop manager
-        self.dispatcher.whenReadReady(channel=self.channel, call=self.perform)
+        self.debug.log('{me.pid}: dismissed at {me.finish:.3f}'.format(me=self))
         # all done
-        return
+        return self
 
 
-    def participate(self):
+    # interface - worker side
+    def register(self):
         """
-        Wait for incoming tasks
+        Initialize the worker side
         """
-        # leave a note
-        self.debug.log('{me.pid}: watching for tasks'.format(me=self))
-        # enter the event loop
-        return self.dispatcher.watch()
+        # send in my registration when the write side of my channel is ready to accept data
+        self.dispatcher.whenWriteReady(channel=self.channel, call=self.checkin)
+        # and chain up to start processing events
+        return self
+
+
+    def checkin(self, channel):
+        """
+        Send my team registration now that my communication channel is open
+        """
+        # check it's me we are talking about
+        assert channel is self.channel
+        # send in a healthy status code
+        self.marshaler.send(channel=channel, item=self.crewcodes.healthy)
+        # register the task execution handler
+        self.dispatcher.whenReadReady(channel=self.channel, call=self.perform)
+        # do not reschedule this handler
+        return False
 
 
     def perform(self, channel, **kwds):
@@ -147,7 +162,9 @@ class Crew(Peer, family='pyre.nexus.peers.member'):
         self.debug.log('{me.pid}: got {task}'.format(me=self, task=task))
         # if it's a quit marker
         if task is None:
-            # we are all done; don't reschedule this handler
+            # we are all done
+            self.stop()
+            # don't reschedule this handler
             return False
 
         # otherwise, try to
@@ -158,43 +175,43 @@ class Crew(Peer, family='pyre.nexus.peers.member'):
         except task.RecoverableError:
             # prepare a report with an error code for the task
             taskstatus = self.taskcodes.failed
-            # a clean bill of health for the team member
-            memberstatus = self.crewcodes.healthy
+            # a clean bill of health for me
+            crewstatus = self.crewcodes.healthy
             # and a null result
             result = None
         # if anything else goes wrong
         except Exception as error:
             # prepare a report with an error code for the task
             taskstatus = self.taskcodes.aborted
-            # mark the team member as damaged
-            memberstatus = self.crewcodes.damaged
+            # mark me as damaged
+            crewstatus = self.crewcodes.damaged
             # and a null result
             result = None
         # if all goes well
         else:
             # indicate task success
             taskstatus = self.taskcodes.completed
-            # and a healthy the team member
-            memberstatus = self.crewcodes.healthy
+            # and a clean bill of health for me
+            crewstatus = self.crewcodes.healthy
 
         # schedule the reporting of the execution of this task
         self.dispatcher.whenWriteReady(
             channel = channel,
             call = functools.partial(self.report,
-                                     result=result,
-                                     memberstatus=memberstatus,
-                                     taskstatus=taskstatus))
+                                     result = result,
+                                     crewstatus = crewstatus,
+                                     taskstatus = taskstatus))
 
         # and go back to waiting for more
         return True
 
 
-    def report(self, channel, memberstatus, taskstatus, result, **kwds):
+    def report(self, channel, crewstatus, taskstatus, result, **kwds):
         """
         Post the task completion {report}
         """
         # make a report
-        report = (memberstatus, taskstatus, result)
+        report = (crewstatus, taskstatus, result)
         # tell me
         self.debug.log('{me.pid}: sending report {report}'.format(me=self, report=report))
         # serialize and send
@@ -212,9 +229,16 @@ class Crew(Peer, family='pyre.nexus.peers.member'):
         return self
 
 
-    # private data
-    start = None
-    finish = None
+    # meta-methods
+    def __init__(self, pid, channel, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save my crew is; this is an opaque type, assigned to me by my recruiter
+        self.pid = pid
+        # save the communication channel to my twin
+        self.channel = channel
+        # all done
+        return
 
 
 # end of file

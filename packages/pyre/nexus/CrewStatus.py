@@ -19,8 +19,8 @@ class CrewStatus(enum.Enum):
 
     # as far as the crew member can tell, all is good and it is ready to accept work
     healthy = 0
-    # the crew member is compromised and can't be relied upon any more; the task should be
-    # rescheduled to another process; this worker should be removed from the pool permanently
+    # the crew member is compromised and can't be relied upon any more; it should be removed
+    # from the team permanently
     damaged = 1
 
 

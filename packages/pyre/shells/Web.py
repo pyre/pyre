@@ -51,7 +51,7 @@ class Web(Script, family='pyre.shells.web'):
         # register it with the nexus
         nexus.services['web'] = 'http'
         # activate
-        nexus.activate(application=application)
+        nexus.prepare(application=application)
 
         # get the address of the web server
         address = nexus.services['web'].address
@@ -71,7 +71,7 @@ class Web(Script, family='pyre.shells.web'):
             # get the nexus to do its thing
             # N.B. this is an infinite loop; it is the responsibility of the application to
             # terminate the interaction with the user and exit gracefully
-            status = nexus.serve()
+            status = nexus.watch()
         # if the user interrupted
         except KeyboardInterrupt as event:
             # launch the handler

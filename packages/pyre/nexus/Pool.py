@@ -31,10 +31,10 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
 
     # user configurable state
     size = pyre.properties.int(default=1)
-    size.doc = 'the number of team members to recruit'
+    size.doc = 'the number of crew members to recruit'
 
     recruiter = Recruiter()
-    recruiter.doc = 'the strategy for recruiting team members'
+    recruiter.doc = 'the strategy for recruiting crew members'
 
 
     # interface
@@ -50,7 +50,7 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         channel.line('  current outstanding tasks: {}'.format(len(self.workplan)))
         channel.line('  max team size: {}'.format(self.size))
         channel.line('  current vacancies: {}'.format(self.vacancies()))
-        channel.line('  active team members: {}'.format(len(self.active)))
+        channel.line('  active crew members: {}'.format(len(self.active)))
 
         # add the new tasks to the workplan
         self.workplan |= workplan
@@ -58,11 +58,11 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         channel.line('extending the workplan')
         channel.line('  current outstanding tasks: {}'.format(len(self.workplan)))
 
-        # if necessary, recruit some new team members
+        # if necessary, recruit some new crew members
         self.recruit()
         # tell me
-        channel.line('recruited new team member')
-        channel.line('  active team members: {}'.format(len(self.active)))
+        channel.line('recruited new crew member')
+        channel.line('  active crew members: {}'.format(len(self.active)))
 
         # flush
         channel.log()
@@ -92,7 +92,8 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # chain up
         super().__init__(**kwds)
 
-        # initialize my records
+        # initialize my crew records
+        self.registered = set()
         self.active = set()
         self.retired = set()
 
@@ -109,35 +110,45 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         Assemble the team
         """
         # get my recruiter to recruit some workers
-        for teamMember in self.recruiter.recruit(team=self):
-            # activate and register
-            self.activate(member=teamMember)
+        for crew in self.recruiter.recruit(team=self):
+            # register the crew member
+            self.registered.add(crew)
         # all done
         return self
 
 
-    def activate(self, member):
+    def activate(self, crew):
         """
-        Add the given {member} to the scheduling queue
+        Add the given {crew} member to the scheduling queue
+        """
+        # upgrade its status from registered
+        self.registered.remove(crew)
+        # to active
+        self.active.add(crew)
+        # all done
+        return self
+
+
+    def schedule(self, crew):
+        """
+        Add the given {crew} member to the execution schedule
         """
         # start sending tasks when the worker is ready to listen
         self.dispatcher.whenWriteReady(
-            channel = member.channel,
-            call = functools.partial(self.schedule, member=member))
-        # add it to the active pile
-        self.active.add(member)
+            channel = crew.channel,
+            call = functools.partial(self.submit, crew=crew))
         # all done
         return self
 
 
-    def schedule(self, channel, member, **kwds):
+    def submit(self, channel, crew, **kwds):
         """
-        A team member has reported ready to accept tasks
+        A crew member has reported ready to accept tasks
         """
         # N.B.: {channel} is ready to write, because that's how we got here; so write away...
 
         # tell me
-        self.debug.log('sending a task to {.pid}'.format(member))
+        self.debug.log('sending a task to {.pid}'.format(crew))
         # get my workplan
         workplan = self.workplan
         # and my marshaler
@@ -146,47 +157,39 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # if there is nothing left to do
         if not workplan:
             # notify this worker we are done
-            self.dismiss(member=member)
+            self.dismiss(crew=crew)
             # and don't send it any further work
             return False
 
         # otherwise, grab a task
         task = workplan.pop()
         # and send it to the worker
-        member.execute(team=self, task=task)
+        crew.execute(team=self, task=task)
 
         # don't reschedule me; let the handler that harvests the task status decide the fate of
         # this worker
         return False
 
 
-    def welcome(self, member):
+    def dismiss(self, crew):
         """
-        The recruiter has identified a new team member
+        Dismiss the {crew} member from the team
         """
-        # nothing to do, by default
-        return self
-
-
-    def dismiss(self, member):
-        """
-        Dismiss the {member} from the team
-        """
-        # notify this team member it is dismissed
-        member.dismissed()
+        # notify this crew member it is dismissed
+        crew.dismissed()
         # let the recruiter know
-        self.recruiter.dismiss(team=self, member=member)
+        self.recruiter.dismiss(team=self, crew=crew)
         # remove it from the roster
-        self.active.discard(member)
-        # and add it to the pile of retured workers
-        self.retired.add(member)
+        self.active.discard(crew)
+        # and add it to the pile of retired workers
+        self.retired.add(crew)
         # all done
         return self
 
 
     # private data
-    active = None   # the set of currently deployed team members
-    retired = None  # the set of retired team members
+    active = None   # the set of currently deployed crew members
+    retired = None  # the set of retired crew members
 
 
 # end of file

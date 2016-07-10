@@ -25,4 +25,36 @@ class Asynchronous(pyre.protocol, family='pyre.nexus.peers'):
     dispatcher.doc = "the manager of the event loop"
 
 
+    # required interface
+    @pyre.provides
+    def run(self):
+        """
+        Start processing requests
+        """
+
+    @pyre.provides
+    def prepare(self):
+        """
+        Carry out any necessary start up steps
+        """
+
+    @pyre.provides
+    def watch(self):
+        """
+        Activate my event loop
+        """
+
+    @pyre.provides
+    def shutdown(self):
+        """
+        Signal my event loop to stop processing events
+        """
+
+    @pyre.provides
+    def shutdown(self):
+        """
+        Shut down and exit gracefully
+        """
+
+
 # end of file

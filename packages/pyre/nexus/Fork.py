@@ -53,31 +53,31 @@ class Fork(pyre.component, family='pyre.nexus.recruiters.fork', implements=Recru
         # in the worker process
         if pid == 0:
             # make a team member
-            member = team.crew(pid=os.getpid(), channel=parent, **kwds)
-            # ask the team to narrow the set of accessible resources
-            team.welcome(member=member)
-            # join the team and carry out tasks until there is nothing more to do
-            status = member.join()
+            crew = team.crew(pid=os.getpid(), channel=parent, **kwds)
+            # ask it to register with the team
+            crew.register()
+            # spin up and carry out tasks until there is nothing more to do
+            status = crew.run()
             # at which point, this process must terminate
             raise SystemExit(status)
 
         # make a member proxy for the team manager and return it
-        member = team.crew(pid=pid, channel=child, timer=team.timer)
+        crew = team.crew(pid=pid, channel=child, timer=team.timer)
         # adjust its support for asynchrony
-        member.dispatcher = team.dispatcher
+        crew.dispatcher = team.dispatcher
         # and its message serializer
-        member.marshaler = team.marshaler
-        # all done
-        return member
+        crew.marshaler = team.marshaler
+        # spin it up and return it
+        return crew.join(team=team)
 
 
     @pyre.provides
-    def dismiss(self, team, member, **kwds):
+    def dismiss(self, team, crew, **kwds):
         """
         The {team} manager has dismissed the given {member}
         """
         # harvest the status
-        status = os.waitpid(member.pid, 0)
+        status = os.waitpid(crew.pid, 0)
         # all done
         return
 

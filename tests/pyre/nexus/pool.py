@@ -99,7 +99,7 @@ class Application(pyre.application, family="samples.applications.pool"):
         # set it up for execution
         team.execute(workplan=workplan)
         # and enter the event loop
-        team.serve()
+        team.run()
 
         # when it is all done, show me
         channel.line()

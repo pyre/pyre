@@ -8,26 +8,33 @@
 
 class Task:
     """
-    Encapsulation of a task that is to be distributed to a worker for asynchronous execution
+    Base class for functors that are part of an application data model
     """
 
 
     # types
+    # easy access to the base indicator of a temporary failure during task execution
     from .exceptions import RecoverableError
-    from .TaskStatus import TaskStatus as taskcodes
+    # access to status enums for this task and its broader execution context
     from .CrewStatus import CrewStatus as crewcodes
+    from .TaskStatus import TaskStatus as taskcodes
+
+
+    # interface
+    def execute(self, **kwds):
+        """
+        The body of the functor
+        """
+        # N.B.: defined to support subclasses that employ cooperative multiple inheritance;
+        # they can chain up to this empty implementation
+        # nothing to do
+        return
 
 
     # meta-methods
     def __call__(self, **kwds):
-        # delegate
+        # forward to the {execute} method
         return self.execute(**kwds)
-
-
-    # implementation details
-    def execute(self, **kwds):
-        # nothing else to do
-        return
 
 
 # end of file

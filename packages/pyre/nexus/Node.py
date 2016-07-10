@@ -10,26 +10,25 @@
 import signal, weakref
 # support
 import pyre
+# base class
+from .Peer import Peer
 # my protocols
 from .Nexus import Nexus
 from .Service import Service
 
 
 # declaration
-class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
+class Node(Peer, family="pyre.nexus.servers.node", implements=Nexus):
 
 
     # user configurable state
-    dispatcher = pyre.ipc.dispatcher()
-    dispatcher.doc = 'the component responsible for monitor my communication channels'
-
     services = pyre.properties.dict(schema=Service())
     services.doc = 'the table of available services'
 
 
     # interface
     @pyre.export
-    def activate(self, application):
+    def prepare(self, application):
         """
         Get ready to listen for incoming connections
         """
@@ -43,21 +42,6 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
             service.activate(application=application, dispatcher=self.dispatcher)
         # all done
         return
-
-
-    @pyre.export
-    def serve(self):
-        """
-        Start processing requests
-        """
-        # enter the event loop of the dispatcher
-        status = self.dispatcher.watch()
-        # when done, tell me
-        self.application.debug.log('done')
-        # shut everything down
-        self.shutdown()
-        # and report the status
-        return status
 
 
     @pyre.export
@@ -76,7 +60,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         # flush
         application.debug.log()
         # all done
-        return
+        return super().shutdown()
 
 
     # low level event handlers
@@ -86,16 +70,6 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
         """
         # NYI: what does 'reload' mean? does it involve the configuration store, or just the
         # layout of the distributed application?
-        return
-
-
-    def terminate(self):
-        """
-        Terminate the event processing loop
-        """
-        # notify my dispatcher to exit its event loop
-        self.dispatcher.stop()
-        # and return
         return
 
 
@@ -131,7 +105,7 @@ class Node(pyre.component, family="pyre.nexus.servers.node", implements=Nexus):
             # on {HUP}, reload
             signal.SIGHUP: self.reload,
             # on {TERM}, terminate
-            signal.SIGTERM: self.terminate,
+            signal.SIGTERM: self.stop,
             }
         # and return it
         return signals
