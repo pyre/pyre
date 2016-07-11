@@ -19,13 +19,15 @@ version = (major, minor, revision)
 # decorations for the help system
 copyright = "copyright (c) 1998-2016 all rights reserved"
 
-header = """
+banner = """
     pyre {major}.{minor} revision {revision}
     {copyright}
+""".format(major=major, minor=minor, revision=revision, copyright=copyright)
 
+header = banner + """
 author:
     Michael Aïvázis     <michael.aivazis@orthologue.com>
-""".format(major=major, minor=minor, revision=revision, copyright=copyright)
+"""
 
 license = header + """
 license:

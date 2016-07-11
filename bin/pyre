@@ -61,7 +61,7 @@ import code
 sys.ps1 = 'pyre: '
 sys.ps2 = '  ... '
 # enter interactive mode
-code.interact(banner=pyre.copyright(), local=locals())
+code.interact(banner=pyre.meta.banner, local=locals())
 
 # configure the garbage collector
 # import gc
