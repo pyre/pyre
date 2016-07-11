@@ -59,10 +59,12 @@ class Local(Filesystem):
             raise self.URISpecificationError(uri=uri, reason=str(error))
 
 
-    def mkdir(self, parent, name, **kwds):
+    def mkdir(self, name, parent=None, **kwds):
         """
         Create a subdirectory {name} in {parent}
         """
+        # maybe it's all about me after all
+        if parent is None: parent = self
         # assemble the new folder uri
         uri = parent.uri / name
         # create the directory
@@ -75,10 +77,12 @@ class Local(Filesystem):
         return folder
 
 
-    def touch(self, parent, name, **kwds):
+    def touch(self, name, parent=None, **kwds):
         """
         Create a file {name} in directory {parent}
         """
+        # maybe it's all about me after all
+        if parent is None: parent = self
         # assemble the new folder uri
         uri = parent.uri / name
         # create the file
@@ -95,10 +99,12 @@ class Local(Filesystem):
         return node
 
 
-    def write(self, parent, name, contents, mode='w'):
+    def write(self, name, contents, parent=None, mode='w'):
         """
         Create the file {name} in the folder {parent} with the given {contents}
         """
+        # maybe it's all about me after all
+        if parent is None: parent = self
         # assemble the new file uri
         uri = parent.uri / name
         # create the file
