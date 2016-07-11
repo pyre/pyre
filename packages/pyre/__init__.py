@@ -56,7 +56,7 @@ def copyright():
     """
     Return the pyre copyright note
     """
-    return _pyre_copyright
+    return print(meta.header)
 
 
 def license():
@@ -64,24 +64,22 @@ def license():
     Print the pyre license
     """
     # print it
-    print(_pyre_license)
-    # all done
-    return
+    return print(meta.license)
 
 
 def version():
     """
     Return the pyre version
     """
-    return _pyre_version
+    return meta.version
 
 
 def credits():
     """
     Print the acknowledgments
     """
-    print(_pyre_acknowledgments)
-    return
+    # print it
+    return print(meta.acknowledgments)
 
 
 # component introspection
@@ -99,77 +97,6 @@ def where(configurable, attribute=None):
     # and return its locator
     return slot.locator
 
-
-# constants
-_pyre_version = (PYRE_MAJOR, PYRE_MINOR, BZR_REVNO)
-
-_pyre_date = "DATE_COMPILED"
-
-_pyre_tag = "pyre {}.{} revision {}".format(*_pyre_version)
-
-_pyre_copyright = "{}: Copyright (c) 1998-2016 Michael A.G. Aïvázis".format(_pyre_tag)
-
-_pyre_header = """
-    {}
-    Copyright (c) 1998-2016 Michael A.G. Aïvázis
-    All Rights Reserved
-    """.format(_pyre_tag)
-
-_pyre_license = _pyre_header + """
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions
-    are met:
-
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in
-      the documentation and/or other materials provided with the
-      distribution.
-
-    * Neither the name pyre nor the names of its contributors may be
-      used to endorse or promote products derived from this software
-      without specific prior written permission.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
-    """
-
-_pyre_acknowledgments = _pyre_header + """
-    This work has been funded in part by the Department of Energy, the
-    National Science Foundation, the National Nuclear Safety
-    Administration, and Orthologue.
-
-    None of this would have been possible without Dan Meiron, Michael
-    Ortiz, Mike Gurnis, Brent Fultz, and Mark Simons, all of whom took a
-    risk by supporting pyre at various stages in its development.
-
-    Much of the current design of pyre is due to ideas and constructive
-    criticism by Leif Strand.
-
-    Raúl Radovitzky, Brad Aagaard and Patrick Hung taught me a lot about
-    the needs of massively parallel applications.
-
-    Jiao Lin has built a very sophisticated web application framework by
-    stretching pyre beyond its limits, and contributing countless use cases
-    that have had a significant impact on the current implementation.
-
-    Mike McKerns, Tim Kelly, Brandon Keith are early adopters and have made
-    significant contributions to the usability of the package. Most of the
-    existing documentation and user support over the years has been
-    possible thanks to their remarkable efforts.
-    """
 
 # put the following start-up steps inside functions so we can have better control over their
 # execution context and namespace pollution
@@ -232,8 +159,10 @@ def debug():
 # invoke the debug method in case the user asked for debugging support
 debug()
 
+# version info
+from . import meta
 # convenient access to parts of the framework
-from . import constraints, geometry, primitives, tracking
+from . import version, constraints, geometry, primitives, tracking
 # configurables and their support
 from .components.Actor import Actor as actor
 from .components.Role import Role as role
