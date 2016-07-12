@@ -31,9 +31,7 @@ def credits():
     Print the acknowledgments
     """
     # generate the message
-    print(_merlin_acknowledgments)
-    # all done
-    return
+    return print(meta.acknowledgments)
 
 
 def copyright():
@@ -41,9 +39,7 @@ def copyright():
     Return the merlin copyright note
     """
     # generate the message
-    print(_merlin_copyright)
-    # all done
-    return
+    return print(meta.copyright)
 
 
 def license():
@@ -51,88 +47,19 @@ def license():
     Print the merlin license
     """
     # generate the message
-    print(_merlin_license)
-    # all done
-    return
+    return print(meta.license)
 
 
 def version():
     """
     Return the merlin version
     """
-    # generate the message
-    print(_merlin_version)
-    # all done
-    return
+    # return the version
+    return meta.version
 
 
-# the actual text
-# NYI: add localized versions of all this
-_merlin_version = (MERLIN_MAJOR, MERLIN_MINOR, BZR_REVNO)
-
-_merlin_date = "DATE_COMPILED"
-
-_merlin_tag = "merlin {}.{} revision {}".format(*_merlin_version)
-
-_merlin_copyright = "{}: Copyright (c) 1998-2016 Michael A.G. Aïvázis".format(_merlin_tag)
-
-_merlin_header = """
-    {}
-    Copyright (c) 1998-2016 Michael A.G. Aïvázis
-    All rights reserved
-    """.format(_merlin_tag)
-
-
-_merlin_usage = _merlin_header + """
-    Basic commands:
-        merlin init           make this directory the root of a project
-        merlin status         print a summary of the state of a build target
-        merlin add            add files or directories to the build system
-        merlin build          build a target
-
-        merlin help <topic>   detailed help on topic
-        merlin help commands  list all the available commands
-        merlin help topics    list all available help topics
-
-        merlin license        terms of use
-
-    Visit http://merlin.orthologue.com for the latest documentation
-    """
-
-
-_merlin_license = _merlin_header + """
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions
-    are met:
-
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in
-      the documentation and/or other materials provided with the
-      distribution.
-
-    * Neither the name merlin nor the names of its contributors may be
-      used to endorse or promote products derived from this software
-      without specific prior written permission.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
-    """
-
-_merlin_acknowledgments = _merlin_header + """
-    """
+# pull the meta-data
+from . import meta
 
 # bootstrapping
 def boot():

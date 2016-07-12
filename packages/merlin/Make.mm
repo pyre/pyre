@@ -18,7 +18,17 @@ RECURSE_DIRS = \
     spells \
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    meta.py \
     __init__.py
+
+# get today's date
+TODAY = ${strip ${shell date -u}}
+# grab the revision number
+REVISION = ${strip ${shell bzr revno}}
+# if not there
+ifeq ($(REVISION),)
+REVISION = 0
+endif
 
 # standard targets
 all: export
@@ -32,20 +42,20 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-export:: __init__.py export-python-modules
+export:: meta.py export-python-modules
 	BLD_ACTION="export" $(MM) recurse
-	@$(RM) __init__.py
+	@$(RM) meta.py
 
 live: live-python-modules
 	BLD_ACTION="live" $(MM) recurse
 
-# construct my {__init__.py}
-__init__.py: __init__py Make.mm
+# construct my {meta.py}
+meta.py: meta Make.mm
 	@sed \
-          -e "s:MERLIN_MAJOR:$(PROJECT_MAJOR):g" \
-          -e "s:MERLIN_MINOR:$(PROJECT_MINOR):g" \
-          -e "s:BZR_REVNO:$$(bzr revno):g" \
-          -e "s|DATE_COMPILED|$$(date -u)|g" \
-          __init__py > __init__.py
+          -e "s:MAJOR:$(PROJECT_MAJOR):g" \
+          -e "s:MINOR:$(PROJECT_MINOR):g" \
+          -e "s:REVISION:$(REVISION):g" \
+          -e "s|TODAY|$(TODAY)|g" \
+          meta > meta.py
 
 # end of file

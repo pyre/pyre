@@ -62,14 +62,14 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
         """
         # get the package
         import merlin
+        # grab a channel
+        channel = self.info
         # set the indentation
         indent = ' '*4
         # make some space
-        self.info.line()
-        # get the help header
-        for line in merlin._merlin_header.splitlines():
-            # and display it
-            self.info.line(line)
+        channel.line()
+        # get the help header and display it
+        channel.line(merlin.meta.header)
 
         # reset the pile of actions
         actions = []
@@ -82,16 +82,16 @@ class Merlin(pyre.plexus, family='merlin.components.plexus'):
             # figure out how much space we need
             width = max(len(name) for name, _ in actions)
             # introduce this section
-            self.info.line('commands:')
+            channel.line('commands:')
             # for each documented action
             for name, tip in actions:
                 # show the details
-                self.info.line('{}{:>{}}: {}'.format(indent, name, width, tip))
+                channel.line('{}{:>{}}: {}'.format(indent, name, width, tip))
             # some space
-            self.info.line()
+            channel.line()
 
         # flush
-        self.info.log()
+        channel.log()
         # and indicate success
         return 0
 

@@ -24,58 +24,46 @@ class About(merlin.spell, family='merlin.spells.about'):
 
     # class interface
     @merlin.export(tip="print the copyright note")
-    def copyright(self, plexus):
+    def copyright(self, plexus, **kwds):
         """
         Print the copyright note of the merlin package
         """
-        # leave some space
+        # make some space
         plexus.info.line()
-        # get the lines
-        for line in merlin._merlin_header.splitlines():
-            # and push them to the plexus info channel
-            plexus.info.line(line)
-        # flush
-        plexus.info.log()
+        # print the copyright note
+        plexus.info.log(merlin.meta.header)
         # all done
         return
 
 
     @merlin.export(tip="print out the acknowledgments")
-    def credits(self, plexus):
+    def credits(self, plexus, **kwds):
         """
         Print the acknowledgments
         """
         # make some space
         plexus.info.line()
-        # get the lines
-        for line in merlin._merlin_acknowledgments.splitlines():
-            # and push them to the plexus info channel
-            plexus.info.line(line)
-        # flush
-        plexus.info.log()
+        # print the acknowledgments
+        plexus.info.log(merlin.meta.acknowledgments)
         # all done
         return
 
 
     @merlin.export(tip="print out the license and terms of use")
-    def license(self, plexus):
+    def license(self, plexus, **kwds):
         """
         Print the license and terms of use of the merlin package
         """
         # make some space
         plexus.info.line()
-        # get the lines
-        for line in merlin._merlin_license.splitlines():
-            # and push them to the plexus info channel
-            plexus.info.line(line)
-        # flush
-        plexus.info.log()
+        # print the license
+        plexus.info.log(merlin.meta.license)
         # all done
         return
 
 
     @merlin.export(tip='dump the application configuration namespace')
-    def nfs(self, plexus):
+    def nfs(self, plexus, **kwds):
         """
         Dump the application configuration namespace
         """
@@ -88,18 +76,18 @@ class About(merlin.spell, family='merlin.spells.about'):
 
 
     @merlin.export(tip="print the version number")
-    def version(self, plexus):
+    def version(self, plexus, **kwds):
         """
         Print the version of the merlin package
         """
         # print the version number as simply as possible
-        print(merlin._merlin_version)
+        print(merlin.meta.version)
         # all done
         return
 
 
     @merlin.export(tip='dump the application virtual filesystem')
-    def vfs(self, plexus):
+    def vfs(self, plexus, **kwds):
         """
         Dump the application virtual filesystem
         """
@@ -108,9 +96,9 @@ class About(merlin.spell, family='merlin.spells.about'):
         # build the report
         report = '\n'.join(plexus.vfs[prefix].dump())
         # sign in
-        plexus.line('vfs: prefix={!r}'.format(prefix))
+        plexus.info.line('vfs: prefix={!r}'.format(prefix))
         # dump
-        plexus.log(report)
+        plexus.info.log(report)
         # all done
         return
 
