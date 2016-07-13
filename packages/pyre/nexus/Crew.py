@@ -170,7 +170,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # otherwise, try to
         try:
             # execute the task and collect its result
-            result = task(**kwds)
+            result = self.engage(task=task, **kwds)
         # if the task failure is recoverable
         except task.RecoverableError:
             # prepare a report with an error code for the task
@@ -204,6 +204,14 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
 
         # and go back to waiting for more
         return True
+
+
+    def engage(self, task, **kwds):
+        """
+        Carry out the task
+        """
+        # just do it
+        return task(**kwds)
 
 
     def report(self, channel, crewstatus, taskstatus, result, **kwds):
