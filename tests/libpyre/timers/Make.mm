@@ -19,7 +19,7 @@ TESTS = \
     timer
 
 PROJ_LCXX_LIBPATH = $(BLD_LIBDIR)
-PROJ_LIBRARIES = -lpyre
+PROJ_LIBRARIES = -lpyre -ljournal
 LIBRARIES = $(PROJ_LIBRARIES) $(EXTERNAL_LIBS)
 
 #--------------------------------------------------------------------------
