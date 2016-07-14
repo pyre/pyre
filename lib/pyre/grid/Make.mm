@@ -46,4 +46,14 @@ all: export
 
 export:: $(PROJ_DLL) export-headers export-package-headers export-libraries
 
+live: live-headers live-package-headers live-libraries
+	BLD_ACTION="live" $(MM) recurse
+
+# archiving support
+zipit:
+	cd $(EXPORT_ROOT); \
+        zip -r $(PYRE_ZIP) lib/lib$(PROJECT).$(EXT_SO); \
+        zip -r $(PYRE_ZIP) ${addprefix include/pyre/, $(EXPORT_HEADERS)} ; \
+        zip -r $(PYRE_ZIP) include/pyre/$(PACKAGE)
+
 # end of file
