@@ -17,8 +17,6 @@ include cuda/default.def
 include std-pythonmodule.def
 # use a tmp directory that knows the name of the module
 PROJ_TMPDIR = $(BLD_TMPDIR)/extensions/$(PROJECT)
-# point to the location of my libraries
-PROJ_LCXX_LIBPATH=$(BLD_LIBDIR)
 # link against these
 PROJ_LIBRARIES = -ljournal
 # the sources
