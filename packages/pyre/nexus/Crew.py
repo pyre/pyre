@@ -33,6 +33,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
     """
 
     # types
+    from .exceptions import RecoverableError
     from .CrewStatus import CrewStatus as crewcodes
     from .TaskStatus import TaskStatus as taskcodes
 
@@ -172,7 +173,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             # execute the task and collect its result
             result = self.engage(task=task, **kwds)
         # if the task failure is recoverable
-        except task.RecoverableError:
+        except self.RecoverableError:
             # prepare a report with an error code for the task
             taskstatus = self.taskcodes.failed
             # a clean bill of health for me
