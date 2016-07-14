@@ -13,7 +13,7 @@ include pyre.def
 # the package name
 PACKAGE = mpi
 # the tmp directory
-PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
+PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/lib/$(PACKAGE)
 # top level header
 EXPORT_HEADERS = \
     mpi.h \

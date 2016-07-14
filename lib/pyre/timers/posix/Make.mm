@@ -15,7 +15,7 @@ EXPORT_PKG_HEADERS = \
     Clock.h Clock.icc
 
 # the tmp directory
-PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
+PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
 
 # the standard targets
 all: export

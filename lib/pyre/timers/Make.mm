@@ -21,7 +21,7 @@ RECURSE_DIRS = \
 # libraries
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SAR)
 PROJ_DLL = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SO)
-PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
+PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
 # sources
 PROJ_SRCS = \
     Display.cc \

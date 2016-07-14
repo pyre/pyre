@@ -17,7 +17,7 @@ EXPORT_PKG_HEADERS = \
     BCD.h BCD.icc
 
 # the tmp directory
-PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
+PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
 
 # standard targets
 all: export

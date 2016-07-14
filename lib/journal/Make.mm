@@ -26,7 +26,7 @@ PROJ_SRCS = \
 # the products
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SAR)
 PROJ_DLL = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SO)
-PROJ_TMPDIR = $(BLD_TMPDIR)/lib/$(PROJECT)/$(PACKAGE)
+PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/lib/$(PACKAGE)
 
 # what to export
 # the library
