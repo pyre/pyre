@@ -9,18 +9,12 @@
 include pyre.def
 # my dibdirectories
 RECURSE_DIRS = \
-    pyre \
-    journal \
-
-# the optional packages
-# mpi
-MPI_DIR= # overriden by the the environment
-ifneq ($(strip $(MPI_DIR)),)
-  RECURSE_DIRS += mpi
-endif
+    algebra \
+    patterns \
+    timers \
 
 # use a tmp directory that knows what we are building in this directory structure
-PROJ_TMPDIR = $(BLD_TMPDIR)/lib
+PROJ_TMPDIR = $(BLD_TMPDIR)/lib/pyre
 
 # the standard targets
 all:
