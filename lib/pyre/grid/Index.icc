@@ -1,0 +1,116 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_grid_Index_icc)
+#error This header file contains implementation details of class pyre::grid::Index
+#endif
+
+
+// meta-methods
+template <typename repT> template <typename... argT>
+pyre::grid::Index<repT>::
+Index(argT... value) :
+    _index{value...}
+{}
+
+
+// interface
+// dimensionality of the index
+template <typename repT>
+constexpr auto
+pyre::grid::Index<repT>::
+size() const {
+    // easy enough
+    return _index.size();
+}
+
+// value access
+template <typename repT>
+auto &
+pyre::grid::Index<repT>::
+operator[] (size_type item) {
+    // bounds check
+#if defined(DEBUG_CHECK_BOUNDS)
+    if (item >= size()) {
+        // open a channel
+        pyre::journal::firewall_t firewall("pyre.grid.bounds");
+        // complain
+        firewall
+            << pyre::journal::at(__HERE__)
+            << "index error: out of range: " << item << " > " << size()-1
+            << pyre::journal::endl;
+
+    }
+#endif
+    // return the address of the indicated item
+    return _index[item];
+}
+
+
+template <typename repT>
+auto
+pyre::grid::Index<repT>::
+operator[] (size_type item) const {
+    // bounds check
+#if defined(DEBUG_CHECK_BOUNDS)
+    if (item >= size()) {
+        // open a channel
+        pyre::journal::firewall_t firewall("pyre.grid.bounds");
+        // complain
+        firewall
+            << pyre::journal::at(__HERE__)
+            << "index error: out of range: " << item << " > " << size()-1
+            << pyre::journal::endl;
+
+    }
+#endif
+    // look up the item value and return it
+    return _index[item];
+}
+
+
+// loops
+template <typename repT>
+auto
+pyre::grid::Index<repT>::
+begin() const {
+    // the array itself is the beginning
+    return _index.cbegin();
+}
+
+
+template <typename repT>
+auto
+pyre::grid::Index<repT>::
+end() const {
+    // compute the element "one past the end"
+    return _index.cend();
+}
+
+
+// operators on indices
+template <typename repT>
+auto
+pyre::grid::
+operator==(const Index<repT> & one, const Index<repT> & two) {
+    // delegate to the standard algorithm
+    return std::equal(one.begin(), one.end(), two.begin());
+}
+
+
+template <typename repT>
+auto
+pyre::grid::
+operator!=(const Index<repT> & one, const Index<repT> & two) {
+    // easy enough
+    return !(one == two);
+}
+
+
+// end of file

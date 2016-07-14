@@ -1,0 +1,46 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_grid_Direct_icc)
+#error This header file contains implementation details of class pyre::grid::Direct
+#endif
+
+
+// meta-methods
+pyre::grid::Direct::
+Direct(uri_type name, size_type size, offset_type offset, bool writable) :
+    _buffer {map(name, size, offset, writable)},
+    _size {size}
+{}
+
+
+pyre::grid::Direct::
+~Direct() {
+    // delegate
+    unmap(_buffer, _size);
+}
+
+
+// interface
+// accessors
+pyre::grid::Direct::size_type
+pyre::grid::Direct::
+size() const {
+    // easy enough
+    return _size;
+}
+
+void *
+pyre::grid::Direct::
+buffer() const {
+    // easy enough
+    return _buffer;
+}
+
+// end of file

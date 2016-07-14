@@ -7,9 +7,10 @@
 
 # project defaults
 include pyre.def
-# my dibdirectories
+# my subdirectories
 RECURSE_DIRS = \
     algebra \
+    grid \
     patterns \
     timers \
 

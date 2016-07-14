@@ -1,0 +1,109 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_grid_Slice_icc)
+#error This header file contains implementation details of class pyre::grid::Slice
+#endif
+
+
+// meta-methods
+template <typename tileT>
+pyre::grid::Slice<tileT>::
+Slice(const tile_type & tile, const layout_type & layout) :
+    _tile {tile},
+    _begin {}, // set everything to 0
+    _end { tile.shape() },
+    _layout {layout}
+{}
+
+template <typename tileT>
+pyre::grid::Slice<tileT>::
+Slice(const tile_type & tile,
+      const index_type & begin, const index_type & end,
+      const layout_type & layout) :
+    _tile {tile},
+    _begin { begin }, // set everything to 0
+    _end { end },
+    _layout {layout}
+{}
+
+
+// interface
+template <typename tileT>
+const auto &
+pyre::grid::Slice<tileT>::
+shape() const {
+    // ask the tile
+    return _tile.shape();
+}
+
+
+template <typename tileT>
+const auto &
+pyre::grid::Slice<tileT>::
+layout() const {
+    // ask the tile
+    return _layout;
+}
+
+
+template <typename tileT>
+auto
+pyre::grid::Slice<tileT>::
+offset(const index_type & index) const {
+    // ask the tile
+    return _tile.offset(index);
+}
+
+
+template <typename tileT>
+auto
+pyre::grid::Slice<tileT>::
+index(size_type offset) const {
+    // ask the tile
+    return _tile.index(offset);
+}
+
+
+template <typename tileT>
+auto
+pyre::grid::Slice<tileT>::
+operator[](const index_type & index) const {
+    // ask the tile
+    return offset(index);
+}
+
+
+template <typename tileT>
+auto
+pyre::grid::Slice<tileT>::
+operator[](size_type offset) const {
+    // ask the tile
+    return index(offset);
+}
+
+template <typename tileT>
+auto
+pyre::grid::Slice<tileT>::
+begin() const {
+    // easy enough...
+    return iterator_type{ _begin, _end, _layout };
+}
+
+
+template <typename tileT>
+auto
+pyre::grid::Slice<tileT>::
+end() const {
+    // easy enough...
+    return iterator_type{ _end, _end, _layout };
+}
+
+
+// end of file

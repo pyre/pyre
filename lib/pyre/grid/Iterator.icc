@@ -1,0 +1,104 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_grid_Iterator_icc)
+#error This header file contains implementation details of class pyre::grid::Iterator
+#endif
+
+
+// meta-methods
+template <typename indexT, typename layoutT>
+pyre::grid::Iterator<indexT, layoutT>::
+Iterator(const index_type & begin, const index_type & end, const layout_type & layout) :
+    _current(begin),
+    _begin(begin),
+    _end(end),
+    _layout(layout)
+{}
+
+
+// interface
+// access to the current value
+template <typename indexT, typename layoutT>
+const typename pyre::grid::Iterator<indexT, layoutT>::index_type &
+pyre::grid::Iterator<indexT, layoutT>::
+operator* () const {
+    // return the current value
+    return _current;
+}
+
+
+// value update
+template <typename indexT, typename layoutT>
+pyre::grid::Iterator<indexT, layoutT> &
+pyre::grid::Iterator<indexT, layoutT>::
+operator++ () {
+    // pull the indices in layout order
+    for (auto dim : _layout) {
+        // get the associated limit
+        auto limit = _end[dim];
+        // get my current value for this component and increment it
+        auto value = ++(_current[dim]);
+        // if the value didn't overflow
+        if (value < limit) {
+            // save it
+            _current[dim] = value;
+            // all done
+            return *this;
+        }
+        // otherwise, we overflowed; set this component to its starting value and grab the next one
+        _current[dim] = _begin[dim];
+    }
+
+    // if we get this far, every component has overflowed
+    _current = _end;
+
+    // all done
+    return *this;
+}
+
+
+// access to my limits
+template <typename indexT, typename layoutT>
+const typename pyre::grid::Iterator<indexT, layoutT>::index_type &
+pyre::grid::Iterator<indexT, layoutT>::
+begin() const {
+    // easy...
+    return _begin;
+}
+
+template <typename indexT, typename layoutT>
+const typename pyre::grid::Iterator<indexT, layoutT>::index_type &
+pyre::grid::Iterator<indexT, layoutT>::
+end() const {
+    // easy...
+    return _end;
+}
+
+
+// operators on indices
+template <typename indexT, typename layoutT>
+auto
+pyre::grid::
+operator==(const Iterator<indexT, layoutT> & one, const Iterator<indexT, layoutT> & two) {
+    // delegate to the standard algorithm
+    return std::equal((*one).begin(), (*one).end(), (*two).begin());
+}
+
+
+template <typename indexT, typename layoutT>
+auto
+pyre::grid::
+operator!=(const Iterator<indexT, layoutT> & one, const Iterator<indexT, layoutT> & two) {
+    // easy enough
+    return !(one == two);
+}
+
+
+// end of file

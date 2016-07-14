@@ -1,0 +1,72 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_grid_Layout_icc)
+#error This header file contains implementation details of class pyre::grid::Layout
+#endif
+
+
+// meta-methods
+template <typename repT> template <typename... argT>
+pyre::grid::Layout<repT>::
+Layout(argT... value) :
+    _layout{value...}
+{}
+
+
+// interface
+// dimensionality of the index
+template <typename repT>
+constexpr auto
+pyre::grid::Layout<repT>::
+size() const {
+    // easy enough
+    return _layout.size();
+}
+
+template <typename repT>
+auto
+pyre::grid::Layout<repT>::
+operator[] (size_type item) const {
+    // bounds check
+#if defined(DEBUG_CHECK_BOUNDS)
+    if (item >= size()) {
+        // open a channel
+        pyre::journal::firewall_t firewall("pyre.grid.bounds");
+        // complain
+        firewall
+            << pyre::journal::at(__HERE__)
+            << "index error: out of range: " << item << " > " << size()-1
+            << pyre::journal::endl;
+
+    }
+#endif
+    // look up the item value and return it
+    return _layout[item];
+}
+
+// loops
+template <typename repT>
+auto
+pyre::grid::Layout<repT>::
+begin() const {
+    // the array itself is the beginning
+    return _layout.cbegin();
+}
+
+
+template <typename repT>
+auto
+pyre::grid::Layout<repT>::
+end() const {
+    // compute the element "one past the end"
+    return _layout.cend();
+}
+
+// end of file

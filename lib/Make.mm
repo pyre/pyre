@@ -7,7 +7,7 @@
 
 # project defaults
 include pyre.def
-# my dibdirectories
+# my subdirectories
 RECURSE_DIRS = \
     pyre \
     journal \
