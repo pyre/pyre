@@ -77,22 +77,27 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         Compute how may recruits are needed to take the team to full strength
         """
         # get the current team size
-        active = len(self.active)
+        current = len(self.registered) + len(self.active)
         # get my pool size limit
         pool = self.size
         # figure out how much work is left to do
         tasks = len(self.workplan)
 
         # compute the number of vacancies
-        return min(tasks, pool) - active
+        return min(tasks, pool) - current
 
 
     # meta-methods
-    def __init__(self, **kwds):
+    def __init__(self, crew=None, **kwds):
         # chain up
         super().__init__(**kwds)
 
-        # initialize my crew records
+        # if i were given a non-trivial crew factory
+        if crew is not None:
+            # attach it
+            self.crew = crew
+
+        # initialize my crew registries
         self.registered = set()
         self.active = set()
         self.retired = set()
