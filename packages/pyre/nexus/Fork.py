@@ -32,7 +32,7 @@ class Fork(pyre.component, family='pyre.nexus.recruiters.fork', implements=Recru
         # recruit the right number of team members
         for _ in range(vacancies):
             # deploy them and add them to the team
-            yield self.deploy(team)
+            yield self.deploy(team, **kwds)
         # all done
         return
 
