@@ -173,13 +173,13 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             # execute the task and collect its result
             result = self.engage(task=task, **kwds)
         # if the task failure is recoverable
-        except self.RecoverableError:
+        except self.RecoverableError as error:
             # prepare a report with an error code for the task
             taskstatus = self.taskcodes.failed
             # a clean bill of health for me
             crewstatus = self.crewcodes.healthy
             # and a null result
-            result = None
+            result = error
         # if anything else goes wrong
         except Exception as error:
             # prepare a report with an error code for the task
@@ -187,7 +187,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             # mark me as damaged
             crewstatus = self.crewcodes.damaged
             # and a null result
-            result = None
+            result = error
         # if all goes well
         else:
             # indicate task success
