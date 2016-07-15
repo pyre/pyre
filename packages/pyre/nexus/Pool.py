@@ -50,6 +50,7 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         channel.line('  current outstanding tasks: {}'.format(len(self.workplan)))
         channel.line('  max team size: {}'.format(self.size))
         channel.line('  current vacancies: {}'.format(self.vacancies()))
+        channel.line('  registered crew members: {}'.format(len(self.registered)))
         channel.line('  active crew members: {}'.format(len(self.active)))
 
         # add the new tasks to the workplan
@@ -62,6 +63,7 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         self.recruit()
         # tell me
         channel.line('recruited new crew member')
+        channel.line('  registered crew members: {}'.format(len(self.registered)))
         channel.line('  active crew members: {}'.format(len(self.active)))
 
         # flush
@@ -110,12 +112,12 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
 
 
     # implementation details
-    def recruit(self):
+    def recruit(self, **kwds):
         """
         Assemble the team
         """
         # get my recruiter to recruit some workers
-        for crew in self.recruiter.recruit(team=self):
+        for crew in self.recruiter.recruit(team=self, **kwds):
             # register the crew member
             self.registered.add(crew)
         # all done
