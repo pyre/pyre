@@ -9,8 +9,8 @@
 include pyre.def
 # my subdirectories
 RECURSE_DIRS = \
-    pyre \
     journal \
+    pyre \
 
 # the optional packages
 # mpi
