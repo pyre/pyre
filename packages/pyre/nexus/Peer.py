@@ -102,6 +102,8 @@ class Peer(pyre.component, family='pyre.nexus.peers.peer', implements=Asynchrono
         import journal
         self.info = journal.info(name=name)
         self.debug = journal.debug(name=name)
+        self.warning = journal.warning(name=name)
+        self.error = journal.error(name=name)
 
         # all done
         return

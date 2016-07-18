@@ -102,13 +102,21 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # first, let's figure out what to do with the task; if it failed due to some temporary
         # condition
         if taskstatus is self.taskcodes.failed:
+            # tell me
+            self.reportRecoverableError(team=team, task=task, error=result)
             # put the task back in the workplan
             team.workplan.add(task)
 
-        # now, let's figure out what to do with the worker; if the process is not damaged
-        if memberstatus is not self.taskcodes.damaged:
-            # put the worker back in the queue
+        # now, let's figure out what to do with me; if i'm healthy
+        if memberstatus is self.crewcodes.healthy:
+            # put me back in the work queue
             team.schedule(crew=self)
+        # otherwise
+        else:
+            # tell me
+            self.reportUnrecoverableError(team=team, task=task, error=result)
+            # dismiss me
+            team.dismiss(crew=self)
 
         # all done
         return False
@@ -126,6 +134,26 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.debug.log('{me.pid}: dismissed at {me.finish:.3f}'.format(me=self))
         # all done
         return self
+
+
+    def reportRecoverableError(self, team, task, error):
+        """
+        Report a task failure that can be reasonably expected to be temporary
+        """
+        # show me
+        self.info.log('{me.pid}: recoverable error: {error}'.format(me=self, error=error))
+        # all done
+        return
+
+
+    def reportUnrecoverableError(self, team, task, error):
+        """
+        Report a permanent task failure
+        """
+        # show me
+        self.info.log('{me.pid}: unrecoverable error: {error}'.format(me=self, error=error))
+        # all done
+        return
 
 
     # interface - worker side
@@ -178,7 +206,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             taskstatus = self.taskcodes.failed
             # a clean bill of health for me
             crewstatus = self.crewcodes.healthy
-            # and a null result
+            # and attach the error description
             result = error
         # if anything else goes wrong
         except Exception as error:
@@ -186,7 +214,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             taskstatus = self.taskcodes.aborted
             # mark me as damaged
             crewstatus = self.crewcodes.damaged
-            # and a null result
+            # and attach the error description
             result = error
         # if all goes well
         else:
