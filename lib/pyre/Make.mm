@@ -10,7 +10,7 @@ include pyre.def
 # my subdirectories
 RECURSE_DIRS = \
     algebra \
-    grid \
+    geometry \
     patterns \
     timers \
 

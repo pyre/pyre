@@ -7,14 +7,14 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Slice_icc)
-#error This header file contains implementation details of class pyre::grid::Slice
+#if !defined(pyre_geometry_Slice_icc)
+#error This header file contains implementation details of class pyre::geometry::Slice
 #endif
 
 
 // meta-methods
 template <typename tileT>
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 Slice(const tile_type & tile, const layout_type & layout) :
     _tile {tile},
     _begin {}, // set everything to 0
@@ -23,7 +23,7 @@ Slice(const tile_type & tile, const layout_type & layout) :
 {}
 
 template <typename tileT>
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 Slice(const tile_type & tile,
       const index_type & begin, const index_type & end,
       const layout_type & layout) :
@@ -37,7 +37,7 @@ Slice(const tile_type & tile,
 // interface
 template <typename tileT>
 const auto &
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 shape() const {
     // ask the tile
     return _tile.shape();
@@ -46,7 +46,7 @@ shape() const {
 
 template <typename tileT>
 const auto &
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 layout() const {
     // ask the tile
     return _layout;
@@ -55,7 +55,7 @@ layout() const {
 
 template <typename tileT>
 auto
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 offset(const index_type & index) const {
     // ask the tile
     return _tile.offset(index);
@@ -64,7 +64,7 @@ offset(const index_type & index) const {
 
 template <typename tileT>
 auto
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 index(size_type offset) const {
     // ask the tile
     return _tile.index(offset);
@@ -73,7 +73,7 @@ index(size_type offset) const {
 
 template <typename tileT>
 auto
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 operator[](const index_type & index) const {
     // ask the tile
     return offset(index);
@@ -82,7 +82,7 @@ operator[](const index_type & index) const {
 
 template <typename tileT>
 auto
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 operator[](size_type offset) const {
     // ask the tile
     return index(offset);
@@ -90,7 +90,7 @@ operator[](size_type offset) const {
 
 template <typename tileT>
 auto
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 begin() const {
     // easy enough...
     return iterator_type{ _begin, _end, _layout };
@@ -99,7 +99,7 @@ begin() const {
 
 template <typename tileT>
 auto
-pyre::grid::Slice<tileT>::
+pyre::geometry::Slice<tileT>::
 end() const {
     // easy enough...
     return iterator_type{ _end, _end, _layout };

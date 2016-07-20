@@ -7,13 +7,13 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Index_h)
-#define pyre_grid_Index_h
+#if !defined(pyre_geometry_Index_h)
+#define pyre_geometry_Index_h
 
 
 // declaration
 template <typename repT>
-class pyre::grid::Index {
+class pyre::geometry::Index {
     // types
 public:
     // the container of the index values

@@ -10,7 +10,7 @@ PROJECT = pyre
 
 RECURSE_DIRS = \
     algebra \
-    grid \
+    geometry \
     journal \
     timers \
 

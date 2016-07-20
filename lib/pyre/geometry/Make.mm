@@ -11,7 +11,7 @@ include shared/target.def
 # project defaults
 include pyre.def
 # the name of the package
-PACKAGE = grid
+PACKAGE = geometry
 
 # the products
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SAR)
@@ -29,7 +29,7 @@ PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE)
 # the library
 EXPORT_LIBS = $(PROJ_DLL)
 EXPORT_HEADERS = \
-    grid.h \
+    geometry.h \
 # the package headers
 EXPORT_PKG_HEADERS = \
     Direct.h Direct.icc \

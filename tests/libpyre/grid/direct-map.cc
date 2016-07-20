@@ -12,7 +12,7 @@
 #include <portinfo>
 
 // support
-#include <pyre/grid.h>
+#include <pyre/geometry.h>
 
 // entry point
 int main() {
@@ -23,12 +23,12 @@ int main() {
     // fix the rep
     typedef std::array<int, 3> rep_t;
     // build the parts
-    typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::layout_t<rep_t> layout_t;
-    typedef pyre::grid::tile_t<index_t, layout_t> tile_t;
+    typedef pyre::geometry::index_t<rep_t> index_t;
+    typedef pyre::geometry::layout_t<rep_t> layout_t;
+    typedef pyre::geometry::tile_t<index_t, layout_t> tile_t;
 
     // the name of the file
-    pyre::grid::uri_t name {"grid.dat"};
+    pyre::geometry::uri_t name {"grid.dat"};
     // make a layout
     tile_t::layout_type layout {2, 1, 0};
     // make a shape
@@ -40,11 +40,11 @@ int main() {
     size_t size = sizeof(pixel_t) * tile.size();
 
     // turn on the info channel
-    // pyre::journal::debug_t("pyre.grid.direct").activate();
+    // pyre::journal::debug_t("pyre.geometry.direct").activate();
     // map a buffer over the file
-    void * buffer = pyre::grid::direct_t::map("grid.dat", size, 0, true);
+    void * buffer = pyre::geometry::direct_t::map("grid.dat", size, 0, true);
     // and undo it
-    pyre::grid::direct_t::unmap(buffer, size);
+    pyre::geometry::direct_t::unmap(buffer, size);
 
     // all done
     return 0;

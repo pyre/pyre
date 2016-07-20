@@ -14,19 +14,19 @@
 // portability
 #include <portinfo>
 // support
-#include <pyre/grid.h>
+#include <pyre/geometry.h>
 
 // entry point
 int main() {
     // fix the representation
     typedef std::array<int, 4> rep_t;
     // alias
-    typedef pyre::grid::layout_t<rep_t> layout_t;
+    typedef pyre::geometry::layout_t<rep_t> layout_t;
     // make the interleaving
     layout_t layout = {0, 1, 2, 3};
 
     // make a firewall
-    pyre::journal::firewall_t channel("pyre.grid");
+    pyre::journal::firewall_t channel("pyre.geometry");
 
     // check the values one by one
     for (layout_t::size_type i=0; i < layout.size(); ++i) {

@@ -7,13 +7,13 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Slice_h)
-#define pyre_grid_Slice_h
+#if !defined(pyre_geometry_Slice_h)
+#define pyre_geometry_Slice_h
 
 
 // declaration
 template <typename tileT>
-class pyre::grid::Slice {
+class pyre::geometry::Slice {
     // types
 public:
     // for sizing things

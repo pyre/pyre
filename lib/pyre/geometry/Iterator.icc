@@ -7,14 +7,14 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Iterator_icc)
-#error This header file contains implementation details of class pyre::grid::Iterator
+#if !defined(pyre_geometry_Iterator_icc)
+#error This header file contains implementation details of class pyre::geometry::Iterator
 #endif
 
 
 // meta-methods
 template <typename indexT, typename layoutT>
-pyre::grid::Iterator<indexT, layoutT>::
+pyre::geometry::Iterator<indexT, layoutT>::
 Iterator(const index_type & begin, const index_type & end, const layout_type & layout) :
     _current(begin),
     _begin(begin),
@@ -26,8 +26,8 @@ Iterator(const index_type & begin, const index_type & end, const layout_type & l
 // interface
 // access to the current value
 template <typename indexT, typename layoutT>
-const typename pyre::grid::Iterator<indexT, layoutT>::index_type &
-pyre::grid::Iterator<indexT, layoutT>::
+const typename pyre::geometry::Iterator<indexT, layoutT>::index_type &
+pyre::geometry::Iterator<indexT, layoutT>::
 operator* () const {
     // return the current value
     return _current;
@@ -36,8 +36,8 @@ operator* () const {
 
 // value update
 template <typename indexT, typename layoutT>
-pyre::grid::Iterator<indexT, layoutT> &
-pyre::grid::Iterator<indexT, layoutT>::
+pyre::geometry::Iterator<indexT, layoutT> &
+pyre::geometry::Iterator<indexT, layoutT>::
 operator++ () {
     // pull the indices in layout order
     for (auto dim : _layout) {
@@ -66,16 +66,16 @@ operator++ () {
 
 // access to my limits
 template <typename indexT, typename layoutT>
-const typename pyre::grid::Iterator<indexT, layoutT>::index_type &
-pyre::grid::Iterator<indexT, layoutT>::
+const typename pyre::geometry::Iterator<indexT, layoutT>::index_type &
+pyre::geometry::Iterator<indexT, layoutT>::
 begin() const {
     // easy...
     return _begin;
 }
 
 template <typename indexT, typename layoutT>
-const typename pyre::grid::Iterator<indexT, layoutT>::index_type &
-pyre::grid::Iterator<indexT, layoutT>::
+const typename pyre::geometry::Iterator<indexT, layoutT>::index_type &
+pyre::geometry::Iterator<indexT, layoutT>::
 end() const {
     // easy...
     return _end;
@@ -85,7 +85,7 @@ end() const {
 // operators on indices
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::
+pyre::geometry::
 operator==(const Iterator<indexT, layoutT> & one, const Iterator<indexT, layoutT> & two) {
     // delegate to the standard algorithm
     return std::equal((*one).begin(), (*one).end(), (*two).begin());
@@ -94,7 +94,7 @@ operator==(const Iterator<indexT, layoutT> & one, const Iterator<indexT, layoutT
 
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::
+pyre::geometry::
 operator!=(const Iterator<indexT, layoutT> & one, const Iterator<indexT, layoutT> & two) {
     // easy enough
     return !(one == two);

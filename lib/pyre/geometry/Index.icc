@@ -7,14 +7,14 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Index_icc)
-#error This header file contains implementation details of class pyre::grid::Index
+#if !defined(pyre_geometry_Index_icc)
+#error This header file contains implementation details of class pyre::geometry::Index
 #endif
 
 
 // meta-methods
 template <typename repT> template <typename... argT>
-pyre::grid::Index<repT>::
+pyre::geometry::Index<repT>::
 Index(argT... value) :
     _index{value...}
 {}
@@ -24,7 +24,7 @@ Index(argT... value) :
 // dimensionality of the index
 template <typename repT>
 constexpr auto
-pyre::grid::Index<repT>::
+pyre::geometry::Index<repT>::
 size() const {
     // easy enough
     return _index.size();
@@ -33,13 +33,13 @@ size() const {
 // value access
 template <typename repT>
 auto &
-pyre::grid::Index<repT>::
+pyre::geometry::Index<repT>::
 operator[] (size_type item) {
     // bounds check
 #if defined(DEBUG_CHECK_BOUNDS)
     if (item >= size()) {
         // open a channel
-        pyre::journal::firewall_t firewall("pyre.grid.bounds");
+        pyre::journal::firewall_t firewall("pyre.geometry.bounds");
         // complain
         firewall
             << pyre::journal::at(__HERE__)
@@ -55,13 +55,13 @@ operator[] (size_type item) {
 
 template <typename repT>
 auto
-pyre::grid::Index<repT>::
+pyre::geometry::Index<repT>::
 operator[] (size_type item) const {
     // bounds check
 #if defined(DEBUG_CHECK_BOUNDS)
     if (item >= size()) {
         // open a channel
-        pyre::journal::firewall_t firewall("pyre.grid.bounds");
+        pyre::journal::firewall_t firewall("pyre.geometry.bounds");
         // complain
         firewall
             << pyre::journal::at(__HERE__)
@@ -78,7 +78,7 @@ operator[] (size_type item) const {
 // loops
 template <typename repT>
 auto
-pyre::grid::Index<repT>::
+pyre::geometry::Index<repT>::
 begin() const {
     // the array itself is the beginning
     return _index.cbegin();
@@ -87,7 +87,7 @@ begin() const {
 
 template <typename repT>
 auto
-pyre::grid::Index<repT>::
+pyre::geometry::Index<repT>::
 end() const {
     // compute the element "one past the end"
     return _index.cend();
@@ -97,7 +97,7 @@ end() const {
 // operators on indices
 template <typename repT>
 auto
-pyre::grid::
+pyre::geometry::
 operator==(const Index<repT> & one, const Index<repT> & two) {
     // delegate to the standard algorithm
     return std::equal(one.begin(), one.end(), two.begin());
@@ -106,7 +106,7 @@ operator==(const Index<repT> & one, const Index<repT> & two) {
 
 template <typename repT>
 auto
-pyre::grid::
+pyre::geometry::
 operator!=(const Index<repT> & one, const Index<repT> & two) {
     // easy enough
     return !(one == two);

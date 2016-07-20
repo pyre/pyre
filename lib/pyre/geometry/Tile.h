@@ -7,12 +7,12 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Tile_h)
-#define pyre_grid_Tile_h
+#if !defined(pyre_geometry_Tile_h)
+#define pyre_geometry_Tile_h
 
 // declaration
 template <typename indexT, typename layoutT>
-class pyre::grid::Tile {
+class pyre::geometry::Tile {
     // types
 public:
     // for sizing things

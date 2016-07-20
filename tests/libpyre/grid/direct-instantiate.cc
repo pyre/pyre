@@ -12,7 +12,7 @@
 #include <portinfo>
 
 // support
-#include <pyre/grid.h>
+#include <pyre/geometry.h>
 
 // entry point
 int main() {
@@ -23,12 +23,12 @@ int main() {
     // fix the rep
     typedef std::array<int, 3> rep_t;
     // build the parts
-    typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::layout_t<rep_t> layout_t;
-    typedef pyre::grid::tile_t<index_t, layout_t> tile_t;
+    typedef pyre::geometry::index_t<rep_t> index_t;
+    typedef pyre::geometry::layout_t<rep_t> layout_t;
+    typedef pyre::geometry::tile_t<index_t, layout_t> tile_t;
 
     // the name of the file
-    pyre::grid::uri_t name {"grid.dat"};
+    pyre::geometry::uri_t name {"grid.dat"};
     // make a layout
     tile_t::layout_type layout {2, 1, 0};
     // make a shape
@@ -41,14 +41,14 @@ int main() {
 
     // map the file
     // turn on the info channel
-    // pyre::journal::debug_t("pyre.grid.direct").activate();
+    // pyre::journal::debug_t("pyre.geometry.direct").activate();
     // map a buffer over the file; it gets unmapped on destruction
-    pyre::grid::direct_t map {name};
+    pyre::geometry::direct_t map {name};
 
     // ask the map for its size and compare against our calculation
     if (map.size() != size) {
         // make a channel
-        pyre::journal::firewall_t firewall("pyre.grid.direct");
+        pyre::journal::firewall_t firewall("pyre.geometry.direct");
         // and complain
             firewall
                 << pyre::journal::at(__HERE__)

@@ -14,16 +14,16 @@
 // portability
 #include <portinfo>
 // support
-#include <pyre/grid.h>
+#include <pyre/geometry.h>
 
 // entry point
 int main() {
     // fix the rep
     typedef std::array<int, 2> rep_t;
     // alias index; exercise the compiler's ability to deduce the layout
-    typedef pyre::grid::index_t<rep_t> index_t;
+    typedef pyre::geometry::index_t<rep_t> index_t;
     // create a shortcut to my target iterator type
-    typedef pyre::grid::iterator_t<index_t> iterator_t;
+    typedef pyre::geometry::iterator_t<index_t> iterator_t;
 
     // make a layout
     iterator_t::layout_type layout {1, 0};
@@ -34,7 +34,7 @@ int main() {
     iterator_t iterator {begin, end, layout};
 
     // make a channel
-    pyre::journal::debug_t channel("pyre.grid");
+    pyre::journal::debug_t channel("pyre.geometry");
     // sign in
     channel << pyre::journal::at(__HERE__);
     // loop until the iterator reaches the end

@@ -14,16 +14,16 @@
 // portability
 #include <portinfo>
 // support
-#include <pyre/grid.h>
+#include <pyre/geometry.h>
 
 // entry point
 int main() {
     // fix the rep
     typedef std::array<int, 4> rep_t;
     // build the parts
-    typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::layout_t<rep_t> layout_t;
-    typedef pyre::grid::tile_t<index_t, layout_t> tile_t;
+    typedef pyre::geometry::index_t<rep_t> index_t;
+    typedef pyre::geometry::layout_t<rep_t> layout_t;
+    typedef pyre::geometry::tile_t<index_t, layout_t> tile_t;
 
     // make a layout
     tile_t::layout_type layout {3, 2, 1, 0};
@@ -33,7 +33,7 @@ int main() {
     tile_t tile {shape, layout};
 
     // make a channel
-    pyre::journal::debug_t channel("pyre.grid");
+    pyre::journal::debug_t channel("pyre.geometry");
 
     // display information about the tile layout
     channel << pyre::journal::at(__HERE__);

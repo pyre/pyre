@@ -7,13 +7,13 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Iterator_h)
-#define pyre_grid_Iterator_h
+#if !defined(pyre_geometry_Iterator_h)
+#define pyre_geometry_Iterator_h
 
 
 // declaration
 template <typename indexT, typename layoutT>
-class pyre::grid::Iterator {
+class pyre::geometry::Iterator {
     // types
 public:
     // my parts

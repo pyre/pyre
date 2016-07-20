@@ -9,7 +9,7 @@
 #include <portinfo>
 
 // support
-#include <pyre/grid.h>
+#include <pyre/geometry.h>
 
 // entry point
 int main() {
@@ -18,22 +18,22 @@ int main() {
     // declare the type of a pixel
     typedef double pixel_t;
     // the name of the file
-    pyre::grid::string_t name {"grid.dat"};
+    pyre::geometry::string_t name {"grid.dat"};
     // specify the shape of the data
-    pyre::grid::shape_t shape {1*k, 3*k, 3};
+    pyre::geometry::shape_t shape {1*k, 3*k, 3};
     // make a tile
-    pyre::grid::tile_t tile {shape, pyre::grid::layout::pixel};
+    pyre::geometry::tile_t tile {shape, pyre::geometry::layout::pixel};
 
     // compute the size of the payload
     size_t size = sizeof(pixel_t) * tile.pixels();
 
     // map the file
     // turn on the info channel
-    pyre::journal::debug_t("pyre.grid.direct").activate();
+    pyre::journal::debug_t("pyre.geometry.direct").activate();
     // map a buffer over the file; it gets unmapped on destruction
-    pyre::grid::direct_t map {name, size};
+    pyre::geometry::direct_t map {name, size};
     // and make a copy
-    pyre::grid::direct_t clone {map};
+    pyre::geometry::direct_t clone {map};
 
     // all done
     return 0;

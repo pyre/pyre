@@ -6,11 +6,11 @@
 // (c) 1998-2016 all rights reserved
 
 // code guard
-#if !defined(pyre_grid_h)
-#define pyre_grid_h
+#if !defined(pyre_geometry_h)
+#define pyre_geometry_h
 
 // support
-#include "grid/public.h"
+#include "geometry/public.h"
 
 #endif
 

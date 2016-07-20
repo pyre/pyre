@@ -5,7 +5,7 @@
 // (c) 1998-2016 all rights reserved
 //
 
-// access the low level interface to create a file that can fit an grid of a specified size
+// access the low level interface to create a file that can fit a grid of a specified size
 //
 // N.B.: this test leaves behind a file named "grid.dat" that is used by the other tests; it
 // must be cleaned up after the tests are run
@@ -14,7 +14,7 @@
 #include <portinfo>
 
 // support
-#include <pyre/grid.h>
+#include <pyre/geometry.h>
 
 // entry point
 int main() {
@@ -25,12 +25,12 @@ int main() {
     // fix the rep
     typedef std::array<int, 3> rep_t;
     // build the parts
-    typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::layout_t<rep_t> layout_t;
-    typedef pyre::grid::tile_t<index_t, layout_t> tile_t;
+    typedef pyre::geometry::index_t<rep_t> index_t;
+    typedef pyre::geometry::layout_t<rep_t> layout_t;
+    typedef pyre::geometry::tile_t<index_t, layout_t> tile_t;
 
     // the name of the file
-    pyre::grid::uri_t name {"grid.dat"};
+    pyre::geometry::uri_t name {"grid.dat"};
     // make a layout
     tile_t::layout_type layout {2, 1, 0};
     // make a shape
@@ -39,9 +39,9 @@ int main() {
     tile_t tile {shape, layout};
 
     // turn on the info channel
-    // pyre::journal::debug_t("pyre.grid.direct").activate();
+    // pyre::journal::debug_t("pyre.geometry.direct").activate();
     // create a file that can fit the payload
-    pyre::grid::direct_t::create(name, sizeof(pixel_t)*tile.size());
+    pyre::geometry::direct_t::create(name, sizeof(pixel_t)*tile.size());
 
     // all done
     return 0;

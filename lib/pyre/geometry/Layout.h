@@ -7,13 +7,13 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Layout_h)
-#define pyre_grid_Layout_h
+#if !defined(pyre_geometry_Layout_h)
+#define pyre_geometry_Layout_h
 
 
 // declaration
 template <typename repT>
-class pyre::grid::Layout {
+class pyre::geometry::Layout {
     // types
 public:
     // the container with the index order

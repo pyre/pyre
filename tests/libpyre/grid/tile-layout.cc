@@ -14,16 +14,16 @@
 // portability
 #include <portinfo>
 // support
-#include <pyre/grid.h>
+#include <pyre/geometry.h>
 
 // entry point
 int main() {
     // fix the rep
     typedef std::array<int, 4> rep_t;
     // build the parts
-    typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::layout_t<rep_t> layout_t;
-    typedef pyre::grid::tile_t<index_t, layout_t> tile_t;
+    typedef pyre::geometry::index_t<rep_t> index_t;
+    typedef pyre::geometry::layout_t<rep_t> layout_t;
+    typedef pyre::geometry::tile_t<index_t, layout_t> tile_t;
 
     // make a layout
     tile_t::layout_type layout {3, 2, 1, 0};
@@ -42,7 +42,7 @@ int main() {
         // verify it has the expected value
         if (offset != pixel) {
             // open a channel
-            pyre::journal::firewall_t firewall("pyre.grid.index");
+            pyre::journal::firewall_t firewall("pyre.geometry.index");
             // complain
             firewall
                 << pyre::journal::at(__HERE__)
@@ -57,7 +57,7 @@ int main() {
         // and verify it is identical to our loop index
         if (refl != index) {
             // open a channel
-            pyre::journal::firewall_t firewall("pyre.grid.index");
+            pyre::journal::firewall_t firewall("pyre.geometry.index");
             // complain
             firewall
                 << pyre::journal::at(__HERE__)

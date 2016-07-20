@@ -7,8 +7,8 @@
 //
 
 // code guard
-#if !defined(pyre_grid_public_h)
-#define pyre_grid_public_h
+#if !defined(pyre_geometry_public_h)
+#define pyre_geometry_public_h
 
 // externals
 #include <stdexcept>
@@ -19,7 +19,7 @@
 
 // forward declarations
 namespace pyre {
-    namespace grid {
+    namespace geometry {
         // local type aliases
         // for filenames
         typedef std::string uri_t;
@@ -27,9 +27,9 @@ namespace pyre {
         typedef off_t offset_t;
         typedef std::size_t size_t;
 
-        // grid packing order
+        //.geometry.packing order
         template <typename repT> class Layout;
-        // grid indices
+        //.geometry.indices
         template <typename repT> class Index;
         // iterators over index ranges
         template <typename indexT, typename layoutT> class Iterator;
@@ -70,7 +70,7 @@ namespace pyre {
 
 // namespace additions
 namespace pyre {
-    namespace grid {
+    namespace geometry {
         // type aliases
         template <typename repT> using index_t = Index<repT>;
         template <typename repT> using layout_t = Layout<repT>;
@@ -90,34 +90,34 @@ namespace pyre {
 
 // the implementations
 // layout
-#define pyre_grid_Layout_icc
+#define pyre_geometry_Layout_icc
 #include "Layout.icc"
-#undef pyre_grid_Layout_icc
+#undef pyre_geometry_Layout_icc
 
 // index
-#define pyre_grid_Index_icc
+#define pyre_geometry_Index_icc
 #include "Index.icc"
-#undef pyre_grid_Index_icc
+#undef pyre_geometry_Index_icc
 
 // iterator
-#define pyre_grid_Iterator_icc
+#define pyre_geometry_Iterator_icc
 #include "Iterator.icc"
-#undef pyre_grid_Iterator_icc
+#undef pyre_geometry_Iterator_icc
 
 // tile
-#define pyre_grid_Tile_icc
+#define pyre_geometry_Tile_icc
 #include "Tile.icc"
-#undef pyre_grid_Tile_icc
+#undef pyre_geometry_Tile_icc
 
 // slice
-#define pyre_grid_Slice_icc
+#define pyre_geometry_Slice_icc
 #include "Slice.icc"
-#undef pyre_grid_Slice_icc
+#undef pyre_geometry_Slice_icc
 
 // slice
-#define pyre_grid_Direct_icc
+#define pyre_geometry_Direct_icc
 #include "Direct.icc"
-#undef pyre_grid_Direct_icc
+#undef pyre_geometry_Direct_icc
 
 #endif
 

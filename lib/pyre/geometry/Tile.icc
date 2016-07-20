@@ -7,14 +7,14 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Tile_icc)
-#error This header file contains implementation details of class pyre::grid::Tile
+#if !defined(pyre_geometry_Tile_icc)
+#error This header file contains implementation details of class pyre::geometry::Tile
 #endif
 
 
 // meta-methods
 template <typename indexT, typename layoutT>
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 Tile(index_type shape, layout_type layout) :
     _shape{shape},
     _layout{layout}
@@ -25,7 +25,7 @@ Tile(index_type shape, layout_type layout) :
 // accessors
 template <typename indexT, typename layoutT>
 const auto &
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 shape() const {
     // easy enough...
     return _shape;
@@ -33,7 +33,7 @@ shape() const {
 
 template <typename indexT, typename layoutT>
 const auto &
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 layout() const {
     // easy enough...
     return _layout;
@@ -42,7 +42,7 @@ layout() const {
 // compute the size of the tile
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 size() const {
     // initialize
     size_type cells = 1;
@@ -58,7 +58,7 @@ size() const {
 // cell offset for a given index
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 offset(const index_type & index) const {
     // initialize the offset
     size_type offset = 0;
@@ -79,7 +79,7 @@ offset(const index_type & index) const {
 // index for a given cell offset
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 index(size_type offset) const {
     // storage for the answer
     index_type index;
@@ -104,7 +104,7 @@ index(size_type offset) const {
 // the syntactic sugar
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 operator[](const index_type & index) const {
     // delegate
     return offset(index);
@@ -112,7 +112,7 @@ operator[](const index_type & index) const {
 
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 operator[](size_type offset) const {
     // delegate
     return index(offset);
@@ -122,7 +122,7 @@ operator[](size_type offset) const {
 // iteration support
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 begin() const {
     // delegate
     return iterator_type {{}, _shape, _layout};
@@ -130,7 +130,7 @@ begin() const {
 
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 end() const {
     // delegate
     return iterator_type {_shape, _shape, _layout};
@@ -139,7 +139,7 @@ end() const {
 // slicing
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 slice(const layout_type & layout) const {
     // make a slice over the whole tile but with the given layout
     return slice_type(*this, {}, _shape, layout);
@@ -148,7 +148,7 @@ slice(const layout_type & layout) const {
 
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 slice(const index_type & begin, const index_type & end) const {
     // make a slice over the whole tile but with the given layout
     return slice_type(*this, begin, end, _layout);
@@ -157,7 +157,7 @@ slice(const index_type & begin, const index_type & end) const {
 
 template <typename indexT, typename layoutT>
 auto
-pyre::grid::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, layoutT>::
 slice(const index_type & begin, const index_type & end, const layout_type & layout) const {
     // make a slice over the whole tile but with the given layout
     return slice_type(*this, begin, end, layout);

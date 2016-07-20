@@ -14,19 +14,19 @@
 // portability
 #include <portinfo>
 // support
-#include <pyre/grid.h>
+#include <pyre/geometry.h>
 
 // entry point
 int main() {
     // fix the representation
     typedef std::array<int, 4> rep_t;
     // alias
-    typedef pyre::grid::index_t<rep_t> index_t;
+    typedef pyre::geometry::index_t<rep_t> index_t;
     // make an index
     index_t index = {2, 2, 2, 2};
 
     // make a firewall
-    pyre::journal::firewall_t channel("pyre.grid");
+    pyre::journal::firewall_t channel("pyre.geometry");
 
     // adjust the values one by one
     for (index_t::size_type i=0; i < index.size(); ++i) {

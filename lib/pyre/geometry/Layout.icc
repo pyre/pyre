@@ -7,14 +7,14 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Layout_icc)
-#error This header file contains implementation details of class pyre::grid::Layout
+#if !defined(pyre_geometry_Layout_icc)
+#error This header file contains implementation details of class pyre::geometry::Layout
 #endif
 
 
 // meta-methods
 template <typename repT> template <typename... argT>
-pyre::grid::Layout<repT>::
+pyre::geometry::Layout<repT>::
 Layout(argT... value) :
     _layout{value...}
 {}
@@ -24,7 +24,7 @@ Layout(argT... value) :
 // dimensionality of the index
 template <typename repT>
 constexpr auto
-pyre::grid::Layout<repT>::
+pyre::geometry::Layout<repT>::
 size() const {
     // easy enough
     return _layout.size();
@@ -32,13 +32,13 @@ size() const {
 
 template <typename repT>
 auto
-pyre::grid::Layout<repT>::
+pyre::geometry::Layout<repT>::
 operator[] (size_type item) const {
     // bounds check
 #if defined(DEBUG_CHECK_BOUNDS)
     if (item >= size()) {
         // open a channel
-        pyre::journal::firewall_t firewall("pyre.grid.bounds");
+        pyre::journal::firewall_t firewall("pyre.geometry.bounds");
         // complain
         firewall
             << pyre::journal::at(__HERE__)
@@ -54,7 +54,7 @@ operator[] (size_type item) const {
 // loops
 template <typename repT>
 auto
-pyre::grid::Layout<repT>::
+pyre::geometry::Layout<repT>::
 begin() const {
     // the array itself is the beginning
     return _layout.cbegin();
@@ -63,7 +63,7 @@ begin() const {
 
 template <typename repT>
 auto
-pyre::grid::Layout<repT>::
+pyre::geometry::Layout<repT>::
 end() const {
     // compute the element "one past the end"
     return _layout.cend();
