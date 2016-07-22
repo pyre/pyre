@@ -1,0 +1,83 @@
+// -*- C++ -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_geometry_Point_icc)
+#error This header file contains implementation details of class pyre::geometry::Point
+#endif
+
+// inlines
+template <std::size_t dim, typename dataT> template <typename... coordT>
+pyre::geometry::Point<dim, dataT>::
+Point(coordT... coordinate) :
+    _coordinates{coordinate...}
+{}
+
+template <std::size_t dim, typename dataT>
+constexpr auto
+pyre::geometry::Point<dim, dataT>::
+size() const {
+    // delegate
+    return _coordinates.size();
+}
+
+template <std::size_t dim, typename dataT>
+auto
+pyre::geometry::Point<dim, dataT>::
+operator[](size_type index) const {
+    // delegate
+    return _coordinates[index];
+}
+
+template <std::size_t dim, typename dataT>
+auto
+pyre::geometry::Point<dim, dataT>::
+begin() const {
+    // delegate
+    return _coordinates.cbegin();
+}
+
+template <std::size_t dim, typename dataT>
+auto
+pyre::geometry::Point<dim, dataT>::
+end() const {
+    // delegate
+    return _coordinates.cend();
+}
+
+// global operators
+template <std::size_t dim, typename dataT>
+auto
+pyre::geometry::
+operator==(const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2) {
+    // delegate
+    return std::equal(p1.begin(), p1.end(), p2.begin());
+}
+
+template <std::size_t dim, typename dataT>
+auto
+pyre::geometry::
+operator!=(const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2) {
+    // delegate
+    return !(p1 == p2);
+}
+
+template <std::size_t dim, typename dataT>
+auto &
+operator<<(std::ostream & stream, const pyre::geometry::point_t<dim, dataT> & point) {
+    // inject
+    stream << "(";
+    for (auto v = point.begin(); v != point.end()-1; ++v) {
+        stream << *v << ", ";
+    }
+    stream << point[point.size()-1] << ")";
+    // all done
+    return stream;
+}
+
+
+// end of file

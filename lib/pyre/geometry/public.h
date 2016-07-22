@@ -41,6 +41,9 @@ namespace pyre {
         class Direct;
         class MemoryMap;
 
+        // point
+        template <size_t dim, typename dataT> class Point;
+
         // type aliases
         template <typename repT> using index_t = Index<repT>;
         template <typename repT> using layout_t = Layout<repT>;
@@ -55,6 +58,11 @@ namespace pyre {
 
         // buffer types
         typedef Direct direct_t; // memory mapped file
+
+        // point
+        template <std::size_t dim = 3, typename dataT = double>
+        using point_t = Point<dim, dataT>;
+
         // operators on indices
         // equality
         template <typename repT>
@@ -70,8 +78,21 @@ namespace pyre {
         // inequality
         template <typename indexT, typename layoutT>
         auto operator!= (const Iterator<indexT, layoutT> &, const Iterator<indexT, layoutT> &);
+
+        // operators on points
+        // equality
+        template <std::size_t dim, typename dataT>
+        auto operator== (const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2);
+        // inequality
+        template <std::size_t dim, typename dataT>
+        auto operator!= (const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2);
     }
 }
+
+// stream injection; it appears that this must be declared at global scope so as not to shadow
+// the journal injectors...
+template <std::size_t dim, typename dataT>
+auto & operator<< (std::ostream & stream, const pyre::geometry::point_t<dim, dataT> & point);
 
 // the object model
 #include "Layout.h"
@@ -81,6 +102,7 @@ namespace pyre {
 #include "Slice.h"
 #include "MemoryMap.h"
 #include "Direct.h"
+#include "Point.h"
 
 // the implementations
 // layout
@@ -108,10 +130,15 @@ namespace pyre {
 #include "Slice.icc"
 #undef pyre_geometry_Slice_icc
 
-// slice
+// memory mapping
 #define pyre_geometry_Direct_icc
 #include "Direct.icc"
 #undef pyre_geometry_Direct_icc
+
+// point
+#define pyre_geometry_Point_icc
+#include "Point.icc"
+#undef pyre_geometry_Point_icc
 
 #endif
 
