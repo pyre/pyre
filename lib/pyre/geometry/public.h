@@ -27,9 +27,9 @@ namespace pyre {
         typedef off_t offset_t;
         typedef std::size_t size_t;
 
-        //.geometry.packing order
+        // geometry packing order
         template <typename repT> class Layout;
-        //.geometry.indices
+        // geometry indices
         template <typename repT> class Index;
         // iterators over index ranges
         template <typename indexT, typename layoutT> class Iterator;
@@ -41,6 +41,20 @@ namespace pyre {
         class Direct;
         class MemoryMap;
 
+        // type aliases
+        template <typename repT> using index_t = Index<repT>;
+        template <typename repT> using layout_t = Layout<repT>;
+
+        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type>>
+            using iterator_t = Iterator<indexT, layoutT>;
+
+        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type>>
+            using tile_t = Tile<indexT, layoutT>;
+
+        template <typename tileT> using slice_t = Slice<tileT>;
+
+        // buffer types
+        typedef Direct direct_t; // memory mapped file
         // operators on indices
         // equality
         template <typename repT>
@@ -67,26 +81,6 @@ namespace pyre {
 #include "Slice.h"
 #include "MemoryMap.h"
 #include "Direct.h"
-
-// namespace additions
-namespace pyre {
-    namespace geometry {
-        // type aliases
-        template <typename repT> using index_t = Index<repT>;
-        template <typename repT> using layout_t = Layout<repT>;
-
-        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type>>
-            using iterator_t = Iterator<indexT, layoutT>;
-
-        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type>>
-            using tile_t = Tile<indexT, layoutT>;
-
-        template <typename tileT> using slice_t = Slice<tileT>;
-
-        // buffer types
-        typedef Direct direct_t; // memory mapped file
-    }
-}
 
 // the implementations
 // layout
