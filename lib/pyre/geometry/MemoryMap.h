@@ -26,9 +26,9 @@ public:
 
     // class methods
 public:
-    static void create(uri_t name, size_t size);
-    static void * map(uri_t name, size_t & size, offset_t offset, bool writable);
-    static void unmap(const void * buffer, size_t size);
+    static void create(uri_type name, size_type size);
+    static void * map(uri_type name, size_type & size, offset_type offset, bool writable);
+    static void unmap(const void * buffer, size_type size);
 };
 
 #endif

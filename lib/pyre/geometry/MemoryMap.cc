@@ -17,7 +17,6 @@
 #include <sys/stat.h> // for the mode flags
 #include <sys/mman.h> // for mmap
 
-
 // my parts
 #include "public.h"
 
@@ -25,7 +24,7 @@
 // make a file of a specified size
 void
 pyre::geometry::MemoryMap::
-create(uri_t name, size_t size) {
+create(uri_type name, size_type size) {
     // create a file stream
     std::ofstream grid(name, std::ofstream::binary);
     // go to the end of the file
@@ -52,11 +51,11 @@ create(uri_t name, size_t size) {
 // memory map the given file
 void *
 pyre::geometry::MemoryMap::
-map(uri_t name, size_t & size, off_t offset, bool writable) {
+map(uri_type name, size_type & size, offset_type offset, bool writable) {
     // deduce the mode for opening the file
     auto mode = writable ? O_RDWR : O_RDONLY;
     // open the file using low level IO, since we need its file descriptor
-    int fd = ::open(name.c_str(), mode);
+    auto fd = ::open(name.c_str(), mode);
     // verify the file was opened correctly
     if (fd < 0) {
         // and if not, create a channel
@@ -145,7 +144,7 @@ map(uri_t name, size_t & size, off_t offset, bool writable) {
 // unmap the given buffer
 void
 pyre::geometry::MemoryMap::
-unmap(const void * buffer, size_t size) {
+unmap(const void * buffer, size_type size) {
     // unmap
     ::munmap(const_cast<void *>(buffer), size);
 
