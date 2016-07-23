@@ -20,9 +20,9 @@ Point(coordT... coordinate) :
 template <std::size_t dim, typename dataT>
 constexpr auto
 pyre::geometry::Point<dim, dataT>::
-size() const {
+dimension() const {
     // delegate
-    return _coordinates.size();
+    return dim;
 }
 
 template <std::size_t dim, typename dataT>
@@ -74,7 +74,7 @@ operator<<(std::ostream & stream, const pyre::geometry::point_t<dim, dataT> & po
     for (auto v = point.begin(); v != point.end()-1; ++v) {
         stream << *v << ", ";
     }
-    stream << point[point.size()-1] << ")";
+    stream << point[point.dimension()-1] << ")";
     // all done
     return stream;
 }

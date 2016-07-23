@@ -22,7 +22,7 @@ public:
     // interface
 public:
     // size
-    inline constexpr auto size() const;
+    inline constexpr auto dimension() const;
 
     // indexed access
     inline auto operator[](size_type item) const;
