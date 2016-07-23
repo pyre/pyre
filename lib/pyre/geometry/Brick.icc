@@ -1,0 +1,83 @@
+// -*- C++ -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_geometry_Brick_icc)
+#error This header file contains implementation details of class pyre::geometry::Brick
+#endif
+
+// inlines
+template <std::size_t dim, typename nodeT> template <typename... cornerT>
+pyre::geometry::Brick<dim, nodeT>::
+Brick(cornerT... corner) :
+    _corners{corner...}
+{}
+
+template <std::size_t dim, typename nodeT>
+constexpr auto
+pyre::geometry::Brick<dim, nodeT>::
+dimension() const {
+    // delegate
+    return dim;
+}
+
+template <std::size_t dim, typename nodeT>
+auto
+pyre::geometry::Brick<dim, nodeT>::
+operator[](size_type index) const {
+    // delegate
+    return _corners[index];
+}
+
+template <std::size_t dim, typename nodeT>
+auto
+pyre::geometry::Brick<dim, nodeT>::
+begin() const {
+    // delegate
+    return _corners.cbegin();
+}
+
+template <std::size_t dim, typename nodeT>
+auto
+pyre::geometry::Brick<dim, nodeT>::
+end() const {
+    // delegate
+    return _corners.cend();
+}
+
+// global operators
+template <std::size_t dim, typename nodeT>
+auto
+pyre::geometry::
+operator==(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2) {
+    // delegate
+    return std::equal(b1.begin(), b1.end(), b2.begin());
+}
+
+template <std::size_t dim, typename nodeT>
+auto
+pyre::geometry::
+operator!=(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2) {
+    // delegate
+    return !(b1 == b2);
+}
+
+template <std::size_t dim, typename nodeT>
+auto &
+operator<<(std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick) {
+    // inject
+    stream << "(";
+    for (auto v = brick.begin(); v != brick.end()-1; ++v) {
+        stream << *v << ", ";
+    }
+    stream << brick[brick.dimension()-1] << ")";
+    // all done
+    return stream;
+}
+
+
+// end of file

@@ -43,6 +43,8 @@ namespace pyre {
 
         // point
         template <size_t dim, typename dataT> class Point;
+        // brick
+        template <size_t dim, typename nodeT> class Brick;
 
         // type aliases
         template <typename repT> using index_t = Index<repT>;
@@ -60,8 +62,11 @@ namespace pyre {
         typedef Direct direct_t; // memory mapped file
 
         // point
-        template <std::size_t dim = 3, typename dataT = double>
+        template <std::size_t dim, typename dataT>
         using point_t = Point<dim, dataT>;
+        // brick
+        template <std::size_t dim, typename nodeT>
+            using brick_t = Brick<3, nodeT>;
 
         // operators on indices
         // equality
@@ -86,13 +91,24 @@ namespace pyre {
         // inequality
         template <std::size_t dim, typename dataT>
         auto operator!= (const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2);
+
+        // operators on bricks
+        // equality
+        template <std::size_t dim, typename nodeT>
+        auto operator== (const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2);
+        // inequality
+        template <std::size_t dim, typename nodeT>
+        auto operator!= (const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2);
     }
 }
 
 // stream injection; it appears that this must be declared at global scope so as not to shadow
 // the journal injectors...
 template <std::size_t dim, typename dataT>
-auto & operator<< (std::ostream & stream, const pyre::geometry::point_t<dim, dataT> & point);
+auto & operator<< (std::ostream & stream, const pyre::geometry::Point<dim, dataT> & point);
+
+template <std::size_t dim, typename nodeT>
+auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick);
 
 // the object model
 #include "Layout.h"
@@ -103,6 +119,7 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::point_t<dim, dat
 #include "MemoryMap.h"
 #include "Direct.h"
 #include "Point.h"
+#include "Brick.h"
 
 // the implementations
 // layout
@@ -139,6 +156,11 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::point_t<dim, dat
 #define pyre_geometry_Point_icc
 #include "Point.icc"
 #undef pyre_geometry_Point_icc
+
+// brick
+#define pyre_geometry_Brick_icc
+#include "Brick.icc"
+#undef pyre_geometry_Brick_icc
 
 #endif
 

@@ -32,6 +32,7 @@ EXPORT_HEADERS = \
     geometry.h \
 # the package headers
 EXPORT_PKG_HEADERS = \
+    Brick.h Brick.icc \
     Direct.h Direct.icc \
     Index.h Index.icc \
     Iterator.h Iterator.icc \

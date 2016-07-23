@@ -28,6 +28,7 @@ TESTS = \
     direct-map \
     direct-instantiate \
     point \
+    brick \
 
 # tests that should fail because their access patterns are prohibited
 SHOULD_FAIL = \
