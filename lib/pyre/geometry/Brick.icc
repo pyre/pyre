@@ -20,7 +20,7 @@ Brick(cornerT... corner) :
 template <std::size_t dim, typename nodeT>
 constexpr auto
 pyre::geometry::Brick<dim, nodeT>::
-dimension() const {
+dimension() {
     // delegate
     return dim;
 }

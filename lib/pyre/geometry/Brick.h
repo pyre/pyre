@@ -25,7 +25,7 @@ public:
     // interface
 public:
     // dimension
-    inline constexpr auto dimension() const;
+    inline constexpr static auto dimension();
 
     // indexed access
     inline auto operator[](size_type item) const;

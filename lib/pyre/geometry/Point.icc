@@ -20,7 +20,7 @@ Point(coordT... coordinate) :
 template <std::size_t dim, typename dataT>
 constexpr auto
 pyre::geometry::Point<dim, dataT>::
-dimension() const {
+dimension() {
     // delegate
     return dim;
 }
