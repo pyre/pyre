@@ -45,8 +45,12 @@ namespace pyre {
         template <size_t dim, typename dataT> class Point;
         // brick
         template <size_t dim, typename nodeT> class Brick;
+    }
+}
 
-        // type aliases
+// type aliases for the above
+namespace pyre {
+    namespace geometry {
         template <typename repT> using index_t = Index<repT>;
         template <typename repT> using layout_t = Layout<repT>;
 
@@ -62,12 +66,17 @@ namespace pyre {
         typedef Direct direct_t; // memory mapped file
 
         // point
-        template <std::size_t dim, typename dataT>
+        template <std::size_t dim = 3, typename dataT = double>
         using point_t = Point<dim, dataT>;
         // brick
-        template <std::size_t dim, typename nodeT>
-            using brick_t = Brick<3, nodeT>;
+        template <std::size_t dim = 3, typename nodeT = point_t<3>>
+            using brick_t = Brick<dim, nodeT>;
+    }
+}
 
+// operators
+namespace pyre {
+    namespace geometry {
         // operators on indices
         // equality
         template <typename repT>
@@ -87,28 +96,30 @@ namespace pyre {
         // operators on points
         // equality
         template <std::size_t dim, typename dataT>
-        auto operator== (const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2);
+        auto operator== (const Point<dim, dataT> & p1, const Point<dim, dataT> & p2);
         // inequality
         template <std::size_t dim, typename dataT>
-        auto operator!= (const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2);
+        auto operator!= (const Point<dim, dataT> & p1, const Point<dim, dataT> & p2);
 
         // operators on bricks
         // equality
         template <std::size_t dim, typename nodeT>
-        auto operator== (const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2);
+        auto operator== (const Brick<dim, nodeT> & b1, const Brick<dim, nodeT> & b2);
         // inequality
         template <std::size_t dim, typename nodeT>
-        auto operator!= (const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2);
+        auto operator!= (const Brick<dim, nodeT> & b1, const Brick<dim, nodeT> & b2);
     }
 }
 
-// stream injection; it appears that this must be declared at global scope so as not to shadow
-// the journal injectors...
+
+// stream injection: overload the global operator<<
+// for points
 template <std::size_t dim, typename dataT>
 auto & operator<< (std::ostream & stream, const pyre::geometry::Point<dim, dataT> & point);
-
+// and bricks
 template <std::size_t dim, typename nodeT>
 auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick);
+
 
 // the object model
 #include "Layout.h"
