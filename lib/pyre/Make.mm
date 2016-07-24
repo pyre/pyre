@@ -11,6 +11,7 @@ include pyre.def
 RECURSE_DIRS = \
     algebra \
     geometry \
+    memory \
     patterns \
     timers \
 

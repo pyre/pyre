@@ -7,20 +7,20 @@
 //
 
 // code guard
-#if !defined(pyre_geometry_Direct_icc)
-#error This header file contains implementation details of class pyre::geometry::Direct
+#if !defined(pyre_memory_Direct_icc)
+#error This header file contains implementation details of class pyre::memory::Direct
 #endif
 
 
 // meta-methods
-pyre::geometry::Direct::
+pyre::memory::Direct::
 Direct(uri_type name, size_type size, offset_type offset, bool writable) :
     _buffer {map(name, size, offset, writable)},
     _size {size}
 {}
 
 
-pyre::geometry::Direct::
+pyre::memory::Direct::
 ~Direct() {
     // delegate
     unmap(_buffer, _size);
@@ -29,15 +29,15 @@ pyre::geometry::Direct::
 
 // interface
 // accessors
-pyre::geometry::Direct::size_type
-pyre::geometry::Direct::
+pyre::memory::Direct::size_type
+pyre::memory::Direct::
 size() const {
     // easy enough
     return _size;
 }
 
 void *
-pyre::geometry::Direct::
+pyre::memory::Direct::
 buffer() const {
     // easy enough
     return _buffer;

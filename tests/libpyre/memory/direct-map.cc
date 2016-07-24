@@ -12,6 +12,7 @@
 #include <portinfo>
 
 // support
+#include <pyre/memory.h>
 #include <pyre/geometry.h>
 
 // entry point
@@ -28,7 +29,7 @@ int main() {
     typedef pyre::geometry::tile_t<index_t, layout_t> tile_t;
 
     // the name of the file
-    pyre::geometry::uri_t name {"grid.dat"};
+    pyre::memory::uri_t name {"grid.dat"};
     // make a layout
     tile_t::layout_type layout {2, 1, 0};
     // make a shape
@@ -40,11 +41,11 @@ int main() {
     size_t size = sizeof(pixel_t) * tile.size();
 
     // turn on the info channel
-    // pyre::journal::debug_t("pyre.geometry.direct").activate();
+    // pyre::journal::debug_t("pyre.memory.direct").activate();
     // map a buffer over the file
-    void * buffer = pyre::geometry::direct_t::map("grid.dat", size, 0, true);
+    void * buffer = pyre::memory::direct_t::map("grid.dat", size, 0, true);
     // and undo it
-    pyre::geometry::direct_t::unmap(buffer, size);
+    pyre::memory::direct_t::unmap(buffer, size);
 
     // all done
     return 0;

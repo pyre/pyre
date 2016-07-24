@@ -7,8 +7,8 @@
 //
 
 // code guard
-#if !defined(pyre_geometry_Direct_h)
-#define pyre_geometry_Direct_h
+#if !defined(pyre_memory_Direct_h)
+#define pyre_memory_Direct_h
 
 //
 // Direct is the life cycle manager of a memory mapping
@@ -18,7 +18,7 @@
 //
 
 // declaration
-class pyre::geometry::Direct : public pyre::geometry::MemoryMap {
+class pyre::memory::Direct : public pyre::memory::MemoryMap {
     // meta-methods
 public:
     // constructor

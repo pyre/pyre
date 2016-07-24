@@ -23,7 +23,7 @@
 // class methods
 // make a file of a specified size
 void
-pyre::geometry::MemoryMap::
+pyre::memory::MemoryMap::
 create(uri_type name, size_type size) {
     // create a file stream
     std::ofstream grid(name, std::ofstream::binary);
@@ -35,7 +35,7 @@ create(uri_type name, size_type size) {
     grid.write(&null, sizeof(null));
 
     // make a channel
-    pyre::journal::debug_t channel("pyre.geometry.direct");
+    pyre::journal::debug_t channel("pyre.memory.direct");
     // show me
     channel
         << pyre::journal::at(__HERE__)
@@ -50,7 +50,7 @@ create(uri_type name, size_type size) {
 
 // memory map the given file
 void *
-pyre::geometry::MemoryMap::
+pyre::memory::MemoryMap::
 map(uri_type name, size_type & size, offset_type offset, bool writable) {
     // deduce the mode for opening the file
     auto mode = writable ? O_RDWR : O_RDONLY;
@@ -59,7 +59,7 @@ map(uri_type name, size_type & size, offset_type offset, bool writable) {
     // verify the file was opened correctly
     if (fd < 0) {
         // and if not, create a channel
-        pyre::journal::error_t channel("pyre.geometry.direct");
+        pyre::journal::error_t channel("pyre.memory.direct");
         // complain
         channel
             // where
@@ -84,7 +84,7 @@ map(uri_type name, size_type & size, offset_type offset, bool writable) {
         // if we were unable to get file information
         if (flag) {
             // create a channel
-            pyre::journal::error_t channel("pyre.geometry.direct");
+            pyre::journal::error_t channel("pyre.memory.direct");
             // complain
             channel
                 // where
@@ -109,7 +109,7 @@ map(uri_type name, size_type & size, offset_type offset, bool writable) {
     // check it
     if (buffer == MAP_FAILED) {
         // create a channel
-        pyre::journal::error_t channel("pyre.geometry.direct");
+        pyre::journal::error_t channel("pyre.memory.direct");
         // complain
         channel
             // where
@@ -126,7 +126,7 @@ map(uri_type name, size_type & size, offset_type offset, bool writable) {
     }
 
     // make a channel
-    pyre::journal::debug_t channel("pyre.geometry.direct");
+    pyre::journal::debug_t channel("pyre.memory.direct");
     // show me
     channel
         << pyre::journal::at(__HERE__)
@@ -143,13 +143,13 @@ map(uri_type name, size_type & size, offset_type offset, bool writable) {
 
 // unmap the given buffer
 void
-pyre::geometry::MemoryMap::
+pyre::memory::MemoryMap::
 unmap(const void * buffer, size_type size) {
     // unmap
     ::munmap(const_cast<void *>(buffer), size);
 
     // make a channel
-    pyre::journal::debug_t channel("pyre.geometry.direct");
+    pyre::journal::debug_t channel("pyre.memory.direct");
     // show me
     channel
         << pyre::journal::at(__HERE__)

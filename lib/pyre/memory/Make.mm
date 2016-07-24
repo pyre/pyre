@@ -11,13 +11,16 @@ include shared/target.def
 # project defaults
 include pyre.def
 # the name of the package
-PACKAGE = geometry
+PACKAGE = memory
 
 # the products
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SAR)
 PROJ_DLL = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SO)
 # the private build space
 PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
+# the sources
+PROJ_SRCS = \
+    MemoryMap.cc \
 
 # what to clean
 PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
@@ -26,16 +29,11 @@ PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
 # the library
 EXPORT_LIBS = $(PROJ_DLL)
 EXPORT_HEADERS = \
-    geometry.h \
+    memory.h \
 # the package headers
 EXPORT_PKG_HEADERS = \
-    Brick.h Brick.icc \
-    Index.h Index.icc \
-    Iterator.h Iterator.icc \
-    Layout.h Layout.icc \
-    Point.h Point.icc \
-    Slice.h Slice.icc \
-    Tile.h Tile.icc \
+    Direct.h Direct.icc \
+    MemoryMap.h \
     public.h
 
 # the standard targets

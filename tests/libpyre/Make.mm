@@ -11,6 +11,7 @@ PROJECT = pyre
 RECURSE_DIRS = \
     algebra \
     geometry \
+    memory \
     journal \
     timers \
 

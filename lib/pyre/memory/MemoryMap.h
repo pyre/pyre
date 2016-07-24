@@ -7,18 +7,18 @@
 //
 
 // code guard
-#if !defined(pyre_geometry_MemoryMap_h)
-#define pyre_geometry_MemoryMap_h
+#if !defined(pyre_memory_MemoryMap_h)
+#define pyre_memory_MemoryMap_h
 
 
 // declaration
 // this class is a wrapper around the os calls
-class pyre::geometry::MemoryMap {
+class pyre::memory::MemoryMap {
     // types
 public:
-    typedef pyre::geometry::uri_t uri_type;
-    typedef pyre::geometry::size_t size_type;
-    typedef pyre::geometry::offset_t offset_type;
+    typedef pyre::memory::uri_t uri_type;
+    typedef pyre::memory::size_t size_type;
+    typedef pyre::memory::offset_t offset_type;
 
     // constants
 public:

@@ -12,7 +12,6 @@
 
 // externals
 #include <stdexcept>
-#include <utility>
 #include <array>
 // support
 #include <pyre/journal.h>
@@ -21,12 +20,8 @@
 namespace pyre {
     namespace geometry {
         // local type aliases
-        // for filenames
-        typedef std::string uri_t;
         // for describing shapes and regions
-        typedef off_t offset_t;
         typedef std::size_t size_t;
-
         // geometry packing order
         template <typename repT> class Layout;
         // geometry indices
@@ -37,9 +32,6 @@ namespace pyre {
         template <typename indexT, typename layoutT> class Tile;
         // slices
         template <typename tileT> class Slice;
-
-        class Direct;
-        class MemoryMap;
 
         // point
         template <size_t dim, typename dataT> class Point;
@@ -61,9 +53,6 @@ namespace pyre {
             using tile_t = Tile<indexT, layoutT>;
 
         template <typename tileT> using slice_t = Slice<tileT>;
-
-        // buffer types
-        typedef Direct direct_t; // memory mapped file
 
         // point
         template <std::size_t dim = 3, typename dataT = double>
@@ -127,8 +116,6 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT
 #include "Iterator.h"
 #include "Tile.h"
 #include "Slice.h"
-#include "MemoryMap.h"
-#include "Direct.h"
 #include "Point.h"
 #include "Brick.h"
 
@@ -157,11 +144,6 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT
 #define pyre_geometry_Slice_icc
 #include "Slice.icc"
 #undef pyre_geometry_Slice_icc
-
-// memory mapping
-#define pyre_geometry_Direct_icc
-#include "Direct.icc"
-#undef pyre_geometry_Direct_icc
 
 // point
 #define pyre_geometry_Point_icc
