@@ -21,8 +21,24 @@ template <std::size_t dim, typename nodeT>
 constexpr auto
 pyre::geometry::Brick<dim, nodeT>::
 dimension() {
-    // delegate
+    // my node type knows this one
+    return node_type::dimension();
+}
+
+template <std::size_t dim, typename nodeT>
+constexpr auto
+pyre::geometry::Brick<dim, nodeT>::
+intrinsicDimension() {
+    // i know this one
     return dim;
+}
+
+template <std::size_t dim, typename nodeT>
+constexpr auto
+pyre::geometry::Brick<dim, nodeT>::
+points() {
+    // ask my point container
+    return 1 << dimension();
 }
 
 template <std::size_t dim, typename nodeT>
@@ -74,7 +90,7 @@ operator<<(std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & bric
     for (auto v = brick.begin(); v != brick.end()-1; ++v) {
         stream << *v << ", ";
     }
-    stream << brick[brick.dimension()-1] << ")";
+    stream << brick[brick.points()-1] << ")";
     // all done
     return stream;
 }

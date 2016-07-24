@@ -21,7 +21,7 @@ public:
 
     // interface
 public:
-    // size
+    // the dimension of the underlying space
     inline constexpr static auto dimension();
 
     // indexed access

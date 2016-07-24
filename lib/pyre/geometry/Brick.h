@@ -24,8 +24,12 @@ public:
 
     // interface
 public:
-    // dimension
+    // the dimension of the underlying space
     inline constexpr static auto dimension();
+    // the intrinsic dimension of the brick
+    inline constexpr static auto intrinsicDimension();
+    // the number of points in the brick
+    inline constexpr static auto points();
 
     // indexed access
     inline auto operator[](size_type item) const;
