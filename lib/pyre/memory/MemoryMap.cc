@@ -146,7 +146,7 @@ void
 pyre::memory::MemoryMap::
 unmap(const void * buffer, size_type size) {
     // unmap
-    ::munmap(const_cast<void *>(buffer), size);
+    int status = ::munmap(const_cast<void *>(buffer), size);
 
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.direct");
@@ -155,6 +155,17 @@ unmap(const void * buffer, size_type size) {
         << pyre::journal::at(__HERE__)
         << "unmapped " << size << " bytes from " << buffer
         << pyre::journal::endl;
+
+    // check whether the memory was unmapped
+    if (status) {
+        // make a channel
+        pyre::journal::error_t error("pyre.memory.direct");
+        // complain
+        error
+            << pyre::journal::at(__HERE__)
+            << "error " << errno << ": " << std::strerror(errno)
+            << pyre::journal::endl;
+    }
 
     // all done
     return;
