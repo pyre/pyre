@@ -14,17 +14,59 @@
 
 // meta-methods
 pyre::memory::Direct::
-Direct(uri_type name, size_type size, offset_type offset, bool writable) :
+Direct() :
+    _buffer {0},
+    _size {0}
+{}
+
+pyre::memory::Direct::
+Direct(uri_type name, bool writable, size_type size, offset_type offset) :
     _buffer {map(name, size, offset, writable)},
     _size {size}
 {}
 
 
 pyre::memory::Direct::
-~Direct() {
-    // delegate
-    unmap(_buffer, _size);
+Direct(Direct && other) :
+    _buffer {0},
+    _size {0}
+{
+    // delegate to the move assignment operator
+    *this = std::move(other);
 }
+
+pyre::memory::Direct &
+pyre::memory::Direct::
+operator=(Direct && other) {
+    // trap assignment to self
+    if (this == &other) {
+        // and bail
+        return *this;
+    }
+    // if my current buffer is valid
+    if (_buffer) {
+        // unmap the memory
+        unmap(_buffer, _size);
+    }
+    // pilfer
+    _buffer = other._buffer;
+    _size = other._size;
+    // invalidate the state of the source
+    other._buffer = 0;
+    other._size = 0;
+    // make me available
+    return *this;
+}
+
+pyre::memory::Direct::
+~Direct() {
+    // if i am holding a valid region
+    if (_buffer) {
+        // unmap the memory
+        unmap(_buffer, _size);
+    }
+}
+
 
 
 // interface

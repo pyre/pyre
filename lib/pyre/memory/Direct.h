@@ -21,16 +21,19 @@
 class pyre::memory::Direct : public pyre::memory::MemoryMap {
     // meta-methods
 public:
+    // default constructor
+    inline Direct();
     // constructor
-    explicit inline
+    inline
     Direct(uri_type name,               // the name of the file
+           bool writable = false,       // type of access to grant
            size_type size = entireFile, // how much of the file to map
-           offset_type offset = 0,      // starting at this offset from the beginning
-           bool writable = false);      // type of access to grant
+           offset_type offset = 0       // starting at this offset from the beginning
+           );
 
     // move semantics
-    constexpr Direct(Direct &&) = default;
-    Direct & operator=(Direct &&) = default;
+    inline Direct(Direct && other);
+    inline Direct & operator=(Direct && other);
 
     // destructor
     inline ~Direct();
@@ -43,10 +46,10 @@ public:
 
     // implementation details: data
 private:
-    void * const _buffer;  // the buffer payload may be writable; the pointer itself is not
-    const size_type _size; // need this during destruction
+    void * _buffer;
+    size_type _size;
 
-    // disable copy semantics
+    // disable the copy semantics
 private:
     Direct(const Direct &) = delete;
     Direct & operator=(const Direct &) = delete;
