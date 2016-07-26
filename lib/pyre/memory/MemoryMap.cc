@@ -25,14 +25,19 @@
 void
 pyre::memory::MemoryMap::
 create(uri_type name, size_type size) {
+    // we take advantage of the POSIX requirement that writing a byte at a file location past its
+    // current size automatically fills all the locations before it with nulls
+
     // create a file stream
-    std::ofstream grid(name, std::ofstream::binary);
-    // go to the end of the file
-    grid.seekp(size - 1);
+    std::ofstream file(name, std::ofstream::binary);
+    // move the file pointer to the desired size
+    file.seekp(size - 1);
     // make a byte
     char null = 0;
     // write a byte
-    grid.write(&null, sizeof(null));
+    file.write(&null, sizeof(null));
+    // close the stream
+    file.close();
 
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.direct");
@@ -42,8 +47,6 @@ create(uri_type name, size_type size) {
         << "created '" << name << "' (" << size << " bytes)"
         << pyre::journal::endl;
 
-    // close
-    grid.close();
     // all done
     return;
 }

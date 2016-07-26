@@ -68,7 +68,6 @@ pyre::memory::Direct::
 }
 
 
-
 // interface
 // accessors
 pyre::memory::Direct::size_type
