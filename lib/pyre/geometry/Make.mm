@@ -30,6 +30,7 @@ EXPORT_HEADERS = \
 # the package headers
 EXPORT_PKG_HEADERS = \
     Brick.h Brick.icc \
+    Grid.h Grid.icc \
     Index.h Index.icc \
     Iterator.h Iterator.icc \
     Layout.h Layout.icc \

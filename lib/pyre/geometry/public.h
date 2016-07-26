@@ -37,6 +37,8 @@ namespace pyre {
         template <size_t dim, typename dataT> class Point;
         // brick
         template <size_t dim, typename nodeT> class Brick;
+        // corner point grid
+        template <typename cellT, typename tileT, typename storageT> class Grid;
     }
 }
 
@@ -46,11 +48,11 @@ namespace pyre {
         template <typename repT> using index_t = Index<repT>;
         template <typename repT> using layout_t = Layout<repT>;
 
-        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type>>
-            using iterator_t = Iterator<indexT, layoutT>;
+        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type> >
+        using iterator_t = Iterator<indexT, layoutT>;
 
-        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type>>
-            using tile_t = Tile<indexT, layoutT>;
+        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type> >
+        using tile_t = Tile<indexT, layoutT>;
 
         template <typename tileT> using slice_t = Slice<tileT>;
 
@@ -58,8 +60,11 @@ namespace pyre {
         template <std::size_t dim = 3, typename dataT = double>
         using point_t = Point<dim, dataT>;
         // brick
-        template <std::size_t dim = 3, typename nodeT = point_t<3>>
-            using brick_t = Brick<dim, nodeT>;
+        template <std::size_t dim = 3, typename nodeT = point_t<3> >
+        using brick_t = Brick<dim, nodeT>;
+        // corner point grid
+        template <typename cellT, typename tileT, typename storageT>
+        using grid_t = Grid<cellT, tileT, storageT>;
     }
 }
 
@@ -118,6 +123,7 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT
 #include "Slice.h"
 #include "Point.h"
 #include "Brick.h"
+#include "Grid.h"
 
 // the implementations
 // layout
@@ -154,6 +160,11 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT
 #define pyre_geometry_Brick_icc
 #include "Brick.icc"
 #undef pyre_geometry_Brick_icc
+
+// corner point grid
+#define pyre_geometry_Grid_icc
+#include "Grid.icc"
+#undef pyre_geometry_Grid_icc
 
 #endif
 

@@ -26,6 +26,9 @@ TESTS = \
     tile-slice \
     point \
     brick \
+    grid-view \
+    grid-heap \
+    grid-direct \
 
 all: test clean
 
