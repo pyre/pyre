@@ -25,8 +25,8 @@ public:
     inline View(void * buffer = 0);
 
     // copy semantics
-    inline View(View & other);
-    inline View & operator=(View & other);
+    inline View(const View & other);
+    inline View & operator=(const View & other);
 
     // destructor
     inline ~View();
@@ -42,8 +42,8 @@ private:
 
     // disable move semantics
 private:
-    View(const View &&) = delete;
-    View & operator=(const View &&) = delete;
+    View(View &&) = delete;
+    View & operator=(View &&) = delete;
 };
 
 

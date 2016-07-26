@@ -20,13 +20,13 @@ View(void * buffer) :
 
 
 pyre::memory::View::
-View(View & other) :
+View(const View & other) :
     _buffer {other.buffer()}
 {}
 
 pyre::memory::View &
 pyre::memory::View::
-operator=(View & other) {
+operator=(const View & other) {
     // trap assignment to self
     if (this == &other) {
         // and bail
