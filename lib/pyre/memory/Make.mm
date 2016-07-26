@@ -33,7 +33,9 @@ EXPORT_HEADERS = \
 # the package headers
 EXPORT_PKG_HEADERS = \
     Direct.h Direct.icc \
+    Heap.h Heap.icc \
     MemoryMap.h \
+    View.h View.icc \
     public.h
 
 # the standard targets

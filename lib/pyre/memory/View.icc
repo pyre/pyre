@@ -1,0 +1,54 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_memory_View_icc)
+#error This header file contains implementation details of class pyre::memory::View
+#endif
+
+
+// meta-methods
+pyre::memory::View::
+View(void * buffer) :
+    _buffer {buffer}
+{}
+
+
+pyre::memory::View::
+View(View & other) :
+    _buffer {other.buffer()}
+{}
+
+pyre::memory::View &
+pyre::memory::View::
+operator=(View & other) {
+    // trap assignment to self
+    if (this == &other) {
+        // and bail
+        return *this;
+    }
+    // grab the memory location
+    _buffer = other._buffer;
+    // make me available
+    return *this;
+}
+
+pyre::memory::View::
+~View() {}
+
+
+// interface
+// accessor
+void *
+pyre::memory::View::
+buffer() const {
+    // easy enough
+    return _buffer;
+}
+
+// end of file

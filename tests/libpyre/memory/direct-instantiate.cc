@@ -34,14 +34,14 @@ int main() {
     if (map.size() != page) {
         // make a channel
         pyre::journal::firewall_t firewall("pyre.memory.direct");
-        // and complain
-            firewall
-                << pyre::journal::at(__HERE__)
-                << "size mismatch for file '" << name << "': " << pyre::journal::newline
-                << "  expected " << page << " bytes, got " << map.size() << " bytes"
-                << pyre::journal::endl;
-            // and bail
-            return 1;
+        // complain
+        firewall
+            << pyre::journal::at(__HERE__)
+            << "size mismatch for file '" << name << "': " << pyre::journal::newline
+            << "  expected " << page << " bytes, got " << map.size() << " bytes"
+            << pyre::journal::endl;
+        // and bail
+        return 1;
     }
 
     // all done

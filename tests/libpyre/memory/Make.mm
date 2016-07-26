@@ -11,6 +11,8 @@ include pyre.def
 
 # the pile of tests
 TESTS = \
+    view-instantiate \
+    heap-instantiate \
     direct-create \
     direct-map \
     direct-instantiate \
