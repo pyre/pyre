@@ -22,7 +22,7 @@ Direct() :
 
 pyre::memory::Direct::
 Direct(uri_type name, size_type size, size_type offset) :
-    MemoryMap(name),
+    MemoryMap(name, size),
     _buffer {map(name, size, offset, true)},
     _size {size}
 {}

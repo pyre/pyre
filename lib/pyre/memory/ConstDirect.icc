@@ -22,7 +22,7 @@ ConstDirect() :
 
 pyre::memory::ConstDirect::
 ConstDirect(uri_type name, size_type size, size_type offset) :
-    MemoryMap(name),
+    MemoryMap(name, size),
     _buffer {map(name, size, offset, false)},
     _size {size}
 {}
