@@ -12,7 +12,14 @@
 
 // externals
 #include <stdexcept>
+#include <fstream>
 #include <utility>
+// low level stuff
+#include <cstring> // for strerror
+#include <fcntl.h> // for open
+#include <unistd.h> // for close
+#include <sys/stat.h> // for the mode flags
+#include <sys/mman.h> // for mmap
 // support
 #include <pyre/journal.h>
 
@@ -25,30 +32,25 @@ namespace pyre {
         // for describing shapes and regions
         typedef off_t offset_t;
         typedef std::size_t size_t;
+        // file information
+        typedef struct stat info_t;
 
-        class Direct;
-        class Heap;
-        class MemoryMap;
-        class View;
-    }
-}
+        class MemoryMap; // infrastructure
 
-// type aliases for the above
-namespace pyre {
-    namespace memory {
         // buffer types
-        typedef View view_t;     // view over existing memory
-        typedef Heap heap_t;     // dynamically allocated memory
-        typedef Direct direct_t; // memory mapped file
+        typedef class View view_t;               // view over existing memory
+        typedef class Heap heap_t;               // dynamically allocated memory
+        typedef class Direct direct_t;           // memory mapped file
+        typedef class ConstDirect constdirect_t; // memory mapped file
     }
 }
-
 
 // the object model
 #include "View.h"
 #include "Heap.h"
 #include "MemoryMap.h"
 #include "Direct.h"
+#include "ConstDirect.h"
 
 // the implementations
 // views over existing memory
@@ -59,10 +61,19 @@ namespace pyre {
 #define pyre_memory_Heap_icc
 #include "Heap.icc"
 #undef pyre_memory_Heap_icc
-// memory mapping
+
+// support for memory backed by files
+#define pyre_memory_MemoryMap_icc
+#include "MemoryMap.icc"
+#undef pyre_memory_MemoryMap_icc
+
 #define pyre_memory_Direct_icc
 #include "Direct.icc"
 #undef pyre_memory_Direct_icc
+
+#define pyre_memory_ConstDirect_icc
+#include "ConstDirect.icc"
+#undef pyre_memory_ConstDirect_icc
 
 #endif
 

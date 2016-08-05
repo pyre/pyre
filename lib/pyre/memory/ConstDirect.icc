@@ -1,0 +1,93 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_memory_ConstDirect_icc)
+#error This header file contains implementation details of class pyre::memory::ConstDirect
+#endif
+
+
+// meta-methods
+pyre::memory::ConstDirect::
+ConstDirect() :
+    MemoryMap(),
+    _buffer {0},
+    _size {0}
+{}
+
+pyre::memory::ConstDirect::
+ConstDirect(uri_type name, size_type size, size_type offset) :
+    MemoryMap(name),
+    _buffer {map(name, size, offset, false)},
+    _size {size}
+{}
+
+
+pyre::memory::ConstDirect::
+ConstDirect(ConstDirect && other) :
+    MemoryMap(other),
+    _buffer {0},
+    _size {0}
+{
+    // delegate to the move assignment operator
+    *this = std::move(other);
+}
+
+pyre::memory::ConstDirect &
+pyre::memory::ConstDirect::
+operator=(ConstDirect && other) {
+    // trap assignment to self
+    if (this == &other) {
+        // and bail
+        return *this;
+    }
+    // chain up
+    MemoryMap::operator=(other);
+
+    // if my current buffer is valid
+    if (_buffer) {
+        // unmap the memory
+        unmap(_buffer, _size);
+    }
+    // pilfer
+    _buffer = other._buffer;
+    _size = other._size;
+    // invalidate the state of the source
+    other._buffer = 0;
+    other._size = 0;
+    // make me available
+    return *this;
+}
+
+pyre::memory::ConstDirect::
+~ConstDirect() {
+    // if i am holding a valid region
+    if (_buffer) {
+        // unmap the memory
+        unmap(_buffer, _size);
+    }
+}
+
+
+// interface
+// accessors
+auto
+pyre::memory::ConstDirect::
+size() const {
+    // easy enough
+    return _size;
+}
+
+auto
+pyre::memory::ConstDirect::
+buffer() const {
+    // easy enough
+    return _buffer;
+}
+
+// end of file

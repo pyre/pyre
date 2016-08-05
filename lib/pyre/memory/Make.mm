@@ -32,6 +32,7 @@ EXPORT_HEADERS = \
     memory.h \
 # the package headers
 EXPORT_PKG_HEADERS = \
+    ConstDirect.h ConstDirect.icc \
     Direct.h Direct.icc \
     Heap.h Heap.icc \
     MemoryMap.h MemoryMap.icc \

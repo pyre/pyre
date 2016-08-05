@@ -14,6 +14,9 @@ TESTS = \
     view-instantiate \
     heap-instantiate \
     direct-create \
+    constdirect-map \
+    constdirect-instantiate \
+    constdirect-instantiate-partial \
     direct-map \
     direct-instantiate \
     direct-instantiate-partial \
