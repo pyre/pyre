@@ -15,19 +15,22 @@
 // meta-methods
 pyre::memory::Direct::
 Direct() :
+    MemoryMap(),
     _buffer {0},
     _size {0}
 {}
 
 pyre::memory::Direct::
-Direct(uri_type name, bool writable, size_type size, offset_type offset) :
-    _buffer {map(name, size, offset, writable)},
+Direct(uri_type name, size_type size, size_type offset) :
+    MemoryMap(name),
+    _buffer {map(name, size, offset, true)},
     _size {size}
 {}
 
 
 pyre::memory::Direct::
 Direct(Direct && other) :
+    MemoryMap(other),
     _buffer {0},
     _size {0}
 {
@@ -43,6 +46,9 @@ operator=(Direct && other) {
         // and bail
         return *this;
     }
+    // chain up
+    MemoryMap::operator=(other);
+
     // if my current buffer is valid
     if (_buffer) {
         // unmap the memory
@@ -70,14 +76,14 @@ pyre::memory::Direct::
 
 // interface
 // accessors
-pyre::memory::Direct::size_type
+auto
 pyre::memory::Direct::
 size() const {
     // easy enough
     return _size;
 }
 
-void *
+auto
 pyre::memory::Direct::
 buffer() const {
     // easy enough

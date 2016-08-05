@@ -9,16 +9,72 @@
 // portability
 #include <portinfo>
 // externals
-#include <fstream>
-// low level stuff
-#include <cstring> // for strerror
-#include <fcntl.h> // for open
-#include <unistd.h> // for close
-#include <sys/stat.h> // for the mode flags
-#include <sys/mman.h> // for mmap
-
+#include <sstream>
 // my parts
 #include "public.h"
+
+// meta-methods
+pyre::memory::MemoryMap::
+MemoryMap(uri_type uri, size_type size) :
+    _uri {uri},
+    _info {}
+{
+    // if no filename were given
+    if (uri.empty()) {
+        // nothing further to do
+        return;
+    }
+
+    // otherwise, ask the file system for what known about it
+    int status = ::stat(_uri.data(), &_info);
+    // if this failed
+    if (status) {
+        // the only case we handle is the file not existing; complain about everything else
+        if (errno != ENOENT) {
+            // create a channel
+            pyre::journal::error_t channel("pyre.memory.direct");
+            // complain
+            channel
+                // where
+                << pyre::journal::at(__HERE__)
+                // what happened
+                << "while opening '" << _uri << "'" << pyre::journal::newline
+                // why it happened
+                << "  reason " << errno << ": " << std::strerror(errno)
+                // flush
+                << pyre::journal::endl;
+            // raise an exception
+            throw std::system_error(errno, std::system_category());
+        }
+        // so, the file doesn't exist; if the caller did not specify a desired map size
+        if (size == 0) {
+            // we have a problem
+            std::stringstream problem;
+            // describe it
+            problem << "while creating '" << uri << "': unknown size";
+            // create a channel
+            pyre::journal::error_t channel("pyre.memory.direct");
+            // complain
+            channel
+                // where
+                << pyre::journal::at(__HERE__)
+                // what happened
+                << problem.str()
+                // flush
+                << pyre::journal::endl;
+            // raise an exception
+            throw std::runtime_error(problem.str());
+        }
+        // if we have size information, create the file
+        create(uri, size);
+        // and get the file information
+        ::stat(_uri.data(), &_info);
+    }
+
+    // all done
+    return;
+}
+
 
 // class methods
 // make a file of a specified size
@@ -54,7 +110,7 @@ create(uri_type name, size_type size) {
 // memory map the given file
 void *
 pyre::memory::MemoryMap::
-map(uri_type name, size_type & size, offset_type offset, bool writable) {
+map(uri_type name, size_type & size, size_type offset, bool writable) {
     // deduce the mode for opening the file
     auto mode = writable ? O_RDWR : O_RDONLY;
     // open the file using low level IO, since we need its file descriptor
@@ -74,41 +130,13 @@ map(uri_type name, size_type & size, offset_type offset, bool writable) {
             // flush
             << pyre::journal::endl;
             // raise an exception
-        throw std::runtime_error(std::strerror(errno));
-    }
-
-    // if the {size} argument is 0, interpret it as a request to map the entire file; let's ask
-    // the OS for the size of the file
-    if (size == entireFile) {
-        // allocate space for a {stat} buffer
-        struct stat info;
-        // fill it with what the OS knows about the file
-        auto flag = ::fstat(fd, &info);
-        // if we were unable to get file information
-        if (flag) {
-            // create a channel
-            pyre::journal::error_t channel("pyre.memory.direct");
-            // complain
-            channel
-                // where
-                << pyre::journal::at(__HERE__)
-                // what happened
-                << "while querying '" << name << "'" << pyre::journal::newline
-                // why it happened
-                << "  reason " << errno << ": " << std::strerror(errno)
-                // flush
-                << pyre::journal::endl;
-            // raise an exception
-            throw std::runtime_error(std::strerror(errno));
-        }
-        // the {info} structure is now full of useful information, including the file size in bytes
-        size = info.st_size;
+        throw std::system_error(errno, std::system_category());
     }
 
     // deduce the protection flag
     auto prot = writable ? (PROT_READ | PROT_WRITE) : PROT_READ;
     // map it
-    void * buffer = ::mmap(0, size, prot, MAP_SHARED, fd, offset);
+    void * buffer = ::mmap(0, size, prot, MAP_SHARED, fd, static_cast<offset_t>(offset));
     // check it
     if (buffer == MAP_FAILED) {
         // create a channel

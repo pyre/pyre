@@ -34,7 +34,7 @@ EXPORT_HEADERS = \
 EXPORT_PKG_HEADERS = \
     Direct.h Direct.icc \
     Heap.h Heap.icc \
-    MemoryMap.h \
+    MemoryMap.h MemoryMap.icc \
     View.h View.icc \
     public.h
 

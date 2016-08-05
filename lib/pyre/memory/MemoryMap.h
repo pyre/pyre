@@ -17,17 +17,33 @@ class pyre::memory::MemoryMap {
     // types
 public:
     typedef pyre::memory::uri_t uri_type;
+    typedef pyre::memory::info_t info_type;
     typedef pyre::memory::size_t size_type;
     typedef pyre::memory::offset_t offset_type;
 
     // constants
 public:
-    static const size_t entireFile = 0;
+    constexpr static int entireFile = 0;
+
+    // meta-methods
+public:
+    MemoryMap(uri_type name="", size_type size=0);
+
+    // interface
+public:
+    inline auto uri() const;
+    inline const auto & info() const;
+
+    // implementation details - data
+private:
+    uri_type _uri;
+    info_type _info;
+
 
     // class methods
 public:
     static void create(uri_type name, size_type size);
-    static void * map(uri_type name, size_type & size, offset_type offset, bool writable);
+    static void * map(uri_type name, size_type & size, size_type offset, bool writable);
     static void unmap(const void * buffer, size_type size);
 };
 

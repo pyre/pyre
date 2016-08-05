@@ -25,10 +25,9 @@ public:
     inline Direct();
     // constructor
     inline
-    Direct(uri_type name,               // the name of the file
-           bool writable = false,       // type of access to grant
-           size_type size = entireFile, // how much of the file to map
-           offset_type offset = 0       // starting at this offset from the beginning
+    Direct(uri_type uri,         // the name of the file
+           size_type size,       // how much of the file to map
+           size_type offset = 0  // starting at this offset from the beginning
            );
 
     // move semantics
@@ -41,8 +40,8 @@ public:
     // interface
 public:
     // accessors
-    inline size_type size() const;
-    inline void * buffer() const;
+    inline auto size() const;
+    inline auto buffer() const;
 
     // implementation details: data
 private:

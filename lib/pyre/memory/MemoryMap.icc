@@ -1,0 +1,29 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_memory_MemoryMap_icc)
+#error This header file contains implementation details of class pyre::memory::MemoryMap
+#endif
+
+// accessors
+auto
+pyre::memory::MemoryMap::
+uri() const {
+    // easy enough
+    return _uri;
+}
+
+const auto &
+pyre::memory::MemoryMap::
+info() const {
+    // easy enough
+    return _info;
+}
+
+// end of file
