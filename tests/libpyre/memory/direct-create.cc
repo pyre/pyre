@@ -29,7 +29,7 @@ int main() {
     // turn on the info channel
     // pyre::journal::debug_t("pyre.geometry.direct").activate();
     // create a file that can fit the payload
-    pyre::memory::direct_t::create(name, page);
+    pyre::memory::direct_t::create(name, 2*page);
 
     // all done
     return 0;

@@ -16,10 +16,12 @@ TESTS = \
     direct-create \
     direct-map \
     direct-instantiate \
+    direct-instantiate-partial \
 
 # tests that should fail because their access patterns are prohibited
 SHOULD_FAIL = \
     direct-clone \
+    constdirect-clone \
 
 all: test clean
 

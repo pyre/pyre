@@ -28,10 +28,10 @@ int main() {
     // turn on the info channel
     // pyre::journal::debug_t("pyre.memory.direct").activate();
     // map a buffer over the file; it gets unmapped on destruction
-    pyre::memory::direct_t map {name, 2*page};
+    pyre::memory::direct_t map {name, page, page};
 
     // ask the map for its size and compare against our calculation
-    if (map.size() != 2*page) {
+    if (map.size() != page) {
         // make a channel
         pyre::journal::firewall_t firewall("pyre.memory.direct");
         // complain
