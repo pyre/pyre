@@ -10,17 +10,16 @@
 
 // portability
 #include <portinfo>
-
+// externals
+#include <unistd.h>
 // support
 #include <pyre/memory.h>
 #include <pyre/geometry.h>
 
 // entry point
 int main() {
-    // units
-    auto k = 1024;
     // desired size
-    size_t page = 4*k;
+    size_t page = ::getpagesize();
 
     // allocate a buffer
     void * buffer = ::operator new(page);

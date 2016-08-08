@@ -10,7 +10,8 @@
 
 // portability
 #include <portinfo>
-
+// externals
+#include <unistd.h>
 // support
 #include <pyre/journal.h>
 #include <pyre/memory.h>
@@ -18,10 +19,8 @@
 
 // entry point
 int main() {
-    // units
-    auto k = 1024;
     // desired size
-    size_t page = 4*k;
+    size_t page = ::getpagesize();
 
     // make an allocation
     pyre::memory::heap_t heap(page);
