@@ -141,7 +141,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         Report a task failure that can be reasonably expected to be temporary
         """
         # show me
-        self.info.log('{me.pid}: recoverable error: {error}'.format(me=self, error=error))
+        self.debug.log('{me.pid}: recoverable error: {error}'.format(me=self, error=error))
         # all done
         return
 
@@ -151,7 +151,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         Report a permanent task failure
         """
         # show me
-        self.info.log('{me.pid}: unrecoverable error: {error}'.format(me=self, error=error))
+        self.debug.log('{me.pid}: unrecoverable error: {error}'.format(me=self, error=error))
         # all done
         return
 
