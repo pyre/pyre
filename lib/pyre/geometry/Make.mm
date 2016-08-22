@@ -42,9 +42,9 @@ EXPORT_PKG_HEADERS = \
 # the standard targets
 all: export
 
-export:: $(PROJ_DLL) export-headers export-package-headers export-libraries
+export:: export-headers export-package-headers
 
-live: live-headers live-package-headers live-libraries
+live: live-headers live-package-headers
 	BLD_ACTION="live" $(MM) recurse
 
 # archiving support
