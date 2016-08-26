@@ -7,7 +7,10 @@
 grant:
   repository = /home/projects/pyre/repository
   admin = pyre
-  readers = bryan.riel, jiao.lin, raul.radovitzky, romain.jolivet, eric.gurrola, marco.lavalle
+  readers =
+    raul.radovitzky,
+    bryan.riel, romain.jolivet,
+    eric.gurrola, marco.lavalle, piyush.agram, cohen.joshua
   writers = alec.aivazis, leif.strand, michael.aivazis
 
 ; end of file
