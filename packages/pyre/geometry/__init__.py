@@ -72,6 +72,17 @@ def triangulation(**kwds):
     return Triangulation(**kwds)
 
 
+# index objects
+def tile(**kwds):
+    """
+    Create a tile
+    """
+    # get the factory
+    from .Tile import Tile
+    # instantiate and return it
+    return Tile(**kwds)
+
+
 # utilities
 def transfer(grid, fields, mesh):
     """

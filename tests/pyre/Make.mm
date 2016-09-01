@@ -11,6 +11,7 @@ PROJECT = pyre
 RECURSE_DIRS = \
     primitives \
     patterns \
+    geometry \
     parsing \
     units \
     filesystem \
@@ -37,9 +38,7 @@ RECURSE_DIRS = \
     externals \
     pyre
 
-#--------------------------------------------------------------------------
 #
-
 all:
 	BLD_ACTION="all" $(MM) recurse
 
@@ -55,5 +54,10 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
+# shortcuts for building specific subdirectories
+.PHONY: $(RECURSE_DIRS)
+
+$(RECURSE_DIRS):
+	(cd $@; $(MM))
 
 # end of file

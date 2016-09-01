@@ -21,6 +21,7 @@ EXPORT_PYTHON_MODULES = \
     Simplex.py \
     SimplicialMesh.py \
     Surface.py \
+    Tile.py \
     Triangulation.py \
     __init__.py
 
