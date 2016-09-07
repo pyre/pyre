@@ -161,7 +161,7 @@ map(uri_type name, size_type & size, size_type offset, bool writable) {
     // show me
     channel
         << pyre::journal::at(__HERE__)
-        << "mapped '" << name << "' into memory at " << buffer
+        << "mapped " << size << " bytes from '" << name << "' into memory at " << buffer
         << pyre::journal::endl;
 
     // clean up
