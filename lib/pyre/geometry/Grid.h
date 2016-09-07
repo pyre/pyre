@@ -30,10 +30,8 @@ public:
 
     // interface
 public:
-    // the dimension of the underlying space
-    inline constexpr static auto dimension();
-    // the intrinsic dimension of the brick
-    inline constexpr static auto intrinsicDimension();
+    // access to my shape
+    auto shape() const;
 
     // read and write access using offsets
     inline auto & operator[](size_type offset);

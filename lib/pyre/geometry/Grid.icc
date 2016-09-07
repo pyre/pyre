@@ -28,6 +28,14 @@ Grid(tile_type shape, storage_type && storage) :
 
 
 // interface
+template <typename cellT, typename tileT, typename storageT>
+auto
+pyre::geometry::Grid<cellT, tileT, storageT>::
+shape() const
+{
+    return _shape;
+}
+
 // grant write access to the grid at {offset}
 template <typename cellT, typename tileT, typename storageT>
 auto &
