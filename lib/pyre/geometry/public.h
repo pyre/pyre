@@ -107,7 +107,10 @@ namespace pyre {
 
 
 // stream injection: overload the global operator<<
-// for points
+// for indices
+template <typename repT>
+auto & operator<< (std::ostream & stream, const pyre::geometry::Index<repT> & index);
+// points
 template <std::size_t dim, typename dataT>
 auto & operator<< (std::ostream & stream, const pyre::geometry::Point<dim, dataT> & point);
 // and bricks
