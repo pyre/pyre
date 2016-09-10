@@ -7,7 +7,7 @@
 
 
 # externals
-import itertools
+import itertools, textwrap
 
 
 # superclass
@@ -100,12 +100,10 @@ class Configurable(Dashboard):
         """
         Generate a short description of what I do
         """
-        # look for my docstring
+        # if i have a docstring (and i really really should...)
         if self.__doc__:
-            # split my docstring into lines
-            for line in self.__doc__.splitlines():
-                # indent each one and return it
-                yield '{}{}'.format(indent, line.strip())
+            # format and return
+            yield textwrap.indent(textwrap.dedent(self.__doc__), indent)
         # all done
         return
 
