@@ -30,14 +30,15 @@ public:
     // slice the whole tile but change the layout
     Slice(const tile_type & tile, const layout_type & layout);
 
-    // slice the tile between {begin} and {end}, and visit with the given {layout}
+    // slice the tile between {low} and {high}, and visit with the given {layout}
     Slice(const tile_type & tile,
-          const index_type & begin, const index_type & end,
+          const index_type & low, const index_type & high,
           const layout_type & layout);
 
     // interface
 public:
-    inline const auto & shape() const;
+    inline const auto & low() const;
+    inline const auto & high() const;
     inline const auto & layout() const;
 
     // compute the pixel offset implied by a given index
@@ -56,8 +57,8 @@ public:
     // implementation details
 private:
     const tile_type _tile;
-    const index_type _begin;
-    const index_type _end;
+    const index_type _low;
+    const index_type _high;
     const layout_type _layout;
 };
 

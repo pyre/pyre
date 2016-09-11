@@ -5,6 +5,8 @@
 // (c) 1998-2016 all rights reserved
 //
 
+// config
+#include <portinfo>
 // externals
 #include <iostream>
 #include <pyre/journal.h>
@@ -32,7 +34,7 @@ int main() {
     // show me
     info
         << pyre::journal::at(__HERE__)
-        << cube
+        << "[" << cube << "]"
         << pyre::journal::endl;
 
     // all done

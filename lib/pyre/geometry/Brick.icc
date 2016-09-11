@@ -85,12 +85,14 @@ operator!=(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2) {
 template <std::size_t dim, typename nodeT>
 auto &
 operator<<(std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick) {
-    // inject
-    stream << "(";
-    for (auto v = brick.begin(); v != brick.end()-1; ++v) {
-        stream << *v << ", ";
+    // initialize; do it in this scope scope so we can use the iterator after the loop
+    auto b = brick.begin();
+    // inject up to the last point
+    for (; b != brick.end()-1; ++b) {
+        stream << "(" << *b << "), ";
     }
-    stream << brick[brick.points()-1] << ")";
+    // and now the last one
+    stream << "(" << *b << ")";
     // all done
     return stream;
 }

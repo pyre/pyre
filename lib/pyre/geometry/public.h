@@ -110,6 +110,9 @@ namespace pyre {
 // for indices
 template <typename repT>
 auto & operator<< (std::ostream & stream, const pyre::geometry::Index<repT> & index);
+// layouts
+template <typename repT>
+auto & operator<< (std::ostream & stream, const pyre::geometry::Layout<repT> & layout);
 // points
 template <std::size_t dim, typename dataT>
 auto & operator<< (std::ostream & stream, const pyre::geometry::Point<dim, dataT> & point);

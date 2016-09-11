@@ -39,8 +39,8 @@ public:
     inline auto size() const;
 
     // compute the pixel offset implied by a given index
-    // compute the index that corresponds to a given offset
     inline auto offset(const index_type & index) const;
+    // compute the index that corresponds to a given offset
     inline auto index(size_type offset) const;
 
     // syntactic sugar for the pair above
@@ -54,8 +54,7 @@ public:
     // iterating over slices in arbitrary order
     auto slice(const layout_type & order) const;
     auto slice(const index_type & begin, const index_type & end) const;
-    auto slice(const index_type & begin, const index_type & end,
-                     const layout_type & layout) const;
+    auto slice(const index_type & begin, const index_type & end, const layout_type & order) const;
 
     // implementation details
 private:

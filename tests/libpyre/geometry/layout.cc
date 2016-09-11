@@ -28,14 +28,10 @@ int main() {
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
     // and display information about the tile layout
-    channel << pyre::journal::at(__HERE__) << "layout : (";
-    // go through the values
-    for (auto index : layout) {
-        // inject them
-        channel << " " << index;
-    }
-    // flush
-    channel << " )" << pyre::journal::endl;
+    channel
+        << pyre::journal::at(__HERE__)
+        << "layout : (" << layout << ")"
+        << pyre::journal::endl;
 
     // all done
     return 0;

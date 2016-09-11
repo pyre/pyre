@@ -52,11 +52,7 @@ int main() {
         // get the offset of the pixel at this index
         auto pixel = tile[index];
         // show me
-        channel
-            << "(" << index[0] << "," << index[1] << "," << index[2] << "," << index[3] << ")"
-            << " -> "
-            << pixel
-            << pyre::journal::newline;
+        channel << "(" << index << ") -> " << pixel << pyre::journal::newline;
     }
     // flush
     channel << pyre::journal::endl;

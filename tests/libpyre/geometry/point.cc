@@ -5,6 +5,8 @@
 // (c) 1998-2016 all rights reserved
 //
 
+// config
+#include <portinfo>
 // externals
 #include <pyre/journal.h>
 #include <pyre/geometry.h>
@@ -21,7 +23,7 @@ int main() {
     // show me
     info
         << pyre::journal::at(__HERE__)
-        << p
+        << "point: (" << p << ")"
         << pyre::journal::endl;
 
     // all done

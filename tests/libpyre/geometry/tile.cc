@@ -35,22 +35,11 @@ int main() {
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
 
-    // display information about the tile layout
-    channel << pyre::journal::at(__HERE__);
-
-    // show me the shape
-    channel << "shape: (";
-    for (auto sz : shape) {
-        channel << " " << sz;
-    }
-    channel << " )" << pyre::journal::endl;
-
-    // show me the layout
-    channel << "layout: (";
-    for (auto sz : layout) {
-        channel << " " << sz;
-    }
-    channel << " )" << pyre::journal::endl;
+    // display information about the tile shape and layout
+    channel
+        << pyre::journal::at(__HERE__)
+        << "shape: (" << shape << ")" << pyre::journal::newline
+        << "layout: (" << layout << ")" << pyre::journal::endl;
 
     // all done
     return 0;

@@ -28,14 +28,10 @@ int main() {
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
     // and display information about the tile index
-    channel << pyre::journal::at(__HERE__) << "index : (";
-    // go through the values
-    for (auto value : idx) {
-        // inject them
-        channel << " " << value;
-    }
-    // flush
-    channel << " )" << pyre::journal::endl;
+    channel
+        << pyre::journal::at(__HERE__)
+        << "index : (" << idx << ")"
+        << pyre::journal::endl;
 
     // all done
     return 0;

@@ -40,11 +40,7 @@ int main() {
     // loop until the iterator reaches the end
     for (const auto & cursor = *iterator; cursor != end; ++iterator) {
         // show me
-        channel << "  (";
-        for (auto idx : cursor) {
-            channel << " " << idx;
-        }
-        channel << " )" << pyre::journal::newline;
+        channel << "  (" << cursor << ")" << pyre::journal::newline;
     }
     // flush
     channel << pyre::journal::endl;

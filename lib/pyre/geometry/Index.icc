@@ -116,12 +116,14 @@ operator!=(const Index<repT> & one, const Index<repT> & two) {
 template <typename repT>
 auto &
 operator<<(std::ostream & stream, const pyre::geometry::Index<repT> & index) {
-    // inject
-    stream << "(";
-    for (auto v = index.begin(); v != index.end()-1; ++v) {
+    // initialize; do it in this scope scope so we can use the iterator after the loop
+    auto v = index.begin();
+    // inject up to the last coordinate
+    for (; v != index.end()-1; ++v) {
         stream << *v << ", ";
     }
-    stream << index[index.size()-1] << ")";
+    // and now the last one
+    stream << *v;
     // all done
     return stream;
 }

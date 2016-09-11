@@ -69,4 +69,21 @@ end() const {
     return _layout.cend();
 }
 
+
+template <typename repT>
+auto &
+operator<<(std::ostream & stream, const pyre::geometry::Layout<repT> & layout) {
+    // initialize; do it in this scope scope so we can use the iterator after the loop
+    auto v = layout.begin();
+    // inject up to the last coordinate
+    for (; v != layout.end()-1; ++v) {
+        stream << *v << ", ";
+    }
+    // and now the last one
+    stream << *v;
+    // all done
+    return stream;
+}
+
+
 // end of file

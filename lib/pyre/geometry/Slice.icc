@@ -17,19 +17,19 @@ template <typename tileT>
 pyre::geometry::Slice<tileT>::
 Slice(const tile_type & tile, const layout_type & layout) :
     _tile {tile},
-    _begin {}, // set everything to 0
-    _end { tile.shape() },
+    _low {}, // set everything to 0
+    _high { tile.shape() },
     _layout {layout}
 {}
 
 template <typename tileT>
 pyre::geometry::Slice<tileT>::
 Slice(const tile_type & tile,
-      const index_type & begin, const index_type & end,
+      const index_type & low, const index_type & high,
       const layout_type & layout) :
     _tile {tile},
-    _begin { begin }, // set everything to 0
-    _end { end },
+    _low { low }, // set everything to 0
+    _high { high },
     _layout {layout}
 {}
 
@@ -38,9 +38,18 @@ Slice(const tile_type & tile,
 template <typename tileT>
 const auto &
 pyre::geometry::Slice<tileT>::
-shape() const {
-    // ask the tile
-    return _tile.shape();
+low() const {
+    // easy
+    return _low;
+}
+
+
+template <typename tileT>
+const auto &
+pyre::geometry::Slice<tileT>::
+high() const {
+    // easy
+    return _high;
 }
 
 
@@ -48,7 +57,7 @@ template <typename tileT>
 const auto &
 pyre::geometry::Slice<tileT>::
 layout() const {
-    // ask the tile
+    // easy
     return _layout;
 }
 
@@ -93,7 +102,7 @@ auto
 pyre::geometry::Slice<tileT>::
 begin() const {
     // easy enough...
-    return iterator_type{ _begin, _end, _layout };
+    return iterator_type{ _low, _high, _layout };
 }
 
 
@@ -102,7 +111,7 @@ auto
 pyre::geometry::Slice<tileT>::
 end() const {
     // easy enough...
-    return iterator_type{ _end, _end, _layout };
+    return iterator_type{ _high, _high, _layout };
 }
 
 
