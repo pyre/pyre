@@ -14,14 +14,14 @@ TESTS = \
     index \
     index-access \
     index-bool \
-    layout \
-    layout-access \
+    order \
+    order-access \
     iterator \
-    iterator-layout \
+    iterator-order \
     iterator-access \
     iterator-loop \
     tile \
-    tile-layout \
+    tile-order \
     slice \
     tile-slice \
     point \

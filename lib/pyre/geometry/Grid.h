@@ -18,7 +18,7 @@ public:
     typedef storageT storage_type;
     // dependent types
     typedef typename tile_type::index_type index_type;
-    typedef typename tile_type::layout_type layout_type;
+    typedef typename tile_type::order_type order_type;
 
     // othe help
     typedef std::size_t size_type;

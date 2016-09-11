@@ -33,7 +33,7 @@ EXPORT_PKG_HEADERS = \
     Grid.h Grid.icc \
     Index.h Index.icc \
     Iterator.h Iterator.icc \
-    Layout.h Layout.icc \
+    Order.h Order.icc \
     Point.h Point.icc \
     Slice.h Slice.icc \
     Tile.h Tile.icc \

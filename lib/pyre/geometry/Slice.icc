@@ -15,22 +15,22 @@
 // meta-methods
 template <typename tileT>
 pyre::geometry::Slice<tileT>::
-Slice(const tile_type & tile, const layout_type & layout) :
+Slice(const tile_type & tile, const order_type & order) :
     _tile {tile},
     _low {}, // set everything to 0
     _high { tile.shape() },
-    _layout {layout}
+    _order {order}
 {}
 
 template <typename tileT>
 pyre::geometry::Slice<tileT>::
 Slice(const tile_type & tile,
       const index_type & low, const index_type & high,
-      const layout_type & layout) :
+      const order_type & order) :
     _tile {tile},
     _low { low }, // set everything to 0
     _high { high },
-    _layout {layout}
+    _order {order}
 {}
 
 
@@ -56,9 +56,9 @@ high() const {
 template <typename tileT>
 const auto &
 pyre::geometry::Slice<tileT>::
-layout() const {
+order() const {
     // easy
-    return _layout;
+    return _order;
 }
 
 
@@ -102,7 +102,7 @@ auto
 pyre::geometry::Slice<tileT>::
 begin() const {
     // easy enough...
-    return iterator_type{ _low, _high, _layout };
+    return iterator_type{ _low, _high, _order };
 }
 
 
@@ -111,7 +111,7 @@ auto
 pyre::geometry::Slice<tileT>::
 end() const {
     // easy enough...
-    return iterator_type{ _high, _high, _layout };
+    return iterator_type{ _high, _high, _order };
 }
 
 

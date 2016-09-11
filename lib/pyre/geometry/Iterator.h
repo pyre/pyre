@@ -12,17 +12,17 @@
 
 
 // declaration
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 class pyre::geometry::Iterator {
     // types
 public:
     // my parts
     typedef indexT index_type;
-    typedef layoutT layout_type;
+    typedef orderT order_type;
 
     // meta-methods
 public:
-    Iterator(const index_type & begin, const index_type & end, const layout_type & layout);
+    Iterator(const index_type & begin, const index_type & end, const order_type & order);
 
     // interface
 public:
@@ -38,7 +38,7 @@ private:
     index_type _current;
     const index_type _begin;
     const index_type _end;
-    const layout_type _layout;
+    const order_type _order;
 };
 
 

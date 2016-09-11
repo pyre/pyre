@@ -24,8 +24,8 @@ int main() {
     // shape
     typedef std::array<int, 3> rep_t;
     typedef pyre::geometry::index_t<rep_t> index_t;
-    typedef pyre::geometry::layout_t<rep_t> layout_t;
-    typedef pyre::geometry::tile_t<index_t, layout_t> tile_t;
+    typedef pyre::geometry::order_t<rep_t> order_t;
+    typedef pyre::geometry::tile_t<index_t, order_t> tile_t;
     // storage
     typedef pyre::memory::view_t view_t;
     // grid
@@ -34,12 +34,12 @@ int main() {
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
 
-    // make a layout
-    tile_t::layout_type layout {2, 1, 0};
+    // make a order
+    tile_t::order_type order {2, 1, 0};
     // make a shape
     tile_t::index_type shape {6, 4, 2};
     // make a tile
-    tile_t tile {shape, layout};
+    tile_t tile {shape, order};
 
     // allocate some memory
     void * data = ::operator new(tile.size() * sizeof(cell_t));

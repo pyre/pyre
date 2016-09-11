@@ -13,36 +13,36 @@
 
 
 // meta-methods
-template <typename indexT, typename layoutT>
-pyre::geometry::Tile<indexT, layoutT>::
-Tile(index_type shape, layout_type layout) :
+template <typename indexT, typename orderT>
+pyre::geometry::Tile<indexT, orderT>::
+Tile(index_type shape, order_type order) :
     _shape{shape},
-    _layout{layout}
+    _order{order}
 {}
 
 
 // interface
 // accessors
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 const auto &
-pyre::geometry::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, orderT>::
 shape() const {
     // easy enough...
     return _shape;
 }
 
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 const auto &
-pyre::geometry::Tile<indexT, layoutT>::
-layout() const {
+pyre::geometry::Tile<indexT, orderT>::
+order() const {
     // easy enough...
-    return _layout;
+    return _order;
 }
 
 // compute the size of the tile
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, orderT>::
 size() const {
     // initialize
     size_type cells = 1;
@@ -56,16 +56,16 @@ size() const {
 }
 
 // cell offset for a given index
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, orderT>::
 offset(const index_type & index) const {
     // initialize the offset
     size_type offset = 0;
     // and the running product
     size_type product = 1;
     // loop over the packing order
-    for (auto axis : _layout) {
+    for (auto axis : _order) {
         // update the offset
         offset += index[axis] * product;
         // update the product
@@ -77,9 +77,9 @@ offset(const index_type & index) const {
 
 
 // index for a given cell offset
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, orderT>::
 index(size_type offset) const {
     // storage for the answer
     index_type index;
@@ -89,9 +89,9 @@ index(size_type offset) const {
     // loop in reverse packing order
     for (int dim = index.size()-1; dim >=0; --dim) {
         // pull the current shape limit out of the product
-        product /= _shape[_layout[dim]];
+        product /= _shape[_order[dim]];
         // compute the index
-        index[_layout[dim]] = offset / product;
+        index[_order[dim]] = offset / product;
         // adjust the offset
         offset %= product;
     }
@@ -102,17 +102,17 @@ index(size_type offset) const {
 
 
 // the syntactic sugar
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, orderT>::
 operator[](const index_type & index) const {
     // delegate
     return offset(index);
 }
 
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, orderT>::
 operator[](size_type offset) const {
     // delegate
     return index(offset);
@@ -120,47 +120,47 @@ operator[](size_type offset) const {
 
 
 // iteration support
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, orderT>::
 begin() const {
     // delegate
-    return iterator_type {{}, _shape, _layout};
+    return iterator_type {{}, _shape, _order};
 }
 
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, orderT>::
 end() const {
     // delegate
-    return iterator_type {_shape, _shape, _layout};
+    return iterator_type {_shape, _shape, _order};
 }
 
 // slicing
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
-slice(const layout_type & layout) const {
-    // make a slice over the whole tile but with the given layout
-    return slice_type(*this, {}, _shape, layout);
+pyre::geometry::Tile<indexT, orderT>::
+slice(const order_type & order) const {
+    // make a slice over the whole tile but with the given order
+    return slice_type(*this, {}, _shape, order);
 }
 
 
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
+pyre::geometry::Tile<indexT, orderT>::
 slice(const index_type & begin, const index_type & end) const {
-    // make a slice over the whole tile but with the given layout
-    return slice_type(*this, begin, end, _layout);
+    // make a slice over the whole tile but with the given order
+    return slice_type(*this, begin, end, _order);
 }
 
 
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
-pyre::geometry::Tile<indexT, layoutT>::
-slice(const index_type & begin, const index_type & end, const layout_type & layout) const {
-    // make a slice over the whole tile but with the given layout
-    return slice_type(*this, begin, end, layout);
+pyre::geometry::Tile<indexT, orderT>::
+slice(const index_type & begin, const index_type & end, const order_type & order) const {
+    // make a slice over the whole tile but with the given order
+    return slice_type(*this, begin, end, order);
 }
 
 

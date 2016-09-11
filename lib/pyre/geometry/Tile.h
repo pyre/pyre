@@ -11,7 +11,7 @@
 #define pyre_geometry_Tile_h
 
 // declaration
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 class pyre::geometry::Tile {
     // types
 public:
@@ -19,21 +19,21 @@ public:
     typedef std::size_t size_type;
     // aliases for my parts
     typedef indexT index_type;
-    typedef layoutT layout_type;
+    typedef orderT order_type;
     // slices
     typedef Slice<Tile> slice_type;
     // iterator
-    typedef Iterator<index_type, layout_type> iterator_type;
+    typedef Iterator<index_type, order_type> iterator_type;
 
     // meta-methods
 public:
-    Tile(index_type shape, layout_type layout);
+    Tile(index_type shape, order_type order);
 
     // interface
 public:
     // accessors
     inline const auto & shape() const;
-    inline const auto & layout() const;
+    inline const auto & order() const;
 
     // the number of cells in this tile
     inline auto size() const;
@@ -52,14 +52,14 @@ public:
     inline auto end() const;
 
     // iterating over slices in arbitrary order
-    auto slice(const layout_type & order) const;
+    auto slice(const order_type & order) const;
     auto slice(const index_type & begin, const index_type & end) const;
-    auto slice(const index_type & begin, const index_type & end, const layout_type & order) const;
+    auto slice(const index_type & begin, const index_type & end, const order_type & order) const;
 
     // implementation details
 private:
     const index_type _shape;
-    const layout_type _layout;
+    const order_type _order;
 };
 
 

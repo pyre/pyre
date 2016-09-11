@@ -13,21 +13,21 @@
 
 
 // meta-methods
-template <typename indexT, typename layoutT>
-pyre::geometry::Iterator<indexT, layoutT>::
-Iterator(const index_type & begin, const index_type & end, const layout_type & layout) :
+template <typename indexT, typename orderT>
+pyre::geometry::Iterator<indexT, orderT>::
+Iterator(const index_type & begin, const index_type & end, const order_type & order) :
     _current(begin),
     _begin(begin),
     _end(end),
-    _layout(layout)
+    _order(order)
 {}
 
 
 // interface
 // access to the current value
-template <typename indexT, typename layoutT>
-const typename pyre::geometry::Iterator<indexT, layoutT>::index_type &
-pyre::geometry::Iterator<indexT, layoutT>::
+template <typename indexT, typename orderT>
+const typename pyre::geometry::Iterator<indexT, orderT>::index_type &
+pyre::geometry::Iterator<indexT, orderT>::
 operator* () const {
     // return the current value
     return _current;
@@ -35,12 +35,12 @@ operator* () const {
 
 
 // value update
-template <typename indexT, typename layoutT>
-pyre::geometry::Iterator<indexT, layoutT> &
-pyre::geometry::Iterator<indexT, layoutT>::
+template <typename indexT, typename orderT>
+pyre::geometry::Iterator<indexT, orderT> &
+pyre::geometry::Iterator<indexT, orderT>::
 operator++ () {
-    // pull the indices in layout order
-    for (auto dim : _layout) {
+    // pull the indices in order order
+    for (auto dim : _order) {
         // get the associated limit
         auto limit = _end[dim];
         // get my current value for this component and increment it
@@ -65,17 +65,17 @@ operator++ () {
 
 
 // access to my limits
-template <typename indexT, typename layoutT>
-const typename pyre::geometry::Iterator<indexT, layoutT>::index_type &
-pyre::geometry::Iterator<indexT, layoutT>::
+template <typename indexT, typename orderT>
+const typename pyre::geometry::Iterator<indexT, orderT>::index_type &
+pyre::geometry::Iterator<indexT, orderT>::
 begin() const {
     // easy...
     return _begin;
 }
 
-template <typename indexT, typename layoutT>
-const typename pyre::geometry::Iterator<indexT, layoutT>::index_type &
-pyre::geometry::Iterator<indexT, layoutT>::
+template <typename indexT, typename orderT>
+const typename pyre::geometry::Iterator<indexT, orderT>::index_type &
+pyre::geometry::Iterator<indexT, orderT>::
 end() const {
     // easy...
     return _end;
@@ -83,19 +83,19 @@ end() const {
 
 
 // operators on indices
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
 pyre::geometry::
-operator==(const Iterator<indexT, layoutT> & one, const Iterator<indexT, layoutT> & two) {
+operator==(const Iterator<indexT, orderT> & one, const Iterator<indexT, orderT> & two) {
     // delegate to the standard algorithm
     return std::equal((*one).begin(), (*one).end(), (*two).begin());
 }
 
 
-template <typename indexT, typename layoutT>
+template <typename indexT, typename orderT>
 auto
 pyre::geometry::
-operator!=(const Iterator<indexT, layoutT> & one, const Iterator<indexT, layoutT> & two) {
+operator!=(const Iterator<indexT, orderT> & one, const Iterator<indexT, orderT> & two) {
     // easy enough
     return !(one == two);
 }

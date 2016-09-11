@@ -7,13 +7,13 @@
 //
 
 // code guard
-#if !defined(pyre_geometry_Layout_h)
-#define pyre_geometry_Layout_h
+#if !defined(pyre_geometry_Order_h)
+#define pyre_geometry_Order_h
 
 
 // declaration
 template <typename repT>
-class pyre::geometry::Layout {
+class pyre::geometry::Order {
     // types
 public:
     // the container with the index order
@@ -27,7 +27,7 @@ public:
 public:
     // the constructor is a variadic template; it enables construction of the rep using
     // initializer lists
-    template <typename... argT> inline Layout(argT... arg);
+    template <typename... argT> inline Order(argT... arg);
 
     // interface
 public:
@@ -43,7 +43,7 @@ public:
 
     // implementation details
 private:
-    const rep_type _layout;
+    const rep_type _order;
 };
 
 

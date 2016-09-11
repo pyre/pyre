@@ -23,13 +23,13 @@ namespace pyre {
         // for describing shapes and regions
         typedef std::size_t size_t;
         // geometry packing order
-        template <typename repT> class Layout;
+        template <typename repT> class Order;
         // geometry indices
         template <typename repT> class Index;
         // iterators over index ranges
-        template <typename indexT, typename layoutT> class Iterator;
+        template <typename indexT, typename orderT> class Iterator;
         // tiles
-        template <typename indexT, typename layoutT> class Tile;
+        template <typename indexT, typename orderT> class Tile;
         // slices
         template <typename tileT> class Slice;
 
@@ -46,13 +46,13 @@ namespace pyre {
 namespace pyre {
     namespace geometry {
         template <typename repT> using index_t = Index<repT>;
-        template <typename repT> using layout_t = Layout<repT>;
+        template <typename repT> using order_t = Order<repT>;
 
-        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type> >
-        using iterator_t = Iterator<indexT, layoutT>;
+        template <typename indexT, typename orderT = order_t<typename indexT::rep_type> >
+        using iterator_t = Iterator<indexT, orderT>;
 
-        template <typename indexT, typename layoutT = layout_t<typename indexT::rep_type> >
-        using tile_t = Tile<indexT, layoutT>;
+        template <typename indexT, typename orderT = order_t<typename indexT::rep_type> >
+        using tile_t = Tile<indexT, orderT>;
 
         template <typename tileT> using slice_t = Slice<tileT>;
 
@@ -81,11 +81,11 @@ namespace pyre {
 
         // operators on iterators
         // equality
-        template <typename indexT, typename layoutT>
-        auto operator== (const Iterator<indexT, layoutT> &, const Iterator<indexT, layoutT> &);
+        template <typename indexT, typename orderT>
+        auto operator== (const Iterator<indexT, orderT> &, const Iterator<indexT, orderT> &);
         // inequality
-        template <typename indexT, typename layoutT>
-        auto operator!= (const Iterator<indexT, layoutT> &, const Iterator<indexT, layoutT> &);
+        template <typename indexT, typename orderT>
+        auto operator!= (const Iterator<indexT, orderT> &, const Iterator<indexT, orderT> &);
 
         // operators on points
         // equality
@@ -110,9 +110,9 @@ namespace pyre {
 // for indices
 template <typename repT>
 auto & operator<< (std::ostream & stream, const pyre::geometry::Index<repT> & index);
-// layouts
+// orders
 template <typename repT>
-auto & operator<< (std::ostream & stream, const pyre::geometry::Layout<repT> & layout);
+auto & operator<< (std::ostream & stream, const pyre::geometry::Order<repT> & order);
 // points
 template <std::size_t dim, typename dataT>
 auto & operator<< (std::ostream & stream, const pyre::geometry::Point<dim, dataT> & point);
@@ -122,7 +122,7 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT
 
 
 // the object model
-#include "Layout.h"
+#include "Order.h"
 #include "Index.h"
 #include "Iterator.h"
 #include "Tile.h"
@@ -132,10 +132,10 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT
 #include "Grid.h"
 
 // the implementations
-// layout
-#define pyre_geometry_Layout_icc
-#include "Layout.icc"
-#undef pyre_geometry_Layout_icc
+// order
+#define pyre_geometry_Order_icc
+#include "Order.icc"
+#undef pyre_geometry_Order_icc
 
 // index
 #define pyre_geometry_Index_icc

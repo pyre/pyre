@@ -22,24 +22,24 @@ public:
     typedef tileT tile_type;
     // easy access to deduced types
     typedef typename tile_type::index_type index_type;
-    typedef typename tile_type::layout_type layout_type;
+    typedef typename tile_type::order_type order_type;
     typedef typename tile_type::iterator_type iterator_type;
 
     // meta-methods
 public:
-    // slice the whole tile but change the layout
-    Slice(const tile_type & tile, const layout_type & layout);
+    // slice the whole tile but change the order
+    Slice(const tile_type & tile, const order_type & order);
 
-    // slice the tile between {low} and {high}, and visit with the given {layout}
+    // slice the tile between {low} and {high}, and visit with the given {order}
     Slice(const tile_type & tile,
           const index_type & low, const index_type & high,
-          const layout_type & layout);
+          const order_type & order);
 
     // interface
 public:
     inline const auto & low() const;
     inline const auto & high() const;
-    inline const auto & layout() const;
+    inline const auto & order() const;
 
     // compute the pixel offset implied by a given index
     // compute the index that corresponds to a given offset
@@ -59,7 +59,7 @@ private:
     const tile_type _tile;
     const index_type _low;
     const index_type _high;
-    const layout_type _layout;
+    const order_type _order;
 };
 
 

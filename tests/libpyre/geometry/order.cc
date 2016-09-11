@@ -5,10 +5,10 @@
 // (c) 1998-2016 all rights reserved
 //
 
-// exercise grid layout construction:
+// exercise grid order construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   assemble a layout
+//   assemble a order
 //   verify it can be iterated
 
 // portability
@@ -21,16 +21,16 @@ int main() {
     // fix the representation
     typedef std::array<int, 4> rep_t;
     // alias
-    typedef pyre::geometry::layout_t<rep_t> layout_t;
+    typedef pyre::geometry::order_t<rep_t> order_t;
     // make the interleaving
-    layout_t layout = {0, 1, 2, 3};
+    order_t order = {0, 1, 2, 3};
 
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
-    // and display information about the tile layout
+    // and display information about the tile order
     channel
         << pyre::journal::at(__HERE__)
-        << "layout : (" << layout << ")"
+        << "order : (" << order << ")"
         << pyre::journal::endl;
 
     // all done
