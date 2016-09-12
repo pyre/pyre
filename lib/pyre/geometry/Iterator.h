@@ -12,33 +12,29 @@
 
 
 // declaration
-template <typename indexT, typename orderT>
+template <typename sliceT>
 class pyre::geometry::Iterator {
     // types
 public:
     // my parts
-    typedef indexT index_type;
-    typedef orderT order_type;
+    typedef sliceT slice_type;
+    typedef typename slice_type::index_type index_type;
+    typedef typename slice_type::order_type order_type;
 
     // meta-methods
 public:
-    Iterator(const index_type & begin, const index_type & end, const order_type & order);
+    Iterator(const slice_type & slice);
+    Iterator(const index_type & current, const slice_type & slice);
 
     // interface
 public:
     inline Iterator & operator++();
     inline const index_type & operator*() const;
 
-    // access to my limits
-    const index_type & begin() const;
-    const index_type & end() const;
-
     // implementation details
 private:
     index_type _current;
-    const index_type _begin;
-    const index_type _end;
-    const order_type _order;
+    const slice_type & _slice;
 };
 
 

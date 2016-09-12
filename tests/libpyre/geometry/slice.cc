@@ -5,11 +5,10 @@
 // (c) 1998-2016 all rights reserved
 //
 
-// exercise grid order construction:
+// exercise slice construction
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   assemble a order
-//   verify it can be iterated
+//   instantiate and access the simple interface
 
 // portability
 #include <portinfo>
@@ -23,16 +22,16 @@ int main() {
     // build the parts
     typedef pyre::geometry::index_t<rep_t> index_t;
     typedef pyre::geometry::order_t<rep_t> order_t;
-    typedef pyre::geometry::tile_t<index_t, order_t> tile_t;
+    typedef pyre::geometry::slice_t<index_t, order_t> slice_t;
 
-    // make a order
-    tile_t::order_type order {3, 2, 1, 0};
-    // make a shape
-    tile_t::index_type shape {2, 3, 4, 5};
-    // make a tile
-    tile_t tile {shape, order};
+    // make an ordering
+    slice_t::order_type order {3, 2, 1, 0};
+    // make a lower bound
+    slice_t::index_type low {0, 0, 0, 0};
+    // make an upper bound
+    slice_t::index_type high {2, 3, 4, 5};
     // make a slice
-    tile_t::slice_type slice = tile.slice({0,1,2,3});
+    slice_t slice {low, high, order};
 
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");

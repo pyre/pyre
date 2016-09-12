@@ -8,8 +8,8 @@
 // exercise grid order construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   assemble a order
-//   verify it can be iterated
+//   assemble an ordering
+//   verify it can be injected into a stream
 
 // portability
 #include <portinfo>

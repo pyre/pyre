@@ -34,17 +34,15 @@ int main() {
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
 
-    // make a order
+    // make an ordering
     tile_t::order_type order {2, 1, 0};
     // make a shape
     tile_t::index_type shape {6, 4, 2};
     // make a tile
     tile_t tile {shape, order};
 
-    // allocate some memory
-    void * data = ::operator new(tile.size() * sizeof(cell_t));
-    // make a view over it
-    view_t storage {data};
+    // allocate some memory and make a view over it
+    view_t storage { ::operator new(tile.size() * sizeof(cell_t)) };
     // make the grid
     grid_t grid {tile, storage};
 
@@ -55,7 +53,7 @@ int main() {
         << pyre::journal::endl;
 
     // clean up
-    ::operator delete(data);
+    ::operator delete(storage.buffer());
     // all done
     return 0;
 }

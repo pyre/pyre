@@ -8,7 +8,7 @@
 // exercise grid order construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   assemble a order
+//   assemble an ordering
 //   verify it can be iterated
 
 // portability
@@ -22,7 +22,7 @@ int main() {
     typedef std::array<int, 4> rep_t;
     // alias
     typedef pyre::geometry::order_t<rep_t> order_t;
-    // make the interleaving
+    // instantiate an ordering
     order_t order = {0, 1, 2, 3};
 
     // make a firewall

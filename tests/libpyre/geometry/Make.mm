@@ -16,19 +16,21 @@ TESTS = \
     index-bool \
     order \
     order-access \
+    slice \
     iterator \
-    iterator-order \
     iterator-access \
     iterator-loop \
+    iterator-slice \
     tile \
     tile-order \
-    slice \
     tile-slice \
     point \
     brick \
     grid-view \
     grid-heap \
     grid-direct \
+    grid-direct-set \
+    grid-direct-get \
 
 all: test clean
 

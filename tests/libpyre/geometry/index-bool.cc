@@ -8,8 +8,7 @@
 // exercise grid index construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   assemble a index
-//   verify it can be iterated
+//   assemble indices and verify they can be compared
 
 // portability
 #include <portinfo>

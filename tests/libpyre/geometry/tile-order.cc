@@ -5,11 +5,11 @@
 // (c) 1998-2016 all rights reserved
 //
 
-// exercise grid order construction:
+// exercise tile construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   assemble a order
-//   verify it can be iterated
+//   instantiate a tile and verify it can be iterated
+//   exercise the index <-> offset calculations
 
 // portability
 #include <portinfo>
@@ -25,8 +25,8 @@ int main() {
     typedef pyre::geometry::order_t<rep_t> order_t;
     typedef pyre::geometry::tile_t<index_t, order_t> tile_t;
 
-    // make a order
-    tile_t::order_type order {3, 2, 1, 0};
+    // make an ordering
+    tile_t::order_type order {2, 3, 0, 1};
     // make a shape
     tile_t::index_type shape {2, 3, 4, 5};
     // make a tile
@@ -62,9 +62,7 @@ int main() {
             firewall
                 << pyre::journal::at(__HERE__)
                 << "index error at offset " << offset << pyre::journal::newline
-                << "(" << index[0] << "," << index[1] << "," << index[2] << ")"
-                << " != "
-                << "(" << refl[0] << "," << refl[1] << "," << refl[2] << ")"
+                << "(" << index << ") != (" << refl << ")"
                 << pyre::journal::endl;
             // and bail
             return 1;

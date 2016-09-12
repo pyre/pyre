@@ -34,17 +34,15 @@ int main() {
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
 
-    // make a order
+    // make an ordering
     tile_t::order_type order {2, 1, 0};
     // make a shape
     tile_t::index_type shape {6, 4, 2};
     // make a tile
     tile_t tile {shape, order};
 
-    // make a view over it
-    heap_t storage {tile.size()};
-    // make the grid
-    grid_t grid {tile, std::move(storage)};
+    // allocate some memory on the heap and make a grid
+    grid_t grid {tile, heap_t{tile.size()}};
 
     // show me
     channel

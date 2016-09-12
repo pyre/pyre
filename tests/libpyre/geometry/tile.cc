@@ -5,11 +5,10 @@
 // (c) 1998-2016 all rights reserved
 //
 
-// exercise grid order construction:
+// exercise tile construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   assemble a order
-//   verify it can be iterated
+//   exercise the simpel interface
 
 // portability
 #include <portinfo>
@@ -25,7 +24,7 @@ int main() {
     typedef pyre::geometry::order_t<rep_t> order_t;
     typedef pyre::geometry::tile_t<index_t, order_t> tile_t;
 
-    // make a order
+    // make an ordering
     tile_t::order_type order {3, 2, 1, 0};
     // make a shape
     tile_t::index_type shape {2, 3, 4, 5};
@@ -38,8 +37,8 @@ int main() {
     // display information about the tile shape and order
     channel
         << pyre::journal::at(__HERE__)
-        << "shape: (" << shape << ")" << pyre::journal::newline
-        << "order: (" << order << ")" << pyre::journal::endl;
+        << "shape: (" << tile.shape() << ")" << pyre::journal::newline
+        << "order: (" << tile.order() << ")" << pyre::journal::endl;
 
     // all done
     return 0;

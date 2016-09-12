@@ -5,9 +5,7 @@
 // (c) 1998-2016 all rights reserved
 //
 
-// exercise iterator loops
-//   N.B.: this is a test of the implementation, not an example of the
-//   recommended way to use iterators
+// exercise looping through slices
 
 // portability
 #include <portinfo>
@@ -22,8 +20,6 @@ int main() {
     typedef pyre::geometry::index_t<rep_t> index_t;
     typedef pyre::geometry::order_t<rep_t> order_t;
     typedef pyre::geometry::slice_t<index_t, order_t> slice_t;
-    // create a shortcut to my target iterator type
-    typedef pyre::geometry::iterator_t<slice_t> iterator_t;
 
     // make an ordering
     slice_t::order_type order {1, 0};
@@ -32,17 +28,13 @@ int main() {
     slice_t::index_type high {3, 2};
     // make a slice
     slice_t slice {low, high, order};
-    // make a iterator
-    iterator_t iterator {slice};
 
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
     // sign in
     channel << pyre::journal::at(__HERE__);
-    // loop until the iterator reaches the end
-    // this test works because {cursor} is a reference to the {iterator} current value
-    // this is not an example of the recommended way to use slice iterators...
-    for (const auto & cursor = *iterator; cursor != slice.high(); ++iterator) {
+    // loop through the slice
+    for (auto cursor : slice) {
         // show me
         channel << "  (" << cursor << ")" << pyre::journal::newline;
     }

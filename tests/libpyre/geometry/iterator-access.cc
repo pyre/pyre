@@ -5,11 +5,7 @@
 // (c) 1998-2016 all rights reserved
 //
 
-// exercise grid order construction:
-//   verify that all the parts are accessible through the public headers
-//   verify constructor signatures
-//   assemble a order
-//   verify it can be iterated
+// exercise iterator dereferencing
 
 // portability
 #include <portinfo>
@@ -20,18 +16,24 @@
 int main() {
     // fix the rep
     typedef std::array<int, 4> rep_t;
-    // alias index; exercise the compiler's ability to deduce the order
+    // alias index and order
     typedef pyre::geometry::index_t<rep_t> index_t;
+    typedef pyre::geometry::order_t<rep_t> order_t;
+    typedef pyre::geometry::slice_t<index_t, order_t> slice_t;
     // create a shortcut to my target iterator type
-    typedef pyre::geometry::iterator_t<index_t> iterator_t;
+    typedef pyre::geometry::iterator_t<slice_t> iterator_t;
 
-    // make a order
-    iterator_t::order_type order {2, 3, 1, 0};
-    // build the iteration boundaries
-    index_t begin {0, 0, 0, 0};
-    index_t end {5, 4, 3, 2};
-    // make a iterator
-    iterator_t iterator {begin, end, order};
+    // make an ordering
+    slice_t::order_type order {2, 3, 1, 0};
+    // make a lower bound
+    slice_t::index_type low {0, 0, 0, 0};
+    // make an upper bound
+    slice_t::index_type high {2, 3, 4, 5};
+    // make a slice
+    slice_t slice {low, high, order};
+
+    // make an iterator
+    iterator_t iterator {low, slice};
 
     // increment
     ++iterator;
@@ -48,20 +50,11 @@ int main() {
         // sign in
         channel
             << pyre::journal::at(__HERE__)
-            << "error while incrementing iterator:"
-            << pyre::journal::newline;
-        // show me what i expected
-        channel << "expected: (";
-        for (auto idx : correct) {
-            channel << " " << idx;
-        }
-        channel << " )" << pyre::journal::newline;
-        // show me what i got
-        channel << "     got: (";
-        for (auto idx : got) {
-            channel << " " << idx;
-        }
-        channel << " )" << pyre::journal::endl;
+            << "error while incrementing iterator:" << pyre::journal::newline
+            // show me what i expected
+            << "    expected: (" << correct << ")" << pyre::journal::newline
+            // show me what i got
+            << "    got: (" << got << ")" << pyre::journal::endl;
 
         // fail
         return 1;

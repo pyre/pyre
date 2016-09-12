@@ -8,7 +8,8 @@
 // configuration
 #include <portinfo>
 // externals
-#include <iostream>
+#include <numeric>
+// support
 #include <pyre/journal.h>
 #include <pyre/memory.h>
 #include <pyre/geometry.h>
@@ -33,9 +34,6 @@ int main() {
     // grid
     typedef pyre::geometry::grid_t<cell_t, tile_t, direct_t> grid_t;
 
-    // make a channel
-    pyre::journal::debug_t channel("pyre.geometry");
-
     // make an ordering
     tile_t::order_type order {2, 1, 0};
     // make a shape
@@ -47,16 +45,25 @@ int main() {
     uri_t name {"grid.dat"};
     // and the desired size
     size_t size = tile.size() * sizeof(cell_t);
-    // realize it
-    direct_t::create(name, size);
     // map it and make the grid
     grid_t grid {tile, direct_t{name, size}};
 
-    // show me
-    channel
-        << pyre::journal::at(__HERE__)
-        << grid[{1,1,1}]
-        << pyre::journal::endl;
+    // make a channel
+    pyre::journal::debug_t channel("pyre.geometry");
+    // loop over the grid
+    for (auto idx : grid.shape()) {
+        // reduce the index
+        auto v = std::accumulate(idx.begin(), idx.end(), 1, std::multiplies<cell_t>());
+        // and store the value
+        grid[idx] = v;
+        // show me
+        channel
+            << pyre::journal::at(__HERE__)
+            << "grid[" << idx << "] = " << grid[idx]
+            << pyre::journal::newline;
+    }
+    // flush
+    channel << pyre::journal::endl;
 
     // all done
     return 0;

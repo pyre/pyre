@@ -12,28 +12,24 @@
 
 
 // declaration
-template <typename tileT>
+template <typename indexT, typename orderT>
 class pyre::geometry::Slice {
     // types
 public:
     // for sizing things
     typedef std::size_t size_type;
-    // alias for my template parameter
-    typedef tileT tile_type;
-    // easy access to deduced types
-    typedef typename tile_type::index_type index_type;
-    typedef typename tile_type::order_type order_type;
-    typedef typename tile_type::iterator_type iterator_type;
+    // aliases for my parts
+    typedef indexT index_type;
+    typedef orderT order_type;
+    // alias for me
+    typedef Slice<index_type, order_type> slice_type;
+    // iterators
+    typedef Iterator<slice_type> iterator_type;
 
     // meta-methods
 public:
-    // slice the whole tile but change the order
-    Slice(const tile_type & tile, const order_type & order);
-
-    // slice the tile between {low} and {high}, and visit with the given {order}
-    Slice(const tile_type & tile,
-          const index_type & low, const index_type & high,
-          const order_type & order);
+    // a slice is the set of indices [low, high) visited in a given order
+    Slice(const index_type & low, const index_type & high, const order_type & order);
 
     // interface
 public:
@@ -41,22 +37,12 @@ public:
     inline const auto & high() const;
     inline const auto & order() const;
 
-    // compute the pixel offset implied by a given index
-    // compute the index that corresponds to a given offset
-    inline auto offset(const index_type & index) const;
-    inline auto index(size_type offset) const;
-
-    // syntactic sugar for the pair above
-    inline auto operator[](const index_type & index) const;
-    inline auto operator[](size_type offset) const;
-
     // iteration support
     inline auto begin() const;
     inline auto end() const;
 
     // implementation details
 private:
-    const tile_type _tile;
     const index_type _low;
     const index_type _high;
     const order_type _order;

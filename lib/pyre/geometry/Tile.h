@@ -12,7 +12,7 @@
 
 // declaration
 template <typename indexT, typename orderT>
-class pyre::geometry::Tile {
+class pyre::geometry::Tile : public Slice<indexT, orderT> {
     // types
 public:
     // for sizing things
@@ -20,10 +20,7 @@ public:
     // aliases for my parts
     typedef indexT index_type;
     typedef orderT order_type;
-    // slices
-    typedef Slice<Tile> slice_type;
-    // iterator
-    typedef Iterator<index_type, order_type> iterator_type;
+    typedef Slice<indexT, orderT> slice_type;
 
     // meta-methods
 public:
@@ -33,7 +30,6 @@ public:
 public:
     // accessors
     inline const auto & shape() const;
-    inline const auto & order() const;
 
     // the number of cells in this tile
     inline auto size() const;
@@ -47,19 +43,10 @@ public:
     inline auto operator[](const index_type & index) const;
     inline auto operator[](size_type offset) const;
 
-    // iteration support
-    inline auto begin() const;
-    inline auto end() const;
-
     // iterating over slices in arbitrary order
     auto slice(const order_type & order) const;
     auto slice(const index_type & begin, const index_type & end) const;
     auto slice(const index_type & begin, const index_type & end, const order_type & order) const;
-
-    // implementation details
-private:
-    const index_type _shape;
-    const order_type _order;
 };
 
 

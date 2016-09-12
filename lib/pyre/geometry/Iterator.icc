@@ -13,21 +13,27 @@
 
 
 // meta-methods
-template <typename indexT, typename orderT>
-pyre::geometry::Iterator<indexT, orderT>::
-Iterator(const index_type & begin, const index_type & end, const order_type & order) :
-    _current(begin),
-    _begin(begin),
-    _end(end),
-    _order(order)
+template <typename sliceT>
+pyre::geometry::Iterator<sliceT>::
+Iterator(const slice_type & slice) :
+    _current(slice.low()),
+    _slice(slice)
+{}
+
+
+template <typename sliceT>
+pyre::geometry::Iterator<sliceT>::
+Iterator(const index_type & current, const slice_type & slice) :
+    _current(current),
+    _slice(slice)
 {}
 
 
 // interface
 // access to the current value
-template <typename indexT, typename orderT>
-const typename pyre::geometry::Iterator<indexT, orderT>::index_type &
-pyre::geometry::Iterator<indexT, orderT>::
+template <typename sliceT>
+const typename pyre::geometry::Iterator<sliceT>::index_type &
+pyre::geometry::Iterator<sliceT>::
 operator* () const {
     // return the current value
     return _current;
@@ -35,14 +41,14 @@ operator* () const {
 
 
 // value update
-template <typename indexT, typename orderT>
-pyre::geometry::Iterator<indexT, orderT> &
-pyre::geometry::Iterator<indexT, orderT>::
+template <typename sliceT>
+pyre::geometry::Iterator<sliceT> &
+pyre::geometry::Iterator<sliceT>::
 operator++ () {
-    // pull the indices in order order
-    for (auto dim : _order) {
+    // pull the indices in the specified order
+    for (auto dim : _slice.order()) {
         // get the associated limit
-        auto limit = _end[dim];
+        auto limit = _slice.high()[dim];
         // get my current value for this component and increment it
         auto value = ++(_current[dim]);
         // if the value didn't overflow
@@ -53,49 +59,31 @@ operator++ () {
             return *this;
         }
         // otherwise, we overflowed; set this component to its starting value and grab the next one
-        _current[dim] = _begin[dim];
+        _current[dim] = _slice.low()[dim];
     }
 
     // if we get this far, every component has overflowed
-    _current = _end;
+    _current = _slice.high();
 
     // all done
     return *this;
 }
 
 
-// access to my limits
-template <typename indexT, typename orderT>
-const typename pyre::geometry::Iterator<indexT, orderT>::index_type &
-pyre::geometry::Iterator<indexT, orderT>::
-begin() const {
-    // easy...
-    return _begin;
-}
-
-template <typename indexT, typename orderT>
-const typename pyre::geometry::Iterator<indexT, orderT>::index_type &
-pyre::geometry::Iterator<indexT, orderT>::
-end() const {
-    // easy...
-    return _end;
-}
-
-
 // operators on indices
-template <typename indexT, typename orderT>
+template <typename sliceT>
 auto
 pyre::geometry::
-operator==(const Iterator<indexT, orderT> & one, const Iterator<indexT, orderT> & two) {
+operator==(const Iterator<sliceT> & one, const Iterator<sliceT> & two) {
     // delegate to the standard algorithm
     return std::equal((*one).begin(), (*one).end(), (*two).begin());
 }
 
 
-template <typename indexT, typename orderT>
+template <typename sliceT>
 auto
 pyre::geometry::
-operator!=(const Iterator<indexT, orderT> & one, const Iterator<indexT, orderT> & two) {
+operator!=(const Iterator<sliceT> & one, const Iterator<sliceT> & two) {
     // easy enough
     return !(one == two);
 }
