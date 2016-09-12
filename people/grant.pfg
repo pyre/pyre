@@ -10,7 +10,7 @@ grant:
   readers =
     raul.radovitzky,
     bryan.riel, romain.jolivet,
-    eric.gurrola, marco.lavalle, piyush.agram, cohen.joshua
+    eric.gurrola, marco.lavalle, piyush.agram, joshua.cohen
   writers = alec.aivazis, leif.strand, michael.aivazis
 
 ; end of file
