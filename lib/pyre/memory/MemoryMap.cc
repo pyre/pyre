@@ -25,7 +25,7 @@ MemoryMap(uri_type uri, size_type size) :
         return;
     }
 
-    // otherwise, ask the file system for what known about it
+    // otherwise, ask the filesystem
     int status = ::stat(_uri.data(), &_info);
     // if this failed
     if (status) {

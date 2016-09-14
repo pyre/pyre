@@ -21,6 +21,38 @@ Order(argT... value) :
 
 
 // interface
+// factory of a c-like ordering where the last index varies the fastest
+template <typename repT>
+constexpr auto
+pyre::geometry::Order<repT>::
+rowMajor() {
+    // make an empty one
+    repT order {};
+    // go through its slots
+    for (size_t slot=0; slot < order.size(); ++slot) {
+        // and fill with consecutive decreasing integers
+        order[slot] = order.size() - 1 - slot;
+    }
+    // all done
+    return order;
+}
+
+// factory of a fortran-like ordering where the first index varies the fastest
+template <typename repT>
+constexpr auto
+pyre::geometry::Order<repT>::
+columnMajor() {
+    // make an empty one
+    repT order{};
+    // go through its slots
+    for (size_t slot=0; slot < order.size(); ++slot) {
+        // and fill with consecutive decreasing integers
+        order[slot] = slot;
+    }
+    // all done
+    return order;
+}
+
 // dimensionality of the index
 template <typename repT>
 constexpr auto

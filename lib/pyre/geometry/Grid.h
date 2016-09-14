@@ -20,7 +20,7 @@ public:
     typedef typename tile_type::index_type index_type;
     typedef typename tile_type::order_type order_type;
 
-    // othe help
+    // other help
     typedef std::size_t size_type;
 
     // meta-methods

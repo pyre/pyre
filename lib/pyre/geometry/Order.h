@@ -31,6 +31,12 @@ public:
 
     // interface
 public:
+    // factories
+    // c-like: last index varies the fastest
+    inline static constexpr auto rowMajor();
+    // fortran-like: first index varies the fastest
+    inline static constexpr auto columnMajor();
+
     // size
     inline constexpr auto size() const;
 

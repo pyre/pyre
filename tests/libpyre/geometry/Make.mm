@@ -15,6 +15,8 @@ TESTS = \
     index-access \
     index-bool \
     order \
+    order-c \
+    order-fortran \
     order-access \
     slice \
     iterator \
@@ -23,6 +25,7 @@ TESTS = \
     iterator-slice \
     tile \
     tile-order \
+    tile-order-default \
     tile-slice \
     point \
     brick \

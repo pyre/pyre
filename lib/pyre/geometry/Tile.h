@@ -24,7 +24,8 @@ public:
 
     // meta-methods
 public:
-    Tile(index_type shape, order_type order);
+    // a tile with index ordering supplied by the caller
+    Tile(index_type shape, order_type order = order_type::rowMajor());
 
     // interface
 public:
