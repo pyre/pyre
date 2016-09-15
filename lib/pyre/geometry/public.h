@@ -15,6 +15,7 @@
 #include <array>
 // support
 #include <pyre/journal.h>
+#include <pyre/memory.h>
 
 // forward declarations
 namespace pyre {
@@ -37,8 +38,11 @@ namespace pyre {
         template <size_t dim, typename dataT> class Point;
         // brick
         template <size_t dim, typename nodeT> class Brick;
-        // corner point grid
+
+        // grid
         template <typename cellT, typename tileT, typename storageT> class Grid;
+        // direct grid: a memory mapped grid
+        template <typename cellT, typename tileT, typename directT> class DirectGrid;
     }
 }
 
@@ -60,9 +64,13 @@ namespace pyre {
         // brick
         template <std::size_t dim = 3, typename nodeT = point_t<3> >
         using brick_t = Brick<dim, nodeT>;
-        // corner point grid
+
+        // grid
         template <typename cellT, typename tileT, typename storageT>
         using grid_t = Grid<cellT, tileT, storageT>;
+        // direct grid
+        template <typename cellT, typename tileT, typename directT = pyre::memory::direct_t>
+        using directgrid_t = DirectGrid<cellT, tileT, directT>;
     }
 }
 
@@ -128,6 +136,7 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT
 #include "Point.h"
 #include "Brick.h"
 #include "Grid.h"
+#include "DirectGrid.h"
 
 // the implementations
 // order
@@ -165,11 +174,16 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT
 #include "Brick.icc"
 #undef pyre_geometry_Brick_icc
 
-// corner point grid
+// grid
 #define pyre_geometry_Grid_icc
 #include "Grid.icc"
 #undef pyre_geometry_Grid_icc
-#endif
 
+// grid
+#define pyre_geometry_DirectGrid_icc
+#include "DirectGrid.icc"
+#undef pyre_geometry_DirectGrid_icc
+
+# endif
 
 // end of file

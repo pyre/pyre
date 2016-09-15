@@ -7,6 +7,10 @@
 
 // A grid
 
+// code guard
+#if !defined(pyre_geometry_Grid_h)
+#define pyre_geometry_Grid_h
+
 // declaration
 template <typename cellT, typename tileT, typename storageT>
 class pyre::geometry::Grid {
@@ -48,5 +52,7 @@ private:
     cell_type * const _cells;
 };
 
+
+#endif
 
 // end of file

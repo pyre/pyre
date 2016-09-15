@@ -32,7 +32,7 @@ int main() {
     // storage
     typedef pyre::memory::constdirect_t constdirect_t;
     // grid
-    typedef pyre::geometry::grid_t<cell_t, tile_t, constdirect_t> grid_t;
+    typedef pyre::geometry::directgrid_t<cell_t, tile_t, constdirect_t> grid_t;
 
     // make an ordering
     tile_t::order_type order {2, 1, 0};
@@ -43,10 +43,8 @@ int main() {
 
     // the name of the file
     uri_t name {"grid.dat"};
-    // and the desired size
-    size_t size = tile.size() * sizeof(cell_t);
     // map it and make the grid
-    grid_t grid {tile, constdirect_t{name, size}};
+    grid_t grid {name, tile};
 
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
