@@ -49,7 +49,6 @@ public:
 private:
     const tile_type _shape;
     const storage_type _storage;
-    cell_type * const _cells;
 };
 
 

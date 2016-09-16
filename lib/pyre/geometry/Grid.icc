@@ -14,16 +14,14 @@ template <typename cellT, typename tileT, typename storageT>
 pyre::geometry::Grid<cellT, tileT, storageT>::
 Grid(tile_type shape, const storage_type & storage) :
     _shape { shape },
-    _storage { storage },
-    _cells { static_cast<cell_type *>(_storage.buffer()) }
+    _storage { storage }
     {}
 
 template <typename cellT, typename tileT, typename storageT>
 pyre::geometry::Grid<cellT, tileT, storageT>::
 Grid(tile_type shape, storage_type && storage) :
     _shape { shape },
-    _storage { std::move(storage) },
-    _cells { static_cast<cell_type *>(_storage.buffer()) }
+    _storage { std::move(storage) }
     {}
 
 
@@ -42,8 +40,12 @@ auto &
 pyre::geometry::Grid<cellT, tileT, storageT>::
 operator[](size_type offset)
 {
+    // get the data location
+    // N.B.here we need write access, so the compiler may complain about discarded qualifiers
+    // if my storage is const...
+    auto cells = static_cast<cell_type *>(_storage.buffer());
     // dereference and return the value
-    return _cells[offset];
+    return cells[offset];
 }
 
 // grant read access to the grid at {index}
@@ -52,8 +54,10 @@ auto
 pyre::geometry::Grid<cellT, tileT, storageT>::
 operator[](size_type offset) const
 {
+    // get the data location
+    auto cells = static_cast<const cell_type *>(_storage.buffer());
     // dereference and return the value
-    return _cells[offset];
+    return cells[offset];
 }
 
 // grant write access to the grid at {index}
