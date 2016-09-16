@@ -32,6 +32,7 @@ TESTS = \
     grid-view \
     grid-heap \
     grid-direct \
+    grid-direct-data \
     grid-direct-set \
     grid-direct-get \
 

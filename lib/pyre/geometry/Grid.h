@@ -36,6 +36,8 @@ public:
 public:
     // access to my shape
     inline const auto & shape() const;
+    // access to my memory location
+    inline const auto data() const;
 
     // read and write access using offsets
     inline auto & operator[](size_type offset);
