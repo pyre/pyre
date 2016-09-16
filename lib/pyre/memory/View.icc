@@ -12,6 +12,15 @@
 #endif
 
 
+// interface
+// accessor
+auto
+pyre::memory::View::
+buffer() const {
+    // easy enough
+    return _buffer;
+}
+
 // meta-methods
 pyre::memory::View::
 View(void * buffer) :
@@ -39,16 +48,21 @@ operator=(const View & other) {
 }
 
 pyre::memory::View::
+View(const View && other) :
+    _buffer {other.buffer()}
+{}
+
+pyre::memory::View &
+pyre::memory::View::
+operator=(const View && other) {
+    // grab the memory location
+    _buffer = other._buffer;
+    // make me available
+    return *this;
+}
+
+pyre::memory::View::
 ~View() {}
 
-
-// interface
-// accessor
-void *
-pyre::memory::View::
-buffer() const {
-    // easy enough
-    return _buffer;
-}
 
 // end of file

@@ -28,22 +28,21 @@ public:
     inline View(const View & other);
     inline View & operator=(const View & other);
 
+    // move semantics
+    inline View(const View &&);
+    inline View & operator=(const View &&);
+
     // destructor
     inline ~View();
 
     // interface
 public:
     // accessor
-    inline void * buffer() const;
+    inline auto buffer() const;
 
     // implementation details: data
 private:
     void * _buffer;
-
-    // disable move semantics
-private:
-    View(View &&) = delete;
-    View & operator=(View &&) = delete;
 };
 
 
