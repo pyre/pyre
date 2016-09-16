@@ -77,6 +77,9 @@ export:: meta.py export-python-modules
 live: live-python-modules
 	BLD_ACTION="live" $(MM) recurse
 
+revision: meta.py export-python-modules
+	@$(RM) meta.py
+
 # construct my {meta.py}
 meta.py: meta Make.mm
 	@sed \
