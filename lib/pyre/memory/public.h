@@ -39,14 +39,16 @@ namespace pyre {
 
         // buffer types
         typedef class View view_t;               // view over existing memory
+        typedef class ConstView constview_t;     // view over existing constant memory
         typedef class Heap heap_t;               // dynamically allocated memory
         typedef class Direct direct_t;           // memory mapped file
-        typedef class ConstDirect constdirect_t; // memory mapped file
+        typedef class ConstDirect constdirect_t; // const access to a memory mapped file
     }
 }
 
 // the object model
 #include "View.h"
+#include "ConstView.h"
 #include "Heap.h"
 #include "MemoryMap.h"
 #include "Direct.h"
@@ -57,6 +59,12 @@ namespace pyre {
 #define pyre_memory_View_icc
 #include "View.icc"
 #undef pyre_memory_View_icc
+
+// views over existing const memory
+#define pyre_memory_ConstView_icc
+#include "ConstView.icc"
+#undef pyre_memory_ConstView_icc
+
 // dynamically allocated memory
 #define pyre_memory_Heap_icc
 #include "Heap.icc"

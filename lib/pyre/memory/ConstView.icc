@@ -1,0 +1,68 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_memory_ConstView_icc)
+#error This header file contains implementation details of class pyre::memory::ConstView
+#endif
+
+
+// interface
+// accessor
+auto
+pyre::memory::ConstView::
+buffer() const {
+    // easy enough
+    return _buffer;
+}
+
+// meta-methods
+pyre::memory::ConstView::
+ConstView(const void * buffer) :
+    _buffer {buffer}
+{}
+
+
+pyre::memory::ConstView::
+ConstView(const ConstView & other) :
+    _buffer {other.buffer()}
+{}
+
+pyre::memory::ConstView &
+pyre::memory::ConstView::
+operator=(const ConstView & other) {
+    // trap assignment to self
+    if (this == &other) {
+        // and bail
+        return *this;
+    }
+    // grab the memory location
+    _buffer = other._buffer;
+    // make me available
+    return *this;
+}
+
+pyre::memory::ConstView::
+ConstView(const ConstView && other) :
+    _buffer {other.buffer()}
+{}
+
+pyre::memory::ConstView &
+pyre::memory::ConstView::
+operator=(const ConstView && other) {
+    // grab the memory location
+    _buffer = other._buffer;
+    // make me available
+    return *this;
+}
+
+pyre::memory::ConstView::
+~ConstView() {}
+
+
+// end of file
