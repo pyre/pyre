@@ -39,11 +39,11 @@ public:
 
     // read and write access using offsets
     inline auto & operator[](size_type offset);
-    inline auto operator[](size_type offset) const;
+    inline const auto & operator[](size_type offset) const;
 
     // read and write access using indices
     inline auto & operator[](const index_type & index);
-    inline auto operator[](const index_type & index) const;
+    inline const auto & operator[](const index_type & index) const;
 
     // implementation details - data
 private:

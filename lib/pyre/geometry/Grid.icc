@@ -50,7 +50,7 @@ operator[](size_type offset)
 
 // grant read access to the grid at {index}
 template <typename cellT, typename tileT, typename storageT>
-auto
+const auto &
 pyre::geometry::Grid<cellT, tileT, storageT>::
 operator[](size_type offset) const
 {
@@ -75,7 +75,7 @@ operator[](const index_type & index)
 
 // grant read access to the grid at {index}
 template <typename cellT, typename tileT, typename storageT>
-auto
+const auto &
 pyre::geometry::Grid<cellT, tileT, storageT>::
 operator[](const index_type & index) const
 {
