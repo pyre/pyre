@@ -35,7 +35,7 @@ public:
     // interface
 public:
     // access to my shape
-    auto shape() const;
+    inline const auto & shape() const;
 
     // read and write access using offsets
     inline auto & operator[](size_type offset);

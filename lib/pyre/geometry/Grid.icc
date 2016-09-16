@@ -29,7 +29,7 @@ Grid(tile_type shape, storage_type && storage) :
 
 // interface
 template <typename cellT, typename tileT, typename storageT>
-auto
+const auto &
 pyre::geometry::Grid<cellT, tileT, storageT>::
 shape() const
 {
