@@ -36,9 +36,94 @@ intrinsicDimension() {
 template <std::size_t dim, typename nodeT>
 constexpr auto
 pyre::geometry::Brick<dim, nodeT>::
-points() {
+size() {
     // ask my point container
     return 1 << dimension();
+}
+
+template <std::size_t dim, typename nodeT>
+auto
+pyre::geometry::Brick<dim, nodeT>::
+interior(const node_type & p) const {
+    // i return a tuple of integers indicating the relative position of {p}
+    std::array<int, dim> flag {};
+    // rough check: get my bounding box
+    auto bbox = box();
+    // and unpack it
+    auto & low = bbox.first;
+    auto & high = bbox.second;
+
+    // go through each axis
+    for (size_t axis=0; axis < dimension(); ++axis) {
+        // if the point coordinate is less than my bounding box
+        if (p[axis] < low[axis]) {
+            // mark as such
+            flag[axis] = -1;
+            // and move on
+            continue;
+        }
+        // if the point coordinate is greater than my bounding box
+        if (p[axis] > high[axis]) {
+            // mark as such
+            flag[axis] = 1;
+            // and move on
+            continue;
+        }
+        // otherwise, the point is within my bounding box
+        // i now should perform a more complicated geometrical check, but for now...
+        flag[axis] = 0;
+    }
+
+    // done
+    return flag;
+}
+
+template <std::size_t dim, typename nodeT>
+double
+pyre::geometry::Brick<dim, nodeT>::
+eigenlen() const {
+    // what?
+    return 0;
+}
+
+template <std::size_t dim, typename nodeT>
+auto
+pyre::geometry::Brick<dim, nodeT>::
+box() const {
+    // make a trivial one
+    box_type box { _corners[0].data(), _corners[0].data() };
+    // enlarge it to fit me
+    fit(box);
+    // and return it
+    return box;
+}
+
+template <std::size_t dim, typename nodeT>
+auto
+pyre::geometry::Brick<dim, nodeT>::
+fit(box_type & box) const {
+    // unpack
+    auto & low = box.first;
+    auto & high = box.second;
+    // go through my nodes
+    for (auto & p : *this) {
+        // and all axes
+        for (size_t axis=0; axis < p.dimension(); ++axis) {
+            // compare with {low}
+            if (p[axis] < low[axis]) {
+                // and adjust if necessary
+                low[axis] = p[axis];
+            }
+            // compare with {high}
+            if (p[axis] > high[axis]) {
+                // and adjust if necessary
+                high[axis] = p[axis];
+            }
+        }
+    }
+
+    // all done
+    return;
 }
 
 template <std::size_t dim, typename nodeT>

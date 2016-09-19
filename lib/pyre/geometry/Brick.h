@@ -14,9 +14,13 @@ template <std::size_t dim, typename nodeT>
 class pyre::geometry::Brick {
     // types
 public:
+    // export my template parameters
     typedef nodeT node_type;
-    typedef std::size_t size_type;
+    // my parts
     typedef std::array<node_type, 1<<dim> rep_type; // 2^d nodes of a type of your choice
+    // convenience
+    typedef size_t size_type;
+    typedef std::pair<typename node_type::rep_type, typename node_type::rep_type> box_type;
 
     // meta-methods
 public:
@@ -29,7 +33,17 @@ public:
     // the intrinsic dimension of the brick
     inline constexpr static auto intrinsicDimension();
     // the number of points in the brick
-    inline constexpr static auto points();
+    inline constexpr static auto size();
+
+    // check whether the given point is interior
+    inline auto interior(const node_type & p) const;
+
+    // compute my characteristic scale
+    inline double eigenlen() const;
+    // compute my bounding box
+    inline auto box() const;
+    // enlarge the given box so that it fits me
+    inline auto fit(box_type & box) const;
 
     // indexed access
     inline auto operator[](size_type item) const;
