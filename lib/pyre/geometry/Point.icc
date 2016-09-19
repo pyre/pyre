@@ -26,6 +26,14 @@ dimension() {
 }
 
 template <std::size_t dim, typename dataT>
+const auto &
+pyre::geometry::Point<dim, dataT>::
+data() const {
+    // delegate
+    return _coordinates;
+}
+
+template <std::size_t dim, typename dataT>
 auto
 pyre::geometry::Point<dim, dataT>::
 operator[](size_type index) const {

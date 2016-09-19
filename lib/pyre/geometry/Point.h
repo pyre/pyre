@@ -23,6 +23,8 @@ public:
 public:
     // the dimension of the underlying space
     inline constexpr static auto dimension();
+    // access to my contents
+    const auto & data() const;
 
     // indexed access
     inline auto operator[](size_type item) const;
