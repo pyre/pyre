@@ -37,7 +37,7 @@ EXPORT_PKG_HEADERS = \
     Timer.h Timer.icc
 
 # standard targets
-all: $(PROJ_DLL) export
+all: export
 	BLD_ACTION="all" $(MM) recurse
 
 tidy::
@@ -49,7 +49,7 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-export:: export-headers export-package-headers export-libraries
+export:: $(PROJ_DLL) export-headers export-package-headers export-libraries
 	BLD_ACTION="export" $(MM) recurse
 
 live: live-headers live-package-headers live-libraries
