@@ -11,7 +11,7 @@ include shared/target.def
 # project defaults
 include pyre.def
 # the name of the package
-PACKAGE = geometry
+PACKAGE = grid
 
 # the products
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SAR)
@@ -25,12 +25,15 @@ PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
 # what to export
 # the library
 EXPORT_LIBS = $(PROJ_DLL)
-EXPORT_HEADERS = \
-    geometry.h \
 # the package headers
 EXPORT_PKG_HEADERS = \
-    Brick.h Brick.icc \
-    Point.h Point.icc \
+    DirectGrid.h DirectGrid.icc \
+    Grid.h Grid.icc \
+    Index.h Index.icc \
+    Iterator.h Iterator.icc \
+    Order.h Order.icc \
+    Slice.h Slice.icc \
+    Tile.h Tile.icc \
     public.h
 
 # the standard targets

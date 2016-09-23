@@ -11,8 +11,28 @@ include pyre.def
 
 # the pile of tests
 TESTS = \
-    point \
-    brick \
+    index \
+    index-access \
+    index-bool \
+    order \
+    order-c \
+    order-fortran \
+    order-access \
+    slice \
+    iterator \
+    iterator-access \
+    iterator-loop \
+    iterator-slice \
+    tile \
+    tile-order \
+    tile-order-default \
+    tile-slice \
+    grid-view \
+    grid-heap \
+    grid-direct \
+    grid-direct-data \
+    grid-direct-set \
+    grid-direct-get \
 
 all: test clean
 

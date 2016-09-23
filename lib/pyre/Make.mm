@@ -11,16 +11,21 @@ include pyre.def
 RECURSE_DIRS = \
     algebra \
     geometry \
+    grid \
     memory \
     patterns \
     timers \
 
+# the top level headers
+EXPORT_HEADERS = \
+    geometry.h \
+    grid.h \
+
 # use a tmp directory that knows what we are building in this directory structure
-PROJ_TMPDIR = $(BLD_TMPDIR)/lib/pyre
+PROJ_TMPDIR = $(BLD_TMPDIR)/lib
 
 # the standard targets
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: export
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -31,7 +36,7 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-export::
+export:: export-headers
 	BLD_ACTION="export" $(MM) recurse
 
 live:

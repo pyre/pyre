@@ -11,7 +11,7 @@ PROJECT = pyre
 RECURSE_DIRS = \
     primitives \
     patterns \
-    geometry \
+    grid \
     parsing \
     units \
     filesystem \

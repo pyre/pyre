@@ -1,0 +1,71 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2016 all rights reserved
+//
+
+// code guard
+#if !defined(pyre_grid_Slice_icc)
+#error This header file contains implementation details of class pyre::grid::Slice
+#endif
+
+
+// meta-methods
+template <typename indexT, typename orderT>
+pyre::grid::Slice<indexT, orderT>::
+Slice(const index_type & low, const index_type & high, const order_type & order) :
+    _low { low },
+    _high { high },
+    _order {order}
+{}
+
+
+// interface
+template <typename indexT, typename orderT>
+const auto &
+pyre::grid::Slice<indexT, orderT>::
+low() const {
+    // easy
+    return _low;
+}
+
+
+template <typename indexT, typename orderT>
+const auto &
+pyre::grid::Slice<indexT, orderT>::
+high() const {
+    // easy
+    return _high;
+}
+
+
+template <typename indexT, typename orderT>
+const auto &
+pyre::grid::Slice<indexT, orderT>::
+order() const {
+    // easy
+    return _order;
+}
+
+
+template <typename indexT, typename orderT>
+auto
+pyre::grid::Slice<indexT, orderT>::
+begin() const {
+    // easy enough...
+    return iterator_type{  *this };
+}
+
+
+template <typename indexT, typename orderT>
+auto
+pyre::grid::Slice<indexT, orderT>::
+end() const {
+    // easy enough...
+    return iterator_type{ _high, *this };
+}
+
+
+// end of file

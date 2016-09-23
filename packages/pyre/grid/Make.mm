@@ -8,20 +8,10 @@
 # project defaults
 include pyre.def
 # package name
-PACKAGE = geometry
+PACKAGE = grid
 # the python modules
 EXPORT_PYTHON_MODULES = \
-    CPGrid.py \
-    Field.py \
-    Grid.py \
-    Mesh.py \
-    Octree.py \
-    Point.py \
-    PointCloud.py \
-    Simplex.py \
-    SimplicialMesh.py \
-    Surface.py \
-    Triangulation.py \
+    Tile.py \
     __init__.py
 
 # standard targets
