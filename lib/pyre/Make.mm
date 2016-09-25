@@ -20,6 +20,7 @@ RECURSE_DIRS = \
 EXPORT_HEADERS = \
     geometry.h \
     grid.h \
+    memory.h \
 
 # use a tmp directory that knows what we are building in this directory structure
 PROJ_TMPDIR = $(BLD_TMPDIR)/lib

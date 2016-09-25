@@ -28,8 +28,6 @@ PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
 # what to export
 # the library
 EXPORT_LIBS = $(PROJ_DLL)
-EXPORT_HEADERS = \
-    memory.h \
 # the package headers
 EXPORT_PKG_HEADERS = \
     ConstDirect.h ConstDirect.icc \
@@ -43,7 +41,7 @@ EXPORT_PKG_HEADERS = \
 # the standard targets
 all: export
 
-export:: $(PROJ_DLL) export-headers export-package-headers export-libraries
+export:: $(PROJ_DLL) export-package-headers export-libraries
 
 live: live-headers live-package-headers live-libraries
 	BLD_ACTION="live" $(MM) recurse
