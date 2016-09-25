@@ -13,8 +13,8 @@ Exercise host configuration
 
 
 def test():
-    # externals
-    import pyre
+    # support
+    import pyre, journal
 
     # derive an application class
     class app(pyre.component):
@@ -26,20 +26,26 @@ def test():
 
     # instantiate
     one = app(name='one')
-    # check i have a host
-    assert one.host
+    # get the platform manager
+    host = one.host
+    # check i have one
+    assert host
 
-    # print out some details
-    # host = one.host
-    # print('host: {}'.format(host))
-    # print('  hostname: {.hostname}'.format(host))
-    # print('  nickname: {.nickname}'.format(host))
-    # print('  cpus: {.cpus}'.format(host))
-    # print('  platform: {.platform}'.format(host))
-    # print('  release: {.release}'.format(host))
-    # print('  codename: {.codename}'.format(host))
-    # print('  distribution: {.distribution}'.format(host))
-    # print('  package manager: {.externals}'.format(host))
+    # make a channel
+    channel = journal.debug('pyre.host')
+    # if the channel is active
+    if channel:
+        # show me some details
+        channel.line('host: {}'.format(host))
+        channel.line('         hostname: {.hostname}'.format(host))
+        channel.line('         nickname: {.nickname}'.format(host))
+        channel.line('             cpus: {.cpus}'.format(host))
+        channel.line('         platform: {.platform}'.format(host))
+        channel.line('          release: {.release}'.format(host))
+        channel.line('         codename: {.codename}'.format(host))
+        channel.line('     distribution: {.distribution}'.format(host))
+        channel.line('  package manager: {.packager.name}'.format(host))
+        channel.log()
 
     # and return
     return one
