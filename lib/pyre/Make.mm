@@ -16,14 +16,37 @@ RECURSE_DIRS = \
     patterns \
     timers \
 
+
+# the products
+PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SAR)
+PROJ_DLL = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SO)
+# the private build space
+PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
+# what to clean
+PROJ_CLEAN += $(EXPORT_LIBS) $(EXPORT_INCDIR)
+
+# the sources
+PROJ_SRCS = \
+    version.cc \
+
+# what to export
+# the library
+EXPORT_LIBS = $(PROJ_DLL)
 # the top level headers
 EXPORT_HEADERS = \
     geometry.h \
     grid.h \
     memory.h \
+    version.h
 
-# use a tmp directory that knows what we are building in this directory structure
-PROJ_TMPDIR = $(BLD_TMPDIR)/lib
+# get today's date
+TODAY = ${strip ${shell date -u}}
+# grab the revision number
+REVISION = ${strip ${shell bzr revno}}
+# if not there
+ifeq ($(REVISION),)
+REVISION = 0
+endif
 
 # the standard targets
 all: export
@@ -37,8 +60,12 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-export:: export-headers
+export:: version.cc $(PROJ_DLL) export-headers export-libraries
 	BLD_ACTION="export" $(MM) recurse
+	@$(RM) version.cc
+
+revision: version.cc $(PROJ_DLL) export-libraries
+	@$(RM) version.cc
 
 live:
 	BLD_ACTION="live" $(MM) recurse
@@ -46,5 +73,14 @@ live:
 # archiving support
 zipit:
 	PYRE_ZIP=$(PYRE_ZIP) BLD_ACTION="zipit" $(MM) recurse
+
+# construct my {version.cc}
+version.cc: version Make.mm
+	@sed \
+          -e "s:MAJOR:$(PROJECT_MAJOR):g" \
+          -e "s:MINOR:$(PROJECT_MINOR):g" \
+          -e "s:REVISION:$(REVISION):g" \
+          -e "s|TODAY|$(TODAY)|g" \
+          version > version.cc
 
 # end of file
