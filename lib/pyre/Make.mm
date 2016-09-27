@@ -5,6 +5,8 @@
 # (c) 1998-2016 all rights reserved
 #
 
+# access the machinery for building shared objects
+include shared/target.def
 # project defaults
 include pyre.def
 # my subdirectories
