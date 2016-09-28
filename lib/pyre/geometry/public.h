@@ -13,6 +13,7 @@
 // externals
 #include <stdexcept>
 #include <array>
+#include <valarray>
 // support
 #include <pyre/journal.h>
 #include <pyre/memory.h>
@@ -25,6 +26,8 @@ namespace pyre {
         typedef std::size_t size_t;
         // point
         template <size_t dim, typename dataT> class Point;
+        // point cloud
+        template <typename pointT> class PointCloud;
         // brick
         template <size_t dim, typename nodeT> class Brick;
     }
@@ -34,12 +37,11 @@ namespace pyre {
 namespace pyre {
     namespace geometry {
         // point
-        template <size_t dim = 3, typename dataT = double>
-        using point_t = Point<dim, dataT>;
+        template <size_t dim = 3, typename dataT = double> using point_t = Point<dim, dataT>;
+        // point cloud
+        template <typename pointT = point_t<3, double>> using cloud_t = PointCloud<pointT>;
         // brick
-        template <size_t dim = 3, typename nodeT = point_t<3> >
-        using brick_t = Brick<dim, nodeT>;
-
+        template <size_t dim = 3, typename nodeT = point_t<3> > using brick_t = Brick<dim, nodeT>;
     }
 }
 
@@ -76,17 +78,21 @@ namespace pyre {
         // operators on points
         // equality
         template <size_t dim, typename dataT>
+        inline
         auto operator== (const Point<dim, dataT> & p1, const Point<dim, dataT> & p2);
         // inequality
         template <size_t dim, typename dataT>
+        inline
         auto operator!= (const Point<dim, dataT> & p1, const Point<dim, dataT> & p2);
 
         // operators on bricks
         // equality
         template <size_t dim, typename nodeT>
+        inline
         auto operator== (const Brick<dim, nodeT> & b1, const Brick<dim, nodeT> & b2);
         // inequality
         template <size_t dim, typename nodeT>
+        inline
         auto operator!= (const Brick<dim, nodeT> & b1, const Brick<dim, nodeT> & b2);
     }
 }
@@ -95,14 +101,16 @@ namespace pyre {
 // stream injection: overload the global operator<<
 // points
 template <size_t dim, typename dataT>
+inline
 auto & operator<< (std::ostream & stream, const pyre::geometry::Point<dim, dataT> & point);
-// and bricks
+// bricks
 template <size_t dim, typename nodeT>
+inline
 auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick);
-
 
 // the object model
 #include "Point.h"
+#include "PointCloud.h"
 #include "Brick.h"
 
 // the implementations
@@ -110,6 +118,11 @@ auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT
 #define pyre_geometry_Point_icc
 #include "Point.icc"
 #undef pyre_geometry_Point_icc
+
+// point cloud
+#define pyre_geometry_PointCloud_icc
+#include "PointCloud.icc"
+#undef pyre_geometry_PointCloud_icc
 
 // brick
 #define pyre_geometry_Brick_icc

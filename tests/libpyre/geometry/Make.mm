@@ -12,6 +12,7 @@ include pyre.def
 # the pile of tests
 TESTS = \
     point \
+    pointcloud \
     brick \
 
 all: test clean

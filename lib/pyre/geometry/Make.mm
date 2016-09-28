@@ -31,6 +31,7 @@ EXPORT_HEADERS = \
 EXPORT_PKG_HEADERS = \
     Brick.h Brick.icc \
     Point.h Point.icc \
+    PointCloud.h PointCloud.icc \
     public.h
 
 # the standard targets
