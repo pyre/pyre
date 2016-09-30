@@ -42,7 +42,7 @@ int main() {
     tile_t tile {shape, order};
 
     // allocate some memory on the heap and make a grid
-    grid_t grid {tile, heap_t{tile.size()}};
+    grid_t grid {tile, tile.size() * sizeof(grid_t::cell_type)};
 
     // show me
     channel

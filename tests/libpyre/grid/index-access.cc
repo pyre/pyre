@@ -30,7 +30,7 @@ int main() {
 
     // adjust the values one by one
     for (index_t::size_type i=0; i < index.size(); ++i) {
-        // to a sequence of consecutive integeres
+        // to a sequence of consecutive integers
         index[i] = i;
     }
 

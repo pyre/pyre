@@ -24,6 +24,24 @@ int main() {
     // make a FORTRAN-style interleaving
     order_t order = order_t::columnMajor();
 
+    // go through the order contents
+    for (order_t::size_type i=0; i<order.size(); ++i) {
+        // we expect
+        order_t::value_type expected = i;
+        // and check that it is sorted in ascending order
+        if (order[i] != expected) {
+            // make a firewall
+            pyre::journal::firewall_t channel("pyre.grid");
+            // complain
+            channel
+                << pyre::journal::at(__HERE__)
+                << "order mismatch at " << i << ": " << order[i] << " != " << expected
+                << pyre::journal::endl;
+            // and bail
+            return 1;
+        }
+    }
+
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
     // and display information about the tile order

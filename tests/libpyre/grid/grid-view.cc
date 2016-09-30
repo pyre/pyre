@@ -41,19 +41,39 @@ int main() {
     // make a tile
     tile_t tile {shape, order};
 
-    // allocate some memory and make a view over it
-    view_t storage { ::operator new(tile.size() * sizeof(cell_t)) };
-    // make the grid
-    grid_t grid {tile, storage};
+    // allocate some memory
+    cell_t * buffer = new cell_t[tile.size()];
+    // initialize the memory with predictable values
+    for (tile_t::size_type i=0; i<tile.size(); ++i) {
+        buffer[i] = i;
+    }
 
-    // show me
-    channel
-        << pyre::journal::at(__HERE__)
-        << grid[{1,1,1}]
-        << pyre::journal::endl;
+    // make grid
+    // N.B.: {buffer} is auto-converted into a view by the grid constructor
+    grid_t grid {tile, buffer};
+
+    // loop over the grid
+    for (auto idx : grid.shape()) {
+        // get the value stored at this location
+        auto value = grid[idx];
+        // the expected value is the current offset as a double
+        grid_t::cell_type expected = grid.shape().offset(idx);
+        // if they are not the same
+        if (value != expected) {
+            // make a channel
+            pyre::journal::firewall_t firewall("pyre.grid");
+            // show me
+            firewall
+                << pyre::journal::at(__HERE__)
+                << "grid[" << idx << "]: " << value << " != " << expected
+                << pyre::journal::endl;
+            // and bail
+            return 1;
+        }
+    }
 
     // clean up
-    ::operator delete(storage.buffer());
+    delete [] buffer;
     // all done
     return 0;
 }

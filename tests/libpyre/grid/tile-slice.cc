@@ -45,7 +45,6 @@ int main() {
 
     // otherwise, sign in
     channel << pyre::journal::at(__HERE__);
-
     // loop over the tile in packing order
     for (auto index : tile.slice(begin, end)) {
         // get the offset of the pixel at this index
