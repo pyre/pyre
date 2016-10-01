@@ -91,6 +91,9 @@ auto & operator<< (std::ostream & stream, const pyre::grid::Index<repT> & index)
 // orders
 template <typename repT>
 auto & operator<< (std::ostream & stream, const pyre::grid::Order<repT> & order);
+// tiles
+template <typename indexT, typename orderT>
+auto & operator<< (std::ostream & stream, const pyre::grid::Tile<indexT, orderT> & tile);
 
 // the object model
 #include "Order.h"

@@ -139,4 +139,14 @@ slice(const index_type & begin, const index_type & end, const order_type & order
 }
 
 
+// stream injection
+template <typename indexT, typename orderT>
+auto &
+operator<< (std::ostream & stream, const pyre::grid::Tile<indexT, orderT> & tile) {
+    // inject my parts into the stream
+    stream << "(" << tile.high() << ") as (" << tile.order() << ")";
+    // all done
+    return stream;
+}
+
 // end of file
