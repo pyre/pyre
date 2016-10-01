@@ -24,6 +24,12 @@ Grid(tile_type shape, storage_type && storage) :
     _storage { std::move(storage) }
     {}
 
+template <typename cellT, typename tileT, typename storageT>
+pyre::grid::Grid<cellT, tileT, storageT>::
+Grid(tile_type shape) :
+    _shape { shape },
+    _storage { sizeof(cell_type) * shape.size() }
+    {}
 
 // interface
 // accessors

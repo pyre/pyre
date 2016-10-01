@@ -29,8 +29,12 @@ public:
 
     // meta-methods
 public:
+    // given a shape and a storage solution managed by someone else
     inline Grid(tile_type shape, const storage_type & storage);
+    // given a shape and a storage solution managed by me
     inline Grid(tile_type shape, storage_type && storage);
+    // given a shape and a storage solution that can be instantiated using my shape info
+    inline Grid(tile_type shape);
 
     // interface
 public:
