@@ -33,6 +33,7 @@ TESTS = \
     grid-direct-data \
     grid-direct-set \
     grid-direct-get \
+    grid-mosaic \
 
 all: test clean
 
