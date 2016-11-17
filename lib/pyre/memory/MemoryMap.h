@@ -27,7 +27,7 @@ public:
 
     // meta-methods
 public:
-    MemoryMap(uri_type name="", size_type size=0);
+    MemoryMap(uri_type name="", size_type size=0, bool preserve=false);
 
     // interface
 public:

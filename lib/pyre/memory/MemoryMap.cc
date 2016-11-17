@@ -15,26 +15,40 @@
 
 // meta-methods
 pyre::memory::MemoryMap::
-MemoryMap(uri_type uri, size_type size) :
+MemoryMap(uri_type uri, size_type size, bool preserve) :
     _uri {uri},
     _info {}
 {
+    // make a channel
+    pyre::journal::debug_t channel("pyre.memory.direct");
+
     // if no filename were given
     if (uri.empty()) {
+        // show me
+        channel
+            << pyre::journal::at(__HERE__)
+            << "no uri given"
+            << pyre::journal::endl;
         // nothing further to do
         return;
     }
 
     // otherwise, ask the filesystem
     int status = ::stat(_uri.data(), &_info);
+    // show me
+    channel
+        << pyre::journal::at(__HERE__)
+        << "looking for '" << _uri << "': status=" << status
+        << pyre::journal::endl;
+
     // if this failed
     if (status) {
         // the only case we handle is the file not existing; complain about everything else
         if (errno != ENOENT) {
             // create a channel
-            pyre::journal::error_t channel("pyre.memory.direct");
+            pyre::journal::error_t error("pyre.memory.direct");
             // complain
-            channel
+            error
                 // where
                 << pyre::journal::at(__HERE__)
                 // what happened
@@ -53,9 +67,9 @@ MemoryMap(uri_type uri, size_type size) :
             // describe it
             problem << "while creating '" << uri << "': unknown size";
             // create a channel
-            pyre::journal::error_t channel("pyre.memory.direct");
+            pyre::journal::error_t error("pyre.memory.direct");
             // complain
-            channel
+            error
                 // where
                 << pyre::journal::at(__HERE__)
                 // what happened
@@ -67,8 +81,42 @@ MemoryMap(uri_type uri, size_type size) :
         }
         // if we have size information, create the file
         create(uri, size);
-        // and get the file information
+        // get the file information
         ::stat(_uri.data(), &_info);
+        // all done
+        return;
+    }
+
+    // the file already exists; let's find its size
+    size_type actual = _info.st_size;
+    // if the actual size does not match the required size
+    if (actual != size) {
+        // if the user doesn't care about the existing file
+        if (!preserve) {
+            // throw the existing file away and rebuild it
+            create(uri, size);
+        // otherwise
+        } else {
+            // we have a problem
+            std::stringstream problem;
+            // describe it
+            problem
+                << "while mapping '" << uri
+                << "': the file already exists but there is a size mismatch: "
+                << "actual: " << actual << " bytes, requested: " << size << " bytes";
+            // create a channel
+            pyre::journal::error_t error("pyre.memory.direct");
+            // complain
+            error
+                // where
+                << pyre::journal::at(__HERE__)
+                // what happened
+                << problem.str()
+                // flush
+                << pyre::journal::endl;
+            // raise an exception
+            throw std::runtime_error(problem.str());
+        }
     }
 
     // all done
@@ -161,7 +209,9 @@ map(uri_type name, size_type & size, size_type offset, bool writable) {
     // show me
     channel
         << pyre::journal::at(__HERE__)
-        << "mapped " << size << " bytes from '" << name << "' into memory at " << buffer
+        << "mapped " << size << " bytes from '" << name << "' into "
+        << (writable ? "writable" : "read-only")
+        << " memory at " << buffer
         << pyre::journal::endl;
 
     // clean up
