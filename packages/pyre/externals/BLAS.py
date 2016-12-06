@@ -155,7 +155,7 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         header = 'atlas/atlas_buildinfo.h'
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=headers))
-        # which is inside the atlas directory; save the parent
+        # save it
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
@@ -198,7 +198,7 @@ class Atlas(Default, family='pyre.externals.blas.atlas'):
         header = 'atlas/atlas_buildinfo.h'
         # look for it
         incdir = packager.findfirst(target=header, contents=contents)
-        # it is inside the atlas directory; save the parent
+        # save it
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
@@ -245,7 +245,7 @@ class OpenBLAS(Default, family='pyre.externals.blas.openblas'):
         header = 'openblas/openblas_config.h'
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
-        # which is inside the atlas directory; save the parent
+        # save it
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
@@ -335,7 +335,7 @@ class GSLCBLAS(Default, family='pyre.externals.blas.gslcblas'):
         header = 'gsl/gsl_cblas.h'
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
-        # which is inside the atlas directory; save the parent
+        # save it
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries

@@ -128,7 +128,7 @@ class VTK5(LibraryInstallation, family='pyre.externals.vtk.vtk5', implements=VTK
         header = 'vtkVersion.h'
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
-        # which is inside the atlas directory; save the parent
+        # save it
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
@@ -225,7 +225,7 @@ class VTK6(LibraryInstallation, family='pyre.externals.vtk.vtk6', implements=VTK
         header = 'vtkVersion.h'
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
-        # which is inside the atlas directory; save the parent
+        # save it
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries

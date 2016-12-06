@@ -126,7 +126,7 @@ class Default(LibraryInstallation, family='pyre.externals.hdf5.default', impleme
         header = 'hdf5.h'
         # find the header
         incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
-        # which is inside the atlas directory; save the parent
+        # save it
         self.incdir = [ incdir ] if incdir else []
 
         # in order to identify my {libdir}, search for one of my libraries
