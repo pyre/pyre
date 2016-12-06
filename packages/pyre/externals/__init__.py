@@ -96,6 +96,15 @@ def hdf5():
     # and generate a facility
     return hdf5()
 
+def metis():
+    """
+    The metis package manager
+    """
+    # grab the protocol
+    from .Metis import Metis as metis
+    # and generate a facility
+    return metis()
+
 def mpi():
     """
     The MPI package manager
@@ -104,6 +113,24 @@ def mpi():
     from .MPI import MPI as mpi
     # and generate a facility
     return mpi()
+
+def parmetis():
+    """
+    The parmetis package manager
+    """
+    # grab the protocol
+    from .ParMetis import ParMetis as parmetis
+    # and generate a facility
+    return parmetis()
+
+def petsc():
+    """
+    The PETSc package manager
+    """
+    # grab the protocol
+    from .PETSc import PETSc as petsc
+    # and generate a facility
+    return petsc()
 
 def postgres():
     """

@@ -19,8 +19,11 @@ EXPORT_PYTHON_MODULES = \
     Installation.py \
     Library.py \
     LibraryInstallation.py \
+    Metis.py \
     MPI.py \
     Package.py \
+    ParMetis.py \
+    PETSc.py \
     Postgres.py \
     Python.py \
     Tool.py \
