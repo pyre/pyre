@@ -50,7 +50,7 @@ PYTHON_ABITAG = ${shell $(PYTHON) bin/abi.py}
 PYRE_VERSION = $(PROJECT_MAJOR).$(PROJECT_MINOR)
 PYRE_BOOTPKGS = pyre journal merlin
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION).$(PYTHON_ABITAG).zip
-PYRE_BOOTZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION)-boot.$(PYTHON_TAG).zip
+PYRE_BOOTZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION)-boot.zip
 
 zip: build cleanit zipit pushit cleanit
 
@@ -67,7 +67,7 @@ pushit:
 
 boot:
 	@$(RM_F) $(PYRE_BOOTZIP)
-	@(cd $(EXPORT_ROOT)/packages; zip -r ${PYRE_BOOTZIP} $(PYRE_BOOTPKGS) --include \*.pyc)
+	@(cd $(EXPORT_ROOT)/packages; zip -r ${PYRE_BOOTZIP} $(PYRE_BOOTPKGS) --include \*.py)
 	scp $(PYRE_BOOTZIP) $(PROJ_LIVE_USERURL):$(PROJ_LIVE_DOCROOT)
 	@$(RM_F) $(PYRE_BOOTZIP)
 

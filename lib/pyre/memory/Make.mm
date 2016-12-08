@@ -28,6 +28,9 @@ PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
 # what to export
 # the library
 EXPORT_LIBS = $(PROJ_DLL)
+# the public header
+EXPORT_HEADERS = \
+    memory.h \
 # the package headers
 EXPORT_PKG_HEADERS = \
     ConstDirect.h ConstDirect.icc \

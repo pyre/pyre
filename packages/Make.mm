@@ -55,7 +55,7 @@ live:
 
 # archiving support
 zipit:
-	cd $(EXPORT_ROOT); zip -r $(PYRE_ZIP) ${addprefix packages/, $(PACKAGES)}
+	cd $(EXPORT_ROOT); zip -r $(PYRE_ZIP) ${addprefix packages/, $(PACKAGES) --include \*.py}
 
 # shortcuts for building specific subdirectories
 .PHONY: $(RECURSE_DIRS)
