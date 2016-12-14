@@ -1,10 +1,9 @@
 # -*- Makefile -*-
 #
 # authors:
-#   Michael Aïvázis <michael.aivazis@para-sim.com>
-#   Raúl Radovitzky <raul.radovitzky@para-sim.com>
+#   {project.authors}
 #
-# (c) 2013-2016 all rights reserved
+# (c) {project.span} all rights reserved
 #
 
 
