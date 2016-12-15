@@ -21,6 +21,8 @@ PROJ_SRCS = \
     exceptions.cc \
     metadata.cc
 
+# the private build space
+PROJ_TMPDIR = $(BLD_TMPDIR)/{project.name}/extensions/{project.name}
 # my dependencies
 PROJ_LIBRARIES += -l{project.name} -ljournal
 

@@ -12,7 +12,7 @@ include shared/target.def
 PROJECT = {project.name}
 
 # version info
-PROJECT_MAJOR = 3
+PROJECT_MAJOR = 1
 PROJECT_MINOR = 0
 
 # project settings

@@ -11,6 +11,8 @@ include {project.name}.def
 
 # adjust the build parameters
 PROJ_LIB = $(PROJ_LIBDIR)/lib{project.name}.$(EXT_LIB)
+# the private build space
+PROJ_TMPDIR = $(BLD_TMPDIR)/{project.name}/lib/{project.name}
 
 # the list of sources to compile
 PROJ_SRCS = \
