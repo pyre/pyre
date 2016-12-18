@@ -169,7 +169,7 @@ class PrivateInventory(Inventory):
 
 
     def __str__(self):
-        return "public inventory at {:#x}".format(id(self))
+        return "private inventory at {:#x}".format(id(self))
 
 
 # end of file

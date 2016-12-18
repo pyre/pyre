@@ -19,6 +19,7 @@ class Inventory(dict, Dashboard):
 
     # public data
     name = None # by default, components have no name
+    fragments = () # by default, components have no family name
     package = None # by default, components have no family names
 
 
