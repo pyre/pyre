@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import itertools
 # support
 from .. import tracking
 # metaclass
@@ -159,6 +161,8 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         information available to this protocol; other compatible components may be provided by
         packages that have not been imported yet, or live in files outside the canonical layout
         """
+        # all registered implementers
+        yield from cls.pyre_locateAllRegisteredImplementers()
         # all loadable implementers
         yield from cls.pyre_locateAllLoadableImplementers()
         # all importable implementers
@@ -166,6 +170,34 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # all done
         return
 
+
+    @classmethod
+    def pyre_locateAllRegisteredImplementers(cls):
+        """
+        Retrieve all implementers that are already registered with the framework
+
+        This catches components whose source has been seen by the framework at the time this
+        method was invoked; the information available may be different during a subsequent call
+        if pyre has bumped into additional implementers
+        """
+        # get the registrar
+        registrar = cls.pyre_registrar
+        # traverse my inheritance
+        for ancestor in cls.pyre_public():
+            # access the registered implementers for this ancestor
+            for implementer in registrar.implementers[ancestor]:
+                # if this is not a publicly visible entity
+                if not implementer.pyre_isPublicClass():
+                    # skip it
+                    continue
+                # get the family name; this is equivalent to the fully scoped {uri}
+                uri = implementer.pyre_family()
+                # extract the short name
+                name = implementer.pyre_familyFragments()[-1]
+                # and add it to the pile
+                yield uri, name, implementer
+        # all done
+        return
 
     @classmethod
     def pyre_locateAllImportableImplementers(cls):
