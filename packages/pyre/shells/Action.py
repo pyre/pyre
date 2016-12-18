@@ -46,12 +46,18 @@ class Action(pyre.protocol, family='pyre.actions'):
         """
         # get all visible implementations
         for uri, name, action in cls.pyre_locateAllImplementers():
-            # get the tip
-            tip = action.pyre_tip
-            # if there is one
-            if tip:
-                # pass this one along
-                yield uri, name, action, tip
+            # attempt to
+            try:
+                # get the tip
+                tip = action.pyre_tip
+            # if there isn't one
+            except AttributeError:
+                # no worries
+                continue
+            # skip trivial  the top is trivial one
+            if not tip: continue
+            # pass this one along
+            yield uri, name, action, tip
         # all done
         return
 
