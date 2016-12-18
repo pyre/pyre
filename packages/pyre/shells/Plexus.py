@@ -52,14 +52,15 @@ class Plexus(Application):
             pass
         # if there is something to invoke
         else:
-            # do it; typos and suck get handled by the {repertoir} itself
-            return self.repertoir.invoke(plexus=self, action=name, argv=argv)
+            # do it
+            return self.pyre_invoke( action=name, argv=argv)
 
         # if the user has requested an interactive session
         if self.interactive:
             # jump to the interpreter
             return self.pyre_interactiveSession()
-        # otherwise, show the help screen
+
+        # otherwise, just show the help screen
         return self.help()
 
 
@@ -118,6 +119,17 @@ class Plexus(Application):
         from .Repertoir import Repertoir
         # build one and return it
         return Repertoir(protocol=self.pyre_action)
+
+
+    # convenience
+    def pyre_invoke(self, action, argv=None):
+        """
+        Invoke the named {action} with {argv} as additional arguments
+        """
+        # normalize {argv}
+        argv = argv or ()
+        # resolve and invoke; typos and such get handled by {repertoir}
+        return self.repertoir.invoke(plexus=self, action=action, argv=argv)
 
 
     # support for the help system
