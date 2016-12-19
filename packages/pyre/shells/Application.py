@@ -410,7 +410,7 @@ class Application(pyre.component, metaclass=Director):
         # if not
         except prefix.NotFoundError:
             # create it
-            parent = prefix.mkdir(parent=prefix, name=folder)
+            parent = prefix.mkdir(name=folder)
         # look for content
         parent.discover(levels=1)
         # now, check whether there is a subdirectory named after me
@@ -420,8 +420,7 @@ class Application(pyre.component, metaclass=Director):
         # if not
         except prefix.NotFoundError as error:
             # create it
-            mine = prefix.mkdir(parent=parent, name=namespace)
-            # mine = parent.mkdir(name=namespace)
+            mine = parent.mkdir(name=namespace)
             # and show me
             # print("  created {.uri}".format(mine))
         # if all went well
