@@ -180,6 +180,7 @@ class SymbolTable:
 
     # meta-methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
         # initialize my node map
         self._nodes = {}
@@ -193,6 +194,14 @@ class SymbolTable:
         """
         # check whether it is present in my node index
         return name in self._nodes
+
+
+    def __iter__(self):
+        """
+        Go through my keys
+        """
+        # easy enough
+        return iter(self._nodes)
 
 
     def __getitem__(self, name):
