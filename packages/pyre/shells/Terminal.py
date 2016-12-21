@@ -19,7 +19,7 @@ class Terminal(pyre.protocol, family='pyre.terminals'):
 
     # framework support
     @classmethod
-    def pyre_default(cls, name='pyre.terminal', **kwds):
+    def pyre_default(cls, **kwds):
         """
         Sniff out the capabilities of the current terminal and choose the default implementation
         """
@@ -44,12 +44,12 @@ class Terminal(pyre.protocol, family='pyre.terminals'):
                     # get the ansi terminal
                     from .ANSI import ANSI
                     # and return it
-                    return ANSI(name=name, emulation=term)
+                    return ANSI
 
         # otherwise, get the plain terminal
         from .Plain import Plain
         # and return it
-        return Plain(name=name)
+        return Plain
 
 
     # implementation details

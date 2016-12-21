@@ -529,7 +529,7 @@ class Executive:
         from ..shells import user, terminal
         # instantiate them and attach them
         self.user = user(name='pyre.user')
-        self.terminal = terminal.pyre_default(name='pyre.terminal')
+        self.terminal = terminal.pyre_default()(name='pyre.terminal')
 
         # finally, the environment variables
         from .Environ import Environ

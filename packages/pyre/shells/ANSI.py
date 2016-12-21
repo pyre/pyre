@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import os
 # access the framework
 import pyre
 # get my protocol
@@ -45,11 +47,11 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
 
 
     # meta-methods
-    def __init__(self, emulation, **kwds):
+    def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # save the emulation
-        self.emulation = emulation
+        # figure out the emulation
+        self.emulation = os.environ.get('TERM', 'unknown').lower()
         # all done
         return
 
