@@ -17,7 +17,7 @@ EXPORT_BINS = \
     abi.py \
     cache_tag.py \
     class.pyre \
-    listdir.py \
+    walk \
     merlin \
     smith.pyre \
     pyre \
