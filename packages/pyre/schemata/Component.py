@@ -19,9 +19,13 @@ class Component(Schema):
 
     # types
     from . import uri
+
     # constants
     default = object()
     typename = 'component' # the name of my type
+
+    # public data
+    protocol = None
 
 
     # interface
