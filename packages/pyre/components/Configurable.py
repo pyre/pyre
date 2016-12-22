@@ -81,7 +81,7 @@ class Configurable(Dashboard):
 
             # show me
             yield "{}{.name}:".format(one, trait)
-            yield "{}type: {}".format(two, trait.typename)
+            yield "{}schema: {}".format(two, trait.typename)
             yield "{}value: {}".format(two, value)
             yield "{}default: {}".format(two, default)
             yield "{}tip: {}".format(two, tip)
@@ -94,6 +94,80 @@ class Configurable(Dashboard):
                 yield from value.pyre_showConfiguration(indent=three)
         # all done
         return
+
+
+    def pyre_renderConfiguration(self):
+        """
+        Traverse my configuration and represent it in a JSON friendly way
+        """
+        # prime the document
+        doc = {}
+        # meta-data about all my traits
+        traits = {}
+        # value information about my properties
+        properties = {}
+        # and my components
+        components = {}
+
+        # add my state
+        doc['name'] = self.pyre_name
+        doc['schema'] = self.pyre_family()
+        doc['doc'] = self.__doc__
+        doc['traits'] = traits
+        doc['properties'] = properties
+        doc['components'] = components
+
+        # go through my traits
+        for trait in self.pyre_configurables():
+            # meta-data:
+            # the trait name
+            traitName = trait.name
+            # any aliases
+            traitAliases = trait.aliases
+            # the schema
+            traitCategory = trait.typename
+            # and the documentation
+            traitTip = trait.tip
+            traitDoc = trait.doc
+
+            # the type of components
+            if traitCategory == 'component':
+                # is their family name
+                traitType = trait.protocol.pyre_family()
+            # for the other traits
+            else:
+                # just use their schema
+                traitType = traitCategory
+
+            # initialize the trait description
+            traits[traitName] = {
+                'name': traitName,
+                'aliases': list(traitAliases),
+                'category': traitCategory,
+                'schema': traitType,
+                'doc': traitDoc,
+                'tip': traitTip,
+            }
+
+            # now, for the tricky part
+            value = getattr(self, traitName)
+
+            # with components
+            if traitCategory == 'component':
+                # ask them to build their meta-date and attach it
+                components[traitName] = value.pyre_renderConfiguration()
+                # and move on
+                continue
+
+            # with properties, attach the property meta-data
+            properties[traitName] = {
+                'name': traitName,
+                'value': str(value),
+                'default': trait.default,
+            }
+
+        # all done
+        return doc
 
 
     def pyre_showSummary(self, indent, **kwds):
