@@ -148,16 +148,10 @@ class Application(pyre.component, metaclass=Director):
         """
         Hook for the application help system
         """
-        # tell the user what they typed
-        self.info.line('{.pyre_namespace}'.format(self))
-
         # build the simple description of what i do
-        for line in self.pyre_help():
-            # and push it to my info channel
-            self.info.line(line)
-
-        # flush
-        self.info.log()
+        content = '\n'.join(self.pyre_help())
+        # render it
+        self.info.log(content)
         # and indicate success
         return 0
 
@@ -542,7 +536,7 @@ class Application(pyre.component, metaclass=Director):
         # adjust the local namespace
         context = self.pyre_interactiveSessionContext(context=context)
         # enter interactive mode
-        return code.interact(banner=self.pyre_banner(), local=context)
+        return code.interact(banner=self.pyre_interactiveBanner(), local=context)
 
 
     def pyre_interactiveSessionContext(self, context):
@@ -561,9 +555,39 @@ class Application(pyre.component, metaclass=Director):
         return context
 
 
+    # basic support for the help system
+    def pyre_help(self, indent=' '*4, **kwds):
+        """
+        Hook for the application help system
+        """
+        # make a mark
+        yield self.pyre_banner()
+        # my summary
+
+        yield from self.pyre_showSummary(indent=indent, **kwds)
+        # usage
+        yield 'usage:'
+        yield ''
+        yield '    {} [options]'.format(self.pyre_name)
+        yield ''
+
+        # my public state
+        yield from self.pyre_showConfigurables(indent=indent, **kwds)
+        # all done
+        return
+
+
     def pyre_banner(self):
         """
-        Print an identifying message
+        Print an identifying message for the help system
+        """
+        # easy
+        return ''
+
+
+    def pyre_interactiveBanner(self):
+        """
+        Print an identifying message for the interactive session
         """
         return 'entering interactive mode'
 
