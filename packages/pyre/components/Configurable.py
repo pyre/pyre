@@ -154,8 +154,8 @@ class Configurable(Dashboard):
 
             # with components
             if traitCategory == 'component':
-                # ask them to build their meta-date and attach it
-                components[traitName] = value.pyre_renderConfiguration()
+                # if there is something bound to the facility, ask it to describe itself
+                components[traitName] = value.pyre_renderConfiguration() if value else None
                 # and move on
                 continue
 
