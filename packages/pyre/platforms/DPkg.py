@@ -74,7 +74,7 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
         # grab the index of installed packages
         installed = self.getInstalledPackages()
 
-        # another possibility is that this instance belongs to a selection group; we build
+        # one possibility is that this instance belongs to a selection group; we build
         # these for some packages whenever we have to provide package choices to support the
         # computation of the package protocol default
         group = installation.pyre_implements
@@ -134,7 +134,7 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
 
     def setAlternatives(self, group, options):
         """
-        Attach the table of available of {options} for the given package {group}
+        Attach the table of available {options} for the given package {group}
 
         The table of options is a map from the constructed pyre legal installation names to the
         names of the packages that support them
