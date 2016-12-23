@@ -7,7 +7,7 @@
 
 
 # externals
-import re
+import os, re
 # access to the framework
 import pyre
 # superclass
@@ -34,7 +34,7 @@ class PETSc(Library, family='pyre.externals.petsc'):
         # get the index of installed packages
         installed = dpkg.installed()
         # the package regex
-        rgx = r"^lib{cls.category}(?P<variant>-[a-z]+)?-dev$".format(cls=cls)
+        rgx = r"lib{cls.category}(?P<version>.*)-dev$".format(cls=cls)
         # the recognizer of python dev packages
         scanner = re.compile(rgx)
 
@@ -45,13 +45,13 @@ class PETSc(Library, family='pyre.externals.petsc'):
             # once we have a match
             if match:
                 # extract the variant
-                variant = match.group('variant')
+                version = ''.join(match.group('version').split('.'))
                 # fold it into the installation name
-                name = cls.category + (variant if variant else '')
+                name = cls.category + version
                 # place the package name into a tuple
-                packages = match.group(),
+                package = match.group(),
                 # hand them to the caller
-                yield name, packages
+                yield name, package
 
         # all done
         return
@@ -68,7 +68,7 @@ class PETSc(Library, family='pyre.externals.petsc'):
         versions = Default,
         # go through the versions
         for version in versions:
-           # scan through the alternatives
+            # scan through the alternatives
             for name in alternatives:
                 # if it is match
                 if name.startswith(version.flavor):
@@ -105,9 +105,6 @@ class Default(LibraryInstallation, family='pyre.externals.petsc.default', implem
     flavor = category
 
     # public state
-    confdir = pyre.properties.path()
-    confdir.doc = "the location of my configuration files; for the build system"
-
     defines = pyre.properties.strings(default="WITH_PETSC")
     defines.doc = "the compile time markers that indicate my presence"
 
@@ -125,30 +122,12 @@ class Default(LibraryInstallation, family='pyre.externals.petsc.default', implem
         # get the version info
         self.version, _ = packager.info(package=dev)
 
-        # in order to identify my {confdir}, search for the build variables settings
-        variables = 'variables'
-        # find the file
-        confdir = packager.findfirst(target=variables, contents=packager.contents(package=dev))
-        # and save the parent
-        self.confdir = confdir.parent
-
-        # in order to identify my {incdir}, search for the top-level header file
-        header = 'petsc.h'
-        # find the header
-        incdir = packager.findfirst(target=header, contents=packager.contents(package=dev))
-        # save it
-        self.incdir = [ incdir ] if incdir else []
-
-        # in order to identify my {libdir}, search for one of my libraries
-        stem = self.flavor
-        # convert it into the actual file name
-        libpetsc = self.pyre_host.dynamicLibrary(stem)
-        # find it
-        libdir = packager.findfirst(target=libpetsc, contents=packager.contents(package=dev))
-        # and save it
-        self.libdir = [ libdir ] if libdir else []
+        # the package leaves includes in
+        self.incdir = [ '/usr/include/petsc' ]
+        # and libraries in
+        self.libdir = [ '/usr/lib/x86_64-linux-gnu' ]
         # set my library
-        self.libraries = stem
+        self.libraries = 'petsc'
 
         # now that we have everything, compute the prefix
         self.prefix = self.commonpath(folders=self.incdir+self.libdir)
@@ -175,13 +154,6 @@ class Default(LibraryInstallation, family='pyre.externals.petsc.default', implem
             raise self.ConfigurationError(configurable=self, errors=[msg])
         # otherwise, grab the package contents
         contents = tuple(packager.contents(package=package))
-
-        # in order to identify my {confdir}, search for the build variables settings
-        variables = 'variables'
-        # find the file
-        confdir = packager.findfirst(target=variables, contents=contents)
-        # and save the parent
-        self.confdir = confdir.parent
 
         # in order to identify my {incdir}, search for the top-level header file
         header = 'petsc.h'
