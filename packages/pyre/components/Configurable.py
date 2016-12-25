@@ -117,6 +117,11 @@ class Configurable(Dashboard):
         doc['properties'] = properties
         doc['components'] = components
 
+        # get my key
+        key = self.pyre_key
+        # get my scope
+        scope = list(self.pyre_nameserver.getInfo(key).split)
+
         # go through my traits
         for trait in self.pyre_configurables():
             # meta-data:
@@ -142,6 +147,7 @@ class Configurable(Dashboard):
             # initialize the trait description
             traits[traitName] = {
                 'name': traitName,
+                'scope': scope,
                 'aliases': list(traitAliases),
                 'category': traitCategory,
                 'schema': traitType,
@@ -162,7 +168,7 @@ class Configurable(Dashboard):
             # with properties, attach the property meta-data
             properties[traitName] = {
                 'name': traitName,
-                'value': str(value),
+                'value': value,
                 'default': trait.default,
             }
 
