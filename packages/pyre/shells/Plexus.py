@@ -53,7 +53,7 @@ class Plexus(Application):
         # if there is something to invoke
         else:
             # do it
-            return self.pyre_invoke( action=name, argv=argv)
+            return self.pyre_invoke(action=name, argv=argv)
 
         # if the user has requested an interactive session
         if self.interactive:

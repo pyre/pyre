@@ -173,7 +173,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
     def pyre_slot(self, attribute):
         """
         Return the slot associated with {attribute}
-        the locator of the component
         """
         # find the trait
         trait = self.pyre_trait(alias=attribute)
