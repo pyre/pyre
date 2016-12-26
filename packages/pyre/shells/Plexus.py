@@ -55,11 +55,6 @@ class Plexus(Application):
             # do it
             return self.pyre_invoke(action=name, argv=argv)
 
-        # if the user has requested an interactive session
-        if self.interactive:
-            # jump to the interpreter
-            return self.pyre_interactiveSession()
-
         # otherwise, just show the help screen
         return self.help()
 

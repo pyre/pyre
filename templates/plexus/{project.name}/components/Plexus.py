@@ -35,18 +35,14 @@ class Plexus(pyre.plexus, family='{project.name}.components.plexus'):
 
 
     # interactive session management
-    def pyre_interactiveSessionContext(self, context):
+    def pyre_interactiveSessionContext(self, context=None):
         """
         Go interactive
         """
-        # protect against bad contexts
-        if context is None:
-            # by initializing as an empty dict
-            context = {{}}
-
-        # set up some context
+        # prime the execution context
+        context = context or {{}}
+        # grant access to my package
         context['{project.name}'] = {project.name}  # my package
-
         # and chain up
         return super().pyre_interactiveSessionContext(context=context)
 

@@ -76,6 +76,17 @@ def script():
     return script
 
 @foundry(implements=shell)
+def interactive():
+    """
+    An application shell based on {script} that enters interactive mode after the application
+    is finished running
+    """
+    # grab the component class record
+    from .Interactive import Interactive as interactive
+    # and return it
+    return interactive
+
+@foundry(implements=shell)
 def fork():
     """
     The fork shell: a shell that invokes the application main entry point in a child process

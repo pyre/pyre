@@ -15,8 +15,6 @@ from .Director import Director
 # access to the local interfaces
 from .Shell import Shell
 from .Renderer import Renderer
-# so i can describe my dependencies
-from .. import externals, primitives
 
 
 # declaration
@@ -43,9 +41,6 @@ class Application(pyre.component, metaclass=Director):
     # public state
     shell = Shell()
     shell.doc = 'my hosting strategy'
-
-    interactive = pyre.properties.bool(default=False)
-    interactive.doc = "go interactive when no command line arguments are provided"
 
     DEBUG = pyre.properties.bool(default=False)
     DEBUG.doc = 'debugging mode'
@@ -130,8 +125,8 @@ class Application(pyre.component, metaclass=Director):
         """
         The main entry point of an application component
         """
-        # go interactive
-        return self.pyre_interactiveSession()
+        # the default behavior is to show the help screen
+        return self.help(**kwds)
 
 
     @pyre.export
@@ -472,87 +467,20 @@ class Application(pyre.component, metaclass=Director):
         return 1
 
 
-    def pyre_interactiveSession(self, context=None):
-        """
-        Convert this session to an interactive one
-        """
-        # try to
-        try:
-            # get readline
-            import readline
-        # if not there
-        except ImportError:
-            # no problem
-            pass
-        # if successful
-        else:
-            # turn on completion
-            import rlcompleter
-            # check which interface is available and do the right thing: on OSX, readline is
-            # provided by libedit
-            if 'libedit' in readline.__doc__:
-                # enable completion
-                readline.parse_and_bind('bind -v')
-                readline.parse_and_bind('bind ^I rl_complete')
-            # on other machines, or if the python readline extension is available on OSX
-            else:
-                # enable completion
-                readline.parse_and_bind('tab: complete')
-
-            # attempt to make it possible to save the command history across sessions; we need
-            # a name for the history file; check whether I belong to a package
-            package = self.pyre_package()
-            # in which case
-            if package:
-                # use its name
-                name = package.name
-            # otherwise
-            else:
-                # use 'pyre' by default
-                name = 'pyre'
-
-            # build the uri to the history file
-            history = primitives.path('~', '.{}-history'.format(name)).expanduser().resolve()
-            # stringify
-            history = str(history)
-            # attempt to
-            try:
-                # read it
-                readline.read_history_file(history)
-            # if not there
-            except IOError:
-                # no problem
-                pass
-            # make sure it gets saved
-            import atexit
-            # by registering a handler for when the session terminates
-            atexit.register(readline.write_history_file, history)
-
-        # go live
-        import code, sys
-        # adjust the prompts
-        sys.ps1 = '{}: '.format(self.pyre_namespace or self.pyre_name)
-        sys.ps2 = '  ... '
-        # adjust the local namespace
-        context = self.pyre_interactiveSessionContext(context=context)
-        # enter interactive mode
-        return code.interact(banner=self.pyre_interactiveBanner(), local=context)
-
-
     def pyre_interactiveSessionContext(self, context):
         """
         Prepare the interactive context by granting access to application parts
         """
-        # if the supplied context is empty
-        if context is None:
-            # prime with an empty dict
-            context = {}
-
-        # put me in it
-        context['self'] = self
-
-        # and return it
+        # by default, nothing to do: the shell has already bound me in this context
         return context
+
+
+    def pyre_interactiveBanner(self):
+        """
+        Print an identifying message for the interactive session
+        """
+        # just saying hi...
+        return 'entering interactive mode...\n'
 
 
     # basic support for the help system
@@ -583,13 +511,6 @@ class Application(pyre.component, metaclass=Director):
         """
         # easy
         return ''
-
-
-    def pyre_interactiveBanner(self):
-        """
-        Print an identifying message for the interactive session
-        """
-        return 'entering interactive mode'
 
 
     def pyre_respond(self, server, request):
