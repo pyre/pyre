@@ -57,6 +57,24 @@ class Date(Schema):
             raise self.CastingError(value=value, description=str(error))
 
 
+    def string(self, value):
+        """
+        Render value as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None: return None
+        # my value knows
+        return value.strftime(self.format)
+
+
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
     # meta-methods
     def __init__(self, default=datetime.date.today(), format=format, **kwds):
         # chain up with my default

@@ -34,7 +34,7 @@ class InputStream(Schema, Dashboard):
         Attempt to convert {value} into an open input stream
         """
         # the value is the special string "stdin"
-        if value == 'stdin':
+        if value == 'stdin' or value == '<stdin>':
             # return the process stdin
             return sys.stdin
         # check for strings
@@ -51,6 +51,24 @@ class InputStream(Schema, Dashboard):
             return self.pyre_fileserver.open(uri=value, mode=self.mode)
         # otherwise, leave it alone
         return value
+
+
+    def string(self, value):
+        """
+        Render value as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None: return None
+        # my value knows
+        return value.name
+
+
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
 
 
     # meta-methods

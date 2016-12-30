@@ -35,6 +35,14 @@ class Decimal(Numeric):
         return decimal.Decimal(value)
 
 
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
     # meta-methods
     def __init__(self, default=decimal.Decimal(), **kwds):
         # chain up with my default

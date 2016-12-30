@@ -27,6 +27,27 @@ class Sequence(Container):
     container = tuple # the default container i represent
 
 
+    # interface
+    def str(self, value):
+        """
+        Render value as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None: return None
+        # my value knows
+        return str(self.container(str(item) for item in value))
+
+
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # respect {None}
+        if value is None: return None
+        # easy enough
+        return self.container(str(item) for item in value)
+
+
     # implementation details
     def _coerce(self, value, **kwds):
         """

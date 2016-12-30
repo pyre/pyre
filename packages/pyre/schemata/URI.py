@@ -55,6 +55,14 @@ class URI(Schema):
         raise self.CastingError(value=value, description=msg)
 
 
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
     # meta-methods
     def __init__(self, default=locator(), scheme=None, authority=None, address=None, **kwds):
         # chain up with my default

@@ -35,6 +35,14 @@ class Fraction(Numeric):
         return fractions.Fraction(value)
 
 
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
     # meta-methods
     def __init__(self, default=fractions.Fraction(), **kwds):
         # chain up with my default

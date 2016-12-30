@@ -22,4 +22,15 @@ class Set(Sequence):
     container = set # the container I represent
 
 
+    # interface
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # respect {None}
+        if value is None: return None
+        # sets are not JSON representable, so we convert them into lists
+        return self.list(str(item) for item in value)
+
+
 # end of file

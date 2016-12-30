@@ -61,4 +61,12 @@ class Path(Schema):
         return primitives.path(value)
 
 
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
 # end of file

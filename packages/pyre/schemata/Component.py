@@ -111,6 +111,24 @@ class Component(Schema):
         raise protocol.ResolutionError(protocol=protocol, value=value) from None
 
 
+    def string(self, value):
+        """
+        Render value as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None: return None
+        # my value knows
+        return value.pyre_name
+
+
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
     # meta-methods
     def __init__(self, protocol, default=default, **kwds):
         # chain up

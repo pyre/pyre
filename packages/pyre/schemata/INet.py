@@ -189,6 +189,14 @@ class INet(Schema):
         return self.ipv4(host=match.group('host'), port=match.group('port'))
 
 
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
     # meta-methods
     def __init__(self, default=any, **kwds):
         # chain up with my default

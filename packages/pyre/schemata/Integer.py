@@ -24,7 +24,7 @@ class Integer(Numeric):
     # interface
     def coerce(self, value, **kwds):
         """
-        Attempt to convert {value} into a float
+        Attempt to convert {value} into an integer
         """
         # for strings
         if isinstance(value, str):

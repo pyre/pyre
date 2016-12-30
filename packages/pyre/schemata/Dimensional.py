@@ -41,6 +41,14 @@ class Dimensional(Numeric):
         raise self.CastingError(value=value, description=msg)
 
 
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
     # meta-methods
     def __init__(self, default=units.zero, **kwds):
         # chain up with my default

@@ -49,6 +49,27 @@ class Schema:
         return value
 
 
+    def string(self, value):
+        """
+        Render value as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None: return None
+        # my value knows
+        return str(value)
+
+
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # respect {None}
+        if value is None: return None
+        # by default, let the raw value through; the schemata that are not JSON representable
+        # must override to provide something suitable
+        return value
+
+
     # meta-methods
     def __init__(self, default=None, **kwds):
         # chain up
