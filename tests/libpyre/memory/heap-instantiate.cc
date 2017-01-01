@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2016 all rights reserved
+// (c) 1998-2017 all rights reserved
 //
 
 // given a file named "grid.dat" in the current directory, use the high level interface to map
