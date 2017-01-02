@@ -36,6 +36,8 @@ class Typed(Schema):
         """
         # {None} is special; leave it alone
         if value is None: return None
+        # so are string representations of {None}
+        if isinstance(value, str) and value.strip().lower() == "none": return None
         # otherwise, convert
         for converter in self.converters: value = converter(value=value, **kwds)
         # cast
