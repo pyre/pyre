@@ -43,13 +43,9 @@ class Date(Schema):
 
         # otherwise, assume it is a string; attempt to
         try:
-            # strip
+            # strip it
             value = value.strip()
-            # check for "none"
-            if value.lower() == "none":
-                # do as told
-                return None
-           # cast {value} into a date
+            # and cast it into a date
             return datetime.datetime.strptime(value, self.format).date()
         # if this fails
         except (AttributeError, TypeError, ValueError) as error:

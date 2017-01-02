@@ -20,6 +20,7 @@ class Fraction(Numeric):
 
     # constants
     typename = 'fraction' # the name of my type
+    ncomplaint = 'could not coerce {0.value!r) into a fraction'
 
 
     # interface
@@ -27,12 +28,14 @@ class Fraction(Numeric):
         """
         Attempt to convert {value} into a fraction
         """
-        # check for "none"
-        if isinstance(value, str) and value.strip().lower() == "none":
-            # do as told
-            return None
-        # otherwise, let the constructor do its job
-        return fractions.Fraction(value)
+        # attempt to
+        try:
+            # let the constructor do its job
+            return fractions.Fraction(value)
+        # if anything goes wrong
+        except Exception as error:
+            # complain
+            raise self.CastingError(value=value, description=self.complaint)
 
 
     def json(self, value):

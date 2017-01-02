@@ -19,6 +19,7 @@ class String(Schema):
 
     # constants
     typename = 'str' # the name of my type
+    complaint = 'could not coerce {0.value!r} into a string'
 
 
     # interface
@@ -26,12 +27,14 @@ class String(Schema):
         """
         Attempt to convert {value} into a string
         """
-        # let the constructor do its job
-        value = str(value)
-        # now, check for "none"
-        if value.strip().lower() == "none": return None
-        # otherwise
-        return value
+        # attempt to
+        try:
+            # let the constructor do its job
+            return str(value)
+        # if anything goes wrong
+        except Exception as error:
+            # complain
+            raise self.CastingError(value=value, description=self.complaint)
 
 
     # meta-methods

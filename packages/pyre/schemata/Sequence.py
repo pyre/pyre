@@ -25,6 +25,7 @@ class Sequence(Container):
     delimiter = ','
     typename = 'sequence' # the name of my type
     container = tuple # the default container i represent
+    complaint = 'could not coerce {0.value!r} as a sequence'
 
 
     # interface
@@ -55,8 +56,6 @@ class Sequence(Container):
         """
         # string processing
         if isinstance(value, str):
-            # check for "nonw"
-            if value.strip().lower() == "none": return None
             # strip opening and closing delimiters
             if value and value[0] in self.open: value = value[1:]
             if value and value[-1] in self.close: value = value[:-1]
@@ -76,7 +75,7 @@ class Sequence(Container):
             # all done
             return
         # otherwise, flag it as bad input
-        raise self.CastingError(value=value, description="unknown type: value={0.value!r}")
+        raise self.CastingError(value=value, description=self.complaint)
 
 
 # end of file

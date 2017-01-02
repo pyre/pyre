@@ -29,7 +29,7 @@ def test():
         descriptor.coerce(1)
         assert False
     except descriptor.CastingError as error:
-        assert str(error) == "could not convert 1 into a dimensional quantity"
+        assert str(error) == "could not coerce 1 into a dimensional quantity"
 
     return
 

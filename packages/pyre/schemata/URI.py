@@ -24,6 +24,7 @@ class URI(Schema):
 
     # constants
     typename = 'uri' # the name of my type
+    complaint = 'could not coerce {0.value!r} into a URI'
 
 
     # interface
@@ -35,24 +36,16 @@ class URI(Schema):
         if isinstance(value, self.locator):
             # leave it alone
             return value
-        # if it is a string
-        if isinstance(value, str):
-            # check for "none"
-            if value.strip().lower() == "none": return None
-            # otherwise, attempt to
-            try:
-                # get my basic type to parse it
-                return self.locator.parse(
-                    value, scheme=self.scheme, authority=self.authority, address=self.address)
-            # if anything goes wrong
-            except self.locator.ParsingError:
-                # complain
-                msg = 'unrecognizable URI {0.value!r}'
-                raise self.CastingError(value=value, description=msg)
 
-        # otherwise
-        msg = 'unrecognizable URI {0.value!r}'
-        raise self.CastingError(value=value, description=msg)
+        # attempt to coerce
+        try:
+            # by assuming it is a string
+            return self.locator.parse(
+                value.strip(), scheme=self.scheme, authority=self.authority, address=self.address)
+        # if anything goes wrong
+        except Exception as error:
+            # complain
+            raise self.CastingError(value=value, description=self.complaint)
 
 
     def json(self, value):

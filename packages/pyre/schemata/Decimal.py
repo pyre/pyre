@@ -27,12 +27,14 @@ class Decimal(Numeric):
         """
         Attempt to convert {value} into a decimal
         """
-        # check for "none"
-        if isinstance(value, str) and value.strip().lower() == "none":
-            # do as told
-            return None
-        # let the constructor do its job
-        return decimal.Decimal(value)
+        # attempt to
+        try:
+            # let the constructor do its job
+            return decimal.Decimal(value)
+        # if anything goes wrong
+        except decimal.InvalidOperation as error:
+            # convert it into a configuration error
+            raise self.CastingError(value=value, description=str(error))
 
 
     def json(self, value):

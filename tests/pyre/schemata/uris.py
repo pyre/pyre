@@ -110,7 +110,7 @@ def test():
         uri.coerce("&")
         assert False
     except uri.CastingError as error:
-        assert str(error) == 'unrecognizable URI {!r}'.format('&')
+        assert str(error) == 'could not coerce {!r} into a URI'.format('&')
 
     # anything else?
     return

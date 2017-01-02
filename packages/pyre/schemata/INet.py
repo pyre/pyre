@@ -113,6 +113,7 @@ class INet(Schema):
     # constants
     any = ip(host='', port=0) # the moral equivalent of zero...
     typename = 'inet' # the name of my type
+    complaint = 'could not coerce {0.value!r} into an internet address'
 
 
     # interface
@@ -122,11 +123,12 @@ class INet(Schema):
         """
         # {address} instances go right through
         if isinstance(value, self.address): return value
-        # use the address parser to convert strings
-        if isinstance(value, str): return self.parse(value.strip())
-        # everything else is an error
-        msg="could not convert {0.value!r} into an internet address"
-        raise self.CastingError(value=value, description=msg)
+        # strings
+        if isinstance(value, str):
+            # get processes by my parser
+            return self.parse(value.strip())
+        # anything else is an error
+        raise self.CastingError(value=value, description=self.complaint)
 
 
     def recognize(self, family, address):
@@ -153,10 +155,6 @@ class INet(Schema):
         """
         Convert {value}, expected to be a string, into an inet address
         """
-        # check for "none"
-        if value.lower() == "none":
-            # and do as told
-            return None
         # interpret an empty {value}
         if not value:
             # as an ip4 address, on the local host at some random port
@@ -165,10 +163,8 @@ class INet(Schema):
         match = self.regex.match(value)
         # if it failed
         if not match:
-            # describe the problem
-            msg = "could not convert {0.value!r} into an internet address"
             # bail out
-            raise self.CastingError(value=value, description=msg)
+            raise self.CastingError(value=value, description=self.complaint)
 
         # check whether this an IP address
         family = match.group('ip')

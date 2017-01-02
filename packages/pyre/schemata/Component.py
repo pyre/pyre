@@ -23,6 +23,7 @@ class Component(Schema):
     # constants
     default = object()
     typename = 'component' # the name of my type
+    complaint = 'could not coerce {0.value!r} into a component'
 
     # public data
     protocol = None
@@ -54,17 +55,11 @@ class Component(Schema):
 
         # the only remaining case that i can handle is {value} being a string; if it's not
         if not isinstance(value, str):
-            # build an error message
-            msg = 'could not convert {0.value} into a component'
-            # and complain
-            raise self.CastingError(value=value, description=msg) from None
+            # complain
+            raise self.CastingError(value=value, description=self.complaint)
 
         # ok, we have a string; strip it
         value = value.strip()
-        # check for none
-        if value.lower() == "none":
-            # and do as instructed
-            return None
 
         # ask the protocol
         try:

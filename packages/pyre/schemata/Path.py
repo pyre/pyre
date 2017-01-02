@@ -21,6 +21,7 @@ class Path(Schema):
 
     # constants
     typename = 'path' # the name of my type
+    complaint = "cannot cast {0.value!r} into a path"
 
     # magic values
     cwd = primitives.path.cwd
@@ -33,11 +34,6 @@ class Path(Schema):
         """
         Attempt to convert {value} into a path
         """
-        # respect None
-        if value is None:
-            # by leaving it alone
-            return None
-
         # perhaps it is already a path
         if isinstance(value, primitives.path):
             # in which case, just leave it alone
@@ -45,17 +41,8 @@ class Path(Schema):
 
         # the rest assume {value} is a string; if it isn't
         if not isinstance(value, str):
-            # build the error message
-            msg = "cannot cast {!r} into a path".format(value)
-            # and complain
-            raise self.CastingError(value=value, description=msg)
-
-        # strip
-        value = value.strip()
-        # check for "none"
-        if value.lower() == "none":
-            # do as told
-            return None
+            # complain
+            raise self.CastingError(value=value, description=self.complaint)
 
         # cast {value} into a path
         return primitives.path(value)

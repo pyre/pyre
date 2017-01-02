@@ -21,6 +21,7 @@ class Dimensional(Numeric):
 
     # constants
     typename = 'dimensional' # the name of my type
+    complaint = 'could not coerce {0.value!r} into a dimensional quantity'
 
 
     # public data
@@ -32,13 +33,17 @@ class Dimensional(Numeric):
         """
         Attempt to convert {value} into a dimensional
         """
-        # use the unit parser to convert strings to dimensionals
-        if isinstance(value, str): return self.parser.parse(value)
         # dimensionals go right through
         if isinstance(value, units.dimensional): return value
-        # everything else is an error
-        msg="could not convert {0.value!r} into a dimensional quantity"
-        raise self.CastingError(value=value, description=msg)
+
+        # attempt to coerce strings
+        try:
+            # by invoking the {units} parser
+            return self.parser.parse(value)
+        # if anything whatsoever goes wring
+        except Exception as error:
+            # complain
+            raise self.CastingError(value=value, description=self.complaint)
 
 
     def json(self, value):

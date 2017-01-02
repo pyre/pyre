@@ -27,7 +27,7 @@ def test():
         istream.coerce("&")
         assert False
     except istream.CastingError as error:
-        assert str(error) == 'unrecognizable URI {!r}'.format('&')
+        assert str(error) == "could not coerce '&' into a URI"
 
     # anything else?
     return

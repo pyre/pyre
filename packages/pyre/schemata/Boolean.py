@@ -19,6 +19,7 @@ class Boolean(Numeric):
 
     # constants
     typename = 'bool' # the name of my type
+    complaint = 'could not coerce {0.value!r} to bool'
 
 
     # interface
@@ -28,10 +29,14 @@ class Boolean(Numeric):
         """
         # native type pass through unchanged
         if isinstance(value, bool): return value
-        # strings go through the translation map
-        if isinstance(value, str): return self.xlat[value.lower()]
-        # anything else is an error
-        raise self.CastingError(description='could not cast {0.value!r} to bool', value=value)
+        # anything else
+        try:
+            # must be convertible by my table
+            return self.xlat[value.lower()]
+        # if anything goes wrong
+        except Exception as error:
+            # it is an error
+            raise self.CastingError(description=self.complaint, value=value)
 
 
     # meta-methods

@@ -19,6 +19,7 @@ class Integer(Numeric):
 
     # constants
     typename = 'int' # the name of my type
+    complaint = 'could not coerce {0.value!r} into an integer'
 
 
     # interface
@@ -26,24 +27,18 @@ class Integer(Numeric):
         """
         Attempt to convert {value} into an integer
         """
-        # for strings
-        if isinstance(value, str):
-            # strip
-            value = value.strip()
-            # check for "none"
-            if value.lower() == "none":
-                # do as told
-                return None
-            # otherwise, get the interpreter to evaluate simple expressions
-            value = eval(value)
-        # attempt to
+        # attempt to convert into an integer
         try:
-            # cast {value} into an integer
+            # for strings
+            if isinstance(value, str):
+                # get the interpreter to evaluate simple expressions
+                value = eval(value)
+            # everything must to go through the {int} constructor to get coerced correctly
             return int(value)
-        # if that fails
-        except (TypeError, ValueError) as error:
+        # if anything whatsoever goes wrong
+        except Exception as error:
             # complain
-            raise self.CastingError(value=value, description=str(error)) from None
+            raise self.CastingError(value=value, description=self.complaint)
 
 
     # meta-methods

@@ -34,14 +34,10 @@ class Array(Schema):
             value = value.strip()
             # if there is nothing left, return an empty tuple
             if not value: return ()
-            # if it is the string "none"
-            if value.lower() == "none":
-                # do as told
-                return None
             # otherwise, ask python to process
             value = eval(value)
         # if {value} is an iterable, convert it to a tuple and return it
-        if  isinstance(value, collections.Iterable): return tuple(value)
+        if isinstance(value, collections.Iterable): return tuple(value)
         # otherwise flag it as bad input
         raise self.CastingError(value=value, description="unknown type: value={0.value!r}")
 

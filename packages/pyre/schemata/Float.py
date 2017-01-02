@@ -19,6 +19,7 @@ class Float(Numeric):
 
     # constants
     typename = 'float' # the name of my type
+    complaint = 'could not coerce {0.value!r} into a float'
 
 
     # interface
@@ -26,22 +27,18 @@ class Float(Numeric):
         """
         Attempt to convert {value} into a float
         """
-        # if it is a string
-        if isinstance(value, str):
-            # check for none
-            if value.strip().lower() == "none":
-                # and do as told
-                return None
-            # otherwise, get the interpreter to evaluate simple expressions
-            value = eval(value)
-        # attempt to
+        # attempt to convert into a float
         try:
-            # cast {value} into a float
+            # if it is a string
+            if isinstance(value, str):
+                # get the interpreter to evaluate simple expressions
+                value = eval(value)
+            # everything has to go through the {float} constructor to get coerced correctly
             return float(value)
-        # if it didn't work
-        except (TypeError, ValueError) as error:
+        # if anything whatsoever goes wrong
+        except Exception as error:
             # complain
-            raise self.CastingError(value=value, description=str(error)) from None
+            raise self.CastingError(value=value, description=self.complaint) from None
 
 
     # meta-methods

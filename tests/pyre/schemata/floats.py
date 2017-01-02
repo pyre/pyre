@@ -24,10 +24,10 @@ def test():
     assert 1.2 == descriptor.coerce("1.2")
     # failures
     try:
-        descriptor.coerce(test)
+        descriptor.coerce('what?')
         assert False
     except descriptor.CastingError as error:
-        assert str(error).startswith("float() argument must be a string or a number")
+        assert str(error) == "could not coerce 'what?' into a float"
 
     return
 
