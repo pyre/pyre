@@ -127,6 +127,8 @@ class Request:
             if actual == 0:
                 # in which case mark me as done
                 self.complete = True
+                # normalize my payload, if necessary
+                if self.payload is None: self.payload = []
                 # and get out of here
                 return True
             # otherwise, complain
