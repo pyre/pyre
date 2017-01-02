@@ -33,7 +33,7 @@ class GSL(Library, family='pyre.externals.gsl'):
         installed = dpkg.installed()
 
         # the GSL development packages
-        gsl = 'libgsl0-dev',
+        gsl = 'libgsl-dev', 'libgsl2'
         # find the missing ones
         missing = [ pkg for pkg in gsl if pkg not in installed ]
         # if there are no missing ones
