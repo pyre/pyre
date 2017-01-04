@@ -15,13 +15,14 @@ include Python/default.def
 # the files
 EXPORT_BINS = \
     abi.py \
+    blame \
     cache_tag.py \
     class.pyre \
-    walk \
     merlin \
     smith.pyre \
     pyre \
-    python.pyre
+    python.pyre \
+    walk \
 
 # add these to the clean pile
 PROJ_TIDY += python.pyre
