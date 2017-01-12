@@ -28,7 +28,7 @@ class ConstraintViolationError(FrameworkError):
     """
 
     # public data
-    description  = "{0.value!r} violates the constraint ({0.constraint})"
+    description  = "{0.value!r} is not {0.constraint}"
 
     # meta-methods
     def __init__(self, constraint, value, **kwds):
@@ -39,7 +39,6 @@ class ConstraintViolationError(FrameworkError):
         self.value = value
         # all done
         return
-
 
 
 # end of file
