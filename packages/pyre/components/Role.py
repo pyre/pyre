@@ -19,6 +19,15 @@ class Role(Requirement):
     """
 
 
+    # public data
+    @property
+    def pyre_name(self):
+        """
+        Return the component's family name
+        """
+        return self.pyre_family()
+
+
     # meta methods
     def __new__(cls, name, bases, attributes, **kwds):
         """

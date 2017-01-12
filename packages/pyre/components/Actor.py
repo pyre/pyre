@@ -30,6 +30,15 @@ class Actor(Requirement):
     from .exceptions import ImplementationSpecificationError, ProtocolError
 
 
+    # public data
+    @property
+    def pyre_name(self):
+        """
+        Return the component's family name
+        """
+        return self.pyre_family()
+
+
     # meta-methods
     def __new__(cls, name, bases, attributes, *, family=None, implements=None, **kwds):
         """
