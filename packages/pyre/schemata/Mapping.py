@@ -22,6 +22,7 @@ class Mapping(Container):
     # constants
     typename = 'mapping' # the name of my type
     container = dict # the default container i represent
+    complaint = 'could not coerce {0.value!r} to a mapping'
 
 
     # implementation details
@@ -60,7 +61,7 @@ class Mapping(Container):
             return
 
         # otherwise, flag it as bad input
-        raise self.CastingError(value=value, description="unknown type: value={0.value!r}")
+        raise self.CastingError(value=value, description=self.complaint)
 
 
 # end of file

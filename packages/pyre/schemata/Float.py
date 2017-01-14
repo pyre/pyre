@@ -38,7 +38,7 @@ class Float(Numeric):
         # if anything whatsoever goes wrong
         except Exception as error:
             # complain
-            raise self.CastingError(value=value, description=self.complaint) from None
+            raise self.CastingError(value=value, description=self.complaint)
 
 
     # meta-methods

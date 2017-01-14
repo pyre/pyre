@@ -21,6 +21,7 @@ class Array(Schema):
 
     # constants
     typename = 'array' # the name of my type
+    complaint = 'could not coerce {0.value!r} to an array'
 
 
     # interface
@@ -39,7 +40,7 @@ class Array(Schema):
         # if {value} is an iterable, convert it to a tuple and return it
         if isinstance(value, collections.Iterable): return tuple(value)
         # otherwise flag it as bad input
-        raise self.CastingError(value=value, description="unknown type: value={0.value!r}")
+        raise self.CastingError(value=value, description=self.complaint)
 
 
     # meta-methods
