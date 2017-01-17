@@ -193,9 +193,7 @@ class DPkg(Managed, family='pyre.platforms.packagers.dpkg'):
                 # if it matched
                 if match:
                     # extract the information we need and hand it to the caller
-                    # print(match.group('package', 'version', 'revision'))
                     yield match.group('package', 'version', 'revision')
-                else: print(line[:-1])
         # all done
         return
 
