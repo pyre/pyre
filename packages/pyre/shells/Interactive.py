@@ -38,7 +38,7 @@ class Interactive(Script, family="pyre.shells.interactive"):
         Convert this session to an interactive one
         """
         # we need an application specific tag
-        name = application.pyre_namespace or application._pyre_name or 'pyre'
+        name = application.pyre_namespace or application.pyre_name or 'pyre'
 
         # try to
         try:
