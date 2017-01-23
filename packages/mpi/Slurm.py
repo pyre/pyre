@@ -49,8 +49,8 @@ class Slurm(Launcher, family='mpi.shells.slurm'):
         if self.tasks:
             # add the corresponding command line argument to the pile
             argv += ['-np', str(self.tasks)]
-        # add python, the command line arguments to this script, and the autospawn marker
-        argv += [interpreter] + sys.argv + ['--{.pyre_name}.autospawn=no'.format(self)]
+        # add python, the command line arguments to this script, and the auto marker
+        argv += [interpreter] + sys.argv + ['--{.pyre_name}.auto=no'.format(self)]
 
         # here is the body of the script
         script = '\n'.join([

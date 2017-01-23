@@ -25,8 +25,8 @@ class Launcher(Script, family='mpi.shells.mpirun'):
     tasks = pyre.properties.int()
     tasks.doc = 'the number of mpi tasks'
 
-    autospawn = pyre.properties.bool(default=True)
-    autospawn.doc = 'set to {True} to re-launch this script under {mpirun}'
+    auto = pyre.properties.bool(default=True)
+    auto.doc = 'set to {True} to re-launch this script under {mpirun}'
 
     mpi = pyre.externals.mpi()
     mpi.doc = 'the mpi runtime of choice'
@@ -43,7 +43,7 @@ class Launcher(Script, family='mpi.shells.mpirun'):
         Launch {application} as a collection of mpi tasks
         """
         # if we need to invoke {mpirun}
-        if self.autospawn:
+        if self.auto:
             # do it
             return self.spawn(application=application)
 
@@ -79,8 +79,8 @@ class Launcher(Script, family='mpi.shells.mpirun'):
             # add the corresponding command line argument to the pile
             argv += ['-np', str(self.tasks)]
 
-        # add python, the command line arguments to this script, and the autospawn marker
-        argv += [interpreter] + sys.argv + ['--{.pyre_name}.autospawn=no'.format(self)]
+        # add python, the command line arguments to this script, and the auto marker
+        argv += [interpreter] + sys.argv + ['--{.pyre_name}.auto=no'.format(self)]
 
         # set the subprocess options
         options = {
