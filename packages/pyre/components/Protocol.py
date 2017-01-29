@@ -225,12 +225,14 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Retrieve all implementers that live in files and folders derivable from my family name
         """
+        # get my family fragments
+        fragments = cls.pyre_familyFragments()
+        # if i don't have a public name, there is nothing to do
+        if not fragments: return
         # get the file server
         vfs = cls.pyre_fileserver
         # construct the base uri
-        uri = vfs.path(*cls.pyre_familyFragments())
-        # if i don't have a public name, there is nothing to do
-        if not uri: return
+        uri = vfs.path(*fragments)
         # try to
         try:
             # get the associated node
@@ -247,14 +249,16 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             for path, folder in todo:
                 # grab the contents
                 for name, child in folder.open():
+                    # form the path to the child
+                    name = path / name
                     # if the child is a folder
                     if child.isFolder:
-                        # put it on the todo
-                        todo.append((vfs.join(path,name), child))
+                        # put it on the to do pile
+                        todo.append((name, child))
                     # otherwise
                     else:
                         # treat it as a shelf; assemble its address
-                        shelf = 'vfs:' + str(vfs.path(path, name))
+                        shelf = 'vfs:{}'.format(name)
                         # and get its contents
                         yield from cls.pyre_implementers(uri=shelf)
 
