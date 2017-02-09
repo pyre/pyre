@@ -6,13 +6,27 @@
  *
  */
 
-#app {
+main {
     font-size: 60%;
-    margin: 2.0em 1.0em 2.0em 16.0em;
+    line-height: 150%;
+    margin: 7.0em 2.0em 2.0em 2.0em;
 }
 
-#app p {
-    margin-top: 2.0em;
+/* sections */
+section {
+}
+
+/* title */
+section h1 {
+    font-size: 150%;
+    font-weight: normal;
+    text-align: left;
+    text-transform: uppercase;
+    color: #f37f18;
+}
+
+section p {
+    margin-top: 1.0em;
 }
 
 /* end of file */

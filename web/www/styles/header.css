@@ -8,76 +8,59 @@
 
 /* the page banner */
 header {
-    font-size: 60%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
 
-    margin: 0.0em 0.0em 0.0em 1.0em;
-    height: 5.0em;
+    height: 4.0em;
+
+    font-size: 60%;
+    margin: 0.0em 2.0em 0.0em 2.0em;
+    padding: 1.0em 2.0em 1.0em 2.0em;
 
     color: #666;
-    color: #5c2813;
-    /* marker for debugging
-    border-bottom: 1px solid #e0e0e0;
-    */
 }
 
 /* logo */
 header img#logo {
     float: left;
-    height: 4.0em;
-}
-
-/* access portal */
-header p {
-    font-size: 200%;
-    text-align: center;
-    color: #f37f18;
-
-    height: 2.5em;
-    padding-top: 0.5em;
+    height: 3.0em;
 }
 
 /* navigation bar */
-header ul {
-    list-style-type: none;
-
+header nav {
+    float: right;
+    display: inline;
     text-align: right;
     white-space: nowrap;
-
-    /* marker for debugging
-    border: 1px solid #e0e0e0;
-    */
 }
 
-header ul li {
-    display: inline;
-    cursor: pointer;
-
-    /*
-    margin-left: 0.25em;
-    margin-right: 0.25em;
-    */
+header nav a {
     padding-left: 1.0em;
     padding-right: 1.0em;
-    line-height: 2.0em;
-    text-transform: uppercase;
-
+    line-height: 4.0em;
+    text-transform: lowercase;
     border-right: 1px solid #c8c8c8;
 }
 
-header ul li.last {
+header nav a.last {
     border-right: none;
+    padding-right: 0.0em;
 }
 
-header ul li:hover {
-    color: #ff6600;
+header nav a:hover {
+    color: #f60;
 }
 
-header ul li.current {
-    cursor: default;
-    color: #ff6600;
+header nav a.current {
+    color: #f60;
 }
 
-header ul[name="company-links"] {
+header nav[name="company-links"] {
     padding-top: 5.0em;
 }
 

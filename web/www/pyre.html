@@ -35,43 +35,50 @@
 
   <!-- basic document structure -->
   <body>
-    <!-- the banner -->
+    <!-- the header -->
     <header>
       <!-- logo -->
       <img id="logo" src="graphics/logo.png"/>
-      <!-- app id -->
-      <p>
-        pyre application testbed
-      </p>
+      <!-- navigation -->
+      <nav>
+        <a href="#about">about</a>
+        <a href="#download">get</a>
+        <a href="#documentation">docs</a>
+        <a href="#contact" class="last">contact</a>
+      </nav>
     </header>
 
-    <!-- the blank frame -->
-    <section id="app">
-      <!-- a generic blurb; gets replaced at runtim -->
-      <p id="app-blurb">
-        Welcome to the pyre application testbed. This is an exploration of invoking the various
-        actions of <em>pyre</em> applications through a web based interface.
-      </p>
-
-      <!-- the interface -->
-      <p id="app-control">
-        Placeholder for the application configuration controls; if you can see this, something
-        went wrong...
-      </p>
-    </section>
-
-    <!-- colophon -->
+    <!-- footer -->
     <footer>
-      <span class="copyright">
+      <nav class="copyright">
         copyright &copy; 1998-2017
         <a href="http://www.orthologue.com/michael.aivazis">michael aïvázis</a>
         -- all rights reserved
-      </span>
-      <span class="social">
-      </span>
+      </nav>
     </footer>
-  </body>
 
+    <main>
+      <!-- about -->
+      <section id="about">
+        <p>
+          <span class="pyre">pyre</span> is an open source application framework written
+          in <a href="http://www.python.org">python</a>. It's an attempt to bring state of the
+          art software design practices to scientific computing. The goal is to provide a
+          strong skeleton on which to build scientific codes by steering the implementation
+          towards usability and maintainability.
+        </p>
+        <p>
+          The basic conceptual building block in <span class="pyre">pyre</span> is
+          the <em>component</em>. Components are classes that specifically grant access to some
+          of their state to the application end user. The class declaration specifies default
+          values to be used in case the user didn't make a choice, but the user can override
+          any of them during component configuration.
+        </p>
+
+      </section>
+
+    </main>
+  </body>
 </html>
 
 <!-- end of file -->

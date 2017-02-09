@@ -15,7 +15,7 @@ RECURSE_DIRS = \
     styles \
 
 # the files
-EXPORT_WEB = pyre.html
+EXPORT_WEB = pyre.html index.html
 
 # standard targets
 all: export

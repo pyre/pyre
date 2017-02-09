@@ -13,34 +13,39 @@
 
 body {
 
+    font-family: "helveticaneue-thin";
     font-family: "century gothic", "corbel", "geneva", "arial", "helvetica", sans-serif;
     font-size: 20px;
+    line-height: 100%;
 
-    margin: 0.25em;
-    padding: 0.25em;
+    padding: 0.25em 0.0em 0.25em 0.0em;
     color: #633;
     color: #444;
 
 }
 
 a:link {
-    color: #666;
+    color: #aaa;
     text-decoration: none;
 }
 
 a:visited {
-    color: #666;
+    color: #aaa;
     text-decoration: none;
 }
 
 a:hover {
-    color: #666;
+    color: #f60;
     text-decoration: none;
 }
 
 a:active {
-    color: #666;
+    color: #aaa;
     text-decoration: none;
+}
+
+.pyre {
+    color: #aab141;
 }
 
 /* end of file */
