@@ -96,7 +96,7 @@ class Configurable(Dashboard):
         return
 
 
-    def pyre_renderConfiguration(self):
+    def pyre_renderConfiguration(self, deep=True):
         """
         Traverse my configuration and represent it in a JSON friendly way
         """
@@ -112,6 +112,7 @@ class Configurable(Dashboard):
         # add my state
         doc['name'] = self.pyre_name
         doc['schema'] = self.pyre_family()
+        doc['value'] = self.pyre_family()
         doc['doc'] = self.__doc__
         doc['traits'] = traits
         doc['properties'] = properties
@@ -122,8 +123,11 @@ class Configurable(Dashboard):
         # get my scope
         scope = list(self.pyre_nameserver.getInfo(key).split)
 
+        # determine how deep to go
+        configurables = self.pyre_configurables() if deep else self.pyre_localConfigurables()
+
         # go through my traits
-        for trait in self.pyre_configurables():
+        for trait in configurables:
             # meta-data:
             # the trait name
             traitName = trait.name
@@ -161,14 +165,17 @@ class Configurable(Dashboard):
             # with components
             if traitCategory == 'component':
                 # if there is something bound to the facility, ask it to describe itself
-                components[traitName] = value.pyre_renderConfiguration() if value else None
+                components[traitName] = {
+                    'name': value.pyre_name,
+                    'value': value.pyre_name,
+                }
                 # and move on
                 continue
 
             # with properties, attach the property meta-data
             properties[traitName] = {
                 'name': traitName,
-                'value': value,
+                'value': trait.json(value),
                 'default': trait.default,
             }
 
