@@ -45,16 +45,17 @@ class Web(Script, family='pyre.shells.web'):
                 return application.help(*args, **kwds)
 
         # ok, we are in business; create a nexus
-        nexus = pyre.nexus.node()
+        nexus = pyre.nexus.node(name="{.pyre_name}.nexus".format(application))
         # attach it to the application
         application.nexus = nexus
         # register it with the nexus
         nexus.services['web'] = 'http'
         # activate
         nexus.prepare(application=application)
-
+        # get the web server
+        web = nexus.services['web']
         # get the address of the web server
-        address = nexus.services['web'].address
+        address = web.address
         # show me
         application.info.log('web server on {}'.format(address))
         # if we were asked to launch a browser
