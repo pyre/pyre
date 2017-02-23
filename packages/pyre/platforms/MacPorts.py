@@ -190,8 +190,18 @@ class MacPorts(Managed, family='pyre.platforms.packagers.macports'):
                     selection = []
                 # if not
                 else:
-                    # remove it from the alternatives
-                    alternatives.remove(selection)
+                    # attempt to
+                    try:
+                        # remove it from the alternatives
+                        alternatives.remove(selection)
+                    # if this fails
+                    except ValueError:
+                        # port selections are in an inconsistent state
+                        import journal
+                        # build a message
+                        msg = "the {!r} port selection is in inconsistent state".format(group)
+                        # and warn the user
+                        journal.warning("pyre.platforms").log(msg)
                     # and put it at the top of the pile
                     selection = [selection]
                 # turn the pile into a properly ordered tuple
