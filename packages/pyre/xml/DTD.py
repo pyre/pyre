@@ -25,17 +25,18 @@ class DTD(AttributeClassifier):
         """
         Build the document class record
         """
-        # harvest the document nodes
+        # storage for the document nodes
         nodes = []
+        # harvest them
         for name, node in cls.pyre_harvest(attributes, cls.Descriptor):
             # record the name name
             node.name = name
             # and add it to the pile
             nodes.append(node)
 
-        # record the list of nodes
+        # record them as the DTD
         attributes["dtd"] = dtd = tuple(nodes)
-        # build the node
+        # chain up to build the node
         node = super().__new__(cls, name, bases, attributes, **kwds)
 
         # namespaces introduce a bit of complexity. unless it turns out to be inconsistent with
@@ -61,6 +62,10 @@ class DTD(AttributeClassifier):
             handler.tag = element.name
             handler._pyre_nodeIndex = {}
             handler._pyre_nodeQIndex = {}
+            # if this is the root element
+            if element.root:
+                # record it in the document class
+                node.root = element.name
             # build the nested element indices
             for tag in handler.elements:
                 # get the nestling handler
@@ -76,6 +81,7 @@ class DTD(AttributeClassifier):
             root = index[node.root].handler
             node.namespace = root.namespace
             node._pyre_nodeIndex = { node.root: root }
+
         # return the node to the caller
         return node
 

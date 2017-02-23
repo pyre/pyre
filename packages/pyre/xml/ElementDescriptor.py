@@ -24,9 +24,10 @@ class ElementDescriptor(Descriptor):
 
 
     # meta methods
-    def __init__(self, *, tag, handler):
+    def __init__(self, *, tag, handler, root=False):
         super().__init__(name=tag)
         self.handler = handler
+        self.root = root
         return
 
 
