@@ -11,6 +11,6 @@ grant:
     raul.radovitzky,
     bryan.riel, romain.jolivet,
     eric.gurrola, marco.lavalle, piyush.agram, joshua.cohen
-  writers = alec.aivazis, leif.strand, michael.aivazis
+  writers = alec.aivazis, leif.strand, michael.aivazis, radish
 
 ; end of file
