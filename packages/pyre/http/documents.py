@@ -69,7 +69,7 @@ class JSON(OK):
     # interface
     def render(self, server, **kwds):
         """
-        Pack the contents of the file into a binary buffer
+        Encode the object in JSON format
         """
         # return my value as a byte stream
         return json.dumps(self.value).encode(self.encoding)
