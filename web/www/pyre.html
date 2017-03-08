@@ -21,16 +21,7 @@
     <link href="styles/page.css" type="text/css" rel="stylesheet" media="all" />
     <link href="styles/header.css" type="text/css" rel="stylesheet" media="all" />
     <link href="styles/pyre.css" type="text/css" rel="stylesheet" media="all" />
-    <link href="styles/component.css" type="text/css" rel="stylesheet" media="all" />
     <link href="styles/footer.css" type="text/css" rel="stylesheet" media="all" />
-
-    <!-- javascript -->
-    <!-- jquery -->
-    <script type="text/javascript" src="scripts/jquery.js"></script>
-    <!-- pyre -->
-    <script type="text/javascript" src="scripts/boot.js"></script>
-    <script type="text/javascript" src="scripts/pyre.js"></script>
-    <script type="text/javascript" src="scripts/component.js"></script>
   </head>
 
   <!-- basic document structure -->
@@ -57,9 +48,26 @@
       </nav>
     </footer>
 
+    <!-- splash -->
+    <div id="splash">
+      <h3>an architecture for</h3>
+      <h1>scientific applications</h1>
+      <p class="abstract">
+        pyre is an open source application framework for building
+        scalable, user-friendly scientific applications
+      </p>
+
+      <nav>
+        <div><p>install</p></div>
+        <div><p>tutorials</p></div>
+      </nav>
+
+    </div>
+
     <main>
       <!-- about -->
       <section id="about">
+        <h1>about</h1>
         <p>
           <span class="pyre">pyre</span> is an open source application framework written
           in <a href="http://www.python.org">python</a>. It's an attempt to bring state of the
@@ -70,11 +78,10 @@
         <p>
           The basic conceptual building block in <span class="pyre">pyre</span> is
           the <em>component</em>. Components are classes that specifically grant access to some
-          of their state to the application end user. The class declaration specifies default
-          values to be used in case the user didn't make a choice, but the user can override
-          any of them during component configuration.
+          of their state to the application end user. Component authors provide default
+          values to be used in case the user doesn't make a choice, but the user is explicitly
+          given complete control and can override them during component configuration.
         </p>
-
       </section>
 
     </main>

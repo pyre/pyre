@@ -15,13 +15,13 @@ footer {
     z-index: 9999;
     margin: 0.0em 2.0em 0.0em 2.0em;
     padding: 1.0em 2.0em 1.0em 2.0em;
-    background-color: #fff;
-    border-top: 1px solid #e0e0e0;
 
     font-size: 50%;
     /* color: #bd905f; */
-    color: #ddd;
+    color: #aaa;
+    background-color: #fff;
     text-align: right;
+    border-top: 1px solid #e0e0e0;
 }
 
 footer nav.copyright {
@@ -37,17 +37,17 @@ footer a:link {
 }
 
 footer a:visited {
-    color: #aaa;
+    color: #888;
     border-bottom: 1px dotted #ccc;
 }
 
 footer a:hover {
-    color: #aaa;
+    color: #888;
     border-bottom: 1px dotted #bbb;
 }
 
 footer a:active {
-    color: #aaa;
+    color: #888;
     border-bottom: 1px solid #888;
 }
 

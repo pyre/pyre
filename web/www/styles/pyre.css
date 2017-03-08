@@ -6,27 +6,101 @@
  *
  */
 
+/* cover page */
+#splash {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 3.0em 2.0em 1.0em 2.0em;
+    padding: 1.0em 0em 1.0em 0em;
+}
+
+#splash h1 {
+    font-size: 200%;
+    font-weight: normal;
+    line-height: 300%;
+    white-space: nowrap;
+    text-transform: uppercase;
+    color: #ff973e;
+}
+
+#splash h3 {
+    font-size: 120%;
+    font-weight: normal;
+    line-height: 150%;
+    white-space: nowrap;
+    text-transform: uppercase;
+    color: #888;
+}
+
+#splash p.abstract {
+    font-family: georgia;
+    font-style: italic;
+    font-size: 100%;
+    line-height: 150%;
+    margin: 0.5em auto .5em auto;
+    text-align: center;
+    width: 30em;
+    color: #888;
+}
+
+#splash nav {
+    display: flex;
+    flex-direction: row;
+    margin: 2em 0em 2em 0em;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#splash nav div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 3em;
+    width: 10em;
+    border: 1px solid #bbb;
+    margin: 1em 2em 1em 2em;
+    border-radius: 0.5em;
+}
+
+#splash nav div p {
+    margin: auto 0em auto 0em;
+    text-transform: uppercase;
+    color: #4daae8;
+}
+
+/* main */
 main {
     font-size: 60%;
-    line-height: 150%;
-    margin: 7.0em 2.0em 2.0em 2.0em;
+    line-height: 180%;
+    margin: 1em 0em 3em 0em;
 }
 
 /* sections */
 section {
+    display: flex;
+    flex-direction: column;
+    margin: 1em 1em 1em 1em;
+    border-top: 1px solid #e0e0e0;
 }
 
-/* title */
 section h1 {
     font-size: 150%;
     font-weight: normal;
-    text-align: left;
+    line-height: 200%;
     text-transform: uppercase;
-    color: #f37f18;
+    color: #7a7864;
+    margin: 1em 0em 1em 0em;
+    padding: 0.25em 1.5em 0.25em 1.5em;
+    background-color: #f4f2e4;
 }
 
 section p {
-    margin-top: 1.0em;
+    margin: 0.5em 0em 0.5em 0em;
+    padding: 0em 2em 0em 2em;
 }
+
+
 
 /* end of file */

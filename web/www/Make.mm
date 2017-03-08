@@ -11,11 +11,10 @@ include pyre.def
 # my subfolders
 RECURSE_DIRS = \
     graphics \
-    scripts \
     styles \
 
 # the files
-EXPORT_WEB = pyre.html index.html
+EXPORT_WEB = pyre.html
 
 # standard targets
 all: export
