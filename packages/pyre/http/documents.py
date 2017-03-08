@@ -67,7 +67,7 @@ class JSON(OK):
     encoding = 'utf-8' # the encoding to use when converting to bytes
 
     # interface
-    def render(self, server, **kwds):
+    def render(self, **kwds):
         """
         Encode the object in JSON format
         """
