@@ -20,6 +20,7 @@ EXPORT_PYTHON_MODULES = \
     Linux.py \
     MacPorts.py \
     Managed.py \
+    Modules.py \
     POSIX.py \
     PackageManager.py \
     Platform.py \
