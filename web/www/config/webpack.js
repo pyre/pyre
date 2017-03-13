@@ -15,16 +15,13 @@ var devtool = ''
 var rootDir = path.join(__dirname, '..')
 var sourceDir = path.join(rootDir, 'react')
 var configDir = path.join(rootDir, 'config')
-
-var buildDir = ''
+var buildDir = path.join(rootDir, 'build')
 
 // pugins
 var plugins = []
 
 // if we are building for production
 if (process.env.NODE_ENV === 'production') {
-    // set the target directory
-    buildDir = path.join(rootDir, 'production')
     // use production plugins
     plugins.push(
         new HtmlWebpackPlugin({
@@ -42,8 +39,6 @@ if (process.env.NODE_ENV === 'production') {
         new webpack.optimize.DedupePlugin()
     )
 } else {
-    // set the target directory
-    buildDir = path.join(rootDir, 'build')
     // show me decent stack races
     devtool = "inline-source-map"
     // use devel plugins
