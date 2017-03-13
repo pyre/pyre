@@ -1,0 +1,31 @@
+// -*- jsx -*-
+//
+// michael a.g. aïvázis
+// orthologue
+// (c) 1998-2017 all rights reserved
+//
+
+// externals
+import React from 'react'
+// locals
+import styles from './styles'
+
+// declare
+const Footer = () => (
+    <footer style={styles.footer}>
+        <span style={styles.copyright}>
+            copyright &copy; 1998-2017
+            &nbsp;
+            <a href="http://www.orthologue.com/michael.aivazis">
+                michael aïvázis
+            </a>
+            &nbsp;
+            -- all rights reserved
+        </span>
+    </footer>
+)
+
+// export
+export default Footer
+
+// end of file

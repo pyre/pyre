@@ -8,16 +8,25 @@
 
 # project defaults
 include pyre.def
-# my subfolders
+# the package
+PACKAGE = web
+# my subfolders with static assets
 RECURSE_DIRS = \
     graphics \
     styles \
 
-# the files
-EXPORT_WEB = pyre.html
+# layout
+PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
+PROJ_WEBPACK_CONFIG = config
+PROJ_WEBPACK_SOURCES = react
+PROJ_CLEAN += ${addprefix $(PROJ_TMPDIR)/, build $(PROJ_WEBPACK_SOURCES)}
+
+# the exported items
+EXPORT_WEB = \
+   $(PROJ_TMPDIR)/build/*
 
 # standard targets
-all: export
+all: webpack.deps webpack.build export
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
