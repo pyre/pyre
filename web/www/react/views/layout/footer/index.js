@@ -13,15 +13,17 @@ import styles from './styles'
 // declare
 const Footer = () => (
     <footer style={styles.footer}>
-        <span style={styles.copyright}>
-            copyright &copy; 1998-2017
-            &nbsp;
-            <a href="http://www.orthologue.com/michael.aivazis">
-                michael aïvázis
-            </a>
-            &nbsp;
-            -- all rights reserved
-        </span>
+        <div style={styles.colophon}>
+            <span style={styles.copyright}>
+                copyright &copy; 1998-2017
+                &nbsp;
+                <a href="http://www.orthologue.com/michael.aivazis">
+                    michael aïvázis
+                </a>
+                &nbsp;
+                -- all rights reserved
+            </span>
+        </div>
     </footer>
 )
 

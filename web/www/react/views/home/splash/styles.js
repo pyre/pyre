@@ -53,7 +53,7 @@ export default {
     navigation: {
         display: "flex",
         flexDirection: "row",
-        margin: "2.0em 0.0em 2.0em 0.0em",
+        margin: "2.0em 0.0em 1.0em 0.0em",
         alignItems: "center",
         justifyContent: "space-evenly",
     },

@@ -18,6 +18,21 @@ export default {
         right: "0",
         zIndex: "9999",
 
+        display: "flex",
+        flexDirection: "column",
+        padding: "0.5em 0.0em 0.0em 0.0em",
+        backgroundColor: wheel.chalk,
+    },
+
+    transition: {
+        height: "0.5em",
+        filter: "blur(0.25em)",
+        margin: "0.0em",
+        padding: "0.0em",
+        backgroundColor: wheel.chalk,
+    },
+
+    colophon: {
         fontSize: "50%",
         margin: "0.0em 2.0em 0.0em 2.0em",
         padding: "1.0em 2.0em 1.0em 2.0em",
@@ -26,7 +41,6 @@ export default {
         color: wheel.soapstone,
         backgroundColor: wheel.chalk,
         borderTop: `1px solid ${wheel.soapstone}`,
-
     },
 
     copyright : {
