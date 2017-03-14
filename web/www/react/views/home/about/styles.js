@@ -7,12 +7,24 @@
 
 // styling
 import styles from 'views/styles'
+// colors
+import { theme } from 'palette'
 
 // publish
 export default {
-    section: styles.sections.section,
-    title: styles.sections.title,
-    body: styles.sections.body,
+
+    section: {
+        ...styles.sections.section,
+    },
+
+    title: {
+        ...styles.sections.title,
+    },
+
+    body: {
+        ...styles.sections.body,
+    },
+
 }
 
 // end of file

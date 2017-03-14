@@ -16,7 +16,9 @@ import PanelExample from './panel'
 // declaration
 const About = () => (
     <section style={styles.section}>
+
         <h1 style={styles.title}>about</h1>
+
         <p style={styles.body}>
           <span className="pyre">pyre</span> is an open source application framework written
           in <a href="http://www.python.org">python</a>. It's an attempt to bring state of the
@@ -24,6 +26,7 @@ const About = () => (
           strong skeleton on which to build scientific codes by steering the implementation
           towards usability and maintainability.
         </p>
+
         <p style={styles.body}>
           The basic conceptual building block in <span className="pyre">pyre</span> is
           the <em>component</em>. Components are classes that specifically grant access to some

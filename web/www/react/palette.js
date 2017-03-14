@@ -5,7 +5,7 @@
 // (c) 1998-2017 all rights reserved
 //
 
-var wheel = {
+const wheel = {
     // greys
     "obsidian": "#000",
     "basalt": "#333",
@@ -14,10 +14,11 @@ var wheel = {
     "soapstone": "#dadada",
     "cement": "#eee",
     "flour": "#fafafa",
+    "milk": "#fdfdfd",
     "chalk": "#fff",
     }
 
-var semantic = {
+const semantic = {
     "error": "#ffa0a0",
 
     "title": "#ff973e",
@@ -35,7 +36,31 @@ var semantic = {
     },
 }
 
+// theme for syntax highlighting code snippets
+const theme = {
+    background: "#fdfdfd",
+    normal: "#5e6e5e",
+
+    comment: "#ccc",
+    string: "#999",
+
+    type: "#0080c0",
+    literal: "#0080c0",
+    number: "#0080c0",
+    builtin: "#0080c0",
+    parameters: "#0080c0",
+
+    keyword: "#ad2bee",
+    selector: "#ad2bee",
+
+    meta: "#20b2aa", // python decorators, ...
+    lineNumber: "#ddd",
+
+    // unmapped
+    quote: "#687d68",
+}
+
 // publish
-export { wheel, semantic }
+export { wheel, semantic, theme }
 
 // end of file

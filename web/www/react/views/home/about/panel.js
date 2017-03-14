@@ -7,14 +7,12 @@
 
 // externals
 import React from 'react'
-import Highlight from 'react-syntax-highlighter'
-import { atelierSeasideLight } from 'react-syntax-highlighter/dist/styles'
 
-// locals
-import styles from './styles'
+// support
+import Python from 'widgets/code/Python'
 
 // the code snippet
-const listing = `
+const listing = `\
 # -*- coding: utf-8 -*-
 
 # support
@@ -45,12 +43,9 @@ class say(isce.panel(), family='isce.actions.say'):
 
 // dress up
 const content = () => (
-    <Highlight language="python"
-               style={atelierSeasideLight}
-               customStyle={styles.body}
-               showLineNumbers="true">
+    <Python>
         {listing}
-    </Highlight>
+    </Python>
 )
 
 // publish
