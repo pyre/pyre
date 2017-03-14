@@ -10,6 +10,8 @@ import React from 'react'
 
 // locals
 import styles from './styles'
+import PanelExample from './panel'
+
 
 // declaration
 const About = () => (
@@ -29,6 +31,9 @@ const About = () => (
           values to be used in case the user doesn't make a choice, but the user is explicitly
           given complete control and can override them during component configuration.
         </p>
+
+        <PanelExample />
+
     </section>
 )
 

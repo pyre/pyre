@@ -23,7 +23,7 @@ export default {
 
     leader: {
         fontSize: "120%",
-        fontWeigth: "normal",
+        fontWeight: "normal",
         lineHeight: "150%",
         whiteSpace: "nowrap",
         textTransform: "uppercase",
@@ -32,7 +32,7 @@ export default {
 
     title: {
         fontSize: "200%",
-        fontWeigth: "normal",
+        fontWeight: "normal",
         lineHeight: "300%",
         whiteSpace: "nowrap",
         textTransform: "uppercase",
