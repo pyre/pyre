@@ -13,7 +13,9 @@ import Python from 'widgets/code/Python'
 
 // the code snippet
 const listing = `\
+#! /usr/bin/env python3
 # support
+import pyre
 
 # the application class
 class Gauss(pyre.application, family='gauss.applications.simple'):

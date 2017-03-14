@@ -13,9 +13,11 @@ import { Section, SectionTitle, Paragraph } from 'widgets/doc'
 // locals
 import styles from './styles'
 
-import Ball from './Ball'
-import Shape from './Shape'
-import Gauss from './Gauss'
+import Ball from './ball'
+import Shape from './shape'
+import Gauss from './gauss'
+import Launch from './launch'
+import Launch3D from './launch3d'
 
 
 // declaration
@@ -64,7 +66,30 @@ const About = () => (
         <Gauss/>
 
         <Paragraph>
-            For details, and more examples, please take a look at the tutorials.
+            Assuming the application above is in a file <code>gauss.py</code> that has execute
+            permissions, you can launch the app from the command line to compute the volume of
+            the default shape, which is a unit circle with its center at the origin:
+        </Paragraph>
+
+        <Launch/>
+
+        <Paragraph>
+            Our implementation is dimension independent, and gets its dimensionality clues
+            from the number of coördinates it takes to specify the center of the ball. We can
+            compute the volume of the unit sphere in three dimensions by invoking the app with
+            the following command line arguments:
+        </Paragraph>
+
+        <Launch3D/>
+
+        <Paragraph>
+            You play with the radius by providing values for
+            the <code>--shape.radius</code> command line argument.
+        </Paragraph>
+
+        <Paragraph>
+            For more details, and more sophisticated examples, please take a look at the
+            tutorials.
         </Paragraph>
 
     </Section>
