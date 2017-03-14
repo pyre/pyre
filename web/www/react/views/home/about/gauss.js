@@ -25,7 +25,7 @@ class Gauss(pyre.application, family='gauss.applications.simple'):
 
     # public state
     shape = Shape()
-    radius.doc = 'the shape whose volume will be computed'
+    shape.doc = 'the shape whose volume will be computed'
 
     # interface
     @pyre.export
