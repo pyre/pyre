@@ -11,8 +11,8 @@ import React from 'react'
 import { section } from './styles'
 
 // render
-const Section = ({children, style}) => (
-    <section style={{...section.container, ...style}}>
+const Section = ({id, children, style}) => (
+    <section id={id} style={{...section.container, ...style}}>
         {children}
     </section>
 )
