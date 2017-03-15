@@ -10,8 +10,9 @@ import React from 'react'
 
 // locals
 import styles from './styles'
-import About from './about'
 import Splash from './splash'
+import About from './about'
+import Install from './install'
 
 // declaration
 const Home = () => (
@@ -19,6 +20,7 @@ const Home = () => (
         <Splash/>
         <main style={styles.main}>
             <About/>
+            <Install/>
         </main>
     </div>
 )
