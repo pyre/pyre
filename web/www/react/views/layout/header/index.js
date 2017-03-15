@@ -17,18 +17,18 @@ const header = () => (
     <header style={styles.header}>
         <img style={styles.logo} src="graphics/logo.png" />
         <nav style={styles.nav}>
-            <Link to="#about" style={styles.navLink}>
+            <a href="#about" style={styles.navLink}>
                 about
-            </Link>
-            <Link to="#download" style={styles.navLink}>
+            </a>
+            <a href="#install" style={styles.navLink}>
                 get
-            </Link>
-            <Link to="#documentation" style={styles.navLink}>
+            </a>
+            <a href="#documentation" style={styles.navLink}>
                 docs
-            </Link>
-            <Link to="#contact" style={{...styles.navLink, ...styles.navLinkLast}}>
+            </a>
+            <a href="#contact" style={{...styles.navLink, ...styles.navLinkLast}}>
                 contact
-            </Link>
+            </a>
         </nav>
     </header>
 )

@@ -65,6 +65,7 @@ export default {
         height: "3em",
         width: "10em",
         margin: "1.0em 2.0em 1.0em 2.0em",
+        cursor: "pointer",
         border: `solid 1px ${semantic.button.border}`,
         borderRadius: "0.5em",
     },

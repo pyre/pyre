@@ -7,6 +7,7 @@
 
 // externals
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 // locals
 import styles from './styles'
@@ -23,10 +24,10 @@ const Splash = () => (
 
         <nav style={styles.navigation}>
             <div style={styles.button}>
-                <p style={styles.label}>install</p>
+                <a href="#install" style={styles.label}>install</a>
             </div>
             <div style={styles.button}>
-                <p style={styles.label}>tutorials</p>
+                <a href="#tutorials" style={styles.label}>tutorials</a>
             </div>
         </nav>
 

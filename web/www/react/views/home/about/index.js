@@ -22,9 +22,9 @@ import Launch3D from './launch3d'
 
 // declaration
 const About = () => (
-    <Section>
+    <Section id="about">
 
-        <SectionTitle>about</SectionTitle>
+        <SectionTitle>quick introduction</SectionTitle>
 
         <Paragraph>
           <span className="pyre">pyre</span> is an open source application framework written
@@ -83,13 +83,16 @@ const About = () => (
         <Launch3D/>
 
         <Paragraph>
-            You play with the radius by providing values for
-            the <code>--shape.radius</code> command line argument.
+            You play with the radius by providing values for the <code>--shape.radius</code>
+            command line argument.  For more details, and more sophisticated examples, please
+            take a look at the tutorials.
         </Paragraph>
 
         <Paragraph>
-            For more details, and more sophisticated examples, please take a look at the
-            tutorials.
+            Frequently used configurations can be stored in files in a variety of formats and
+            loaded both automatically and on demand.
+            For more sophisticated applications, <span className="pyre">pyre</span> provides
+            infrastructure for storing configuration in databases.
         </Paragraph>
 
     </Section>
