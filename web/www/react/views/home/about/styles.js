@@ -13,8 +13,12 @@ import { theme } from 'palette'
 // publish
 export default {
 
-    section: {
-        ...styles.sections.section,
+    container: {
+        ...styles.sections.container,
+    },
+
+    bar: {
+        ...styles.sections.bar,
     },
 
     title: {

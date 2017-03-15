@@ -12,11 +12,11 @@ import { wheel, semantic } from 'palette'
 export const section = {
 
     container: {
-        fontSize: "120%",
         display: "flex",
         flexDirection: "column",
+
+        fontSize: "120%",
         margin: "1em 1em 1em 1em",
-        borderTop: `1px solid ${wheel.soapstone}`,
     },
 
     bar: {
@@ -30,9 +30,12 @@ export const section = {
 
     title: {
         fontWeight: "normal",
-        lineHeight: "150%",
+        fontSize: "150%",
+        lineHeight: "200%",
+
         textTransform: "uppercase",
         color: semantic.section.title.text,
+        backgroundColor: semantic.section.title.banner,
     },
 
     logo: {

@@ -17,12 +17,17 @@ export default {
         flexDirection: "column",
         justifyContent: "space-evenly",
         alignItems: "center",
+
+        fontSize: "150%",
+        lineHeight: "150%",
+        minHeight: "20em",
+
         margin: "3.0em 2.0em 1.0em 2.0em",
         padding: "1.0em 0.0em 1.0em 0.0em",
     },
 
     leader: {
-        fontSize: "120%",
+        fontSize: "150%",
         fontWeight: "normal",
         lineHeight: "150%",
         whiteSpace: "nowrap",
@@ -33,7 +38,7 @@ export default {
     title: {
         fontSize: "200%",
         fontWeight: "normal",
-        lineHeight: "300%",
+        lineHeight: "200%",
         whiteSpace: "nowrap",
         textTransform: "uppercase",
         color: semantic.title,
@@ -42,8 +47,6 @@ export default {
     abstract: {
         fontFamily: "georgia",
         fontStyle: "italic",
-        fontSize: "100%",
-        lineHeight: "150%",
         margin: "0.5em auto 0.5em auto",
         textAlign: "center",
         width: "30em",

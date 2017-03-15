@@ -22,7 +22,7 @@ import Launch3D from './launch3d'
 
 // declaration
 const About = () => (
-    <Section id="about">
+    <Section id="about" style={styles.container}>
 
         <SectionTitle>quick introduction</SectionTitle>
 
