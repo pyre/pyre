@@ -14,6 +14,12 @@
     <Directory />
         Options Indexes FollowSymLinks MultiViews
         Require all granted
+        RewriteEngine On
+        RewriteBase "/"
+        RewriteRule "/about" "/"
+        RewriteRule "/install" "/"
+        RewriteRule "/tutorials" "/"
+        RewriteRule "/contact" "/"
     </Directory>
 
     # the applications
@@ -23,9 +29,9 @@
         Require all granted
     </Directory>
 
-    # the repository
-    Alias /PYRE_MAJOR.PYRE_MINOR/ PROJ_LIVE_HOME/repository/PYRE_MAJOR.PYRE_MINOR/
-    <Directory PROJ_LIVE_HOME/repository/PYRE_MAJOR.PYRE_MINOR/>
+    # the repositories
+    Alias /1.0/ PROJ_LIVE_HOME/repository/1.0/
+    <Directory PROJ_LIVE_HOME/repository/1.0/>
         Options Indexes FollowSymLinks MultiViews
         Require all granted
     </Directory>

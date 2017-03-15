@@ -16,6 +16,12 @@
         AllowOverride None
         Order allow,deny
         Allow from all
+        RewriteEngine On
+        RewriteBase "/"
+        RewriteRule "/about" "/"
+        RewriteRule "/install" "/"
+        RewriteRule "/tutorials" "/"
+        RewriteRule "/contact" "/"
     </Directory>
 
     # the applications
