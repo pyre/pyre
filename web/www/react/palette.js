@@ -39,6 +39,7 @@ const semantic = {
 // theme for syntax highlighting code snippets
 const theme = {
     background: "#fdfdfd",
+    background: "#fffef2",
     normal: "#5e6e5e",
 
     comment: "#ccc",
