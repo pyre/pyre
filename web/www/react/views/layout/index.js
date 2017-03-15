@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -7,7 +7,7 @@
 
 // externals
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 // locals
 import styles from './styles'

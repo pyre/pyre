@@ -15,20 +15,22 @@ import styles from './styles'
 // declare
 const header = () => (
     <header style={styles.header}>
-        <img style={styles.logo} src="graphics/logo.png" />
+        <Link to="/">
+            <img style={styles.logo} src="graphics/logo.png" />
+        </Link>
         <nav style={styles.nav}>
-            <a href="#about" style={styles.navLink}>
+            <Link to="/about" style={styles.navLink}>
                 about
-            </a>
-            <a href="#install" style={styles.navLink}>
+            </Link>
+            <Link to="/install" style={styles.navLink}>
                 get
-            </a>
-            <a href="#documentation" style={styles.navLink}>
+            </Link>
+            <Link to="/documentation" style={styles.navLink}>
                 docs
-            </a>
-            <a href="#contact" style={{...styles.navLink, ...styles.navLinkLast}}>
+            </Link>
+            <Link to="/contact" style={{...styles.navLink, ...styles.navLinkLast}}>
                 contact
-            </a>
+            </Link>
         </nav>
     </header>
 )

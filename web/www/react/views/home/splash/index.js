@@ -24,10 +24,10 @@ const Splash = () => (
 
         <nav style={styles.navigation}>
             <div style={styles.button}>
-                <a href="#install" style={styles.label}>install</a>
+                <Link to="/install" style={styles.label}>install</Link>
             </div>
             <div style={styles.button}>
-                <a href="#tutorials" style={styles.label}>tutorials</a>
+                <Link to="/tutorials" style={styles.label}>tutorials</Link>
             </div>
         </nav>
 
