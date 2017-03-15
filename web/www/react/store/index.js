@@ -6,15 +6,37 @@
 //
 
 // externals
-import { createStore as createReduxStore, combineReducers, compose } from 'redux'
-import { responsiveStoreEnhancer, calculateResponsiveState } from 'redux-responsive'
+// store setup
+import {
+    createStore as createReduxStore,
+    combineReducers, applyMiddleware, compose
+} from 'redux'
+// browser history
+import createHistory from 'history/createBrowserHistory'
+// react-router's connection of history to the store
+import {
+    ConnectedRouter,
+    routerReducer as router,
+    routerMiddleware
+} from 'react-router-redux'
+
+// alec's connector of viewport state to the store
+import {
+    responsiveStoreEnhancer, calculateResponsiveState
+} from 'redux-responsive'
 
 // locals
 import browser from './browser'
 
+// create a browser history
+const history = createHistory()
+// build the middleware for intercepting and dispatching navigation actions
+const middleware = routerMiddleware(history)
+
 // assemble my reducers
 const reducer = combineReducers({
     browser,
+    router,
 })
 
 // my store factory
@@ -22,6 +44,7 @@ const createStore = () => createReduxStore(
     reducer,
     compose(
         responsiveStoreEnhancer,
+        applyMiddleware(middleware)
     )
 )
 
