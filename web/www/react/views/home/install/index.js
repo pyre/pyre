@@ -52,8 +52,8 @@ const Install = () => (
             <Paragraph>
                 You can download pre-built binaries of the latest stable release of <Pyre/>.
                 The binaries assume that you have installed compatible versions of all the
-                packages thart <Pyre/> depends, a requirement that is often a lot trickier than it
-                sounds. You may want to try these first, before resorting to
+                packages on which <Pyre/> depends, a requirement that is often a lot trickier
+                than it sounds. You may want to try these first, before resorting to
                 building <Pyre/> from source.
             </Paragraph>
 
