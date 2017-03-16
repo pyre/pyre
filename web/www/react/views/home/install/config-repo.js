@@ -13,9 +13,14 @@ import Bash from 'widgets/code/Bash'
 
 // the code snippet
 const listing = `\
-mga@cygnus:~/tmp> gauss.py --shape.center=(0,0,0)
-simple: volume = 4.1887902047863905
-mga@cygnus:~/tmp>
+mga@cygnus:~> cd ~/tmp
+mga@cygnus:~/tmp> bzr init config
+mga@cygnus:~/tmp> cd config
+mga@cygnus:~/tmp/config> bzr pull --remember http://config.orthologue.com/release
+    ...
+All changes applied successfully
+Now on revision xxxx
+mga@cygnus:~/tmp/config>
 `
 
 // dress up

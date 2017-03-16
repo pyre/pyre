@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -9,7 +9,7 @@
 import React from 'react'
 
 // support
-import { Section, SectionTitle, Paragraph } from 'widgets/doc'
+import { Pyre, Section, Paragraph } from 'widgets/doc'
 // locals
 import styles from './styles'
 
@@ -22,12 +22,10 @@ import Launch3D from './launch3d'
 
 // declaration
 const About = () => (
-    <Section id="about" style={styles.container}>
-
-        <SectionTitle>quick introduction</SectionTitle>
+    <Section id="about" style={styles.container} title="quick introduction">
 
         <Paragraph>
-          <span className="pyre">pyre</span> is an open source application framework written
+          <Pyre/> is an open source application framework written
           in <a href="http://www.python.org">python</a>. It's an attempt to bring state of the
           art software design practices to scientific computing. The goal is to provide a
           strong skeleton on which to build scientific codes by steering the implementation
@@ -35,7 +33,7 @@ const About = () => (
         </Paragraph>
 
         <Paragraph>
-          The basic conceptual building block in <span className="pyre">pyre</span> is
+          The basic conceptual building block in <Pyre/> is
           the <em>component</em>. Components are classes that specifically grant access to some
           of their state to the application end user. Component authors provide default
           values to be used in case the user doesn't make a choice, but the user is explicitly
@@ -91,7 +89,7 @@ const About = () => (
         <Paragraph>
             Frequently used configurations can be stored in files in a variety of formats and
             loaded both automatically and on demand.
-            For more sophisticated applications, <span className="pyre">pyre</span> provides
+            For more sophisticated applications, <Pyre/> provides
             infrastructure for storing configuration in databases.
         </Paragraph>
 

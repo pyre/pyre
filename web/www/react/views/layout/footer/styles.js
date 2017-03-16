@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -20,7 +20,8 @@ export default {
 
         display: "flex",
         flexDirection: "column",
-        padding: "0.0em 0.0em 0.0em 0.0em",
+        margin: "0em",
+        padding: "0em",
         backgroundColor: wheel.chalk,
     },
 

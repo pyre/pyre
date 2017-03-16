@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -8,11 +8,11 @@
 // externals
 import React from 'react'
 // locals
-import { section }  from './styles'
+import document  from './styles'
 
 // render
 const Paragraph = ({children, style}) => (
-    <p style={{...section.body, ...style}}>
+    <p style={{...document.body, ...style}}>
         {children}
     </p>
 )

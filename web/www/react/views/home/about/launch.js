@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -9,7 +9,7 @@
 import React from 'react'
 
 // support
-import Python from 'widgets/code/Python'
+import Bash from 'widgets/code/Bash'
 
 // the code snippet
 const listing = `\
@@ -20,9 +20,9 @@ mga@cygnus:~/tmp>
 
 // dress up
 const content = ({...props}) => (
-    <Python {...props}>
+    <Bash {...props}>
         {listing}
-    </Python>
+    </Bash>
 )
 
 // publish

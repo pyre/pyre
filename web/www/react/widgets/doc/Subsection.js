@@ -12,9 +12,9 @@ import document from './styles'
 import Title from './SectionTitle'
 
 // render
-const Section = ({id, title, logo, children, style}) => (
-    <section id={id} style={{...document.page, ...style}}>
-        <Title logo={logo} style={document.section}>
+const Subsection = ({id, title, logo, children, style}) => (
+    <section id={id} style={style}>
+        <Title logo={logo} style={document.subsection}>
             {title}
         </Title>
         {children}
@@ -22,13 +22,13 @@ const Section = ({id, title, logo, children, style}) => (
 )
 
 // defaults
-Section.defaultProps = {
+Subsection.defaultProps = {
     id: "unused",
-    logo: true,
-    title: "please specify the section title",
+    logo: false,
+    title: "please specify the subsection title",
 }
 
 // publish
-export default Section
+export default Subsection
 
 // end of file

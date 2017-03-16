@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -19,9 +19,11 @@ const wheel = {
     }
 
 const semantic = {
-    "error": "#ffa0a0",
+    pyre: "#aab141",
 
-    "title": "#ff973e",
+    error: "#ffa0a0",
+
+    title: "#ff973e",
 
     section: {
         title: {

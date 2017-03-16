@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -15,23 +15,25 @@ import styles from './styles'
 // declare
 const header = () => (
     <header style={styles.header}>
-        <Link to="/">
-            <img style={styles.logo} src="graphics/logo.png" />
-        </Link>
-        <nav style={styles.nav}>
-            <Link to="/about" style={styles.navLink}>
-                about
+        <div style={styles.bar}>
+            <Link to="/">
+                <img style={styles.logo} src="graphics/logo.png" />
             </Link>
-            <Link to="/install" style={styles.navLink}>
-                get
-            </Link>
-            <Link to="/documentation" style={styles.navLink}>
-                docs
-            </Link>
-            <Link to="/contact" style={{...styles.navLink, ...styles.navLinkLast}}>
-                contact
-            </Link>
-        </nav>
+            <nav style={styles.nav}>
+                <Link to="/about" style={styles.navLink}>
+                    about
+                </Link>
+                <Link to="/install" style={styles.navLink}>
+                    get
+                </Link>
+                <Link to="/documentation" style={styles.navLink}>
+                    docs
+                </Link>
+                <Link to="/contact" style={{...styles.navLink, ...styles.navLinkLast}}>
+                    contact
+                </Link>
+            </nav>
+        </div>
     </header>
 )
 

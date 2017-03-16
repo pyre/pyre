@@ -13,9 +13,14 @@ import Bash from 'widgets/code/Bash'
 
 // the code snippet
 const listing = `\
-mga@cygnus:~/tmp> gauss.py --shape.center=(0,0,0)
-simple: volume = 4.1887902047863905
-mga@cygnus:~/tmp>
+mga@cygnus:~> cd ~/tmp/pyre-1.0
+mga@cygnus:~/tmp/pyre-1.0> mm
+ ...
+mga@cygnus:~/tmp/pyre-1.0> cd ~
+mga@cygnus:~> mkdir .mm
+mga@cygnus:~> cd .mm
+mga@cygnus:~/.mm> vi mga.py
+mga@cygnus:~/.mm>
 `
 
 // dress up

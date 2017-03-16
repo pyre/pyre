@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -18,7 +18,7 @@ export default {
         fontSize: "60%",
         lineHeight: "180%",
 
-        margin: "3.0em 0.0em 2.0em 0.0em",
+        margin: "5.0em 0.0em 5.0em 0.0em",
         padding: "0.25em 1.0em 0.25em 1.0em",
     },
 }

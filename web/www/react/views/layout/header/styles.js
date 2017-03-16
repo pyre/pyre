@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -17,29 +17,33 @@ export default {
         left: "0",
         right: "0",
         zIndex: "9999",
+        margin: "0em",
+        padding: "0em",
         backgroundColor: wheel.chalk,
-        borderBottom: `1px solid ${wheel.cement}`,
+    },
 
+    bar: {
         display: "flex",
         flexDirection: "row",
-        alignItems: "bottom",
+        alignItems: "center",
 
-        height: "2.0em",
-
-        fontSize: "60%",
+        fontSize: "50%",
+        height: "3.0em",
         margin: "0.0em 2.0em 0.0em 2.0em",
         padding: "1.0em 2.0em 1.0em 2.0em",
 
         color: wheel.steel,
+        borderBottom: `1px solid ${wheel.soapstone}`,
     },
 
     // the logo
     logo: {
-        height: "2.0em",
+        height: "2.5em",
     },
 
     // navigation
     nav: {
+        fontSize: "120%",
         whiteSpace: "nowrap",
         paddingLeft: "2em",
     },

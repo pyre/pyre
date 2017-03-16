@@ -13,9 +13,14 @@ import Bash from 'widgets/code/Bash'
 
 // the code snippet
 const listing = `\
-mga@cygnus:~/tmp> gauss.py --shape.center=(0,0,0)
-simple: volume = 4.1887902047863905
-mga@cygnus:~/tmp>
+mga@cygnus:~> cd ~/tmp
+mga@cygnus:~/tmp> bzr init pyre-1.0
+mga@cygnus:~/tmp> cd pyre-1.0
+mga@cygnus:~/tmp/pyre-1.0> bzr pull --remember http://pyre.orthologue.com/1.0/devel
+    ...
+All changes applied successfully
+Now on revision xxxx
+mga@cygnus:~/tmp/pyre-1.0>
 `
 
 // dress up

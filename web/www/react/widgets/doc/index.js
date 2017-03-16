@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -6,8 +6,9 @@
 //
 
 // pull and publish
+export Pyre from './Pyre'
 export Paragraph from './Paragraph'
 export Section from './Section'
-export SectionTitle from './SectionTitle'
+export Subsection from './Subsection'
 
 // end of file

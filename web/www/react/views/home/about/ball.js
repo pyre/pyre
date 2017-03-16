@@ -1,4 +1,4 @@
-// -*- jsx -*-
+// -*- web -*-
 //
 // michael a.g. aïvázis
 // orthologue
@@ -21,7 +21,7 @@ from .Shape import Shape
 # the component implementation
 class Ball(pyre.component, family='gauss.shapes.ball', implements=Shape):
     """
-    A shape that  a custom action provided by the end user
+    A shape that represents a sphere in {d} dimensions
     """
 
     # public state

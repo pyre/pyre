@@ -13,9 +13,16 @@ import Bash from 'widgets/code/Bash'
 
 // the code snippet
 const listing = `\
-mga@cygnus:~/tmp> gauss.py --shape.center=(0,0,0)
-simple: volume = 4.1887902047863905
-mga@cygnus:~/tmp>
+# set up config
+  alias mm='python3 \${HOME}/tmp/config/make/mm.py'
+  alias mm.env='mm --env=sh'
+  alias mm.show='mm --show --dry'
+  alias mm.bldroot='mm --dry --quiet --show=BLD_ROOT'
+
+  mm.paths() {
+    # get {mm} to print out the path variables and add them to the current environment
+    eval \$(python3 \${HOME}/tmp/config/make/mm.py --quiet --paths=sh \$*)
+  }
 `
 
 // dress up
