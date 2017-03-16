@@ -4,31 +4,36 @@
 // (c) 1998-2017 all rights reserved
 //
 
-// webpack imports
+// get webpack
 var webpack = require('webpack')
+// access to environment variables
 var process = require('process')
+// path arithmetic
 var path = require('path')
+
+// the project layout
+var layout = require('./layout')
+// identify the build mode
+var production = (process.env.NODE_ENV === 'production')
+// do we need sane stack traces?
+var devtool = production ? '' : 'inline-source-map'
+
+// plugins
+// we need at least this one
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-
-var devtool = ''
-
-var rootDir = path.join(__dirname, '..')
-var sourceDir = path.join(rootDir, 'react')
-var configDir = path.join(rootDir, 'config')
-var buildDir = path.join(rootDir, 'build')
-
-// pugins
-var plugins = []
+// so use it initialize our pile
+var plugins = [
+    new HtmlWebpackPlugin({
+        inject: 'body',
+        template: layout.template,
+        filename: layout.target
+    })
+]
 
 // if we are building for production
-if (process.env.NODE_ENV === 'production') {
-    // use production plugins
+if (production) {
+    // use these additional production plugins
     plugins.push(
-        new HtmlWebpackPlugin({
-            template: path.join(sourceDir, 'pyre.html'),
-            inject: 'body',
-            filename: path.join(buildDir, 'pyre.html')
-        }),
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify('production')
@@ -38,35 +43,24 @@ if (process.env.NODE_ENV === 'production') {
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.optimize.DedupePlugin()
     )
-} else {
-    // show me decent stack races
-    devtool = "inline-source-map"
-    // use devel plugins
-    plugins.push(
-        new HtmlWebpackPlugin({
-            template: path.join(sourceDir, 'pyre.html'),
-            inject: 'body',
-            filename: path.join(buildDir, 'pyre.html')
-        })
-    )
 }
 
 // export webpack configuration object
 module.exports = {
     entry: {
-        pyre: path.join(sourceDir, 'pyre.js'),
+        pyre: layout.client,
     },
     output: {
-        filename: path.join('[name].js'),
-        path: buildDir,
+        filename: 'pyre.js',
+        path: layout.build,
     },
     module: {
         loaders: [
             {
                 test: /\.jsx?$/,
                 loader: 'babel',
-                include: [ sourceDir, ],
-                query: { extends: path.join(configDir, 'babelrc')}
+                include: [ layout.source, ],
+                query: { extends: layout.babel }
             }, {
                 test: /\.css$/,
                 loaders: ['style', 'css'],
@@ -79,7 +73,7 @@ module.exports = {
     },
     resolve: {
         extensions: ['', '.js', '.jsx'],
-        root: [sourceDir],
+        root: [layout.source],
     },
 
     plugins: plugins,
