@@ -13,7 +13,6 @@
 
 body {
 
-    font-family: "helveticaneue-thin";
     font-family: "century gothic", "corbel", "geneva", "arial", "helvetica", sans-serif;
     font-size: 20px;
     line-height: 100%;
@@ -26,12 +25,12 @@ body {
 }
 
 a:link {
-    color: #999;
+    color: #aab141;
     text-decoration: none;
 }
 
 a:visited {
-    color: #999;
+    color: #aab141;
     text-decoration: none;
 }
 
@@ -41,12 +40,8 @@ a:hover {
 }
 
 a:active {
-    color: #999;
-    text-decoration: none;
-}
-
-.pyre {
     color: #aab141;
+    text-decoration: none;
 }
 
 /* end of file */
