@@ -73,7 +73,25 @@ const document = {
             textTransform: "uppercase",
             color: semantic.section.title.text,
         },
-    }
+    },
+
+    toc: {
+        table: {
+            margin: "1.0em 0.0em 1.0em 0.0em",
+        },
+
+        title: {
+            fontSize: "120%",
+            lineHeight: "150%",
+            textTransform: "uppercase",
+            color: semantic.section.title.text,
+        },
+
+        item: {
+            marginLeft: "2em",
+            lineHeight: "175%",
+        },
+    },
 }
 
 // publish

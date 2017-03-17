@@ -7,17 +7,23 @@
 
 // externals
 import React from 'react'
-import { Link } from 'react-router-dom'
-
 // locals
 import document from './styles'
 
 // render
-const Pyre = () => (
-    <span style={document.pyre}>pyre</span>
+const Content = ({title, children}) => (
+    <div style={document.toc.item}>
+        {title}
+        {children}
+    </div>
 )
 
+// defaults
+Content.defaultProps = {
+    title: null,
+}
+
 // publish
-export default Pyre
+export default Content
 
 // end of file
