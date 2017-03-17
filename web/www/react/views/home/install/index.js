@@ -22,7 +22,7 @@ import ConfigDeveloper from './config-developer'
 
 // declaration
 const Install = () => (
-    <Section id="install" title="installation instructions">
+    <Section id="install" style={styles.container} title="installation instructions">
 
         <Subsection title="For the impatient --- and those with commitment issues">
             <Paragraph>

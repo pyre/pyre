@@ -7,30 +7,33 @@
 
 // externals
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Switch, Route, Link } from 'react-router-dom'
 
 // support
 import { Pyre, Section, Subsection, Paragraph } from 'widgets/doc'
+
 // locals
 import styles from './styles'
+import Syllabus from './Syllabus'
+import Overview from './overview'
+
+// dress up the section title as a link to the syllabus
+const title = (
+    <span>A short course on <Pyre/></span>
+)
 
 // declaration
-const Syllabus = () => (
-    <Section id="docs" title="Documentation">
-
-        <Paragraph>
-        </Paragraph>
-
-        <Subsection title="Syllabus">
-            <ul>
-                <li><Link to="docs/overview">overview</Link></li>
-            </ul>
-        </Subsection>
-
+const Course = () => (
+    <Section id="syllabus" style={styles.container} title={title}>
+        <Switch>
+            <Route path="/docs/course/overview" component={Overview} />
+            {/* by default, show the syllabus */}
+            <Route path="/docs/course" component={Syllabus} />
+        </Switch>
     </Section>
 )
 
 //   publish
-export default Syllabus
+export default Course
 
 // end of file

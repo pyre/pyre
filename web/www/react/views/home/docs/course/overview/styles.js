@@ -28,6 +28,7 @@ export default {
     body: {
         ...styles.sections.body,
     },
+
 }
 
 // end of file
