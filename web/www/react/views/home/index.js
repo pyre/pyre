@@ -14,6 +14,7 @@ import styles from './styles'
 import Splash from './splash'
 import About from './about'
 import Install from './install'
+import Documentation from './docs'
 
 
 // assemble the default view
@@ -31,6 +32,7 @@ const Home = () => (
             <Route exact path="/" component={Default}/>
             <Route path="/about" component={About}/>
             <Route path="/install" component={Install}/>
+            <Route path="/docs" component={Documentation}/>
             <Route component={Default}/>
         </Switch>
     </main>

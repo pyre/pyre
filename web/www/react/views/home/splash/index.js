@@ -27,7 +27,7 @@ const Splash = () => (
                 <Link to="/install" style={styles.label}>install</Link>
             </div>
             <div style={styles.button}>
-                <Link to="/tutorials" style={styles.label}>tutorials</Link>
+                <Link to="/docs" style={styles.label}>documentation</Link>
             </div>
         </nav>
 
