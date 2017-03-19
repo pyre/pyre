@@ -10,18 +10,25 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 // support
-import { Pyre, Subsection, Paragraph, TableOfContents, Content } from 'widgets/doc'
+import { Pyre, Section, Subsection, Paragraph, TableOfContents, Content } from 'widgets/doc'
 // locals
 import styles from './styles'
 
+// dress up the section title as a link to the syllabus
+const title = (
+    <span>A short course on <Pyre/></span>
+)
+
 // declaration
 const Syllabus = () => (
-    <Subsection title="Syllabus">
-        <Paragraph>
-            The material here is derived from a semester long course on using <Pyre/> to
-            write scientific applications. The lecture notes are written
-            using <code>beamer</code> and are bundled with the source code.
-        </Paragraph>
+    <Section id="syllabus" style={styles.container} title={title}>
+        <Subsection title="Syllabus">
+            <Paragraph>
+                The material here is derived from a semester long course on using <Pyre/> to
+                write scientific applications. The lecture notes are written
+                using <code>beamer</code> and are bundled with the source code.
+            </Paragraph>
+        </Subsection>
 
         <TableOfContents>
             <Content title="from the end user's point of view">
@@ -47,7 +54,7 @@ const Syllabus = () => (
                                 asynchronous and concurrent execution" />
             </Content>
         </TableOfContents>
-    </Subsection>
+    </Section>
 )
 
 //   publish

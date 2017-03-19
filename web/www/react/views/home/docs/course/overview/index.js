@@ -9,20 +9,17 @@
 import React from 'react'
 
 // support
-import { Pyre, Subsection, Paragraph } from 'widgets/doc'
+import { Pyre, Section, Subsection, Paragraph } from 'widgets/doc'
 
 // locals
 import styles from './styles'
 
 // declaration
 const Overview = () => (
-    <Subsection id="course-overview" title="overview">
-
-        <Paragraph>
-            overview of <Pyre/>
-        </Paragraph>
-
-    </Subsection>
+    <Section id="overview"
+             style={styles.container}
+             title={<span>Overview of <Pyre/></span>} >
+    </Section>
 )
 
 //   publish

@@ -17,20 +17,13 @@ import styles from './styles'
 import Syllabus from './Syllabus'
 import Overview from './overview'
 
-// dress up the section title as a link to the syllabus
-const title = (
-    <span>A short course on <Pyre/></span>
-)
-
 // declaration
 const Course = () => (
-    <Section id="syllabus" style={styles.container} title={title}>
-        <Switch>
-            <Route path="/docs/course/overview" component={Overview} />
-            {/* by default, show the syllabus */}
-            <Route path="/docs/course" component={Syllabus} />
-        </Switch>
-    </Section>
+    <Switch>
+        <Route path="/docs/course/overview" component={Overview} />
+        {/* by default, show the syllabus */}
+        <Route path="/docs/course" component={Syllabus} />
+    </Switch>
 )
 
 //   publish
