@@ -17,6 +17,7 @@ export default {
 
         color: theme.normal,
         background: theme.background,
+        borderLeft: `3px solid ${theme.pyre}`,
     },
 
     "hljs-emphasis": {

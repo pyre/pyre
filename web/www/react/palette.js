@@ -44,6 +44,8 @@ const theme = {
     background: "#fffef2",
     normal: "#5e6e5e",
 
+    pyre: semantic.pyre,
+
     comment: "#ccc",
     string: "#999",
 
