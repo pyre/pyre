@@ -12,7 +12,11 @@ export default {
 
     sections: {
         container: {
-            margin: "1em 1em 1em 1em",
+            fontSize: "150%",
+            lineHeight: "150%",
+            overflowY: "auto",
+            margin: "1em auto",
+            width: "50em",
         },
 
         bar: {
