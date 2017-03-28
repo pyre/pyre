@@ -23,7 +23,7 @@ export default {
         margin: "0em",
         padding: "0em",
 
-        backgroundColor: wheel.chalk,
+        // backgroundColor: wheel.chalk,
     },
 
     bar: {

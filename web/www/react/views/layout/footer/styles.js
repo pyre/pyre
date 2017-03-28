@@ -22,15 +22,7 @@ export default {
         flexDirection: "column",
         margin: "0em",
         padding: "0em",
-        backgroundColor: wheel.chalk,
-    },
-
-    transition: {
-        height: "0.5em",
-        filter: "blur(0.25em)",
-        margin: "0.0em",
-        padding: "0.0em",
-        backgroundColor: wheel.chalk,
+        // backgroundColor: wheel.chalk,
     },
 
     colophon: {
@@ -40,7 +32,6 @@ export default {
         textAlign: "right",
 
         color: wheel.soapstone,
-        backgroundColor: wheel.chalk,
         borderTop: `1px solid ${wheel.soapstone}`,
     },
 
