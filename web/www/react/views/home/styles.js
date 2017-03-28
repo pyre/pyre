@@ -12,14 +12,20 @@ import { wheel, semantic } from "palette"
 export default {
     // home
     main: {
-        display: "flex",
-        flexDirection: "column",
+        position: "fixed",
+        top: "6em",
+        right: "0",
+        bottom: "4em",
+        left: "0",
+        zIndex: "0",
 
-        fontSize: "60%",
+        overflow: "auto",
+
+        fontSize: "50%",
         lineHeight: "180%",
 
-        margin: "5.0em 0.0em 5.0em 0.0em",
-        padding: "0.25em 1.0em 0.25em 1.0em",
+        margin: "0.0em 0.0em",
+        padding: "0.0em 0.0em",
     },
 }
 
