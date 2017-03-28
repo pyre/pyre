@@ -5,12 +5,21 @@
 ;
 
 grant:
-  repository = /home/projects/pyre/repository
   admin = pyre
+  repository = /home/projects/pyre/repository
+
   readers =
+    ; parasim
     raul.radovitzky,
-    bryan.riel, romain.jolivet,
-    eric.gurrola, marco.lavalle, piyush.agram, joshua.cohen
-  writers = alec.aivazis, leif.strand, michael.aivazis, radish
+    ; caltech
+    romain.jolivet,
+    ; jpl
+    bryan.riel, eric.gurrola, marco.lavalle, piyush.agram, joshua.cohen, heresh.fattahi,
+    ; urban radish
+    radish,
+
+  writers = 
+    ; developers
+    alec.aivazis, leif.strand, michael.aivazis,
 
 ; end of file
