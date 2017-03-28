@@ -18,7 +18,7 @@ export default {
         justifyContent: "space-evenly",
         alignItems: "center",
 
-        fontSize: "150%",
+        fontSize: "180%",
         lineHeight: "150%",
         minHeight: "20em",
 
