@@ -17,17 +17,19 @@ export default {
         left: "0",
         right: "0",
         zIndex: "9999",
+        display: "flex",
+        flexDirection: "column",
+
         margin: "0em",
         padding: "0em",
+
         backgroundColor: wheel.chalk,
     },
 
     bar: {
-        height: "1.5em",
-        margin: "0.0em 2.0em 0.0em 2.0em",
-        padding: "1.0em 2.0em 1.0em 2.0em",
-
-        color: wheel.steel,
+        fontSize: "50%",
+        margin: "0.0em 2.0em",
+        padding: "1.0em 2.0em",
         borderBottom: `1px solid ${wheel.soapstone}`,
     },
 
@@ -37,7 +39,9 @@ export default {
         flexDirection: "row",
         alignItems: "center",
 
-        fontSize: "60%",
+        color: wheel.steel,
+
+        fontSize: "150%",
         whiteSpace: "nowrap",
     },
 

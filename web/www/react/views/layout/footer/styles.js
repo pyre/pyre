@@ -35,8 +35,8 @@ export default {
 
     colophon: {
         fontSize: "50%",
-        margin: "0.0em 2.0em 0.0em 2.0em",
-        padding: "1.0em 2.0em 1.0em 2.0em",
+        margin: "0.0em 2.0em",
+        padding: "1.0em 2.0em",
         textAlign: "right",
 
         color: wheel.soapstone,
