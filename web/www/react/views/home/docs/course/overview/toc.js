@@ -17,7 +17,7 @@ import styles from './styles'
 
 // declaration
 const TOC = () => (
-    <TableOfContents>
+    <TableOfContents title="Table of Contents">
         <Link to="/docs/course/overview/intro">introduction</Link>
         <Link to="/docs/course/overview/components">components</Link>
         <Link to="/docs/course/overview/appications">applications</Link>
