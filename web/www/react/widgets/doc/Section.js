@@ -13,7 +13,7 @@ import Title from './SectionTitle'
 
 // render
 const Section = ({id, title, logo, children, style}) => (
-    <section id={id} style={{...document.page, ...style}}>
+    <section id={id} style={{...document.section.container, ...style}}>
         <Title logo={logo} style={document.section}>
             {title}
         </Title>

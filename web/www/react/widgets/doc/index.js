@@ -7,6 +7,7 @@
 
 // pull and publish
 export Content from './Content'
+export Page from './Page'
 export Pyre from './Pyre'
 export Paragraph from './Paragraph'
 export Section from './Section'

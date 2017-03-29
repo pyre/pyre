@@ -11,21 +11,18 @@ import React from 'react'
 import document from './styles'
 
 // render
-const Content = ({title, children}) => (
-    <div style={document.toc.item}>
-        {title}
-        <div style={document.toc.contents}>
-            {children}
-        </div>
+const Page = ({children, style}) => (
+    <div style={{...document.page, ...style}}>
+        {children}
     </div>
 )
 
 // defaults
-Content.defaultProps = {
-    title: null,
+Page.defaultProps = {
+    style: {},
 }
 
 // publish
-export default Content
+export default Page
 
 // end of file

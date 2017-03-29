@@ -17,10 +17,7 @@ const document = {
 
     page: {
         display: "flex",
-        flexDirection: "column",
-
-        fontSize: "120%",
-        //margin: "1em 1em 1em 1em",
+        flexDirection: "row",
     },
 
     body: {
@@ -30,6 +27,14 @@ const document = {
     },
 
     section: {
+
+        container: {
+            display: "flex",
+            flexDirection: "column",
+
+            fontSize: "120%",
+            //margin: "1em 1em 1em 1em",
+        },
 
         bar: {
             display: "flex",
@@ -77,7 +82,8 @@ const document = {
 
     toc: {
         table: {
-            margin: "1.0em 0.0em 1.0em 0.0em",
+            flexGrow: 0,
+            margin: "1.0em 0.0em",
         },
 
         title: {
@@ -88,9 +94,12 @@ const document = {
         },
 
         item: {
-            marginLeft: "2em",
             lineHeight: "175%",
         },
+
+        contents: {
+            marginLeft: "2em",
+        }
     },
 }
 
