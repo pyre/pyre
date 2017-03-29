@@ -32,11 +32,9 @@ const Syllabus = () => (
 
         <TableOfContents>
             <Content title="from the end user's point of view">
-                <Content>
-                    <Link to="/docs/course/overview">
-                        overview of <Pyre/>
-                    </Link>
-                </Content>
+                <Link to="/docs/course/overview">
+                    overview of <Pyre/>
+                </Link>
                 <Content title="capturing user choices"/>
                 <Content title="writing components"/>
             </Content>
