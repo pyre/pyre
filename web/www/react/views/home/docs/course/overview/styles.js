@@ -15,6 +15,8 @@ export default {
 
     container: {
         ...styles.sections.container,
+        marginLeft: "2.0em",
+        width: "40em",
     },
 
     bar: {
