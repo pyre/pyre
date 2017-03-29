@@ -8,6 +8,34 @@
 // colors
 import { wheel, semantic } from 'palette'
 
+
+// styling common to all content levels
+const structure = {
+    container: {
+        display: "flex",
+        flexDirection: "column",
+        fontSize: "120%",
+    },
+
+    bar: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        margin: "1.0em 0.0em 1.0em 0.0em",
+    },
+
+    title: {
+        textTransform: "uppercase",
+        color: semantic.section.title.text,
+    },
+
+    logo: {
+        height: "1.25em",
+        marginLeft: "auto",
+    },
+}
+
+
 // define
 const document = {
 
@@ -26,71 +54,90 @@ const document = {
         padding: "0.0em 0.0em 0.0em 0.0em",
     },
 
-    section: {
+    sidebar: {
+        margin: "0em 1em 0em 0em"
+    },
+
+    narrative: {
+        margin: "0em 0em 0em 1em"
+    },
+
+    chapter: {
 
         container: {
-            display: "flex",
-            flexDirection: "column",
-
-            fontSize: "120%",
-            //margin: "1em 1em 1em 1em",
+            ...structure.container,
         },
 
         bar: {
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            margin: "1.0em 0.0em 1.0em 0.0em",
+            ...structure.bar,
             padding: "0.25em 1.5em 0.25em 1.5em",
             backgroundColor: semantic.section.title.banner,
         },
 
         title: {
+            ...structure.title,
             fontWeight: "normal",
-            fontSize: "150%",
+            fontSize: "180%",
             lineHeight: "200%",
-
-            textTransform: "uppercase",
-            color: semantic.section.title.text,
         },
 
         logo: {
-            height: "1.25em",
-            marginLeft: "auto",
+            ...structure.logo,
+        },
+    },
+
+    section: {
+
+        container: {
+            ...structure.container,
+        },
+
+        bar: {
+            ...structure.bar,
+            padding: "0.25em 1.5em 0.25em 1.5em",
+            backgroundColor: semantic.section.title.banner,
+        },
+
+        title: {
+            ...structure.title,
+            fontWeight: "normal",
+            fontSize: "150%",
+            lineHeight: "200%",
+        },
+
+        logo: {
+            ...structure.logo,
         },
     },
 
     subsection: {
+        container: {
+            ...structure.container,
+        },
 
         bar: {
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            margin: "1.0em 0.0em 1.0em 0.0em",
-            padding: "0.25em 0em 0.25em 0em",
+            ...structure.bar,
         },
 
         title: {
+            ...structure.title,
             fontWeight: "normal",
             fontSize: "120%",
             lineHeight: "150%",
-
-            textTransform: "uppercase",
-            color: semantic.section.title.text,
         },
     },
 
     toc: {
-        table: {
+        container: {
+            ...structure.container,
             flexGrow: 0,
             margin: "1.0em 0.0em",
         },
 
         title: {
+            ...structure.title,
             fontSize: "120%",
             lineHeight: "150%",
-            textTransform: "uppercase",
-            color: semantic.section.title.text,
         },
 
         item: {

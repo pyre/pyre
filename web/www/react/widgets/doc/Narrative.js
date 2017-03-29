@@ -11,19 +11,18 @@ import React from 'react'
 import document from './styles'
 
 // render
-const TableOfContents = ({title, children}) => (
-    <section style={document.toc.container}>
-        <span style={document.toc.title}>{title}</span>
+const Narrative = ({children, style}) => (
+    <div style={{...document.narrative, ...style}}>
         {children}
-    </section>
+    </div>
 )
 
 // defaults
-TableOfContents.defaultProps = {
-    title: "Contents",
+Narrative.defaultProps = {
+    style: {},
 }
 
 // publish
-export default TableOfContents
+export default Narrative
 
 // end of file

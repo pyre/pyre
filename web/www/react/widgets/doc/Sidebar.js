@@ -11,19 +11,18 @@ import React from 'react'
 import document from './styles'
 
 // render
-const TableOfContents = ({title, children}) => (
-    <section style={document.toc.container}>
-        <span style={document.toc.title}>{title}</span>
+const Sidebar = ({children, style}) => (
+    <div style={{...document.sidebar, ...style}}>
         {children}
-    </section>
+    </div>
 )
 
 // defaults
-TableOfContents.defaultProps = {
-    title: "Contents",
+Sidebar.defaultProps = {
+    style: {},
 }
 
 // publish
-export default TableOfContents
+export default Sidebar
 
 // end of file
