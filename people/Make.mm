@@ -23,6 +23,6 @@ authorized_keys: $(PUBLIC_KEYS) grant.py grant.pfg Make.mm
 keys: authorized_keys
 
 live: keys
-	$(SCP) $< $(PROJ_LIVE_ADMIN)@$(PROJ_LIVE_HOST):$(PROJ_LIVE_HOME)/.ssh
+	$(SCP) authorized_keys $(PROJ_LIVE_ADMIN)@$(PROJ_LIVE_HOST):$(PROJ_LIVE_HOME)/.ssh
 
 # end of file
