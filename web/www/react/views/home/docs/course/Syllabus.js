@@ -10,7 +10,11 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 // support
-import { Pyre, Section, Subsection, Paragraph, TableOfContents, Content } from 'widgets/doc'
+import {
+    Content, Narrative, Page, Paragraph, Pyre,
+    Section, Subsection, TableOfContents
+} from 'widgets/doc'
+
 // locals
 import styles from './styles'
 
@@ -21,6 +25,8 @@ const title = (
 
 // declaration
 const Syllabus = () => (
+    <Page>
+        <Narrative>
     <Section id="syllabus" style={styles.container} title={title}>
         <Subsection title="Syllabus">
             <Paragraph>
@@ -53,6 +59,8 @@ const Syllabus = () => (
             </Content>
         </TableOfContents>
     </Section>
+        </Narrative>
+    </Page>
 )
 
 //   publish

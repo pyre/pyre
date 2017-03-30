@@ -25,8 +25,8 @@ export default {
         ...styles.sections.title,
     },
 
-    body: {
-        ...styles.sections.body,
+    logo: {
+        ...styles.sections.logo,
     },
 
 }

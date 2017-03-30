@@ -12,10 +12,6 @@ export default {
 
     sections: {
         container: {
-            fontSize: "150%",
-            lineHeight: "150%",
-            overflowY: "auto",
-            margin: "1em auto",
             width: "50em",
         },
 
@@ -25,7 +21,7 @@ export default {
         title: {
         },
 
-        body: {
+        logo: {
         },
     },
 }

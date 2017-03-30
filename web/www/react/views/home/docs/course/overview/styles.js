@@ -15,7 +15,6 @@ export default {
 
     container: {
         ...styles.sections.container,
-        marginLeft: "2.0em",
         width: "40em",
     },
 
@@ -27,8 +26,8 @@ export default {
         ...styles.sections.title,
     },
 
-    body: {
-        ...styles.sections.body,
+    logo: {
+        ...styles.sections.logo,
     },
 
 }

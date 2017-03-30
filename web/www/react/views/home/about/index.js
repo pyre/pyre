@@ -9,7 +9,7 @@
 import React from 'react'
 
 // support
-import { Pyre, Section, Paragraph } from 'widgets/doc'
+import { Narrative, Page, Pyre, Section, Paragraph } from 'widgets/doc'
 // locals
 import styles from './styles'
 
@@ -22,7 +22,9 @@ import Launch3D from './launch3d'
 
 // declaration
 const About = () => (
-    <Section id="about" style={styles.container} title="quick introduction">
+    <Page>
+    <Narrative>
+        <Section id="about" style={styles.container} title="quick introduction">
 
         <Paragraph>
           <Pyre/> is an open source application framework written
@@ -92,7 +94,9 @@ const About = () => (
             applications, <Pyre/> provides infrastructure for storing configuration in databases.
         </Paragraph>
 
-    </Section>
+        </Section>
+    </Narrative>
+    </Page>
 )
 
 //   publish

@@ -14,7 +14,8 @@ const structure = {
     container: {
         display: "flex",
         flexDirection: "column",
-        fontSize: "120%",
+        overflowY: "auto",
+        margin: "1em auto",
     },
 
     bar: {
@@ -46,12 +47,13 @@ const document = {
     page: {
         display: "flex",
         flexDirection: "row",
+        margin: "0em auto",
     },
 
     body: {
         textAlign: "justify",
-        margin: "0.5em 0.0em 0.5em 0.0em",
-        padding: "0.0em 0.0em 0.0em 0.0em",
+        margin: "0.5em 0.0em",
+        padding: "0.0em",
     },
 
     sidebar: {
@@ -59,7 +61,8 @@ const document = {
     },
 
     narrative: {
-        margin: "0em 0em 0em 1em"
+        fontSize: "150%",
+        margin: "0em auto",
     },
 
     chapter: {
@@ -70,7 +73,7 @@ const document = {
 
         bar: {
             ...structure.bar,
-            padding: "0.25em 1.5em 0.25em 1.5em",
+            padding: "0.25em 1.5em",
             backgroundColor: semantic.section.title.banner,
         },
 
@@ -94,7 +97,7 @@ const document = {
 
         bar: {
             ...structure.bar,
-            padding: "0.25em 1.5em 0.25em 1.5em",
+            padding: "0.25em 1.5em",
             backgroundColor: semantic.section.title.banner,
         },
 

@@ -10,7 +10,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 // support
-import { Pyre, Section, Subsection, Paragraph } from 'widgets/doc'
+import { Narrative, Page, Pyre, Section, Subsection, Paragraph } from 'widgets/doc'
 // locals
 import styles from './styles'
 import PyreRepo from './pyre-repo'
@@ -22,6 +22,8 @@ import ConfigDeveloper from './config-developer'
 
 // declaration
 const Install = () => (
+    <Page>
+    <Narrative>
     <Section id="install" style={styles.container} title="installation instructions">
 
         <Subsection title="For the impatient --- and those with commitment issues">
@@ -145,6 +147,8 @@ const Install = () => (
         </Subsection>
 
     </Section>
+    </Narrative>
+    </Page>
 )
 
 //   publish

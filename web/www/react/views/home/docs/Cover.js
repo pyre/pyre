@@ -10,12 +10,14 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 // support
-import { Pyre, Section, Subsection, Paragraph } from 'widgets/doc'
+import { Narrative, Page, Pyre, Section, Subsection, Paragraph } from 'widgets/doc'
 // locals
 import styles from './styles'
 
 // declaration
 const Documentation = () => (
+    <Narrative>
+        <Page>
     <Section id="docs" style={styles.container} title="Documentation">
         <Paragraph>
             This section is under active development. New material shows up all the time. Many
@@ -59,6 +61,8 @@ const Documentation = () => (
         </Paragraph>
 
     </Section>
+        </Page>
+        </Narrative>
 )
 
 //   publish
