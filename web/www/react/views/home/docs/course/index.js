@@ -10,7 +10,7 @@ import React from 'react'
 import { Switch, Route, Link } from 'react-router-dom'
 
 // support
-import { Pyre, Section, Subsection, Paragraph } from 'widgets/doc'
+import { Pyre, Subsection, Paragraph } from 'widgets/doc'
 
 // locals
 import styles from './styles'

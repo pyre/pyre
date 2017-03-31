@@ -9,6 +9,9 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
+// support
+import { Narrative, Page } from 'widgets/doc'
+
 // locals
 import styles from './styles'
 import Splash from './splash'

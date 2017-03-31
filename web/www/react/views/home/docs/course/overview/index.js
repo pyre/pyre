@@ -25,7 +25,7 @@ const Overview = () => (
         </Sidebar>
         <Narrative>
             <Chapter id="overview"
-                     style={styles.container}
+                     style={styles}
                      title={<span>Overview of <Pyre/></span>}>
                 <Prologue/>
                 <Introduction/>

@@ -9,7 +9,7 @@
 import React from 'react'
 
 // support
-import { Pyre, Page, Section, Subsection, Paragraph } from 'widgets/doc'
+import { Pyre, Section, Subsection, Paragraph } from 'widgets/doc'
 
 // locals
 import styles from './styles'
@@ -17,7 +17,7 @@ import styles from './styles'
 // declaration
 const Introduction = () => (
     <Section id="introduction"
-             style={styles.container}
+             style={styles}
              title={<span>Introduction</span>} >
 
     </Section>

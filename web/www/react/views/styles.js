@@ -12,7 +12,9 @@ export default {
 
     sections: {
         container: {
-            width: "50em",
+            flexGrow: 1,
+            minWidth: "40em",
+            maxWidth: "50em",
         },
 
         bar: {

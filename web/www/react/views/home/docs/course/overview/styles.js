@@ -15,7 +15,6 @@ export default {
 
     container: {
         ...styles.sections.container,
-        width: "40em",
     },
 
     bar: {
@@ -29,7 +28,6 @@ export default {
     logo: {
         ...styles.sections.logo,
     },
-
 }
 
 // end of file
