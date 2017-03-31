@@ -73,8 +73,8 @@ const Install = () => (
 
                 <Subsection title="Getting the source code">
                     <Paragraph>
-                        When you are ready to dig a little deeper, take a look at the
-                        <Pyre/> source code.  There are a couple of options.  You can <Link
+                        When you are ready to dig a little deeper, take a look at
+                        the <Pyre/> source code.  There are a couple of options.  You can <Link
                         to="/pyre-1.0-source.tar.bz2">get</Link> a TAR file with the source
                         code of the last stable release.  Alternatively, you can prepare an
                         area on your filesystem and pull from the BZR repository:
@@ -87,9 +87,9 @@ const Install = () => (
                 <Subsection title="Building the source code">
 
                     <Paragraph>
-                        Building a <Pyre/> installation from its source requires access to
-                        <code>config</code>, its build system. You can pull
-                        <code>config</code> from its BZR repository:
+                        Building a <Pyre/> installation from its source requires access 
+                        to <code>config</code>, its build system. You can 
+                        pull <code>config</code> from its BZR repository:
                     </Paragraph>
 
                     <ConfigRepo/>
@@ -105,9 +105,9 @@ const Install = () => (
 
                     <Paragraph>
                         The aliases above are for a BASH compatible shell; please adjust to
-                        your environment. Note that we have assumed you have pulled
-                        <code>config</code> into <code>~/tmp</code>; please make the necessary
-                        adjustments if you chose a different location for the
+                        your environment. Note that we have assumed you have
+                        pulled <code>config</code> into <code>~/tmp</code>; please make the 
+                        necessary adjustments if you chose a different location for the
                         <code>config</code> repository.
                     </Paragraph>
 

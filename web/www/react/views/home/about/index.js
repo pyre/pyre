@@ -35,8 +35,8 @@ const About = () => (
                 </Paragraph>
 
                 <Paragraph>
-                    The basic conceptual building block in <Pyre/> is the
-                    <em>component</em>. Components are classes that specifically grant access
+                    The basic conceptual building block in <Pyre/> is the <em>component</em>.
+                    Components are classes that specifically grant access
                     to some of their state to the application end user. Component authors
                     provide default values to be used in case the user doesn't make a choice,
                     but the user is explicitly given complete control and can override them
@@ -52,18 +52,18 @@ const About = () => (
                 <Ball/>
 
                 <Paragraph>
-                    Packages that support more than one kind of shape should probably declare a
-                    <em>protocol</em> to capture their basic properties and behaviors, much
+                    Packages that support more than one kind of shape should probably declare
+                    a <em>protocol</em> to capture their basic properties and behaviors, much
                     like abstract base classes do for their sub-classes.
                 </Paragraph>
 
                 <Shape/>
 
                 <Paragraph>
-                    Then, applications can use the protocol to express a <em>requirement</em>
-                    for some kind of shape, and defer to the user for the actual choice. If the
-                    user does not express an opinion, the default specified by Shape will be
-                    used.
+                    Then, applications can use the protocol to express
+                    a <em>requirement</em> for some kind of shape, and defer to the user
+                    for the actual choice. If the user does not express an opinion, the
+                    default specified by Shape will be used.
                 </Paragraph>
 
                 <Gauss/>
@@ -87,8 +87,8 @@ const About = () => (
                 <Launch3D/>
 
                 <Paragraph>
-                    You play with the radius by providing values for the
-                    <code>--shape.radius</code> command line argument.  For more details, and
+                    You play with the radius by providing values for 
+                    the <code>--shape.radius</code> command line argument.  For more details, and
                     more sophisticated examples, please take a look at the tutorials.
                 </Paragraph>
 
