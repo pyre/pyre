@@ -12,14 +12,39 @@ import document from './styles'
 import Title from './SectionTitle'
 
 // render
-const Section = ({id, title, logo, children, style}) => (
-    <section id={id} style={{...document.section.container, ...style}}>
-        <Title logo={logo} style={document.section}>
-            {title}
-        </Title>
-        {children}
-    </section>
-)
+const Section = ({id, title, logo, children, style}) => {
+    // mix the styles
+    const mixed = {
+        container: {
+            ...document.section.container,
+            ...style.container,
+        },
+
+        bar: {
+            ...document.section.bar,
+            ...style.bar,
+        },
+
+        title: {
+            ...document.section.title,
+            ...style.title,
+        },
+
+        logo: {
+            ...document.section.logo,
+            ...style.logo,
+        },
+    }
+    // render
+    return (
+        <section id={id} style={mixed.container}>
+            <Title logo={logo} style={mixed}>
+                {title}
+            </Title>
+            {children}
+        </section>
+    )
+}
 
 // defaults
 Section.defaultProps = {

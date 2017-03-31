@@ -11,6 +11,7 @@ import { wheel, semantic } from 'palette'
 
 // styling common to all content levels
 const structure = {
+
     container: {
         display: "flex",
         flexDirection: "column",
@@ -48,12 +49,8 @@ const document = {
         display: "flex",
         flexDirection: "row",
         margin: "0em auto",
-    },
-
-    body: {
-        textAlign: "justify",
-        margin: "0.5em 0.0em",
-        padding: "0.0em",
+        justifyContent: "center",
+        alignItems: "top",
     },
 
     sidebar: {
@@ -61,8 +58,18 @@ const document = {
     },
 
     narrative: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         fontSize: "150%",
-        margin: "0em auto",
+        lineHeight: "150%",
+        margin: "0em 2em",
+    },
+
+    body: {
+        textAlign: "justify",
+        margin: "0.75em 0.0em",
+        padding: "0.0em",
     },
 
     chapter: {
