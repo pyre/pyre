@@ -20,6 +20,7 @@ EXPORT_PYTHON_MODULES = \
     Executive.py \
     Fork.py \
     Interactive.py \
+    IPython.py \
     Layout.py \
     Panel.py \
     Plain.py \
