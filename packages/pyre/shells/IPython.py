@@ -25,12 +25,12 @@ class IPython(Interactive, family="pyre.shells.ipython"):
         """
         # attempt to
         try:
-            # get support fro IPython
+            # get support for IPython
             import IPython
         # if this fails
         except ImportError:
             # print an error message
-            application.error.log("could not locate IPython")
+            application.error.log("could not import the IPython module; is it installed?")
             # and bail
             raise SystemExit(1)
 
