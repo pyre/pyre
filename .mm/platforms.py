@@ -44,7 +44,7 @@ def platform(builder):
             gsl.ldpath = systemlibdir
 
         # set up {libpq}
-        libpqVersion = 'postgresql95'
+        libpqVersion = 'postgresql96'
         # do we have postgres?
         havePostgres = (
             os.path.isdir(os.path.join(systemlibdir, libpqVersion))
@@ -65,7 +65,7 @@ def platform(builder):
             libpq.ldpath = os.path.join(systemincdir, libpqVersion)
 
         # set up {mpi}
-        mpiVersion = 'openmpi-gcc5'
+        mpiVersion = 'openmpi-gcc6'
         # do we have {mpi}?
         haveMPI = (
             os.path.isdir(os.path.join(systemlibdir, mpiVersion))
@@ -89,7 +89,7 @@ def platform(builder):
             mpi.ldpath = systemlibdir
 
         # set up {python}
-        pythonVersion = '3.5'
+        pythonVersion = '3.6'
         pythonMemoryModel = 'm'
         python = 'python' + pythonVersion
         pythonHome = os.path.join(
