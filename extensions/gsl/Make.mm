@@ -35,7 +35,6 @@ PROJ_SRCS = \
     vector.cc \
 
 # optional mpi support
-MPI_DIR= # should be overriden by the environment
 ifneq ($(strip $(MPI_DIR)), )
     include MPI/default.def
     PROJ_SRCS += partition.cc

@@ -17,14 +17,11 @@ RECURSE_DIRS = \
     timers \
 
 # mpi
-MPI_DIR= # overriden by the the environment
 ifneq ($(strip $(MPI_DIR)),)
   RECURSE_DIRS += mpi
 endif
 
-#--------------------------------------------------------------------------
-#
-
+# standard targets
 all:
 	BLD_ACTION="all" $(MM) recurse
 
