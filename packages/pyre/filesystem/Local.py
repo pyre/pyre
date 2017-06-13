@@ -266,7 +266,7 @@ class Local(Filesystem):
                 # remove the associated node from the vnode table
                 del self.vnodes[folder[entry]]
                 # and remove them from the folder contents
-                del folder[name]
+                del folder.contents[entry]
 
         # show me
         # print("    after uri: {!r}".format(self.vnodes[root].uri))
