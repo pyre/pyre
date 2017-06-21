@@ -6,7 +6,7 @@
 # (c) 1998-2017 all rights reserved
 #
 
-PROJECT = pyre
+include pyre.def
 PACKAGE = algebra
 
 PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)

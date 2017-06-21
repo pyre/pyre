@@ -6,7 +6,7 @@
 # (c) 1998-2017 all rights reserved
 #
 
-PROJECT = pyre
+include journal.def
 PACKAGE = journal
 
 PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)

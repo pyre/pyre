@@ -5,9 +5,6 @@
 # (c) 1998-2017 all rights reserved
 #
 
-# find out what kind of clock support is provided by this platform
-include clock/default.def
-
 # project defaults
 include pyre.def
 # package name

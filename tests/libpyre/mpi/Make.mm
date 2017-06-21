@@ -6,6 +6,7 @@
 # (c) 1998-2017 all rights reserved
 #
 
+include pyre.def
 include MPI/default.def
 
 PROJECT = pyre

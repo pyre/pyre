@@ -6,9 +6,7 @@
 # (c) 1998-2017 all rights reserved
 #
 
-include clock/default.def
-
-PROJECT = pyre
+include pyre.def
 PACKAGE = timers
 
 PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
