@@ -6,6 +6,9 @@
 #
 
 
+# externals
+import math
+
 # superclass
 from .Numeric import Numeric
 
@@ -32,7 +35,7 @@ class Float(Numeric):
             # if it is a string
             if isinstance(value, str):
                 # get the interpreter to evaluate simple expressions
-                value = eval(value)
+                value = eval(value, self.context)
             # everything has to go through the {float} constructor to get coerced correctly
             return float(value)
         # if anything whatsoever goes wrong

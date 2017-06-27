@@ -32,7 +32,7 @@ class Integer(Numeric):
             # for strings
             if isinstance(value, str):
                 # get the interpreter to evaluate simple expressions
-                value = eval(value)
+                value = eval(value, self.context)
             # everything must to go through the {int} constructor to get coerced correctly
             return int(value)
         # if anything whatsoever goes wrong

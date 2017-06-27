@@ -39,7 +39,7 @@ class Dimensional(Numeric):
         # attempt to coerce strings
         try:
             # by invoking the {units} parser
-            return self.parser.parse(value)
+            return self.parser.parse(value, context=self.context)
         # if anything whatsoever goes wring
         except Exception as error:
             # complain

@@ -17,7 +17,7 @@ class Parser(metaclass=Singleton):
 
 
     # interface
-    def parse(self, text):
+    def parse(self, text, context=None):
         """
         Convert the string representation in {text} into a dimensional quantity
         """
@@ -25,8 +25,20 @@ class Parser(metaclass=Singleton):
         if text.strip().lower() == "none":
             # do as told
             return None
-        # otherwise, evaluate the expression and return the result
-        return eval(text, self.context)
+
+        # if the caller did not supply a context
+        if context is None:
+            # use ours
+            context = self.context
+        # otherwise
+        else:
+            # create a new one
+            context = context.copy()
+            # and merge mine in it
+            context.update(self.context)
+
+        # evaluate the expression and return the result
+        return eval(text, context)
 
 
     # meta methods
