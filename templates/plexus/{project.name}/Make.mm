@@ -20,7 +20,7 @@ RECURSE_DIRS = \
 
 # the list of python modules
 EXPORT_PYTHON_MODULES = \
-    version.py \
+    meta.py \
     __init__.py
 
 # get today's date
@@ -44,21 +44,31 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-export:: version.py export-python-modules
+export:: meta.py export-python-modules
 	BLD_ACTION="export" $(MM) recurse
-	@$(RM) version.py
+	@$(RM) meta.py
 
 live: live-python-modules
 	BLD_ACTION="live" $(MM) recurse
 
-# construct my {{version.py}}
-version.py: version Make.mm
+revision: meta.py export-python-modules
+	@$(RM) meta.py
+
+# construct my {{meta.py}}
+meta.py: meta Make.mm
 	@sed \
           -e "s:MAJOR:$(PROJECT_MAJOR):g" \
           -e "s:MINOR:$(PROJECT_MINOR):g" \
           -e "s:REVISION:$(REVISION):g" \
           -e "s|TODAY|$(TODAY)|g" \
-          version > version.py
+          meta > meta.py
+
+
+# shortcuts for building specific subdirectories
+.PHONY: $(RECURSE_DIRS)
+
+$(RECURSE_DIRS):
+	(cd $@; $(MM))
 
 
 # end of file

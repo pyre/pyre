@@ -15,6 +15,7 @@ EXPORT_PYTHON_MODULES = \
     Action.py \
     Command.py \
     Plexus.py \
+    UX.py \
     __init__.py
 
 # the standard build targets

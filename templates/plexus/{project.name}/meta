@@ -19,13 +19,15 @@ version = (major, minor, revision)
 # decorations for the help system
 copyright = "copyright (c) {project.span} all rights reserved"
 
-header = """
-    {project.name} {{0}}.{{1}} revision {{2}}
-    {{3}}
+banner = f"""
+    {project.name} {{major}}.{{minor}} revision {{revision}}
+    {{copyright}}
+"""
 
+header = banner + """
 authors:
     {project.authors}
-""".format(major, minor, revision, copyright)
+"""
 
 license = header + """
 license:

@@ -73,7 +73,7 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         Print the version of the {project.name} package
         """
         # make some space
-        plexus.info.log({project.name}.version.header)
+        plexus.info.log({project.name}.meta.header)
         # all done
         return
 
@@ -84,7 +84,7 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         Print the copyright note of the {project.name} package
         """
         # show the copyright note
-        plexus.info.log({project.name}.version.copyright)
+        plexus.info.log({project.name}.meta.copyright)
         # all done
         return
 
@@ -95,7 +95,7 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         Print out the license and terms of use of the {project.name} package
         """
         # make some space
-        plexus.info.log({project.name}.version.header)
+        plexus.info.log({project.name}.meta.header)
         # all done
         return
 
@@ -106,7 +106,7 @@ class About({project.name}.command, family='{project.name}.actions.about'):
         Print out the license and terms of use of the {project.name} package
         """
         # make some space
-        plexus.info.log({project.name}.version.license)
+        plexus.info.log({project.name}.meta.license)
         # all done
         return
 

@@ -27,7 +27,7 @@ home, prefix, defaults = package.layout()
 
 # publish local modules
 from . import (
-    version, # version info
+    meta, # meta-data
     extensions, # my extension module
     )
 
