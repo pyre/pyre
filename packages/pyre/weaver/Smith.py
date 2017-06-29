@@ -75,8 +75,16 @@ class Smith(pyre.application, family='pyre.applications.smith'):
             folder = cwd.mkdir(parent=destination, name=name, exist_ok=True)
             # go through the folder contents
             for entry, child in source.contents.items():
-                # expand any macros in the name
-                entry = nameserver.interpolate(expression=entry)
+                # attempt to
+                try:
+                    # expand any macros in the name
+                    entry = nameserver.interpolate(expression=entry)
+                # if anything goes wrong
+                except self.FrameworkError as error:
+                    # generate an error message
+                    self.error.log('could not process {}: {}'.format(entry, error))
+                    # and move on
+                    continue
                 # show me
                 # self.info.log('generating {!r}'.format(entry))
                 # if the {child} is a folder
@@ -96,8 +104,16 @@ class Smith(pyre.application, family='pyre.applications.smith'):
                 else:
                     # the {child} is a regular file; open it and read its contents
                     body = child.open().read()
-                    # expand any macros
-                    body = nameserver.interpolate(expression=body)
+                    # attempt to
+                    try:
+                        # expand any macros
+                        body = nameserver.interpolate(expression=body)
+                    # if anything goes wrong
+                    except self.FrameworkError as error:
+                        # generate an error message
+                        self.error.log('while processing {}: {}'.format(entry, error))
+                        # and move on
+                        continue
                     # create the file
                     destination = cwd.write(parent=folder, name=entry, contents=body)
 
