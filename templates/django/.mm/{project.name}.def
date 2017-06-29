@@ -10,7 +10,7 @@
 PROJECT = {project.name}
 
 # the live host
-PROJ_LIVE_HOST = {project.live.hostname}
+PROJ_LIVE_HOST = {project.live.name}
 PROJ_LIVE_ADMIN = {project.live.admin}
 PROJ_LIVE_HOME = {project.live.home}
 PROJ_LIVE_ROOT = {project.live.root}

@@ -20,10 +20,10 @@ class Host(pyre.component, family='pyre.smith.installations.host', implements=In
 
 
     # user configurable state
-    hostname = pyre.properties.str(default='localhost')
-    hostname.doc = "the name of the machine that hosts the live application"
+    name = pyre.properties.str(default='localhost')
+    name.doc = "the name of the machine that hosts the live application"
 
-    virtual = pyre.properties.str(default="{project.live.hostname}")
+    virtual = pyre.properties.str(default="{project.live.name}")
     virtual.doc = "the virtual name of the web server"
 
     home = pyre.properties.str(default='~')
