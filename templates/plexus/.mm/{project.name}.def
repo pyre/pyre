@@ -20,12 +20,12 @@ PROJ_CXX_FLAGS = $(COMPILER_CXX_STD14)
 
 # the repository
 PROJ_REPO_ADMIN = {project.live.admin}
-PROJ_REPO_HOST = {project.live.hostname}
+PROJ_REPO_HOST = {project.live.name}
 PROJ_REPO_HOME = {project.live.home}
 PROJ_REPO_REPOSITORY = $(PROJ_REPO_HOME)/repository
 
 # the live host
-PROJ_LIVE_HOST = {project.live.hostname}
+PROJ_LIVE_HOST = {project.live.name}
 PROJ_LIVE_ADMIN = {project.live.admin}
 PROJ_LIVE_HOME = {project.live.home}
 PROJ_LIVE_ROOT = {project.live.root}

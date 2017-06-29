@@ -5,7 +5,7 @@
 # (c) {project.span} all rights reserved
 #
 
-# projet defaults
+# project defaults
 include {project.name}.def
 # the package
 PACKAGE = extensions
