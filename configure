@@ -10,7 +10,7 @@
 import datetime, os, sys
 
 # the location of project configuration files
-pdir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+pdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '.mm'))
 # if it doesn't exist, make it
 os.makedirs(pdir, exist_ok=True)
 
@@ -41,36 +41,24 @@ except ImportError:
     # grab the sys module
     import sys
     # so we can add the bootstrapper to it
-    sys.path[1] = local
+    sys.path.insert(1, local)
     # try importing pyre again
     import pyre
 
 
 # the app
-class configure(pyre.application, family='summit.applications.configure'):
+class configure(pyre.application, family='pyre.applications.configure'):
     """
-    The summit configuration utility
+    The pyre configuration utility
     """
 
     # user configurable state
     # packages
-    hdf5 = pyre.externals.hdf5()
-    hdf5.doc = "the HDF5 installation"
-
     gsl = pyre.externals.gsl()
     gsl.doc = "the GSL installation"
 
-    metis = pyre.externals.metis()
-    metis.doc = "the metis installation"
-
     mpi = pyre.externals.mpi()
     mpi.doc = "the MPI installation"
-
-    parmetis = pyre.externals.parmetis()
-    parmetis.doc = "the parmetis installation"
-
-    petsc = pyre.externals.petsc()
-    petsc.doc = "the PETSc installation"
 
     postgres = pyre.externals.postgres()
     postgres.doc = "the client side of postgres"
@@ -78,9 +66,6 @@ class configure(pyre.application, family='summit.applications.configure'):
     python = pyre.externals.python()
     python = pyre.externals.python()
     python.doc = "the python installation"
-
-    vtk = pyre.externals.vtk()
-    vtk.doc = "the VTK installation"
 
     # geography
     config = pyre.properties.path(default=os.path.join(pdir, 'config.def'))
@@ -93,8 +78,6 @@ class configure(pyre.application, family='summit.applications.configure'):
         """
         The main entry point
         """
-        # display details about the package choices
-        self.show()
         # render the configuration in {mm} format
         table = self.render()
         # save the configuration
@@ -111,14 +94,6 @@ class configure(pyre.application, family='summit.applications.configure'):
         # initialize
         table = table or {}
 
-        # hdf5
-        hdf5 = self.hdf5
-        # update the table
-        table['HDF5_DIR'] = hdf5.prefix
-        table['HDF5_VERSION'] = hdf5.sigver
-        table['HDF5_INCDIR'] = hdf5.join(hdf5.incdir)
-        table['HDF5_LIBDIR'] = hdf5.join(hdf5.libdir)
-
         # gsl
         gsl = self.gsl
         # update the table
@@ -126,14 +101,6 @@ class configure(pyre.application, family='summit.applications.configure'):
         table['GSL_VERSION'] = gsl.sigver
         table['GSL_INCDIR'] = gsl.join(gsl.incdir)
         table['GSL_LIBDIR'] = gsl.join(gsl.libdir)
-
-        # metis
-        metis = self.metis
-        # update the table
-        table['METIS_DIR'] = metis.prefix
-        table['METIS_VERSION'] = metis.sigver
-        table['METIS_INCDIR'] = metis.join(metis.incdir)
-        table['METIS_LIBDIR'] = metis.join(metis.libdir)
 
         # mpi
         mpi = self.mpi
@@ -143,22 +110,6 @@ class configure(pyre.application, family='summit.applications.configure'):
         table['MPI_LIBDIR'] = mpi.join(mpi.libdir)
         table['MPI_EXECUTIVE'] = mpi.launcher
         table['MPI_VERSION'] = mpi.flavor
-
-        # parmetis
-        parmetis = self.parmetis
-        # update the table
-        table['PARMETIS_DIR'] = parmetis.prefix
-        table['PARMETIS_VERSION'] = parmetis.sigver
-        table['PARMETIS_INCDIR'] = parmetis.join(parmetis.incdir)
-        table['PARMETIS_LIBDIR'] = parmetis.join(parmetis.libdir)
-
-        # petsc
-        petsc = self.petsc
-        # update the table
-        table['PETSC_DIR'] = petsc.prefix
-        table['PETSC_VERSION'] = petsc.sigver
-        table['PETSC_INCDIR'] = petsc.join(petsc.incdir)
-        table['PETSC_LIBDIR'] = petsc.join(petsc.libdir)
 
         # postgres
         postgres = self.postgres
@@ -178,14 +129,6 @@ class configure(pyre.application, family='summit.applications.configure'):
         table['PYTHON_PYCFLAGS'] = '-b'
         table['PYTHON_LIB'] = python.interpreter
 
-        # vtk
-        vtk = self.vtk
-        # update the table
-        table['VTK_DIR'] = vtk.prefix
-        table['VTK_VERSION'] = vtk.sigver
-        table['VTK_INCDIR'] = vtk.join(vtk.incdir)
-        table['VTK_LIBDIR'] = vtk.join(vtk.libdir)
-
         # all done
         return table
 
@@ -202,54 +145,6 @@ class configure(pyre.application, family='summit.applications.configure'):
         print(doc, file=stream)
         # all done
         return table
-
-
-    def show(self):
-        """
-        Display details about each package
-        """
-        # grab a channel
-        channel = self.debug
-        # if the channel is active
-        if channel:
-            # sign in
-            channel.line("configuration:")
-            # show me the mpi settings
-            self.mpiDetails(channel=channel)
-            # flush
-            channel.log()
-        # all done
-        return
-
-
-    def mpiDetails(self, channel, **kwds):
-        """
-        Display details about mpi
-        """
-        # mpi
-        mpi = self.mpi
-        # show me
-        channel.line("  mpi:")
-        channel.line("    package: {}".format(mpi))
-        # how did i get this
-        channel.line("    chosen: {}".format(mpi.pyre_where()))
-        # version info
-        channel.line("    version: {.version}".format(mpi))
-        channel.line("    prefix: {.prefix}".format(mpi))
-        # locations
-        channel.line("    tools:")
-        channel.line("      path: {}".format(mpi.join(mpi.bindir)))
-        channel.line("      launcher: {.launcher}".format(mpi))
-        # compile line
-        channel.line("    compile:")
-        channel.line("      defines: {}".format(mpi.join(mpi.defines)))
-        channel.line("      headers: {}".format(mpi.join(mpi.incdir)))
-        # link line
-        channel.line("    link:")
-        channel.line("      paths: {}".format(mpi.join(mpi.libdir)))
-        channel.line("      libraries: {}".format(mpi.join(mpi.libraries)))
-        # all done
-        return 0
 
 
     def assemble(self, table):
