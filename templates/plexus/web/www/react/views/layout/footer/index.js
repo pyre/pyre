@@ -20,6 +20,8 @@ const restart = event => {{
     event.stopPropagation()
     // ask the server to restart
     axios.put('/action/meta/stop').then(() => null).catch(() => null)
+    // close the window
+    window.close()
 }}
 
 // declare and public
@@ -28,7 +30,7 @@ const footer = () => (
         <Fetch url="/query/meta/version">
             {{({{status, document: version}}) => status === "success" && (
                  <span style={{styles.serverVersion}}>
-                     <span style={{styles.action}} onClick={{restart}}>server</span>:
+                     <span style={{styles.action}} onClick={{restart}}>{project.name}</span>:
                      version {{version}}
                  </span>
              )}}

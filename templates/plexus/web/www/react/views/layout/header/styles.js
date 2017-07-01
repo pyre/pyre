@@ -25,6 +25,7 @@ export default {{
         borderBottom: `1px solid ${{wheel.soapstone}}`,
 
         fontSize: "60%",
+        padding: "1.0em",
 
         // for my children
         display: "flex",
@@ -39,8 +40,8 @@ export default {{
         flexShrink: "0",
 
         // styling
-        height: "4.0em",
-        padding: "0.0em 1.0em",
+        height: "2.0em",
+        padding: "0.5em 1.0em",
     }},
 
     // the title
