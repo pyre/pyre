@@ -31,6 +31,46 @@ from . import (
     extensions, # my extension module
     )
 
+# administrivia
+def copyright():
+    """
+    Return the copyright note
+    """
+    # pull and print the meta-data
+    return print(meta.header)
+
+
+def license():
+    """
+    Print the license
+    """
+    # pull and print the meta-data
+    return print(meta.license)
+
+
+def built():
+    """
+    Return the build timestamp
+    """
+    # pull and return the meta-data
+    return meta.date
+
+
+def credits():
+    """
+    Print the acknowledgments
+    """
+    return print(meta.acknowledgments)
+
+
+def version():
+    """
+    Return the version
+    """
+    # pull and return the meta-data
+    return meta.version
+
+
 # plexus support
 from .components import plexus, action, command
 

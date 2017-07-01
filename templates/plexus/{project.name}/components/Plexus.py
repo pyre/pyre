@@ -31,7 +31,7 @@ class Plexus(pyre.plexus, family='{project.name}.components.plexus'):
         Generate the help banner
         """
         # show the license header
-        return {project.name}.version.license
+        return {project.name}.meta.license
 
 
     # interactive session management

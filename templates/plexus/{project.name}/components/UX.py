@@ -8,6 +8,8 @@
 
 # external
 import re
+# support
+import {project.name}
 
 
 # declaration
