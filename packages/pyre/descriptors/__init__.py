@@ -25,6 +25,7 @@ class descriptor(stem.variable): pass
 # for convenience, expose the typed ones
 # the simple ones
 bool = descriptor.bool
+complex = descriptor.complex
 decimal = descriptor.decimal
 float = descriptor.float
 inet = descriptor.inet

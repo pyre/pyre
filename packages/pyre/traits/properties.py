@@ -16,11 +16,13 @@ from .Property import Property as property
 # for convenience, expose the typed ones
 # the simple ones
 bool = property.bool
+complex = property.complex
 decimal = property.decimal
 float = property.float
 inet = property.inet
 int = property.int
 identity = property.identity
+object = property.identity
 str = property.str
 
 # the more complex types

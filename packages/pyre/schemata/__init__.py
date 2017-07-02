@@ -10,6 +10,7 @@
 from .Schema import Schema as identity
 # simple types
 from .Boolean import Boolean as bool
+from .Complex import Complex as complex
 from .Decimal import Decimal as decimal
 from .Float import Float as float
 from .Fraction import Fraction as fraction
@@ -41,7 +42,7 @@ from .OutputStream import OutputStream as ostream
 
 
 # put the schemata in piles
-basic = (identity, bool, decimal, float, fraction, inet, int, str)
+basic = (identity, bool, complex, decimal, float, fraction, inet, int, str)
 composite = (date, dimensional, path, time, uri)
 containers = (sequence, array, list, set, tuple, mapping, catalog)
 meta = (istream, ostream)
@@ -51,7 +52,7 @@ schemata = basic + composite + containers + meta
 # type categories
 sequences = { list, set, tuple }
 mappings = { catalog }
-numeric = { bool, decimal, dimensional, float, int }
+numeric = { bool, complex, decimal, dimensional, float, int }
 
 
 # grant access to the type decorator

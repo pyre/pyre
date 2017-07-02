@@ -14,6 +14,7 @@ EXPORT_PYTHON_MODULES = \
     Array.py \
     Boolean.py \
     Catalog.py \
+    Complex.py \
     Component.py \
     Container.py \
     Date.py \

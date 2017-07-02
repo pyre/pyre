@@ -6,35 +6,43 @@
 #
 
 
+# externals
+import collections
+
+
 # superclass
 from .Numeric import Numeric
 
 
 # declaration
-class Float(Numeric):
+class Complex(Numeric):
     """
-    A type declarator for floats
+    A type declarator for complex numbers
     """
 
 
     # constants
-    typename = 'float' # the name of my type
-    complaint = 'could not coerce {0.value!r} into a float'
+    typename = 'complex' # the name of my type
+    complaint = 'could not coerce {0.value!r} into a complex number'
 
 
     # interface
     def coerce(self, value, **kwds):
         """
-        Attempt to convert {value} into a float
+        Attempt to convert {value} into a complex number
         """
-        # attempt to convert into a float
+        # attempt to convert into a complex number
         try:
             # if it is a string
             if isinstance(value, str):
                 # get the interpreter to evaluate simple expressions
                 value = eval(value, self.context)
-            # everything has to go through the {float} constructor to get coerced correctly
-            return float(value)
+            # if it is an iterable
+            if isinstance(value, collections.Iterable):
+                # unpack it and instantiate it
+                return complex(*value)
+            # otherwise, just invoke the constructor
+            return complex(value)
         # if anything whatsoever goes wrong
         except Exception as error:
             # complain
@@ -42,7 +50,7 @@ class Float(Numeric):
 
 
     # meta-methods
-    def __init__(self, default=float(), **kwds):
+    def __init__(self, default=complex(), **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # all done
