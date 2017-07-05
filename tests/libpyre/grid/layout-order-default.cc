@@ -5,10 +5,10 @@
 // (c) 1998-2017 all rights reserved
 //
 
-// exercise tile construction:
+// exercise layout construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   instantiate a tile and verify it can be iterated
+//   instantiate a layout and verify it can be iterated
 //   exercise the index <-> offset calculations
 
 // portability
@@ -23,20 +23,20 @@ int main() {
     // build the parts
     typedef pyre::grid::index_t<rep_t> index_t;
     typedef pyre::grid::packing_t<rep_t> packing_t;
-    typedef pyre::grid::tile_t<index_t, packing_t> tile_t;
+    typedef pyre::grid::layout_t<index_t, packing_t> layout_t;
 
     // make a shape
-    tile_t::index_type shape {2, 3, 4, 5};
-    // make a tile with the default packing order
-    tile_t tile {shape};
+    layout_t::index_type shape {2, 3, 4, 5};
+    // make a layout with the default packing order
+    layout_t layout {shape};
 
     // initialize the offset
     size_t offset = 0;
 
-    // loop over the tile in packing order
-    for (auto index : tile) {
+    // loop over the layout in packing order
+    for (auto index : layout) {
         // get the offset of the pixel at this index
-        auto pixel = tile[index];
+        auto pixel = layout[index];
         // verify it has the expected value
         if (offset != pixel) {
             // open a channel
@@ -51,7 +51,7 @@ int main() {
         }
 
         // map the offset back to an index
-        auto refl = tile[offset];
+        auto refl = layout[offset];
         // and verify it is identical to our loop index
         if (refl != index) {
             // open a channel

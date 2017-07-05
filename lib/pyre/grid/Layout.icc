@@ -7,15 +7,15 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Tile_icc)
-#error This header file contains implementation details of class pyre::grid::Tile
+#if !defined(pyre_grid_Layout_icc)
+#error This header file contains implementation details of class pyre::grid::Layout
 #endif
 
 
 // meta-methods
 template <typename indexT, typename packingT>
-pyre::grid::Tile<indexT, packingT>::
-Tile(index_type shape, packing_type packing) :
+pyre::grid::Layout<indexT, packingT>::
+Layout(shape_type shape, packing_type packing) :
     Slice<indexT, packingT> { {}, shape, packing }
 {}
 
@@ -24,17 +24,17 @@ Tile(index_type shape, packing_type packing) :
 // accessors
 template <typename indexT, typename packingT>
 const auto &
-pyre::grid::Tile<indexT, packingT>::
+pyre::grid::Layout<indexT, packingT>::
 shape() const {
     // easy enough...
     return this->high();
 }
 
 
-// compute the size of the tile
+// compute the size of the layout
 template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, packingT>::
+pyre::grid::Layout<indexT, packingT>::
 size() const {
     // initialize
     size_type cells = 1;
@@ -50,7 +50,7 @@ size() const {
 // cell offset for a given index
 template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, packingT>::
+pyre::grid::Layout<indexT, packingT>::
 offset(const index_type & index) const {
     // initialize the offset
     size_type offset = 0;
@@ -71,7 +71,7 @@ offset(const index_type & index) const {
 // index for a given cell offset
 template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, packingT>::
+pyre::grid::Layout<indexT, packingT>::
 index(size_type offset) const {
     // storage for the answer
     index_type index;
@@ -96,7 +96,7 @@ index(size_type offset) const {
 // the syntactic sugar
 template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, packingT>::
+pyre::grid::Layout<indexT, packingT>::
 operator[](const index_type & index) const {
     // delegate
     return offset(index);
@@ -104,7 +104,7 @@ operator[](const index_type & index) const {
 
 template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, packingT>::
+pyre::grid::Layout<indexT, packingT>::
 operator[](size_type offset) const {
     // delegate
     return index(offset);
@@ -114,27 +114,27 @@ operator[](size_type offset) const {
 // slicing
 template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, packingT>::
+pyre::grid::Layout<indexT, packingT>::
 slice(const packing_type & packing) const {
-    // make a slice over the whole tile but with the given packing
+    // make a slice over the whole layout but with the given packing
     return slice_type(this->low(), this->high(), packing);
 }
 
 
 template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, packingT>::
+pyre::grid::Layout<indexT, packingT>::
 slice(const index_type & begin, const index_type & end) const {
-    // make a slice over the whole tile but with the given packing
+    // make a slice over the whole layout but with the given packing
     return slice_type(begin, end, this->packing());
 }
 
 
 template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, packingT>::
+pyre::grid::Layout<indexT, packingT>::
 slice(const index_type & begin, const index_type & end, const packing_type & packing) const {
-    // make a slice over the whole tile but with the given packing
+    // make a slice over the whole layout but with the given packing
     return slice_type(begin, end, packing);
 }
 
@@ -142,9 +142,9 @@ slice(const index_type & begin, const index_type & end, const packing_type & pac
 // stream injection
 template <typename indexT, typename packingT>
 auto &
-operator<< (std::ostream & stream, const pyre::grid::Tile<indexT, packingT> & tile) {
+operator<< (std::ostream & stream, const pyre::grid::Layout<indexT, packingT> & layout) {
     // inject my parts into the stream
-    stream << "(" << tile.high() << ") packed using (" << tile.packing() << ")";
+    stream << "(" << layout.high() << ") packed using (" << layout.packing() << ")";
     // all done
     return stream;
 }

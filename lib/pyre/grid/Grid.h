@@ -12,36 +12,37 @@
 #define pyre_grid_Grid_h
 
 // declaration
-template <typename cellT, typename tileT, typename storageT>
+template <typename cellT, typename layoutT, typename storageT>
 class pyre::grid::Grid {
     // types
 public:
     // aliases for my template parameters
     typedef cellT cell_type;
-    typedef tileT tile_type;
+    typedef layoutT layout_type;
     typedef storageT storage_type;
     // dependent types
-    typedef typename tile_type::index_type index_type;
-    typedef typename tile_type::packing_type packing_type;
+    typedef typename layout_type::index_type index_type;
+    typedef typename layout_type::shape_type shape_type;
+    typedef typename layout_type::packing_type packing_type;
 
     // other help
     typedef std::size_t size_type;
 
     // meta-methods
 public:
-    // given a shape and a storage solution managed by someone else
-    inline Grid(tile_type shape, const storage_type & storage);
-    // given a shape and a storage solution managed by me
-    inline Grid(tile_type shape, storage_type && storage);
-    // given a shape and a storage solution that can be instantiated using my shape info
-    inline Grid(tile_type shape);
+    // given a layout and a storage solution managed by someone else
+    inline Grid(layout_type layout, const storage_type & storage);
+    // given a layout and a storage solution managed by me
+    inline Grid(layout_type layout, storage_type && storage);
+    // given a layout and a storage solution that can be instantiated using my shape info
+    inline Grid(layout_type layout);
     // given just the index extents
-    inline Grid(index_type shape);
+    inline Grid(shape_type shape);
 
     // interface
 public:
     // access to my shape
-    inline const auto & shape() const;
+    inline const auto & layout() const;
     // access to my memory location
     inline const auto data() const;
 
@@ -55,7 +56,7 @@ public:
 
     // implementation details - data
 private:
-    const tile_type _shape;
+    const layout_type _layout;
     const storage_type _storage;
 };
 

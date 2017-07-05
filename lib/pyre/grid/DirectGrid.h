@@ -12,25 +12,25 @@
 // A memory mapped grid
 
 // declaration
-template < typename cellT, typename tileT, typename directT>
-class pyre::grid::DirectGrid : public Grid<cellT, tileT, directT> {
+template < typename cellT, typename layoutT, typename directT>
+class pyre::grid::DirectGrid : public Grid<cellT, layoutT, directT> {
     // types
 public:
     // aliases for my template parameters
     typedef cellT cell_type;
-    typedef tileT tile_type;
+    typedef layoutT layout_type;
     typedef directT storage_type;
     // dependent types
     typedef typename storage_type::uri_type uri_type;
-    typedef typename tile_type::index_type index_type;
-    typedef typename tile_type::packing_type packing_type;
+    typedef typename layout_type::index_type index_type;
+    typedef typename layout_type::packing_type packing_type;
 
     // other help
     typedef std::size_t size_type;
 
     // meta-methods
 public:
-    inline DirectGrid(uri_type uri, tile_type shape);
+    inline DirectGrid(uri_type uri, layout_type shape);
 };
 
 

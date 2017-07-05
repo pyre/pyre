@@ -5,10 +5,10 @@
 // (c) 1998-2017 all rights reserved
 //
 
-// exercise tile construction
+// exercise layout construction
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   verify tiles can be sliced
+//   verify layouts can be sliced
 
 // portability
 #include <portinfo>
@@ -22,18 +22,18 @@ int main() {
     // build the parts
     typedef pyre::grid::index_t<rep_t> index_t;
     typedef pyre::grid::packing_t<rep_t> packing_t;
-    typedef pyre::grid::tile_t<index_t, packing_t> tile_t;
+    typedef pyre::grid::layout_t<index_t, packing_t> layout_t;
 
     // make a packing strategy
-    tile_t::packing_type packing {3, 2, 1, 0};
+    layout_t::packing_type packing {3, 2, 1, 0};
     // make a shape
-    tile_t::index_type shape {2, 3, 4, 5};
-    // make a tile
-    tile_t tile {shape, packing};
+    layout_t::index_type shape {2, 3, 4, 5};
+    // make a layout
+    layout_t layout {shape, packing};
 
     // specify the slice region
     index_t begin {1,1,1,1};
-    index_t end = tile.shape();
+    index_t end = layout.shape();
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
@@ -45,10 +45,10 @@ int main() {
 
     // otherwise, sign in
     channel << pyre::journal::at(__HERE__);
-    // loop over the tile in packing order
-    for (auto index : tile.slice(begin, end)) {
+    // loop over the layout in packing order
+    for (auto index : layout.slice(begin, end)) {
         // get the offset of the pixel at this index
-        auto pixel = tile[index];
+        auto pixel = layout[index];
         // show me
         channel << "(" << index << ") -> " << pixel << pyre::journal::newline;
     }

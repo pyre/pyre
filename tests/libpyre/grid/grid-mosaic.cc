@@ -22,60 +22,60 @@ int main() {
     typedef std::array<int, 3> crep_t;
     typedef pyre::grid::index_t<crep_t> cindex_t;
     typedef pyre::grid::packing_t<crep_t> cpacking_t;
-    typedef pyre::grid::tile_t<cindex_t, cpacking_t> ctile_t;
+    typedef pyre::grid::layout_t<cindex_t, cpacking_t> clayout_t;
     // storage
     typedef pyre::memory::heap_t heap_t;
     // grid
-    typedef pyre::grid::grid_t<cell_t, ctile_t, heap_t> grid_t;
+    typedef pyre::grid::grid_t<cell_t, clayout_t, heap_t> grid_t;
 
     // types for the mosaic itself
     // shape
     typedef std::array<int, 2> mrep_t; // the mosaic is a 2d arrangement
     typedef pyre::grid::index_t<mrep_t> mindex_t;
     typedef pyre::grid::packing_t<mrep_t> mpacking_t;
-    typedef pyre::grid::tile_t<mindex_t, mpacking_t> mtile_t;
+    typedef pyre::grid::layout_t<mindex_t, mpacking_t> mlayout_t;
     // mosaic
-    typedef pyre::grid::grid_t<grid_t, mtile_t, heap_t> mosaic_t;
+    typedef pyre::grid::grid_t<grid_t, mlayout_t, heap_t> mosaic_t;
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
 
     // setup the shape of the mosaic
-    mtile_t mtile { {2,2} };
+    mlayout_t mlayout { {2,2} };
     // setup the shape of the cell grids
-    ctile_t ctile { {3,3,3}, {2,1,0} };
+    clayout_t clayout { {3,3,3}, {2,1,0} };
 
     // instantiate the mosaic
-    mosaic_t mosaic {mtile};
+    mosaic_t mosaic {mlayout};
     // show me
     channel
         << pyre::journal::at(__HERE__)
         << "mosaic:" << pyre::journal::newline
-        << "  shape: " << mosaic.shape()
+        << "  shape: " << mosaic.layout()
         << pyre::journal::endl;
 
     // initialize the mosaic cells by going through each of its cells
-    for (auto idx : mosaic.shape()) {
+    for (auto idx : mosaic.layout()) {
         // getting the address of the current one
         grid_t * current = &mosaic[idx];
         // and placing a new grid there
-        new (current) grid_t(ctile);
+        new (current) grid_t(clayout);
     }
 
     // show me
     channel << pyre::journal::at(__HERE__);
     // the contents of each cell
-    for (auto idx : mosaic.shape()) {
+    for (auto idx : mosaic.layout()) {
         channel
             << "mosaic[" << idx << "]: "
-            << mosaic[idx].shape() << " at " << &mosaic[idx]
+            << mosaic[idx].layout() << " at " << &mosaic[idx]
             << pyre::journal::newline;
     }
     // flush
     channel << pyre::journal::endl;
 
     // clean up
-    for (auto idx : mosaic.shape()) {
+    for (auto idx : mosaic.layout()) {
         // invoke the destructor explicitly
         mosaic[idx].~grid_t();
     }

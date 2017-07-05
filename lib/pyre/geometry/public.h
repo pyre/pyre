@@ -61,14 +61,14 @@ namespace pyre {
         using iterator_t = pyre::grid::iterator_t<sliceT>;
 
         template <typename indexT, typename packingT>
-        using tile_t = pyre::grid::tile_t<indexT, packingT>;
+        using layout_t = pyre::grid::layout_t<indexT, packingT>;
 
         // grid
-        template <typename cellT, typename tileT, typename storageT>
-        using grid_t = pyre::grid::grid_t<cellT, tileT, storageT>;
+        template <typename cellT, typename layoutT, typename storageT>
+        using grid_t = pyre::grid::grid_t<cellT, layoutT, storageT>;
         // direct grid
-        template <typename cellT, typename tileT, typename directT = pyre::memory::direct_t>
-        using directgrid_t = pyre::grid::directgrid_t<cellT, tileT, directT>;
+        template <typename cellT, typename layoutT, typename directT = pyre::memory::direct_t>
+        using directgrid_t = pyre::grid::directgrid_t<cellT, layoutT, directT>;
     }
 }
 

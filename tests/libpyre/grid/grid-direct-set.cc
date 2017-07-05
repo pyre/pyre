@@ -26,28 +26,28 @@ int main() {
     typedef std::array<int, 3> rep_t;
     typedef pyre::grid::index_t<rep_t> index_t;
     typedef pyre::grid::packing_t<rep_t> packing_t;
-    typedef pyre::grid::tile_t<index_t, packing_t> tile_t;
+    typedef pyre::grid::layout_t<index_t, packing_t> layout_t;
     // convenience
     typedef pyre::memory::uri_t uri_t;
     // grid
-    typedef pyre::grid::directgrid_t<cell_t, tile_t> grid_t;
+    typedef pyre::grid::directgrid_t<cell_t, layout_t> grid_t;
 
     // make an ordering
-    tile_t::packing_type packing {2, 1, 0};
+    layout_t::packing_type packing {2, 1, 0};
     // make a shape
-    tile_t::index_type shape {6, 4, 5};
-    // make a tile
-    tile_t tile {shape, packing};
+    layout_t::shape_type shape {6, 4, 5};
+    // make a layout
+    layout_t layout {shape, packing};
 
     // the name of the file
     uri_t name {"grid.dat"};
     // map it and make the grid
-    grid_t grid {name, tile};
+    grid_t grid {name, layout};
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
     // loop over the grid
-    for (auto idx : grid.shape()) {
+    for (auto idx : grid.layout()) {
         // reduce the index
         auto v = std::accumulate(idx.begin(), idx.end(), 1, std::multiplies<cell_t>());
         // and store the value

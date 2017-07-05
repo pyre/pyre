@@ -23,10 +23,10 @@ TESTS = \
     iterator-access \
     iterator-loop \
     iterator-slice \
-    tile \
-    tile-order \
-    tile-order-default \
-    tile-slice \
+    layout \
+    layout-order \
+    layout-order-default \
+    layout-slice \
     grid-view \
     grid-heap \
     grid-direct \

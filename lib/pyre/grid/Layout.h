@@ -7,32 +7,33 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Tile_h)
-#define pyre_grid_Tile_h
+#if !defined(pyre_grid_Layout_h)
+#define pyre_grid_Layout_h
 
 // declaration
 template <typename indexT, typename packingT>
-class pyre::grid::Tile : public Slice<indexT, packingT> {
+class pyre::grid::Layout : public Slice<indexT, packingT> {
     // types
 public:
     // for sizing things
     typedef std::size_t size_type;
     // aliases for my parts
     typedef indexT index_type;
+    typedef indexT shape_type;
     typedef packingT packing_type;
     typedef Slice<indexT, packingT> slice_type;
 
     // meta-methods
 public:
-    // a tile with index packinging supplied by the caller
-    Tile(index_type shape, packing_type packing = packing_type::rowMajor());
+    // a layout with index packinging supplied by the caller
+    Layout(shape_type shape, packing_type packing = packing_type::rowMajor());
 
     // interface
 public:
     // accessors
     inline const auto & shape() const;
 
-    // the number of cells in this tile
+    // the number of cells in this layout
     inline auto size() const;
 
     // compute the pixel offset implied by a given index

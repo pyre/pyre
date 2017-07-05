@@ -5,7 +5,7 @@
 // (c) 1998-2017 all rights reserved
 //
 
-// exercise tile construction:
+// exercise layout construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
 //   exercise the simpel interface
@@ -22,23 +22,23 @@ int main() {
     // build the parts
     typedef pyre::grid::index_t<rep_t> index_t;
     typedef pyre::grid::packing_t<rep_t> packing_t;
-    typedef pyre::grid::tile_t<index_t, packing_t> tile_t;
+    typedef pyre::grid::layout_t<index_t, packing_t> layout_t;
 
     // make a packing strategy
-    tile_t::packing_type packing {3, 2, 1, 0};
+    layout_t::packing_type packing {3, 2, 1, 0};
     // make a shape
-    tile_t::index_type shape {2, 3, 4, 5};
-    // make a tile
-    tile_t tile {shape, packing};
+    layout_t::index_type shape {2, 3, 4, 5};
+    // make a layout
+    layout_t layout {shape, packing};
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
 
-    // display information about the tile shape and packing
+    // display information about the layout shape and packing
     channel
         << pyre::journal::at(__HERE__)
-        << "shape: (" << tile.shape() << ")" << pyre::journal::newline
-        << "packing: (" << tile.packing() << ")" << pyre::journal::endl;
+        << "shape: (" << layout.shape() << ")" << pyre::journal::newline
+        << "packing: (" << layout.packing() << ")" << pyre::journal::endl;
 
     // all done
     return 0;

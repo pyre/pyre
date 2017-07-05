@@ -25,35 +25,35 @@ int main() {
     typedef std::array<int, 3> rep_t;
     typedef pyre::grid::index_t<rep_t> index_t;
     typedef pyre::grid::packing_t<rep_t> packing_t;
-    typedef pyre::grid::tile_t<index_t, packing_t> tile_t;
+    typedef pyre::grid::layout_t<index_t, packing_t> layout_t;
     // storage
     typedef pyre::memory::constdirect_t constdirect_t;
     // convenience
     typedef pyre::memory::uri_t uri_t;
     // grid
-    typedef pyre::grid::directgrid_t<cell_t, tile_t, constdirect_t> grid_t;
+    typedef pyre::grid::directgrid_t<cell_t, layout_t, constdirect_t> grid_t;
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
 
     // make a shape
-    tile_t::index_type shape {6, 4, 5};
+    layout_t::shape_type shape {6, 4, 5};
     // make an ordering
-    tile_t::packing_type packing {2, 1, 0};
-    // make a tile
-    tile_t tile {shape, packing};
+    layout_t::packing_type packing {2, 1, 0};
+    // make a layout
+    layout_t layout {shape, packing};
 
     // the name of the file
     uri_t name {"grid.dat"};
     // create it, map it, and make the grid
-    grid_t grid {name, tile};
+    grid_t grid {name, layout};
 
     // show me
     channel
         << pyre::journal::at(__HERE__)
         << "grid:" << pyre::journal::newline
-        << "   shape: (" << grid.shape().shape() << ")" << pyre::journal::newline
-        << " packing: (" << grid.shape().packing() << ")" << pyre::journal::newline
+        << "   shape: (" << grid.layout().shape() << ")" << pyre::journal::newline
+        << " packing: (" << grid.layout().packing() << ")" << pyre::journal::newline
         << "  mapped: " << grid.data()
         << pyre::journal::endl;
 

@@ -10,10 +10,10 @@
 #error This header file contains implementation details of class pyre::grid::DirectGrid
 #endif
 
-template <typename cellT, typename tileT, typename directT>
-pyre::grid::DirectGrid<cellT, tileT, directT>::
-DirectGrid(uri_type name, tile_type shape) :
-    Grid<cellT, tileT, storage_type>(shape,  storage_type{name, sizeof(cell_type)*shape.size()})
+template <typename cellT, typename layoutT, typename directT>
+pyre::grid::DirectGrid<cellT, layoutT, directT>::
+DirectGrid(uri_type name, layout_type shape) :
+    Grid<cellT, layoutT, storage_type>(shape,  storage_type{name, sizeof(cell_type)*shape.size()})
 {}
 
 
