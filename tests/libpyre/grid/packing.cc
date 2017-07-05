@@ -5,10 +5,10 @@
 // (c) 1998-2017 all rights reserved
 //
 
-// exercise grid order construction:
+// exercise grid packing construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   assemble an ordering
+//   assemble a packing specification
 //   verify it can be injected into a stream
 
 // portability
@@ -21,16 +21,16 @@ int main() {
     // fix the representation
     typedef std::array<int, 4> rep_t;
     // alias
-    typedef pyre::grid::order_t<rep_t> order_t;
+    typedef pyre::grid::packing_t<rep_t> packing_t;
     // make the interleaving
-    order_t order = {0, 1, 2, 3};
+    packing_t packing = {0, 1, 2, 3};
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
-    // and display information about the tile order
+    // and display information about the tile packing
     channel
         << pyre::journal::at(__HERE__)
-        << "order : (" << order << ")"
+        << "packing : (" << packing << ")"
         << pyre::journal::endl;
 
     // all done

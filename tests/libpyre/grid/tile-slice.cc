@@ -21,15 +21,15 @@ int main() {
     typedef std::array<int, 4> rep_t;
     // build the parts
     typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::order_t<rep_t> order_t;
-    typedef pyre::grid::tile_t<index_t, order_t> tile_t;
+    typedef pyre::grid::packing_t<rep_t> packing_t;
+    typedef pyre::grid::tile_t<index_t, packing_t> tile_t;
 
-    // make an ordering
-    tile_t::order_type order {3, 2, 1, 0};
+    // make a packing strategy
+    tile_t::packing_type packing {3, 2, 1, 0};
     // make a shape
     tile_t::index_type shape {2, 3, 4, 5};
     // make a tile
-    tile_t tile {shape, order};
+    tile_t tile {shape, packing};
 
     // specify the slice region
     index_t begin {1,1,1,1};

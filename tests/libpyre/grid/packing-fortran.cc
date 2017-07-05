@@ -5,9 +5,9 @@
 // (c) 1998-2017 all rights reserved
 //
 
-// exercise grid order construction:
+// exercise grid packing construction:
 //   verify that all the parts are accessible through the public headers
-//   assemble a FORTRAN style ordering
+//   assemble a FORTRAN style packing strategy
 //   verify it can be injected into a stream
 
 // portability
@@ -20,22 +20,22 @@ int main() {
     // fix the representation
     typedef std::array<int, 4> rep_t;
     // alias
-    typedef pyre::grid::order_t<rep_t> order_t;
+    typedef pyre::grid::packing_t<rep_t> packing_t;
     // make a FORTRAN-style interleaving
-    order_t order = order_t::columnMajor();
+    packing_t packing = packing_t::columnMajor();
 
-    // go through the order contents
-    for (order_t::size_type i=0; i<order.size(); ++i) {
+    // go through the packing contents
+    for (packing_t::size_type i=0; i<packing.size(); ++i) {
         // we expect
-        order_t::value_type expected = i;
+        packing_t::value_type expected = i;
         // and check that it is sorted in ascending order
-        if (order[i] != expected) {
+        if (packing[i] != expected) {
             // make a firewall
             pyre::journal::firewall_t channel("pyre.grid");
             // complain
             channel
                 << pyre::journal::at(__HERE__)
-                << "order mismatch at " << i << ": " << order[i] << " != " << expected
+                << "packing mismatch at " << i << ": " << packing[i] << " != " << expected
                 << pyre::journal::endl;
             // and bail
             return 1;
@@ -44,10 +44,10 @@ int main() {
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
-    // and display information about the tile order
+    // and display information about the tile packing
     channel
         << pyre::journal::at(__HERE__)
-        << "order : (" << order << ")"
+        << "packing : (" << packing << ")"
         << pyre::journal::endl;
 
     // all done

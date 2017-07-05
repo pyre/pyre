@@ -31,6 +31,13 @@ Grid(tile_type shape) :
     _storage { sizeof(cell_type) * shape.size() }
     {}
 
+template <typename cellT, typename tileT, typename storageT>
+pyre::grid::Grid<cellT, tileT, storageT>::
+Grid(index_type shape) :
+    _shape { {shape} },
+    _storage { sizeof(cell_type) * _shape.size() }
+    {}
+
 // interface
 // accessors
 template <typename cellT, typename tileT, typename storageT>

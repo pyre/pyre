@@ -21,24 +21,24 @@ int main() {
     typedef std::array<int, 4> rep_t;
     // build the parts
     typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::order_t<rep_t> order_t;
-    typedef pyre::grid::tile_t<index_t, order_t> tile_t;
+    typedef pyre::grid::packing_t<rep_t> packing_t;
+    typedef pyre::grid::tile_t<index_t, packing_t> tile_t;
 
-    // make an ordering
-    tile_t::order_type order {3, 2, 1, 0};
+    // make a packing strategy
+    tile_t::packing_type packing {3, 2, 1, 0};
     // make a shape
     tile_t::index_type shape {2, 3, 4, 5};
     // make a tile
-    tile_t tile {shape, order};
+    tile_t tile {shape, packing};
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
 
-    // display information about the tile shape and order
+    // display information about the tile shape and packing
     channel
         << pyre::journal::at(__HERE__)
         << "shape: (" << tile.shape() << ")" << pyre::journal::newline
-        << "order: (" << tile.order() << ")" << pyre::journal::endl;
+        << "packing: (" << tile.packing() << ")" << pyre::journal::endl;
 
     // all done
     return 0;

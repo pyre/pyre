@@ -11,21 +11,21 @@
 #define pyre_grid_Tile_h
 
 // declaration
-template <typename indexT, typename orderT>
-class pyre::grid::Tile : public Slice<indexT, orderT> {
+template <typename indexT, typename packingT>
+class pyre::grid::Tile : public Slice<indexT, packingT> {
     // types
 public:
     // for sizing things
     typedef std::size_t size_type;
     // aliases for my parts
     typedef indexT index_type;
-    typedef orderT order_type;
-    typedef Slice<indexT, orderT> slice_type;
+    typedef packingT packing_type;
+    typedef Slice<indexT, packingT> slice_type;
 
     // meta-methods
 public:
-    // a tile with index ordering supplied by the caller
-    Tile(index_type shape, order_type order = order_type::rowMajor());
+    // a tile with index packinging supplied by the caller
+    Tile(index_type shape, packing_type packing = packing_type::rowMajor());
 
     // interface
 public:
@@ -44,10 +44,11 @@ public:
     inline auto operator[](const index_type & index) const;
     inline auto operator[](size_type offset) const;
 
-    // iterating over slices in arbitrary order
-    auto slice(const order_type & order) const;
+    // iterating over slices in arbitrary packing order
+    auto slice(const packing_type & packing) const;
     auto slice(const index_type & begin, const index_type & end) const;
-    auto slice(const index_type & begin, const index_type & end, const order_type & order) const;
+    auto slice(const index_type & begin, const index_type & end,
+               const packing_type & packing) const;
 };
 
 

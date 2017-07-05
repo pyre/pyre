@@ -13,18 +13,18 @@
 
 
 // meta-methods
-template <typename indexT, typename orderT>
-pyre::grid::Tile<indexT, orderT>::
-Tile(index_type shape, order_type order) :
-    Slice<indexT, orderT> { {}, shape, order }
+template <typename indexT, typename packingT>
+pyre::grid::Tile<indexT, packingT>::
+Tile(index_type shape, packing_type packing) :
+    Slice<indexT, packingT> { {}, shape, packing }
 {}
 
 
 // interface
 // accessors
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 const auto &
-pyre::grid::Tile<indexT, orderT>::
+pyre::grid::Tile<indexT, packingT>::
 shape() const {
     // easy enough...
     return this->high();
@@ -32,9 +32,9 @@ shape() const {
 
 
 // compute the size of the tile
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, orderT>::
+pyre::grid::Tile<indexT, packingT>::
 size() const {
     // initialize
     size_type cells = 1;
@@ -48,16 +48,16 @@ size() const {
 }
 
 // cell offset for a given index
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, orderT>::
+pyre::grid::Tile<indexT, packingT>::
 offset(const index_type & index) const {
     // initialize the offset
     size_type offset = 0;
     // and the running product
     size_type product = 1;
-    // loop over the packing order
-    for (auto axis : this->order()) {
+    // loop in packing order
+    for (auto axis : this->packing()) {
         // update the offset
         offset += index[axis] * product;
         // update the product
@@ -69,9 +69,9 @@ offset(const index_type & index) const {
 
 
 // index for a given cell offset
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, orderT>::
+pyre::grid::Tile<indexT, packingT>::
 index(size_type offset) const {
     // storage for the answer
     index_type index;
@@ -81,9 +81,9 @@ index(size_type offset) const {
     // loop in reverse packing order
     for (int dim = index.size()-1; dim >=0; --dim) {
         // pull the current shape limit out of the product
-        product /= this->high()[this->order()[dim]];
+        product /= this->high()[this->packing()[dim]];
         // compute the index
-        index[this->order()[dim]] = offset / product;
+        index[this->packing()[dim]] = offset / product;
         // adjust the offset
         offset %= product;
     }
@@ -94,17 +94,17 @@ index(size_type offset) const {
 
 
 // the syntactic sugar
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, orderT>::
+pyre::grid::Tile<indexT, packingT>::
 operator[](const index_type & index) const {
     // delegate
     return offset(index);
 }
 
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, orderT>::
+pyre::grid::Tile<indexT, packingT>::
 operator[](size_type offset) const {
     // delegate
     return index(offset);
@@ -112,39 +112,39 @@ operator[](size_type offset) const {
 
 
 // slicing
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, orderT>::
-slice(const order_type & order) const {
-    // make a slice over the whole tile but with the given order
-    return slice_type(this->low(), this->high(), order);
+pyre::grid::Tile<indexT, packingT>::
+slice(const packing_type & packing) const {
+    // make a slice over the whole tile but with the given packing
+    return slice_type(this->low(), this->high(), packing);
 }
 
 
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, orderT>::
+pyre::grid::Tile<indexT, packingT>::
 slice(const index_type & begin, const index_type & end) const {
-    // make a slice over the whole tile but with the given order
-    return slice_type(begin, end, this->order());
+    // make a slice over the whole tile but with the given packing
+    return slice_type(begin, end, this->packing());
 }
 
 
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Tile<indexT, orderT>::
-slice(const index_type & begin, const index_type & end, const order_type & order) const {
-    // make a slice over the whole tile but with the given order
-    return slice_type(begin, end, order);
+pyre::grid::Tile<indexT, packingT>::
+slice(const index_type & begin, const index_type & end, const packing_type & packing) const {
+    // make a slice over the whole tile but with the given packing
+    return slice_type(begin, end, packing);
 }
 
 
 // stream injection
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto &
-operator<< (std::ostream & stream, const pyre::grid::Tile<indexT, orderT> & tile) {
+operator<< (std::ostream & stream, const pyre::grid::Tile<indexT, packingT> & tile) {
     // inject my parts into the stream
-    stream << "(" << tile.high() << ") as (" << tile.order() << ")";
+    stream << "(" << tile.high() << ") packed using (" << tile.packing() << ")";
     // all done
     return stream;
 }

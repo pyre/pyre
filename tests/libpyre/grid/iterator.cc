@@ -18,15 +18,15 @@
 int main() {
     // fix the rep
     typedef std::array<int, 4> rep_t;
-    // alias index and order
+    // alias index and packing
     typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::order_t<rep_t> order_t;
-    typedef pyre::grid::slice_t<index_t, order_t> slice_t;
+    typedef pyre::grid::packing_t<rep_t> packing_t;
+    typedef pyre::grid::slice_t<index_t, packing_t> slice_t;
     // create a shortcut to my target iterator type
     typedef pyre::grid::iterator_t<slice_t> iterator_t;
 
-    // make an ordering
-    slice_t::order_type order {3, 2, 1, 0};
+    // make a packing strategy
+    slice_t::packing_type packing {3, 2, 1, 0};
     // make a lower bound
     slice_t::index_type low {0, 0, 0, 0};
     // make an upper bound
@@ -34,7 +34,7 @@ int main() {
     // and some initial value for the iterator
     slice_t::index_type current {1, 1, 1, 1};
     // make a slice
-    slice_t slice {low, high, order};
+    slice_t slice {low, high, packing};
 
     // make an iterator with the default initial value
     iterator_t i1 {slice};

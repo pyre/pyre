@@ -7,16 +7,16 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Order_h)
-#define pyre_grid_Order_h
+#if !defined(pyre_grid_Packing_h)
+#define pyre_grid_Packing_h
 
 
 // declaration
 template <typename repT>
-class pyre::grid::Order {
+class pyre::grid::Packing {
     // types
 public:
-    // the container with the index order
+    // the container with the index packing
     typedef repT rep_type;
     // for sizing things
     typedef typename rep_type::size_type size_type;
@@ -27,15 +27,19 @@ public:
 public:
     // the constructor is a variadic template; it enables construction of the rep using
     // initializer lists
-    template <typename... argT> inline Order(argT... arg);
+    template <typename... argT> inline Packing(argT... arg);
 
     // interface
 public:
     // factories
     // c-like: last index varies the fastest
     inline static constexpr auto rowMajor();
+    // and its alias
+    inline static constexpr auto c();
     // fortran-like: first index varies the fastest
     inline static constexpr auto columnMajor();
+    // and its alias
+    inline static constexpr auto fortran();
 
     // size
     inline constexpr auto size() const;
@@ -49,7 +53,7 @@ public:
 
     // implementation details
 private:
-    const rep_type _order;
+    const rep_type _packing;
 };
 
 

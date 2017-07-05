@@ -7,64 +7,82 @@
 //
 
 // code guard
-#if !defined(pyre_grid_Order_icc)
-#error This header file contains implementation details of class pyre::grid::Order
+#if !defined(pyre_grid_Packing_icc)
+#error This header file contains implementation details of class pyre::grid::Packing
 #endif
 
 
 // meta-methods
 template <typename repT> template <typename... argT>
-pyre::grid::Order<repT>::
-Order(argT... value) :
-    _order{value...}
+pyre::grid::Packing<repT>::
+Packing(argT... value) :
+    _packing{value...}
 {}
 
 
 // interface
-// factory of a c-like ordering where the last index varies the fastest
+// factory of a c-like packing where the last index varies the fastest
 template <typename repT>
 constexpr auto
-pyre::grid::Order<repT>::
+pyre::grid::Packing<repT>::
 rowMajor() {
     // make an empty one
-    repT order {};
+    repT packing {};
     // go through its slots
-    for (size_t slot=0; slot < order.size(); ++slot) {
+    for (size_t slot=0; slot < packing.size(); ++slot) {
         // and fill with consecutive decreasing integers
-        order[slot] = order.size() - 1 - slot;
+        packing[slot] = packing.size() - 1 - slot;
     }
     // all done
-    return order;
+    return packing;
 }
 
-// factory of a fortran-like ordering where the first index varies the fastest
+// the alias
 template <typename repT>
 constexpr auto
-pyre::grid::Order<repT>::
+pyre::grid::Packing<repT>::
+c() {
+    // delegate
+    return rowMajor();
+}
+
+// factory of a fortran-like packing where the first index varies the fastest
+template <typename repT>
+constexpr auto
+pyre::grid::Packing<repT>::
 columnMajor() {
     // make an empty one
-    repT order{};
+    repT packing{};
     // go through its slots
-    for (size_t slot=0; slot < order.size(); ++slot) {
+    for (size_t slot=0; slot < packing.size(); ++slot) {
         // and fill with consecutive decreasing integers
-        order[slot] = slot;
+        packing[slot] = slot;
     }
     // all done
-    return order;
+    return packing;
+}
+
+// the alias
+template <typename repT>
+constexpr auto
+pyre::grid::Packing<repT>::
+fortran() {
+    // delegate
+    return columnMajor();
 }
 
 // dimensionality of the index
 template <typename repT>
 constexpr auto
-pyre::grid::Order<repT>::
+pyre::grid::Packing<repT>::
 size() const {
     // easy enough
-    return _order.size();
+    return _packing.size();
 }
 
 template <typename repT>
 auto
-pyre::grid::Order<repT>::
+pyre::grid::Packing<repT>::
 operator[] (size_type item) const {
     // bounds check
 #if defined(DEBUG_CHECK_BOUNDS)
@@ -80,35 +98,35 @@ operator[] (size_type item) const {
     }
 #endif
     // look up the item value and return it
-    return _order[item];
+    return _packing[item];
 }
 
 // loops
 template <typename repT>
 auto
-pyre::grid::Order<repT>::
+pyre::grid::Packing<repT>::
 begin() const {
     // the array itself is the beginning
-    return _order.cbegin();
+    return _packing.cbegin();
 }
 
 
 template <typename repT>
 auto
-pyre::grid::Order<repT>::
+pyre::grid::Packing<repT>::
 end() const {
     // compute the element "one past the end"
-    return _order.cend();
+    return _packing.cend();
 }
 
 
 template <typename repT>
 auto &
-operator<<(std::ostream & stream, const pyre::grid::Order<repT> & order) {
+operator<<(std::ostream & stream, const pyre::grid::Packing<repT> & packing) {
     // initialize; do it in this scope scope so we can use the iterator after the loop
-    auto v = order.begin();
+    auto v = packing.begin();
     // inject up to the last coordinate
-    for (; v != order.end()-1; ++v) {
+    for (; v != packing.end()-1; ++v) {
         stream << *v << ", ";
     }
     // and now the last one

@@ -45,8 +45,8 @@ template <typename sliceT>
 pyre::grid::Iterator<sliceT> &
 pyre::grid::Iterator<sliceT>::
 operator++ () {
-    // pull the indices in the specified order
-    for (auto dim : _slice.order()) {
+    // pull the indices in the specified packing
+    for (auto dim : _slice.packing()) {
         // get the associated limit
         auto limit = _slice.high()[dim];
         // get my current value for this component and increment it

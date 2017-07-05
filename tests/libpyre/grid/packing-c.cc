@@ -5,9 +5,9 @@
 // (c) 1998-2017 all rights reserved
 //
 
-// exercise grid order construction:
+// exercise grid packing construction:
 //   verify that all the parts are accessible through the public headers
-//   assemble a C style ordering
+//   assemble a C style packing strategy
 //   verify it can be injected into a stream
 
 // portability
@@ -20,22 +20,22 @@ int main() {
     // fix the representation
     typedef std::array<int, 4> rep_t;
     // alias
-    typedef pyre::grid::order_t<rep_t> order_t;
+    typedef pyre::grid::packing_t<rep_t> packing_t;
     // make a C-style interleaving
-    order_t order = order_t::rowMajor();
+    packing_t packing = packing_t::rowMajor();
 
-    // go through the order contents
-    for (order_t::size_type i=0; i<order.size(); ++i) {
+    // go through the packing contents
+    for (packing_t::size_type i=0; i<packing.size(); ++i) {
         // we expect
-        order_t::value_type expected = order.size() - i - 1;
-        // and check that it is sorted in descending order
-        if (order[i] != expected) {
+        packing_t::value_type expected = packing.size() - i - 1;
+        // and check that it is sorted in descending packing
+        if (packing[i] != expected) {
             // make a firewall
             pyre::journal::firewall_t channel("pyre.grid");
             // complain
             channel
                 << pyre::journal::at(__HERE__)
-                << "order mismatch at " << i << ": " << order[i] << " != " << expected
+                << "packing mismatch at " << i << ": " << packing[i] << " != " << expected
                 << pyre::journal::endl;
             // and bail
             return 1;
@@ -44,10 +44,10 @@ int main() {
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
-    // and display information about the tile order
+    // and display information about the tile packing
     channel
         << pyre::journal::at(__HERE__)
-        << "order : (" << order << ")"
+        << "packing : (" << packing << ")"
         << pyre::journal::endl;
 
     // all done

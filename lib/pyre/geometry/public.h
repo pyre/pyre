@@ -52,16 +52,16 @@ namespace pyre {
         using index_t = pyre::grid::index_t<repT>;
 
         template <typename repT>
-        using order_t = pyre::grid::order_t<repT>;
+        using packing_t = pyre::grid::packing_t<repT>;
 
-        template <typename indexT, typename orderT>
-        using slice_t = pyre::grid::slice_t<indexT, orderT>;
+        template <typename indexT, typename packingT>
+        using slice_t = pyre::grid::slice_t<indexT, packingT>;
 
         template <typename sliceT>
         using iterator_t = pyre::grid::iterator_t<sliceT>;
 
-        template <typename indexT, typename orderT>
-        using tile_t = pyre::grid::tile_t<indexT, orderT>;
+        template <typename indexT, typename packingT>
+        using tile_t = pyre::grid::tile_t<indexT, packingT>;
 
         // grid
         template <typename cellT, typename tileT, typename storageT>

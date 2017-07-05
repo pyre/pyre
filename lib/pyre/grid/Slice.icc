@@ -13,55 +13,55 @@
 
 
 // meta-methods
-template <typename indexT, typename orderT>
-pyre::grid::Slice<indexT, orderT>::
-Slice(const index_type & low, const index_type & high, const order_type & order) :
+template <typename indexT, typename packingT>
+pyre::grid::Slice<indexT, packingT>::
+Slice(const index_type & low, const index_type & high, const packing_type & packing) :
     _low { low },
     _high { high },
-    _order {order}
+    _packing {packing}
 {}
 
 
 // interface
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 const auto &
-pyre::grid::Slice<indexT, orderT>::
+pyre::grid::Slice<indexT, packingT>::
 low() const {
     // easy
     return _low;
 }
 
 
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 const auto &
-pyre::grid::Slice<indexT, orderT>::
+pyre::grid::Slice<indexT, packingT>::
 high() const {
     // easy
     return _high;
 }
 
 
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 const auto &
-pyre::grid::Slice<indexT, orderT>::
-order() const {
+pyre::grid::Slice<indexT, packingT>::
+packing() const {
     // easy
-    return _order;
+    return _packing;
 }
 
 
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Slice<indexT, orderT>::
+pyre::grid::Slice<indexT, packingT>::
 begin() const {
     // easy enough...
     return iterator_type{  *this };
 }
 
 
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 auto
-pyre::grid::Slice<indexT, orderT>::
+pyre::grid::Slice<indexT, packingT>::
 end() const {
     // easy enough...
     return iterator_type{ _high, *this };

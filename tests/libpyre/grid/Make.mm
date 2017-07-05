@@ -14,10 +14,10 @@ TESTS = \
     index \
     index-access \
     index-bool \
-    order \
-    order-c \
-    order-fortran \
-    order-access \
+    packing \
+    packing-c \
+    packing-fortran \
+    packing-access \
     slice \
     iterator \
     iterator-access \

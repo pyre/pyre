@@ -21,8 +21,8 @@ int main() {
     // shape
     typedef std::array<int, 3> crep_t;
     typedef pyre::grid::index_t<crep_t> cindex_t;
-    typedef pyre::grid::order_t<crep_t> corder_t;
-    typedef pyre::grid::tile_t<cindex_t, corder_t> ctile_t;
+    typedef pyre::grid::packing_t<crep_t> cpacking_t;
+    typedef pyre::grid::tile_t<cindex_t, cpacking_t> ctile_t;
     // storage
     typedef pyre::memory::heap_t heap_t;
     // grid
@@ -32,8 +32,8 @@ int main() {
     // shape
     typedef std::array<int, 2> mrep_t; // the mosaic is a 2d arrangement
     typedef pyre::grid::index_t<mrep_t> mindex_t;
-    typedef pyre::grid::order_t<mrep_t> morder_t;
-    typedef pyre::grid::tile_t<mindex_t, morder_t> mtile_t;
+    typedef pyre::grid::packing_t<mrep_t> mpacking_t;
+    typedef pyre::grid::tile_t<mindex_t, mpacking_t> mtile_t;
     // mosaic
     typedef pyre::grid::grid_t<grid_t, mtile_t, heap_t> mosaic_t;
 

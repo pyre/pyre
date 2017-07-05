@@ -23,7 +23,7 @@ public:
     // dependent types
     typedef typename storage_type::uri_type uri_type;
     typedef typename tile_type::index_type index_type;
-    typedef typename tile_type::order_type order_type;
+    typedef typename tile_type::packing_type packing_type;
 
     // other help
     typedef std::size_t size_type;

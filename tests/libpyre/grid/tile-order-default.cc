@@ -22,12 +22,12 @@ int main() {
     typedef std::array<int, 4> rep_t;
     // build the parts
     typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::order_t<rep_t> order_t;
-    typedef pyre::grid::tile_t<index_t, order_t> tile_t;
+    typedef pyre::grid::packing_t<rep_t> packing_t;
+    typedef pyre::grid::tile_t<index_t, packing_t> tile_t;
 
     // make a shape
     tile_t::index_type shape {2, 3, 4, 5};
-    // make a tile with the default ordering
+    // make a tile with the default packing order
     tile_t tile {shape};
 
     // initialize the offset

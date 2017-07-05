@@ -22,7 +22,7 @@ public:
     typedef storageT storage_type;
     // dependent types
     typedef typename tile_type::index_type index_type;
-    typedef typename tile_type::order_type order_type;
+    typedef typename tile_type::packing_type packing_type;
 
     // other help
     typedef std::size_t size_type;
@@ -35,6 +35,8 @@ public:
     inline Grid(tile_type shape, storage_type && storage);
     // given a shape and a storage solution that can be instantiated using my shape info
     inline Grid(tile_type shape);
+    // given just the index extents
+    inline Grid(index_type shape);
 
     // interface
 public:

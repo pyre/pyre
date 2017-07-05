@@ -19,7 +19,7 @@ public:
     // my parts
     typedef sliceT slice_type;
     typedef typename slice_type::index_type index_type;
-    typedef typename slice_type::order_type order_type;
+    typedef typename slice_type::packing_type packing_type;
 
     // meta-methods
 public:

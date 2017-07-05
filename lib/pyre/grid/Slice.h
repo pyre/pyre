@@ -12,7 +12,7 @@
 
 
 // declaration
-template <typename indexT, typename orderT>
+template <typename indexT, typename packingT>
 class pyre::grid::Slice {
     // types
 public:
@@ -20,22 +20,22 @@ public:
     typedef std::size_t size_type;
     // aliases for my parts
     typedef indexT index_type;
-    typedef orderT order_type;
+    typedef packingT packing_type;
     // alias for me
-    typedef Slice<index_type, order_type> slice_type;
+    typedef Slice<index_type, packing_type> slice_type;
     // iterators
     typedef Iterator<slice_type> iterator_type;
 
     // meta-methods
 public:
-    // a slice is the set of indices [low, high) visited in a given order
-    Slice(const index_type & low, const index_type & high, const order_type & order);
+    // a slice is the set of indices [low, high) visited in a given packing
+    Slice(const index_type & low, const index_type & high, const packing_type & packing);
 
     // interface
 public:
     inline const auto & low() const;
     inline const auto & high() const;
-    inline const auto & order() const;
+    inline const auto & packing() const;
 
     // iteration support
     inline auto begin() const;
@@ -45,7 +45,7 @@ public:
 private:
     const index_type _low;
     const index_type _high;
-    const order_type _order;
+    const packing_type _packing;
 };
 
 

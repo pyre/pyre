@@ -5,10 +5,10 @@
 // (c) 1998-2017 all rights reserved
 //
 
-// exercise grid order construction:
+// exercise grid packing construction:
 //   verify that all the parts are accessible through the public headers
 //   verify constructor signatures
-//   assemble an ordering
+//   assemble a packing strategy
 //   verify it can be iterated
 
 // portability
@@ -21,21 +21,21 @@ int main() {
     // fix the representation
     typedef std::array<int, 4> rep_t;
     // alias
-    typedef pyre::grid::order_t<rep_t> order_t;
-    // instantiate an ordering
-    order_t order = {0, 1, 2, 3};
+    typedef pyre::grid::packing_t<rep_t> packing_t;
+    // instantiate an packinging
+    packing_t packing = {0, 1, 2, 3};
 
     // make a firewall
     pyre::journal::firewall_t channel("pyre.grid");
 
     // check the values one by one
-    for (order_t::size_type i=0; i < order.size(); ++i) {
+    for (packing_t::size_type i=0; i < packing.size(); ++i) {
         // check this one
-        if (order[i] != static_cast<order_t::value_type>(i)) {
+        if (packing[i] != static_cast<packing_t::value_type>(i)) {
             // complain
             channel
                 << pyre::journal::at(__HERE__)
-                << "index mismatch: " << order[i] << " != " << i
+                << "index mismatch: " << packing[i] << " != " << i
                 << pyre::journal::endl;
             // and bail
             return 1;

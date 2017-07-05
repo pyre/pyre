@@ -26,13 +26,13 @@ namespace pyre {
         // indices
         template <typename repT> class Index;
         // index ordering
-        template <typename repT> class Order;
+        template <typename repT> class Packing;
         // slices
-        template <typename indexT, typename orderT> class Slice;
+        template <typename indexT, typename packingT> class Slice;
         // iterators over index ranges
         template <typename sliceT> class Iterator;
         // tiles
-        template <typename indexT, typename orderT> class Tile;
+        template <typename indexT, typename packingT> class Tile;
 
         // grid
         template <typename cellT, typename tileT, typename storageT> class Grid;
@@ -45,13 +45,13 @@ namespace pyre {
 namespace pyre {
     namespace grid {
         template <typename repT> using index_t = Index<repT>;
-        template <typename repT> using order_t = Order<repT>;
+        template <typename repT> using packing_t = Packing<repT>;
 
-        template <typename indexT, typename orderT> using slice_t = Slice<indexT, orderT>;
+        template <typename indexT, typename packingT> using slice_t = Slice<indexT, packingT>;
 
         template <typename sliceT> using iterator_t = Iterator<sliceT>;
 
-        template <typename indexT, typename orderT> using tile_t = Tile<indexT, orderT>;
+        template <typename indexT, typename packingT> using tile_t = Tile<indexT, packingT>;
 
         // grid
         template <typename cellT, typename tileT, typename storageT>
@@ -88,15 +88,15 @@ namespace pyre {
 // for indices
 template <typename repT>
 auto & operator<< (std::ostream & stream, const pyre::grid::Index<repT> & index);
-// orders
+// packing strategies
 template <typename repT>
-auto & operator<< (std::ostream & stream, const pyre::grid::Order<repT> & order);
+auto & operator<< (std::ostream & stream, const pyre::grid::Packing<repT> & packing);
 // tiles
-template <typename indexT, typename orderT>
-auto & operator<< (std::ostream & stream, const pyre::grid::Tile<indexT, orderT> & tile);
+template <typename indexT, typename packingT>
+auto & operator<< (std::ostream & stream, const pyre::grid::Tile<indexT, packingT> & tile);
 
 // the object model
-#include "Order.h"
+#include "Packing.h"
 #include "Index.h"
 #include "Slice.h"
 #include "Iterator.h"
@@ -105,10 +105,10 @@ auto & operator<< (std::ostream & stream, const pyre::grid::Tile<indexT, orderT>
 #include "DirectGrid.h"
 
 // the implementations
-// order
-#define pyre_grid_Order_icc
-#include "Order.icc"
-#undef pyre_grid_Order_icc
+// packing
+#define pyre_grid_Packing_icc
+#include "Packing.icc"
+#undef pyre_grid_Packing_icc
 
 // index
 #define pyre_grid_Index_icc
