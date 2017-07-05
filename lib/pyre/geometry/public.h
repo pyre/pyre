@@ -52,6 +52,9 @@ namespace pyre {
         using index_t = pyre::grid::index_t<repT>;
 
         template <typename repT>
+        using shape_t = pyre::grid::shape_t<repT>;
+
+        template <typename repT>
         using packing_t = pyre::grid::packing_t<repT>;
 
         template <typename indexT, typename packingT>

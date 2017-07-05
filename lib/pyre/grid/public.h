@@ -45,6 +45,7 @@ namespace pyre {
 namespace pyre {
     namespace grid {
         template <typename repT> using index_t = Index<repT>;
+        template <typename repT> using shape_t = Index<repT>;
         template <typename repT> using packing_t = Packing<repT>;
 
         template <typename indexT, typename packingT> using slice_t = Slice<indexT, packingT>;
