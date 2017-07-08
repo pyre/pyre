@@ -25,6 +25,14 @@ Index(argT... value) :
 template <typename repT>
 constexpr auto
 pyre::grid::Index<repT>::
+dim() {
+    // ask my rep
+    return std::tuple_size<rep_type>::value;
+}
+
+template <typename repT>
+constexpr auto
+pyre::grid::Index<repT>::
 size() const {
     // easy enough
     return _index.size();

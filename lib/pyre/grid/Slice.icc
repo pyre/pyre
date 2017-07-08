@@ -55,7 +55,7 @@ auto
 pyre::grid::Slice<indexT, packingT>::
 begin() const {
     // easy enough...
-    return iterator_type{  *this };
+    return iterator_type{ *this };
 }
 
 

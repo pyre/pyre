@@ -31,6 +31,16 @@ shape() const {
 }
 
 
+// get the dimensionality of my index
+template <typename indexT, typename packingT>
+constexpr auto
+pyre::grid::Layout<indexT, packingT>::
+dim() {
+    // ask my index
+    return index_type::dim();
+}
+
+
 // compute the size of the layout
 template <typename indexT, typename packingT>
 auto

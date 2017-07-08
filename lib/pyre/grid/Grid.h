@@ -41,6 +41,9 @@ public:
 
     // interface
 public:
+    // the dimensionality of my index
+    inline static constexpr auto dim();
+
     // access to my shape
     inline const auto & layout() const;
     // access to my memory location

@@ -39,6 +39,16 @@ Grid(shape_type shape) :
     {}
 
 // interface
+// get the dimensionality of my index
+template <typename cellT, typename layoutT, typename storageT>
+constexpr auto
+pyre::grid::Grid<cellT, layoutT, storageT>::
+dim() {
+    // ask my layout
+    return layout_type::dim();
+}
+
+
 // accessors
 template <typename cellT, typename layoutT, typename storageT>
 const auto &

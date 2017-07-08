@@ -32,7 +32,9 @@ public:
 
     // interface
 public:
-    // size
+    // dimensionality
+    inline static constexpr auto dim();
+    // same as {dim} but as a member function
     inline constexpr auto size() const;
 
     // indexed access
