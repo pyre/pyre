@@ -17,10 +17,8 @@
 
 // entry point
 int main() {
-    // fix the representation
-    typedef std::array<int, 4> rep_t;
     // alias
-    typedef pyre::grid::packing_t<rep_t> packing_t;
+    typedef pyre::grid::packing_t<4> packing_t;
     // make a C-style interleaving
     packing_t packing = packing_t::rowMajor();
 

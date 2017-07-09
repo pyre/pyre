@@ -13,8 +13,8 @@
 
 
 // meta-methods
-template <typename repT> template <typename... argT>
-pyre::grid::Packing<repT>::
+template <pyre::grid::size_t dim> template <typename... argT>
+pyre::grid::Packing<dim>::
 Packing(argT... value) :
     _packing{value...}
 {}
@@ -22,12 +22,12 @@ Packing(argT... value) :
 
 // interface
 // factory of a c-like packing where the last index varies the fastest
-template <typename repT>
+template <pyre::grid::size_t dim>
 constexpr auto
-pyre::grid::Packing<repT>::
+pyre::grid::Packing<dim>::
 rowMajor() {
     // make an empty one
-    repT packing {};
+    rep_type packing {};
     // go through its slots
     for (size_t slot=0; slot < packing.size(); ++slot) {
         // and fill with consecutive decreasing integers
@@ -38,21 +38,21 @@ rowMajor() {
 }
 
 // the alias
-template <typename repT>
+template <pyre::grid::size_t dim>
 constexpr auto
-pyre::grid::Packing<repT>::
+pyre::grid::Packing<dim>::
 c() {
     // delegate
     return rowMajor();
 }
 
 // factory of a fortran-like packing where the first index varies the fastest
-template <typename repT>
+template <pyre::grid::size_t dim>
 constexpr auto
-pyre::grid::Packing<repT>::
+pyre::grid::Packing<dim>::
 columnMajor() {
     // make an empty one
-    repT packing{};
+    rep_type packing{};
     // go through its slots
     for (size_t slot=0; slot < packing.size(); ++slot) {
         // and fill with consecutive decreasing integers
@@ -63,26 +63,26 @@ columnMajor() {
 }
 
 // the alias
-template <typename repT>
+template <pyre::grid::size_t dim>
 constexpr auto
-pyre::grid::Packing<repT>::
+pyre::grid::Packing<dim>::
 fortran() {
     // delegate
     return columnMajor();
 }
 
 // dimensionality of the index
-template <typename repT>
+template <pyre::grid::size_t dim>
 constexpr auto
-pyre::grid::Packing<repT>::
+pyre::grid::Packing<dim>::
 size() const {
     // easy enough
     return _packing.size();
 }
 
-template <typename repT>
+template <pyre::grid::size_t dim>
 auto
-pyre::grid::Packing<repT>::
+pyre::grid::Packing<dim>::
 operator[] (size_type item) const {
     // bounds check
 #if defined(DEBUG_CHECK_BOUNDS)
@@ -102,27 +102,27 @@ operator[] (size_type item) const {
 }
 
 // loops
-template <typename repT>
+template <pyre::grid::size_t dim>
 auto
-pyre::grid::Packing<repT>::
+pyre::grid::Packing<dim>::
 begin() const {
     // the array itself is the beginning
     return _packing.cbegin();
 }
 
 
-template <typename repT>
+template <pyre::grid::size_t dim>
 auto
-pyre::grid::Packing<repT>::
+pyre::grid::Packing<dim>::
 end() const {
     // compute the element "one past the end"
     return _packing.cend();
 }
 
 
-template <typename repT>
+template <pyre::grid::size_t dim>
 auto &
-operator<<(std::ostream & stream, const pyre::grid::Packing<repT> & packing) {
+operator<<(std::ostream & stream, const pyre::grid::Packing<dim> & packing) {
     // initialize; do it in this scope scope so we can use the iterator after the loop
     auto v = packing.begin();
     // inject up to the last coordinate

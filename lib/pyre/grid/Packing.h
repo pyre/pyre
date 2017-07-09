@@ -12,12 +12,12 @@
 
 
 // declaration
-template <typename repT>
+template <pyre::grid::size_t dim>
 class pyre::grid::Packing {
     // types
 public:
     // the container with the index packing
-    typedef repT rep_type;
+    typedef std::array<size_t, dim> rep_type;
     // for sizing things
     typedef typename rep_type::size_type size_type;
     // the base type of my values

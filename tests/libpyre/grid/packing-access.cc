@@ -18,12 +18,10 @@
 
 // entry point
 int main() {
-    // fix the representation
-    typedef std::array<int, 4> rep_t;
     // alias
-    typedef pyre::grid::packing_t<rep_t> packing_t;
+    typedef pyre::grid::packing_t<4> packing_t;
     // instantiate an packinging
-    packing_t packing = {0, 1, 2, 3};
+    packing_t packing = {0u, 1u, 2u, 3u};
 
     // make a firewall
     pyre::journal::firewall_t channel("pyre.grid");

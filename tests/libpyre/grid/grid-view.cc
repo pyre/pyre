@@ -24,8 +24,7 @@ int main() {
     // layout
     typedef std::array<int, 3> rep_t;
     typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::packing_t<rep_t> packing_t;
-    typedef pyre::grid::layout_t<index_t, packing_t> layout_t;
+    typedef pyre::grid::layout_t<index_t> layout_t;
     // storage
     typedef pyre::memory::view_t view_t;
     // grid
@@ -35,7 +34,7 @@ int main() {
     pyre::journal::debug_t channel("pyre.grid");
 
     // make an ordering
-    layout_t::packing_type packing {2, 1, 0};
+    layout_t::packing_type packing {2u, 1u, 0u};
     // make a layout
     layout_t::shape_type shape {6, 4, 2};
     // make a layout

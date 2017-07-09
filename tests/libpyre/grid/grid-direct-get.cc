@@ -25,8 +25,7 @@ int main() {
     // shape
     typedef std::array<int, 3> rep_t;
     typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::packing_t<rep_t> packing_t;
-    typedef pyre::grid::layout_t<index_t, packing_t> layout_t;
+    typedef pyre::grid::layout_t<index_t> layout_t;
     // convenience
     typedef pyre::memory::uri_t uri_t;
     // storage
@@ -34,10 +33,10 @@ int main() {
     // grid
     typedef pyre::grid::directgrid_t<cell_t, layout_t, constdirect_t> grid_t;
 
-    // make an ordering
-    layout_t::packing_type packing {2, 1, 0};
     // make a shape
     layout_t::shape_type shape {6, 4, 5};
+    // make an ordering
+    layout_t::packing_type packing {2u, 1u, 0u};
     // make a layout
     layout_t layout {shape, packing};
 

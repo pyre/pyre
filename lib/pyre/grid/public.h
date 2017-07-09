@@ -26,7 +26,7 @@ namespace pyre {
         // indices
         template <typename repT> class Index;
         // index ordering
-        template <typename repT> class Packing;
+        template <size_t dim> class Packing;
         // slices
         template <typename indexT, typename packingT> class Slice;
         // iterators over index ranges
@@ -41,18 +41,21 @@ namespace pyre {
     }
 }
 
-// type aliases for the above
+// type aliases for the above; these are the type names that form the public interface of this
+// package; please consider anything else in this file as an implementation detail
 namespace pyre {
     namespace grid {
         template <typename repT> using index_t = Index<repT>;
         template <typename repT> using shape_t = Index<repT>;
-        template <typename repT> using packing_t = Packing<repT>;
+        template <size_t dim> using packing_t = Packing<dim>;
 
-        template <typename indexT, typename packingT> using slice_t = Slice<indexT, packingT>;
+        template <typename indexT, typename packingT = Packing<indexT::dim()>>
+        using slice_t = Slice<indexT, packingT>;
 
         template <typename sliceT> using iterator_t = Iterator<sliceT>;
 
-        template <typename indexT, typename packingT> using layout_t = Layout<indexT, packingT>;
+        template <typename indexT, typename packingT = Packing<indexT::dim()>>
+        using layout_t = Layout<indexT, packingT>;
 
         // grid
         template <typename cellT, typename layoutT, typename storageT>
@@ -67,7 +70,7 @@ namespace pyre {
                    typename cellT = double,
                    typename repT = std::array<int, dim>,
                    typename storageT = pyre::memory::heap_t>
-        using simple_t = Grid<cellT, Layout<Index<repT>, Packing<repT>>, storageT>;
+        using simple_t = Grid<cellT, Layout<Index<repT>, Packing<dim>>, storageT>;
     }
 }
 
@@ -98,8 +101,8 @@ namespace pyre {
 template <typename repT>
 auto & operator<< (std::ostream & stream, const pyre::grid::Index<repT> & index);
 // packing strategies
-template <typename repT>
-auto & operator<< (std::ostream & stream, const pyre::grid::Packing<repT> & packing);
+template <size_t dim>
+auto & operator<< (std::ostream & stream, const pyre::grid::Packing<dim> & packing);
 // layouts
 template <typename indexT, typename packingT>
 auto & operator<< (std::ostream & stream, const pyre::grid::Layout<indexT, packingT> & layout);

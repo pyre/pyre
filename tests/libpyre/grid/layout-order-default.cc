@@ -22,8 +22,7 @@ int main() {
     typedef std::array<int, 4> rep_t;
     // build the parts
     typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::packing_t<rep_t> packing_t;
-    typedef pyre::grid::layout_t<index_t, packing_t> layout_t;
+    typedef pyre::grid::layout_t<index_t> layout_t;
 
     // make a shape
     layout_t::index_type shape {2, 3, 4, 5};

@@ -21,11 +21,10 @@ int main() {
     typedef std::array<int, 4> rep_t;
     // build the parts
     typedef pyre::grid::index_t<rep_t> index_t;
-    typedef pyre::grid::packing_t<rep_t> packing_t;
-    typedef pyre::grid::slice_t<index_t, packing_t> slice_t;
+    typedef pyre::grid::slice_t<index_t> slice_t;
 
     // make a packing strategy
-    slice_t::packing_type packing {3, 2, 1, 0};
+    slice_t::packing_type packing {3u, 2u, 1u, 0u};
     // make a lower bound
     slice_t::index_type low {0, 0, 0, 0};
     // make an upper bound
