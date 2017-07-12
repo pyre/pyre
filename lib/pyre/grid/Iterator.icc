@@ -45,10 +45,15 @@ template <typename sliceT>
 pyre::grid::Iterator<sliceT> &
 pyre::grid::Iterator<sliceT>::
 operator++ () {
+    // get the lower limits for the slice indices
+    const auto & low = _slice.low();
+    // and the upper limits
+    const auto & high = _slice.high();
+
     // pull the indices in the order specified by the slice packing
     for (auto dim : _slice.packing()) {
         // get the associated limit
-        auto limit = _slice.high()[dim];
+        auto limit = high[dim];
         // get my current value for this component and increment it
         auto value = ++(_current[dim]);
         // if the value didn't overflow
@@ -59,11 +64,11 @@ operator++ () {
             return *this;
         }
         // otherwise, we overflowed; set this component to its starting value and grab the next one
-        _current[dim] = _slice.low()[dim];
+        _current[dim] = low[dim];
     }
 
     // if we get this far, every component has overflowed
-    _current = _slice.high();
+    _current = high;
 
     // all done
     return *this;
@@ -74,18 +79,18 @@ operator++ () {
 template <typename sliceT>
 auto
 pyre::grid::
-operator==(const Iterator<sliceT> & one, const Iterator<sliceT> & two) {
+operator==(const Iterator<sliceT> & left, const Iterator<sliceT> & right) {
     // delegate to the standard algorithm
-    return std::equal((*one).begin(), (*one).end(), (*two).begin());
+    return std::equal((*left).begin(), (*left).end(), (*right).begin());
 }
 
 
 template <typename sliceT>
 auto
 pyre::grid::
-operator!=(const Iterator<sliceT> & one, const Iterator<sliceT> & two) {
+operator!=(const Iterator<sliceT> & left, const Iterator<sliceT> & right) {
     // easy enough
-    return !(one == two);
+    return !(left == right);
 }
 
 
