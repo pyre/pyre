@@ -14,6 +14,16 @@ For more details, see http://pyre.orthologue.com.
 For terms of use, see pyre.license()
 """
 
+# version check
+# python version information is in {sys.version}
+import sys
+# unwrap
+major, minor, _, _, _ = sys.version_info
+# check
+if major < 3 or (major == 3 and minor < 5):
+    # complain
+    raise RuntimeError("pyre needs python 3.5 or newer")
+
 
 # convenience
 def resolve(uri):
