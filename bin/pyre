@@ -7,61 +7,20 @@
 # (c) 1998-2017 all rights reserved
 #
 
-# version check
-# python version information is in {sys.version}
-import sys
-# unwrap
-major, minor, _, _, _ = sys.version_info
-# check
-if major < 3 or (major == 3 and minor < 5):
-    # complain
-    raise RuntimeError("pyre needs python 3.5 or newer")
-
-# settings for interactive use of python
-# attempt to enable readline
-try:
-    import readline
-# not there
-except ImportError:
-    # bail
-    print("    readline not available")
-# success!
-else:
-    # turn on completion
-    import rlcompleter
-    # check which interface is available and do the right thing
-    if 'libedit' in readline.__doc__:
-        readline.parse_and_bind("bind -v")
-        readline.parse_and_bind("bind ^I rl_complete")
-    else:
-        readline.parse_and_bind("tab: complete")
-    # form the path to the history file
-    import os
-    history = os.path.join(os.path.expanduser('~'), '.pyre-history')
-    # attempt to read it
-    try:
-        readline.read_history_file(history)
-    except IOError:
-        pass
-    # and make sure it gets saved
-    import atexit
-    atexit.register(readline.write_history_file, history)
-
-# add the current directory to the path
-sys.path = [''] + sys.path
-
-# turn on debugging in packages that support it
-# pyre_debug = { "pyre.framework", "pyre.filesystem", "pyre.calc" }
-
-# framework access
+# get support
 import pyre
-# get the code package
-import code
-# adjust the prompts
-sys.ps1 = 'pyre: '
-sys.ps2 = '  ... '
-# enter interactive mode
-code.interact(banner=pyre.meta.banner, local=locals())
+
+# build a shell
+shell = pyre.shells.interactive()(name='pyre.shell')
+# make a context
+context = {
+    'pyre': pyre
+}
+# make a banner
+banner = pyre.meta.header
+
+# and launch it
+shell.pyre_interactiveSession(banner=banner, context=context)
 
 # configure the garbage collector
 # import gc
