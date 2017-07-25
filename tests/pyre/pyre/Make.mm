@@ -12,7 +12,7 @@ PROJ_TIDY += __pycache__
 # the standard targets
 all: test clean
 
-test: sanity api regressions
+test: sanity api traits regressions
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -20,6 +20,9 @@ sanity:
 api:
 	${PYTHON} ./loadConfiguration.py
 	${PYTHON} ./resolve.py
+
+traits:
+	${PYTHON} ./spaces.py
 
 regressions:
 	${PYTHON} ./defaults.py

@@ -50,7 +50,7 @@ class Assignment(Event):
         # chain up
         super().__init__(**kwds)
         # extract my name
-        self.name = token.lexeme.split(self.scopeSeparator)
+        self.name = [fragment.strip() for fragment in token.lexeme.split(self.scopeSeparator)]
         # save the source of the token
         self.locator = token.locator
         # all done
