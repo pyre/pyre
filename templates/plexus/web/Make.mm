@@ -1,7 +1,8 @@
 # -*- Makefile -*-
 #
-# {project.authors}
-# {project.affiliations}
+# authors:
+#   {project.authors}
+#
 # (c) {project.span} all rights reserved
 #
 
@@ -9,12 +10,24 @@
 include {project.name}.def
 # my subdirectories
 RECURSE_DIRS = \
-    www \
-    apache \
+    fonts \
+    graphics \
+    scripts \
+    styles \
+
+
+# layout
+PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
+PROJ_WEBPACK_CONFIG = config
+PROJ_WEBPACK_SOURCES = react
+PROJ_CLEAN += ${{addprefix $(PROJ_TMPDIR)/, build $(PROJ_WEBPACK_SOURCES)}}
+
+# the exported items
+EXPORT_WEB = \
+   $(PROJ_TMPDIR)/build/*
 
 # standard targets
-all:
-	BLD_ACTION="all" $(MM) recurse
+all: webpack.deps webpack.build export
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -25,13 +38,10 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-live: live-dirs
+export:: export-web
+	BLD_ACTION="export" $(MM) recurse
+
+live: live-dirs live-web
 	BLD_ACTION="live" $(MM) recurse
-
-#  shortcuts for building specific subdirectories
-.PHONY: $(RECURSE_DIRS)
-
-$(RECURSE_DIRS):
-	(cd $@; $(MM))
 
 # end of file

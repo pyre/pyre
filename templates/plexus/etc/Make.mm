@@ -9,15 +9,7 @@
 include {project.name}.def
 # my subdirectories
 RECURSE_DIRS = \
-    {project.name} \
-    lib \
-    extension \
-    defaults \
-    etc \
-    web \
-    bin \
-    doc \
-    tests \
+    apache \
 
 # standard targets
 all:
@@ -34,12 +26,6 @@ distclean::
 
 live: live-dirs
 	BLD_ACTION="live" $(MM) recurse
-
-# convenience
-build: {project.name} lib extension defaults
-
-test: build tests
-
 
 #  shortcuts for building specific subdirectories
 .PHONY: $(RECURSE_DIRS)

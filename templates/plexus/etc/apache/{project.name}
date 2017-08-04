@@ -14,20 +14,24 @@
     # make sure there is a usable locale
     SetEnv LANG en_US.UTF-8
     # and a python path
-    SetEnv PYTHONPATH ~/live/packages
+    SetEnv PYTHONPATH {project.live.root}/packages
 
     # the web
     DocumentRoot {project.live.web}
     <Directory />
         Options Indexes FollowSymLinks MultiViews
-        Require all granted
+        AllowOverride None
+        Order allow,deny
+        Allow from all
     </Directory>
 
     # the applications
     ScriptAlias /bin/ {project.live.root}/bin
     <Directory "/bin">
+        AllowOverride None
         Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
-        Require all granted
+        Order allow,deny
+        Allow from all
     </Directory>
 
     # what to log; possible values include:

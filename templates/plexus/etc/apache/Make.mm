@@ -8,7 +8,7 @@
 # project defaults
 include {project.name}.def
 # the package name
-PACKAGE = web/apache
+PACKAGE = etc/apache
 
 # the standard build targets
 all: tidy
