@@ -8,6 +8,8 @@
 
 # project settings
 include {project.name}.def
+# the package
+PACKAGE = web
 # my subdirectories
 RECURSE_DIRS = \
     fonts \
