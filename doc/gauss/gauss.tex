@@ -9,16 +9,16 @@
 % adjust the paths
 \makeatletter
 \providecommand*{\input@path}{}
-\edef\input@path{{sections/}{config/}\input@path}
+\edef\input@path{{config/}\input@path}
 \makeatother
 
 % here we go
 \documentclass[titlepage]{article}
 
 % packages, setup, macros, etc.
-\input{setup}
-\input{meta}
-\input{macros}
+\input{config/setup}
+\input{config/meta}
+\input{config/macros}
 
 % the document
 \title{Building scientific applications using \pyre}
@@ -30,7 +30,7 @@
 \maketitle
 \setcounter{page}{1}
 %\pagenumbering{roman}
-\input{abstract}
+\input{sections/abstract}
 \tableofcontents
 %\newpage
 %\listoffigures
@@ -42,25 +42,23 @@
 %\setcounter{page}{1}
 
 % the body
-\input{introduction}
+\input{sections/introduction}
 
 % a bit of theory
-\input{montecarlo}
+\input{sections/montecarlo}
 
 % the simple solutions
-\input{simple}
+\input{sections/simple}
 % going object oriented
-\input{classes}
+\input{sections/classes}
 % component mining
-\input{components}
+\input{sections/components}
 
 % NYI
-\input{pyreapp}
-%\input{sec_web}
-%\input{sec_gui}
-%\input{sec_services}
+\input{sections/pyreapp}
 
-\input{epilogue}
+% last words
+\input{sections/epilogue}
 
 % references
 \newpage
