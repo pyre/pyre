@@ -19,10 +19,10 @@ version = (major, minor, revision)
 # decorations for the help system
 copyright = "copyright (c) 1998-2017 all rights reserved"
 
-banner = """
+banner = f"""
     pyre {major}.{minor} revision {revision}
     {copyright}
-""".format(major=major, minor=minor, revision=revision, copyright=copyright)
+"""
 
 header = banner + """
 author:

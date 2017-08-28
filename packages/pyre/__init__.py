@@ -20,9 +20,9 @@ import sys
 # unwrap
 major, minor, _, _, _ = sys.version_info
 # check
-if major < 3 or (major == 3 and minor < 5):
+if major < 3 or (major == 3 and minor < 6):
     # complain
-    raise RuntimeError("pyre needs python 3.5 or newer")
+    raise RuntimeError("pyre needs python 3.6 or newer")
 
 
 # convenience
