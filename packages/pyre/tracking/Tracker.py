@@ -24,19 +24,20 @@ class Tracker:
         return self.log[key]
 
 
-    def track(self, key, value):
+    def track(self, key, node):
         """
         Add {value} to the history of {key}
         """
-        self.log[key].append(value)
+        self.log[key].append(node)
         return
 
 
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
-
+        # the index of historical values
         self.log = collections.defaultdict(list)
-
+        # all done
         return
 
 

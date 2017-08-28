@@ -21,7 +21,7 @@ class Slot(Dashboard, metaclass=calc.calculator):
 
     All configuration information recovered from the command line, configuration files or
     explicit assignments to the {configurator} is stored in slots. The {configurator} maintains
-    a map from a hashed version of the public name of the key to a slot.
+    a map from the hashed version of a public name to a slot.
 
     Similarly, all component classes and instances store the values of their properties and
     facilities in slots. The {pyre_inventory} dictionary is a map from trait descriptors to the
