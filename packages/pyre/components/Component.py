@@ -122,6 +122,33 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return
 
 
+    # trait access with optional metadata
+    def pyre_setTrait(self, alias, value, priority=None, locator=None):
+        """
+        Assign {value} to the trait named {alias}
+        """
+        # identify the trait descriptor
+        trait = self.pyre_trait(alias)
+        # build a locator
+        locator = tracking.here(level=1) if locator is None else locator
+        # build a priority
+        priority = self.pyre_executive.priority.explicit() if priority is None else priority
+        # set the value
+        return self.pyre_inventory.setTrait(
+            trait=trait, factory=trait.instanceSlot,
+            value=value, priority=priority, locator=locator)
+
+
+    def pyre_getTrait(self, alias):
+        """
+        Retrieve the value and meta-data associated with the trait named {alias}
+        """
+        # identify the trait descriptor
+        trait = self.pyre_trait(alias)
+        # ask my inventory to do the rest
+        return self.pyre_inventory.getTrait(trait), self.pyre_inventory.getTraitLocator(trait)
+
+
     # framework notifications
     def pyre_registered(self):
         """
@@ -183,14 +210,27 @@ class Component(Configurable, metaclass=Actor, internal=True):
     def pyre_where(self, attribute=None):
         """
         Return the locator associated with {attribute}; if no attribute name is given, return
-        the locator of the component
+        the locator of the component instance
         """
         # if no name is given, return my locator
         if attribute is None: return self.pyre_locator
-        # otherwise, find the slot
-        slot = self.pyre_slot(attribute=attribute)
-        # and return its locator
-        return slot.locator
+        # otherwise, find the trait descriptor associated with this {attribute}
+        trait = self.pyre_trait(alias=attribute)
+        # and return its meta-data
+        return self.pyre_inventory.getTraitLocator(trait)
+
+
+    @classmethod
+    def pyre_classWhere(cls, attribute=None):
+        """
+        Return the component class locator
+        """
+        # if no name is given, return my locator
+        if attribute is None: return cls.pyre_locator
+        # otherwise, find the trait descriptor associated with this {attribute}
+        trait = cls.pyre_trait(alias=attribute)
+        # and return its meta-data
+        return cls.pyre_inventory.getTraitLocator(trait)
 
 
     # meta methods
@@ -295,7 +335,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
             canonical = self.pyre_namemap[name]
         # if the name is not in the name map
         except KeyError:
-            # this must a non-trait attribute
+            # this must be a non-trait attribute
             return super().__setattr__(name, value)
 
         # find the trait

@@ -11,7 +11,7 @@ from ..framework.Dashboard import Dashboard
 
 
 # declaration
-class Inventory(dict, Dashboard):
+class Inventory(Dashboard):
     """
     Base class for the state storage strategies for component classes and instances
     """
@@ -20,7 +20,7 @@ class Inventory(dict, Dashboard):
     # public data
     name = None # by default, components have no name
     fragments = () # by default, components have no family name
-    package = None # by default, components have no family names
+    package = None # by default, components don't belong to a package
 
 
     # interface
@@ -46,9 +46,24 @@ class Inventory(dict, Dashboard):
 
     # meta-methods
     def __init__(self, slots, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # initialize my table
+        self.traits = {}
         # load the slots
-        self.update(slots)
+        self.traits.update(slots)
+        # all done
+        return
+
+
+    def __getitem__(self, trait):
+        # ask my table
+        return self.traits[trait]
+
+
+    def __setitem__(self, trait, item):
+        # punt
+        self.traits[trait] = item
         # all done
         return
 

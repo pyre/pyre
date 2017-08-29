@@ -63,7 +63,7 @@ class PublicInventory(Inventory):
     # slot access
     def setTrait(self, trait, **kwds):
         """
-        Set the value of the slot associated with {trait}
+        Set the value of the slot associated with the given {trait} descriptor
         """
         # hash the trait name
         key = self.key[trait.name]
@@ -75,6 +75,34 @@ class PublicInventory(Inventory):
         return
 
 
+    def getTrait(self, trait):
+        """
+        Get the value associated with this {trait} descriptor
+        """
+        # hash the trait name
+        key = self.key[trait.name]
+        # access the nameserver
+        nameserver = self.pyre_nameserver
+        # ask it for the slot
+        slot = nameserver.getNode(key)
+        # return the value
+        return slot.value
+
+
+    def getTraitLocator(self, trait):
+        """
+        Get the location of last assignment for this {trait}
+        """
+        # hash the trait name
+        key = self.key[trait.name]
+        # access the nameserver
+        nameserver = self.pyre_nameserver
+        # ask it for the meta-data
+        info = nameserver.getInfo(key)
+        # return the locator
+        return info.locator
+
+
     # support for constructing component classes and instances
     @classmethod
     def initializeClass(cls, component, family, **kwds):
@@ -82,9 +110,6 @@ class PublicInventory(Inventory):
         Build inventory appropriate for a component instance that has a publicly visible name and
         is registered with the nameserver
         """
-        # get the locator
-        locator = component.pyre_locator
-
         # register the class with the executive
         key = component.pyre_executive.registerComponentClass(family=family, component=component)
         # register with the component registrar
@@ -98,7 +123,7 @@ class PublicInventory(Inventory):
         slots = itertools.chain(local, inherited)
 
         # register them with the nameserver
-        slots = cls.registerSlots(key=key, slots=slots, locator=locator)
+        slots = cls.registerSlots(key=key, slots=slots, locator=component.pyre_locator)
 
         # build the inventory
         inventory = cls(key=key, slots=slots)
@@ -256,8 +281,11 @@ class PublicInventory(Inventory):
 
     # meta-methods
     def __init__(self, key, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the key
         self.key = key
+        # all done
         return
 
 

@@ -62,6 +62,8 @@ component-class:
 	${PYTHON} ./component_class_binding_conversions.py
 	${PYTHON} ./component_class_validation.py
 	${PYTHON} ./component_class_trait_matrix.py
+	${PYTHON} ./component_class_private_locators.py
+	${PYTHON} ./component_class_public_locators.py
 	${PYTHON} ./component_class_inventory.py
 
 component-instance:
@@ -79,6 +81,8 @@ component-instance:
 	${PYTHON} ./component_instance_binding_existing.py
 	${PYTHON} ./component_instance_binding_deferred.py
 	${PYTHON} ./component_instance_validation.py
+	${PYTHON} ./component_instance_private_locators.py
+	${PYTHON} ./component_instance_public_locators.py
 	${PYTHON} ./component_aliases.py --functor.μ=0.10 --gaussian.σ=0.10
 
 component-multi:

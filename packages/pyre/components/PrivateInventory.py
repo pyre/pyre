@@ -30,15 +30,33 @@ class PrivateInventory(Inventory):
         Set the value of the slot associated with {trait}
         """
         # grab the old slot
-        old = self[trait]
+        old = self.traits[trait]
         # use the factory to make a new slot
         new = factory(value=value)
         # replace references to the old slot
         new.replace(old)
         # and attach the new one
-        self[trait] = new
+        self.traits[trait] = new
         # all done
         return
+
+
+    def getTrait(self, trait):
+        """
+        Get the value associated with this {trait} descriptor
+        """
+        # get the slot
+        slot = self.traits[trait]
+        # return the value, along with empty meta-data
+        return slot.value
+
+
+    def getTraitLocator(self, trait):
+        """
+        Retrieve the location of last assignment for this {trait}
+        """
+        # private inventories don't track trait meta-data
+        return tracking.unknown()
 
 
     # support for building component classes and instances
@@ -80,8 +98,12 @@ class PrivateInventory(Inventory):
         cls.pyre_registrar.registerComponentInstance(instance=instance)
         # invoke the registration hook
         instance.pyre_registered()
-        # build the inventory out of the instance slots and attach it
-        instance.pyre_inventory = cls(slots=cls.instanceSlots(instance=instance))
+        # prime the slot generator
+        slots = cls.instanceSlots(instance=instance)
+        # build the inventory
+        inventory = cls(slots=slots)
+        # and attach it
+        instance.pyre_inventory = inventory
         # invoke the configuration hook and pass on any errors
         yield from instance.pyre_configured()
         # all done

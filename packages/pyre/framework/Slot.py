@@ -70,7 +70,7 @@ class Slot(Dashboard, metaclass=calc.calculator):
     class literal:
         """Representation of foreign values"""
         def __init__(self, key=None, **kwds):
-            # chain up with a blank key
+            # chain up
             super().__init__(key=key, **kwds)
             # and return
             return
