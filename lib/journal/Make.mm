@@ -26,7 +26,10 @@ PROJ_SRCS = \
 # the products
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SAR)
 PROJ_DLL = $(BLD_LIBDIR)/lib$(PACKAGE).$(EXT_SO)
+# the private build space
 PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/lib/$(PACKAGE)
+# what to clean
+PROJ_CLEAN += $(EXPORT_LIBS) $(EXPORT_INCDIR)
 
 # what to export
 # the library
