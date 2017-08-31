@@ -215,9 +215,9 @@ class Path(tuple):
         # if i am an absolute path
         if self.anchor:
             # splice my representation into a valid 'file:' uri
-            return "file://{}".format(self)
+            return f"file://{self}"
         # otherwise, build an error message
-        msg = "'{}' is a relative path and can't be expressed as a URI".format(self)
+        msg = f"'{self}' is a relative path and can't be expressed as a URI"
         # and complain
         raise ValueError(msg)
 
@@ -255,15 +255,20 @@ class Path(tuple):
         """
         # coerce {other} into a path
         other = self.coerce(other)
+
         # the {path} exists iff {other} is a subsequence of {self}
+        if len(other) > len(self):
+            # no way
+            raise ValueError(f"{str(other)!r} is not a parent of {str(self)!r}")
+        # now check the individual levels
         for mine, hers in zip(self, other):
             # if they are not identical
             if mine != hers:
                 # build the message
-                error = "{!r} does not start with {!r}".format(str(self), str(other))
-                location = "{} doesn't match {}".format(mine, hers)
+                error = f"'{self}' does not start with '{other}'"
+                location = f"'{mine}' doesn't match '{hers}'"
                 # and complain
-                raise ValueError("{}: {}".format(error, location))
+                raise ValueError(f"{error}: {location}")
 
         # what's left is the answer
         return super().__new__(type(self), self[len(other):])
@@ -276,7 +281,7 @@ class Path(tuple):
         # check that the name has no separators in it
         if self._SEP in name:
             # complain
-            raise ValueError("invalid name {!r}".format(str(name)))
+            raise ValueError(f"invalid name '{name}'")
         # replace my name and build a new path
         return super().__new__(type(self), self[:-1] + (name,))
 
@@ -288,7 +293,7 @@ class Path(tuple):
         # check that the suffix is valid
         if suffix and (not suffix.startswith('.') or self._SEP in suffix):
             # complain
-            raise ValueError("invalid suffix {!r}".format(str(suffix)))
+            raise ValueError(f"invalid suffix '{suffix}'")
         # get my name
         name = self.name
         # get my suffix
@@ -335,7 +340,7 @@ class Path(tuple):
             # if this fails
             except KeyError:
                 # most likely cause is
-                msg = "the user {!r} is not in the password database".format(user)
+                msg = f"the user '{user}' is not in the password database"
                 # so complain
                 raise RuntimeError(msg)
         # if we get this far, we have the name of the path; build a path and return it
@@ -566,8 +571,10 @@ class Path(tuple):
         else:
             # leave no marker in the beginning
             marker = ''
+        # build the body out of the remaining parts
+        body = sep.join(i)
         # ok, let's put this all together
-        return '{}{}'.format(marker, sep.join(i))
+        return f'{marker}{body}'
 
 
     def __bool__(self):
@@ -637,7 +644,7 @@ class Path(tuple):
             # anything else
             else:
                 # is an error
-                msg = "can't parse '{}', of type {}".format(arg, type(arg))
+                msg = f"can't parse '{arg}', of type {type(arg)}"
                 # so complain
                 raise TypeError(msg)
 

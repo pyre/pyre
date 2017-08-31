@@ -43,6 +43,19 @@ def test():
     # and something a bit more complicated
     assert str((home/here).relativeTo(home)) == str(here)
 
+    # check that
+    try:
+        # this fails because {here} is a child of {home}
+        (root / home).relativeTo(total)
+    # if caught
+    except ValueError:
+        # all good
+        pass
+    # if not
+    else:
+        # complain
+        assert False, f"'{root/home}' is not a child of '{total}'"
+
     # all done
     return
 
