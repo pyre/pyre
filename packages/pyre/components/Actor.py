@@ -100,6 +100,9 @@ class Actor(Requirement):
         """
         Build an instance of one of my classes
         """
+        # ask the component class for any opinions on the name of this instance
+        name = self.pyre_normalizeInstanceName(name)
+
         # if I know the name
         if name:
             # get the registrar
@@ -120,7 +123,7 @@ class Actor(Requirement):
                 # merge global settings
                 nameserver.pullGlobalIntoScope(scope=name, symbols=aliases)
 
-        # otherwise, record the caller's location
+        # in any case, record the caller's location
         locator = tracking.here(1) if locator is None else locator
         # build the instance
         instance = super().__call__(name=name, locator=locator, **kwds)
@@ -132,7 +135,7 @@ class Actor(Requirement):
 
         # if there were any
         if initializationErrors:
-            # complain; no need to include the now obsolete configuration errors
+            # complain
             raise instance.ConfigurationError(configurable=instance, errors=initializationErrors)
 
         # and return it
@@ -144,7 +147,7 @@ class Actor(Requirement):
         Trap attribute setting in my class record instances to support setting the default
         value using the natural syntax
         """
-        # print("Actor.__setattr__: {!r}<-{!r}".format(name, value))
+        # print(f"Actor.__setattr__: '{name}'<-'{value}'")
         # in the early states of decorating component class records, it is important to
         # recognize internal attributes
         if name.startswith('pyre_'):
@@ -177,10 +180,12 @@ class Actor(Requirement):
     def __str__(self):
         # get my family name
         family = self.pyre_family()
-        # if i gave one, use it
-        if family: return 'component {!r}'.format(family)
+        # if i have one
+        if family:
+            # use it
+            return f"component '{family}'"
         # otherwise, use my class name
-        return 'component {.__name__!r}'.format(self)
+        return f"component '{self.__name__}'"
 
 
     # implementation details

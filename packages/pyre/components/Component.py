@@ -88,7 +88,19 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # and my family name
         family = self.pyre_family() or "<none>"
         # build the spec and return it
-        return "{} # {}".format(family, name)
+        return f"{family} # {name}"
+
+
+    @classmethod
+    def pyre_normalizeInstanceName(cls, name):
+        """
+        Give a component a chance to normalize the {name} of an instance that is about to
+        be created
+        """
+        # show me
+        # print(f"{cls}: leaving '{name}' alone")
+        # by default, leave it alone
+        return name
 
 
     @classmethod
@@ -275,17 +287,19 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # if i have one:
         if name is not None:
             # use it
-            fragments.append('component {!r}'.format(name))
+            fragments.append(f"component '{name}'")
         # get my family name
         family = self.pyre_family()
         # if i have one
         if family:
             # use it
-            fragments.append('an instance of {!r}'.format(family))
+            fragments.append(f"an instance of '{family}'")
         # otherwise
         else:
-            # leave a marker
-            fragments.append('an instance of {!r}'.format(type(self).__name__))
+            # find the name of my class
+            marker = type(self).__name__
+            # and use it
+            fragments.append(f"an instance of '{marker}'")
         # assemble
         return ', '.join(fragments)
 
@@ -302,7 +316,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # if it's not one of my traits
         except KeyError:
             # get someone else to do the work
-            raise AttributeError("{} has no attribute {!r}".format(self, name)) from None
+            raise AttributeError(f"{self} has no attribute '{name}'") from None
 
         # if the normalized name is the same as the original
         if normal == name:
@@ -359,12 +373,12 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Check whether {cls} is assignment compatible with {spec}, i.e. whether it provides at
         least the properties and behaviors specified by {spec}
         """
-        # print("CP: me={}, other={}".format(cls, spec))
+        # print(f"CP: me={cls}, other={spec}")
         # chain up
         report = super().pyre_isCompatible(spec=spec, fast=fast)
         # if an incompatibility were detected and we are not interested in the full picture
         if fast and not report.isClean:
-            # print(' ** early exit: {}'.format(report.incompatibilities))
+            # print(f' ** early exit: {report.incompatibilities}')
             # we are done
             return report
 
