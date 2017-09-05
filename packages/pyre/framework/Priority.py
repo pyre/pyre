@@ -18,6 +18,9 @@ import collections # for defaultdict
 class Priority:
 
 
+    # by default
+    category = None
+
     # the priority category types; patched later in this file
     uninitialized = None
     defaults = None
@@ -51,11 +54,12 @@ class Priority:
     # private data
     collator = collections.defaultdict(itertools.count)
     # narrow the footprint
-    __slots__ = ("category", "rank")
+    __slots__ = ["rank"]
 
 
 # build a counter
 categories = itertools.count(start=-1)
+
 
 # specific priority categories
 class Uninitialized(Priority):
@@ -65,6 +69,9 @@ class Uninitialized(Priority):
     """
     # public data
     category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
 
 class Defaults(Priority):
     """
@@ -73,6 +80,9 @@ class Defaults(Priority):
     """
     # public data
     category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
 
 class Boot(Priority):
     """
@@ -80,6 +90,9 @@ class Boot(Priority):
     """
     # public data
     category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
 
 class Package(Priority):
     """
@@ -88,6 +101,9 @@ class Package(Priority):
     """
     # public data
     category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
 
 class User(Priority):
     """
@@ -96,6 +112,9 @@ class User(Priority):
     """
     # public data
     category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
 
 class Command(Priority):
     """
@@ -103,6 +122,9 @@ class Command(Priority):
     """
     # public data
     category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
 
 class Explicit(Priority):
     """
@@ -110,6 +132,9 @@ class Explicit(Priority):
     """
     # public data
     category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
 
 class Framework(Priority):
     """
@@ -117,6 +142,8 @@ class Framework(Priority):
     """
     # public data
     category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
 
 
 # patch Priority
