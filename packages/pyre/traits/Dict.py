@@ -18,6 +18,9 @@ class Dict(Slotted):
     A property that maps strings to components
     """
 
+    # constants
+    typename = 'dict' # the name of my type
+
 
     # public data
     @property
