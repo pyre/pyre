@@ -22,11 +22,18 @@ class Component(Schema):
 
     # constants
     default = object()
-    typename = 'component' # the name of my type
     complaint = 'could not coerce {0.value!r} into a component'
 
     # public data
     protocol = None
+
+
+    @property
+    def typename(self):
+        """
+        Identify my schema through my protocol
+        """
+        return self.protocol.pyre_family() or 'component'
 
 
     # interface
