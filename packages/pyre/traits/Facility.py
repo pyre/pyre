@@ -24,6 +24,7 @@ class Facility(Slotted, schemata.component):
 
 
     # framework data
+    category = 'component'
     # predicate that indicates whether this trait is a facility
     isFacility = True
 

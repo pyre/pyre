@@ -22,6 +22,8 @@ class Behavior(Trait):
 
 
     # framework data
+    # my category name
+    category = 'behavior'
     # predicate that indicates whether this trait is a behavior
     isBehavior = True
 

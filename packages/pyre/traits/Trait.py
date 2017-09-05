@@ -33,6 +33,8 @@ class Trait(stem.variable, Dashboard):
     # trait name translation that is necessary to support trait aliases
 
     # framework data
+    # my category
+    category = 'trait' # the stem cell of traits...
     # predicate that indicates whether this trait is a behavior
     isBehavior = False
     # predicate that indicates whether this trait is a property

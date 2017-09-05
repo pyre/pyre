@@ -134,19 +134,11 @@ class Configurable(Dashboard):
             # any aliases
             traitAliases = trait.aliases
             # the schema
-            traitCategory = trait.typename
+            traitCategory = trait.category
+            traitType = trait.typename
             # and the documentation
             traitTip = trait.tip
             traitDoc = trait.doc
-
-            # the type of components
-            if traitCategory == 'component':
-                # is their family name
-                traitType = trait.protocol.pyre_family()
-            # for the other traits
-            else:
-                # just use their schema
-                traitType = traitCategory
 
             # initialize the trait description
             traits[traitName] = {
@@ -162,8 +154,8 @@ class Configurable(Dashboard):
             # now, for the tricky part
             value = getattr(self, traitName)
 
-            # with components
-            if traitCategory == 'component':
+            # with facilities
+            if trait.isFacility:
                 # if there is something bound to the facility, ask it to describe itself
                 components[traitName] = {
                     'name': value.pyre_name,
