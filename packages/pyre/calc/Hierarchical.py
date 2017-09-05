@@ -369,7 +369,7 @@ class Hierarchical(SymbolTable):
         List my contents
         """
         # sign on
-        print("model {}:".format(self))
+        print("model '{}':".format(self))
         print("  nodes:")
         # for all node that match {pattern}
         for info, node in self.find(pattern):

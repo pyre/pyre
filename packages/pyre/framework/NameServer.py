@@ -343,4 +343,22 @@ class NameServer(Hierarchical):
         return
 
 
+    # meta-methods
+    def __init__(self, name='pyre::nameserver', **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # record my name
+        self._modelName = name
+        # all done
+        return
+
+
+    def __str__(self):
+        """
+        Identify me by name
+        """
+        # easy enough
+        return self._modelName
+
+
 # end of file
