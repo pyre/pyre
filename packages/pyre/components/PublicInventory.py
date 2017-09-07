@@ -103,6 +103,20 @@ class PublicInventory(Inventory):
         return info.locator
 
 
+    def getValuePriority(self, trait):
+        """
+        Retrieve the priority of the last assignment for this {trait}
+        """
+        # hash the trait name
+        key = self.key[trait.name]
+        # access the nameserver
+        nameserver = self.pyre_nameserver
+        # ask it for the meta-data
+        info = nameserver.getInfo(key)
+        # return the priority
+        return info.priority
+
+
     # support for constructing component classes and instances
     @classmethod
     def initializeClass(cls, component, family, **kwds):

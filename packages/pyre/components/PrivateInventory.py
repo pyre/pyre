@@ -53,10 +53,18 @@ class PrivateInventory(Inventory):
 
     def getTraitLocator(self, trait):
         """
-        Retrieve the location of last assignment for this {trait}
+        Retrieve the location of the last assignment for this {trait}
         """
-        # private inventories don't track trait meta-data
+        # private inventories don't track trait meta-data (yet)
         return tracking.unknown()
+
+
+    def getValuePriority(self, trait):
+        """
+        Retrieve the priority of the last assignment for this {trait}
+        """
+        # private inventories don't track trait meta-data (yet)
+        return None
 
 
     # support for building component classes and instances

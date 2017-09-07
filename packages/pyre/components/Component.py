@@ -219,6 +219,16 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return self.pyre_inventory[trait]
 
 
+    def pyre_how(self, attribute):
+        """
+        Return the priority associated with {attribute}
+        """
+        # find the trait descriptor associated with this {attribute}
+        trait = self.pyre_trait(alias=attribute)
+        # and return its meta-data
+        return self.pyre_inventory.getValuePriority(trait)
+
+
     def pyre_where(self, attribute=None):
         """
         Return the locator associated with {attribute}; if no attribute name is given, return
