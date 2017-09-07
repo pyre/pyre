@@ -16,7 +16,20 @@ import collections # for defaultdict
 @functools.total_ordering
 # declaration
 class Priority:
+    """
+    An intelligent enum of configuration priorities
 
+    Each source of configuration information is assigned to a category, and each category has a
+    priority. The priority is used to decide whether a the value of a trait should be modified
+    based on information from the source at hand: higher priority settings override lower ones.
+
+    Within a category, each configuration setting is assigned a rank, based on the order it was
+    encountered. This kind of logic, for example, assures that command line arguments that
+    appear later in the command line override earlier ones
+
+    This class provides a resting place for the priority categories, and a total ordering so
+    comparisons can be made
+    """
 
     # by default
     category = None
@@ -26,6 +39,7 @@ class Priority:
     defaults = None
     boot = None
     package = None
+    persistent = None
     user = None
     command = None
     explicit = None
@@ -98,6 +112,17 @@ class Package(Priority):
     """
     Category for the priorities of values assigned while package configurations are being
     retrieved
+    """
+    # public data
+    category = next(categories)
+    # narrow the footprint
+    __slots__ = ()
+
+
+class Persistent(Priority):
+    """
+    Category for the priorities of values retrieved from an application supplied persistent
+    store where components record their configurations
     """
     # public data
     category = next(categories)
