@@ -82,8 +82,7 @@ class Observer(Observable):
     # implementation details
     def _substitute(self, current, replacement):
         """
-        Adjust the operands by substituting {replacement} for {current} in the list of operands
-        at position {index}
+        Adjust the operands by substituting {replacement} for {current} in the set of operands
         """
         # flush my cache
         self.flush(observable=self)

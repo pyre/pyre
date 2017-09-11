@@ -97,7 +97,7 @@ class Observable:
         """
         Handler of the notification event from one of my observables
         """
-        # let my observer know
+        # let my observers know
         return self.notifyObservers()
 
 

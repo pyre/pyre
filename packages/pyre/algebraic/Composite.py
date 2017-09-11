@@ -34,8 +34,7 @@ class Composite:
     # implementation details
     def _substitute(self, current, replacement):
         """
-        Adjust the operands by substituting {replacement} for {current} in the list of operands
-        at position {index}
+        Adjust the operands by substituting {replacement} for {current} in the sequence of operands
         """
         # save the locations that have to be modified
         indices = []

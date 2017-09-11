@@ -49,8 +49,7 @@ class Mapping:
     # implementation details
     def _substitute(self, current, replacement):
         """
-        Adjust the operands by substituting {replacement} for {current} in the list of operands
-        at position {index}
+        Adjust the operands by substituting {replacement} for {current} in the set of operands
         """
         # go through my data
         for name, operand in self.data.items():
