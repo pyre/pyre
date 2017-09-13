@@ -12,6 +12,10 @@
 
 - framework:
 
+  - take advantage of the new class creation protocol in 3.6+
+
+  - have component+trait+schema paritcipate in value resolution, not just schema
+
   - pyre.patterns.Named has to become a little more sophisticated with its name handling:
 
     - passing name=<foo> to the constructor must have an indentical net effect as leaving it
