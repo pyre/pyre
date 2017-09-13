@@ -8,15 +8,26 @@
 
 # project defaults
 include pyre.def
-# my subdirectories; move content directories first before invoking any apache comamnds on the host
+# the package
+PACKAGE = web
+# my subfolders with static assets
 RECURSE_DIRS = \
     bin \
-    www \
-    apache \
+    graphics \
+    styles \
 
-# the standard targets
-all:
-	BLD_ACTION="all" $(MM) recurse
+# layout
+PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
+PROJ_WEBPACK_CONFIG = config
+PROJ_WEBPACK_SOURCES = react
+PROJ_CLEAN += ${addprefix $(PROJ_TMPDIR)/, build $(PROJ_WEBPACK_SOURCES)}
+
+# the exported items
+EXPORT_WEB = \
+   $(PROJ_TMPDIR)/build/*
+
+# standard targets
+all: webpack.deps webpack.build export
 
 tidy::
 	BLD_ACTION="tidy" $(MM) recurse
@@ -27,11 +38,10 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-live:
-	BLD_ACTION="live" $(MM) recurse
+export:: export-web
+	BLD_ACTION="export" $(MM) recurse
 
-# archiving support
-zipit:
-	cd $(EXPORT_ROOT); zip -r $(PYRE_ZIP) web/www/$(PROJECT)
+live: live-web
+	BLD_ACTION="live" $(MM) recurse
 
 # end of file

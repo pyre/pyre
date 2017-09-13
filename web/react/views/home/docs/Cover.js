@@ -22,7 +22,7 @@ const Documentation = () => (
                 <Paragraph>
                     This section is under active development. New material shows up all the
                     time. Many of the links do not work yet because the material is being
-                    developed. I use it as my to-do list, so bare with me.
+                    developed. I use it as my to-do list, so bear with me.
                 </Paragraph>
 
                 <Paragraph>
