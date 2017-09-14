@@ -16,6 +16,12 @@ class Category(AbstractMetaclass):
     Metaclass that builds class hierarchies with specific properties from a given base class
     """
 
+    # types
+    # structural
+    from .Leaf import Leaf as leaf
+    from .Composite import Composite as composite
+    from .Traversible import Traversible as traversible
+
 
     # implementation details
     @classmethod

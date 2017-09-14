@@ -23,10 +23,6 @@ class Algebra(Category):
     from .Arithmetic import Arithmetic as arithmetic
     from .Ordering import Ordering as ordering
     from .Boolean import Boolean as boolean
-    # structural
-    from .Leaf import Leaf as leaf
-    from .Traversible import Traversible as traversible
-    from .Composite import Composite as composite
     # entities
     from .Literal import Literal as literal
     from .Variable import Variable as variable
