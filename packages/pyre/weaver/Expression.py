@@ -104,7 +104,7 @@ class Expression:
             operator.floordiv: self._binaryOperatorRenderer,
             operator.mod: self._binaryOperatorRenderer,
             operator.pow: self._binaryOperatorRenderer,
-            operator.abs: self._absoluteRenderer,
+            operator.abs: self._unaryOperatorRenderer,
             operator.neg: self._oppositeRenderer,
             # comparisons
             operator.eq: self._binaryOperatorRenderer,
@@ -160,7 +160,7 @@ class Expression:
 
     def _unaryOperatorRenderer(self, node, **kwds):
         """
-        Render {node} assuming it is an operator
+        Render {node} assuming it is an operator whose evaluator has a registered symbol
         """
         # get the operand: unpack as a tuple to catch mistakes
         operand, = node.operands
@@ -170,18 +170,6 @@ class Expression:
         symbol = self._symbols[node.evaluator]
         # put it all together
         return "{}({})".format(symbol, op)
-
-
-    def _absoluteRenderer(self, node, **kwds):
-        """
-        Render the absolute value of {node}
-        """
-        # get the operand: unpack as a tuple to catch mistakes
-        operand, = node.operands
-        # render it
-        op = self._renderers[type(operand)](node=operand, **kwds)
-        # decorate and return
-        return "{}({})".format(self._symbols[node.evaluator], op)
 
 
     def _oppositeRenderer(self, node, **kwds):
