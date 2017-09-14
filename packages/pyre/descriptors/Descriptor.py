@@ -39,7 +39,9 @@ class Descriptor(metaclass=Decorator):
 
         # support for graph traversals
         def identify(self, authority, **kwds):
-            """Let {authority} know I am a descriptor"""
+            """
+            Let {authority} know I am a descriptor
+            """
             return authority.onDescriptor(descriptor=self, **kwds)
 
 

@@ -43,9 +43,11 @@ class Literal:
 
     # support for graph traversals
     def identify(self, authority, **kwds):
-        """Let {authority} know I am a literal"""
+        """
+        Let {authority} know I am a literal
+        """
         # invoke the callback
-        return authority.onLiteral(descriptor=self, **kwds)
+        return authority.onLiteral(literal=self, **kwds)
 
 
 # end of file

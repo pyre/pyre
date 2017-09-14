@@ -18,9 +18,11 @@ class Variable:
 
     # support for graph traversals
     def identify(self, authority, **kwds):
-        """Let {authority} know I am a variable"""
+        """
+        Let {authority} know I am a variable
+        """
         # invoke the callback
-        return authority.onVariable(descriptor=self, **kwds)
+        return authority.onVariable(variable=self, **kwds)
 
 
 # end of file

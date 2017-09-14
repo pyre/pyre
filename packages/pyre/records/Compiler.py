@@ -56,14 +56,14 @@ class Compiler:
         return node
 
 
-    def onOperator(self, source, cache, descriptor):
+    def onOperator(self, source, cache, operator):
         """
         Handler for derivations
         """
         # if I have visited this descriptor before
         try:
             # get the previously built node
-            node = cache[descriptor]
+            node = cache[operator]
         # if not
         except KeyError:
             # build a node for its operands
@@ -71,20 +71,20 @@ class Compiler:
                 # by processing
                 op.identify(authority=self, cache=cache, source=source)
                 # each operand
-                for op in descriptor.operands)
+                for op in operator.operands)
             # make an operator node
-            node = self.node.operator(evaluator=descriptor.evaluator,
-                                      postprocessor=descriptor.process, operands=operands)
+            node = self.node.operator(evaluator=operator.evaluator,
+                                      postprocessor=operator.process, operands=operands)
         # and make it available
         return node
 
 
-    def onLiteral(self, source, cache, descriptor):
+    def onLiteral(self, source, cache, literal):
         """
         Handler for literals
         """
-        # build a literal node
-        return self.node.literal(value=descriptor._value)
+        # build a literal node with the same value as the foreign object
+        return self.node.literal(value=literal._value)
 
 
 # end of file

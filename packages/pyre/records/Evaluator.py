@@ -55,14 +55,14 @@ class Evaluator:
         return value
 
 
-    def onOperator(self, source, cache, descriptor):
+    def onOperator(self, source, cache, operator):
         """
         Handler for operators
         """
-        # if I have been asked for the value of this {descriptor} before
+        # if I have been asked for the value of this {operator} before
         try:
             # get it
-            value = cache[descriptor]
+            value = cache[operator]
         # if not
         except KeyError:
             # compute the values of each of its operands
@@ -70,21 +70,21 @@ class Evaluator:
                 # by converting
                 op.identify(authority=self, cache=cache, source=source)
                 # each operand
-                for op in descriptor.operands)
+                for op in operator.operands)
             # compute the raw value of this descriptor by applying its evaluator
-            value = descriptor.evaluator(*values)
+            value = operator.evaluator(*values)
             # coerce the value
-            value = descriptor.process(value)
+            value = operator.process(value)
         # and make it available
         return value
 
 
-    def onLiteral(self, source, cache, descriptor):
+    def onLiteral(self, source, cache, literal):
         """
         Handler for descriptors that encapsulate foreign values
         """
-        # not much to do
-        return descriptor._value
+        # ask it for its value
+        return literal._value
 
 
 # end of file

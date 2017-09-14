@@ -31,9 +31,11 @@ class Operator:
 
     # support for graph traversals
     def identify(self, authority, **kwds):
-        """Let {authority} know I am an operator"""
+        """
+        Let {authority} know I am an operator
+        """
         # invoke the callback
-        return authority.onOperator(descriptor=self, **kwds)
+        return authority.onOperator(operator=self, **kwds)
 
 
 # end of file
