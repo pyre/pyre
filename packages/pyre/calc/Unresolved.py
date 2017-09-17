@@ -25,17 +25,22 @@ class Unresolved:
         """
         Compute my value
         """
+        # asking for my value is an error
         raise self.UnresolvedNodeError(node=self, name=self.request)
 
 
     # meta methods
     def __init__(self, request, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # store the name of the requested node
         self.request = request
+        # all done
         return
 
 
     def __str__(self):
+        # i have a name...
         return self.request
 
 

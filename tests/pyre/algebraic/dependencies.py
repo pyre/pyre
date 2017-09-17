@@ -25,37 +25,39 @@ def test():
     n2 = node.variable()
 
     # check that they have no dependencies
-    assert tuple(id(v) for v in n1.variables) == (id(n1),)
-    assert tuple(id(v) for v in n2.variables) == (id(n2),)
-    assert tuple(id(v) for v in n1.operators) == ()
-    assert tuple(id(v) for v in n2.operators) == ()
+    assert list(map(id, n1.literals)) == []
+    assert list(map(id, n2.literals)) == []
+    assert list(map(id, n1.operators)) == []
+    assert list(map(id, n2.operators)) == []
+    assert list(map(id, n1.variables)) == [id(n1)]
+    assert list(map(id, n2.variables)) == [id(n2)]
 
     # an expression involving a unary operator
     n = -n1
-    assert tuple(id(v) for v in n.variables) == (id(n1),)
-    assert tuple(id(o) for o in n.operators) == (id(n),)
+    assert list(map(id, n.operators)) == [id(n)]
+    assert list(map(id, n.variables)) == [id(n1)]
 
     # an expression involving a literal
     n = 2*n1
-    assert tuple(id(v) for v in n.variables) == (id(n1),)
-    assert tuple(id(v) for v in n.operators) == (id(n),)
+    assert list(map(id, n.operators)) == [id(n)]
+    assert list(map(id, n.variables)) == [id(n1)]
 
     # an expression involving a binary operator
     n = n1 + n2
-    assert tuple(id(v) for v in n.variables) == (id(n1), id(n2))
-    assert tuple(id(v) for v in n.operators) == (id(n),)
+    assert list(map(id, n.operators)) == [id(n)]
+    assert list(map(id, n.variables)) == [id(n1), id(n2)]
 
     # add another layer
     m = n + n
-    assert tuple(id(v) for v in n.variables) == (id(n1), id(n2))
-    assert tuple(id(v) for v in m.operators) == (id(m), id(n) ,id(n))
+    assert list(map(id, m.variables)) == [id(n1), id(n2)] * 2
+    assert list(map(id, m.operators)) == [id(m), id(n) ,id(n)]
     # and one more
     l = m + m
-    assert set(id(v) for v in l.variables) == {id(n1), id(n2)}
-    assert tuple(id(v) for v in l.operators) == (id(l), id(m), id(n), id(n), id(m), id(n), id(n))
+    assert list(map(id, l.variables)) == [id(n1), id(n2)] * 4
+    assert list(map(id, l.operators)) == [id(l), id(m), id(n), id(n), id(m), id(n), id(n)]
 
     # a more complicated example
-    assert set(id(v) for v in (2*(.5 - n1*n2 + n2**2)*n1).variables) == {id(n1), id(n2)}
+    assert set(map(id, (2*(.5 - n1*n2 + n2**2)*n1).variables)) == {id(n1), id(n2)}
 
     return
 

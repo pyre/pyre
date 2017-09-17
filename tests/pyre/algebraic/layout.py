@@ -13,8 +13,6 @@ Verify the node layout
 
 
 def test():
-    # access the various operator
-    import operator
     # access the package
     import pyre.algebraic
 
@@ -49,7 +47,7 @@ def test():
 
     # check operator
     assert node.operator.__mro__ == (
-        node.operator, algebra.operator, algebra.composite, algebra.traversible,
+        node.operator, algebra.operator, algebra.composite,
         node,
         algebra.base,
         algebra.arithmetic, algebra.ordering, algebra.boolean,

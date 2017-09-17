@@ -15,13 +15,11 @@ EXPORT_PYTHON_MODULES = \
     Algebra.py \
     Arithmetic.py \
     Boolean.py \
-    Category.py \
     Composite.py \
     Leaf.py \
     Literal.py \
     Operator.py \
     Ordering.py \
-    Traversible.py \
     Variable.py \
     exceptions.py \
     __init__.py

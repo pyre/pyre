@@ -35,9 +35,9 @@ def test():
     assert s._value == 3
 
     # check that variables have no operands
-    assert len(zero.operands) == 0
-    assert len(one.operands) == 0
-    assert len(two.operands) == 0
+    assert len(tuple(zero.operands)) == 0
+    assert len(tuple(one.operands)) == 0
+    assert len(tuple(two.operands)) == 0
     # check that {zero} has no observers
     assert len(zero.observers) == 0
     # but {one} and {two} have one each
@@ -48,7 +48,7 @@ def test():
     assert identical((ref() for ref in two.observers), [s])
 
     # check that {s} has two operands
-    assert len(s.operands) == 2
+    assert len(tuple(s.operands)) == 2
     assert identical(s.operands, [one, two])
 
     # all done

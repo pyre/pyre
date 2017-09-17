@@ -17,10 +17,6 @@ class Literal:
     category = 'literal'
 
 
-    # public data
-    span = () # literals are not proper nodes so their span is empty
-    variables = () # and so is their list of nodes
-
     # literals get a value accessor regardless of whether the rest of the algebra supports
     # value access
     @property
@@ -29,6 +25,17 @@ class Literal:
         Value accessor
         """
         return self._value
+
+
+    # interface
+    def literals(self):
+        """
+        Return a sequence of the literals in my span
+        """
+        # i am one
+        yield self
+        # and nothing further
+        return
 
 
     # meta-methods

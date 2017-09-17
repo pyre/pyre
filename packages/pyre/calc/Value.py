@@ -17,6 +17,7 @@ class Value:
         """
         Return my value
         """
+        # easy enouugh
         return self._value
 
 
@@ -32,8 +33,11 @@ class Value:
 
     # meta methods
     def __init__(self, value=None, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # save the value
         self._value = value
+        # all done
         return
 
 

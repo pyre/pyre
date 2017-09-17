@@ -16,6 +16,29 @@ class Variable:
     category = 'variable'
 
 
+    # interface
+    @property
+    def span(self):
+        """
+        Return a sequence of the nodes in my span
+        """
+        # i am one
+        yield self
+        # and nothing further
+        return
+
+
+    @property
+    def variables(self):
+        """
+        Return a sequence of the variables in my span
+        """
+        # i am one
+        yield self
+        # and nothing further
+        return
+
+
     # support for graph traversals
     def identify(self, authority, **kwds):
         """

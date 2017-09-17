@@ -60,7 +60,7 @@ class Expression:
         program, operands = self.compile(model=self._model, expression=value)
         # adjust my state
         self.expression = value
-        self.operands = operands
+        self._operands = tuple(operands)
         self._program = program
         # all done
         return self

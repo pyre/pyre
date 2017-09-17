@@ -74,7 +74,7 @@ class Observer(Observable):
         # assume i am a composite
         super().__init__(operands=operands, **kwds)
         # observe my operands
-        self.observe(observables=operands)
+        self.observe(observables=self.operands)
         # all done
         return
 

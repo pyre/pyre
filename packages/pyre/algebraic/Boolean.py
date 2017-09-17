@@ -31,7 +31,7 @@ class Boolean:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.and_, operands=[self, other])
+        return self.operator(evaluator=operator.and_, operands=(self, other))
 
 
     def __or__(self, other):
@@ -40,7 +40,7 @@ class Boolean:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.or_, operands=[self, other])
+        return self.operator(evaluator=operator.or_, operands=(self, other))
 
 
     # the reflections
@@ -50,7 +50,7 @@ class Boolean:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.and_, operands=[other, self])
+        return self.operator(evaluator=operator.and_, operands=(other, self))
 
 
     def __ror__(self, other):
@@ -59,7 +59,7 @@ class Boolean:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.or_, operands=[other, self])
+        return self.operator(evaluator=operator.or_, operands=(other, self))
 
 
 # end of file

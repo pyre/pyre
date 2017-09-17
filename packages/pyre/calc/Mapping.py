@@ -25,6 +25,8 @@ class Mapping:
         """
         # easy enough
         yield from self.data.values()
+        # all done
+        return
 
 
     # interface
@@ -38,8 +40,8 @@ class Mapping:
 
     # meta-methods
     def __init__(self, operands, **kwds):
-        # chain up
-        super().__init__(**kwds)
+        # chain up with an empty pile of dependencies
+        super().__init__(operands=(), **kwds)
         # my operands are in a dict
         self.data = dict(**operands)
         # all done

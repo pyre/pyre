@@ -33,8 +33,8 @@ def test():
     # n3 to have no observers
     assert len(n3.observers) == 0
     # s to have two operands: n1 and n2
-    assert len(s.operands) == 2
-    assert identical(tuple(s.operands), (n1, n2))
+    assert len(s._operands) == 2
+    assert identical(tuple(s._operands), (n1, n2))
     # and no observers
     assert len(s.observers) == 0
 
@@ -50,8 +50,8 @@ def test():
     assert len(n3.observers) == 1
     assert identical((ref() for ref in n3.observers), [s])
     # s to have two operands: n2 and n3
-    assert len(s.operands) == 2
-    assert identical(tuple(s.operands), (n3, n2))
+    assert len(s._operands) == 2
+    assert identical(tuple(s._operands), (n3, n2))
     # and no observers
     assert len(s.observers) == 0
 

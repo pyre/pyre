@@ -56,13 +56,14 @@ class Observable:
         """
         Remove {obsolete} from its upstream graph and assume its responsibilities
         """
-        # iterate over the observers of the {obsolete} node
+        # take a snapshot of the current observers of the {obsolete} node, so we can avoid
+        # modifying whatever container they are in
         for oref in tuple(obsolete.observers):
-            # get the actual node
+            # we store weakrefs; get the actual node
             observer = oref()
-            # skip dead nodes
+            # skip the dead ones
             if observer is None: continue
-            # ask the observer to replace {obsolete} with me
+            # ask the observer to stop watching {obsolete}, and watch me instead
             observer.substitute(current=obsolete, replacement=self)
         # all done
         return super().replace(obsolete=obsolete)

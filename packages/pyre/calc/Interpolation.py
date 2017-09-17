@@ -49,7 +49,7 @@ class Interpolation:
         """
         # adjust my state
         self.expression = value
-        self.operands = tuple(self.compile(model=self._model, expression=value))
+        self._operands = tuple(self.compile(model=self._model, expression=value))
         # all done
         return self
 

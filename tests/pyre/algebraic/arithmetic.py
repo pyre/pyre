@@ -66,34 +66,34 @@ def test():
 # checkers
 def check_unary(expression, operator, operand):
     assert expression.evaluator is operator
-    assert expression.operands[0] is operand
+    assert expression._operands[0] is operand
     return
 
 
 def check_binary(expression, operator, op1, op2):
     assert expression.evaluator is operator
-    assert expression.operands[0] is op1
-    assert expression.operands[1] is op2
+    assert expression._operands[0] is op1
+    assert expression._operands[1] is op2
     return
 
 def check_ternary(expression, operator1, operator2, op1, op2, op3):
     assert expression.evaluator is operator1
-    assert expression.operands[0] is op1
-    assert expression.operands[1].evaluator is operator2
-    assert expression.operands[1].operands[0] is op2
-    assert expression.operands[1].operands[1] is op3
+    assert expression._operands[0] is op1
+    assert expression._operands[1].evaluator is operator2
+    assert expression._operands[1]._operands[0] is op2
+    assert expression._operands[1]._operands[1] is op3
     return
 
 def check_left(expression, operator, value, node):
     assert expression.evaluator is operator
-    assert expression.operands[0].value == value
-    assert expression.operands[1] is node
+    assert expression._operands[0].value == value
+    assert expression._operands[1] is node
     return
 
 def check_right(expression, operator, value, node):
     assert expression.evaluator is operator
-    assert expression.operands[0] is node
-    assert expression.operands[1].value == value
+    assert expression._operands[0] is node
+    assert expression._operands[1].value == value
     return
 
 

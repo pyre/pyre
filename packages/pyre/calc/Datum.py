@@ -57,7 +57,7 @@ class Datum(AbstractNode):
         Build and return a reference to me
         """
         # use the class factory to make one and return it
-        return self.reference(operands=[self], **kwds)
+        return self.reference(operands=(self,), **kwds)
 
 
 # end of file

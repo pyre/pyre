@@ -43,12 +43,12 @@ def test():
 
     # check all expected invariants
     # operands
-    assert len(one.operands) == 0
-    assert len(two.operands) == 0
-    assert len(var.operands) == 0
-    assert len(three.operands) == 2
+    assert len(tuple(one.operands)) == 0
+    assert len(tuple(two.operands)) == 0
+    assert len(tuple(var.operands)) == 0
+    assert len(tuple(three.operands)) == 2
     assert identical(three.operands, [one, two])
-    assert len(double.operands) == 2
+    assert len(tuple(double.operands)) == 2
     assert identical(double.operands, [three, three])
 
     # observers

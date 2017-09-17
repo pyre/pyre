@@ -32,7 +32,7 @@ class Ordering:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.eq, operands=[self, other])
+        return self.operator(evaluator=operator.eq, operands=(self, other))
 
 
     # and of course, now that we have overridden __eq__, we must specify this so that
@@ -46,7 +46,7 @@ class Ordering:
             # promote it
             other = self.literal(value=other)
         # build a representation of the inequality test
-        return self.operator(evaluator=operator.ne, operands=[self, other])
+        return self.operator(evaluator=operator.ne, operands=(self, other))
 
 
     def __le__(self, other):
@@ -55,7 +55,7 @@ class Ordering:
             # promote it
             other = self.literal(value=other)
         # build a representation of {<=}
-        return self.operator(evaluator=operator.le, operands=[self, other])
+        return self.operator(evaluator=operator.le, operands=(self, other))
 
 
     def __ge__(self, other):
@@ -64,7 +64,7 @@ class Ordering:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.ge, operands=[self, other])
+        return self.operator(evaluator=operator.ge, operands=(self, other))
 
 
     def __lt__(self, other):
@@ -73,7 +73,7 @@ class Ordering:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.lt, operands=[self, other])
+        return self.operator(evaluator=operator.lt, operands=(self, other))
 
 
     def __gt__(self, other):
@@ -82,7 +82,7 @@ class Ordering:
             # promote it
             other = self.literal(value=other)
         # build a representation of the equality test
-        return self.operator(evaluator=operator.gt, operands=[self, other])
+        return self.operator(evaluator=operator.gt, operands=(self, other))
 
 
 # end of file

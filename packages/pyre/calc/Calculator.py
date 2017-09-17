@@ -222,10 +222,8 @@ class Calculator(algebraic.algebra):
         if record.mapping: yield record.mapping
         # my mappings know how to compute their values
         yield cls.mapping
-        # the traversible
-        yield cls.traversible
-        # and the end of the line
-        yield record
+        # and whatever else my superclass says
+        yield from cls.compositeDerivation(record)
         # all done
         return
 

@@ -18,7 +18,7 @@ class Count:
         Compute and return my value
         """
         # compute and return my value
-        return len(self.operands)
+        return len(tuple(self.operands))
 
 
 # end of file

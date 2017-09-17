@@ -16,6 +16,7 @@ class Sum:
         """
         Compute and return my value
         """
+        # easy enough
         return sum(operand.value for operand in self.operands)
 
 

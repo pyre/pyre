@@ -40,8 +40,8 @@ def test():
 # the checker
 def check_binary(expression, operator, op1, op2):
     assert expression.evaluator is operator
-    assert expression.operands[0] is op1
-    assert expression.operands[1] is op2
+    assert expression._operands[0] is op1
+    assert expression._operands[1] is op2
     return
 
 
