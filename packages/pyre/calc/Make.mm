@@ -13,6 +13,7 @@ PACKAGE = calc
 EXPORT_PYTHON_MODULES = \
     Average.py \
     Calculator.py \
+    Composite.py \
     Const.py \
     Count.py \
     Datum.py \

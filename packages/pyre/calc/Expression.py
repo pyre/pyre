@@ -66,6 +66,28 @@ class Expression:
         return self
 
 
+    # classifiers
+    @property
+    def expressions(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are constructed out of python
+        expressions involving the names of other nodes
+        """
+        # i am one
+        yield self
+        # nothing further
+        return
+
+
+    # support for graph traversals
+    def identify(self, authority, **kwds):
+        """
+        Let {authority} know I am an expression
+        """
+        # invoke the callback
+        return authority.onExpression(expression=self, **kwds)
+
+
     # meta-methods
     def __init__(self, model, expression, program, **kwds):
         # chain up

@@ -22,4 +22,25 @@ class Reference:
         return referent.value
 
 
+    # classifiers
+    @property
+    def references(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are references to other nodes
+        """
+        # i am one
+        yield self
+        # nothing further
+        return
+
+
+    # support for graph traversals
+    def identify(self, authority, **kwds):
+        """
+        Let {authority} know I am a reference
+        """
+        # invoke the callback
+        return authority.onReference(reference=self, **kwds)
+
+
 # end of file

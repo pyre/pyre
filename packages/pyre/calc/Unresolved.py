@@ -29,6 +29,27 @@ class Unresolved:
         raise self.UnresolvedNodeError(node=self, name=self.request)
 
 
+    # classifiers
+    @property
+    def unresolveds(self):
+        """
+        Return a sequence over the unresolved nodes in my dependency graph
+        """
+        # i am one
+        yield self
+        # nothing further
+        return
+
+
+    # support for graph traversals
+    def identify(self, authority, **kwds):
+        """
+        Let {authority} know I am an unresolved node
+        """
+        # invoke the callback
+        return authority.onUnresolved(unresolved=self, **kwds)
+
+
     # meta methods
     def __init__(self, request, **kwds):
         # chain up

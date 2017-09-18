@@ -62,64 +62,64 @@ class Calculator(algebraic.algebra):
 
         # the rest get some extra decoration: expressions, interpolations, and references
         # build the list of base classes for expression
-        ancestors = tuple(cls.expressionDerivation(record))
+        derivation = tuple(cls.expressionDerivation(record))
         # make one
-        record.expression = cls('expression', ancestors, {}, ignore=True)
+        record.expression = cls('expression', derivation, {}, ignore=True)
 
         # build the list of base classes for interpolation
-        ancestors = tuple(cls.interpolationDerivation(record))
+        derivation = tuple(cls.interpolationDerivation(record))
         # make one
-        record.interpolation = cls('interpolation', ancestors, {}, ignore=True)
+        record.interpolation = cls('interpolation', derivation, {}, ignore=True)
 
         # build the list of base classes for interpolation
-        ancestors = tuple(cls.sequenceDerivation(record))
+        derivation = tuple(cls.sequenceDerivation(record))
         # make one
-        record.sequence = cls('sequence', ancestors, {}, ignore=True)
+        record.sequence = cls('sequence', derivation, {}, ignore=True)
 
         # build the list of base classes for interpolation
-        ancestors = tuple(cls.mappingDerivation(record))
+        derivation = tuple(cls.mappingDerivation(record))
         # make one
-        record.mapping = cls('mapping', ancestors, {}, ignore=True)
+        record.mapping = cls('mapping', derivation, {}, ignore=True)
 
         # build the list of base classes for reference
-        ancestors = tuple(cls.referenceDerivation(record))
+        derivation = tuple(cls.referenceDerivation(record))
         # make one
-        record.reference = cls('reference', ancestors, {}, ignore=True)
+        record.reference = cls('reference', derivation, {}, ignore=True)
 
         # build the list of base classes for unresolved
-        ancestors = tuple(cls.unresolvedDerivation(record))
+        derivation = tuple(cls.unresolvedDerivation(record))
         # make one
-        record.unresolved = cls('unresolved', ancestors, {}, ignore=True)
+        record.unresolved = cls('unresolved', derivation, {}, ignore=True)
 
         # build the list of base classes for average
-        ancestors = tuple(cls.injectComposite(cls.average, record))
+        derivation = tuple(cls.injectComposite(cls.average, record))
         # make one
-        record.average = cls('average', ancestors, {}, ignore=True)
+        record.average = cls('average', derivation, {}, ignore=True)
 
         # build the list of base classes for count
-        ancestors = tuple(cls.injectComposite(cls.count, record))
+        derivation = tuple(cls.injectComposite(cls.count, record))
         # make one
-        record.count = cls('count', ancestors, {}, ignore=True)
+        record.count = cls('count', derivation, {}, ignore=True)
 
         # build the list of base classes for max
-        ancestors = tuple(cls.injectComposite(cls.maximum, record))
+        derivation = tuple(cls.injectComposite(cls.maximum, record))
         # make one
-        record.max = cls('max', ancestors, {}, ignore=True)
+        record.max = cls('max', derivation, {}, ignore=True)
 
         # build the list of base classes for min
-        ancestors = tuple(cls.injectComposite(cls.minimum, record))
+        derivation = tuple(cls.injectComposite(cls.minimum, record))
         # make one
-        record.min = cls('min', ancestors, {}, ignore=True)
+        record.min = cls('min', derivation, {}, ignore=True)
 
         # build the list of base classes for product
-        ancestors = tuple(cls.injectComposite(cls.product, record))
+        derivation = tuple(cls.injectComposite(cls.product, record))
         # make one
-        record.product = cls('product', ancestors, {}, ignore=True)
+        record.product = cls('product', derivation, {}, ignore=True)
 
         # build the list of base classes for sum
-        ancestors = tuple(cls.injectComposite(cls.sum, record))
+        derivation = tuple(cls.injectComposite(cls.sum, record))
         # make one
-        record.sum = cls('sum', ancestors, {}, ignore=True)
+        record.sum = cls('sum', derivation, {}, ignore=True)
 
         # all done
         return record

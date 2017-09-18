@@ -18,6 +18,9 @@ class Datum(AbstractNode):
 
 
     # types
+    # augmented structural nodes
+    from .Composite import Composite as composite
+    # new leaves
     mapping = None
     sequence = None
     expression = None
@@ -58,6 +61,55 @@ class Datum(AbstractNode):
         """
         # use the class factory to make one and return it
         return self.reference(operands=(self,), **kwds)
+
+
+    # classifiers
+    @property
+    def expressions(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are constructed out of python
+        expressions involving the names of other nodes
+        """
+        # by default, empty
+        return ()
+
+
+    @property
+    def interpolations(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are constructed by expanding
+        the values of other nodes in a macro
+        """
+        # by default, empty
+        return ()
+
+
+    @property
+    def references(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are references to other nodes
+        """
+        # by default, empty
+        return ()
+
+
+    @property
+    def references(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are references to other nodes
+        """
+        # by default, empty
+        return ()
+
+
+    @property
+    def unresolveds(self):
+        """
+        Return a sequence over the nodes in my dependency graph that represent requests for model
+        names that don't exist
+        """
+        # by default, empty
+        return ()
 
 
 # end of file
