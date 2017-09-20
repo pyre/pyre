@@ -42,14 +42,40 @@ class Composite:
 
 
     @property
+    def mappings(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are mappings
+        """
+        # go through my operands
+        for operand in self.operands:
+            # and ask them for mappings in their span
+            yield from operand.mappings
+        # all done
+        return
+
+
+    @property
     def references(self):
         """
         Return a sequence over the nodes in my dependency graph that are references to other nodes
         """
         # go through my operands
         for operand in self.operands:
-            # and ask them for variables in their span
+            # and ask them for references in their span
             yield from operand.references
+        # all done
+        return
+
+
+    @property
+    def sequences(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are sequences
+        """
+        # go through my operands
+        for operand in self.operands:
+            # and ask them for sequences in their span
+            yield from operand.sequences
         # all done
         return
 

@@ -29,6 +29,18 @@ class Mapping:
         return
 
 
+    # classifiers
+    @property
+    def mappings(self):
+        """
+        Return a sequence over mappings in my dependency graph
+        """
+        # i am one
+        yield self
+        # nothing further
+        return
+
+
     # interface
     def getValue(self, **kwds):
         """

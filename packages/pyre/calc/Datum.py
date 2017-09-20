@@ -94,9 +94,18 @@ class Datum(AbstractNode):
 
 
     @property
-    def references(self):
+    def mappings(self):
         """
-        Return a sequence over the nodes in my dependency graph that are references to other nodes
+        Return a sequence over the nodes in my dependency graph that are mappings
+        """
+        # by default, empty
+        return ()
+
+
+    @property
+    def sequences(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are sequences
         """
         # by default, empty
         return ()

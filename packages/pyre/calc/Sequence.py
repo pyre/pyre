@@ -12,6 +12,18 @@ class Sequence:
     """
 
 
+    # classifiers
+    @property
+    def sequences(self):
+        """
+        Return a sequence over sequences in my dependency graph
+        """
+        # i am one
+        yield self
+        # nothing further
+        return
+
+
     # interface
     def getValue(self, **kwds):
         """
