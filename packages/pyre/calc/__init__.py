@@ -70,7 +70,7 @@ def expression(*, formula, model):
     resolved in the symbol table {model}.
     """
     # build the node and return it
-    return model.expression(expression=formula)
+    return model.expression(value=formula)
 
 
 def sequence(*operands):

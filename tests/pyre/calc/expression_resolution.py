@@ -19,16 +19,16 @@ def test():
     model = pyre.calc.model()
 
     # set up an expression with an unresolved node
-    model["price"] = "2*{production}"
+    model["price"] = model.expression(value="2*{production}")
 
     # ask for the price
     try:
         model["price"]
         assert False
     except model.UnresolvedNodeError as error:
-        unresolved, _ = model._resolve(name="production")
+        unresolved = model.retrieve(name="production")
         assert error.node is unresolved
-        assert error.request == "production"
+        assert error.name == "production"
 
     # resolve the node
     p = 80.
@@ -48,7 +48,7 @@ def test():
     # force a node substitution
     m = 60
     model["materials"] = m
-    model["production"] = "2*{materials}"
+    model["production"] = model.expression(value="2*{materials}")
     # chek again
     assert model["materials"] == m
     assert model["production"] == 2*m

@@ -38,12 +38,10 @@ evaluators:
 	${PYTHON} ./operations.py
 	${PYTHON} ./algebra.py
 
-	${PYTHON} ./expression.py
-	${PYTHON} ./interpolation.py
-
 expressions:
 	${PYTHON} ./expression.py
 	${PYTHON} ./expression_escaped.py
+	${PYTHON} ./expression_resolution.py
 	${PYTHON} ./expression_circular.py
 	${PYTHON} ./expression_syntaxerror.py
 	${PYTHON} ./expression_typeerror.py
