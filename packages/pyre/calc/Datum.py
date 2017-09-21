@@ -41,8 +41,14 @@ class Datum(AbstractNode):
         """
         Get my value
         """
-        # delegate
-        return self.getValue()
+        # attempt to
+        try:
+            # ask me for my value
+            return self.getValue()
+        # if reading is not supported
+        except AttributeError:
+            # complain
+            raise self.EvaluationError(node=self, error="node value is not readable")
 
 
     @value.setter
@@ -50,8 +56,14 @@ class Datum(AbstractNode):
         """
         Set my value
         """
-        # delegate
-        return self.setValue(value=value)
+        # attempt to
+        try:
+            # set my value
+            return self.setValue(value=value)
+        # if writing is not supported
+        except AttributeError:
+            # complain
+            raise self.EvaluationError(node=self, error="node value is not writable")
 
 
     # classifiers
