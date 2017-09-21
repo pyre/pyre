@@ -33,8 +33,10 @@ class Sequence:
         """
         Compute and return my value
         """
-        # return the value of each operand
-        return (op.value for op in self.operands)
+        # return a tuple with the value of each operand; do not be tempted to avoid realizing
+        # the container: value memoization will store the generator, it will get exhausted on
+        # first read, and the value of the sequence will be empty thereafter
+        return tuple(op.value for op in self.operands)
 
 
 # end of file
