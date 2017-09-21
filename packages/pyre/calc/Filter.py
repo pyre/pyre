@@ -14,7 +14,7 @@ class Filter:
     """
 
 
-    # interface
+    # value management
     def setValue(self, **kwds):
         """
         Override the value setter to let the assignment go through iff my constraints are all

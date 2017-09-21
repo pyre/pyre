@@ -18,7 +18,7 @@ class Literal:
 
 
     # literals get a value accessor regardless of whether the rest of the algebra supports
-    # value access
+    # value access; the value is read-only
     @property
     def value(self):
         """
@@ -28,6 +28,7 @@ class Literal:
 
 
     # interface
+    @property
     def literals(self):
         """
         Return a sequence of the literals in my span

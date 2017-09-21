@@ -20,7 +20,7 @@ class Observable:
     observers = None
 
 
-    # interface
+    # value management
     def setValue(self, value):
         """
         Override the value setter to notify my observers that my value changed

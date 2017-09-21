@@ -27,11 +27,26 @@ class Expression:
         EvaluationError )
 
 
+    # constants
+    category = "expression"
     # public data
     expression = None # the expression supplied by the client
 
 
-    # support for value access
+    # classifiers
+    @property
+    def expressions(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are constructed out of python
+        expressions involving the names of other nodes
+        """
+        # i am one
+        yield self
+        # nothing further
+        return
+
+
+    # value management
     def getValue(self):
         """
         Compute and return my value
@@ -64,19 +79,6 @@ class Expression:
         self._program = program
         # all done
         return self
-
-
-    # classifiers
-    @property
-    def expressions(self):
-        """
-        Return a sequence over the nodes in my dependency graph that are constructed out of python
-        expressions involving the names of other nodes
-        """
-        # i am one
-        yield self
-        # nothing further
-        return
 
 
     # support for graph traversals

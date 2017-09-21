@@ -12,7 +12,7 @@ class Count:
     """
 
 
-    # interface
+    # value management
     def getValue(self):
         """
         Compute and return my value

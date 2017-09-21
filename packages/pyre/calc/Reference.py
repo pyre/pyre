@@ -11,15 +11,8 @@ class Reference:
     A node that refers to another node
     """
 
-    # interface
-    def getValue(self):
-        """
-        Compute and return my value
-        """
-        # get my referent
-        referent, = self.operands
-        # and ask him for his value
-        return referent.value
+    # constants
+    category = 'reference'
 
 
     # classifiers
@@ -32,6 +25,17 @@ class Reference:
         yield self
         # nothing further
         return
+
+
+    # value management
+    def getValue(self):
+        """
+        Compute and return my value
+        """
+        # get my referent
+        referent, = self.operands
+        # and ask him for his value
+        return referent.value
 
 
     # support for graph traversals

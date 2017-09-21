@@ -16,6 +16,8 @@ class Mapping:
     # types
     from .exceptions import CircularReferenceError
 
+    # constants
+    category = "mapping"
 
     # public data
     @property
@@ -41,7 +43,7 @@ class Mapping:
         return
 
 
-    # interface
+    # value management
     def getValue(self, **kwds):
         """
         Compute and return my value

@@ -12,12 +12,12 @@ class Value:
     """
 
 
-    # interface
+    # value management
     def getValue(self, **kwds):
         """
         Return my value
         """
-        # easy enouugh
+        # easy enough
         return self._value
 
 

@@ -19,23 +19,17 @@ class Observer(Observable):
     """
 
 
-    # value access
+    # value management
     def setValue(self, value):
         """
         Set my value
         """
-        # save my current operands
-        operands = self.operands
-        # stop observing them
-        self.ignore(operands)
-
+        # stop observing my current operands
+        self.ignore(self.operands)
         # chain up to change the value; my super-classes may not implement
         super().setValue(value)
-
-        # get the new operands
-        operands = self.operands
         # start observing again
-        self.observe(operands)
+        self.observe(self.operands)
         # all done
         return self
 

@@ -11,7 +11,7 @@ class Const:
     Mix-in class that serves a read-only value that must be set during construction
     """
 
-    # interface
+    # value management
     def getValue(self):
         """
         Return my value

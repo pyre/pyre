@@ -16,17 +16,10 @@ class Unresolved:
     from .exceptions import UnresolvedNodeError
 
 
+    # constants
+    category = 'unresolved'
     # public data
     request = None # the unresolved name
-
-
-    @property
-    def getValue(self):
-        """
-        Compute my value
-        """
-        # asking for my value is an error
-        raise self.UnresolvedNodeError(node=self, name=self.request)
 
 
     # classifiers
@@ -39,6 +32,15 @@ class Unresolved:
         yield self
         # nothing further
         return
+
+
+    # value management
+    def getValue(self):
+        """
+        Compute my value
+        """
+        # asking for my value is an error
+        raise self.UnresolvedNodeError(node=self, name=self.request)
 
 
     # support for graph traversals

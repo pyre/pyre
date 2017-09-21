@@ -28,11 +28,26 @@ class Interpolation:
         EvaluationError )
 
 
+    # constants
+    category = "interpolation"
     # public data
     expression = None # the expression supplied by the client
 
 
-    # interface
+    # classifiers
+    @property
+    def interpolations(self):
+        """
+        Return a sequence over the nodes in my dependency graph that are constructed by expanding
+        the values of other nodes in a macro
+        """
+        # i am one
+        yield self
+        # nothing further
+        return
+
+
+    # value management
     def getValue(self):
         """
         Compute and return my value
@@ -52,19 +67,6 @@ class Interpolation:
         self._operands = tuple(self.compile(model=self._model, expression=value))
         # all done
         return self
-
-
-    # classifiers
-    @property
-    def interpolations(self):
-        """
-        Return a sequence over the nodes in my dependency graph that are constructed by expanding
-        the values of other nodes in a macro
-        """
-        # i am one
-        yield self
-        # nothing further
-        return
 
 
     # support for graph traversals
@@ -174,7 +176,6 @@ class Interpolation:
 
 
     # private data
-    node = None # my evaluation node
     _scanner = re.compile( # the expression tokenizer
         r"(?P<esc_open>{{)"
         r"|"

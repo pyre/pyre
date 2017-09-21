@@ -12,6 +12,10 @@ class Sequence:
     """
 
 
+    # constants
+    category = "sequence"
+
+
     # classifiers
     @property
     def sequences(self):
@@ -24,7 +28,7 @@ class Sequence:
         return
 
 
-    # interface
+    # value management
     def getValue(self, **kwds):
         """
         Compute and return my value

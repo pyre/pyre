@@ -38,7 +38,7 @@ class Postprocessor:
         return
 
 
-    # interface
+    # value management
     def getValue(self, **kwds):
         """
         Intercept the node value retriever and make sure that the value the caller gets has
