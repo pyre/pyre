@@ -42,8 +42,8 @@ class Memo:
         super().setValue(value=value, **kwds)
         # mark me as dirty
         self.dirty = True
-        # notify my observers
-        return self.notifyObservers()
+        # all done
+        return self
 
 
     # cache management

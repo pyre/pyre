@@ -17,18 +17,24 @@ class Observable:
     """
 
     # public data
-    observers = None
-
-
-    # value management
-    def setValue(self, value):
+    @property
+    def observers(self):
         """
-        Override the value setter to notify my observers that my value changed
+        Return an iterable over my live observers
         """
-        # pass the value along
-        super().setValue(value)
-        # notify my observers
-        return self.notifyObservers()
+        # go through the references to my observers
+        for ref in self._observers:
+            # unwrap it
+            observer = ref()
+            # if it is dead
+            if observer is None:
+                # skip it
+                continue
+            # otherwise, send it along
+            yield observer
+
+        # all done
+        return
 
 
     # observer management
@@ -37,7 +43,7 @@ class Observable:
         Add {observer} to my pile
         """
         # build a weak reference to {observer} and add it to the pile
-        self.observers.add(weakref.ref(observer))
+        self._observers.add(weakref.ref(observer))
         # all done
         return self
 
@@ -47,7 +53,7 @@ class Observable:
         Remove {observer} from my pile
         """
         # build a weak reference to {observer} and remove it from the pile
-        self.observers.remove(weakref.ref(observer))
+        self._observers.remove(weakref.ref(observer))
         # all done
         return self
 
@@ -58,12 +64,8 @@ class Observable:
         """
         # take a snapshot of the current observers of the {obsolete} node, so we can avoid
         # modifying whatever container they are in
-        for oref in tuple(obsolete.observers):
-            # we store weakrefs; get the actual node
-            observer = oref()
-            # skip the dead ones
-            if observer is None: continue
-            # ask the observer to stop watching {obsolete}, and watch me instead
+        for observer in tuple(obsolete.observers):
+            # ask each one to stop watching {obsolete}, and watch me instead
             observer.substitute(current=obsolete, replacement=self)
         # all done
         return super().replace(obsolete=obsolete)
@@ -77,7 +79,7 @@ class Observable:
         # initialize the list of dead references
         discard = []
         # for each registered observer reference
-        for ref in self.observers:
+        for ref in self._observers:
             # unwrap the weak reference
             observer = ref()
             # if the observer is still alive
@@ -89,7 +91,7 @@ class Observable:
                 # put the reference on the discard pile
                 discard.append(ref)
         # clean up
-        for dead in discard: self.observers.remove(dead)
+        for dead in discard: self._observers.remove(dead)
         # all done
         return self
 
@@ -107,7 +109,7 @@ class Observable:
         # chain up
         super().__init__(**kwds)
         # initialize the set of my observers
-        self.observers = set() # should have been a weak set, but I can do better...
+        self._observers = set() # should have been a weak set, but I can do better...
         # all done
         return
 

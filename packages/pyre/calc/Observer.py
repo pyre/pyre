@@ -6,32 +6,15 @@
 #
 
 
-# we build weak references to nodes
-import weakref
-# superclass
+# the complement
 from .Observable import Observable
 
 
 # class declaration
-class Observer(Observable):
+class Observer:
     """
     Mix-in class that enables a node to be notified when the value of its dependents change
     """
-
-
-    # value management
-    def setValue(self, value):
-        """
-        Set my value
-        """
-        # stop observing my current operands
-        self.ignore(self.operands)
-        # chain up to change the value; my super-classes may not implement
-        super().setValue(value)
-        # start observing again
-        self.observe(self.operands)
-        # all done
-        return self
 
 
     # interface
@@ -63,16 +46,6 @@ class Observer(Observable):
         return
 
 
-    # meta-methods
-    def __init__(self, operands, **kwds):
-        # assume i am a composite
-        super().__init__(operands=operands, **kwds)
-        # observe my operands
-        self.observe(observables=self.operands)
-        # all done
-        return
-
-
     # implementation details
     def _substitute(self, current, replacement):
         """
@@ -80,14 +53,20 @@ class Observer(Observable):
         """
         # flush my cache
         self.flush(observable=self)
-        # make a weak reference to myself
-        selfref = weakref.ref(self)
-        # remove me as an observer of the old node
-        # N.B: do it quietly because failure here is not an indication of a problem; i may have
-        # been here before if i show up more than once in the list of operands of {current}
-        current.observers.discard(selfref)
-        # and add me to the list of observers of the replacement
-        replacement.observers.add(selfref)
+
+        # attempt to
+        try:
+            # remove me as an observer of the old node
+            current.removeObserver(self)
+        # if this fails
+        except KeyError:
+            # it is not an indication of a problem; i may have been here before if i show up
+            # more than once in the list of operands of {current}; just move on
+            pass
+
+        # add me to the list of observers of the replacement
+        replacement.addObserver(self)
+
         # and ask my superclass to do the rest
         return super()._substitute(current, replacement)
 

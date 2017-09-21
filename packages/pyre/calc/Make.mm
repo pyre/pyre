@@ -17,6 +17,8 @@ EXPORT_PYTHON_MODULES = \
     Const.py \
     Count.py \
     Datum.py \
+    Dependency.py \
+    Dependent.py \
     Evaluator.py \
     Expression.py \
     Filter.py \

@@ -28,9 +28,9 @@ def test():
     assert tuple(cost.operands) == (production, shipping)
     assert tuple(clone.operands) == (cost,)
     # and the dependents
-    assert set(ref() for ref in production.observers) == {cost}
-    assert set(ref() for ref in shipping.observers) == {cost}
-    assert set(ref() for ref in cost.observers) == {clone}
+    assert set(production.observers) == {cost}
+    assert set(shipping.observers) == {cost}
+    assert set(cost.observers) == {clone}
     # check the values
     assert production.value == p
     assert shipping.value == s

@@ -23,8 +23,8 @@ def test():
     p = v1 * v2
     # check
     assert list(s.operands) == [v1, v2]
-    assert set(observer() for observer in v1.observers) == {s, p}
-    assert set(observer() for observer in v2.observers) == {s, p}
+    assert set(v1.observers) == {s, p}
+    assert set(v2.observers) == {s, p}
     # verify that both s and p are dirty
     assert s.dirty == True
     assert p.dirty == True

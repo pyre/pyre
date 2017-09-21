@@ -41,6 +41,8 @@ class Calculator(algebraic.algebra):
     # value change notification
     from .Observer import Observer as observer
     from .Observable import Observable as observable
+    from .Dependent import Dependent as dependent
+    from .Dependency import Dependency as dependency
     # value processing
     from .Preprocessor import Preprocessor as preprocessor
     from .Postprocessor import Postprocessor as postprocessor
@@ -92,32 +94,32 @@ class Calculator(algebraic.algebra):
         record.unresolved = cls('unresolved', derivation, {}, ignore=True)
 
         # build the list of base classes for average
-        derivation = tuple(cls.injectComposite(cls.average, record))
+        derivation = tuple(cls.managedCompositeDerivation(cls.average, record))
         # make one
         record.average = cls('average', derivation, {}, ignore=True)
 
         # build the list of base classes for count
-        derivation = tuple(cls.injectComposite(cls.count, record))
+        derivation = tuple(cls.managedCompositeDerivation(cls.count, record))
         # make one
         record.count = cls('count', derivation, {}, ignore=True)
 
         # build the list of base classes for max
-        derivation = tuple(cls.injectComposite(cls.maximum, record))
+        derivation = tuple(cls.managedCompositeDerivation(cls.maximum, record))
         # make one
         record.max = cls('max', derivation, {}, ignore=True)
 
         # build the list of base classes for min
-        derivation = tuple(cls.injectComposite(cls.minimum, record))
+        derivation = tuple(cls.managedCompositeDerivation(cls.minimum, record))
         # make one
         record.min = cls('min', derivation, {}, ignore=True)
 
         # build the list of base classes for product
-        derivation = tuple(cls.injectComposite(cls.product, record))
+        derivation = tuple(cls.managedCompositeDerivation(cls.product, record))
         # make one
         record.product = cls('product', derivation, {}, ignore=True)
 
         # build the list of base classes for sum
-        derivation = tuple(cls.injectComposite(cls.sum, record))
+        derivation = tuple(cls.managedCompositeDerivation(cls.sum, record))
         # make one
         record.sum = cls('sum', derivation, {}, ignore=True)
 
@@ -133,6 +135,8 @@ class Calculator(algebraic.algebra):
         """
         # my literals have const values
         yield cls.const
+        # they are observable
+        yield cls.observable
         # and whatever else my superclass says
         yield from super().literalDerivation(record)
         # all done
@@ -146,13 +150,8 @@ class Calculator(algebraic.algebra):
         """
         # my variable may reject invalid input
         yield cls.filter
-        # my variables memoize their values
-        yield cls.memo
-        # my variables support arbitrary value conversions
-        yield cls.preprocessor
-        yield cls.postprocessor
-        # my variables notify their clients of changes to their values
-        yield cls.observable
+        # make a managed dependent
+        yield from cls.managedDependencyDerivation()
         # my variables have values
         yield cls.value
         # and whatever else my superclass says
@@ -166,14 +165,8 @@ class Calculator(algebraic.algebra):
         """
         Contribute to the list of ancestors of the representation of operators
         """
-        # my operators memoize their values
-        yield cls.memo
-        # my operators support arbitrary value conversions
-        yield cls.preprocessor
-        yield cls.postprocessor
-        # my operators notify their clients of changes to their values and respond when the
-        # values of their operands change
-        yield cls.observer
+        # make a managed dependent
+        yield from cls.managedDependentDerivation()
         # my operators know how to compute their values
         yield cls.evaluator
         # and whatever else my superclass says
@@ -187,16 +180,12 @@ class Calculator(algebraic.algebra):
         """
         Contribute to the list of ancestors of the representation of operators
         """
-        # my operators memoize their values
-        yield cls.memo
-        # my operators support arbitrary value conversions
-        yield cls.preprocessor
-        yield cls.postprocessor
-        # my operators notify their clients of changes to their values and respond when the
-        # values of their operands change
-        yield cls.observer
+        # make a managed dependent
+        yield from cls.managedDependentDerivation()
         # if the record has anything to say
-        if record.sequence: yield record.sequence
+        if record.sequence:
+            # this is its spot
+            yield record.sequence
         # my sequences know how to compute their values
         yield cls.sequence
         # and whatever else my superclass says
@@ -210,16 +199,12 @@ class Calculator(algebraic.algebra):
         """
         Contribute to the list of ancestors of the representation of operators
         """
-        # my operators memoize their values
-        yield cls.memo
-        # my operators support arbitrary value conversions
-        yield cls.preprocessor
-        yield cls.postprocessor
-        # my operators notify their clients of changes to their values and respond when the
-        # values of their operands change
-        yield cls.observer
+        # make a managed dependent
+        yield from cls.managedDependentDerivation()
         # if the record has anything to say
-        if record.mapping: yield record.mapping
+        if record.mapping:
+            # this is its spot
+            yield record.mapping
         # my mappings know how to compute their values
         yield cls.mapping
         # and whatever else my superclass says
@@ -233,16 +218,12 @@ class Calculator(algebraic.algebra):
         """
         Contribute to the list of ancestors of the representation of expressions
         """
-        # my expressions memoize their values
-        yield cls.memo
-        # support arbitrary value conversions
-        yield cls.preprocessor
-        yield cls.postprocessor
-        # notify their clients of changes to their values and respond when the values of their
-        # operands change
-        yield cls.observer
+        # make a managed dependent
+        yield from cls.managedDependentDerivation()
         # if the record has anything to say
-        if record.expression: yield record.expression
+        if record.expression:
+            # this is its spot
+            yield record.expression
         # this where they fit
         yield cls.expression
         # and whatever else my superclass says
@@ -256,16 +237,12 @@ class Calculator(algebraic.algebra):
         """
         Contribute to the list of ancestors of the representation of interpolations
         """
-        # my interpolations memoize their values
-        yield cls.memo
-        # support arbitrary value conversions
-        yield cls.preprocessor
-        yield cls.postprocessor
-        # notify their clients of changes to their values and respond when the values of their
-        # operands change
-        yield cls.observer
+        # make a managed dependent
+        yield from cls.managedDependentDerivation()
         # if the record has anything to say
-        if record.interpolation: yield record.interpolation
+        if record.interpolation:
+            # this is its spot
+            yield record.interpolation
         # this where they fit
         yield cls.interpolation
         # and whatever else my superclass says
@@ -279,16 +256,12 @@ class Calculator(algebraic.algebra):
         """
         Contribute to the list of ancestors of the representation of references
         """
-        # my references memoize their values
-        yield cls.memo
-        # support arbitrary value conversions
-        yield cls.preprocessor
-        yield cls.postprocessor
-        # notify their clients of changes to their values and respond when the values of their
-        # operands change
-        yield cls.observer
+        # make a managed dependent
+        yield from cls.managedDependentDerivation()
         # if the record has anything to say
-        if record.reference: yield record.reference
+        if record.reference:
+            # this is its spot
+            yield record.reference
         # this where they fit
         yield cls.reference
         # and whatever else my superclass says
@@ -302,8 +275,7 @@ class Calculator(algebraic.algebra):
         """
         Contribute to the list of ancestors of the representation of unresolved nodes
         """
-        # my unresolved nodes notify their clients of changes to their values and respond when
-        # the values of their operands change
+        # my unresolved nodes are observable
         yield cls.observable
         # if the record has anything to say
         if record.unresolved: yield record.unresolved
@@ -316,19 +288,51 @@ class Calculator(algebraic.algebra):
 
 
     @classmethod
-    def injectComposite(cls, composite, record):
+    def managedDependencyDerivation(cls):
         """
-        Place the class {composite} in the right spot in the {record} inheritance graph
+        Build the canonical derivation of node that other nodes can depend on
         """
-        # my local composites memoize their values
+        # my local nodes memoize their values
         yield cls.memo
         # support arbitrary value conversions
         yield cls.preprocessor
         yield cls.postprocessor
         # notify their clients of changes to their values and respond when the values of their
         # operands change
+        yield cls.dependency
+        yield cls.observable
+        # all done
+        return
+
+
+    @classmethod
+    def managedDependentDerivation(cls):
+        """
+        Place {dependent} in the right spot in the inheritance graph of {record}
+        """
+        # my local nodes memoize their values
+        yield cls.memo
+        # support arbitrary value conversions
+        yield cls.preprocessor
+        yield cls.postprocessor
+        # notify their clients of changes to their values and respond when the values of their
+        # operands change
+        yield cls.dependent
         yield cls.observer
-        # this where they fit
+        yield cls.dependency
+        yield cls.observable
+        # all done
+        return
+
+
+    @classmethod
+    def managedCompositeDerivation(cls, composite, record):
+        """
+        Place the class {composite} in the right spot in the {record} inheritance graph
+        """
+        # make a managed dependent
+        yield from cls.managedDependentDerivation()
+        # this where {composite} fits
         yield composite
         # and whatever else my superclass says
         yield from cls.compositeDerivation(record)

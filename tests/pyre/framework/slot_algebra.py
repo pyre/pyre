@@ -39,13 +39,13 @@ def test():
     assert len(tuple(one.operands)) == 0
     assert len(tuple(two.operands)) == 0
     # check that {zero} has no observers
-    assert len(zero.observers) == 0
+    assert len(tuple(zero.observers)) == 0
     # but {one} and {two} have one each
-    assert len(one.observers) == 1
-    assert len(two.observers) == 1
+    assert len(tuple(one.observers)) == 1
+    assert len(tuple(two.observers)) == 1
     # the right one
-    assert identical((ref() for ref in one.observers), [s])
-    assert identical((ref() for ref in two.observers), [s])
+    assert identical(one.observers, [s])
+    assert identical(two.observers, [s])
 
     # check that {s} has two operands
     assert len(tuple(s.operands)) == 2

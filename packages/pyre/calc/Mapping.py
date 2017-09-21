@@ -10,6 +10,8 @@
 class Mapping:
     """
     Mix-in class that forms the basis of the representation of mappings
+
+    Mappings are dictionaries with arbitrary keys whose values are nodes
     """
 
 
@@ -52,12 +54,36 @@ class Mapping:
         return {name: op.value for name, op in self.data.items()}
 
 
+    def setValue(self, value):
+        """
+        Add the {key, node} pair in {value} to the mapping
+        """
+        # unpack
+        key, node = value
+        # store
+        self.data[key] = noe
+        # all done
+        return self
+
+
     # meta-methods
     def __init__(self, operands, **kwds):
         # chain up with an empty pile of dependencies
         super().__init__(operands=(), **kwds)
         # my operands are in a dict
         self.data = dict(**operands)
+        # all done
+        return
+
+
+    def __getitem__(self, key):
+        # return the value of the node stored under {key}
+        return self.data[key].value
+
+
+    def __setitem__(self, key, node):
+        # store {node} under {key}
+        self.data[key] = node
         # all done
         return
 

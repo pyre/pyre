@@ -52,14 +52,14 @@ def test():
     assert identical(double.operands, [three, three])
 
     # observers
-    assert len(one.observers) == 1
-    assert identical((ref() for ref in one.observers), [three])
-    assert len(two.observers) == 1
-    assert identical((ref() for ref in two.observers), [three])
-    assert len(var.observers) == 0
-    assert len(three.observers) == 1
-    assert identical((ref() for ref in three.observers), [double])
-    assert len(double.observers) == 0
+    assert len(tuple(one.observers)) == 1
+    assert identical(one.observers, [three])
+    assert len(tuple(two.observers)) == 1
+    assert identical(two.observers, [three])
+    assert len(tuple(var.observers)) == 0
+    assert len(tuple(three.observers)) == 1
+    assert identical(three.observers, [double])
+    assert len(tuple(double.observers)) == 0
 
     # all done
     return var, double
