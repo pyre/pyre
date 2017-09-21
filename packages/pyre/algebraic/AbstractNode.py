@@ -58,9 +58,9 @@ class AbstractNode:
 
     # node classifiers
     @property
-    def variables(self):
+    def literals(self):
         """
-        Return a sequence over the leaf nodes in my dependency graph
+        Return a sequence over the nodes in my dependency graph that encapsulate foreign objects
         """
         # by default, empty
         return ()
@@ -76,9 +76,9 @@ class AbstractNode:
 
 
     @property
-    def literals(self):
+    def variables(self):
         """
-        Return a sequence over the nodes in my dependency graph that encapsulate foreign objects
+        Return a sequence over the leaf nodes in my dependency graph
         """
         # by default, empty
         return ()

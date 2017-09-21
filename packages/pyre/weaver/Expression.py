@@ -127,7 +127,7 @@ class Expression:
         Render {node} as a literal
         """
         # return the literal representation
-        return repr(node.value, **kwds)
+        return repr(node._value, **kwds)
 
 
     def _operatorRenderer(self, node, **kwds):

@@ -93,32 +93,4 @@ class Composite:
         return
 
 
-    @property
-    def operators(self):
-        """
-        Return a sequence over the composite nodes in my dependency graph
-        """
-        # i am one
-        yield self
-        # go through my operands
-        for operand in self.operands:
-            # and ask them for operators in their span
-            yield from operand.operators
-        # all done
-        return
-
-
-    @property
-    def literals(self):
-        """
-        Return a sequence over the nodes in my dependency graph that encapsulate foreign objects
-        """
-        # go through my operands
-        for operand in self.operands:
-            # and ask them for literals in their span
-            yield from operand.literals
-        # all done
-        return
-
-
 # end of file

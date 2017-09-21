@@ -54,15 +54,6 @@ class Datum(AbstractNode):
         return self.setValue(value=value)
 
 
-    # interface
-    def ref(self, **kwds):
-        """
-        Build and return a reference to me
-        """
-        # use the class factory to make one and return it
-        return self.reference(operands=(self,), **kwds)
-
-
     # classifiers
     @property
     def expressions(self):
@@ -85,18 +76,18 @@ class Datum(AbstractNode):
 
 
     @property
-    def references(self):
+    def mappings(self):
         """
-        Return a sequence over the nodes in my dependency graph that are references to other nodes
+        Return a sequence over the nodes in my dependency graph that are mappings
         """
         # by default, empty
         return ()
 
 
     @property
-    def mappings(self):
+    def references(self):
         """
-        Return a sequence over the nodes in my dependency graph that are mappings
+        Return a sequence over the nodes in my dependency graph that are references to other nodes
         """
         # by default, empty
         return ()
@@ -119,6 +110,15 @@ class Datum(AbstractNode):
         """
         # by default, empty
         return ()
+
+
+    # interface
+    def ref(self, **kwds):
+        """
+        Build and return a reference to me
+        """
+        # use the class factory to make one and return it
+        return self.reference(operands=(self,), **kwds)
 
 
 # end of file

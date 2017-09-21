@@ -17,16 +17,6 @@ class Literal:
     category = 'literal'
 
 
-    # literals get a value accessor regardless of whether the rest of the algebra supports
-    # value access; the value is read-only
-    @property
-    def value(self):
-        """
-        Value accessor
-        """
-        return self._value
-
-
     # interface
     @property
     def literals(self):

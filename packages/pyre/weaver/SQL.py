@@ -48,7 +48,7 @@ class SQL(LineMill, Expression):
         Render {node} as a literal
         """
         # get the value of the node
-        value = node.value
+        value = node._value
         # if it is already a string
         if isinstance(value, str):
             # just escape the single quotes

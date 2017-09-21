@@ -47,14 +47,14 @@ class Composite:
 
     # classifiers
     @property
-    def variables(self):
+    def literals(self):
         """
-        Return a sequence over the leaf nodes in my dependency graph
+        Return a sequence over the nodes in my dependency graph that encapsulate foreign objects
         """
         # go through my operands
         for operand in self.operands:
-            # and ask them for variables in their span
-            yield from operand.variables
+            # and ask them for literals in their span
+            yield from operand.literals
         # all done
         return
 
@@ -75,14 +75,14 @@ class Composite:
 
 
     @property
-    def literals(self):
+    def variables(self):
         """
-        Return a sequence over the nodes in my dependency graph that encapsulate foreign objects
+        Return a sequence over the leaf nodes in my dependency graph
         """
         # go through my operands
         for operand in self.operands:
-            # and ask them for literals in their span
-            yield from operand.literals
+            # and ask them for variables in their span
+            yield from operand.variables
         # all done
         return
 
