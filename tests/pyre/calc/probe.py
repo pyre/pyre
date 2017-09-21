@@ -16,13 +16,14 @@ Verify that probes get notified when the values of their nodes change
 def test():
     import pyre.calc
 
+    # a probe is an observer
+    from pyre.calc.Observer import Observer
     # make a probe that records the values of the monitored nodes
-    from pyre.calc.Probe import Probe
-    class Recorder(Probe):
+    class Probe(Observer):
 
         def flush(self, observable):
             self.nodes[observable] = observable.value
-            return
+            return self
 
         def __init__(self, **kwds):
             super().__init__(**kwds)
@@ -30,7 +31,7 @@ def test():
             return
 
     # make a probe
-    probe = Recorder()
+    probe = Probe()
 
     # make a node
     v = 80.
@@ -38,7 +39,7 @@ def test():
     assert production.value == v
 
     # insert the probe
-    probe.insert(production)
+    probe.observe(observables=[production])
 
     # set and check the value
     production.value = v

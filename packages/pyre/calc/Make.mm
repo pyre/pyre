@@ -34,7 +34,6 @@ EXPORT_PYTHON_MODULES = \
     Observer.py \
     Preprocessor.py \
     Postprocessor.py \
-    Probe.py \
     Product.py \
     Reference.py \
     Sequence.py \
