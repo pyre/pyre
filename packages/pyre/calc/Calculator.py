@@ -39,6 +39,7 @@ class Calculator(algebraic.algebra):
     from .Product import Product as product
     from .Sum import Sum as sum
     # value change notification
+    from .Reactor import Reactor as reactor
     from .Observer import Observer as observer
     from .Observable import Observable as observable
     from .Dependent import Dependent as dependent

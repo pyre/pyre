@@ -6,12 +6,14 @@
 #
 
 
+# the superclass
+from .Reactor import Reactor
 # the complement
 from .Observable import Observable
 
 
 # class declaration
-class Observer:
+class Observer(Reactor):
     """
     Mix-in class that enables a node to be notified when the value of its dependents change
     """

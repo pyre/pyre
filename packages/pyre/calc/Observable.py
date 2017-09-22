@@ -8,10 +8,12 @@
 
 # externals
 import weakref
+# the superclas
+from .Reactor import  Reactor
 
 
 # class declaration
-class Observable:
+class Observable(Reactor):
     """
     Mix-in class that notifies its clients when the value of a node changes
     """
@@ -72,36 +74,20 @@ class Observable:
 
 
     # signaling
-    def notifyObservers(self):
-        """
-        Notify the nodes that depend on me that my value has changed
-        """
-        # initialize the list of dead references
-        discard = []
-        # for each registered observer reference
-        for ref in self._observers:
-            # unwrap the weak reference
-            observer = ref()
-            # if the observer is still alive
-            if observer is not None:
-                # notify it
-                observer.flush(observable=self)
-            # otherwise
-            else:
-                # put the reference on the discard pile
-                discard.append(ref)
-        # clean up
-        for dead in discard: self._observers.remove(dead)
-        # all done
-        return self
-
-
-    def flush(self, observable=None):
+    def flush(self, **kwds):
         """
         Handler of the notification event from one of my observables
-        """
-        # let my observers know
-        return self.notifyObservers()
+       """
+        # take this opportunity to clean up my observers
+        observers = set(self.observers)
+        # go through the pile
+        for observer in observers:
+            # notify each one
+            observer.flush(observable=self)
+        # rebuild the set of reeferences
+        self._observers = set(map(weakref.ref, observers))
+        # chain up
+        return super().flush(**kwds)
 
 
     # meta-methods

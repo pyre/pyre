@@ -35,6 +35,7 @@ EXPORT_PYTHON_MODULES = \
     Preprocessor.py \
     Postprocessor.py \
     Product.py \
+    Reactor.py \
     Reference.py \
     Sequence.py \
     Sum.py \

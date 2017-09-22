@@ -35,7 +35,7 @@ def test():
     # check literals
     assert node.literal.__mro__ == (
         node.literal, # the leaf
-        calculator.const, calculator.observable,  # from calculator
+        calculator.const, calculator.observable, calculator.reactor,  # from calculator
         calculator.literal, calculator.leaf, # from algebra
         node, # from node
         calculator.base, base,
@@ -47,7 +47,8 @@ def test():
         node.variable, # the leaf
         calculator.filter, calculator.memo, # from calculator
         calculator.preprocessor, calculator.postprocessor, # from calculator
-        calculator.dependency, calculator.observable, calculator.value, # from calculator
+        calculator.dependency, calculator.observable, calculator.reactor, # from calculator
+        calculator.value, # from calculator
         calculator.variable, calculator.leaf, # from algebra
         node, # from node
         calculator.base, base,
@@ -61,6 +62,7 @@ def test():
         calculator.preprocessor, calculator.postprocessor, # from calculator
         calculator.dependent, calculator.observer, # from calculator
         calculator.dependency, calculator.observable, # from calculator
+        calculator.reactor, # from calculator
         calculator.evaluator, # from calculator
         calculator.operator, node.composite, calculator.composite, # from algebra
         node, # from node
@@ -75,6 +77,7 @@ def test():
         calculator.preprocessor, calculator.postprocessor, # from calculator
         calculator.dependent, calculator.observer, # from calculator
         calculator.dependency, calculator.observable, # from calculator
+        calculator.reactor, # from calculator
         calculator.expression, # from calculator
         node.composite, calculator.composite, # from algebra
         node, # from node
@@ -89,6 +92,7 @@ def test():
         calculator.preprocessor, calculator.postprocessor, # from calculator
         calculator.dependent, calculator.observer, # from calculator
         calculator.dependency, calculator.observable, # from calculator
+        calculator.reactor, # from calculator
         calculator.interpolation, # from calculator
         node.composite, calculator.composite, # from algebra
         node, # from node
@@ -103,6 +107,7 @@ def test():
         calculator.preprocessor, calculator.postprocessor, # from calculator
         calculator.dependent, calculator.observer, # from calculator
         calculator.dependency, calculator.observable, # from calculator
+        calculator.reactor, # from calculator
         calculator.reference, # from calculator
         node.composite, calculator.composite, # from algebra
         node, # from node
@@ -113,7 +118,8 @@ def test():
     # check unresolved nodes
     assert node.unresolved.__mro__ == (
         node.unresolved, # the leaf
-        calculator.observable, calculator.unresolved, # from calculator
+        calculator.observable, calculator.reactor, # from calculator
+        calculator.unresolved, # from calculator
         calculator.leaf, # from algebra
         node, # from node
         calculator.base, base,

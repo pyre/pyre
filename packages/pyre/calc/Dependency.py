@@ -21,7 +21,7 @@ class Dependency:
         # pass the value along
         super().setValue(value)
         # notify my observers
-        self.notifyObservers()
+        self.flush()
         # all done
         return self
 
