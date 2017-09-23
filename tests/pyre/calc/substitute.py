@@ -41,14 +41,14 @@ def test():
     # make a substitution
     s.substitute(current=n1, replacement=n3)
     # we expect:
-    # n1 to have no observers
-    assert len(n1._observers) == 0
+    # n1 to still have one observer, since {substitute} no longer adjusts observer piles
+    assert len(n1._observers) == 1
+    assert identical(n1.observers, [s])
     # n2 to have one observer: s
     assert len(n2._observers) == 1
     assert identical(n2.observers, [s])
-    # n3 to have one observer: s
-    assert len(n3._observers) == 1
-    assert identical(n3.observers, [s])
+    # n3 to have no observes (see above)
+    assert len(n3._observers) == 0
     # s to have two operands: n2 and n3
     assert len(s._operands) == 2
     assert identical(s._operands, (n3, n2))

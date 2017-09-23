@@ -48,29 +48,4 @@ class Observer(Reactor):
         return
 
 
-    # implementation details
-    def _substitute(self, current, replacement):
-        """
-        Adjust the operands by substituting {replacement} for {current} in the set of operands
-        """
-        # flush my cache
-        self.flush(observable=self)
-
-        # attempt to
-        try:
-            # remove me as an observer of the old node
-            current.removeObserver(self)
-        # if this fails
-        except KeyError:
-            # it is not an indication of a problem; i may have been here before if i show up
-            # more than once in the list of operands of {current}; just move on
-            pass
-
-        # add me to the list of observers of the replacement
-        replacement.addObserver(self)
-
-        # and ask my superclass to do the rest
-        return super()._substitute(current, replacement)
-
-
 # end of file

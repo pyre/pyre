@@ -41,7 +41,7 @@ def test():
     # print("     poser: node@{:#x}".format(id(poser)))
 
     # patch cost with the new production node
-    cost.substitute(current=production, replacement=poser)
+    poser.replace(production)
     # check
     assert cost.value == poser.value + shipping.value
     assert margin.value == .25*cost.value

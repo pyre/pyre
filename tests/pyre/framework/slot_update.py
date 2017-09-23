@@ -39,7 +39,7 @@ def test():
     assert three.value == 3
 
     # now, replace {var} by {three} in {double}
-    double.substitute(current=var, replacement=three)
+    three.replace(var)
 
     # check all expected invariants
     # operands

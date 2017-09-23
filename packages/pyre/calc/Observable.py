@@ -64,11 +64,20 @@ class Observable(Reactor):
         """
         Remove {obsolete} from its upstream graph and assume its responsibilities
         """
-        # take a snapshot of the current observers of the {obsolete} node, so we can avoid
-        # modifying whatever container they are in
+        # make a pile of nodes that have been adjusted
+        clean = set()
+        # go through the observers of {obsolete}
         for observer in tuple(obsolete.observers):
-            # ask each one to stop watching {obsolete}, and watch me instead
-            observer.substitute(current=obsolete, replacement=self)
+            # remove it from the pile in {obsolete}
+            obsolete.removeObserver(observer)
+            # if the observer is a composite
+            if isinstance(observer, self.composite):
+                # perform a substitution
+                observer.substitute(current=obsolete, replacement=self, clean=clean)
+            # add it to my pile
+            self.addObserver(observer)
+            # and let it know things have changed
+            observer.flush(observable=self)
         # all done
         return super().replace(obsolete=obsolete)
 
@@ -84,7 +93,7 @@ class Observable(Reactor):
         for observer in observers:
             # notify each one
             observer.flush(observable=self)
-        # rebuild the set of reeferences
+        # rebuild the set of references
         self._observers = set(map(weakref.ref, observers))
         # chain up
         return super().flush(**kwds)
