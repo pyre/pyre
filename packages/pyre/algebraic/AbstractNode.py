@@ -85,31 +85,30 @@ class AbstractNode:
 
 
     # interface
+    def cyclic(self):
+        """
+        Determine whether my subgraph has any cycles
+        """
+        # initialize the my markers
+        known = set()
+        # go through my span
+        for node in self.span:
+            # if i've seen it before
+            if node in known:
+                # it's a cycle
+                return node
+            # add this to the pile and move on
+            known.add(node)
+        # no cycles were detected
+        return None
+
+
     def replace(self, obsolete):
         """
         Take ownership of any information held by the {obsolete} node, which is about to be
         destroyed
-
-        At this level, there is no mechanism for performing the actual replacement. The node
-        interface guarantees that i can compute my {span}, so all i can do is check for whether
-        the obsolete node shows up in my upstream graph.
         """
-        # print("AbstractNode.replace:")
-        # print("    self:", self)
-        # print("        span:", tuple(self.span))
-        # print("    obsolete:", obsolete)
-        # print("        span:", tuple(obsolete.span))
-
-        # smarter nodes may know how to do this; assuming the clean up has already taken place
-        # by the time they chain here, let's verify that it was done correctly and {obsolete}
-        # is not in my span; this must be done carefully so as not to trigger operator {__eq__},
-        # which may be overloaded by the {boolean} mixin
-        for node in self.span:
-            # if it matches {obsolete}
-            if node is obsolete:
-                # report the error
-                raise self.CircularReferenceError(node=obsolete)
-        # all done
+        # i don't know how to do that; my subclasses might
         return self
 
 
