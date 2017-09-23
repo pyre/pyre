@@ -25,6 +25,7 @@ structural:
 	${PYTHON} ./node.py
 	${PYTHON} ./substitute.py
 	${PYTHON} ./replace.py
+	${PYTHON} ./replace_probe.py
 	${PYTHON} ./patch.py
 
 evaluators:

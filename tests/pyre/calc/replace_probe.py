@@ -16,7 +16,7 @@ Verify that probes get notified when the values of their nodes change
 def test():
     import pyre.calc
 
-    # get the base class
+    # a probe is an observer
     from pyre.calc.Probe import Probe
     # make a probe that records the values of the monitored nodes
     class probe(Probe):
@@ -30,29 +30,48 @@ def test():
             self.nodes = {}
             return
 
+    # make some nodes
+    u = pyre.calc.var(value='u')
+    v = pyre.calc.var(value='v')
+    w = pyre.calc.var(value='w')
+    s = u + v
+    r = u.ref()
+
+    # as we are, {u} has two observers: {s} and {r}
+    assert identical(u.observers, {r,s})
+
     # make a probe
-    probe = probe()
+    p = probe()
+    # ask it watch {u} and its dependents
+    p.observe(observables=(u,s,r))
 
-    # make a node
-    v = 80.
-    production = pyre.calc.var(value=v)
-    assert production.value == v
+    # {u} now has three observers: {s}, {r}, and {p}
+    # print(set(u.observers))
+    assert identical(u.observers, {r,s,p})
 
-    # insert the probe
-    probe.observe(observables=[production])
-
-    # set and check the value
-    production.value = v
-    assert production.value == v
-    assert probe.nodes[production] == v
-
-    # once more
-    v = 100.
-    production.value = v
-    assert production.value == v
-    assert probe.nodes[production] == v
+    # {w} should have no observers
+    assert identical(w.observers, {})
+    # make the substitution
+    w.replace(u)
+    # print(set(w.observers))
+    # print(set(u.observers))
+    # {w} should have three observers: {s}, {r}, and {p}
+    assert identical(w.observers, {r,s, p})
 
     return
+
+
+def identical(s1, s2):
+    """
+    Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
+    we must avoid triggering __eq__
+    """
+    # for the pairs
+    for n1, n2 in zip(s1, s2):
+        # check them for _identity_, not _equality_
+        if n1 is not n2: return False
+    # all done
+    return True
 
 
 # main
