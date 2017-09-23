@@ -96,8 +96,10 @@ class Composite:
         desirable typically. To prevent this, we check that {self} is not in the span of
         {replacement} when the caller does not supply a set of {clean} nodes
         """
-        # if there is no {clean} set
-        if clean is None:
+        # if the caller didn't hand me a {clean} pile
+        if clean is None: clean = set()
+        # if the {clean} pile does not already contain {replacement}
+        if replacement not in clean:
             # cycle detection: look for {self} in the span of {replacement}; do it carefully so
             # as not to trigger a call to the potentially overloaded {__eq__}, which may not
             # actually perform a comparison
@@ -107,7 +109,7 @@ class Composite:
                     # the substitution would create a cycle
                     raise self.CircularReferenceError(node=self)
             # all good; put {replacement} in the pile of {clean} nodes
-            clean = { replacement }
+            clean.add(replacement)
         # now, iterate over composites in my span
         for node in self.operators:
             # if this is a node we have visited before
