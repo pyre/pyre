@@ -74,11 +74,6 @@ class PrivateInventory(Inventory):
         Build inventory appropriate for a component class that is not registered with the
         nameserver
         """
-        # register with the component registrar
-        component.pyre_registrar.registerComponentClass(component=component)
-        # invoke the registration hook
-        component.pyre_classRegistered()
-
         # collect the slots
         local = cls.localSlots(component=component)
         inherited = cls.inheritedSlots(component=component)
@@ -102,10 +97,6 @@ class PrivateInventory(Inventory):
         Build inventory appropriate for a component instance that is not registered with the
         nameserver
         """
-        # register with the component registrar
-        cls.pyre_registrar.registerComponentInstance(instance=instance)
-        # invoke the registration hook
-        instance.pyre_registered()
         # prime the slot generator
         slots = cls.instanceSlots(instance=instance)
         # build the inventory

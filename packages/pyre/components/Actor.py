@@ -92,6 +92,11 @@ class Actor(Requirement):
                 # complain
                 raise self.ProtocolError(self, protocol, report)
 
+        # register with the component registrar
+        self.pyre_registrar.registerComponentClass(component=self)
+        # invoke the registration hook
+        self.pyre_classRegistered()
+
         # all done
         return
 
@@ -102,11 +107,11 @@ class Actor(Requirement):
         """
         # ask the component class for any opinions on the name of this instance
         name = self.pyre_normalizeInstanceName(name)
+        # get the registrar
+        registrar = self.pyre_registrar
 
         # if I know the name
         if name:
-            # get the registrar
-            registrar = self.pyre_registrar
             # look for this name among my instances
             instance = registrar.retrieveComponentByName(componentClass=self, name=name)
             # if found, return it
@@ -137,6 +142,11 @@ class Actor(Requirement):
         if initializationErrors:
             # complain
             raise instance.ConfigurationError(configurable=instance, errors=initializationErrors)
+
+        # register with the component registrar
+        registrar.registerComponentInstance(instance=instance)
+        # invoke the registration hook
+        instance.pyre_registered()
 
         # and return it
         return instance

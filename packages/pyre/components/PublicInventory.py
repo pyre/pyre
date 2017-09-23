@@ -126,10 +126,6 @@ class PublicInventory(Inventory):
         """
         # register the class with the executive
         key = component.pyre_executive.registerComponentClass(family=family, component=component)
-        # register with the component registrar
-        component.pyre_registrar.registerComponentClass(component=component)
-        # invoke the registration hook
-        component.pyre_classRegistered()
 
         # collect the slots
         local = cls.localSlots(key=key, component=component)
@@ -161,11 +157,6 @@ class PublicInventory(Inventory):
         """
         # have the executive make a key
         key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
-
-        # register with the component registrar
-        cls.pyre_registrar.registerComponentInstance(instance=instance)
-        # invoke the registration hook
-        instance.pyre_registered()
 
         # build the instance slots
         slots = cls.instanceSlots(key=key, instance=instance)

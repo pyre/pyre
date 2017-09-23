@@ -65,14 +65,15 @@ class Role(Requirement):
             # i have no registration key
             self.pyre_key = None
 
-        # register with the protocol registrar
-        self.pyre_executive.registrar.registerProtocolClass(protocol=self)
-        # invoke the registration hook
-        self.pyre_classRegistered()
         # invoke the configuration hook
         self.pyre_classConfigured()
         # invoke the initialization hook
         self.pyre_classInitialized()
+
+        # register with the protocol registrar
+        self.pyre_registrar.registerProtocolClass(protocol=self)
+        # invoke the registration hook
+        self.pyre_classRegistered()
 
         # all done
         return
