@@ -207,7 +207,7 @@ class Configurator:
             # find the trait
             trait = instance.pyre_trait(assignment.key[0])
             # ask it to set the value
-            inventory.setTrait(
+            inventory.setTraitValue(
                 trait=trait, factory=trait.instanceSlot,
                 value=assignment.value, priority=priority, locator=assignment.locator)
 

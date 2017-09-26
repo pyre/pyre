@@ -214,7 +214,7 @@ class Dict(Slotted):
         here = tracking.simple('while configuring {.pyre_name!r}'.format(client))
 
         # attach my new value
-        client.pyre_inventory.setTrait(
+        client.pyre_inventory.setTraitValue(
             trait=self, factory=myFactory,
             value=catalog, priority=userPriority(), locator=here)
 

@@ -146,7 +146,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # build a priority
         priority = self.pyre_executive.priority.explicit() if priority is None else priority
         # set the value
-        return self.pyre_inventory.setTrait(
+        return self.pyre_inventory.setTraitValue(
             trait=trait, factory=trait.instanceSlot,
             value=value, priority=priority, locator=locator)
 
@@ -158,7 +158,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # identify the trait descriptor
         trait = self.pyre_trait(alias)
         # ask my inventory to do the rest
-        return self.pyre_inventory.getTrait(trait), self.pyre_inventory.getTraitLocator(trait)
+        return self.pyre_inventory.getTraitValue(trait), self.pyre_inventory.getTraitLocator(trait)
 
 
     # framework notifications
@@ -226,7 +226,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # find the trait descriptor associated with this {attribute}
         trait = self.pyre_trait(alias=attribute)
         # and return its meta-data
-        return self.pyre_inventory.getValuePriority(trait)
+        return self.pyre_inventory.getTraitPriority(trait)
 
 
     def pyre_where(self, attribute=None):
@@ -369,7 +369,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # set the priority
         priority = self.pyre_executive.priority.explicit()
         # set the value
-        self.pyre_inventory.setTrait(trait=trait, factory=trait.instanceSlot,
+        self.pyre_inventory.setTraitValue(trait=trait, factory=trait.instanceSlot,
                                      value=value, priority=priority, locator=locator)
 
         # all done

@@ -180,7 +180,7 @@ class Actor(Requirement):
         # set the priority
         priority = self.pyre_executive.priority.explicit()
         # set the value
-        self.pyre_inventory.setTrait(
+        self.pyre_inventory.setTraitValue(
             trait=trait, factory=trait.classSlot,
             value=value, priority=priority, locator=locator)
         # and return

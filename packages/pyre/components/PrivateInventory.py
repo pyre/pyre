@@ -25,7 +25,7 @@ class PrivateInventory(Inventory):
 
 
     # slot access
-    def setTrait(self, trait, factory, value, **kwds):
+    def setTraitValue(self, trait, factory, value, **kwds):
         """
         Set the value of the slot associated with {trait}
         """
@@ -41,7 +41,7 @@ class PrivateInventory(Inventory):
         return
 
 
-    def getTrait(self, trait):
+    def getTraitValue(self, trait):
         """
         Get the value associated with this {trait} descriptor
         """
@@ -59,7 +59,7 @@ class PrivateInventory(Inventory):
         return tracking.unknown()
 
 
-    def getValuePriority(self, trait):
+    def getTraitPriority(self, trait):
         """
         Retrieve the priority of the last assignment for this {trait}
         """

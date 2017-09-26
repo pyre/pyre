@@ -61,7 +61,7 @@ class PublicInventory(Inventory):
 
 
     # slot access
-    def setTrait(self, trait, **kwds):
+    def setTraitValue(self, trait, **kwds):
         """
         Set the value of the slot associated with the given {trait} descriptor
         """
@@ -75,7 +75,7 @@ class PublicInventory(Inventory):
         return
 
 
-    def getTrait(self, trait):
+    def getTraitValue(self, trait):
         """
         Get the value associated with this {trait} descriptor
         """
@@ -103,7 +103,7 @@ class PublicInventory(Inventory):
         return info.locator
 
 
-    def getValuePriority(self, trait):
+    def getTraitPriority(self, trait):
         """
         Retrieve the priority of the last assignment for this {trait}
         """
