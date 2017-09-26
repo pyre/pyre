@@ -117,6 +117,21 @@ class PublicInventory(Inventory):
         return info.priority
 
 
+    def getSlots(self):
+        """
+        Return an iterable over the trait value storage
+        """
+        # access the nameserver
+        nameserver = self.pyre_nameserver
+        # go through the slot keys
+        for key in self.traits.values():
+            # look up the slot and send it off
+            yield nameserver.getNode(key)
+        # all done
+        return
+
+
+
     # support for constructing component classes and instances
     @classmethod
     def initializeClass(cls, component, family, **kwds):

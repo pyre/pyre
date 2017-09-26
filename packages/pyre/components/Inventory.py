@@ -23,7 +23,7 @@ class Inventory(Dashboard):
     package = None # by default, components don't belong to a package
 
 
-    # interface
+    # factories
     @classmethod
     def initializeClass(cls):
         """
@@ -42,6 +42,24 @@ class Inventory(Dashboard):
         # implementation dependent -- override in subclasses
         raise NotImplementedError(
             "class {.__name__!r} must implement 'inistializeInstance'".format(cls))
+
+
+    # trait and slot access
+    def getTraits(self):
+        """
+        Return an iterable over my traits
+        """
+        # easy: i already support the iteration protocol
+        return iter(self)
+
+
+    def getSlots(self):
+        """
+        Return an iterable over the trait value storage
+        """
+        # i don't know how to do it, but my children had better
+        raise NotImplementedError(
+            "class {.__name__!r} must implement 'getSlots'".format(cls))
 
 
     # meta-methods
@@ -66,6 +84,11 @@ class Inventory(Dashboard):
         self.traits[trait] = item
         # all done
         return
+
+
+    def __iter__(self):
+        # iterate over my keys
+        return iter(self.traits)
 
 
 # end of file

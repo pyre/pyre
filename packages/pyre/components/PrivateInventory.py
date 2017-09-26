@@ -67,6 +67,14 @@ class PrivateInventory(Inventory):
         return None
 
 
+    def getSlots(self):
+        """
+        Return an iterable over the trait value storage
+        """
+        # that's what i store in my trait map
+        return self.traits.values()
+
+
     # support for building component classes and instances
     @classmethod
     def initializeClass(cls, component, **kwds):
