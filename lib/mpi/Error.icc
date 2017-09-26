@@ -14,12 +14,12 @@
 
 // destructor
 pyre::mpi::Error::
-~Error() throw()
+~Error()
  {}
 
 
 // constructor
-pyre::mpi::Error::Error(int code) throw() :
+pyre::mpi::Error::Error(int code):
     std::exception(),
     _code(code)
 {}

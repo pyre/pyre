@@ -24,8 +24,8 @@ class pyre::mpi::Error : public std::exception {
 
 // meta-methods
 public:
-    inline Error(int code) throw();
-    inline ~Error() throw();
+    inline Error(int code);
+    inline ~Error();
 
 // data
 private:

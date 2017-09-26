@@ -34,30 +34,30 @@ public:
 
     // interface
 public:
-    inline handle_t handle() const throw();
-    inline bool isNull() const throw();
+    inline handle_t handle() const;
+    inline bool isNull() const;
 
-    inline void barrier() const throw(Error); // build a synchronization barrier
+    inline void barrier() const; // build a synchronization barrier
 
-    inline int rank() const throw(Error); // compute the rank of this process
-    inline int size() const throw(Error); // compute my size
+    inline int rank() const; // compute the rank of this process
+    inline int size() const; // compute my size
 
-    inline group_t group() const throw(Error); // access to my group of processes
-    inline communicator_t communicator(const group_t &) const throw(Error);
+    inline group_t group() const; // access to my group of processes
+    inline communicator_t communicator(const group_t &) const;
 
-    inline communicator_t cartesian(const ranklist_t &, const ranklist_t &, int) const throw(Error);
-    inline ranklist_t coordinates(int) const throw(Error);
+    inline communicator_t cartesian(const ranklist_t &, const ranklist_t &, int) const;
+    inline ranklist_t coordinates(int) const;
 
     // meta methods
 public:
-    inline ~Communicator() throw();
-    inline Communicator(handle_t, bool = false) throw();
-    inline Communicator(const Communicator &) throw();
-    inline const Communicator & operator=(const Communicator &) throw();
+    inline ~Communicator();
+    inline Communicator(handle_t, bool = false);
+    inline Communicator(const Communicator &);
+    inline const Communicator & operator=(const Communicator &);
 
     // hidden
 private:
-    static inline void free(MPI_Comm *) throw(Error);
+    static inline void free(MPI_Comm *);
 
     // data members
 private:

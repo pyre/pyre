@@ -14,10 +14,11 @@ namespace pyre {
     namespace mpi {
         class Group;
         class Communicator;
+        class Error;
 
-        inline Group groupUnion(const Group &, const Group &) throw(Error);
-        inline Group groupIntersection(const Group &, const Group &) throw(Error);
-        inline Group groupDifference(const Group &, const Group &) throw(Error);
+        inline Group groupUnion(const Group &, const Group &);
+        inline Group groupIntersection(const Group &, const Group &);
+        inline Group groupDifference(const Group &, const Group &);
     }
 }
 
@@ -26,9 +27,9 @@ class pyre::mpi::Group {
     friend class Communicator;
     friend class Shareable<Group>;
 
-    friend Group groupUnion(const Group &, const Group &) throw(Error);
-    friend Group groupIntersection(const Group &, const Group &) throw(Error);
-    friend Group groupDifference(const Group &, const Group &) throw(Error);
+    friend Group groupUnion(const Group &, const Group &);
+    friend Group groupIntersection(const Group &, const Group &);
+    friend Group groupDifference(const Group &, const Group &);
 
     // types
 public:
@@ -41,24 +42,24 @@ public:
 
     // interface
 public:
-    inline bool isEmpty() const throw();
-    inline int rank() const throw(Error);
-    inline int size() const throw(Error);
+    inline bool isEmpty() const;
+    inline int rank() const;
+    inline int size() const;
 
-    inline group_t include(const ranklist_t &) const throw(Error);
-    inline group_t exclude(const ranklist_t &) const throw(Error);
+    inline group_t include(const ranklist_t &) const;
+    inline group_t exclude(const ranklist_t &) const;
 
     // meta methods
 public:
-    inline ~Group() throw();
-    inline Group(handle_t handle, bool = false) throw();
-    inline Group(const Group &) throw();
-    inline const Group & operator=(const Group &) throw();
+    inline ~Group();
+    inline Group(handle_t handle, bool = false);
+    inline Group(const Group &);
+    inline const Group & operator=(const Group &);
 
     // hidden
 private:
-    inline operator handle_t () const throw();
-    static inline void free(MPI_Group *) throw(Error);
+    inline operator handle_t () const;
+    static inline void free(MPI_Group *);
 
     // data members
 private:
