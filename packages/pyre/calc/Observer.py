@@ -31,7 +31,7 @@ class Observer(Reactor):
             # add me as an observer to the rest
             observable.addObserver(self)
         # all done
-        return
+        return self
 
 
     def ignore(self, observables):
@@ -45,7 +45,7 @@ class Observer(Reactor):
             # drop me as an observer from the rest
             observable.removeObserver(self)
         # all done
-        return
+        return self
 
 
 # end of file
