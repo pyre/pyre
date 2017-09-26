@@ -10,7 +10,7 @@ PROJ_TIDY += __pycache__
 
 all: test
 
-test: sanity metaclasses protocols components configurations clean
+test: sanity metaclasses protocols components configurations watching clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -92,6 +92,10 @@ component-multi:
 
 configurations:
 	${PYTHON} ./quad.py
+
+watching:
+	${PYTHON} ./monitor.py
+	${PYTHON} ./tracker.py
 
 
 # end of file
