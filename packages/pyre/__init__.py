@@ -179,6 +179,8 @@ from .components.Role import Role as role
 from .components.Protocol import Protocol as protocol
 from .components.Component import Component as component
 from .components.Foundry import Foundry as foundry
+from .components.Monitor import Monitor as monitor
+from .components.Tracker import Tracker as tracker
 # traits
 from .traits import properties
 property = properties.identity

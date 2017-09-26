@@ -17,12 +17,15 @@ EXPORT_PYTHON_MODULES = \
     Configurable.py \
     Foundry.py \
     Inventory.py \
+    Monitor.py \
     PrivateInventory.py \
     Protocol.py \
     PublicInventory.py \
     Registrar.py \
     Requirement.py \
+    Revision.py \
     Role.py \
+    Tracker.py \
     exceptions.py \
     __init__.py
 
