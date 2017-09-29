@@ -62,7 +62,7 @@ class Priority:
 
     # debug support
     def __str__(self):
-        return "({0.category},{0.rank})".format(self)
+        return f"({self.name}:{self.rank})"
 
 
     # private data
@@ -82,6 +82,7 @@ class Uninitialized(Priority):
     functions
     """
     # public data
+    name = 'uninitialized'
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
@@ -93,6 +94,7 @@ class Defaults(Priority):
     declarations
     """
     # public data
+    name = 'defaults'
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
@@ -103,6 +105,7 @@ class Boot(Priority):
     Category for the priorities of values assigned while the framework is booting
     """
     # public data
+    name = 'boot'
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
@@ -114,6 +117,7 @@ class Package(Priority):
     retrieved
     """
     # public data
+    name = 'package'
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
@@ -125,6 +129,7 @@ class Persistent(Priority):
     store where components record their configurations
     """
     # public data
+    name = 'persistent'
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
@@ -136,6 +141,7 @@ class User(Priority):
     events
     """
     # public data
+    name = 'user'
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
@@ -146,6 +152,7 @@ class Command(Priority):
     Category for the priorities of values assigned during the processing of the command line
     """
     # public data
+    name = 'command'
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
@@ -156,6 +163,7 @@ class Explicit(Priority):
     Category for the priorities of values assigned explicitly by the user program
     """
     # public data
+    name = 'explicit'
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
@@ -166,6 +174,7 @@ class Framework(Priority):
     Category for the priorities of read-only values assigned by the framework
     """
     # public data
+    name = 'framework'
     category = next(categories)
     # narrow the footprint
     __slots__ = ()
