@@ -56,7 +56,7 @@ def test():
     # print(set(w.observers))
     # print(set(u.observers))
     # {w} should have three observers: {s}, {r}, and {p}
-    assert identical(w.observers, {r,s, p})
+    assert identical(w.observers, {p,s,r})
 
     return
 
@@ -66,11 +66,22 @@ def identical(s1, s2):
     Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
     we must avoid triggering __eq__
     """
-    # for the pairs
-    for n1, n2 in zip(s1, s2):
-        # check them for _identity_, not _equality_
-        if n1 is not n2: return False
-    # all done
+    # realize both of them
+    s1 = tuple(s1)
+    s2 = tuple(s2)
+    # fail if their lengths are not the same
+    if len(s1) != len(s2): return False
+    # go through one
+    for n1 in s1:
+        # and the other
+        for n2 in s2:
+            # if this is a match, we are done
+            if n1 is n2: break
+        # if we didn't n1 in s2
+        else:
+            # fail
+            return False
+    # if we get this far, all is good
     return True
 
 

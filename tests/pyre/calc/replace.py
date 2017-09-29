@@ -25,35 +25,35 @@ def test():
 
     # we expect:
     # n1 to have one observer: s
-    assert len(n1._observers) == 1
+    assert len(tuple(n1.observers)) == 1
     assert identical(n1.observers, [s])
     # n2 to have one observer: s
-    assert len(n2._observers) == 1
+    assert len(tuple(n2.observers)) == 1
     assert identical(n2.observers, [s])
     # n3 to have no observers
-    assert len(n3._observers) == 0
+    assert len(tuple(n3.observers)) == 0
     # s to have two operands: n1 and n2
-    assert len(s._operands) == 2
-    assert identical(s._operands, (n1, n2))
+    assert len(tuple(s.operands)) == 2
+    assert identical(s.operands, (n1, n2))
     # and no observers
-    assert len(s._observers) == 0
+    assert len(tuple(s.observers)) == 0
 
     # let n3 replace n1
     n3.replace(n1)
     # we expect:
     # n1 to have no observers
-    assert len(n1._observers) == 0
+    assert len(tuple(n1.observers)) == 0
     # n2 to have one observer: s
-    assert len(n2._observers) == 1
+    assert len(tuple(n2.observers)) == 1
     assert identical(n2.observers, [s])
     # n3 to have no observers
-    assert len(n3._observers) == 1
+    assert len(tuple(n3.observers)) == 1
     assert identical(n3.observers, [s])
     # s to have two operands: n1 and n2
-    assert len(s._operands) == 2
-    assert identical(s._operands, (n3, n2))
+    assert len(tuple(s.operands)) == 2
+    assert identical(s.operands, (n3, n2))
     # and no observers
-    assert len(s._observers) == 0
+    assert len(tuple(s.observers)) == 0
 
     return
 
@@ -63,11 +63,22 @@ def identical(s1, s2):
     Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
     we must avoid triggering __eq__
     """
-    # for the pairs
-    for n1, n2 in zip(s1, s2):
-        # check them for _identity_, not _equality_
-        if n1 is not n2: return False
-    # all done
+    # realize both of them
+    s1 = tuple(s1)
+    s2 = tuple(s2)
+    # fail if their lengths are not the same
+    if len(s1) != len(s2): return False
+    # go through one
+    for n1 in s1:
+        # and the other
+        for n2 in s2:
+            # if this is a match, we are done
+            if n1 is n2: break
+        # if we didn't n1 in s2
+        else:
+            # fail
+            return False
+    # if we get this far, all is good
     return True
 
 
