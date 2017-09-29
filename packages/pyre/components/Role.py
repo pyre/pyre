@@ -83,10 +83,8 @@ class Role(Requirement):
         """
         The instantiation of protocol objects creates facility descriptors
         """
-        # get the facility factory
-        from ..traits.Facility import Facility
-        # make one and return it
-        return Facility(protocol=self, **kwds)
+        # make a trait descriptor and return it
+        return self.facility(**kwds)
 
 
     def __str__(self):
@@ -96,6 +94,17 @@ class Role(Requirement):
         if family: return 'protocol {!r}'.format(family)
         # otherwise, use my class name
         return 'protocol {.__name__!r}'.format(self)
+
+
+    # implementation details
+    def facility(self, **kwds):
+        """
+        Build my trait descriptor
+        """
+        # get the default facility factory
+        from ..traits.Facility import Facility
+        # make one and return it
+        return Facility(protocol=self, **kwds)
 
 
 # end of file
