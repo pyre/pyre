@@ -54,15 +54,27 @@ class Descriptor(metaclass=Decorator):
         return self
 
 
-    # data
-    optional = False
+    # standard meta-data
+    # a marker that indicates the semantic complexity of my value; typically used to indicate
+    # the level of expertise a user should have before mucking about
+    level = 0
+
+    # declaration of the user intent
+    input = False # my client considers my value as input
+    output = False # my client may adjust my value during its life cycle
+
+    # indicate whether {None} is an allowed value after configuration is complete
+    optional = True
 
 
     # meta-methods
-    def __init__(self, optional=optional, **kwds):
+    def __init__(self, optional=optional, input=input, output=output, level=level, **kwds):
         # chain up
         super().__init__(**kwds)
         # mark me
+        self.level = level
+        self.input = input
+        self.output = output
         self.optional = optional
         # all done
         return
