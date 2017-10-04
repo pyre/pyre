@@ -50,9 +50,9 @@ class Tracker(Monitor):
 
 
     # hooks
-    def flush(self, observable):
+    def flush(self, observable, **kwds):
         """
-        Handle the notification that the value of {observable} has changes
+        Handle the notification that the value of {observable} has changed
         """
         # get the slot key
         key = observable.key
@@ -64,9 +64,8 @@ class Tracker(Monitor):
         revision = Revision(value, locator=info.locator, priority=info.priority)
         # record
         self.history[key].append(revision)
-
-        # all done
-        return self
+        # chain up
+        return super().flush(observable=observable, **kwds)
 
 
     # meta-methods
