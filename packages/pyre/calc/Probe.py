@@ -6,23 +6,17 @@
 #
 
 
-# superclass
+# superclasses
 from .Observer import Observer
+from .Observable import Observable
 
 
 # declaration
-class Probe(Observer):
+class Probe(Observer, Observable):
     """
-    The base class for objects that observe the values of nodes in a calc graph
+    The base class for entities that observe the values of nodes in a calc graph and can notify
+    external clients when node values change
     """
-
-
-    def flush(self, observable):
-        """
-        The callback that gets invoked when one of the monitored nodes receives a new value
-        """
-        # by default, do nothing
-        return
 
 
 # end of file
