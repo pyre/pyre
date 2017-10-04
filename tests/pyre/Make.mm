@@ -36,6 +36,7 @@ RECURSE_DIRS = \
     platforms \
     shells \
     externals \
+    flow \
     pyre
 
 #
