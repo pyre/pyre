@@ -23,6 +23,7 @@ RECURSE_DIRS = \
     extensions \
     externals \
     filesystem \
+    flow \
     framework \
     geometry \
     grid \
