@@ -64,7 +64,7 @@ class Executive:
         try:
             # ask the file server for the input stream
             source = self.fileserver.open(uri=uri)
-            # print(" -- found: {} ".format(uri))
+            # print(f" -- found: {uri} ")
         # if that fails
         except self.PyreError as error:
             # save it
@@ -95,9 +95,9 @@ class Executive:
         Locate and load all accessible configuration files for the given {stem}
         """
         # print("Executive.configure:")
-        # print("    stem={}".format(stem))
-        # print("    locator={}".format(locator))
-        # print("    priority={}".format(priority))
+        # print(f"    stem={stem}")
+        # print(f"    locator={locator}")
+        # print(f"    priority={priority}")
         # access the fileserver
         fs = self.fileserver
         # the nameserver
@@ -109,15 +109,15 @@ class Executive:
         # look for each one
         for root, filename, extension in scope:
             # build the uri
-            uri = "{}/{}.{}".format(root.uri, filename, extension)
-            # print(' ++ looking for {!r}'.format(uri))
+            uri = f"{root.uri}/{filename}.{extension}"
+            # print(f" ++ looking for '{uri}'")
             # load the settings from the associated file
             self.loadConfiguration(uri=uri, priority=priority, locator=locator)
         # all done
         return
 
 
-    def resolve(self, uri, node=None, protocol=None, **kwds):
+    def resolve(self, uri, protocol=None, **kwds):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
 
@@ -171,8 +171,8 @@ class Executive:
                 return box
         """
         # print('pyre.framework.Executive.resolve:')
-        # print('    uri: {}'.format(uri))
-        # print('    protocol: {}'.format(protocol))
+        # print(f'    uri: {uri}')
+        # print(f'    protocol: {protocol}')
         # force a uri
         uri = self.uri().coerce(uri)
         # grab my nameserver
@@ -180,35 +180,39 @@ class Executive:
 
         # if the {uri} contains a fragment, treat it as the name of the component
         name = uri.fragment
-
         # is there anything registered under it? check carefully: do not to disturb the symbol
         # table of the nameserver, in case the name is junk
         if name and name in nameserver:
-            # look it up
+            # the name is known; attempt to
             try:
-                # and return it
-                yield nameserver[name]
+                # look up the corresponding entity
+                candidate = nameserver[name]
             # if it is unresolved
             except nameserver.UnresolvedNodeError:
-                # no worries
+                # no worries; someone else has asked for it too, but it has not been realized yet
                 pass
+            # if it's there
+            else:
+                # send it off
+                yield candidate
+                # this is the only acceptable match; we are done
+                return
 
         # if the address part is empty, do not go any further
         if not uri.address: return
 
-        # make a locator
-        locator = tracking.simple('while resolving {!r}'.format(uri.uri))
-        # if we have a valid node and it has a public key
-        if node and node.key:
-            # chain its locator to mine
-            locator = tracking.chain(this=locator, next=self.nameserver._metadata[node.key].locator)
         # load the component recognizers
         from ..components.Actor import Actor as actor
         from ..components.Component import Component as component
+        # make a locator
+        locator = tracking.simple(f"while resolving '{uri.uri}'")
+
+        # initialize the pile of known candidates
+        known = set()
 
         # the easy things didn't work out; look for matching descriptors
         for candidate in self.retrieveComponentDescriptor(
-                uri=uri, node=node, protocol=protocol, **kwds):
+                uri=uri, protocol=protocol, locator=locator, **kwds):
             # if the candidate is neither a component class nor a component instance
             if not (isinstance(candidate, actor) or isinstance(candidate, component)):
                 # it must be a foundry
@@ -227,11 +231,14 @@ class Executive:
             if name and isinstance(candidate, actor):
                 # build it
                 candidate = candidate(name=name, locator=locator)
-            # otherwise
-            else:
-                # just mark it
-                candidate.pyre_locator = tracking.chain(candidate.pyre_locator, locator)
-            # ready to hand it to our caller
+
+            # we now have a viable candidate; if it's a known one
+            if candidate in known:
+                # move on
+                continue
+            # otherwise, add it to the pile
+            known.add(candidate)
+            # and hand it to our caller
             yield candidate
 
         # totally out of ideas
@@ -300,7 +307,7 @@ class Executive:
         Register a freshly minted protocol class
         """
         # make a locator
-        pkgloc = tracking.simple('while registering protocol {!r}'.format(family))
+        pkgloc = tracking.simple(f"while registering protocol '{family}'")
         # get the associated package
         package = self.nameserver.package(executive=self, name=family, locator=pkgloc)
         # associate the protocol with its package
@@ -316,7 +323,7 @@ class Executive:
         Register a freshly minted component class
         """
         # make a locator
-        pkgloc = tracking.simple('while registering component {!r}'.format(family))
+        pkgloc = tracking.simple(f"while registering component '{family}'")
         # get the associated package
         package = self.nameserver.package(executive=self, name=family, locator=pkgloc)
         # associate the component with its package
@@ -493,7 +500,7 @@ class Executive:
         # make a locator
         here = tracking.simple('while discovering the platform characteristics')
         # set the stem
-        stem = 'pyre/platforms/{}'.format(host.distribution)
+        stem = f'pyre/platforms/{host.distribution}'
         # attempt to load any matching configuration files
         self.configure(stem=stem, priority=self.priority.user, locator=here)
 
@@ -518,7 +525,7 @@ class Executive:
         # make a locator
         here = tracking.simple('while discovering the host characteristics')
         # set the stem
-        stem = 'pyre/hosts/{}'.format(host.nickname)
+        stem = f'pyre/hosts/{host.nickname}'
         # attempt to load any matching configuration files
         self.configure(stem=stem, priority=self.priority.user, locator=here)
 
@@ -571,6 +578,16 @@ class Executive:
         """
         Handler for the {config} command line argument
         """
+        # if the value is empty
+        if not value:
+            # form the name of the command line argument
+            name = ".".join(key)
+            # grab the journal
+            import journal
+            # issue a warning
+            journal.warning('pyre.framework').log(f"{name}: no uri")
+            # and go no further
+            return
         # load the configuration
         self.loadConfiguration(uri=value, locator=locator, priority=self.priority.command)
         # and return
