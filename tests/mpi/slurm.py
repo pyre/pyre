@@ -41,8 +41,12 @@ def test():
         app.run()
     # if this fails because we don't have slurm
     except FileNotFoundError as error:
+        # the name of the slurm submission script
+        sbatch = 'sbatch'
         # make sure that we are just missing {sbatch}
-        assert str(error) == "[Errno 2] No such file or directory: 'sbatch'"
+        assert error.errno == 2
+        assert error.filename == f"{sbatch}"
+        assert error.strerror == f"No such file or directory: '{sbatch}'"
 
     # return the app
     return app
