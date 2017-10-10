@@ -38,6 +38,19 @@ class Reference:
         return referent.value
 
 
+    def setValue(self, value):
+        """
+        Set the value of the node i refer to
+        """
+        # get my referent
+        referent, = self.operands
+        # set its value
+        referent.value = value
+        # all done
+        return self
+
+
+
     # support for graph traversals
     def identify(self, authority, **kwds):
         """
