@@ -16,7 +16,7 @@ from .Monitor import Monitor
 # value tracker
 class Tracker(Monitor):
     """
-    A class that monitors the traits of a set components and maintains a record of their values
+    A class that monitors the traits of a set of components and maintains a record of their values
     """
 
 

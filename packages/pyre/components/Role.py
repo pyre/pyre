@@ -23,7 +23,7 @@ class Role(Requirement):
     @property
     def pyre_name(self):
         """
-        Return the component's family name
+        The protocol's name is its family name
         """
         return self.pyre_family()
 
