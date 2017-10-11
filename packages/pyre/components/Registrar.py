@@ -34,6 +34,16 @@ class Registrar:
 
 
     # interface
+    def registerNamingServer(self, server):
+        """
+        Register {server} as a naming serice
+        """
+        # add it to my pile
+        self.nameGenerators.add(server)
+        # all done
+        return self
+
+
     def registerProtocolClass(self, protocol):
         """
         Register the {protocol} class record
@@ -78,6 +88,18 @@ class Registrar:
             observer.pyre_newInstanceRegistration(instance=instance)
         # and return it
         return instance
+
+
+    def nameInstance(self, componentClass):
+        """
+        Attempt to generate a name for an instance of {componentClass}
+        """
+        # go through the registered name generators
+        for namegen in self.nameGenerators:
+            # ask for a name
+            return namegen.nameInstance(componentClass=componentClass)
+        # out of ideas
+        return None
 
 
     def observeProtocols(self, observer):
@@ -182,6 +204,9 @@ class Registrar:
         self.protocols = set()
         # map: protocols -> components that implement them
         self.implementers = collections.defaultdict(set)
+
+        # registered services
+        self.nameGenerators = weakref.WeakSet()
 
         # listeners
         self.protocolObservers = weakref.WeakSet()

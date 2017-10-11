@@ -127,6 +127,10 @@ class Actor(Requirement):
                 aliases = { alias for trait in traits for alias in trait.aliases }
                 # merge global settings
                 nameserver.pullGlobalIntoScope(scope=name, symbols=aliases)
+        # if not
+        else:
+            # ask the component registrar for help
+            name = registrar.nameInstance(componentClass=self)
 
         # in any case, record the caller's location
         locator = tracking.here(1) if locator is None else locator
