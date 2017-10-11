@@ -45,7 +45,7 @@ class Interactive(Script, family="pyre.shells.interactive"):
         # configure {readline}
         self.pyre_enrich(tag)
         # adjust the prompts
-        sys.ps1 = '{}: '.format(tag)
+        sys.ps1 = f'{tag}: '
         sys.ps2 = '  ... '
 
         # prime the local namespace
@@ -67,7 +67,7 @@ class Interactive(Script, family="pyre.shells.interactive"):
             banner = application.pyre_interactiveBanner()
 
         # enter interactive mode
-        return code.interact(banner=banner, local=symbols)
+        return code.interact(banner=banner, local=symbols, exitmsg=f'{tag}: exiting...')
 
 
     def pyre_enrich(self, tag):
@@ -106,7 +106,7 @@ class Interactive(Script, family="pyre.shells.interactive"):
             pass
 
         # build the uri to the history file
-        history = pyre.primitives.path('~', '.{}-history'.format(tag)).expanduser().resolve()
+        history = pyre.primitives.path('~', f'.{tag}-history').expanduser().resolve()
         # stringify
         history = str(history)
         # attempt to
