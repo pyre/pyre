@@ -209,11 +209,23 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return cls.pyre_registrar.components[cls]
 
 
-    def pyre_slot(self, attribute):
+    def pyre_slot(self, attribute=None):
         """
-        Return the slot associated with {attribute}
+        Return the slot associated with {attribute}; if no attribute s given, return the slot with
+        the component instance itself
         """
-        # find the trait
+        # if the caller did not specify an attribute
+        if attribute is None:
+            # get my key
+            key = self.pyre_key
+            # if i don't have a key
+            if key is None:
+                # not sure what to do
+                return None
+            # otherwise, get my nameserver to retrieve my slot
+            return self.pyre_nameserver.getNode(key)
+
+        # if we have an {attribute} name, find the associated trait descriptor
         trait = self.pyre_trait(alias=attribute)
         # look up the slot associated with this trait and return it
         return self.pyre_inventory[trait]
