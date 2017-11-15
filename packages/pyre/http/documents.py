@@ -78,6 +78,8 @@ class JSON(OK):
     def __init__(self, value, **kwds):
         # chain up
         super().__init__(**kwds)
+        # add the content type to the headers
+        self.headers['Content-Type'] = f'application/json; charset={self.encoding}'
         # save the value
         self.value = value
         # all done
