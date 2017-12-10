@@ -15,6 +15,7 @@ PACKAGE = mpi
 PROJ_TMPDIR = $(BLD_TMPDIR)/$(PROJECT)/$(PACKAGE)
 PROJ_CLEAN += $(TESTS)
 
+MPI_ARGS = --hostfile localhost
 
 TESTS = \
     sanity \
@@ -32,13 +33,13 @@ LIBRARIES = $(EXTERNAL_LIBS)
 all: test clean
 
 test: $(TESTS)
-	$(MPI_EXECUTIVE) -np 4 ./sanity
-	$(MPI_EXECUTIVE) -np 4 ./world
-	$(MPI_EXECUTIVE) -np 4 ./group
-	$(MPI_EXECUTIVE) -np 7 ./group-include
-	$(MPI_EXECUTIVE) -np 7 ./group-exclude
-	$(MPI_EXECUTIVE) -np 7 ./group-setops
-	$(MPI_EXECUTIVE) -np 8 ./communicator
+	$(MPI_EXECUTIVE) ${MPI_ARGS} -np 4 ./sanity
+	$(MPI_EXECUTIVE) ${MPI_ARGS} -np 4 ./world
+	$(MPI_EXECUTIVE) ${MPI_ARGS} -np 4 ./group
+	$(MPI_EXECUTIVE) ${MPI_ARGS} -np 7 ./group-include
+	$(MPI_EXECUTIVE) ${MPI_ARGS} -np 7 ./group-exclude
+	$(MPI_EXECUTIVE) ${MPI_ARGS} -np 7 ./group-setops
+	$(MPI_EXECUTIVE) ${MPI_ARGS} -np 8 ./communicator
 
 # build
 %: %.cc
