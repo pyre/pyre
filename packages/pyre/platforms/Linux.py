@@ -50,6 +50,7 @@ class Linux(POSIX, family='pyre.platforms.linux'):
             from .Ubuntu import Ubuntu
             # and return it
             return Ubuntu
+        # check for debian
         if distribution.lower().startswith('debian'):
             # load the platform file
             from .Debian import Debian

@@ -40,6 +40,7 @@ def test():
         channel.line('         hostname: {.hostname}'.format(host))
         channel.line('         nickname: {.nickname}'.format(host))
         channel.line('             cpus: {.cpus}'.format(host))
+        channel.line('     architecture: {.architecture}'.format(host))
         channel.line('         platform: {.platform}'.format(host))
         channel.line('          release: {.release}'.format(host))
         channel.line('         codename: {.codename}'.format(host))

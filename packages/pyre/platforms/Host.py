@@ -26,6 +26,7 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
     nickname = None # the short name assigned to this host by the user
     # cpus
     cpus = None # the triplet (cpus, physical cores, logical cores)
+    architecture = platform.machine() # the cpu type
     # os
     platform = None # the OS type on which this process is running
     release = None # the OS release
