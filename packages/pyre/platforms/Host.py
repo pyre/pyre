@@ -12,6 +12,8 @@ import platform
 import pyre
 # my protocol
 from .Platform import Platform
+# cpu info
+from .CPUInfo import CPUInfo
 
 
 # declaration
@@ -26,7 +28,6 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
     nickname = None # the short name assigned to this host by the user
     # cpus
     cpus = None # the triplet (cpus, physical cores, logical cores)
-    architecture = platform.machine() # the cpu type
     # os
     platform = None # the OS type on which this process is running
     release = None # the OS release
@@ -60,7 +61,7 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
         """
         # by default, we know nothing; so assume one single core cpu with no hyper-threading
         # subclasses should override with their platform dependent survey code
-        return (1,1)
+        return CPUInfo()
 
 
     # feature support

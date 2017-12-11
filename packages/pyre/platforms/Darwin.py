@@ -12,6 +12,8 @@ import pyre
 from .POSIX import POSIX
 # the default package manager
 from .MacPorts import MacPorts
+# the CPU info object
+from .CPUInfo import CPUInfo
 
 
 # declaration
@@ -51,8 +53,13 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
         except ImportError:
             # revert to defaults
             return super().cpuSurvey()
-        # otherwise, return the information given by OSX
-        return host.physicalMax(), host.logicalMax()
+        # otherwise, initialize the info object
+        info = CPUInfo()
+        # decorate it; macos doesn't seem to know the number of CPU sockets on the motherboard
+        info.cores = host.physicalMax()
+        info.cpus = host.logicalMax()
+        # and return it
+        return info
 
 
     @classmethod

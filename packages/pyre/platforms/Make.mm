@@ -12,6 +12,7 @@ PACKAGE = platforms
 # the python modules
 EXPORT_PYTHON_MODULES = \
     Bare.py \
+    CPUInfo.py \
     CentOS.py \
     DPkg.py \
     Darwin.py \

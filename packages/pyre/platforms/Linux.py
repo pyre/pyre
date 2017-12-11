@@ -7,9 +7,13 @@
 
 
 # externals
-import collections, operator
+import collections
+import operator
+import subprocess
 # superclass
 from .POSIX import POSIX
+# the cpu info object
+from .CPUInfo import CPUInfo
 
 
 # declaration
@@ -79,13 +83,80 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         """
         Collect information about the CPU resources on this host
         """
+        # collect the information and return it
+        return cls.lscpu()
+
+
+    # implementation details: workhorses
+    @classmethod
+    def lscpu(cls):
+        """
+        Invoke {lscpu} to gather CPU info
+        """
+        # the name of the program that collates the cpu information
+        client = 'lscpu'
+        # the command line arguments
+        settings = {
+            'executable' : client,
+            'args': (
+                client,
+                ),
+            'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
+            'universal_newlines': True,
+            'shell': False
+        }
+
+        # initialize storage
+        sockets = 1
+        coresPerSocket = 1
+        threadsPerCore = 1
+
+        # make a pipe
+        with subprocess.Popen(**settings) as pipe:
+            # get the text source and tokenize it
+            tokens = cls.tokenizeCPUInfo(cpuinfo=pipe.stdout)
+            # parse
+            for key, value in tokens:
+                # number of sockets
+                if key == "Socket(s)":
+                    # save
+                    sockets = int(value)
+                # number of cores per socket
+                elif key == "Core(s) per socket":
+                    # save
+                    coresPerSocket = int(value)
+                # number of threads per core
+                elif key == "Thread(s) per core":
+                    # save
+                    threadsPerCore = int(value)
+
+        # make a cpu info object
+        info = CPUInfo()
+        # decorate
+        info.sockets = sockets
+        info.cores = sockets * coresPerSocket
+        info.cpus = info.cores * threadsPerCore
+        # and retur it
+        return info
+
+
+    @classmethod
+    def procCPUInfo(cls):
+        """
+        Interrogate /proc for CPU info
+
+        This was the original manner in which pyre discovered cpu information. It appears that
+        the gathering of information was inadvertently polluted by what is available for
+        {x86_64} architectures, and fails to be useful on {ppc64le}. As a result, it has been
+        replaced by the method {lscpu} above that seems to slower but much more reliable.
+        """
         # initialize the cpu store
         ids = 0
         cpus = collections.defaultdict(dict)
         # the markers
         physicalid = None
         # prime the tokenizer
-        tokens = cls.tokenizeCPUInfo()
+        tokens = cls.tokenizeCPUInfo(cpuinfo=open(cls.cpuinfo))
         # the keys we care about
         targets = {'siblings', 'cpu cores'}
         # parse
@@ -128,35 +199,38 @@ class Linux(POSIX, family='pyre.platforms.linux'):
 
         # if the reduction produced non-zero results
         if physical and logical:
-            # that's all for now
-            return physical, logical
+            # create an info object
+            info = CPUInfo()
+            # decorate it
+            info.sockets = sockets
+            info.cores = physical
+            info.cpus = logical
+            # and return it
+            return info
 
-        # otherwise, punt
-        return super().cpuSurvey()
+        # otherwise, indicate failure
+        raise RuntimeError("unable to determine cpu information")
 
 
-    # implementation details: workhorses
     @classmethod
-    def tokenizeCPUInfo(cls):
+    def tokenizeCPUInfo(cls, cpuinfo):
         """
         Split the CPU info file into (key, value) pairs
         """
-        # on linux, all the info is in '/proc/cpuinfo'
-        with open(cls.cpuinfo) as cpuinfo:
-            # in order to tokenize each line
-            for line in cpuinfo:
-                # strip whitespace
-                line = line.strip()
-                # if this leaves us with nothing, we ran into a separator blank line
-                if not line:
-                    # form a pair of blank tokens
-                    key = value = ''
-                # otherwise
-                else:
-                    # split apart and strip leading and trailing whitespace
-                    key, value = map(operator.methodcaller('strip'), line.split(':'))
-                # yield the tokens
-                yield key, value
+        # in order to tokenize each line
+        for line in cpuinfo:
+            # strip whitespace
+            line = line.strip()
+            # if this leaves us with nothing, we ran into a separator blank line
+            if not line:
+                # form a pair of blank tokens
+                key = value = ''
+            # otherwise
+            else:
+                # split apart and strip leading and trailing whitespace
+                key, value = map(operator.methodcaller('strip'), line.split(':'))
+            # yield the tokens
+            yield key, value
         # nothing more
         return
 
