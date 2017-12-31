@@ -8,6 +8,8 @@
 
 # meta-class
 from pyre.patterns.Singleton import Singleton
+# the extension with CUDA support
+from . import cuda
 
 
 # declaration
@@ -18,16 +20,13 @@ class DeviceManager(metaclass=Singleton):
 
 
     # meta-methods
-    def __init__(self, extension, **kwds):
+    def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-
         # grab the device class
         from .Device import Device
-
         # build the device list and attach it
-        self.devices = extension.discover(Device)
-
+        self.devices = cuda.discover(Device)
         # all done
         return
 

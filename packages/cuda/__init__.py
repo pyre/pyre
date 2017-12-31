@@ -13,10 +13,12 @@ try:
 # if this fails
 except ImportError:
     # not much to do...
-    msg = "could not load the 'cuda' extension module"
+    msg = "could not find 'cuda' support"
     # complain
     import journal
-    raise journal.error('cuda').log(msg)
+    journal.error('cuda').log(msg)
+    # re-raise the exception so clients can cope
+    raise
 
 
 # otherwise, all is well;
@@ -25,10 +27,9 @@ version = cuda.version
 copyright = cuda.copyright
 def license() : print(cuda.license())
 
-
 # build the device manager
 from .DeviceManager import DeviceManager
-manager = DeviceManager(extension=cuda)
+manager = DeviceManager()
 
 
 # end of file

@@ -15,11 +15,25 @@ class Device:
     # attributes
     id = None
     name = ""
+
     capability = ()
     driverVersion = ()
     runtimeVersion = ()
+    computeMode = 0
+
+    processors = 0
+    coresPerProcessor = 0
 
     globalMemory = 0
+    constantMemory = 0
+    sharedMemoryPerBlock = 0
+
+    warp = 0
+    maxThreadsPerBlock = 0
+    maxThreadsPerProcessor = 0
+
+    maxGrid = ()
+    maxThreadBlock = ()
 
 
     # debugging
@@ -27,12 +41,27 @@ class Device:
         """
         Print information about this device
         """
-        print("{}device {.id}:".format(indent, self))
-        print("{}  name: {.name}".format(indent, self))
-        print("{}  driver version: {.driverVersion}".format(indent, self))
-        print("{}  runtime version: {.runtimeVersion}".format(indent, self))
-        print("{}  compute capability: {.capability}".format(indent, self))
-        print("{}  global memory: {.globalMemory} bytes".format(indent, self))
+        print(f"{indent}device {self.id}:")
+        print(f"{indent}  name: {self.name}")
+
+        print(f"{indent}  driver version: {self.driverVersion}")
+        print(f"{indent}  runtime version: {self.runtimeVersion}")
+        print(f"{indent}  compute capability: {self.capability}")
+        print(f"{indent}  compute mode: {self.computeMode}")
+
+        print(f"{indent}  processors: {self.processors}")
+        print(f"{indent}  cores per processor: {self.coresPerProcessor}")
+
+        print(f"{indent}  global memory: {self.globalMemory} bytes")
+        print(f"{indent}  constant memory: {self.constantMemory} bytes")
+        print(f"{indent}  shared memory per block: {self.sharedMemoryPerBlock} bytes")
+
+        print(f"{indent}  warp: {self.warp} threads")
+        print(f"{indent}  max threads per block: {self.maxThreadsPerBlock}")
+        print(f"{indent}  max threads per processor: {self.maxThreadsPerProcessor}")
+
+        print(f"{indent}  max dimensions of a grid: {self.maxGrid}")
+        print(f"{indent}  max dimensions of a thread block: {self.maxThreadBlock}")
 
         # all done
         return
