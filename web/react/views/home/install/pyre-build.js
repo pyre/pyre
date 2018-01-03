@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2017 all rights reserved
+// (c) 1998-2018 all rights reserved
 //
 
 // externals
@@ -18,7 +18,7 @@ mga@cygnus:~/tmp/pyre-1.0> mm
  ...
 mga@cygnus:~/tmp/pyre-1.0> mm.paths
 mga@cygnus:~/tmp/pyre-1.0> python3
-Python 3.5.3 (default, Jan 21 2017, 15:44:58)
+Python 3.6.4 (default, Dec 21 2017, 15:44:58)
 [GCC 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import pyre

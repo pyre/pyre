@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
-# (c) 1998-2017 all rights reserved
+# (c) 1998-2018 all rights reserved
 #
 
 # support

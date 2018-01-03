@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@orthologue.com>
-# (c) 1998-2017 all rights reserved
+# (c) 1998-2018 all rights reserved
 #
 
 # expansion placeholders
@@ -17,7 +17,7 @@ version = (major, minor, revision)
 
 
 # decorations for the help system
-copyright = "copyright (c) 1998-2017 all rights reserved"
+copyright = "copyright (c) 1998-2018 all rights reserved"
 
 banner = """
     merlin {major}.{minor} revision {revision}

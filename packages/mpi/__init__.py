@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2017 all rights reserved
+# (c) 1998-2018 all rights reserved
 #
 
 
@@ -32,11 +32,11 @@ def version():
 # license
 _mpi_version = (1, 0, 0)
 
-_mpi_copyright = "pyre mpi: Copyright (c) 1998-2017 Michael A.G. Aïvázis"
+_mpi_copyright = "pyre mpi: Copyright (c) 1998-2018 Michael A.G. Aïvázis"
 
 _mpi_license = """
     pyre mpi 1.0
-    Copyright (c) 1998-2017 Michael A.G. Aïvázis
+    Copyright (c) 1998-2018 Michael A.G. Aïvázis
     All Rights Reserved
 
 

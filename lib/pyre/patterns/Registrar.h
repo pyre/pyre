@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2017 all rights reserved
+// (c) 1998-2018 all rights reserved
 //
 
 #if !defined(pyre_patterns_Registrar_h)
