@@ -21,6 +21,9 @@ class Device:
     runtimeVersion = ()
     computeMode = 0
 
+    managedMemory = False
+    unifiedAddressing = False
+
     processors = 0
     coresPerProcessor = 0
 
@@ -48,6 +51,9 @@ class Device:
         print(f"{indent}  runtime version: {self.runtimeVersion}")
         print(f"{indent}  compute capability: {self.capability}")
         print(f"{indent}  compute mode: {self.computeMode}")
+
+        print(f"{indent}  managed memory: {self.managedMemory}")
+        print(f"{indent}  unified addressing: {self.unifiedAddressing}")
 
         print(f"{indent}  processors: {self.processors}")
         print(f"{indent}  cores per processor: {self.coresPerProcessor}")

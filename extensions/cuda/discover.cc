@@ -117,6 +117,15 @@ discover(PyObject *, PyObject *args)
         // attach the compute mode
         PyObject_SetAttrString(sheet, "computeMode", PyLong_FromLong(prop.computeMode));
 
+        // attach the managed memory flag
+        PyObject_SetAttrString(sheet,
+                               "managedMemory",
+                               PyBool_FromLong(prop.managedMemory));
+        // attach the unified addressing flag
+        PyObject_SetAttrString(sheet,
+                               "unifiedAddressing",
+                               PyBool_FromLong(prop.unifiedAddressing));
+
         // get the number of multiprocessors
         int processors = prop.multiProcessorCount;
         // attach
