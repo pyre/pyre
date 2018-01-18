@@ -31,7 +31,7 @@ discover(PyObject *, PyObject *args)
     // the device property class; it's supposed to be a class, so it's an instance of {type}
     PyObject *sheetFactory;
     // my journal channel; for debugging
-    journal::debug_t channel("cuda");
+    pyre::journal::debug_t channel("cuda");
 
     // if I were not passed the expected arguments
     if (!PyArg_ParseTuple(args, "O!:discover", &PyType_Type, &sheetFactory)) {
@@ -51,12 +51,12 @@ discover(PyObject *, PyObject *args)
             << pyre::journal::at(__HERE__)
             << "while getting device count: "
             << cudaGetErrorName(status) << " (" << status << ")"
-            << journal::endl;
+            << pyre::journal::endl;
         // pretend there are no CUDA capable devices
         return PyTuple_New(0);
     }
     // show me
-    channel << "CUDA devices: " << count << journal::endl;
+    channel << "CUDA devices: " << count << pyre::journal::endl;
 
     // build the device tuple
     PyObject * result = PyTuple_New(count);
