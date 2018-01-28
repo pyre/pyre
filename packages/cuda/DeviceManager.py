@@ -18,6 +18,15 @@ class DeviceManager(metaclass=Singleton):
     The singleton that provides access to what is known about CUDA capable hardware
     """
 
+    # interface
+    @property
+    def count(self):
+        """
+        Return the number of devices on the current host
+        """
+        # easy enough
+        return len(self.devices)
+
 
     # meta-methods
     def __init__(self, **kwds):
