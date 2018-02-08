@@ -17,6 +17,7 @@ RECURSE_DIRS = \
     bin \
     templates \
     schema \
+    etc \
     tests \
     examples \
     bot \
