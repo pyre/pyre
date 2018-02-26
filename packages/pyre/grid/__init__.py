@@ -6,15 +6,10 @@
 #
 
 
-# index objects
-def tile(**kwds):
-    """
-    Create a tile
-    """
-    # get the factory
-    from .Tile import Tile
-    # instantiate and return it
-    return Tile(**kwds)
+# grids
+from .Grid import Grid as grid
+# index objects, just in case they are useful by themselves
+from .Tile import Tile as tile
 
 
 # end of file

@@ -11,6 +11,7 @@ include pyre.def
 PACKAGE = grid
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    Grid.py \
     Tile.py \
     __init__.py
 

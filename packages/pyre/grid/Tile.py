@@ -123,15 +123,13 @@ class Tile:
 
 
     # meta-methods
-    def __init__(self, shape, layout, **kwds):
+    def __init__(self, shape, layout=None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # realize and freeze
-        shape = tuple(shape)
-        layout = tuple(layout)
-        # record
-        self.shape = shape
-        self.layout = layout
+        # realize and freeze the shape
+        self.shape = shape = tuple(shape)
+        # and the layout
+        self.layout = layout = tuple(layout or reversed(range(len(shape))))
         # compute the capacity of this tile
         self.size = functools.reduce(operator.mul, shape, 1)
 
@@ -147,6 +145,11 @@ class Tile:
 
         # all done
         return
+
+
+    def __getitem__(self, index):
+        # return the offset that corresponds to the given index
+        return self.offset(index)
 
 
     def __iter__(self):

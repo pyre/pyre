@@ -12,13 +12,16 @@ include pyre.def
 
 all: test
 
-test: sanity tile
+test: sanity tile grid
 
 sanity:
 	${PYTHON} ./sanity.py
 
 tile:
 	${PYTHON} ./tile.py
+
+grid:
+	${PYTHON} ./grid.py
 
 
 # end of file
