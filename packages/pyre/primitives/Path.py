@@ -95,8 +95,21 @@ class Path(tuple):
         cls = type(self)
         # generate a sequence of lengths so i can build subsequences
         for pos in range(1,len(self)):
-            # build a path out of a subsequence that doesn't include the lasth level
-            yield super().__new__(type(self), self[:-pos])
+            # build a path out of a subsequence that doesn't include the last level
+            yield super().__new__(cls, self[:-pos])
+        # all done
+        return
+
+
+    @property
+    def crumbs(self):
+        """
+        Generate a sequence of paths from here to the root
+        """
+        # first me
+        yield self
+        # and now my ancestors
+        yield from self.parents
         # all done
         return
 
