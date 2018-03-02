@@ -35,7 +35,7 @@ class User(pyre.component):
 
     # public data
     uid = os.getuid() # the user's system id
-    home = os.environ.get('HOME') # the location of the user's home directory
+    home = pyre.primitives.path(os.environ.get('HOME')) # the location of the user's home directory
     username = os.environ.get('LOGNAME') # the username
 
 
