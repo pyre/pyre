@@ -590,12 +590,8 @@ class Path(tuple):
         return f'{marker}{body}'
 
 
-    def __fspath__(self):
-        """
-        Implement the {os.PathLike} protocol
-        """
-        # easy enough
-        return str(self)
+    # implement the {os.PathLike} protocol
+    __fspath__ = __str__
 
 
     def __bool__(self):
