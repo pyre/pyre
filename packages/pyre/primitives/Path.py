@@ -19,7 +19,7 @@ def _unaryDispatch(f):
     @functools.wraps(f)
     def dispatch(self, *args, **kwds):
         # build my rep and forward to the wrapped function
-        return f(str(self), *args, **kwds)
+        return f(self, *args, **kwds)
     # return the function to leave behind
     return dispatch
 
@@ -205,7 +205,7 @@ class Path(tuple):
         Generate a sequence of my contents
         """
         # go through my contents
-        for name in os.listdir(str(self)):
+        for name in os.listdir(self):
             # make a path and hand it to the caller
             yield self / name
         # all done
@@ -272,7 +272,7 @@ class Path(tuple):
         # the {path} exists iff {other} is a subsequence of {self}
         if len(other) > len(self):
             # no way
-            raise ValueError(f"{str(other)!r} is not a parent of {str(self)!r}")
+            raise ValueError(f"'{other}' is not a parent of '{self}'")
         # now check the individual levels
         for mine, hers in zip(self, other):
             # if they are not identical
@@ -520,7 +520,7 @@ class Path(tuple):
             # attempt to
             try:
                 # create the directory
-                return os.mkdir(str(self), **kwds)
+                return os.mkdir(self, **kwds)
             # if the directory exists already
             except FileExistsError:
                 # and we care
@@ -528,7 +528,7 @@ class Path(tuple):
                     # complain
                     raise
         # if we are supposed to build the intermediate levels, delegate to the system routine
-        return os.makedirs(str(self), exist_ok=exist_ok, **kwds)
+        return os.makedirs(self, exist_ok=exist_ok, **kwds)
 
 
     def touch(self,  mode=0x666, exist_ok=True):
@@ -588,6 +588,14 @@ class Path(tuple):
         body = sep.join(i)
         # ok, let's put this all together
         return f'{marker}{body}'
+
+
+    def __fspath__(self):
+        """
+        Implement the {os.PathLike} protocol
+        """
+        # easy enough
+        return str(self)
 
 
     def __bool__(self):
