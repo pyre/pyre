@@ -47,12 +47,12 @@ class Application(pyre.component, metaclass=Director):
 
     # per-instance public data
     # geography
-    home = None # the directory where my invocation script lives
-    prefix = None # my installation directory
-    defaults = None # the directory with my configuration folders
+    pyre_home = None # the directory where my invocation script lives
+    pyre_prefix = None # my installation directory
+    pyre_defaults = None # the directory with my configuration folders
     pfs = None # the root of my private filesystem
     layout = None # my configuration options
-    renderer = Renderer()
+    pyre_renderer = Renderer()
 
     # journal channels
     info = None
@@ -158,7 +158,7 @@ class Application(pyre.component, metaclass=Director):
 
         # attach my renderer to the console
         import journal
-        journal.console.renderer = self.renderer
+        journal.console.renderer = self.pyre_renderer
 
         # make a name for my channels
         channel  = self.pyre_namespace or name
@@ -176,7 +176,7 @@ class Application(pyre.component, metaclass=Director):
                 self.debug.active = True
 
         # sniff around for my environment
-        self.home, self.prefix, self.defaults = self.pyre_explore()
+        self.pyre_home, self.pyre_prefix, self.pyre_defaults = self.pyre_explore()
         # instantiate my layout
         self.layout = self.pyre_loadLayout()
         # mount my folders
@@ -308,7 +308,7 @@ class Application(pyre.component, metaclass=Director):
                 pfs[self.USER] = userdir
 
         # get my prefix
-        prefix = self.prefix
+        prefix = self.pyre_prefix
         # if i don't have one
         if not prefix:
             # attach an empty folder; must use {pfs} to do this to guarantee filesystem consistency

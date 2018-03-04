@@ -77,7 +77,7 @@ class Plexus(Application):
         # if there was one
         else:
             # we have the name of a command; resolve it
-            command = self.repertoir.resolve(plexus=self, spec=name)
+            command = self.pyre_repertoir.resolve(plexus=self, spec=name)
             # and invoke its help
             return command.help(plexus=self)
 
@@ -99,14 +99,14 @@ class Plexus(Application):
         # chain up
         super().__init__(**kwds)
         # build my repertoir
-        self.repertoir = self.newRepertoir()
+        self.pyre_repertoir = self.pyre_newRepertoir()
         # all done
         return
 
 
     # implementation details
     # hooks
-    def newRepertoir(self):
+    def pyre_newRepertoir(self):
         """
         Factory for the manager of actions
         """
@@ -123,8 +123,8 @@ class Plexus(Application):
         """
         # normalize {argv}
         argv = argv or ()
-        # resolve and invoke; typos and such get handled by {repertoir}
-        return self.repertoir.invoke(plexus=self, action=action, argv=argv)
+        # resolve and invoke; typos and such get handled by {pyre_repertoir}
+        return self.pyre_repertoir.invoke(plexus=self, action=action, argv=argv)
 
 
     # support for the help system
@@ -156,7 +156,7 @@ class Plexus(Application):
 
 
     # data
-    repertoir = None
+    pyre_repertoir = None
 
 
 # end of file
