@@ -16,19 +16,20 @@
 #include <unistd.h>
 // support
 #include <pyre/memory.h>
-#include <pyre/geometry.h>
 
 // entry point
 int main() {
+    // the cell type
+    typedef double cell_t;
     // desired size
     size_t page = ::getpagesize();
     // the name of the file
     pyre::memory::uri_t name {"grid.dat"};
 
     // turn on the info channel
-    // pyre::journal::debug_t("pyre.geometry.direct").activate();
+    pyre::journal::debug_t("pyre.geometry.direct").activate();
     // create a file that can fit the payload
-    pyre::memory::direct_t::create(name, 2*page);
+    pyre::memory::direct_t<cell_t>::create(name, 2*page);
 
     // all done
     return 0;

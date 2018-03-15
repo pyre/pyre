@@ -39,7 +39,7 @@ EXPORT_PKG_HEADERS = \
     Heap.h Heap.icc \
     MemoryMap.h MemoryMap.icc \
     View.h View.icc \
-    public.h
+    forward.h public.h
 
 # the standard targets
 all: export

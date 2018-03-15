@@ -18,11 +18,20 @@
 //
 
 // declaration
+template <typename cellT>
 class pyre::memory::View {
+    // types
+public:
+    typedef cellT cell_type;
+    typedef cell_type * cell_ptrtype;
+
     // meta-methods
 public:
+    // destructor
+    inline ~View();
+
     // constructor
-    inline View(void * buffer = 0);
+    inline View(cell_type * buffer = 0);
 
     // copy semantics
     inline View(const View & other);
@@ -32,17 +41,14 @@ public:
     inline View(const View &&);
     inline View & operator=(const View &&);
 
-    // destructor
-    inline ~View();
-
     // interface
 public:
     // accessor
-    inline auto buffer() const;
+    inline auto data() const;
 
     // implementation details: data
 private:
-    void * _buffer;
+    cellptr_type const _buffer;
 };
 
 

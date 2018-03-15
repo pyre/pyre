@@ -30,9 +30,9 @@ int main() {
         // turn on the info channel
         // pyre::journal::debug_t("pyre.memory.direct").activate();
         // create a view over the buffer
-        pyre::memory::view_t<cell_t> v1 {buffer};
+        pyre::memory::constview_t<cell_t> v1 {buffer};
         // make a copy
-        pyre::memory::view_t<cell_t> v2 {v1};
+        pyre::memory::constview_t<cell_t> v2 {v1};
         // check that they point to the same memory location
         if (v2.data() != v1.data()) {
             // make a channel

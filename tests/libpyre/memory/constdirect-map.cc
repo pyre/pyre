@@ -14,7 +14,6 @@
 #include <unistd.h>
 // support
 #include <pyre/memory.h>
-#include <pyre/geometry.h>
 
 // entry point
 int main() {
@@ -23,12 +22,14 @@ int main() {
     // the name of the file
     pyre::memory::uri_t name {"grid.dat"};
 
+    // the file size, in bytes
+    size_t size = 2*page;
     // turn on the info channel
     // pyre::journal::debug_t("pyre.memory.direct").activate();
     // map a buffer over the file
-    void * buffer = pyre::memory::direct_t::map(name, page, 0, true);
+    void * buffer = pyre::memory::direct_t<char>::map(name, size, 0, true);
     // and undo it
-    pyre::memory::direct_t::unmap(buffer, page);
+    pyre::memory::direct_t<char>::unmap(buffer, size);
 
     // all done
     return 0;

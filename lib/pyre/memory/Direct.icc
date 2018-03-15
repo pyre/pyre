@@ -13,81 +13,29 @@
 
 
 // meta-methods
-pyre::memory::Direct::
-Direct() :
-    MemoryMap(),
-    _buffer {0},
-    _size {0}
-{}
-
-pyre::memory::Direct::
-Direct(uri_type name, size_type size, size_type offset) :
-    MemoryMap(name, size),
-    _buffer {map(name, size, offset, true)},
+template <typename cellT>
+pyre::memory::Direct<cellT>::
+Direct(uri_type name, size_type size, size_type offset, bool preserve) :
+    MemoryMap(name, true, size*sizeof(cell_type), offset, preserve),
     _size {size}
 {}
 
-
-pyre::memory::Direct::
-Direct(Direct && other) :
-    MemoryMap(other),
-    _buffer {0},
-    _size {0}
-{
-    // delegate to the move assignment operator
-    *this = std::move(other);
-}
-
-pyre::memory::Direct &
-pyre::memory::Direct::
-operator=(Direct && other) {
-    // trap assignment to self
-    if (this == &other) {
-        // and bail
-        return *this;
-    }
-    // chain up
-    MemoryMap::operator=(other);
-
-    // if my current buffer is valid
-    if (_buffer) {
-        // unmap the memory
-        unmap(_buffer, _size);
-    }
-    // pilfer
-    _buffer = other._buffer;
-    _size = other._size;
-    // invalidate the state of the source
-    other._buffer = 0;
-    other._size = 0;
-    // make me available
-    return *this;
-}
-
-pyre::memory::Direct::
-~Direct() {
-    // if i am holding a valid region
-    if (_buffer) {
-        // unmap the memory
-        unmap(_buffer, _size);
-    }
-}
-
-
 // interface
 // accessors
+template <typename cellT>
 auto
-pyre::memory::Direct::
+pyre::memory::Direct<cellT>::
 size() const {
     // easy enough
     return _size;
 }
 
+template <typename cellT>
 auto
-pyre::memory::Direct::
-buffer() const {
+pyre::memory::Direct<cellT>::
+data() const {
     // easy enough
-    return _buffer;
+    return static_cast<cell_type *>(buffer());
 }
 
 // end of file

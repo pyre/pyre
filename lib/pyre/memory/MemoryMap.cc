@@ -10,14 +10,19 @@
 #include <portinfo>
 // externals
 #include <sstream>
+// local forward declarations
+#include "forward.h"
 // my parts
-#include "public.h"
+#include "MemoryMap.h"
 
 // meta-methods
 pyre::memory::MemoryMap::
-MemoryMap(uri_type uri, size_type size, bool preserve) :
+MemoryMap(uri_type uri, bool writeable, size_type bytes, size_type offset, bool preserve) :
     _uri {uri},
-    _info {}
+    _info {},
+    _bytes(bytes),
+    _buffer(0)
+
 {
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.direct");
@@ -32,6 +37,9 @@ MemoryMap(uri_type uri, size_type size, bool preserve) :
         // nothing further to do
         return;
     }
+
+    // compute the desired file size
+    size_t desired = offset + bytes;
 
     // otherwise, ask the filesystem
     int status = ::stat(_uri.data(), &_info);
@@ -61,7 +69,7 @@ MemoryMap(uri_type uri, size_type size, bool preserve) :
             throw std::system_error(errno, std::system_category());
         }
         // so, the file doesn't exist; if the caller did not specify a desired map size
-        if (size == 0) {
+        if (bytes == 0) {
             // we have a problem
             std::stringstream problem;
             // describe it
@@ -80,21 +88,47 @@ MemoryMap(uri_type uri, size_type size, bool preserve) :
             throw std::runtime_error(problem.str());
         }
         // if we have size information, create the file
-        create(uri, size);
+        create(uri, desired);
         // get the file information
         ::stat(_uri.data(), &_info);
+        // get the actual file size
+        size_type actual = _info.st_size;
+        // check that it matches our expectations
+        if (actual != desired) {
+            // if not, we have a problem
+            std::stringstream problem;
+            // describe it
+            problem
+                << "while creating '" << uri << "': file size mismatch: asked for "
+                << desired << " bytes, got " << _info.st_size << " bytes instead";
+            // create a channel
+            pyre::journal::error_t error("pyre.memory.direct");
+            // complain
+            error
+                // where
+                << pyre::journal::at(__HERE__)
+                // what happened
+                << problem.str()
+                // flush
+                << pyre::journal::endl;
+            // raise an exception
+            throw std::runtime_error(problem.str());
+        }
+
+        // map it
+        _buffer = map(uri, bytes, offset, writeable);
         // all done
         return;
     }
 
     // the file already exists; let's find its size
     size_type actual = _info.st_size;
-    // if the actual size does not match the required size
-    if (actual != size) {
+    // if the actual size is not big enough to hold our data
+    if (actual < desired) {
         // if the user doesn't care about the existing file
         if (!preserve) {
             // throw the existing file away and rebuild it
-            create(uri, size);
+            create(uri, desired);
         // otherwise
         } else {
             // we have a problem
@@ -102,8 +136,8 @@ MemoryMap(uri_type uri, size_type size, bool preserve) :
             // describe it
             problem
                 << "while mapping '" << uri
-                << "': the file already exists but there is a size mismatch: "
-                << "actual: " << actual << " bytes, requested: " << size << " bytes";
+                << "': the file already exists but it is not big enough: "
+                << "actual: " << actual << " bytes, requested: " << desired << " bytes";
             // create a channel
             pyre::journal::error_t error("pyre.memory.direct");
             // complain
@@ -119,23 +153,25 @@ MemoryMap(uri_type uri, size_type size, bool preserve) :
         }
     }
 
+    // map it
+    _buffer = map(uri, bytes, offset, writeable);
+
     // all done
     return;
 }
 
-
 // class methods
 // make a file of a specified size
-void
+pyre::memory::MemoryMap::size_type
 pyre::memory::MemoryMap::
-create(uri_type name, size_type size) {
+create(uri_type name, size_type bytes) {
     // we take advantage of the POSIX requirement that writing a byte at a file location past its
     // current size automatically fills all the locations before it with nulls
 
     // create a file stream
     std::ofstream file(name, std::ofstream::binary);
     // move the file pointer to the desired size
-    file.seekp(size - 1);
+    file.seekp(bytes - 1);
     // make a byte
     char null = 0;
     // write a byte
@@ -148,24 +184,24 @@ create(uri_type name, size_type size) {
     // show me
     channel
         << pyre::journal::at(__HERE__)
-        << "created '" << name << "' (" << size << " bytes)"
+        << "created '" << name << "' (" << bytes << " bytes)"
         << pyre::journal::endl;
 
     // all done
-    return;
+    return bytes;
 }
 
 // memory map the given file
 void *
 pyre::memory::MemoryMap::
-map(uri_type name, size_type & size, size_type offset, bool writable) {
+map(uri_type name, size_type bytes, size_type offset, bool writable) {
     // deduce the mode for opening the file
     auto mode = writable ? O_RDWR : O_RDONLY;
     // open the file using low level IO, since we need its file descriptor
     auto fd = ::open(name.c_str(), mode);
-    // verify the file was opened correctly
+    // verify the file was not opened correctly
     if (fd < 0) {
-        // and if not, create a channel
+        // we have a problem; make a channel
         pyre::journal::error_t channel("pyre.memory.direct");
         // complain
         channel
@@ -177,14 +213,14 @@ map(uri_type name, size_type & size, size_type offset, bool writable) {
             << "  reason " << errno << ": " << std::strerror(errno)
             // flush
             << pyre::journal::endl;
-            // raise an exception
+        // raise an exception
         throw std::system_error(errno, std::system_category());
     }
 
     // deduce the protection flag
     auto prot = writable ? (PROT_READ | PROT_WRITE) : PROT_READ;
     // map it
-    void * buffer = ::mmap(0, size, prot, MAP_SHARED, fd, static_cast<offset_t>(offset));
+    void * buffer = ::mmap(0, bytes, prot, MAP_SHARED, fd, static_cast<offset_t>(offset));
     // check it
     if (buffer == MAP_FAILED) {
         // create a channel
@@ -194,7 +230,7 @@ map(uri_type name, size_type & size, size_type offset, bool writable) {
             // where
             << pyre::journal::at(__HERE__)
             // what happened
-            << "failed to map '" << name << "' onto memory (" << size << " bytes)"
+            << "failed to map '" << name << "' onto memory (" << bytes << " bytes)"
             << pyre::journal::newline
             // why it happened
             << "  reason " << errno << ": " << std::strerror(errno)
@@ -209,13 +245,12 @@ map(uri_type name, size_type & size, size_type offset, bool writable) {
     // show me
     channel
         << pyre::journal::at(__HERE__)
-        << "mapped " << size << " bytes from '" << name << "' into "
+        << "mapped " << bytes << " bytes from '" << name << "' into "
         << (writable ? "writable" : "read-only")
         << " memory at " << buffer
         << pyre::journal::endl;
 
-    // clean up
-    // close the file
+    // clean up: close the file
     close(fd);
     // return the payload
     return buffer;
@@ -225,16 +260,16 @@ map(uri_type name, size_type & size, size_type offset, bool writable) {
 // unmap the given buffer
 void
 pyre::memory::MemoryMap::
-unmap(const void * buffer, size_type size) {
+unmap(const void * buffer, size_type bytes) {
     // unmap
-    int status = ::munmap(const_cast<void *>(buffer), size);
+    int status = ::munmap(const_cast<void *>(buffer), bytes);
 
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.direct");
     // show me
     channel
         << pyre::journal::at(__HERE__)
-        << "unmapped " << size << " bytes from " << buffer
+        << "unmapped " << bytes << " bytes from " << buffer
         << pyre::journal::endl;
 
     // check whether the memory was unmapped

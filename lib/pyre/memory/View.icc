@@ -12,30 +12,27 @@
 #endif
 
 
-// interface
-// accessor
-auto
-pyre::memory::View::
-buffer() const {
-    // easy enough
-    return _buffer;
-}
-
 // meta-methods
-pyre::memory::View::
-View(void * buffer) :
+template <typename cellT>
+pyre::memory::View<cellT>::
+~View() {}
+
+template <typename cellT>
+pyre::memory::View<cellT>::
+View(cell_type * buffer) :
     _buffer {buffer}
 {}
 
-
-pyre::memory::View::
-View(const View & other) :
-    _buffer {other.buffer()}
+template <typename cellT>
+pyre::memory::View<cellT>::
+View(const View<cellT> & other) :
+    _buffer {other._buffer}
 {}
 
-pyre::memory::View &
-pyre::memory::View::
-operator=(const View & other) {
+template <typename cellT>
+pyre::memory::View<cellT> &
+pyre::memory::View<cellT>::
+operator=(const View<cellT> & other) {
     // trap assignment to self
     if (this == &other) {
         // and bail
@@ -47,13 +44,15 @@ operator=(const View & other) {
     return *this;
 }
 
-pyre::memory::View::
+template <typename cellT>
+pyre::memory::View<cellT>::
 View(const View && other) :
-    _buffer {other.buffer()}
+    _buffer {other._buffer}
 {}
 
-pyre::memory::View &
-pyre::memory::View::
+template <typename cellT>
+pyre::memory::View<cellT> &
+pyre::memory::View<cellT>::
 operator=(const View && other) {
     // grab the memory location
     _buffer = other._buffer;
@@ -61,8 +60,15 @@ operator=(const View && other) {
     return *this;
 }
 
-pyre::memory::View::
-~View() {}
 
+// interface
+// accessor
+template <typename cellT>
+auto
+pyre::memory::View<cellT>::
+data() const {
+    // easy enough
+    return _buffer;
+}
 
 // end of file

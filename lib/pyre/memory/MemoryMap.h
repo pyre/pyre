@@ -10,9 +10,11 @@
 #if !defined(pyre_memory_MemoryMap_h)
 #define pyre_memory_MemoryMap_h
 
-
 // declaration
 // this class is a wrapper around the os calls
+//
+// ALL SIZES HERE ARE IN BYTES
+//
 class pyre::memory::MemoryMap {
     // types
 public:
@@ -27,24 +29,40 @@ public:
 
     // meta-methods
 public:
-    MemoryMap(uri_type name="", size_type size=0, bool preserve=false);
+    inline ~MemoryMap();
+
+    // constructor
+    MemoryMap(uri_type name, bool writeable, size_type bytes, size_type offset, bool preserve);
+
+    // move semantics
+    inline MemoryMap(MemoryMap &&);
+    inline MemoryMap & operator=(MemoryMap &&);
 
     // interface
 public:
     inline auto uri() const;
-    inline const auto & info() const;
+    inline auto bytes() const;
+    inline auto buffer() const;
+    inline const auto & fileinfo() const;
 
     // implementation details - data
 private:
     uri_type _uri;
     info_type _info;
-
+    size_type _bytes;
+    void * _buffer;
 
     // class methods
 public:
-    static void create(uri_type name, size_type size);
-    static void * map(uri_type name, size_type & size, size_type offset, bool writable);
-    static void unmap(const void * buffer, size_type size);
+    static size_type create(uri_type name, size_type bytes);
+    static void * map(uri_type name, size_type bytes, size_type offset, bool writable);
+    static void unmap(const void * buffer, size_type bytes);
+
+    // suppress
+private:
+    // copy semantics
+    MemoryMap(const MemoryMap &) = delete;
+    MemoryMap & operator=(const MemoryMap &) = delete;
 };
 
 #endif

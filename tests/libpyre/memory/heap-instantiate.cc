@@ -15,48 +15,15 @@
 // support
 #include <pyre/journal.h>
 #include <pyre/memory.h>
-#include <pyre/geometry.h>
 
 // entry point
 int main() {
+    // the cell type
+    typedef double cell_t;
     // desired size
     size_t page = ::getpagesize();
-
     // make an allocation
-    pyre::memory::heap_t heap(page);
-    // remember the allocation location
-    void * data = heap.buffer();
-
-    // use it to initialize another one
-    pyre::memory::heap_t clone {std::move(heap)};
-    // check that it got the same memory location
-    if (clone.buffer() != data) {
-        // make a channel
-        pyre::journal::firewall_t firewall("pyre.memory.heap");
-        // complain
-        firewall
-            << pyre::journal::at(__HERE__)
-            << "heap copy not at expected location:" << pyre::journal::newline
-            << "  expected " << data << ", got " << clone.buffer()
-            << pyre::journal::endl;
-        // and bail
-        return 1;
-    }
-
-    // check that the source is now "empty"
-    // check that it got the same memory location
-    if (heap.buffer()) {
-        // make a channel
-        pyre::journal::firewall_t firewall("pyre.memory.heap");
-        // complain
-        firewall
-            << pyre::journal::at(__HERE__)
-            << "heap not properly moved:" << pyre::journal::newline
-            << "  expected " << (void*)0 << ", got " << heap.buffer()
-            << pyre::journal::endl;
-        // and bail
-        return 1;
-    }
+    pyre::memory::heap_t<cell_t> heap(page);
 
     // if all goes well, no exceptions will be thrown when these objects get destroyed
     return 0;

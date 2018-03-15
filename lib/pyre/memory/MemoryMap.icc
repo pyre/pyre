@@ -11,6 +11,47 @@
 #error This header file contains implementation details of class pyre::memory::MemoryMap
 #endif
 
+// meta-methods
+pyre::memory::MemoryMap::
+~MemoryMap() {
+    // if i have a valid buffer
+    if (_buffer) {
+        // unmap it
+        unmap(_buffer, _bytes);
+    }
+    // all done
+    return;
+}
+
+pyre::memory::MemoryMap::
+MemoryMap(MemoryMap && other) {
+    // delegate to the move assignment operator
+    *this = std::move(other);
+}
+
+pyre::memory::MemoryMap &
+pyre::memory::MemoryMap::
+operator=(MemoryMap && other) {
+    // trap assignment to self
+    if (this == &other) {
+        // and bail
+        return *this;
+    }
+    // if my current buffer is valid
+    if (_buffer) {
+        // unmap the memory
+        unmap(_buffer, _bytes);
+    }
+    // pilfer from the other
+    _buffer = other._buffer;
+    _bytes = other._bytes;
+    // invalidate him
+    other._buffer = 0;
+    other._bytes = 0;
+    // make me available
+    return *this;
+}
+
 // accessors
 auto
 pyre::memory::MemoryMap::
@@ -19,9 +60,23 @@ uri() const {
     return _uri;
 }
 
+auto
+pyre::memory::MemoryMap::
+bytes() const {
+    // easy enough
+    return _bytes;
+}
+
+auto
+pyre::memory::MemoryMap::
+buffer() const {
+    // easy enough
+    return _buffer;
+}
+
 const auto &
 pyre::memory::MemoryMap::
-info() const {
+fileinfo() const {
     // easy enough
     return _info;
 }

@@ -18,38 +18,40 @@
 //
 
 // declaration
+template <typename cellT>
 class pyre::memory::Direct : public pyre::memory::MemoryMap {
+    // types
+public:
+    typedef cellT cell_type;
+    typedef cell_type * cell_ptrtype;
+
     // meta-methods
 public:
-    // default constructor
-    inline Direct();
     // constructor
     inline
     Direct(uri_type uri,         // the name of the file
-           size_type size,       // how much of the file to map
-           size_type offset = 0  // starting at this offset from the beginning
+           size_type size,       // how much of the file to map (in cell_type units)
+           size_type offset = 0, // starting at this offset from the beginning
+           bool preserve = false // preserve the file
            );
 
     // move semantics
-    inline Direct(Direct && other);
-    inline Direct & operator=(Direct && other);
-
-    // destructor
-    inline ~Direct();
+    inline Direct(Direct &&) = default;
+    inline Direct & operator=(Direct &&) = default;
 
     // interface
 public:
     // accessors
     inline auto size() const;
-    inline auto buffer() const;
+    inline auto data() const;
 
     // implementation details: data
 private:
-    void * _buffer;
     size_type _size;
 
-    // disable the copy semantics
+    // suppress
 private:
+    // disable the copy semantics
     Direct(const Direct &) = delete;
     Direct & operator=(const Direct &) = delete;
 };

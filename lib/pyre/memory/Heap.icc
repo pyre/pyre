@@ -13,14 +13,22 @@
 
 
 // meta-methods
-pyre::memory::Heap::
+template <typename cellT>
+pyre::memory::Heap<cellT>::
+~Heap() {
+    // clean up
+    ::operator delete(_buffer);
+}
+
+template <typename cellT>
+pyre::memory::Heap<cellT>::
 Heap(size_type size) :
-    _buffer {::operator new(size)},
+    _buffer {static_cast<cellptr_type>(::operator new(size * sizeof(cellT)))},
     _size {size}
 {}
 
-
-pyre::memory::Heap::
+template <typename cellT>
+pyre::memory::Heap<cellT>::
 Heap(Heap && other) :
     _buffer {0},
     _size {0}
@@ -29,8 +37,9 @@ Heap(Heap && other) :
     *this = std::move(other);
 }
 
-pyre::memory::Heap &
-pyre::memory::Heap::
+template <typename cellT>
+pyre::memory::Heap<cellT> &
+pyre::memory::Heap<cellT>::
 operator=(Heap && other) {
     // trap assignment to self
     if (this == &other) {
@@ -52,25 +61,21 @@ operator=(Heap && other) {
     return *this;
 }
 
-pyre::memory::Heap::
-~Heap() {
-    // clean up
-    ::operator delete(_buffer);
-}
-
 
 // interface
 // accessors
-pyre::memory::Heap::size_type
-pyre::memory::Heap::
+template <typename cellT>
+typename pyre::memory::Heap<cellT>::size_type
+pyre::memory::Heap<cellT>::
 size() const {
     // easy enough
     return _size;
 }
 
-void *
-pyre::memory::Heap::
-buffer() const {
+template <typename cellT>
+typename pyre::memory::Heap<cellT>::cell_type *
+pyre::memory::Heap<cellT>::
+data() const {
     // easy enough
     return _buffer;
 }

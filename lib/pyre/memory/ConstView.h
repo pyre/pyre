@@ -18,11 +18,20 @@
 //
 
 // declaration
+template <typename cellT>
 class pyre::memory::ConstView {
+    // types
+public:
+    typedef cellT cell_type;
+    typedef const cell_type * cell_ptrtype;
+
     // meta-methods
 public:
+    // destructor
+    inline ~ConstView();
+
     // constructor
-    inline ConstView(const void * buffer);
+    inline ConstView(const cell_type * buffer);
 
     // copy semantics
     inline ConstView(const ConstView & other);
@@ -32,17 +41,14 @@ public:
     inline ConstView(const ConstView &&);
     inline ConstView & operator=(const ConstView &&);
 
-    // destructor
-    inline ~ConstView();
-
     // interface
 public:
     // accessor
-    inline auto buffer() const;
+    inline auto data() const;
 
     // implementation details: data
 private:
-    const void * _buffer;
+    cellptr_type const _buffer;
 };
 
 

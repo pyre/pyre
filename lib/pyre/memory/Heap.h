@@ -18,9 +18,14 @@
 //
 
 // declaration
+template <typename cellT>
 class pyre::memory::Heap {
     // types
 public:
+    // alias for my template type
+    typedef cellT cell_type;
+    typedef cell_type * cellptr_type;
+    // other help
     typedef size_t size_type;
 
     // meta-methods
@@ -39,17 +44,19 @@ public:
 public:
     // accessors
     inline size_type size() const;
-    inline void * buffer() const;
+    inline cell_type * data() const;
 
     // implementation details: data
 private:
-    void * _buffer;
+    cell_type * _buffer;
     size_type _size;
 
-    // disable the copy semantics
+    // suppress
 private:
+    // copy semantics
     Heap(const Heap &) = delete;
     Heap & operator=(const Heap &) = delete;
+
 };
 
 

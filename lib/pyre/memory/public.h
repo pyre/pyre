@@ -10,41 +10,8 @@
 #if !defined(pyre_memory_public_h)
 #define pyre_memory_public_h
 
-// externals
-#include <stdexcept>
-#include <fstream>
-#include <utility>
-// low level stuff
-#include <cstring> // for strerror
-#include <fcntl.h> // for open
-#include <unistd.h> // for close
-#include <sys/stat.h> // for the mode flags
-#include <sys/mman.h> // for mmap
-// support
-#include <pyre/journal.h>
-
-// forward declarations
-namespace pyre {
-    namespace memory {
-        // local type aliases
-        // for filenames
-        typedef std::string uri_t;
-        // for describing shapes and regions
-        typedef off_t offset_t;
-        typedef std::size_t size_t;
-        // file information
-        typedef struct stat info_t;
-
-        class MemoryMap; // infrastructure
-
-        // buffer types
-        typedef class View view_t;               // view over existing memory
-        typedef class ConstView constview_t;     // view over existing constant memory
-        typedef class Heap heap_t;               // dynamically allocated memory
-        typedef class Direct direct_t;           // memory mapped file
-        typedef class ConstDirect constdirect_t; // const access to a memory mapped file
-    }
-}
+// forward declaration
+#include "forward.h"
 
 // the object model
 #include "View.h"
