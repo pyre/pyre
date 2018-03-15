@@ -26,7 +26,7 @@ int main() {
     typedef pyre::grid::index_t<rep_t> index_t;
     typedef pyre::grid::layout_t<index_t> layout_t;
     // storage
-    typedef pyre::memory::heap_t heap_t;
+    typedef pyre::memory::heap_t<cell_t> heap_t;
     // grid
     typedef pyre::grid::grid_t<cell_t, layout_t, heap_t> grid_t;
 
@@ -41,7 +41,7 @@ int main() {
     layout_t layout {shape, packing};
 
     // allocate some memory on the heap and make a grid
-    grid_t grid {layout, layout.size() * sizeof(grid_t::cell_type)};
+    grid_t grid {layout};
 
     // show me
     channel

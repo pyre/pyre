@@ -62,14 +62,16 @@ namespace pyre {
         using grid_t = Grid<cellT, layoutT, storageT>;
 
         // direct grid
-        template <typename cellT, typename layoutT, typename directT = pyre::memory::direct_t>
+        template < typename cellT,
+                   typename layoutT,
+                   typename directT = pyre::memory::direct_t<cellT>>
         using directgrid_t = DirectGrid<cellT, layoutT, directT>;
 
         // simplified access
         template < size_t dim,
                    typename cellT = double,
                    typename repT = std::array<int, dim>,
-                   typename storageT = pyre::memory::heap_t>
+                   typename storageT = pyre::memory::heap_t<cellT>>
         using simple_t = Grid<cellT, Layout<Index<repT>, Packing<dim>>, storageT>;
     }
 }

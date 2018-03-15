@@ -23,7 +23,7 @@ int main() {
     typedef pyre::grid::index_t<crep_t> cindex_t;
     typedef pyre::grid::layout_t<cindex_t> clayout_t;
     // storage
-    typedef pyre::memory::heap_t heap_t;
+    typedef pyre::memory::heap_t<cell_t> heap_t;
     // grid
     typedef pyre::grid::grid_t<cell_t, clayout_t, heap_t> grid_t;
 
@@ -32,11 +32,15 @@ int main() {
     typedef std::array<int, 2> mrep_t; // the mosaic is a 2d arrangement
     typedef pyre::grid::index_t<mrep_t> mindex_t;
     typedef pyre::grid::layout_t<mindex_t> mlayout_t;
+    // storage
+    typedef pyre::memory::heap_t<grid_t> mheap_t;
     // mosaic
-    typedef pyre::grid::grid_t<grid_t, mlayout_t, heap_t> mosaic_t;
+    typedef pyre::grid::grid_t<grid_t, mlayout_t, mheap_t> mosaic_t;
 
     // make a channel
     pyre::journal::debug_t channel("pyre.grid");
+    // activate it
+    // channel.activate();
 
     // setup the shape of the mosaic
     mlayout_t mlayout { {2,2} };

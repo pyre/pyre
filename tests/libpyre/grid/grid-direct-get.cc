@@ -29,7 +29,7 @@ int main() {
     // convenience
     typedef pyre::memory::uri_t uri_t;
     // storage
-    typedef pyre::memory::constdirect_t constdirect_t;
+    typedef pyre::memory::constdirect_t<cell_t> constdirect_t;
     // grid
     typedef pyre::grid::directgrid_t<cell_t, layout_t, constdirect_t> grid_t;
 

@@ -10,8 +10,8 @@
 #error This header file contains implementation details of class pyre::grid::Grid
 #endif
 
-template <typename cellT, typename layoutT, typename storageT>
-pyre::grid::Grid<cellT, layoutT, storageT>::
+ template <typename cellT, typename layoutT, typename storageT>
+ pyre::grid::Grid<cellT, layoutT, storageT>::
 Grid(layout_type layout, const storage_type & storage) :
     _layout { layout },
     _storage { storage }
@@ -28,14 +28,14 @@ template <typename cellT, typename layoutT, typename storageT>
 pyre::grid::Grid<cellT, layoutT, storageT>::
 Grid(layout_type layout) :
     _layout { layout },
-    _storage { sizeof(cell_type) * layout.size() }
+    _storage { layout.size() }
     {}
 
 template <typename cellT, typename layoutT, typename storageT>
 pyre::grid::Grid<cellT, layoutT, storageT>::
 Grid(shape_type shape) :
     _layout { {shape} },
-    _storage { sizeof(cell_type) * _layout.size() }
+    _storage { _layout.size() }
     {}
 
 // interface
@@ -59,11 +59,11 @@ layout() const
 }
 
 template <typename cellT, typename layoutT, typename storageT>
-const auto
+auto
 pyre::grid::Grid<cellT, layoutT, storageT>::
 data() const
 {
-    return _storage.buffer();
+    return _storage.data();
 }
 
 // grant write access to the grid at {offset}
@@ -73,21 +73,21 @@ pyre::grid::Grid<cellT, layoutT, storageT>::
 operator[](size_type offset)
 {
     // get the data location
-    // N.B.here we need write access, so the compiler may complain about discarded qualifiers
+    // N.B.: here we need write access, so the compiler may complain about discarded qualifiers
     // if my storage is const...
-    auto cells = static_cast<cell_type *>(_storage.buffer());
+    typename storage_type::cellptr_type cells = _storage.data();
     // dereference and return the value
     return cells[offset];
 }
 
 // grant read access to the grid at {index}
 template <typename cellT, typename layoutT, typename storageT>
-const auto &
+auto &
 pyre::grid::Grid<cellT, layoutT, storageT>::
 operator[](size_type offset) const
 {
     // get the data location
-    auto cells = static_cast<const cell_type *>(_storage.buffer());
+    typename storage_type::cellptr_type cells = _storage.data();
     // dereference and return the value
     return cells[offset];
 }

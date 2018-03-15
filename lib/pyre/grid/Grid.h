@@ -47,11 +47,11 @@ public:
     // access to my shape
     inline const auto & layout() const;
     // access to my memory location
-    inline const auto data() const;
+    inline auto data() const;
 
     // read and write access using offsets
     inline auto & operator[](size_type offset);
-    inline const auto & operator[](size_type offset) const;
+    inline auto & operator[](size_type offset) const;
 
     // read and write access using indices
     inline auto & operator[](const index_type & index);

@@ -26,7 +26,7 @@ int main() {
     typedef pyre::grid::index_t<rep_t> index_t;
     typedef pyre::grid::layout_t<index_t> layout_t;
     // storage
-    typedef pyre::memory::view_t view_t;
+    typedef pyre::memory::view_t<cell_t> view_t;
     // grid
     typedef pyre::grid::grid_t<cell_t, layout_t, view_t> grid_t;
 

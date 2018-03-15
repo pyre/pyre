@@ -70,7 +70,9 @@ namespace pyre {
         template <typename cellT, typename layoutT, typename storageT>
         using grid_t = pyre::grid::grid_t<cellT, layoutT, storageT>;
         // direct grid
-        template <typename cellT, typename layoutT, typename directT = pyre::memory::direct_t>
+        template <typename cellT,
+                  typename layoutT,
+                  typename directT = pyre::memory::direct_t<cellT>>
         using directgrid_t = pyre::grid::directgrid_t<cellT, layoutT, directT>;
     }
 }

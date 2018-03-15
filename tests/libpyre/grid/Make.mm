@@ -10,7 +10,7 @@
 include pyre.def
 
 # the pile of tests
-TESTS = \
+LAYOUT_TESTS = \
     index \
     index-access \
     index-bool \
@@ -27,6 +27,8 @@ TESTS = \
     layout-order \
     layout-order-default \
     layout-slice \
+
+GRID_TESTS = \
     grid-view \
     grid-heap \
     grid-direct \
@@ -38,14 +40,22 @@ TESTS = \
 all: test clean
 
 # testing
-test: $(TESTS)
+test: layout_tests grid_tests
+
+layout_tests: $(LAYOUT_TESTS)
 	@echo "testing:"
-	@for testcase in $(TESTS); do { \
+	@for testcase in $(LAYOUT_TESTS); do { \
+            echo "    $${testcase}" ; ./$${testcase} || exit 1 ; \
+            } done
+
+grid_tests: $(GRID_TESTS)
+	@echo "testing:"
+	@for testcase in $(GRID_TESTS); do { \
             echo "    $${testcase}" ; ./$${testcase} || exit 1 ; \
             } done
 
 # build
-PROJ_CLEAN += $(TESTS) grid.dat
+PROJ_CLEAN += $(LAYOUT_TESTS) $(GRID_TESTS) grid.dat
 PROJ_LIBRARIES = -lpyre -ljournal
 LIBRARIES = $(PROJ_LIBRARIES) $(EXTERNAL_LIBS)
 
