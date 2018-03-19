@@ -23,7 +23,10 @@ class pyre::memory::ConstDirect : public pyre::memory::MemoryMap {
     // types
 public:
     typedef cellT cell_type;
-    typedef cell_type * cell_ptrtype;
+    typedef const cell_type & reference;
+    typedef const cell_type & const_reference;
+    typedef const cell_type * pointer;
+    typedef const cell_type * const_pointer;
 
     // meta-methods
 public:

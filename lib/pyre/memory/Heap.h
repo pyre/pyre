@@ -22,9 +22,12 @@ template <typename cellT>
 class pyre::memory::Heap {
     // types
 public:
-    // alias for my template type
+    // aliases for my template type
     typedef cellT cell_type;
-    typedef cell_type * cellptr_type;
+    typedef cell_type & reference;
+    typedef const cell_type & const_reference;
+    typedef cell_type * pointer;
+    typedef const cell_type * const_pointer;
     // other help
     typedef size_t size_type;
 
@@ -44,11 +47,11 @@ public:
 public:
     // accessors
     inline size_type size() const;
-    inline cell_type * data() const;
+    inline auto data() const;
 
     // implementation details: data
 private:
-    cell_type * _buffer;
+    pointer _buffer;
     size_type _size;
 
     // suppress

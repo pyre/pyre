@@ -23,6 +23,8 @@ public:
     typedef pyre::memory::size_t size_type;
     typedef pyre::memory::offset_t offset_type;
 
+    typedef void * pointer;
+
     // constants
 public:
     constexpr static int entireFile = 0;
@@ -50,13 +52,13 @@ private:
     uri_type _uri;
     info_type _info;
     size_type _bytes;
-    void * _buffer;
+    pointer _buffer;
 
     // class methods
 public:
     static size_type create(uri_type name, size_type bytes);
-    static void * map(uri_type name, size_type bytes, size_type offset, bool writable);
-    static void unmap(const void * buffer, size_type bytes);
+    static pointer map(uri_type name, size_type bytes, size_type offset, bool writable);
+    static void unmap(const pointer buffer, size_type bytes);
 
     // suppress
 private:

@@ -23,7 +23,10 @@ class pyre::memory::ConstView {
     // types
 public:
     typedef cellT cell_type;
-    typedef const cell_type * cell_ptrtype;
+    typedef const cell_type & reference;
+    typedef const cell_type & const_reference;
+    typedef const cell_type * pointer;
+    typedef const cell_type * const_pointer;
 
     // meta-methods
 public:
@@ -31,7 +34,7 @@ public:
     inline ~ConstView();
 
     // constructor
-    inline ConstView(const cell_type * buffer);
+    inline ConstView(const pointer buffer);
 
     // copy semantics
     inline ConstView(const ConstView & other);
@@ -48,7 +51,7 @@ public:
 
     // implementation details: data
 private:
-    cellptr_type const _buffer;
+    pointer const _buffer;
 };
 
 

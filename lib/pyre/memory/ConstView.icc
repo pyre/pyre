@@ -19,7 +19,7 @@ pyre::memory::ConstView<cellT>::
 
 template <typename cellT>
 pyre::memory::ConstView<cellT>::
-ConstView(const cell_type * buffer) :
+ConstView(const pointer buffer) :
     _buffer {buffer}
 {}
 

@@ -75,7 +75,7 @@ operator[](size_type offset)
     // get the data location
     // N.B.: here we need write access, so the compiler may complain about discarded qualifiers
     // if my storage is const...
-    typename storage_type::cellptr_type cells = _storage.data();
+    typename storage_type::pointer cells = _storage.data();
     // dereference and return the value
     return cells[offset];
 }
@@ -87,7 +87,7 @@ pyre::grid::Grid<cellT, layoutT, storageT>::
 operator[](size_type offset) const
 {
     // get the data location
-    typename storage_type::cellptr_type cells = _storage.data();
+    typename storage_type::const_pointer cells = _storage.data();
     // dereference and return the value
     return cells[offset];
 }

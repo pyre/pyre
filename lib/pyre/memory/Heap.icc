@@ -23,7 +23,7 @@ pyre::memory::Heap<cellT>::
 template <typename cellT>
 pyre::memory::Heap<cellT>::
 Heap(size_type size) :
-    _buffer {static_cast<cellptr_type>(::operator new(size * sizeof(cellT)))},
+    _buffer {static_cast<pointer>(::operator new(size * sizeof(cellT)))},
     _size {size}
 {}
 
@@ -73,7 +73,7 @@ size() const {
 }
 
 template <typename cellT>
-typename pyre::memory::Heap<cellT>::cell_type *
+auto
 pyre::memory::Heap<cellT>::
 data() const {
     // easy enough

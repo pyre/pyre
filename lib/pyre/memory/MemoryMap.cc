@@ -192,7 +192,7 @@ create(uri_type name, size_type bytes) {
 }
 
 // memory map the given file
-void *
+pyre::memory::MemoryMap::pointer
 pyre::memory::MemoryMap::
 map(uri_type name, size_type bytes, size_type offset, bool writable) {
     // deduce the mode for opening the file
@@ -220,7 +220,7 @@ map(uri_type name, size_type bytes, size_type offset, bool writable) {
     // deduce the protection flag
     auto prot = writable ? (PROT_READ | PROT_WRITE) : PROT_READ;
     // map it
-    void * buffer = ::mmap(0, bytes, prot, MAP_SHARED, fd, static_cast<offset_t>(offset));
+    pointer buffer = ::mmap(0, bytes, prot, MAP_SHARED, fd, static_cast<offset_t>(offset));
     // check it
     if (buffer == MAP_FAILED) {
         // create a channel
@@ -260,7 +260,7 @@ map(uri_type name, size_type bytes, size_type offset, bool writable) {
 // unmap the given buffer
 void
 pyre::memory::MemoryMap::
-unmap(const void * buffer, size_type bytes) {
+unmap(const pointer buffer, size_type bytes) {
     // unmap
     int status = ::munmap(const_cast<void *>(buffer), bytes);
 

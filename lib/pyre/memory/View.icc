@@ -19,7 +19,7 @@ pyre::memory::View<cellT>::
 
 template <typename cellT>
 pyre::memory::View<cellT>::
-View(cell_type * buffer) :
+View(pointer buffer) :
     _buffer {buffer}
 {}
 
