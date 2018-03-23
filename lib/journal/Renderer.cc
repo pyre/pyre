@@ -54,19 +54,30 @@ header(
        pyre::journal::Renderer::metadata_t & metadata)
 {
     string_t marker(" >> ");
+
     // render the diagnostic severity and channel
     stream
+        // a marker
         << marker
         // the severity
         <<  metadata["severity"]
         // the channel name
-        << "(" << metadata["channel"] << ")"
-        // a newline and a marker
-        << std::endl << marker;
-    // render the filename
-    const size_t maxlen = 60;
+        << "(" << metadata["channel"] << "): ";
+
+    // get the file name from the metadata
     string_t & filename = metadata["filename"];
-    // names longer than 60 characters get shortened
+    // if we don't know the filename
+    if (filename.empty()) {
+        // add a newline
+        stream << std::endl;
+        // and bail
+        return;
+    }
+
+    // for rendering the filename
+    const size_t maxlen = 20;
+
+    // names longer than {maxlen} characters get shortened
     if (filename.size() > maxlen) {
         stream
             << filename.substr(0, maxlen/2 - 3)
@@ -82,8 +93,12 @@ header(
     if (! function.empty()) {
         stream << ":" << function;
     }
-    // a newline
+    // add a separator
+    stream << ": ";
+
+    // and a newline
     stream << std::endl;
+
     // and return
     return;
 }
