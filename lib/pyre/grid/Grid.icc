@@ -66,6 +66,14 @@ data() const
     return _storage.data();
 }
 
+template <typename cellT, typename layoutT, typename storageT>
+const auto &
+pyre::grid::Grid<cellT, layoutT, storageT>::
+storage() const
+{
+    return _storage;
+}
+
 // grant write access to the grid at {offset}
 template <typename cellT, typename layoutT, typename storageT>
 auto &

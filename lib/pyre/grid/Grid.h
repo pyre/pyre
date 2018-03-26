@@ -48,6 +48,8 @@ public:
     inline const auto & layout() const;
     // access to my memory location
     inline auto data() const;
+    // access to my storage strategy
+    inline const auto & storage() const;
 
     // read and write access using offsets
     inline auto & operator[](size_type offset);
