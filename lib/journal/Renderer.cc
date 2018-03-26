@@ -75,14 +75,14 @@ header(
     }
 
     // for rendering the filename
-    const size_t maxlen = 20;
+    const size_t maxlen = 40;
 
     // names longer than {maxlen} characters get shortened
     if (filename.size() > maxlen) {
         stream
-            << filename.substr(0, maxlen/2 - 3)
+            << filename.substr(0, maxlen/4 - 3)
             << "..."
-            << filename.substr(filename.size() - maxlen/2);
+            << filename.substr(filename.size() - 3*maxlen/4);
     } else {
         stream << filename;
     }
