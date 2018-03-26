@@ -27,8 +27,19 @@ class Panel(Command):
         """
         # realize the argument sequence
         argv = tuple(argv)
-        # if there was no command, show the user my help screen
-        if not argv: return self.help(plexus=plexus)
+        # if there was no command
+        if not argv:
+            # attempt to
+            try:
+                # look for a default action
+                default = getattr(self, 'default')
+            # if not there
+            except AttributeError:
+                # show the user my help screen
+                return self.help(plexus=plexus)
+            # if we have one, invoke it
+            return default(plexus=plexus, argv=argv)
+
         # otherwise, go through my secondary arguments
         for command in argv:
             # attempt to
