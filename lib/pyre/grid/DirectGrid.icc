@@ -13,7 +13,7 @@
 template <typename cellT, typename layoutT, typename directT>
 pyre::grid::DirectGrid<cellT, layoutT, directT>::
 DirectGrid(uri_type name, layout_type shape) :
-    Grid<cellT, layoutT, storage_type>(shape,  storage_type{name, sizeof(cell_type)*shape.size()})
+    Grid<cellT, layoutT, storage_type>(shape,  storage_type{name, shape.size()})
 {}
 
 
