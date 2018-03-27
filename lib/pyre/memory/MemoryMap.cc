@@ -279,7 +279,8 @@ unmap(const pointer buffer, size_type bytes) {
         // complain
         error
             << pyre::journal::at(__HERE__)
-            << "error " << errno << ": " << std::strerror(errno)
+            << "while unmapping " << bytes << " bytes from " << buffer
+            << ": error " << errno << ": " << std::strerror(errno)
             << pyre::journal::endl;
     }
 
