@@ -7,9 +7,15 @@
 
 # global options for mpi
 PROJECT = mpi
+
+# version info
+PROJECT_MAJOR = 1
+PROJECT_MINOR = 0
+
 # the live host
 include live.def
 
 # project settings
 PROJ_CXX_FLAGS += $(COMPILER_CXX_STD17)
+
 # end of file

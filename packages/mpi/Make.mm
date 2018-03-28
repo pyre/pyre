@@ -19,13 +19,36 @@ EXPORT_PYTHON_MODULES = \
     Port.py \
     Slurm.py \
     TrivialCommunicator.py \
+    meta.py \
     __init__.py
+
+# get today's date
+TODAY = ${strip ${shell date -u}}
+# grab the revision number
+REVISION = ${strip ${shell bzr revno}}
+# if not there
+ifeq ($(REVISION),)
+REVISION = 0
+endif
 
 # standard targets
 all: export
 
-export:: export-python-modules
+export:: meta.py export-python-modules
+	@$(RM) meta.py
 
 live: live-python-modules
+
+revision: meta.py export-python-modules
+	@$(RM) meta.py
+
+# construct my {meta.py}
+meta.py: meta Make.mm
+	@sed \
+          -e "s:MAJOR:$(PROJECT_MAJOR):g" \
+          -e "s:MINOR:$(PROJECT_MINOR):g" \
+          -e "s:REVISION:$(REVISION):g" \
+          -e "s|TODAY|$(TODAY)|g" \
+          meta > meta.py
 
 # end of file
