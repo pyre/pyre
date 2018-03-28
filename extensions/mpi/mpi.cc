@@ -105,6 +105,14 @@ namespace mpi {
 PyMODINIT_FUNC
 PyInit_mpi()
 {
+    // mga - 20180328
+    // N.B.: we used to initialize mpi as part of the import of this module
+    // this seems to be a problem starting with openmpi 3.0
+
+    // the reason is that openmpi no longer supports calling fork/exec of {mpiru} after
+    // {MPI_Init} has been called by a process, which implies that we must delay initialization
+    // until after the {launcher} has built the parallel machine
+
     // create the module
     PyObject * module = PyModule_Create(&mpi::module_definition);
     // check whether module creation succeeded and raise an exception if not
@@ -113,11 +121,6 @@ PyInit_mpi()
     }
     // otherwise, we have an initialized module
     mpi::registerExceptionHierarchy(module);
-
-    // initialize MPI
-    if (!mpi::initialize(0, 0)) {
-        return 0;
-    }
 
     // add the world communicator
     PyModule_AddObject(module, "world", mpi::communicator::world);
