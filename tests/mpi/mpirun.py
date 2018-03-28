@@ -36,7 +36,9 @@ def test():
     # instantiate it
     app = application(name='mpirun')
     # run it
-    app.run()
+    status = app.run()
+    # verify that the exit code propagated correctly
+    assert status == 0
 
     # return the app
     return app
