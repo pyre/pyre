@@ -68,47 +68,43 @@ const char * const mpi::finalize__doc__ = "shut down MPI";
 
 PyObject * mpi::finalize(PyObject *, PyObject *)
 {
-    // check whether MPI is already initialized
+    // plant a flag
     int isInitialized = 0;
-    int status = MPI_Initialized(&isInitialized);
-
-    // if something went wrong
-    if (status != MPI_SUCCESS) {
-        // bail
-        Py_INCREF(Py_None);
-        return Py_None;
+    // check whether MPI is already initialized
+    if (MPI_Initialized(&isInitialized) != MPI_SUCCESS) {
+        // build an exception
+        PyErr_SetString(PyExc_ImportError, "MPI_Initialized failed");
+        // and raise it
+        return 0;
     }
 
-    // check whether MPI is already finalized
+    // plant a flag
     int isFinalized = 0;
-    status = MPI_Finalized(&isFinalized);
-
-    // if something went wrong
-    if (status != MPI_SUCCESS) {
-        // also bail
-        Py_INCREF(Py_None);
-        return Py_None;
+    // check whether MPI is already finalized
+    if (MPI_Finalized(&isFinalized) != MPI_SUCCESS) {
+        // build an exception
+        PyErr_SetString(PyExc_ImportError, "MPI_Finalized failed");
+        // and raise it
+        return 0;
     }
 
-    // if all is good and mpi has been initialized previously
+    // if all is good
     if (isInitialized && !isFinalized) {
         // get the world communicator layout
         int rank, size;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &size);
+
         // shut down mpi
         int success = MPI_Finalize();
 
         // build a channel
         pyre::journal::debug_t channel("mpi.init");
-        // if the user cares
-        if (channel) {
-            // indicate that mpi is down
-            channel
-                << pyre::journal::at(__HERE__)
-                << "[" << rank << ":" << size << "] " << "finalized mpi; status = " << success
-                << pyre::journal::endl;
-        }
+        // tell the user that mpi is down
+        channel
+            << pyre::journal::at(__HERE__)
+            << "[" << rank << ":" << size << "] " << "finalized mpi; status = " << success
+            << pyre::journal::endl;
     }
 
     // all done
