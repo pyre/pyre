@@ -31,50 +31,49 @@ class Slurm(Launcher, family='mpi.shells.slurm'):
     submit = pyre.properties.bool(default=True)
     submit.doc = 'if {True} invoke sbatch; otherwise just save the SLURM script in a file'
 
+
     # spawning the application
     def spawn(self, application):
         """
         Generate a {SLURM} script and submit a job
         """
-        # figure out which mpi we are using
-        launcher = self.mpi.launcher
-        # and which python
-        interpreter = sys.executable
-
         # we have two things to build: the SLURM script, and the command line to {sbatch} to
         # submit the job to the queuing system
 
-        # start building the command line that we will include in the SLURM script
-        argv = [launcher]
-        if self.tasks:
-            # add the corresponding command line argument to the pile
-            argv += ['-np', str(self.tasks)]
-        # add python, the command line arguments to this script, and the auto marker
-        argv += [interpreter] + sys.argv + ['--{.pyre_name}.auto=no'.format(self)]
+        # build the command line that we will include in the SLURM script
+        argv = self.buildCommandLine()
+
+        # meta-data
+        # use the app name as the filename stem for the job name, stdout, and stderr
+        stem = application.pyre_name
+        # grab the name of the queue
+        queue = self.queue
+        # and the number of tasks
+        tasks = self.tasks
 
         # here is the body of the script
-        script = '\n'.join([
-            '#!/bin/bash',
-            '',
-            '#SBATCH --job-name="{}"'.format(application.pyre_name),
-            '#SBATCH --ntasks={}'.format(self.tasks),
-            '#SBATCH --output="{}.out"'.format(application.pyre_name),
-            '#SBATCH --error="{}.err"'.format(application.pyre_name),
-            '#SBATCH --partition={}'.format(self.queue),
-            '',
-            '# load the environment',
-            '[ -r /etc/profile ] && source /etc/profile',
-            '',
-            '# launch the pyre application',
-            ' '.join(argv),
-            '',
-            '# end of file'
+        script = "\n".join([
+            "#!/bin/bash",
+            "",
+            f"#SBATCH --job-name='{stem}'",
+            f"#SBATCH --ntasks={tasks}",
+            f"#SBATCH --output='{stem}.out'",
+            f"#SBATCH --error='{stem}.err'",
+            f"#SBATCH --partition='{queue}'",
+            "",
+            "# load the environment",
+            "[ -r /etc/profile ] && source /etc/profile",
+            "",
+            "# launch the pyre application",
+            " ".join(argv),
+            "",
+            "# end of file"
             ])
 
         # if we were asked not to invoke SLURM
         if not self.submit:
             # open a file named after the app
-            with open(application.pyre_name+'.slurm', 'w') as record:
+            with open(application.pyre_name+".slurm", "w") as record:
                 # write the script
                 record.write(script)
                 # and return success
@@ -84,11 +83,11 @@ class Slurm(Launcher, family='mpi.shells.slurm'):
         sbatch = str(self.sbatch)
         # command line arguments
         options = {
-            'args': [sbatch],
-            'executable': sbatch,
-            'stdin': subprocess.PIPE, 'stdout': subprocess.PIPE, 'stderr': subprocess.PIPE,
-            'universal_newlines': True,
-            'shell': False
+            "args": [sbatch],
+            "executable": sbatch,
+            "stdin": subprocess.PIPE, "stdout": subprocess.PIPE, "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False
             }
         # invoke {sbatch}
         with subprocess.Popen(**options) as child:
