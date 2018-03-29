@@ -43,6 +43,7 @@ EXPORT_PKG_HEADERS = \
     firewalls.h \
     macros.h \
     manipulators.h manipulators.icc \
+    public.h \
     Channel.h Channel.icc \
     Chronicler.h Chronicler.icc \
     Console.h \

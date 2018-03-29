@@ -12,24 +12,9 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
-#include <map>
-#include <vector>
-#include <string>
-#include <sstream>
 
-// local types
-#include "Device.h"
-#include "Chronicler.h"
-#include "Inventory.h"
-#include "Index.h"
-#include "Channel.h"
-// diagnostics
-#include "Diagnostic.h"
-#include "Null.h"
-#include "Debug.h"
-#include "Locator.h"
-#include "manipulators.h"
-
+// the journal interface
+#include "public.h"
 // access the declarations
 #include "debuginfo.h"
 
