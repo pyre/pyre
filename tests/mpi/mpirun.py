@@ -11,7 +11,7 @@
 Launch an mpi application
 """
 
-
+# the driver
 def test():
     # access the framework
     import pyre
@@ -22,11 +22,10 @@ def test():
 
         @pyre.export
         def main(self, **kwds):
-            # access the package
+            # get the mpi support
             import mpi
             # get the world communicator
             world = mpi.world
-            # print("Hello from {0.rank} of {0.size}".format(world))
             # check
             assert world.size == self.shell.tasks
             assert world.rank in range(world.size)
@@ -37,15 +36,15 @@ def test():
     app = application(name='mpirun')
     # run it
     status = app.run()
-    # verify that the exit code propagated correctly
+    # check
     assert status == 0
-
-    # return the app
+    # and return the app
     return app
 
 
-# main
+# bootstrap
 if __name__ == "__main__":
+    # do it...
     test()
 
 
