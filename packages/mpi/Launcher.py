@@ -91,33 +91,16 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         # prep the subprocess options
         options = {
             "args": argv,
-            "stdout": subprocess.PIPE, "stderr": subprocess.PIPE,
             "universal_newlines": True,
             "shell": False
         }
 
         # if launching fails, indicate an error
         status = 42
-        # borrow the application info channel
-        channel = application.debug
-        # show me the command line
-        channel.line("command line: {}".format(" ".join(argv)))
-
         # launch
         with subprocess.Popen(**options) as child:
             # wait for it to finish
-            out, err = child.communicate()
-            # collect the return code
-            status = child.returncode
-
-            # show me the status
-            channel.line(f"    status: {status}")
-            # and the output
-            channel.line(f"    out: '{out}'")
-            channel.line(f"    err: '{err}'")
-
-        # flush
-        channel.log()
+            status = child.wait()
 
         # all done
         return status
