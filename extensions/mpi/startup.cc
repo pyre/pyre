@@ -5,17 +5,20 @@
 // (c) 1998-2018 all rights reserved
 //
 
+// configuration option
 #include <portinfo>
+// python api
 #include <Python.h>
-#include <pyre/mpi.h>
-
+// journal
 #include <pyre/journal.h>
-
+// my wrappers over the mpi api
+#include <pyre/mpi.h>
+// my local declarations
 #include "startup.h"
 
 
 // initialize
-const char * const mpi::initialize__name__ = "initialize";
+const char * const mpi::initialize__name__ = "init";
 const char * const mpi::initialize__doc__ = "initialize MPI";
 
 PyObject * mpi::initialize(PyObject *, PyObject *)
@@ -39,15 +42,15 @@ PyObject * mpi::initialize(PyObject *, PyObject *)
     }
 
     // build a channel
-    pyre::journal::debug_t info("mpi.init");
+    pyre::journal::debug_t channel("mpi.init");
     // and if the use cares
-    if (info.isActive()) {
+    if (channel) {
         // get the world communicator layout
         int rank, size;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &size);
         // and show
-        info
+        channel
             << pyre::journal::at(__HERE__)
             << "[" << rank << ":" << size << "] " << "mpi initialized successfully"
             << pyre::journal::endl;
@@ -65,14 +68,47 @@ const char * const mpi::finalize__doc__ = "shut down MPI";
 
 PyObject * mpi::finalize(PyObject *, PyObject *)
 {
-    // check whether MPI is already intialized
+    // check whether MPI is already initialized
     int isInitialized = 0;
     int status = MPI_Initialized(&isInitialized);
 
+    // if something went wrong
+    if (status != MPI_SUCCESS) {
+        // bail
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
+    // check whether MPI is already finalized
+    int isFinalized = 0;
+    status = MPI_Finalized(&isFinalized);
+
+    // if something went wrong
+    if (status != MPI_SUCCESS) {
+        // also bail
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
     // if all is good and mpi has been initialized previously
-    if (status == MPI_SUCCESS && isInitialized) {
-        // shut it down
-        MPI_Finalize();
+    if (isInitialized && !isFinalized) {
+        // get the world communicator layout
+        int rank, size;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &size);
+        // shut down mpi
+        int success = MPI_Finalize();
+
+        // build a channel
+        pyre::journal::debug_t channel("mpi.init");
+        // if the user cares
+        if (channel) {
+            // indicate that mpi is down
+            channel
+                << pyre::journal::at(__HERE__)
+                << "[" << rank << ":" << size << "] " << "finalized mpi; status = " << success
+                << pyre::journal::endl;
+        }
     }
 
     // all done
