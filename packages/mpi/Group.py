@@ -6,12 +6,14 @@
 #
 
 
-# base classes
+# base class
 from .Object import Object
+# meta-class
+from pyre.patterns.ExtentAware import ExtentAware
 
 
 # declaration
-class Group(Object):
+class Group(Object, metaclass=ExtentAware):
     """
     Encapsulation of MPI communicator groups
     """

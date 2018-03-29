@@ -26,13 +26,10 @@ from .TrivialCommunicator import TrivialCommunicator as world
 try:
     # try to load the extension
     from . import mpi
-
 # if it fails for any reason
 except Exception as error:
-    # build {world} out of a trivial communicator
     # indicate that there is no runtime support
     mpi = None
-
 # otherwise, we have bindings and hence MPI support
 else:
     # grab the shell protocol form pyre
@@ -55,8 +52,7 @@ else:
         # and return it
         return Slurm
 
-    # prep access to the mpi objects; this is done in two steps so that we can guarantee that
-    # destructors get called before {mpi.finalize}
+    # the factories
     communicator = None
     group = None
     port = None
@@ -79,7 +75,7 @@ def init():
 
     # register the finalization routine to happen when the interpreter exits
     import atexit
-    atexit.register(mpi.finalize)
+    atexit.register(finalize)
 
     # initialize mpi
     mpi.init()
@@ -87,23 +83,56 @@ def init():
     from .Object import Object
     Object.mpi = mpi
 
-    # the communicator factory
+    # the factory placeholders
     global communicator
-    from .Communicator import Communicator as communicator
-    # the group factory
     global group
-    from .Group import Group as group
-    # the port factory
     global port
+    # the factories
+    from .Communicator import Communicator as communicator
+    from .Group import Group as group
     from .Port import Port as port
 
     # fix the world communicator
     global world
     # by building a real one
-    world = communicator(mpi.world)
+    world = communicator(capsule=mpi.world)
 
     # all done
     return mpi
+
+def finalize():
+    """
+    Shutdown mpi
+    """
+    # if we don't have runtime support
+    if not mpi:
+        # bail
+        return
+
+    # get the groups
+    from .Group import Group
+    # ask each instance
+    for group in Group._pyre_extent:
+        # to forget its capsule
+        group.capsule = None
+
+    # get the communicators
+    from .Communicator import Communicator
+    # ask each instance
+    for communicator in Communicator._pyre_extent:
+        # to forget its capsule
+        communicator.capsule = None
+
+    # get {Object}
+    from .Object import Object
+    # and destroy the extension handle it holds
+    Object.mpi = None
+
+    # finalize
+    mpi.finalize()
+
+    # all done
+    return
 
 
 # in any case, grab the framework

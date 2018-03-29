@@ -9,12 +9,15 @@
 # externals
 import pickle
 
-# base classes
+# base class
 from .Object import Object
+# meta-class
+from pyre.patterns.ExtentAware import ExtentAware
+
 
 
 # declaration
-class Communicator(Object):
+class Communicator(Object, metaclass=ExtentAware):
     """
     An encapsulation of MPI communicators
     """
