@@ -15,6 +15,8 @@ Sanity check: verify that the world communicator is accessible
 def test():
     # access the package
     import mpi
+    # initialize it
+    mpi.init()
     # get the world communicator
     world = mpi.world
     # extract the size of the communicator and my rank within it

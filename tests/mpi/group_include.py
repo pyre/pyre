@@ -15,6 +15,8 @@ Exercise the group manipulation interface
 def test():
     # access the package
     import mpi
+    # initialize
+    mpi.init()
     # grab the world communicator
     world = mpi.world
     # access the world group

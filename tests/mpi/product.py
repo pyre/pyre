@@ -16,6 +16,8 @@ def test():
     # externals
     import mpi
     import math
+    # initialize
+    mpi.init()
     # get the world communicator
     world = mpi.world
     # and its structure

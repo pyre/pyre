@@ -14,12 +14,14 @@ Sanity check: verify that the extension module is accessible
 
 def test():
     # access the extension module
-    from mpi import mpi
+    import mpi
+    # initialize it
+    ext = mpi.init()
     # get the world communicator
-    world = mpi.world
+    world = ext.world
     # extract the size of the communicator and my rank within it
-    size = mpi.communicatorSize(world)
-    rank = mpi.communicatorRank(world)
+    size = ext.communicatorSize(world)
+    rank = ext.communicatorRank(world)
     # verify that my rank is within range
     assert rank in range(size)
 

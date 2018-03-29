@@ -25,6 +25,8 @@ class message:
 def test():
     # access the package
     import mpi
+    # initialize
+    mpi.init()
     # get the world communicator
     world = mpi.world
     # set up a source for the broadcast

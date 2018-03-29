@@ -15,6 +15,8 @@ Verify that communicator groups are accessible
 def test():
     # access the package
     import mpi
+    # initialize mpi
+    mpi.init()
     # grab the world communicator
     world = mpi.world
     # access the world process group

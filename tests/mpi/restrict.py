@@ -15,6 +15,8 @@ Exercise communicator construction given a process group
 def test():
     # access the package
     import mpi
+    # initialize
+    mpi.init()
     # grab the world communicator
     world = mpi.world
     # access the world process group
