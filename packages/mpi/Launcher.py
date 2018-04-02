@@ -23,8 +23,11 @@ class Launcher(Script, family="mpi.shells.mpirun"):
 
 
     # user configurable state
+    hosts = pyre.properties.int(default=1)
+    hosts.doc = "the number of hosts in the parallel machine"
+
     tasks = pyre.properties.int()
-    tasks.doc = "the number of mpi tasks"
+    tasks.doc = "the number of mpi tasks per host; defaults to the number of cores"
 
     hostfile = pyre.properties.path()
     hostfile.doc = "the name of the file that describes the machine"
@@ -114,7 +117,9 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         launcher = self.mpi.launcher
         # the python interpreter
         interpreter = sys.executable
-        # the number of tasks
+        # the number of hosts
+        hosts = self.hosts
+        # the number of tasks per host
         tasks = self.tasks
         # the host file
         hostfile = self.hostfile
@@ -126,7 +131,7 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         # if the user specified the number of tasks
         if tasks:
             # build the corresponding arguments
-            argv += [ "-n", str(tasks) ]
+            argv += [ "-n", str(hosts * tasks) ]
         # if the user supplied a host file
         if hostfile:
             # add it to the pile
