@@ -94,20 +94,21 @@ namespace pyre {
         // inequality
         template <typename sliceT>
         auto operator!= (const Iterator<sliceT> &, const Iterator<sliceT> &);
+
+        // stream injection: overload the global operator<<
+        // for indices
+        template <typename repT>
+        auto & operator<< (std::ostream & stream, const Index<repT> & index);
+        // packing strategies
+        template <size_t dim>
+        auto & operator<< (std::ostream & stream, const Packing<dim> & packing);
+        // layouts
+        template <typename indexT, typename packingT>
+        auto & operator<< (std::ostream & stream, const Layout<indexT, packingT> & layout);
+
     }
 }
 
-
-// stream injection: overload the global operator<<
-// for indices
-template <typename repT>
-auto & operator<< (std::ostream & stream, const pyre::grid::Index<repT> & index);
-// packing strategies
-template <size_t dim>
-auto & operator<< (std::ostream & stream, const pyre::grid::Packing<dim> & packing);
-// layouts
-template <typename indexT, typename packingT>
-auto & operator<< (std::ostream & stream, const pyre::grid::Layout<indexT, packingT> & layout);
 
 // the object model
 #include "Packing.h"

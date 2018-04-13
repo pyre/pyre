@@ -169,6 +169,7 @@ operator!=(const brick_t<dim, nodeT> & b1, const brick_t<dim, nodeT> & b2) {
 
 template <std::size_t dim, typename nodeT>
 auto &
+pyre::geometry::
 operator<<(std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick) {
     // initialize; do it in this scope scope so we can use the iterator after the loop
     auto b = brick.begin();

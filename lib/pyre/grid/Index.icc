@@ -123,6 +123,7 @@ operator!=(const Index<repT> & one, const Index<repT> & two) {
 
 template <typename repT>
 auto &
+pyre::grid::
 operator<<(std::ostream & stream, const pyre::grid::Index<repT> & index) {
     // initialize; do it in this scope scope so we can use the iterator after the loop
     auto v = index.begin();

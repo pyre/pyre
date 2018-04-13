@@ -76,6 +76,7 @@ operator!=(const point_t<dim, dataT> & p1, const point_t<dim, dataT> & p2) {
 
 template <std::size_t dim, typename dataT>
 auto &
+pyre::geometry::
 operator<<(std::ostream & stream, const pyre::geometry::point_t<dim, dataT> & point) {
     // initialize an iterator
     auto p = point.begin();

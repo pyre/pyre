@@ -99,19 +99,19 @@ namespace pyre {
         template <size_t dim, typename nodeT>
         inline
         auto operator!= (const Brick<dim, nodeT> & b1, const Brick<dim, nodeT> & b2);
+
+        // stream injection: overload the global operator<<
+        // points
+        template <size_t dim, typename dataT>
+        inline
+        auto & operator<< (std::ostream & stream, const Point<dim, dataT> & point);
+        // bricks
+        template <size_t dim, typename nodeT>
+        inline
+        auto & operator<< (std::ostream & stream, const Brick<dim, nodeT> & brick);
     }
 }
 
-
-// stream injection: overload the global operator<<
-// points
-template <size_t dim, typename dataT>
-inline
-auto & operator<< (std::ostream & stream, const pyre::geometry::Point<dim, dataT> & point);
-// bricks
-template <size_t dim, typename nodeT>
-inline
-auto & operator<< (std::ostream & stream, const pyre::geometry::Brick<dim, nodeT> & brick);
 
 // the object model
 #include "Point.h"

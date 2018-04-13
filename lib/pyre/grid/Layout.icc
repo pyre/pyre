@@ -152,6 +152,7 @@ slice(const index_type & begin, const index_type & end, const packing_type & pac
 // stream injection
 template <typename indexT, typename packingT>
 auto &
+pyre::grid::
 operator<< (std::ostream & stream, const pyre::grid::Layout<indexT, packingT> & layout) {
     // inject my parts into the stream
     stream << "(" << layout.high() << ") packed using (" << layout.packing() << ")";

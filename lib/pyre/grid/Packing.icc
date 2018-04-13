@@ -122,6 +122,7 @@ end() const {
 
 template <pyre::grid::size_t dim>
 auto &
+pyre::grid::
 operator<<(std::ostream & stream, const pyre::grid::Packing<dim> & packing) {
     // initialize; do it in this scope scope so we can use the iterator after the loop
     auto v = packing.begin();
