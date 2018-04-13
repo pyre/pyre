@@ -178,7 +178,7 @@ class Matrix:
         return self
 
 
-    def print(self, format='{:+12.5e}', indent='', interactive=True):
+    def print(self, format='{:+13.4e}', indent='', interactive=True):
         """
         Print my values using the given {format}
         """
