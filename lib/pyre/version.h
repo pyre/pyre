@@ -8,7 +8,7 @@
 
 // code guard
 #if !defined(pyre_version_h)
-#define pyre_iversion_h
+#define pyre_version_h
 
 // support
 #include <array>
