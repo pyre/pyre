@@ -158,12 +158,68 @@ class Matrix:
         return MatrixView(matrix=self, start=start, shape=shape)
 
 
+    def load(self, filename, binary=None):
+        """
+        Read my values from {filename}
+
+        This method attempts to distinguish between text and binary representations of the
+        data, based on the parameter {mode}, or the {filename} extension if {mode} is absent
+        """
+        # if the caller asked for binary mode
+        if binary is True:
+            # pick the binary representation
+            return self.read(filename)
+
+        # if the caller asked for ascii mode
+        if binary is False:
+            # pick ascii
+            return self.scanf(filename)
+
+        # otherwise, look at the file extension
+        suffix = filename.suffix
+        # if it's {bin}
+        if suffix == "bin":
+            # go binary
+            return self.read(filename)
+
+        # otherwise
+        return self.scanf(filename)
+
+
+    def save(self, filename, binary=None, format="+16.3e"):
+        """
+        Write my values to {filename}
+
+        This method attempts to distinguish between text and binary representations of the
+        data, based on the parameter {mode}, or the {filename} extension if {mode} is absent
+        """
+        # if the caller asked for binary mode
+        if binary is True:
+            # pick the binary representation
+            return self.write(filename)
+
+        # if the caller asked for ascii mode
+        if binary is False:
+            # pick ascii
+            return self.printf(filename)
+
+        # otherwise, look at the file extension
+        suffix = filename.suffix
+        # if it's {bin}
+        if suffix == "bin":
+            # go binary
+            return self.write(filename)
+
+        # otherwise
+        return self.printf(filename, format)
+
+
     def read(self, filename):
         """
         Read my values from {filename}
         """
         # read
-        gsl.matrix_read(self.data, filename)
+        gsl.matrix_read(self.data, filename.path)
         # and return
         return self
 
@@ -173,7 +229,27 @@ class Matrix:
         Write my values to {filename}
         """
         # write
-        gsl.matrix_write(self.data, filename)
+        gsl.matrix_write(self.data, filename.path)
+        # and return
+        return self
+
+
+    def scanf(self, filename):
+        """
+        Read my values from {filename}
+        """
+        # read
+        gsl.matrix_scanf(self.data, filename.path)
+        # and return
+        return self
+
+
+    def printf(self, filename, format="+13.4e"):
+        """
+        Write my values to {filename}
+        """
+        # write
+        gsl.matrix_printf(self.data, filename.path, format)
         # and return
         return self
 

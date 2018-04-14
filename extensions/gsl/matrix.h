@@ -53,6 +53,16 @@ namespace gsl {
         extern const char * const write__doc__;
         PyObject * write(PyObject *, PyObject *);
 
+        // scanf
+        extern const char * const scanf__name__;
+        extern const char * const scanf__doc__;
+        PyObject * scanf(PyObject *, PyObject *);
+
+        // printf
+        extern const char * const printf__name__;
+        extern const char * const printf__doc__;
+        PyObject * printf(PyObject *, PyObject *);
+
         // transpose
         extern const char * const transpose__name__;
         extern const char * const transpose__doc__;

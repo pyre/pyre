@@ -219,7 +219,7 @@ gsl::vector::copy(PyObject *, PyObject * args) {
 
 // read
 const char * const gsl::vector::read__name__ = "vector_read";
-const char * const gsl::vector::read__doc__ = "read the values of a vector from a file";
+const char * const gsl::vector::read__doc__ = "read the values of a vector from a binary file";
 
 PyObject *
 gsl::vector::read(PyObject *, PyObject * args) {
@@ -261,7 +261,7 @@ gsl::vector::read(PyObject *, PyObject * args) {
 
 // write
 const char * const gsl::vector::write__name__ = "vector_write";
-const char * const gsl::vector::write__doc__ = "write the values of a vector to a file";
+const char * const gsl::vector::write__doc__ = "write the values of a vector to a binary file";
 
 PyObject *
 gsl::vector::write(PyObject *, PyObject * args) {
@@ -292,6 +292,97 @@ gsl::vector::write(PyObject *, PyObject * args) {
         static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
     // write the data
     gsl_vector_fwrite(stream, v);
+
+    // close the file
+    std::fclose(stream);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// scanf
+const char * const gsl::vector::scanf__name__ = "vector_scanf";
+const char * const gsl::vector::scanf__doc__ = "read the values of a vector from a text file";
+
+PyObject *
+gsl::vector::scanf(PyObject *, PyObject * args) {
+    // the arguments
+    char * filename;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args, "O!s:vector_scanf", &PyCapsule_Type, &capsule, &filename);
+
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the source capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
+        return 0;
+    }
+
+    // attempt to open the stream
+    std::FILE * stream = std::fopen(filename, "r");
+    // bail out if something went wrong
+    if (!stream) {
+        PyErr_SetString(PyExc_IOError, "could not open file for reading");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // read the data
+    gsl_vector_fscanf(stream, v);
+    // close the file
+    std::fclose(stream);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// printf
+const char * const gsl::vector::printf__name__ = "vector_printf";
+const char * const gsl::vector::printf__doc__ = "write the values of a vector to a file";
+
+PyObject *
+gsl::vector::printf(PyObject *, PyObject * args) {
+    // the arguments
+    char * filename;
+    char * format;
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(args,
+                                  "O!ss:vector_printf",
+                                  &PyCapsule_Type,
+                                  &capsule,
+                                  &filename,
+                                  &format);
+
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the source capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule for source");
+        return 0;
+    }
+
+    // attempt to open the stream
+    FILE * stream = std::fopen(filename, "wb");
+    // bail out if something went wrong
+    if (!stream) {
+        PyErr_SetString(PyExc_IOError, "could not open file for writing");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+    // write the data
+    gsl_vector_fprintf(stream, v, format);
 
     // close the file
     std::fclose(stream);
