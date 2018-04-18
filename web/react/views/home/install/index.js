@@ -54,8 +54,8 @@ const Install = () => (
 
                 <Subsection title="binaries">
                     <Paragraph>
-                        You can download pre-built binaries of the latest stable release of
-                        <Pyre/>.  The binaries assume that you have installed compatible
+                        You can download pre-built binaries of the latest stable release
+                        of <Pyre/>.  The binaries assume that you have installed compatible
                         versions of all the packages on which <Pyre/> depends, a requirement
                         that is often a lot trickier than it sounds. You may want to try these
                         first, before resorting to building <Pyre/> from source.
@@ -63,8 +63,8 @@ const Install = () => (
 
                     <Paragraph>
                         Currently, we build binaries for <a
-                        href="/pyre-1.0.cpython-35m-darwin.zip">macOS sierra</a>, and <a
-                        href="/pyre-1.0.cpython-35m-x86_64-linux-gnu.zip">ubuntu 16.10</a>.  If
+                        href="/pyre-1.0.cpython-36m-darwin.zip">macOS high sierra</a>, and <a
+                        href="/pyre-1.0.cpython-36m-x86_64-linux-gnu.zip">ubuntu 17.10</a>.  If
                         you would like to see another platform added to this list, please <Link
                         to="/contact">let us know</Link>.
                     </Paragraph>
@@ -87,8 +87,8 @@ const Install = () => (
                 <Subsection title="Building the source code">
 
                     <Paragraph>
-                        Building a <Pyre/> installation from its source requires access 
-                        to <code>config</code>, its build system. You can 
+                        Building a <Pyre/> installation from its source requires access
+                        to <code>config</code>, its build system. You can
                         pull <code>config</code> from its BZR repository:
                     </Paragraph>
 
@@ -106,7 +106,7 @@ const Install = () => (
                     <Paragraph>
                         The aliases above are for a BASH compatible shell; please adjust to
                         your environment. Note that we have assumed you have
-                        pulled <code>config</code> into <code>~/tmp</code>; please make the 
+                        pulled <code>config</code> into <code>~/tmp</code>; please make the
                         necessary adjustments if you chose a different location for the
                         <code>config</code> repository.
                     </Paragraph>
@@ -124,7 +124,8 @@ const Install = () => (
                         If you would like to control where <Pyre/> gets installed, there are a
                         couple of extra steps. Create the directory <code>~/.mm</code>, go
                         there, and create a file with the same name as your user name and with
-                        the <code>.py</code> extension
+                        the <code>.py</code> extension. For example, if your username
+                        is <code>mga</code>
                     </Paragraph>
 
                     <PyreInstall/>
