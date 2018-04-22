@@ -1,6 +1,7 @@
 # ignore rules
 
 /.bzr
+*~
 
 # the default build locations
 /builds
