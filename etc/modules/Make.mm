@@ -16,14 +16,14 @@ PROJ_MODULES = \
 # get today's date
 TODAY = ${strip ${shell date -u}}
 # grab the revision number
-REVISION = ${strip ${shell bzr revno}}
+REVISION = ${strip ${shell git log --format=format:"%h" -n 1}}
 # if not there
 ifeq ($(REVISION),)
 REVISION = 0
 endif
 
 # grab the repo nickname
-NICKNAME = ${strip ${shell bzr nick}}
+NICKNAME = ${strip ${shell git rev-parse --abbrev-ref HEAD}}
 
 # the standard targets
 all: export-modules

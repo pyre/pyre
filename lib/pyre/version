@@ -11,7 +11,7 @@
 pyre::version_t
 pyre::version() {
     //
-    return version_t { MAJOR, MINOR, REVISION };
+    return { MAJOR, MINOR, "REVISION" };
 }
 
 // end of file

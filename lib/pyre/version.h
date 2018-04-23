@@ -11,12 +11,13 @@
 #define pyre_version_h
 
 // support
-#include <array>
+#include <tuple>
+#include <string>
 
 // my declarations
 namespace pyre {
-    // my version is an array of three integers
-    typedef std::array<int, 3> version_t;
+    // my version is an array of two integers and the git hash
+    using version_t = std::tuple<int, int, std::string>;
 
     // access to the version number of the {pyre} library
     version_t version();

@@ -44,7 +44,7 @@ EXPORT_HEADERS = \
 # get today's date
 TODAY = ${strip ${shell date -u}}
 # grab the revision number
-REVISION = ${strip ${shell bzr revno}}
+REVISION = ${strip ${shell git log --format=format:"%h" -n 1}}
 # if not there
 ifeq ($(REVISION),)
 REVISION = 0
