@@ -144,6 +144,16 @@ def make():
     return make
 
 @foundry(implements=language)
+def pfg():
+    """
+    The pfg weaver
+    """
+    # grab the component class
+    from .PFG import PFG as pfg
+    # and return it
+    return pfg
+
+@foundry(implements=language)
 def perl():
     """
     The perl weaver

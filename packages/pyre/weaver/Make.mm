@@ -33,6 +33,7 @@ EXPORT_PYTHON_MODULES = \
     Make.py \
     Mill.py \
     MixedComments.py \
+    PFG.py \
     Perl.py \
     Plexus.py \
     Project.py \

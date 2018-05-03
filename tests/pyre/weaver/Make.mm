@@ -30,6 +30,7 @@ documents:
 	${PYTHON} ./document_html.py
 	${PYTHON} ./document_latex.py
 	${PYTHON} ./document_make.py
+	${PYTHON} ./document_pfg.py
 	${PYTHON} ./document_perl.py
 	${PYTHON} ./document_python.py
 	${PYTHON} ./document_sh.py
