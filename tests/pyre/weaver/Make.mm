@@ -11,7 +11,7 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-all: test clean
+all: test
 
 test: sanity weaver documents expressions
 
@@ -19,7 +19,7 @@ sanity:
 	${PYTHON} ./sanity.py
 
 weaver:
-	${PYTHON} ./weaver.py
+	${PYTHON} ./weaver_raw.py
 
 documents:
 	${PYTHON} ./document_c.py
