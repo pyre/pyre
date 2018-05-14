@@ -27,11 +27,16 @@ class MatrixView(Matrix):
         # store a reference to the underlying matrix so it lives long enough
         self.matrix = matrix
         # build the view
-        self.view, data = gsl.matrix_view_alloc(matrix.data, start, shape)
+        self.capsule, data = gsl.matrix_view_alloc(matrix.data, start, shape)
         # chain up
         super().__init__(shape=shape, data=data, **kwds)
         # all done
         return
+
+
+    # private data
+    matrix = None # a reference to the matrix instance i'm viewing
+    capsule = None # the capsule with the pointer to the view object
 
 
 # end of file
