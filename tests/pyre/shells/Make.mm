@@ -15,7 +15,7 @@ PROJ_CLEAN += shells.log
 
 all: test
 
-test: sanity launching clean
+test: sanity color launching clean
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -29,6 +29,10 @@ sanity:
 	${PYTHON} ./fork_instantiation.py
 	${PYTHON} ./daemon_sanity.py
 	${PYTHON} ./daemon_instantiation.py
+
+color:
+	${PYTHON} ./colors256.py
+	${PYTHON} ./colors24bit.py
 
 launching:
 	${PYTHON} ./script_launching.py

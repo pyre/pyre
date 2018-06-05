@@ -8,18 +8,16 @@
 
 
 """
-Show me the 256 colors possible with the ANSI 256 escape sequences
+Perform terminal output using the support for 24 bit color
 """
 
-# support
-import itertools
 # framework
 import pyre
 
 # declaration
 class ColorTable(pyre.application):
     """
-    Build a 256 color table
+    Exercise the 24-bit color capabilities
     """
 
     # public state
@@ -35,10 +33,12 @@ class ColorTable(pyre.application):
         """
         # get my terminal
         term = self.pyre_executive.terminal
+        # render the user selected color
+        color = term.rgb(self.color, foreground=False)
         # putting things back to normal
         normal = term.colors['normal']
         # show me
-        print('{}Hello!{}'.format(term.rgb(self.color, foreground=False), normal))
+        self.debug.log(f"{color}Hello!{normal}")
         # all done
         return 0
 

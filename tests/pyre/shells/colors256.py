@@ -11,8 +11,6 @@
 Show me the 256 colors possible with the ANSI 256 escape sequences
 """
 
-# support
-import itertools
 # framework
 import pyre
 
@@ -27,22 +25,46 @@ class ColorTable(pyre.application):
         """
         The main entry point
         """
+        # make a channel
+        channel = self.debug
+        # put the channel tag in its own line
+        channel.line()
+        # make the swatches
+        for line in self.swatches():
+            # show me
+            channel.line(line)
+        # flush
+        channel.log()
+        # all done
+        return
+
+
+    # implementation details
+    def swatches(self):
+        """
+        Build the color swatches
+        """
         # get my terminal
         term = self.pyre_executive.terminal
         # putting things back to normal
         normal = term.colors['normal']
         # loop
         for r in range(6):
+            # initialize a line
+            row = []
+            # the two inferior indices
             for g in range(6):
                 for b in range(6):
-                    # splice
-                    code = "{}{}{}".format(r,g,b)
+                    # splice to build the color code
+                    code = f"{r}{g}{b}"
                     # get the color sequence
                     color = term.rgb256(code, foreground=False)
-                    # say hello
-                    print("{}  {}".format(color, normal), end='')
-                print(end=' ')
-            print()
+                    # add it to the pile
+                    row += f"{color}  {normal}"
+                # separate the swatches
+                row += " "
+            # a row is ready
+            yield ''.join(row)
 
         # all done
         return
