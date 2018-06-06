@@ -45,6 +45,17 @@ class Facility(Slotted, schemata.component):
         return default
 
 
+    @default.setter
+    def default(self, value):
+        """
+        Set my default value
+        """
+        # save {value} as the default
+        self._default = value
+        # all done
+        return
+
+
     def macro(self, **kwds):
         """
         Return the default strategy for handling expressions in slot values
