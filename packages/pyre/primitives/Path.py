@@ -499,6 +499,7 @@ class Path(tuple):
 
     # physical path interface
     # forwarding to standard library functions
+    chdir = _unaryDispatch(os.chdir)
     chmod = _unaryDispatch(os.chmod)
     lstat = _unaryDispatch(os.lstat)
     stat = _unaryDispatch(os.stat)
