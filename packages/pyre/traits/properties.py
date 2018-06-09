@@ -41,6 +41,8 @@ tuple = property.tuple
 # meta
 istream = property.istream
 ostream = property.ostream
+envvar = property.envvar
+envpath = property.envpath
 
 from .Facility import Facility as facility
 
