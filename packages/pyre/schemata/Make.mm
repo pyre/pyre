@@ -20,6 +20,8 @@ EXPORT_PYTHON_MODULES = \
     Date.py \
     Decimal.py \
     Dimensional.py \
+    EnvPath.py \
+    EnvVar.py \
     Float.py \
     Fraction.py \
     INet.py \

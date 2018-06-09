@@ -39,13 +39,15 @@ from .Catalog import Catalog as catalog
 from .Component import Component as component
 from .InputStream import InputStream as istream
 from .OutputStream import OutputStream as ostream
+from .EnvVar import EnvVar as envvar
+from .EnvPath import EnvPath as envpath
 
 
 # put the schemata in piles
 basic = (identity, bool, complex, decimal, float, fraction, inet, int, str)
 composite = (date, dimensional, path, time, uri)
 containers = (sequence, array, list, set, tuple, mapping, catalog)
-meta = (istream, ostream)
+meta = (istream, ostream, envvar, envpath)
 # all of them
 schemata = basic + composite + containers + meta
 
