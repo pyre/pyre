@@ -75,16 +75,20 @@ class ANSIRenderer(pyre.component, family="journal.renderers.ansi", implements=R
             severityColor, severity, channelColor, channel, severityColor, normal)
 
         # the function
-        try:
-            function = metadata["function"]
-        except KeyError:
-            fields["function"] = ''
-        else:
+        function = metadata.get("function", '')
+        # if we have non-trivial information
+        if function:
+            # display it
             color = palette["function"]
-            fields["function"] = " in {}{!r}{}:".format(color, function, normal)
+            fields["function"] = " in {}{!r}{}".format(color, function, normal)
+        # otherwise
+        else:
+            # say nothing
+            fields["function"] = ""
+
 
         # build the header
-        header = " {0.header} {filename}{line}{diagnostic}{function}".format(self, **fields)
+        header = " {0.header} {filename}{line}{diagnostic}{function}:".format(self, **fields)
         # return the header
         yield header
         # and the body
