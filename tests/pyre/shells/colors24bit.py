@@ -34,7 +34,7 @@ class ColorTable(pyre.application):
         # get my terminal
         term = self.pyre_executive.terminal
         # render the user selected color
-        color = term.rgb(self.color, foreground=False)
+        color = term.rgb(rgb=self.color, foreground=False)
         # putting things back to normal
         normal = term.colors['normal']
         # show me
