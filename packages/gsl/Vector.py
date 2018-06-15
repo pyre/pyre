@@ -20,6 +20,8 @@ class Vector:
 
     # types
     from .Permutation import Permutation as permutation
+    # constants
+    defaultFormat = "+16.3"
 
 
     # class methods
@@ -189,7 +191,7 @@ class Vector:
         return self.scanf(filename)
 
 
-    def save(self, filename, binary=None, format="+16.3e"):
+    def save(self, filename, binary=None, format=defaultFormat):
         """
         Write my values to {filename}
 
@@ -204,7 +206,7 @@ class Vector:
         # if the caller asked for ascii mode
         if binary is False:
             # pick ascii
-            return self.printf(filename)
+            return self.printf(filename=filename, format=format)
 
         # otherwise, look at the file extension
         suffix = filename.suffix
@@ -214,7 +216,7 @@ class Vector:
             return self.write(filename)
 
         # otherwise
-        return self.printf(filename, format)
+        return self.printf(filename=filename, format=format)
 
 
     def read(self, filename):
@@ -247,12 +249,12 @@ class Vector:
         return self
 
 
-    def printf(self, filename, format="+13.4e"):
+    def printf(self, filename, format=defaultFormat):
         """
         Write my values to {filename}
         """
         # write
-        gsl.vector_printf(self.data, filename.path, format)
+        gsl.vector_printf(self.data, filename.path, '%'+format)
         # and return
         return self
 

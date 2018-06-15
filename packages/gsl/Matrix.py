@@ -21,6 +21,8 @@ class Matrix:
     from .Vector import Vector as vector
 
     # constants
+    defaultFormat = "+16.3"
+
     upperTriangular = 1
     lowerTriangular = 0
 
@@ -186,7 +188,7 @@ class Matrix:
         return self.scanf(filename)
 
 
-    def save(self, filename, binary=None, format="+16.3e"):
+    def save(self, filename, binary=None, format=defaultFormat):
         """
         Write my values to {filename}
 
@@ -201,7 +203,7 @@ class Matrix:
         # if the caller asked for ascii mode
         if binary is False:
             # pick ascii
-            return self.printf(filename)
+            return self.printf(filename=filename, format=format)
 
         # otherwise, look at the file extension
         suffix = filename.suffix
@@ -211,7 +213,7 @@ class Matrix:
             return self.write(filename)
 
         # otherwise
-        return self.printf(filename, format)
+        return self.printf(filename=filename, format=format)
 
 
     def read(self, filename):
@@ -244,12 +246,12 @@ class Matrix:
         return self
 
 
-    def printf(self, filename, format="+13.4e"):
+    def printf(self, filename, format=defaultFormat):
         """
         Write my values to {filename}
         """
         # write
-        gsl.matrix_printf(self.data, filename.path, format)
+        gsl.matrix_printf(self.data, filename.path, '%'+format)
         # and return
         return self
 

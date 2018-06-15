@@ -371,7 +371,7 @@ gsl::vector::printf(PyObject *, PyObject * args) {
     }
 
     // attempt to open the stream
-    FILE * stream = std::fopen(filename, "wb");
+    FILE * stream = std::fopen(filename, "w");
     // bail out if something went wrong
     if (!stream) {
         PyErr_SetString(PyExc_IOError, "could not open file for writing");
