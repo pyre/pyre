@@ -35,7 +35,7 @@ auto
 pyre::memory::Direct<cellT>::
 data() const {
     // easy enough
-    return static_cast<pointer>(buffer());
+    return reinterpret_cast<pointer>(buffer());
 }
 
 // end of file
