@@ -14,6 +14,17 @@
 // meta-methods
 pyre::memory::MemoryMap::
 ~MemoryMap() {
+    // make a channel
+    pyre::journal::debug_t channel("pyre.memory.direct");
+
+    // tell me
+    channel
+        << pyre::journal::at(__HERE__)
+        << "destructor"
+        << pyre::journal::newline
+        << "    buffer: " << _buffer
+        << pyre::journal::endl;
+
     // if i have a valid buffer
     if (_buffer) {
         // unmap it
@@ -25,6 +36,18 @@ pyre::memory::MemoryMap::
 
 pyre::memory::MemoryMap::
 MemoryMap(MemoryMap && other) {
+    // make a channel
+    pyre::journal::debug_t channel("pyre.memory.direct");
+    // tell me
+    channel
+        << pyre::journal::at(__HERE__)
+        << "copy constructor with move semantics: "
+        << pyre::journal::newline
+        << "    this buffer: " << _buffer
+        << pyre::journal::newline
+        << "    other buffer: " << other._buffer
+        << pyre::journal::endl;
+
     // delegate to the move assignment operator
     *this = std::move(other);
 }
@@ -32,11 +55,24 @@ MemoryMap(MemoryMap && other) {
 pyre::memory::MemoryMap &
 pyre::memory::MemoryMap::
 operator=(MemoryMap && other) {
+    // make a channel
+    pyre::journal::debug_t channel("pyre.memory.direct");
+    // tell me
+    channel
+        << pyre::journal::at(__HERE__)
+        << "operator= with move semantics: "
+        << pyre::journal::newline
+        << "    this buffer: " << _buffer
+        << pyre::journal::newline
+        << "    other buffer: " << other._buffer
+        << pyre::journal::endl;
+
     // trap assignment to self
     if (this == &other) {
         // and bail
         return *this;
     }
+
     // if my current buffer is valid
     if (_buffer) {
         // unmap the memory

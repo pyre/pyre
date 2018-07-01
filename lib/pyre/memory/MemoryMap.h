@@ -34,7 +34,7 @@ public:
     inline ~MemoryMap();
 
     // constructor
-    MemoryMap(uri_type name, bool writeable, size_type bytes, size_type offset, bool preserve);
+    MemoryMap(uri_type name, bool writable, size_type bytes, size_type offset, bool preserve);
 
     // move semantics
     inline MemoryMap(MemoryMap &&);
@@ -63,6 +63,7 @@ public:
     // suppress
 private:
     // copy semantics
+    MemoryMap() = delete;
     MemoryMap(const MemoryMap &) = delete;
     MemoryMap & operator=(const MemoryMap &) = delete;
 };

@@ -17,15 +17,26 @@
 
 // meta-methods
 pyre::memory::MemoryMap::
-MemoryMap(uri_type uri, bool writeable, size_type bytes, size_type offset, bool preserve) :
+MemoryMap(uri_type uri, bool writable, size_type bytes, size_type offset, bool preserve) :
     _uri {uri},
     _info {},
     _bytes(bytes),
     _buffer(0)
-
 {
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.direct");
+
+    // show me
+    channel
+        << pyre::journal::at(__HERE__)
+        << "constructor: "
+        << pyre::journal::newline
+        << "    uri: '" << _uri << "'" << pyre::journal::newline
+        << "    writable: " << writable << pyre::journal::newline
+        << "    bytes: " << bytes << pyre::journal::newline
+        << "    offset: " << offset << pyre::journal::newline
+        << "    preserve: " << preserve << pyre::journal::newline
+        << "    buffer: " << _buffer << pyre::journal::endl;
 
     // if no filename were given
     if (uri.empty()) {
@@ -68,6 +79,13 @@ MemoryMap(uri_type uri, bool writeable, size_type bytes, size_type offset, bool 
             // raise an exception
             throw std::system_error(errno, std::system_category());
         }
+
+        // show me
+        channel
+            << pyre::journal::at(__HERE__)
+            << "the file '" << _uri << "' does not exist"
+            << pyre::journal::endl;
+
         // so, the file doesn't exist; if the caller did not specify a desired map size
         if (bytes == 0) {
             // we have a problem
@@ -87,6 +105,12 @@ MemoryMap(uri_type uri, bool writeable, size_type bytes, size_type offset, bool 
             // raise an exception
             throw std::runtime_error(problem.str());
         }
+
+        // show me
+        channel
+            << pyre::journal::at(__HERE__)
+            << "creating file '" << _uri << "'"
+            << pyre::journal::endl;
         // if we have size information, create the file
         create(uri, desired);
         // get the file information
@@ -115,18 +139,35 @@ MemoryMap(uri_type uri, bool writeable, size_type bytes, size_type offset, bool 
             throw std::runtime_error(problem.str());
         }
 
+        // show me
+        channel
+            << pyre::journal::at(__HERE__)
+            << "mapping " << bytes << " bytes over file '" << _uri << "' at offset " << offset
+            << pyre::journal::endl;
         // map it
-        _buffer = map(uri, bytes, offset, writeable);
+        _buffer = map(uri, bytes, offset, writable);
         // all done
         return;
     }
 
+    // tell me
+    channel
+        << pyre::journal::at(__HERE__)
+        << "the file '" << uri << "' exists already"
+        << pyre::journal::endl;
     // the file already exists; let's find its size
     size_type actual = _info.st_size;
     // if the actual size is not big enough to hold our data
     if (actual < desired) {
         // if the user doesn't care about the existing file
         if (!preserve) {
+            // show me
+            channel
+                << pyre::journal::at(__HERE__)
+                << "size mismatch: actual: " << actual << ", expected: " << desired
+                << pyre::journal::newline
+                << "re-creating file '" << _uri << "'"
+                << pyre::journal::endl;
             // throw the existing file away and rebuild it
             create(uri, desired);
         // otherwise
@@ -153,8 +194,13 @@ MemoryMap(uri_type uri, bool writeable, size_type bytes, size_type offset, bool 
         }
     }
 
+    // show me
+    channel
+        << pyre::journal::at(__HERE__)
+        << "mapping " << bytes << " bytes over file '" << _uri << "' at offset " << offset
+        << pyre::journal::endl;
     // map it
-    _buffer = map(uri, bytes, offset, writeable);
+    _buffer = map(uri, bytes, offset, writable);
 
     // all done
     return;
@@ -261,11 +307,18 @@ map(uri_type name, size_type bytes, size_type offset, bool writable) {
 void
 pyre::memory::MemoryMap::
 unmap(const pointer buffer, size_type bytes) {
+    // make a channel
+    pyre::journal::debug_t channel("pyre.memory.direct");
+
+    // tell me
+    channel
+        << pyre::journal::at(__HERE__)
+        << "cleaning up existing map at " << buffer
+        << pyre::journal::endl;
+
     // unmap
     int status = ::munmap(const_cast<void *>(buffer), bytes);
 
-    // make a channel
-    pyre::journal::debug_t channel("pyre.memory.direct");
     // show me
     channel
         << pyre::journal::at(__HERE__)
