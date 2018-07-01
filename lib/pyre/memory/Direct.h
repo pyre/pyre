@@ -54,7 +54,9 @@ private:
 
     // suppress
 private:
-    // disable the copy semantics
+    // default constructor
+    Direct() = delete;
+    // copy semantics
     Direct(const Direct &) = delete;
     Direct & operator=(const Direct &) = delete;
 };

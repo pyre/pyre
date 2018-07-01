@@ -54,6 +54,8 @@ private:
 
     // suppress
 private:
+    // default constructor
+    ConstDirect() = delete;
     // copy semantics
     ConstDirect(const ConstDirect &) = delete;
     ConstDirect & operator=(const ConstDirect &) = delete;
