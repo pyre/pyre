@@ -61,7 +61,7 @@ class Facility(Slotted, schemata.component):
         Return the default strategy for handling expressions in slot values
         """
         # build expressions
-        return self.pyre_nameserver.interpolation(**kwds)
+        return self.pyre_nameserver.expression(**kwds)
 
 
     def native(self, **kwds):
