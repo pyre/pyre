@@ -29,7 +29,7 @@ NICKNAME = ${strip ${shell git rev-parse --abbrev-ref HEAD}}
 all: export-modules
 
 # pyre
-pyre: Make.mm
+pyre: $(EXPORT_MODDIR) Make.mm
 	@sed \
           -e "s|TODAY|$(TODAY)|g" \
           -e "s:PYRE_MAJOR:$(PROJECT_MAJOR):g" \
