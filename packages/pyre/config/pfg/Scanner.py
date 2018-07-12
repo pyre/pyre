@@ -13,8 +13,7 @@ import pyre.parsing
 # the scanner
 class Scanner(pyre.parsing.sws):
     """
-    Converts an input source into a stream of tokens. The input is expected to conform to a
-    simple version of the well-known windows INI format.
+    Converts an input source into a stream of tokens.
     """
 
 
