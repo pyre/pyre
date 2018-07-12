@@ -22,27 +22,21 @@ namespace pyre {
         // new line
         inline Null & newline(Null &);
         template <typename Channel> inline Channel & newline(Channel &);
+
+        // declaration of the injection operators
+        // injection by function
+        template <typename Channel>
+        inline
+        Diagnostic<Channel> &
+        operator << (Diagnostic<Channel> &, Diagnostic<Channel> & (*)(Diagnostic<Channel> &));
+
+        // injection on null diagnostics
+        inline
+        Null &
+        operator << (Null &, Null & (*)(Null &));
+
     }
 }
-
-// declaration of the injection operators; place these in global scope
-// injection by function
-template <typename Channel>
-inline
-pyre::journal::Diagnostic<Channel> &
-operator << (
-             pyre::journal::Diagnostic<Channel> &,
-             pyre::journal::Diagnostic<Channel> &
-             (*)(pyre::journal::Diagnostic<Channel> &));
-
-
-// injection on null diagnostics
-inline
-pyre::journal::Null &
-operator << (
-             pyre::journal::Null &,
-             pyre::journal::Null & (*)(pyre::journal::Null &));
-
 
 #define pyre_journal_manipulators_icc
 #include "manipulators.icc"

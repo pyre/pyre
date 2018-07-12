@@ -13,16 +13,12 @@
 namespace pyre {
     namespace journal {
         class Null;
+
+        // the injection operator
+        template <typename item_t>
+        inline Null & operator << (Null &, item_t);
     }
 }
-
-
-// the injection operator
-template <typename item_t>
-inline
-pyre::journal::Null &
-operator << (pyre::journal::Null &, item_t);
-
 
 // declaration
 class pyre::journal::Null

@@ -13,6 +13,7 @@
 // the injection operator
 template <typename Severity, typename item_t>
 pyre::journal::Diagnostic<Severity> &
+pyre::journal::
 operator << (pyre::journal::Diagnostic<Severity> & channel, item_t item) {
     return channel.inject(item);
 }

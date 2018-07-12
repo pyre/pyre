@@ -12,6 +12,7 @@
 // injection operators for locators
 template <typename Channel>
 pyre::journal::Diagnostic<Channel> &
+pyre::journal::
 operator<< (
             pyre::journal::Diagnostic<Channel> & channel,
             const pyre::journal::Locator & locator) {

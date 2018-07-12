@@ -15,15 +15,14 @@
 namespace pyre {
     namespace journal {
         class Locator;
+
+        // overload the injection operator
+        template <typename Channel>
+        inline
+        Diagnostic<Channel> &
+        operator << (Diagnostic<Channel> &, const Locator &);
     }
 }
-
-
-// overload the injection operators; should be at global scope
-template <typename Channel>
-inline
-pyre::journal::Diagnostic<Channel> &
-operator << (pyre::journal::Diagnostic<Channel> &, const pyre::journal::Locator &);
 
 // null diagnostics
 inline

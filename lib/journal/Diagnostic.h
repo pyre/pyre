@@ -13,14 +13,14 @@
 namespace pyre {
     namespace journal {
         template <typename> class Diagnostic;
+
+        // the injection operator
+        template <typename Channel, typename item_t>
+        inline
+        Diagnostic<Channel> &
+        operator<< (Diagnostic<Channel> &, item_t);
     }
 }
-
-// the injection operator
-template <typename Channel, typename item_t>
-inline
-pyre::journal::Diagnostic<Channel> &
-operator << (pyre::journal::Diagnostic<Channel> &, item_t);
 
 
 // declaration
