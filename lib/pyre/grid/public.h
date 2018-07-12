@@ -95,7 +95,7 @@ namespace pyre {
         template <typename sliceT>
         auto operator!= (const Iterator<sliceT> &, const Iterator<sliceT> &);
 
-        // stream injection: overload the global operator<<
+        // stream injection
         // for indices
         template <typename repT>
         auto & operator<< (std::ostream & stream, const Index<repT> & index);
