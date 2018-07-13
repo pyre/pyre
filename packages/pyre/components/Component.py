@@ -186,9 +186,11 @@ class Component(Configurable, metaclass=Actor, internal=True):
         bound and validated. This is the place where the component should acquire whatever
         further resources it requires.
         """
-        # return the list of errors encountered while checking the instance state and acquiring
-        # resources
-        return []
+        # if there were any configuration errors, report them
+        yield from self.pyre_configurationErrors
+        # report any further errors encountered while checking the instance state and acquiring
+        # resources; by default, there aren't any
+        return
 
 
     def pyre_finalized(self):
