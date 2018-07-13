@@ -190,14 +190,14 @@ class ConfigurationError(ComponentError):
     """
 
     # public data
-    description = 'while configuring {0.configurable}: {0.report}'
+    description = 'while configuring {0.configurable}:\n    {0.report}'
 
     @property
     def report(self):
         """
         Splice my errors together
         """
-        return "\n    ".join([''] + self.errors)
+        return "\n    ".join(map(str, self.errors))
 
     # meta-methods
     def __init__(self, configurable, errors, **kwds):
@@ -216,14 +216,14 @@ class InitializationError(ComponentError):
     """
 
     # public data
-    description = 'while initializing {0.configurable}: {0.report}'
+    description = 'while initializing {0.configurable}:\n    {0.report}'
 
     @property
     def report(self):
         """
         Splice my errors together
         """
-        return "\n    ".join([''] + self.errors)
+        return "\n    ".join(map(str, self.errors))
 
     # meta-methods
     def __init__(self, configurable, errors, **kwds):
