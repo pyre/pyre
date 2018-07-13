@@ -210,4 +210,30 @@ class ConfigurationError(ComponentError):
         return
 
 
+class InitializationError(ComponentError):
+    """
+    Exception raised when something bad happens during component initialization
+    """
+
+    # public data
+    description = 'while initializing {0.configurable}: {0.report}'
+
+    @property
+    def report(self):
+        """
+        Splice my errors together
+        """
+        return "\n    ".join([''] + self.errors)
+
+    # meta-methods
+    def __init__(self, configurable, errors, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store my context
+        self.configurable = configurable
+        self.errors = errors
+        # all done
+        return
+
+
 # end of file
