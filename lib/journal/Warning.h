@@ -35,7 +35,7 @@ public:
     // meta methods
 public:
     inline ~Warning();
-    inline Warning(string_t name);
+    inline explicit Warning(string_t name);
 
     // disallow
 private:

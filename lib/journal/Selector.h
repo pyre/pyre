@@ -36,7 +36,8 @@ operator<< (pyre::journal::Null &, const pyre::journal::Selector &);
 class pyre::journal::Selector {
     // types
 public:
-    typedef std::string string_t;
+    using string_t = std::string;
+
     // interface
 public:
     template <typename Channel>
@@ -48,10 +49,12 @@ public:
 public:
     inline ~Selector();
     inline Selector(string_t, string_t);
-    inline Selector(const Selector &); // accessible but not implemented; for C++89 compatibility
+    // inline Selector(const Selector &); // accessible but not implemented; for C++89 compatibility
+
     // disallow
 private:
-    inline Selector & operator= (const Selector &);
+    Selector(const Selector &) = delete;
+    Selector & operator= (const Selector &) = delete;
 
     // data
 private:

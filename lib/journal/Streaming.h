@@ -21,16 +21,17 @@ namespace pyre {
 class pyre::journal::Streaming : public pyre::journal::Device {
     // types
 public:
-    typedef std::ostream stream_t;
+    using stream_t = std::ostream;
 
     // meta methods
 public:
     virtual ~Streaming();
     inline Streaming(stream_t &);
+
 private:
     // disallow
-    inline Streaming(const Streaming &);
-    inline const Streaming & operator=(const Streaming &);
+    Streaming(const Streaming &) = delete;
+    const Streaming & operator=(const Streaming &) = delete;
 
     // data members
 private:

@@ -21,7 +21,7 @@ namespace pyre {
 class pyre::journal::Console : public pyre::journal::Streaming {
     // types
 public:
-    typedef Renderer renderer_t;
+    using renderer_t = Renderer;
 
     // interface
 public:
@@ -31,10 +31,11 @@ public:
 public:
     virtual ~Console();
     Console();
-private:
+
     // disallow
-    Console(const Console &);
-    const Console & operator=(const Console &);
+private:
+    Console(const Console &) = delete;
+    const Console & operator=(const Console &) = delete;
 
     // data
 private:

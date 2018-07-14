@@ -19,7 +19,7 @@
 #include "debuginfo.h"
 
 // convenience
-typedef pyre::journal::Debug debug_t;
+using debug_t = pyre::journal::Debug;
 
 
 // hit

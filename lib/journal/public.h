@@ -42,18 +42,13 @@
 namespace pyre {
     namespace journal {
 
-        // debug
+        // disable debug and firewalls for production builds
 #if defined(DEBUG)
-        typedef Debug debug_t;
+        using debug_t = Debug;
+        using firewall_t = Firewall;
 #else
-        typedef Null debug_t;
-#endif
-
-        // firewalls
-#if defined(DEBUG)
-        typedef Firewall firewall_t;
-#else
-        typedef Null firewall_t;
+        using debug_t = Null;
+        using firewall_t = Null;
 #endif
     }
 }
@@ -62,13 +57,13 @@ namespace pyre {
 namespace pyre {
     namespace journal {
         // diagnostics
-        typedef Error error_t;
-        typedef Informational info_t;
-        typedef Warning warning_t;
+        using error_t = Error;
+        using info_t = Informational;
+        using warning_t = Warning;
 
         // locators
-        typedef Locator at;
-        typedef Selector set;
+        using at = Locator;
+        using set = Selector;
     }
 }
 

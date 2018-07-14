@@ -28,12 +28,12 @@ template <typename Severity>
 class pyre::journal::Diagnostic : public pyre::journal::Chronicler {
     // types
 public:
-    typedef Severity severity_t;
-    typedef std::string string_t;
+    using severity_t = Severity;
+    using string_t = std::string;
 
-    typedef std::vector<string_t> entry_t;
-    typedef std::stringstream buffer_t;
-    typedef std::map<string_t, string_t> metadata_t;
+    using entry_t = std::vector<string_t>;
+    using buffer_t = std::stringstream;
+    using metadata_t = std::map<string_t, string_t>;
 
     // interface
 public:
@@ -51,10 +51,11 @@ public:
 protected:
     inline ~Diagnostic();
     inline Diagnostic(string_t, string_t);
+
     // disallow
 private:
-    inline Diagnostic(const Diagnostic &);
-    inline Diagnostic & operator=(const Diagnostic &);
+    Diagnostic(const Diagnostic &) = delete;
+    Diagnostic & operator=(const Diagnostic &) = delete;
 
     // data members
 private:

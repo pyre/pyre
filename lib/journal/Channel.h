@@ -22,11 +22,11 @@ template <typename Severity, bool DefaultState=true>
 class pyre::journal::Channel {
     // types
 public:
-    typedef std::string string_t;
-    typedef Inventory<DefaultState> inventory_t;
-    typedef typename inventory_t::state_t state_t;
-    typedef typename inventory_t::device_t device_t;
-    typedef Index<inventory_t> index_t;
+    using string_t = std::string;
+    using inventory_t = Inventory<DefaultState>;
+    using state_t = typename inventory_t::state_t;
+    using device_t = typename inventory_t::device_t;
+    using index_t = Index<inventory_t>;
 
     // interface
 public:
@@ -48,12 +48,12 @@ public:
 
 protected:
     inline ~Channel();
-    inline Channel(string_t);
+    inline explicit Channel(string_t);
 
     // disallow
 private:
-    inline Channel(const Channel &);
-    inline const Channel & operator=(const Channel &);
+    Channel(const Channel &) = delete;
+    const Channel & operator=(const Channel &) = delete;
 
     // data members
 private:

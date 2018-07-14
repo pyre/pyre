@@ -23,8 +23,8 @@ template <bool DefaultState>
 class pyre::journal::Inventory {
     // types
 public:
-    typedef bool state_t;
-    typedef Device device_t;
+    using state_t = bool;
+    using device_t = Device;
 
     // interface
 public:

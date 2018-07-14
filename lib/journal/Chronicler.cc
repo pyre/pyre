@@ -15,11 +15,6 @@
 #include <string>
 
 // local types
-#if 0
-#include "Inventory.h"
-#include "Index.h"
-#include "Channel.h"
-#endif
 #include "Device.h"
 #include "Streaming.h"
 #include "Renderer.h"

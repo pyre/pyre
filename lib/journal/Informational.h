@@ -35,7 +35,7 @@ public:
     // meta methods
 public:
     inline ~Informational();
-    inline Informational(string_t name);
+    inline explicit Informational(string_t name);
 
     // disallow
 private:

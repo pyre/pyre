@@ -31,7 +31,7 @@
 #include "Warning.h"
 
 // type aliases
-typedef std::string string_t;
+using string_t = std::string;
 
 // initialization routines
 static pyre::journal::Debug::index_t initializeDebugIndex()
@@ -66,14 +66,18 @@ static pyre::journal::Debug::index_t initializeDebugIndex()
 }
 
 
-// specializations that serve as definitions of the indices
+// definitions of static members
 namespace pyre {
     namespace journal {
-        // define the indices
+        // the firewall index
         Firewall::index_t Firewall::_index = Firewall::index_t();
+        // the debug index
         Debug::index_t Debug::_index = initializeDebugIndex();
+        // the error index
         Error::index_t Error::_index = Error::index_t();
+        // the warning index
         Warning::index_t Warning::_index = Warning::index_t();
+        // the informational index
         Informational::index_t Informational::_index = Informational::index_t();
     }
 }

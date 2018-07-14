@@ -25,7 +25,7 @@ class pyre::journal::Null
 {
     // types
 public:
-    typedef std::string string_t;
+    using string_t = std::string;
 
     // interface
 public:
@@ -42,10 +42,11 @@ public:
 
     inline ~Null();
     inline Null(const string_t &);
+
     // disallow
 private:
-    inline Null(const Null &);
-    inline const Null & operator=(const Null &);
+    Null(const Null &) = delete;
+    const Null & operator=(const Null &) = delete;
 };
 
 

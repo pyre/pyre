@@ -18,7 +18,7 @@
 #include "firewalls.h"
 
 // convenience
-typedef pyre::journal::Firewall firewall_t;
+using firewall_t = pyre::journal::Firewall;
 
 
 // hit

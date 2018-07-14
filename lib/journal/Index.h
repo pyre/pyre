@@ -29,10 +29,10 @@ class pyre::journal::Index {
 
     // types
 public:
-    typedef Value value_t;
-    typedef std::string string_t;
-    typedef string_t key_t;
-    typedef std::map<key_t, value_t> index_t;
+    using value_t = Value;
+    using string_t = std::string;
+    using key_t = string_t;
+    using index_t = std::map<key_t, value_t>;
 
     // interface: place the public methods here
 public:

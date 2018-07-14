@@ -20,10 +20,10 @@ namespace pyre {
 class pyre::journal::Renderer {
     // types
 public:
-    typedef std::string string_t;
-    typedef std::stringstream stream_t;
-    typedef std::vector<string_t> entry_t;
-    typedef std::map<string_t, string_t> metadata_t;
+    using string_t = std::string;
+    using stream_t = std::stringstream;
+    using entry_t = std::vector<string_t>;
+    using metadata_t = std::map<string_t, string_t>;
 
     // interface
 public:
@@ -33,10 +33,11 @@ public:
 public:
     virtual ~Renderer();
     inline Renderer();
+
     // disallow
 private:
-    Renderer(const Renderer &);
-    const Renderer & operator=(const Renderer &);
+    Renderer(const Renderer &) = delete;
+    const Renderer & operator=(const Renderer &) = delete;
 
     // implementation details
 protected:
