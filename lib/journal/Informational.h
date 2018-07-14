@@ -22,20 +22,29 @@ class pyre::journal::Informational :
     public pyre::journal::Diagnostic<Informational>,
     public pyre::journal::Channel<Informational, true>
 {
+    // befriend my superclass so it can access my index
+    friend class Channel<Informational, true>;
+
     // types
 public:
-    typedef std::string string_t;
-    typedef Diagnostic<Informational> diagnostic_t;
-    typedef Channel<Informational, true> channel_t;
+    using string_t = std::string;
+    using diagnostic_t = Diagnostic<Informational>;
+    using channel_t = Channel<Informational, true>;
+    using index_t = channel_t::index_t;
 
     // meta methods
 public:
     inline ~Informational();
     inline Informational(string_t name);
+
     // disallow
 private:
-    inline Informational(const Informational &);
-    inline const Informational & operator=(const Informational &);
+    Informational(const Informational &) = delete;
+    const Informational & operator=(const Informational &) = delete;
+
+    // per class
+private:
+    static index_t _index;
 };
 
 

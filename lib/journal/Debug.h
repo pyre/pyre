@@ -22,20 +22,29 @@ class pyre::journal::Debug :
     public pyre::journal::Diagnostic<Debug>,
     public pyre::journal::Channel<Debug, false>
 {
+    // befriend my superclass so it can access my index
+    friend class Channel<Debug, false>;
+
     // types
 public:
-    typedef std::string string_t;
-    typedef Diagnostic<Debug> diagnostic_t;
-    typedef Channel<Debug, false> channel_t;
+    using string_t = std::string;
+    using diagnostic_t = Diagnostic<Debug>;
+    using channel_t = Channel<Debug, false>;
+    using index_t = channel_t::index_t;
 
     // meta methods
 public:
     inline ~Debug();
-    inline Debug(string_t name);
+    inline explicit Debug(string_t name);
+
     // disallow
 private:
-    inline Debug(const Debug &);
-    inline const Debug & operator=(const Debug &);
+    Debug(const Debug &) = delete;
+    const Debug & operator=(const Debug &) = delete;
+
+    // per class
+private:
+    static index_t _index;
 };
 
 

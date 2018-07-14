@@ -22,23 +22,29 @@ class pyre::journal::Warning :
     public pyre::journal::Diagnostic<Warning>,
     public pyre::journal::Channel<Warning, true>
 {
-    // befriend my superclass so it can invoke my recording hooks
-    friend class Diagnostic<Warning>;
+    // befriend my superclass so it can access my index
+    friend class Channel<Warning, true>;
 
     // types
 public:
-    typedef std::string string_t;
-    typedef Diagnostic<Warning> diagnostic_t;
-    typedef Channel<Warning, true> channel_t;
+    using string_t = std::string;
+    using diagnostic_t = Diagnostic<Warning>;
+    using channel_t = Channel<Warning, true>;
+    using index_t = channel_t::index_t;
 
     // meta methods
 public:
     inline ~Warning();
     inline Warning(string_t name);
+
     // disallow
 private:
-    inline Warning(const Warning &);
-    inline const Warning & operator=(const Warning &);
+    Warning(const Warning &) = delete;
+    const Warning & operator=(const Warning &) = delete;
+
+    // per class
+private:
+    static index_t _index;
 };
 
 

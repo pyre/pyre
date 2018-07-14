@@ -62,7 +62,8 @@ typename pyre::journal::Channel<Severity, DefaultState>::inventory_t &
 pyre::journal::Channel<Severity, DefaultState>::
 lookup(typename Channel::string_t name)
 {
-    return _index.lookup(name);
+    // look up name in my index
+    return Severity::_index.lookup(name);
 }
 
 

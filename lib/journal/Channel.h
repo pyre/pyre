@@ -59,8 +59,6 @@ private:
 private:
     string_t _name;
     inventory_t & _inventory;
-    // per class
-    static index_t _index;
 };
 
 

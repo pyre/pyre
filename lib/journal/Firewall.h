@@ -24,25 +24,33 @@ class pyre::journal::Firewall :
 {
     // befriend my superclass so it can invoke my recording hooks
     friend class Diagnostic<Firewall>;
+    // befriend my superclass so it can access my index
+    friend class Channel<Firewall, true>;
 
     // types
 public:
-    typedef std::string string_t;
-    typedef Diagnostic<Firewall> diagnostic_t;
-    typedef Channel<Firewall, true> channel_t;
+    using string_t = std::string;
+    using diagnostic_t = Diagnostic<Firewall>;
+    using channel_t = Channel<Firewall, true>;
+    using index_t = channel_t::index_t;
 
     // meta methods
 public:
     inline ~Firewall();
-    inline Firewall(string_t name);
+    inline explicit Firewall(string_t name);
+
     // disallow
 private:
-    inline Firewall(const Firewall &);
-    inline const Firewall & operator=(const Firewall &);
+    Firewall(const Firewall &) = delete;
+    const Firewall & operator=(const Firewall &) = delete;
 
     // implementation details
 protected:
     inline void _endRecording(); // NYI: are firewalls fatal?
+
+    // per class
+private:
+    static index_t _index;
 };
 
 

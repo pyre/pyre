@@ -69,30 +69,12 @@ static pyre::journal::Debug::index_t initializeDebugIndex()
 // specializations that serve as definitions of the indices
 namespace pyre {
     namespace journal {
-        // firewall
-        template <>
-        pyre::journal::Firewall::index_t
-        pyre::journal::Firewall::channel_t::_index = pyre::journal::Firewall::index_t();
-
-        // debug
-        template <>
-        pyre::journal::Debug::index_t
-        pyre::journal::Debug::channel_t::_index = initializeDebugIndex();
-
-        // error
-        template <>
-        pyre::journal::Error::index_t
-        pyre::journal::Error::channel_t::_index = pyre::journal::Error::index_t();
-
-        // info
-        template <>
-        pyre::journal::Informational::index_t
-        pyre::journal::Informational::channel_t::_index = pyre::journal::Informational::index_t();
-
-        // warning
-        template <>
-        pyre::journal::Warning::index_t
-        pyre::journal::Warning::channel_t::_index = pyre::journal::Warning::index_t();
+        // define the indices
+        Firewall::index_t Firewall::_index = Firewall::index_t();
+        Debug::index_t Debug::_index = initializeDebugIndex();
+        Error::index_t Error::_index = Error::index_t();
+        Warning::index_t Warning::_index = Warning::index_t();
+        Informational::index_t Informational::_index = Informational::index_t();
     }
 }
 

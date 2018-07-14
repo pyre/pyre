@@ -38,25 +38,30 @@ class Debug :
     public pyre::journal::Diagnostic<Debug>,
     public pyre::journal::Channel<Debug, false>
 {
+    // befriend my superclass so it can invoke my recording hooks
+    friend class Channel<Debug, false>;
+
     // types
 public:
+    using channel_t = Channel<Debug, false>;
+    using index_t = channel_t::index_t;
     typedef std::string string_t;
+
+
     // meta methods
 public:
     Debug(string_t name) :
         pyre::journal::Diagnostic<Debug>("debug", name),
         pyre::journal::Channel<Debug, false>(name)
     {}
+
+    // per class
+private:
+    static index_t _index;
 };
 
-
-// storage for the index
-namespace pyre {
-    namespace journal {
-        template <>
-        Debug::index_t pyre::journal::Channel<Debug, false>::_index = Debug::index_t();
-    }
-}
+// allocate the index
+Debug::index_t Debug::_index = Debug::index_t();
 
 // main program
 int main() {

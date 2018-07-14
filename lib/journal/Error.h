@@ -22,23 +22,29 @@ class pyre::journal::Error :
     public pyre::journal::Diagnostic<Error>,
     public pyre::journal::Channel<Error, true>
 {
-    // befriend my superclass so it can invoke my recording hooks
-    friend class Diagnostic<Error>;
+    // befriend my superclass so it can access my index
+    friend class Channel<Error, true>;
 
     // types
 public:
-    typedef std::string string_t;
-    typedef Diagnostic<Error> diagnostic_t;
-    typedef Channel<Error, true> channel_t;
+    using string_t = std::string;
+    using diagnostic_t = Diagnostic<Error>;
+    using channel_t = Channel<Error, true>;
+    using index_t = channel_t::index_t;
 
     // meta methods
 public:
     inline ~Error();
-    inline Error(string_t name);
+    inline explicit Error(string_t name);
+
     // disallow
 private:
-    inline Error(const Error &);
-    inline const Error & operator=(const Error &);
+    Error(const Error &) = delete;
+    const Error & operator=(const Error &) = delete;
+
+    // per class
+private:
+    static index_t _index;
 };
 
 
