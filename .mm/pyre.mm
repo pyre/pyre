@@ -22,11 +22,13 @@ pyre.tests := # pyre.tst.pyre pyre.tst.libpyre
 pyre.pkg.root := packages/pyre/
 pyre.pkg.stem := pyre
 pyre.pkg.drivers := pyre
+pyre.pkg.ext := extensions
 
 # the pyre meta-data
 journal.pkg.root := packages/journal/
 journal.pkg.stem := journal
 journal.pkg.meta :=
+journal.pkg.ext :=
 
 # the journal library meta-data
 journal.lib.root := lib/journal/
@@ -36,21 +38,20 @@ journal.lib.master := journal.h
 journal.lib.extern :=
 journal.lib.c++.flags += $($(compiler.c++).std.c++17)
 
-# the pyre library meta-data
-pyre.lib.root := lib/pyre/
-pyre.lib.stem := pyre
-pyre.lib.extern := journal.lib
-pyre.lib.prerequisites := journal.lib
-pyre.lib.c++.flags += $($(compiler.c++).std.c++17)
-
 # the extension meta-data
 journal.ext.root := extensions/journal/
 journal.ext.stem := journal
 journal.ext.pkg := journal.pkg
 journal.ext.wraps := journal.lib
 journal.ext.extern := journal.lib python
-journal.ext.prerequisites := journal.lib
 journal.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+
+# the pyre library meta-data
+pyre.lib.root := lib/pyre/
+pyre.lib.stem := pyre
+pyre.lib.extern := journal.lib
+pyre.lib.prerequisites := journal.lib
+pyre.lib.c++.flags += $($(compiler.c++).std.c++17)
 
 # the libpyre test suite
 pyre.tst.libpyre.stem := libpyre
