@@ -17,6 +17,19 @@ class Grid:
     """
 
 
+    # interface
+    def enumerate(self):
+        """
+        Visit the entire grid in layout order returning ({index}, {value}) pairs
+        """
+        # go through the container and tile in sync
+        for index, value in zip(self.tile, self.data):
+            # hand the {index} and the corresponding value to the caller
+            yield index, value
+        # all done
+        return
+
+
     # meta-methods
     def __init__(self, shape, layout=None, value=None, data=None, **kwds):
         # chain up
