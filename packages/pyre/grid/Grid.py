@@ -18,7 +18,7 @@ class Grid:
 
 
     # meta-methods
-    def __init__(self, shape, layout=None, value=None, **kwds):
+    def __init__(self, shape, layout=None, value=None, data=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # make a tile out of my shape and layout
@@ -27,8 +27,12 @@ class Grid:
         # compute the tile size
         size = self.tile.size
 
+        # if the caller provide a {data} buffer
+        if data is not None:
+            # use it
+            self.data = data
         # if {value} is callable
-        if callable(value):
+        elif callable(value):
             # build my data by invoking it once per cell
             self.data = [ value() for _ in range(size) ]
         # otherwise
