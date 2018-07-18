@@ -27,9 +27,10 @@ class Grid:
         # compute the tile size
         size = self.tile.size
 
-        # if the caller provide a {data} buffer
+        # if the caller provided a {data} container
         if data is not None:
             # use it
+            # N.B.: it is the caller's responsibility to provide a container of the correct size
             self.data = data
         # if {value} is callable
         elif callable(value):
@@ -60,6 +61,11 @@ class Grid:
         self.data[self.tile.offset(index)] = value
         # all done
         return
+
+
+    def __len__(self):
+        # my tile knows
+        return self.tile.size
 
 
 # end of file
