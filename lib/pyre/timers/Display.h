@@ -38,18 +38,18 @@ public:
 
     // interface
 public:
-    name_t name() const;
+    inline name_t name() const;
     // start a timer
-    Display & start();
+    inline Display & start();
     // stop a timer
-    Display & stop();
+    inline Display & stop();
     // zero out a timer
-    Display & reset();
+    inline Display & reset();
 
     // take a reading in seconds from a *running* timer
-    double lap();
+    inline double lap();
     // get the number of seconds accumulated by a *stopped* timer
-    double read();
+    inline double read();
 
     // locate a timer given its name
     static timer_t & retrieveTimer(name_t name);

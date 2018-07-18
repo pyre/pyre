@@ -30,6 +30,10 @@ pyre::timers::Display & pyre::timers::Display::reset() {
     return *this;
 }
 
+double pyre::timers::Display::lap() {
+    return _timer.lap();
+}
+
 double pyre::timers::Display::read() {
     return _timer.read();
 }
