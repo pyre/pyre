@@ -28,9 +28,6 @@ PROJ_SRCS = \
     Timer.cc \
 # the target
 EXPORT_LIBS = $(PROJ_DLL)
-# top level header
-EXPORT_HEADERS = \
-    timers.h \
 # headers scoped by the package name
 EXPORT_PKG_HEADERS = \
     Display.h Display.icc \
@@ -49,7 +46,7 @@ clean::
 distclean::
 	BLD_ACTION="distclean" $(MM) recurse
 
-export:: $(PROJ_DLL) export-headers export-package-headers export-libraries
+export:: $(PROJ_DLL) export-package-headers export-libraries
 	BLD_ACTION="export" $(MM) recurse
 
 live: live-headers live-package-headers live-libraries

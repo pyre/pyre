@@ -39,6 +39,7 @@ EXPORT_HEADERS = \
     geometry.h \
     grid.h \
     memory.h \
+    timers.h \
     version.h
 
 # get today's date
