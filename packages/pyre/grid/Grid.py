@@ -49,22 +49,48 @@ class Grid:
         """
         Return the value stored at {index}
         """
-        # tile knows the offset
-        return self.data[self.tile.offset(index)]
+        # attempt to
+        try:
+            # cast {index} to an integer
+            index = int(index)
+        # if this fails
+        except TypeError:
+            # ask my tile do the rest
+            value = self.data[self.tile.offset(index)]
+        # otherwise
+        else:
+            # retrieve the item directly from my container
+            value = self.data[index]
+        # all done
+        return value
+
 
 
     def __setitem__(self, index, value):
         """
         Return the value stored at {index}
         """
-        # tile knows the offset
-        self.data[self.tile.offset(index)] = value
+        # attempt to
+        try:
+            # cast {index} to an integer
+            index = int(index)
+        # if this fails
+        except TypeError:
+            # let my tile do the rest
+            self.data[self.tile.offset(index)] = value
+        # otherwise
+        else:
+            # set the item directly in my container
+            self.data[index] = value
         # all done
         return
 
 
     def __len__(self):
-        # my tile knows
+        """
+        Compute my length
+        """
+        # my tile knows; so does my {data} container
         return self.tile.size
 
 
