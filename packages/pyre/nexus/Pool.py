@@ -39,9 +39,9 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
 
     # interface
     @pyre.export
-    def execute(self, workplan, **kwds):
+    def assemble(self, workplan, **kwds):
         """
-        Recruit a team to execute the set of tasks in my {workplan}
+        Assemble a team to execute the set of tasks in my {workplan}
         """
         # grab a journal channel
         channel = self.debug
@@ -62,7 +62,7 @@ class Pool(Peer, family='pyre.nexus.teams.pool', implements=Team):
         # if necessary, recruit some new crew members
         self.recruit()
         # tell me
-        channel.line('recruited new crew member')
+        channel.line('recruited new crew members')
         channel.line('  registered crew members: {}'.format(len(self.registered)))
         channel.line('  active crew members: {}'.format(len(self.active)))
 

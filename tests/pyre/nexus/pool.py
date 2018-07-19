@@ -97,7 +97,7 @@ class Application(pyre.application, family="samples.applications.pool"):
         # make a workplan
         workplan = { Task() for _ in range(self.tasks) }
         # set it up for execution
-        team.execute(workplan=workplan)
+        team.assemble(workplan=workplan)
         # and enter the event loop
         team.run()
 

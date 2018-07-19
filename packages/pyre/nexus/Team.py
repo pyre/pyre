@@ -29,7 +29,7 @@ class Team(pyre.protocol, family='pyre.nexus.teams'):
 
     # interface
     @pyre.provides
-    def execute(self, workplan, **kwds):
+    def assemble(self, workplan, **kwds):
         """
         Recruit a team to execute the set of tasks in my {workplan}
         """
