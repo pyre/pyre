@@ -122,6 +122,38 @@ operator!=(const Index<repT> & one, const Index<repT> & two) {
 
 
 template <typename repT>
+auto
+pyre::grid::
+operator+(const Index<repT> & one, const Index<repT> & two) {
+    // make a default one
+    Index<repT> sum {};
+    // go through its slots
+    for (typename Index<repT>::size_type slot=0; slot < one.size(); ++slot) {
+        // and set each one to the sum of the other two
+        sum[slot] = one[slot] + two[slot];
+    }
+    // all done
+    return sum;
+}
+
+
+template <typename repT>
+auto
+pyre::grid::
+operator-(const Index<repT> & one, const Index<repT> & two) {
+    // make a default one
+    Index<repT> sum {};
+    // go through its slots
+    for (typename Index<repT>::size_type slot=0; slot < one.size(); ++slot) {
+        // and set each one to the sum of the other two
+        sum[slot] = one[slot] - two[slot];
+    }
+    // all done
+    return sum;
+}
+
+
+template <typename repT>
 auto &
 pyre::grid::
 operator<<(std::ostream & stream, const pyre::grid::Index<repT> & index) {
