@@ -20,6 +20,7 @@ public:
     typedef std::size_t size_type;
     // aliases for my parts
     typedef indexT index_type;
+    typedef indexT shape_type;
     typedef packingT packing_type;
     // alias for me
     typedef Slice<index_type, packing_type> slice_type;
@@ -36,6 +37,8 @@ public:
     inline const auto & low() const;
     inline const auto & high() const;
     inline const auto & packing() const;
+
+    inline auto shape() const;
 
     // iteration support
     inline auto begin() const;

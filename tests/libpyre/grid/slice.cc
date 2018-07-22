@@ -40,7 +40,8 @@ int main() {
         << pyre::journal::at(__HERE__)
         << "low: (" << slice.low() << ")" << pyre::journal::newline
         << "high: (" << slice.high() << ")" << pyre::journal::newline
-        << "packing: (" << slice.packing() << ")"
+        << "packing: (" << slice.packing() << ")" << pyre::journal::newline
+        << "shape: (" << slice.shape() << ")"
         << pyre::journal::endl;
 
     // all done

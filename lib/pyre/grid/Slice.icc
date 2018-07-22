@@ -53,6 +53,24 @@ packing() const {
 template <typename indexT, typename packingT>
 auto
 pyre::grid::Slice<indexT, packingT>::
+shape() const {
+    // make an empty one
+    index_type shape {};
+
+    // go through my boundaries
+    for (size_t slot=0; slot < index_type::dim(); ++slot) {
+        // and fill the shape with my extent
+        shape[slot] = _high[slot] - _low[slot];
+    }
+
+    // and return it
+    return shape;
+}
+
+
+template <typename indexT, typename packingT>
+auto
+pyre::grid::Slice<indexT, packingT>::
 begin() const {
     // easy enough...
     return iterator_type{ *this };

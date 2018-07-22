@@ -30,9 +30,6 @@ public:
 
     // interface
 public:
-    // accessors
-    inline const auto & shape() const;
-
     // the dimensionality of my index
     inline static constexpr auto dim();
     // the number of cells in this layout

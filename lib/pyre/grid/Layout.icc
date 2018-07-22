@@ -21,16 +21,6 @@ Layout(shape_type shape, packing_type packing) :
 
 
 // interface
-// accessors
-template <typename indexT, typename packingT>
-const auto &
-pyre::grid::Layout<indexT, packingT>::
-shape() const {
-    // easy enough...
-    return this->high();
-}
-
-
 // get the dimensionality of my index
 template <typename indexT, typename packingT>
 constexpr auto
