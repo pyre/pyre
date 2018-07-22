@@ -17,14 +17,14 @@ class pyre::grid::Iterator {
     // types
 public:
     // my parts
-    typedef sliceT slice_type;
-    typedef typename slice_type::index_type index_type;
-    typedef typename slice_type::packing_type packing_type;
+    using slice_type = sliceT;
+    using index_type = typename slice_type::index_type;
+    using packing_type = typename slice_type::packing_type;
 
     // meta-methods
 public:
-    Iterator(const slice_type & slice);
-    Iterator(const index_type & current, const slice_type & slice);
+    inline Iterator(const slice_type & slice);
+    inline Iterator(const index_type & current, const slice_type & slice);
 
     // interface
 public:
