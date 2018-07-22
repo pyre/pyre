@@ -21,6 +21,7 @@ public:
     typedef layoutT layout_type;
     typedef storageT storage_type;
     // dependent types
+    typedef typename layout_type::slice_type slice_type;
     typedef typename layout_type::index_type index_type;
     typedef typename layout_type::shape_type shape_type;
     typedef typename layout_type::packing_type packing_type;
