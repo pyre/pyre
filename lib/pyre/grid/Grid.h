@@ -17,17 +17,19 @@ class pyre::grid::Grid {
     // types
 public:
     // aliases for my template parameters
-    typedef cellT cell_type;
-    typedef layoutT layout_type;
-    typedef storageT storage_type;
+    using cell_type = cellT;
+    using layout_type = layoutT;
+    using storage_type = storageT;
+    // view over portions of my data
+    using view_type = View<Grid<cell_type, layout_type, storage_type>>;
     // dependent types
-    typedef typename layout_type::slice_type slice_type;
-    typedef typename layout_type::index_type index_type;
-    typedef typename layout_type::shape_type shape_type;
-    typedef typename layout_type::packing_type packing_type;
+    using slice_type = typename layout_type::slice_type;
+    using index_type = typename layout_type::index_type;
+    using shape_type = typename layout_type::shape_type;
+    using packing_type = typename layout_type::packing_type;
 
     // other help
-    typedef std::size_t size_type;
+    using size_type = std::size_t;
 
     // meta-methods
 public:
@@ -51,6 +53,10 @@ public:
     inline auto data() const;
     // access to my storage strategy
     inline const auto & storage() const;
+
+    // iteration support
+    inline auto view();
+    inline auto view(const slice_type & slice);
 
     // read and write access using offsets
     inline auto & operator[](size_type offset);

@@ -74,6 +74,24 @@ storage() const
     return _storage;
 }
 
+// iteration support
+template <typename cellT, typename layoutT, typename storageT>
+auto
+pyre::grid::Grid<cellT, layoutT, storageT>::
+view()
+{
+    return view_type(*this, layout());
+}
+
+template <typename cellT, typename layoutT, typename storageT>
+auto
+pyre::grid::Grid<cellT, layoutT, storageT>::
+view(const slice_type & slice)
+{
+    return view_type(*this, slice);
+}
+
+
 // grant write access to the grid at {offset}
 template <typename cellT, typename layoutT, typename storageT>
 auto &
