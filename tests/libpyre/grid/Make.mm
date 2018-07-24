@@ -35,6 +35,8 @@ GRID_TESTS = \
     grid-direct-data \
     grid-direct-set \
     grid-direct-get \
+    grid-fill \
+    grid-scan \
     grid-mosaic \
 
 all: test clean
