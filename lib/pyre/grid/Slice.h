@@ -36,9 +36,9 @@ public:
 public:
     inline const auto & low() const;
     inline const auto & high() const;
-    inline const auto & packing() const;
 
     inline auto shape() const;
+    inline const auto & packing() const;
 
     // iteration support
     inline auto begin() const;
