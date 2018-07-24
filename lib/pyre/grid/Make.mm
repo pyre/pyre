@@ -32,11 +32,13 @@ EXPORT_HEADERS = \
 EXPORT_PKG_HEADERS = \
     DirectGrid.h DirectGrid.icc \
     Grid.h Grid.icc \
+    GridIterator.h GridIterator.icc \
     Index.h Index.icc \
     Iterator.h Iterator.icc \
+    Layout.h Layout.icc \
     Packing.h Packing.icc \
     Slice.h Slice.icc \
-    Layout.h Layout.icc \
+    View.h View.icc \
     public.h
 
 # the standard targets

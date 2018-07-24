@@ -13,6 +13,7 @@
 // externals
 #include <stdexcept>
 #include <array>
+#include <iterator>
 // support
 #include <pyre/journal.h>
 #include <pyre/memory.h>
@@ -38,6 +39,11 @@ namespace pyre {
         template <typename cellT, typename layoutT, typename storageT> class Grid;
         // direct grid: a memory mapped grid
         template <typename cellT, typename layoutT, typename directT> class DirectGrid;
+
+        // iterators over grids
+        template <typename gridT> class GridIterator;
+        // views over grids
+        template <typename gridT> class View;
     }
 }
 
@@ -100,6 +106,14 @@ namespace pyre {
         template <typename sliceT>
         auto operator!= (const Iterator<sliceT> &, const Iterator<sliceT> &);
 
+        // operators on grid iterators
+        // equality
+        template <typename gridT>
+        auto operator== (const GridIterator<gridT> &, const GridIterator<gridT> &);
+        // inequality
+        template <typename gridT>
+        auto operator!= (const GridIterator<gridT> &, const GridIterator<gridT> &);
+
         // stream injection
         // for indices
         template <typename repT>
@@ -121,7 +135,9 @@ namespace pyre {
 #include "Slice.h"
 #include "Iterator.h"
 #include "Layout.h"
+#include "View.h"
 #include "Grid.h"
+#include "GridIterator.h"
 #include "DirectGrid.h"
 
 // the implementations
@@ -150,10 +166,20 @@ namespace pyre {
 #include "Layout.icc"
 #undef pyre_grid_Layout_icc
 
+// grid slices
+#define pyre_grid_View_icc
+#include "View.icc"
+#undef pyre_grid_View_icc
+
 // grid
 #define pyre_grid_Grid_icc
 #include "Grid.icc"
 #undef pyre_grid_Grid_icc
+
+// grid iterator
+#define pyre_grid_GridIterator_icc
+#include "GridIterator.icc"
+#undef pyre_grid_GridIterator_icc
 
 // grid
 #define pyre_grid_DirectGrid_icc
