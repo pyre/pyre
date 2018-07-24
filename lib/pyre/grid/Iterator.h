@@ -28,13 +28,27 @@ public:
 
     // interface
 public:
-    inline Iterator & operator++();
-    inline const index_type & operator*() const;
+    inline auto & operator++();
+    inline const auto & operator*() const;
 
     // implementation details
 private:
     index_type _current;
     const slice_type & _slice;
+};
+
+
+// Iterator traits
+template <>
+template <typename sliceT>
+class std::iterator_traits<pyre::grid::Iterator<sliceT>> {
+    // types
+public:
+    using value_type = typename sliceT::index_type;
+    using difference_type = void;
+    using pointer = typename sliceT::cell_type *;
+    using reference = typename sliceT::cell_type &;
+    using iterator_category = std::forward_iterator_tag;
 };
 
 

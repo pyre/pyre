@@ -32,7 +32,7 @@ Iterator(const index_type & current, const slice_type & slice) :
 // interface
 // access to the current value
 template <typename sliceT>
-const typename pyre::grid::Iterator<sliceT>::index_type &
+const auto &
 pyre::grid::Iterator<sliceT>::
 operator* () const {
     // return the current value
@@ -42,7 +42,7 @@ operator* () const {
 
 // value update
 template <typename sliceT>
-pyre::grid::Iterator<sliceT> &
+auto &
 pyre::grid::Iterator<sliceT>::
 operator++ () {
     // get the lower limits for the slice indices
