@@ -22,7 +22,7 @@ public:
     using layout_type = typename grid_type::layout_type;
     using slice_type = typename grid_type::slice_type;
     // my iterator
-    using iterator_type = GridIterator<grid_type>;
+    using iterator_type = ConstGridIterator<grid_type>;
 
     // meta-methods
 public:

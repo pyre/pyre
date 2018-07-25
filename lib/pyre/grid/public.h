@@ -42,6 +42,8 @@ namespace pyre {
 
         // iterators over grids
         template <typename gridT> class GridIterator;
+        template <typename gridT> class ConstGridIterator;
+
         // views over grids
         template <typename gridT> class View;
         template <typename gridT> class ConstView;
@@ -115,6 +117,13 @@ namespace pyre {
         template <typename gridT>
         auto operator!= (const GridIterator<gridT> &, const GridIterator<gridT> &);
 
+        // equality
+        template <typename gridT>
+        auto operator== (const ConstGridIterator<gridT> &, const ConstGridIterator<gridT> &);
+        // inequality
+        template <typename gridT>
+        auto operator!= (const ConstGridIterator<gridT> &, const ConstGridIterator<gridT> &);
+
         // stream injection
         // for indices
         template <typename repT>
@@ -140,6 +149,7 @@ namespace pyre {
 #include "ConstView.h"
 #include "Grid.h"
 #include "GridIterator.h"
+#include "ConstGridIterator.h"
 #include "DirectGrid.h"
 
 // the implementations
@@ -182,10 +192,14 @@ namespace pyre {
 #include "Grid.icc"
 #undef pyre_grid_Grid_icc
 
-// grid iterator
+// grid iterators
 #define pyre_grid_GridIterator_icc
 #include "GridIterator.icc"
 #undef pyre_grid_GridIterator_icc
+
+#define pyre_grid_ConstGridIterator_icc
+#include "ConstGridIterator.icc"
+#undef pyre_grid_ConstGridIterator_icc
 
 // grid
 #define pyre_grid_DirectGrid_icc

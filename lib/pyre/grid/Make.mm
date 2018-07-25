@@ -30,6 +30,7 @@ EXPORT_HEADERS = \
     grid.h \
 # the package headers
 EXPORT_PKG_HEADERS = \
+    ConstGridIterator.h ConstGridIterator.icc \
     ConstView.h ConstView.icc \
     DirectGrid.h DirectGrid.icc \
     Grid.h Grid.icc \
