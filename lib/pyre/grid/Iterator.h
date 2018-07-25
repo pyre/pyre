@@ -39,7 +39,6 @@ private:
 
 
 // Iterator traits
-template <>
 template <typename sliceT>
 class std::iterator_traits<pyre::grid::Iterator<sliceT>> {
     // types

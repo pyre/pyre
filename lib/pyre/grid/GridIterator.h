@@ -42,7 +42,6 @@ private:
 
 
 // GridIterator traits
-template <>
 template <typename gridT>
 class std::iterator_traits<pyre::grid::GridIterator<gridT>> {
     // types
