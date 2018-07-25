@@ -36,6 +36,7 @@ journal.lib.stem := journal
 journal.lib.incdir := $(builder.dest.inc)pyre/journal/
 journal.lib.master := journal.h
 journal.lib.extern :=
+journal.lib.c++.defines += PYRE_CORE
 journal.lib.c++.flags += $($(compiler.c++).std.c++17)
 
 # the extension meta-data
@@ -44,6 +45,7 @@ journal.ext.stem := journal
 journal.ext.pkg := journal.pkg
 journal.ext.wraps := journal.lib
 journal.ext.extern := journal.lib python
+journal.ext.lib.c++.defines += PYRE_CORE
 journal.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 
 # the pyre library meta-data

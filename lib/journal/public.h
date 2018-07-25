@@ -42,11 +42,21 @@
 namespace pyre {
     namespace journal {
 
-        // disable debug and firewalls for production builds
-#if defined(DEBUG)
+        //  if we are building the library
+#if defined(PYRE_CORE)
+        // we need everything
         using debug_t = Debug;
         using firewall_t = Firewall;
+
+        // if this a client DEBUG build
+#elif defined(DEBUG)
+        // enable debug and firewalls
+        using debug_t = Debug;
+        using firewall_t = Firewall;
+
+        // otherwise, this is a production build
 #else
+        // disable debug and firewalls for production builds
         using debug_t = Null;
         using firewall_t = Null;
 #endif
