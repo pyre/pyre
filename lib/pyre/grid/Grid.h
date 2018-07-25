@@ -22,6 +22,8 @@ public:
     using storage_type = storageT;
     // view over portions of my data
     using view_type = View<Grid<cell_type, layout_type, storage_type>>;
+    using constview_type = ConstView<Grid<cell_type, layout_type, storage_type>>;
+
     // dependent types
     using slice_type = typename layout_type::slice_type;
     using index_type = typename layout_type::index_type;
@@ -57,6 +59,9 @@ public:
     // iteration support
     inline auto view();
     inline auto view(const slice_type & slice);
+
+    inline auto view() const;
+    inline auto view(const slice_type & slice) const;
 
     // read and write access using offsets
     inline auto & operator[](size_type offset);

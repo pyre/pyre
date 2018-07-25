@@ -44,6 +44,7 @@ namespace pyre {
         template <typename gridT> class GridIterator;
         // views over grids
         template <typename gridT> class View;
+        template <typename gridT> class ConstView;
     }
 }
 
@@ -136,6 +137,7 @@ namespace pyre {
 #include "Iterator.h"
 #include "Layout.h"
 #include "View.h"
+#include "ConstView.h"
 #include "Grid.h"
 #include "GridIterator.h"
 #include "DirectGrid.h"
@@ -170,6 +172,10 @@ namespace pyre {
 #define pyre_grid_View_icc
 #include "View.icc"
 #undef pyre_grid_View_icc
+
+#define pyre_grid_ConstView_icc
+#include "ConstView.icc"
+#undef pyre_grid_ConstView_icc
 
 // grid
 #define pyre_grid_Grid_icc
