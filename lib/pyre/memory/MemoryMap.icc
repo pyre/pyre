@@ -35,7 +35,12 @@ pyre::memory::MemoryMap::
 }
 
 pyre::memory::MemoryMap::
-MemoryMap(MemoryMap && other) {
+MemoryMap(MemoryMap && other) :
+    _uri {},
+    _info {},
+    _bytes(),
+    _buffer()
+{
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.direct");
     // tell me
