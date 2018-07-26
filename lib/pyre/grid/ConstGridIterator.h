@@ -42,16 +42,19 @@ private:
 
 
 // ConstGridIterator traits
-template <typename gridT>
-class std::iterator_traits<pyre::grid::ConstGridIterator<gridT>> {
-    // types
-public:
-    using value_type = typename gridT::cell_type;
-    using difference_type = void;
-    using pointer = typename gridT::cell_type *;
-    using reference = typename gridT::cell_type &;
-    using iterator_category = std::forward_iterator_tag;
-};
+// 20180726: switch to {std::} to keep gcc-6.4 happy; we need it for cuda
+namespace std {
+    template <typename gridT>
+    class iterator_traits<pyre::grid::ConstGridIterator<gridT>> {
+        // types
+    public:
+        using value_type = typename gridT::cell_type;
+        using difference_type = void;
+        using pointer = typename gridT::cell_type *;
+        using reference = typename gridT::cell_type &;
+        using iterator_category = std::forward_iterator_tag;
+    };
+}
 
 
 #endif

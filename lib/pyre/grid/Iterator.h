@@ -39,16 +39,19 @@ private:
 
 
 // Iterator traits
-template <typename sliceT>
-class std::iterator_traits<pyre::grid::Iterator<sliceT>> {
-    // types
-public:
-    using value_type = typename sliceT::index_type;
-    using difference_type = void;
-    using pointer = typename sliceT::cell_type *;
-    using reference = typename sliceT::cell_type &;
-    using iterator_category = std::forward_iterator_tag;
-};
+// 20180726: switch to {std::} to keep gcc-6.4 happy; we need it for cuda
+namespace std {
+    template <typename sliceT>
+    class iterator_traits<pyre::grid::Iterator<sliceT>> {
+        // types
+    public:
+        using value_type = typename sliceT::index_type;
+        using difference_type = void;
+        using pointer = typename sliceT::cell_type *;
+        using reference = typename sliceT::cell_type &;
+        using iterator_category = std::forward_iterator_tag;
+    };
+}
 
 
 #endif
