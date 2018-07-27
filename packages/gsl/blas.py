@@ -165,6 +165,14 @@ def dgemm(tranA, tranB, α, A, B, β, C):
     # and return the result
     return C
 
+def dsymm(side, uploA, α, A, B, β, C):
+    """
+    Compute {C = α A B + β C} or {C = α B A + β C} depending on {side}, A is symmetric
+    """
+    #compute
+    gsl.blas_dsymm(side, uploA, α, A.data, B.data, β, C.data)
+    #return the result
+    return C
 
 def dtrmm(sideA, uplo, transpose, diag, α, A, B):
     """

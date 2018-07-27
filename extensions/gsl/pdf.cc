@@ -162,12 +162,12 @@ const char * const gsl::pdf::gaussian::sample__doc__ =
 PyObject *
 gsl::pdf::gaussian::sample(PyObject *, PyObject * args) {
     // the arguments
-    double sigma;
+    double mean, sigma;
     PyObject * capsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "dO!:gaussian_sample",
-                                  &sigma, &PyCapsule_Type, &capsule);
+                                  args, "ddO!:gaussian_sample",
+                                  &mean, &sigma, &PyCapsule_Type, &capsule);
     // bail out if something went wrong with the argument unpacking
     if (!status) return 0;
     // bail out if the capsule is not valid
@@ -180,6 +180,7 @@ gsl::pdf::gaussian::sample(PyObject *, PyObject * args) {
     gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, gsl::rng::capsule_t));
     // sample the distribution
     double sample = gsl_ran_gaussian(r, sigma);
+    sample+=mean;
 
     // return the value
     return PyFloat_FromDouble(sample);
@@ -193,14 +194,14 @@ const char * const gsl::pdf::gaussian::density__doc__ = "return the gaussian dis
 PyObject *
 gsl::pdf::gaussian::density(PyObject *, PyObject * args) {
     // the arguments
-    double x, sigma;
+    double x, mean, sigma;
     // unpack the argument tuple
-    int status = PyArg_ParseTuple(args, "dd:gaussian_density", &sigma, &x);
+    int status = PyArg_ParseTuple(args, "ddd:gaussian_density", &mean, &sigma, &x);
     // bail out if something went wrong with the argument unpacking
     if (!status) return 0;
 
     // compute
-    double pdf = gsl_ran_gaussian_pdf(x, sigma);
+    double pdf = gsl_ran_gaussian_pdf(x-mean, sigma);
 
     // compute the density and return the value
     return PyFloat_FromDouble(pdf);
@@ -214,13 +215,13 @@ const char * const gsl::pdf::gaussian::vector__doc__ = "fill a vector with rando
 PyObject *
 gsl::pdf::gaussian::vector(PyObject *, PyObject * args) {
     // the arguments
-    double sigma;
+    double mean, sigma;
     PyObject * rngCapsule;
     PyObject * vectorCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "dO!O!:gaussian_vector",
-                                  &sigma,
+                                  args, "ddO!O!:gaussian_vector",
+                                  &mean, &sigma,
                                   &PyCapsule_Type, &rngCapsule,
                                   &PyCapsule_Type, &vectorCapsule);
     // bail out if something went wrong with the argument unpacking
@@ -244,7 +245,7 @@ gsl::pdf::gaussian::vector(PyObject *, PyObject * args) {
     // fill
     for (size_t i = 0; i < v->size; i++) {
         double value = gsl_ran_gaussian(rng, sigma);
-        gsl_vector_set(v, i, value);
+        gsl_vector_set(v, i, value+mean);
     }
     // return None
     Py_INCREF(Py_None);
@@ -259,13 +260,13 @@ const char * const gsl::pdf::gaussian::matrix__doc__ = "fill a matrix with rando
 PyObject *
 gsl::pdf::gaussian::matrix(PyObject *, PyObject * args) {
     // the arguments
-    double sigma;
+    double mean, sigma;
     PyObject * rngCapsule;
     PyObject * matrixCapsule;
     // unpack the argument tuple
     int status = PyArg_ParseTuple(
-                                  args, "dO!O!:gaussian_matrix",
-                                  &sigma,
+                                  args, "ddO!O!:gaussian_matrix",
+                                  &mean, &sigma,
                                   &PyCapsule_Type, &rngCapsule,
                                   &PyCapsule_Type, &matrixCapsule);
     // bail out if something went wrong with the argument unpacking
@@ -290,7 +291,7 @@ gsl::pdf::gaussian::matrix(PyObject *, PyObject * args) {
     for (size_t i = 0; i < m->size1; i++) {
         for (size_t j = 0; j < m->size2; j++) {
             double value = gsl_ran_gaussian(rng, sigma);
-            gsl_matrix_set(m, i, j, value);
+            gsl_matrix_set(m, i, j, value+mean);
         }
     }
     // return None
@@ -439,6 +440,114 @@ gsl::pdf::ugaussian::matrix(PyObject *, PyObject * args) {
     return Py_None;
 }
 
+// dirichlet::sample
+const char * const gsl::pdf::dirichlet::sample__name__ = "dirichlet_sample";
+const char * const gsl::pdf::dirichlet::sample__doc__ = "return a sample(vector) with random variables";
+
+PyObject *
+gsl::pdf::dirichlet::sample(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * rngCapsule;
+    PyObject * alphaCapsule;
+    PyObject * vectorCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!O!:dirichlet_vector",
+                                  &PyCapsule_Type, &rngCapsule,
+                                  &PyCapsule_Type, &alphaCapsule,
+                                  &PyCapsule_Type, &vectorCapsule);
+    // bail out if something went wrong with the argument unpacking
+    if (!status) return 0;
+    // bail out if the rng capsule is not valid
+    if (!PyCapsule_IsValid(rngCapsule, gsl::rng::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+    // bail out if the alpha capsule is not valid
+    if (!PyCapsule_IsValid(alphaCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+    // bail out if the vector capsule is not valid
+    if (!PyCapsule_IsValid(vectorCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the rng
+    gsl_rng * rng =
+        static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
+    // get the vector
+    gsl_vector * alpha =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(alphaCapsule, gsl::vector::capsule_t));
+    // get the vector
+    gsl_vector * v =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+
+    // get the order of the pdf
+    size_t K = alpha->size;
+    // check that it is compatible with the matrix we were given
+    if (K != v->size) {
+        PyErr_SetString(PyExc_ValueError, "shape incompatibility");
+        return 0;
+    }
+    // fill the vector
+    gsl_ran_dirichlet(rng, K, alpha->data, v->data);
+
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+
+}
+
+
+// dirichlet::density
+const char * const gsl::pdf::dirichlet::density__name__ = "dirichlet_density";
+const char * const gsl::pdf::dirichlet::density__doc__ = "return the density of a dirichlet sample(vector)";
+
+PyObject *
+gsl::pdf::dirichlet::density(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * alphaCapsule;
+    PyObject * vectorCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:dirichlet_density",
+                                  &PyCapsule_Type, &alphaCapsule,
+                                  &PyCapsule_Type, &vectorCapsule);
+    // bail out if something went wrong with the argument unpacking
+    if (!status) return 0;
+    // bail out if the alpha capsule is not valid
+    if (!PyCapsule_IsValid(alphaCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+    // bail out if the vector capsule is not valid
+    if (!PyCapsule_IsValid(vectorCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the alpha vector
+    gsl_vector * alpha =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(alphaCapsule, gsl::vector::capsule_t));
+    // get the theta vector
+    gsl_vector * v =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+
+    // get the order of the pdf
+    size_t K = alpha->size;
+    // check that it is compatible with the matrix we were given
+    if (K != v->size) {
+        PyErr_SetString(PyExc_ValueError, "shape incompatibility");
+        return 0;
+    }
+    // calculate the pdf
+    double pdf = gsl_ran_dirichlet_pdf(K, alpha->data, v->data);
+
+    // and return the value
+    return PyFloat_FromDouble(pdf);
+}
 
 // dirichlet::vector
 const char * const gsl::pdf::dirichlet::vector__name__ = "dirichlet_vector";

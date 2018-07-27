@@ -80,7 +80,7 @@ class gaussian:
         Sample the gaussian distribution using a random value from {rng}
         """
         # get the value
-        return gsl.gaussian_sample(self.sigma, self.rng.rng)
+        return gsl.gaussian_sample(self.mean, self.sigma, self.rng.rng)
 
 
     def density(self, x):
@@ -88,7 +88,7 @@ class gaussian:
         Compute the probability density of the gaussian distribution at {x}
         """
         # get the value
-        return gsl.gaussian_density(self.sigma, x)
+        return gsl.gaussian_density(self.mean, self.sigma, x)
 
 
     # higher level support
@@ -97,7 +97,7 @@ class gaussian:
         Fill {vector} with random values
         """
         # fill the vector
-        gsl.gaussian_vector(self.sigma, self.rng.rng, vector.data)
+        gsl.gaussian_vector(self.mean, self.sigma, self.rng.rng, vector.data)
         # and return it
         return vector
 
@@ -107,20 +107,22 @@ class gaussian:
         Fill {matrix} with random values
         """
         # fill the matrix
-        gsl.gaussian_matrix(self.sigma, self.rng.rng, matrix.data)
+        gsl.gaussian_matrix(self.mean, self.sigma, self.rng.rng, matrix.data)
         # and return it
         return matrix
 
 
     # meta methods
-    def __init__(self, sigma, rng, **kwds):
+    def __init__(self, mean, sigma, rng, **kwds):
         super().__init__(**kwds)
         self.rng = rng
+        self.mean = mean
         self.sigma = sigma
         return
 
 
     # implementation details
+    mean = 0.0
     sigma = None
 
 

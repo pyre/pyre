@@ -357,6 +357,12 @@ class Vector:
         """
         # easy enough
         return gsl.vector_sdev(self.data, float(mean) if mean is not None else None)
+        
+    def dataptr(self):
+        """
+        Return the data pointer
+        """
+        return gsl.vector_dataptr(self.data)    
 
 
     # meta methods

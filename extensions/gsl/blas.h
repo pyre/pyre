@@ -79,6 +79,10 @@ namespace gsl {
         extern const char * const dgemm__name__;
         extern const char * const dgemm__doc__;
         PyObject * dgemm(PyObject *, PyObject *);
+        
+        extern const char * const dsymm__name__;
+        extern const char * const dsymm__doc__;
+        PyObject * dsymm(PyObject *, PyObject *);
 
         extern const char * const dtrmm__name__;
         extern const char * const dtrmm__doc__;

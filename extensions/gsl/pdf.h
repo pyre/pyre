@@ -80,6 +80,16 @@ namespace gsl {
 
         // the dirichlet distribution
         namespace dirichlet {
+            // sample            
+            extern const char * const sample__name__;
+            extern const char * const sample__doc__;
+            PyObject * sample(PyObject *, PyObject *);
+
+            // density
+            extern const char * const density__name__;
+            extern const char * const density__doc__;
+            PyObject * density(PyObject *, PyObject *);
+            
             // fills
             extern const char * const vector__name__;
             extern const char * const vector__doc__;
