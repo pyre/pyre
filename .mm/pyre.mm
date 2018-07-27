@@ -10,13 +10,13 @@ pyre.major := 1
 pyre.minor := 0
 
 # pyre builds a python package
-pyre.packages := pyre.pkg journal.pkg
+pyre.packages := pyre.pkg journal.pkg mpi.pkg
 # a library
-pyre.libraries := journal.lib pyre.lib
+pyre.libraries := journal.lib pyre.lib mpi.lib
 # a python extension
-pyre.extensions := journal.ext host.ext postgres.ext timers.ext
+pyre.extensions := journal.ext host.ext postgres.ext timers.ext mpi.ext
 # and a test suite
-pyre.tests := # pyre.tst.pyre pyre.tst.libpyre
+pyre.tests := mpi.tst.libmpi # pyre.tst.pyre pyre.tst.libpyre
 
 # the pyre meta-data
 pyre.pkg.root := packages/pyre/
@@ -80,6 +80,33 @@ timers.ext.wraps := pyre.lib
 timers.ext.extern := pyre.lib journal.lib python
 timers.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 timers.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
+
+# mpi
+# the package
+mpi.pkg.root := packages/mpi/
+mpi.pkg.stem := mpi
+mpi.pkg.ext :=
+# the library
+mpi.lib.root := lib/mpi/
+mpi.lib.stem := mpi
+mpi.lib.extern := journal.lib mpi
+mpi.lib.master := mpi.h
+mpi.lib.incdir := $(builder.dest.inc)pyre/mpi/
+mpi.lib.prerequisites += journal.lib
+mpi.lib.c++.flags += $($(compiler.c++).std.c++17)
+# the extension
+mpi.ext.root := extensions/mpi/
+mpi.ext.stem := mpi
+mpi.ext.pkg := mpi.pkg
+mpi.ext.wraps := mpi.lib
+mpi.ext.extern := pyre.lib journal.lib mpi python
+mpi.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+mpi.ext.lib.prerequisites += journal.lib pyre.lib # mpi.lib is added automatically
+# the tests
+mpi.tst.libmpi.stem := mpi
+mpi.tst.libmpi.extern := pyre.lib journal.lib mpi
+mpi.tst.libmpi.prerequisites := mpi.lib
+mpi.tst.libmpi.root := tests/libpyre/mpi/
 
 # the libpyre test suite
 pyre.tst.libpyre.stem := libpyre
