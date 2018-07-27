@@ -25,6 +25,7 @@
 #include "permutation.h" // permutations
 #include "rng.h" // random numbers
 #include "vector.h" // vectors
+#include "stats.h" // stats
 
 // mpi support
 #if defined(WITH_MPI)
@@ -222,6 +223,10 @@ namespace gsl {
         { vector::median__name__, vector::median, METH_VARARGS, vector::median__doc__ },
         { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
         { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
+        
+        // more statistics
+        { stats::correlation__name__, stats::correlation, METH_VARARGS, stats::correlation__doc__},
+        { stats::covariance__name__, stats::covariance, METH_VARARGS, stats::covariance__doc__},
 
         // mpi support
 #if defined(WITH_MPI)

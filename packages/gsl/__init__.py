@@ -55,7 +55,7 @@ from .RNG import RNG as rng
 from .Vector import Vector as vector
 
 # other interfaces
-from . import blas, pdf, linalg
+from . import blas, pdf, linalg, stats
 
 
 # end of file
