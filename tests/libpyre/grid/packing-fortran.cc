@@ -28,8 +28,8 @@ int main() {
         packing_t::value_type expected = i;
         // and check that it is sorted in ascending order
         if (packing[i] != expected) {
-            // make a firewall
-            pyre::journal::firewall_t channel("pyre.grid");
+            // make a channel
+            pyre::journal::error_t channel("pyre.grid");
             // complain
             channel
                 << pyre::journal::at(__HERE__)

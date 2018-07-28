@@ -60,9 +60,9 @@ int main() {
         // if they are not the same
         if (value != expected) {
             // make a channel
-            pyre::journal::firewall_t firewall("pyre.grid");
+            pyre::journal::error_t error("pyre.grid");
             // show me
-            firewall
+            error
                 << pyre::journal::at(__HERE__)
                 << "grid[" << idx << "]: " << value << " != " << expected
                 << pyre::journal::endl;

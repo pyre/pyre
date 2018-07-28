@@ -61,9 +61,9 @@ int main() {
         // if it's not what we expect
         if (stored != value) {
             // make a channel
-            pyre::journal::firewall_t firewall("pyre.grid");
+            pyre::journal::error_t error("pyre.grid");
             // show me
-            firewall
+            error
                 << pyre::journal::at(__HERE__)
                 << "grid[" << idx << "]: " << stored << " != " << value
                 << pyre::journal::endl;

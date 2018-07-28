@@ -39,9 +39,9 @@ int main() {
         // verify it has the expected value
         if (offset != pixel) {
             // open a channel
-            pyre::journal::firewall_t firewall("pyre.grid.index");
+            pyre::journal::error_t error("pyre.grid.index");
             // complain
-            firewall
+            error
                 << pyre::journal::at(__HERE__)
                 << "offset error: " << offset << " != " << pixel
                 << pyre::journal::endl;
@@ -54,9 +54,9 @@ int main() {
         // and verify it is identical to our loop index
         if (refl != index) {
             // open a channel
-            pyre::journal::firewall_t firewall("pyre.grid.index");
+            pyre::journal::error_t error("pyre.grid.index");
             // complain
-            firewall
+            error
                 << pyre::journal::at(__HERE__)
                 << "index error at offset " << offset << pyre::journal::newline
                 << "(" << index << ") != (" << refl << ")"

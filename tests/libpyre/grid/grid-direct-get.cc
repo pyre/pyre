@@ -54,9 +54,9 @@ int main() {
         // verify we read the correct value
         if (grid[idx] != v) {
             // make a channel
-            pyre::journal::firewall_t firewall("pyre.grid");
+            pyre::journal::error_t error("pyre.grid");
             // show me
-            firewall
+            error
                 << pyre::journal::at(__HERE__)
                 << "grid[" << idx << "] = " << grid[idx] << " != " << v
                 << pyre::journal::endl;

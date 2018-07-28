@@ -23,8 +23,8 @@ int main() {
     // instantiate an packinging
     packing_t packing = {0u, 1u, 2u, 3u};
 
-    // make a firewall
-    pyre::journal::firewall_t channel("pyre.grid");
+    // make a channel
+    pyre::journal::error_t channel("pyre.grid");
 
     // check the values one by one
     for (packing_t::size_type i=0; i < packing.size(); ++i) {

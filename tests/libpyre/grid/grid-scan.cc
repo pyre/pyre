@@ -71,10 +71,10 @@ int main() {
         auto expected = value * (offset+1);
         // if not
         if (stored != expected) {
-            // if not, make a channel
-            pyre::journal::firewall_t firewall("pyre.grid");
+            // make a channel
+            pyre::journal::error_t error("pyre.grid");
             // show me
-            firewall
+            error
                 << pyre::journal::at(__HERE__)
                 << "grid[" << idx << "]: " << stored << " != " << expected
                 << pyre::journal::endl;

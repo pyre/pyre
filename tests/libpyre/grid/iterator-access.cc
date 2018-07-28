@@ -43,8 +43,8 @@ int main() {
 
     // check
     if (got != correct) {
-        // make a firewall
-        pyre::journal::firewall_t channel("pyre.grid");
+        // make a channel
+        pyre::journal::error_t channel("pyre.grid");
 
         // sign in
         channel

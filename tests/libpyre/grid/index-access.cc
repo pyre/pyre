@@ -25,8 +25,8 @@ int main() {
     // make an index
     index_t index = {2, 2, 2, 2};
 
-    // make a firewall
-    pyre::journal::firewall_t channel("pyre.grid");
+    // make a channel
+    pyre::journal::error_t channel("pyre.grid");
 
     // adjust the values one by one
     for (index_t::size_type i=0; i < index.size(); ++i) {

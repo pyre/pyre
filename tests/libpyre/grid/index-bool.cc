@@ -26,8 +26,8 @@ int main() {
     index_t same = {0, 1, 2, 3};
     index_t different = {0, 1, 3, 3};
 
-    // make a firewall
-    pyre::journal::firewall_t channel("pyre.grid");
+    // make a channel
+    pyre::journal::error_t channel("pyre.grid");
 
     // check the ones that are supposed to be the same
     if (one != same) {
