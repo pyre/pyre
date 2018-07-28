@@ -32,6 +32,9 @@ public:
 
     // interface
 public:
+    // factories
+    inline static constexpr auto fill(value_type value);
+
     // dimensionality
     inline static constexpr auto dim();
     // same as {dim} but as a member function
@@ -45,12 +48,16 @@ public:
     inline auto begin() const;
     inline auto end() const;
 
+    inline auto begin();
+    inline auto end();
+
     // implementation details
-    // there are two ways to get this to be initialized
+private:
+    // there are two ways to initialize _index
     //  - relax access control to enable initialization through brace enclosed
     //    initializer lists
     //  - make the constructor a variadic template with a parameter pack
-private:
+    // we picked the latter
     repT _index;
 };
 

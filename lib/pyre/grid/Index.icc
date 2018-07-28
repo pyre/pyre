@@ -21,6 +21,19 @@ Index(argT... value) :
 
 
 // interface
+// initializer with a constant value
+template <typename repT>
+constexpr auto
+pyre::grid::Index<repT>::
+fill(value_type value) {
+    // make an empty one
+    Index<rep_type> idx {};
+    // fill it with {value}
+    std::fill(idx.begin(), idx.end(), value);
+    // all done
+    return idx;
+}
+
 // dimensionality of the index
 template <typename repT>
 constexpr auto
@@ -99,6 +112,24 @@ pyre::grid::Index<repT>::
 end() const {
     // compute the element "one past the end"
     return _index.cend();
+}
+
+
+template <typename repT>
+auto
+pyre::grid::Index<repT>::
+begin() {
+    // the array itself is the beginning
+    return _index.begin();
+}
+
+
+template <typename repT>
+auto
+pyre::grid::Index<repT>::
+end() {
+    // compute the element "one past the end"
+    return _index.end();
 }
 
 
