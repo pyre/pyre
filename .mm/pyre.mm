@@ -11,12 +11,15 @@ pyre.minor := 0
 
 # pyre builds a python package
 pyre.packages := pyre.pkg journal.pkg mpi.pkg
-# a library
+# libraries
 pyre.libraries := journal.lib pyre.lib mpi.lib
-# a python extension
-pyre.extensions := journal.ext host.ext postgres.ext timers.ext mpi.ext
-# and a test suite
+# python extensions
+pyre.extensions := journal.ext host.ext timers.ext mpi.ext
+# and test suites
 pyre.tests := mpi.tst.libmpi # pyre.tst.pyre pyre.tst.libpyre
+
+# if we have {libpq}, add it to the pile
+${if ${findstring libpq,$(extern.available)}, ${eval pyre.extensions += postgres.ext}}
 
 # the pyre meta-data
 pyre.pkg.root := packages/pyre/
