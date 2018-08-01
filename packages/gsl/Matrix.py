@@ -21,7 +21,7 @@ class Matrix:
     from .Vector import Vector as vector
 
     # constants
-    defaultFormat = "+16.3"
+    defaultFormat = "+16.7"
 
     upperTriangular = 1
     lowerTriangular = 0
@@ -208,7 +208,7 @@ class Matrix:
         # otherwise, look at the file extension
         suffix = filename.suffix
         # if it's {bin}
-        if suffix == "bin":
+        if suffix == ".bin":
             # go binary
             return self.write(filename)
 
@@ -251,7 +251,7 @@ class Matrix:
         Write my values to {filename}
         """
         # write
-        gsl.matrix_printf(self.data, filename.path, '%'+format)
+        gsl.matrix_printf(self.data, filename.path, '%'+format+'e')
         # and return
         return self
 

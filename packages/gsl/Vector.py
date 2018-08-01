@@ -21,7 +21,7 @@ class Vector:
     # types
     from .Permutation import Permutation as permutation
     # constants
-    defaultFormat = "+16.3"
+    defaultFormat = "+16.7"
 
 
     # class methods
@@ -211,7 +211,7 @@ class Vector:
         # otherwise, look at the file extension
         suffix = filename.suffix
         # if it's {bin}
-        if suffix == "bin":
+        if suffix == ".bin":
             # go binary
             return self.write(filename)
 
@@ -254,7 +254,7 @@ class Vector:
         Write my values to {filename}
         """
         # write
-        gsl.vector_printf(self.data, filename.path, '%'+format)
+        gsl.vector_printf(self.data, filename.path, '%'+format+'e')
         # and return
         return self
 
