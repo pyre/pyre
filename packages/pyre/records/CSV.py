@@ -78,6 +78,41 @@ class CSV:
         return
 
 
+    def write(self, sheet, uri=None, stream=None, **kwds):
+        """
+        Read lines from a csv formatted input source
+
+        The argument {sheet} is expected to be a subclass of {pyre.records.Record}. It will be
+        inspected to extract the names of the columns to save.
+
+        If {uri} is not None, it will be opened for writing in the manner recommended by the
+        {csv} package; if {stream} is given instead, it will be passed directly to the {csv}
+        package
+        """
+        # if the user did not explicitly specify an output stream
+        if stream is None:
+            # if no {uri} was provided
+            if uri is None:
+                # form one from the name of the sheet
+                uri = sheet.pyre_name + '.csv'
+            # build the associated stream
+            stream = open(uri, 'w', newline='')
+
+        # access the package
+        import csv
+        # build a writer
+        writer = csv.writer(stream, **kwds)
+        # save the headers
+        writer.writerow(field.name for field in sheet.pyre_fields)
+        # go through the data
+        for record in sheet:
+            # write each one
+            writer.writerow(record)
+
+        # all done
+        return
+
+
     # exceptions
     from .exceptions import SourceSpecificationError
 
