@@ -61,12 +61,22 @@ class Sheet(records.record, metaclass=Tabulator):
         """
         # get my dataset
         dataset = self.pyre_data
-        # compute the collation number of this record
-        rank = len(dataset)
         # add the record to the dataset
         dataset.append(row)
         # all done
         return self
+
+
+    def pyre_new(self):
+        """
+        Create a new blank mutable record instance and add it to my data set
+        """
+        # ask my record to build one
+        record = super().pyre_mutable()
+        # add it to the pile
+        self.pyre_append(record)
+        # and hand it to the caller
+        return record
 
 
     @classmethod
