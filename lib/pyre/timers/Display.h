@@ -32,24 +32,24 @@ namespace pyre {
 class pyre::timers::Display {
     // types
 public:
-    typedef std::string name_t;
-    typedef Timer timer_t;
-    typedef pyre::patterns::Registrar<timer_t> index_t;
+    using timer_t = Timer;
+    using index_t = pyre::patterns::Registrar<timer_t>;
+    using name_t = std::string;
 
     // interface
 public:
-    inline name_t name() const;
+    inline auto name() const;
     // start a timer
-    inline Display & start();
+    inline auto start() -> Display & ;
     // stop a timer
-    inline Display & stop();
+    inline auto stop() -> Display & ;
     // zero out a timer
-    inline Display & reset();
+    inline auto reset() -> Display & ;
 
     // take a reading in seconds from a *running* timer
-    inline double lap();
+    inline auto lap();
     // get the number of seconds accumulated by a *stopped* timer
-    inline double read();
+    inline auto read();
 
     // locate a timer given its name
     static timer_t & retrieveTimer(name_t name);
@@ -59,14 +59,11 @@ public:
     virtual ~Display();
     inline Display(name_t name);
 
+    // implementation details
     // data members
 private:
     timer_t & _timer;
-
     static index_t _index;
-
-    // implementation details
-private:
 };
 
 // get the inline definitions

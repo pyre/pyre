@@ -11,36 +11,45 @@
 #else
 
 // interface
-pyre::timers::Display::name_t pyre::timers::Display::name() const {
+auto pyre::timers::Display::name() const {
+    // ask the timer for its name and return it
     return _timer.name();
 }
 
-pyre::timers::Display & pyre::timers::Display::start() {
+auto pyre::timers::Display::start() -> Display & {
+    // start the timer
     _timer.start();
+    // all done
     return *this;
 }
 
-pyre::timers::Display & pyre::timers::Display::stop() {
+auto pyre::timers::Display::stop() -> Display & {
+    // stop the timer
     _timer.stop();
+    // all done
     return *this;
 }
 
-pyre::timers::Display & pyre::timers::Display::reset() {
+auto pyre::timers::Display::reset() -> Display & {
+    // reset the timer
     _timer.reset();
+    // all done
     return *this;
 }
 
-double pyre::timers::Display::lap() {
+auto pyre::timers::Display::lap() {
+    // ask the timer
     return _timer.lap();
 }
 
-double pyre::timers::Display::read() {
+auto pyre::timers::Display::read() {
+    // ask the timer
     return _timer.read();
 }
 
 // constructor
 pyre::timers::Display::Display(name_t name) :
-    _timer(retrieveTimer(name)) {
+    _timer {retrieveTimer(name)} {
 }
 
 #endif
