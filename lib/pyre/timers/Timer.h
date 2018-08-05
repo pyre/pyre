@@ -20,9 +20,9 @@ namespace pyre {
 #include <string>
 
 // get platform specific clock type
-#if defined(__config_platform_darwin)
+#if defined(mm_platforms_darwin) || defined(__config_platform_darwin)
 #include "mach/Clock.h"
-#elif defined(__config_platform_linux)
+#elif defined(mm_platforms_linux) || defined(__config_platform_linux)
 #include <pyre/algebra/BCD.h>
 #include "posix/Clock.h"
 #else
@@ -34,20 +34,20 @@ namespace pyre {
 class pyre::timers::Timer {
     //typedefs
 public:
-    typedef Clock clock_t;
-    typedef std::string name_t;
-    typedef Timer timer_t;
+    using clock_t = Clock;
+    using timer_t = Timer;
+    using name_t = std::string;
 
     // interface
 public:
-    inline name_t name() const;
+    inline auto name() const -> name_t;
 
-    inline void start();
-    inline void stop();
-    inline void reset();
+    inline auto start() -> Timer &;
+    inline auto stop() -> Timer &;
+    inline auto reset() -> Timer &;
 
-    inline double lap();  // read the elapsed time
-    inline double read(); // return the accumulated time
+    inline auto lap();  // read the elapsed time
+    inline auto read(); // return the accumulated time
 
     // meta methods
 public:
@@ -64,8 +64,8 @@ private:
 
     // disable these
 private:
-    Timer(const Timer &);
-    const timer_t & operator= (const timer_t &);
+    Timer(const Timer &) = delete;
+    const timer_t & operator= (const timer_t &) = delete;
 };
 
 // get the inline definitions
