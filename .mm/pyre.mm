@@ -18,8 +18,17 @@ pyre.extensions := journal.ext host.ext timers.ext mpi.ext
 # and test suites
 pyre.tests := mpi.tst.libmpi # pyre.tst.pyre pyre.tst.libpyre
 
+# if we have {cuda}, add it to the pile
+${if ${findstring cuda,$(extern.available)},\
+    ${eval pyre.packages += cuda.pkg} \
+    ${eval pyre.extensions += cuda.ext} \
+    ${eval cuda.libraries += cudart} \
+,}
+
 # if we have {libpq}, add it to the pile
-${if ${findstring libpq,$(extern.available)}, ${eval pyre.extensions += postgres.ext}}
+${if ${findstring libpq,$(extern.available)}, \
+    ${eval pyre.extensions += postgres.ext} \
+,}
 
 # the pyre meta-data
 pyre.pkg.root := packages/pyre/
@@ -83,6 +92,21 @@ timers.ext.wraps := pyre.lib
 timers.ext.extern := pyre.lib journal.lib python
 timers.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 timers.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
+
+# cuda
+# the package
+cuda.pkg.root := packages/cuda/
+cuda.pkg.stem := cuda
+cuda.pkg.meta :=
+cuda.pkg.ext :=
+# the extension
+cuda.ext.root := extensions/cuda/
+cuda.ext.stem := cuda
+cuda.ext.pkg := cuda.pkg
+cuda.ext.wraps :=
+cuda.ext.extern := pyre.lib journal.lib cuda mpi python
+cuda.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+cuda.ext.lib.prerequisites += journal.lib pyre.lib # gsl.lib is added automatically
 
 # mpi
 # the package
