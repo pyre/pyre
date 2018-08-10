@@ -12,15 +12,14 @@
 // my header
 #include "Display.h"
 
-// quick access to my namespace
-using namespace pyre::timers;
-
 // the map
-Display::index_t Display::_index;
+pyre::timers::Display::index_t pyre::timers::Display::_index;
 
 
 // lookup a timer in the index and return it
-Display::timer_t & Display::retrieveTimer(name_t name) {
+pyre::timers::Display::timer_t &
+pyre::timers::Display::
+retrieveTimer(name_t name) {
     //
     // lookup {name} in the {_index} and return the associated timer
     // if not found, create a new one and index it under {name}
@@ -45,6 +44,7 @@ Display::timer_t & Display::retrieveTimer(name_t name) {
 
 
 // destructor
-Display::~Display() {}
+pyre::timers::Display::
+~Display() {}
 
 // end of file

@@ -19,6 +19,9 @@ namespace pyre {
 
             // the capsule tag
             const char * const timerCapsuleName = "pyre.timers.timer";
+
+            // local alias for the timer type
+            using timer_t = pyre::timer_t::timer_t;
         } // of namespace timers
     } // of namespace extensions
 } // of namespace pyre
@@ -31,12 +34,15 @@ PyObject * pyre::extensions::timers::newTimer(PyObject *, PyObject * args)
     const char * name;
     // extract the arguments
     if (!PyArg_ParseTuple(args, "s:newTimer", &name)) {
-        return 0;
+        // and bail if something went wrong
+        return nullptr;
     }
+
     // access the timer
-    pyre::timer_t::timer_t * timer = & pyre::timer_t::retrieveTimer(name);
+    timer_t * timer = & pyre::timer_t::retrieveTimer(name);
+
     // encapsulate it
-    PyObject * capsule = PyCapsule_New(timer, timerCapsuleName, 0);
+    PyObject * capsule = PyCapsule_New(timer, timerCapsuleName, nullptr);
     // and return the capsule
     return capsule;
 }
@@ -48,18 +54,24 @@ PyObject * pyre::extensions::timers::start(PyObject *, PyObject * args)
     PyObject * capsule;
     // extract the arguments
     if (!PyArg_ParseTuple(args, "O!:start", &PyCapsule_Type, &capsule)) {
-        return 0;
+        // and bail if something went wrong
+        return nullptr;
     }
-    // bail if the capsule is invalid
+
+    // if the capsule is invalid
     if (!PyCapsule_IsValid(capsule, timerCapsuleName)) {
-        return 0;
+        // bail
+        return nullptr;
     }
-    // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer
-        = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
+
+    // cast it to a {timer_t}
+    timer_t * timer =
+        reinterpret_cast<timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
+
     // start the timer
     timer->start();
-    // and return None
+
+    // all done
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -71,18 +83,23 @@ PyObject * pyre::extensions::timers::stop(PyObject *, PyObject * args)
     PyObject * capsule;
     // extract the arguments
     if (!PyArg_ParseTuple(args, "O!:start", &PyCapsule_Type, &capsule)) {
-        return 0;
+        return nullptr;
     }
-    // bail if the capsule is invalid
+
+    // if the capsule is invalid
     if (!PyCapsule_IsValid(capsule, timerCapsuleName)) {
-        return 0;
+        // bail
+        return nullptr;
     }
-    // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer
-        = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
-    // start the timer
+
+    // cast it to a {timer_t}
+    timer_t * timer
+        = reinterpret_cast<timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
+
+    // stop the timer
     timer->stop();
-    // and return None
+
+    // all done
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -94,18 +111,23 @@ PyObject * pyre::extensions::timers::reset(PyObject *, PyObject * args)
     PyObject * capsule;
     // extract the arguments
     if (!PyArg_ParseTuple(args, "O!:start", &PyCapsule_Type, &capsule)) {
-        return 0;
+        // and bail if something went wrong
+        return nullptr;
     }
-    // bail if the capsule is invalid
+
+    // if the capsule is invalid
     if (!PyCapsule_IsValid(capsule, timerCapsuleName)) {
-        return 0;
+        // bail
+        return nullptr;
     }
-    // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer
-        = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
-    // stop the timer
+    // cast it to a {timer_t}
+    timer_t * timer
+        = reinterpret_cast<timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
+
+    // reset the timer
     timer->reset();
-    // and return None
+
+    // all done
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -117,17 +139,22 @@ PyObject * pyre::extensions::timers::read(PyObject *, PyObject * args)
     PyObject * capsule;
     // extract the arguments
     if (!PyArg_ParseTuple(args, "O!:start", &PyCapsule_Type, &capsule)) {
-        return 0;
+        // if something went wrong, bail
+        return nullptr;
     }
-    // bail if the capsule is invalid
+
+    // if the capsule is invalid
     if (!PyCapsule_IsValid(capsule, timerCapsuleName)) {
-        return 0;
+        // bail
+        return nullptr;
     }
-    // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer
-        = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
-    // start the timer
+    // cast it to a Ptimer_t}
+    timer_t * timer =
+        reinterpret_cast<timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
+
+    // read the timer
     double elapsed = timer->read();
+
     // and return the time elapsed
     return Py_BuildValue("d", elapsed);
 }
@@ -139,18 +166,24 @@ PyObject * pyre::extensions::timers::lap(PyObject *, PyObject * args)
     PyObject * capsule;
     // extract the arguments
     if (!PyArg_ParseTuple(args, "O!:start", &PyCapsule_Type, &capsule)) {
-        return 0;
+        // if something went wrong, bail
+        return nullptr;
     }
-    // bail if the capsule is invalid
+
+    // if the capsule is invalid
     if (!PyCapsule_IsValid(capsule, timerCapsuleName)) {
-        return 0;
+        // bail
+        return nullptr;
     }
+
     // cast it to a Timer pointer
-    pyre::timer_t::timer_t * timer
-        = static_cast<pyre::timer_t::timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
-    // reset the timer
+    timer_t * timer
+        = reinterpret_cast<timer_t *>(PyCapsule_GetPointer(capsule, timerCapsuleName));
+
+    // compute the elapsed time
     double elapsed = timer->lap();
-    // and return the time elapsed
+
+    // and return it
     return Py_BuildValue("d", elapsed);
 }
 
