@@ -25,6 +25,12 @@ ${if ${findstring cuda,$(extern.available)},\
     ${eval cuda.libraries += cudart} \
 ,}
 
+# if we have {gsl}, add it to the pile
+${if ${findstring gsl,$(extern.available)},\
+    ${eval pyre.packages += gsl.pkg} \
+    ${eval pyre.extensions += gsl.ext} \
+,}
+
 # if we have {libpq}, add it to the pile
 ${if ${findstring libpq,$(extern.available)}, \
     ${eval pyre.extensions += postgres.ext} \
@@ -56,6 +62,7 @@ journal.ext.root := extensions/journal/
 journal.ext.stem := journal
 journal.ext.pkg := journal.pkg
 journal.ext.wraps := journal.lib
+journal.ext.capsule :=
 journal.ext.extern := journal.lib python
 journal.ext.lib.c++.defines += PYRE_CORE
 journal.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
@@ -73,6 +80,7 @@ host.ext.root := extensions/host/
 host.ext.stem := host
 host.ext.pkg := pyre.pkg
 host.ext.wraps := pyre.lib
+host.ext.capsule :=
 host.ext.extern := pyre.lib journal.lib python
 host.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
@@ -81,6 +89,7 @@ postgres.ext.root := extensions/postgres/
 postgres.ext.stem := postgres
 postgres.ext.pkg := pyre.pkg
 postgres.ext.wraps := pyre.lib
+postgres.ext.capsule :=
 postgres.ext.extern := pyre.lib journal.lib libpq python
 postgres.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
@@ -89,6 +98,7 @@ timers.ext.root := extensions/timers/
 timers.ext.stem := timers
 timers.ext.pkg := pyre.pkg
 timers.ext.wraps := pyre.lib
+timers.ext.capsule :=
 timers.ext.extern := pyre.lib journal.lib python
 timers.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 timers.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
@@ -104,9 +114,29 @@ cuda.ext.root := extensions/cuda/
 cuda.ext.stem := cuda
 cuda.ext.pkg := cuda.pkg
 cuda.ext.wraps :=
+cuda.ext.capsule :=
 cuda.ext.extern := pyre.lib journal.lib cuda mpi python
 cuda.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 cuda.ext.lib.prerequisites += journal.lib pyre.lib # gsl.lib is added automatically
+
+# gsl
+# the package
+gsl.pkg.root := packages/gsl/
+gsl.pkg.stem := gsl
+gsl.pkg.meta :=
+gsl.pkg.ext :=
+# the extension
+gsl.ext.root := extensions/gsl/
+gsl.ext.stem := gsl
+gsl.ext.pkg := gsl.pkg
+gsl.ext.wraps :=
+gsl.ext.extern := pyre.lib journal.lib mpi.lib gsl mpi python
+gsl.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+gsl.ext.lib.prerequisites += journal.lib pyre.lib mpi.lib # gsl.lib is added automatically
+# the tests
+gsl.tst.pkg.stem := gsl
+gsl.tst.pkg.prerequisites := gsl.ext
+gsl.tst.pkg.root := tests/gsl/
 
 # mpi
 # the package
