@@ -130,9 +130,10 @@ gsl.ext.root := extensions/gsl/
 gsl.ext.stem := gsl
 gsl.ext.pkg := gsl.pkg
 gsl.ext.wraps :=
+gsl.ext.capsule.destination := pyre/gsl/
 gsl.ext.extern := pyre.lib journal.lib mpi.lib gsl mpi python
 gsl.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
-gsl.ext.lib.prerequisites += journal.lib pyre.lib mpi.lib # gsl.lib is added automatically
+gsl.ext.lib.prerequisites += journal.lib pyre.lib mpi.ext # gsl.lib is added automatically
 # the tests
 gsl.tst.pkg.stem := gsl
 gsl.tst.pkg.prerequisites := gsl.ext
