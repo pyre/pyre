@@ -36,6 +36,10 @@ namespace pyre {
                 // license
                 { license__name__, license, METH_VARARGS, license__doc__ },
 
+                // registration
+                { registerExceptions__name__,
+                  registerExceptions, METH_VARARGS, registerExceptions__doc__ },
+
                 // device discovery and other administrative tasks
                 // discover
                 { discover__name__, discover, METH_VARARGS, discover__doc__ },
@@ -89,9 +93,6 @@ PyInit_cuda()
         return 0;
     }
 #endif
-
-    // otherwise, we are good to go; register the module exceptions
-    pyre::extensions::cuda::registerExceptionHierarchy(module);
 
     // and return the newly created module
     return module;

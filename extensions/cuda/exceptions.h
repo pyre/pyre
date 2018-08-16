@@ -14,12 +14,13 @@ namespace pyre {
     namespace extensions {
         namespace cuda {
 
-            // exception registration
-            PyObject * registerExceptionHierarchy(PyObject *);
-
-            // base class for cuda errors
+            // exceptions
             extern PyObject * Error;
-            extern const char * const Error__name__;
+
+            // exception registration
+            extern const char * const registerExceptions__name__;
+            extern const char * const registerExceptions__doc__;
+            PyObject * registerExceptions(PyObject *, PyObject *);
 
         } // of namespace cuda
     } // of namespace extensions

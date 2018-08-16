@@ -12,28 +12,44 @@
 // my declarations
 #include "exceptions.h"
 
+// allocate the global objects
+namespace pyre {
+    namespace extensions {
+        namespace cuda {
+            PyObject * Error = nullptr;
+        } // of namespace cuda
+    } // of namespace extensions
+} // of namespace pyre
 
-// the definition of the exception class
-PyObject * pyre::extensions::cuda::Error = 0;
-const char * const pyre::extensions::cuda::Error__name__ = "Error";
 
 // exception registration
-PyObject * pyre::extensions::cuda::registerExceptionHierarchy(PyObject * module) {
+const char * const
+pyre::extensions::cuda::
+registerExceptions__name__ = "registerExceptions";
 
-    std::string stem = "cuda.";
+const char * const
+pyre::extensions::cuda::
+registerExceptions__doc__ =
+    "register the classes that represent the standard exceptions raised by CUDA";
 
-    // the base class
-    // build its name
-    std::string errorName = stem + Error__name__;
-    // and the exception object
-    Error = PyErr_NewException(errorName.c_str(), 0, 0);
-    // increment its reference count so we can pass ownership to the module
-    Py_INCREF(Error);
-    // register it with the module
-    PyModule_AddObject(module, Error__name__, Error);
+PyObject *
+pyre::extensions::cuda::
+registerExceptions(PyObject * module, PyObject * args)
+{
+
+    // unpack the arguments
+    PyObject * exceptions;
+    if (!PyArg_ParseTuple(args, "O!:registerExceptions", &PyModule_Type, &exceptions)) {
+        return nullptr;
+    }
+
+    // register the base class
+    Error = PyObject_GetAttrString(exceptions, "Error");
+    PyModule_AddObject(module, "Error", Error);
 
     // and return the module
-    return module;
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 // end of file
