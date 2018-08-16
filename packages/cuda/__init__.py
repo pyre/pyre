@@ -27,6 +27,13 @@ version = cuda.version
 copyright = cuda.copyright
 def license() : print(cuda.license())
 
+
+# get the exceptions
+from . import exceptions
+# register the exceptions with the extension module
+cuda.registerExceptions(exceptions)
+
+
 # build the device manager
 from .DeviceManager import DeviceManager
 manager = DeviceManager()
