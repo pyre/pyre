@@ -29,7 +29,7 @@ setDevice(PyObject *, PyObject *args)
     // allocate storage for the arguments
     int did;
     // if I were not passed the expected arguments
-    if (!PyArg_ParseTuple(args, "k:setDevice", &PyType_Type, &did)) {
+    if (!PyArg_ParseTuple(args, "i:setDevice", &did)) {
         // raise an exception
         return nullptr;
     }
