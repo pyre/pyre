@@ -17,6 +17,9 @@
 // boilerplate
 #include "metadata.h"
 #include "exceptions.h"
+
+// device management
+#include "device.h"
 // the module method declarations
 #include "discover.h"
 
@@ -39,6 +42,10 @@ namespace pyre {
                 // registration
                 { registerExceptions__name__,
                   registerExceptions, METH_VARARGS, registerExceptions__doc__ },
+
+                // device management
+                { setDevice__name__, setDevice, METH_VARARGS, setDevice__doc__ },
+                { resetDevice__name__, resetDevice, METH_VARARGS, resetDevice__doc__ },
 
                 // device discovery and other administrative tasks
                 // discover

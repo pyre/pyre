@@ -21,6 +21,7 @@ PROJ_TMPDIR = $(BLD_TMPDIR)/extensions/$(PROJECT)
 PROJ_LIBRARIES = -ljournal
 # the sources
 PROJ_SRCS = \
+    device.cc \
     discover.cc \
     exceptions.cc \
     metadata.cc
