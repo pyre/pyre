@@ -37,6 +37,7 @@ EXPORT_PYTHON_MODULES = \
     Set.py \
     String.py \
     Time.py \
+    Timestamp.py \
     Tuple.py \
     Typed.py \
     URI.py \

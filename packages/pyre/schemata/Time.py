@@ -20,7 +20,7 @@ class Time(Schema):
 
 
     # constants
-    format = "%Y-%m-%d %H:%M:%S" # the default format
+    format = "%H:%M:%S" # the default format
     typename = 'time' # the name of my type
     complaint = 'could not coerce {0.value!r} into a time'
 
@@ -30,15 +30,32 @@ class Time(Schema):
         """
         Attempt to convert {value} into a timestamp
         """
-        # perhaps {value} is already a {datetime} instance
-        if isinstance(value, datetime.datetime):
+        # perhaps {value} is already a {time} instance
+        if isinstance(value, datetime.time):
             # in which case just return it
             return value
+        # it might be a {datetime} instance
+        if isinstance(value, datetime.datetime):
+            # in which case extract a time object from it
+            return value.timetz()
+
+        # the rest assumes that {value} is a string; attempt
+        try:
+            # to strip the value
+            value = value.strip()
+        # if this fails
+        except AttributeError:
+            # complain
+            raise self.CastingError(value=value, description=self.complaint)
+        # if there is nothing left
+        if not value:
+            # bail
+            return None
 
         # attempt to
         try:
-            # assume it is a string; strip it and covert it
-            return datetime.datetime.strptime(value.strip(), self.format)
+            # assume it is a string; strip it and convert it
+            return datetime.datetime.strptime(value, self.format).time()
         # if anything goes wrong
         except Exception as error:
             # complain

@@ -16,19 +16,19 @@ def test():
     import pyre.schemata
 
     # create a descriptor
-    time = pyre.schemata.time()
+    time = pyre.schemata.timestamp()
 
     # casts are not implemented yet
-    magic = time.coerce('13:30:00')
+    magic = time.coerce('1992-12-21 13:30:00')
     # check
     assert magic.hour == 13
     assert magic.minute == 30
     assert magic.second == 0
 
     # now one with a different input format
-    time = pyre.schemata.time(format='%H|%M|%S')
+    time = pyre.schemata.time(format='%Y/%m/%d %H|%M|%S')
     # try again
-    magic = time.coerce(value='13|30|00')
+    magic = time.coerce(value='1992/12/21 13|30|00')
     # check
     assert magic.hour == 13
     assert magic.minute == 30

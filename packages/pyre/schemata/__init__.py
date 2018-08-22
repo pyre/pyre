@@ -23,6 +23,7 @@ from .Date import Date as date
 from .Dimensional import Dimensional as dimensional
 from .Path import Path as path
 from .Time import Time as time
+from .Timestamp import Timestamp as timestamp
 from .URI import URI as uri
 
 # containers
@@ -45,7 +46,7 @@ from .EnvPath import EnvPath as envpath
 
 # put the schemata in piles
 basic = (identity, bool, complex, decimal, float, fraction, inet, int, str)
-composite = (date, dimensional, path, time, uri)
+composite = (date, dimensional, path, time, timestamp, uri)
 containers = (sequence, array, list, set, tuple, mapping, catalog)
 meta = (istream, ostream, envvar, envpath)
 # all of them

@@ -13,33 +13,27 @@ from .Schema import Schema
 
 
 # my declaration
-class Date(Schema):
+class Timestamp(Schema):
     """
-    A type declarator for dates
+    A type declarator for timestamps
     """
 
 
     # constants
-    format = "%Y-%m-%d" # the default date format
-    typename = 'date' # the name of my type
+    format = "%Y-%m-%d %H:%M:%S" # the default format
+    typename = 'time' # the name of my type
+    complaint = 'could not coerce {0.value!r} into a time'
 
 
     # interface
     def coerce(self, value, **kwds):
         """
-        Attempt to convert {value} into a date
+        Attempt to convert {value} into a timestamp
         """
-        # treat false values as uninitialized
-        if not value: return None
-
-        # check whether {value} is already a {date} instance
-        if isinstance(value, datetime.date):
-            # in which case we are done
-            return value
-        # perhaps it is a {datetime} instance
+        # perhaps {value} is already a {datetime} instance
         if isinstance(value, datetime.datetime):
-            # in which case extract its date component
-            return value.date()
+            # in which case just return it
+            return value
 
         # the rest assumes that {value} is a string; attempt
         try:
@@ -56,12 +50,12 @@ class Date(Schema):
 
         # attempt to
         try:
-            # cast it into a date
-            return datetime.datetime.strptime(value, self.format).date()
-        # if this fails
-        except (AttributeError, TypeError, ValueError) as error:
+            # assume it is a string; strip it and covert it
+            return datetime.datetime.strptime(value, self.format)
+        # if anything goes wrong
+        except Exception as error:
             # complain
-            raise self.CastingError(value=value, description=str(error))
+            raise self.CastingError(value=value, description=self.complaint)
 
 
     def string(self, value):
@@ -83,7 +77,7 @@ class Date(Schema):
 
 
     # meta-methods
-    def __init__(self, default=datetime.date.today(), format=format, **kwds):
+    def __init__(self, default=datetime.datetime.today(), format=format, **kwds):
         # chain up with my default
         super().__init__(default=default, **kwds)
         # store the format

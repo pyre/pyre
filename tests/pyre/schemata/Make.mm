@@ -38,6 +38,7 @@ types:
 	${PYTHON} ./sets.py
 	${PYTHON} ./strings.py
 	${PYTHON} ./times.py
+	${PYTHON} ./timestamps.py
 	${PYTHON} ./tuples.py
 	${PYTHON} ./uris.py
 
