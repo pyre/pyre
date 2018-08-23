@@ -21,7 +21,7 @@ class Timestamp(Schema):
 
     # constants
     format = "%Y-%m-%d %H:%M:%S" # the default format
-    typename = 'time' # the name of my type
+    typename = 'timestamp' # the name of my type
     complaint = 'could not coerce {0.value!r} into a time'
 
 
