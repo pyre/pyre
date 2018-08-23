@@ -38,6 +38,7 @@ date = descriptor.date
 dimensional = descriptor.dimensional
 path = descriptor.path
 time = descriptor.time
+timestamp = descriptor.timestamp
 uri = descriptor.uri
 
 # containers

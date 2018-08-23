@@ -35,6 +35,7 @@ complex:
 	${PYTHON} ./dimensionals.py
 	${PYTHON} ./paths.py
 	${PYTHON} ./times.py
+	${PYTHON} ./timestamps.py
 	${PYTHON} ./uris.py
 
 containers:
