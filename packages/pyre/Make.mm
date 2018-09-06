@@ -27,6 +27,7 @@ RECURSE_DIRS = \
     framework \
     geometry \
     grid \
+    handbook \
     http \
     ipc \
     nexus \
