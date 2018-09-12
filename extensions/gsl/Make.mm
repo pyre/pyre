@@ -33,6 +33,7 @@ PROJ_SRCS = \
     permutation.cc \
     rng.cc \
     vector.cc \
+    stats.cc \
 
 # optional mpi support
 ifneq ($(strip $(MPI_DIR)), )
