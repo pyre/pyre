@@ -3,6 +3,9 @@
 /.bzr
 *~
 
+# machine-dependent config
+/.mm/config.def
+
 # the default build locations
 /builds
 /products
