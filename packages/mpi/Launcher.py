@@ -27,6 +27,7 @@ class Launcher(Script, family="mpi.shells.mpirun"):
     hosts.doc = "the number of hosts in the parallel machine"
 
     tasks = pyre.properties.int()
+    tasks.default = pyre.executive.host.cpus.cores
     tasks.doc = "the number of mpi tasks per host; defaults to the number of cores"
 
     hostfile = pyre.properties.path()
@@ -48,17 +49,25 @@ class Launcher(Script, family="mpi.shells.mpirun"):
 
     # interface
     @pyre.export
-    def launch(self, *args, **kwds):
+    def launch(self, application, *args, **kwds):
         """
         Launch {application} as a collection of mpi tasks
         """
         # if we are auto-spawning
         if self.auto:
-            # do it
-            return self.spawn(*args, **kwds)
+            # first, attempt to
+            try:
+                # give the application an opportunity to inspect the machine layout
+                application.pyre_mpi(*args, **kwds)
+            # if it doesn't know how or doesn't care
+            except AttributeError:
+                # no worries
+                pass
+            # invoke the launcher
+            return self.spawn(application=application, *args, **kwds)
 
         # otherwise, just launch the application
-        return self.parallel(*args, **kwds)
+        return self.parallel(application=application, *args, **kwds)
 
 
     # launching hooks; subclasses may override this to get finer control over the two launching
@@ -72,7 +81,9 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         import mpi
         # and try to initialize it
         if mpi.init():
-            # if all goes well, launch the application and return its exit code
+            # if all goes well, grant access to the global communicator
+            self.world = mpi.world
+            # launch the application and return its exit code
             return super().launch(*args, **kwds)
 
         # if something went wrong, get the journal
@@ -128,10 +139,8 @@ class Launcher(Script, family="mpi.shells.mpirun"):
 
         # start building the command line for the subprocess
         argv = [ launcher ]
-        # if the user specified the number of tasks
-        if tasks:
-            # build the corresponding arguments
-            argv += [ "-n", str(hosts * tasks) ]
+        # build the corresponding arguments
+        argv += [ "-n", str(hosts * tasks) ]
         # if the user supplied a host file
         if hostfile:
             # add it to the pile
@@ -144,11 +153,18 @@ class Launcher(Script, family="mpi.shells.mpirun"):
         argv += [ interpreter ]
         # and the entire original command line
         argv += sys.argv
+        # be explicit about the machine layout, in case the application made changes
+        argv += [ f"--shell.hosts={hosts}", f"--shell.tasks={tasks}" ]
         # prevent auto-spawning next time around
         argv += [ f"--shell.auto=no" ]
 
         # all done
         return argv
+
+
+    # easy access to the global communicator; not available until after the launcher has
+    # spawned the parallel program
+    world = None
 
 
 # end of file
