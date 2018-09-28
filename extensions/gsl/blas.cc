@@ -734,6 +734,63 @@ gsl::blas::dgemm(PyObject *, PyObject * args) {
 }
 
 
+// blas::dsymm
+const char * const gsl::blas::dsymm__name__ = "blas_dsymm";
+const char * const gsl::blas::dsymm__doc__ = "compute C = a A B  + b C where A is symmetric";
+
+PyObject *
+gsl::blas::dsymm(PyObject *, PyObject * args) {
+    // the arguments
+    int side, UploA;
+    double a, b;
+    PyObject * Ac;
+    PyObject * Bc;
+    PyObject * Cc;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "iidO!O!dO!:blas_dsymm",
+                                  &side, &UploA,
+                                  &a,
+                                  &PyCapsule_Type, &Ac,
+                                  &PyCapsule_Type, &Bc,
+                                  &b,
+                                  &PyCapsule_Type, &Cc);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the two capsules are not valid
+    if (!PyCapsule_IsValid(Ac, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the fourth argument must be a matrix");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(Bc, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the fifth argument must be a matrix");
+        return 0;
+    }
+    if (!PyCapsule_IsValid(Cc, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the seventh argument must be a matrix");
+        return 0;
+    }
+
+    // decode the enum
+    CBLAS_SIDE_t cside = side ? CblasRight : CblasLeft;
+    CBLAS_UPLO_t cuplo = UploA ? CblasUpper : CblasLower;
+
+
+    // get the matrices
+    gsl_matrix * A = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Ac, gsl::matrix::capsule_t));
+    gsl_matrix * B = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Bc, gsl::matrix::capsule_t));
+    gsl_matrix * C = static_cast<gsl_matrix *>(PyCapsule_GetPointer(Cc, gsl::matrix::capsule_t));
+
+    // compute the form
+    gsl_blas_dsymm(cside, cuplo, a, A, B, b, C);
+
+    // and return
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+
 // blas::dtrmm
 const char * const gsl::blas::dtrmm__name__ = "blas_dtrmm";
 const char * const gsl::blas::dtrmm__doc__ = "compute B = a op(A) B";
