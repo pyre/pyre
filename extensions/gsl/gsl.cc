@@ -64,6 +64,7 @@ namespace gsl {
         { blas::dsyr__name__, blas::dsyr, METH_VARARGS, blas::dsyr__doc__ },
         // blas - level 3
         { blas::dgemm__name__, blas::dgemm, METH_VARARGS, blas::dgemm__doc__ },
+        { blas::dsymm__name__, blas::dsymm, METH_VARARGS, blas::dsymm__doc__ },
         { blas::dtrmm__name__, blas::dtrmm, METH_VARARGS, blas::dtrmm__doc__ },
 
         // histograms
