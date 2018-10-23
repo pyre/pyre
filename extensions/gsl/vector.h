@@ -128,6 +128,11 @@ namespace gsl {
         extern const char * const scale__doc__;
         PyObject * scale(PyObject *, PyObject *);
 
+        // vector_dataptr
+        extern const char * const dataptr__name__;
+        extern const char * const dataptr__doc__;
+        PyObject * dataptr(PyObject *, PyObject *);
+    
         // statistics
         // vector_sort
         extern const char * const sort__name__;

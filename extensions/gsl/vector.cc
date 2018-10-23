@@ -869,6 +869,33 @@ gsl::vector::scale(PyObject *, PyObject * args) {
 }
 
 
+const char * const gsl::vector::dataptr__name__ = "vector_dataptr";
+const char * const gsl::vector::dataptr__doc__ = "return data pointer of vector";
+
+PyObject *
+gsl::vector::dataptr(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * self;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!:vector_dataptr",
+                                  &PyCapsule_Type, &self);
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(self, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v = static_cast<gsl_vector *>(PyCapsule_GetPointer(self, capsule_t));
+    
+    // return the pointer address
+    PyObject * result = PyLong_FromVoidPtr((void *)v->data);
+    return result;
+}
+
 // statistics
 // sort
 const char * const gsl::vector::sort__name__ = "vector_sort";

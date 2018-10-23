@@ -153,6 +153,11 @@ namespace gsl {
         extern const char * const scale__doc__;
         PyObject * scale(PyObject *, PyObject *);
 
+        // matrix_dataptr
+        extern const char * const dataptr__name__;
+        extern const char * const dataptr__doc__;
+        PyObject * dataptr(PyObject *, PyObject *);
+        
         // matrix_eigen_symmetric
         extern const char * const eigen_symmetric__name__;
         extern const char * const eigen_symmetric__doc__;
