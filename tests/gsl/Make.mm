@@ -13,7 +13,7 @@ PROJECT = gsl
 
 all: test
 
-test: sanity rng pdf vectors matrices blas linalg mpi
+test: sanity rng pdf vectors matrices blas linalg stats mpi
 
 sanity:
 	${PYTHON} ./sanity.py
@@ -92,10 +92,15 @@ blas:
 	${PYTHON} ./blas_dtrsv.py
 	${PYTHON} ./blas_dsymv.py
 	${PYTHON} ./blas_dgemm.py
+    ${PYTHON} ./blas_dsymm.py
 	${PYTHON} ./blas_dtrmm.py
 
 linalg:
 	${PYTHON} ./linalg_LU.py
+    
+stats:
+	${PYTHON} ./stats_correlation.py
+    ${PYTHON} ./stats_covariance.py
 
 # do I have mpi?
 MPI_DIR=

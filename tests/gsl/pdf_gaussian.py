@@ -18,20 +18,21 @@ def test():
     # access the package
     import gsl
 
-    # the σ of the distribution
+    # the σ, mean of the distribution
     σ = 2
+    mean = 1
     # build a random number generator
     rng = gsl.rng()
     # build a gaussian distribution
-    gaussian = gsl.pdf.gaussian(sigma=σ, rng=rng)
+    gaussian = gsl.pdf.gaussian(mean=mean, sigma=σ, rng=rng)
 
     # sample it
     sample = gaussian.sample()
 
     # compute the density
-    x = 0
+    x = mean
     density = gaussian.density(x)
-    assert density == 1/sqrt(2*pi*σ**2) * exp(-x**2/ (2*σ**2))
+    assert density == 1/sqrt(2*pi*σ**2) * exp(-(x-mean)**2/ (2*σ**2))
 
     # make a vector
     v = gsl.vector(1000)
