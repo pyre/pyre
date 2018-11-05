@@ -19,7 +19,6 @@ LAYOUT_TESTS = \
     packing-fortran \
     packing-access \
     slice \
-    iterator \
     iterator-access \
     iterator-loop \
     iterator-slice \
@@ -39,6 +38,7 @@ GRID_TESTS = \
     grid-mosaic \
     grid-scan \
     grid-transform \
+    grid-view-assignment \
 
 all: test clean
 
