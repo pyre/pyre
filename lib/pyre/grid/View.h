@@ -10,8 +10,6 @@
 #if !defined(pyre_grid_View_h)
 #define pyre_grid_View_h
 
-#include <iostream>
-
 
 // declaration
 template <typename gridT>
