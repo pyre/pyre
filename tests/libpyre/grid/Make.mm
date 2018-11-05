@@ -19,6 +19,7 @@ LAYOUT_TESTS = \
     packing-fortran \
     packing-access \
     slice \
+    iterator \
     iterator-access \
     iterator-loop \
     iterator-slice \
