@@ -21,7 +21,6 @@ public:
     // and some of its parts
     using layout_type = typename grid_type::layout_type;
     using slice_type = typename grid_type::slice_type;
-    using index_type = typename grid_type::index_type;
     // my iterator
     using iterator_type = GridIterator<grid_type>;
 
