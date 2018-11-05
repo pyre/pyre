@@ -18,7 +18,7 @@ def test():
     # make a matrix
     m = gsl.matrix(shape=(100,50))
     # fill it with random values
-    m.random(pdf=gsl.pdf.gaussian(sigma=2, rng=gsl.rng()))
+    m.random(pdf=gsl.pdf.gaussian(mean=0.0, sigma=2, rng=gsl.rng()))
 
     # rows
     i = 3
