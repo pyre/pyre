@@ -62,10 +62,13 @@ const Install = () => (
                     </Paragraph>
 
                     <Paragraph>
-                        Currently, we build binaries for <a
-                        href="/pyre-1.0.cpython-36m-darwin.zip">macOS high sierra</a>, and <a
-                        href="/pyre-1.0.cpython-36m-x86_64-linux-gnu.zip">ubuntu 17.10</a>.  If
-                        you would like to see another platform added to this list, please <Link
+                        Currently, we build binaries for macOS high sierra for both
+                        Python <a href="/pyre-1.0.cpython-36m-darwin.zip">3.6</a> and <a
+                        href="/pyre-1.0.cpython-37m-darwin.zip">3.7</a>.
+                        For linux, we build binaries for ubuntu 18.04 for Python <a
+                        href="/pyre-1.0.cpython-36m-x86_64-linux-gnu.zip">3.6</a> and <a
+                        href="/pyre-1.0.cpython-37m-x86_64-linux-gnu.zip">3.7</a>.
+                        If you would like to see another platform added to this list, please <Link
                         to="/contact">let us know</Link>.
                     </Paragraph>
 
