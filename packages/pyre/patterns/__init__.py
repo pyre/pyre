@@ -15,6 +15,10 @@ This package contains functions and classes that encapsulate common usage patter
 import itertools, collections
 
 
+# publish local support
+from .Observable import Observable as observable
+
+
 # utilities
 def mean(iterable):
     """

@@ -80,8 +80,11 @@ class Observable:
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # initialize the pile of observers
         self.observers = weakref.WeakKeyDictionary()
+        # all done
         return
 
 
