@@ -46,8 +46,8 @@ def test():
             node.addObserver(self._update)
             return
 
-        def _update(self, node):
-            self.cache = node.value
+        def _update(self, observable, **kwds):
+            self.cache = observable.value
             return
 
     n = node(0)

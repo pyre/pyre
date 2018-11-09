@@ -37,7 +37,7 @@ class Observable:
 
 
     # interface
-    def notifyObservers(self):
+    def notifyObservers(self, **kwds):
         """
         Notify all observers
         """
@@ -47,7 +47,7 @@ class Observable:
         for instance, method in tuple(self.observers.items()):
             # print("  notifying {}".format(instance))
             # invoke the callable
-            method(instance, self)
+            method(instance, observable=self, **kwds)
         # all done
         return self
 
