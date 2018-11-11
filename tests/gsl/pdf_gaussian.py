@@ -23,7 +23,7 @@ def test():
     # build a random number generator
     rng = gsl.rng()
     # build a gaussian distribution
-    gaussian = gsl.pdf.gaussian(sigma=σ, rng=rng)
+    gaussian = gsl.pdf.gaussian(mean=0.0, sigma=σ, rng=rng)
 
     # sample it
     sample = gaussian.sample()

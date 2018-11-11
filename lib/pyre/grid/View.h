@@ -27,6 +27,7 @@ public:
     // meta-methods
 public:
     inline View(grid_type & grid, const slice_type & slice);
+    inline const View & operator=(const View & view) const;
 
     // interface
 public:
@@ -42,7 +43,7 @@ public:
     // iteration support
     inline auto begin() const;
     inline auto end() const;
-
+    
     // implementation details
 private:
     grid_type & _grid;

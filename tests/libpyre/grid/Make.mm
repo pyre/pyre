@@ -39,6 +39,7 @@ GRID_TESTS = \
     grid-mosaic \
     grid-scan \
     grid-transform \
+    grid-view-assignment \
 
 all: test clean
 
