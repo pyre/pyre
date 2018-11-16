@@ -29,9 +29,9 @@ def test():
     sample = gaussian.sample()
 
     # compute the density
-    x = mean
+    x = 0
     density = gaussian.density(x)
-    assert density == 1/sqrt(2*pi*σ**2) * exp(-(x-mean)**2/ (2*σ**2))
+    assert density == 1/sqrt(2*pi*σ**2) * exp(-x**2/ (2*σ**2))
 
     # make a vector
     v = gsl.vector(1000)

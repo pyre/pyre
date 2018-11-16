@@ -113,11 +113,10 @@ class gaussian:
 
 
     # meta methods
-    def __init__(self, sigma, rng, mean=None, **kwds):
+    def __init__(self, mean, sigma, rng, **kwds):
         super().__init__(**kwds)
-        if mean is not None:
-            self.mean = mean
         self.rng = rng
+        self.mean = mean
         self.sigma = sigma
         return
 

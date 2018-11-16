@@ -97,7 +97,7 @@ blas:
 
 linalg:
 	${PYTHON} ./linalg_LU.py
-    
+
 stats:
 	${PYTHON} ./stats_correlation.py
     ${PYTHON} ./stats_covariance.py

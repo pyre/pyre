@@ -9,12 +9,13 @@
 
 """
 Exercise {dsymm}
-the matrix-matrix product and sum C = \alpha A B + \beta C for Side is CblasLeft 
-                          and C = \alpha B A + \beta C for Side is CblasRight
+the matrix-matrix product and sum for a symmetric matrix
 
-The matrix A is symmetric. 
-When Uplo is CblasUpper then the upper triangle and diagonal of A are used, 
-and when Uplo is CblasLower then the lower triangle and diagonal of A are used.
+C = \alpha A B + \beta C for Side is CblasLeft
+C = \alpha B A + \beta C for Side is CblasRight
+where A is symmetric.
+When Uplo is CblasUpper, the upper triangle and diagonal of A are used;
+when Uplo is CblasLower, the lower triangle and diagonal of A are used.
 """
 
 

@@ -15,7 +15,7 @@ Test stats_covariance
 def test():
     # package access
     import gsl
-    # make two vectors 
+    # make two vectors
     length = 100
     v1 = gsl.vector(shape=length)
     v2 = gsl.vector(shape=length)
@@ -26,7 +26,7 @@ def test():
 
     # call correlation
     covariance = gsl.stats.covariance(v1, v2)
-    
+
     # assert gsl.stats.covariance(v1, v1) == v1.variance(mean=v1.mean())
 
     # all done

@@ -15,7 +15,7 @@ Test stats_correlation
 def test():
     # package access
     import gsl
-    # make two vectors 
+    # make two vectors
     length = 100
     v1 = gsl.vector(shape=length)
     v2 = gsl.vector(shape=length)
@@ -26,8 +26,8 @@ def test():
 
     # call correlation
     correlation = gsl.stats.correlation(v1, v2)
-    
-    # correlation with itself should be one     
+
+    # correlation with itself should be one
     # assert gsl.stats.correlation(v1, v1) == 1.0
 
     # all done
