@@ -27,7 +27,8 @@ def test():
     # call correlation
     covariance = gsl.stats.covariance(v1, v2)
 
-    # assert gsl.stats.covariance(v1, v1) == v1.variance(mean=v1.mean())
+    # covariance between a vector and itself is its variance
+    assert gsl.stats.covariance(v1, v1) == v1.variance(mean=v1.mean())
 
     # all done
     return covariance

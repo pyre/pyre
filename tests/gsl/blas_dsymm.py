@@ -37,14 +37,13 @@ def test():
     # the matrix C
     C = gsl.matrix(shape=(2,3))
     C[0,0], C[0,1], C[0,2] = 0,0,0
-    C[1,0], C[1,1], C[1,2] = 0,0,0
+    C[1,0], C[1,1], C[1,2] = 0,0,1
 
     # compute the form
     gsl.blas.dsymm(A.sideLeft, A.upperTriangular, α, A, B, β, C)
 
     # check
-    # print(tuple(y))
-    assert tuple(C) == (14, 24, 14, 16, 26, 16)
+    assert tuple(C) == (14, 24, 14, 16, 26, 19)
 
     # all done
     return

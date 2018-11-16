@@ -27,8 +27,8 @@ def test():
     # call correlation
     correlation = gsl.stats.correlation(v1, v2)
 
-    # correlation with itself should be one
-    # assert gsl.stats.correlation(v1, v1) == 1.0
+    # correlation of a vector with itself should be one
+    assert gsl.stats.correlation(v1, v1) == 1.0
 
     # all done
     return correlation
