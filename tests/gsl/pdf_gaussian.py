@@ -18,13 +18,12 @@ def test():
     # access the package
     import gsl
 
-    # the σ, mean of the distribution
+    # the σ of the distribution
     σ = 2
-    mean = 1
     # build a random number generator
     rng = gsl.rng()
     # build a gaussian distribution
-    gaussian = gsl.pdf.gaussian(mean=mean, sigma=σ, rng=rng)
+    gaussian = gsl.pdf.gaussian(mean=0.0, sigma=σ, rng=rng)
 
     # sample it
     sample = gaussian.sample()

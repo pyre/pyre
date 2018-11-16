@@ -37,7 +37,7 @@ class Observable:
 
 
     # interface
-    def notifyObservers(self):
+    def notifyObservers(self, **kwds):
         """
         Notify all observers
         """
@@ -47,7 +47,7 @@ class Observable:
         for instance, method in tuple(self.observers.items()):
             # print("  notifying {}".format(instance))
             # invoke the callable
-            method(instance, self)
+            method(instance, observable=self, **kwds)
         # all done
         return self
 
@@ -80,8 +80,11 @@ class Observable:
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # initialize the pile of observers
         self.observers = weakref.WeakKeyDictionary()
+        # all done
         return
 
 
