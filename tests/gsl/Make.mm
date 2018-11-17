@@ -92,7 +92,7 @@ blas:
 	${PYTHON} ./blas_dtrsv.py
 	${PYTHON} ./blas_dsymv.py
 	${PYTHON} ./blas_dgemm.py
-    ${PYTHON} ./blas_dsymm.py
+	${PYTHON} ./blas_dsymm.py
 	${PYTHON} ./blas_dtrmm.py
 
 linalg:
@@ -100,7 +100,7 @@ linalg:
 
 stats:
 	${PYTHON} ./stats_correlation.py
-    ${PYTHON} ./stats_covariance.py
+	${PYTHON} ./stats_covariance.py
 
 # do I have mpi?
 MPI_DIR=
