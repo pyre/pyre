@@ -154,6 +154,119 @@ gsl::pdf::uniform::matrix(PyObject *, PyObject * args) {
 }
 
 
+// uniform_pos::sample
+const char * const gsl::pdf::uniform_pos::sample__name__ = "uniform_pos_sample";
+const char * const gsl::pdf::uniform_pos::sample__doc__ =
+    "return a sample from the uniform distribution";
+
+PyObject *
+gsl::pdf::uniform_pos::sample(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!:uniform_pos_sample",
+                                  &PyCapsule_Type, &capsule);
+    // bail out if something went wrong with the argument unpacking
+    if (!status) return 0;
+    // bail out if the capsule is not valid
+    if (!PyCapsule_IsValid(capsule, gsl::rng::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+    // get the rng
+    gsl_rng * r = static_cast<gsl_rng *>(PyCapsule_GetPointer(capsule, gsl::rng::capsule_t));
+    // sample the distribution and return the value
+    return PyFloat_FromDouble(gsl_rng_uniform_pos(r));
+}
+
+// uniform_pos::vector
+const char * const gsl::pdf::uniform_pos::vector__name__ = "uniform_pos_vector";
+const char * const gsl::pdf::uniform_pos::vector__doc__ = "fill a vector with random values";
+
+PyObject *
+gsl::pdf::uniform_pos::vector(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * rngCapsule;
+    PyObject * vectorCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:uniform_vector",
+                                  &PyCapsule_Type, &rngCapsule,
+                                  &PyCapsule_Type, &vectorCapsule);
+    // bail out if something went wrong with the argument unpacking
+    if (!status) return 0;
+    // bail out if the rng capsule is not valid
+    if (!PyCapsule_IsValid(rngCapsule, gsl::rng::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+    // bail out if the vector capsule is not valid
+    if (!PyCapsule_IsValid(vectorCapsule, gsl::vector::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+    // get the rng
+    gsl_rng * rng =
+        static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
+    // get the vector
+    gsl_vector * v =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(vectorCapsule, gsl::vector::capsule_t));
+    // fill
+    for (size_t i = 0; i < v->size; i++) {
+        double value = gsl_rng_uniform_pos(rng);
+        gsl_vector_set(v, i, value);
+    }
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+// uniform_pos::matrix
+const char * const gsl::pdf::uniform_pos::matrix__name__ = "uniform_pos_matrix";
+const char * const gsl::pdf::uniform_pos::matrix__doc__ = "fill a matrix with random values";
+
+PyObject *
+gsl::pdf::uniform_pos::matrix(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * rngCapsule;
+    PyObject * matrixCapsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!O!:uniform_matrix",
+                                  &PyCapsule_Type, &rngCapsule,
+                                  &PyCapsule_Type, &matrixCapsule);
+    // bail out if something went wrong with the argument unpacking
+    if (!status) return 0;
+    // bail out if the rng capsule is not valid
+    if (!PyCapsule_IsValid(rngCapsule, gsl::rng::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid rng capsule");
+        return 0;
+    }
+    // bail out if the matrix capsule is not valid
+    if (!PyCapsule_IsValid(matrixCapsule, gsl::matrix::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
+        return 0;
+    }
+    // get the rng
+    gsl_rng * rng =
+        static_cast<gsl_rng *>(PyCapsule_GetPointer(rngCapsule, gsl::rng::capsule_t));
+    // get the matrix
+    gsl_matrix * m =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(matrixCapsule, gsl::matrix::capsule_t));
+    // fill
+    for (size_t i = 0; i < m->size1; i++) {
+        for (size_t j = 0; j < m->size2; j++) {
+            double value = gsl_rng_uniform_pos(rng);
+            gsl_matrix_set(m, i, j, value);
+        }
+    }
+    // return None
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 // gaussian::sample
 const char * const gsl::pdf::gaussian::sample__name__ = "gaussian_sample";
 const char * const gsl::pdf::gaussian::sample__doc__ =

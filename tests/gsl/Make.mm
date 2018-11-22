@@ -34,6 +34,7 @@ rng:
 
 pdf:
 	${PYTHON} ./pdf_uniform.py
+	${PYTHON} ./pdf_uniform_pos.py
 	${PYTHON} ./pdf_gaussian.py
 	${PYTHON} ./pdf_dirichlet.py
 
