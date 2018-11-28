@@ -23,6 +23,7 @@ def test():
 
     # sample it
     sample = uniform.sample()
+    # assert the sample is within (0, 1)
     assert sample > 0 and sample < 1
 
     density = uniform.density(0)
@@ -32,11 +33,15 @@ def test():
     v = gsl.vector(1000)
     # fill it with random numbers
     uniform.vector(vector=v)
+    # assert all the samples are positive
+    for sample in v: assert sample > 0 and sample < 1
 
     # make a matrix
     m = gsl.matrix(shape=(100, 100))
     # fill it with random numbers
     uniform.matrix(matrix=m)
+    # assert all the samples are positive
+    for sample in m: assert sample > 0 and sample < 1
 
     return uniform
 
