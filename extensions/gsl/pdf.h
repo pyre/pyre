@@ -34,6 +34,23 @@ namespace gsl {
             PyObject * matrix(PyObject *, PyObject *);
         } // of namespace uniform
 
+        // the positive uniform distribution
+        namespace uniform_pos {
+            // sample
+            extern const char * const sample__name__;
+            extern const char * const sample__doc__;
+            PyObject * sample(PyObject *, PyObject *);
+
+            // fills
+            extern const char * const vector__name__;
+            extern const char * const vector__doc__;
+            PyObject * vector(PyObject *, PyObject *);
+
+            extern const char * const matrix__name__;
+            extern const char * const matrix__doc__;
+            PyObject * matrix(PyObject *, PyObject *);
+        } // of namespace uniform_pos
+
         // the gaussian distribution
         namespace gaussian {
             // sample

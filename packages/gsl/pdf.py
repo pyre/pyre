@@ -66,6 +66,57 @@ class uniform:
     # implementation details
     support = None
 
+# the uniform probability distribution
+class uniform_pos:
+    """
+    Encapsulation of the positive uniform probability distribution
+    """
+
+
+    # interface
+    def sample(self):
+        """
+        Sample the uniform distribution using a random value from {rng}
+        """
+        # get the value
+        return gsl.uniform_pos_sample(self.rng.rng)
+
+
+    def density(self, x):
+        """
+        Compute the probability density of the uniform distribution at {x}
+        """
+        # get the value
+        return 1.0
+
+
+    # higher level support
+    def vector(self, vector):
+        """
+        Fill {vector} with random values
+        """
+        # fill the vector
+        gsl.uniform_pos_vector(self.rng.rng, vector.data)
+        # and return it
+        return vector
+
+
+    def matrix(self, matrix):
+        """
+        Fill {matrix} with random values
+        """
+        # fill the matrix
+        gsl.uniform_pos_matrix(self.rng.rng, matrix.data)
+        # and return it
+        return matrix
+
+
+    # meta methods
+    def __init__(self, rng, **kwds):
+        super().__init__(**kwds)
+        self.rng = rng
+        return
+
 
 # the gaussian probability distribution
 class gaussian:
