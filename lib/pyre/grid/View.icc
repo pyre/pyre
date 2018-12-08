@@ -53,6 +53,15 @@ high() const {
 template <typename gridT>
 const auto &
 pyre::grid::View<gridT>::
+packing() const {
+    // easy
+    return _slice.packing();
+}
+
+
+template <typename gridT>
+const auto &
+pyre::grid::View<gridT>::
 slice() const {
     // easy
     return _slice;
