@@ -33,6 +33,19 @@ class Tile:
         """
         Compute the offset of the cell at the given {index} value
         """
+        # check whether
+        try:
+            # the index is already an integer
+            index = int(index)
+        # if it is not
+        except TypeError:
+            # no worries
+            pass
+        # if it is
+        else:
+            # nothing further to do; bounds check maybe?
+            return index
+
         # get my shape
         shape = self.shape
         # initialize the offset
