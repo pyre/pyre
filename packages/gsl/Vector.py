@@ -357,13 +357,42 @@ class Vector:
         """
         # easy enough
         return gsl.vector_sdev(self.data, float(mean) if mean is not None else None)
-        
+
+    def mean_sd(self):
+        """
+        Compute both the mean value and the standard deviation
+        """
+        mean = self.mean()
+        sdev = self.sdev(mean=mean)
+        # return both values
+        return mean, sdev
+
+    # reference/conversion
     def dataptr(self):
         """
-        Return the data pointer
+        Return the pointer(memory address) of the data
         """
-        return gsl.vector_dataptr(self.data)    
+        return gsl.vector_dataptr(self.data)
 
+    def asnumpy(self):
+        """
+        Return a numpy ndarray (as a reference, with shared data)
+        """
+        # import supports
+        import numpy, ctypes
+        # get the memory address
+        data_pointer = ctypes.cast(self.dataptr(), ctypes.POINTER(ctypes.c_double))
+        # create a numpy ndarray wrapper and return
+        return numpy.ctypeslib.as_array(data_pointer, shape=self.shape)
+
+    def tonumpy(self):
+        """
+        Copy vector to a one-dimensional numpy ndarray
+        """
+        # make a reference
+        array = self.asnumpy()
+        # return a copy
+        return array.copy()
 
     # meta methods
     def __init__(self, shape, data=None, **kwds):

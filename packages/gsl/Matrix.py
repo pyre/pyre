@@ -9,8 +9,6 @@
 # externals
 import numbers
 from . import gsl # the extension
-import ctypes
-import numpy
 
 
 # the class declaration
@@ -414,19 +412,85 @@ class Matrix:
         # easy enough
         return gsl.matrix_minmax(self.data)
 
+    # statistics
+    def mean(self, byrow=False):
+        """
+        Compute the mean values for each row (byrow = True) or each column(byrow = False)
+        """
+        # get the shape
+        rows, cols = self.shape
+
+        # if for each row
+        if(byrow):
+            # allocate a result vector
+            result = self.vector(shape=rows)
+            # compute mean for each row
+            for i in range(rows):
+                result[i] = self.getRow(i).mean()
+        # else, for each column
+        else:
+            # allocate a result vector
+            result = self.vector(shape=cols)
+            # compute mean for each column
+            for i in range(cols):
+                result[i] = self.getColumn(i).mean()
+        # return the result vector
+        return result
+
+    def mean_sd(self, byrow=False):
+        """
+        Compute the mean and standard deviation for each row/column
+        """
+        # get the shape
+        rows, cols = self.shape
+
+        # if for each row
+        if(byrow):
+            # allocate mean, and sdev vectors
+            mean = self.vector(shape=rows)
+            sdev = self.vector(shape=rows)
+            # for each row
+            for i in range(rows):
+                # compute the mean, sdev
+                mean[i], sdev[i] = self.getRow(i).mean_sd()
+        # else, for each column
+        else:
+            # allocate mean, and sdev vectors
+            mean = self.vector(shape=cols)
+            sdev = self.vector(shape=cols)
+            # for each column
+            for i in range(cols):
+               # compute the mean, sdev
+                mean[i], sdev[i] = self.getColumn(i).mean_sd()
+        # return
+        return mean, sdev
+
+    # reference/conversion
     def dataptr(self):
         """
-        Return the data pointer
+        Return the pointer (memory address) of the data
         """
         return gsl.matrix_dataptr(self.data)
-        
+
     def asnumpy(self):
         """
-        Return a Numpy array
+        Return a numpy ndarray (as a reference, with shared data)
         """
+        # import supports
+        import numpy, ctypes
+        # get the memory address
         data_pointer = ctypes.cast(self.dataptr(), ctypes.POINTER(ctypes.c_double))
-        return numpy.ctypeslib.as_array(data_pointer, shape=self.shape) 
-        
+        # create a numpy ndarray wrapper and return
+        return numpy.ctypeslib.as_array(data_pointer, shape=self.shape)
+
+    def tonumpy(self):
+        """
+        Copy matrix to a two-dimensional numpy ndarray
+        """
+        # create a reference
+        array = self.asnumpy()
+        # return a copy
+        return array.copy()
 
     # eigensystems
     def symmetricEigensystem(self, order=sortValueAscending):

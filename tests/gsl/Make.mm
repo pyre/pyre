@@ -82,6 +82,8 @@ matrices:
 	${PYTHON} ./matrix_min.py
 	${PYTHON} ./matrix_minmax.py
 	${PYTHON} ./matrix_view.py
+	${PYTHON} ./matrix_stats.py
+	${PYTHON} ./matrix_numpy.py
 
 blas:
 	${PYTHON} ./blas_ddot.py
