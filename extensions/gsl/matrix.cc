@@ -1153,33 +1153,6 @@ gsl::matrix::scale(PyObject *, PyObject * args) {
     return Py_None;
 }
 
-const char * const gsl::matrix::dataptr__name__ = "matrix_dataptr";
-const char * const gsl::matrix::dataptr__doc__ = "return data pointer of matrix";
-
-PyObject *
-gsl::matrix::dataptr(PyObject *, PyObject * args) {
-    // the arguments
-    PyObject * self;
-    // unpack the argument tuple
-    int status = PyArg_ParseTuple(
-                                  args, "O!:matrix_dataptr",
-                                  &PyCapsule_Type, &self);
-    // if something went wrong
-    if (!status) return 0;
-    // bail out if the capsule is not valid
-    if (!PyCapsule_IsValid(self, capsule_t)) {
-        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
-        return 0;
-    }
-
-    // get the matrix
-    gsl_matrix * m = static_cast<gsl_matrix *>(PyCapsule_GetPointer(self, capsule_t));
-    // std::cout << " gsl.matrix_scale: matrix@" << m << ", value=" << value << std::endl;
-
-    // return the pointer address
-    PyObject * result = PyLong_FromVoidPtr((void *)m->data);
-    return result;
-}
 
 // matrix_eigen_symmetric
 const char * const gsl::matrix::eigen_symmetric__name__ = "matrix_eigen_symmetric";
@@ -1197,7 +1170,7 @@ gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
                                   &PyCapsule_Type, &capsule, &sort);
     // if something went wrong
     if (!status) return 0;
-    // bail out if the two capsules are not valid
+    // bail out if the capsule is not valid
     if (!PyCapsule_IsValid(capsule, capsule_t)) {
         PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
         return 0;
@@ -1219,7 +1192,7 @@ gsl::matrix::eigen_symmetric(PyObject *, PyObject * args) {
         break;
 
     default:
-        PyErr_SetString(PyExc_TypeError, "invalid sort type");
+        PyErr_SetString(PyExc_ValueError, "invalid sort type");
         return 0;
     }
 

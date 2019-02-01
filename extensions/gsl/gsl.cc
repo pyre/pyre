@@ -136,7 +136,6 @@ namespace gsl {
         { matrix::div__name__, matrix::div, METH_VARARGS, matrix::div__doc__ },
         { matrix::shift__name__, matrix::shift, METH_VARARGS, matrix::shift__doc__ },
         { matrix::scale__name__, matrix::scale, METH_VARARGS, matrix::scale__doc__ },
-        { matrix::dataptr__name__, matrix::dataptr, METH_VARARGS, matrix::dataptr__doc__ },
         { matrix::eigen_symmetric__name__, matrix::eigen_symmetric, METH_VARARGS,
           matrix::eigen_symmetric__doc__ },
 
@@ -228,7 +227,6 @@ namespace gsl {
         { vector::div__name__, vector::div, METH_VARARGS, vector::div__doc__ },
         { vector::shift__name__, vector::shift, METH_VARARGS, vector::shift__doc__ },
         { vector::scale__name__, vector::scale, METH_VARARGS, vector::scale__doc__ },
-        { vector::dataptr__name__, vector::dataptr, METH_VARARGS, vector::dataptr__doc__ },
         // statistics
         { vector::sort__name__, vector::sort, METH_VARARGS, vector::sort__doc__ },
         { vector::sortIndex__name__, vector::sortIndex, METH_VARARGS, vector::sortIndex__doc__ },
@@ -236,7 +234,7 @@ namespace gsl {
         { vector::median__name__, vector::median, METH_VARARGS, vector::median__doc__ },
         { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
         { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
-        
+
         // more statistics
         { stats::correlation__name__, stats::correlation, METH_VARARGS, stats::correlation__doc__},
         { stats::covariance__name__, stats::covariance, METH_VARARGS, stats::covariance__doc__},

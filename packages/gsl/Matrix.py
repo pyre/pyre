@@ -9,7 +9,6 @@
 # externals
 import numbers
 from . import gsl # the extension
-import ctypes
 import numpy
 
 
@@ -414,19 +413,6 @@ class Matrix:
         # easy enough
         return gsl.matrix_minmax(self.data)
 
-    def dataptr(self):
-        """
-        Return the data pointer
-        """
-        return gsl.matrix_dataptr(self.data)
-        
-    def asnumpy(self):
-        """
-        Return a Numpy array
-        """
-        data_pointer = ctypes.cast(self.dataptr(), ctypes.POINTER(ctypes.c_double))
-        return numpy.ctypeslib.as_array(data_pointer, shape=self.shape) 
-        
 
     # eigensystems
     def symmetricEigensystem(self, order=sortValueAscending):
