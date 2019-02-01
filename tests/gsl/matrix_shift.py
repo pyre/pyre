@@ -18,11 +18,11 @@ def test():
     # make a couple of matrices and initialize them
     m = gsl.matrix(shape=(100,100)).fill(value=1)
     # check
-    for e in m: assert e == 1
+    for e in m.elements: assert e == 1
     # add them and store the result in m1
     m += 1
     # check
-    for e in m: assert e == 2
+    for e in m.elements: assert e == 2
     # all done
     return m
 

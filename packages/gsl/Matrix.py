@@ -8,8 +8,8 @@
 
 # externals
 import numbers
+import itertools
 from . import gsl # the extension
-import numpy
 
 
 # the class declaration
@@ -80,7 +80,7 @@ class Matrix:
         if communicator is None:
             # get the mpi package
             import mpi
-            # use the world by default
+            # use the {world} by default
             communicator = mpi.world
         # gather the data
         result = gsl.gatherMatrix(communicator.capsule, destination, matrix.data)
@@ -128,6 +128,21 @@ class Matrix:
         Get the number of rows
         """
         return self.shape[0]
+
+
+    @property
+    def elements(self):
+        """
+        Iterate over all my elements in shape order
+        """
+        # unpack the shape
+        index0, index1 = self.shape
+        # go over all index pairs
+        for index in itertools.product(*map(range, self.shape)):
+            # grab the value
+            yield gsl.matrix_get(self.data, index)
+        # all done
+        return
 
 
     # initialization

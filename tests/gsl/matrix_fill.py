@@ -20,7 +20,7 @@ def test():
     # set it to some value
     m.fill(value=2)
     # verify it happened
-    for e in m: assert e == 2
+    for e in m.elements: assert e == 2
     # all done
     return m
 

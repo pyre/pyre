@@ -91,6 +91,18 @@ class Vector:
         return self
 
 
+    # public data
+    @property
+    def elements(self):
+        """
+        Iterate over all my elements
+        """
+        # i'm already accessible as an iterator
+        yield from self
+        # all done
+        return
+
+
     # initialization
     def zero(self):
         """

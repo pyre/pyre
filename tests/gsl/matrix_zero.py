@@ -20,7 +20,7 @@ def test():
     # zero it out
     m.zero()
     # verify it happened
-    for e in m: assert e == 0
+    for e in m.elements: assert e == 0
     # all done
     return m
 
