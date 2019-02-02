@@ -337,6 +337,18 @@ class Matrix:
         return self
 
 
+    def tuple(self):
+        """
+        Build a representation of my contents as a tuple of tuples
+
+        This is suitable for converting to other matrix representations, such as numpy
+        """
+        # ask the extension to build the rep
+        rep = gsl.matrix_tuple(self.data)
+        # and return it
+        return rep
+
+
     # matrix operations
     def transpose(self, destination=None):
         """

@@ -165,6 +165,16 @@ class Vector:
         return self
 
 
+    def tuple(self):
+        """
+        Build a representation of my contents as a tuple
+        """
+        # ask the extension to build the rep
+        rep = gsl.vector_tuple(self.data)
+        # and return it
+        return rep
+
+
     def view(self, start, shape):
         """
         Build a view of my from {start} to {start+shape}

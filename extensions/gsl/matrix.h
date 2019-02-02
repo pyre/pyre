@@ -43,6 +43,11 @@ namespace gsl {
         extern const char * const copy__doc__;
         PyObject * copy(PyObject *, PyObject *);
 
+        // tuple
+        extern const char * const tuple__name__;
+        extern const char * const tuple__doc__;
+        PyObject * tuple(PyObject *, PyObject *);
+
         // read
         extern const char * const read__name__;
         extern const char * const read__doc__;
@@ -157,7 +162,7 @@ namespace gsl {
         extern const char * const dataptr__name__;
         extern const char * const dataptr__doc__;
         PyObject * dataptr(PyObject *, PyObject *);
-        
+
         // matrix_eigen_symmetric
         extern const char * const eigen_symmetric__name__;
         extern const char * const eigen_symmetric__doc__;

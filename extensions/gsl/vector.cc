@@ -217,6 +217,47 @@ gsl::vector::copy(PyObject *, PyObject * args) {
 }
 
 
+// tuple
+const char * const gsl::vector::tuple__name__ = "vector_tuple";
+const char * const gsl::vector::tuple__doc__ = "build a tuple out of a vector";
+
+PyObject *
+gsl::vector::tuple(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!:vector_tuple",
+                                  &PyCapsule_Type, &capsule
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the source capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid vector capsule");
+        return 0;
+    }
+
+    // get the vector
+    gsl_vector * v =
+        static_cast<gsl_vector *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // get the shape
+    size_t s = v->size;
+
+    // we return a tuple
+    PyObject * result = PyTuple_New(s);
+    // go through the elements
+    for (size_t slot=0; slot<s; ++slot) {
+        // grab the value, turn it into a float and attach it
+        PyTuple_SET_ITEM(result, slot, PyFloat_FromDouble(gsl_vector_get(v, slot)));
+    }
+
+    // return the result
+    return result;
+}
+
+
 // read
 const char * const gsl::vector::read__name__ = "vector_read";
 const char * const gsl::vector::read__doc__ = "read the values of a vector from a binary file";

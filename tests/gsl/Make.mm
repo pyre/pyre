@@ -52,6 +52,7 @@ vectors:
 	${PYTHON} ./vector_set.py
 	${PYTHON} ./vector_slices.py
 	${PYTHON} ./vector_contains.py
+	${PYTHON} ./vector_tuple.py
 	${PYTHON} ./vector_add.py
 	${PYTHON} ./vector_sub.py
 	${PYTHON} ./vector_mul.py
@@ -72,6 +73,7 @@ matrices:
 	${PYTHON} ./matrix_set.py
 	${PYTHON} ./matrix_slices.py
 	${PYTHON} ./matrix_contains.py
+	${PYTHON} ./matrix_tuple.py
 	${PYTHON} ./matrix_add.py
 	${PYTHON} ./matrix_sub.py
 	${PYTHON} ./matrix_mul.py

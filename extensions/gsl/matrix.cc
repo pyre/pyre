@@ -216,6 +216,55 @@ gsl::matrix::copy(PyObject *, PyObject * args) {
 }
 
 
+// tuple
+const char * const gsl::matrix::tuple__name__ = "matrix_tuple";
+const char * const gsl::matrix::tuple__doc__ = "build a tuple of tuples out of a matrix";
+
+PyObject *
+gsl::matrix::tuple(PyObject *, PyObject * args) {
+    // the arguments
+    PyObject * capsule;
+    // unpack the argument tuple
+    int status = PyArg_ParseTuple(
+                                  args, "O!:matrix_tuple",
+                                  &PyCapsule_Type, &capsule
+                                  );
+    // if something went wrong
+    if (!status) return 0;
+    // bail out if the source capsule is not valid
+    if (!PyCapsule_IsValid(capsule, capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "invalid matrix capsule");
+        return 0;
+    }
+
+    // get the matrix
+    gsl_matrix * mat =
+        static_cast<gsl_matrix *>(PyCapsule_GetPointer(capsule, capsule_t));
+
+    // get the shape
+    size_t s1 = mat->size1;
+    size_t s2 = mat->size2;
+
+    // we return a tuple
+    PyObject * result = PyTuple_New(s1);
+    // go through the rows
+    for (size_t row=0; row<s1; ++row) {
+        // store the values in a tuple
+        PyObject * data  = PyTuple_New(s2);
+        // go through the columns
+        for (size_t col=0; col<s2; ++col) {
+            // grab the value, turn it into a float and attach it
+            PyTuple_SET_ITEM(data, col, PyFloat_FromDouble(gsl_matrix_get(mat, row, col)));
+        }
+        // attach this row
+        PyTuple_SET_ITEM(result, row, data);
+    }
+
+    // return the result
+    return result;
+}
+
+
 // read
 const char * const gsl::matrix::read__name__ = "matrix_read";
 const char * const gsl::matrix::read__doc__ = "read the values of a matrix from a binary file";

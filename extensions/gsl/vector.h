@@ -43,6 +43,11 @@ namespace gsl {
         extern const char * const copy__doc__;
         PyObject * copy(PyObject *, PyObject *);
 
+        // vector_tuple
+        extern const char * const tuple__name__;
+        extern const char * const tuple__doc__;
+        PyObject * tuple(PyObject *, PyObject *);
+
         // vector_read
         extern const char * const read__name__;
         extern const char * const read__doc__;
@@ -132,7 +137,7 @@ namespace gsl {
         extern const char * const dataptr__name__;
         extern const char * const dataptr__doc__;
         PyObject * dataptr(PyObject *, PyObject *);
-    
+
         // statistics
         // vector_sort
         extern const char * const sort__name__;
