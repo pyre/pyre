@@ -129,18 +129,13 @@ class Matrix:
         """
         return self.shape[0]
 
-
     @property
     def elements(self):
         """
-        Iterate over all my elements in shape order
+        Iterate over all my elements
         """
-        # unpack the shape
-        index0, index1 = self.shape
-        # go over all index pairs
-        for index in itertools.product(*map(range, self.shape)):
-            # grab the value
-            yield gsl.matrix_get(self.data, index)
+        # i'm already accessible as an iterator
+        yield from self
         # all done
         return
 
@@ -459,12 +454,15 @@ class Matrix:
 
     # container support
     def __iter__(self):
+        """
+        Iterate over all my elements in shape order
+        """
         # unpack the shape
         index0, index1 = self.shape
-        # iterate over all the elements
-        for i in range(index0):
-            for j in range(index1):
-                yield gsl.matrix_get(self.data, (i, j))
+        # go over all index pairs
+        for index in itertools.product(*map(range, self.shape)):
+            # grab the value
+            yield gsl.matrix_get(self.data, index)
         # all done
         return
 
