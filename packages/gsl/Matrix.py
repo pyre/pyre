@@ -155,9 +155,24 @@ class Matrix:
         """
         Set all my elements to {value}
         """
-        # fill
-        gsl.matrix_fill(self.data, value)
-        # and return
+        # grab my capsule
+        data = self.data
+        # first, attempt to
+        try:
+            # convert value into a float
+            value = float(value)
+        # if this fails
+        except TypeError:
+            # go through the input values
+            for idx, elem in zip(itertools.product(*map(range, self.shape)), value):
+                # set each element
+                gsl.matrix_set(data, idx, float(elem))
+        # if the conversion to float were successful
+        else:
+            # fill
+            gsl.matrix_fill(data, value)
+
+        # all done
         return self
 
 

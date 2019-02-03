@@ -118,9 +118,24 @@ class Vector:
         """
         Set all my elements to {value}
         """
-        # fill
-        gsl.vector_fill(self.data, value)
-        # and return
+        # grab my capsule
+        data = self.data
+        # first, attempt to
+        try:
+            # convert {value} into a float
+            value = float(value)
+        # if this fails
+        except TypeError:
+            # go through the input values
+            for idx, elem in zip(range(self.shape), value):
+                # set the value
+                gsl.vector_set(data, idx, float(elem))
+        # if the conversion to float were successful
+        else:
+            # fill me with {value}
+            gsl.vector_fill(data, value)
+
+        # all done
         return self
 
 
@@ -395,7 +410,9 @@ class Vector:
 
 
     # container support
-    def __len__(self): return self.shape
+    def __len__(self):
+        # easy
+        return self.shape
 
 
     def __iter__(self):

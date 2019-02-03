@@ -15,14 +15,23 @@ Fill a vector with a constant value
 def test():
     # package access
     import gsl
+
     # make a vector
-    v = gsl.vector(shape=100)
+    v1 = gsl.vector(shape=100)
     # set it to some value
-    v.fill(value=2)
+    v1.fill(value=2)
     # verify it happened
-    for e in v: assert e == 2
+    for e in v1: assert e == 2
+
+    # make and initialize another vector
+    v2 = gsl.vector(shape=100).zero()
+    # fill it
+    v2.fill(range(100))
+    # verify
+    assert v2.tuple() == tuple(range(100))
+
     # all done
-    return v
+    return v1, v2
 
 
 # main
