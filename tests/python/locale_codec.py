@@ -26,11 +26,11 @@ def test_el_GR():
 
     # test object -> str
     assert "1234,56" == locale.str(1234.56)
-    assert "1.234,56" == locale.format("%.2f", 1234.56, grouping=True, monetary=True)
+    assert "1.234,56" == locale.format_string("%.2f", 1234.56, grouping=True, monetary=True)
     # print(locale.currency(1234567.89, True, True, False))
     # print(locale.currency(1234567.89, True, True, True))
-    # assert "1.234.567,8900€" == locale.currency(1234567.89, True, True, False)
-    # assert "1.234.567,8900EUR " == locale.currency(1234567.89, True, True, True)
+    assert "1.234.567,89 Eu" == locale.currency(1234567.89, True, True, False)
+    assert "1.234.567,89 EUR " == locale.currency(1234567.89, True, True, True)
 
     return
 
@@ -49,7 +49,7 @@ def test_en_US():
 
     # test object -> str
     assert "1234.56" == locale.str(1234.56)
-    assert "1,234.56" == locale.format("%.2f", 1234.56, grouping=True, monetary=True)
+    assert "1,234.56" == locale.format_string("%.2f", 1234.56, grouping=True, monetary=True)
     # print(locale.currency(1234567.89, True, True, False))
     # print(locale.currency(1234567.89, True, True, True))
     assert "$1,234,567.89" == locale.currency(1234567.89, True, True, False)
@@ -72,7 +72,7 @@ def test_en_GB():
 
     # test object -> str
     assert "1234.56" == locale.str(1234.56)
-    assert "1,234.56" == locale.format("%.2f", 1234.56, grouping=True, monetary=True)
+    assert "1,234.56" == locale.format_string("%.2f", 1234.56, grouping=True, monetary=True)
     # print(locale.currency(1234567.89, True, True, False))
     # print(locale.currency(1234567.89, True, True, True))
     assert "£1,234,567.89" == locale.currency(1234567.89, True, True, False)
@@ -96,11 +96,11 @@ def test_fr_FR():
     # test object -> str
     assert "1234,56" == locale.str(1234.56)
     # print(locale.format("%.2f", 1234.56, grouping=True, monetary=True))
-    assert "1234,56" == locale.format("%.2f", 1234.56, grouping=False, monetary=True)
+    assert "1234,56" == locale.format_string("%.2f", 1234.56, grouping=False, monetary=True)
     # print(locale.currency(1234567.89, True, True, False))
     # print(locale.currency(1234567.89, True, True, True))
-    # assert "1234567,89 €" == locale.currency(1234567.89, True, True, False)
-    # assert "1234567,89 EUR " == locale.currency(1234567.89, True, True, True)
+    assert "1 234 567,89 Eu" == locale.currency(1234567.89, True, True, False)
+    assert "1 234 567,89 EUR " == locale.currency(1234567.89, True, True, True)
 
     return
 
