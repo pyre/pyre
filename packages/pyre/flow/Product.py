@@ -28,6 +28,13 @@ class Product(Node, implements=Specification):
     status = None
 
 
+    # interface
+    def sync(self):
+        """
+        Examine my state
+        """
+
+
     # meta-methods
     def __init__(self, **kwds):
         # chain up
