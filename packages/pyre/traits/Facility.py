@@ -68,6 +68,7 @@ class Facility(Slotted, schemata.component):
         """
         The strategy for building slots from more complex input values
         """
+        # facility values are held in variables
         return self.pyre_nameserver.variable(**kwds)
 
 
