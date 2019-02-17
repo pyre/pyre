@@ -6,6 +6,8 @@
 #
 
 
+# externals
+import weakref
 # support
 import pyre
 
@@ -21,10 +23,25 @@ class Status(pyre.tracker):
     raw = True
 
 
+    # interface
+    def track(self):
+        """
+        Start tracking my {node}
+        """
+        # get the client
+        node = self.node()
+        # chain up
+        return super().track(component=node)
+
+
     # meta-methods
-    def __init__(self, raw=raw, **kwds):
+    def __init__(self, node, raw=raw, **kwds):
         # chain up
         super().__init__(**kwds)
+        # remember my clients
+        self.node = weakref.ref(node)
+        # enable tracking
+        self.track()
         # initialize my flag
         self.raw = raw
         # all done

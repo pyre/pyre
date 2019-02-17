@@ -8,6 +8,8 @@
 
 # support
 import pyre
+# my status tracker
+from .Status import Status
 
 
 # declaration
@@ -15,6 +17,21 @@ class Node(pyre.component):
     """
     Base class for entities that participate in workflows
     """
+
+
+    # public data
+    # the object that watches over my traits
+    status = None
+
+
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # build my status tracker
+        self.status = Status(node=self)
+        # all done
+        return
 
 
     # introspection
