@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis @ orthologue
+// Lijun Zhu @ Caltech
 // (c) 1998-2019 all rights reserved
 //
 
@@ -17,11 +17,27 @@ namespace gsl {
         extern const char * const correlation__name__;
         extern const char * const correlation__doc__;
         PyObject * correlation(PyObject *, PyObject *);
-        
+
         // gsl_stats_covariance
         extern const char * const covariance__name__;
         extern const char * const covariance__doc__;
         PyObject * covariance(PyObject *, PyObject *);
+
+        // gsl_stats_matrix_mean
+        extern const char * const matrix_mean__name__;
+        extern const char * const matrix_mean__doc__;
+        PyObject * matrix_mean(PyObject *, PyObject *);
+
+        // gsl_stats_matrix_mean_sd
+        extern const char * const matrix_mean_sd__name__;
+        extern const char * const matrix_mean_sd__doc__;
+        PyObject * matrix_mean_sd(PyObject *, PyObject *);
+
+        // gsl_stats_matrix_mean_std
+        extern const char * const matrix_mean_std__name__;
+        extern const char * const matrix_mean_std__doc__;
+        PyObject * matrix_mean_std(PyObject *, PyObject *);
+
 
     } // of namespace stats
 } // of namespace gsl

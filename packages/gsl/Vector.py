@@ -396,6 +396,20 @@ class Vector:
         return gsl.vector_sdev(self.data, float(mean) if mean is not None else None)
 
 
+    def asnumpy(self):
+        """
+        Return a numpy array reference
+        """
+        # call the c api
+        return gsl.vector_asnumpy(self.data)
+
+    def tonumpy(self):
+        """
+        Copy to a numpy array
+        """
+        import numpy
+        return numpy.asarray(self.tuple())
+
     # meta methods
     def __init__(self, shape, data=None, **kwds):
         # chain up

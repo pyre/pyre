@@ -34,6 +34,7 @@ PROJ_SRCS = \
     rng.cc \
     vector.cc \
     stats.cc \
+    numpy.cc \
 
 # optional mpi support
 ifneq ($(strip $(MPI_DIR)), )
