@@ -139,7 +139,7 @@ gsl::stats::matrix_mean(PyObject *, PyObject * args)
             for(size_t i=0; i<cols; ++i)
             {
                 // compute mean for each column
-                mean =  gsl_stats_mean(datap, cols, rows); // (data[], stride, total elements)
+                mean =  gsl_stats_mean(datap, tda, rows); // (data[], stride, total elements)
                 // set the values to output vectors
                 gsl_vector_set(meanVec, i, mean);
                 // move pointer to next column

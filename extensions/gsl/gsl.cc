@@ -239,8 +239,8 @@ namespace gsl {
         { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
 
         // numpy
-        { vector::asnumpy__name__, vector::asnumpy, METH_VARARGS, vector::asnumpy__doc__ },
-        { matrix::asnumpy__name__, matrix::asnumpy, METH_VARARGS, matrix::asnumpy__doc__ },
+        { vector::ndarray__name__, vector::ndarray, METH_VARARGS, vector::ndarray__doc__ },
+        { matrix::ndarray__name__, matrix::ndarray, METH_VARARGS, matrix::ndarray__doc__ },
 
         // more statistics
         { stats::correlation__name__, stats::correlation, METH_VARARGS, stats::correlation__doc__},

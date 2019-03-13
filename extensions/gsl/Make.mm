@@ -13,6 +13,8 @@ PACKAGE =
 MODULE = gsl
 # get gsl support
 include gsl/default.def
+# get numpy support
+include numpy/default.def
 # build a python extension
 include std-pythonmodule.def
 # my headers live here

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
-// Lijun Zhu
-// Caltech
+// Lijun Zhu (ljzhu@gps.caltech.edu)
+//
 // (c) 1998-2019 all rights reserved
 //
 
@@ -13,16 +13,16 @@
 namespace gsl {
     namespace vector {
         // vector_asnumpy
-        extern const char * const asnumpy__name__;
-        extern const char * const asnumpy__doc__;
-        PyObject * asnumpy(PyObject *, PyObject *);
+        extern const char * const ndarray__name__;
+        extern const char * const ndarray__doc__;
+        PyObject * ndarray(PyObject *, PyObject *);
     } // of namespace vector
 
     namespace matrix {
-        // matrix_asnumpy
-        extern const char * const asnumpy__name__;
-        extern const char * const asnumpy__doc__;
-        PyObject * asnumpy(PyObject *, PyObject *);
+        // matrix_ndarray
+        extern const char * const ndarray__name__;
+        extern const char * const ndarray__doc__;
+        PyObject * ndarray(PyObject *, PyObject *);
     } // of namespace matrix
 } // of namespace gsl
 

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
-// Lijun Zhu
-// Caltech
+// Lijun Zhu (ljzhu@gps.caltech.edu)
+//
 // (c) 1998-2019 all rights reserved
 //
 
@@ -21,11 +21,11 @@
 #include "capsules.h"
 
 
-const char * const gsl::vector::asnumpy__name__ = "vector_asnumpy";
-const char * const gsl::vector::asnumpy__doc__ = "return a numpy array reference of vector";
+const char * const gsl::vector::ndarray__name__ = "vector_ndarray";
+const char * const gsl::vector::ndarray__doc__ = "return a numpy array reference of vector";
 
 PyObject *
-gsl::vector::asnumpy(PyObject *, PyObject * args) {
+gsl::vector::ndarray(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
     // unpack the argument tuple
@@ -53,11 +53,11 @@ gsl::vector::asnumpy(PyObject *, PyObject * args) {
     return ndarray;
 }
 
-const char * const gsl::matrix::asnumpy__name__ = "matrix_asnumpy";
-const char * const gsl::matrix::asnumpy__doc__ = "return a numpy array reference of matrix";
+const char * const gsl::matrix::ndarray__name__ = "matrix_ndarray";
+const char * const gsl::matrix::ndarray__doc__ = "return a numpy array reference of matrix";
 
 PyObject *
-gsl::matrix::asnumpy(PyObject *, PyObject * args) {
+gsl::matrix::ndarray(PyObject *, PyObject * args) {
     // the arguments
     PyObject * self;
     // unpack the argument tuple
