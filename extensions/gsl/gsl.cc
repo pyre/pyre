@@ -26,6 +26,7 @@
 #include "rng.h" // random numbers
 #include "vector.h" // vectors
 #include "stats.h" // stats
+#include "numpy.h" // numpy hook
 
 // mpi support
 #if defined(WITH_MPI)
@@ -237,9 +238,16 @@ namespace gsl {
         { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
         { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
 
+        // numpy
+        { vector::ndarray__name__, vector::ndarray, METH_VARARGS, vector::ndarray__doc__ },
+        { matrix::ndarray__name__, matrix::ndarray, METH_VARARGS, matrix::ndarray__doc__ },
+
         // more statistics
         { stats::correlation__name__, stats::correlation, METH_VARARGS, stats::correlation__doc__},
         { stats::covariance__name__, stats::covariance, METH_VARARGS, stats::covariance__doc__},
+        { stats::matrix_mean__name__, stats::matrix_mean, METH_VARARGS, stats::matrix_mean__doc__},
+        { stats::matrix_mean_sd__name__, stats::matrix_mean_sd, METH_VARARGS, stats::matrix_mean_sd__doc__},
+        { stats::matrix_mean_std__name__, stats::matrix_mean_std, METH_VARARGS, stats::matrix_mean_std__doc__},
 
         // mpi support
 #if defined(WITH_MPI)

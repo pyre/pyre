@@ -396,6 +396,18 @@ class Vector:
         return gsl.vector_sdev(self.data, float(mean) if mean is not None else None)
 
 
+    def ndarray(self, copy=False):
+        """
+        Return a numpy array reference (w/ shared data) if {copy} is False, or a new copy if {copy} is {True}
+        """
+        # call c-api extension to create a numpy array reference
+        array = gsl.vector_ndarray(self.data)
+        # whether the data copy is required
+        if copy:
+            array = array.copy()
+        return array
+
+
     # meta methods
     def __init__(self, shape, data=None, **kwds):
         # chain up
