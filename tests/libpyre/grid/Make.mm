@@ -14,6 +14,7 @@ LAYOUT_TESTS = \
     index \
     index-access \
     index-bool \
+    index-arithmetic \
     packing \
     packing-c \
     packing-fortran \

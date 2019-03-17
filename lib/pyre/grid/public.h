@@ -91,15 +91,19 @@ namespace pyre {
         // operators on indices
         // equality
         template <typename repT>
-        auto operator== (const Index<repT> &, const Index<repT> &);
+        inline auto operator== (const Index<repT> &, const Index<repT> &);
         // inequality
         template <typename repT>
-        auto operator!= (const Index<repT> &, const Index<repT> &);
+        inline auto operator!= (const Index<repT> &, const Index<repT> &);
         // arithmetic
         template <typename repT>
-        auto operator+ (const Index<repT> &, const Index<repT> &);
+        inline auto operator+ (const Index<repT> &, const Index<repT> &);
         template <typename repT>
-        auto operator- (const Index<repT> &, const Index<repT> &);
+        inline auto operator- (const Index<repT> &, const Index<repT> &);
+        template <typename repT>
+        inline auto operator* (int, const Index<repT> &);
+        template <typename repT>
+        inline auto operator* (const Index<repT> &, int);
 
         // operators on iterators
         // equality
