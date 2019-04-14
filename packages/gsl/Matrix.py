@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2018 all rights reserved
+# (c) 1998-2019 all rights reserved
 #
 
 
@@ -463,6 +463,98 @@ class Matrix:
         x = type(self)(shape=self.shape, data=vectors)
         # and return
         return λ, x
+
+    # statistics
+    def mean(self, axis=None, out=None):
+        """
+        Compute the mean values of a matrix
+        axis = None, 0, or 1, along which the mean are computed
+        """
+        # check axis
+        if axis is not None and axis !=0 and axis !=1:
+            raise IndexError("axis is out of range")
+        # check whether output vector is already allocated
+        if out is None:
+            # mean, sd over flattened matrix
+            if axis is None:
+                mean = self.vector(shape=1)
+            # mean, sd along row
+            elif axis == 0:
+                mean = self.vector(shape=self.columns)
+            # mean, sd along column
+            elif axis == 1:
+                mean = self.vector(shape=self.rows)
+        else:
+            # use pre-allocated vectors
+            mean = out
+            # assuming correct dimension, skip error checking
+
+        # call gsl function
+        gsl.stats_matrix_mean(self.data, axis, mean.data)
+
+        # return the result
+        return mean
+
+    def mean_sd(self, axis=None, out=None, sample=True):
+        """
+        Compute the mean values of matrix
+        axis: int or None
+             axis along which the means are computed. None for all elements
+        out: tuple of two vectors (mean, sd)
+             vector size is 1 (axis=None),  columns(axis=0), rows(axis=1)
+        sample: True or False
+             when True, the sample standard deviation is computed 1/(N-1)
+             when False, the population standard deviation is computed 1/N
+        """
+        # check axis
+        if axis is not None and axis !=0 and axis !=1:
+            raise IndexError("axis is out of range")
+
+        if out is None:
+            # mean, sd over flattened matrix
+            if axis is None:
+                mean = self.vector(shape=1)
+                sd = self.vector(shape=1)
+            # mean, sd along row
+            elif axis == 0:
+                mean = self.vector(shape=self.columns)
+                sd = self.vector(shape=self.columns)
+            # mean, sd along column
+            elif axis == 1:
+                mean = self.vector(shape=self.rows)
+                sd = self.vector(shape=self.rows)
+        else:
+            # use pre-allocated vectors
+            mean, sd = out
+            # assuming correct dimension, skip error checking
+
+        # call gsl function
+        if sample:
+            gsl.stats_matrix_mean_sd(self.data, axis, mean.data, sd.data)
+        else:
+            gsl.stats_matrix_mean_std(self.data, axis, mean.data, sd.data)
+
+        # return (mean, sd)
+        return mean, sd
+
+    def std(self, axis=None, sample=False):
+        """
+        Compute the standard deviation of a matrix
+        """
+        mean, sd = self.mean_sd(axis=axis, out=None, sample=sample)
+        return sd
+
+
+    def ndarray(self, copy=False):
+        """
+        Return a numpy array reference (w/ shared data) if {copy} is False, or a new copy if {copy} is {True}
+        """
+        # call c-api extension to create a numpy array reference
+        array = gsl.matrix_ndarray(self.data)
+        # whether the data copy is required
+        if copy:
+            array = array.copy()
+        return array
 
 
     # meta methods

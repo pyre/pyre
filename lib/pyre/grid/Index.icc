@@ -3,7 +3,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2018 all rights reserved
+// (c) 1998-2019 all rights reserved
 //
 
 // code guard
@@ -181,6 +181,38 @@ operator-(const Index<repT> & one, const Index<repT> & two) {
     }
     // all done
     return sum;
+}
+
+
+template <typename repT>
+auto
+pyre::grid::
+operator*(int scale, const Index<repT> & idx) {
+    // make a default one
+    Index<repT> res = idx;
+    // go through its slots
+    for (typename Index<repT>::size_type slot=0; slot < idx.size(); ++slot) {
+        // and set each one to the sum of the other two
+        res[slot] *= scale;
+    }
+    // all done
+    return res;
+}
+
+
+template <typename repT>
+auto
+pyre::grid::
+operator*(const Index<repT> & idx, int scale) {
+    // make a default one
+    Index<repT> res = idx;
+    // go through its slots
+    for (typename Index<repT>::size_type slot=0; slot < idx.size(); ++slot) {
+        // and set each one to the sum of the other two
+        res[slot] *= scale;
+    }
+    // all done
+    return res;
 }
 
 

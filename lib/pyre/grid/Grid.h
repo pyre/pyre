@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2018 all rights reserved
+// (c) 1998-2019 all rights reserved
 //
 
 // A grid
@@ -62,6 +62,9 @@ public:
 
     inline auto view() const;
     inline auto view(const slice_type & slice) const;
+
+    inline auto constview() const;
+    inline auto constview(const slice_type & slice) const;
 
     // read and write access using offsets
     inline auto & operator[](size_type offset);

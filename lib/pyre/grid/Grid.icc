@@ -2,7 +2,7 @@
 //
 // michael a.g. aïvázis
 // orthologue
-// (c) 1998-2018 all rights reserved
+// (c) 1998-2019 all rights reserved
 //
 
 // code guard
@@ -103,6 +103,22 @@ template <typename cellT, typename layoutT, typename storageT>
 auto
 pyre::grid::Grid<cellT, layoutT, storageT>::
 view(const slice_type & slice) const
+{
+    return constview_type(*this, slice);
+}
+
+template <typename cellT, typename layoutT, typename storageT>
+auto
+pyre::grid::Grid<cellT, layoutT, storageT>::
+constview() const
+{
+    return constview_type(*this, layout());
+}
+
+template <typename cellT, typename layoutT, typename storageT>
+auto
+pyre::grid::Grid<cellT, layoutT, storageT>::
+constview(const slice_type & slice) const
 {
     return constview_type(*this, slice);
 }
