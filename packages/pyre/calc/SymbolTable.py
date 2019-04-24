@@ -27,12 +27,23 @@ class SymbolTable:
 
     # public data
     @property
+    def keys(self):
+        """
+        Build an iterator over my registered keys
+        """
+        # delegate to my map and realize into a container since some types of access modify the
+        # key and slot stores
+        return tuple(self._nodes.keys())
+
+
+    @property
     def nodes(self):
         """
         Build an iterator over my registered nodes
         """
-        # delegate to my map
-        return self._nodes.values()
+        # delegate to my map and realize into a container since some types of access modify the
+        # key and slot stores
+        return tuple(self._nodes.values())
 
 
     # convenience: node constructors
