@@ -12,8 +12,6 @@ import pyre
 from .Specification import Specification
 # my superclass
 from .Node import Node
-# my status tracker
-from .Status import Status
 
 
 # class declaration
@@ -23,19 +21,11 @@ class Product(Node, implements=Specification):
     """
 
 
-    # public data
-    # the object that watches over my traits
-    status = None
-
-
-    # meta-methods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # build my status tracker
-        self.status = Status().track(component=self)
-        # all done
-        return
+    # interface
+    def sync(self):
+        """
+        Examine my state
+        """
 
 
 # end of file

@@ -18,6 +18,9 @@ from .Specification import Specification as specification
 from .Factory import Factory as factory
 from .Product import Product as product
 
+# the decorators
+from .Binder import Binder as bind
+
 # the base classes
 from .Workflow import Workflow as workflow
 

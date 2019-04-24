@@ -11,6 +11,7 @@ include pyre.def
 PACKAGE = flow
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    Binder.py \
     Factory.py \
     Node.py \
     Producer.py \

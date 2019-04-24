@@ -19,6 +19,11 @@ class Specification(pyre.protocol):
     """
 
 
+    # public data
+    input = False
+    output = False
+
+
     # facility makers
     @classmethod
     def blueprint(cls, **kwds):
