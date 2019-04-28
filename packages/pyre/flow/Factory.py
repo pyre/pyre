@@ -15,7 +15,7 @@ from .Node import Node
 
 
 # class declaration
-class Factory(Node, implements=Producer):
+class Factory(Node, implements=Producer, internal=True):
     """
     The base class for creators of data products
     """

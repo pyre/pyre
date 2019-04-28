@@ -8,12 +8,14 @@
 
 # support
 import pyre
+# my meta-class
+from .FlowMaster import FlowMaster
 # my status tracker
 from .Status import Status
 
 
 # declaration
-class Node(pyre.component):
+class Node(pyre.component, metaclass=FlowMaster, internal=True):
     """
     Base class for entities that participate in workflows
     """

@@ -15,7 +15,7 @@ from .Node import Node
 
 
 # class declaration
-class Product(Node, implements=Specification):
+class Product(Node, implements=Specification, internal=True):
     """
     The base class for data products
     """
