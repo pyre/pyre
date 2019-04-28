@@ -104,7 +104,7 @@ class Facility(Slotted, schemata.component):
             locator = None
 
         # instantiate and return
-        return value(name=name, locator=locator)
+        return value(name=name, locator=locator, implicit=True)
 
 
     # meta-methods

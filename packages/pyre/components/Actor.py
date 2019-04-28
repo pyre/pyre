@@ -101,7 +101,7 @@ class Actor(Requirement):
         return
 
 
-    def __call__(self, name=None, locator=None, globalAliases=False, **kwds):
+    def __call__(self, name=None, locator=None, implicit=False, globalAliases=False, **kwds):
         """
         Build an instance of one of my classes
         """
