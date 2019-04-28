@@ -13,6 +13,8 @@ PACKAGE = flow
 EXPORT_PYTHON_MODULES = \
     Binder.py \
     Factory.py \
+    FlowMaster.py \
+    NameGenerator.py \
     Node.py \
     Producer.py \
     Product.py \
