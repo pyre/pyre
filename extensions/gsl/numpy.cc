@@ -9,12 +9,11 @@
 #include <portinfo>
 #include <Python.h>
 #include <sstream>
-#include <cstdio>
 
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 
-//#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
 
 #include "numpy.h"
@@ -49,7 +48,7 @@ gsl::vector::ndarray(PyObject *, PyObject * args) {
     npy_intp dims[1] = {(npy_intp)v->size}; // shape
     int typenum = NPY_DOUBLE;  // dtype
     PyObject* ndarray = PyArray_SimpleNewFromData(nd, dims, typenum, (void *)v->data);
-    // return the ndarray 
+    // return the ndarray
     return ndarray;
 }
 
@@ -87,7 +86,7 @@ gsl::matrix::ndarray(PyObject *, PyObject * args) {
     npy_intp dims[2] = {(npy_intp)m->size1, (npy_intp)m->size2}; // shape
     int typenum = NPY_DOUBLE;  // dtype
     PyObject* ndarray = PyArray_SimpleNewFromData(nd, dims, typenum, (void *)m->data);
-    // return the ndarray 
+    // return the ndarray
     return ndarray;
 }
 
