@@ -49,6 +49,16 @@ class Tracker(Monitor):
         return self
 
 
+    def playback(self, key):
+        """
+        Play back the history of a specific trait
+        """
+        # get the record associated with key and return each entry
+        yield from self.history[key]
+        # all done
+        return
+
+
     # hooks
     def flush(self, observable, **kwds):
         """
