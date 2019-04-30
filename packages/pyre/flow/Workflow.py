@@ -28,4 +28,28 @@ class Workflow(pyre.application, family='pyre.applications.workflow'):
     products.doc = "the set of flow products"
 
 
+    # debugging support
+    def pyre_dump(self):
+        """
+        Display my factories and products
+        """
+        # make a channel
+        channel = self.info
+        # sign on
+        channel.line("flo:")
+        # first, the products
+        channel.line("  products:")
+        for product in self.products:
+            channel.line(f"    {product}")
+        # and the factories
+        channel.line("  factories:")
+        for factory in self.factories:
+            channel.line(f"    {factory}")
+        # flush
+        channel.log()
+
+        # all done
+        return
+
+
 # end of file
