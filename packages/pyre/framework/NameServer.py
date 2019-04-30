@@ -182,16 +182,16 @@ class NameServer(Hierarchical):
             # check whether this assignment is of lesser priority, in which case we just leave
             # the value as is
             if priority < meta.priority:
-                # but we may have to adjust the trait
+                # now look for the existing model node
+                old = self._nodes[key]
+                # we may have to adjust the trait
                 if factory:
-                    # which involves two steps: first, update the info node
+                    # update the info node
                     meta.factory = factory
-                    # and now look for the existing model node
-                    old = self._nodes[key]
                     # so we can update its value postprocessor
                     old.postprocessor = factory.processor
                 # in any case, we are done here
-                return key
+                return key, None, old
             # ok: higher priority assignment; check whether we should update the descriptor
             if factory: meta.factory = factory
             # adjust the locator and priority of the info node
@@ -211,8 +211,8 @@ class NameServer(Hierarchical):
             old = self._nodes[key]
         # if not
         except KeyError:
-            # no worries
-            pass
+            # no worries; just remember
+            old = None
         # otherwise
         else:
             # adjust the dependency graph
@@ -222,7 +222,7 @@ class NameServer(Hierarchical):
         self._nodes[key] = new
 
         # and return
-        return key
+        return key, new, old
 
 
     def retrieve(self, name):

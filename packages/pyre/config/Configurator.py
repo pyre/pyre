@@ -127,7 +127,9 @@ class Configurator:
         # get the model
         nameserver = self.executive.nameserver
         # insert the value in the model
-        return nameserver.insert(split=split, value=value, locator=locator, priority=priority)
+        key, _, _ = nameserver.insert(split=split, value=value, locator=locator, priority=priority)
+        # and return the associated key
+        return key
 
 
     def defer(self, assignment, priority):
@@ -290,7 +292,8 @@ class Configurator:
 
         # place the trait in the model
         nameserver.insert(name=name, value=value,
-                          factory=configpath.instanceSlot, priority=priority, locator=locator)
+                          factory=configpath.instanceSlot,
+                          priority=priority, locator=locator)
 
         # all done
         return self

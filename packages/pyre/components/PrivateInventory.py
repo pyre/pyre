@@ -38,7 +38,7 @@ class PrivateInventory(Inventory):
         # and attach the new one
         self.traits[trait] = new
         # all done
-        return
+        return new, old
 
 
     def getTraitValue(self, trait):

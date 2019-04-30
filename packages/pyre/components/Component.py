@@ -146,9 +146,17 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # build a priority
         priority = self.pyre_executive.priority.explicit() if priority is None else priority
         # set the value
-        return self.pyre_inventory.setTraitValue(
-            trait=trait, factory=trait.instanceSlot,
-            value=value, priority=priority, locator=locator)
+        new, old = self.pyre_inventory.setTraitValue(trait=trait, factory=trait.instanceSlot,
+                                                     value=value,
+                                                     priority=priority, locator=locator)
+
+        # if an actual assignment took place
+        if new is not None:
+            # invoke the hook
+            self.pyre_traitModified(trait=trait, new=new, old=old)
+
+        # all done
+        return
 
 
     def pyre_getTrait(self, alias):
@@ -191,6 +199,14 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # report any further errors encountered while checking the instance state and acquiring
         # resources; by default, there aren't any
         return
+
+
+    def pyre_traitModified(self, trait, new, old):
+        """
+        Hook that gets invoked by the framework right after a trait value has been modified.
+        """
+        # nothing to do
+        return self
 
 
     def pyre_finalized(self):
@@ -367,6 +383,21 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # we chain up here after normalizing the name. this might be ok, if it weren't for the
         # fact that it is impossible to guarantee that the locator will be correct in all cases
 
+        # we must record the location of the caller; {pyre_setTrait} doesn't know the correct
+        # stack depth whenever this method is involved
+        locator = tracking.here(level=1)
+        # attempt to
+        try:
+            # set the trait
+            self.pyre_setTrait(alias=name, value=value, locator=locator)
+        # if this fails
+        except self.TraitNotFoundError:
+            # this must be a non-trait attribute
+            super().__setattr__(name, value)
+
+        # all done
+        return
+
         # attempt to
         try:
             # normalize the name
@@ -374,17 +405,16 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # if the name is not in the name map
         except KeyError:
             # this must be a non-trait attribute
-            return super().__setattr__(name, value)
+            super().__setattr__(name, value)
 
         # find the trait
         trait = self.pyre_traitmap[canonical]
-        # record the location of the caller
-        locator = tracking.here(level=1)
         # set the priority
         priority = self.pyre_executive.priority.explicit()
         # set the value
-        self.pyre_inventory.setTraitValue(trait=trait, factory=trait.instanceSlot,
-                                          value=value, priority=priority, locator=locator)
+        new, old = self.pyre_inventory.setTraitValue(trait=trait,
+                                                     factory=trait.instanceSlot, value=value,
+                                                     priority=priority, locator=locator)
 
         # all done
         return

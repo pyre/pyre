@@ -70,9 +70,9 @@ class PublicInventory(Inventory):
         # get the nameserver
         nameserver = self.pyre_nameserver
         # adjust the model
-        nameserver.insert(key=key, **kwds)
+        _, new, old = nameserver.insert(key=key, **kwds)
         # all done
-        return
+        return new, old
 
 
     def getTraitValue(self, trait):
@@ -285,8 +285,9 @@ class PublicInventory(Inventory):
             # build the trait full name
             fullname = nameserver.join(base, name)
             # place the slot with the nameserver
-            traitKey = nameserver.insert(name=fullname, value=value,
-                                         factory=factory, locator=locator, priority=priority())
+            traitKey, _, _ = nameserver.insert(name=fullname, value=value,
+                                               factory=factory,
+                                               locator=locator, priority=priority())
             # register the trait aliases
             for alias in trait.aliases:
                 # skip the canonical name

@@ -346,8 +346,9 @@ class KeyMap(Map):
         # build the full name of the map entry
         fullname = nameserver.join(self.name, name)
         # insert into the model
-        key = nameserver.insert(name=fullname, value=value,
-                                factory=self.factory, locator=locator, priority=priority)
+        key, _, _ = nameserver.insert(name=fullname, value=value,
+                                      factory=self.factory,
+                                      locator=locator, priority=priority)
         # adjust my map
         self.map[name] = key
         # all done
