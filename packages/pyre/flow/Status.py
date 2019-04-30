@@ -10,6 +10,7 @@
 import weakref
 # support
 import pyre
+import journal
 
 
 # declaration
@@ -34,6 +35,22 @@ class Status(pyre.tracker):
         return super().track(component=node)
 
 
+    def playback(self, alias):
+        """
+        Go through the history of the trait named {alias}
+        """
+        # get my client
+        node = self.node()
+        # find its trait by this name
+        trait = node.pyre_trait(alias=alias)
+        # get the key
+        key = node.pyre_inventory[trait].key
+        # chain up
+        yield from super().playback(key=key)
+        # all done
+        return
+
+
     # meta-methods
     def __init__(self, node, raw=raw, **kwds):
         # chain up
@@ -53,6 +70,8 @@ class Status(pyre.tracker):
         """
         Handler of the notification that the value of {observable} has changed
         """
+        # get the client
+        node = self.node()
         # mark me
         self.raw = True
         # chain up
