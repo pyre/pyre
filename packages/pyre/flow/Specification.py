@@ -19,34 +19,25 @@ class Specification(pyre.protocol):
     """
 
 
-    # public data
-    input = False
-    output = False
-
-
     # facility makers
     @classmethod
-    def blueprint(cls, **kwds):
+    def input(cls, **kwds):
         """
         Make an input descriptor
         """
-        # ask my meta-class to build a descriptor
-        facility = cls(**kwds)
-        # mark it as input
-        facility.input = True
+        # ask my meta-class to build a descriptor marked as input
+        facility = cls(input=True, **kwds)
         # and return it
         return facility
 
 
     @classmethod
-    def product(cls, **kwds):
+    def output(cls, **kwds):
         """
         Make an output descriptor
         """
-        # ask my meta-class to build a descriptor
-        facility = cls(**kwds)
-        # mark it as input
-        facility.output = True
+        # ask my meta-class to build a descriptor marked as output
+        facility = cls(output=True, **kwds)
         # and return it
         return facility
 
