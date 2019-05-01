@@ -29,12 +29,12 @@ class Workflow(pyre.application, family='pyre.applications.workflow'):
 
 
     # debugging support
-    def pyre_dump(self):
+    def pyre_dump(self, channel=None):
         """
         Display my factories and products
         """
         # make a channel
-        channel = self.info
+        channel = self.info if channel is None else channel
         # sign on
         channel.line("flo:")
         # first, the products
