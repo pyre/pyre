@@ -23,7 +23,7 @@ class FlowMaster(pyre.actor):
     pyre_nameGenerator = NameGenerator()
 
 
-    # methods
+    # meta-methods
     def __call__(self, name=None, locator=None, implicit=False, **kwds):
         """
         Build an instance of one of my classes
