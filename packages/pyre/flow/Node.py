@@ -31,7 +31,7 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         # chain up
         super().__init__(**kwds)
         # build my status tracker
-        self.status = Status(node=self)
+        self.status = Status(node=self, dirty=False)
         # all done
         return
 
