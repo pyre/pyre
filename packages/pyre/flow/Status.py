@@ -21,7 +21,27 @@ class Status(pyre.tracker):
 
 
     # public data
-    raw = True
+    @property
+    def dirty(self):
+        """
+        Return my current status
+        """
+        # easy enough
+        return self._dirty
+
+    @dirty.setter
+    def dirty(self, status):
+        """
+        Adjust my status
+        """
+        # if i'm being marked as dirty
+        if status is True:
+            # flush
+            return self.flush()
+        # otherwise, just update the status
+        self._dirty = False
+        # all done
+        return self
 
 
     # interface
@@ -52,7 +72,7 @@ class Status(pyre.tracker):
 
 
     # meta-methods
-    def __init__(self, node, raw=raw, **kwds):
+    def __init__(self, node, dirty, **kwds):
         # chain up
         super().__init__(**kwds)
         # remember my clients
@@ -60,22 +80,29 @@ class Status(pyre.tracker):
         # enable tracking
         self.track()
         # initialize my flag
-        self.raw = raw
+        self._dirty = dirty
         # all done
         return
 
 
     # hooks
-    def flush(self, observable, **kwds):
+    def flush(self, observable=None, **kwds):
         """
         Handler of the notification that the value of {observable} has changed
         """
         # get the client
         node = self.node()
+        # show me
+        print(f"flushing {node}")
         # mark me
-        self.raw = True
+        self._dirty = True
         # chain up
         return super().flush(observable=observable, **kwds)
+
+
+    # implementation details
+    # data
+    _dirty = True
 
 
 # end of file
