@@ -40,10 +40,20 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
     @pyre.export
     def plan(self, context=None):
         """
-        Describe what needs to get to done to make my products
+        Describe what needs to get done to make my products
         """
         # don't know how to do that
         return
+
+
+    # framework hooks
+    def pyre_traitModified(self, trait, new, old):
+        """
+        Hook invoked when a trait changes value
+        """
+        print(trait)
+        # chain up
+        return super().pyre_traitModified(trait=trait, new=new, old=old)
 
 
 # end of file
