@@ -42,8 +42,8 @@ class Tracker(Monitor):
             info = nameserver.getInfo(key)
             # save the info
             revision = Revision(value=slot.value, locator=info.locator, priority=info.priority)
-            # record
-            history[key].append(revision)
+            # create a pile and record
+            history[key] = [ revision ]
 
         # all done
         return self
@@ -82,8 +82,8 @@ class Tracker(Monitor):
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # initialize my history
-        self.history = collections.defaultdict(list)
+        # initialize my history; it's a dictionary that maps trait keys to a list of revisions
+        self.history = {}
         # all done
         return
 
