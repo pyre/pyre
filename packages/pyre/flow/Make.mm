@@ -14,12 +14,15 @@ EXPORT_PYTHON_MODULES = \
     Binder.py \
     Factory.py \
     FactoryMaker.py \
+    FactoryStatus.py \
     FlowMaster.py \
     NameGenerator.py \
     Node.py \
     Producer.py \
     Product.py \
+    ProductStatus.py \
     Specification.py \
+    Stale.py \
     Status.py \
     Workflow.py \
     __init__.py
