@@ -19,6 +19,14 @@ class Specification(pyre.protocol):
     """
 
 
+    # required interface
+    @pyre.provides
+    def pyre_make(self, **kwds):
+        """
+        Ask my factories to rebuild me
+        """
+
+
     # facility makers
     @classmethod
     def input(cls, **kwds):
