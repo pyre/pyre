@@ -17,13 +17,13 @@ class Producer(pyre.protocol):
 
     # required interface
     @pyre.provides
-    def make(self, **kwds):
+    def pyre_make(self, **kwds):
         """
         Build all products
         """
 
     @pyre.provides
-    def plan(self, **kwds):
+    def pyre_plan(self, **kwds):
         """
         Describe what needs to get to done to make the products
         """
