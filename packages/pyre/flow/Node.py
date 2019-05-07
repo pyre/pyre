@@ -10,8 +10,6 @@
 import pyre
 # my meta-class
 from .FlowMaster import FlowMaster
-# my status tracker
-from .Status import Status
 
 
 # declaration
@@ -23,7 +21,7 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
 
     # public data
     # the object that watches over my traits
-    status = None
+    pyre_status = None
 
 
     # meta-methods
@@ -31,37 +29,7 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         # chain up
         super().__init__(**kwds)
         # build my status tracker
-        self.status = Status(node=self, dirty=False)
-        # all done
-        return
-
-
-    # introspection
-    def pyre_clients(self):
-        """
-        Print a list of the observers of each of my traits
-        """
-        # get my slot
-        myslot = self.pyre_slot()
-        # ask it to watch over all my traits
-        # myslot.observe(self.pyre_inventory[trait] for trait in self.pyre_configurables())
-
-        # show me
-        observers = tuple(myslot.observers)
-        # show me
-        print(f"{self.pyre_spec}:")
-        print(f"    observers = {observers}")
-        # go through my traits
-        for trait in self.pyre_configurables():
-            # show me
-            print(f"    trait: {trait.name}")
-            # get its slot
-            slot = self.pyre_inventory[trait]
-            # see who's watching it
-            observers = tuple(slot.observers)
-            # show me
-            print(f"        observers = {observers}")
-
+        self.pyre_status = self.pyre_newStatus(node=self)
         # all done
         return
 
