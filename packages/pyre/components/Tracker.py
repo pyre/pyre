@@ -8,6 +8,8 @@
 
 # externals
 import collections
+# the framework
+import pyre
 # support
 from .Revision import Revision
 # superclass
@@ -38,6 +40,10 @@ class Tracker(Monitor):
         for slot in inventory.getSlots():
             # grab the key
             key = slot.key
+            # if the key is trivial
+            if key is None:
+                # move on
+                continue
             # ask the name server for the slot meta-data
             info = nameserver.getInfo(key)
             # save the info
@@ -60,20 +66,23 @@ class Tracker(Monitor):
 
 
     # hooks
-    def flush(self, observable, **kwds):
+    def flush(self, observable=None, **kwds):
         """
         Handle the notification that the value of {observable} has changed
         """
-        # get the slot key
-        key = observable.key
-        # ask it for its value
-        value = observable.value
-        # and the meta-data maintained by the nameserver
-        info = observable.pyre_nameserver.getInfo(key)
-        # save the info
-        revision = Revision(value, locator=info.locator, priority=info.priority)
-        # record
-        self.history[key].append(revision)
+        # if the observable is another monitor
+        if isinstance(observable, pyre.executive.nameserver.node):
+            # get the slot key
+            key = observable.key
+            # ask it for its value
+            value = observable.value
+            # and the meta-data maintained by the nameserver
+            info = observable.pyre_nameserver.getInfo(key)
+            # save the info
+            revision = Revision(value, locator=info.locator, priority=info.priority)
+            # record
+            self.history[key].append(revision)
+
         # chain up
         return super().flush(observable=observable, **kwds)
 
