@@ -102,14 +102,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         """
         Hook invoked when a trait changes value
         """
-        print(f"Factory.pyre_traitModified: {self}")
-        print(f"  inputs: {self.pyre_inputs}")
-        print(f"  outputs: {self.pyre_outputs}")
-        print(f"  trait: {trait!r}")
-        print(f"  old: {old}")
-        print(f"  new: {new}")
-        print(trait.input)
-        print(trait.output)
         # get my status monitor
         status = self.pyre_status
         # if {trait} is an input
@@ -121,7 +113,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
             # ask my status monitor to replace the {old} output with a {new} one
             status.replaceOutput(new=new, old=old)
         # chain up
-        print(f"Factory.pyre_traitModified: done")
         return super().pyre_traitModified(trait=trait, new=new, old=old)
 
 

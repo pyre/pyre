@@ -32,11 +32,6 @@ class FactoryStatus(Status):
         """
         Replace the {old} input with a {new} one
         """
-        print(f"FactoryStatus.replaceInput:")
-        print(f"  old: {old}")
-        print(f"    observers: {old.pyre_status._observers}")
-        print(f"  new: {new}")
-        print(f"    observers: {new.pyre_status._observers}")
         # remove me from the list of {old} observers
         old.pyre_status.removeObserver(observer=self)
         # and add to the list of {new} observers
@@ -45,8 +40,6 @@ class FactoryStatus(Status):
         if new.pyre_stale:
             # mark the downstream graph
             self.flush(observable=new.pyre_status)
-
-        print(f"FactoryStatus.replaceInput: done")
         # all done
         return
 
@@ -55,18 +48,12 @@ class FactoryStatus(Status):
         """
         Replace the {old} output with a {new} one
         """
-        print(f"FactoryStatus.replaceOutput:")
-        print(f"  old: {old}")
-        print(f"    observers: {old.pyre_status._observers}")
-        print(f"  new: {new}")
-        print(f"    observers: {new.pyre_status._observers}")
         # remove the {old} product from the list of my observers
         self.removeObserver(observer=old.pyre_status)
         # add the new one
         self.addObserver(observer=new.pyre_status)
         # and mark it
         new.pyre_stale = True
-        print(f"FactoryStatus.replaceOutput: done")
         # all done
         return
 
