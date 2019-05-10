@@ -43,13 +43,7 @@ class Product(Node, implements=Specification, internal=True):
         return
 
 
-    # interface
-    def sync(self):
-        """
-        Examine my state
-        """
-
-
+    # protocol obligations
     @pyre.export
     def pyre_make(self):
         """
@@ -69,7 +63,13 @@ class Product(Node, implements=Specification, internal=True):
         return self
 
 
-        # meta-methods
+    def sync(self):
+        """
+        Examine my state
+        """
+
+
+    # meta-methods
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
@@ -90,17 +90,74 @@ class Product(Node, implements=Specification, internal=True):
         return ProductStatus(**kwds)
 
 
-    def pyre_registerFactory(self, factory):
+    def pyre_addInputBinding(self, factory):
         """
-        Register {factory} as one of my makers
+        Bind me as an input to the given {factory}
         """
-        # add the {factory} to my pile
+        # let my monitor know there is a new client {factory}
+        self.pyre_status.addInputBinding(factory=factory, product=self)
+        # all done
+        return
+
+
+    def pyre_removeInputBinding(self, factory):
+        """
+        Unbind me as an input to the given {factory}
+        """
+        # let my monitor know there is a new client {factory}
+        self.pyre_status.removeInputBinding(factory=factory, product=self)
+        # all done
+        return
+
+
+    def pyre_addOutputBinding(self, factory):
+        """
+        Bind me as an output to the given {factory}
+        """
+        # add {factory} to my pile
         self.pyre_factories.add(factory)
-        # set it up so i can monitor its status
-        self.pyre_status.monitorFactory(factory=factory)
+        # let my monitor know there is a new client {factory}
+        self.pyre_status.addOutputBinding(factory=factory, product=self)
+        # all done
+        return
+
+
+    def pyre_removeOutputBinding(self, factory):
+        """
+        Unbind me as an output to the given {factory}
+        """
+        # remove {factory} from my pile
+        self.pyre_factories.remove(factory)
+        # let my monitor know there is a new client {factory}
+        self.pyre_status.removeOutputBinding(factory=factory, product=self)
+        # all done
+        return
+
+
+    # debugging support
+    def pyre_dump(self, channel, indent=''):
+        """
+        Put some useful info about me in {channel}
+        """
+        # sign on
+        channel.line(f"{indent}{self}")
+
+        # my factories
+        channel.line(f"{indent*2}factories:")
+        for factory in self.pyre_factories:
+            channel.line(f"{indent*3}{factory}")
+
+        # my state
+        channel.line(f"{indent*2}stale: {self.pyre_stale}")
+
+        # my status monitor
+        channel.line(f"{indent*2}status: {self.pyre_status}")
+        channel.line(f"{indent*3}observers:")
+        for observer in self.pyre_status.observers:
+            channel.line(f"{indent*4}{observer}")
+
         # all done
         return self
-
 
 
 # end of file

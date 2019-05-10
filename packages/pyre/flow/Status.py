@@ -32,6 +32,38 @@ class Status(pyre.tracker):
         return
 
 
+    def addInputBinding(self, factory, product):
+        """
+        The given {product} is now an input to my {factory}
+        """
+        # by default, nothing to do
+        return self
+
+
+    def removeInputBinding(self, factory, product):
+        """
+        The given {product} is no longer an input to my {factory}
+        """
+        # by default, nothing to do
+        return self
+
+
+    def addOutputBinding(self, factory, product):
+        """
+        The given {product} is now an output of {factory}
+        """
+        # by default, nothing to do
+        return self
+
+
+    def removeOutputBinding(self, factory, product):
+        """
+        The given {product} is no longer an output of {factory}
+        """
+        # by default, nothing to do
+        return self
+
+
     # meta-methods
     def __init__(self, node, **kwds):
         # chain up

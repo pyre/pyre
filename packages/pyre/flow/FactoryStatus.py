@@ -18,14 +18,20 @@ class FactoryStatus(Status):
 
 
     # interface
-    def bindInputs(self, factory):
+    def addOutputBinding(self, factory, product):
         """
-        Add the status monitors of the {factory} inputs to the pile of my {observables}
+        Add {product} as an output of my {factory}
         """
-        # add the associated status monitors to my pile
-        self.observe(observables=factory.pyre_monitors(pile=factory.pyre_inputs))
-        # all done
-        return
+        # add the {product} monitor to the pile of my observers
+        return self.addObserver(observer=product.pyre_status)
+
+
+    def removeOutputBinding(self, factory, product):
+        """
+        Remove {product} as an output of my {factory}
+        """
+        # add the {product} monitor to the pile of my observers
+        return self.addObserver(observer=product.pyre_status)
 
 
     def replaceInput(self, new, old):

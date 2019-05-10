@@ -70,10 +70,16 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # introduce my inputs to my monitor
-        self.pyre_bindInputs()
-        # introduce my monitor to my outputs
-        self.pyre_bindOutputs()
+        # get my inventory
+        inventory = self.pyre_inventory
+        # get my inputs
+        inputs = (inventory[trait].value for trait in self.pyre_inputs)
+        # bind me to them
+        self.pyre_bindInputs(*inputs)
+        # get my outputs
+        outputs = (inventory[trait].value for trait in self.pyre_outputs)
+        # bind me to them
+        self.pyre_bindOutputs(*outputs)
         # all done
         return
 
@@ -87,6 +93,70 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         from .FactoryStatus import FactoryStatus
         # make one and return it
         return FactoryStatus(**kwds)
+
+
+    def pyre_bindInputs(self, *inputs):
+        """
+        Bind me to the sequence of products in {inputs}
+        """
+        # get my status monitor
+        monitor = self.pyre_status
+        # go through each of my inputs
+        for product in inputs:
+            # tell the product i'm interested in its state
+            product.pyre_addInputBinding(factory=self)
+            # and notify my monitor
+            monitor.addInputBinding(factory=self, product=product)
+        # all done
+        return self
+
+
+    def pyre_unbindInputs(self, *inputs):
+        """
+        Unbind me to the sequence of products in {inputs}
+        """
+        # get my status monitor
+        monitor = self.pyre_status
+        # go through each of my inputs
+        for product in inputs:
+            # tell the product i'm interested in its state
+            product.pyre_removeInputBinding(factory=self)
+            # and notify my monitor
+            monitor.removeInputBinding(factory=self, product=product)
+        # all done
+        return self
+
+
+    def pyre_bindOutputs(self, *outputs):
+        """
+        Bind me to the sequence of products in {outputs}
+        """
+        # get my status monitor
+        monitor = self.pyre_status
+        # go through the products
+        for product in outputs:
+            # tell the product i'm its factory
+            product.pyre_addOutputBinding(factory=self)
+            # and notify my monitor
+            monitor.addOutputBinding(factory=self, product=product)
+        # all done
+        return self
+
+
+    def pyre_unbindOutputs(self, *outputs):
+        """
+        Unbind me to the sequence of products in {outputs}
+        """
+        # get my status monitor
+        monitor = self.pyre_status
+        # go through the products
+        for product in outputs:
+            # tell the product i'm not its factory any more
+            product.pyre_removeOutputBinding(factory=self)
+            # and notify my monitor
+            monitor.removeOutputBinding(factory=self, product=product)
+        # all done
+        return self
 
 
     def pyre_run(self, requestor, stale, **kwds):
@@ -104,61 +174,58 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         """
         # get my status monitor
         status = self.pyre_status
+
         # if {trait} is an input
         if trait.input:
-            # ask my status monitor to replace the {old} input with a {new} one
-            status.replaceInput(new=new, old=old)
+            # if {old} is non-trivial
+            if old is not None:
+                # remove from my input pile
+                self.pyre_unbindInputs(old)
+            # if {new} is non-trivial
+            if new is not None:
+                # add it to my pile of inputs
+                self.pyre_bindInputs(new)
+
         # if {trait} is an output
         if trait.output:
-            # ask my status monitor to replace the {old} output with a {new} one
-            status.replaceOutput(new=new, old=old)
+            # if {old} is non-trivial
+            if old is not None:
+                # ask it to forget me
+                self.pyre_unbindOutputs(old)
+            # if {new} is non-trivial
+            if new is not None:
+                # tell it i'm one of its factories
+                self.pyre_bindOutputs(old)
         # chain up
         return super().pyre_traitModified(trait=trait, new=new, old=old)
 
 
-    # implementation details
-    def pyre_monitors(self, pile):
+    # debugging support
+    def pyre_dump(self, channel, indent=''):
         """
-        Yield the sequence of monitors of traits in {pile}
+        Put some useful info about me in {channel}
         """
-        # get my inventory
-        inventory = self.pyre_inventory
-        # go through my inputs
-        for trait in pile:
-            # look up the associated slot
-            slot = inventory[trait]
-            # get the product
-            product = slot.value
-            # and return its status monitor
-            yield product.pyre_status
+        # sign on
+        channel.line(f"{indent}{self}")
+
+        # my inputs
+        channel.line(f"{indent*2}inputs:")
+        for product in self.pyre_inputs:
+            channel.line(f"{indent*3}{product}")
+
+        # my outputs
+        channel.line(f"{indent*2}outputs:")
+        for product in self.pyre_outputs:
+            channel.line(f"{indent*3}{product}")
+
+        # my status monitor
+        channel.line(f"{indent*2}status: {self.pyre_status}")
+        channel.line(f"{indent*3}observers:")
+        for observer in self.pyre_status.observers:
+            channel.line(f"{indent*4}{observer}")
 
         # all done
-        return
-
-
-    def pyre_bindInputs(self):
-        """
-        Bind me to the current value of my outputs
-        """
-        # delegate to my status monitor
-        return self.pyre_status.bindInputs(factory=self)
-
-
-    def pyre_bindOutputs(self):
-        """
-        Bind me to the current value of my outputs
-        """
-        # grab my inventory
-        inventory = self.pyre_inventory
-        # go through my inputs
-        for trait in self.pyre_outputs:
-            # get the associated product
-            product = inventory[trait].value
-            # register me as a factory
-            product.pyre_registerFactory(factory=self)
-        # all done
-        return
-
+        return self
 
 
 # end of file
