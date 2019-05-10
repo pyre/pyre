@@ -195,7 +195,7 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
             # if {new} is non-trivial
             if new is not None:
                 # tell it i'm one of its factories
-                self.pyre_bindOutputs(old)
+                self.pyre_bindOutputs(new)
         # chain up
         return super().pyre_traitModified(trait=trait, new=new, old=old)
 

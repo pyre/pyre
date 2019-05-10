@@ -104,7 +104,7 @@ class Product(Node, implements=Specification, internal=True):
         """
         Unbind me as an input to the given {factory}
         """
-        # let my monitor know there is a new client {factory}
+        # let my monitor know {factory} is no longer a client
         self.pyre_status.removeInputBinding(factory=factory, product=self)
         # all done
         return
@@ -128,7 +128,7 @@ class Product(Node, implements=Specification, internal=True):
         """
         # remove {factory} from my pile
         self.pyre_factories.remove(factory)
-        # let my monitor know there is a new client {factory}
+        # let my monitor know {factory} is no longer a client
         self.pyre_status.removeOutputBinding(factory=factory, product=self)
         # all done
         return

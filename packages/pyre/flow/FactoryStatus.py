@@ -30,8 +30,8 @@ class FactoryStatus(Status):
         """
         Remove {product} as an output of my {factory}
         """
-        # add the {product} monitor to the pile of my observers
-        return self.addObserver(observer=product.pyre_status)
+        # remove the {product} monitor from my pile of observers
+        return self.removeObserver(observer=product.pyre_status)
 
 
     def replaceInput(self, new, old):
