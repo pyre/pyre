@@ -37,6 +37,14 @@ class ProductStatus(Stale, Status):
         return self.removeObserver(observer=factory.pyre_status)
 
 
+    def addOutputBinding(self, factory, product):
+        """
+        Add {product} as an output of my {factory}
+        """
+        # add the {product} monitor to the pile of my observers
+        return self.flush(observable=factory.pyre_status)
+
+
     # meta-methods
     def __init__(self, stale=False, **kwds):
         # chain up
