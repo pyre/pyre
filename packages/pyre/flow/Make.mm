@@ -25,6 +25,7 @@ EXPORT_PYTHON_MODULES = \
     Stale.py \
     Status.py \
     Workflow.py \
+    exceptions.py \
     __init__.py
 
 # standard targets
