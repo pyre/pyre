@@ -27,6 +27,20 @@ class Specification(pyre.protocol):
         """
 
 
+    @pyre.provides
+    def pyre_tasklist(self, **kwds):
+        """
+        Generate the sequence of factories that must be invoked to rebuild me
+        """
+
+
+    @pyre.provides
+    def pyre_targets(self, **kwds):
+        """
+        Generate the sequence of products that must be refreshed to rebuild me
+        """
+
+
     # facility makers
     @classmethod
     def input(cls, **kwds):
