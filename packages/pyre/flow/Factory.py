@@ -22,46 +22,160 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
     The base class for creators of data products
     """
 
+
+    # types
+    from .exceptions import IncompleteFlowError
+
+
     # public data
-    pyre_inputs = ()
-    pyre_outputs = ()
-
-
-    # interface obligations
-    @pyre.export
-    def pyre_make(self, product, context=None):
+    @property
+    def pyre_inputs(self):
         """
-        Construct my products
-        """
-        # put a plan together
-        stale = tuple(self.pyre_plan(context=context))
-        # go through the stale products
-        for product in stale:
-            # force them to get remade
-            product.pyre_make()
-        # if any of my inputs were stale
-        if stale:
-            # invoke me
-            self.pyre_run(requestor=product, stale=stale)
-        # all done
-        return self
-
-
-    @pyre.export
-    def pyre_plan(self, context=None):
-        """
-        Describe what needs to get done to make my products
+        Build the list of my input products
         """
         # grab my inventory
         inventory = self.pyre_inventory
-        # go through my inputs
-        for trait in self.pyre_inputs:
-            # get the product
+        # go through my input traits
+        for trait in self.pyre_inputTraits:
+            # get the associated product
             product = inventory[trait].value
-            # if it's stale
-            if product.pyre_stale:
-                # it needs to be remade
-                yield product
+            # pass it on along with its meta-data
+            yield trait, product
+        # all done
+        return
+
+
+    @property
+    def pyre_outputs(self):
+        """
+        Build the list of my output products
+        """
+        # grab my inventory
+        inventory = self.pyre_inventory
+        # go through my output traits
+        for trait in self.pyre_outputTraits:
+            # get the associated product
+            product = inventory[trait].value
+            # pass it on along with its meta-data
+            yield trait, product
+        # all done
+        return
+
+
+    # protocol obligations
+    @pyre.export
+    def pyre_make(self, **kwds):
+        """
+        Construct my products
+        """
+        # make a pile of stale inputs
+        stale = []
+        # and another for the unbound traits
+        unbound = []
+        # go through my inputs
+        for trait, product in self.pyre_inputs:
+            # if the product is unbound
+            if product is None:
+                # add it to the pile
+                unbound.append(trait)
+                # and move on
+                continue
+            # if the product is stale
+            if product.pyre_stale is True:
+                # add it to the stale pile
+                stale.append(product)
+                # and move on
+                continue
+        # if there are unbound traits
+        if unbound:
+            # build a locator that blames my caller
+            locator = pyre.tracking.here(level=1)
+            # complain
+            raise self.IncompleteFlowError(node=self, traits=unbound, locator=locator)
+        # go through the stale products
+        for product in stale:
+            # refresh them
+            product.pyre_make(**kwds)
+        # if anything were stale
+        if stale:
+            # invoke me
+            self.pyre_run(stale=stale, **kwds)
+        # all done
+        return
+
+
+    @pyre.export
+    def pyre_tasklist(self, **kwds):
+        """
+        Generate the sequence of factories that must be invoked to rebuild a product
+        """
+        # make a pile of stale inputs
+        stale = []
+        # and another for the unbound traits
+        unbound = []
+        # go through my inputs
+        for trait, product in self.pyre_inputs:
+            # if the product is unbound
+            if product is None:
+                # add it to the pile
+                unbound.append(trait)
+                # and move on
+                continue
+            # if the product is stale
+            if product.pyre_stale is True:
+                # add it to the stale pile
+                stale.append(product)
+                # and move on
+                continue
+        # if there are unbound traits
+        if unbound:
+            # build a locator that blames my caller
+            locator = pyre.tracking.here(level=1)
+            # complain
+            raise self.IncompleteFlowError(node=self, traits=unbound, locator=locator)
+        # go through the stale products
+        for product in stale:
+            # ask them to contribute
+            yield from product.pyre_tasklist(**kwds)
+        # add me to the pile
+        yield self
+        # all done
+        return
+
+
+    @pyre.export
+    def pyre_targets(self, context=None):
+        """
+        Generate the sequence of products that must be refreshed
+        """
+        # make a pile of stale inputs
+        stale = []
+        # and another for the unbound traits
+        unbound = []
+        # go through my inputs
+        for trait, product in self.pyre_inputs:
+            # if the product is unbound
+            if product is None:
+                # add it to the pile
+                unbound.append(trait)
+                # and move on
+                continue
+            # if the product is stale
+            if product.pyre_stale is True:
+                # add it to the stale pile
+                stale.append(product)
+                # and move on
+                continue
+        # if there are unbound traits
+        if unbound:
+            # build a locator that blames my caller
+            locator = pyre.tracking.here(level=1)
+            # complain
+            raise self.IncompleteFlowError(node=self, traits=unbound, locator=locator)
+        # go through the stale inputs
+        for product in stale:
+            # ask them to contribute
+            yield from product.pyre_targets()
         # all done
         return
 
@@ -73,11 +187,11 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # get my inventory
         inventory = self.pyre_inventory
         # get my inputs
-        inputs = (inventory[trait].value for trait in self.pyre_inputs)
+        inputs = (inventory[trait].value for trait in self.pyre_inputTraits)
         # bind me to them
         self.pyre_bindInputs(*inputs)
         # get my outputs
-        outputs = (inventory[trait].value for trait in self.pyre_outputs)
+        outputs = (inventory[trait].value for trait in self.pyre_outputTraits)
         # bind me to them
         self.pyre_bindOutputs(*outputs)
         # all done
@@ -159,7 +273,7 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         return self
 
 
-    def pyre_run(self, requestor, stale, **kwds):
+    def pyre_run(self, **kwds):
         """
         Invoke me and remake my products
         """
@@ -210,12 +324,12 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
 
         # my inputs
         channel.line(f"{indent*2}inputs:")
-        for product in self.pyre_inputs:
+        for product in self.pyre_inputTraits:
             channel.line(f"{indent*3}{product}")
 
         # my outputs
         channel.line(f"{indent*2}outputs:")
-        for product in self.pyre_outputs:
+        for product in self.pyre_outputTraits:
             channel.line(f"{indent*3}{product}")
 
         # my status monitor
@@ -226,6 +340,11 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
 
         # all done
         return self
+
+
+    # private data
+    pyre_inputTraits = ()
+    pyre_outputTraits = ()
 
 
 # end of file
