@@ -27,8 +27,8 @@ class FactoryMaker(FlowMaster):
         Build a new factory record
         """
         # augment the attributes
-        attributes["pyre_inputs"] = ()
-        attributes["pyre_outputs"] = ()
+        attributes["pyre_inputTraits"] = ()
+        attributes["pyre_outputTraits"] = ()
         # chain up to build the record
         factory = super().__new__(cls, name, bases, attributes, **kwds)
         # and pass it on
@@ -62,8 +62,8 @@ class FactoryMaker(FlowMaster):
                     # add it to the pile of outputs
                     outputs.append(trait)
         # attach them
-        self.pyre_inputs = tuple(inputs)
-        self.pyre_outputs = tuple(outputs)
+        self.pyre_inputTraits = tuple(inputs)
+        self.pyre_outputTraits = tuple(outputs)
 
         # all done
         return
