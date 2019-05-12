@@ -19,6 +19,31 @@ class PFG(LineMill):
     """
 
 
+    # meta-methods
+    def component(self, name):
+        """
+        Render a component
+        """
+        # easy enough
+        return self.place(f"{name}:")
+
+
+    def trait(self, name, value):
+        """
+        Render a trait
+        """
+        # easy enough
+        return self.place(f"{name} = {value}")
+
+
+    def value(self, value):
+        """
+        Renderer a value for a multi-line trait
+        """
+        # easy
+        return self.place(value)
+
+
     # private data
     comment = ';'
 
