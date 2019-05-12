@@ -88,7 +88,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # and my family name
         family = self.pyre_family() or "<none>"
         # build the spec and return it
-        return f"{family} # {name}"
+        return f"{family}#{name}"
 
 
     @classmethod
