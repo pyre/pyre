@@ -40,13 +40,13 @@ class Indenter:
 
 
     # meta methods
-    def __init__(self, indenter=None, **kwds):
+    def __init__(self, indenter=None, level=0, **kwds):
         # chain up
         super().__init__(**kwds)
         # initialize my markers
-        self.leader = ""
-        self._level = 0
+        self._level = level
         self._indenter = self.INDENTER if indenter is None else indenter
+        self.leader = self._indenter * level
         # all done
         return
 
