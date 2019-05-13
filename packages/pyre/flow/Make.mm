@@ -15,6 +15,7 @@ EXPORT_PYTHON_MODULES = \
     Factory.py \
     FactoryMaker.py \
     FactoryStatus.py \
+    Flow.py \
     FlowMaster.py \
     NameGenerator.py \
     Node.py \
