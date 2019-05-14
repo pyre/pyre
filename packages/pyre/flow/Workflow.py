@@ -59,7 +59,7 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
         # make a channel
         channel = self.info if channel is None else channel
         # sign on
-        channel.line("flo:")
+        channel.line(f"{self}")
         # first, the products
         channel.line("  products:")
         for product in self.products:
