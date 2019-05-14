@@ -165,8 +165,14 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         # identify the trait descriptor
         trait = self.pyre_trait(alias)
-        # ask my inventory to do the rest
-        return self.pyre_inventory.getTraitValue(trait), self.pyre_inventory.getTraitLocator(trait)
+        # get my inventory
+        inventory = self.pyre_inventory
+        # ask it for the value
+        value = inventory.getTraitValue(trait)
+        # and the locator
+        locator = inventory.getTraitLocator(trait)
+        # pass them on
+        return value, locator
 
 
     # framework notifications
@@ -229,7 +235,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
     def pyre_slot(self, attribute=None):
         """
-        Return the slot associated with {attribute}; if no attribute s given, return the slot with
+        Return the slot associated with {attribute}; if no attribute is given, return the slot with
         the component instance itself
         """
         # if the caller did not specify an attribute
@@ -394,27 +400,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         except self.TraitNotFoundError:
             # this must be a non-trait attribute
             super().__setattr__(name, value)
-
-        # all done
-        return
-
-        # attempt to
-        try:
-            # normalize the name
-            canonical = self.pyre_namemap[name]
-        # if the name is not in the name map
-        except KeyError:
-            # this must be a non-trait attribute
-            super().__setattr__(name, value)
-
-        # find the trait
-        trait = self.pyre_traitmap[canonical]
-        # set the priority
-        priority = self.pyre_executive.priority.explicit()
-        # set the value
-        new, old = self.pyre_inventory.setTraitValue(trait=trait,
-                                                     factory=trait.instanceSlot, value=value,
-                                                     priority=priority, locator=locator)
 
         # all done
         return
