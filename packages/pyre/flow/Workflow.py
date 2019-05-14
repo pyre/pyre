@@ -30,6 +30,27 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
     products.doc = "the set of my products"
 
 
+    # persistence
+    def save(self):
+        """
+        Save my entire graph
+        """
+        # make a weaver
+        weaver = pyre.weaver.weaver()
+        # set the encoding
+        weaver.language = self.encoding
+        # open a file
+        with open(f"{self.pyre_name}.{self.encoding}", mode='w') as stream:
+            # assemble the document
+            document = self.pyre_renderTraitValues(renderer=weaver.language)
+            # get the weaver to do its things
+            for line in weaver.weave(document=document):
+                # place each line in the file
+                print(line, file=stream)
+        # all done
+        return
+
+
     # debugging support
     def pyre_dump(self, channel=None):
         """
@@ -52,6 +73,10 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
 
         # all done
         return
+
+
+    # constants
+    encoding = 'pfg'
 
 
 # end of file

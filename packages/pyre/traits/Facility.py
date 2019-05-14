@@ -107,6 +107,19 @@ class Facility(Slotted, schemata.component):
         return value(name=name, locator=locator, implicit=True)
 
 
+    def render(self, value, renderer, workload, incognito=False):
+        """
+        Render {value} using renderer
+        """
+        # get the name to use
+        name = None if incognito else self.name
+        # delegate to my protocol
+        yield from self.protocol.pyre_render(renderer=renderer,
+                                             name=name, component=value, workload=workload)
+        # all done
+        return
+
+
     # meta-methods
     def __init__(self, protocol, **kwds):
         # chain up

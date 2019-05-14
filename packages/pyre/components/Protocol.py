@@ -110,6 +110,31 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         return
 
 
+    @classmethod
+    def pyre_render(cls, renderer, name, component, workload):
+        """
+        Hook invoked when serializing the value of components
+        """
+        # non-trivial components are identified using their spec
+        value = None if component is None else component.pyre_spec
+        # if i'm incognito
+        if name is None:
+            # render just my value
+            yield renderer.value(value=value)
+        # otherwise
+        else:
+            # render both my name and the value
+            yield renderer.trait(name=name, value=value)
+
+        # if the value is non-trivial
+        if component is not None and component not in workload:
+            # add the component to the workload
+            workload.append(component)
+
+        # all done
+        return
+
+
     # support for framework requests
     @classmethod
     def pyre_resolveSpecification(cls, spec, **kwds):
@@ -198,6 +223,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                 yield uri, name, implementer
         # all done
         return
+
 
     @classmethod
     def pyre_locateAllImportableImplementers(cls):

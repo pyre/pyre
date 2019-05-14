@@ -56,6 +56,20 @@ class Configurable(Dashboard):
         return
 
 
+    def pyre_renderTraitValues(self, renderer):
+        """
+        Generate a persistent representation of the values of my traits using {renderer}
+        """
+        # set up the workload
+        workload = [ self ]
+        # while there is still something to do
+        for configurable in workload:
+            # invoke the worker
+            yield from configurable._pyre_renderTraitValues(renderer=renderer, workload=workload)
+        # all done
+        return
+
+
     def pyre_showConfiguration(self, indent='', deep=False):
         """
         Traverse my configuration tree and display trait metadata
@@ -449,6 +463,41 @@ class Configurable(Dashboard):
 
         # all done
         return report
+
+
+    # implementation details
+    def _pyre_renderTraitValues(self, renderer, workload):
+        """
+        Render me and the values of my trait using {renderer}
+        """
+        # get my name
+        spec = self.pyre_spec
+        # and my inventory
+        inventory = self.pyre_inventory
+
+        # first, myself
+        yield renderer.component(name=spec)
+
+        # now, my content
+        renderer.indent()
+        # get my configurable traits
+        traits = self.pyre_configurables()
+        # go through them
+        for trait in traits:
+            # get the trait name
+            name = trait.name
+            # get the value
+            value = inventory.getTraitValue(trait=trait)
+            # get the trait to render the value
+            yield from trait.render(renderer=renderer, value=value, workload=workload)
+
+        # pull out
+        renderer.outdent()
+        # leave a blank line
+        yield ''
+        # all done
+        return
+
 
 
 # end of file
