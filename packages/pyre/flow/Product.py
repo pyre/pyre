@@ -56,7 +56,7 @@ class Product(Node, implements=Specification, internal=True):
         # otherwise, go through my factories
         for factory in self.pyre_factories:
             # and ask each one to update me
-            factory.pyre_make(requestor=self, **kwds)
+            factory.pyre_make(**kwds)
         # if all went well, update my status
         self.pyre_stale = False
         # all done
