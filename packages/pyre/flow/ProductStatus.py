@@ -35,9 +35,9 @@ class ProductStatus(Status):
 
     def addOutputBinding(self, factory, product):
         """
-        Add {product} as an output of my {factory}
+        Add my client {product} as an output of {factory}
         """
-        # add the {product} monitor to the pile of my observers
+        # my client is associated with a new factory, so mark me as stale and notify downstream
         return self.flush(observable=factory.pyre_status)
 
 
