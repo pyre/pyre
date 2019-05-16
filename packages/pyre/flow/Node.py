@@ -24,6 +24,26 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
     pyre_status = None
 
 
+    # public data
+    @property
+    def pyre_stale(self):
+        """
+        Retrieve my status
+        """
+        # delegate to my status manager
+        return self.pyre_status.stale
+
+    @pyre_stale.setter
+    def pyre_stale(self, value):
+        """
+        Set my status
+        """
+        # delegate to my status manager
+        self.pyre_status.stale = value
+        # all done
+        return
+
+
     # meta-methods
     def __init__(self, **kwds):
         # chain up

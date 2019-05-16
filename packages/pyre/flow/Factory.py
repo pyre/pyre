@@ -286,9 +286,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         """
         Hook invoked when a trait changes value
         """
-        # get my status monitor
-        status = self.pyre_status
-
         # if {trait} is an input
         if trait.input:
             # if {old} is non-trivial
