@@ -8,17 +8,13 @@
 
 # my superclasses
 from .Status import Status
-from .Stale import Stale
 
 
 # declaration
-class ProductStatus(Stale, Status):
+class ProductStatus(Status):
     """
     A helper that watches over the traits of products and records value changes
     """
-
-    # N.B. the {flush} chain terminates in the {Status} branch of the inheritance so it has to
-    # be last in the sequence of ancestors
 
     # interface
     def addInputBinding(self, factory, product):
@@ -43,14 +39,6 @@ class ProductStatus(Stale, Status):
         """
         # add the {product} monitor to the pile of my observers
         return self.flush(observable=factory.pyre_status)
-
-
-    # meta-methods
-    def __init__(self, stale=False, **kwds):
-        # chain up
-        super().__init__(stale=stale, **kwds)
-        # all done
-        return
 
 
 # end of file

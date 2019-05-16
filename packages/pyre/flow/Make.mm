@@ -23,7 +23,6 @@ EXPORT_PYTHON_MODULES = \
     Product.py \
     ProductStatus.py \
     Specification.py \
-    Stale.py \
     Status.py \
     Workflow.py \
     exceptions.py \
