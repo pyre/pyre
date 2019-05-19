@@ -41,12 +41,64 @@ class Component(Schema):
         """
         Attempt to convert {value} into a component class compatible with my protocol
         """
+        # coerce {value}
+        value = self._coerce(value=value, **kwds)
+        # if we got something trivial
+        if value is None:
+            # nothing further to do
+            return None
+        # otherwise, get my protocol
+        protocol = self.protocol
+        # and check whether it is compatible with it
+        report = value.pyre_isCompatible(spec=protocol, fast=True)
+        # if the report is clean
+        if report.isClean:
+            # we are done
+            return value
+        # otherwise, complain
+        raise protocol.ProtocolCompatibilityError(configurable=value, protocol=protocol)
+
+    def string(self, value):
+        """
+        Render value as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None: return None
+        # my value knows
+        return value.pyre_name
+
+
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
+    # meta-methods
+    def __init__(self, protocol, default=default, **kwds):
+        # chain up
+        super().__init__(default=default, **kwds)
+        # save my protocol
+        self.protocol = protocol
+        # all done
+        return
+
+
+    # implementation details
+    def _coerce(self, value, **kwds):
+        """
+        Walk {value} through the coercion process
+        """
         # get my protocol
         protocol = self.protocol
         # which knows the actor type
         actor = protocol.actor
         # the component type
         component = protocol.component
+        # the foundry type
+        foundry = protocol.foundry
         # and the factory of its default value
         default = protocol.pyre_default
 
@@ -54,11 +106,20 @@ class Component(Schema):
         if value == default:
             # evaluate it
             value = value()
-            # and if it's none, we are done
-            if value is None: return None
+            # and if it's none
+            if value is None:
+                # we are done
+                return None
 
-        # give {value} a try
-        if isinstance(value, actor) or isinstance(value, component): return value
+        # if {value} is a foundry
+        if isinstance(value, foundry):
+            # invoke it
+            value = value()
+
+        # if {value} is a component class or instance
+        if isinstance(value, actor) or isinstance(value, component):
+            # pass it on
+            return value
 
         # the only remaining case that i can handle is {value} being a string; if it's not
         if not isinstance(value, str):
@@ -111,34 +172,6 @@ class Component(Schema):
 
         # out of ideas; build an error message and complain
         raise protocol.ResolutionError(protocol=protocol, value=value) from None
-
-
-    def string(self, value):
-        """
-        Render value as a string that can be persisted for later coercion
-        """
-        # respect {None}
-        if value is None: return None
-        # my value knows
-        return value.pyre_name
-
-
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
-
-    # meta-methods
-    def __init__(self, protocol, default=default, **kwds):
-        # chain up
-        super().__init__(default=default, **kwds)
-        # save my protocol
-        self.protocol = protocol
-        # all done
-        return
 
 
 # end of file
