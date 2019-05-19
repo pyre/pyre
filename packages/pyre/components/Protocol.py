@@ -152,13 +152,13 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             # definition of what's acceptable is somewhat complicated because there are many
             # sensible use cases to support. the first step is to check whether the candidate
             # fulfills the obligations defined my this protocol, i.e. it has the correct
-            # properties and behaviors. then, there are issues of pedigree that must be resoved
+            # properties and behaviors. then, there are issues of pedigree that must be resolved
             # on a case by case basis
 
             # if it is compatible with my protocol
             if candidate.pyre_isCompatible(spec=cls):
                 # show me
-                # print('pyre.components.Protocol: compatible candidate: {}'.format(candidate))
+                # print(f"pyre.components.Protocol: compatible candidate: {candidate}")
                 # we are done
                 return candidate
 
@@ -237,7 +237,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # attempt to
         try:
             # hunt the implementers down
-            yield from cls.pyre_implementers(uri='import:{}'.format(uri))
+            yield from cls.pyre_implementers(uri=f'import:{uri}')
         # if anything goes wrong
         except cls.FrameworkError:
             # skip this step
@@ -284,7 +284,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                     # otherwise
                     else:
                         # treat it as a shelf; assemble its address
-                        shelf = 'vfs:{}'.format(name)
+                        shelf = f'vfs:{name}'
                         # and get its contents
                         yield from cls.pyre_implementers(uri=shelf)
 
@@ -338,7 +338,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
             # other kinds?
             import journal
-            return journal.firewall.log("new kind of symbol in shelf {!r}".format(str(uri)))
+            return journal.firewall.log(f"new kind of symbol in shelf '{uri}'")
 
         # all done
         return
@@ -350,7 +350,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         Check whether {this} protocol is compatible with the {other}
         """
-        # print("PP: me={}, other={}".format(cls, spec))
+        # print(f"PP: me={cls}, other={spec}")
         # first, the easy cases am i looking in the mirror?
         if cls == spec:
             # easy; no need to build a report since the rest of the code is not supposed to
@@ -386,7 +386,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         {cls} and {protocol}
         """
         # show me
-        # print("me: {}, other: {}".format(cls, protocol))
+        # print(f"me: {cls}, other: {protocol}")
 
         # I am automatically compatible with my ancestors
         if issubclass(cls, protocol):
