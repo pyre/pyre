@@ -175,8 +175,6 @@ class NameServer(Hierarchical):
             # build the info node
             meta = self.info(name=name, split=split, key=key,
                              priority=priority, locator=locator, factory=factory)
-            # and attach it
-            self._metadata[key] = meta
         # if there is an existing metadata node
         else:
             # check whether this assignment is of lesser priority, in which case we just leave
@@ -220,6 +218,8 @@ class NameServer(Hierarchical):
 
         # place the new node in the model
         self._nodes[key] = new
+        # and attach its meta-data
+        self._metadata[key] = meta
 
         # and return
         return key, new, old
