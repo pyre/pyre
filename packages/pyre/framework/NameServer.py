@@ -50,12 +50,11 @@ class NameServer(Hierarchical):
         # fill out the node info
         name, split, key = self.info.fillNodeId(model=self, name=name)
         # build the node metadata
-        info = self.info(name=name, split=split, key=key,
-                         locator=locator, priority=priority)
+        info = self.info(name=name, split=split, key=key, locator=locator, priority=priority)
         # grab the key
         key = info.key
         # build a slot to hold the {configurable}
-        slot = self.variable(key=key, value=configurable)
+        slot = self.literal(key=key, value=configurable)
         # store it in the model
         self._nodes[key] = slot
         self._metadata[key] = info
@@ -94,7 +93,7 @@ class NameServer(Hierarchical):
                 # get the journal
                 import journal
                 # build the report
-                complaint = 'name conflict while configuring package {!r}: {}'.format(name, package)
+                complaint = f"name conflict while configuring package '{name}': {package}"
                 # and complain
                 raise journal.error('pyre.configuration').log(complaint)
 
@@ -136,7 +135,7 @@ class NameServer(Hierarchical):
             return self.node.expression.expand(model=self, expression=expression)
         # with empty expressions
         except self.EmptyExpressionError as error:
-            # return the expanded text, since it the input may have contained escaped braces
+            # return the expanded text, since the input may have contained escaped braces
             return error.expression
 
 
