@@ -63,10 +63,11 @@ class Slot(Dashboard, metaclass=calc.calculator):
         """
         Get the name under which I am registered with the nameserver
         """
+        # ask the nameserver for the name that corresponds to my key
         return self.pyre_nameserver.getName(self.key) if self.key else None
 
 
-    # mixins
+    # mix-ins
     class literal:
         """Representation of foreign values"""
         def __init__(self, key=None, **kwds):
