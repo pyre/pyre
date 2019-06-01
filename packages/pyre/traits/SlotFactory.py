@@ -28,20 +28,30 @@ class SlotFactory(Dashboard):
         return
 
 
-    def __call__(self, value, **kwds):
+    def __call__(self, value, current=None, **kwds):
         """
         Make a slot for my client trait
         """
         # if the {value} is already a slot
         if isinstance(value, self.pyre_nameserver.node):
             # just return it
-            return value
+            new = value
         # if it is a string
-        if isinstance(value, str):
+        elif isinstance(value, str):
             # do whatever the trait specifies as the slot building factory for string input
-            return self.trait.macro(postprocessor=self.processor, value=value, **kwds)
-        # anything else is native to the trait
-        return self.trait.native(postprocessor=self.processor, value=value, **kwds)
+            new = self.trait.macro(postprocessor=self.processor, value=value, **kwds)
+        # anything else
+        else:
+            # is native to the trait
+            new = self.trait.native(postprocessor=self.processor, value=value, **kwds)
+
+        # if the existing slot is non trivial
+        if current is not None:
+            # replace it
+            new.replace(obsolete=current)
+
+        # all done
+        return new
 
 
 # end of file

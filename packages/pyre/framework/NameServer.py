@@ -195,25 +195,15 @@ class NameServer(Hierarchical):
             meta.locator = locator
             meta.priority = priority
 
+        # look for an existing node
+        old = self._nodes.get(key)
+
         # if we get this far, we have a valid key, and valid and updated metadata; start
         # processing the value by getting the trait; use the info node, which is the
         # authoritative source of this information
         factory = meta.factory
         # and ask it to build a node for the value
-        new = factory(key=key, value=value)
-
-        # if we are replacing an existing node
-        try:
-            # get it
-            old = self._nodes[key]
-        # if not
-        except KeyError:
-            # no worries; just remember
-            old = None
-        # otherwise
-        else:
-            # adjust the dependency graph
-            new.replace(old)
+        new = factory(key=key, value=value, current=old)
 
         # place the new node in the model
         self._nodes[key] = new
