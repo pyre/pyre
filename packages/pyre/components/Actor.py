@@ -152,6 +152,9 @@ class Actor(Requirement):
         # invoke the registration hook
         instance.pyre_registered()
 
+        # mark it as fully instantiated
+        instance.pyre_cooked = True
+
         # and return it
         return instance
 

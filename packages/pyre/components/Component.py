@@ -32,6 +32,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
     pyre_inventory = None # my inventory management strategy
     pyre_implements = None # my protocol
     pyre_isComponent = True
+    pyre_cooked = False
 
     # introspection
     @property
@@ -151,7 +152,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
                                                      priority=priority, locator=locator)
 
         # if an actual assignment took place
-        if new is not None:
+        if new is not None and self.pyre_cooked:
             # invoke the hook
             self.pyre_traitModified(trait=trait, new=new, old=old)
 
