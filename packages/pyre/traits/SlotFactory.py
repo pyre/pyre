@@ -18,12 +18,13 @@ class SlotFactory(Dashboard):
 
 
     # meta-methods
-    def __init__(self, trait, processor, **kwds):
+    def __init__(self, trait, pre=None, post=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my parts
         self.trait = trait
-        self.processor = processor
+        self.pre = pre
+        self.post = post
         # all done
         return
 
@@ -34,16 +35,18 @@ class SlotFactory(Dashboard):
         """
         # if the {value} is already a slot
         if isinstance(value, self.pyre_nameserver.node):
-            # just return it
+            # just use it
             new = value
         # if it is a string
         elif isinstance(value, str):
             # do whatever the trait specifies as the slot building factory for string input
-            new = self.trait.macro(postprocessor=self.processor, value=value, **kwds)
+            new = self.trait.macro(preprocessor=self.pre, postprocessor=self.post,
+                                   value=value, **kwds)
         # anything else
         else:
             # is native to the trait
-            new = self.trait.native(postprocessor=self.processor, value=value, **kwds)
+            new = self.trait.native(preprocessor=self.pre, postprocessor=self.post,
+                                    value=value, **kwds)
 
         # if the existing slot is non trivial
         if current is not None:

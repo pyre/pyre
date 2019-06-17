@@ -204,7 +204,7 @@ class Configurator:
         # get the configuration key; guaranteed to exist since this method is only called for
         # instances with public inventory
         key = inventory.key
-        # go through all deferred assignment that were meant for {instance}
+        # go through all deferred assignments that were meant for {instance}
         for assignment, priority in self.retrieveDeferredAssignments(key=key):
             # find the trait
             trait = instance.pyre_trait(assignment.key[0])

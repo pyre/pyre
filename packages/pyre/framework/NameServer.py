@@ -185,8 +185,9 @@ class NameServer(Hierarchical):
                 if factory:
                     # update the info node
                     meta.factory = factory
-                    # so we can update its value postprocessor
-                    old.postprocessor = factory.processor
+                    # so we can update its value processors
+                    old.preprocessor = factory.pre
+                    old.postprocessor = factory.post
                 # in any case, we are done here
                 return key, None, old
             # ok: higher priority assignment; check whether we should update the descriptor
@@ -281,7 +282,8 @@ class NameServer(Hierarchical):
             newNode.replace(oldNode)
             # adjust the key in the new node
             newNode.key = key
-            # adjust the post-processor
+            # adjust the value processors
+            newNode.preprocessor = oldNode.preprocessor
             newNode.postprocessor = oldNode.postprocessor
             # attach it to the store
             self._nodes[key] = newNode

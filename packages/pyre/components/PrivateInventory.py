@@ -153,9 +153,10 @@ class PrivateInventory(Inventory):
                 traits.remove(trait)
                 # get the associated slot
                 slot = ancestor.pyre_inventory[trait]
-                # build a reference to it; no need to switch postprocessor here, since the type
-                # of an inherited trait is determined by the nearest ancestor that declared it
-                ref = slot.ref(postprocessor=trait.classSlot.processor)
+                # build a reference to it; no need to switch value processors here, since the
+                # type of an inherited trait is determined by the nearest ancestor that
+                # declared it
+                ref = slot.ref(preprocessor=trait.classSlot.pre, postprocessor=trait.classSlot.post)
                 # and yield the trait, slot pair
                 yield trait, ref
             # if we have exhausted the trait pile
@@ -190,7 +191,9 @@ class PrivateInventory(Inventory):
             # ask the class inventory for the slot that corresponds to this trait
             slot = component.pyre_inventory[trait]
             # build a reference to the class slot
-            ref = slot.ref(key=None, postprocessor=trait.instanceSlot.processor)
+            ref = slot.ref(key=None,
+                           preprocessor=trait.instanceSlot.pre,
+                           postprocessor=trait.instanceSlot.post)
             # hand the trait, slot pair
             yield trait, ref
         # all done

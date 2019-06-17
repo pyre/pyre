@@ -125,8 +125,8 @@ class Facility(Slotted, schemata.component):
         # chain up
         super().__init__(protocol=protocol, **kwds)
         # build my slot factories
-        self.classSlot = self.factory(trait=self, processor=self.process)
-        self.instanceSlot = self.factory(trait=self, processor=self.instantiate)
+        self.classSlot = self.factory(trait=self, post=self.process)
+        self.instanceSlot = self.factory(trait=self, post=self.instantiate)
         # add the converter from my protocol to my pile
         self.converters.append(protocol.pyre_convert)
         # all done

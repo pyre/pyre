@@ -119,8 +119,8 @@ class Dict(Slotted):
         # record my schema
         self.schema = schema
         # build my slot factories
-        self.classSlot = self.factory(trait=self, processor=self.process)
-        self.instanceSlot = self.factory(trait=self, processor=self.instantiate)
+        self.classSlot = self.factory(trait=self, post=self.process)
+        self.instanceSlot = self.factory(trait=self, post=self.instantiate)
         # all done
         return
 
