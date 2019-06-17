@@ -23,6 +23,7 @@ class Configurable(Dashboard):
     common to both components and interfaces
     """
 
+
     # types
     from .exceptions import (
         FrameworkError, CategoryMismatchError, TraitNotFoundError, ConfigurationError,
@@ -497,7 +498,6 @@ class Configurable(Dashboard):
         yield ''
         # all done
         return
-
 
 
 # end of file

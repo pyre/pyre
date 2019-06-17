@@ -58,6 +58,7 @@ class Component(Schema):
         # otherwise, complain
         raise protocol.ProtocolCompatibilityError(configurable=value, protocol=protocol)
 
+
     def string(self, value):
         """
         Render value as a string that can be persisted for later coercion
