@@ -153,7 +153,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # if an actual assignment took place
         if new is not None:
             # invoke the hook
-            self.pyre_traitModified(trait=trait, new=new.value, old=old.value)
+            self.pyre_traitModified(trait=trait, new=new, old=old)
 
         # all done
         return

@@ -286,27 +286,30 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         """
         Hook invoked when a trait changes value
         """
+        # evaluate
+        newValue = new.value
+        oldValue = old.value
         # if {trait} is an input
         if trait.input:
-            # if {old} is non-trivial
-            if old is not None:
+            # if {oldValue} is non-trivial
+            if oldValue is not None:
                 # remove from my input pile
-                self.pyre_unbindInputs(old)
-            # if {new} is non-trivial
-            if new is not None:
+                self.pyre_unbindInputs(oldValue)
+            # if {newValue} is non-trivial
+            if newValue is not None:
                 # add it to my pile of inputs
-                self.pyre_bindInputs(new)
+                self.pyre_bindInputs(newValue)
 
         # if {trait} is an output
         if trait.output:
-            # if {old} is non-trivial
-            if old is not None:
+            # if {oldValue} is non-trivial
+            if oldValue is not None:
                 # ask it to forget me
-                self.pyre_unbindOutputs(old)
-            # if {new} is non-trivial
-            if new is not None:
+                self.pyre_unbindOutputs(oldValue)
+            # if {newValue} is non-trivial
+            if newValue is not None:
                 # tell it i'm one of its factories
-                self.pyre_bindOutputs(new)
+                self.pyre_bindOutputs(newValue)
         # chain up
         return super().pyre_traitModified(trait=trait, new=new, old=old)
 
