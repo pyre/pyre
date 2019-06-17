@@ -199,19 +199,19 @@ class Configurator:
         """
         The last step in the configuration of a component instance
         """
-        # access the instance inventory
-        inventory = instance.pyre_inventory
         # get the configuration key; guaranteed to exist since this method is only called for
         # instances with public inventory
-        key = inventory.key
+        key = instance.pyre_key
         # go through all deferred assignments that were meant for {instance}
         for assignment, priority in self.retrieveDeferredAssignments(key=key):
-            # find the trait
-            trait = instance.pyre_trait(assignment.key[0])
-            # ask it to set the value
-            inventory.setTraitValue(
-                trait=trait, factory=trait.instanceSlot,
-                value=assignment.value, priority=priority, locator=assignment.locator)
+            # get the name of the trait
+            alias = assignment.key[0]
+            # get the value
+            value = assignment.value
+            # and the locator
+            locator = assignment.locator
+            # ask the instance to set the value
+            instance.pyre_setTrait(alias=alias, value=value, priority=priority, locator=locator)
 
         # notify each trait
         for trait in instance.pyre_traits():
