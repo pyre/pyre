@@ -17,8 +17,14 @@ class SlotFactory(Dashboard):
     """
 
 
+    # get the identity value processor
+    from ..schemata import identity
+    # make a null value processor
+    noop = identity().coerce
+
+
     # meta-methods
-    def __init__(self, trait, pre=None, post=None, **kwds):
+    def __init__(self, trait, pre=noop, post=noop, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my parts
