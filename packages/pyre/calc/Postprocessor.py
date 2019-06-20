@@ -14,6 +14,8 @@ class Postprocessor:
 
     # types
     from ..schemata import identity
+    # the default postprocessor
+    noop = identity().coerce
 
     # public data
     @property
@@ -61,7 +63,7 @@ class Postprocessor:
 
 
     # meta-methods
-    def __init__(self, postprocessor=identity().coerce, **kwds):
+    def __init__(self, postprocessor=noop, **kwds):
         # chain up
         super().__init__(**kwds)
         # set my value processor
