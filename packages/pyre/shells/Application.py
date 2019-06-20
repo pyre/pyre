@@ -12,8 +12,10 @@ import sys
 import pyre
 # my metaclass
 from .Director import Director
-# access to the local interfaces
+# protocols
 from .Shell import Shell
+import journal.protocols
+# the default renderer
 from .Renderer import Renderer
 
 
@@ -42,6 +44,9 @@ class Application(pyre.component, metaclass=Director):
     shell = Shell()
     shell.doc = 'my hosting strategy'
 
+    renderer = journal.protocols.renderer(default=Renderer)
+    renderer.doc = "the specialized renderer for journal entries"
+
     DEBUG = pyre.properties.bool(default=False)
     DEBUG.doc = 'debugging mode'
 
@@ -52,7 +57,6 @@ class Application(pyre.component, metaclass=Director):
     pyre_defaults = None # the directory with my configuration folders
     pfs = None # the root of my private filesystem
     layout = None # my configuration options
-    pyre_renderer = Renderer()
 
     # journal channels
     info = None
@@ -158,7 +162,7 @@ class Application(pyre.component, metaclass=Director):
 
         # attach my renderer to the console
         import journal
-        journal.console.renderer = self.pyre_renderer
+        journal.console.renderer = self.renderer
 
         # make a name for my channels
         channel  = self.pyre_namespace or name
