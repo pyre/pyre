@@ -14,7 +14,6 @@ class Postprocessor:
 
     # types
     from ..schemata import identity
-    from .exceptions import EvaluationError
 
     # public data
     @property

@@ -24,6 +24,7 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
 
     # public state
     terminal = Terminal()
+    terminal.doc = "the terminal type"
 
 
     # interface
@@ -59,6 +60,7 @@ class Renderer(pyre.component, family='pyre.shells.renderer',
 
 
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
 
         # get my terminal
