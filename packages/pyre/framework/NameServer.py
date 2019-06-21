@@ -160,59 +160,80 @@ class NameServer(Hierarchical):
         """
         # figure out the node info
         name, split, key = self.info.fillNodeId(model=self, key=key, split=split, name=name)
+        # if we were not given a slot factory
+        if factory is None:
+            # use instance slots for a generic trait, by default
+            factory = properties.identity(name=name).instanceSlot
 
-        # look for metadata
+        # look for the node registered under this key
+        old = self._nodes.get(key, None)
+        # and
         try:
-            # registered under this key
+            # its meta-data
             meta = self._metadata[key]
-        # if there's no registered metadata, this is the first time this name was encountered
+        # if this is the first time this name was encountered
         except KeyError:
-            # if we need to build type information
-            if not factory:
-                # use instance slots for an identity trait, by default
-                factory = properties.identity(name=name).instanceSlot
+            # if we have no meta-data, we shouldn't have an old node either
+            if old is not None:
+                # if we do, it's a bug, so get the journal
+                import journal
+                # build a description
+                msg = f"{name}: found a node with no meta-data"
+                # and complain
+                raise journal.firewall("pyre.nameserver").log(msg)
             # build the info node
-            meta = self.info(name=name, split=split, key=key,
+            info = self.info(name=name, split=split, key=key,
                              priority=priority, locator=locator, factory=factory)
-        # if there is an existing metadata node
-        else:
-            # check whether this assignment is of lesser priority, in which case we just leave
-            # the value as is
-            if priority < meta.priority:
-                # now look for the existing model node
-                old = self._nodes[key]
-                # we may have to adjust the trait
-                if factory:
-                    # update the info node
-                    meta.factory = factory
-                    # so we can update its value processors
-                    old.preprocessor = factory.pre
-                    old.postprocessor = factory.post
-                # in any case, we are done here
-                return key, None, old
-            # ok: higher priority assignment; check whether we should update the descriptor
-            if factory: meta.factory = factory
-            # adjust the locator and priority of the info node
-            meta.locator = locator
+            # attach it to the meta-data store
+            self._metadata[key] = info
+            # build the new node
+            new = factory(key=key, value=value)
+            # and attach it
+            self._nodes[key] = new
+            # all done
+            return key, new, old
+
+        # if the assignment happens during component configuration
+        if priority.category == priority.defaults.category:
+            # we have some adjustments to make
+
+            # first, update the factory registered with the meta-data; whatever is currently
+            # stored there is wrong, since the component configuration infrastructure is the
+            # definitive source of which kind of node to use to store the value
+            meta.factory = factory
+            # the rest of the meta-data, currently priority and locator, must be correct, so
+            # don't touch
+
+            # the existing node is not the correct type, so use the factory we were given to
+            # build a new one; the value of the old node must be correct, because {defaults}
+            # is the lowest possible priority; so we must save it
+            new = factory(key=key, value=old.value, current=old)
+            # and register it; no need to adjust the graph since the slot factory now takes
+            # care of this
+            self._nodes[key] = new
+
+            # and we are done
+            return key, new, old
+
+        # if the new assignment is higher priority than the existing one
+        if priority > meta.priority:
+            # record the assignment priority
             meta.priority = priority
+            # and its locator
+            meta.locator = locator
 
-        # look for an existing node
-        old = self._nodes.get(key)
+            # make a new node using the registered node factory
+            new = meta.factory(key=key, value=value, current=old)
+            # register it
+            self._nodes[key] = new
 
-        # if we get this far, we have a valid key, and valid and updated metadata; start
-        # processing the value by getting the trait; use the info node, which is the
-        # authoritative source of this information
-        factory = meta.factory
-        # and ask it to build a node for the value
-        new = factory(key=key, value=value, current=old)
+            # and we are done
+            return key, new, old
 
-        # place the new node in the model
-        self._nodes[key] = new
-        # and attach its meta-data
-        self._metadata[key] = meta
-
-        # and return
-        return key, new, old
+        # the only remaining case is an assignment of lower priority than the existing one that
+        # is also not happening during component configuration; there is nothing to do in this
+        # case
+        return key, None, old
 
 
     def retrieve(self, name):
