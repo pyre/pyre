@@ -177,15 +177,15 @@ class NameServer(Hierarchical):
             if old is not None:
                 # if we do, it's a bug, so get the journal
                 import journal
-                # build a description
-                msg = f"{name}: found a node with no meta-data"
+                # build a bug report
+                bug = f"{name}: found a node with no meta-data"
                 # and complain
-                raise journal.firewall("pyre.nameserver").log(msg)
+                raise journal.firewall("pyre.nameserver").log(bug)
             # build the info node
-            info = self.info(name=name, split=split, key=key,
+            meta = self.info(name=name, split=split, key=key,
                              priority=priority, locator=locator, factory=factory)
             # attach it to the meta-data store
-            self._metadata[key] = info
+            self._metadata[key] = meta
             # build the new node
             new = factory(key=key, value=value)
             # and attach it
@@ -196,6 +196,15 @@ class NameServer(Hierarchical):
         # if the assignment happens during component configuration
         if priority.category == priority.defaults.category:
             # we have some adjustments to make
+
+            # we require a non-trivial factory
+            if factory is None:
+                # so if we didn't get one, grab the journal
+                import journal
+                # build a bug report
+                bug = f"{name}: a non-trivial factory is required"
+                # and complain
+                raise journal.firewall("pyre.nameserver").log(bug)
 
             # first, update the factory registered with the meta-data; whatever is currently
             # stored there is wrong, since the component configuration infrastructure is the
