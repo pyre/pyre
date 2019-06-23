@@ -32,9 +32,7 @@ class PrivateInventory(Inventory):
         # grab the old slot
         old = self.traits[trait]
         # use the factory to make a new slot
-        new = factory(value=value)
-        # replace references to the old slot
-        new.replace(old)
+        new = factory(value=value, current=old)
         # and attach the new one
         self.traits[trait] = new
         # all done
@@ -188,14 +186,14 @@ class PrivateInventory(Inventory):
         component = type(instance)
         # go through all the configurable traits in {component}
         for trait in component.pyre_configurables():
-            # ask the class inventory for the slot that corresponds to this trait
-            slot = component.pyre_inventory[trait]
-            # build a reference to the class slot
-            ref = slot.ref(key=None,
-                           preprocessor=trait.instanceSlot.pre,
-                           postprocessor=trait.instanceSlot.post)
-            # hand the trait, slot pair
-            yield trait, ref
+            # ask the class inventory for the default value
+            value = component.pyre_inventory[trait].value
+            # get the instance slot factory
+            factory = trait.instanceSlot
+            # make a slot
+            slot = factory(value=value)
+            # hand the trait and the default value from the class record
+            yield trait, slot
         # all done
         return
 

@@ -65,12 +65,20 @@ class PublicInventory(Inventory):
         """
         Set the value of the slot associated with the given {trait} descriptor
         """
-        # hash the trait name
-        key = self.key[trait.name]
+        # N.B: the previous implementation used the client key to hash the trait name directly;
+        # this method suffers from a fundamental flaw: there is no easy way to build the slot
+        # name. the current implementation builds the name path to the node and hands that to
+        # the nameserver, which is perfectly able of building a key and assembling the name
+
+        # get the name path of my client
+        split = list(self.fragments)
+        # add the trait name
+        split.append(trait.name)
         # get the nameserver
         nameserver = self.pyre_nameserver
         # adjust the model
-        _, new, old = nameserver.insert(key=key, **kwds)
+        _, new, old = nameserver.insert(split=split, **kwds)
+
         # all done
         return new, old
 
@@ -261,12 +269,12 @@ class PublicInventory(Inventory):
         for trait in component.pyre_configurables():
             # ask the class inventory for the slot that corresponds to this trait
             slot = component.pyre_inventory[trait]
-            # build a reference to the class slot
-            ref = slot.ref(key=key[trait.name],
-                           preprocessor=trait.instanceSlot.pre,
-                           postprocessor=trait.instanceSlot.post)
-            # hand the trait, slot and its value
-            yield trait, trait.instanceSlot, ref
+            # get its value
+            value = slot.value
+            # grab the trait slot factory
+            factory = trait.instanceSlot
+            # hand the trait, the factory and the default value from the class record
+            yield trait, factory, value
         # all done
         return
 
@@ -281,7 +289,7 @@ class PublicInventory(Inventory):
         nameserver = cls.pyre_nameserver
         # get the factory of priorities in the {defaults} category
         priority = nameserver.priority.defaults
-        # look up the basename
+        # look up the base name
         base = nameserver.getName(key)
         # go through the (trait, slot) pairs
         for trait, factory, value in slots:
