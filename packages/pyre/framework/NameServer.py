@@ -24,7 +24,7 @@ class NameServer(Hierarchical):
 
     # types
     from .Package import Package
-    # node storage and metadata
+    # node storage and meta-data
     from .Slot import Slot as node
     from .SlotInfo import SlotInfo as info
     from .Priority import Priority as priority
@@ -41,24 +41,14 @@ class NameServer(Hierarchical):
 
 
     # framework object management
-    def configurable(self, name, configurable, locator, priority=None):
+    def configurable(self, name, configurable, locator, priority):
         """
         Add {configurable} to the model under {name}
         """
-        # get the right priority
-        priority = self.priority.package() if priority is None else priority
-        # fill out the node info
-        name, split, key = self.info.fillNodeId(model=self, name=name)
-        # build the node metadata
-        info = self.info(name=name, split=split, key=key, locator=locator, priority=priority)
-        # grab the key
-        key = info.key
-        # build a slot to hold the {configurable}
-        slot = self.literal(key=key, value=configurable)
-        # store it in the model
-        self._nodes[key] = slot
-        self._metadata[key] = info
-
+        # add the {configurable} to the store
+        key, _, _ = self.insert(name=name, value=configurable,
+                                priority=priority, locator=locator,
+                                factory=self.literal)
         # and return the key
         return key
 
@@ -160,6 +150,15 @@ class NameServer(Hierarchical):
         """
         # figure out the node info
         name, split, key = self.info.fillNodeId(model=self, key=key, split=split, name=name)
+        # check we have full node info
+        if name is None or split is None or key is None:
+            # grab the journal
+            import journal
+            # make a bug report
+            bug = f"incomplete node info: name={name}, {locator}"
+            # and submit it
+            raise journal.firewall("pyre.framework").log(bug)
+
         # if we were not given a slot factory
         if factory is None:
             # use instance slots for a generic trait, by default
@@ -196,7 +195,7 @@ class NameServer(Hierarchical):
         # if the assignment happens during component configuration
         if priority.category == priority.defaults.category:
             # we have some adjustments to make
-
+            print(f"  {name}: -*- configuring defaults -*-")
             # we require a non-trivial factory
             if factory is None:
                 # so if we didn't get one, grab the journal
