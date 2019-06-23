@@ -194,9 +194,7 @@ class NameServer(Hierarchical):
 
         # if the assignment happens during component configuration
         if priority.category == priority.defaults.category:
-            # we have some adjustments to make
-            print(f"  {name}: -*- configuring defaults -*-")
-            # we require a non-trivial factory
+            # we have some adjustments to make; first, we require a non-trivial factory
             if factory is None:
                 # so if we didn't get one, grab the journal
                 import journal
