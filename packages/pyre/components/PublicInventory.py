@@ -147,8 +147,10 @@ class PublicInventory(Inventory):
         Build inventory appropriate for a component instance that has a publicly visible name and
         is registered with the nameserver
         """
+        # get the executive
+        executive = component.pyre_executive
         # register the class with the executive
-        key = component.pyre_executive.registerComponentClass(family=family, component=component)
+        key = executive.registerComponentClass(family=family, component=component)
 
         # collect the slots
         local = cls.localSlots(key=key, component=component)
@@ -178,8 +180,10 @@ class PublicInventory(Inventory):
         Build inventory appropriate for a component instance that has a publicly visible name and
         is registered with the nameserver
         """
+        # grab the executive
+        executive = cls.pyre_executive
         # have the executive make a key
-        key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
+        key = executive.registerComponentInstance(instance=instance, name=name)
 
         # build the instance slots
         slots = cls.instanceSlots(key=key, instance=instance)
@@ -187,10 +191,12 @@ class PublicInventory(Inventory):
         slots = cls.registerSlots(key=key, slots=slots, locator=instance.pyre_locator)
         # build the inventory out of the instance slots and attach it
         instance.pyre_inventory = cls(key=key, slots=slots)
+
         # configure the instance
         cls.pyre_configurator.configureComponentInstance(instance=instance)
         # invoke the configuration hook and pass on any errors
         yield from instance.pyre_configured()
+
         # all done
         return
 
