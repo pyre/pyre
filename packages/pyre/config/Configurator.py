@@ -199,11 +199,8 @@ class Configurator:
         """
         The last step in the configuration of a component instance
         """
-        # get the configuration key; guaranteed to exist since this method is only called for
-        # instances with public inventory
-        key = instance.pyre_key
         # go through all deferred assignments that were meant for {instance}
-        for assignment, priority in self.retrieveDeferredAssignments(key=key):
+        for assignment, priority in self.retrieveDeferredAssignments(instance=instance):
             # get the name of the trait
             alias = assignment.key[0]
             # get the value
@@ -240,11 +237,22 @@ class Configurator:
         return
 
 
-    def retrieveDeferredAssignments(self, key):
+    def retrieveDeferredAssignments(self, key=None, instance=None):
         """
         Locate the deferred assignments that are relevant to the component instance associated
         with the supplied configuration {key}
         """
+        # MGA: 20190624
+        #
+        # N.B.: the original api required only {key}; {instance} was added to accommodate what
+        # appears to be a fundamental problem with early evaluation: the configuration store is
+        # not ready to answer questions about components that are nested inside others since
+        # the parent nodes have not been created yet this is
+        #
+        # the solution here is just a temporary band aid
+
+        # get the configuration key
+        key = instance.pyre_key if key is None else key
         # access the nameserver
         nameserver = self.executive.nameserver
 
@@ -255,10 +263,18 @@ class Configurator:
                 # hash the conditions
                 name = nameserver.hash(name)
                 family = nameserver.hash(family)
-                # deduce the class to which this component instance belongs
-                target = type(nameserver[name])
+                # if the hashed name matches the instance we are configuring
+                if name is key:
+                    # no need to look it up; chances are good it's not there yet anyway
+                    ref = instance
+                # otherwise
+                else:
+                    # look up the referenced component
+                    ref = nameserver.getNode(key=name).value
+                # get the type
+                cls = type(ref)
                 # check the family name
-                if target.pyre_inventory.key is not family: break
+                if cls.pyre_inventory.key is not family: break
             # iff all assignment conditions are satisfied
             else:
                 # hand this assignment to the caller

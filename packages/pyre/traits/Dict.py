@@ -10,6 +10,8 @@
 from .Property import Property
 # superclass
 from .Slotted import Slotted
+# support
+from .. import tracking
 
 
 # declaration
@@ -191,7 +193,7 @@ class Dict(Slotted):
             catalog.insert(name=name, value=value, priority=userPriority(), locator=locator)
 
         # grab all deferred assignments to this key
-        for assignment, priority in configurator.retrieveDeferredAssignments(key):
+        for assignment, priority in configurator.retrieveDeferredAssignments(key=key):
             # store them
             catalog.insert(
                 name=assignment.key[0], value=assignment.value,
@@ -224,10 +226,9 @@ class Dict(Slotted):
 
 # implementation details
 # externals
-# superclasses
 import collections.abc
+# superclass
 from ..framework.Dashboard import Dashboard
-from .. import tracking
 
 
 # the helper container classes
