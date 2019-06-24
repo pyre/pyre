@@ -80,15 +80,16 @@ class PrivateInventory(Inventory):
         Build inventory appropriate for a component class that is not registered with the
         nameserver
         """
+        # build the inventory
+        inventory = cls()
+        # attach it
+        component.pyre_inventory = inventory
         # collect the slots
         local = cls.localSlots(component=component)
         inherited = cls.inheritedSlots(component=component)
         slots = itertools.chain(local, inherited)
-
-        # build the inventory
-        inventory = cls(slots=slots)
-        # attach it
-        component.pyre_inventory = inventory
+        # and populate the inventory
+        inventory.populate(slots=slots)
 
         # invoke the configuration hook
         component.pyre_classConfigured()
@@ -103,12 +104,23 @@ class PrivateInventory(Inventory):
         Build inventory appropriate for a component instance that is not registered with the
         nameserver
         """
+        # build the inventory
+        inventory = cls()
+        # attach it
+        instance.pyre_inventory = inventory
         # prime the slot generator
         slots = cls.instanceSlots(instance=instance)
-        # build the inventory
-        inventory = cls(slots=slots)
-        # and attach it
-        instance.pyre_inventory = inventory
+        # and populate the inventory
+        inventory.populate(slots=slots)
+        # all done
+        return
+
+
+    @classmethod
+    def configureInstance(cls, instance):
+        """
+        Configure a newly minted instance
+        """
         # invoke the configuration hook and pass on any errors
         yield from instance.pyre_configured()
         # all done

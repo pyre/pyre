@@ -42,8 +42,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         # get my inventory
         inventory = self.pyre_inventory
-        # and ask it for my key; if i don't have one bail
-        return inventory.key if inventory is not None else None
+        # and ask it for my key
+        key =  inventory.key if inventory is not None else None
+        # all done
+        return key
 
 
     @property
@@ -309,11 +311,11 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # record the locator
         instance.pyre_locator = locator
         # deduce the visibility of this instance
-        visibility = cls.PrivateInventory if name is None else cls.PublicInventory
+        inventory = cls.PrivateInventory if name is None else cls.PublicInventory
+        # ask it to initialize the instance
+        inventory.initializeInstance(instance=instance, name=name, implicit=implicit)
         # invoke it to initialize the instance and collect configuration errors
-        instance.pyre_configurationErrors = list(
-            visibility.initializeInstance(instance=instance, name=name, implicit=implicit)
-            )
+        instance.pyre_configurationErrors = list(inventory.configureInstance(instance))
 
         # all done
         return instance

@@ -161,9 +161,11 @@ class PublicInventory(Inventory):
         slots = cls.registerSlots(key=key, slots=slots, locator=component.pyre_locator)
 
         # build the inventory
-        inventory = cls(key=key, slots=slots)
+        inventory = cls(key=key)
         # attach it
         component.pyre_inventory = inventory
+        # and populate it
+        inventory.populate(slots=slots)
 
         # configure the class
         component.pyre_configurator.configureComponentClass(component=component)
@@ -186,27 +188,36 @@ class PublicInventory(Inventory):
 
         # check for reentry
         if implicit:
-            # we need the key
-            key = instance.pyre_key
+            # a key already exists; grab it
+            key = cls.pyre_nameserver.hash(name=name)
         # otherwise
         else:
-            # grab the executive
-            executive = cls.pyre_executive
             # have the executive make a key
-            key = executive.registerComponentInstance(instance=instance, name=name)
+            key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
 
+        # create the inventory
+        inventory = cls(key=key)
+        # attach it
+        instance.pyre_inventory = inventory
         # build the instance slots
         slots = cls.instanceSlots(key=key, instance=instance)
         # register them
         slots = cls.registerSlots(key=key, slots=slots, locator=instance.pyre_locator)
-        # build the inventory out of the instance slots and attach it
-        instance.pyre_inventory = cls(key=key, slots=slots)
+        # and populate
+        inventory.populate(slots=slots)
+        # all done
+        return
 
+
+    @classmethod
+    def configureInstance(cls, instance):
+        """
+        Configure a newly minted {instance}
+        """
         # configure the instance
         cls.pyre_configurator.configureComponentInstance(instance=instance)
         # invoke the configuration hook and pass on any errors
         yield from instance.pyre_configured()
-
         # all done
         return
 
