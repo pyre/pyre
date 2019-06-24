@@ -98,9 +98,20 @@ class Property(Slotted):
     def __init__(self, classSlot=None, instanceSlot=None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # build my slot factories
-        self.classSlot = classSlot or self.factory(trait=self, post=self.process)
-        self.instanceSlot = instanceSlot or self.factory(trait=self, post=self.process)
+
+        # if the caller has no opinions on what kind of class slots to build
+        if classSlot is None:
+            # pick one
+            classSlot = self.factory(trait=self, pre=self.process, post=self.process)
+        # if the caller has no opinions on what kind of instance slots to build
+        if instanceSlot is None:
+            # pick one
+            instanceSlot = self.factory(trait=self, pre=self.process, post=self.process)
+
+        # attach
+        self.classSlot = classSlot
+        self.instanceSlot = instanceSlot
+
         # all done
         return
 
