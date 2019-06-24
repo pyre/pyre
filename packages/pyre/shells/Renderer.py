@@ -15,8 +15,8 @@ from .Terminal import Terminal
 
 
 # declaration
-class Renderer(pyre.component, family='pyre.shells.renderer',
-               implements=journal.protocols.renderer):
+class Renderer(pyre.component,
+               family='pyre.shells.renderer', implements=journal.protocols.renderer):
     """
     Custom replacement for the {journal} renderer
     """

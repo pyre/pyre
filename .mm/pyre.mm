@@ -45,7 +45,6 @@ pyre.pkg.ext := extensions/
 # the pyre meta-data
 journal.pkg.root := packages/journal/
 journal.pkg.stem := journal
-journal.pkg.meta :=
 journal.pkg.ext :=
 
 # the journal library meta-data

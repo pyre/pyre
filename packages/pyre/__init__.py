@@ -142,7 +142,7 @@ def debug():
 
     Modules that support debugging must provide a {debug} method and do as little as possible
     during their initialization. The fundamental constraints are provided by the python import
-    algorithm that only give you one chance to import a module.
+    algorithm that only gives you a single chance to import a module.
 
     This must be done very early, before pyre itself starts importing its packages. One way to
     request debugging is to create a variable {pyre_debug} in the __main__ module that contains
@@ -151,16 +151,24 @@ def debug():
     """
     # the set of packages to patch for debug support
     packages = set()
-    # pull pyre_debug from the __main__ module
+    # get the __main__ module
     import __main__
+    # attempt ot
     try:
+        # get the list of module names specified in the user's main script
         packages |= set(__main__.pyre_debug)
+    # if there aren't any
     except:
+        # no worries
         pass
-    # iterate over the names, import the package and invoke its debug method
+
+    # go through the module names
     for package in packages:
+        # import each one
         module = __import__(package, fromlist=["debug"])
+        # and invoke its debug method
         module.debug()
+
     # all done
     return
 

@@ -161,8 +161,7 @@ class Application(pyre.component, metaclass=Director):
         super().__init__(name=name, **kwds)
 
         # attach my renderer to the console
-        import journal
-        journal.console.renderer = self.renderer
+        journal.scribe().device.renderer = self.renderer
 
         # make a name for my channels
         channel  = self.pyre_namespace or name
