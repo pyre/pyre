@@ -175,15 +175,25 @@ class PublicInventory(Inventory):
 
 
     @classmethod
-    def initializeInstance(cls, instance, name):
+    def initializeInstance(cls, instance, name, implicit):
         """
         Build inventory appropriate for a component instance that has a publicly visible name and
         is registered with the nameserver
         """
-        # grab the executive
-        executive = cls.pyre_executive
-        # have the executive make a key
-        key = executive.registerComponentInstance(instance=instance, name=name)
+        # N.B.: if this initialization is marked {implicit}, we are already in the process of
+        # registering this instance; we must avoid causing the executive from re-registering it
+        # because it screws up the node priorities, among other potential problems
+
+        # check for reentry
+        if implicit:
+            # we need the key
+            key = instance.pyre_key
+        # otherwise
+        else:
+            # grab the executive
+            executive = cls.pyre_executive
+            # have the executive make a key
+            key = executive.registerComponentInstance(instance=instance, name=name)
 
         # build the instance slots
         slots = cls.instanceSlots(key=key, instance=instance)

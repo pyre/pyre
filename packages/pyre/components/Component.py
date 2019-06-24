@@ -293,7 +293,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
 
     # meta methods
-    def __new__(cls, name, locator, **kwds):
+    def __new__(cls, name, locator, implicit, **kwds):
         # build the instance; in order to accommodate components with non-trivial constructors,
         # we have to swallow any extra arguments passed to {__new__}; unfortunately, this
         # places some restrictions on how components participate in class hierarchies: no
@@ -312,14 +312,14 @@ class Component(Configurable, metaclass=Actor, internal=True):
         visibility = cls.PrivateInventory if name is None else cls.PublicInventory
         # invoke it to initialize the instance and collect configuration errors
         instance.pyre_configurationErrors = list(
-            visibility.initializeInstance(instance=instance, name=name)
+            visibility.initializeInstance(instance=instance, name=name, implicit=implicit)
             )
 
         # all done
         return instance
 
 
-    def __init__(self, name, locator, **kwds):
+    def __init__(self, name, locator, implicit, **kwds):
         # only needed to swallow the extra arguments
         super().__init__(**kwds)
         # all done
