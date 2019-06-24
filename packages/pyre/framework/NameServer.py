@@ -150,6 +150,7 @@ class NameServer(Hierarchical):
         """
         # figure out the node info
         name, split, key = self.info.fillNodeId(model=self, key=key, split=split, name=name)
+
         # check we have full node info
         if name is None or split is None or key is None:
             # grab the journal
@@ -194,7 +195,7 @@ class NameServer(Hierarchical):
 
         # if the assignment happens during component configuration
         if priority.category == priority.defaults.category:
-            # we have some adjustments to make; first, we require a non-trivial factory
+            # we have some adjustments to make; we require a non-trivial factory
             if factory is None:
                 # so if we didn't get one, grab the journal
                 import journal
@@ -203,7 +204,7 @@ class NameServer(Hierarchical):
                 # and complain
                 raise journal.firewall("pyre.nameserver").log(bug)
 
-            # first, update the factory registered with the meta-data; whatever is currently
+            # update the factory registered with the meta-data; whatever is currently
             # stored there is wrong, since the component configuration infrastructure is the
             # definitive source of which kind of node to use to store the value
             meta.factory = factory
