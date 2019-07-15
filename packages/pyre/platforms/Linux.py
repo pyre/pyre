@@ -83,8 +83,17 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         """
         Collect information about the CPU resources on this host
         """
-        # collect the information and return it
-        return cls.lscpu()
+        # first, let's try
+        try:
+            # to use {lscpu} to collect the information and return it
+            return cls.lscpu()
+        # if it's not available on this machine
+        except FileNotFoundError:
+            # no worries, we'll try something else
+            pass
+
+        # last resort, because it's heavily polluted by x86_64 peculiarities
+        return cls.procCPUInfo()
 
 
     # implementation details: workhorses
@@ -189,27 +198,24 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         # initialize the counters
         sockets = physical = logical = 0
         # reduce
-        for info in cpus.values():
+        for sec in cpus.values():
             # update the cpu count
             sockets += 1
             # update the number of physical cores
-            physical += int(info['cpu cores'])
+            physical += int(sec['cpu cores'])
             # update the number of logical cores
-            logical += int(info['siblings'])
+            logical += int(sec['siblings'])
 
+        # create an info object
+        info = CPUInfo()
         # if the reduction produced non-zero results
         if physical and logical:
-            # create an info object
-            info = CPUInfo()
             # decorate it
             info.sockets = sockets
             info.cores = physical
             info.cpus = logical
-            # and return it
-            return info
-
-        # otherwise, indicate failure
-        raise RuntimeError("unable to determine cpu information")
+        # and return it
+        return info
 
 
     @classmethod
