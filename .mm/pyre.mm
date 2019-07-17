@@ -7,7 +7,7 @@
 
 # project meta-data
 pyre.major := 1
-pyre.minor := 0
+pyre.minor := 9
 
 # pyre builds a python package
 pyre.packages := pyre.pkg journal.pkg mpi.pkg
