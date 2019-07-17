@@ -21,6 +21,7 @@ EXPORT_BINS = \
     merlin \
     smith.pyre \
     pyre \
+    pyre-config \
     python.pyre \
     walk \
 
