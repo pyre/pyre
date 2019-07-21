@@ -48,7 +48,7 @@ zipit:
 export-portinfo: $(EXPORT_ROOT)/include/portinfo
 
 
-$(EXPORT_ROOT)/include/portinfo: Make.mm
+$(EXPORT_ROOT)/include/portinfo: $(EXPORT_ROOT)/include Make.mm
 	@sed \
           -e "s:PYRE_PLATFORM:#define mm_platforms_${MM_PLATFORM}_${MM_ARCH} 1:g" \
           portinfo > $@
