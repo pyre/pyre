@@ -63,9 +63,9 @@ EXPORT_PKG_HEADERS = \
     Warning.h Warning.icc \
 
 # the standard targets
-all: $(PROJ_DLL) export
+all: export
 
-export:: export-headers export-package-headers export-libraries
+export:: $(PROJ_DLL) export-headers export-package-headers export-libraries
 
 live: live-headers live-package-headers live-libraries
 
