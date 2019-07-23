@@ -36,7 +36,7 @@ class ColorTable(pyre.application):
         # render the user selected color
         color = term.rgb(rgb=self.color, foreground=False)
         # putting things back to normal
-        normal = term.colors['normal']
+        normal = term.ansi['normal']
         # show me
         self.debug.log(f"{color}Hello!{normal}")
         # all done

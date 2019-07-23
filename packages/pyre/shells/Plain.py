@@ -25,15 +25,15 @@ class Plain(pyre.component, family='pyre.terminals.plain', implements=terminal):
         """
         The 24-bit color request
         """
-        # we don't do that...
+        # we don't do this...
         return''
 
 
-    def rgb256(self, rgb, foreground=True):
+    def rgb256(self, red=0, green=0, blue=0, foreground=True):
         """
         The 256-color palette request
         """
-        # we don't do that either...
+        # we don't do this either...
         return''
 
 

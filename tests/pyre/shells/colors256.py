@@ -47,7 +47,7 @@ class ColorTable(pyre.application):
         # get my terminal
         term = self.pyre_executive.terminal
         # putting things back to normal
-        normal = term.colors['normal']
+        normal = term.ansi['normal']
         # loop
         for r in range(6):
             # initialize a line
@@ -55,10 +55,8 @@ class ColorTable(pyre.application):
             # the two inferior indices
             for g in range(6):
                 for b in range(6):
-                    # splice to build the color code
-                    code = f"{r}{g}{b}"
                     # get the color sequence
-                    color = term.rgb256(code, foreground=False)
+                    color = term.rgb256(red=r, green=g, blue=b, foreground=False)
                     # add it to the pile
                     row += f"{color}  {normal}"
                 # separate the swatches

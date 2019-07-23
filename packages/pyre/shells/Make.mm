@@ -11,9 +11,11 @@ include pyre.def
 PACKAGE = shells
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    ASCII.py \
     ANSI.py \
     Action.py \
     Application.py \
+    CSI.py \
     Command.py \
     Daemon.py \
     Director.py \
