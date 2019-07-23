@@ -160,6 +160,9 @@ class FileServer(Filesystem):
         # same deal: mount it or an empty folder
         self[self.USER_DIR] = self.retrieveFilesystem(root=userdir)
 
+        # build the virtual directory where packages park their configuration
+        self[self.PACKAGES_DIR] = self.folder()
+
         # all done
         return
 
