@@ -209,6 +209,8 @@ if executive:
     executive.discover()
     # application shells
     from .shells import application, action, plexus, command, panel
+    # support for filesystems
+    from . import filesystem
     # support for workflows
     from . import flow
     # document rendering
