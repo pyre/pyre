@@ -7,6 +7,7 @@
 
 
 # externals
+import os
 import collections
 # access the framework
 import pyre
@@ -19,6 +20,24 @@ class Plain(pyre.component, family='pyre.terminals.plain', implements=terminal):
     """
     A terminal that provides no color capabilities
     """
+
+    # public data
+    @property
+    def width(self):
+        """
+        Compute the width of the terminal
+        """
+        # attempt to
+        try:
+            # ask python
+            return os.get_terminal_size().columns
+        # if something went wrong
+        except OSError:
+            # absorb
+            pass
+        # don't know
+        return 0
+
 
     # interface
     def rgb(self, **kwds):

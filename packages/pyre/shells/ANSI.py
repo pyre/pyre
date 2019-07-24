@@ -23,6 +23,24 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
     """
 
 
+    # public data
+    @property
+    def width(self):
+        """
+        Compute the width of the terminal
+        """
+        # attempt to
+        try:
+            # ask python
+            return os.get_terminal_size().columns
+        # if something went wrong
+        except OSError:
+            # absorb
+            pass
+        # don't know
+        return 0
+
+
     # interface
     def rgb(self, rgb, foreground=True):
         """
@@ -52,6 +70,7 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
         return
 
 
+    # the ansi color names with their standard implementations
     ansi = {
         "": "", # no color given
         "none": "", # no color
@@ -78,7 +97,42 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
         "white": CSI.csi3(bright=True, code="37"),
         }
 
+
+    # the X11 named colors
     x11 = {
+        "burlywood": CSI.csi24(red=0xde, green=0xb8, blue=0x87),
+        "dark_goldenrod": CSI.csi24(red=0xb8, green=0x86, blue=0x0b),
+        "dark_khaki": CSI.csi24(red=0xbd, green=0xb7, blue=0x6b),
+        "dark_orange": CSI.csi24(red=0xff, green=0x8c, blue=0x00),
+        "dark_sea_green": CSI.csi24(red=0x8f, green=0xbc, blue=0x8f),
+        "firebrick": CSI.csi24(red=0xb2, green=0x22, blue=0x22),
+        "hot_pink": CSI.csi24(red=0xff, green=0x69, blue=0xb4),
+        "indian_red": CSI.csi24(red=0xcd, green=0x5c, blue=0x5c),
+        "lavender": CSI.csi24(red=0xc0, green=0xb0, blue=0xe0),
+        "light_green": CSI.csi24(red=0x90, green=0xee, blue=0x90),
+        "light_steel_blue": CSI.csi24(red=0xb0, green=0xc4, blue=0xde),
+        "lime_green": CSI.csi24(red=0x32, green=0xcd, blue=0x32),
+        "navajo_white": CSI.csi24(red=0xff, green=0xde, blue=0xad),
+        "olive_drab": CSI.csi24(red=0x6b, green=0x8e, blue=0x23),
+        "peach_puff": CSI.csi24(red=0xff, green=0xda, blue=0xb9),
+        "sage": CSI.csi24(red=176, green=208, blue=176),
+    }
+
+
+    # grays
+    gray = {
+        "gray10": CSI.csi24(red=0x19, green=0x19, blue=0x19),
+        "gray30": CSI.csi24(red=0x4c, green=0x4c, blue=0x4c),
+        "gray41": CSI.csi24(red=0x69, green=0x69, blue=0x69),
+        "gray50": CSI.csi24(red=0x80, green=0x80, blue=0x80),
+        "gray66": CSI.csi24(red=0xa9, green=0xa9, blue=0xa9),
+        "gray75": CSI.csi24(red=0xbe, green=0xbe, blue=0xbe),
+    }
+
+
+    # other
+    misc = {
+        "amber": CSI.csi24(red=0xff, green=0xbf, blue=0x00),
     }
 
 
