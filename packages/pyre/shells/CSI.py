@@ -17,6 +17,16 @@ class CSI:
     """
 
 
+    # reset
+    @staticmethod
+    def reset():
+        """
+        Reset all output attributes
+        """
+        # build the sequence and return it
+        return f"{ASCII.ESC}[0m"
+
+
     # the color commands
     @staticmethod
     def csi3(bright=False, code=None):
@@ -81,6 +91,22 @@ class CSI:
             f"{ASCII.ESC}[",
             "38" if foreground else "48",
             f";2;{red};{green};{blue}",
+            "m"
+        ]
+        # assemble it and return it
+        return "".join(seq)
+
+
+    # graphics rendition commands
+    @staticmethod
+    def blink(state=True):
+        """
+        Turn blink on or off
+        """
+        # build the sequence
+        seq = [
+            f"{ASCII.ESC}["
+            "5" if state else "25"
             "m"
         ]
         # assemble it and return it
