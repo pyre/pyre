@@ -111,11 +111,13 @@ class ANSI(pyre.component, family='pyre.terminals.ansi', implements=terminal):
         "lavender": CSI.csi24(red=0xc0, green=0xb0, blue=0xe0),
         "light_green": CSI.csi24(red=0x90, green=0xee, blue=0x90),
         "light_steel_blue": CSI.csi24(red=0xb0, green=0xc4, blue=0xde),
+        "light_slate_gray": CSI.csi24(red=0x77, green=0x88, blue=0x99),
         "lime_green": CSI.csi24(red=0x32, green=0xcd, blue=0x32),
         "navajo_white": CSI.csi24(red=0xff, green=0xde, blue=0xad),
         "olive_drab": CSI.csi24(red=0x6b, green=0x8e, blue=0x23),
         "peach_puff": CSI.csi24(red=0xff, green=0xda, blue=0xb9),
         "sage": CSI.csi24(red=176, green=208, blue=176),
+        "steel_blue": CSI.csi24(red=0x46, green=0x82, blue=0xb4),
     }
 
 
