@@ -50,7 +50,7 @@ class Dir(pyre.application):
             # go there
             os.chdir(directory)
             # get the listing
-            text = "\n".join(self.render(directory=directory))
+            text = "\n".join(self.render())
             # and if it's non-trivial
             if text:
                 # print it
@@ -76,14 +76,14 @@ class Dir(pyre.application):
 
 
     # implementation details
-    def render(self, directory):
+    def render(self):
         """
         Generate the directory listing
         """
         # get the terminal
         terminal = self.terminal
         # decorate the directory contents
-        entries = self.colorize(directory=directory)
+        entries = self.colorize()
 
         # figure out the width of the terminal
         width = terminal.width
@@ -122,12 +122,12 @@ class Dir(pyre.application):
         return
 
 
-    def colorize(self, directory):
+    def colorize(self):
         """
         Walk the directory contents through the various colorizers
         """
         # make the listing
-        entries = self.discover(directory=directory)
+        entries = self.discover()
         # run it through the git colorizer
         entries = self.git(entries=entries)
         # and return them
@@ -145,12 +145,13 @@ class Dir(pyre.application):
         # all done
         return
 
-    def discover(self, directory):
+
+    def discover(self):
         """
         Initialize the directory listing
         """
         # mount the filesystem
-        fs = pyre.filesystem.local(root=directory)
+        fs = pyre.filesystem.local(root='.')
         # expand the top level only
         fs.discover(levels=1)
 
@@ -416,6 +417,10 @@ class Git:
                 # adjust its color
                 entry.nameColor = self.palette["conflicted"]
             # if the entry has changed since it were added to the index
+            elif name in info.unstaged and name in info.staged:
+                # adjust its color
+                entry.nameColor = self.palette["staged-modified"]
+            # if the entry has changed but not added to the index
             elif name in info.unstaged:
                 # adjust its color
                 entry.nameColor = self.palette["unstaged"]
@@ -455,6 +460,7 @@ class Git:
             "conflicted": terminal.x11["firebrick"],
             "ignored": terminal.gray["gray30"],
             "staged": terminal.x11["dark_sea_green"],
+            "staged-modified": terminal.x11["indian_red"],
             "unstaged": terminal.misc["amber"],
             "untracked": terminal.x11["steel_blue"],
         }
@@ -612,16 +618,16 @@ class Git:
             # all done
             return table
 
-        # if the code has any info on the index side and is clean on the worktree side
-        if code[0] != ' ' and code[1] == ' ':
+        # if the code has any info on the index side
+        if code[0] != ' ':
             # add it to the staged pile
             table.staged.add(entry)
-            # all done
-            return table
 
-        # all that should be left is files that require staging, either because they were never
-        # added, or because they have been modified since being added
-        table.unstaged.add(entry)
+        # if the code has any info on the worktree side
+        if code[1] != ' ':
+            # add it to the staged pile
+            table.unstaged.add(entry)
+
         # all done
         return table
 
