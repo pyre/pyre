@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2016 all rights reserved
+# (c) 1998-2019 all rights reserved
 #
 
 # global options for merlin
@@ -10,7 +10,7 @@ PROJECT = merlin
 
 # version info
 PROJECT_MAJOR = 1
-PROJECT_MINOR = 0
+PROJECT_MINOR = 9
 
 # the live host
 include live.def

@@ -26,14 +26,24 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
     # host
     hostname = platform.node() # the name of the host on which this process is running
     nickname = None # the short name assigned to this host by the user
-    # cpus
-    cpus = None # the triplet (cpus, physical cores, logical cores)
     # os
     platform = None # the OS type on which this process is running
     release = None # the OS release
     codename = None # the OS version
     # distribution
     distribution = None # a clue about the package manager on this machine
+
+    @property
+    def cpus(self):
+        """
+        The CPU configuration of the machine as a triplet (cpus, physical cores, logical cores)
+        """
+        # if we haven't done this before
+        if self._cpus is None:
+            # find out
+            self._cpus = self.cpuSurvey()
+        # all done
+        return self._cpus
 
     # user configurable state
     externals = pyre.properties.dict(schema=pyre.properties.str())
@@ -47,8 +57,8 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # discover the number of cpus
-        self.cpus = self.cpuSurvey()
+        # initialize the CPU info cache
+        self._cpus = None
         # all done
         return
 

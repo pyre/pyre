@@ -8,7 +8,7 @@
 
 
 """
-Exercise an SVG weaver
+Exercise a PFG weaver
 """
 
 

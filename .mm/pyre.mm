@@ -7,7 +7,7 @@
 
 # project meta-data
 pyre.major := 1
-pyre.minor := 0
+pyre.minor := 9
 
 # pyre builds a python package
 pyre.packages := pyre.pkg journal.pkg mpi.pkg
@@ -39,7 +39,7 @@ ${if ${findstring libpq,$(extern.available)}, \
 # the pyre meta-data
 pyre.pkg.root := packages/pyre/
 pyre.pkg.stem := pyre
-pyre.pkg.drivers := pyre
+pyre.pkg.drivers := pyre pyre-config colors.py dir.py merlin smith.pyre
 pyre.pkg.ext := extensions/
 
 # the pyre meta-data

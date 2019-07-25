@@ -38,8 +38,8 @@ class Renderer(pyre.component,
 
         # my colors; hardwired for now
         marker = self.palette[metadata['severity']]
-        blue = self.terminal.colors['blue']
-        normal = self.terminal.colors['normal']
+        blue = self.terminal.ansi['blue']
+        normal = self.terminal.ansi['normal']
 
         # extract the information from the metadata
         # channel = '{}{}{}'.format(blue, metadata['channel'], normal)
@@ -67,11 +67,11 @@ class Renderer(pyre.component,
         terminal = self.terminal
         # build my palette
         self.palette = {
-            'info': terminal.rgb256('020'),
-            'warning': terminal.rgb256('530'),
-            'error': terminal.rgb256('500'),
-            'debug': terminal.rgb256('135'),
-            'firewall': terminal.colors['light-red'],
+            'info': terminal.rgb256(red=0, green=2, blue=0),
+            'warning': terminal.rgb256(red=5, green=3, blue=0),
+            'error': terminal.rgb256(red=5, green=0, blue=0),
+            'debug': terminal.rgb256(red=1, green=3, blue=5),
+            'firewall': terminal.ansi['light-red'],
             }
 
         # all done

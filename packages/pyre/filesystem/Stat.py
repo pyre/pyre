@@ -7,7 +7,8 @@
 
 
 # externals
-import os, stat
+import os
+import stat
 
 
 # my base class
@@ -19,9 +20,6 @@ class Stat(Recognizer):
     """
     This class provides support for sorting out local filesystem entries based on the lowest
     level of metadata available: the actual representation on the hard disk.
-
-    This recognizer uses {os.stat} for discovering the entries in a given directory. Therefore,
-    it handles symbolic links transparently.
     """
 
 
@@ -51,7 +49,7 @@ class Stat(Recognizer):
     def recognize(cls, entry, follow_symlinks=False):
         """
         The most basic file recognition: convert the name of a file into a {Node} descendant
-        and decorate it with all the metadata available on the disk.
+        and decorate it with all the meta-data available on the disk.
         """
         # attempt to
         try:
@@ -65,9 +63,9 @@ class Stat(Recognizer):
         # grab my mode
         mode = meta.st_mode
 
-        # lookup the file type
+        # attempt to
         try:
-            # and build the meta-data
+            # lookup the file type and build the meta-data
             info = cls.filetypes[stat.S_IFMT(mode)]
         # if not there
         except KeyError:

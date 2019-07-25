@@ -18,10 +18,13 @@ EXPORT_BINS = \
     blame \
     cache_tag.py \
     class.pyre \
+    colors.py \
+    dir.py \
     merlin \
-    smith.pyre \
     pyre \
+    pyre-config \
     python.pyre \
+    smith.pyre \
     walk \
 
 # add these to the clean pile

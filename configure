@@ -97,37 +97,41 @@ class configure(pyre.application, family='pyre.applications.configure'):
         # gsl
         gsl = self.gsl
         # update the table
-        table['GSL_DIR'] = gsl.prefix
-        table['GSL_VERSION'] = gsl.sigver
-        table['GSL_INCDIR'] = gsl.join(gsl.incdir)
-        table['GSL_LIBDIR'] = gsl.join(gsl.libdir)
+        if gsl:
+            table['GSL_DIR'] = gsl.prefix
+            table['GSL_VERSION'] = gsl.sigver
+            table['GSL_INCDIR'] = gsl.join(gsl.incdir)
+            table['GSL_LIBDIR'] = gsl.join(gsl.libdir)
 
         # mpi
         mpi = self.mpi
         # update the table
-        table['MPI_DIR'] = mpi.prefix
-        table['MPI_INCDIR'] = mpi.join(mpi.incdir)
-        table['MPI_LIBDIR'] = mpi.join(mpi.libdir)
-        table['MPI_EXECUTIVE'] = mpi.launcher
-        table['MPI_VERSION'] = mpi.flavor
+        if mpi:
+            table['MPI_DIR'] = mpi.prefix
+            table['MPI_INCDIR'] = mpi.join(mpi.incdir)
+            table['MPI_LIBDIR'] = mpi.join(mpi.libdir)
+            table['MPI_EXECUTIVE'] = mpi.launcher
+            table['MPI_VERSION'] = mpi.flavor
 
         # postgres
         postgres = self.postgres
         # update the table
-        table['LIBPQ_DIR'] = postgres.prefix
-        table['LIBPQ_VERSION'] = postgres.sigver
-        table['LIBPQ_INCDIR'] = postgres.join(postgres.incdir)
-        table['LIBPQ_LIBDIR'] = postgres.join(postgres.libdir)
+        if postgres:
+            table['LIBPQ_DIR'] = postgres.prefix
+            table['LIBPQ_VERSION'] = postgres.sigver
+            table['LIBPQ_INCDIR'] = postgres.join(postgres.incdir)
+            table['LIBPQ_LIBDIR'] = postgres.join(postgres.libdir)
 
         # python
         python = self.python
         # update the table
-        table['PYTHON'] = python.interpreter
-        table['PYTHON_DIR'] = python.prefix
-        table['PYTHON_INCDIR'] = python.join(python.incdir)
-        table['PYTHON_LIBDIR'] = python.join(python.libdir)
-        table['PYTHON_PYCFLAGS'] = '-b'
-        table['PYTHON_LIB'] = python.interpreter
+        if python:
+            table['PYTHON'] = python.interpreter
+            table['PYTHON_DIR'] = python.prefix
+            table['PYTHON_INCDIR'] = python.join(python.incdir)
+            table['PYTHON_LIBDIR'] = python.join(python.libdir)
+            table['PYTHON_PYCFLAGS'] = '-b'
+            table['PYTHON_LIB'] = python.interpreter
 
         # all done
         return table
