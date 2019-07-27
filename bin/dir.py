@@ -38,17 +38,26 @@ class Dir(pyre.application):
         # figure out how many there are
         args = len(directories)
 
-        # save the currnet working directory
+        # save the current working directory
         cwd = os.getcwd()
 
         # go through each on
         for directory in directories:
-            # if there is more than one
+            # attempt to
+            try:
+                # go there
+                os.chdir(directory)
+            # if something went wrong
+            except self.knownErrorConditions as error:
+                # complain
+                self.error.log(error)
+                # and move on
+                continue
+            # otherwise, start building the listing
+            # if we have to show the contents of more than one directory
             if args > 1:
-                # show the one being dumped
+                # show the directory we are listing
                 print(f"{directory}:")
-            # go there
-            os.chdir(directory)
             # get the listing
             text = "\n".join(self.render())
             # and if it's non-trivial
@@ -60,6 +69,8 @@ class Dir(pyre.application):
                 # print a separator
                 print()
             # come back
+            # N.B.: don't be tempted to optimize this away; {directory} is almost always
+            # specified relative to the user's original {cwd}
             os.chdir(cwd)
 
         # all done
@@ -252,6 +263,10 @@ class Dir(pyre.application):
         return entry
 
 
+    # the errors we recognize
+    knownErrorConditions = (FileNotFoundError, PermissionError)
+
+
 # helpers
 class Entry:
     """
@@ -321,7 +336,7 @@ class Table:
         """
         Generate the entry container and its shape
         """
-        # initialize the stats
+        # initialize the statistics
         longestName = 0
         longestMarker = 0
         numEntries = 0
