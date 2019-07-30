@@ -27,6 +27,7 @@ class Dir(pyre.application):
     across = pyre.properties.bool(default=False)
     across.doc = "sort multi-column output across the window"
 
+
     # protocol obligations
     @pyre.export
     def main(self, *args, **kwds):
@@ -40,38 +41,10 @@ class Dir(pyre.application):
 
         # save the current working directory
         cwd = os.getcwd()
-
-        # go through each on
+        # go through each one
         for directory in directories:
-            # attempt to
-            try:
-                # go there
-                os.chdir(directory)
-            # if something went wrong
-            except self.knownErrorConditions as error:
-                # complain
-                self.error.log(error)
-                # and move on
-                continue
-            # otherwise, start building the listing
-            # if we have to show the contents of more than one directory
-            if args > 1:
-                # show the directory we are listing
-                print(f"{directory}:")
-            # get the listing
-            text = "\n".join(self.render())
-            # and if it's non-trivial
-            if text:
-                # print it
-                print(text)
-            # if necessary
-            if args > 1:
-                # print a separator
-                print()
-            # come back
-            # N.B.: don't be tempted to optimize this away; {directory} is almost always
-            # specified relative to the user's original {cwd}
-            os.chdir(cwd)
+            # produce the listing
+            self.ls(directory=directory, cwd=cwd, header=args > 1)
 
         # all done
         return 0
@@ -84,9 +57,48 @@ class Dir(pyre.application):
         # attach my terminal
         self.terminal = self.executive.terminal
         # all done
+        return
 
 
     # implementation details
+    def ls(self, directory, cwd, header):
+        """
+        Assemble the directory listing, colorize it, and print it
+        """
+        # attempt to
+        try:
+            # go there
+            os.chdir(directory)
+        # if something went wrong
+        except self.knownErrorConditions as error:
+            # complain
+            self.error.log(error)
+            # and move on
+            return
+        # otherwise, start building the listing
+        # if we have to show the contents of more than one directory
+        if header:
+            # show the directory we are listing
+            print(f"{directory}:")
+        # get the listing
+        text = "\n".join(self.render())
+        # and if it's non-trivial
+        if text:
+            # print it
+            print(text)
+        # if necessary
+        if header:
+            # print a separator
+            print()
+        # come back
+        # N.B.: don't be tempted to optimize this away; {directory} is almost always
+        # specified relative to the user's original {cwd}
+        os.chdir(cwd)
+
+        # all done
+        return
+
+
     def render(self):
         """
         Generate the directory listing
@@ -102,10 +114,8 @@ class Dir(pyre.application):
         layout = (1,0) if self.across else (0,1)
         # make a tabulator
         tabulator = Table(width=width, layout=layout, entries=entries)
-        # get the grid
-        grid = tabulator.grid
         # unpack its shape
-        rows, columns = grid.tile.shape
+        rows, columns = tabulator.shape
         # ask for the column width
         columnWidth = tabulator.width
 
@@ -119,13 +129,15 @@ class Dir(pyre.application):
             # go through the columns
             for col in range(columns):
                 # get the entry
-                entry = grid[(row, col)]
+                entry = tabulator[(row, col)]
                 # render it
                 fragments.append(entry.render(reset=reset))
                 # every column other than the last
                 if col < columns-1:
-                    # adds a bit of padding
-                    fragments.append(" "*(columnWidth - (len(entry.name)+len(entry.marker))))
+                    # needs a bit of padding
+                    padding = " "*(columnWidth - (len(entry.name)+len(entry.marker)))
+                    # add it to the pile
+                    fragments.append(padding)
             # put it all together
             yield "".join(fragments)
 
@@ -305,6 +317,15 @@ class Table:
     grid = None
 
 
+    @property
+    def shape(self):
+        """
+        Retrieve the shape of the table
+        """
+        # easy enough
+        return self.grid.tile.shape
+
+
     # meta-methods
     def __init__(self, entries, width, layout=None, **kwds):
         # chain up
@@ -313,6 +334,11 @@ class Table:
         self.grid = self.makeGrid(maxWidth=width, layout=layout, entries=entries)
         # all done
         return
+
+
+    def __getitem__(self, index):
+        # delegate
+        return self.grid[index]
 
 
     # implementation details
