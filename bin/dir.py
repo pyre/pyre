@@ -856,10 +856,31 @@ class Git(SCS):
         return table
 
 
-    def moved(self, table, match, **kwds):
+    def moved(self, table, match, prefix):
         """
         Compute the number of moved files
         """
+        # get the match group dictionary
+        info = match.groupdict()
+        # get the code
+        code = info["code"]
+        # and the filename
+        filename = pyre.primitives.path(info["destination"])
+        # project it onto the {prefix} and pull out the top
+        entry = filename.relativeTo(prefix)[0]
+
+        # if the code has any info on the index side
+        if code[0] != ' ':
+            # add it to the staged pile
+            table.staged.add(entry)
+
+        # if the code has any info on the worktree side
+        if code[1] != ' ':
+            # add it to the staged pile
+            table.unstaged.add(entry)
+
+        # all done
+        return table
         # all done
         return table
 
