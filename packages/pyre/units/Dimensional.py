@@ -471,6 +471,9 @@ class Dimensional:
             for label, exponent in zip(self.fundamental, self.derivation) if exponent)
 
 
+# just in case users care about our ordering of the exponents
+fundamental = Dimensional.fundamental
+
 # instances
 zero = Dimensional(0, Dimensional.zero)
 one = dimensionless = Dimensional(1, Dimensional.zero)
