@@ -40,7 +40,7 @@ ${if ${findstring libpq,$(extern.available)}, \
 pyre.pkg.root := packages/pyre/
 pyre.pkg.stem := pyre
 pyre.pkg.drivers := pyre pyre-config colors.py dir.py merlin smith.pyre
-pyre.pkg.config := pyre.pfg merlin.pfg
+pyre.pkg.config := pyre merlin
 pyre.pkg.ext := extensions/
 
 # the pyre meta-data
