@@ -16,7 +16,7 @@ PROJECT_MINOR = 9
 include live.def
 
 # project settings
-PROJ_CXX_FLAGS += $(COMPILER_CXX_STD17)
+PROJ_CXX_FLAGS += $(COMPILER_CXX_STD14)
 
 # external dependencies
 include clock/default.def
