@@ -247,7 +247,7 @@ class Configurator:
         # N.B.: the original api required only {key}; {instance} was added to accommodate what
         # appears to be a fundamental problem with early evaluation: the configuration store is
         # not ready to answer questions about components that are nested inside others since
-        # the parent nodes have not been created yet this is
+        # the parent nodes have not been created yet
         #
         # the solution here is just a temporary band aid
 
@@ -273,8 +273,10 @@ class Configurator:
                     ref = nameserver.getNode(key=name).value
                 # get the type
                 cls = type(ref)
-                # check the family name
-                if cls.pyre_inventory.key is not family: break
+                # if the family names don't match
+                if cls.pyre_inventory.key is not family:
+                    # bail
+                    break
             # iff all assignment conditions are satisfied
             else:
                 # hand this assignment to the caller

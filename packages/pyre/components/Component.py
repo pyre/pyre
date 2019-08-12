@@ -312,9 +312,9 @@ class Component(Configurable, metaclass=Actor, internal=True):
         instance.pyre_locator = locator
         # deduce the visibility of this instance
         inventory = cls.PrivateInventory if name is None else cls.PublicInventory
-        # ask it to initialize the instance
+        # ask the inventory to initialize the instance
         inventory.initializeInstance(instance=instance, name=name, implicit=implicit)
-        # invoke it to initialize the instance and collect configuration errors
+        # and collect configuration errors
         instance.pyre_configurationErrors = list(inventory.configureInstance(instance))
 
         # all done
