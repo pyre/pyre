@@ -52,27 +52,39 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
 
 
     # debugging support
-    def pyre_dump(self, channel=None):
+    def pyre_dump(self, channel=None, indent=' '*2, level=0):
         """
         Display my factories and products
         """
-        # make a channel
+        # make a channel, if necessary
         channel = self.info if channel is None else channel
         # sign on
-        channel.line(f"{self}")
+        super().pyre_dump(channel=channel, indent=indent, level=level)
+
+        return self
+
+        # compute the margin
+        margin = indent * (level+1)
+
         # first, the products
-        channel.line("  products:")
+        channel.line(f"{margin}products:")
         for product in self.products:
-            channel.line(f"    {product}")
+            product.pyre_dump(channel=channel, indent=indent, level=level+2)
+
         # and the factories
-        channel.line("  factories:")
+        channel.line(f"{margin}factories:")
         for factory in self.factories:
-            channel.line(f"    {factory}")
+            factory.pyre_dump(channel=channel, indent=indent, level=level+2)
+
+        # now dump them
+        for product in itertools.chain(self.products, self.factories):
+            channel.line()
+            product.pyre_dump(channel=channel, indent=indent, level=level)
+
         # flush
         channel.log()
-
         # all done
-        return
+        return self
 
 
     # constants

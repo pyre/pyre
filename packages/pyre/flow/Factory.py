@@ -315,28 +315,27 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
 
 
     # debugging support
-    def pyre_dump(self, channel, indent=''):
+    def pyre_dump(self, channel, indent, level):
         """
         Put some useful info about me in {channel}
         """
         # sign on
-        channel.line(f"{indent}{self}")
+        super().pyre_dump(channel=channel, indent=indent, level=level)
+
+        # compute the margin
+        margin = indent * (level+1)
 
         # my inputs
-        channel.line(f"{indent*2}inputs:")
-        for product in self.pyre_inputTraits:
-            channel.line(f"{indent*3}{product}")
+        if self.pyre_inputTraits:
+            channel.line(f"{margin}inputs:")
+            for product in self.pyre_inputTraits:
+                channel.line(f"{margin}{indent}{product}")
 
         # my outputs
-        channel.line(f"{indent*2}outputs:")
-        for product in self.pyre_outputTraits:
-            channel.line(f"{indent*3}{product}")
-
-        # my status monitor
-        channel.line(f"{indent*2}status: {self.pyre_status}")
-        channel.line(f"{indent*3}observers:")
-        for observer in self.pyre_status.observers:
-            channel.line(f"{indent*4}{observer}")
+        if self.pyre_outputTraits:
+            channel.line(f"{margin}outputs:")
+            for product in self.pyre_outputTraits:
+                channel.line(f"{margin}{indent}{product}")
 
         # all done
         return self
