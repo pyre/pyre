@@ -32,7 +32,7 @@ class Flow(Producer, family="pyre.flow"):
 
 
     @classmethod
-    def pyre_convert(cls, value, node, **kwds):
+    def pyre_normalize(cls, value, node, **kwds):
         """
         Help convert {value} into a flow instance
         """
@@ -60,8 +60,10 @@ class Flow(Producer, family="pyre.flow"):
 
         # form possible filenames looking for a configuration file
         scope = itertools.product(reversed(ns.configpath), [value], cfg.encodings())
+        print(f"Flow.pyre_normalize:")
         # go through the possibilities
         for root, filename, extension in scope:
+            print(f"    uri: {uri}")
             # assemble the uri
             uri = executive.uri().coerce(f"{root.uri}/{filename}.{extension}")
             # attempt to
@@ -69,16 +71,15 @@ class Flow(Producer, family="pyre.flow"):
                 # ask the fileserver to resolve it
                 source = fs.open(uri=uri)
             # if something went wrong
-            except executive.PyreError:
+            except executive.PyreError as error:
+                print(f"    error: {error}")
                 # no worries
                 continue
 
             # show me
-            # print(f"Flow.pyre_convert:")
-            # print(f"    uri: {uri}")
-            # print(f"    node: {node}")
-            # print(f"    locator: {locator}")
-            # print(f"    priority: {priority}")
+            print(f"    node: {node}")
+            print(f"    locator: {locator}")
+            print(f"    priority: {priority}")
 
             # ask the configurator to process the stream
             errors = cfg.loadConfiguration(uri=uri, source=source,
