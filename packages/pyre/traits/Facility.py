@@ -129,6 +129,8 @@ class Facility(Slotted, schemata.component):
         self.instanceSlot = self.factory(trait=self, pre=self.instantiate, post=self.instantiate)
         # add the converter from my protocol to my pile
         self.converters.append(protocol.pyre_convert)
+        # repeat with my normalizer
+        self.normalizers.append(protocol.pyre_normalize)
         # all done
         return
 

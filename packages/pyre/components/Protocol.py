@@ -47,13 +47,23 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         return None
 
 
-    # override this in your protocols to provide custom translations of symbols to component
+    # override these in your protocols to provide custom translations of symbols to component
     # specifications
     @classmethod
     def pyre_convert(cls, value, **kwds):
         """
-        Hook to enable protocols to translate the component specification in {value} into a
-        canonical form
+        Hook to enable protocols to translate the component specification in {value} into canonical
+        form; invoked during value preprocessing
+        """
+        # by default, do nothing
+        return value
+
+
+    @classmethod
+    def pyre_normalize(cls, value, **kwds):
+        """
+        Hook to enable protocols to translate the component specification in {value} into normal
+        form; invoked during value post-processing
         """
         # by default, do nothing
         return value
