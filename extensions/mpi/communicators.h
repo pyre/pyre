@@ -62,6 +62,26 @@ namespace mpi {
         extern const char * const min__doc__;
         PyObject * min(PyObject *, PyObject *);
 
+        // sum reduction and distribute to all
+        extern const char * const sum_all__name__;
+        extern const char * const sum_all__doc__;
+        PyObject * sum_all(PyObject *, PyObject *);
+
+        // product reduction and distribute to all
+        extern const char * const product_all__name__;
+        extern const char * const product_all__doc__;
+        PyObject * product_all(PyObject *, PyObject *);
+
+        // max reduction and distribute to all
+        extern const char * const max_all__name__;
+        extern const char * const max_all__doc__;
+        PyObject * max_all(PyObject *, PyObject *);
+
+        // min reduction and distribute to all
+        extern const char * const min_all__name__;
+        extern const char * const min_all__doc__;
+        PyObject * min_all(PyObject *, PyObject *);
+
     } // of namespace communicator
 
     namespace cartesian {
