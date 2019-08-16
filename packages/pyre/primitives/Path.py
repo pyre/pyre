@@ -203,7 +203,7 @@ class Path(tuple):
         if pos == -1:
             # my stem is my name
             return name
-        # otherwise. drop the suffix
+        # otherwise, drop the suffix
         return name[:pos]
 
     @property
@@ -326,7 +326,7 @@ class Path(tuple):
             # and i have one, remove it; otherwise, clone me
             return self.withName(stem) if mine else self
 
-        # if a suffix were supplied, append it to my prefix and build a path
+        # if a suffix were supplied, append it to my stem and build a path
         return self.withName(name=stem+suffix)
 
 
