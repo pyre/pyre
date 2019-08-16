@@ -33,6 +33,10 @@ def test():
         assert largest == (size-1)**2
     else:
         assert largest is None
+    # perform the all process reduction
+    largest = world.max(item=number)
+    # check it
+    assert largest == (size-1)**2
     # all done
     return
 
