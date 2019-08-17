@@ -84,7 +84,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             # get its type
             component = type(value)
         # if it is a component class
-        elif issubclass(value, cls.component):
+        elif isinstance(value, cls.actor):
             # we know its type
             component = value
         # anything else
