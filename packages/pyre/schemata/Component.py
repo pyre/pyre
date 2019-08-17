@@ -41,57 +41,6 @@ class Component(Schema):
         """
         Attempt to convert {value} into a component class compatible with my protocol
         """
-        # coerce {value}
-        value = self._coerce(value=value, **kwds)
-        # if we got something trivial
-        if value is None:
-            # nothing further to do
-            return None
-        # otherwise, get my protocol
-        protocol = self.protocol
-        # and check whether it is compatible with it
-        report = value.pyre_isCompatible(spec=protocol, fast=True)
-        # if the report is clean
-        if report.isClean:
-            # we are done
-            return value
-        # otherwise, complain
-        raise protocol.ProtocolCompatibilityError(configurable=value, protocol=protocol)
-
-
-    def string(self, value):
-        """
-        Render value as a string that can be persisted for later coercion
-        """
-        # respect {None}
-        if value is None: return None
-        # my value knows
-        return value.pyre_name
-
-
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
-
-    # meta-methods
-    def __init__(self, protocol, default=default, **kwds):
-        # chain up
-        super().__init__(default=default, **kwds)
-        # save my protocol
-        self.protocol = protocol
-        # all done
-        return
-
-
-    # implementation details
-    def _coerce(self, value, **kwds):
-        """
-        Walk {value} through the coercion process
-        """
         # get my protocol
         protocol = self.protocol
         # which knows the actor type
@@ -164,6 +113,10 @@ class Component(Schema):
             if factory == default:
                 # invoke it
                 factory = factory()
+            # perhaps it's a foundry
+            if isinstance(factory, foundry):
+                # invoke it
+                factory = factory()
             # now, if it is a component constructor
             if isinstance(factory, actor):
                 # use it to build a component instance
@@ -171,8 +124,36 @@ class Component(Schema):
                 # and return it
                 return candidate
 
-        # out of ideas; build an error message and complain
-        raise protocol.ResolutionError(protocol=protocol, value=value) from None
+        # out of ideas; leave {value} alone and leave it up to the validators to complain
+        return value
+
+
+    def string(self, value):
+        """
+        Render value as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None: return None
+        # my value knows
+        return value.pyre_name
+
+
+    def json(self, value):
+        """
+        Generate a JSON representation of {value}
+        """
+        # represent as a string
+        return self.string(value)
+
+
+    # meta-methods
+    def __init__(self, protocol, default=default, **kwds):
+        # chain up
+        super().__init__(default=default, **kwds)
+        # save my protocol
+        self.protocol = protocol
+        # all done
+        return
 
 
 # end of file

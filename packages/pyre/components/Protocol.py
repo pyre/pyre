@@ -47,13 +47,13 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         return None
 
 
-    # override these in your protocols to provide custom translations of symbols to component
+    # value processing hooks
     # specifications
     @classmethod
     def pyre_convert(cls, value, **kwds):
         """
-        Hook to enable protocols to translate the component specification in {value} into canonical
-        form; invoked during value preprocessing
+        Translate the component specification in {value} into canonical form; invoked during value
+        processing
         """
         # by default, do nothing
         return value
@@ -62,11 +62,45 @@ class Protocol(Configurable, metaclass=Role, internal=True):
     @classmethod
     def pyre_normalize(cls, value, **kwds):
         """
-        Hook to enable protocols to translate the component specification in {value} into normal
-        form; invoked during value post-processing
+        Translate the component specification in {value} into normal form; invoked during value
+        processing
         """
         # by default, do nothing
         return value
+
+
+    @classmethod
+    def pyre_validate(cls, value, **kwds):
+        """
+        Check that {value} is acceptable
+        """
+        # the value {None}
+        if value is None:
+            # is perfectly acceptable
+            return value
+
+        # if the value is a component instance
+        if isinstance(value, cls.component):
+            # get its type
+            component = type(value)
+        # if it is a component class
+        elif issubclass(value, cls.component):
+            # we know its type
+            component = value
+        # anything else
+        else:
+            # is not acceptable
+            raise cls.ResolutionError(protocol=cls, value=value)
+
+        # check that the component is compatible with me
+        report =  component.pyre_isCompatible(spec=cls)
+        # if the report is clean
+        if report.isClean:
+            # we are done
+            return value
+
+        # otherwise, complain
+        raise cls.ResolutionError(protocol=cls, value=value, report=report)
 
 
     # introspection
@@ -361,7 +395,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         Check whether {this} protocol is compatible with the {other}
         """
         # print(f"PP: me={cls}, other={spec}")
-        # first, the easy cases am i looking in the mirror?
+        # first, the easy cases: am i looking in the mirror?
         if cls == spec:
             # easy; no need to build a report since the rest of the code is not supposed to
             # touch the report unless it evaluates to {False}
@@ -377,12 +411,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
         # do the assignment compatibility check
         report = super().pyre_isCompatible(spec=spec, fast=fast)
-        # if we are in fast mode and got an error
-        if fast and report:
-            # all done
-            return report
-
-        # all done
+        # and report any errors
         return report
 
 
