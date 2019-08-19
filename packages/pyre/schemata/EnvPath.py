@@ -23,10 +23,13 @@ class EnvPath(List):
 
     # constants
     typename = 'envpath' # the name of my type
+    pathsep = os.pathsep # the character to use as separator
 
 
     # meta-methods
-    def __init__(self, variable, **kwds):
+    def __init__(self, variable, pathsep=pathsep, **kwds):
+        # save the path separator
+        self.pathsep = pathsep
         # attempt to
         try:
             # get the value of the environment variable
@@ -38,7 +41,7 @@ class EnvPath(List):
         # otherwise
         else:
             # split it using the path separator
-            default = list(filter(None, default.split(os.pathsep)))
+            default = list(filter(None, default.split(self.pathsep)))
 
         # chain up
         super().__init__(schema=Path(), default=default, **kwds)
@@ -57,7 +60,7 @@ class EnvPath(List):
         # all we have to do is split strings using the path separator
         if isinstance(value, str):
             # do the split
-            value = value.split(os.pathsep)
+            value = value.split(self.pathsep)
         # everything else is handled by my superclass
         return super()._coerce(value=value, **kwds)
 

@@ -54,13 +54,16 @@ class Parser(metaclass=Singleton):
         Build the initial list of resolvable unit symbols
         """
         # get the list of default packages
-        from . import modules
-        # start with an empty one
+        from . import quantities
+        # initialize the pile
         context = {}
-        # update it with the contents of all the default modules
-        for module in modules():
-            for symbol, value in module.__dict__.items():
+        # go through all the supported quantities
+        for quantity in quantities():
+            # extract the symbols and their value
+            for symbol, value in quantity.__dict__.items():
+                # skip symbols that are in the reserved python namespace
                 if not symbol.startswith('__'):
+                    # add the rest to the pile
                     context[symbol] = value
         # and return it
         return context

@@ -40,6 +40,7 @@ ${if ${findstring libpq,$(extern.available)}, \
 pyre.pkg.root := packages/pyre/
 pyre.pkg.stem := pyre
 pyre.pkg.drivers := pyre pyre-config colors.py dir.py merlin smith.pyre
+pyre.pkg.config := pyre merlin
 pyre.pkg.ext := extensions/
 
 # the pyre meta-data
@@ -54,7 +55,7 @@ journal.lib.incdir := $(builder.dest.inc)pyre/journal/
 journal.lib.master := journal.h
 journal.lib.extern :=
 journal.lib.c++.defines += PYRE_CORE
-journal.lib.c++.flags += $($(compiler.c++).std.c++17)
+journal.lib.c++.flags += $($(compiler.c++).std.c++14)
 
 # the extension meta-data
 journal.ext.root := extensions/journal/
@@ -64,14 +65,14 @@ journal.ext.wraps := journal.lib
 journal.ext.capsule :=
 journal.ext.extern := journal.lib python
 journal.ext.lib.c++.defines += PYRE_CORE
-journal.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+journal.ext.lib.c++.flags += $($(compiler.c++).std.c++14)
 
 # the pyre library meta-data
 pyre.lib.root := lib/pyre/
 pyre.lib.stem := pyre
 pyre.lib.extern := journal.lib
 pyre.lib.prerequisites += journal.lib
-pyre.lib.c++.flags += $($(compiler.c++).std.c++17)
+pyre.lib.c++.flags += $($(compiler.c++).std.c++14)
 
 # the pyre extensions
 # host info
@@ -81,7 +82,7 @@ host.ext.pkg := pyre.pkg
 host.ext.wraps := pyre.lib
 host.ext.capsule :=
 host.ext.extern := pyre.lib journal.lib python
-host.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+host.ext.lib.c++.flags += $($(compiler.c++).std.c++14)
 host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 # postgres
 postgres.ext.root := extensions/postgres/
@@ -90,7 +91,7 @@ postgres.ext.pkg := pyre.pkg
 postgres.ext.wraps := pyre.lib
 postgres.ext.capsule :=
 postgres.ext.extern := pyre.lib journal.lib libpq python
-postgres.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+postgres.ext.lib.c++.flags += $($(compiler.c++).std.c++14)
 postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 # timers
 timers.ext.root := extensions/timers/
@@ -99,7 +100,7 @@ timers.ext.pkg := pyre.pkg
 timers.ext.wraps := pyre.lib
 timers.ext.capsule :=
 timers.ext.extern := pyre.lib journal.lib python
-timers.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+timers.ext.lib.c++.flags += $($(compiler.c++).std.c++14)
 timers.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 # cuda
@@ -115,7 +116,7 @@ cuda.ext.pkg := cuda.pkg
 cuda.ext.wraps :=
 cuda.ext.capsule :=
 cuda.ext.extern := pyre.lib journal.lib cuda mpi python
-cuda.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+cuda.ext.lib.c++.flags += $($(compiler.c++).std.c++14)
 cuda.ext.lib.prerequisites += journal.lib pyre.lib # gsl.lib is added automatically
 
 # gsl
@@ -131,7 +132,7 @@ gsl.ext.pkg := gsl.pkg
 gsl.ext.wraps :=
 gsl.ext.capsule.destination := pyre/gsl/
 gsl.ext.extern := pyre.lib journal.lib mpi.lib gsl mpi python numpy
-gsl.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+gsl.ext.lib.c++.flags += $($(compiler.c++).std.c++14)
 gsl.ext.lib.prerequisites += journal.lib pyre.lib mpi.ext # gsl.lib is added automatically
 # the tests
 gsl.tst.pkg.stem := gsl
@@ -150,14 +151,14 @@ mpi.lib.extern := journal.lib mpi
 mpi.lib.master := mpi.h
 mpi.lib.incdir := $(builder.dest.inc)pyre/mpi/
 mpi.lib.prerequisites += journal.lib
-mpi.lib.c++.flags += $($(compiler.c++).std.c++17)
+mpi.lib.c++.flags += $($(compiler.c++).std.c++14)
 # the extension
 mpi.ext.root := extensions/mpi/
 mpi.ext.stem := mpi
 mpi.ext.pkg := mpi.pkg
 mpi.ext.wraps := mpi.lib
 mpi.ext.extern := pyre.lib journal.lib mpi python
-mpi.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+mpi.ext.lib.c++.flags += $($(compiler.c++).std.c++14)
 mpi.ext.lib.prerequisites += journal.lib pyre.lib # mpi.lib is added automatically
 # the tests
 mpi.tst.libmpi.stem := mpi

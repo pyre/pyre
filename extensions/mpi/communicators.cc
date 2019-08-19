@@ -449,7 +449,7 @@ PyObject * mpi::communicator::product(PyObject *, PyObject * args)
     PyObject * py_comm;
 
     // parse the argument list
-    if (!PyArg_ParseTuple(args, "O!id:max", &PyCapsule_Type, &py_comm, &root, &number)) {
+    if (!PyArg_ParseTuple(args, "O!id:product", &PyCapsule_Type, &py_comm, &root, &number)) {
         return 0;
     }
 
@@ -573,6 +573,165 @@ PyObject * mpi::communicator::min(PyObject *, PyObject * args)
     return Py_None;
 }
 
+// perform a sum reduction and distribute the result back to all processes
+const char * const
+mpi::communicator::
+sum_all__name__ = "sum_all";
+
+const char * const
+mpi::communicator::
+sum_all__doc__ = "perform a sum reduction and distribute the result back to all processes";
+
+PyObject * mpi::communicator::sum_all(PyObject *, PyObject * args)
+{
+    // place holders
+    double number;
+    PyObject * py_comm;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(args, "O!d:sum_all", &PyCapsule_Type, &py_comm, &number)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm =
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // space for the result
+    double total;
+    // compute the total
+    MPI_Allreduce(&number, &total, 1, MPI_DOUBLE, MPI_SUM, comm->handle());
+
+    // return the reduced value for all processes
+    return PyFloat_FromDouble(total);
+}
+
+
+// perform a product reduction and distribute the result back to all processes
+const char * const
+mpi::communicator::
+product_all__name__ = "product_all";
+
+const char * const
+mpi::communicator::
+product_all__doc__ = "perform a product reduction and distribute the result back to all processes";
+
+PyObject * mpi::communicator::product_all(PyObject *, PyObject * args)
+{
+    // place holders
+    double number;
+    PyObject * py_comm;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(args, "O!d:product_all", &PyCapsule_Type, &py_comm, &number)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm =
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // space for the result
+    double product = 0;
+    // compute the product
+    MPI_Allreduce(&number, &product, 1, MPI_DOUBLE, MPI_PROD, comm->handle());
+
+    // return the reduced value for all processes
+    return PyFloat_FromDouble(product);
+}
+
+
+// perform a max reduction and distribute the result back to all processes
+const char * const
+mpi::communicator::
+max_all__name__ = "max_all";
+
+const char * const
+mpi::communicator::
+max_all__doc__ = "perform a max reduction and distribute the result back to all processes";
+
+PyObject * mpi::communicator::max_all(PyObject *, PyObject * args)
+{
+    // place holders
+    double number;
+    PyObject * py_comm;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(args, "O!d:max_all", &PyCapsule_Type, &py_comm, &number)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+
+    // get the communicator
+    pyre::mpi::communicator_t * comm =
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // space for the result
+    double largest = 0;
+    // compute the total
+    MPI_Allreduce(&number, &largest, 1, MPI_DOUBLE, MPI_MAX, comm->handle());
+
+    // return the reduced value
+    return PyFloat_FromDouble(largest);
+}
+
+
+// perform a min reduction and distribute the result back to all processes
+const char * const
+mpi::communicator::
+min_all__name__ = "min_all";
+
+const char * const
+mpi::communicator::
+min_all__doc__ = "perform a min reduction and distribute the result back to all processes";
+
+PyObject * mpi::communicator::min_all(PyObject *, PyObject * args)
+{
+    // place holders
+    double number;
+    PyObject * py_comm;
+
+    // parse the argument list
+    if (!PyArg_ParseTuple(args, "O!d:min_all", &PyCapsule_Type, &py_comm, &number)) {
+        return 0;
+    }
+
+    // check that we were handed the correct kind of capsule
+    if (!PyCapsule_IsValid(py_comm, mpi::communicator::capsule_t)) {
+        PyErr_SetString(PyExc_TypeError, "the first argument must be a valid communicator");
+        return 0;
+    }
+    // get the communicator
+    pyre::mpi::communicator_t * comm =
+        static_cast<pyre::mpi::communicator_t *>
+        (PyCapsule_GetPointer(py_comm, mpi::communicator::capsule_t));
+
+    // space for the result
+    double smallest = 0;
+    // compute the smallest
+    MPI_Allreduce(&number, &smallest, 1, MPI_DOUBLE, MPI_MIN, comm->handle());
+
+    // return the reduced value
+    return PyFloat_FromDouble(smallest);
+}
 
 // helpers
 void

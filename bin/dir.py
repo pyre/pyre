@@ -27,6 +27,7 @@ class Dir(pyre.application):
     across = pyre.properties.bool(default=False)
     across.doc = "sort multi-column output across the window"
 
+
     # protocol obligations
     @pyre.export
     def main(self, *args, **kwds):
@@ -38,29 +39,12 @@ class Dir(pyre.application):
         # figure out how many there are
         args = len(directories)
 
-        # save the currnet working directory
+        # save the current working directory
         cwd = os.getcwd()
-
-        # go through each on
+        # go through each one
         for directory in directories:
-            # if there is more than one
-            if args > 1:
-                # show the one being dumped
-                print(f"{directory}:")
-            # go there
-            os.chdir(directory)
-            # get the listing
-            text = "\n".join(self.render())
-            # and if it's non-trivial
-            if text:
-                # print it
-                print(text)
-            # if necessary
-            if args > 1:
-                # print a separator
-                print()
-            # come back
-            os.chdir(cwd)
+            # produce the listing
+            self.ls(directory=directory, cwd=cwd, header=args > 1)
 
         # all done
         return 0
@@ -73,9 +57,48 @@ class Dir(pyre.application):
         # attach my terminal
         self.terminal = self.executive.terminal
         # all done
+        return
 
 
     # implementation details
+    def ls(self, directory, cwd, header):
+        """
+        Assemble the directory listing, colorize it, and print it
+        """
+        # attempt to
+        try:
+            # go there
+            os.chdir(directory)
+        # if something went wrong
+        except self.knownErrorConditions as error:
+            # complain
+            self.error.log(error)
+            # and move on
+            return
+        # otherwise, start building the listing
+        # if we have to show the contents of more than one directory
+        if header:
+            # show the directory we are listing
+            print(f"{directory}:")
+        # get the listing
+        text = "\n".join(self.render())
+        # and if it's non-trivial
+        if text:
+            # print it
+            print(text)
+        # if necessary
+        if header:
+            # print a separator
+            print()
+        # come back
+        # N.B.: don't be tempted to optimize this away; {directory} is almost always
+        # specified relative to the user's original {cwd}
+        os.chdir(cwd)
+
+        # all done
+        return
+
+
     def render(self):
         """
         Generate the directory listing
@@ -91,10 +114,8 @@ class Dir(pyre.application):
         layout = (1,0) if self.across else (0,1)
         # make a tabulator
         tabulator = Table(width=width, layout=layout, entries=entries)
-        # get the grid
-        grid = tabulator.grid
         # unpack its shape
-        rows, columns = grid.tile.shape
+        rows, columns = tabulator.shape
         # ask for the column width
         columnWidth = tabulator.width
 
@@ -108,13 +129,15 @@ class Dir(pyre.application):
             # go through the columns
             for col in range(columns):
                 # get the entry
-                entry = grid[(row, col)]
+                entry = tabulator[(row, col)]
                 # render it
                 fragments.append(entry.render(reset=reset))
                 # every column other than the last
                 if col < columns-1:
-                    # adds a bit of padding
-                    fragments.append(" "*(columnWidth - (len(entry.name)+len(entry.marker))))
+                    # needs a bit of padding
+                    padding = " "*(columnWidth - (len(entry.name)+len(entry.marker)))
+                    # add it to the pile
+                    fragments.append(padding)
             # put it all together
             yield "".join(fragments)
 
@@ -128,10 +151,24 @@ class Dir(pyre.application):
         """
         # make the listing
         entries = self.discover()
-        # run it through the git colorizer
+        # run it through the bzr colorizer
+        entries = self.bzr(entries=entries)
+        # and through the git colorizer
         entries = self.git(entries=entries)
         # and return them
         return entries
+
+
+    def bzr(self, entries):
+        """
+        Decorate the directory {entries} with information from the local bzr repository
+        """
+        # make a bzr aware colorizer
+        bzr = BZR(terminal=self.terminal)
+        # run {entries} through it
+        yield from bzr.colorize(entries)
+        # all done
+        return
 
 
     def git(self, entries):
@@ -252,6 +289,10 @@ class Dir(pyre.application):
         return entry
 
 
+    # the errors we recognize
+    knownErrorConditions = (FileNotFoundError, PermissionError)
+
+
 # helpers
 class Entry:
     """
@@ -290,6 +331,15 @@ class Table:
     grid = None
 
 
+    @property
+    def shape(self):
+        """
+        Retrieve the shape of the table
+        """
+        # easy enough
+        return self.grid.tile.shape
+
+
     # meta-methods
     def __init__(self, entries, width, layout=None, **kwds):
         # chain up
@@ -298,6 +348,11 @@ class Table:
         self.grid = self.makeGrid(maxWidth=width, layout=layout, entries=entries)
         # all done
         return
+
+
+    def __getitem__(self, index):
+        # delegate
+        return self.grid[index]
 
 
     # implementation details
@@ -321,7 +376,7 @@ class Table:
         """
         Generate the entry container and its shape
         """
-        # initialize the stats
+        # initialize the statistics
         longestName = 0
         longestMarker = 0
         numEntries = 0
@@ -368,25 +423,27 @@ class Table:
     shape = None
 
 
-class Git:
+# base class for repository based colorization
+class SCS:
     """
-    Extract the status of the current git worktree and colorize matching directory entries
+    Colorize directory entries based on repository information
     """
 
 
     # interface
     def colorize(self, entries):
         """
-        Colorize the directory {entries} with info from the current worktree
+        Colorize the directory {entries}  with info from the current worktree
         """
-        # get the root of the worktree
-        root = self.root()
-        # if we are not in a git worktree
+        # get the root of the repository
+        root = self._root
+        # if we are not within a bzr repository
         if root is None:
-            # pass the entries through untouched
+            # pass the entries through
             yield from entries
             # and bail
             return
+
         # get the current working directory
         cwd = pyre.primitives.path.cwd()
         # attempt to
@@ -404,9 +461,283 @@ class Git:
             # and bail
             return
 
-        # ask git for status info
+        # ask the repository for status info
         info = self.status(prefix=prefix)
+        # decorate
+        yield from self.decorate(entries=entries, info=info)
 
+        # all done
+        return
+
+
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # hunt down the root of the repository
+        self._root = self.root()
+        # all done
+        return
+
+
+    # implementation details
+    def decorate(self, entries, info=None, **kwds):
+        """
+        Decorate the directory {entries} based on the repository status
+        """
+        # nothing special, by default
+        yield from entries
+        # all done
+        return
+
+
+    def root(self):
+        """
+        Deduce the root of the repository
+        """
+        # i don't know enough
+        return None
+
+
+    def status(self, prefix, **kwds):
+        """
+        Extract the status of the worktree
+        """
+        # don't know how to do that
+        return None
+
+
+# support for bzr
+class BZR(SCS):
+    """
+    Extract the status of the current bzr worktree and colorize matching directory entries
+    """
+
+
+    # meta-methods
+    def __init__(self, terminal, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # palette
+        self.palette = {
+            "added": terminal.x11["dark_sea_green"],
+            "removed": terminal.misc["amber"],
+            "renamed": terminal.misc["amber"],
+            "modified": terminal.misc["amber"],
+            "kind-changed": terminal.misc["amber"],
+            "unknown": terminal.x11["steel_blue"],
+            "ignored": terminal.gray["gray30"],
+        }
+        # all done
+        return
+
+
+    # implementation details
+    def root(self):
+        """
+        Locate the root of the current repository
+        """
+        # set up the command
+        cmd = [ "bzr", "root" ]
+        # settings
+        options = {
+            "executable": "bzr",
+            "args": cmd,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False }
+        # invoke
+        with subprocess.Popen(**options) as bzr:
+            # collect the output
+            stdout, stderr = bzr.communicate()
+            # if there was no error
+            if bzr.returncode == 0:
+                # read the location of the repository root
+                root = stdout.strip()
+                # turn it into a path and return it
+                return pyre.primitives.path(root)
+        # all done
+        return None
+
+
+    def decorate(self, entries, info):
+        """
+        Colorize the directory {entries} with info from the current worktree
+        """
+        # go through the entries
+        for entry in entries:
+            # get the status of the entry
+            status = info.get(entry.name)
+            # if the status is non-trivial
+            if status:
+                # colorize it
+                entry.nameColor = self.palette[status]
+            # pass it on
+            yield entry
+        # all done
+        return
+
+
+    def status(self, prefix):
+        """
+        Collect the status of the worktree
+        """
+        # initialize the classification table
+        table = BZRInfo()
+
+        # first, let's hunt down ignored files
+        cmd = [ "bzr", "ls", "--recursive", "--ignored" ]
+        # settings
+        options = {
+            "executable": "bzr",
+            "args": cmd,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False }
+        # invoke
+        with subprocess.Popen(**options) as bzr:
+            # collect the output
+            stdout, stderr = bzr.communicate()
+            # if the command completed successfully
+            if bzr.returncode == 0:
+                # extract the output
+                report = stdout.splitlines()
+                # extract the filenames
+                for filename in report:
+                    # project to the root of the repository
+                    name = pyre.primitives.path(filename)[0]
+                    # and add them to the correct pile
+                    table[name] = "ignored"
+
+        # next, get status information
+        cmd = [ "bzr", "status", "--short", "--no-classify", "." ]
+        # adjust the command options
+        options["args"] = cmd
+        # invoke
+        with subprocess.Popen(**options) as bzr:
+            # collect the output
+            stdout, stderr = bzr.communicate()
+            # if the command completed successfully
+            if bzr.returncode == 0:
+                # extract the output
+                report = stdout.splitlines()
+                # parse the output and return it
+                self.parse(table=table, prefix=prefix, report=report)
+
+        # all done
+        return table
+
+
+    def parse(self, table, prefix, report):
+        """
+        Parse the {report} and classify its contents
+        """
+        # go through the lines in the {report}
+        for line in report:
+            # attempt to match it
+            match = self.parser.match(line)
+            # if we couldn't
+            if match is None:
+                # just ignore it and move on
+                continue
+            # get the code
+            code = match["code"]
+            # and the file name
+            filename = pyre.primitives.path(match["filename"])
+            # project to the root of the repository and extract the top level; this lets us
+            # colorize directories based on the status of their contents
+            name = filename.relativeTo(prefix)[0]
+            # add them to the index
+            table[name] = self.codes[code]
+        # all done
+        return table
+
+
+    # private data
+    # the status parser
+    parser = re.compile(r"(?P<code>..)\s+((?P<original>[^\s=]+)\s=\>\s)?(?P<filename>[^ =]+)$")
+    # status code sets
+    codes = {
+        "+N": "added",
+        "-D": "removed",
+        "R ": "renamed",
+        " M": "modified",
+        " K": "kind-changed",
+        "? ": "unknown",
+    }
+
+
+class BZRInfo(dict):
+    """
+    Aggregator of information about the worktree
+    """
+
+
+# support for git
+class Git(SCS):
+    """
+    Extract the status of the current git worktree and colorize matching directory entries
+    """
+
+    # meta-methods
+    def __init__(self, terminal, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # make the dispatch table
+        self.dispatcher = {
+            "no_commits": self.noCommits,
+            "tracking": self.tracking,
+            "moved": self.moved,
+            "changed": self.changed,
+        }
+        # colors
+        self.palette = {
+            "conflicted": terminal.x11["firebrick"],
+            "ignored": terminal.gray["gray30"],
+            "staged": terminal.x11["dark_sea_green"],
+            "staged-modified": terminal.x11["indian_red"],
+            "unstaged": terminal.misc["amber"],
+            "untracked": terminal.x11["steel_blue"],
+        }
+        # all done
+        return
+
+
+    # implementation details
+    def root(self):
+        """
+        Locate the root of the git worktree
+        """
+        # set up the command
+        cmd = [ "git", "rev-parse", "--show-toplevel" ]
+        # settings
+        options = {
+            "executable": "git",
+            "args": cmd,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "universal_newlines": True,
+            "shell": False }
+        # invoke
+        with subprocess.Popen(**options) as git:
+            # collect the output
+            stdout, stderr = git.communicate()
+            # if there was no error
+            if git.returncode == 0:
+                # read the location of the repository root
+                root = stdout.strip()
+                # turn it into a path and return it
+                return pyre.primitives.path(root)
+        # all done
+        return None
+
+
+    def decorate(self, entries, info):
+        """
+        Colorize the directory {entries} with info from the current worktree
+        """
         # now, go through the entries
         for entry in entries:
             # grab the name
@@ -444,60 +775,6 @@ class Git:
         return
 
 
-    # meta-methods
-    def __init__(self, terminal, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # make the dispatch table
-        self.dispatcher = {
-            "no_commits": self.noCommits,
-            "tracking": self.tracking,
-            "moved": self.moved,
-            "changed": self.changed,
-        }
-        # colors
-        self.palette = {
-            "conflicted": terminal.x11["firebrick"],
-            "ignored": terminal.gray["gray30"],
-            "staged": terminal.x11["dark_sea_green"],
-            "staged-modified": terminal.x11["indian_red"],
-            "unstaged": terminal.misc["amber"],
-            "untracked": terminal.x11["steel_blue"],
-        }
-
-        # all done
-        return
-
-
-    # implementation details
-    def root(self):
-        """
-        Locate the root of the git worktree
-        """
-        # set up the command
-        cmd = [ "git", "rev-parse", "--show-toplevel" ]
-        # settings
-        options = {
-            "executable": "git",
-            "args": cmd,
-            "stdout": subprocess.PIPE,
-            "stderr": subprocess.PIPE,
-            "universal_newlines": True,
-            "shell": False }
-        # invoke
-        with subprocess.Popen(**options) as git:
-            # collect the output
-            stdout, stderr = git.communicate()
-            # if there was no error
-            if git.returncode == 0:
-                # read the location of the repository root
-                root = stdout.strip()
-                # turn into a path and return it
-                return pyre.primitives.path(root)
-        # all done
-        return None
-
-
     def status(self, prefix):
         """
         Collect the status of the worktree
@@ -524,15 +801,18 @@ class Git:
             if git.returncode != 0:
                 # this is not a git repository, so we are done
                 return
-            # extract the output
+            # otherwise, extract the output
             report = stdout.splitlines()
-            # otherwise, parse the output and return it
+            # parse the output and return it
             return self.parse(prefix=prefix, report=report)
         # if something went wrong, return an empty summary
         return GitInfo()
 
 
     def parse(self, prefix, report):
+        """
+        Parse the {report} and classify its contents
+        """
         # make an info table
         table = GitInfo()
         # go through the lines in {report}
@@ -576,10 +856,31 @@ class Git:
         return table
 
 
-    def moved(self, table, match, **kwds):
+    def moved(self, table, match, prefix):
         """
         Compute the number of moved files
         """
+        # get the match group dictionary
+        info = match.groupdict()
+        # get the code
+        code = info["code"]
+        # and the filename
+        filename = pyre.primitives.path(info["destination"])
+        # project it onto the {prefix} and pull out the top
+        entry = filename.relativeTo(prefix)[0]
+
+        # if the code has any info on the index side
+        if code[0] != ' ':
+            # add it to the staged pile
+            table.staged.add(entry)
+
+        # if the code has any info on the worktree side
+        if code[1] != ' ':
+            # add it to the staged pile
+            table.unstaged.add(entry)
+
+        # all done
+        return table
         # all done
         return table
 
@@ -664,7 +965,7 @@ class Git:
 
 class GitInfo:
     """
-    Aggregator of information about the worktree status
+    Aggregator of information about the worktree
     """
 
     # meta-methods
