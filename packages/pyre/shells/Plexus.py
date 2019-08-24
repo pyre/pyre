@@ -133,7 +133,7 @@ class Plexus(Application):
         # reset the pile of actions
         actions = []
         # get the documented commands
-        for uri, name, action, tip in self.pyre_action.pyre_documentedActions():
+        for uri, name, action, tip in self.pyre_action.pyre_documentedActions(plexus=self):
             # and put them on the pile
             actions.append((name, tip))
         # if there were any

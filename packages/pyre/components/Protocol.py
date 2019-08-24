@@ -222,7 +222,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
 
     @classmethod
-    def pyre_locateAllImplementers(cls):
+    def pyre_locateAllImplementers(cls, namespace):
         """
         Retrieve all visible components that are compatible with me
 
@@ -231,17 +231,17 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         packages that have not been imported yet, or live in files outside the canonical layout
         """
         # all registered implementers
-        yield from cls.pyre_locateAllRegisteredImplementers()
+        yield from cls.pyre_locateAllRegisteredImplementers(namespace=namespace)
         # all loadable implementers
-        yield from cls.pyre_locateAllLoadableImplementers()
+        yield from cls.pyre_locateAllLoadableImplementers(namespace=namespace)
         # all importable implementers
-        yield from cls.pyre_locateAllImportableImplementers()
+        yield from cls.pyre_locateAllImportableImplementers(namespace=namespace)
         # all done
         return
 
 
     @classmethod
-    def pyre_locateAllRegisteredImplementers(cls):
+    def pyre_locateAllRegisteredImplementers(cls, namespace):
         """
         Retrieve all implementers that are already registered with the framework
 
@@ -270,14 +270,20 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
 
     @classmethod
-    def pyre_locateAllImportableImplementers(cls):
+    def pyre_locateAllImportableImplementers(cls, namespace):
         """
         Retrieve all implementers registered in a namespace derivable from my family name
         """
-        # splice my family name together to form a module name
-        uri = '.'.join(cls.pyre_familyFragments())
-        # if i don't have a public name, there is nothing to do
-        if not uri: return
+        # prime the search space using my family name
+        fragments = cls.pyre_familyFragments()
+        # if i don't have a public name
+        if not fragments:
+            # there is nothing to do
+            return
+        # inject the given {namespace} in the search path
+        fragments = tuple(cls.pyre_nameserver.split(namespace)) + fragments[1:]
+        # splice the search path together to form a module name
+        uri = '.'.join(fragments)
         # attempt to
         try:
             # hunt the implementers down
@@ -291,14 +297,16 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
 
     @classmethod
-    def pyre_locateAllLoadableImplementers(cls):
+    def pyre_locateAllLoadableImplementers(cls, namespace):
         """
         Retrieve all implementers that live in files and folders derivable from my family name
         """
         # get my family fragments
         fragments = cls.pyre_familyFragments()
-        # if i don't have a public name, there is nothing to do
-        if not fragments: return
+        # if i don't have a public name
+        if not fragments:
+            # there is nothing to do
+            return
         # get the file server
         vfs = cls.pyre_fileserver
         # construct the base uri
