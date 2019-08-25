@@ -10,8 +10,6 @@
 Support for workflows
 """
 
-# framework
-import pyre
 
 # the protocols
 from .Producer import Producer as producer
