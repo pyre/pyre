@@ -60,10 +60,8 @@ class Flow(Producer, family="pyre.flow"):
 
         # form possible filenames looking for a configuration file
         scope = itertools.product(reversed(ns.configpath), [value], cfg.encodings())
-        print(f"Flow.pyre_normalize:")
         # go through the possibilities
         for root, filename, extension in scope:
-            print(f"    uri: {uri}")
             # assemble the uri
             uri = executive.uri().coerce(f"{root.uri}/{filename}.{extension}")
             # attempt to
@@ -72,14 +70,8 @@ class Flow(Producer, family="pyre.flow"):
                 source = fs.open(uri=uri)
             # if something went wrong
             except executive.PyreError as error:
-                print(f"    error: {error}")
                 # no worries
                 continue
-
-            # show me
-            print(f"    node: {node}")
-            print(f"    locator: {locator}")
-            print(f"    priority: {priority}")
 
             # ask the configurator to process the stream
             errors = cfg.loadConfiguration(uri=uri, source=source,
@@ -87,6 +79,7 @@ class Flow(Producer, family="pyre.flow"):
             # if there were any errors, add them to the pile
             executive.errors.extend(errors)
 
+        # this is all wrong: why pyre_default()
         # regardless of whether we were able to find a configuration, get the container
         workflow = cls.pyre_default()
         # instantiate and return it
