@@ -5,6 +5,9 @@
 # (c) 1998-2019 all rights reserved
 #
 
+
+# externals
+import itertools
 # support
 import pyre
 # protocols
@@ -61,25 +64,18 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
         # sign on
         super().pyre_dump(channel=channel, indent=indent, level=level)
 
-        return self
-
         # compute the margin
         margin = indent * (level+1)
 
-        # first, the products
+        # display the products
         channel.line(f"{margin}products:")
         for product in self.products:
-            product.pyre_dump(channel=channel, indent=indent, level=level+2)
+            channel.line(f"{margin}{indent}{product}")
 
         # and the factories
         channel.line(f"{margin}factories:")
         for factory in self.factories:
-            factory.pyre_dump(channel=channel, indent=indent, level=level+2)
-
-        # now dump them
-        for product in itertools.chain(self.products, self.factories):
-            channel.line()
-            product.pyre_dump(channel=channel, indent=indent, level=level)
+            channel.line(f"{margin}{indent}{factory}")
 
         # flush
         channel.log()
