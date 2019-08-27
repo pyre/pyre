@@ -54,27 +54,52 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         return
 
 
+    # persistence
+    def pyre_save(self):
+        """
+        Save my entire graph
+        """
+        # make a weaver
+        weaver = pyre.weaver.weaver()
+        # set the encoding
+        weaver.language = self.encoding
+        # open a file
+        with open(f"{self.pyre_name}.{self.encoding}", mode='w') as stream:
+            # assemble the document
+            document = self.pyre_renderTraitValues(renderer=weaver.language)
+            # get the weaver to do its things
+            for line in weaver.weave(document=document):
+                # place each line in the file
+                print(line, file=stream)
+        # all done
+        return
+
+
     # debugging support
-    def pyre_dump(self, channel, indent, level):
+    def pyre_dump(self, channel, indent=' '*2, level=0):
         """
         Display information about me
         """
         # compute the margin
         margin = indent * level
-        # sign on
-        channel.line(f"{margin}{self}")
+        # make a weaver
+        weaver = pyre.weaver.weaver()
+        # pick the language
+        weaver.language = self.encoding
 
-        # my status monitor
-        channel.line(f"{margin}{indent}status: {self.pyre_status}")
-        # my observers
-        observers = tuple(self.pyre_status.observers)
-        if observers:
-            channel.line(f"{margin}{indent}observers:")
-            for observer in observers:
-                channel.line(f"{margin}{indent*2}{observer}")
+        # assemble the document
+        report = self.pyre_renderTraitValues(renderer=weaver.language)
+        # go through each line
+        for line in weaver.weave(document=report):
+            # and inject into the channel
+            channel.line(f"{margin}{line}")
 
         # all done
         return self
+
+
+    # constants
+    encoding = 'pfg'
 
 
 # end of file

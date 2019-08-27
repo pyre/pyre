@@ -144,27 +144,4 @@ class Product(Node, implements=Specification, internal=True):
         return
 
 
-    # debugging support
-    def pyre_dump(self, channel, indent, level):
-        """
-        Put some useful info about me in {channel}
-        """
-        # sign on
-        super().pyre_dump(channel=channel, indent=indent, level=level)
-
-        # compute the margin
-        margin = indent * (level+1)
-        # my state
-        channel.line(f"{margin}stale: {self.pyre_stale}")
-
-        # my factories
-        channel.line(f"{margin}factories:")
-        for factory in self.pyre_factories:
-            channel.line(f"{margin}{indent}{factory}")
-
-
-        # all done
-        return self
-
-
 # end of file

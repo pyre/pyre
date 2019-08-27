@@ -314,33 +314,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         return super().pyre_traitModified(trait=trait, new=new, old=old)
 
 
-    # debugging support
-    def pyre_dump(self, channel, indent, level):
-        """
-        Put some useful info about me in {channel}
-        """
-        # sign on
-        super().pyre_dump(channel=channel, indent=indent, level=level)
-
-        # compute the margin
-        margin = indent * (level+1)
-
-        # my inputs
-        if self.pyre_inputTraits:
-            channel.line(f"{margin}inputs:")
-            for product in self.pyre_inputTraits:
-                channel.line(f"{margin}{indent}{product}")
-
-        # my outputs
-        if self.pyre_outputTraits:
-            channel.line(f"{margin}outputs:")
-            for product in self.pyre_outputTraits:
-                channel.line(f"{margin}{indent}{product}")
-
-        # all done
-        return self
-
-
     # private data
     pyre_inputTraits = ()
     pyre_outputTraits = ()
