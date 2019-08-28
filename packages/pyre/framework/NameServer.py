@@ -46,9 +46,12 @@ class NameServer(Hierarchical):
         Add {configurable} to the model under {name}
         """
         # add the {configurable} to the store
+        # N.B: let {insert} choose the slot factory; this uses to specify a {literal} as the
+        # slot factory, but this appears to have been misguided: there are paths when replacing
+        # an existing node that invoked the slot factory with more arguments than
+        # {self.literal} could handle...
         key, _, _ = self.insert(name=name, value=configurable,
-                                priority=priority, locator=locator,
-                                factory=self.literal)
+                                priority=priority, locator=locator)
         # and return the key
         return key
 
