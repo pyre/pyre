@@ -117,10 +117,12 @@ class Plexus(Application):
 
 
     # convenience
-    def pyre_invoke(self, action, argv):
+    def pyre_invoke(self, action, argv=None):
         """
         Invoke the named {action} with {argv} as additional arguments
         """
+        # make sure {argv} is iterable
+        argv = [] if argv is None else argv
         # resolve and invoke; typos and such get handled by {pyre_repertoir}
         return self.pyre_repertoir.invoke(plexus=self, action=action, argv=argv)
 
