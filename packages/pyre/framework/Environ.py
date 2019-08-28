@@ -44,9 +44,9 @@ class Environ(collections.abc.MutableMapping):
                 nameserver.configurable(
                     name=self.prefix+name, configurable=value,
                     locator=locator, priority=priority())
-            # if anything goes wrong
-            except nameserver.FrameworkError:
-                # just skip this variable for now
+            # values with braces trigger expression syntax errors
+            except nameserver.ExpressionSyntaxError:
+                # so skip them, for now
                 continue
 
         # all done
