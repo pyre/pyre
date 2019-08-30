@@ -106,7 +106,7 @@ class Configurable(Dashboard):
                 # mark it
                 yield "{}configuration:".format(two)
                 # and describe it
-                yield from value.pyre_showConfiguration(indent=three)
+                yield from value.pyre_showConfiguration(indent=three, deep=deep)
         # all done
         return
 
