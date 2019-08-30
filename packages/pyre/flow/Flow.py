@@ -32,7 +32,7 @@ class Flow(Producer, family="pyre.flow"):
 
 
     @classmethod
-    def pyre_normalize(cls, value, node, **kwds):
+    def pyre_normalize(cls, descriptor, value, node, **kwds):
         """
         Help convert {value} into a flow instance
         """
@@ -79,11 +79,23 @@ class Flow(Producer, family="pyre.flow"):
             # if there were any errors, add them to the pile
             executive.errors.extend(errors)
 
-        # this is all wrong: why pyre_default()
-        # regardless of whether we were able to find a configuration, get the container
-        workflow = cls.pyre_default()
-        # instantiate and return it
-        return workflow(name=value, locator=locator)
+        # get the default workflow registered with the {descriptor}
+        workflow = descriptor.default
+        # if it is still my default factory
+        if workflow is cls.pyre_default:
+            # invoke it
+            workflow = workflow()
+        # if it is a foundry
+        if isinstance(workflow, cls.foundry):
+            # invoke it
+            workflow = workflow()
+        # if it is a component class
+        if isinstance(workflow, cls.actor):
+            # instantiate and return it
+            return workflow(name=value, locator=locator)
+
+        # otherwise, leave alone; the validator will complain
+        return value
 
 
 # end of file
