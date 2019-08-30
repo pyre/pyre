@@ -199,12 +199,16 @@ class Protocol(Configurable, metaclass=Role, internal=True):
             # properties and behaviors. then, there are issues of pedigree that must be resolved
             # on a case by case basis
 
-            # if it is compatible with my protocol
-            if candidate.pyre_isCompatible(spec=cls):
-                # show me
-                # print(f"pyre.components.Protocol: compatible candidate: {candidate}")
-                # we are done
-                return candidate
+            # if the candidate is not compatible with my protocol
+            if not candidate.pyre_isCompatible(spec=cls):
+                # get another
+                continue
+
+            # show me
+            # print(f"pyre.components.Protocol: compatible candidate: {candidate}")
+
+            # if the candidate satisfies all constraints, we are done
+            return candidate
 
         # if we get this far, i just couldn't pull it off
         raise cls.ResolutionError(protocol=cls, value=spec)
