@@ -149,11 +149,16 @@ class PrivateInventory(Inventory):
         """
         # collect the traits I am looking for
         traits = set(trait for trait in component.pyre_inheritedTraits if trait.isConfigurable)
-        # if there are no inherited traits, bail out
-        if not traits: return
+        # if there are no inherited traits
+        if not traits:
+            # there is nothing to do
+            return
+
         # go through each of the ancestors of {component}
         for ancestor in component.pyre_pedigree[1:]:
-            # and all its configurable traits
+            # get the inventory of the ancestor
+            inventory = ancestor.pyre_inventory
+            # go through its configurable traits
             for trait in ancestor.pyre_configurables():
                 # if the trait is not in the target pile
                 if trait not in traits:
@@ -161,14 +166,21 @@ class PrivateInventory(Inventory):
                     continue
                 # otherwise, remove it from the target list
                 traits.remove(trait)
-                # get the associated slot
-                slot = ancestor.pyre_inventory[trait]
-                # build a reference to it; no need to switch value processors here, since the
-                # type of an inherited trait is determined by the nearest ancestor that
-                # declared it
-                ref = slot.ref(preprocessor=trait.classSlot.pre, postprocessor=trait.classSlot.post)
-                # and yield the trait, slot pair
-                yield trait, ref
+                # ancestors marked {internal} do not have inventories; if this is not one of them
+                if inventory is not None:
+                    # get the associated slot
+                    slot = inventory[trait]
+                    # build a reference to it; no need to switch value processors here, since
+                    # the type of an inherited trait is determined by the nearest ancestor that
+                    # declared it
+                    ref = slot.ref(preprocessor=trait.classSlot.pre,
+                                   postprocessor=trait.classSlot.post)
+                    # and yield the trait, reference slot pair
+                    yield trait, ref
+                # otherwise
+                else:
+                    # act like we own it
+                    yield trait, trait.classSlot(value=trait.default)
             # if we have exhausted the trait pile
             if not traits:
                 # skip the rest of the ancestors
@@ -176,9 +188,8 @@ class PrivateInventory(Inventory):
         # if we ran out of ancestors before we ran out of traits
         else:
             # complain
-            missing = ', '.join('{!r}'.format(trait.name) for trait in traits)
-            msg = "{}: could not locate slots for the following traits: {}".format(
-                component, missing)
+            missing = ', '.join(f"'{trait.name}'" for trait in traits)
+            msg = f"{component}: could not locate slots for the following traits: {missing}"
             # by accessing the journal package
             import journal
             # and raising a firewall, since this is almost certainly a bug
@@ -211,7 +222,7 @@ class PrivateInventory(Inventory):
 
 
     def __str__(self):
-        return "private inventory at {:#x}".format(id(self))
+        return f"private inventory at {id(self):#x}"
 
 
 # end of file

@@ -244,11 +244,16 @@ class PublicInventory(Inventory):
         """
         # collect the traits I am looking for
         traits = set(trait for trait in component.pyre_inheritedTraits if trait.isConfigurable)
-        # if there are no inherited traits, bail out
-        if not traits: return
+        # if there are no inherited traits
+        if not traits:
+            # there is nothing to do
+            return
+
         # go through each of the ancestors of {component}
         for ancestor in component.pyre_pedigree[1:]:
-            # and all its configurable traits
+            # get the inventory of the ancestor
+            inventory = ancestor.pyre_inventory
+            # go through its configurable traits
             for trait in ancestor.pyre_configurables():
                 # if the trait is not in the target pile
                 if trait not in traits:
@@ -256,16 +261,25 @@ class PublicInventory(Inventory):
                     continue
                 # otherwise, remove it from the target list
                 traits.remove(trait)
-                # get the associated slot
-                slot = ancestor.pyre_inventory[trait]
-                # build a reference to it; no need to switch value processors here, since the
-                # type of an inherited trait is determined by the nearest ancestor that
-                # declared it
-                ref = slot.ref(key=key[trait.name],
-                               preprocessor=trait.classSlot.pre,
-                               postprocessor=trait.classSlot.post)
-                # yield the trait, its class slot factory, and a reference to the inherited trait
-                yield trait, trait.classSlot, ref
+                # ancestors that are marked {internal} do not get inventories; if this is not
+                # one of them
+                if inventory is not None:
+                    # get the associated slot
+                    slot = inventory[trait]
+                    # build a reference to it; no need to switch value processors here, since
+                    # the type of an inherited trait is determined by the nearest ancestor that
+                    # declared it
+                    ref = slot.ref(key=key[trait.name],
+                                   preprocessor=trait.classSlot.pre,
+                                   postprocessor=trait.classSlot.post)
+                    # yield the trait, its class slot factory, and a reference to the inherited
+                    # slot
+                    yield trait, trait.classSlot, ref
+                # otherwise
+                else:
+                    # act like we own it
+                    yield trait, trait.classSlot, trait.default
+
             # if we have exhausted the trait pile
             if not traits:
                 # skip the rest of the ancestors
@@ -273,9 +287,8 @@ class PublicInventory(Inventory):
         # if we ran out of ancestors before we ran out of traits
         else:
             # complain
-            missing = ', '.join('{!r}'.format(trait.name) for trait in traits)
-            msg = "{}: could not locate slots for the following traits: {}".format(
-                component, missing)
+            missing = ', '.join(f"'{trait.name}'" for trait in traits)
+            msg = f"{component}: could not locate slots for the following traits: {missing}"
             # by raising a firewall, since this is almost certainly a bug
             import journal
             raise journal.firewall("pyre.components").log(msg)
@@ -361,7 +374,7 @@ class PublicInventory(Inventory):
 
 
     def __str__(self):
-        return "public inventory at {:#x}".format(id(self))
+        return f"public inventory at {id(self):#x}"
 
 
 # end of file
