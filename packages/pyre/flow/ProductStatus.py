@@ -22,7 +22,9 @@ class ProductStatus(Status):
         My client {product} is an input to {factory}
         """
         # add the {factory} monitor to my observers
-        return self.addObserver(observer=factory.pyre_status)
+        self.addObserver(observer=factory.pyre_status)
+        # and chain up
+        return super().addInputBinding(factory=factory, product=product)
 
 
     def removeInputBinding(self, factory, product):
@@ -30,7 +32,9 @@ class ProductStatus(Status):
         My client {product} is no longer an input to {factory}
         """
         # remove the {factory} monitor from my pile of observers
-        return self.removeObserver(observer=factory.pyre_status)
+        self.removeObserver(observer=factory.pyre_status)
+        # and chain up
+        return super().removeInputBinding(factory=factory, product=product)
 
 
     def addOutputBinding(self, factory, product):
@@ -38,7 +42,9 @@ class ProductStatus(Status):
         Add my client {product} as an output of {factory}
         """
         # my client is associated with a new factory, so mark me as stale and notify downstream
-        return self.flush(observable=factory.pyre_status)
+        self.flush(observable=factory.pyre_status)
+        # and chain up
+        return super().addOutputBinding(factory=factory, product=product)
 
 
 # end of file

@@ -23,7 +23,9 @@ class FactoryStatus(Status):
         Add {product} as an output of my {factory}
         """
         # add the {product} monitor to the pile of my observers
-        return self.addObserver(observer=product.pyre_status)
+        self.addObserver(observer=product.pyre_status)
+        # and chain up
+        return super().addOutputBinding(factory=factory, product=product)
 
 
     def removeOutputBinding(self, factory, product):
@@ -31,7 +33,9 @@ class FactoryStatus(Status):
         Remove {product} as an output of my {factory}
         """
         # remove the {product} monitor from my pile of observers
-        return self.removeObserver(observer=product.pyre_status)
+        self.removeObserver(observer=product.pyre_status)
+        # and chain up
+        return super().removeOutputBinding(factory=factory, product=product)
 
 
 # end of file

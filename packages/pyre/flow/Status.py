@@ -56,35 +56,45 @@ class Status(pyre.tracker):
         return
 
 
-    def addInputBinding(self, factory, product):
+    # input binding
+    def addInputBinding(self, **kwds):
         """
-        The given {product} is now an input to my {factory}
+        The given {product} is now an input to {factory}
         """
-        # by default, nothing to do
+        # show me
+        # self.log(activity="adding input", **kwds)
+        # all done
         return self
 
 
-    def removeInputBinding(self, factory, product):
+    def removeInputBinding(self, **kwds):
         """
-        The given {product} is no longer an input to my {factory}
+        The given {product} is no longer an input to {factory}
         """
-        # by default, nothing to do
+        # show me
+        # self.log(activity="removing input", **kwds)
+        # all done
         return self
 
 
-    def addOutputBinding(self, factory, product):
+    # output binding
+    def addOutputBinding(self, **kwds):
         """
         The given {product} is now an output of {factory}
         """
-        # by default, nothing to do
+        # show me
+        # self.log(activity="adding output", **kwds)
+        # all done
         return self
 
 
-    def removeOutputBinding(self, factory, product):
+    def removeOutputBinding(self, **kwds):
         """
         The given {product} is no longer an output of {factory}
         """
-        # by default, nothing to do
+        # show me
+        self.log(activity="removing output", **kwds)
+        # all done
         return self
 
 
@@ -103,7 +113,7 @@ class Status(pyre.tracker):
     # hooks
     def flush(self, **kwds):
         """
-        Handler of the notification that the value of {observable} has changed
+        Handler of the notification that the value of an {observable} has changed
         """
         # update my state
         self._stale = True
@@ -112,6 +122,18 @@ class Status(pyre.tracker):
 
 
     # implementation details
+    def log(self, activity, factory, product):
+        # show me
+        print(f"pyre.flow.Status: {activity}")
+        print(f"  status: {self}")
+        print(f"  factory: {factory}")
+        print(f"  product: {product}")
+        print(f"")
+        # all done
+        return
+
+
+    # private data
     _stale = None
 
 
