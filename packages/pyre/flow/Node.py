@@ -49,7 +49,7 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
         # chain up
         super().__init__(**kwds)
         # build my status tracker
-        self.pyre_status = self.pyre_newStatus(node=self)
+        self.pyre_status = self.pyre_newStatus(node=self, stale=self.stale)
         # all done
         return
 
@@ -73,6 +73,15 @@ class Node(pyre.component, metaclass=FlowMaster, internal=True):
                 print(line, file=stream)
         # all done
         return
+
+
+    # flow hooks
+    def pyre_newStatus(self, **kwds):
+        """
+        Build a handler for my status changes
+        """
+        # the handler is differentiated based on the type of flow node
+        raise NotImplementedError(f"class '{type(self).__name__}' must override 'pyre_newStatus'")
 
 
     # debugging support
