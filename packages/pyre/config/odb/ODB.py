@@ -109,8 +109,8 @@ class ODB(Loader):
         # root marker if any
         context = list(path.names)
         # and the symbol is just the path name with any suffixes
-        symbol = path.stem
-        # return the pair; perhaps i can skip the realization and hand back the generator...
+        symbol = path.name.split('.')[0]
+        # return the pair; perhaps i can skip the realization and hand back the generator...'
         return context, symbol
 
 
