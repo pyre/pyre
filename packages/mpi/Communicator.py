@@ -135,38 +135,46 @@ class Communicator(Object, metaclass=ExtentAware):
         return pickle.loads(data)
 
 
-    def sum(self, item, destination):
+    def sum(self, item, destination=None):
         """
         Perform a sum reduction of {item} using {exemplar} to deduce the type and deliver the
         result to the MPI task whose rank is given in {destination}
-
+        If {destination} is not provided, deliver the results to all processes
         """
         # pass it on
-        return self.mpi.sum(self.capsule, destination, item)
+
+        return self.mpi.sum(self.capsule, destination, item) if destination is not None \
+            else self.mpi.sum_all(self.capsule, item)
 
 
-    def product(self, item, destination):
+    def product(self, item, destination=None):
         """
         Perform a product reduction of {item}
+        If {destination} is not provided, deliver the results to all processes
         """
         # pass it on
-        return self.mpi.product(self.capsule, destination, item)
+        return self.mpi.product(self.capsule, destination, item) if destination is not None \
+            else self.mpi.product_all(self.capsule, item)
 
 
-    def max(self, item, destination):
+    def max(self, item, destination=None):
         """
         Perform a max reduction of {item}
+        If {destination} is not provided, deliver the results to all processes
         """
         # pass it on
-        return self.mpi.max(self.capsule, destination, item)
+        return self.mpi.max(self.capsule, destination, item) if destination is not None \
+            else self.mpi.max_all(self.capsule, item)
 
 
-    def min(self, item, destination):
+    def min(self, item, destination=None):
         """
         Perform a min reduction of {item}
+        If {destination} is not provided, deliver the results to all processes
         """
         # pass it on
-        return self.mpi.min(self.capsule, destination, item)
+        return self.mpi.min(self.capsule, destination, item) if destination is not None \
+            else self.mpi.min_all(self.capsule, item)
 
 
     # meta methods
