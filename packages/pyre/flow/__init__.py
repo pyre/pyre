@@ -20,6 +20,7 @@ from .Flow import Flow as flow
 from .Factory import Factory as factory
 from .Product import Product as product
 from .Workflow import Workflow as workflow
+from .DynamicWorkflow import DynamicWorkflow as dynamic
 
 # the decorators
 from .Binder import Binder as bind
