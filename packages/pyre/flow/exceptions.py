@@ -40,10 +40,10 @@ class IncompleteFlowError(FlowError):
     """
 
     # public data
-    description = "incomplete flow error: factory {0.node} has unbound products"
+    description = "incomplete flow error: factory {0.node} has encountered unbound products"
 
     # meta-methods
-    def __init__(self, **kwds):
+    def __init__(self, traits, **kwds):
         # chain up
         super().__init__(**kwds)
         # save the local info
