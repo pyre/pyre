@@ -27,41 +27,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
     from .exceptions import IncompleteFlowError
 
 
-    # public data
-    @property
-    def pyre_inputs(self):
-        """
-        Build the list of my input products
-        """
-        # grab my inventory
-        inventory = self.pyre_inventory
-        # go through my input traits
-        for trait in self.pyre_inputTraits:
-            # get the associated product
-            product = inventory[trait].value
-            # pass it on along with its meta-data
-            yield trait, product
-        # all done
-        return
-
-
-    @property
-    def pyre_outputs(self):
-        """
-        Build the list of my output products
-        """
-        # grab my inventory
-        inventory = self.pyre_inventory
-        # go through my output traits
-        for trait in self.pyre_outputTraits:
-            # get the associated product
-            product = inventory[trait].value
-            # pass it on along with its meta-data
-            yield trait, product
-        # all done
-        return
-
-
     # protocol obligations
     @pyre.export
     def pyre_make(self, **kwds):
@@ -69,7 +34,7 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         Construct my products
         """
         # sort my inputs
-        unbound, stale, _ = self.pyre_examineInputs()
+        unbound, stale, _ = self.pyre_classifyInputs()
         # if there are unbound traits
         if unbound:
             # build a locator that blames my caller
@@ -94,7 +59,7 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         Generate the sequence of factories that must be invoked to rebuild a product
         """
         # sort my inputs
-        unbound, stale, _ = self.pyre_examineInputs()
+        unbound, stale, _ = self.pyre_classifyInputs()
         # if there are unbound traits
         if unbound:
             # build a locator that blames my caller
@@ -117,7 +82,7 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         Generate the sequence of products that must be refreshed
         """
         # sort my inputs
-        unbound, stale, _ = self.pyre_examineInputs()
+        unbound, stale, _ = self.pyre_classifyInputs()
         # if there are unbound traits
         if unbound:
             # build a locator that blames my caller
@@ -130,6 +95,71 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
             yield from product.pyre_targets()
         # all done
         return
+
+
+    # interface
+    def pyre_inputs(self):
+        """
+        Generate the sequence of my input products
+        """
+        # grab my inventory
+        inventory = self.pyre_inventory
+        # go through my input traits
+        for trait in self.pyre_inputTraits:
+            # get the associated product
+            product = inventory[trait].value
+            # pass it on along with me as its factory, and the trait meta-data
+            # N.B. the strangely articulated meta-data form is meant to accommodate workflows
+            yield product, [(self, trait)]
+        # all done
+        return
+
+
+    def pyre_outputs(self):
+        """
+        Generate the sequence of my output products
+        """
+        # grab my inventory
+        inventory = self.pyre_inventory
+        # go through my output traits
+        for trait in self.pyre_outputTraits:
+            # get the associated product
+            product = inventory[trait].value
+            # pass it on along with me as its factory, and the trait meta-data
+            # N.B. the strangely articulated meta-data form is meant to accommodate workflows
+            yield product, [(self, trait)]
+        # all done
+        return
+
+
+    def pyre_factories(self):
+        """
+        Generate the sequence of my factories
+        """
+        # there is only me
+        yield self
+        # all done
+        return
+
+
+    def pyre_closed(self):
+        """
+        A factory is closed when it has no unbound products
+        """
+        # sort my inputs
+        unboundInputs, _, _ = self.pyre_classifyInputs()
+        # if any are unbound
+        if unboundInputs:
+            # oops
+            return False
+        # classify my outputs
+        unboundOutputs, _ = self.pyre_classifyOutputs()
+        # if any are unbound
+        if unboundOutputs:
+            # oops again
+            return False
+        # otherwise, we are good
+        return True
 
 
     # meta-methods
@@ -172,7 +202,7 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
 
 
     # introspection
-    def pyre_examineInputs(self):
+    def pyre_classifyInputs(self):
         """
         Go through my inputs and sort them in three piles: unbound, stale, and fresh
         """
@@ -183,11 +213,11 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # and another for the unbound traits
         unbound = []
         # go through my inputs
-        for trait, product in self.pyre_inputs:
+        for product, meta in self.pyre_inputs():
             # if the product is unbound
             if product is None:
-                # add it to the pile
-                unbound.append(trait)
+                # add its meta-data to the pile
+                unbound.append(meta)
                 # and move on
                 continue
             # if the product is stale
@@ -202,6 +232,28 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         return unbound, stale, fresh
 
 
+    def pyre_classifyOutputs(self):
+        """
+        Go through my outputs and sort them into two piles: unbound and bound
+        """
+        # make a pile for the bound outputs
+        bound = []
+        # and another for the unbound ones
+        unbound = []
+        # go through my outputs
+        for product, meta in self.pyre_outputs():
+            # if the product is unbound
+            if product is None:
+                # add it to the pile
+                unbound.append(meta)
+                # and move on
+                continue
+            # otherwise, it's good
+            bound.append(product)
+        # all done
+        return unbound, bound
+
+
     # connectivity maintenance
     def pyre_bindInputs(self, *inputs):
         """
@@ -211,6 +263,10 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         monitor = self.pyre_status
         # go through each of my inputs
         for product in inputs:
+            # if this is an unbound product
+            if product is None:
+                # skip it
+                continue
             # tell the product i'm interested in its state
             product.pyre_addInputBinding(factory=self)
             # and notify my monitor
@@ -227,6 +283,10 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         monitor = self.pyre_status
         # go through each of my inputs
         for product in inputs:
+            # if this is an unbound product
+            if product is None:
+                # skip it
+                continue
             # tell the product i'm interested in its state
             product.pyre_removeInputBinding(factory=self)
             # and notify my monitor
@@ -243,6 +303,10 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         monitor = self.pyre_status
         # go through the products
         for product in outputs:
+            # if this is an unbound product
+            if product is None:
+                # skip it
+                continue
             # tell the product i'm its factory
             product.pyre_addOutputBinding(factory=self)
             # and notify my monitor
@@ -259,6 +323,10 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         monitor = self.pyre_status
         # go through the products
         for product in outputs:
+            # if this is an unbound product
+            if product is None:
+                # skip it
+                continue
             # tell the product i'm not its factory any more
             product.pyre_removeOutputBinding(factory=self)
             # and notify my monitor
@@ -277,25 +345,17 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         oldValue = old.value
         # if {trait} is an input
         if trait.input:
-            # if {oldValue} is non-trivial
-            if oldValue is not None:
-                # remove from my input pile
-                self.pyre_unbindInputs(oldValue)
-            # if {newValue} is non-trivial
-            if newValue is not None:
-                # add it to my pile of inputs
-                self.pyre_bindInputs(newValue)
+            # remove from my input pile
+            self.pyre_unbindInputs(oldValue)
+            # add it to my pile of inputs
+            self.pyre_bindInputs(newValue)
 
         # if {trait} is an output
         if trait.output:
-            # if {oldValue} is non-trivial
-            if oldValue is not None:
-                # ask it to forget me
-                self.pyre_unbindOutputs(oldValue)
-            # if {newValue} is non-trivial
-            if newValue is not None:
-                # tell it i'm one of its factories
-                self.pyre_bindOutputs(newValue)
+            # ask it to forget me
+            self.pyre_unbindOutputs(oldValue)
+            # tell it i'm one of its factories
+            self.pyre_bindOutputs(newValue)
         # chain up
         return super().pyre_traitModified(trait=trait, new=new, old=old)
 
