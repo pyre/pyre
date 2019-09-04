@@ -46,6 +46,19 @@ class FactoryMaker(FlowMaster):
             # all done
             return
 
+        # sort my product into inputs and outputs
+        inputs, outputs = self.pyre_classifyProducts()
+        # and attach them
+        self.pyre_inputTraits = tuple(inputs)
+        self.pyre_outputTraits = tuple(outputs)
+        # all done
+        return
+
+
+    def pyre_classifyProducts(self):
+        """
+        Sort my products in to inputs and outputs
+        """
         # make piles for inputs and outputs
         inputs = []
         outputs = []
@@ -61,12 +74,8 @@ class FactoryMaker(FlowMaster):
                 if trait.output:
                     # add it to the pile of outputs
                     outputs.append(trait)
-        # attach them
-        self.pyre_inputTraits = tuple(inputs)
-        self.pyre_outputTraits = tuple(outputs)
-
         # all done
-        return
+        return inputs, outputs
 
 
 # end of file
