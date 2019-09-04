@@ -68,24 +68,8 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         """
         Construct my products
         """
-        # make a pile of stale inputs
-        stale = []
-        # and another for the unbound traits
-        unbound = []
-        # go through my inputs
-        for trait, product in self.pyre_inputs:
-            # if the product is unbound
-            if product is None:
-                # add it to the pile
-                unbound.append(trait)
-                # and move on
-                continue
-            # if the product is stale
-            if product.pyre_stale is True:
-                # add it to the stale pile
-                stale.append(product)
-                # and move on
-                continue
+        # sort my inputs
+        unbound, stale, _ = self.pyre_examineInputs()
         # if there are unbound traits
         if unbound:
             # build a locator that blames my caller
@@ -109,24 +93,8 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         """
         Generate the sequence of factories that must be invoked to rebuild a product
         """
-        # make a pile of stale inputs
-        stale = []
-        # and another for the unbound traits
-        unbound = []
-        # go through my inputs
-        for trait, product in self.pyre_inputs:
-            # if the product is unbound
-            if product is None:
-                # add it to the pile
-                unbound.append(trait)
-                # and move on
-                continue
-            # if the product is stale
-            if product.pyre_stale is True:
-                # add it to the stale pile
-                stale.append(product)
-                # and move on
-                continue
+        # sort my inputs
+        unbound, stale, _ = self.pyre_examineInputs()
         # if there are unbound traits
         if unbound:
             # build a locator that blames my caller
@@ -148,24 +116,8 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         """
         Generate the sequence of products that must be refreshed
         """
-        # make a pile of stale inputs
-        stale = []
-        # and another for the unbound traits
-        unbound = []
-        # go through my inputs
-        for trait, product in self.pyre_inputs:
-            # if the product is unbound
-            if product is None:
-                # add it to the pile
-                unbound.append(trait)
-                # and move on
-                continue
-            # if the product is stale
-            if product.pyre_stale is True:
-                # add it to the stale pile
-                stale.append(product)
-                # and move on
-                continue
+        # sort my inputs
+        unbound, stale, _ = self.pyre_examineInputs()
         # if there are unbound traits
         if unbound:
             # build a locator that blames my caller
@@ -199,6 +151,16 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
 
 
     # flow hooks
+    # deployment
+    def pyre_run(self, **kwds):
+        """
+        Invoke me and remake my products
+        """
+        # nothing to do
+        return self
+
+
+    # status management
     def pyre_newStatus(self, **kwds):
         """
         Build a handler for my status changes
@@ -209,6 +171,38 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         return FactoryStatus(**kwds)
 
 
+    # introspection
+    def pyre_examineInputs(self):
+        """
+        Go through my inputs and sort them in three piles: unbound, stale, and fresh
+        """
+        # make a pile of fresh inputs
+        fresh = []
+        # one for stale inputs
+        stale = []
+        # and another for the unbound traits
+        unbound = []
+        # go through my inputs
+        for trait, product in self.pyre_inputs:
+            # if the product is unbound
+            if product is None:
+                # add it to the pile
+                unbound.append(trait)
+                # and move on
+                continue
+            # if the product is stale
+            if product.pyre_stale is True:
+                # add it to the stale pile
+                stale.append(product)
+                # and move on
+                continue
+            # otherwise, it must be fresh
+            fresh.append(product)
+        # return the three piles
+        return unbound, stale, fresh
+
+
+    # connectivity maintenance
     def pyre_bindInputs(self, *inputs):
         """
         Bind me to the sequence of products in {inputs}
@@ -270,14 +264,6 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
             # and notify my monitor
             monitor.removeOutputBinding(factory=self, product=product)
         # all done
-        return self
-
-
-    def pyre_run(self, **kwds):
-        """
-        Invoke me and remake my products
-        """
-        # nothing to do
         return self
 
 
