@@ -190,7 +190,7 @@ class Path(tuple):
         # grab my name
         name = self.name
         # look for the last '.'
-        pos = name.find('.')
+        pos = name.rfind('.')
         # if not there
         if pos == -1:
             # my stem is my name
