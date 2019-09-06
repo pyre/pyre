@@ -25,6 +25,20 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
     """
 
 
+    # flow hooks
+    @pyre.export
+    def pyre_make(self, **kwds):
+        """
+        Invoke this workflow
+        """
+        # go through my factories
+        for factory in self.pyre_factories():
+            # and ask each one to do its thing
+            factory.pyre_make(**kwds)
+        # if all went well, we are done
+        return
+
+
     # interface
     def pyre_inputs(self):
         """
