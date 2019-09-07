@@ -22,7 +22,7 @@ class FlowError(FrameworkError):
     """
 
     # public data
-    description = "flow error: {0.error}"
+    description = "generic flow error: {0.node}"
 
     # meta-methods
     def __init__(self, node=None, **kwds):
@@ -40,7 +40,7 @@ class IncompleteFlowError(FlowError):
     """
 
     # public data
-    description = "incomplete flow error: factory {0.node} has encountered unbound products"
+    description = "{0.node}, has encountered unbound products"
 
     # meta-methods
     def __init__(self, traits, **kwds):
