@@ -470,10 +470,14 @@ class Application(pyre.component, metaclass=Director):
         return 1
 
 
-    def pyre_interactiveSessionContext(self, context):
+    def pyre_interactiveSessionContext(self, context=None):
         """
         Prepare the interactive context by granting access to application parts
         """
+        # prime the execution context
+        context = context or {}
+        # grant access to pyre
+        context['pyre'] = pyre
         # by default, nothing to do: the shell has already bound me in this context
         return context
 
