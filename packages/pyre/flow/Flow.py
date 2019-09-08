@@ -41,45 +41,8 @@ class Flow(Producer, family="pyre.flow"):
             # wouldn't know what to do
             return value
 
-        # otherwise, we will build a flow using {value} as its name
-        # get the executive
-        executive = cls.pyre_executive
-        # the fileserver
-        fs = executive.fileserver
-        # the nameserver
-        ns = executive.nameserver
-        # and the configurator
-        cfg = executive.configurator
-
-        # grab the node meta-data
-        info = ns.getInfo(node.key)
-        # extract the locator
-        locator = info.locator
-        # and the priority
-        priority = info.priority
-
-        # form possible filenames looking for a configuration file
-        scope = itertools.product(reversed(ns.configpath), [value], cfg.encodings())
-        # go through the possibilities
-        for root, filename, extension in scope:
-            # assemble the uri
-            uri = executive.uri().coerce(f"{root.uri}/{filename}.{extension}")
-            # attempt to
-            try:
-                # ask the fileserver to resolve it
-                source = fs.open(uri=uri)
-            # if something went wrong
-            except executive.PyreError as error:
-                # no worries
-                continue
-
-            # ask the configurator to process the stream
-            errors = cfg.loadConfiguration(uri=uri, source=source,
-                                           locator=locator, priority=type(priority))
-            # if there were any errors, add them to the pile
-            executive.errors.extend(errors)
-
-        # get the default workflow registered with the {descriptor}
+        # otherwise, we will build a flow using {value} as its name; get the default workflow
+        # registered with the {descriptor}
         workflow = descriptor.default
         # if it is still my default factory
         if workflow is cls.pyre_default:
@@ -89,12 +52,25 @@ class Flow(Producer, family="pyre.flow"):
         if isinstance(workflow, cls.foundry):
             # invoke it
             workflow = workflow()
-        # if it is a component class
+
+        # finally, if it is a component class
         if isinstance(workflow, cls.actor):
-            # instantiate and return it
+            # get the executive
+            executive = cls.pyre_executive
+            # and the nameserver
+            ns = executive.nameserver
+            # grab the node meta-data
+            info = ns.getInfo(node.key)
+            # extract the locator
+            locator = info.locator
+            # and the priority
+            priority = info.priority
+            # ask the executive to look for configuration sources based on the flow name
+            executive.configure(stem=value, locator=locator, priority=type(priority))
+            # instantiate the workflow and return it
             return workflow(name=value, locator=locator)
 
-        # otherwise, leave alone; the validator will complain
+        # otherwise, leave alone; the validator will check and complain if necessary
         return value
 
 
