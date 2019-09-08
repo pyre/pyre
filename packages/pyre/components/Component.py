@@ -179,6 +179,15 @@ class Component(Configurable, metaclass=Actor, internal=True):
 
 
     # framework notifications
+    @classmethod
+    def pyre_staged(cls, name, locator, implicit):
+        """
+        Pre-instantiation hook invoked right before the instance is created
+        """
+        # by default, nothing to do
+        return cls
+
+
     def pyre_registered(self):
         """
         Hook that gets invoked by the framework after the component instance has been
@@ -408,6 +417,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         return
 
 
+    # instantiation prep
     # compatibility check
     @classmethod
     def pyre_isCompatible(cls, spec, fast=True):

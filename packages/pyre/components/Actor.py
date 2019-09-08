@@ -134,6 +134,8 @@ class Actor(Requirement):
 
         # in any case, record the caller's location
         locator = tracking.here(1) if locator is None else locator
+        # invoke the pre-instantiation hooks
+        self.pyre_staged(name=name, locator=locator, implicit=implicit)
         # build the instance
         instance = super().__call__(name=name, locator=locator, implicit=implicit, **kwds)
 
