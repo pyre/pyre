@@ -45,7 +45,7 @@ class Flow(Producer, family="pyre.flow"):
         # registered with the {descriptor}
         workflow = descriptor.default
         # if it is still my default factory
-        if workflow is cls.pyre_default:
+        if workflow == cls.pyre_default:
             # invoke it
             workflow = workflow()
         # if it is a foundry
