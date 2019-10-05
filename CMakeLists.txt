@@ -41,7 +41,7 @@ pyre_stagingInit()
 pyre_destinationInit()
 
 # visit subdirectories
-#add_subdirectory(packages)
+add_subdirectory(packages)
 
 
 # end of file
