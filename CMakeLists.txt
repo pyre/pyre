@@ -22,7 +22,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/.cmake)
 # get support
 include(pyre)
 # ask git for the pyre version
-pyreGetVersion()
+pyre_getVersion()
 
 # set up the project
 project(PYRE VERSION ${PYRE_MAJOR}.${PYRE_MINOR}.${PYRE_MICRO} LANGUAGES CXX)
@@ -31,12 +31,14 @@ message("++ pyre version: ${PYRE_MAJOR}.${PYRE_MINOR}.${PYRE_MICRO} build ${PYRE
 
 
 # set up c++
-cxxInit()
+pyre_cxxInit()
 # set up python
-pythonInit()
+pyre_pythonInit()
 
-# initialize the install directory layout
-destinationInit()
+# initialize the variables that describe the staging directory layout
+pyre_stagingInit()
+# initialize the variables that describe the install directory layout
+pyre_destinationInit()
 
 # visit subdirectories
 #add_subdirectory(packages)

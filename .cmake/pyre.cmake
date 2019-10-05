@@ -7,7 +7,7 @@
 
 
 # ask git for the most recent tag and use it to build the version
-function(pyreGetVersion)
+function(pyre_getVersion)
   # git
   find_package(git REQUIRED)
   # get tag info
@@ -34,30 +34,41 @@ function(pyreGetVersion)
   set(PYRE_HASH  ${PYRE_HASH} PARENT_SCOPE)
 
   # all done
-endfunction(pyreGetVersion)
+endfunction(pyre_getVersion)
 
 
 # setup the c++ compiler
-function(cxxInit)
+function(pyre_cxxInit)
   # require c++17
   set(CMAKE_CXX_STANDARD 17 PARENT_SCOPE)
   set(CMAKE_CXX_STANDARD_REQUIRED ON PARENT_SCOPE)
   set(CMAKE_CXX_EXTENSIONS OFF PARENT_SCOPE)
   # all done
-endfunction(cxxInit)
+endfunction(pyre_cxxInit)
 
 
 # setup python
-function(pythonInit)
+function(pyre_pythonInit)
   # get the interpreter
   find_package(Python3 COMPONENTS Interpreter Development NumPy)
   # all done
-endfunction(pythonInit)
+endfunction(pyre_pythonInit)
 
 
-# create the destination layout
-function(destinationInit)
+# describe the layout of the staging area
+function(pyre_stagingInit)
+  # the layout
+  set(PYRE_STAGING_PACKAGES ${CMAKE_BINARY_DIR}/packages PARENT_SCOPE)
   # all done
-endfunction(destinationInit)
+endfunction(pyre_stagingInit)
+
+
+# describe the installation layout
+function(pyre_destinationInit)
+  # create variables to hold the roots in the install directory
+  set(PYRE_DEST_PACAKGES packages PARENT_SCOPE)
+  # all done
+endfunction(pyre_destinationInit)
+
 
 # end of file
