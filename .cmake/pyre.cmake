@@ -20,7 +20,7 @@ function(pyre_getVersion)
     )
 
   # the parser of the "git describe" result
-  set(GIT_DESCRIBE "v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9])-(.+)" )
+  set(GIT_DESCRIBE "v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9])-g(.+)" )
   # parse the bits
   string(REGEX REPLACE ${GIT_DESCRIBE} "\\1" PYRE_MAJOR ${GIT_DESCRIBE_VERSION} )
   string(REGEX REPLACE ${GIT_DESCRIBE} "\\2" PYRE_MINOR ${GIT_DESCRIBE_VERSION})
