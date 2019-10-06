@@ -18,6 +18,15 @@ function(pyre_cmakeInit)
     message(FATAL_ERROR "in-source build detected; please run cmake in a build directory")
   endif()
 
+  # host info
+  # get
+  string(TOLOWER ${CMAKE_HOST_SYSTEM_NAME} HOST_OS)
+  string(TOLOWER ${CMAKE_HOST_SYSTEM_PROCESSOR} HOST_ARCH)
+  # export
+  set(HOST_OS ${HOST_OS} PARENT_SCOPE)
+  set(HOST_ARCH ${HOST_ARCH} PARENT_SCOPE)
+  set(HOST_PLATFORM ${HOST_OS}_${HOST_ARCH} PARENT_SCOPE)
+
   # quiet install
   set(CMAKE_INSTALL_MESSAGE LAZY PARENT_SCOPE)
 
@@ -60,6 +69,7 @@ endfunction(pyre_stagingInit)
 # describe the installation layout
 function(pyre_destinationInit)
   # create variables to hold the roots in the install directory
+  set(PYRE_DEST_INCLUDE include PARENT_SCOPE)
   set(PYRE_DEST_PACKAGES packages PARENT_SCOPE)
   # all done
 endfunction(pyre_destinationInit)

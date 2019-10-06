@@ -15,6 +15,9 @@ cmake_policy(SET CMP0060 NEW)
 if (POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif(POLICY CMP0074)
+if (POLICY CMP0076)
+  cmake_policy(SET CMP0076 NEW)
+endif(POLICY CMP0076)
 
 # options
 option(WITH_CUDA "enable support for CUDA" OFF)
@@ -29,9 +32,6 @@ pyre_getVersion()
 
 # set up the project
 project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
-# show me
-message("++ pyre version: ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} build ${REPO_COMMIT}")
-
 
 # set up cmake
 pyre_cmakeInit()
@@ -50,10 +50,18 @@ pyre_destinationInit()
 find_package(gsl)
 # mpi
 find_package(mpi)
-
+# postgres
+find_package(postgresql)
 
 # visit subdirectories
 add_subdirectory(packages)
+add_subdirectory(lib)
+
+# show me
+message("++ pyre version: ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} build ${REPO_COMMIT}")
+message("++   host: ${HOST_PLATFORM}")
+message("++   source dir: ${CMAKE_SOURCE_DIR}")
+message("++   staging dir: ${CMAKE_BINARY_DIR}")
 
 
 # end of file
