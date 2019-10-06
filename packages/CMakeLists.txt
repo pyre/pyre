@@ -90,11 +90,4 @@ if(WITH_CUDA)
     )
 endif()
 
-# show me
-message("++ in pyre/packages:")
-message("++   CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
-message("++   CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
-message("++   CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
-
-
 # end of file
