@@ -10,11 +10,14 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 # policies
 if (POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
-endif (POLICY CMP0048)
+endif(POLICY CMP0048)
 cmake_policy(SET CMP0060 NEW)
 if (POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif(POLICY CMP0074)
+
+# options
+option(WITH_CUDA "enable support for CUDA" OFF)
 
 # adjust the include path
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/.cmake)
@@ -25,11 +28,13 @@ include(pyre)
 pyre_getVersion()
 
 # set up the project
-project(PYRE VERSION ${PYRE_MAJOR}.${PYRE_MINOR}.${PYRE_MICRO} LANGUAGES CXX)
+project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
 # show me
-message("++ pyre version: ${PYRE_MAJOR}.${PYRE_MINOR}.${PYRE_MICRO} build ${PYRE_HASH}")
+message("++ pyre version: ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} build ${REPO_COMMIT}")
 
 
+# set up cmake
+pyre_cmakeInit()
 # set up c++
 pyre_cxxInit()
 # set up python
@@ -39,6 +44,13 @@ pyre_pythonInit()
 pyre_stagingInit()
 # initialize the variables that describe the install directory layout
 pyre_destinationInit()
+
+# packages
+# gsl
+find_package(gsl)
+# mpi
+find_package(mpi)
+
 
 # visit subdirectories
 add_subdirectory(packages)

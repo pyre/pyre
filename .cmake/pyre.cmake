@@ -6,35 +6,29 @@
 #
 
 
-# ask git for the most recent tag and use it to build the version
-function(pyre_getVersion)
-  # git
-  find_package(git REQUIRED)
-  # get tag info
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} describe --tags --long --always
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    RESULT_VARIABLE GIT_DESCRIBE_STATUS
-    OUTPUT_VARIABLE GIT_DESCRIBE_VERSION
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
+# setup cmake
+function(pyre_cmakeInit)
+  # get the source directory
+  get_filename_component(srcdir "${CMAKE_SOURCE_DIR}" REALPATH)
+  # get the staging directory
+  get_filename_component(stgdir "${CMAKE_BINARY_DIR}" REALPATH)
+  # if we are building within the source directory
+  if ("${srcdir}" STREQUAL "${stgdir}")
+    # complain and bail
+    message(FATAL_ERROR "in-source build detected; please run cmake in a build directory")
+  endif()
 
-  # the parser of the "git describe" result
-  set(GIT_DESCRIBE "v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g(.+)" )
-  # parse the bits
-  string(REGEX REPLACE ${GIT_DESCRIBE} "\\1" PYRE_MAJOR ${GIT_DESCRIBE_VERSION} )
-  string(REGEX REPLACE ${GIT_DESCRIBE} "\\2" PYRE_MINOR ${GIT_DESCRIBE_VERSION})
-  string(REGEX REPLACE ${GIT_DESCRIBE} "\\3" PYRE_MICRO ${GIT_DESCRIBE_VERSION})
-  string(REGEX REPLACE ${GIT_DESCRIBE} "\\5" PYRE_HASH ${GIT_DESCRIBE_VERSION})
+  # quiet install
+  set(CMAKE_INSTALL_MESSAGE LAZY PARENT_SCOPE)
 
-  # export our local variables
-  set(PYRE_MAJOR ${PYRE_MAJOR} PARENT_SCOPE)
-  set(PYRE_MINOR ${PYRE_MINOR} PARENT_SCOPE)
-  set(PYRE_MICRO ${PYRE_MICRO} PARENT_SCOPE)
-  set(PYRE_HASH  ${PYRE_HASH} PARENT_SCOPE)
+  # if the user asked for CUDA support
+  if (WITH_CUDA)
+    # turn it on
+    enable_language(CUDA)
+  endif()
 
   # all done
-endfunction(pyre_getVersion)
+endfunction(pyre_cmakeInit)
 
 
 # setup the c++ compiler
@@ -66,9 +60,40 @@ endfunction(pyre_stagingInit)
 # describe the installation layout
 function(pyre_destinationInit)
   # create variables to hold the roots in the install directory
-  set(PYRE_DEST_PACAKGES packages PARENT_SCOPE)
+  set(PYRE_DEST_PACKAGES packages PARENT_SCOPE)
   # all done
 endfunction(pyre_destinationInit)
+
+
+# ask git for the most recent tag and use it to build the version
+function(pyre_getVersion)
+  # git
+  find_package(git REQUIRED)
+  # get tag info
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} describe --tags --long --always
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    RESULT_VARIABLE GIT_DESCRIBE_STATUS
+    OUTPUT_VARIABLE GIT_DESCRIBE_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+  # the parser of the "git describe" result
+  set(GIT_DESCRIBE "v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g(.+)" )
+  # parse the bits
+  string(REGEX REPLACE ${GIT_DESCRIBE} "\\1" REPO_MAJOR ${GIT_DESCRIBE_VERSION} )
+  string(REGEX REPLACE ${GIT_DESCRIBE} "\\2" REPO_MINOR ${GIT_DESCRIBE_VERSION})
+  string(REGEX REPLACE ${GIT_DESCRIBE} "\\3" REPO_MICRO ${GIT_DESCRIBE_VERSION})
+  string(REGEX REPLACE ${GIT_DESCRIBE} "\\5" REPO_COMMIT ${GIT_DESCRIBE_VERSION})
+
+  # export our local variables
+  set(REPO_MAJOR ${REPO_MAJOR} PARENT_SCOPE)
+  set(REPO_MINOR ${REPO_MINOR} PARENT_SCOPE)
+  set(REPO_MICRO ${REPO_MICRO} PARENT_SCOPE)
+  set(REPO_COMMIT ${REPO_COMMIT} PARENT_SCOPE)
+
+  # all done
+endfunction(pyre_getVersion)
 
 
 # end of file
