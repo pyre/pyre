@@ -14,7 +14,8 @@ string(TIMESTAMP TODAY)
 
 # pyre
 # install the sources straight from the source directory
-install(DIRECTORY pyre
+install(
+  DIRECTORY pyre
   DESTINATION ${PYRE_DEST_PACKAGES}
   FILES_MATCHING PATTERN *.py
   )
@@ -24,14 +25,16 @@ configure_file(
   @ONLY
   )
 # install the generated package meta-data file
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyre
+install(
+  DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyre
   DESTINATION ${PYRE_DEST_PACKAGES}
   FILES_MATCHING PATTERN *.py
   )
 
 # journal
 # install the sources straight from the source directory
-install(DIRECTORY journal
+install(
+  DIRECTORY journal
   DESTINATION ${PYRE_DEST_PACKAGES}
   FILES_MATCHING PATTERN *.py
   )
@@ -39,7 +42,8 @@ install(DIRECTORY journal
 # if we have mpi
 if(${MPI_FOUND})
   # install the sources straight from the source directory
-  install(DIRECTORY mpi
+  install(
+    DIRECTORY mpi
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
@@ -49,7 +53,8 @@ if(${MPI_FOUND})
     @ONLY
     )
   # install the generated package meta-data file
-  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/mpi
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/mpi
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
@@ -57,7 +62,8 @@ endif()
 
 # merlin
 # install the sources straight from the source directory
-install(DIRECTORY merlin
+install(
+  DIRECTORY merlin
   DESTINATION ${PYRE_DEST_PACKAGES}
   FILES_MATCHING PATTERN *.py
   )
@@ -67,7 +73,8 @@ configure_file(
   @ONLY
   )
 # install the generated package meta-data file
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/merlin
+install(
+  DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/merlin
   DESTINATION ${PYRE_DEST_PACKAGES}
   FILES_MATCHING PATTERN *.py
   )
@@ -75,7 +82,8 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/merlin
 # if we have gsl
 if(${GSL_FOUND})
   # install the sources straight from the source directory
-  install(DIRECTORY gsl
+  install(
+    DIRECTORY gsl
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
@@ -84,7 +92,8 @@ endif()
 # if the user requested CUDA support
 if(WITH_CUDA)
   # install the sources straight from the source directory
-  install(DIRECTORY cuda
+  install(
+    DIRECTORY cuda
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
