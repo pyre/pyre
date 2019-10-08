@@ -37,8 +37,6 @@ project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
 pyre_cmakeInit()
 # set up c++
 pyre_cxxInit()
-# set up python
-pyre_pythonInit()
 
 # initialize the variables that describe the staging directory layout
 pyre_stagingInit()
@@ -46,6 +44,10 @@ pyre_stagingInit()
 pyre_destinationInit()
 
 # packages
+# python
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
+# set up python
+pyre_pythonInit()
 # gsl
 find_package(gsl)
 # mpi

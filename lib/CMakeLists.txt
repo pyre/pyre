@@ -59,6 +59,8 @@ endif(MPI_FOUND)
 
 # the libjournal target
 add_library(journal SHARED)
+# define the core macro
+set_target_properties(journal PROPERTIES COMPILE_DEFINITIONS PYRE_CORE)
 # set the include directories
 target_include_directories(
   journal PRIVATE

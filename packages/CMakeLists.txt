@@ -39,27 +39,6 @@ install(
   FILES_MATCHING PATTERN *.py
   )
 
-# if we have mpi
-if(${MPI_FOUND})
-  # install the sources straight from the source directory
-  install(
-    DIRECTORY mpi
-    DESTINATION ${PYRE_DEST_PACKAGES}
-    FILES_MATCHING PATTERN *.py
-    )
-  # build the package meta-data
-  configure_file(
-    mpi/meta.py.in mpi/meta.py
-    @ONLY
-    )
-  # install the generated package meta-data file
-  install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/mpi
-    DESTINATION ${PYRE_DEST_PACKAGES}
-    FILES_MATCHING PATTERN *.py
-    )
-endif()
-
 # merlin
 # install the sources straight from the source directory
 install(
@@ -79,6 +58,16 @@ install(
   FILES_MATCHING PATTERN *.py
   )
 
+# if the user requested CUDA support
+if(WITH_CUDA)
+  # install the sources straight from the source directory
+  install(
+    DIRECTORY cuda
+    DESTINATION ${PYRE_DEST_PACKAGES}
+    FILES_MATCHING PATTERN *.py
+    )
+endif()
+
 # if we have gsl
 if(${GSL_FOUND})
   # install the sources straight from the source directory
@@ -89,11 +78,22 @@ if(${GSL_FOUND})
     )
 endif()
 
-# if the user requested CUDA support
-if(WITH_CUDA)
+# if we have mpi
+if(${MPI_FOUND})
   # install the sources straight from the source directory
   install(
-    DIRECTORY cuda
+    DIRECTORY mpi
+    DESTINATION ${PYRE_DEST_PACKAGES}
+    FILES_MATCHING PATTERN *.py
+    )
+  # build the package meta-data
+  configure_file(
+    mpi/meta.py.in mpi/meta.py
+    @ONLY
+    )
+  # install the generated package meta-data file
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/mpi
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )

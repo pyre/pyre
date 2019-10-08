@@ -52,8 +52,15 @@ endfunction(pyre_cxxInit)
 
 # setup python
 function(pyre_pythonInit)
-  # get the interpreter
-  find_package(Python3 COMPONENTS Interpreter Development NumPy)
+  # ask the executable for the module suffix
+  execute_process(
+    COMMAND ${Python3_EXECUTABLE}-config --extension-suffix
+    RESULT_VARIABLE PYTHON3_SUFFIX_STATUS
+    OUTPUT_VARIABLE PYTHON3_SUFFIX
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  # export
+  set(PYTHON3_SUFFIX ${PYTHON3_SUFFIX} PARENT_SCOPE)
   # all done
 endfunction(pyre_pythonInit)
 
