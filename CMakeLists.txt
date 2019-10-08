@@ -56,12 +56,6 @@ find_package(postgresql)
 # visit subdirectories
 add_subdirectory(packages)
 add_subdirectory(lib)
-
-# show me
-message("++ pyre version: ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} build ${REPO_COMMIT}")
-message("++   host: ${HOST_PLATFORM}")
-message("++   source dir: ${CMAKE_SOURCE_DIR}")
-message("++   staging dir: ${CMAKE_BINARY_DIR}")
-
+add_subdirectory(extensions)
 
 # end of file
