@@ -5,7 +5,7 @@
 # (c) 1998-2019 all rights reserved
 #
 
-message("++ packages:")
+message("++ lib:")
 message("++   source dir: ${CMAKE_CURRENT_SOURCE_DIR}")
 message("++   staging dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -36,11 +36,10 @@ file(
   COPY journal
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
   FILES_MATCHING
-    PATTERN journal.h EXCLUDE
-    PATTERN *.h
-    PATTERN *.icc
+    PATTERN *.h PATTERN *.icc
+    PATTERN journal/journal.h EXCLUDE
   )
-# and the journal master header with the pyre directory
+# and the journal master header within the pyre directory
 file(
   COPY journal/journal.h
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
@@ -52,9 +51,8 @@ if(MPI_FOUND)
     COPY mpi
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
     FILES_MATCHING
-      PATTERN mpi.h EXCLUDE
-      PATTERN *.h
-      PATTERN *.icc
+      PATTERN *.h PATTERN *.icc
+      PATTERN mpi/mpi.h EXCLUDE
     )
   # and the mpi master header with the pyre directory
   file(
@@ -67,12 +65,12 @@ endif(MPI_FOUND)
 add_library(journal SHARED)
 # set the include directories
 target_include_directories(
-  journal PUBLIC
+  journal PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 # add the sources
 target_sources(journal
-  PUBLIC
+  PRIVATE
     journal/Chronicler.cc
     journal/Console.cc
     journal/Device.cc
@@ -87,16 +85,16 @@ target_sources(journal
 add_library(pyre SHARED)
 # set the include directories
 target_include_directories(
-  pyre PUBLIC
+  pyre PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 # add the sources
 target_sources(pyre
-  PUBLIC
+  PRIVATE
     pyre/memory/MemoryMap.cc
     pyre/timers/Display.cc
     pyre/timers/Timer.cc
-    $<BUILD_INTERFACE:pyre/version.cc>
+    ${CMAKE_CURRENT_BINARY_DIR}/pyre/version.cc
   )
 # and the link dependencies
 target_link_libraries(
