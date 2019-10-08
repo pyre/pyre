@@ -5,10 +5,6 @@
 # (c) 1998-2019 all rights reserved
 #
 
-message("++ lib:")
-message("++   source dir: ${CMAKE_CURRENT_SOURCE_DIR}")
-message("++   staging dir: ${CMAKE_CURRENT_BINARY_DIR}")
-
 # set the variables used to build the libpyre version
 set(MAJOR ${REPO_MAJOR})
 set(MINOR ${REPO_MINOR})
