@@ -9,6 +9,7 @@
 date = "@TODAY@"
 major = @MAJOR@
 minor = @MINOR@
+micro = @MICRO@
 revision = "@REVISION@"
 
 
