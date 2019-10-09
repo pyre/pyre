@@ -103,12 +103,11 @@ if (${MPI_FOUND})
     mpi/ports.cc
     mpi/startup.cc
     )
-  # copy the capsule definitions to staging area
+  # copy the capsule definitions to the staging area
   file(
     COPY mpi/capsules.h
     DESTINATION ${CMAKE_BINARY_DIR}/lib/pyre/mpi
     )
-
   # install the extension
   install(
     TARGETS mpimodule
@@ -154,7 +153,11 @@ if (${GSL_FOUND})
     gsl/stats.cc
     gsl/vector.cc
     )
-
+  # copy the capsule definitions to the staging area
+  file(
+    COPY gsl/capsules.h
+    DESTINATION ${CMAKE_BINARY_DIR}/lib/pyre/gsl
+    )
   if (${MPI_FOUND})
     # add the MPI aware sources to the pile
     target_sources(gslmodule PRIVATE gsl/partition.cc)
@@ -169,6 +172,11 @@ if (${GSL_FOUND})
     TARGETS gslmodule
     LIBRARY
     DESTINATION ${CMAKE_INSTALL_PREFIX}/packages/gsl
+    )
+  # and publish the capsules
+  install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/gsl/capsules.h
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/pyre/gsl
     )
 endif()
 
