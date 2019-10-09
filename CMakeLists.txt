@@ -49,11 +49,11 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
 # set up python
 pyre_pythonInit()
 # gsl
-find_package(gsl)
+find_package(GSL)
 # mpi
-find_package(mpi)
+find_package(MPI)
 # postgres
-find_package(postgresql)
+find_package(PostgreSQL)
 
 # visit subdirectories
 add_subdirectory(packages)

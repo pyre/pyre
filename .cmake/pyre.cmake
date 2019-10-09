@@ -85,7 +85,7 @@ endfunction(pyre_destinationInit)
 # ask git for the most recent tag and use it to build the version
 function(pyre_getVersion)
   # git
-  find_package(git REQUIRED)
+  find_package(Git REQUIRED)
   # get tag info
   execute_process(
     COMMAND ${GIT_EXECUTABLE} describe --tags --long --always
