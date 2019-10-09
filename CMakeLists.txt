@@ -59,5 +59,7 @@ find_package(postgresql)
 add_subdirectory(packages)
 add_subdirectory(lib)
 add_subdirectory(extensions)
+add_subdirectory(defaults)
+add_subdirectory(bin)
 
 # end of file
