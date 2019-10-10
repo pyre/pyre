@@ -172,7 +172,7 @@ debug()
 # version info
 from . import meta
 # convenient access to parts of the framework
-from . import version, constraints, geometry, primitives, tracking
+from . import constraints, geometry, primitives, tracking
 # configurables and their support
 from .components.Actor import Actor as actor
 from .components.Role import Role as role

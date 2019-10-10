@@ -82,6 +82,7 @@ version.cc: version Make.mm
 	@sed \
           -e "s:MAJOR:$(PROJECT_MAJOR):g" \
           -e "s:MINOR:$(PROJECT_MINOR):g" \
+          -e "s:MICRO:$(PROJECT_MICRO):g" \
           -e "s:REVISION:$(REVISION):g" \
           -e "s|TODAY|$(TODAY)|g" \
           version > version.cc

@@ -6,8 +6,10 @@
 #
 
 # project meta-data
-pyre.major := 1
-pyre.minor := 9
+pyre.major := $(repo.major)
+pyre.minor := $(repo.minor)
+pyre.micro := $(repo.micro)
+pyre.revision := $(repo.revision)
 
 # pyre builds a python package
 pyre.packages := pyre.pkg journal.pkg mpi.pkg
