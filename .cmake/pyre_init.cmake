@@ -109,6 +109,13 @@ function(pyre_getVersion)
   set(REPO_MICRO ${REPO_MICRO} PARENT_SCOPE)
   set(REPO_COMMIT ${REPO_COMMIT} PARENT_SCOPE)
 
+  # set the variables used in the package meta-data files
+  set(MAJOR ${REPO_MAJOR} PARENT_SCOPE)
+  set(MINOR ${REPO_MINOR} PARENT_SCOPE)
+  set(MICRO ${REPO_MICRO} PARENT_SCOPE)
+  set(REVISION ${REPO_COMMIT} PARENT_SCOPE)
+  string(TIMESTAMP TODAY PARENT_SCOPE)
+
   # all done
 endfunction(pyre_getVersion)
 

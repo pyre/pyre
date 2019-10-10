@@ -24,36 +24,42 @@ option(WITH_CUDA "enable support for CUDA" OFF)
 
 # adjust the include path
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/.cmake)
-
 # get support
-include(pyre)
+include(pyre_init)
+include(pyre_journal)
+include(pyre_pyre)
+include(pyre_merlin)
+include(pyre_cuda)
+include(pyre_gsl)
+include(pyre_mpi)
+
 # ask git for the pyre version
 pyre_getVersion()
 
 # set up the project
 project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
 
-# set up cmake
-pyre_cmakeInit()
-# set up c++
-pyre_cxxInit()
-
-# initialize the variables that describe the staging directory layout
-pyre_stagingInit()
-# initialize the variables that describe the install directory layout
-pyre_destinationInit()
-
 # packages
 # python
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
-# set up python
-pyre_pythonInit()
 # gsl
 find_package(GSL)
 # mpi
 find_package(MPI)
 # postgres
 find_package(PostgreSQL)
+
+# set up cmake
+pyre_cmakeInit()
+# set up c++
+pyre_cxxInit()
+# set up python
+pyre_pythonInit()
+
+# initialize the variables that describe the staging directory layout
+pyre_stagingInit()
+# initialize the variables that describe the install directory layout
+pyre_destinationInit()
 
 # visit subdirectories
 add_subdirectory(packages)
