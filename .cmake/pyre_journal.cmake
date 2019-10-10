@@ -40,7 +40,7 @@ function(pyre_journalLib)
   set_target_properties(journal PROPERTIES COMPILE_DEFINITIONS PYRE_CORE)
   # set the include directories
   target_include_directories(
-    journal PRIVATE
+    journal PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}
     )
   # add the sources
@@ -75,8 +75,6 @@ function(pyre_journalModule)
   # adjust the name to match what python expects
   set_target_properties(journalmodule PROPERTIES LIBRARY_OUTPUT_NAME journal)
   set_target_properties(journalmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
-  # set the include directories
-  target_include_directories(journalmodule PRIVATE ${CMAKE_BINARY_DIR}/lib)
   # set the libraries to link against
   target_link_libraries(journalmodule PRIVATE journal)
   # add the sources

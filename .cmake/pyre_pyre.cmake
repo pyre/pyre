@@ -63,7 +63,7 @@ function(pyre_pyreLib)
   add_library(pyre SHARED)
   # set the include directories
   target_include_directories(
-    pyre PRIVATE
+    pyre PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}
     )
   # add the sources
@@ -104,8 +104,6 @@ function(pyre_pyreModule)
   # adjust the name to match what python expects
   set_target_properties(hostmodule PROPERTIES LIBRARY_OUTPUT_NAME host)
   set_target_properties(hostmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
-  # set the include directories
-  target_include_directories(hostmodule PRIVATE ${CMAKE_BINARY_DIR}/lib)
   # set the libraries to link against
   target_link_libraries(hostmodule PRIVATE pyre journal)
   # add the sources
@@ -120,8 +118,6 @@ function(pyre_pyreModule)
   # adjust the name to match what python expects
   set_target_properties(timersmodule PROPERTIES LIBRARY_OUTPUT_NAME timers)
   set_target_properties(timersmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
-  # set the include directories
-  target_include_directories(timersmodule PRIVATE ${CMAKE_BINARY_DIR}/lib)
   # set the libraries to link against
   target_link_libraries(timersmodule PRIVATE pyre journal)
   # add the sources

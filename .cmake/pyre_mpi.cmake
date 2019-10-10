@@ -62,9 +62,7 @@ function(pyre_mpiModule)
     set_target_properties(mpimodule PROPERTIES LIBRARY_OUTPUT_NAME mpi)
     set_target_properties(mpimodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
     # set the include directories
-    target_include_directories(
-      mpimodule PRIVATE
-      ${MPI_CXX_INCLUDE_PATH} ${CMAKE_BINARY_DIR}/lib)
+    target_include_directories(mpimodule PRIVATE ${MPI_CXX_INCLUDE_PATH})
     # set the libraries to link against
     target_link_libraries(
       mpimodule PRIVATE
@@ -83,7 +81,7 @@ function(pyre_mpiModule)
     # copy the capsule definitions to the staging area
     file(
       COPY mpi/capsules.h
-      DESTINATION ${CMAKE_BINARY_DIR}/lib/pyre/mpi
+      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../lib/pyre/mpi
       )
     # install the extension
     install(

@@ -30,10 +30,7 @@ function(pyre_gslModule)
     set_target_properties(gslmodule PROPERTIES LIBRARY_OUTPUT_NAME gsl)
     set_target_properties(gslmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
     # set the include directories
-    target_include_directories(
-      gslmodule PRIVATE
-      ${GSL_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS} ${CMAKE_BINARY_DIR}/lib
-      )
+    target_include_directories(gslmodule PRIVATE ${GSL_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS})
     # set the libraries to link against
     target_link_libraries(
       gslmodule PRIVATE
@@ -58,7 +55,7 @@ function(pyre_gslModule)
     # copy the capsule definitions to the staging area
     file(
       COPY gsl/capsules.h
-      DESTINATION ${CMAKE_BINARY_DIR}/lib/pyre/gsl
+      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../lib/pyre/gsl
       )
     if (${MPI_FOUND})
       # add the MPI aware sources to the pile
