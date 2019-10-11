@@ -101,7 +101,7 @@ class ODB(Loader):
     @classmethod
     def interpret(cls, request):
         """
-        Attempt to extract to extract a resolution context and a symbol from the {request}
+        Attempt to extract a resolution context and a symbol from the {request}
         """
         # i deal with paths, so attempt to coerce the request
         path = primitives.path(request.address)
