@@ -7,14 +7,15 @@
 #
 
 # expansion placeholders
-date = "TODAY"
-major = MAJOR
-minor = MAJOR
-revision = "REVISION"
+date = "@TODAY@"
+major = @MAJOR@
+minor = @MINOR@
+micro = @MICRO@
+revision = "@REVISION@"
 
 
 # assemble the version tuple
-version = (major, minor, revision)
+version = (major, minor, micro, revision)
 
 
 # decorations for the help system
