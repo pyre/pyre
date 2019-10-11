@@ -12,6 +12,7 @@ PACKAGE = flow
 # the python modules
 EXPORT_PYTHON_MODULES = \
     Binder.py \
+    DynamicWorkflow.py \
     Factory.py \
     FactoryMaker.py \
     FactoryStatus.py \
