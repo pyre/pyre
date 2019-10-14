@@ -40,14 +40,18 @@ pyre_getVersion()
 project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
 
 # packages
-# python
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
 # gsl
 find_package(GSL)
 # mpi
 find_package(MPI)
 # postgres
 find_package(PostgreSQL)
+# python
+set(PYTHON_COMPONENTS Interpreter Development)
+if(GSL_FOUND)
+    list(APPEND PYTHON_COMPONENTS NumPy)
+endif()
+find_package(Python3 REQUIRED COMPONENTS ${PYTHON_COMPONENTS})
 
 # set up cmake
 pyre_cmakeInit()
