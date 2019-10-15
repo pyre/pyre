@@ -122,7 +122,8 @@ class Dict(Slotted):
         self.schema = schema
         # build my slot factories
         self.classSlot = self.factory(trait=self, post=self.process)
-        self.instanceSlot = self.factory(trait=self, pre=self.instantiate, post=self.instantiate)
+        # self.instanceSlot = self.factory(trait=self, pre=self.instantiate, post=self.instantiate)
+        self.instanceSlot = self.factory(trait=self, post=self.instantiate)
         # all done
         return
 
@@ -176,7 +177,7 @@ class Dict(Slotted):
         # get my name
         tag = nameserver.getName(key)
         # the priority of all these assignments
-        userPriority = nameserver.priority.user
+        initPriority = nameserver.priority.user
 
         # make a key based map
         catalog = KeyMap(schema=schema, factory=traitFactory, key=key)
@@ -190,7 +191,7 @@ class Dict(Slotted):
             # make a locator
             locator = tracking.simple('while adding entry {!r} to {.name!r}'.format(name, self))
             # and store them
-            catalog.insert(name=name, value=value, priority=userPriority(), locator=locator)
+            catalog.insert(name=name, value=value, priority=initPriority(), locator=locator)
 
         # grab all deferred assignments to this key
         for assignment, priority in configurator.retrieveDeferredAssignments(key=key):
@@ -218,7 +219,7 @@ class Dict(Slotted):
         # attach my new value
         client.pyre_inventory.setTraitValue(
             trait=self, factory=myFactory,
-            value=catalog, priority=userPriority(), locator=here)
+            value=catalog, priority=initPriority(), locator=here)
 
         # all done
         return self

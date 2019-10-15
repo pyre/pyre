@@ -25,6 +25,8 @@ def test():
         interval.validators = (
             pyre.constraints.isGreaterEqual(value=-1), pyre.constraints.isLess(value=1))
 
+    return
+
     # instantiate
     b = base(name="b")
     # attempt to

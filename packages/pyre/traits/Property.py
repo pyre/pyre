@@ -102,11 +102,13 @@ class Property(Slotted):
         # if the caller has no opinions on what kind of class slots to build
         if classSlot is None:
             # pick one
-            classSlot = self.factory(trait=self, pre=self.process, post=self.process)
+            # classSlot = self.factory(trait=self, pre=self.process, post=self.process)
+            classSlot = self.factory(trait=self, post=self.process)
         # if the caller has no opinions on what kind of instance slots to build
         if instanceSlot is None:
             # pick one
-            instanceSlot = self.factory(trait=self, pre=self.process, post=self.process)
+            # instanceSlot = self.factory(trait=self, pre=self.process, post=self.process)
+            instanceSlot = self.factory(trait=self, post=self.process)
 
         # attach
         self.classSlot = classSlot

@@ -152,19 +152,18 @@ class PublicInventory(Inventory):
         # register the class with the executive
         key = executive.registerComponentClass(family=family, component=component)
 
-        # collect the slots
-        local = cls.localSlots(key=key, component=component)
-        inherited = cls.inheritedSlots(key=key, component=component)
-        slots = itertools.chain(local, inherited)
-
-        # register them with the nameserver
-        slots = cls.registerSlots(key=key, slots=slots, locator=component.pyre_locator)
-
         # build the inventory
         inventory = cls(key=key)
         # attach it
         component.pyre_inventory = inventory
-        # and populate it
+
+        # collect the slots
+        local = cls.localSlots(key=key, component=component)
+        inherited = cls.inheritedSlots(key=key, component=component)
+        slots = itertools.chain(local, inherited)
+        # register them with the nameserver
+        slots = cls.registerSlots(key=key, slots=slots, locator=component.pyre_locator)
+        # and populate the inventory
         inventory.populate(slots=slots)
 
         # configure the class
@@ -182,19 +181,24 @@ class PublicInventory(Inventory):
         Build inventory appropriate for a component instance that has a publicly visible name and
         is registered with the nameserver
         """
-        # N.B.: if this initialization is marked {implicit}, we are already in the process of
+        # N.B.: for EARLY BINDING
+        # if this initialization is marked {implicit}, we are already in the process of
         # registering this instance; we must avoid causing the executive from re-registering it
         # because it screws up the node priorities, among other potential problems
-
+        #
         # check for reentry
-        if implicit:
+        # if implicit:
             # a key already exists; grab it
-            key = cls.pyre_nameserver.hash(name=name)
+            # key = cls.pyre_nameserver.hash(name=name)
         # otherwise
-        else:
+        # else:
             # have the executive make a key
-            key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
+            # key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
+        #
+        # For LATE BIDING, {implicit} is irrelevant because the instantiation happens only once
 
+        # have the executive make a key
+        key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
         # create the inventory
         inventory = cls(key=key)
         # attach it

@@ -27,6 +27,8 @@ def test():
         number = pyre.properties.int(default=1)
         number.validators = (pyre.constraints.isGreater(value=0),)
 
+    return
+
     # check the simple case
     try:
         # illegal assignment
