@@ -198,15 +198,6 @@ class NameServer(Hierarchical):
 
         # if the assignment happens during component configuration
         if priority.category == priority.defaults.category:
-            # we have some adjustments to make; we require a non-trivial factory
-            if factory is None:
-                # so if we didn't get one, grab the journal
-                import journal
-                # build a bug report
-                bug = f"{name}: a non-trivial factory is required"
-                # and complain
-                raise journal.firewall("pyre.nameserver").log(bug)
-
             # update the factory registered with the meta-data; whatever is currently
             # stored there is wrong, since the component configuration infrastructure is the
             # definitive source of which kind of node to use to store the value
