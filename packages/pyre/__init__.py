@@ -62,6 +62,7 @@ def computeCallerStackDepth():
 
 
 # administrative
+
 def copyright():
     """
     Return the pyre copyright note
@@ -90,6 +91,37 @@ def credits():
     """
     # print it
     return print(meta.acknowledgments)
+
+
+def packageInfo():
+    """
+    Gather information about the pyre layout
+    """
+    # first the easy ones
+    info = {
+        "version": version(),
+        "prefix": prefix,
+        "path": prefix / "bin",
+        "ldpath": prefix / "lib",
+        "pythonpath" : home.parent,
+        "includes": f"-I{prefix}/include"
+        }
+
+    # the libraries
+    libs = [ "pyre", "journal" ]
+    # get the host
+    host = executive.host
+    # if the host is a linux box
+    if isinstance(host, platforms.linux()):
+        # we have to link against the real time clock library
+        libs.append("rt")
+    # assemble the libraries
+    libs = " ".join(f"-l{lib}" for lib in libs)
+    # attach
+    info["libs"] = f"-L{prefix}/lib {libs}"
+
+    # all done
+    return info
 
 
 # component introspection
@@ -153,7 +185,7 @@ def debug():
     packages = set()
     # get the __main__ module
     import __main__
-    # attempt ot
+    # attempt to
     try:
         # get the list of module names specified in the user's main script
         packages |= set(__main__.pyre_debug)
