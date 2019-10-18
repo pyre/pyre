@@ -6,7 +6,7 @@
 #
 
 # cmake setup
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 # policies
 if (POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)

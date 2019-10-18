@@ -59,7 +59,7 @@ function(pyre_journalLib)
   # libpyre and libjournal
   install(
     TARGETS journal
-    LIBRARY
+    LIBRARY DESTINATION lib
     )
 
   # all done
