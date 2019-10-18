@@ -23,7 +23,7 @@ endif(POLICY CMP0076)
 option(WITH_CUDA "enable support for CUDA" OFF)
 
 # adjust the include path
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/.cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/.cmake)
 # get support
 include(pyre_init)
 include(pyre_journal)
