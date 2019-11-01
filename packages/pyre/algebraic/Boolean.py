@@ -18,9 +18,9 @@ class Boolean:
     methods defined in these subclasses. These methods then build and return representations of
     the corresponding operators and their operands.
 
-    {Boolean} expects its subclasses to define two class methods: {literal} and
-    {operator}. The former is used to encapsulate operands that are not {Boolean}
-    instances. The latter is used to construct the operator representations.
+    {Boolean} expects its subclasses to define two methods: {literal} and {operator}. The
+    former is used to encapsulate operands that are not {Boolean} instances. The latter is used
+    to construct the operator representations.
     """
 
 
