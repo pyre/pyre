@@ -30,7 +30,7 @@ class Boolean:
         if not isinstance(other, Boolean):
             # promote it
             other = self.literal(value=other)
-        # build a representation of the equality test
+        # build a representation of the operation
         return self.operator(evaluator=operator.and_, operands=(self, other))
 
 
@@ -39,7 +39,7 @@ class Boolean:
         if not isinstance(other, Boolean):
             # promote it
             other = self.literal(value=other)
-        # build a representation of the equality test
+        # build a representation of the operation
         return self.operator(evaluator=operator.or_, operands=(self, other))
 
 
@@ -49,7 +49,7 @@ class Boolean:
         if not isinstance(other, Boolean):
             # promote it
             other = self.literal(value=other)
-        # build a representation of the equality test
+        # build a representation of the operation
         return self.operator(evaluator=operator.and_, operands=(other, self))
 
 
@@ -58,7 +58,7 @@ class Boolean:
         if not isinstance(other, Boolean):
             # promote it
             other = self.literal(value=other)
-        # build a representation of the equality test
+        # build a representation of the operation
         return self.operator(evaluator=operator.or_, operands=(other, self))
 
 
