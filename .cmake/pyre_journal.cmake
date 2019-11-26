@@ -14,6 +14,17 @@ function(pyre_journalPackage)
     DESTINATION ${PYRE_DEST_PACKAGES}
     FILES_MATCHING PATTERN *.py
     )
+  # build the package meta-data
+  configure_file(
+    journal/meta.py.in journal/meta.py
+    @ONLY
+    )
+  # install the generated package meta-data file
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/journal
+    DESTINATION ${PYRE_DEST_PACKAGES}
+    FILES_MATCHING PATTERN *.py
+    )
   # all done
 endfunction(pyre_journalPackage)
 
