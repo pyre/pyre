@@ -20,12 +20,28 @@ class PFG(LineMill):
 
 
     # trait traversal hooks
-    def component(self, name):
+    def componentStart(self, component):
         """
         Render a component
         """
         # easy enough
-        return self.place(f"{name}:")
+        yield self.place(f"{component.pyre_spec}:")
+        # push in
+        self.indent()
+        # all done
+        return
+
+
+    def componentEnd(self, component):
+        """
+        Done processing the traits of {component}
+        """
+        # pop
+        self.outdent()
+        # leave a blank line
+        yield ''
+        # all done
+        return
 
 
     def trait(self, name, value):

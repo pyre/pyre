@@ -471,18 +471,13 @@ class Configurable(Dashboard):
         """
         Render me and the values of my trait using {renderer}
         """
-        # get my name
-        spec = self.pyre_spec
-        # and my inventory
-        inventory = self.pyre_inventory
-
         # first, myself
-        yield renderer.component(name=spec)
+        yield from renderer.componentStart(component=self)
 
-        # now, my content
-        renderer.indent()
         # get my configurable traits
         traits = self.pyre_configurables()
+        # and my inventory
+        inventory = self.pyre_inventory
         # go through them
         for trait in traits:
             # get the trait name
@@ -492,10 +487,9 @@ class Configurable(Dashboard):
             # get the trait to render the value
             yield from trait.render(renderer=renderer, value=value, workload=workload)
 
-        # pull out
-        renderer.outdent()
-        # leave a blank line
-        yield ''
+        # done with me
+        yield from renderer.componentEnd(component=self)
+
         # all done
         return
 
