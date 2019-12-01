@@ -19,7 +19,7 @@ class PFG(LineMill):
     """
 
 
-    # meta-methods
+    # trait traversal hooks
     def component(self, name):
         """
         Render a component
