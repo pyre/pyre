@@ -25,6 +25,6 @@ install:
   - make install
 
 script:
-  - cd build && ctest --verbose
+  - ctest --verbose
 
 # end of file
