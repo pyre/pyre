@@ -97,11 +97,19 @@ function(pyre_getVersion)
 
   # the parser of the "git describe" result
   set(GIT_DESCRIBE "v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g(.+)" )
-  # parse the bits
-  string(REGEX REPLACE ${GIT_DESCRIBE} "\\1" REPO_MAJOR ${GIT_DESCRIBE_VERSION} )
-  string(REGEX REPLACE ${GIT_DESCRIBE} "\\2" REPO_MINOR ${GIT_DESCRIBE_VERSION})
-  string(REGEX REPLACE ${GIT_DESCRIBE} "\\3" REPO_MICRO ${GIT_DESCRIBE_VERSION})
-  string(REGEX REPLACE ${GIT_DESCRIBE} "\\5" REPO_COMMIT ${GIT_DESCRIBE_VERSION})
+
+  if(GIT_DESCRIBE_VERSION MATCHES ${GIT_DESCRIBE})
+      # parse the bits
+      string(REGEX REPLACE ${GIT_DESCRIBE} "\\1" REPO_MAJOR ${GIT_DESCRIBE_VERSION} )
+      string(REGEX REPLACE ${GIT_DESCRIBE} "\\2" REPO_MINOR ${GIT_DESCRIBE_VERSION})
+      string(REGEX REPLACE ${GIT_DESCRIBE} "\\3" REPO_MICRO ${GIT_DESCRIBE_VERSION})
+      string(REGEX REPLACE ${GIT_DESCRIBE} "\\5" REPO_COMMIT ${GIT_DESCRIBE_VERSION})
+  else()
+      set(REPO_MAJOR 1)
+      set(REPO_MINOR 9)
+      set(REPO_MICRO 7)
+      set(REPO_COMMIT ${GIT_DESCRIBE_VERSION})
+  endif()
 
   # export our local variables
   set(REPO_MAJOR ${REPO_MAJOR} PARENT_SCOPE)
