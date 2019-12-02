@@ -72,4 +72,9 @@ add_subdirectory(extensions)
 add_subdirectory(defaults)
 add_subdirectory(bin)
 
+if(BUILD_TESTING)
+    include(CTest)
+    add_subdirectory(tests)
+endif()
+
 # end of file
