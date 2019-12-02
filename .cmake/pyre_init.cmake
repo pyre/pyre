@@ -55,8 +55,7 @@ function(pyre_pythonInit)
   # ask the executable for the module suffix
   execute_process(
     COMMAND ${Python3_EXECUTABLE} -c
-        "from distutils import sysconfig as s;
-        print(s.get_config_var('EXT_SUFFIX'))"
+        "from distutils.sysconfig import *; print(get_config_var('EXT_SUFFIX'))"
     RESULT_VARIABLE PYTHON3_SUFFIX_STATUS
     OUTPUT_VARIABLE PYTHON3_SUFFIX
     OUTPUT_STRIP_TRAILING_WHITESPACE
