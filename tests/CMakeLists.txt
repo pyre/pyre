@@ -293,7 +293,6 @@ pyre/framework/nameserver_access.py
 pyre/framework/nameserver_aliases.py
 pyre/framework/registrar.py
 pyre/framework/sample.py
-pyre/framework/sample_syntaxerror.py
 pyre/framework/sanity.py
 pyre/framework/slot.py
 pyre/framework/slot_algebra.py
@@ -513,7 +512,6 @@ python/inheritance_multiple.py
 python/inheritance_properties.py
 python/inheritance_shadow.py
 python/initialization.py
-python/locale_codec.py
 python/locale_open.py
 python/metaclass.py
 python/metaclass_callsequence.py
@@ -689,6 +687,7 @@ pyre/filesystem/zip.py
 pyre/framework/executive_shelves.py
 pyre/primitives/path_resolution.py
 pyre/schemata/istreams.py
+python/locale_codec.py # format_string doesn't have monetary kwarg until py37
 )
 
 foreach(testfile ${testfiles})
