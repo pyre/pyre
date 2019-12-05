@@ -52,13 +52,13 @@ journal/inventory.cc
 journal/sanity.cc
 journal/warning-injection.cc
 journal/warning.cc
-memory/constdirect-clone.cc
+# memory/constdirect-clone.cc XXX
 memory/constdirect-create.cc
 memory/constdirect-instantiate-partial.cc
 memory/constdirect-instantiate.cc
 memory/constdirect-map.cc
 memory/constview-instantiate.cc
-memory/direct-clone.cc
+# memory/direct-clone.cc XXX
 memory/direct-create.cc
 memory/direct-instantiate-partial.cc
 memory/direct-instantiate.cc
