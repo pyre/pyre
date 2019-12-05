@@ -1,15 +1,10 @@
-set(failingtests # TODO fix these failing tests
-journal/debug.cc
-journal/debug-envvar.cc
-journal/firewall.cc
-)
-
 set(testfiles
 algebra/bcd.cc
 geometry/brick.cc
 geometry/point.cc
 geometry/pointcloud.cc
 grid/grid-direct-data.cc
+grid/grid-direct-get.cc
 grid/grid-direct-set.cc
 grid/grid-direct.cc
 grid/grid-fill.cc
@@ -38,14 +33,17 @@ grid/packing.cc
 grid/slice.cc
 journal/channel.cc
 journal/chronicler.cc
+journal/debug-envvar.cc
 journal/debug-injection.cc
 journal/debug-null.cc
+journal/debug.cc
 journal/diagnostic-injection.cc
 journal/diagnostic.cc
 journal/error-injection.cc
 journal/error.cc
 journal/firewall-injection.cc
 journal/firewall-null.cc
+journal/firewall.cc
 journal/index-inventory.cc
 journal/index.cc
 journal/info-injection.cc
@@ -54,11 +52,13 @@ journal/inventory.cc
 journal/sanity.cc
 journal/warning-injection.cc
 journal/warning.cc
+memory/constdirect-clone.cc
 memory/constdirect-create.cc
 memory/constdirect-instantiate-partial.cc
 memory/constdirect-instantiate.cc
 memory/constdirect-map.cc
 memory/constview-instantiate.cc
+memory/direct-clone.cc
 memory/direct-create.cc
 memory/direct-instantiate-partial.cc
 memory/direct-instantiate.cc
@@ -79,13 +79,6 @@ if(MPI_FOUND)
         mpi/world.cc
         )
 endif()
-
-# TODO fix these failing tests
-set(failtestfiles
-memory/direct-clone.cc
-memory/constdirect-clone.cc
-grid/grid-direct-get.cc
-)
 
 foreach(testfile ${testfiles})
     # generate target and test names from file/directory

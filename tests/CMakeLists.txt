@@ -3,16 +3,20 @@ add_subdirectory(libpyre)
 set(testfiles
 journal/colors.py
 journal/crosstalk.py
+journal/debug-activation.py
 journal/debug-injection.py
 journal/debug.py
+journal/error-activation.py
 journal/error-injection.py
 journal/error.py
+journal/firewall-activation.py
 journal/firewall-injection.py
 journal/firewall.py
 journal/info-activation.py
 journal/info-injection.py
 journal/info.py
 journal/sanity.py
+journal/warning-activation.py
 journal/warning-injection.py
 journal/warning.py
 merlin/components/merlin_curator.py
@@ -98,6 +102,7 @@ pyre/codecs/pml_unknownNode.py
 pyre/codecs/sanity.py
 pyre/components/actor.py
 pyre/components/component.py
+pyre/components/component_aliases.py
 pyre/components/component_bad_implementations.py
 pyre/components/component_behavior.py
 pyre/components/component_class_binding.py
@@ -169,6 +174,7 @@ pyre/config/configurator_assignments.py
 pyre/config/configurator_load_cfg.py
 pyre/config/configurator_load_pfg.py
 pyre/config/configurator_load_pml.py
+pyre/config/configurator_locators.py
 pyre/config/events.py
 pyre/config/events_assignments.py
 pyre/config/exceptions.py
@@ -238,11 +244,14 @@ pyre/descriptors/uris.py
 pyre/externals/blas.py
 pyre/externals/cython.py
 pyre/externals/gcc.py
+pyre/externals/gsl.py
+pyre/externals/hdf5.py
 pyre/externals/locate.py
 pyre/externals/mpi.py
 pyre/externals/postgres.py
 pyre/externals/python.py
 pyre/externals/sanity.py
+pyre/externals/vtk.py
 pyre/filesystem/directory_walker.py
 pyre/filesystem/exceptions.py
 pyre/filesystem/filesystem.py
@@ -273,6 +282,7 @@ pyre/filesystem/virtual_subscripts.py
 pyre/filesystem/zip_open.py
 pyre/filesystem/zip_rootNonexistent.py
 pyre/filesystem/zip_rootNotZipfile.py
+pyre/filesystem/zip.py
 pyre/flow/sanity.py
 pyre/framework/exceptions.py
 pyre/framework/executive.py
@@ -281,6 +291,7 @@ pyre/framework/executive_resolve.py
 pyre/framework/executive_resolve_badImport.py
 pyre/framework/executive_resolve_duplicate.py
 pyre/framework/executive_resolve_syntaxError.py
+pyre/framework/executive_shelves.py
 pyre/framework/externals.py
 pyre/framework/fileserver.py
 pyre/framework/fileserver_mount.py
@@ -339,6 +350,7 @@ pyre/platforms/sanity.py
 pyre/primitives/path.py
 pyre/primitives/path_arithmetic.py
 pyre/primitives/path_parts.py
+pyre/primitives/path_resolution.py
 pyre/primitives/path_tuple.py
 pyre/primitives/sanity.py
 pyre/pyre/defaults.py
@@ -389,6 +401,7 @@ pyre/schemata/floats.py
 pyre/schemata/fractional.py
 pyre/schemata/inets.py
 pyre/schemata/integers.py
+pyre/schemata/istreams.py
 pyre/schemata/lists.py
 pyre/schemata/mappings.py
 pyre/schemata/ostreams.py
@@ -512,6 +525,7 @@ python/inheritance_multiple.py
 python/inheritance_properties.py
 python/inheritance_shadow.py
 python/initialization.py
+python/locale_codec.py
 python/locale_open.py
 python/metaclass.py
 python/metaclass_callsequence.py
@@ -664,31 +678,6 @@ if(PostgreSQL_FOUND)
         postgres/sanity_pyrepg.py
         )
 endif()
-
-# TODO run test with required extra command-line arguments
-set(extraargtests
-pyre/components/component_aliases.py
-)
-# TODO only run these tests when required packages are installed
-set(externalstests
-opal/sanity.py
-pyre/externals/gsl.py
-pyre/externals/hdf5.py
-pyre/externals/vtk.py
-)
-# TODO these tests also fail
-set(failingtests
-journal/debug-activation.py
-journal/error-activation.py
-journal/firewall-activation.py
-journal/warning-activation.py
-pyre/config/configurator_locators.py
-pyre/filesystem/zip.py
-pyre/framework/executive_shelves.py
-pyre/primitives/path_resolution.py
-pyre/schemata/istreams.py
-python/locale_codec.py # format_string doesn't have monetary kwarg until py37
-)
 
 foreach(testfile ${testfiles})
     # generate target and test names from file/directory
