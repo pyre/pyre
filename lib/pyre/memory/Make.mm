@@ -16,6 +16,8 @@ PACKAGE = memory
 # the products
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SAR)
 PROJ_DLL = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SO)
+# dependencies
+PROJ_LCXX_LIBS = -ljournal
 # the private build space
 PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
 # the sources
