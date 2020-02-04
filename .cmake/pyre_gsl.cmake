@@ -65,7 +65,7 @@ function(pyre_gslModule)
       # and the mpi libraries
       target_link_libraries(gslmodule PRIVATE ${MPI_CXX_LIBRARIES})
       # add the preprocessor macro
-      add_compile_definitions(WITH_MPI)
+      target_compile_definitions(gslmodule PRIVATE WITH_MPI)
     endif()
 
     # install the extension
