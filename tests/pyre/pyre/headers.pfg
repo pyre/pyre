@@ -1,0 +1,10 @@
+; michael a.g. aïvázis
+; orthologue
+; (c) 1998-2020 all rights reserved
+
+
+headers.columns:
+    first = 1
+    last = 2
+
+; end of file

@@ -27,5 +27,6 @@ traits:
 regressions:
 	${PYTHON} ./defaults.py
 	${PYTHON} ./play.py
+	${PYTHON} ./headers.py
 
 # end of file

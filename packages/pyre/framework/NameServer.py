@@ -163,11 +163,6 @@ class NameServer(Hierarchical):
             # and submit it
             raise journal.firewall("pyre.framework").log(bug)
 
-        # if we were not given a slot factory
-        if factory is None:
-            # use instance slots for a generic trait, by default
-            factory = properties.identity(name=name).instanceSlot
-
         # look for the node registered under this key
         old = self._nodes.get(key, None)
         # and
@@ -184,6 +179,12 @@ class NameServer(Hierarchical):
                 bug = f"{name}: found a node with no meta-data"
                 # and complain
                 raise journal.firewall("pyre.nameserver").log(bug)
+
+            # if we were not given a slot factory
+            if factory is None:
+                # use instance slots for a generic trait
+                factory = properties.identity(name=name).instanceSlot
+
             # build the info node
             meta = self.info(name=name, split=split, key=key,
                              priority=priority, locator=locator, factory=factory)
@@ -196,14 +197,24 @@ class NameServer(Hierarchical):
             # all done
             return key, new, old
 
+        # if a factory were prescribed
+        if factory:
+            # install it
+            meta.factory = factory
+
         # if the assignment happens during component configuration
         if priority.category == priority.defaults.category:
-            # update the factory registered with the meta-data; whatever is currently
-            # stored there is wrong, since the component configuration infrastructure is the
-            # definitive source of which kind of node to use to store the value
-            meta.factory = factory
-            # the rest of the meta-data, currently priority and locator, must be correct, so
-            # don't touch
+            # verify a factory was prescribed
+            if factory is None:
+                # if not, it's a bug
+                import journal
+                # build a report
+                bug = f"{name}: trait configuration without a factory"
+                # and complain
+                raise journal.firewall("pyre.nameserver").log(bug)
+
+            # we have already updated the factory; the rest of the meta-data, currently
+            # priority and locator, must be correct, so don't touch
 
             # the existing node is not the correct type, so use the factory we were given to
             # build a new one; the value of the old node must be correct, because {defaults}
