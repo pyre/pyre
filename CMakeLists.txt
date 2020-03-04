@@ -19,6 +19,8 @@ if (POLICY CMP0076)
   cmake_policy(SET CMP0076 NEW)
 endif(POLICY CMP0076)
 
+include(GNUInstallDirs)
+
 # options
 option(WITH_CUDA "enable support for CUDA" OFF)
 
@@ -84,6 +86,15 @@ install(EXPORT pyre-targets
         NAMESPACE pyre::
         DESTINATION ${PYRE_CMAKE_DIR}
         )
+
+# install config file for find_package
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    ${PROJECT_SOURCE_DIR}/.cmake/pyre-config.cmake.in
+    ${PROJECT_BINARY_DIR}/pyre-config.cmake
+    INSTALL_DESTINATION ${PYRE_CMAKE_DIR})
+install(FILES ${PROJECT_BINARY_DIR}/pyre-config.cmake
+        DESTINATION ${PYRE_CMAKE_DIR})
 
 # create aliases matching the exports above
 add_library(pyre::pyre    ALIAS pyre)

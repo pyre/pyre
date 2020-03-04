@@ -72,7 +72,7 @@ function(pyre_journalLib)
   install(
     TARGETS journal
     EXPORT pyre-targets
-    LIBRARY DESTINATION lib
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 
   # all done
@@ -104,7 +104,7 @@ function(pyre_journalModule)
   install(
     TARGETS journalmodule
     LIBRARY
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/packages/journal
+    DESTINATION ${PYRE_DEST_PACKAGES}/journal
     )
 endfunction(pyre_journalModule)
 

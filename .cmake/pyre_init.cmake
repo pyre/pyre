@@ -77,8 +77,11 @@ endfunction(pyre_stagingInit)
 # describe the installation layout
 function(pyre_destinationInit)
   # create variables to hold the roots in the install directory
-  set(PYRE_DEST_INCLUDE include PARENT_SCOPE)
-  set(PYRE_DEST_PACKAGES packages PARENT_SCOPE)
+  set(PYRE_DEST_INCLUDE ${CMAKE_INSTALL_INCLUDEDIR} PARENT_SCOPE)
+  if(NOT DEFINED PYRE_DEST_PACKAGES)
+      set(PYRE_DEST_PACKAGES packages CACHE STRING
+          "Python package install location, relative to install prefix")
+  endif()
   # all done
 endfunction(pyre_destinationInit)
 

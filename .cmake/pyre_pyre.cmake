@@ -92,7 +92,7 @@ function(pyre_pyreLib)
   install(
     TARGETS pyre
     EXPORT pyre-targets
-    LIBRARY DESTINATION lib
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 
   # all done
@@ -133,7 +133,7 @@ function(pyre_pyreModule)
   install(
     TARGETS hostmodule timersmodule
     LIBRARY
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/packages/pyre/extensions
+    DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
     )
 endfunction(pyre_pyreModule)
 
@@ -153,12 +153,12 @@ function(pyre_pyreBin)
   install(
     TARGETS python.pyre
     RUNTIME
-    DESTINATION bin
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   # install the scripts
   install(
     PROGRAMS pyre pyre-config merlin smith.pyre
-    DESTINATION bin
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   # all done
 endfunction(pyre_pyreBin)
@@ -169,7 +169,7 @@ function(pyre_pyreDefaults)
   # install the configuration files
   install(
     FILES pyre.pfg merlin.pfg
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/defaults
+    DESTINATION defaults
   )
   # all done
 endfunction(pyre_pyreDefaults)
