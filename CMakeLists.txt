@@ -72,6 +72,23 @@ add_subdirectory(extensions)
 add_subdirectory(defaults)
 add_subdirectory(bin)
 
+# make exports available in binary dir during build
+export(EXPORT pyre-targets
+       NAMESPACE pyre::
+       )
+
+# install exports to installation prefix
+set(PYRE_CMAKE_DIR "share/cmake/pyre" CACHE STRING
+    "Installation directory for cmake files, relative to install prefix")
+install(EXPORT pyre-targets
+        NAMESPACE pyre::
+        DESTINATION ${PYRE_CMAKE_DIR}
+        )
+
+# create aliases matching the exports above
+add_library(pyre::pyre    ALIAS pyre)
+add_library(pyre::journal ALIAS journal)
+
 if(BUILD_TESTING)
     include(CTest)
     add_subdirectory(tests)

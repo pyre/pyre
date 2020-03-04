@@ -52,7 +52,8 @@ function(pyre_journalLib)
   # set the include directories
   target_include_directories(
     journal PUBLIC
-    ${CMAKE_CURRENT_BINARY_DIR}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
     )
   # add the sources
   target_sources(journal
@@ -70,6 +71,7 @@ function(pyre_journalLib)
   # libpyre and libjournal
   install(
     TARGETS journal
+    EXPORT pyre-targets
     LIBRARY DESTINATION lib
     )
 
