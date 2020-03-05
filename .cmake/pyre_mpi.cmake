@@ -87,7 +87,7 @@ function(pyre_mpiModule)
     install(
       TARGETS mpimodule
       LIBRARY
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/packages/mpi
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}/mpi
       )
     # and publish the capsules
     install(

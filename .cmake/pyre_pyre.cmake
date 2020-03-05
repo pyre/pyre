@@ -64,7 +64,8 @@ function(pyre_pyreLib)
   # set the include directories
   target_include_directories(
     pyre PUBLIC
-    ${CMAKE_CURRENT_BINARY_DIR}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
     )
   # add the sources
   target_sources(pyre
@@ -90,7 +91,8 @@ function(pyre_pyreLib)
   # libpyre and libjournal
   install(
     TARGETS pyre
-    LIBRARY DESTINATION lib
+    EXPORT pyre-targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 
   # all done
@@ -131,7 +133,7 @@ function(pyre_pyreModule)
   install(
     TARGETS hostmodule timersmodule
     LIBRARY
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/packages/pyre/extensions
+    DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
     )
 endfunction(pyre_pyreModule)
 
@@ -151,12 +153,12 @@ function(pyre_pyreBin)
   install(
     TARGETS python.pyre
     RUNTIME
-    DESTINATION bin
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   # install the scripts
   install(
     PROGRAMS pyre pyre-config merlin smith.pyre
-    DESTINATION bin
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   # all done
 endfunction(pyre_pyreBin)
@@ -167,7 +169,7 @@ function(pyre_pyreDefaults)
   # install the configuration files
   install(
     FILES pyre.pfg merlin.pfg
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/defaults
+    DESTINATION defaults
   )
   # all done
 endfunction(pyre_pyreDefaults)

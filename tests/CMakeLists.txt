@@ -690,7 +690,7 @@ foreach(testfile ${testfiles})
         COMMAND ${Python3_EXECUTABLE} ./${fullname})
     set_property(TEST ${testname} PROPERTY ENVIRONMENT
         LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
-        PYTHONPATH=${CMAKE_INSTALL_PREFIX}/packages
+        PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
         )
     set_property(TEST ${testname} PROPERTY WORKING_DIRECTORY
         ${CMAKE_CURRENT_LIST_DIR}/${dir}
