@@ -13,7 +13,10 @@ import pyre
 # the app
 class Config(pyre.application):
 
-    # user configurable state
+    # information the user can ask for
+    version = pyre.properties.bool(default=False)
+    version.doc = "the framework version"
+
     prefix = pyre.properties.bool(default=False)
     prefix.doc = "the top level installation directory"
 
@@ -43,6 +46,15 @@ class Config(pyre.application):
         help = True
         # get the package layout
         layout = pyre.packageInfo()
+
+        # if we were asked to show the framework version
+        if self.version:
+            # get the version
+            major, minor, micro, rev = pyre.version()
+            # do it
+            print(f"{major}.{minor}.{micro}")
+            # and lower the flag
+            help = False
 
         # if we were asked to show the installation directory
         if self.prefix:
