@@ -41,6 +41,7 @@ EXPORT_HEADERS = \
     geometry.h \
     grid.h \
     memory.h \
+    pyre.h \
     timers.h \
     version.h
 
