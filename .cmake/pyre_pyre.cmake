@@ -8,7 +8,7 @@
 
 # generate the portinfo file
 function(pyre_portinfo)
-  # inject the platform information and move it to the stagig area
+  # inject the platform information and move it to the staging area
   configure_file(
     portinfo.in portinfo
     @ONLY
