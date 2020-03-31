@@ -63,7 +63,7 @@ class CSI:
 
 
     @staticmethod
-    def csi8_gray(gary=0, foreground=True):
+    def csi8_gray(gray=0, foreground=True):
         """
         Build an ANSI color sequence from the 8 bit color set that corresponds to a gray level in
         the range [0, 23]
