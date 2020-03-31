@@ -53,7 +53,9 @@ class Renderer(pyre.protocol, family="journal.renderers"):
 
 
     # private data
-    ansi = {'ansi', 'vt102', 'vt220', 'vt320', 'vt420', 'xterm', 'xterm-color'}
+    ansi = { 'ansi',
+             'vt102', 'vt220', 'vt320', 'vt420',
+             'xterm', 'xterm-color', 'xterm-16color', 'xterm-256color'}
 
 
 # end of file
