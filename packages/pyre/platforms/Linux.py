@@ -41,12 +41,38 @@ class Linux(POSIX, family='pyre.platforms.linux'):
         """
         Return a suitable default encapsulation of the runtime host
         """
-        # get the platform package
-        import platform
-        # identify the platform characteristics; careful not to set the {distribution}
-        # attribute here; the subclasses set the distribution name to the pyre canonical
-        # nickname
-        distribution, cls.release, cls.codename = platform.linux_distribution()
+
+        # in python 3.8, {platform} doesn't have {linux_distribution} any more; the
+        # functionality has been delegated to the {distro} package
+
+        # so let's try
+        try:
+            # to get {distro}
+            import distro
+        # if that fails
+        except ImportError:
+            # let's try
+            try:
+                # the deprecated python package; this is silly in the long term, but it's a
+                # reasonable workaround for current 3.7 users that don't have {distro}
+                import platform
+            # if this also fails
+            except ImportError:
+                # there isn't much else to do; act like a generic linux system
+                return cls
+            # if it succeeds
+            else:
+                # identify the platform characteristics; careful not to set the {distribution}
+                # attribute here; the subclasses set the distribution name to the pyre
+                # canonical nickname
+                distribution, cls.release, cls.codename = platform.linux_distribution()
+        # if {distro} is available
+        else:
+            # identify the platform characteristics; again, careful not to set the
+            # {distribution} attribute here; the subclasses set the distribution name to the
+            # pyre canonical nickname
+            distribution, cls.release, cls.codename = distro.linux_distribution(
+                full_distribution_name=False)
 
         # check for ubuntu
         if distribution.lower().startswith('ubuntu'):
