@@ -51,21 +51,19 @@ class Linux(POSIX, family='pyre.platforms.linux'):
             import distro
         # if that fails
         except ImportError:
-            # let's try
+            # fallback to the native  python package; this is silly in the long term, but it's a
+            # reasonable workaround for current 3.7 users that don't have {distro}
+            import platform
+            # if it still has the deprecated function
             try:
-                # the deprecated python package; this is silly in the long term, but it's a
-                # reasonable workaround for current 3.7 users that don't have {distro}
-                import platform
-            # if this also fails
-            except ImportError:
-                # there isn't much else to do; act like a generic linux system
-                return cls
-            # if it succeeds
-            else:
                 # identify the platform characteristics; careful not to set the {distribution}
                 # attribute here; the subclasses set the distribution name to the pyre
                 # canonical nickname
                 distribution, cls.release, cls.codename = platform.linux_distribution()
+            # if this also fails
+            except AttributeError:
+                # there isn't much else to do; act like a generic linux system
+                return cls
         # if {distro} is available
         else:
             # identify the platform characteristics; again, careful not to set the
