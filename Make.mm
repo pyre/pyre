@@ -48,9 +48,10 @@ test: build tests examples
 PYTHON_TAG = ${shell $(PYTHON) bin/cache_tag.py}
 PYTHON_ABITAG = ${shell $(PYTHON) bin/abi.py}
 PYRE_VERSION = $(PROJECT_MAJOR).$(PROJECT_MINOR)
-PYRE_BOOTPKGS = pyre journal merlin
 PYRE_ZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION).$(PYTHON_ABITAG).zip
-PYRE_BOOTZIP = $(EXPORT_ROOT)/pyre-$(PYRE_VERSION)-boot.zip
+
+PYRE_BOOTPKGS = pyre journal merlin
+PYRE_BOOTZIP = $(EXPORT_ROOT)/pyre-boot.zip
 
 zip: build cleanit zipit pushit cleanit
 
