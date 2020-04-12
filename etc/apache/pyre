@@ -10,7 +10,7 @@
     ServerAdmin web@orthologue.com
 
     # the web
-    DocumentRoot /home/projects/pyre/web/www
+    DocumentRoot PROJ_LIVE_DOCROOT
     <Directory />
         Options Indexes FollowSymLinks MultiViews
         AllowOverride None
@@ -25,8 +25,8 @@
     </Directory>
 
     # the applications
-    ScriptAlias /bin/ /home/projects/pyre/web/bin/
-    <Directory "/home/projects/pyre/web/bin">
+    ScriptAlias /bin/ PROJ_LIVE_WEBDIR/bin/
+    <Directory "PROJ_LIVE_WEBDIR/bin">
         AllowOverride None
         Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
         Order allow,deny
@@ -34,8 +34,8 @@
     </Directory>
 
     # the repository
-    Alias /1.0/ /home/projects/pyre/repository/1.0/
-    <Directory /home/projects/pyre/repository/1.0/>
+    Alias /1.0/ PROJ_LIVE_HOME/repository/1.0/
+    <Directory PROJ_LIVE_HOME/repository/1.0/>
         Options FollowSymLinks MultiViews
         AllowOverride None
         Order allow,deny
