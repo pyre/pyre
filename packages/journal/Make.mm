@@ -9,6 +9,8 @@
 include journal.def
 # package name
 PACKAGE = journal
+# add this to the clean pile
+PROJ_CLEAN += $(EXPORT_MODULEDIR)
 # the python modules
 EXPORT_PYTHON_MODULES = \
     ANSIRenderer.py \

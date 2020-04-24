@@ -9,6 +9,8 @@
 include gsl.def
 # package name
 PACKAGE = gsl
+# add this to the clean pile
+PROJ_CLEAN += $(EXPORT_MODULEDIR)
 # the python modules
 EXPORT_PYTHON_MODULES = \
     Histogram.py \

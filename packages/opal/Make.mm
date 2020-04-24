@@ -9,7 +9,9 @@
 include opal.def
 # package name
 PACKAGE = opal
-# my sibfolders
+# add this to the clean pile
+PROJ_CLEAN += $(EXPORT_MODULEDIR)
+# my subfolders
 RECURSE_DIRS = \
     html \
     shells \

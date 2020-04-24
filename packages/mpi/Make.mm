@@ -9,6 +9,8 @@
 include mpi.def
 # package name
 PACKAGE = mpi
+# add this to the clean pile
+PROJ_CLEAN += $(EXPORT_MODULEDIR)
 # the python modules
 EXPORT_PYTHON_MODULES = \
     Cartesian.py \

@@ -9,6 +9,8 @@
 include cuda.def
 # package name
 PACKAGE = cuda
+# add this to the clean pile
+PROJ_CLEAN += $(EXPORT_MODULEDIR)
 # the python modules
 EXPORT_PYTHON_MODULES = \
     Device.py \

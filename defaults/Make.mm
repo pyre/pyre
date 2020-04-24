@@ -12,7 +12,6 @@ PACKAGE = defaults
 
 # my subfolders
 RECURSE_DIRS = \
-    merlin \
 
 # the files
 EXPORT_ETC = \

@@ -10,6 +10,8 @@
 include merlin.def
 # package name
 PACKAGE = merlin
+# add this to the clean pile
+PROJ_CLEAN += $(EXPORT_MODULEDIR)
 # my subfolders
 RECURSE_DIRS = \
     assets \
