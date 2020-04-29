@@ -343,7 +343,7 @@ class Path(tuple):
         # if we don't have a user
         if not user:
             # assume the current user
-            dir = pwd.getpwuid(os.getuid()).pw_dir
+            dir = os.path.expanduser("~")
         # otherwise
         else:
             # attempt to
