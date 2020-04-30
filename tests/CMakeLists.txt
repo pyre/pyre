@@ -3,20 +3,15 @@ add_subdirectory(libpyre)
 set(testfiles
 journal/colors.py
 journal/crosstalk.py
-journal/debug-activation.py
 journal/debug-injection.py
 journal/debug.py
-journal/error-activation.py
 journal/error-injection.py
 journal/error.py
-journal/firewall-activation.py
 journal/firewall-injection.py
 journal/firewall.py
-journal/info-activation.py
 journal/info-injection.py
 journal/info.py
 journal/sanity.py
-journal/warning-activation.py
 journal/warning-injection.py
 journal/warning.py
 merlin/components/merlin_curator.py
@@ -679,15 +674,21 @@ if(PostgreSQL_FOUND)
         )
 endif()
 
-foreach(testfile ${testfiles})
+# passes extra args on command line
+function(pyre_python_test testfile)
     # generate target and test names from file/directory
     get_filename_component(fullname ${testfile} NAME)
     get_filename_component(name ${testfile} NAME_WE)
     get_filename_component(dir  ${testfile} DIRECTORY)
     string(REPLACE "/" "." testname ${dir}.${name})
 
+    # create unique test name when extra args are given
+    if(ARGN)
+        string(REPLACE ";" "_" testname "${testname};${ARGN}")
+    endif()
+
     add_test(NAME ${testname}
-        COMMAND ${Python3_EXECUTABLE} ./${fullname})
+        COMMAND ${Python3_EXECUTABLE} ./${fullname} ${ARGN})
     set_property(TEST ${testname} PROPERTY ENVIRONMENT
         LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
         PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
@@ -695,4 +696,21 @@ foreach(testfile ${testfiles})
     set_property(TEST ${testname} PROPERTY WORKING_DIRECTORY
         ${CMAKE_CURRENT_LIST_DIR}/${dir}
         )
+endfunction()
+
+foreach(testfile ${testfiles})
+    pyre_python_test(${testfile})
 endforeach()
+# tests requiring extra args
+pyre_python_test(journal/debug-activation.py --journal.debug.activation)
+pyre_python_test(journal/debug-activation.py --config=activation.pfg)
+pyre_python_test(journal/firewall-activation.py --journal.firewall.activation=off)
+pyre_python_test(journal/firewall-activation.py --config=activation.pfg)
+pyre_python_test(journal/info-activation.py --journal.info.activation)
+pyre_python_test(journal/info-activation.py --config=activation.pfg)
+pyre_python_test(journal/warning-activation.py --journal.warning.activation=off)
+pyre_python_test(journal/warning-activation.py --config=activation.pfg)
+pyre_python_test(journal/error-activation.py --journal.error.activation=off)
+pyre_python_test(journal/error-activation.py --config=activation.pfg)
+pyre_python_test(journal/debug-injection.py --journal.device=import:journal.console)
+pyre_python_test(journal/debug-injection.py --journal.device=import:journal.file --journal.device.log=journal.log)
