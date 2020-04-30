@@ -97,7 +97,6 @@ pyre/codecs/pml_unknownNode.py
 pyre/codecs/sanity.py
 pyre/components/actor.py
 pyre/components/component.py
-pyre/components/component_aliases.py
 pyre/components/component_bad_implementations.py
 pyre/components/component_behavior.py
 pyre/components/component_class_binding.py
@@ -169,7 +168,6 @@ pyre/config/configurator_assignments.py
 pyre/config/configurator_load_cfg.py
 pyre/config/configurator_load_pfg.py
 pyre/config/configurator_load_pml.py
-pyre/config/configurator_locators.py
 pyre/config/events.py
 pyre/config/events_assignments.py
 pyre/config/exceptions.py
@@ -286,7 +284,6 @@ pyre/framework/executive_resolve.py
 pyre/framework/executive_resolve_badImport.py
 pyre/framework/executive_resolve_duplicate.py
 pyre/framework/executive_resolve_syntaxError.py
-pyre/framework/executive_shelves.py
 pyre/framework/externals.py
 pyre/framework/fileserver.py
 pyre/framework/fileserver_mount.py
@@ -701,6 +698,7 @@ endfunction()
 foreach(testfile ${testfiles})
     pyre_python_test(${testfile})
 endforeach()
+
 # tests requiring extra args
 pyre_python_test(journal/debug-activation.py --journal.debug.activation)
 pyre_python_test(journal/debug-activation.py --config=activation.pfg)
@@ -714,3 +712,6 @@ pyre_python_test(journal/error-activation.py --journal.error.activation=off)
 pyre_python_test(journal/error-activation.py --config=activation.pfg)
 pyre_python_test(journal/debug-injection.py --journal.device=import:journal.console)
 pyre_python_test(journal/debug-injection.py --journal.device=import:journal.file --journal.device.log=journal.log)
+pyre_python_test(pyre/components/component_aliases.py  --functor.μ=0.10 --gaussian.σ=0.10)
+
+# end of file
