@@ -23,11 +23,12 @@ def test():
     assert f.name == 'istreams.py'
 
     # a poorly formed one
+    bad = "&"
     try:
-        istream.coerce("&")
+        istream.coerce(bad)
         assert False
     except istream.CastingError as error:
-        assert str(error) == 'unrecognizable URI {!r}'.format('&')
+        assert str(error) == f"could not coerce '{bad}' into a URI"
 
     # anything else?
     return
