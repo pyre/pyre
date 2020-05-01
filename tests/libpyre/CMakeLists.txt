@@ -84,3 +84,6 @@ foreach(testfile ${testfiles})
     target_compile_definitions(${target} PRIVATE PYRE_CORE)
     add_test(NAME ${testname} COMMAND ${target})
 endforeach()
+
+set_tests_properties(libpyre.journal.debug-envvar PROPERTIES
+    ENVIRONMENT DEBUG_OPT=pyre.journal.test)
