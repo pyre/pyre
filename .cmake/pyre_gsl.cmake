@@ -62,6 +62,8 @@ function(pyre_gslModule)
       target_sources(gslmodule PRIVATE gsl/partition.cc)
       # the mpi include directories
       target_include_directories(gslmodule PRIVATE ${MPI_CXX_INCLUDE_PATH})
+      # add the MPI presence indicator
+      target_compile_definitions(gslmodule PRIVATE WITH_MPI)
       # and the mpi libraries
       target_link_libraries(gslmodule PRIVATE ${MPI_CXX_LIBRARIES})
     endif()
