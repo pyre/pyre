@@ -69,15 +69,7 @@ timers/timer.cc
 )
 
 if(MPI_FOUND)
-    list(APPEND testfiles
-        mpi/communicator.cc
-        mpi/group-exclude.cc
-        mpi/group-include.cc
-        mpi/group-setops.cc
-        mpi/group.cc
-        mpi/sanity.cc
-        mpi/world.cc
-        )
+    add_subdirectory(mpi)
 endif()
 
 foreach(testfile ${testfiles})

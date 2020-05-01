@@ -36,6 +36,16 @@ function(pyre_mpiLib)
   # if we have mpi
   if(MPI_FOUND)
     # copy the mpi headers
+
+    # the mpi target (INTERFACE since it is header-only)
+    add_library(mpi INTERFACE)
+    target_link_libraries(mpi INTERFACE pyre MPI::MPI_CXX)
+    target_include_directories(mpi INTERFACE
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/mpi>
+      $<INSTALL_INTERFACE:${PYRE_DEST_INCLUDE}>
+      )
+    add_library(pyre::mpi ALIAS mpi)
+
     file(
       COPY mpi
       DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
@@ -61,12 +71,9 @@ function(pyre_mpiModule)
     # adjust the name to match what python expects
     set_target_properties(mpimodule PROPERTIES LIBRARY_OUTPUT_NAME mpi)
     set_target_properties(mpimodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
-    # set the include directories
-    target_include_directories(mpimodule PRIVATE ${MPI_CXX_INCLUDE_PATH})
     # set the libraries to link against
     target_link_libraries(
-      mpimodule PRIVATE
-      ${MPI_CXX_LIBRARIES} pyre journal
+      mpimodule PRIVATE pyre::mpi journal
       )
     # add the sources
     target_sources(mpimodule PRIVATE
