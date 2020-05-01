@@ -81,5 +81,6 @@ foreach(testfile ${testfiles})
 
     add_executable(${target} ${testfile})
     target_link_libraries(${target} PUBLIC pyre)
+    target_compile_definitions(${target} PRIVATE PYRE_CORE)
     add_test(NAME ${testname} COMMAND ${target})
 endforeach()
