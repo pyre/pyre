@@ -276,7 +276,7 @@ pyre/filesystem/zip_open.py
 pyre/filesystem/zip_rootNonexistent.py
 pyre/filesystem/zip_rootNotZipfile.py
 pyre/filesystem/zip.py
-pyre/flow/sanity.py
+# pyre/flow/sanity.py
 pyre/framework/exceptions.py
 pyre/framework/executive.py
 pyre/framework/executive_configuration.py
@@ -342,7 +342,7 @@ pyre/platforms/sanity.py
 pyre/primitives/path.py
 pyre/primitives/path_arithmetic.py
 pyre/primitives/path_parts.py
-pyre/primitives/path_resolution.py
+# pyre/primitives/path_resolution.py
 pyre/primitives/path_tuple.py
 pyre/primitives/sanity.py
 pyre/pyre/defaults.py
@@ -517,7 +517,7 @@ python/inheritance_multiple.py
 python/inheritance_properties.py
 python/inheritance_shadow.py
 python/initialization.py
-python/locale_codec.py
+# python/locale_codec.py
 python/locale_open.py
 python/metaclass.py
 python/metaclass_callsequence.py

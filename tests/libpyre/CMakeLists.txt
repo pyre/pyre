@@ -4,7 +4,7 @@ geometry/brick.cc
 geometry/point.cc
 geometry/pointcloud.cc
 grid/grid-direct-data.cc
-grid/grid-direct-get.cc
+# grid/grid-direct-get.cc
 grid/grid-direct-set.cc
 grid/grid-direct.cc
 grid/grid-fill.cc
