@@ -275,8 +275,8 @@ pyre/filesystem/virtual_subscripts.py
 pyre/filesystem/zip_open.py
 pyre/filesystem/zip_rootNonexistent.py
 pyre/filesystem/zip_rootNotZipfile.py
-pyre/filesystem/zip.py
-# pyre/flow/sanity.py
+# pyre/filesystem/zip.py
+pyre/flow/sanity.py
 pyre/framework/exceptions.py
 pyre/framework/executive.py
 pyre/framework/executive_configuration.py
