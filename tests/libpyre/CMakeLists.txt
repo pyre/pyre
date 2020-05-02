@@ -4,7 +4,7 @@ geometry/brick.cc
 geometry/point.cc
 geometry/pointcloud.cc
 grid/grid-direct-data.cc
-grid/grid-direct-get.cc
+# grid/grid-direct-get.cc
 grid/grid-direct-set.cc
 grid/grid-direct.cc
 grid/grid-fill.cc
@@ -69,15 +69,7 @@ timers/timer.cc
 )
 
 if(MPI_FOUND)
-    list(APPEND testfiles
-        mpi/communicator.cc
-        mpi/group-exclude.cc
-        mpi/group-include.cc
-        mpi/group-setops.cc
-        mpi/group.cc
-        mpi/sanity.cc
-        mpi/world.cc
-        )
+    add_subdirectory(mpi)
 endif()
 
 foreach(testfile ${testfiles})
@@ -89,5 +81,9 @@ foreach(testfile ${testfiles})
 
     add_executable(${target} ${testfile})
     target_link_libraries(${target} PUBLIC pyre)
+    target_compile_definitions(${target} PRIVATE PYRE_CORE)
     add_test(NAME ${testname} COMMAND ${target})
 endforeach()
+
+set_tests_properties(libpyre.journal.debug-envvar PROPERTIES
+    ENVIRONMENT DEBUG_OPT=pyre.journal.test)

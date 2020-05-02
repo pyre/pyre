@@ -32,8 +32,10 @@ types:
 	${PYTHON} ./fractional.py
 	${PYTHON} ./inets.py
 	${PYTHON} ./integers.py
+	${PYTHON} ./istreams.py
 	${PYTHON} ./lists.py
 	${PYTHON} ./mappings.py
+	${PYTHON} ./ostreams.py
 	${PYTHON} ./paths.py
 	${PYTHON} ./sets.py
 	${PYTHON} ./strings.py
