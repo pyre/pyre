@@ -60,8 +60,12 @@ function(pyre_gslModule)
     if (${MPI_FOUND})
       # add the MPI aware sources to the pile
       target_sources(gslmodule PRIVATE gsl/partition.cc)
-      # the mpi library
-      target_link_libraries(gslmodule PRIVATE MPI::MPI_CXX)
+      # the mpi include directories
+      target_include_directories(gslmodule PRIVATE ${MPI_CXX_INCLUDE_PATH})
+      # add the MPI presence indicator
+      target_compile_definitions(gslmodule PRIVATE WITH_MPI)
+      # and the mpi libraries
+      target_link_libraries(gslmodule PRIVATE ${MPI_CXX_LIBRARIES})
     endif()
 
     # install the extension
