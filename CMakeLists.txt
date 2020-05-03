@@ -103,16 +103,20 @@ install(FILES ${PROJECT_BINARY_DIR}/pyre-config.cmake
 add_library(pyre::pyre    ALIAS pyre)
 add_library(pyre::journal ALIAS journal)
 
+
+# if we are building to test
 if(BUILD_TESTING)
   # get support
   include(CTest)
   # and my functions
   include(pyre_tests)
 
-  # initialize the variables that describe the test suite
+  # initialize the variables that describe the test suite; needed so harnesses can set up the
+  # working directory correctly
   pyre_testInit()
-  # make sure we visit the testsuite
+  # add the testsuite to the pile
   add_subdirectory(tests)
 endif()
+
 
 # end of file

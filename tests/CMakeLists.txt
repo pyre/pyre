@@ -6,6 +6,7 @@
 
 
 # the pyre tests
+include(pyre_tests_journal)
 include(pyre_tests_pyre)
 
 # end of file
