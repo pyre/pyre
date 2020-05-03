@@ -182,6 +182,20 @@ pyre_test_python_testcase(pyre/schemata/tuples.py)
 pyre_test_python_testcase(pyre/schemata/uris.py)
 pyre_test_python_testcase(pyre/schemata/typed.py)
 
+# the {ostreams} test requires setup+cleanup
+# setup: do nothing
+set(schemata_ostreams_setup
+  "echo nothing to do"
+  )
+# cleanup: remove the zipfile
+set(schemata_ostreams_cleanup
+  "rm output.cfg"
+  )
+pyre_test_testcase_shell_fixture(
+  "${schemata_ostreams_setup}" "${schemata_ostreams_cleanup}"
+  pyre/schemata/ostreams.py
+  )
+
 
 #
 # pyre/constraints
@@ -288,6 +302,20 @@ pyre_test_python_testcase(pyre/descriptors/defaults.py)
 pyre_test_python_testcase(pyre/descriptors/inheritance.py)
 pyre_test_python_testcase(pyre/descriptors/filtering.py)
 pyre_test_python_testcase(pyre/descriptors/converters.py)
+
+# the {ostreams} test requires setup+cleanup
+# setup: do nothing
+set(descriptors_ostreams_setup
+  "echo nothing to do"
+  )
+# cleanup: remove the zipfile
+set(descriptors_ostreams_cleanup
+  "rm output.cfg"
+  )
+pyre_test_testcase_shell_fixture(
+  "${descriptors_ostreams_setup}" "${descriptors_ostreams_cleanup}"
+  pyre/descriptors/ostreams.py
+  )
 
 
 #
