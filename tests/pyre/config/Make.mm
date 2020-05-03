@@ -12,9 +12,6 @@ PROJECT = pyre
 #--------------------------------------------------------------------------
 #
 
-work:
-	${PYTHON} ./configurator_load_pfg.py
-
 all: test
 
 test: sanity events configurator commandline
