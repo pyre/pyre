@@ -19,8 +19,6 @@ if (POLICY CMP0076)
   cmake_policy(SET CMP0076 NEW)
 endif(POLICY CMP0076)
 
-include(GNUInstallDirs)
-
 # options
 option(WITH_CUDA "enable support for CUDA" OFF)
 
@@ -40,6 +38,11 @@ pyre_getVersion()
 
 # set up the project
 project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
+# hmmmm
+include(GNUInstallDirs)
+
+# programs
+find_program(BASH_PROGRAM bash)
 
 # packages
 # gsl
@@ -101,8 +104,15 @@ add_library(pyre::pyre    ALIAS pyre)
 add_library(pyre::journal ALIAS journal)
 
 if(BUILD_TESTING)
-    include(CTest)
-    add_subdirectory(tests)
+  # get support
+  include(CTest)
+  # and my functions
+  include(pyre_tests)
+
+  # initialize the variables that describe the test suite
+  pyre_testInit()
+  # make sure we visit the testsuite
+  add_subdirectory(tests)
 endif()
 
 # end of file
