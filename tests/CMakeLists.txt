@@ -6,10 +6,13 @@
 
 
 # the pure python tests
-include(pyre_tests_python)
+#include(pyre_tests_python)
 # the pyre tests
-include(pyre_tests_pyre)
-include(pyre_tests_journal)
+#include(pyre_tests_pyre)
+#include(pyre_tests_journal)
+
+# sqlite
+include(pyre_tests_sqlite)
 
 
 # end of file
