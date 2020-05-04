@@ -12,12 +12,14 @@ dist: bionic
 
 language: python
 python:
-  - "3.8"
+  - 3.7
+  - 3.8
 
-addons:
-  apt:
-    packages:
-      - python3.8-dev
+#addons:
+  #apt:
+    #packages:
+      #- python3.7-dev
+      #- python3.8-dev
 
 install:
   - mkdir build && cd build
