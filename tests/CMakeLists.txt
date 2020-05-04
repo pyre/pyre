@@ -19,5 +19,10 @@ if(MPI_FOUND)
   include(pyre_tests_mpi)
 endif()
 
+# if we have GSL support
+if(GSL_FOUND)
+  include(pyre_tests_gsl)
+endif()
+
 
 # end of file
