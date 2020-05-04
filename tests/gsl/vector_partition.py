@@ -21,6 +21,8 @@ def test():
     import mpi
     import gsl
 
+    # initialize
+    mpi.init()
     # get the world communicator
     world = mpi.world
     # figure out its geometry

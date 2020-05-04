@@ -8,8 +8,8 @@
 
 PROJECT = gsl
 
-#--------------------------------------------------------------------------
-#
+MPI_ARGS = --hostfile localhost
+
 
 all: test
 
@@ -106,21 +106,23 @@ stats:
 	${PYTHON} ./stats_covariance.py
 
 # do I have mpi?
-MPI_DIR=
+# conditionally initialize to avoid the undefined variable warning
+MPI_DIR ?=
+
 mpi:
 ifneq ($(strip $(MPI_DIR)), )
 	${PYTHON} ./matrix_bcast.py
-	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./matrix_bcast.py
+	${MPI_EXECUTIVE} ${MPI_ARGS} -np 8 ${PYTHON} ./matrix_bcast.py
 	${PYTHON} ./matrix_collect.py
-	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./matrix_collect.py
+	${MPI_EXECUTIVE} ${MPI_ARGS} -np 8 ${PYTHON} ./matrix_collect.py
 	${PYTHON} ./matrix_partition.py
-	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./matrix_partition.py
+	${MPI_EXECUTIVE} ${MPI_ARGS} -np 8 ${PYTHON} ./matrix_partition.py
 	${PYTHON} ./vector_bcast.py
-	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./vector_bcast.py
+	${MPI_EXECUTIVE} ${MPI_ARGS} -np 8 ${PYTHON} ./vector_bcast.py
 	${PYTHON} ./vector_collect.py
-	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./vector_collect.py
+	${MPI_EXECUTIVE} ${MPI_ARGS} -np 8 ${PYTHON} ./vector_collect.py
 	${PYTHON} ./vector_partition.py
-	${MPI_EXECUTIVE} -np 8 ${PYTHON} ./vector_partition.py
+	${MPI_EXECUTIVE} ${MPI_ARGS} -np 8 ${PYTHON} ./vector_partition.py
 endif
 
 # end of file
