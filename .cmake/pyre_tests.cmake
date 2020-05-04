@@ -159,4 +159,23 @@ function(pyre_test_python_testcase_envvar env testfile)
 endfunction()
 
 
+# register a python script as a test case; use a path relative to {PYRE_TESTSUITE_DIR}
+function(pyre_test_pyre_driver driver case)
+  # create the name of the testcase
+  set(testname "${driver}.${case}")
+
+  # set up the harness
+  add_test(NAME ${testname}
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/bin/${driver} ${ARGN}
+    )
+  # register the runtime environment requirements
+  set_property(TEST ${testname} PROPERTY ENVIRONMENT
+    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
+    PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
+    )
+
+  # all done
+endfunction()
+
+
 # end of file
