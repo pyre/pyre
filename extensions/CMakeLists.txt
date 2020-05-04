@@ -11,7 +11,9 @@ pyre_journalModule()
 pyre_pyreModule()
 # mpi
 pyre_mpiModule()
-# and gsl
+# gsl
 pyre_gslModule()
+# postgres
+pyre_postgresModule()
 
 # end of file

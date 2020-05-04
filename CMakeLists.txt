@@ -30,8 +30,9 @@ include(pyre_journal)
 include(pyre_pyre)
 include(pyre_merlin)
 include(pyre_cuda)
-include(pyre_gsl)
 include(pyre_mpi)
+include(pyre_gsl)
+include(pyre_postgres)
 
 # ask git for the pyre version
 pyre_getVersion()
