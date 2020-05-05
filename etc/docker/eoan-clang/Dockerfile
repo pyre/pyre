@@ -54,7 +54,9 @@ WORKDIR /root/.pyre
 COPY etc/docker/eoan-clang/mm.pfg mm.pfg.in
 # expand; the '/' after ${prefix} is necessary for complying with the mm convention of
 # terminating slashes on all directories
-RUN sed -e "s:@PREFIX@:${prefix}:g" mm.pfg.in > mm.pfg
+RUN sed \
+        -e "s:@PREFIX@:${prefix}:g" \
+        mm.pfg.in > mm.pfg
 
 # place the {mm} control file
 WORKDIR /root/.mm
@@ -77,19 +79,17 @@ COPY . pyre
 # go to the {pyre} top level directory
 WORKDIR ${srcdir}/pyre
 # build
-# RUN ${mm}
+RUN ${mm}
 # show me the build context
 RUN ${mm} --serial host.info builder.info compilers.info
 
-# prep the install location for python packages
-# - the python packages: by making the canonical directory a symbolic link to our install area
-# RUN \
-        # ln -s ${prefix}/packages/pyre ${prefix}/lib/${python}/dist-packages; \
-        # ln -s ${prefix}/packages/journal ${prefix}/lib/${python}/dist-packages; \
-        # ln -s ${prefix}/packages/merlin ${prefix}/lib/${python}/dist-packages; \
-        # ln -s ${prefix}/packages/sqlite ${prefix}/lib/${python}/dist-packages; \
-        # ln -s ${prefix}/packages/mpi ${prefix}/lib/${python}/dist-packages; \
-        # ln -s ${prefix}/packages/gsl ${prefix}/lib/${python}/dist-packages
+# install the python packages
+RUN \
+        ln -s ${prefix}/packages/pyre ${prefix}/lib/${python}/dist-packages; \
+        ln -s ${prefix}/packages/journal ${prefix}/lib/${python}/dist-packages; \
+        ln -s ${prefix}/packages/mpi ${prefix}/lib/${python}/dist-packages; \
+        ln -s ${prefix}/packages/gsl ${prefix}/lib/${python}/dist-packages
+
 # and test
 # RUN ${mm} tests
 
