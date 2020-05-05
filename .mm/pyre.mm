@@ -12,13 +12,13 @@ pyre.micro := $(repo.micro)
 pyre.revision := $(repo.revision)
 
 # pyre builds a python package
-pyre.packages := pyre.pkg journal.pkg mpi.pkg
+pyre.packages := pyre.pkg journal.pkg
 # libraries
-pyre.libraries := journal.lib pyre.lib mpi.lib
+pyre.libraries := journal.lib pyre.lib
 # python extensions
-pyre.extensions := journal.ext host.ext timers.ext mpi.ext
+pyre.extensions := journal.ext host.ext timers.ext
 # and test suites
-pyre.tests := mpi.tst.libmpi # pyre.tst.pyre pyre.tst.libpyre
+pyre.tests :=
 
 # if we have {cuda}, add it to the pile
 ${if ${findstring cuda,$(extern.available)},\
@@ -27,16 +27,24 @@ ${if ${findstring cuda,$(extern.available)},\
     ${eval cuda.libraries += cudart} \
 ,}
 
+# if we have {mpi}, add it to the pile
+${if ${findstring mpi,$(extern.available)},\
+    ${eval pyre.packages += mpi.pkg} \
+    ${eval pyre.libraries += mpi.lib} \
+    ${eval pyre.extensions += mpi.ext} \
+    ${eval pyre.tests += mpi.tst.libmpi} \
+}
+
 # if we have {gsl}, add it to the pile
 ${if ${findstring gsl,$(extern.available)},\
     ${eval pyre.packages += gsl.pkg} \
     ${eval pyre.extensions += gsl.ext} \
-,}
+}
 
 # if we have {libpq}, add it to the pile
 ${if ${findstring libpq,$(extern.available)}, \
     ${eval pyre.extensions += postgres.ext} \
-,}
+}
 
 # the pyre meta-data
 pyre.pkg.root := packages/pyre/
@@ -121,26 +129,6 @@ cuda.ext.extern := pyre.lib journal.lib cuda mpi python
 cuda.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 cuda.ext.lib.prerequisites += journal.lib pyre.lib # gsl.lib is added automatically
 
-# gsl
-# the package
-gsl.pkg.root := packages/gsl/
-gsl.pkg.stem := gsl
-gsl.pkg.meta :=
-gsl.pkg.ext :=
-# the extension
-gsl.ext.root := extensions/gsl/
-gsl.ext.stem := gsl
-gsl.ext.pkg := gsl.pkg
-gsl.ext.wraps :=
-gsl.ext.capsule.destination := pyre/gsl/
-gsl.ext.extern := pyre.lib journal.lib mpi.lib gsl mpi python numpy
-gsl.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
-gsl.ext.lib.prerequisites += journal.lib pyre.lib mpi.ext # gsl.lib is added automatically
-# the tests
-gsl.tst.pkg.stem := gsl
-gsl.tst.pkg.prerequisites := gsl.ext
-gsl.tst.pkg.root := tests/gsl/
-
 # mpi
 # the package
 mpi.pkg.root := packages/mpi/
@@ -167,6 +155,26 @@ mpi.tst.libmpi.stem := mpi
 mpi.tst.libmpi.extern := pyre.lib journal.lib mpi
 mpi.tst.libmpi.prerequisites := mpi.lib
 mpi.tst.libmpi.root := tests/libpyre/mpi/
+
+# gsl
+# the package
+gsl.pkg.root := packages/gsl/
+gsl.pkg.stem := gsl
+gsl.pkg.meta :=
+gsl.pkg.ext :=
+# the extension
+gsl.ext.root := extensions/gsl/
+gsl.ext.stem := gsl
+gsl.ext.pkg := gsl.pkg
+gsl.ext.wraps :=
+gsl.ext.capsule.destination := pyre/gsl/
+gsl.ext.extern := pyre.lib journal.lib mpi.lib gsl mpi python numpy
+gsl.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+gsl.ext.lib.prerequisites += journal.lib pyre.lib mpi.ext # gsl.lib is added automatically
+# the tests
+gsl.tst.pkg.stem := gsl
+gsl.tst.pkg.prerequisites := gsl.ext
+gsl.tst.pkg.root := tests/gsl/
 
 # the libpyre test suite
 pyre.tst.libpyre.stem := libpyre
