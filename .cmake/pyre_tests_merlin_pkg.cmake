@@ -9,16 +9,16 @@
 # merlin
 #
 # components
-pyre_test_python_testcase(merlin/components/sanity.py)
-pyre_test_python_testcase(merlin/components/merlin_shell.py)
-pyre_test_python_testcase(merlin/components/merlin_spell.py)
-pyre_test_python_testcase(merlin/components/merlin_curator.py)
-pyre_test_python_testcase(merlin/components/merlin_packages.py)
+pyre_test_python_testcase(merlin.pkg/components/sanity.py)
+pyre_test_python_testcase(merlin.pkg/components/merlin_shell.py)
+pyre_test_python_testcase(merlin.pkg/components/merlin_spell.py)
+pyre_test_python_testcase(merlin.pkg/components/merlin_curator.py)
+pyre_test_python_testcase(merlin.pkg/components/merlin_packages.py)
 
 # cleanup
 add_test(NAME merlin.components.clean
   COMMAND ${BASH_PROGRAM} -c "rm .merlin/project.pickle"
-  WORKING_DIRECTORY "${PYRE_TESTSUITE_DIR}/merlin/components"
+  WORKING_DIRECTORY "${PYRE_TESTSUITE_DIR}/merlin.pkg/components"
   )
 
 # fixture
@@ -27,7 +27,7 @@ set_property(TEST merlin.components.clean PROPERTY
   )
 
 # set up the dependencies
-set_property(TEST merlin.components.merlin_curator.py PROPERTY
+set_property(TEST merlin.pkg.components.merlin_curator.py PROPERTY
   FIXTURES_REQUIRED MERLIN_COMPONENTS
   )
 

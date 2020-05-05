@@ -8,26 +8,26 @@
 # the pure python tests
 include(pyre_tests_python)
 # the pyre tests
-include(pyre_tests_pyre)
-include(pyre_tests_journal)
-include(pyre_tests_merlin)
+include(pyre_tests_pyre_pkg)
+include(pyre_tests_journal_pkg)
+include(pyre_tests_merlin_pkg)
 
 # sqlite
-include(pyre_tests_sqlite)
+include(pyre_tests_sqlite_pkg)
 
 # if we have MPI support
 if(MPI_FOUND)
-  include(pyre_tests_mpi)
+  include(pyre_tests_mpi_pkg)
 endif()
 
 # if we have GSL support
 if(GSL_FOUND)
-  include(pyre_tests_gsl)
+  include(pyre_tests_gsl_pkg)
 endif()
 
 # if we have postgres support
 if(PostgreSQL_FOUND)
-  include(pyre_tests_postgres)
+  include(pyre_tests_postgres_ext)
 endif()
 
 
