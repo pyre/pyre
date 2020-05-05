@@ -58,9 +58,6 @@ def version():
     return meta.version
 
 
-# pull the meta-data
-from . import meta
-
 # bootstrapping
 def boot():
     # check whether
@@ -76,15 +73,6 @@ def boot():
         # just ignore it and carry on
         pass
 
-    # package registration
-    import pyre
-    # register the package
-    global package
-    package = pyre.executive.registerPackage(name='merlin', file=__file__)
-    # attach the geography
-    global home, prefix, defaults
-    home, prefix, defaults = package.layout()
-
     # externals
     import weakref
     # access the plexus factory
@@ -99,11 +87,6 @@ def boot():
 
     # all done
     return plexus
-
-
-# the framework entities
-from pyre import foundry, export, properties, protocol
-from .components import component, action, spell
 
 
 # convenience
@@ -141,16 +124,20 @@ def info(message):
     return info.log(message)
 
 
-# the package
-package = None
-# geography
-# the directory of the package
-home = None
-# the pathname of the installation
-prefix = None
-# the directory with the system defaults
-defaults = None
-# the singleton
+# package registration
+import pyre
+# register the package
+package = pyre.executive.registerPackage(name='merlin', file=__file__)
+# attach the geography
+home, prefix, defaults = package.layout()
+
+# pull the meta-data
+from . import meta
+# the framework entities
+from pyre import foundry, export, properties, protocol
+from .components import component, action, spell
+
+# boot the singleton
 merlin = boot()
 
 # end of file
