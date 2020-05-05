@@ -7,9 +7,16 @@
 # external dependencies
 # system tools
 sys.prefix := /usr
+sys.lib := ${sys.prefix}/lib
+sys.libx86 := ${sys.lib}/x86_64-linux-gnu
+
 # gsl
 gsl.version := 2.5
 gsl.dir := $(sys.prefix)
+# mpi
+mpi.version := 4.0.3
+mpi.flavor := openmpi
+mpi.dir := ${sys.libx86}/openmpi
 # numpy
 numpy.version := 1.17.4
 numpy.dir := $(sys.prefix)/lib/python3/dist-packages/numpy/core
