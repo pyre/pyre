@@ -10,32 +10,32 @@ PROJECT = pyre
 
 RECURSE_DIRS = \
     python \
-    libpyre \
-    pyre \
-    journal \
-    merlin \
-    sqlite \
-    opal \
+    journal.lib \
+    pyre.lib \
+    pyre.pkg \
+    journal.pkg \
+    merlin.pkg \
+    sqlite.pkg \
 
 # the optional packages
 # cuda
 ifneq ($(strip $(CUDA_DIR)),)
-  RECURSE_DIRS += cuda
+  RECURSE_DIRS += cuda.pkg
 endif
 
 # mpi
 ifneq ($(strip $(MPI_DIR)),)
-  RECURSE_DIRS += mpi
+  RECURSE_DIRS += mpi.lib mpi.pkg
 endif
 
 # gsl
 ifneq ($(strip $(GSL_DIR)),)
-  RECURSE_DIRS += gsl
+  RECURSE_DIRS += gsl.pkg
 endif
 
 # postgres
 ifneq ($(strip $(LIBPQ_DIR)),)
-  RECURSE_DIRS += postgres
+  RECURSE_DIRS += postgres.ext
 endif
 
 # standard targets

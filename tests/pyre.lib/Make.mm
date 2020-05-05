@@ -13,13 +13,7 @@ RECURSE_DIRS = \
     geometry \
     grid \
     memory \
-    journal \
     timers \
-
-# mpi
-ifneq ($(strip $(MPI_DIR)),)
-  RECURSE_DIRS += mpi
-endif
 
 # standard targets
 all:
