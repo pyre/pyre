@@ -1,0 +1,68 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2020 all rights reserved
+
+
+# the journal package testsuite
+journal.pkg.tests.stem := journal.pkg
+journal.pkg.tests.prerequisites := journal.pkg pyre.pkg
+
+
+# exclusions
+# this is not really a test driver; it's meant to help design color palettes
+journal.pkg.tests.drivers.exclude := colors.py
+
+
+# the {debug-activation} test has some special cases
+tests.journal.debug-activation.cases := debug-activation.cmdline debug-activation.cfgfile
+# configure on the command line
+debug-activation.cmdline.argv := --journal.debug.activation=on
+# configure with a file
+debug-activation.cfgfile.argv := --config=activation.pfg
+
+
+# the {firewall-activation} test has some special cases
+tests.journal.firewall-activation.cases := firewall-activation.cmdline firewall-activation.cfgfile
+# configure on the command line
+firewall-activation.cmdline.argv := --journal.firewall.activation=off
+# configure with a file
+firewall-activation.cfgfile.argv := --config=activation.pfg
+
+
+# the {info-activation} test has some special cases
+tests.journal.info-activation.cases := info-activation.cmdline info-activation.cfgfile
+# configure on the command line
+info-activation.cmdline.argv := --journal.info.activation=on
+# configure with a file
+info-activation.cfgfile.argv := --config=activation.pfg
+
+
+# the {warning-activation} test has some special cases
+tests.journal.warning-activation.cases := warning-activation.cmdline warning-activation.cfgfile
+# configure on the command line
+warning-activation.cmdline.argv := --journal.warning.activation=off
+# configure with a file
+warning-activation.cfgfile.argv := --config=activation.pfg
+
+
+# the {error-activation} test has some special cases
+tests.journal.error-activation.cases := error-activation.cmdline error-activation.cfgfile
+# configure on the command line
+error-activation.cmdline.argv := --journal.error.activation=off
+# configure with a file
+error-activation.cfgfile.argv := --config=activation.pfg
+
+
+# the {debug-injection} test has some special cases
+tests.journal.debug-injection.cases := \
+    debug-injection.default debug-injection.console debug-injection.file
+# the default case passes no command line arguments
+debug-injection.default.argv :=
+# the console case sends the output to the console by requesting explictly
+debug-injection.console.argv := --journal.device=import:journal.console
+# the console case sends the output to a file
+debug-injection.file.argv := --journal.device=import:journal.file --journal.device.log="journal.log"
+
+
+# end of file
