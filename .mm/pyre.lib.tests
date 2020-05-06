@@ -11,12 +11,26 @@ pyre.lib.tests.extern := pyre.lib journal.lib
 
 
 # cleanup
-tests.pyre.lib.memory.clean := grid.dat
+tests.pyre.lib.memory.direct-create.clean := direct-grid.dat
+tests.pyre.lib.memory.constdirect-create.clean := constdirect-grid.dat
+
+
+# some of the grid testcases must be executed in a specific order
+tests.pyre.lib.memory.direct-map.pre := tests.pyre.lib.memory.direct-create
+tests.pyre.lib.memory.direct-instantiate.pre := tests.pyre.lib.memory.direct-create
+tests.pyre.lib.memory.direct-instantiate-partial.pre := tests.pyre.lib.memory.direct-create
+
+tests.pyre.lib.memory.constdirect-map.pre := tests.pyre.lib.memory.constdirect-create
+tests.pyre.lib.memory.constdirect-instantiate.pre := tests.pyre.lib.memory.constdirect-create
+tests.pyre.lib.memory.constdirect-instantiate-partial.pre := \
+    tests.pyre.lib.memory.constdirect-create
+
 
 # exclusions
 # the following drivers are known to fail; they exercise illegal access patterns
 pyre.lib.tests.drivers.exclude += \
     memory/constdirect-clone.cc \
     memory/direct-clone.cc \
+
 
 # end of file
