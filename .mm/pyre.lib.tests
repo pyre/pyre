@@ -11,11 +11,17 @@ pyre.lib.tests.extern := pyre.lib journal.lib
 
 
 # cleanup
+tests.pyre.lib.grid.grid-direct.clean := grid.dat
 tests.pyre.lib.memory.direct-create.clean := direct-grid.dat
 tests.pyre.lib.memory.constdirect-create.clean := constdirect-grid.dat
 
 
 # some of the grid testcases must be executed in a specific order
+tests.pyre.lib.grid.grid-direct-data.pre := tests.pyre.lib.grid.grid-direct
+tests.pyre.lib.grid.grid-direct-set.pre := tests.pyre.lib.grid.grid-direct-data
+tests.pyre.lib.grid.grid-direct-get.pre := tests.pyre.lib.grid.grid-direct-set
+
+# some of the memory testcases must be executed in a specific order
 tests.pyre.lib.memory.direct-map.pre := tests.pyre.lib.memory.direct-create
 tests.pyre.lib.memory.direct-instantiate.pre := tests.pyre.lib.memory.direct-create
 tests.pyre.lib.memory.direct-instantiate-partial.pre := tests.pyre.lib.memory.direct-create
