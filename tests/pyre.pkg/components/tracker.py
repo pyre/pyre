@@ -55,7 +55,7 @@ def test():
     rev = records[0]
     # check
     assert rev.value == 1
-    assert rev.locator.source == './tracker.py'
+    assert rev.locator.source.endswith('tracker.py')
     assert rev.locator.line == 36
     assert rev.locator.function == 'test'
     assert rev.priority.category == rev.priority.defaults.category
@@ -64,7 +64,7 @@ def test():
     rev = records[1]
     # check
     assert rev.value == 4
-    assert rev.locator.source == './tracker.py'
+    assert rev.locator.source.endswith('tracker.py')
     assert rev.locator.line == 42
     assert rev.locator.function == 'test'
     assert rev.priority.category == rev.priority.explicit.category
@@ -74,7 +74,7 @@ def test():
     rev = records[2]
     # check
     assert rev.value == 16
-    assert rev.locator.source == './tracker.py'
+    assert rev.locator.source.endswith('tracker.py')
     assert rev.locator.line == 44
     assert rev.locator.function == 'test'
     assert rev.priority.category == rev.priority.explicit.category

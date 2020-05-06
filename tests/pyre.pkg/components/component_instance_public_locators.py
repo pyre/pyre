@@ -27,7 +27,7 @@ def test():
     # ask for the instance locator
     loc = c.pyre_where()
     # check that it is correct
-    assert loc.source == './component_instance_public_locators.py'
+    assert loc.source.endswith('component_instance_public_locators.py')
     assert loc.line == 26
     assert loc.function == 'test'
 
@@ -36,7 +36,7 @@ def test():
     # ask for its locator
     loc = c.pyre_where('p')
     # check it is correct
-    assert loc.source == './component_instance_public_locators.py'
+    assert loc.source.endswith('component_instance_public_locators.py')
     assert loc.line == 26
     assert loc.function == 'test'
 
@@ -47,7 +47,7 @@ def test():
     # ask for its locator
     loc = c.pyre_where('p')
     # check it is correct
-    assert loc.source == './component_instance_public_locators.py'
+    assert loc.source.endswith('component_instance_public_locators.py')
     assert loc.line == 44
     assert loc.function == 'test'
 

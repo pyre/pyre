@@ -25,7 +25,7 @@ def test():
     # ask for the class locator
     loc = private.pyre_classWhere()
     # check that it is correct
-    assert loc.source == './component_class_private_locators.py'
+    assert loc.source.endswith('component_class_private_locators.py')
     assert loc.line == 18
     assert loc.function == '<module>'
 
