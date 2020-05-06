@@ -15,24 +15,24 @@ PROJ_CLEAN += $(TESTS) $(SPECIAL_TESTS)
 
 TESTS = \
     sanity \
-    chronicler \
+    chronicler-sanity \
     inventory \
-    diagnostic \
+    diagnostic-sanity \
     diagnostic-injection \
-    channel \
-    index \
+    channel-inventory \
+    index-lookup \
     index-inventory \
-    debug \
+    debug-inventory \
     debug-injection \
     debug-null \
-    firewall \
+    firewall-inventory \
     firewall-injection \
     firewall-null \
-    info \
+    info-inventory \
     info-injection \
-    warning \
+    warning-inventory \
     warning-injection \
-    error \
+    error-inventory \
     error-injection \
     debuginfo \
     firewalls \
