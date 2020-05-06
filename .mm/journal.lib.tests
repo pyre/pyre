@@ -11,7 +11,7 @@ journal.lib.tests.extern := journal.lib
 
 
 # the {debug-envvar} test case needs a harness
-tests.libpyre.journal.debug-envvar.harness := DEBUG_OPT=pyre.journal.test
+tests.journal.lib.debug-envvar.harness := DEBUG_OPT=pyre.journal.test
 
 
 # end of file
