@@ -7,8 +7,8 @@
 
 // access the low level interface to create a file that can fit a grid of a specified size
 //
-// N.B.: this test leaves behind a file named "grid.dat" that is used by the other tests; it
-// must be cleaned up after the tests are run
+// N.B.: this test leaves behind a file named "direct-grid.dat" that is used by the other
+// tests; it must be cleaned up after the tests are run
 
 // portability
 #include <portinfo>
@@ -24,7 +24,7 @@ int main() {
     // desired size
     size_t page = ::getpagesize();
     // the name of the file
-    pyre::memory::uri_t name {"grid.dat"};
+    pyre::memory::uri_t name {"direct-grid.dat"};
 
     // turn on the info channel
     pyre::journal::debug_t("pyre.geometry.direct").activate();

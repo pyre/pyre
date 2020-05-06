@@ -5,8 +5,8 @@
 // (c) 1998-2020 all rights reserved
 //
 
-// given a file named "grid.dat" in the current directory, use the high level interface to map
-// it into memory
+// given a file named "direct-grid.dat" in the current directory, use the high level interface
+// to map it into memory
 
 // portability
 #include <portinfo>
@@ -22,7 +22,7 @@ int main() {
     // desired size
     size_t page = ::getpagesize();
     // the name of the file
-    pyre::memory::uri_t name {"grid.dat"};
+    pyre::memory::uri_t name {"direct-grid.dat"};
 
     // the data file is two pages long so it fits
     size_t size = 2*page/sizeof(cell_t);
