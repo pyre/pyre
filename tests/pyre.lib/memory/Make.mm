@@ -38,7 +38,7 @@ test: $(TESTS)
             } done
 
 # build
-PROJ_CLEAN += $(TESTS) grid.dat
+PROJ_CLEAN += $(TESTS) direct-grid.dat constdirect-grid.dat
 PROJ_LIBRARIES = -lpyre -ljournal
 LIBRARIES = $(PROJ_LIBRARIES) $(EXTERNAL_LIBS)
 
