@@ -10,14 +10,40 @@ pyre.pkg.tests.prerequisites := journal.pkg pyre.pkg
 
 
 # clean up
-tests.pyre.filesystem.local_make.clean := local-make
-tests.pyre.filesystem.zip.clean := sample.zip
-tests.pyre.primitives.path_resolution.clean := scratch
+tests.pyre.pkg.descriptors.ostreams.clean := output.cfg
+tests.pyre.pkg.filesystem.local_make.clean := local-make
+tests.pyre.pkg.filesystem.zip.clean := sample.zip
+tests.pyre.pkg.schemata.ostreams.clean := output.cfg
+tests.pyre.pkg.primitives.path_resolution.clean := scratch
 
 
 # special cases
 # the following require launch support
-tests.pyre.components.component_aliases.argv := --functor.μ=0.10 --gaussian.σ=0.10
+tests.pyre.pkg.components.component_aliases.argv := --functor.μ=0.10 --gaussian.σ=0.10
+
+
+# the following require prep support
+# filesystem/zip.py
+tests.pyre.pkg.filesystem.zip.pre := tests.pyre.pkg.filesystem.zip-sample
+
+tests.pyre.pkg.filesystem.zip-sample:
+	cd $(pyre.pkg.tests.prefix)/filesystem; \
+        zip -q sample.zip *
+
+# primitives/path_resolution.py
+tests.pyre.pkg.primitives.path_resolution.pre := tests.pyre.pkg.primitives.make-scratch
+
+tests.pyre.pkg.primitives.make-scratch:
+	$(cd) $(pyre.pkg.tests.prefix)/primitives; \
+	$(mkdir) scratch; \
+	$(cd) scratch; \
+          $(ln.soft) . here; \
+          $(ln.soft) .. up; \
+          $(ln.soft) cycle cycle; \
+          $(ln.soft) $$(pwd)/loop loop; \
+          $(ln.soft) $$(pwd)/cycle ramp; \
+          $(ln.soft) tic toc; \
+          $(ln.soft) toc tic; \
 
 
 # exclusions
@@ -31,11 +57,6 @@ pyre.pkg.tests.drivers.exclude += \
     config/configurator_locators.py \
     framework/executive_shelves.py \
     framework/linker_codecs.py \
-
-# the following tests need support for prep
-pyre.pkg.tests.drivers.exclude += \
-    filesystem/zip.py \
-    primitives/path_resolution.py \
 
 
 # end of file
