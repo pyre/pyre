@@ -77,7 +77,7 @@ postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
 # get the testsuites
-include ${pyre.tests}
+include $(pyre.tests)
 
 
 # end of file
