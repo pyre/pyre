@@ -31,7 +31,7 @@ endfunction()
 function(pyre_test_target target testfile)
   # split
   get_filename_component(path ${testfile} DIRECTORY)
-  get_filename_component(base ${testfile} NAME_WLE)
+  get_filename_component(base ${testfile} NAME_WE)
 
   # replace path separators with dors
   string(REPLACE "/" "." stem ${path})
