@@ -26,11 +26,15 @@
 #include "rng.h" // random numbers
 #include "vector.h" // vectors
 #include "stats.h" // stats
-#include "numpy.h" // numpy hook
 
 // mpi support
 #if defined(WITH_MPI)
 #include "partition.h"
+#endif
+
+// numpy support
+#if defined(WITH_NUMPY)
+#include "numpy.h" // numpy hook
 #endif
 
 // put everything in my private namespace
@@ -238,9 +242,11 @@ namespace gsl {
         { vector::variance__name__, vector::variance, METH_VARARGS, vector::variance__doc__ },
         { vector::sdev__name__, vector::sdev, METH_VARARGS, vector::sdev__doc__ },
 
+#if defined(WITH_NUMPY)
         // numpy
         { vector::ndarray__name__, vector::ndarray, METH_VARARGS, vector::ndarray__doc__ },
         { matrix::ndarray__name__, matrix::ndarray, METH_VARARGS, matrix::ndarray__doc__ },
+#endif
 
         // more statistics
         { stats::correlation__name__, stats::correlation, METH_VARARGS, stats::correlation__doc__},
