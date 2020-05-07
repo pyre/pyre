@@ -27,6 +27,22 @@ function(pyre_test_testcase testcase testfile)
 endfunction()
 
 
+# create a unique test target name
+function(pyre_test_target target testfile)
+  # split
+  get_filename_component(path ${testfile} DIRECTORY)
+  get_filename_component(base ${testfile} NAME_WLE)
+
+  # replace path separators with dors
+  string(REPLACE "/" "." stem ${path})
+
+  # buld the target and return it
+  set(${target} "tests.${stem}.${base}" PARENT_SCOPE)
+
+  # all done
+endfunction()
+
+
 # attach {setup} and {cleanup} fixtures to a test case
 # N.B.: the signature may look backwards, but the {testfile} command line arguments are in
 # ${ARGN} so it seemed simpler this way
@@ -144,9 +160,11 @@ function(pyre_test_python_testcase_envvar env testfile)
 
   # set up the harness
   add_test(NAME ${testname}
-    COMMAND ${BASH_PROGRAM} -c "${env} ${Python3_EXECUTABLE} ./${base} ${ARGN}")
+    COMMAND ${BASH_PROGRAM} -c "${Python3_EXECUTABLE} ./${base} ${ARGN}"
+    )
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
+    ${env}
     LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
     PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
     )
@@ -172,6 +190,74 @@ function(pyre_test_pyre_driver driver case)
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
     LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
     PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
+    )
+
+  # all done
+endfunction()
+
+
+# register a test case based on a compiled driver
+function(pyre_test_driver testfile)
+  # create the name of the testcase
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+  # create the name of the target
+  pyre_test_target(target ${testfile})
+
+  # schedule it to be compiled
+  add_executable(${target} ${testfile})
+  # with some macros
+  target_compile_definitions(${target} PRIVATE PYRE_CORE)
+  # link against my libraries
+  target_link_libraries(${target} PUBLIC pyre journal)
+
+  # make it a test case
+  add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+  # make sure we run it from its home
+  set_property(TEST ${testname} PROPERTY
+    WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/${dir}
+    )
+  # register the runtime environment requirements
+  set_property(TEST ${testname} PROPERTY ENVIRONMENT
+    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
+    )
+
+  # all done
+endfunction()
+
+
+# register a test case based on an existing compiled driver
+function(pyre_test_driver_case testfile)
+  # create the name of the testcase
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+  # create the name of the target
+  pyre_test_target(target ${testfile})
+
+  # make it a test case
+  add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+  # make sure we run it from its home
+  set_property(TEST ${testname} PROPERTY
+    WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/${dir}
+    )
+  # register the runtime environment requirements
+  set_property(TEST ${testname} PROPERTY ENVIRONMENT
+    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
+    )
+
+  # all done
+endfunction()
+
+
+function(pyre_test_driver_env testfile env)
+  # make the target and the test case
+  pyre_test_driver(${testfile} ${ARGN})
+
+  # generate the name of the testcase
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+
+  # adjust the environment
+  set_property(TEST ${testname}
+    APPEND PROPERTY ENVIRONMENT
+    ${env}
     )
 
   # all done

@@ -9,6 +9,7 @@
 # generate the portinfo file
 function(pyre_portinfo)
   # inject the platform information and move it to the staging area
+  # this is the C++ version
   configure_file(
     portinfo.in portinfo
     @ONLY
@@ -18,6 +19,18 @@ function(pyre_portinfo)
     FILES ${CMAKE_CURRENT_BINARY_DIR}/portinfo
     DESTINATION ${PYRE_DEST_INCLUDE}
     )
+
+  # repeat with the C version
+  configure_file(
+    portinfo.in portinfo.h
+    @ONLY
+    )
+  # install the portinfo file
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/portinfo.h
+    DESTINATION ${PYRE_DEST_INCLUDE}
+    )
+
   # all done
 endfunction(pyre_portinfo)
 
