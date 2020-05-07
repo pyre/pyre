@@ -1,0 +1,53 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2020 all rights reserved
+
+
+# the pyre-gsl package testsuite
+pyre-gsl.pkg.tests.stem := gsl.pkg
+pyre-gsl.pkg.tests.prerequisites := pyre-gsl.pkg pyre.pkg
+
+
+# the following are demos; exclude them
+pyre-gsl.pkg.tests.drivers.exclude := \
+    matrix_print.py \
+    vector_print.py \
+
+# if we have mpi
+ifeq ($(pyre-gsl.mpi.available), mpi)
+
+# set up a macro for the hostfile
+pyre-gsl.pkg.mpi.hostfile := --hostfile localhost
+# assemble the haness
+pyre-gsl.pkg.mpi.harness := $(mpi.executive) $(pyre-gsl.pkg.mpi.hostfile)
+
+# run the following tests both in serial and in parallel
+# matrix bcast
+tests.gsl.pkg.matrix_bcast.cases := matrix_bcast.serial matrix_bcast.parallel
+matrix_bcast.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+
+# matrix collect
+tests.gsl.pkg.matrix_collect.cases := matrix_collect.serial matrix_collect.parallel
+matrix_collect.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+
+# matrix partition
+tests.gsl.pkg.matrix_partition.cases := matrix_partition.serial matrix_partition.parallel
+matrix_partition.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+
+# vector bcast
+tests.gsl.pkg.vector_bcast.cases := vector_bcast.serial vector_bcast.parallel
+vector_bcast.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+
+# vector collect
+tests.gsl.pkg.vector_collect.cases := vector_collect.serial vector_collect.parallel
+vector_collect.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+
+# vector partition
+tests.gsl.pkg.vector_partition.cases := vector_partition.serial vector_partition.parallel
+vector_partition.parallel.harness := $(pyre-gsl.pkg.mpi.harness) -np 8
+
+
+endif
+
+# end of file
