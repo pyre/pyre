@@ -18,7 +18,7 @@ pyre.libraries := pyre.lib
 # the mandatory extensions
 pyre.extensions := host.ext timers.ext
 # and test suites
-pyre.tests := pyre.pkg.tests pyre.lib.tests sqlite.pkg.tests
+pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests sqlite.pkg.tests
 
 
 # if we have {libpq}, build the {postgres} extension and test it
