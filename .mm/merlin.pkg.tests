@@ -1,0 +1,65 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2020 all rights reserved
+
+
+# the journal package testsuite
+merlin.pkg.tests.stem := merlin.pkg
+merlin.pkg.tests.prerequisites := merlin.pkg pyre.pkg
+
+
+# clean up
+tests.merlin.components.clean = $(merlin.pkg.tests.prefix)spells/.merlin/project.pickle
+
+
+# in {spells}, there are testcases without drivers
+tests.merlin.pkg.spells :: \
+    tests.merlin.pkg.spells.shallow \
+    tests.merlin.pkg.spells.multi \
+    tests.merlin.pkg.spells.deep
+
+tests.merlin.pkg.spells.clean ::
+	$(rm.force-recurse) $(merlin.shallow.dir) $(merlin.multi.dir) $(merlin.deep.dir)
+
+# the home of the repositories we will create
+merlin.tests.tmpdir := /tmp
+
+# the shallow test
+merlin.shallow.dir = $(merlin.tests.tmpdir)/merlin.shallow
+
+tests.merlin.pkg.spells.shallow:
+	cd $(merlin.pkg.tests.prefix)spells; \
+        merlin init $(merlin.shallow.dir)
+
+
+# the multi test
+merlin.multi.dir = $(merlin.tests.tmpdir)/merlin.one $(merlin.tests.tmpdir)/merlin.two
+
+tests.merlin.pkg.spells.multi:
+	cd $(merlin.pkg.tests.prefix)spells; \
+        merlin init $(merlin.multi.dir)
+
+
+# the deep test
+merlin.deep.dir = $(merlin.tests.tmpdir)/merlin.deep
+
+tests.merlin.pkg.spells.deep:
+	cd $(merlin.pkg.tests.prefix)spells; \
+        merlin init --create-prefix $(merlin.deep.dir)/ly/burried
+
+
+# clean up
+tests.merlin.pkg.spells.clean := \
+    $(merlin.shallow.dir) \
+    $(merlin.multi.dir) \
+    $(merlin.deep.dir) \
+
+
+# connect these tests to the main testsuite
+tests.merlin.pkg :: tests.merlin.pkg.spells
+
+tests.merlin.pkg.clean :: tests.merlin.pkg.spells.clean
+
+
+# end of file
