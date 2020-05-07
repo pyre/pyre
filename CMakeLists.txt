@@ -38,7 +38,7 @@ include(pyre_postgres)
 pyre_getVersion()
 
 # set up the project
-project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
+project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX C)
 # hmmmm
 include(GNUInstallDirs)
 
