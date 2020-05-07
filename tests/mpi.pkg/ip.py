@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis
@@ -8,7 +8,7 @@
 
 
 """
-Sanity check: verify that the world communicator is accessible
+Sanity check: show me the hostname of each machine in a communicator
 """
 
 
@@ -17,6 +17,8 @@ def test():
     import mpi
     import socket
 
+    # initialize mpi
+    mpi.init()
     # get the world communicator
     world = mpi.world
     # get my ip address
