@@ -33,7 +33,7 @@ tests.pyre.pkg.filesystem.zip-sample:
 # primitives/path_resolution.py
 tests.pyre.pkg.primitives.path_resolution.pre := tests.pyre.pkg.primitives.make-scratch
 
-tests.pyre.pkg.primitives.make-scratch:
+tests.pyre.pkg.primitives.make-scratch: tests.pyre.pkg.primitives.path_resolution.clean
 	$(cd) $(pyre.pkg.tests.prefix)/primitives; \
 	$(mkdir) scratch; \
 	$(cd) scratch; \
