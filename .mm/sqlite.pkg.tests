@@ -1,0 +1,22 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2020 all rights reserved
+
+
+# the sqlite testsuite
+sqlite.pkg.tests.stem := sqlite.pkg
+sqlite.pkg.tests.prerequisites := journal.pkg pyre.pkg
+
+
+# clean up
+tests.sqlite.pkg.clean += pyre.sql
+
+
+# the following tests pound on the test database; execute them in order
+tests.sqlite.pkg.sqlite_attach.pre := tests.sqlite.pkg.sqlite_database
+tests.sqlite.pkg.sqlite_table.pre := tests.sqlite.pkg.sqlite_attach
+tests.sqlite.pkg.sqlite_references.pre := tests.sqlite.pkg.sqlite_table
+
+
+# end of file
