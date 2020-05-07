@@ -21,9 +21,10 @@ pyre.extensions := host.ext timers.ext
 pyre.tests := pyre.pkg.tests pyre.lib.tests
 
 
-# if we have {libpq}, build the {postgres} extension
+# if we have {libpq}, build the {postgres} extension and test it
 ${if ${findstring libpq,$(extern.available)},\
     ${eval pyre.extensions += postgres.ext} \
+    ${eval pyre.tests += postgres.ext.tests} \
 }
 
 
@@ -76,7 +77,7 @@ postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
 # get the testsuites
-include pyre.pkg.tests pyre.lib.tests
+include ${pyre.tests}
 
 
 # end of file

@@ -1,0 +1,21 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2020 all rights reserved
+
+
+# the postgres extension testsuite
+postgres.ext.tests.stem := postgres.ext
+postgres.ext.tests.prerequisites := journal.lib pyre.lib journal.pkg pyre.pkg
+
+
+# the following tests pound on the test database; execute them in order
+tests.postgres.ext.postgres_attach.pre := tests.postgres.ext.postgres_database
+tests.postgres.ext.postgres_database_create.pre := tests.postgres.ext.postgres_attach
+tests.postgres.ext.postgres_table.pre := tests.postgres.ext.postgres_database_create
+tests.postgres.ext.postgres_reserved.pre := tests.postgres.ext.postgres_table
+tests.postgres.ext.postgres_references.pre := tests.postgres.ext.postgres_reserved
+tests.postgres.ext.postgres_database_drop.pre := tests.postgres.ext.postgres_references
+
+
+# end of file
