@@ -212,10 +212,6 @@ function(pyre_test_driver testfile)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
-  # make sure we run it from its home
-  set_property(TEST ${testname} PROPERTY
-    WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/${dir}
-    )
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
     LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
@@ -234,10 +230,6 @@ function(pyre_test_driver_case testfile)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
-  # make sure we run it from its home
-  set_property(TEST ${testname} PROPERTY
-    WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/${dir}
-    )
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
     LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
@@ -247,6 +239,7 @@ function(pyre_test_driver_case testfile)
 endfunction()
 
 
+# a test driver with additional environmant variables
 function(pyre_test_driver_env testfile env)
   # make the target and the test case
   pyre_test_driver(${testfile} ${ARGN})

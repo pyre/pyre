@@ -13,6 +13,7 @@ include(pyre_tests_journal_pkg)
 include(pyre_tests_merlin_pkg)
 # the librraies
 include(pyre_tests_journal_lib)
+include(pyre_tests_pyre_lib)
 
 # sqlite
 include(pyre_tests_sqlite_pkg)
