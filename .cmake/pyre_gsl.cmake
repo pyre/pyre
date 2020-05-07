@@ -45,18 +45,13 @@ function(pyre_gslModule)
       gsl/linalg.cc
       gsl/matrix.cc
       gsl/metadata.cc
-      gsl/numpy.cc
       gsl/pdf.cc
       gsl/permutation.cc
       gsl/rng.cc
       gsl/stats.cc
       gsl/vector.cc
       )
-    # copy the capsule definitions to the staging area
-    file(
-      COPY gsl/capsules.h
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../lib/pyre/gsl
-      )
+
     if (${MPI_FOUND})
       # add the MPI aware sources to the pile
       target_sources(gslmodule PRIVATE gsl/partition.cc)
@@ -68,6 +63,18 @@ function(pyre_gslModule)
       target_link_libraries(gslmodule PRIVATE ${MPI_CXX_LIBRARIES})
     endif()
 
+    if (${Python3_NumPy_FOUND})
+      # add the numpy aware sources to the pile
+      target_sources(gslmodule PRIVATE gsl/numpy.cc)
+      # add the MPI presence indicator
+      target_compile_definitions(gslmodule PRIVATE WITH_NUMPY)
+    endif()
+
+    # copy the capsule definitions to the staging area
+    file(
+      COPY gsl/capsules.h
+      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../lib/pyre/gsl
+      )
     # install the extension
     install(
       TARGETS gslmodule

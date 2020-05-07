@@ -53,11 +53,7 @@ find_package(MPI)
 # postgres
 find_package(PostgreSQL)
 # python
-set(PYTHON_COMPONENTS Interpreter Development)
-if(GSL_FOUND)
-    list(APPEND PYTHON_COMPONENTS NumPy)
-endif()
-find_package(Python3 REQUIRED COMPONENTS ${PYTHON_COMPONENTS})
+find_package(Python3 COMPONENTS Interpreter Development NumPy)
 
 # set up cmake
 pyre_cmakeInit()
