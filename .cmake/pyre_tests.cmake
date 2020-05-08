@@ -257,4 +257,35 @@ function(pyre_test_driver_env testfile env)
 endfunction()
 
 
+# register a parallel test case based on a compiled driver
+function(pyre_test_driver_mpi testfile slots)
+  # create the name of the testcase
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+  # create the name of the target
+  pyre_test_target(target ${testfile})
+
+  # schedule it to be compiled
+  add_executable(${target} ${testfile})
+  # with some macros
+  target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_MPI)
+  # link against my libraries
+  target_link_libraries(${target} PUBLIC pyre journal MPI::MPI_CXX)
+
+  # make it a test case
+  add_test(NAME ${testname} COMMAND
+    ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${slots} --hostfile localhost
+    ${MPIEXEC_PREFLAGS}
+    ${target}
+    ${MPIEXEC_POSTFLAGS}
+    ${ARGN}
+    )
+  # register the runtime environment requirements
+  set_property(TEST ${testname} PROPERTY ENVIRONMENT
+    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
+    )
+
+  # all done
+endfunction()
+
+
 # end of file

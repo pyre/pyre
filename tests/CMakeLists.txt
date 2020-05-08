@@ -11,7 +11,7 @@ include(pyre_tests_python)
 include(pyre_tests_pyre_pkg)
 include(pyre_tests_journal_pkg)
 include(pyre_tests_merlin_pkg)
-# the librraies
+# the libraries
 include(pyre_tests_journal_lib)
 include(pyre_tests_pyre_lib)
 
@@ -21,6 +21,7 @@ include(pyre_tests_sqlite_pkg)
 # if we have MPI support
 if(MPI_FOUND)
   include(pyre_tests_mpi_pkg)
+  include(pyre_tests_mpi_lib)
 endif()
 
 # if we have GSL support
