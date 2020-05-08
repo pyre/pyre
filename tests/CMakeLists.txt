@@ -18,6 +18,11 @@ include(pyre_tests_pyre_lib)
 # sqlite
 include(pyre_tests_sqlite_pkg)
 
+# if we have CUDA and the user cares
+if(WITH_CUDA)
+  include(pyre_tests_cuda_pkg)
+endif()
+
 # if we have MPI support
 if(MPI_FOUND)
   include(pyre_tests_mpi_pkg)
