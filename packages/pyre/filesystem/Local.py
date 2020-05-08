@@ -143,7 +143,7 @@ class Local(Filesystem):
         # as long as there is more to do
         for parent, name, source in todo:
             # create the directory
-            folder = self.mkdir(parent=parent, name=name)
+            folder = self.mkdir(parent=parent, name=name, exist_ok=True)
             # add the children to my work list
             todo.extend(
                 (folder, name, child)
