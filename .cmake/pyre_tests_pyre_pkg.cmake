@@ -108,17 +108,24 @@ pyre_test_python_testcase(pyre.pkg/filesystem/finder_pattern.py)
 pyre_test_python_testcase(pyre.pkg/filesystem/simple_explorer.py)
 pyre_test_python_testcase(pyre.pkg/filesystem/tree_explorer.py)
 
-# the {local_make} test requires setup+cleanup
-# setup: zip the current directory
-set(filesystem_local_make_setup
-  "echo nothing to do"
+# the {local_make} test modifes its local directory; so there are race conditions when running
+# the test suite in parallel with all the test that explore the current directory; run it after
+# the other test cases have finished
+set_property(TEST pyre.pkg.filesystem.local_make.py PROPERTY DEPENDS
+  pyre.pkg.filesystem.local.py ;
+  pyre.pkg.filesystem.local_find.py ;
+  pyre.pkg.filesystem.local_leaks.py ;
+  pyre.pkg.filesystem.local_open.py ;
+  pyre.pkg.filesystem.zip.py ;
+  pyre.pkg.filesystem.zip_open.py
   )
-# cleanup: remove the zipfile
+
+# also, it requires cleanup to remove the folder created by the test case
 set(filesystem_local_make_cleanup
   "rm -rf local-make"
   )
 pyre_test_testcase_shell_fixture(
-  "${filesystem_local_make_setup}" "${filesystem_local_make_cleanup}"
+  "" "${filesystem_local_make_cleanup}"
   pyre.pkg/filesystem/local_make.py
   )
 

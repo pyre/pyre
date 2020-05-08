@@ -17,6 +17,17 @@ tests.pyre.pkg.schemata.ostreams.clean := output.cfg
 tests.pyre.pkg.primitives.path_resolution.clean := scratch
 
 
+# the {filesystem.local-make} test modifies the current directory, which creates race
+# conditions with all tests that run discovery on it; it's best to make sure it runs after them
+tests.pyre.pkg.filesystem.local_make.pre := \
+    tests.pyre.pkg.filesystem.local \
+    tests.pyre.pkg.filesystem.local_find \
+    tests.pyre.pkg.filesystem.local_leaks \
+    tests.pyre.pkg.filesystem.local_open \
+    tests.pyre.pkg.filesystem.zip \
+    tests.pyre.pkg.filesystem.zip_open
+
+
 # special cases
 # the following require launch support
 tests.pyre.pkg.components.component_aliases.argv := --functor.μ=0.10 --gaussian.σ=0.10
@@ -29,6 +40,7 @@ tests.pyre.pkg.filesystem.zip.pre := tests.pyre.pkg.filesystem.zip-sample
 tests.pyre.pkg.filesystem.zip-sample:
 	cd $(pyre.pkg.tests.prefix)/filesystem; \
         zip -q sample.zip *
+
 
 # primitives/path_resolution.py
 tests.pyre.pkg.primitives.path_resolution.pre := tests.pyre.pkg.primitives.make-scratch
@@ -52,7 +64,8 @@ pyre.pkg.tests.drivers.exclude += \
     framework/sample.py \
     framework/sample_syntaxerror.py \
 
-# the following tests fail for known reasons
+# the following tests fail for known reasons; they exercise obsolete behavior and should
+# probably be deleted
 pyre.pkg.tests.drivers.exclude += \
     config/configurator_locators.py \
     framework/executive_shelves.py \
