@@ -1,47 +1,29 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
-
-#include <portinfo>
-#include <Python.h>
-#include <string>
-
-#include "exceptions.h"
-
-namespace pyre {
-    namespace extensions {
-        namespace journal {
-        // base class for journal errors
-        const char * const Error__name__ = "Error";
-        PyObject * Error = 0;
-
-        } // of namespace journal
-    } // of namespace extensions
-} // of namespace pyre
 
 
-// exception registration
-PyObject *
-pyre::extensions::journal::
-registerExceptionHierarchy(PyObject * module) {
+// externals
+#include "external.h"
+// namespace setup
+#include "forward.h"
 
-    std::string stem = "journal.";
 
-    // the base class
-    // build its name
-    std::string errorName = stem + journal::Error__name__;
-    // and the exception object
-    journal::Error = PyErr_NewException(errorName.c_str(), 0, 0);
-    // increment its reference count so we can pass ownership to the module
-    Py_INCREF(journal::Error);
-    // register it with the module
-    PyModule_AddObject(module, journal::Error__name__, journal::Error);
+// add bindings to the inventory
+void
+pyre::libjournal::
+exceptions(py::module & m) {
+    // when {debug} channels are fatal
+    py::register_exception<debug_error>(m, "DebugError");
+    // when {firewalls} are fatal
+    py::register_exception<firewall_error>(m, "FirewallError");
+    // when user facing channels are fatal
+    py::register_exception<application_error>(m, "ApplicationError");
 
-    // and return the module
-    return module;
+    // all done
+    return;
 }
+
 
 // end of file

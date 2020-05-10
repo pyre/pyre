@@ -95,16 +95,20 @@ function(pyre_journalModule)
   set_target_properties(journalmodule PROPERTIES LIBRARY_OUTPUT_NAME journal)
   set_target_properties(journalmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
   # set the libraries to link against
-  target_link_libraries(journalmodule PRIVATE journal)
+  target_link_libraries(journalmodule PRIVATE journal pybind11::module)
   # add the sources
   target_sources(journalmodule PRIVATE
     journal/journal.cc
-    journal/DeviceProxy.cc
-    journal/channels.cc
+    journal/api.cc
+    journal/chronicler.cc
+    journal/debug.cc
+    journal/devices.cc
+    journal/error.cc
     journal/exceptions.cc
-    journal/init.cc
-    journal/metadata.cc
-    journal/tests.cc
+    journal/firewall.cc
+    journal/info.cc
+    journal/opaque.cc
+    journal/warning.cc
     )
   # install
   install(
