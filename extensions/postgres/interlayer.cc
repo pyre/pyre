@@ -145,7 +145,7 @@ processResult(string_t command, PGresult * result, resultProcessor_t processor)
     } else if (PQresultStatus(result) == PGRES_COMMAND_OK) {
         // the command was executed successfully
         // diagnostics
-        if (debug.isActive()) {
+        if (debug.active()) {
             debug
                 << pyre::journal::at(__HERE__)
                 << "success: " << PQcmdStatus(result)
@@ -157,7 +157,7 @@ processResult(string_t command, PGresult * result, resultProcessor_t processor)
 
     } else if (PQresultStatus(result) == PGRES_TUPLES_OK) {
         // the query succeeded and there are tuples to harvest
-        if (debug.isActive()) {
+        if (debug.active()) {
             int fields = PQnfields(result);
             int tuples = PQntuples(result);
             debug
