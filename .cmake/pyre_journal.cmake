@@ -58,14 +58,20 @@ function(pyre_journalLib)
   # add the sources
   target_sources(journal
     PRIVATE
+    journal/ANSI.cc
+    journal/ANSI_x11.cc
+    journal/Alert.cc
     journal/Chronicler.cc
     journal/Console.cc
     journal/Device.cc
+    journal/ErrorConsole.cc
+    journal/File.cc
+    journal/Memo.cc
     journal/Renderer.cc
-    journal/Streaming.cc
+    journal/Stream.cc
+    journal/Trash.cc
     journal/debuginfo.cc
     journal/firewalls.cc
-    journal/journal.cc
     )
 
   # libpyre and libjournal
