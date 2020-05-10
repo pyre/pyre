@@ -54,6 +54,10 @@ find_package(MPI)
 find_package(PostgreSQL)
 # python
 find_package(Python3 COMPONENTS Interpreter Development NumPy)
+# for building bindings
+set(PYBIND11_CPP_STANDARD -std=c++17)
+set(PYBIND11_PYTHON_VERSION ${Python3_VERSION})
+find_package(pybind11)
 
 # set up cmake
 pyre_cmakeInit()
