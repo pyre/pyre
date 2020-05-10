@@ -293,7 +293,7 @@ PyObject * mpi::cartesian::coordinates(PyObject *, PyObject * args)
 
     // dump
     pyre::journal::debug_t info("mpi.cartesian");
-    if (info.isActive()) {
+    if (info.active()) {
         int wr, ws;
         MPI_Comm_rank(MPI_COMM_WORLD, &wr);
         MPI_Comm_size(MPI_COMM_WORLD, &ws);
