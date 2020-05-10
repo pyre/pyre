@@ -1,64 +1,98 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
 // code guard
-#if !defined(pyre_journal_Channel)
-#define pyre_journal_Channel
-
-// place Inventory in namespace pyre::journal
-namespace pyre {
-    namespace journal {
-        template <typename, bool> class Channel;
-    }
-}
+#if !defined(pyre_journal_Channel_h)
+#define pyre_journal_Channel_h
 
 
-// declaration
-template <typename Severity, bool DefaultState=true>
-class pyre::journal::Channel {
+// the base journal channel
+template <typename severityT, template <class> typename proxyT>
+class pyre::journal::Channel : public proxyT<severityT>
+{
     // types
 public:
-    using string_t = std::string;
-    using inventory_t = Inventory<DefaultState>;
-    using state_t = typename inventory_t::state_t;
-    using device_t = typename inventory_t::device_t;
-    using index_t = Index<inventory_t>;
+    // my severity
+    using severity_type = severityT;
+    using severity_reference = severity_type &;
 
-    // interface
+    // my verbosity
+    using verbosity_type = verbosity_t;
+
+    // access to my shared state
+    using proxy_type = proxyT<severityT>;
+    using inventory_type = typename proxy_type::inventory_type;
+    using inventory_reference = typename proxy_type::inventory_reference;
+    using device_type = typename inventory_type::device_type;
+
+    // my name
+    using name_type = Index::name_type;
+    // the map from channel names to inventories
+    using index_type = Index;
+    using index_reference = index_type &;
+    // the current message
+    using entry_type = entry_t;
+    using entry_reference = entry_type &;
+    using entry_const_reference = const entry_type &;
+
+    // pathnames
+    using path_type = path_t;
+
+    // miscellaneous
+    using string_type = string_t;
+    using nameset_type = nameset_t;
+
+    // metamethods
 public:
+    inline Channel(const name_type &, verbosity_type = 1);
+
     // accessors
-    inline state_t isActive() const;
-    inline device_t * device() const;
+public:
+    inline auto name() const -> const name_type &;
+    inline auto verbosity() const -> verbosity_type;
+    inline auto entry() const -> entry_const_reference;
 
     // mutators
-    inline void activate();
-    inline void deactivate();
-    inline void device(device_t *);
-
-    // access to the index
-    inline static inventory_t & lookup(string_t name);
-
-    // meta methods
 public:
-    inline operator bool() const;
+    // verbosity
+    inline auto verbosity(verbosity_type) -> severity_reference;
+    // read/write access to my current journal entry
+    inline auto entry() -> entry_reference;
 
-protected:
-    inline ~Channel();
-    inline explicit Channel(string_t);
+    // injection support; not normally accessed directly, there are manipulators for this
+public:
+    // end of a line of message
+    inline auto line() -> severity_reference;
+    // end of a message
+    inline auto log() -> severity_reference;
+    // commit the current message to the journal
+    inline auto commit() -> severity_reference;
 
-    // disallow
+    // static interface
+public:
+    // access to the severity wide index with the default settings and the names of the channels
+    inline static auto index() -> index_reference;
+    // index initializer
+    inline static auto initializeIndex() -> index_type;
+    // bulk channel activation
+    static inline void activateChannels(const nameset_type &);
+
+    // send all output to the trash
+    static inline void quiet();
+    // and all output to a file with the given filename
+    static inline void logfile(const path_t &);
+
+    // implementation details: data
 private:
-    Channel(const Channel &) = delete;
-    const Channel & operator=(const Channel &) = delete;
+    name_type _name;
+    verbosity_type _verbosity;
+    entry_type _entry;
 
-    // data members
+    // implementation details: static data
 private:
-    string_t _name;
-    inventory_t & _inventory;
+    static index_type _index;
 };
 
 
@@ -68,5 +102,6 @@ private:
 #undef pyre_journal_Channel_icc
 
 
-# endif
+#endif
+
 // end of file

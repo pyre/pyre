@@ -1,50 +1,52 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_journal_Error_h)
 #define pyre_journal_Error_h
 
-// place Error in namespace pyre::journal
-namespace pyre {
-    namespace journal {
-        class Error;
-    }
-}
 
-
-// declaration
-class pyre::journal::Error :
-    public pyre::journal::Diagnostic<Error>,
-    public pyre::journal::Channel<Error, true>
+// user facing channel; meant for error messages, i.e. conditions from which the application
+// cannot recover
+template <template <typename> typename proxyT>
+class pyre::journal::Error : public Channel<Error<proxyT>, proxyT>
 {
-    // befriend my superclass so it can access my index
-    friend class Channel<Error, true>;
-
     // types
 public:
-    using string_t = std::string;
-    using diagnostic_t = Diagnostic<Error>;
-    using channel_t = Channel<Error, true>;
-    using index_t = channel_t::index_t;
+    // my base
+    using channel_type = Channel<Error, InventoryProxy>;
+    // my parts
+    using name_type = typename channel_type::name_type;
+    using verbosity_type = typename channel_type::verbosity_type;
+    using index_type = typename channel_type::index_type;
+    using entry_type = typename channel_type::entry_type;
+    // my error indicator
+    using exception_type = application_error;
 
-    // meta methods
+    // metamethods
 public:
-    inline ~Error();
-    inline explicit Error(string_t name);
+    inline explicit Error(const name_type & name, verbosity_type = 1);
+
+    // implementation details
+public:
+    // record the message in the journal
+    inline void record();
+    // raise the correct exception when fatal
+    inline void die();
+
+    // implementation details
+public:
+    // initialize the channel index
+    static inline auto initializeIndex() -> index_type;
 
     // disallow
 private:
     Error(const Error &) = delete;
-    const Error & operator=(const Error &) = delete;
-
-    // per class
-private:
-    static index_t _index;
+    Error(const Error &&) = delete;
+    const Error & operator= (const Error &) = delete;
+    const Error & operator= (const Error &&) = delete;
 };
 
 
@@ -54,5 +56,6 @@ private:
 #undef pyre_journal_Error_icc
 
 
-# endif
+#endif
+
 // end of file

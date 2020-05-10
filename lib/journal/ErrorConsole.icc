@@ -1,0 +1,24 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2020 all rights reserved
+
+// code guard
+#if !defined(pyre_journal_ErrorConsole_icc)
+#error This header contains implementation details of pyre::journal::ErrorConsole
+#else
+
+
+// metamethods
+bool
+pyre::journal::ErrorConsole::
+tty() const
+{
+    // i have a flag for that...
+    return _tty;
+}
+
+
+#endif
+
+// end of file

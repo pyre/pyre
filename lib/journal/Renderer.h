@@ -1,57 +1,52 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_journal_Renderer_h)
 #define pyre_journal_Renderer_h
 
-// place Renderer in namespace pyre::journal
-namespace pyre {
-    namespace journal {
-        class Renderer;
-    }
-}
 
-// declaration
+// the interface for formatting messages
 class pyre::journal::Renderer {
     // types
 public:
-    using string_t = std::string;
-    using stream_t = std::stringstream;
-    using entry_t = std::vector<string_t>;
-    using metadata_t = std::map<string_t, string_t>;
+    // pointers to me
+    using pointer_type = std::shared_ptr<Renderer>;
+
+    // message content
+    using entry_type = entry_t;
+    using line_type = entry_type::line_type;
+    using linebuf_type = entry_type::linebuf_type;
+    // color table
+    using palette_type = palette_t;
+
+
+    // metamethods
+public:
+    virtual ~Renderer();
+    Renderer() = default;
 
     // interface
 public:
-    virtual string_t render(entry_t &, metadata_t &);
+    virtual auto render(palette_type &, const entry_type &) const -> line_type;
 
-    // meta methods
-public:
-    virtual ~Renderer();
-    inline Renderer();
+    // implementation details
+protected:
+    virtual void header(palette_type &, linebuf_type &, const entry_type &) const;
+    virtual void body(palette_type &, linebuf_type &, const entry_type &) const;
+    virtual void footer(palette_type &, linebuf_type &, const entry_type &) const;
 
     // disallow
 private:
     Renderer(const Renderer &) = delete;
-    const Renderer & operator=(const Renderer &) = delete;
-
-    // implementation details
-protected:
-    virtual void header(stream_t &, entry_t &, metadata_t &);
-    virtual void body(stream_t &, entry_t &, metadata_t &);
-    virtual void footer(stream_t &, entry_t &, metadata_t &);
+    Renderer(const Renderer &&) = delete;
+    const Renderer & operator= (const Renderer &) = delete;
+    const Renderer & operator= (const Renderer &&) = delete;
 };
 
 
-// get the inline definitions
-#define pyre_journal_Renderer_icc
-#include "Renderer.icc"
-#undef pyre_journal_Renderer_icc
+#endif
 
-
-# endif
 // end of file

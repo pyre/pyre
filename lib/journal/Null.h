@@ -1,52 +1,62 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_journal_Null_h)
 #define pyre_journal_Null_h
 
-// place Null in namespace pyre::journal
-namespace pyre {
-    namespace journal {
-        class Null;
 
-        // the injection operator
-        template <typename item_t>
-        inline Null & operator << (Null &, item_t);
-    }
-}
-
-// declaration
+// the null channel conforms to the API but has no effect
 class pyre::journal::Null
 {
     // types
 public:
-    using string_t = std::string;
+    // channel names
+    using name_type = name_t;
+    using nameset_type = nameset_t;
+    // parts
+    using active_type = bool;
+    using fatal_type = bool;
+    using device_type = void *;
+
+    // metamethods
+public:
+    // constructor
+    inline explicit Null(const name_type &);
+
+    // accessors
+public:
+    inline constexpr auto active() const;
+    inline constexpr auto fatal() const;
+    inline constexpr auto device() const -> device_type;
+
+    // mutators
+public:
+    inline constexpr auto active(active_type) -> Null &;
+    inline constexpr auto fatal(fatal_type) -> Null &;
+    inline constexpr auto device(device_type) -> Null &;
+
+    // syntactic sugar
+public:
+    inline constexpr operator active_type() const;
 
     // interface
 public:
-    // accessors
-    inline bool isActive() const;
+    // state management
+    inline constexpr void activate() const;
+    inline constexpr void deactivate() const;
 
-    // mutators
-    inline void activate() const;
-    inline void deactivate() const;
-
-    // meta methods
-public:
-    inline operator bool() const;
-
-    inline ~Null();
-    inline Null(const string_t &);
+    // bulk activation
+    static constexpr inline void activateChannels(const nameset_type &);
 
     // disallow
 private:
     Null(const Null &) = delete;
-    const Null & operator=(const Null &) = delete;
+    Null(const Null &&) = delete;
+    const Null & operator= (const Null &) = delete;
+    const Null & operator= (const Null &&) = delete;
 };
 
 
@@ -56,5 +66,6 @@ private:
 #undef pyre_journal_Null_icc
 
 
-# endif
+#endif
+
 // end of file

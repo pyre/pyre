@@ -1,33 +1,23 @@
-// -*- C++ -*-
-// -*- coding: utf-8 -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
-
+// code guard
 #if !defined(pyre_journal_macros_h)
 #define pyre_journal_macros_h
 
-//
-// defined __HERE__, which has to be a preprocessor macro
-//
-#if defined(HAVE__FUNC__)
 
-// gcc supports all three
-#define __HERE__ __FILE__,__LINE__,__FUNCTION__
+// define __HERE__, which has to be a preprocessor macro
+// c++20 has <source_location>, so this will soon be obsolete
+
+// used by the locator to communicate the source of a message
+#define __HERE__ __FILE__,__LINE__,__func__
+// used for the C/FORTRAN bindings
 #define __HERE_ARGS__ filename, lineno, funcname
 #define __HERE_DECL__ const char * filename, long lineno, const char * funcname
 
-#else
 
-#define __HERE__ __FILE__,__LINE__
-#define __HERE_ARGS__ filename, lineno
-#define __HERE_DECL__ const char * filename, long lineno
-
-#endif // HAVE__FUNC__
-
-#endif // pyre_journal_macros_h
+#endif
 
 // end of file

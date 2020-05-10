@@ -1,0 +1,42 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2020 all rights reserved
+
+// code guard
+#if !defined(pyre_journal_Note_icc)
+#error This header contains implementation details of pyre::journal::Note
+#else
+
+
+// metamethods
+pyre::journal::Note::
+Note(key_type key, value_type value):
+    _key(key),
+    _value(value)
+{}
+
+
+// interface
+// accessors
+auto
+pyre::journal::Note::
+key() const -> const key_type &
+{
+    // easy enough
+    return _key;
+}
+
+
+auto
+pyre::journal::Note::
+value() const -> const value_type &
+{
+    // easy enough
+    return _value;
+}
+
+
+# endif
+
+// end of file

@@ -1,56 +1,51 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_journal_Firewall_h)
 #define pyre_journal_Firewall_h
 
-// place Firewall in namespace pyre::journal
-namespace pyre {
-    namespace journal {
-        class Firewall;
-    }
-}
 
-
-// declaration
-class pyre::journal::Firewall :
-    public pyre::journal::Diagnostic<Firewall>,
-    public pyre::journal::Channel<Firewall, true>
+// developer facing channel; usually gets turned off in release mode
+template <template <typename> typename proxyT>
+class pyre::journal::Firewall : public Channel<Firewall<proxyT>, proxyT>
 {
-    // befriend my superclass so it can invoke my recording hooks
-    friend class Diagnostic<Firewall>;
-    // befriend my superclass so it can access my index
-    friend class Channel<Firewall, true>;
-
     // types
 public:
-    using string_t = std::string;
-    using diagnostic_t = Diagnostic<Firewall>;
-    using channel_t = Channel<Firewall, true>;
-    using index_t = channel_t::index_t;
+    // my base
+    using channel_type = Channel<Firewall<proxyT>, proxyT>;
+    // my parts
+    using name_type = typename channel_type::name_type;
+    using verbosity_type = typename channel_type::verbosity_type;
+    using index_type = typename channel_type::index_type;
+    using entry_type = typename channel_type::entry_type;
+    // my exception
+    using exception_type = firewall_error;
 
-    // meta methods
+    // metamethods
 public:
-    inline ~Firewall();
-    inline explicit Firewall(string_t name);
+    inline explicit Firewall(const name_type &, verbosity_type = 1);
+
+    // implementation details
+public:
+    // record the message to a device
+    inline void record();
+    // raise the correct exception when fatal
+    inline void die();
+
+    // implementation details
+public:
+    // initialize the channel index
+    static inline auto initializeIndex() -> index_type;
 
     // disallow
 private:
     Firewall(const Firewall &) = delete;
-    const Firewall & operator=(const Firewall &) = delete;
-
-    // implementation details
-protected:
-    inline void _endRecording(); // NYI: are firewalls fatal?
-
-    // per class
-private:
-    static index_t _index;
+    Firewall(const Firewall &&) = delete;
+    const Firewall & operator= (const Firewall &) = delete;
+    const Firewall & operator= (const Firewall &&) = delete;
 };
 
 
@@ -60,5 +55,6 @@ private:
 #undef pyre_journal_Firewall_icc
 
 
-# endif
+#endif
+
 // end of file

@@ -1,73 +1,71 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
-// build system
-#include <portinfo>
 
-// packages
+// externals
 #include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
-
 // the journal interface
 #include "public.h"
-// access the declarations
+// my declarations
 #include "debuginfo.h"
 
-// convenience
-using debug_t = pyre::journal::Debug;
+// type alias
+using debug_t = pyre::journal::debug_t;
 
 
-// hit
+// check the state
 extern "C"
-int debuginfo_active(const char * channel)
+int debuginfo_active(const char * name)
 {
-    // get the channel state and return it
-    return debug_t(channel).isActive();
+    // make the channel
+    return debug_t(name).active();
 }
 
 
-// activate
+// activate a channel
 extern "C"
-void debuginfo_activate(const char * channel)
+void debuginfo_activate(const char * name)
 {
-    // get the channel state and return it
-    return debug_t(channel).activate();
+    // make the channel and activate it
+    debug_t(name).activate();
+    // all done
+    return;
 }
 
 
-// hit
+// deactivate a channel
 extern "C"
-void debuginfo_deactivate(const char * channel)
+void debuginfo_deactivate(const char * name)
 {
-    // get the channel state and return it
-    return debug_t(channel).deactivate();
+    // make the channel and deactivate it
+    debug_t(name).deactivate();
+    // all done
+    return;
 }
 
 
-// check
+// send a message to the default device
 extern "C"
-void debuginfo_out(const char * channel, __HERE_DECL__, const char * fmt, ...)
+void debuginfo_out(const char * name, __HERE_DECL__, const char * fmt, ...)
 {
-    // build a debug object
-    debug_t debug(channel);
+    // build the channel
+    debug_t channel(name);
 
     // if the channel is active
-    if (debug.isActive()) {
+    if (channel) {
+        // make a (large enough?) buffer
+        char buffer[4096];
         // pull the varargs
         std::va_list args;
-        char buffer[4096];
         va_start(args, fmt);
         std::vsprintf(buffer, fmt, args);
         va_end(args);
 
         // log the message
-        debug
-            << pyre::journal::Locator(__HERE_ARGS__)
+        channel
+            << pyre::journal::locator_t(__HERE_ARGS__)
             << buffer
             << pyre::journal::endl;
     }

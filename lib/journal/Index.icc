@@ -1,65 +1,145 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
+// code guard
 #if !defined(pyre_journal_Index_icc)
-#error This header file contains implementation details of class Index
-# else
+#error this file contains implementation details for pyre::journal::Index
+#else
 
 
-// lookup the pair (severity,channel) and return a reference to its state
-template <typename Value>
-typename pyre::journal::Index<Value>::value_t &
-pyre::journal::Index<Value>::
-lookup(const pyre::journal::Index<Value>::string_t & channel)
-{
-    return _index[channel];
-}
-
-
-// destructor
-template <typename Value>
-pyre::journal::Index<Value>::
-~Index()
+// metamethods
+pyre::journal::Index::
+Index(active_type active, fatal_type fatal):
+    Inventory(active, fatal),
+    _index {}
 {}
 
 
-// the default constructor
-template <typename Value>
-pyre::journal::Index<Value>::
-Index() :
-    _index()
+// interface
+auto
+pyre::journal::Index::
+size() const
 {
+    return _index.size();
 }
 
 
-// copy constructor
-template <typename Value>
-pyre::journal::Index<Value>::
-Index(const pyre::journal::Index<Value> & other) :
-    _index(other._index)
+auto
+pyre::journal::Index::
+empty() const
 {
+    return _index.empty();
 }
 
 
-// operator =
-template <typename Value>
-pyre::journal::Index<Value> &
-pyre::journal::Index<Value>::
-operator= (const pyre::journal::Index<Value> & other)
+auto
+pyre::journal::Index::
+contains(const name_type & channel) const
 {
-    // skip assignment to self
-    if (&other != this) {
-        // otherwise, copy the data
-        _index = other._index;
+    // attempt to locate the {channel}
+    auto place = _index.find(channel);
+    // if i can't find it
+    if (place == _index.end()) {
+        // i don't have it
+        return false;
     }
-    // and return me
-    return *this;
+    // otherwise, i do
+    return true;
 }
 
 
-# endif
+auto
+pyre::journal::Index::
+emplace(const name_type & name, active_type active, fatal_type fatal)
+{
+    // easy enough
+    return _index.emplace(name, inventory_type(active, fatal));
+}
+
+
+auto
+pyre::journal::Index::
+begin() const
+{
+    return _index.begin();
+}
+
+
+auto
+pyre::journal::Index::
+end() const
+{
+    return _index.end();
+}
+
+
+auto
+pyre::journal::Index::
+lookup(const name_type & channel) -> inventory_type &
+{
+    // attempt to locate the {channel} state
+    auto place = _index.find(channel);
+    // if it's there
+    if (place != _index.end()) {
+        // grab it
+        auto & inventory = place->second;
+        // we are done
+        return inventory;
+    }
+
+    // if the channel name is not in the index, we will make a new inventory and insert it; the
+    // only question is what should the state of this new inventory be. we support a cascading
+    // mechanism: treating the character '.' as a separator to form a hierarchy, a channel
+    // inherits the state of its nearest ancestor. if no ancestor exists, the inventory is
+    // initialized in its default state
+
+    // if we fail to find an ancestor, initialize the inventory state with my default values
+    inventory_type inventory { active(), fatal() };
+    // use a period as the separator
+    auto separator = '.';
+    // initialize the end of the search for the separator; initially, look through the entire
+    // string
+    auto stop = name_type::npos;
+    // until we manage to get out of this loop
+    while (1) {
+        // locate the last occurrence of the separator
+        auto pos = channel.find_last_of(separator, stop);
+        // if not there
+        if (pos == name_type::npos) {
+            // nothing else to do
+            break;
+        }
+        // otherwise, extract the fragment up to the separator
+        auto fragment = channel.substr(0, pos);
+        // attempt to look it up in the index
+        auto place = _index.find(fragment);
+        // if it's there
+        if (place != _index.end()) {
+            // grab it
+            inventory = place->second;
+            // and get out of here
+            break;
+        }
+        // otherwise, adjust the stopping place and look again
+        stop = pos - 1;
+    }
+
+    // use the harvested state to initialize the channel inventory
+    auto status = _index.emplace(channel, inventory);
+    // if this failed
+    if (status.second == false) {
+        // something terrible has happened
+        throw std::runtime_error("unable to emplace channel inventory");
+    }
+    // access the newly built shared state
+    auto & shared = status.first->second;
+    // and return it
+    return shared;
+}
+
+
+#endif
+
 // end of file

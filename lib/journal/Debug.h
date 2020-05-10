@@ -1,50 +1,51 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_journal_Debug_h)
 #define pyre_journal_Debug_h
 
-// place Debug in namespace pyre::journal
-namespace pyre {
-    namespace journal {
-        class Debug;
-    }
-}
 
-
-// declaration
-class pyre::journal::Debug :
-    public pyre::journal::Diagnostic<Debug>,
-    public pyre::journal::Channel<Debug, false>
+// developer facing channel; usually gets turned off in release mode
+template <template <typename> typename proxyT>
+class pyre::journal::Debug : public Channel<Debug<proxyT>, proxyT>
 {
-    // befriend my superclass so it can access my index
-    friend class Channel<Debug, false>;
-
     // types
 public:
-    using string_t = std::string;
-    using diagnostic_t = Diagnostic<Debug>;
-    using channel_t = Channel<Debug, false>;
-    using index_t = channel_t::index_t;
+    // my base
+    using channel_type = Channel<Debug<proxyT>, proxyT>;
+    // my parts
+    using name_type = typename channel_type::name_type;
+    using verbosity_type = typename channel_type::verbosity_type;
+    using index_type = typename channel_type::index_type;
+    using entry_type = typename channel_type::entry_type;
+    // my exception
+    using exception_type = debug_error;
 
-    // meta methods
+    // metamethods
 public:
-    inline ~Debug();
-    inline explicit Debug(string_t name);
+    inline Debug(const name_type &, verbosity_type = 1);
+
+    // implementation details; don't access directly
+public:
+    // record the message in the journal
+    inline void record();
+    // raise an exception when fatal
+    inline void die();
+
+    // static methods
+public:
+    // initialize the channel index
+    static inline auto initializeIndex() -> index_type;
 
     // disallow
 private:
     Debug(const Debug &) = delete;
-    const Debug & operator=(const Debug &) = delete;
-
-    // per class
-private:
-    static index_t _index;
+    Debug(const Debug &&) = delete;
+    const Debug & operator= (const Debug &) = delete;
+    const Debug & operator= (const Debug &&) = delete;
 };
 
 
@@ -54,5 +55,6 @@ private:
 #undef pyre_journal_Debug_icc
 
 
-# endif
+#endif
+
 // end of file

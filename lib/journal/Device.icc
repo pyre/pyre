@@ -1,21 +1,31 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
+// code guard
 #if !defined(pyre_journal_Device_icc)
-#error This header file contains implementation details of class Device
+#error This header contains implementation details of pyre::journal::Device
 #else
 
 
-// the default constructor
+// metamethods
 pyre::journal::Device::
-Device()
+Device(const name_type & name) :
+    _name(name)
 {}
 
 
-# endif
+// interface
+auto
+pyre::journal::Device::
+name() const -> const name_type &
+{
+    // easy enogh
+    return _name;
+}
+
+
+#endif
 
 // end of file

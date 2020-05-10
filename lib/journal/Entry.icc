@@ -1,0 +1,122 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2020 all rights reserved
+
+// code guard
+#if !defined(pyre_journal_Entry_icc)
+#error This header contains implementation details of pyre::journal::Entry
+#else
+
+
+// metamethods
+pyre::journal::Entry::
+Entry() :
+    // fresh buffer
+    _buffer{},
+    // blank page
+    _page{},
+    // initialize the message notes with the global settings
+    _notes{ chronicler_t::notes() }
+{}
+
+
+// accessors
+auto
+pyre::journal::Entry::
+page() const -> page_const_reference
+{
+    // easy enough
+    return _page;
+}
+
+
+auto
+pyre::journal::Entry::
+notes() const -> notes_const_reference
+{
+    // easy enough
+    return _notes;
+}
+
+
+// mutators
+auto
+pyre::journal::Entry::
+buffer() -> linebuf_reference
+{
+    // easy enough
+    return _buffer;
+}
+
+
+auto
+pyre::journal::Entry::
+page() -> page_reference
+{
+    // easy enough
+    return _page;
+}
+
+
+auto
+pyre::journal::Entry::
+notes() -> notes_reference
+{
+    // easy enough
+    return _notes;
+}
+
+
+// transaction support
+auto
+pyre::journal::Entry::
+note(const key_type & key, const value_type & value) -> entry_reference
+{
+    // place the pair in the metadata table
+    _notes.emplace(key, value);
+    // all done
+    return *this;
+}
+
+
+auto
+pyre::journal::Entry::
+push() -> entry_reference
+{
+    // add to the page whatever is in the buffer
+    _page.push_back(_buffer.str());
+    // and reset it
+    _buffer.str(line_type());
+    // discard any error flags
+    _buffer.clear();
+    // all done
+    return *this;
+}
+
+
+auto
+pyre::journal::Entry::
+flush() -> entry_reference
+{
+    // clear the page
+    _page.clear();
+    // all done
+    return *this;
+}
+
+
+template <typename itemT>
+void
+pyre::journal::Entry::
+inject(const itemT & item) {
+    // inject
+    _buffer << item;
+    // all done
+    return;
+}
+
+
+# endif
+
+// end of file

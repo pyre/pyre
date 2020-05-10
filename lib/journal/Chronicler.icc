@@ -1,53 +1,106 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
+// code guard
 #if !defined(pyre_journal_Chronicler_icc)
-#error This header file contains implementation details of class Chronicler
-# else
+#error this file contains implementation details for pyre::journal::Chronicler
+#else
 
 
-// interface
-// attach a new default device
-void
+// accessors
+auto
 pyre::journal::Chronicler::
-defaultDevice(pyre::journal::Chronicler::device_t * device)
+verbosity() -> verbosity_type
 {
-    // make sure we are really swapping out the old device
-    if (device != _defaultDevice) {
-        // delete the old one
-        delete _defaultDevice;
-        // attach the new one
-        _defaultDevice = device;
+    // easy enough
+    return _verbosity;
+}
+
+
+auto
+pyre::journal::Chronicler::
+verbosity(verbosity_type verbosity) -> verbosity_type
+{
+    // swap
+    std::swap(verbosity, _verbosity);
+    // and return the old value
+    return verbosity;
+}
+
+
+auto
+pyre::journal::Chronicler::
+notes() -> notes_type &
+{
+    // grant access to my global metadata
+    return _notes;
+}
+
+
+auto
+pyre::journal::Chronicler::
+device() -> device_type
+{
+    // share my device
+    return _device;
+}
+
+
+// mutators
+auto
+pyre::journal::Chronicler::
+device(device_type device) -> device_type
+{
+    // swap mine with the incoming device
+    std::swap(device, _device);
+    // and return it
+    return device;
+}
+
+
+// string -> nameset converter
+auto
+pyre::journal::Chronicler::
+nameset(string_t text) -> nameset_type
+{
+    // make a set
+    nameset_type channels;
+    // start at the beginning
+    name_type::size_type start { 0 };
+    // until much later
+    while (1) {
+        // look for a comma
+        auto pos = text.find(",", start);
+        // if not found
+        if (pos == string_t::npos) {
+            // there was no comma; grab what left of the string
+            auto channel = text.substr(start, string_t::npos);
+            // if it's not empty
+            if (!channel.empty()) {
+                // add it to the set
+                channels.emplace(channel);
+            }
+            // and we are done
+            break;
+        }
+        // if found, extract the substring
+        auto channel = text.substr(start, pos-start);
+        // if it's not empty
+        if (!channel.empty()) {
+            // add it to the set
+            channels.emplace(channel);
+        }
+        // update the start position and move on
+        start = pos + 1;
     }
-    // and return
-    return ;
+
+    // all done
+    return channels;
 }
 
 
-// retrieve the default device
-pyre::journal::Chronicler::device_t *
-pyre::journal::Chronicler::
-defaultDevice()
-{
-    // return the default device
-    return _defaultDevice;
-}
+#endif
 
-
-// destructor
-pyre::journal::Chronicler::
-~Chronicler() {}
-
-
-// the default constructor
-pyre::journal::Chronicler::
-Chronicler()
-{}
-
-
-# endif
 // end of file

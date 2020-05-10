@@ -1,71 +1,49 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
+// code guard
 #if !defined(pyre_journal_Locator_icc)
-#error This header file contains implementation details of class Locator
+#error This header contains implementation details of pyre::journal::Locator
 #else
 
-// injection operators for locators
-template <typename Channel>
-pyre::journal::Diagnostic<Channel> &
-pyre::journal::
-operator<< (
-            pyre::journal::Diagnostic<Channel> & channel,
-            const pyre::journal::Locator & locator) {
-    return locator.inject(channel);
-}
 
-
-// and on null diagnostics
-pyre::journal::Null &
-operator<< (pyre::journal::Null & null, const pyre::journal::Locator &) {
-    return null;
-}
+// metamethods
+pyre::journal::Locator::
+Locator(const char * file, int line, const char * function):
+    _file(file),
+    _line(line > 0 ? std::to_string(line) : ""),
+    _func(function)
+{}
 
 
 // interface
-template <typename Channel>
-pyre::journal::Diagnostic<Channel> &
+// accessors
+auto
 pyre::journal::Locator::
-inject(pyre::journal::Diagnostic<Channel> & channel) const
+file() const -> const value_type &
 {
-    // convert the line number into a string
-    std::stringstream tmp;
-    tmp << _line;
-    // decorate
-    channel.setattr("filename", _file);
-    channel.setattr("line", tmp.str());
-    channel.setattr("function", _function);
-    // and return the channel
-    return channel;
+    // easy enough
+    return _file;
 }
 
 
-// meta methods
-// destuctor
+auto
 pyre::journal::Locator::
-~Locator()
-{}
-
-
-// constructor
-pyre::journal::Locator::
-Locator(const char * file, int line, const char * function) :
-    _file(file ? file : ""),
-    _line(line >= 0 ? line : 0),
-    _function(function ? function : "")
-{}
-
-
-// copy constructor
-pyre::journal::Locator::
-Locator(const Locator & other):
-    _file(other._file), _line(other._line), _function(other._function)
+line() const -> const value_type &
 {
+    // easy enough
+    return _line;
+}
+
+
+auto
+pyre::journal::Locator::
+func() const -> const value_type &
+{
+    // easy enough
+    return _func;
 }
 
 

@@ -1,26 +1,25 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
 
-// for the build system
-#include <portinfo>
+// external support
+#include "externals.h"
+// forward declarations
+#include "forward.h"
+// type aliases
+#include "api.h"
 
-// external packages
-#include <map>
-#include <vector>
-#include <string>
-
-// my class header
+// get the device declaration
 #include "Device.h"
 
 
+// metamethods
 // destructor
 pyre::journal::Device::
-~Device() {}
+~Device()
+{}
 
 
 // end of file

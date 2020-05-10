@@ -1,15 +1,15 @@
-/* -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-*/
 
 #if !defined(pyre_journal_firewalls_h)
 #define pyre_journal_firewalls_h
 
-/* the __HERE__ macros */
+
+// the macros
 #include "macros.h"
+
 
 /* build the declarations of the bindings in a C-compatible way */
 #ifdef __cplusplus
@@ -23,6 +23,7 @@ extern "C" {
 }
 #endif
 
-# endif // pyre_journal_firewalls_h
+
+# endif
 
 /* end of file */

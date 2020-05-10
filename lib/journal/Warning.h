@@ -1,50 +1,53 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
 // code guard
 #if !defined(pyre_journal_Warning_h)
 #define pyre_journal_Warning_h
 
-// place Warning in namespace pyre::journal
-namespace pyre {
-    namespace journal {
-        class Warning;
-    }
-}
 
-
-// declaration
-class pyre::journal::Warning :
-    public pyre::journal::Diagnostic<Warning>,
-    public pyre::journal::Channel<Warning, true>
+// user facing channel ; meant for warning messages, i.e. when the applications detects
+// something wrong but it can work around the problem
+template <template <typename> typename proxyT>
+class pyre::journal::Warning : public Channel<Warning<proxyT>, proxyT>
 {
-    // befriend my superclass so it can access my index
-    friend class Channel<Warning, true>;
-
     // types
 public:
-    using string_t = std::string;
-    using diagnostic_t = Diagnostic<Warning>;
-    using channel_t = Channel<Warning, true>;
-    using index_t = channel_t::index_t;
+    // my base
+    using channel_type = Channel<Warning, InventoryProxy>;
+    // my parts
+    using name_type = typename channel_type::name_type;
+    using verbosity_type = typename channel_type::verbosity_type;
+    using index_type = typename channel_type::index_type;
+    using entry_type = typename channel_type::entry_type;
+    // my exception
+    using exception_type = application_error;
 
-    // meta methods
+    // metamethods
 public:
-    inline ~Warning();
-    inline explicit Warning(string_t name);
+    inline explicit Warning(const name_type & name, verbosity_type = 1);
+
+    // implementation details
+public:
+    // record the message to a device
+    inline void record();
+    // raise the correct exception when fatal
+    inline void die();
+
+
+    // implementation details
+public:
+    // initialize the channel index
+    static inline auto initializeIndex() -> index_type;
 
     // disallow
 private:
     Warning(const Warning &) = delete;
-    const Warning & operator=(const Warning &) = delete;
-
-    // per class
-private:
-    static index_t _index;
+    Warning(const Warning &&) = delete;
+    const Warning & operator= (const Warning &) = delete;
+    const Warning & operator= (const Warning &&) = delete;
 };
 
 
@@ -54,5 +57,6 @@ private:
 #undef pyre_journal_Warning_icc
 
 
-# endif
+#endif
+
 // end of file

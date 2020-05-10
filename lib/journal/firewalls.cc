@@ -1,24 +1,19 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
-// build system
-#include <portinfo>
 
-// packages
+// externals
 #include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
-// the journal public inreface
+// the journal interface
 #include "public.h"
-// access the declarations
+// my declarations
 #include "firewalls.h"
 
-// convenience
-using firewall_t = pyre::journal::Firewall;
+
+// type alias
+using firewall_t = pyre::journal::firewall_t;
 
 
 // hit

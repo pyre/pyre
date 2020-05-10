@@ -1,58 +1,38 @@
-// -*- C++ -*-
-// -*- coding: utf-8 -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
-
+// code guard
 #if !defined(pyre_journal_Locator_h)
 #define pyre_journal_Locator_h
 
 
-// forward declarations
-namespace pyre {
-    namespace journal {
-        class Locator;
+// information about the location of the channel invocation
+class pyre::journal::Locator
+{
+    // types
+public:
+    // the data held by {Locator} are used to create message notes
+    using value_type = value_t;
 
-        // overload the injection operator
-        template <typename Channel>
-        inline
-        Diagnostic<Channel> &
-        operator << (Diagnostic<Channel> &, const Locator &);
-    }
-}
+    // metamethods
+public:
+    // constructor
+    inline explicit Locator(const char * = "", int = 0, const char * = "");
 
-// null diagnostics
-inline
-pyre::journal::Null &
-operator<< (pyre::journal::Null &, const pyre::journal::Locator &);
-
-
-// locator
-class pyre::journal::Locator {
     // interface
 public:
-    template <typename Channel>
-    inline
-    Diagnostic<Channel> &
-    inject(Diagnostic<Channel> & channel) const;
-
-    // meta methods
-public:
-    inline ~Locator();
-    inline Locator(const char *, int, const char * = 0);
-    inline Locator(const Locator &);
-    // disabled
-private:
-    inline Locator & operator=(const Locator &);
+    // accessors
+    inline auto file() const -> const value_type &;
+    inline auto line() const -> const value_type &;
+    inline auto func() const -> const value_type &;
 
     // data
 private:
-    const char * _file;
-    int _line;
-    const char * _function;
+    const value_type _file;
+    const value_type _line;
+    const value_type _func;
 };
 
 
@@ -61,6 +41,7 @@ private:
 #include "Locator.icc"
 #undef pyre_journal_Locator_icc
 
-#endif // pyre_journal_manipulators_0_h
+
+#endif
 
 // end of file

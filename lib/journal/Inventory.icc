@@ -1,103 +1,94 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
+// code guard
 #if !defined(pyre_journal_Inventory_icc)
-#error This header file contains implementation details of class Inventory
+#error this file contains implementation details for pyre::journal::Inventory
 #else
 
 
+// metamethods
+pyre::journal::Inventory::
+Inventory(active_type active, fatal_type fatal) :
+    _active {active},
+    _fatal {fatal},
+    _device {nullptr}
+{}
+
+
 // accessors
-template <bool DefaultState>
-typename pyre::journal::Inventory<DefaultState>::state_t
-pyre::journal::Inventory<DefaultState>::
-state() const
+auto
+pyre::journal::Inventory::
+active() const
 {
-    return _state;
+    // easy enough
+    return _active;
 }
 
 
-template <bool DefaultState>
-typename pyre::journal::Inventory<DefaultState>::device_t *
-pyre::journal::Inventory<DefaultState>::
+auto
+pyre::journal::Inventory::
+fatal() const
+{
+    // easy enough
+    return _fatal;
+}
+
+
+auto
+pyre::journal::Inventory::
 device() const
 {
+    // easy enough
     return _device;
 }
 
 
-// mutators
-template <bool DefaultState>
-void
-pyre::journal::Inventory<DefaultState>::
-activate()
+// accessors
+auto
+pyre::journal::Inventory::
+active(active_type active) -> Inventory &
 {
-    _state = true;
-}
-
-
-template <bool DefaultState>
-void
-pyre::journal::Inventory<DefaultState>::
-deactivate()
-{
-    _state = false;
-}
-
-
-template <bool DefaultState>
-void
-pyre::journal::Inventory<DefaultState>::
-device(typename Inventory::device_t * device)
-{
-    _device = device;
-}
-
-
-// destructor
-template <bool DefaultState>
-pyre::journal::Inventory<DefaultState>::
-~Inventory()
-{}
-
-
-// the default constructor
-template <bool DefaultState>
-pyre::journal::Inventory<DefaultState>::
-Inventory(typename Inventory::state_t state, typename Inventory::device_t * device) :
-    _state(state),
-    _device(device)
-{}
-
-
-// the copy constructor
-template <bool DefaultState>
-pyre::journal::Inventory<DefaultState>::
-Inventory(const pyre::journal::Inventory<DefaultState> & other) :
-    _state(other._state),
-    _device(other._device)
-{}
-
-
-// operator =
-template <bool DefaultState>
-const pyre::journal::Inventory<DefaultState> &
-pyre::journal::Inventory<DefaultState>::
-operator = (const pyre::journal::Inventory<DefaultState> & other)
-{
-    // skip assignment to self
-    if (&other == this) { return *this; }
-    // otherwise, copy the data
-    _state = other._state;
-    _device = other._device;
-    // and return me
+    // easy enough
+    _active = active;
+    // all done
     return *this;
 }
 
 
-# endif
+auto
+pyre::journal::Inventory::
+fatal(fatal_type fatal) -> Inventory &
+{
+    // easy enough
+    _fatal = fatal;
+    // all done
+    return *this;
+}
+
+
+auto
+pyre::journal::Inventory::
+device(device_type device) -> Inventory &
+{
+    // easy enough
+    _device = device;
+    // all done
+    return *this;
+}
+
+
+// syntactic sugar
+pyre::journal::Inventory::
+operator active_type() const
+{
+    // return my activation state
+    return active();
+}
+
+
+#endif
 
 // end of file

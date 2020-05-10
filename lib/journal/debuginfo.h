@@ -1,30 +1,31 @@
-/* -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-*/
 
+// code guard
 #if !defined(pyre_journal_debuginfo_h)
 #define pyre_journal_debuginfo_h
 
-/* the __HERE__ macros */
+
+// the macros
 #include "macros.h"
+
 
 /* build the declarations of the bindings in a C-compatible way */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    int debuginfo_active(const char * channel);
-    void debuginfo_activate(const char * channel);
-    void debuginfo_deactivate(const char * channel);
-    void debuginfo_out(const char * channel, __HERE_DECL__, const char * fmt, ...);
+    int  debuginfo_active(const char * name);
+    void debuginfo_activate(const char * name);
+    void debuginfo_deactivate(const char * name);
+    void debuginfo_out(const char * name, __HERE_DECL__, const char * fmt, ...);
 
 #ifdef __cplusplus
 }
 #endif
 
-# endif // pyre_journal_debuginfo_h
+#endif
 
-/* end of file */
+// end of file

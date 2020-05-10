@@ -1,38 +1,67 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
+// code guard
 #if !defined(pyre_journal_Firewall_icc)
-#error This header file contains implementation details of class Firewall
+#error this file contains implementation details for pyre::journal::Firewall
 #else
 
 
-// meta methods
-// destructor
-pyre::journal::Firewall::
-~Firewall()
-{}
-
-
-// the default constructor
-pyre::journal::Firewall::
-Firewall(pyre::journal::Firewall::string_t name) :
-    pyre::journal::Diagnostic<pyre::journal::Firewall>("firewall", name),
-    pyre::journal::Channel<pyre::journal::Firewall, true>(name)
-{}
+// metamethods
+template <template <typename> typename proxyT>
+pyre::journal::Firewall<proxyT>::
+Firewall(const name_type & name, verbosity_type verbosity) :
+    channel_type(name, verbosity)
+{
+    // get my entry
+    entry_type & e = this->entry();
+    // decorate with my severity
+    e.note("severity", "firewall");
+}
 
 
 // implementation details
+// record the message to the chosen device
+template <template <typename> typename proxyT>
 void
-pyre::journal::Firewall::
-_endRecording() {
+pyre::journal::Firewall<proxyT>::
+record()
+{
+    // hunt down the device to use
+    auto dev = this->device();
+    // and record the entry
+    dev->memo(this->entry());
+    // all done
     return;
 }
 
 
-# endif
+// raise an exception when fatal
+template <template <typename> typename proxyT>
+void
+pyre::journal::Firewall<proxyT>::
+die()
+{
+    // prepare a message
+    auto msg = this->name() + firewall_error::string_type(": FIREWALL BREACHED!");
+    // throw a firewall
+    throw exception_type(msg);
+}
+
+
+// initialize the channel index
+template <template <typename> typename proxyT>
+auto
+pyre::journal::Firewall<proxyT>::
+initializeIndex() -> index_type
+{
+    // make an empty index and return it; for {firewall}, channels are (active,fatal) by default
+    return index_type(true, true);
+}
+
+
+#endif
 
 // end of file

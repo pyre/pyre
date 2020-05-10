@@ -1,30 +1,68 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
+// code guard
 #if !defined(pyre_journal_Warning_icc)
-#error This header file contains implementation details of class Warning
+#error this file contains implementation details for pyre::journal::Warning
 #else
 
 
-// meta methods
-// destructor
-pyre::journal::Warning::
-~Warning()
-{}
+// metamethods
+template <template <typename> typename proxyT>
+pyre::journal::Warning<proxyT>::
+Warning(const name_type & name, verbosity_type verbosity) :
+    channel_type(name, verbosity)
+{
+    // get my entry
+    entry_type & e = this->entry();
+    // decorate with my severity
+    e.note("severity", "warning");
+}
 
 
-// the default constructor
-pyre::journal::Warning::
-Warning(pyre::journal::Warning::string_t name) :
-    pyre::journal::Diagnostic<pyre::journal::Warning>("warning", name),
-    pyre::journal::Channel<pyre::journal::Warning, true>(name)
-{}
+// implementation details
+// record the message to the chosen device
+template <template <typename> typename proxyT>
+void
+pyre::journal::Warning<proxyT>::
+record()
+{
+    // hunt down the device to use
+    auto dev = this->device();
+    // record the entry
+    dev->alert(this->entry());
+    // all done
+    return;
+}
 
 
-# endif
+template <template <typename> typename proxyT>
+void
+pyre::journal::Warning<proxyT>::
+die()
+{
+    // prepare a message
+    auto msg = this->name() + ": application error";
+    // throw an application error
+    throw exception_type(msg);
+}
+
+
+// initialize the channel index
+template <template <typename> typename proxyT>
+auto
+pyre::journal::Warning<proxyT>::
+initializeIndex() -> index_type
+{
+    // make an empty index; for {warning}, channels are (active,non-fatal) by default
+    index_type index(true, false);
+    // and return it
+    return index;
+}
+
+
+#endif
 
 // end of file

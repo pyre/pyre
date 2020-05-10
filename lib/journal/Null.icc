@@ -1,69 +1,184 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
+// code guard
 #if !defined(pyre_journal_Null_icc)
-#error This header file contains implementation details of class Null
+#error This header contains implementation details of pyre::journal::Null
 #else
 
 
-// the injection operator
-template <typename item_t>
-pyre::journal::Null &
-pyre::journal::
-operator << (pyre::journal::Null & null, item_t)
+// metamethods
+pyre::journal::Null::
+Null(const name_type &)
+{}
+
+
+// accessors
+constexpr auto
+pyre::journal::Null::
+active() const
 {
-    return null;
+    // easy enough
+    return false;
+}
+
+
+constexpr auto
+pyre::journal::Null::
+fatal() const
+{
+    // easy enough
+    return false;
+}
+
+
+constexpr auto
+pyre::journal::Null::
+device() const -> device_type
+{
+    // easy enough
+    return nullptr;
+}
+
+
+// accessors
+constexpr auto
+pyre::journal::Null::
+active(active_type) -> Null &
+{
+    // all done
+    return *this;
+}
+
+
+constexpr auto
+pyre::journal::Null::
+fatal(fatal_type) -> Null &
+{
+    // all done
+    return *this;
+}
+
+
+constexpr auto
+pyre::journal::Null::
+device(device_type) -> Null &
+{
+    // all done
+    return *this;
+}
+
+
+constexpr
+pyre::journal::Null::
+operator active_type() const
+{
+    // always off
+    return false;
 }
 
 
 // interface
-bool
-pyre::journal::Null::
-isActive() const
-{
-    return false;
-}
-
-
-void
+constexpr void
 pyre::journal::Null::
 activate() const
 {
+    // nothing to do
     return;
 }
 
 
-void
+constexpr void
 pyre::journal::Null::
 deactivate() const
 {
+    // nothing to do
     return;
 }
 
 
-// meta methods
+constexpr void
 pyre::journal::Null::
-operator bool() const
+activateChannels(const nameset_type &)
 {
-    return false;
+    // nothing to do
+    return;
 }
 
-// destructor
-pyre::journal::Null::
-~Null()
-{}
+
+// manipulators
+constexpr auto
+pyre::journal::
+endl(const Null & null) -> const Null &
+{
+    // leave the channel alone
+    return null;
+}
 
 
-// the default constructor
-pyre::journal::Null::
-Null(const pyre::journal::Null::string_t &)
-{}
+constexpr auto
+pyre::journal::
+newline(const Null & null) -> const Null &
+{
+    // leave the channel alone
+    return null;
+}
 
 
-# endif
+// the injection operators
+// verbosity level
+constexpr auto
+pyre::journal::
+operator<< (const Null & null, const Verbosity &) -> const Null &
+{
+    // do nothing
+    return null;
+}
+
+
+// location info
+constexpr auto
+pyre::journal::
+operator<< (const Null & null, const Locator &) -> const Null &
+{
+    // do nothing
+    return null;
+}
+
+
+// metadata
+constexpr auto
+pyre::journal::
+operator<< (const Null & null, const Note &) -> const Null &
+{
+    // do nothing
+    return null;
+}
+
+
+// injection of manipulator functions
+constexpr auto
+pyre::journal::
+operator<< (const Null & null, const Null & (*)(const Null &)) -> const Null &
+{
+    // do nothing
+    return null;
+}
+
+
+// injection of everything else
+template <typename itemT>
+constexpr auto
+pyre::journal::
+operator<< (const Null & null, const itemT &) -> const Null &
+{
+    // leave the channel alone
+    return null;
+}
+
+
+#endif
 
 // end of file

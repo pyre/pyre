@@ -1,82 +1,130 @@
-// -*- C++ -*-
-// -*- coding: utf-8 -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
 
-
+// code guard
 #if !defined(pyre_journal_public_h)
 #define pyre_journal_public_h
 
-// external packages
-#include <map>
-#include <vector>
-#include <string>
-#include <sstream>
 
-// local declarations
-// infrastructure
-#include "Device.h"
+// external packagesvap
+#include "externals.h"
+// get the forward declarations
+#include "forward.h"
+
+// published type aliases; this is the file you are looking for...
+#include "api.h"
+
+// exceptions
+#include "exceptions.h"
+
+// global settings
 #include "Chronicler.h"
-#include "Inventory.h"
-#include "Index.h"
-#include "Channel.h"
-#include "Diagnostic.h"
-// the predefined diagnostics
-#include "Debug.h"
-#include "Error.h"
-#include "Firewall.h"
-#include "Informational.h"
-#include "Null.h"
-#include "Warning.h"
-// manipulators and associated support
-#include "macros.h"
+
+// message entry
+#include "Entry.h"
+// message metadata
+#include "Verbosity.h"
 #include "Locator.h"
-#include "Selector.h"
+#include "Note.h"
+#include "Flush.h"
+
+// abstractions
+#include "Renderer.h"
+#include "Device.h"
+
+// renderers
+#include "Alert.h"
+#include "Memo.h"
+
+// devices
+#include "Trash.h"
+#include "File.h"
+#include "Stream.h"
+#include "Console.h"
+#include "ErrorConsole.h"
+
+// support for channel shared state
+#include "Inventory.h"
+#include "InventoryProxy.h"
+#include "Index.h"
+
+// channel infrastructure
+#include "Channel.h"
+
+// channels
+#include "Null.h"
+// end user facing
+#include "Informational.h"
+#include "Warning.h"
+#include "Error.h"
+// developer facing
+#include "Debug.h"
+#include "Firewall.h"
+
+// manipulators
 #include "manipulators.h"
 
-// typedefs for convenience
-// debugging support
-namespace pyre {
-    namespace journal {
+// terminal support
+#include "ASCII.h"
+#include "CSI.h"
+#include "ANSI.h"
 
-        //  if we are building the library
-#if defined(PYRE_CORE)
-        // we need everything
-        using debug_t = Debug;
-        using firewall_t = Firewall;
 
-        // if this a client DEBUG build
-#elif defined(DEBUG)
-        // enable debug and firewalls
-        using debug_t = Debug;
-        using firewall_t = Firewall;
+// the convenience initializer
+void
+pyre::journal::
+init(int argc, char* argv[])
+{
+    // ask {chronicler} to do this
+    pyre::journal::chronicler_t::init(argc, argv);
+    // all done
+    return;
+}
 
-        // otherwise, this is a production build
-#else
-        // disable debug and firewalls for production builds
-        using debug_t = Null;
-        using firewall_t = Null;
+
+// register the application name with the chronicler
+void
+pyre::journal::
+application(const value_t & name)
+{
+    // get the global metadata
+    auto & notes = chronicler_t::notes();
+    // register the given name under the {application} key; the key is guaranteed to exist:
+    // it's part of the {chronicler_t} initialization
+    notes.at("application") = name;
+    // all done
+    return;
+}
+
+
+// install the trash can as the global device
+void
+pyre::journal::
+quiet()
+{
+    // forward to the {chronicler_t}
+    chronicler_t::quiet();
+    // all done
+    return;
+}
+
+
+// send all channel output to a log file
+void
+pyre::journal::
+logfile(const path_t & name)
+{
+    // create the device
+    auto dev = std::make_shared<file_t>(name);
+    // register it with the chronicler
+    chronicler_t::device(dev);
+    // all done
+    return;
+}
+
+
 #endif
-    }
-}
-
-// diagnostics
-namespace pyre {
-    namespace journal {
-        // diagnostics
-        using error_t = Error;
-        using info_t = Informational;
-        using warning_t = Warning;
-
-        // locators
-        using at = Locator;
-        using set = Selector;
-    }
-}
-
-#endif // pyre_journal_h
 
 // end of file

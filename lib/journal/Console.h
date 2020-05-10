@@ -1,47 +1,50 @@
-// -*- C++ -*-
+// -*- c++ -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-//
+
 
 // code guard
 #if !defined(pyre_journal_Console_h)
 #define pyre_journal_Console_h
 
-// place Console in namespace pyre::journal
-namespace pyre {
-    namespace journal {
-        class Console;
-    }
-}
-
-
-// declaration
-class pyre::journal::Console : public pyre::journal::Streaming {
+// a device that prints to {cout}
+class pyre::journal::Console : public Stream {
     // types
 public:
-    using renderer_t = Renderer;
+    // pointers to me
+    using pointer_type = std::shared_ptr<Console>;
+
+    // metamethods
+public:
+    // constructor
+    Console();
+    // destructor
+    virtual ~Console();
 
     // interface
 public:
-    virtual void record(entry_t &, metadata_t &);
+    inline bool tty() const;
 
-    // meta methods
-public:
-    virtual ~Console();
-    Console();
+    // data
+private:
+    bool _tty;
 
     // disallow
 private:
     Console(const Console &) = delete;
-    const Console & operator=(const Console &) = delete;
-
-    // data
-private:
-    renderer_t * _renderer;
+    Console(const Console &&) = delete;
+    const Console & operator= (const Console &) = delete;
+    const Console & operator= (const Console &&) = delete;
 };
 
 
-# endif
+// get the inline definitions
+#define pyre_journal_Console_icc
+#include "Console.icc"
+#undef pyre_journal_Console_icc
+
+
+#endif
+
 // end of file
