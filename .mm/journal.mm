@@ -18,7 +18,7 @@ journal.libraries := journal.lib
 # a python extension
 journal.extensions := journal.ext
 # and test suites
-journal.tests := journal.pkg.tests journal.lib.tests
+journal.tests := journal.pkg.tests journal.lib.tests journal.ext.tests
 
 
 # the journal package meta-data
@@ -47,7 +47,7 @@ journal.ext.stem := journal
 journal.ext.root := extensions/journal/
 journal.ext.capsule :=
 journal.ext.extern := journal.lib pybind11 python
-# compmiler control
+# compiler control
 journal.ext.lib.c++.defines += PYRE_CORE
 journal.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 

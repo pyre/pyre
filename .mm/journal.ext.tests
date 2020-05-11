@@ -1,0 +1,27 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2019 all rights reserved
+
+
+# the journal extension module test suite
+journal.ext.tests.stem := journal.ext
+journal.ext.tests.prerequisites := journal.ext
+
+
+# global testsuite settings; these apply to all test cases
+# the harness is the portion of the command line before the test driver itselrf
+journal.ext.tests.harness :=
+# arguments to pass to each test case
+journal.ext.tests.argv :=
+
+
+# the following test cases require cleanup
+tests.journal.ext.api_file.clean += "api_file.log"
+tests.journal.ext.debug_file.clean += "debug_file.log"
+tests.journal.ext.firewall_file.clean += "firewall_file.log"
+tests.journal.ext.error_file.clean += "error_file.log"
+tests.journal.ext.info_file.clean += "info_file.log"
+tests.journal.ext.warning_file.clean += "warning_file.log"
+
+# end of file
