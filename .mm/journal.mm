@@ -48,7 +48,7 @@ journal.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 
 
 # get the testsuites
-include journal.pkg.tests journal.lib.tests
+include $(journal.tests)
 
 
 # end of file
