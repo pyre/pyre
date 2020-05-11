@@ -1,28 +1,26 @@
-/* -*- coding: utf-8 -*-
+// -*- c -*-
 //
-// michael a.g. aïvázis
-// orthologue
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
-*/
 
 
-/* for the build system */
-#include <portinfo.h>
-
-/* access to the journal header file */
+// support for {bool}
+#include <stdbool.h>
+// get the journal
 #include <pyre/journal/firewalls.h>
 
-/* main program */
+
+// exercise the C bindings
 int main() {
+    // name a channel
+    const char * channel = "tests.journal.debuginfo";
 
-    /* the channel name */
-    const char * channel = "pyre.journal.test";
-
-    /* check a trivial condition */
-    firewall_check(channel, 0==0, __HERE__, "%s", "oooooops!");
+    // check a true statement
+    firewall_check(channel, true, __HERE__, "something is %s", "wrong");
 
     // all done
     return 0;
 }
 
-/* end of file */
+
+// end of file
