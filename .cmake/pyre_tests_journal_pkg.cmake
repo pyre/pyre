@@ -149,5 +149,21 @@ set_property(TEST journal.pkg.warning_file.cleanup PROPERTY
   DEPENDS journal.pkg.warning_file.py
   )
 
+add_test(NAME journal.pkg.file_sanity.cleanup
+  COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm file_sanity.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  )
+set_property(TEST journal.pkg.file_sanity.cleanup PROPERTY
+  DEPENDS journal.pkg.file_sanity.py
+  )
+
+add_test(NAME journal.pkg.file_example.cleanup
+  COMMAND ${BASH_PROGRAM} -c "echo $(pwd); rm file_example.log"
+  WORKING_DIRECTORY ${PYRE_TESTSUITE_DIR}/journal.pkg
+  )
+set_property(TEST journal.pkg.file_example.cleanup PROPERTY
+  DEPENDS journal.pkg.file_example.py
+  )
+
 
 # end of file
