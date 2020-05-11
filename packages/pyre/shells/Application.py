@@ -15,8 +15,6 @@ from .Director import Director
 # protocols
 from .Shell import Shell
 import journal.protocols
-# the default renderer
-from .Renderer import Renderer
 
 
 # declaration
@@ -43,9 +41,6 @@ class Application(pyre.component, metaclass=Director):
     # public state
     shell = Shell()
     shell.doc = 'my hosting strategy'
-
-    renderer = journal.protocols.renderer(default=Renderer)
-    renderer.doc = "the specialized renderer for journal entries"
 
     DEBUG = pyre.properties.bool(default=False)
     DEBUG.doc = 'debugging mode'
@@ -160,8 +155,10 @@ class Application(pyre.component, metaclass=Director):
         # chain up
         super().__init__(name=name, **kwds)
 
-        # attach my renderer to the console
-        journal.scribe().device.renderer = self.renderer
+        # if i have a name
+        if name is not None:
+            # register it wit the journal
+            journal.application(name=name)
 
         # make a name for my channels
         channel  = self.pyre_namespace or name
