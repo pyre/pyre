@@ -6,19 +6,15 @@
 #
 
 dist: focal
-# cmake 3.12
-# gcc 7.4
-# https://docs.travis-ci.com/user/reference/bionic/
+group: travis_latest
 
 language: python
 python:
-  - 3.7
   - 3.8
 
 addons:
   apt:
     packages:
-      - python3.7-dev
       - python3.8-dev
       - libgsl-dev
       - python3-pybind11
