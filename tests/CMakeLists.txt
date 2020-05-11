@@ -5,15 +5,20 @@
 #
 
 
-# the pure python tests
+# pure python
 include(pyre_tests_python)
-# the pyre tests
-include(pyre_tests_pyre_pkg)
-include(pyre_tests_journal_pkg)
-include(pyre_tests_merlin_pkg)
-# the libraries
-include(pyre_tests_journal_lib)
+
+# pyre
 include(pyre_tests_pyre_lib)
+include(pyre_tests_pyre_pkg)
+
+# journal
+include(pyre_tests_journal_lib)
+include(pyre_tests_journal_pkg)
+include(pyre_tests_journal_api)
+
+# merlin
+include(pyre_tests_merlin_pkg)
 
 # sqlite
 include(pyre_tests_sqlite_pkg)
