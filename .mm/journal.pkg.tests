@@ -1,67 +1,36 @@
 # -*- Makefile -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2019 all rights reserved
 
 
-# the journal package testsuite
+# the journal package test suite
 journal.pkg.tests.stem := journal.pkg
-journal.pkg.tests.prerequisites := journal.pkg pyre.pkg
+journal.pkg.tests.prerequisites := pyre.pkg journal.pkg
 
 
-# exclusions
-# this is not really a test driver; it's meant to help design color palettes
-journal.pkg.tests.drivers.exclude := colors.py
+# the {ansi_emulates} driver has some special cases
+tests.journal.pkg.ansi_emulates.cases := ansi_emulates.yes ansi_emulates.no
+# run with a value for TERM that indicates a terminal that does not support ANSI emulation
+ansi_emulates.no.harness := TERM=foo
+# tell the driver that it should expect an incompatible terminal
+ansi_emulates.no.argv := 0
+# run with a value for TERM that indicates a terminal that supports ANSI emulation
+ansi_emulates.yes.harness := TERM=xterm
+# tell the driver that it should expect a compatible terminal
+ansi_emulates.yes.argv := 1
 
 
-# the {debug-activation} test has some special cases
-tests.journal.pkg.debug-activation.cases := debug-activation.cmdline debug-activation.cfgfile
-# configure on the command line
-debug-activation.cmdline.argv := --journal.debug.activation=on
-# configure with a file
-debug-activation.cfgfile.argv := --config=activation.pfg
+# the following tests require clean up
+tests.journal.pkg.file_sanity.clean := file_sanity.log
+tests.journal.pkg.file_example.clean := file_example.log
 
-# the {debug-injection} test has some special cases
-tests.journal.pkg.debug-injection.cases := \
-    debug-injection.default debug-injection.console debug-injection.file
-# the default case passes no command line arguments
-debug-injection.default.argv :=
-# the console case sends the output to the console by requesting explictly
-debug-injection.console.argv := --journal.device=import:journal.console
-# the console case sends the output to a file
-debug-injection.file.argv := --journal.device=import:journal.file --journal.device.log="journal.log"
-
-
-# the {firewall-activation} test has some special cases
-tests.journal.pkg.firewall-activation.cases := firewall-activation.cmdline firewall-activation.cfgfile
-# configure on the command line
-firewall-activation.cmdline.argv := --journal.firewall.activation=off
-# configure with a file
-firewall-activation.cfgfile.argv := --config=activation.pfg
-
-
-# the {info-activation} test has some special cases
-tests.journal.pkg.info-activation.cases := info-activation.cmdline info-activation.cfgfile
-# configure on the command line
-info-activation.cmdline.argv := --journal.info.activation=on
-# configure with a file
-info-activation.cfgfile.argv := --config=activation.pfg
-
-
-# the {warning-activation} test has some special cases
-tests.journal.pkg.warning-activation.cases := warning-activation.cmdline warning-activation.cfgfile
-# configure on the command line
-warning-activation.cmdline.argv := --journal.warning.activation=off
-# configure with a file
-warning-activation.cfgfile.argv := --config=activation.pfg
-
-
-# the {error-activation} test has some special cases
-tests.journal.pkg.error-activation.cases := error-activation.cmdline error-activation.cfgfile
-# configure on the command line
-error-activation.cmdline.argv := --journal.error.activation=off
-# configure with a file
-error-activation.cfgfile.argv := --config=activation.pfg
+tests.journal.pkg.api_file.clean := api_file.log
+tests.journal.pkg.debug_file.clean := debug_file.log
+tests.journal.pkg.firewall_file.clean := firewall_file.log
+tests.journal.pkg.error_file.clean := error_file.log
+tests.journal.pkg.info_file.clean := info_file.log
+tests.journal.pkg.warning_file.clean := warning_file.log
 
 
 # end of file

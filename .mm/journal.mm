@@ -24,25 +24,30 @@ journal.tests := journal.pkg.tests journal.lib.tests
 # the journal package meta-data
 journal.pkg.root := packages/journal/
 journal.pkg.stem := journal
-journal.pkg.ext :=
+journal.pkg.prerequisites := pyre.pkg
 
 # the journal library meta-data
-journal.lib.root := lib/journal/
+# the stem; used to derive the location and name of the library; it should be deducible from
+# the name of the project, but just in case...
 journal.lib.stem := journal
+# the destination include directory
 journal.lib.incdir := $(builder.dest.inc)pyre/journal/
+# the master header file; it is deposited one level above the rest
 journal.lib.master := journal.h
-journal.lib.extern :=
+# compiler control
 journal.lib.c++.defines += PYRE_CORE
 journal.lib.c++.flags += $($(compiler.c++).std.c++17)
 
 
 # the journal extension meta-data
-journal.ext.root := extensions/journal/
+# the stem; used to derive the location and name of the extension; it should be deducible from
+# the name of the project, but just in case...
 journal.ext.stem := journal
-journal.ext.pkg := journal.pkg
-journal.ext.wraps := journal.lib
+# the location of the source relative to the project home diretcory
+journal.ext.root := extensions/journal/
 journal.ext.capsule :=
-journal.ext.extern := journal.lib python
+journal.ext.extern := journal.lib pybind11 python
+# compmiler control
 journal.ext.lib.c++.defines += PYRE_CORE
 journal.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 
