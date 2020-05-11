@@ -114,7 +114,7 @@ function(pyre_journalModule)
   install(
     TARGETS journalmodule
     LIBRARY
-    DESTINATION ${PYRE_DEST_PACKAGES}/journal
+    DESTINATION ${PYRE_DEST_PACKAGES}/journal/ext
     )
 endfunction(pyre_journalModule)
 
