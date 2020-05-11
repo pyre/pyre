@@ -150,7 +150,7 @@ endfunction()
 
 # register a python script as a test case that requires environment variables to be set up; use
 # a path relative to {PYRE_TESTSUITE_DIR}
-function(pyre_test_python_testcase_envvar env testfile)
+function(pyre_test_python_testcase_env testfile env)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
 
