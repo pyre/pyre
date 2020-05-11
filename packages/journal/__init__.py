@@ -123,6 +123,11 @@ if without_libjournal:
 # if we have access to the bindings
 else:
     # let the c++ library take over
+    # pull the convenience methods; their interface is the same as the pure python implementation
+    quiet = libjournal.quiet
+    logfile = libjournal.logfile
+    application = libjournal.application
+
     # publish the keeper of the global state
     chronicler = libjournal.Chronicler
 
