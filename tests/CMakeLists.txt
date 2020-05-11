@@ -15,6 +15,7 @@ include(pyre_tests_pyre_pkg)
 # journal
 include(pyre_tests_journal_lib)
 include(pyre_tests_journal_pkg)
+include(pyre_tests_journal_ext)
 include(pyre_tests_journal_api)
 
 # merlin
