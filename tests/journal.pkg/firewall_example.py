@@ -33,7 +33,7 @@ def test():
     except channel.FirewallError as error:
         # verify that the description is correct
         assert str(error) == (
-            f"file='{__file__}', line=29, function='test': "
+            f"file='{__file__}', line='29', function='test': "
             "firewall breached; aborting..."
             )
 
