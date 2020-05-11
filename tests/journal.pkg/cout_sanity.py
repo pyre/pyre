@@ -7,10 +7,14 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Verify that we can access the {cout} console
     """
-    # access the package
-    import journal
+    # get the device
+    from journal.Console import Console as cout
+
+    # instantiate and verify the name
+    cout().name == "cout"
+
     # all done
     return
 

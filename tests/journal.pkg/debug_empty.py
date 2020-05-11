@@ -7,10 +7,19 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Verify that empty log messages get handled properly
     """
-    # access the package
-    import journal
+    # and the channel
+    from journal.Debug import Debug as debug
+
+    # make a debug channel
+    channel = debug(name="tests.journal.debug")
+    # activate it
+    channel.activate()
+
+    # inject an empty message
+    channel.log()
+
     # all done
     return
 

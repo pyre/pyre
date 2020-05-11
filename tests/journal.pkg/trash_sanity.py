@@ -7,10 +7,14 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Verify that we can access the {trash} device
     """
-    # access the package
-    import journal
+    # get the device
+    from journal.Trash import Trash as trash
+
+    # instantiate and verify the name
+    assert trash().name == "trash"
+
     # all done
     return
 

@@ -7,10 +7,10 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Sanity check: verify that the channel is accessible
     """
-    # access the package
-    import journal
+    # access the channel class
+    from journal.Null import Null
     # all done
     return
 

@@ -7,10 +7,21 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Set the application name
     """
-    # access the package
+    # get the library
     import journal
+
+    # make up a name
+    name = "app"
+    # register it
+    journal.application(name)
+
+    # get the chronicler's notes
+    notes = journal.chronicler.notes
+    # verify that the key is registered and has the correct value
+    assert notes["application"] == name
+
     # all done
     return
 

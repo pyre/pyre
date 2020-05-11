@@ -7,10 +7,10 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Sanity check: verify that the channel is accessible
     """
-    # access the package
-    import journal
+    # access the channel constructor
+    from journal.Firewall import Firewall
     # all done
     return
 

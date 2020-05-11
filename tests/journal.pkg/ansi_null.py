@@ -7,10 +7,14 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Check that the color tables respond well when asked for color names that don't exist
     """
-    # access the package
-    import journal
+    # access the color map
+    from journal.ANSI import ANSI
+
+    # ask for a very strange color name
+    assert ANSI.x11("a-very-unlikely-color-name") == ""
+
     # all done
     return
 

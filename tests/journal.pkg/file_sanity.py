@@ -7,10 +7,21 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Verify that we can build a file based device
     """
-    # access the package
-    import journal
+    # pick a file name
+    filename = "file_sanity.log"
+
+    # get the device
+    from journal.File import File
+    # instantiate
+    device = File(path=filename)
+
+    # check its name
+    assert device.name == "log"
+    # and the path
+    assert device.path == filename
+
     # all done
     return
 

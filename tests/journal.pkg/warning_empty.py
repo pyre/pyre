@@ -7,10 +7,17 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Verify that empty log messages get handled properly
     """
-    # access the package
-    import journal
+    # get the channel
+    from journal.Warning import Warning as warning
+
+    # make a warning channel
+    channel = warning(name="tests.journal.warning")
+
+    # inject an empty message
+    channel.log()
+
     # all done
     return
 

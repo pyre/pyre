@@ -7,10 +7,25 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Suppress all journal output
     """
-    # access the package
+    # get the journal
     import journal
+
+    # suppress all outpuut
+    journal.quiet()
+
+    # make a channel
+    channel = journal.debug(name="tests.journal.debug")
+    # activate it
+    channel.activate()
+
+    # add some metadata
+    channel.notes["time"] = "now"
+    # inject
+    channel.line("debug channel:")
+    channel.log("    hello world!")
+
     # all done
     return
 

@@ -7,10 +7,14 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Verify that we can access the {cerr} console
     """
-    # access the package
-    import journal
+    # get the device
+    from journal.ErrorConsole import ErrorConsole as cerr
+
+    # instantiate and verify the name
+    assert cerr().name == "cerr"
+
     # all done
     return
 

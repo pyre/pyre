@@ -7,10 +7,17 @@
 
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Verify that empty log messages get handled properly
     """
-    # access the package
-    import journal
+    # get the channel
+    from journal.Informational import Informational as info
+
+    # make an info channel
+    channel = info(name="tests.journal.info")
+
+    # inject an empty message
+    channel.log()
+
     # all done
     return
 

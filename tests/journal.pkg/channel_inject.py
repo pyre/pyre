@@ -5,12 +5,21 @@
 # (c) 1998-2020 all rights reserved
 
 
+# make sure the injection interface works as expected
 def test():
     """
-    Sanity check: verify that the package is accessible
+    Exercise a simple use case
     """
-    # access the package
-    import journal
+    # get the channel base class
+    from journal.Channel import Channel
+
+    # make one
+    d1 = Channel(name="test.channel")
+
+    # build a message
+    d1.line("hello world!")
+    d1.log()
+
     # all done
     return
 
