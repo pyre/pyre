@@ -17,7 +17,7 @@ using debug_t = pyre::journal::debug_t;
 // send all output to a log file
 int main() {
     // send all channel output to a log file
-    pyre::journal::logfile("debug_file.log");
+    pyre::journal::logfile("api_file.log");
 
     // make a debug channel
     debug_t channel("tests.journal.debug");
