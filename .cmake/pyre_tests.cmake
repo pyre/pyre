@@ -6,7 +6,7 @@
 #
 
 
-# create a unique test case name that incorporate the command line arguments
+# generate a unique test case name that incorporate the command line arguments
 # adapted from code by @rtburns-jpl
 function(pyre_test_testcase testcase testfile)
   # the test case stem is its path with path separators replaced by dots
@@ -27,7 +27,7 @@ function(pyre_test_testcase testcase testfile)
 endfunction()
 
 
-# create a unique test target name
+# generate a unique test target name
 function(pyre_test_target target testfile)
   # split
   get_filename_component(path ${testfile} DIRECTORY)
@@ -47,7 +47,7 @@ endfunction()
 # N.B.: the signature may look backwards, but the {testfile} command line arguments are in
 # ${ARGN} so it seemed simpler this way
 function(pyre_test_testcase_shell_fixture setup cleanup testfile)
-  # create the name of the testcase
+  # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
 
   # get the relative path to the test case local directory so we can set the working dir
@@ -90,7 +90,7 @@ endfunction()
 
 # register a python script as a test case; use a path relative to {PYRE_TESTSUITE_DIR}
 function(pyre_test_python_testcase testfile)
-  # create the name of the testcase
+  # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
 
   # we run the test cases in their local directory, so we need the base name
@@ -117,7 +117,7 @@ endfunction()
 
 # register a python script as a parallel test case
 function(pyre_test_python_testcase_mpi testfile slots)
-  # create the name of the testcase
+  # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${slots} ${ARGN})
 
   # we run the test cases in their local directory, so we need the base name
@@ -148,9 +148,10 @@ function(pyre_test_python_testcase_mpi testfile slots)
 endfunction()
 
 
-# register a python script as a test case; use a path relative to {PYRE_TESTSUITE_DIR}
+# register a python script as a test case that requires environment variables to be set up; use
+# a path relative to {PYRE_TESTSUITE_DIR}
 function(pyre_test_python_testcase_envvar env testfile)
-  # create the name of the testcase
+  # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
 
   # we run the test cases in their local directory, so we need the base name
@@ -179,7 +180,7 @@ endfunction()
 
 # register a python script as a test case; use a path relative to {PYRE_TESTSUITE_DIR}
 function(pyre_test_pyre_driver driver case)
-  # create the name of the testcase
+  # generate the name of the testcase
   set(testname "${driver}.${case}")
 
   # set up the harness
@@ -198,9 +199,9 @@ endfunction()
 
 # register a test case based on a compiled driver
 function(pyre_test_driver testfile)
-  # create the name of the testcase
+  # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
-  # create the name of the target
+  # generate the name of the target
   pyre_test_target(target ${testfile})
 
   # schedule it to be compiled
@@ -223,9 +224,9 @@ endfunction()
 
 # register a test case based on an existing compiled driver
 function(pyre_test_driver_case testfile)
-  # create the name of the testcase
+  # generate the name of the testcase
   pyre_test_testcase(testname ${testfile} ${ARGN})
-  # create the name of the target
+  # generate the name of the target
   pyre_test_target(target ${testfile})
 
   # make it a test case
@@ -248,6 +249,25 @@ function(pyre_test_driver_env testfile env)
   pyre_test_testcase(testname ${testfile} ${ARGN})
 
   # adjust the environment
+  set_property(TEST ${testname}
+    APPEND PROPERTY ENVIRONMENT
+    ${env}
+    )
+
+  # all done
+endfunction()
+
+
+# register a test case with additional environment based on an existing compiled driver
+function(pyre_test_driver_env_case testfile env)
+  # generate the name of the testcase
+  pyre_test_testcase(testname ${testfile} ${env} ${ARGN})
+  # generate the name of the target
+  pyre_test_target(target ${testfile})
+
+  # make a test case
+  add_test(NAME ${testname} COMMAND ${target} ${ARGN})
+  # register the runtime environment requirements
   set_property(TEST ${testname}
     APPEND PROPERTY ENVIRONMENT
     ${env}
