@@ -18,7 +18,7 @@ journal.libraries := journal.lib
 # a python extension
 journal.extensions := journal.ext
 # and test suites
-journal.tests := journal.pkg.tests journal.lib.tests journal.ext.tests
+journal.tests := journal.pkg.tests journal.lib.tests journal.ext.tests journal.api.tests
 
 
 # the journal package meta-data

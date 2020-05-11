@@ -1,0 +1,12 @@
+# -*- Makefile -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2019 all rights reserved
+
+
+# the journal test suite; it exercises whatever is published by the package
+journal.api.tests.stem := journal.api
+journal.api.tests.prerequisites := journal.pkg journal.ext
+
+
+# end of file
