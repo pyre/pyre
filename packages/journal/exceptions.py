@@ -1,50 +1,75 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
-# get the base pyre exception
+# the base exception from the framework
 from pyre.framework.exceptions import PyreError
 
 
-# firewalls
-class FirewallError(PyreError):
+# all local exceptions derive from this
+class JournalError(PyreError):
     """
-    Exception raised whenever a fatal firewall is encountered
+    Base class for all journal errors
+
+    Useful when you are trying to catch all journal errors
+    """
+
+
+# raised by firewalls
+class FirewallError(JournalError):
+    """
+    Exception raised when firewalls fire
     """
 
     # public data
     description = "firewall breached; aborting..."
 
-    # meta-methods
-    def __init__(self, firewall, **kwds):
+    # metamethods
+    def __init__(self, channel, **kwds):
         # chain up
-        super().__init__(locator=firewall.locator, **kwds)
-        # record the error
-        self.firewall = firewall
+        super().__init__(locator=channel.locator, **kwds)
+        # save the firewall
+        self.firewall = channel
         # all done
         return
 
 
-# application errors
-class ApplicationError(PyreError):
+# raised by debug channels that are marked fatal
+class DebugError(JournalError):
     """
-    Exception raised whenever an application error is encountered
+    Exception raised when fatal debug channels fire
     """
-
 
     # public data
-    description = "firewall breached; aborting..."
+    description = "aborting..."
 
-    # meta-methods
-    def __init__(self, error, **kwds):
+    # metamethods
+    def __init__(self, channel, **kwds):
         # chain up
-        super().__init__(locator=error.locator, **kwds)
-        # record the error
-        self.error = error
+        super().__init__(locator=channel.locator, **kwds)
+        # save the firewall
+        self.debug = channel
+        # all done
+        return
+
+
+# raised by error channels
+class ApplicationError(JournalError):
+    """
+    Exception raised when an application error is encountered
+    """
+
+    # public data
+    description = "application error; aborting..."
+
+    # metamethods
+    def __init__(self, channel, **kwds):
+        # chain up
+        super().__init__(locator=channel.locator, **kwds)
+        # save the firewall
+        self.error = channel
         # all done
         return
 

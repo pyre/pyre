@@ -1,31 +1,41 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
-# packages
-import collections
-
-
-# super-classes
+# superclasses
 from .Channel import Channel
-from .Diagnostic import Diagnostic
 
 
-# declaration
-class Warning(Diagnostic, Channel):
+# the implementation of the debug channel
+class Warning(Channel, active=True, fatal=False):
     """
-    This class is the implementation of the warning channel
+    Warning channels are used to communicate application progress to users.
+
+    Typically, they indicate that the application has encountered a condition that is
+    potentially problematic, but the application has identified a workaround.
     """
 
-    # public data
-    severity = "warning"
 
-    # class private data
-    _index = collections.defaultdict(Channel.Enabled)
+    # types
+    from .exceptions import ApplicationError
+
+
+    # implementation details
+    def record(self):
+        """
+        Commit my payload to the journal
+        """
+        # hunt down my device and record the entry
+        self.device.alert(entry=self.entry)
+        # all done
+        return self
+
+
+    # constants
+    severity = "warning"           # the channel severity
+    fatalError = ApplicationError  # the exception i raise when i'm fatal
 
 
 # end of file

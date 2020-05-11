@@ -1,141 +1,143 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
 # administrative
 def copyright():
     """
-    Return the pyre journal copyright note
+    Return the journal copyright note
     """
-    # easy enough
     return print(meta.header)
 
 
 def license():
     """
-    Print the pyre journal license
+    Print the journal license
     """
-    # easy enough
+    # print it
     return print(meta.license)
 
 
 def version():
     """
-    Return the pyre journal version
+    Return the journal version
     """
     return meta.version
 
 
-# the bootstrapping logic is tucked away in a function to prevent namespace pollution
-def boot():
+def credits():
     """
-    Initialize the journal package.
-
-    Attempt to locate the C++ extension and use it if available; fall back on the pure python
-    implementation. Either way, return a marker that enables clients to check whether there is
-    support for journal messages from C/C++/FORTRAN.
+    Print the acknowledgments
     """
-    # access to the local types
-    from .Journal import Journal
-    from .Channel import Channel
-    # instantiate the journal component and patch {Channel}
-    Channel.journal = Journal(name="pyre.journal")
-
-    # attempt to load the journal extension
-    try:
-        from . import journal
-    # if it fails for any reason
-    except Exception:
-        # ignore it; the default implementation will kick in
-        extension = None
-    # otherwise
-    else:
-        # save the extension module
-        extension = journal
-        # hand the journal instance to the extension module so it can have access to the
-        # default device
-        journal.registerJournal(Channel.journal)
-
-        # attach the indices from the extension module to the channel categories
-        # access the index factories
-        from . import proxies
-        # install
-        debug._index = proxies.debugIndex()
-        firewall._index = proxies.firewallIndex()
-        info._index = proxies.infoIndex()
-        warning._index = proxies.warningIndex()
-        error._index = proxies.errorIndex()
-
-    # transfer settings from the configuration store
-    categories = [ debug, firewall, info, warning, error ]
-    Channel.journal.configureCategories(categories)
-
-    # all done
-    return extension
+    # print it
+    return print(meta.acknowledgments)
 
 
-# access to the singleton
-def scribe():
-    """
-    Provide access to the journal manager
-    """
-    # channel knows...
-    from .Channel import Channel as channel
-    # so make him say
-    return channel.journal
+# publish
+# set up a marker about whether we are going to load and publish the bindings
+without_libjournal = False
 
+# get the {__main__} module
+import __main__
+# check whether
+try:
+    # the user has expressed an opinion
+    without_libjournal = __main__.journal_no_libjournal
+# if not
+except AttributeError:
+    # no worries
+    pass
 
-# administrative
+# if we are allowed
+if not without_libjournal:
+    # load the bindings
+    from .ext import libjournal
+    # if something went wrong
+    if libjournal is None:
+        # indicate that we don't have access to the bindings
+        without_libjournal = True
+
+# publish the package metadata
 from . import meta
-# grab the framework
-import pyre
-# register the package
-package = pyre.executive.registerPackage(name='journal', file=__file__)
-# record the layout
-home, prefix, defaults = package.layout()
 
-# access to the public names
-# the channel factories
-from .Debug import Debug as debug
-from .Firewall import Firewall as firewall
-from .Info import Info as info
-from .Warning import Warning as warning
-from .Error import Error as error
+# if we don't have access to the bindings
+if without_libjournal:
+    # publish the keeper of the global settings
+    from .Chronicler import Chronicler
+    # instantiate the singleton and publish the instance
+    chronicler = Chronicler()
 
-# the protocols
-from . import protocols
+    # devices
+    from .Trash import Trash as trash
+    from .File import File as file
+    from .Console import Console as cout
+    from .ErrorConsole import ErrorConsole as cerr
 
-
-# device foundries
-@pyre.foundry(implements=protocols.device)
-def console():
-    # grab the implementation
-    from .Console import Console
-    # steal its docstrnig
-    __doc__ = Console.__doc__
-    # and publish it
-    return Console
-
-@pyre.foundry(implements=protocols.device)
-def file():
-    # grab the implementation
-    from .File import File
-    # steal its docstrnig
-    __doc__ = File.__doc__
-    # and publish it
-    return File
+    # channels
+    # developer facing
+    from .Debug import Debug as debug
+    from .Firewall import Firewall as firewall
+    # user facing
+    from .Informational import Informational as info
+    from .Warning import Warning as warning
+    from .Error import Error as error
 
 
-# the package exception
-from .exceptions import FirewallError
+    # convenience function to set the application name
+    def application(name):
+        """
+        Set the application name
+        """
+        # record the name in the {chronicler} notes
+        chronicler.notes["application"] = name
+        # all done
+        return
+
+    # convenience function to suppress all output
+    def quiet():
+        """
+        Suppress all output
+        """
+        # make a trash can
+        trashcan = trash()
+        # set it as the default device
+        chronicler.device = trashcan
+        # all done
+        return
+
+    # convenience function to send all output to a log file
+    def logfile(path):
+        """
+        Send all output to a log file
+        """
+        # make a file
+        logfile = file(path=path)
+        # set it as the default device
+        chronicler.device = logfile
+        # all done
+        return
 
 
-# make it so...
-extension = boot()
+# if we have access to the bindings
+else:
+    # let the c++ library take over
+    # publish the keeper of the global state
+    chronicler = libjournal.Chronicler
+
+    # devices
+    trash = libjournal.Trash
+    cout = libjournal.Console
+    cerr = libjournal.ErrorConsole
+
+    # the developer facing channels
+    debug = libjournal.Debug
+    firewall = libjournal.Firewall
+    # the user facing channels
+    info = libjournal.Informational
+    warning = libjournal.Warning
+    error = libjournal.Error
 
 
 # end of file

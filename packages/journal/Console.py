@@ -1,43 +1,30 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
-# packages
-import pyre
+# externals
+import sys # for {stdout}
+# superclass
+from .Stream import Stream
+# the palette definitions
+from . import palettes
 
 
-# the implemented interfaces
-from .Device import Device
-
-
-# declaration
-class Console(pyre.component, family="journal.devices.console", implements=Device):
+# write messages to {stdout}
+class Console(Stream):
     """
-    A device that sends journal messages to the standard output
+    Journal device that writes messages to {stdout}
     """
 
 
-    # public state
-    renderer = Device.Renderer()
-    renderer.doc = "the formatting strategy for journal entries"
-
-
-    # interface
-    @pyre.export
-    def record(self, page, metadata):
-        """
-        Record a journal entry
-        """
-        # assemble the text
-        text = '\n'.join(self.renderer.render(page, metadata))
-        # print it to stdout
-        print(text, flush=True)
-        # and return
-        return self
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(name="cout", stream=sys.stdout, palette=palettes.dark, **kwds)
+        # all done
+        return
 
 
 # end of file

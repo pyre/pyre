@@ -12,23 +12,17 @@ from .Stream import Stream
 from . import palettes
 
 
-# write messages to a log file
-class File(Stream):
+# write messages to {stderr}
+class ErrorConsole(Stream):
     """
-    Journal device that writes messages to {stdout}
+    Journal device that writes messages to {stderr}
     """
-
-
-    # the default mode for opening the stream
-    mode = "w"
 
 
     # metamethods
-    def __init__(self, path, mode=mode, **kwds):
+    def __init__(self, **kwds):
         # chain up
-        super().__init__(name="log", stream=open(path, mode=mode), **kwds)
-        # save the path
-        self.path = path
+        super().__init__(name="cerr", stream=sys.stderr, palette=palettes.light, **kwds)
         # all done
         return
 

@@ -1,24 +1,28 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
-# packages
-import collections
-
-
-# super-classes
+# superclasses
 from .Channel import Channel
-from .Diagnostic import Diagnostic
 
 
-# declaration
-class Firewall(Diagnostic, Channel):
+# the implementation of the Firewall channel
+class Firewall(Channel, active=True, fatal=True):
     """
-    This class is the implementation of the firewall channel
+    Firewalls are used to communicate that a bug was detected.
+
+    Firewalls are typically used to contain code that enforces invariants and checks the
+    internal consistency of the code. When these checks fail, the firewall prints a diagnostic
+    message to the screen and raises an exception.
+
+    A firewall fires either because a defect has been identified or because the defect
+    detection logic in the firewall is faulty. In either case, THE SOURCE CODE REQUIRES
+    MODIFICATION.
+
+    Expensive consistency checks can be avoided by checking whether the associated firewall is
+    active before conducting them.
     """
 
 
@@ -26,29 +30,20 @@ class Firewall(Diagnostic, Channel):
     from .exceptions import FirewallError
 
 
-    # public data
-    fatal = False
-    severity = "firewall"
-
-
-    # interface
-    def log(self, message=None, stackdepth=0):
+    # implementation details
+    def record(self):
         """
-        Record my message to my device
+        Commit my payload to the journal
         """
-        # first, record the entry
-        super().log(message, stackdepth)
-        # build an instance of the firewall exception
-        error = self.FirewallError(firewall=self)
-        # if firewalls are not fatal, return the exception instance
-        if not self.fatal: return error
-        # otherwise, raise it
-        raise error
+        # hunt down my device and record the entry
+        self.device.memo(entry=self.entry)
+        # all done
+        return self
 
 
-    # class private data
-    _index = collections.defaultdict(Channel.Enabled)
-    stackdepth = Diagnostic.stackdepth + 1 # there is an extra stack level for firewalls...
+    # constants
+    severity = "firewall"       # the channel severity
+    fatalError = FirewallError  # the exception i raise when i'm fatal
 
 
 # end of file

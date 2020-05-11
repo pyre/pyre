@@ -1,131 +1,384 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
-# super-classes
-from pyre.patterns.Named import Named
+# externals
+import traceback       # location information
+# framework
+import pyre              # for my superclass
+
+# the index
+from .Index import Index
+# the base inventory
+from .Inventory import Inventory
+# the keeper of the global settings
+from .Chronicler import Chronicler
 
 
-# declaration
-class Channel(Named):
+# access to the channel shared state
+class Channel(pyre.patterns.named):
     """
-    This class encapsulates access to the shared channel state
+    Encapsulation of the per-channel shared state
+
+    All channels of a given severity that have the same name access a common state object. This
+    enables a type of context-free control of a channel: anybody with access to the name of a
+    channel can control whether it's active, or what device it writes to.
     """
 
 
-    # class data
-    # the anchor component with the configurable parts
-    journal = None # patched by the journal bootstrapping process
+    # types
+    from .exceptions import JournalError
 
 
     # public data
+    verbosity = 1           # default verbosity
+
+
+    # access to settings from my shared inventory
     @property
     def active(self):
         """
-        Get my current activation state
+        Get my activation state
         """
-        return self._inventory.state
-
+        # ask my inventory
+        return self.inventory.active
 
     @active.setter
-    def active(self, state):
+    def active(self, active):
         """
-        Set my current activation state
+        Set my activation state
         """
-        # save the new state
-        self._inventory.state = state
-        # and return
+        # adjust my inventory
+        self.inventory.active = active
+        # all done
+        return
+
+
+    @property
+    def fatal(self):
+        """
+        Check whether i'm fatal
+        """
+        # ask my inventory
+        return self.inventory.fatal
+
+    @fatal.setter
+    def fatal(self, fatal):
+        """
+        Mark me as {fatal}
+        """
+        # adjust my inventory
+        self.inventory.fatal = fatal
+        # all done
         return
 
 
     @property
     def device(self):
         """
-        Get my current output device
+        Get my device
         """
-        # first, check the specific device assigned to my channel
-        device = self._inventory.device
-        # if one was assigned, return it
-        if device is not None: return device
-        # otherwise, issue a request for the default device
-        return self.journal.device
-
+        # ask my inventory
+        device = self.inventory.device
+        # if it's non-trivial
+        if device is not None:
+            # that's the one
+            return device
+        # otherwise, return whatever the chronicler keeps
+        return self.chronicler.device
 
     @device.setter
     def device(self, device):
         """
-        Associate a device to be used for my output
+        Set my device
         """
-        # attach the new device to my shared state
-        self._inventory.device = device
-        # and return
+        # hand it to my inventory
+        self.inventory.device = device
+        # all done
         return
+
+
+    # control over the severity wide device
+    @classmethod
+    def getDefaultDevice(cls):
+        """
+        Get the default device associated with all channels of this severity
+        """
+        # my inventory type has it
+        return cls.inventory_type.device
+
+
+    @classmethod
+    def setDefaultDevice(cls, device):
+        """
+        Get the default device associated with all channels of this severity
+        """
+        # get the previous setting
+        old = cls.inventory_type.device
+        # install the new device
+        cls.inventory_type.device = device
+        # all done
+        return old
+
+
+    # convenient configuration
+    @classmethod
+    def quiet(cls):
+        """
+        Suppress output from all channels of this severity
+        """
+        # get the trash can
+        from .Trash import Trash
+        # make one
+        trash = Trash()
+        # and install it as the default device
+        return cls.setDefaultDevice(trash)
+
+
+    @classmethod
+    def logfile(cls, path):
+        """
+        Send output from all channels of this severity to a log file
+        """
+        # get the file device
+        from .File import File
+        # make one
+        log = File(path)
+        # and install it as the default
+        return cls.setDefaultDevice(log)
+
+
+    # access to information from my current entry
+    @property
+    def page(self):
+        """
+        Return the contents of my entry
+        """
+        # ask and pass on
+        return self.entry.page
+
+
+    @property
+    def notes(self):
+        """
+        Return the metadata of the current message
+        """
+        # ask and pass on
+        return self.entry.notes
 
 
     # interface
     def activate(self):
         """
-        Mark me as active
+        Enable the recording of messages
         """
-        # do it
+        # easy
         self.active = True
-        # and return
+        # all done
         return self
 
 
     def deactivate(self):
         """
-        Mark me as inactive
+        Disable the recording of messages
         """
-        # do it
+        # easy
         self.active = False
-        # and return
+        # all done
         return self
 
 
-    # meta methods
-    def __init__(self, name, **kwds):
-        # chain to my ancestors
+    def line(self, message=""):
+        """
+        Add {message} to the current page
+        """
+        # add message to my page
+        self.page.append(message)
+        # all done
+        return self
+
+
+    def log(self, message=None):
+        """
+        Add {message} to the current page and then record the entry
+        """
+        # if there is a final {message} to process
+        if message is not None:
+            # add it to the page
+            self.page.append(message)
+
+        # get a stack trace
+        trace = traceback.extract_stack(limit=2)
+        # so we can extract location information
+        filename, line, function, *_ = trace[0]
+
+        # decorate my current metadata
+        notes = self.notes
+        # with location information
+        notes["filename"] = filename
+        notes["line"] = str(line)
+        notes["function"] = function
+
+        # certain channels, e.g. errors and firewalls, raise exceptions as part of committing a
+        # message to the journal. such exceptions may be caught and handled, and the channel
+        # instance may continue to be used. this leads to text accumulating on my page, and the
+        # next time i'm flushed, my {entry} still contains lines from the previous
+        # message. the awkward block that follows attempts to prevent this by catching
+        # exceptions, cleaning up the {entry} in the finally section, and re-raising the
+        # exception. of course, if no exception is raised, we just clean up the page and move
+        # on
+
+        # carefully
+        try:
+            # commit the message to the journal
+            self.commit()
+        # if i'm a fatal diagnostic, {commit} raises a journal exception
+        except self.JournalError:
+            # no worries; someone else may know what to do
+            raise
+        # but in any case
+        finally:
+            # flush my entry
+            self.entry = self.newEntry()
+
+        # all done
+        return self
+
+
+    # metamethods
+    def __init__(self, name, verbosity=verbosity, **kwds):
+        # chain up
         super().__init__(name=name, **kwds)
-        # look up my shared state
-        self._inventory = self._index[name]
-        # and return
+
+        # set my verbosity
+        self.verbosity = verbosity
+        # look up my inventory
+        self.inventory = self.index.lookup(name)
+        # start out with an empty entry
+        self.entry = self.newEntry()
+        # and an invalid locator
+        self.locator = None
+
+        # all done
+        return
+
+
+    @classmethod
+    def __init_subclass__(cls, active=True, fatal=False, **kwds):
+        # chain up
+        super().__init_subclass__(**kwds)
+
+        # we will derive a customized class with a synthesized name
+        name = cls.__name__ + Inventory.__name__
+        # that is a subclass of {Inventory}
+        bases = [ Inventory ]
+        # with default values for the channel state
+        attributes = {
+            "active": active,
+            "fatal": fatal,
+            "device": None
+            }
+        # build the class
+        inventory = type(name, tuple(bases), attributes)
+        # fix the module so it gets the correct attribution in stack traces
+        inventory.__module__ = cls.__module__
+        # attach it as the inventory type
+        cls.inventory_type = inventory
+
+        # create one using my inventory type
+        index = Index(inventoryType=inventory)
+        # and attach it
+        cls.index = index
+
+        # all done
         return
 
 
     def __bool__(self):
         """
-        Simplify the state testing
+        Simplify activation state testing
         """
-        # delegate to my state getter
-        return self.active
+        return self.inventory.active
 
 
     # implementation details
-    # private class data
-    _index = None
+    def commit(self):
+        """
+        Commit the accumulated message to my device and flush
+        """
+        # if i'm not active
+        if not self.active:
+            # nothing to do
+            return self
 
-    # subclasses must supply a non-trivial implementation of the mechanism by which state
-    # shared among channel instances is managed. when the C++ extension is not available at
-    # runtime, this package defaults to a pure python implementation that uses a {defaultdict};
-    # this implies that we need access to factories that build instances with the correct
-    # default activation state, hence the two nested class declarations below. their names
-    # reflect their default state, in the absence of any configuration instructions by the
-    # user. when the state is False, the channel does not produce any output; when device is
-    # {None}, the default device is used instead
-    class Enabled:
-        """Shared state for channels that are enabled by default"""
-        state = True
-        device = None
+        # if my verbosity exceeds the maximum
+        if self.verbosity > self.chronicler.verbosity:
+            # nothing to do
+            return self
 
-    class Disabled:
-        """Shared state for channels that are disabled by default"""
-        state = False
-        device = None
+        # record the entry
+        self.record()
+
+        # if i'm fatal
+        if self.fatal:
+            # get my metadata
+            notes = self.notes
+            # pull the location information
+            filename = notes["filename"]
+            line = notes["line"]
+            function = notes["function"]
+            # build a locator
+            self.locator = pyre.tracking.script(source=filename, line=line, function=function)
+            # generate an exception
+            raise self.fatalError(channel=self)
+
+        # all done
+        return self
+
+
+    def record(self):
+        """
+        Write the accumulated message to the device
+        """
+        # subclasses must override
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'record'")
+
+
+    def newEntry(self):
+        """
+        Create a fresh message entry
+        """
+        # initialize my metadata
+        notes = {
+            "channel": self.name,
+            "severity": self.severity,
+            }
+
+        # inject whatever metadata it has
+        notes.update(self.chronicler.notes)
+
+        # get the entry factory
+        from .Entry import Entry
+        # make one
+        entry = Entry(notes=notes)
+
+        # and return it
+        return entry
+
+
+    # class data
+    severity = "generic"           # the severity name
+    chronicler = Chronicler()      # the keeper of the global settings
+    fatalError = JournalError      # the exception i raise when i'm fatal
+    inventory_type = Inventory     # the default inventory type; subclasses get their own
+    index = Index(inventory_type)  # the severity wide channel index
+
+    # instance data
+    entry = None                   # the accumulator of message content and metadata
+    locator = None                 # location information
+    inventory = None               # the state shared by all instances of the same name/severity
 
 
 # end of file

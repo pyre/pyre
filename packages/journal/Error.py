@@ -1,51 +1,41 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
-# packages
-import collections
-
-
-# super-classes
+# superclasses
 from .Channel import Channel
-from .Diagnostic import Diagnostic
 
 
-# declaration
-class Error(Diagnostic, Channel):
+# the implementation of the debug channel
+class Error(Channel, active=True, fatal=True):
     """
-    This class is the implementation of the error channel
+    Error channels are used to communicate application progress to users
+
+    Typically, they indicate that the application has encountered a condition that is
+    problematic, and the application is unable to identify a viable workaround.
     """
+
 
     # types
     from .exceptions import ApplicationError
 
-    # public data
-    severity = "error"
 
-    # class private data
-    _index = collections.defaultdict(Channel.Enabled)
-
-
-    # interface
-    def log(self, message=None, stackdepth=0):
+    # implementation details
+    def record(self):
         """
-        Make a journal entry and build an exception ready to be raised by the caller
+        Commit my payload to the journal
         """
-        # first, record the entry
-        super().log(message, stackdepth)
-        # build an instance of the error exception
-        error = self.ApplicationError(error=self)
-        # don't raise it; let the caller decide what to do with it
-        return error
+        # hunt down my device and record the entry
+        self.device.alert(entry=self.entry)
+        # all done
+        return self
 
 
-    # class private data
-    stackdepth = Diagnostic.stackdepth + 1 # there is an extra stack level for errors...
+    # constants
+    severity = "error"             # the channel severity
+    fatalError = ApplicationError  # the exception i raise when i'm fatal
 
 
 # end of file

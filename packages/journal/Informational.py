@@ -9,30 +9,30 @@ from .Channel import Channel
 
 
 # the implementation of the debug channel
-class Debug(Channel, active=False, fatal=False):
+class Informational(Channel, active=True, fatal=False):
     """
-    Debug channels are used for communicating application progress to developers
+    Informational channels are used for communicating application progress to users
     """
 
 
     # types
-    from .exceptions import DebugError
+    from .exceptions import ApplicationError
 
 
     # implementation details
     def record(self):
         """
-        Make an entry in the journal
+        Commit my payload to the journal
         """
         # hunt down my device and record the entry
-        self.device.memo(entry=self.entry)
+        self.device.alert(entry=self.entry)
         # all done
         return self
 
 
     # constants
-    severity = "debug"       # the channel severity
-    fatalError = DebugError  # the exception i raise when i'm fatal
+    severity = "info"              # the channel severity
+    fatalError = ApplicationError  # the exception i raise when i'm fatal
 
 
 # end of file

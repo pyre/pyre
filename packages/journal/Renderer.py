@@ -1,61 +1,53 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
-# packages
-import pyre
-
-
-# declaration
-class Renderer(pyre.protocol, family="journal.renderers"):
+# the base renderer
+class Renderer:
     """
-    The protocol specification that renderers must satisfy
+    The base renderer
     """
-
-
-    # my default implementation
-    @classmethod
-    def pyre_default(cls, **kwds):
-        """
-        Examine {sys.stdout} and turn on color output if the current terminal type supports it
-        """
-        # access the stdout stream
-        import sys
-        # if it is a tty
-        try:
-            if sys.stdout.isatty():
-                # figure out the terminal type
-                import os
-                term = os.environ.get('TERM', 'unknown').lower()
-                # if it is ANSI compatible
-                if term in cls.ansi:
-                    # the default is colored
-                    from .ANSIRenderer import ANSIRenderer
-                    return ANSIRenderer
-        # some devices don't support isatty
-        except AttributeError:
-            pass
-        # plain text, by default
-        from .TextRenderer import TextRenderer
-        return TextRenderer
 
 
     # interface
-    @pyre.provides
-    def render(self, text, metadata):
+    def render(self, palette, entry):
         """
-        Convert the diagnostic information into a form that a device can record
+        Generate the message content
         """
+        # each rendered message has three sections
+        yield from self.header(palette=palette, entry=entry)
+        yield from self.body(palette=palette, entry=entry)
+        yield from self.footer(palette=palette, entry=entry)
+
+        # all done
+        return
 
 
-    # private data
-    ansi = { 'ansi',
-             'vt102', 'vt220', 'vt320', 'vt420',
-             'xterm', 'xterm-color', 'xterm-16color', 'xterm-256color'}
+    # implementation details
+    def header(self, **kwds):
+        """
+        Generate the message header
+        """
+        # nothing to do
+        return ()
+
+
+    def body(self, **kwds):
+        """
+        Generate the message body
+        """
+        # nothing to do
+        return ()
+
+
+    def footer(self, **kwds):
+        """
+        Generate the message footer
+        """
+        # nothing to do
+        return ()
 
 
 # end of file
