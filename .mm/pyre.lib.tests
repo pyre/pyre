@@ -8,6 +8,7 @@
 pyre.lib.tests.stem := pyre.lib
 pyre.lib.tests.prerequisites := pyre.lib journal.lib
 pyre.lib.tests.extern := pyre.lib journal.lib
+pyre.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
 
 
 # cleanup

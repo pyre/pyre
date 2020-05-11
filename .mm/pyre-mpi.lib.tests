@@ -8,6 +8,7 @@
 pyre-mpi.lib.tests.stem := mpi.lib
 pyre-mpi.lib.tests.prerequisites := pyre-mpi.lib
 pyre-mpi.lib.tests.extern := pyre-mpi.lib journal.lib mpi
+pyre-mpi.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
 
 
 # set up a macro for the hostfile
