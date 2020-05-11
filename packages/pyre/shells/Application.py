@@ -10,11 +10,11 @@
 import sys
 # access to the framework
 import pyre
+import journal
 # my metaclass
 from .Director import Director
 # protocols
 from .Shell import Shell
-import journal.protocols
 
 
 # declaration
@@ -157,7 +157,7 @@ class Application(pyre.component, metaclass=Director):
 
         # if i have a name
         if name is not None:
-            # register it wit the journal
+            # register it with the journal
             journal.application(name=name)
 
         # make a name for my channels
