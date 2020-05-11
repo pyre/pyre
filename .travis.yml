@@ -20,6 +20,8 @@ addons:
     packages:
       - python3.7-dev
       - python3.8-dev
+      - libgsl-dev
+      - python3-pybind11
 
 install:
   - mkdir build && cd build
