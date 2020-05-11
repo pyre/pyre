@@ -5,7 +5,7 @@
 # (c) 1998-2020 all rights reserved
 #
 
-dist: bionic
+dist: focal
 # cmake 3.12
 # gcc 7.4
 # https://docs.travis-ci.com/user/reference/bionic/
@@ -18,7 +18,6 @@ python:
 addons:
   apt:
     packages:
-      - g++-9
       - python3.7-dev
       - python3.8-dev
       - libgsl-dev
