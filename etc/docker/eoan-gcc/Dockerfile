@@ -31,7 +31,7 @@ RUN apt dist-upgrade -y
 # install the base software stack
 RUN DEBIAN_FRONTEND=noninteractive \
     apt install -y \
-        git vim \
+        git vim unzip zip \
         g++ gfortran make \
         ${python} ${python}-dev \
         python3-pybind11 \
@@ -45,11 +45,17 @@ WORKDIR /root
 # copy the file
 COPY etc/docker/eoan-gcc/bashrc bashrc.in
 # expand
-RUN sed -e "s:@SRCDIR@:${srcdir}:g" bashrc.in > .bashrc
+RUN sed -e \
+        "s:@SRCDIR@:${srcdir}:g" \
+        bashrc.in > .bashrc
 
 # place the {mm} configuration file
 # make the pyre configuration directory
 WORKDIR /root/.pyre
+
+# copy the mpi configuration
+COPY etc/docker/eoan-gcc/mpi.pfg mpi.pfg
+
 # copy the {mm} coniguration file here
 COPY etc/docker/eoan-gcc/mm.pfg mm.pfg.in
 # expand; the '/' after ${prefix} is necessary for complying with the mm convention of
@@ -83,15 +89,8 @@ RUN ${mm}
 # show me the build context
 RUN ${mm} --serial host.info builder.info compilers.info
 
-# install the python packages
-RUN \
-        ln -s ${prefix}/packages/pyre ${prefix}/lib/${python}/dist-packages; \
-        ln -s ${prefix}/packages/journal ${prefix}/lib/${python}/dist-packages; \
-        ln -s ${prefix}/packages/mpi ${prefix}/lib/${python}/dist-packages; \
-        ln -s ${prefix}/packages/gsl ${prefix}/lib/${python}/dist-packages
-
 # and test
-# RUN ${mm} tests
+# RUN ${mm} tests --serial
 
 
 # end of file
