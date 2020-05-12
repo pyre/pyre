@@ -1,0 +1,13 @@
+;
+; michael a.g. aïvázis
+; orthologue
+; (c) 1998-2020 all rights reserved
+;
+
+
+mpi.shells.mpirun:
+    ; extra flags to the mpi launcher
+    extra = --allow-run-as-root
+
+
+; end of file
