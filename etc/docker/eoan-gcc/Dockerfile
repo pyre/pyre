@@ -28,38 +28,42 @@ ENV MM=${mm}
 RUN apt update -y
 # get the latest
 RUN apt dist-upgrade -y
+
 # install the base software stack
+#  - {vim} is for interactive use
+#  - {openssh}, {zip}, {unzip} are needed for some of the tests
 RUN DEBIAN_FRONTEND=noninteractive \
     apt install -y \
         git vim unzip zip \
+        openssh-server \
         g++ gfortran make \
         ${python} ${python}-dev \
         python3-pybind11 \
         libopenmpi-dev \
         libgsl-dev
 
+# start the ssh daemon
+RUN service ssh start
 
 # setup the interactive environment
 # go home
 WORKDIR /root
-# copy the file
+# copy the files with support for interactive use
+COPY etc/docker/eoan-gcc/inputrc .inputrc
+# the startup file
 COPY etc/docker/eoan-gcc/bashrc bashrc.in
 # expand
-RUN sed -e \
-        "s:@SRCDIR@:${srcdir}:g" \
+RUN sed \
+        -e "s:@SRCDIR@:${srcdir}:g" \
         bashrc.in > .bashrc
 
-# place the {mm} configuration file
 # make the pyre configuration directory
 WORKDIR /root/.pyre
-
-# copy the mpi configuration
+# the mpi configuration
 COPY etc/docker/eoan-gcc/mpi.pfg mpi.pfg
-
-# copy the {mm} coniguration file here
+# the {mm} coniguration file
 COPY etc/docker/eoan-gcc/mm.pfg mm.pfg.in
-# expand; the '/' after ${prefix} is necessary for complying with the mm convention of
-# terminating slashes on all directories
+# expand
 RUN sed \
         -e "s:@PREFIX@:${prefix}:g" \
         mm.pfg.in > mm.pfg
