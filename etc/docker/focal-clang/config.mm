@@ -17,6 +17,7 @@ gsl.dir := $(sys.prefix)
 mpi.version := 4.0.3
 mpi.flavor := openmpi
 mpi.dir := ${sys.libx86}/openmpi
+mpi.executive := mpiexec --allow-run-as-root
 # numpy
 numpy.version := 1.17.4
 numpy.dir := $(sys.prefix)/lib/python3/dist-packages/numpy/core
@@ -29,15 +30,16 @@ python.dir := $(sys.prefix)
 python.incdir := $(python.dir)/include/python$(python.version)
 python.libdir := $(python.dir)/lib/python$(python.version)
 
-
 # install locations
 # this is necessary in order to override {mm} appending the build type to the install prefix
 builder.dest.prefix := $(project.prefix)/
-
+# install the pyton packages straight where they need to go
+builder.dest.pyc := $(sys.prefix)/lib/python3/dist-packages/
 
 # control over the build process
 # set the python compiler so we don't depend on the symbolic link, which may not even be there
 compiler.python := python$(python.version)
-
+# pybind11 + clang:
+journal.ext.lib.c++.flags += -fsized-deallocation
 
 # end of file
