@@ -23,10 +23,22 @@ REVISION = 0
 endif
 
 # grab the repo nickname
-NICKNAME = ${strip ${shell git rev-parse --abbrev-ref HEAD}}
+NICKNAME = ${strip ${shell git rev-parse --abbrev-ref HEAD | sed -e 's:/:_:g'}}
 
 # the standard targets
 all: export-modules
+
+foo:
+	@echo $(EXPORT_ROOT)
+	@echo $(EXPORT_BINDIR)
+	@echo $(EXPORT_LIBDIR)
+	@echo $(EXPORT_INCDIR)
+	@echo $(EXPORT_PKGDIR)
+	@echo $(EXPORT_MODDIR)
+	@echo $(PROJECT_MAJOR)
+	@echo $(PROJECT_MINOR)
+	@echo $(NICKNAME)
+
 
 # pyre
 pyre: $(EXPORT_MODDIR) Make.mm
