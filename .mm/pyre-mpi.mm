@@ -47,7 +47,8 @@ pyre-mpi.ext.root := extensions/mpi/
 pyre-mpi.ext.stem := mpi
 pyre-mpi.ext.pkg := pyre-mpi.pkg
 pyre-mpi.ext.wraps := pyre-mpi.lib
-pyre-mpi.ext.capsule :=
+pyre-mpi.ext.capsule.destination := pyre/mpi/
+pyre-mpi.ext.lib.prerequisites := pyre-mpi.lib pyre.lib
 pyre-mpi.ext.extern := pyre.lib journal.lib mpi python
 pyre-mpi.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 

@@ -41,7 +41,8 @@ pyre-gsl.ext.root := extensions/gsl/
 pyre-gsl.ext.stem := gsl
 pyre-gsl.ext.pkg := pyre-gsl.pkg
 pyre-gsl.ext.wraps :=
-pyre-gsl.ext.capsule.destination := pyre/gsl
+pyre-gsl.ext.capsule.destination := pyre/gsl/
+pyre-gsl.ext.lib.prerequisites := journal.lib pyre.lib
 pyre-gsl.ext.extern := pyre.lib journal.lib gsl
 pyre-gsl.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 
@@ -53,6 +54,8 @@ pyre-gsl.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 ifeq ($(pyre-gsl.mpi.available), mpi)
 # add mpi to the external dependencies
 pyre-gsl.ext.extern += mpi
+# make sure the {mpi} module has had a chance to export its caspules
+pyre-gsl.ext.prerequisites += pyre-mpi.ext
 # if not
 else
 # remove the mpi dependent sources from the build
