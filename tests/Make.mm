@@ -12,8 +12,8 @@ RECURSE_DIRS = \
     python \
     journal.lib \
     pyre.lib \
-    pyre.pkg \
     journal.pkg \
+    pyre.pkg \
     merlin.pkg \
     sqlite.pkg \
 
