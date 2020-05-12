@@ -10,8 +10,6 @@ try:
     from . import journal as libjournal
 # if something goes wrong
 except ImportError:
-    # for now
-    raise
     # mark; the rest of the package will adjust
     libjournal = None
 
