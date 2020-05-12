@@ -13,12 +13,18 @@ Create and dump a local filesystem
 
 
 def test():
+    # externals
+    import os
+    # get the package
     import pyre.filesystem
 
-    home = pyre.filesystem.local(root="../..")
-    home.discover()
+    # find something stable to look at
+    root = os.path.dirname(pyre.__file__)
+    # mount a filesystem there and explore
+    home = pyre.filesystem.local(root=root).discover(levels=2)
     # print('\n'.join(home.dump()))
 
+    # all done
     return home
 
 

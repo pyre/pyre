@@ -19,8 +19,7 @@ def test():
     import pyre.filesystem
 
     # make a local filesystem
-    home = pyre.filesystem.local(root=".")
-    home.discover()
+    home = pyre.filesystem.local(root=".").discover(levels=1)
     # print('\n'.join(home.dump()))
 
     # create a template

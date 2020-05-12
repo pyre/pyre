@@ -16,7 +16,7 @@ def test():
     import pyre.filesystem
 
     # build a filesystem out of the current directory
-    dot = pyre.filesystem.local(root=".").discover()
+    dot = pyre.filesystem.local(root=".").discover(levels=1)
     # locate this file
     this = dot["local_open.py"]
     # turn it in to a stream and read its contents

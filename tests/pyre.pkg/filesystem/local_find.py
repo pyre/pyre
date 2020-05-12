@@ -18,8 +18,10 @@ def test():
     # my package
     import pyre.filesystem
 
-    # build a filesystem
-    tests = pyre.filesystem.local(root="..").discover()
+    # build a filesystem; look just deeply enough to be able to find our target, but not too
+    # deeply so we don't run into trouble if the tests are running in parallel and other test
+    # cases have done damage to their local filesystem
+    tests = pyre.filesystem.local(root="..").discover(levels=2)
 
     # look for this file
     this = tests["filesystem/local_find.py"]
