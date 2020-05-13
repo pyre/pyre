@@ -44,7 +44,7 @@ def powerset(iterable):
     """
     Compute the full power set, i.e. the set of all permutations, of the given iterable.
     For example:
-        powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+        powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
     Taken from the python itertools documentation
     """
     # convert {iterable} into a list; we need its length
