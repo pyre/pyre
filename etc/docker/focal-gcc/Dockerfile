@@ -18,7 +18,7 @@ ARG mm="${python} ${srcdir}/mm/mm.py"
 ENV TERM=xterm-256color
 # set up the dynamic linker path
 ENV LD_LIBRARY_PATH=${prefix}/lib
-# export the python choide
+# export the python choice
 ENV PYTHON=${python}
 # and the path to {mm}
 ENV MM=${mm}
@@ -42,9 +42,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
         libopenmpi-dev \
         libgsl-dev
 
-
-# start the ssh daemon
-RUN service ssh start
 
 # setup the interactive environment
 # go home
@@ -94,7 +91,7 @@ RUN ${mm}
 RUN ${mm} --serial host.info builder.info compilers.info
 
 # and test
-# RUN ${mm} tests
+CMD service ssh start && ${MM} tests
 
 
 # end of file
