@@ -46,6 +46,7 @@ journal.ext.stem := journal
 # the location of the source relative to the project home diretcory
 journal.ext.root := extensions/journal/
 journal.ext.capsule :=
+journal.ext.wraps := journal.lib
 journal.ext.extern := journal.lib pybind11 python
 # compiler control
 journal.ext.lib.c++.defines += PYRE_CORE
