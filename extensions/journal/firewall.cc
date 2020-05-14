@@ -12,7 +12,7 @@
 
 // add bindings for the firewall channel
 void
-pyre::libjournal::
+pyre::journal::py::
 firewall(py::module & m) {
 
     // type aliases for the member functions (mfp: method pointer)

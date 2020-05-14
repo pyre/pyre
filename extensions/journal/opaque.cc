@@ -12,7 +12,7 @@
 
 // add bindings to the inventory
 void
-pyre::libjournal::
+pyre::journal::py::
 opaque(py::module & m) {
     // the channel ocontents
     py::bind_vector<pyre::journal::page_t>(m, "Page");

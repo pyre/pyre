@@ -12,7 +12,7 @@
 
 // add bindings for the error channel
 void
-pyre::libjournal::
+pyre::journal::py::
 error(py::module & m) {
 
     // type aliases for the member functions (mfp: method pointer)

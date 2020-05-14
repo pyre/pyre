@@ -12,7 +12,7 @@
 
 // add bindings for the debug channel
 void
-pyre::libjournal::
+pyre::journal::py::
 debug(py::module & m) {
 
     // type aliases for the member functions (mfp: method pointer)

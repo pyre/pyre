@@ -12,7 +12,7 @@
 
 // add bindings for the warning channel
 void
-pyre::libjournal::
+pyre::journal::py::
 warning(py::module & m) {
 
     // type aliases for the member functions (mfp: method pointer)
