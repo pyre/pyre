@@ -111,6 +111,19 @@ device(device_type device) -> client_reference
 }
 
 
+template <typename clientT>
+template <class deviceT, class... Args>
+auto
+pyre::journal::InventoryProxy<clientT>::
+device(Args&&... args) -> client_reference
+{
+    // delegate
+    _inventory.device<deviceT>(std::forward<Args>(args)...);
+    // enable chaining
+    return static_cast<client_reference>(*this);
+}
+
+
 // interface
 template <typename clientT>
 auto

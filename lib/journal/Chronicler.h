@@ -48,7 +48,11 @@ public:
     static inline auto notes() -> notes_type &;
     // device support
     static inline auto device() -> device_type;
-    static inline auto device(device_type) -> device_type;
+
+    static inline void device(device_type);
+
+    template <class deviceT, class... Args>
+    static inline void device(Args&&... args);
 
     // convert a string with a comma separated list of names into a set
     static inline auto nameset(string_type) -> nameset_type;

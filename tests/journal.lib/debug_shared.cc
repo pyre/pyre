@@ -17,16 +17,13 @@ using channel_t = pyre::journal::debug_t;
 
 // verify that channels that have the same name share the same state
 int main() {
-    // make a trash can
-    auto trash = std::make_shared<trash_t>();
-
     // make a channel
     channel_t ch_1("tests.journal");
     // flip all state away from the defaults
     ch_1.active(true);
     ch_1.fatal(true);
-    // install the trash can as the channel device
-    ch_1.device(trash);
+    // install a trash can as the channel device
+    ch_1.device<trash_t>();
 
     // make another with the same name
     channel_t ch_2("tests.journal");

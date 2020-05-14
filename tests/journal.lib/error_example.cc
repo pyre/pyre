@@ -21,7 +21,7 @@ int main() {
     myerror_t channel("tests.journal.error");
 
     // send the output to the trash
-    channel.device(std::make_shared<trash_t>());
+    channel.device<trash_t>();
 
     // carefully
     try {

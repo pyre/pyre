@@ -21,7 +21,7 @@ int main() {
     warning_t channel("tests.journal.warning");
 
     // send the output to the trash
-    channel.device(std::make_shared<trash_t>());
+    channel.device<trash_t>();
 
     // inject repeatedly
     for (auto i=0; i<10; ++i) {

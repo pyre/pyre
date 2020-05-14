@@ -12,6 +12,10 @@
 class pyre::journal::Inventory {
     // types
 public:
+    // me types
+    using inventory_type = Inventory;
+    using inventory_reference = inventory_type&;
+    // my parts
     using active_type = bool;
     using fatal_type = bool;
     using device_type = device_ptr;
@@ -28,9 +32,12 @@ public:
 
     // mutators
 public:
-    inline auto active(active_type) -> Inventory &;
-    inline auto fatal(fatal_type) -> Inventory &;
-    inline auto device(device_type) -> Inventory &;
+    inline auto active(active_type) -> inventory_reference;
+    inline auto fatal(fatal_type) -> inventory_reference;
+    inline auto device(device_type) -> inventory_reference;
+
+    template <class deviceT, class... Args>
+    inline auto device(Args&&... args) -> inventory_reference;
 
     // syntactic sugar
 public:

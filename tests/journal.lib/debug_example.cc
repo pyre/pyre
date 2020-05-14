@@ -18,7 +18,7 @@ int main() {
     // activate it
     channel.activate();
     // but send the output to the trash
-    channel.device(std::make_shared<pyre::journal::trash_t>());
+    channel.device<pyre::journal::trash_t>();
 
     // inject something into the channel
     channel

@@ -32,7 +32,7 @@ int main() {
     // turn it on
     parent.activate();
     // and set the device to a trash can
-    parent.device(std::make_shared<trash_t>());
+    parent.device<trash_t>();
 
     // make a debug that's lower in the hierarchy
     mydebug_t child("test.debug.parent.blah.blah.child");

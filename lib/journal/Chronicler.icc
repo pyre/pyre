@@ -49,14 +49,26 @@ device() -> device_type
 
 
 // mutators
-auto
+void
 pyre::journal::Chronicler::
-device(device_type device) -> device_type
+device(device_type dev)
 {
-    // swap mine with the incoming device
-    std::swap(device, _device);
-    // and return it
-    return device;
+    // install the user's smart pointer
+    _device = dev;
+    // all done
+    return;
+}
+
+
+template <class deviceT, class... Args>
+void
+pyre::journal::Chronicler::
+device(Args&&... args)
+{
+    // build a smart pointer to a device and install it
+    _device = std::make_shared<deviceT>(std::forward<Args>(args)...);
+    // all done
+    return;
 }
 
 

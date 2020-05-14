@@ -20,7 +20,7 @@ int main() {
     // make a firewall
     firewall_t channel("tests.journal.firewall");
     // send the output to the trash
-    channel.device(std::make_shared<trash_t>());
+    channel.device<trash_t>();
 
     // gingerly
     try {

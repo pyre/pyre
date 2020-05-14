@@ -23,7 +23,7 @@ int main() {
     // make a channel
     debug_t channel("test.journal.file");
     // set its device
-    channel.device(std::make_shared<file_t>(filename));
+    channel.device<file_t>(filename);
     // activate
     channel.activate();
 

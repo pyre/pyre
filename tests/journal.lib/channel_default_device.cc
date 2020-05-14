@@ -40,7 +40,7 @@ int main() {
     severity_t::index().device(custom);
 
     // check that the current device is the one we just installed
-    assert (severity_t::index().device().get() == custom.get());
+    assert (severity_t::index().device() == custom);
 
     // all done
     return 0;

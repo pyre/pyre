@@ -46,10 +46,10 @@ device() const
 }
 
 
-// accessors
+// mutators
 auto
 pyre::journal::Inventory::
-active(active_type active) -> Inventory &
+active(active_type active) -> inventory_reference
 {
     // easy enough
     _active = active;
@@ -60,7 +60,7 @@ active(active_type active) -> Inventory &
 
 auto
 pyre::journal::Inventory::
-fatal(fatal_type fatal) -> Inventory &
+fatal(fatal_type fatal) -> inventory_reference
 {
     // easy enough
     _fatal = fatal;
@@ -71,10 +71,22 @@ fatal(fatal_type fatal) -> Inventory &
 
 auto
 pyre::journal::Inventory::
-device(device_type device) -> Inventory &
+device(device_type device) -> inventory_reference
 {
     // easy enough
     _device = device;
+    // all done
+    return *this;
+}
+
+
+template <class deviceT, class...Args>
+inline auto
+pyre::journal::Inventory::
+device(Args&&... args) -> inventory_reference
+{
+    // make a shared pointer and install it
+    _device = std::make_shared<deviceT>(std::forward<Args>(args)...);
     // all done
     return *this;
 }

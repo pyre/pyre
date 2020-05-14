@@ -32,7 +32,7 @@ int main() {
     // turn it off
     parent.deactivate();
     // and set the device to a trash can
-    parent.device(std::make_shared<trash_t>());
+    parent.device<trash_t>();
 
     // make a warning that's lower in the hierarchy
     mywarning_t child("test.warning.parent.blah.blah.child");

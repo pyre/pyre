@@ -23,7 +23,7 @@ int main() {
     // make it non-fatal
     channel.fatal(false);
     // send the output to the trash
-    channel.device(std::make_shared<trash_t>());
+    channel.device<trash_t>();
 
     // errors are fatal by default, so attempt to
     try {

@@ -20,7 +20,7 @@ int main() {
     firewall_t channel("tests.journal.firewall");
 
     // send the output to the trash
-    channel.device(std::make_shared<pyre::journal::trash_t>());
+    channel.device<pyre::journal::trash_t>();
 
     // firewalls are fatal by default, so attempt
     try {

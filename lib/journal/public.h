@@ -116,10 +116,8 @@ void
 pyre::journal::
 logfile(const path_t & name)
 {
-    // create the device
-    auto dev = std::make_shared<file_t>(name);
-    // register it with the chronicler
-    chronicler_t::device(dev);
+    // create the device and register it with the chronicler
+    chronicler_t::device<file_t>(name);
     // all done
     return;
 }

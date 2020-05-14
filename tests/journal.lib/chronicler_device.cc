@@ -23,12 +23,10 @@ int main() {
     // make a new device
     auto custom = std::make_shared<trash_t>();
     // install it
-    auto old = chronicler_t::device(custom);
+    chronicler_t::device(custom);
 
     // check that the current device is the one we just installed
     assert (chronicler_t::device().get() == custom.get());
-    // and that the device returned during installation is the {builtin} one
-    assert (old.get() == builtin.get());
 
     // all done
     return 0;

@@ -68,7 +68,7 @@ int main() {
     assert (ch_2.device() == ch_1.device());
 
     // install a custom device in the shared state
-    inventory.device(std::make_shared<pyre::journal::trash_t>());
+    inventory.device<pyre::journal::trash_t>();
 
     // check again
     assert (ch_1.device() == inventory.device());

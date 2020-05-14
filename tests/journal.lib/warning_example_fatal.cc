@@ -21,7 +21,7 @@ int main() {
     // make it fatal
     channel.fatal(true);
     // send the output to the trash
-    channel.device(std::make_shared<pyre::journal::trash_t>());
+    channel.device<pyre::journal::trash_t>();
 
     // we've asked for this to fail, so carefully
     try {

@@ -16,7 +16,7 @@ int main() {
     pyre::journal::info_t channel("tests.journal.info");
 
     // send the message to the trash
-    channel.device(std::make_shared<pyre::journal::trash_t>());
+    channel.device<pyre::journal::trash_t>();
 
     // inject something into the channel
     channel

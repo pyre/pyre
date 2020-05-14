@@ -106,10 +106,8 @@ chronicler_t::init(int argc, char* argv[]) {
 void
 chronicler_t::quiet()
 {
-    // make a trash can
-    auto trashcan = std::make_shared<trash_t>();
-    // make it the default device
-    device(trashcan);
+    // make a trash can and install it as the default device
+    device<trash_t>();
     // all done
     return;
 }

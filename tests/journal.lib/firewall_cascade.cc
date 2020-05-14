@@ -34,7 +34,7 @@ int main() {
     // make it non-fatal
     parent.fatal(false);
     // and set the device to a trash can
-    parent.device(std::make_shared<trash_t>());
+    parent.device<trash_t>();
 
     // make a firewall that's lower in the hierarchy
     firewall_t child("test.firewall.parent.blah.blah.child");

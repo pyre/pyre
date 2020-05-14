@@ -37,7 +37,7 @@ int main() {
     // make sure it happened
     assert(parent.active() == false);
     // set the device to a trash can
-    parent.device(std::make_shared<trash_t>());
+    parent.device<trash_t>();
 
     // lookup a name that's lower in the hierarchy
     auto & child = index.lookup("test.index.parent.blah.blah.child");

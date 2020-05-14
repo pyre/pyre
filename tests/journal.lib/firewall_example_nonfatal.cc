@@ -21,7 +21,7 @@ int main() {
     firewall_t channel("tests.journal.firewall");
 
     // send the output to the trash
-    channel.device(std::make_shared<trash_t>());
+    channel.device<trash_t>();
     // make sure the firewall isn't fatal
     channel.fatal(false);
 

@@ -40,6 +40,9 @@ public:
     inline auto fatal(fatal_type) -> client_reference;
     inline auto device(device_type) -> client_reference;
 
+    template <class deviceT, class... Args>
+    inline auto device(Args&&... args) -> client_reference;
+
     // interface
 public:
     inline auto activate() -> client_reference;
