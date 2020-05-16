@@ -48,9 +48,6 @@ namespace pyre::journal {
     using cmdvalue_t = string_t;
     using cmd_t = std::map<cmdname_t, cmdvalue_t>;
 
-    // a set of generic names
-    using nameset_t = std::set<name_t>;
-
     // a channel's verbosity level
     using verbosity_t = size_t;
 
