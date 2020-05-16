@@ -10,6 +10,16 @@
 
 
 // metamethods
+// modern version
+pyre::journal::Locator::
+Locator(const value_type & file, int line, const value_type & function):
+    _file(file),
+    _line(line > 0 ? std::to_string(line) : ""),
+    _func(function)
+{}
+
+
+// legacy constructor
 pyre::journal::Locator::
 Locator(const char * file, int line, const char * function):
     _file(file),

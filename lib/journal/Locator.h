@@ -19,6 +19,9 @@ public:
     // metamethods
 public:
     // constructor
+    // modern version; preferred when instantiating explicitly
+    inline Locator(const value_type &, int, const value_type &);
+    // legacy version; used by the {__HERE__} locator factories
     inline explicit Locator(const char * = "", int = 0, const char * = "");
 
     // interface
