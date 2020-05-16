@@ -204,7 +204,10 @@ firewall(py::module & m) {
              // the handler
              [](firewall_t & channel, const firewall_t::string_type & message) {
                  // inject and flush
-                 channel << message << pyre::journal::endl;
+                 channel
+                     << locator()
+                     << message
+                     << pyre::journal::endl;
              },
              // the docstring
              "add the optional {message} to the channel contents and then record the entry",

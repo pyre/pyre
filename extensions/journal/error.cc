@@ -204,7 +204,10 @@ error(py::module & m) {
              // the handler
              [](error_t & channel, const error_t::string_type & message) {
                  // inject and flush
-                 channel << message << pyre::journal::endl;
+                 channel
+                     << locator()
+                     << message
+                     << pyre::journal::endl;
              },
              // the docstring
              "add the optional {message} to the channel contents and then record the entry",

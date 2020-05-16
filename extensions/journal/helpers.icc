@@ -1,0 +1,38 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2020 all rights reserved
+
+// code guard
+#if !defined(pyre_journal_py_helpers_icc)
+#error This header contains implementation details of pyre::journal::py helpers
+#else
+
+
+// build a locator that points to the nearest caller from python
+auto
+pyre::journal::py::
+locator() -> locator_t
+{
+    // get the stack extractor from the {traceback} module
+    auto stackgen = py::module::import("traceback").attr("extract_stack");
+    // ask it for a stack trace that includes our caller
+    auto trace = stackgen("limit"_a=2);
+    // get the trace info from the topmost entry
+    auto caller = trace[py::int_(0)];
+    // pull out what we need
+    py::str filename = caller[py::int_(0)];
+    py::int_ line = caller[py::int_(1)];
+    py::str function = caller[py::int_(2)];
+
+    // make a locator
+    locator_t loc(filename, line, function);
+
+    // and return it
+    return loc;
+}
+
+
+#endif
+
+// end of file

@@ -8,6 +8,8 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
+// helpers
+#include "helpers.h"
 
 
 // the module entry point

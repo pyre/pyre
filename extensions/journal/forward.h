@@ -3,6 +3,13 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2020 all rights reserved
 
+// code guard
+#if !defined(pyre_journal_py_forward_h)
+#define pyre_journal_py_forward_h
+
+
+// get the helpers
+#include "helpers.h"
 
 // the {libjournal} namespace
 namespace pyre::journal::py {
@@ -28,5 +35,7 @@ namespace pyre::journal::py {
     void error(py::module &);
 }
 
+
+#endif
 
 // end of file
