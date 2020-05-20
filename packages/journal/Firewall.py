@@ -37,8 +37,8 @@ class Firewall(Channel, active=True, fatal=True):
         """
         # hunt down my device and record the entry
         self.device.memo(entry=self.entry)
-        # all done
-        return self
+        # return the exception that would have been raised if i were fatal
+        return self.complaint()
 
 
     # constants

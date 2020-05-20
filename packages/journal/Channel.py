@@ -7,7 +7,7 @@
 # externals
 import traceback       # location information
 # framework
-import pyre              # for my superclass
+import pyre              # for my superclass and {tracking}
 
 # the index
 from .Index import Index
@@ -232,8 +232,10 @@ class Channel(pyre.patterns.named):
 
         # carefully
         try:
-            # commit the message to the journal
-            self.commit()
+            # commit the message to the journal and let the channel decide what to return to
+            # the caller; currently, all channels return {self}, except {firewall}, which
+            # returns the exception it would have raised if it were fatal
+            status = self.commit()
         # if i'm a fatal diagnostic, {commit} raises a journal exception
         except self.JournalError:
             # no worries; someone else may know what to do
@@ -244,7 +246,7 @@ class Channel(pyre.patterns.named):
             self.entry = self.newEntry()
 
         # all done
-        return self
+        return status
 
 
     # metamethods
@@ -318,24 +320,34 @@ class Channel(pyre.patterns.named):
             # nothing to do
             return self
 
-        # record the entry
-        self.record()
+        # record the entry and let the channel decide what to return to the user
+        status = self.record()
 
         # if i'm fatal
         if self.fatal:
-            # get my metadata
-            notes = self.notes
-            # pull the location information
-            filename = notes["filename"]
-            line = notes["line"]
-            function = notes["function"]
-            # build a locator
-            self.locator = pyre.tracking.script(source=filename, line=line, function=function)
-            # generate an exception
-            raise self.fatalError(channel=self)
+            # complain
+            raise self.complaint()
 
         # all done
-        return self
+        return status
+
+
+    def complaint(self):
+        """
+        Prepare the exception i raise when i'm fatal
+        """
+        # get my metadata
+        notes = self.notes
+        # pull the location information
+        filename = notes["filename"]
+        line = notes["line"]
+        function = notes["function"]
+        # build a locator
+        self.locator = pyre.tracking.script(source=filename, line=line, function=function)
+        # instantiate the exception
+        complaint = self.fatalError(channel=self)
+        # and return it
+        return complaint
 
 
     def record(self):
