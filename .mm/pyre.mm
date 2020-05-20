@@ -17,6 +17,8 @@ pyre.packages := pyre.pkg
 pyre.libraries := pyre.lib
 # the mandatory extensions
 pyre.extensions := host.ext timers.ext
+# docker image
+pyre.docker-images := pyre.eoan-gcc pyre.eoan-clang pyre.focal-gcc pyre.focal-clang
 # and test suites
 pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests sqlite.pkg.tests
 
@@ -74,6 +76,13 @@ postgres.ext.capsule :=
 postgres.ext.extern := pyre.lib journal.lib libpq python
 postgres.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
+
+
+# the docker images
+pyre.focal-gcc.name := focal-gcc
+pyre.focal-clang.name := focal-clang
+pyre.eoan-gcc.name := eoan-gcc
+pyre.eoan-clang.name := eoan-clang
 
 
 # get the testsuites
