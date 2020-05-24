@@ -228,13 +228,6 @@ logfile(const path_t & name)
 }
 
 
-// static data
-template <typename severityT, template <typename> typename proxyT>
-typename pyre::journal::Channel<severityT, proxyT>::index_type
-pyre::journal::Channel<severityT, proxyT>::
-_index{ severity_type::initializeIndex() };
-
-
 #endif
 
 // end of file

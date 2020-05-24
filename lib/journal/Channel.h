@@ -92,7 +92,7 @@ private:
 
     // implementation details: static data
 private:
-    static index_type _index;
+    static inline index_type _index = severity_type::initializeIndex();
 };
 
 
