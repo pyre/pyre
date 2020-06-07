@@ -8,6 +8,7 @@
 
 # externals
 import platform
+import socket
 # framework
 import pyre
 # my protocol
@@ -24,14 +25,15 @@ class Host(pyre.component, family='pyre.platforms.generic', implements=Platform)
 
     # public data
     # host
+    fqdn = socket.getfqdn()    # the fully qualifies domain name, if available
     hostname = platform.node() # the name of the host on which this process is running
-    nickname = None # the short name assigned to this host by the user
+    nickname = None            # the short name assigned to this host by the user
     # os
-    platform = None # the OS type on which this process is running
-    release = None # the OS release
-    codename = None # the OS version
+    platform = None            # the OS type on which this process is running
+    release = None             # the OS release
+    codename = None            # the OS version
     # distribution
-    distribution = None # a clue about the package manager on this machine
+    distribution = None        # a clue about the package manager on this machine
 
     @property
     def cpus(self):

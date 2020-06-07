@@ -524,8 +524,26 @@ class Executive:
         for info, slot in knownHosts:
             # get the regular expression from the slot value
             regex = slot.value
-            # if my hostname matches
-            if re.match(regex, host.hostname):
+            # attempt to
+            try:
+                # compile the regex
+                parser = re.compile(regex)
+            # if anything goes wrong
+            except re.error as error:
+                # get the journal
+                import journal
+                # make a channel
+                channel = journal.warning("pyre.config")
+                # complain
+                channel.line(f"{error}")
+                channel.line(f" -- while compiling the regex '{regex}'")
+                channel.line(f" -- for '{info.name}'")
+                channel.line(f" -- in {info.locator}")
+                channel.log(f" -- discarding and moving on...")
+                # complain
+                continue
+            # if either my hostname or my fully qualified domain name is a match
+            if parser.match(host.hostname) or parser.match(host.fqdn):
                 # extract the nickname as the last part of the key name
                 host.nickname = nameserver.split(info.name)[-1]
                 # we are done
