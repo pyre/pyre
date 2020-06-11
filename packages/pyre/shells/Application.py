@@ -155,21 +155,20 @@ class Application(pyre.component, metaclass=Director):
         # chain up
         super().__init__(name=name, **kwds)
 
-        # if i have a name
-        if name is not None:
-            # register it with the journal
-            journal.application(name=name)
+        # set up my nickname
+        nickname = self.pyre_namespace or name
 
-        # make a name for my channels
-        channel  = self.pyre_namespace or name
-        # if I have a name
-        if channel:
+        # if i have one
+        if nickname:
+            # register it with the journal
+            journal.application(name=nickname)
+
             # build my channels
-            self.debug = journal.debug(channel)
-            self.firewall = journal.firewall(channel)
-            self.info = journal.info(channel).activate()
-            self.warning = journal.warning(channel).activate()
-            self.error = journal.error(channel).activate()
+            self.debug = journal.debug(nickname)
+            self.firewall = journal.firewall(nickname)
+            self.info = journal.info(nickname).activate()
+            self.warning = journal.warning(nickname).activate()
+            self.error = journal.error(nickname).activate()
             # if i am in debugging mode
             if self.DEBUG:
                 # activate the debug channel
