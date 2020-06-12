@@ -17,6 +17,7 @@ PROJECT_MICRO = 5
 include live.def
 
 # project settings
+PROJ_CXX_DEFINES += PYRE_CORE
 PROJ_CXX_FLAGS += $(COMPILER_CXX_STD17)
 
 # external dependencies
