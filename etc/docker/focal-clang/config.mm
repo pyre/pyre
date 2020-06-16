@@ -27,8 +27,6 @@ pybind11.dir = $(sys.prefix)
 # python
 python.version := @PYTHON_VERSION@
 python.dir := $(sys.prefix)
-python.incdir := $(python.dir)/include/python$(python.version)
-python.libdir := $(python.dir)/lib/python$(python.version)
 
 # install locations
 # this is necessary in order to override {mm} appending the build type to the install prefix
