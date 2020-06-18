@@ -16,7 +16,7 @@ except ImportError:
     msg = "could not find 'cuda' support"
     # complain
     import journal
-    journal.error('cuda').log(msg)
+    journal.warning('cuda').log(msg)
     # re-raise the exception so clients can cope
     raise
 
