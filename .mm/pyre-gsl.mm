@@ -13,13 +13,6 @@ pyre-gsl.numpy.available := ${findstring numpy,$(extern.available)}
 ifeq ($(pyre-gsl.gsl.available), gsl)
 
 
-# project meta-data
-pyre-gsl.major := $(repo.major)
-pyre-gsl.minor := $(repo.minor)
-pyre-gsl.micro := $(repo.micro)
-pyre-gsl.revision := $(repo.revision)
-
-
 # gsl builds a python package
 pyre-gsl.packages := pyre-gsl.pkg
 # no library

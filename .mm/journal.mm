@@ -4,13 +4,6 @@
 # (c) 1998-2020 all rights reserved
 
 
-# project meta-data
-journal.major := $(repo.major)
-journal.minor := $(repo.minor)
-journal.micro := $(repo.micro)
-journal.revision := $(repo.revision)
-
-
 # journal builds a python package
 journal.packages := journal.pkg
 # a library

@@ -4,13 +4,6 @@
 # (c) 1998-2020 all rights reserved
 
 
-# project meta-data
-pyre.major := $(repo.major)
-pyre.minor := $(repo.minor)
-pyre.micro := $(repo.micro)
-pyre.revision := $(repo.revision)
-
-
 # pyre builds a python package
 pyre.packages := pyre.pkg
 # libraries

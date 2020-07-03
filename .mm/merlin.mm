@@ -4,13 +4,6 @@
 # (c) 1998-2020 all rights reserved
 
 
-# project meta-data
-merlin.major := $(repo.major)
-merlin.minor := $(repo.minor)
-merlin.micro := $(repo.micro)
-merlin.revision := $(repo.revision)
-
-
 # merlin builds a python package
 merlin.packages := merlin.pkg
 # no library

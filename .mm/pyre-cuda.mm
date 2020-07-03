@@ -10,12 +10,6 @@ pyre-cuda.cuda.available := ${findstring cuda,$(extern.available)}
 # if cuda is available
 ifeq ($(pyre-cuda.cuda.available), cuda)
 
-# project meta-data
-pyre-cuda.major := $(repo.major)
-pyre-cuda.minor := $(repo.minor)
-pyre-cuda.micro := $(repo.micro)
-pyre-cuda.revision := $(repo.revision)
-
 
 # pyre-cuda builds a python package
 pyre-cuda.packages := pyre-cuda.pkg

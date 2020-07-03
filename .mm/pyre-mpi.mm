@@ -11,13 +11,6 @@ mpi.available := ${findstring mpi,$(extern.available)}
 ifeq ($(mpi.available), mpi)
 
 
-# project meta-data
-pyre-mpi.major := $(repo.major)
-pyre-mpi.minor := $(repo.minor)
-pyre-mpi.micro := $(repo.micro)
-pyre-mpi.revision := $(repo.revision)
-
-
 # mpi builds a python package
 pyre-mpi.packages := pyre-mpi.pkg
 # a library
