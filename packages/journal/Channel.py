@@ -7,7 +7,7 @@
 # externals
 import traceback       # location information
 # framework
-import pyre              # for my superclass and {tracking}
+import pyre            # for my superclass and {tracking}
 
 # the index
 from .Index import Index
