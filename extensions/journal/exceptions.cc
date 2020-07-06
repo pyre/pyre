@@ -14,12 +14,16 @@
 void
 pyre::journal::py::
 exceptions(py::module & m) {
+    // get the base exception as a raw {PyObject *}, which is what {register_exception} wants
+    auto journalError =
+        py::module::import("journal").attr("exceptions").attr("JournalError").ptr();
+
     // when {debug} channels are fatal
-    py::register_exception<debug_error>(m, "DebugError");
+    py::register_exception<debug_error>(m, "DebugError", journalError);
     // when {firewalls} are fatal
-    py::register_exception<firewall_error>(m, "FirewallError");
+    py::register_exception<firewall_error>(m, "FirewallError", journalError);
     // when user facing channels are fatal
-    py::register_exception<application_error>(m, "ApplicationError");
+    py::register_exception<application_error>(m, "ApplicationError", journalError);
 
     // all done
     return;
