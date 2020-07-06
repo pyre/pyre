@@ -8,6 +8,8 @@
 
 # access to the framework
 import pyre
+# get the journal
+import journal
 # my base class
 from .Executive import Executive
 
@@ -51,8 +53,14 @@ class Script(Executive, family="pyre.shells.script"):
         except KeyboardInterrupt as event:
             # launch the handler
             status = application.pyre_interrupted(info=event)
+        # if this is a journal related exception
+        except journal.exceptions.JournalError:
+            # unless explicitly suppressed, this has been reported already; in either case,
+            # leave it alone and just indicate a failure
+            status = 2
         # if the framework complained about something
         except self.PyreError as error:
+            print(type(error).mro())
             # if we are in debug mode
             if application.DEBUG:
                 # let the error through

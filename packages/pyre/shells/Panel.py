@@ -8,6 +8,8 @@
 
 # access to the framework
 import pyre
+# and the journal
+import journal
 # superclass
 from .Command import Command
 
@@ -62,7 +64,12 @@ class Panel(Command):
                 # point; properly constructed {pyre} harnesses return control to the shell by
                 # raising {SystemExit}, which performs this translation
 
-            # if anything goes wrong
+            # if a journal related exception is raised
+            except journal.exceptions.JournalError:
+                # unless explicitly suppressed, this has been reported already; in either case,
+                # leave it alone and just indicate a failure
+                return 2
+            # if anything else goes wrong
             except Exception as error:
                 # if we are in debug mode
                 if plexus.DEBUG:
