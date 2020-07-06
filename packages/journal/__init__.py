@@ -4,41 +4,13 @@
 # (c) 1998-2020 all rights reserved
 
 
-# administrative
-def copyright():
-    """
-    Return the journal copyright note
-    """
-    return print(meta.header)
+# publish the package metadata
+from . import meta
+# load the exception hierarchy
+from . import exceptions
 
-
-def license():
-    """
-    Print the journal license
-    """
-    # print it
-    return print(meta.license)
-
-
-def version():
-    """
-    Return the journal version
-    """
-    return meta.version
-
-
-def credits():
-    """
-    Print the acknowledgments
-    """
-    # print it
-    return print(meta.acknowledgments)
-
-
-# publish
 # set up a marker about whether we are going to load and publish the bindings
 without_libjournal = False
-
 # get the {__main__} module
 import __main__
 # check whether
@@ -59,10 +31,7 @@ if not without_libjournal:
         # indicate that we don't have access to the bindings
         without_libjournal = True
 
-# publish the package metadata
-from . import meta
-
-# if we don't have access to the bindings
+# if we don't have access to the bindings, rely on the pure python implementation
 if without_libjournal:
     # publish the keeper of the global settings
     from .Chronicler import Chronicler
@@ -143,6 +112,37 @@ else:
     info = libjournal.Informational
     warning = libjournal.Warning
     error = libjournal.Error
+
+
+# administrative
+def copyright():
+    """
+    Return the journal copyright note
+    """
+    return print(meta.header)
+
+
+def license():
+    """
+    Print the journal license
+    """
+    # print it
+    return print(meta.license)
+
+
+def version():
+    """
+    Return the journal version
+    """
+    return meta.version
+
+
+def credits():
+    """
+    Print the acknowledgments
+    """
+    # print it
+    return print(meta.acknowledgments)
 
 
 # end of file
