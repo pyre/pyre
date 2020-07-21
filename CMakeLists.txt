@@ -99,13 +99,21 @@ install(EXPORT pyre-targets
         DESTINATION ${PYRE_CMAKE_DIR}
         )
 
-# install config file for find_package
+# set up version detection for cmake find_package
 include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    pyre-config-version.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY ExactVersion
+    )
+
+# install config file for find_package
 configure_package_config_file(
     ${PROJECT_SOURCE_DIR}/.cmake/pyre-config.cmake.in
     ${PROJECT_BINARY_DIR}/pyre-config.cmake
     INSTALL_DESTINATION ${PYRE_CMAKE_DIR})
 install(FILES ${PROJECT_BINARY_DIR}/pyre-config.cmake
+              ${PROJECT_BINARY_DIR}/pyre-config-version.cmake
         DESTINATION ${PYRE_CMAKE_DIR})
 
 # create aliases matching the exports above
