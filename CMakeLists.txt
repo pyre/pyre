@@ -77,6 +77,8 @@ pyre_stagingInit()
 # initialize the variables that describe the install directory layout
 pyre_destinationInit()
 
+find_package(Filesystem REQUIRED)
+
 # visit subdirectories
 add_subdirectory(packages)
 add_subdirectory(lib)
