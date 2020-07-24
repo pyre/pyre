@@ -57,7 +57,7 @@ find_package(Python3 COMPONENTS Interpreter Development NumPy)
 # for building bindings
 set(PYBIND11_CPP_STANDARD -std=c++17)
 set(PYBIND11_PYTHON_VERSION ${Python3_VERSION})
-find_package(pybind11 REQUIRED)
+find_package(pybind11)
 
 # pybind11 pre-2.5 C++17 compilation is broken under Clang
 # see https://github.com/pybind/pybind11/issues/1604#issuecomment-443385783
