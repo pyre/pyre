@@ -57,7 +57,13 @@ find_package(Python3 COMPONENTS Interpreter Development NumPy)
 # for building bindings
 set(PYBIND11_CPP_STANDARD -std=c++17)
 set(PYBIND11_PYTHON_VERSION ${Python3_VERSION})
-find_package(pybind11)
+find_package(pybind11 REQUIRED)
+
+# pybind11 pre-2.5 C++17 compilation is broken under Clang
+# see https://github.com/pybind/pybind11/issues/1604#issuecomment-443385783
+if(pybind11_VERSION VERSION_LESS 2.5 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(pybind11::module INTERFACE -fsized-deallocation)
+endif()
 
 # set up cmake
 pyre_cmakeInit()
