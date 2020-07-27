@@ -1,0 +1,31 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+
+// code guard
+#if !defined(pyre_cuda_Device_icc)
+#error This header file contains implementation details of class pyre::cuda::Device
+#endif
+
+int
+pyre::cuda::Device::
+id() const noexcept
+{
+    return _id;
+}
+
+bool
+pyre::cuda::
+operator==(pyre::cuda::Device lhs, pyre::cuda::Device rhs) noexcept
+{
+    return lhs.id() == rhs.id();
+}
+
+bool
+pyre::cuda::
+operator!=(pyre::cuda::Device lhs, pyre::cuda::Device rhs) noexcept
+{
+    return not(lhs == rhs);
+}
+
+// end of file

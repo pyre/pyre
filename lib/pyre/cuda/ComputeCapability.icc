@@ -1,0 +1,67 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+
+// code guard
+#if !defined(pyre_cuda_ComputeCapability_icc)
+#error This header file contains implementation details of class pyre::cuda::ComputeCapability
+#endif
+
+constexpr
+pyre::cuda::ComputeCapability::
+ComputeCapability(int major, int minor) noexcept :
+    major {major},
+    minor {minor}
+{}
+
+constexpr bool
+pyre::cuda::
+operator==(pyre::cuda::ComputeCapability lhs,
+           pyre::cuda::ComputeCapability rhs) noexcept
+{
+    return lhs.major == rhs.major and lhs.minor == rhs.minor;
+}
+
+constexpr bool
+pyre::cuda::
+operator!=(pyre::cuda::ComputeCapability lhs,
+           pyre::cuda::ComputeCapability rhs) noexcept
+{
+    return not(lhs == rhs);
+}
+
+constexpr bool
+pyre::cuda::
+operator<(pyre::cuda::ComputeCapability lhs,
+          pyre::cuda::ComputeCapability rhs) noexcept
+{
+    return lhs.major < rhs.major or
+           (lhs.major == rhs.major and lhs.minor < rhs.minor);
+}
+
+constexpr bool
+pyre::cuda::
+operator>(pyre::cuda::ComputeCapability lhs,
+          pyre::cuda::ComputeCapability rhs) noexcept
+{
+    return lhs.major > rhs.major or
+           (lhs.major == rhs.major and lhs.minor > rhs.minor);
+}
+
+constexpr bool
+pyre::cuda::
+operator<=(pyre::cuda::ComputeCapability lhs,
+           pyre::cuda::ComputeCapability rhs) noexcept
+{
+    return not(lhs > rhs);
+}
+
+constexpr bool
+pyre::cuda::
+operator>=(pyre::cuda::ComputeCapability lhs,
+           pyre::cuda::ComputeCapability rhs) noexcept
+{
+    return not(lhs < rhs);
+}
+
+// end of file
