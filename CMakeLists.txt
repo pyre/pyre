@@ -59,6 +59,12 @@ set(PYBIND11_CPP_STANDARD -std=c++17)
 set(PYBIND11_PYTHON_VERSION ${Python3_VERSION})
 find_package(pybind11)
 
+# pybind11 pre-2.5 C++17 compilation is broken under Clang
+# see https://github.com/pybind/pybind11/issues/1604#issuecomment-443385783
+if(pybind11_VERSION VERSION_LESS 2.5 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(pybind11::module INTERFACE -fsized-deallocation)
+endif()
+
 # set up cmake
 pyre_cmakeInit()
 # set up c++
@@ -70,6 +76,8 @@ pyre_pythonInit()
 pyre_stagingInit()
 # initialize the variables that describe the install directory layout
 pyre_destinationInit()
+
+find_package(Filesystem REQUIRED)
 
 # visit subdirectories
 add_subdirectory(packages)
@@ -91,13 +99,21 @@ install(EXPORT pyre-targets
         DESTINATION ${PYRE_CMAKE_DIR}
         )
 
-# install config file for find_package
+# set up version detection for cmake find_package
 include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    pyre-config-version.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY ExactVersion
+    )
+
+# install config file for find_package
 configure_package_config_file(
     ${PROJECT_SOURCE_DIR}/.cmake/pyre-config.cmake.in
     ${PROJECT_BINARY_DIR}/pyre-config.cmake
     INSTALL_DESTINATION ${PYRE_CMAKE_DIR})
 install(FILES ${PROJECT_BINARY_DIR}/pyre-config.cmake
+              ${PROJECT_BINARY_DIR}/pyre-config-version.cmake
         DESTINATION ${PYRE_CMAKE_DIR})
 
 # create aliases matching the exports above
