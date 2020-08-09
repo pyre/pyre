@@ -93,7 +93,7 @@ class Status(pyre.tracker):
         The given {product} is no longer an output of {factory}
         """
         # show me
-        self.log(activity="removing output", **kwds)
+        # self.log(activity="removing output", **kwds)
         # all done
         return self
 
