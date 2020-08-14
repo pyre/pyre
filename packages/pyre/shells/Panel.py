@@ -78,7 +78,8 @@ class Panel(Command):
                 # otherwise, grab the type of error
                 category = type(error).__name__
                 # and generate an error message for the user
-                plexus.error.log(f"{command}: {category}: {error}")
+                plexus.error.line(f"while executing '{self.pyre_spec} {command}':")
+                plexus.error.log(f"    {category}: {error}")
                 # and bail
                 return 1
 
