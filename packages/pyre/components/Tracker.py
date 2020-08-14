@@ -92,7 +92,7 @@ class Tracker(Monitor):
         # chain up
         super().__init__(**kwds)
         # initialize my history; it's a dictionary that maps trait keys to a list of revisions
-        self.history = {}
+        self.history = collections.defaultdict(list)
         # all done
         return
 
