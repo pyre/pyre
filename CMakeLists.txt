@@ -6,18 +6,7 @@
 #
 
 # cmake setup
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
-# policies
-if (POLICY CMP0048)
-  cmake_policy(SET CMP0048 NEW)
-endif(POLICY CMP0048)
-cmake_policy(SET CMP0060 NEW)
-if (POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
-endif(POLICY CMP0074)
-if (POLICY CMP0076)
-  cmake_policy(SET CMP0076 NEW)
-endif(POLICY CMP0076)
+cmake_minimum_required(VERSION 3.12...3.18)
 
 # options
 option(WITH_CUDA "enable support for CUDA" OFF)
