@@ -103,7 +103,6 @@ function(pyre_test_python_testcase testfile)
     COMMAND ${Python3_EXECUTABLE} ./${base} ${ARGN})
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
-    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
     PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
     )
   # launch from the location of the testcase
@@ -136,7 +135,6 @@ function(pyre_test_python_testcase_mpi testfile slots)
     )
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
-    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
     PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
     )
   # launch from the location of the testcase
@@ -166,7 +164,6 @@ function(pyre_test_python_testcase_env testfile env)
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
     ${env}
-    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
     PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
     )
   # launch from the location of the testcase
@@ -189,7 +186,6 @@ function(pyre_test_pyre_driver driver case)
     )
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
-    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
     PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
     )
 
@@ -213,10 +209,6 @@ function(pyre_test_driver testfile)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
-  # register the runtime environment requirements
-  set_property(TEST ${testname} PROPERTY ENVIRONMENT
-    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
-    )
 
   # all done
 endfunction()
@@ -231,10 +223,6 @@ function(pyre_test_driver_case testfile)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
-  # register the runtime environment requirements
-  set_property(TEST ${testname} PROPERTY ENVIRONMENT
-    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
-    )
 
   # all done
 endfunction()
@@ -298,10 +286,6 @@ function(pyre_test_driver_mpi testfile slots)
     ${target}
     ${MPIEXEC_POSTFLAGS}
     ${ARGN}
-    )
-  # register the runtime environment requirements
-  set_property(TEST ${testname} PROPERTY ENVIRONMENT
-    LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib
     )
 
   # all done
