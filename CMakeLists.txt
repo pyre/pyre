@@ -15,6 +15,37 @@ option(WITH_CUDA "enable support for CUDA" OFF)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/.cmake)
 # get support
 include(pyre_init)
+
+# ask git for the pyre version
+pyre_getVersion()
+
+# set up the project
+project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX C)
+# hmmmmm
+include(GNUInstallDirs)
+
+# RPATH handling
+# https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
+# use, i.e. don't skip the full RPATH for the build tree
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+
+# when building, don't use the install RPATH already
+# (but later on when installing)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# the RPATH to be used when installing, but only if it's not a system directory
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
+     "${CMAKE_INSTALL_FULL_LIBDIR}" isSystemDir)
+if("${isSystemDir}" STREQUAL "-1")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+endif()
+
 include(pyre_journal)
 include(pyre_pyre)
 include(pyre_merlin)
@@ -22,14 +53,6 @@ include(pyre_cuda)
 include(pyre_mpi)
 include(pyre_gsl)
 include(pyre_postgres)
-
-# ask git for the pyre version
-pyre_getVersion()
-
-# set up the project
-project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX C)
-# hmmmm
-include(GNUInstallDirs)
 
 # programs
 find_program(BASH_PROGRAM bash)
