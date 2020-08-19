@@ -20,7 +20,7 @@ include(pyre_init)
 pyre_getVersion()
 
 # set up the project
-project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX C)
+project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
 # hmmmmm
 include(GNUInstallDirs)
 
@@ -135,6 +135,9 @@ add_library(pyre::journal ALIAS journal)
 
 # if we are building to test
 if(BUILD_TESTING)
+  # needed by some {journal} test cases
+  enable_language(C)
+
   # get support
   include(CTest)
   # and my functions
