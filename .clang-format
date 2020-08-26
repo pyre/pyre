@@ -1,0 +1,23 @@
+Language: Cpp
+Standard: c++17
+
+AccessModifierOffset: -4
+AllowAllConstructorInitializersOnNextLine: false
+AlwaysBreakAfterReturnType: TopLevel
+AlwaysBreakTemplateDeclarations: Yes
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterColon
+CompactNamespaces: false
+Cpp11BracedListStyle: false
+IndentWidth: 4
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: All
+PointerAlignment: Middle
+SpaceAfterTemplateKeyword: true
+SpaceBeforeCpp11BracedList: true
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterClass: true
+    AfterFunction: true
+    SplitEmptyFunction: false
