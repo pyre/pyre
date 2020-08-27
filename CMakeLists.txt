@@ -21,6 +21,17 @@ pyre_getVersion()
 
 # set up the project
 project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
+
+# is this the topmost project? (not added via e.g. add_subdirectory)
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(PYRE_IS_ROOT_PROJECT TRUE)
+else()
+  set(PYRE_IS_ROOT_PROJECT FALSE)
+endif()
+
+# default to build tests only when root project, but allow user to choose
+option(PYRE_BUILD_TESTING "Build pyre's test suite" ${PYRE_IS_ROOT_PROJECT})
+
 # hmmmmm
 include(GNUInstallDirs)
 
@@ -134,7 +145,8 @@ add_library(pyre::journal ALIAS journal)
 
 
 # if we are building to test
-if(BUILD_TESTING)
+if(PYRE_BUILD_TESTING)
+
   # needed by some {journal} test cases
   enable_language(C)
 

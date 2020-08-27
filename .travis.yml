@@ -21,7 +21,7 @@ addons:
 
 install:
   - mkdir build && cd build
-  - cmake .. -DBUILD_TESTING=y -DCMAKE_INSTALL_PREFIX=$(realpath ../install) -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-fsized-deallocation"
+  - cmake .. -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-fsized-deallocation"
   - make install
 
 script:
