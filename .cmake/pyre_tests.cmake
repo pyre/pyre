@@ -103,7 +103,7 @@ function(pyre_test_python_testcase testfile)
     COMMAND ${Python3_EXECUTABLE} ./${base} ${ARGN})
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
-    PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
+    PYTHONPATH=${PYRE_DEST_FULL_PACKAGES}
     )
   # launch from the location of the testcase
   set_property(TEST ${testname} PROPERTY
@@ -135,7 +135,7 @@ function(pyre_test_python_testcase_mpi testfile slots)
     )
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
-    PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
+    PYTHONPATH=${PYRE_DEST_FULL_PACKAGES}
     )
   # launch from the location of the testcase
   set_property(TEST ${testname} PROPERTY
@@ -164,7 +164,7 @@ function(pyre_test_python_testcase_env testfile env)
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
     ${env}
-    PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
+    PYTHONPATH=${PYRE_DEST_FULL_PACKAGES}
     )
   # launch from the location of the testcase
   set_property(TEST ${testname} PROPERTY
@@ -186,7 +186,7 @@ function(pyre_test_pyre_driver driver case)
     )
   # register the runtime environment requirements
   set_property(TEST ${testname} PROPERTY ENVIRONMENT
-    PYTHONPATH=${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}
+    PYTHONPATH=${PYRE_DEST_FULL_PACKAGES}
     )
 
   # all done

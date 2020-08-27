@@ -37,7 +37,7 @@ function(pyre_postgresModule)
     install(
       TARGETS postgresmodule
       LIBRARY
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}/pyre/extensions
+      DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
       )
   endif()
   # all done
