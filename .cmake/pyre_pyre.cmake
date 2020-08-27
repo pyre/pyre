@@ -66,11 +66,14 @@ function(pyre_pyreLib)
     @ONLY
     )
   # copy the pyre headers over to the staging area
-  file(
-    COPY pyre
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-    FILES_MATCHING PATTERN *.h PATTERN *.icc
-    )
+  file(GLOB_RECURSE files
+       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/pyre
+       CONFIGURE_DEPENDS
+       *.h *.icc
+       )
+  foreach(file ${files})
+    configure_file(pyre/${file} pyre/${file} COPYONLY)
+  endforeach()
 
   # the libpyre target
   add_library(pyre SHARED)

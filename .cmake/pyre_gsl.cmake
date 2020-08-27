@@ -71,10 +71,7 @@ function(pyre_gslModule)
     endif()
 
     # copy the capsule definitions to the staging area
-    file(
-      COPY gsl/capsules.h
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../lib/pyre/gsl
-      )
+    configure_file(gsl/capsules.h ../lib/pyre/gsl/ COPYONLY)
     # install the extension
     install(
       TARGETS gslmodule
