@@ -46,6 +46,7 @@ namespace pyre::journal {
     class Stream;
     class Console;
     class ErrorConsole;
+    class Tee;
 
     // the null channel; used when developer facing channels are turned off at compile time
     class Null;

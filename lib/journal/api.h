@@ -31,6 +31,7 @@ namespace pyre::journal {
     using splitter_t = Splitter;
     using trash_t = Trash;
     using file_t = File;
+    using tee_t = Tee;
     using stream_t = Stream;
     using cout_t = Console;
     using cerr_t = ErrorConsole;

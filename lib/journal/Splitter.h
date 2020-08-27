@@ -11,9 +11,10 @@ class pyre::journal::Splitter : public Device
 {
 protected:
     using output_t = std::shared_ptr<Device>;
+    using outputs_t = std::vector<output_t>;
 
 private:
-    std::vector<output_t> _outputs;
+    outputs_t _outputs;
 
 public:
     // constructors
@@ -25,6 +26,7 @@ public:
 
     // accessors
     auto & outputs() { return _outputs; }
+    void attach(output_t output);
 
     virtual auto memo(const entry_type & entry) -> Splitter & override;
     virtual auto alert(const entry_type & entry) -> Splitter & override;
