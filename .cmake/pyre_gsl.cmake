@@ -76,12 +76,12 @@ function(pyre_gslModule)
     install(
       TARGETS gslmodule
       LIBRARY
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}/gsl
+      DESTINATION ${PYRE_DEST_PACKAGES}/gsl
       )
     # and publish the capsules
     install(
       FILES ${CMAKE_CURRENT_SOURCE_DIR}/gsl/capsules.h
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/include/pyre/gsl
+      DESTINATION ${PYRE_DEST_INCLUDE}/pyre/gsl
       )
   endif()
   # all done

@@ -93,12 +93,12 @@ function(pyre_mpiModule)
     install(
       TARGETS mpimodule
       LIBRARY
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYRE_DEST_PACKAGES}/mpi
+      DESTINATION ${PYRE_DEST_PACKAGES}/mpi
       )
     # and publish the capsules
     install(
       FILES ${CMAKE_CURRENT_SOURCE_DIR}/mpi/capsules.h
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/include/pyre/mpi
+      DESTINATION ${PYRE_DEST_INCLUDE}/pyre/mpi
       )
   endif()
   # all done

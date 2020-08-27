@@ -80,8 +80,12 @@ function(pyre_destinationInit)
   set(PYRE_DEST_INCLUDE ${CMAKE_INSTALL_INCLUDEDIR} PARENT_SCOPE)
   if(NOT DEFINED PYRE_DEST_PACKAGES)
       set(PYRE_DEST_PACKAGES packages CACHE STRING
-          "Python package install location, relative to install prefix")
+          "Python package install location, absolute or relative to install prefix")
   endif()
+  # Translate to unconditional absolute path
+  get_filename_component(PYRE_DEST_FULL_PACKAGES ${PYRE_DEST_PACKAGES} ABSOLUTE
+                         BASE_DIR ${CMAKE_INSTALL_PREFIX})
+  set(PYRE_DEST_FULL_PACKAGES ${PYRE_DEST_FULL_PACKAGES} PARENT_SCOPE)
   # all done
 endfunction(pyre_destinationInit)
 
