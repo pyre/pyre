@@ -68,6 +68,7 @@ function(pyre_journalLib)
     journal/File.cc
     journal/Memo.cc
     journal/Renderer.cc
+    journal/Splitter.cc
     journal/Stream.cc
     journal/Trash.cc
     journal/debuginfo.cc

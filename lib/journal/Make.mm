@@ -26,6 +26,7 @@ PROJ_SRCS = \
     File.cc \
     Memo.cc \
     Renderer.cc \
+    Splitter.cc \
     Stream.cc \
     Trash.cc
 
@@ -79,6 +80,7 @@ EXPORT_PKG_HEADERS = \
     Note.h Note.icc \
     Null.h Null.icc \
     Renderer.h \
+    Splitter.h \
     Stream.h Stream.icc \
     Trash.h Trash.icc \
     Verbosity.h Verbosity.icc \

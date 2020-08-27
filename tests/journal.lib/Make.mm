@@ -104,6 +104,8 @@ TESTS = \
     null_inject \
     null_manipulators \
     null_sanity \
+    splitter_sanity \
+    splitter_streams \
     trash_sanity \
     warning_cascade \
     warning_empty \

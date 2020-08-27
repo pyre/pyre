@@ -40,6 +40,7 @@ namespace pyre::journal {
     class Alert;
 
     // devices
+    class Splitter;
     class Trash;
     class File;
     class Stream;
