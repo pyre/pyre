@@ -44,6 +44,13 @@ Splitter(std::vector<output_t> o) :
     _outputs{o}
 {}
 
+void
+pyre::journal::Splitter::
+attach(output_t output)
+{
+    outputs().push_back(output);
+}
+
 // the interface simply forwards to the outputs' interfaces
 auto
 pyre::journal::Splitter::
