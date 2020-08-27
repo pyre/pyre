@@ -32,18 +32,21 @@ endfunction(pyre_journalPackage)
 # build libjournal
 function(pyre_journalLib)
   # copy the journal headers over to the staging area
-  file(
-    COPY journal
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
-    FILES_MATCHING
-    PATTERN *.h PATTERN *.icc
-    PATTERN journal/journal.h EXCLUDE
-    )
+  file(GLOB_RECURSE files
+       RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/journal
+       CONFIGURE_DEPENDS
+       *.h *.icc
+       )
+  foreach(file ${files})
+    # skip the special header
+    if("${file}" STREQUAL "journal.h")
+      continue()
+    endif()
+    configure_file(journal/${file} pyre/journal/${file} COPYONLY)
+  endforeach()
+
   # and the journal master header within the pyre directory
-  file(
-    COPY journal/journal.h
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/pyre
-    )
+  configure_file(journal/journal.h pyre/journal.h COPYONLY)
 
   # the libjournal target
   add_library(journal SHARED)
