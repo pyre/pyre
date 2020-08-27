@@ -39,6 +39,7 @@
 #include "Memo.h"
 
 // devices
+#include "Splitter.h"
 #include "Trash.h"
 #include "File.h"
 #include "Stream.h"

@@ -28,6 +28,7 @@ namespace pyre::journal {
     using chronicler_t = Chronicler;
 
     // devices
+    using splitter_t = Splitter;
     using trash_t = Trash;
     using file_t = File;
     using stream_t = Stream;
