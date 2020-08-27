@@ -106,6 +106,7 @@ TESTS = \
     null_sanity \
     splitter_sanity \
     splitter_streams \
+    tee_sanity \
     trash_sanity \
     warning_cascade \
     warning_empty \

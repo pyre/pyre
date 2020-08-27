@@ -82,6 +82,7 @@ EXPORT_PKG_HEADERS = \
     Renderer.h \
     Splitter.h \
     Stream.h Stream.icc \
+    Tee.h \
     Trash.h Trash.icc \
     Verbosity.h Verbosity.icc \
     Warning.h Warning.icc
