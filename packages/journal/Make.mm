@@ -38,7 +38,9 @@ EXPORT_PYTHON_MODULES = \
     Memo.py \
     Null.py \
     Renderer.py \
+    Splitter.py \
     Stream.py \
+    Tee.py \
     Trash.py \
     Warning.py \
     exceptions.py \
