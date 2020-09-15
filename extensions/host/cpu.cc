@@ -13,7 +13,11 @@
 #include "cpu.h"
 
 // sysctl
+// on {macos}, most of the relevant information if obtained by querying the kernel
+// currently, no other platform uses this
+#if defined(HAVE_SYSCTL)
 #include <sys/sysctl.h>
+#endif
 
 // logical
 PyObject * pyre::extensions::host::logical(PyObject *, PyObject * args)
