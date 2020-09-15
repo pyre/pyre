@@ -25,8 +25,8 @@ journal.pkg.prerequisites := pyre.pkg
 journal.lib.stem := journal
 # the destination include directory
 journal.lib.incdir := $(builder.dest.inc)pyre/journal/
-# the master header file; it is deposited one level above the rest
-journal.lib.master := journal.h
+# the main api header file; it is deposited one level above the rest
+journal.lib.gateway := journal.h
 # compiler control
 journal.lib.c++.defines += PYRE_CORE
 journal.lib.c++.flags += $($(compiler.c++).std.c++17)
