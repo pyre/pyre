@@ -59,7 +59,7 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
         # - this is the notification that the connection has been closed by the peer; in this
         #   case the channel contains exactly zero bytes for us; we check for this one early
         # - this the first time this peer connects
-        # - more data that for an existing request have arrived
+        # - more data for an existing request have arrived
         # - this is a known peer whose previous request was handled but has kept the connection
         #   alive; this case may not survive as it can be handled by starting a new request
         #   every time without closing the connection

@@ -43,7 +43,7 @@ class Literal(OK):
     # interface
     def render(self, server, **kwds):
         """
-        Pack the contents of the file into a binary buffer
+        Pack my value into a byte stream and send it along
         """
         # return my value as a byte stream
         return self.value.encode(self.encoding)
@@ -52,6 +52,31 @@ class Literal(OK):
     def __init__(self, value, **kwds):
         # chain up
         super().__init__(**kwds)
+        # save the value
+        self.value = value
+        # all done
+        return
+
+
+class BMP(OK):
+    """
+    A stream formatted as a BMP
+    """
+
+    # interface
+    def render(self, server, **kwds):
+        """
+        Send my value along
+        """
+        # my value is already a byte stream; send it off
+        return self.value
+
+    # meta-methods
+    def __init__(self, value, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # add the content type to the headers
+        self.headers['Content-Type'] = f'image/bmp'
         # save the value
         self.value = value
         # all done
