@@ -69,16 +69,16 @@ class BMP(OK):
         Send my value along
         """
         # my value is already a byte stream; send it off
-        return self.value
+        return self.bmp
 
     # meta-methods
-    def __init__(self, value, **kwds):
+    def __init__(self, bmp, **kwds):
         # chain up
         super().__init__(**kwds)
         # add the content type to the headers
         self.headers['Content-Type'] = f'image/bmp'
         # save the value
-        self.value = value
+        self.bmp = bmp
         # all done
         return
 
