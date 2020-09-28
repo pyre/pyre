@@ -27,12 +27,15 @@ class Response(NexusError):
     # the work...
 
     # public data
-    code = None # a numeric code indicating the type of HTTP response
-    status = '' # a very short description of the type of HTTP response
-    server = None # the server that accepted the client request
-    headers = None # meta data about the response
-    encoding = 'utf-8' # the default encoding for the response payload
-    version = (1,1) # the HTTP version spoken here
+    code = None           # a numeric code indicating the type of HTTP response
+    status = ''           # a very short description of the type of HTTP response
+    server = None         # the server that accepted the client request
+    headers = None        # meta data about the response
+    encoding = 'utf-8'    # the default encoding for the response payload
+    version = (1,1)       # the HTTP version spoken here
+
+    alive = True          # keep the connection alive after serving this response
+    abort = False         # terminate the process after serving this response
 
 
     # meta-methods
@@ -61,8 +64,10 @@ class Response(NexusError):
         """
         Generate a conforming timestamp
         """
-        # use now if necessary
-        if tick is None: tick = time.time()
+        # if the caller didn't supply a timestamp
+        if tick is None:
+            # make one
+            tick = time.time()
         # unpack
         year, month, day, hh, mm, ss, wd, y, z = time.gmtime(tick)
         # render and return

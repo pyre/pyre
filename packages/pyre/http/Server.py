@@ -150,8 +150,14 @@ class Server(pyre.nexus.server, family='pyre.nexus.servers.http'):
 
         # either way, send the bytes to the client
         channel.write(stream)
-        # keep the channel alive
-        return True
+
+        # if the application wants to terminate
+        if response.abort:
+            # do it
+            raise SystemExit(0)
+
+        # otherwise, let the response document decide whether we should keep the channel alive
+        return response.alive
 
 
     # meta-methods

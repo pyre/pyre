@@ -31,6 +31,16 @@ class OK(Response):
         return b''
 
 
+# special document that gets served when a client has asked the server to exit
+class Exit(OK):
+    """
+    The client has asked the server to terminate; respond with an {OK} and shutdown
+    """
+
+    # public data
+    abort = True
+
+
 # simple documents
 class Literal(OK):
     """
