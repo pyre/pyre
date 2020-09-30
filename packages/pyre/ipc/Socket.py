@@ -52,9 +52,16 @@ class Socket(socket.socket, Channel):
         """
         Return the address of my peer, i.e. the remote endpoint of the socket
         """
-        # get the raw address
-        address = self.getpeername()
-        # parse it, decorate it and return it
+        # attempt to
+        try:
+            # get the raw address
+            address = self.getpeername()
+        # if something goes wrong
+        except OSError:
+            # make an empty address and send it off
+            return self.inet()
+
+        # otherwise, parse the address, decorate it and return it
         return self.inet().recognize(family=self.family, address=address)
 
 
