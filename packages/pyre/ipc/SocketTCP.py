@@ -36,9 +36,16 @@ class SocketTCP(Socket):
         packets = []
         # for as long as it takes
         while True:
-            # pull something from the channel
-            packet = self.recv(maxlen-total)
-            # get its length
+            # carefully
+            try:
+                # pull something from the channel
+                packet = self.recv(maxlen-total)
+            # if the peer closed the connection
+            except ConnectionResetError:
+                # bail
+                brek
+
+            # otherwise, get the packet length
             got = len(packet)
             # if we got nothing, the channel is closed; bail
             if got == 0: break
@@ -48,6 +55,7 @@ class SocketTCP(Socket):
             packets.append(packet)
             # if we have reached our goal, bail
             if total >= minlen: break
+
         # assemble the byte string and return it
         return b''.join(packets)
 
