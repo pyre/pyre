@@ -43,7 +43,7 @@ class SocketTCP(Socket):
             # if the peer closed the connection
             except ConnectionResetError:
                 # bail
-                brek
+                break
 
             # otherwise, get the packet length
             got = len(packet)
