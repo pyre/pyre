@@ -84,6 +84,10 @@ public:
     // and all output to a file with the given filename
     static inline void logfile(const path_t &);
 
+    // NVCC workaround for initializing the index
+private:
+    static inline auto _initializeIndex() -> index_type;
+
     // implementation details: data
 private:
     name_type _name;
@@ -92,7 +96,7 @@ private:
 
     // implementation details: static data
 private:
-    static inline index_type _index = severity_type::initializeIndex();
+    static inline index_type _index = _initializeIndex();
 };
 
 
