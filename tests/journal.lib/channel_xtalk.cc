@@ -43,7 +43,7 @@ myinfo_t::myinfo_t(const name_type & name) :
 // initialize the channel index
 auto myinfo_t::initializeIndex() -> index_type
 {
-    // make an empty index; for {debug}, channels are (inactive,non-fatal) by default
+    // make an empty index; for {myinfo_t}, channels are (inactive,non-fatal) by default
     return index_type(false, false);
 }
 
@@ -75,7 +75,7 @@ mywarning_t::mywarning_t(const name_type & name) :
 // initialize the channel index
 auto mywarning_t::initializeIndex() -> index_type
 {
-    // make an empty index; for {debug}, channels are (inactive,non-fatal) by default
+    // make an empty index; for {mywarning_t}, channels are (active,non-fatal) by default
     return index_type(true, false);
 }
 
@@ -107,7 +107,7 @@ myerror_t::myerror_t(const name_type & name) :
 // initialize the channel index
 auto myerror_t::initializeIndex() -> index_type
 {
-    // make an empty index; for {debug}, channels are (inactive,non-fatal) by default
+    // make an empty index; for {myerror_t}, channels are (active,fatal) by default
     return index_type(true, true);
 }
 
