@@ -31,6 +31,16 @@ class OK(Response):
         return b''
 
 
+# special document that gets served when a client has asked the server to exit
+class Exit(OK):
+    """
+    The client has asked the server to terminate; respond with an {OK} and shutdown
+    """
+
+    # public data
+    abort = True
+
+
 # simple documents
 class Literal(OK):
     """
@@ -43,7 +53,7 @@ class Literal(OK):
     # interface
     def render(self, server, **kwds):
         """
-        Pack the contents of the file into a binary buffer
+        Pack my value into a byte stream and send it along
         """
         # return my value as a byte stream
         return self.value.encode(self.encoding)
@@ -54,6 +64,31 @@ class Literal(OK):
         super().__init__(**kwds)
         # save the value
         self.value = value
+        # all done
+        return
+
+
+class BMP(OK):
+    """
+    A stream formatted as a BMP
+    """
+
+    # interface
+    def render(self, server, **kwds):
+        """
+        Send my value along
+        """
+        # my value is already a byte stream; send it off
+        return self.bmp
+
+    # meta-methods
+    def __init__(self, bmp, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # add the content type to the headers
+        self.headers['Content-Type'] = f'image/bmp'
+        # save the value
+        self.bmp = bmp
         # all done
         return
 

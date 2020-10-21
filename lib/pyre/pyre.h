@@ -10,7 +10,6 @@
 #define pyre_h
 
 // support
-#include "algebra.h"
 #include "timers.h"
 #include "memory.h"
 #include "grid.h"
