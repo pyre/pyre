@@ -16,11 +16,21 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/.cmake)
 # get support
 include(pyre_init)
 
-# ask git for the pyre version
-pyre_getVersion()
+if(NOT PYRE_VERSION)
+    if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+        message(FATAL_ERROR "git auto-versioning requires cloned repo! "
+                            "provide a version with -DPYRE_VERSION=X.Y.Z")
+    endif()
+
+    # ask git for the pyre version
+    pyre_getVersion()
+endif()
 
 # set up the project
-project(PYRE VERSION ${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO} LANGUAGES CXX)
+project(PYRE VERSION "${PYRE_VERSION}" LANGUAGES CXX)
+set(MAJOR ${PROJECT_VERSION_MAJOR})
+set(MINOR ${PROJECT_VERSION_MINOR})
+set(MICRO ${PROJECT_VERSION_PATCH})
 
 # is this the topmost project? (not added via e.g. add_subdirectory)
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
