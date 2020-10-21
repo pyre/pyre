@@ -77,8 +77,13 @@ find_package(PostgreSQL)
 # python
 find_package(Python3 COMPONENTS Interpreter Development NumPy)
 # for building bindings
+# require c++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(PYBIND11_CPP_STANDARD -std=c++17)
 set(PYBIND11_PYTHON_VERSION ${Python3_VERSION})
+set(PYBIND11_FINDPYTHON ON) # Use new FindPython if available
 find_package(pybind11)
 
 # pybind11 pre-2.5 C++17 compilation is broken under Clang
@@ -89,8 +94,6 @@ endif()
 
 # set up cmake
 pyre_cmakeInit()
-# set up c++
-pyre_cxxInit()
 # set up python
 pyre_pythonInit()
 
