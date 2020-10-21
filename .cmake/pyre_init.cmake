@@ -40,16 +40,6 @@ function(pyre_cmakeInit)
 endfunction(pyre_cmakeInit)
 
 
-# setup the c++ compiler
-function(pyre_cxxInit)
-  # require c++17
-  set(CMAKE_CXX_STANDARD 17 PARENT_SCOPE)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON PARENT_SCOPE)
-  set(CMAKE_CXX_EXTENSIONS OFF PARENT_SCOPE)
-  # all done
-endfunction(pyre_cxxInit)
-
-
 # setup python
 function(pyre_pythonInit)
   # ask the executable for the module suffix
