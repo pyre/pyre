@@ -118,7 +118,7 @@ endfunction(pyre_pyreLib)
 # build the pyre extension modules
 function(pyre_pyreModule)
   # host
-  Python3_add_library(hostmodule MODULE)
+  Python_add_library(hostmodule MODULE)
   # adjust the name to match what python expects
   set_target_properties(hostmodule PROPERTIES LIBRARY_OUTPUT_NAME host)
   set_target_properties(hostmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
@@ -132,7 +132,7 @@ function(pyre_pyreModule)
     )
 
   # timers
-  Python3_add_library(timersmodule MODULE)
+  Python_add_library(timersmodule MODULE)
   # adjust the name to match what python expects
   set_target_properties(timersmodule PROPERTIES LIBRARY_OUTPUT_NAME timers)
   set_target_properties(timersmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
@@ -163,7 +163,7 @@ function(pyre_pyreBin)
     python.cc
     )
   # and libraries
-  target_link_libraries(python.pyre Python3::Python)
+  target_link_libraries(python.pyre Python::Python)
 
   # install the custom python
   install(
