@@ -69,7 +69,7 @@ endfunction(pyre_mpiLib)
 function(pyre_mpiModule)
   # if we have mpi
   if (${MPI_FOUND})
-    Python3_add_library(mpimodule MODULE)
+    Python_add_library(mpimodule MODULE)
     # adjust the name to match what python expects
     set_target_properties(mpimodule PROPERTIES LIBRARY_OUTPUT_NAME mpi)
     set_target_properties(mpimodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})

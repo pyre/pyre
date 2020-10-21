@@ -44,7 +44,7 @@ endfunction(pyre_cmakeInit)
 function(pyre_pythonInit)
   # ask the executable for the module suffix
   execute_process(
-    COMMAND ${Python3_EXECUTABLE} -c
+    COMMAND ${Python_EXECUTABLE} -c
         "from distutils.sysconfig import *; print(get_config_var('EXT_SUFFIX'))"
     RESULT_VARIABLE PYTHON3_SUFFIX_STATUS
     OUTPUT_VARIABLE PYTHON3_SUFFIX

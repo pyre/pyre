@@ -25,12 +25,12 @@ endfunction(pyre_gslPackage)
 function(pyre_gslModule)
   # if we have gsl
   if (${GSL_FOUND})
-    Python3_add_library(gslmodule MODULE)
+    Python_add_library(gslmodule MODULE)
     # adjust the name to match what python expects
     set_target_properties(gslmodule PROPERTIES LIBRARY_OUTPUT_NAME gsl)
     set_target_properties(gslmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
     # set the include directories
-    target_include_directories(gslmodule PRIVATE ${GSL_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS})
+    target_include_directories(gslmodule PRIVATE ${GSL_INCLUDE_DIRS} ${Python_NumPy_INCLUDE_DIRS})
     # set the libraries to link against
     target_link_libraries(
       gslmodule PRIVATE
@@ -63,7 +63,7 @@ function(pyre_gslModule)
       target_link_libraries(gslmodule PRIVATE ${MPI_CXX_LIBRARIES})
     endif()
 
-    if (${Python3_NumPy_FOUND})
+    if (${Python_NumPy_FOUND})
       # add the numpy aware sources to the pile
       target_sources(gslmodule PRIVATE gsl/numpy.cc)
       # add the MPI presence indicator

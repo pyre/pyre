@@ -93,7 +93,7 @@ endfunction(pyre_journalLib)
 # build the journal python extension
 function(pyre_journalModule)
   # journal
-  Python3_add_library(journalmodule MODULE)
+  Python_add_library(journalmodule MODULE)
   # turn on the core macro
   set_target_properties(journalmodule PROPERTIES COMPILE_DEFINITIONS PYRE_CORE)
   # adjust the name to match what python expects
