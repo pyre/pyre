@@ -27,4 +27,7 @@ install:
 script:
   - ctest --verbose
 
+git:
+  depth: 500
+
 # end of file
