@@ -45,9 +45,9 @@ RUN DEBIAN_FRONTEND=noninteractive \
 # go home
 WORKDIR /root
 # copy the files with support for interactive use
-COPY etc/docker/eoan-gcc/inputrc .inputrc
+COPY etc/docker/focal-gcc/inputrc .inputrc
 # the startup file
-COPY etc/docker/eoan-gcc/bashrc bashrc.in
+COPY etc/docker/focal-gcc/bashrc bashrc.in
 # expand
 RUN sed \
         -e "s:@SRCDIR@:${srcdir}:g" \
@@ -56,7 +56,7 @@ RUN sed \
 # make the pyre configuration directory
 WORKDIR /root/.pyre
 # the mpi configuration
-COPY etc/docker/eoan-gcc/mpi.pfg mpi.pfg
+COPY etc/docker/focal-gcc/mpi.pfg mpi.pfg
 # the {mm} coniguration file
 COPY etc/docker/focal-clang/mm.pfg mm.pfg.in
 # expand
