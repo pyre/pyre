@@ -44,15 +44,15 @@ discover(PyObject *, PyObject *args)
     cudaError_t status = cudaGetDeviceCount(&count);
     // if anything went wrong
     if (status != cudaSuccess) {
-        // make an error channel
-        pyre::journal::error_t error("cuda");
-        // show me
-        error
+        // make a channel
+        pyre::journal::warning_t channel("cuda");
+        // complain
+        channel
             << pyre::journal::at(__HERE__)
             << "while getting device count: "
             << cudaGetErrorName(status) << " (" << status << ")"
             << pyre::journal::endl;
-        // pretend there are no CUDA capable devices
+        // and pretend there are no CUDA capable devices
         return PyTuple_New(0);
     }
     // show me
