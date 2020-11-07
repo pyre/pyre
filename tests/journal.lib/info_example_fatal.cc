@@ -36,7 +36,7 @@ int main() {
         // if all goes well
     } catch (const info_t::exception_type & error) {
         // make sure the reason was recorded correctly
-        assert (error.what() == channel.name() + info_t::string_type(": application error"));
+        assert (error.what() == channel.name() + info_t::string_type(": info"));
     }
 
     // all done

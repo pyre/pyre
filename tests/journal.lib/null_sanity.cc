@@ -4,6 +4,8 @@
 // (c) 1998-2020 all rights reserved
 
 
+// support
+#include <cassert>
 // get the journal
 #include <pyre/journal.h>
 
@@ -13,19 +15,14 @@ int main() {
     // make a null channel
     pyre::journal::null_t channel("tests.journal.null");
 
-    // if it's active by default
-    if (channel) {
-        // we have a problem
-        throw pyre::journal::firewall_error("active null channel");
-    }
+    // if it's active by default, we have a problem
+    assert (!channel);
 
     // attempt to activate
     channel.activate();
-    // if it's activated
-    if (channel) {
-        // we have a problem
-        throw pyre::journal::firewall_error("null channel was activated");
-    }
+
+    // if it activated, we have a problem
+    assert (!channel);
 
     // nothing to do
     return 0;
