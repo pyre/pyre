@@ -45,9 +45,9 @@ pyre::journal::Firewall<proxyT>::
 die()
 {
     // prepare a message
-    auto msg = this->name() + firewall_error::string_type(": FIREWALL BREACHED!");
+    auto msg = this->name() + exception_type::headline_type(": FIREWALL BREACHED!");
     // throw a firewall
-    throw exception_type(msg);
+    throw exception_type(msg, this->entry().page(), this->entry().notes());
 }
 
 
