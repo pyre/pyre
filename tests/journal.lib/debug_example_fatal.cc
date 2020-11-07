@@ -42,7 +42,7 @@ int main() {
     // if all goes well
     } catch (const debug_t::exception_type & error) {
         // make sure the reason was recorded correctly
-        assert (error.what() == channel.name() + debug_t::string_type(": debug error"));
+        assert (error.what() == channel.name() + debug_t::string_type(": debug"));
     }
 
     // all done
