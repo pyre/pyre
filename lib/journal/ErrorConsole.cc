@@ -56,7 +56,7 @@ ErrorConsole() :
         _palette["debug"] = ansi_t::x11("cornflower blue");
         _palette["firewall"] = ansi_t::x11("fuchsia");
         // the page body
-        _palette["body"] = "";
+        _palette["body"] = ansi_t::x11("normal");
     }
 }
 
