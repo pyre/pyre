@@ -12,9 +12,9 @@
 // metamethods
 // modern version
 pyre::journal::Locator::
-Locator(const value_type & file, int line, const value_type & function):
+Locator(const value_type & file, const value_type & line, const value_type & function):
     _file(file),
-    _line(line > 0 ? std::to_string(line) : ""),
+    _line(line),
     _func(function)
 {}
 

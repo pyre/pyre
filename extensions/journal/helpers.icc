@@ -22,7 +22,7 @@ locator() -> locator_t
     auto caller = trace[py::int_(0)];
     // pull out what we need
     py::str filename = caller[py::int_(0)];
-    py::int_ line = caller[py::int_(1)];
+    py::str line = caller[py::int_(1)];
     py::str function = caller[py::int_(2)];
 
     // make a locator
