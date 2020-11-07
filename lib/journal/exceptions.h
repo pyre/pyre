@@ -12,12 +12,25 @@
 class pyre::journal::application_error : public std::runtime_error {
     // types
 public:
-    using string_type = string_t;
+    using headline_type = string_t;
+    using page_type = page_t;
+    using notes_type = notes_t;
+    using page_const_reference = const page_t &;
+    using notes_const_reference = const notes_t &;
 
     // metamethods
 public:
-    inline application_error(const char *);
-    inline application_error(const string_type &);
+    inline application_error(const headline_type &, const page_type &, const notes_type &);
+
+    // accessors
+public:
+    inline auto page() const -> page_const_reference;
+    inline auto notes() const -> notes_const_reference;
+
+    // implementation details: extra data
+private:
+    page_type _page;
+    notes_type _notes;
 };
 
 
@@ -25,12 +38,25 @@ public:
 class pyre::journal::firewall_error : public std::logic_error {
     // types
 public:
-    using string_type = string_t;
+    using headline_type = string_t;
+    using page_type = page_t;
+    using notes_type = notes_t;
+    using page_const_reference = const page_t &;
+    using notes_const_reference = const notes_t &;
 
     // metamethods
 public:
-    inline firewall_error(const char *);
-    inline firewall_error(const string_type &);
+    inline firewall_error(const headline_type &, const page_type &, const notes_type &);
+
+    // accessors
+public:
+    inline auto page() const -> page_const_reference;
+    inline auto notes() const -> notes_const_reference;
+
+    // implementation details: extra data
+private:
+    page_type _page;
+    notes_type _notes;
 };
 
 
@@ -38,12 +64,25 @@ public:
 class pyre::journal::debug_error : public std::logic_error {
     // types
 public:
-    using string_type = string_t;
+    using headline_type = string_t;
+    using page_type = page_t;
+    using notes_type = notes_t;
+    using page_const_reference = const page_t &;
+    using notes_const_reference = const notes_t &;
 
     // metamethods
 public:
-    inline debug_error(const char *);
-    inline debug_error(const string_type &);
+    inline debug_error(const headline_type &, const page_type &, const notes_type &);
+
+    // accessors
+public:
+    inline auto page() const -> page_const_reference;
+    inline auto notes() const -> notes_const_reference;
+
+    // implementation details: extra data
+private:
+    page_type _page;
+    notes_type _notes;
 };
 
 
