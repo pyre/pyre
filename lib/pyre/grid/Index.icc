@@ -38,7 +38,7 @@ fill(value_type value) {
 template <typename repT>
 constexpr auto
 pyre::grid::Index<repT>::
-dim() {
+dim() -> size_type {
     // ask my rep
     return std::tuple_size<rep_type>::value;
 }
@@ -46,7 +46,7 @@ dim() {
 template <typename repT>
 constexpr auto
 pyre::grid::Index<repT>::
-size() const {
+size() const -> size_type {
     // easy enough
     return _index.size();
 }
