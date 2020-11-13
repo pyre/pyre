@@ -22,8 +22,6 @@ public:
     typedef typename rep_type::size_type size_type;
     // just in case anybody cares about the type of my payload
     typedef typename rep_type::value_type value_type;
-    // for sizes of things
-    using size_type = size_t;
 
     // meta-methods
 public:
