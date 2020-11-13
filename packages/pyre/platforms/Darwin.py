@@ -89,6 +89,7 @@ class Darwin(POSIX, family='pyre.platforms.darwin'):
     # private data
     # the known code names
     codenames = {
+        '11.0': 'big sur',
         '10.15': 'catalina',
         '10.14': 'mojave',
         '10.13': 'high sierra',
