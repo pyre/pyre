@@ -22,6 +22,8 @@ public:
     typedef typename rep_type::size_type size_type;
     // just in case anybody cares about the type of my payload
     typedef typename rep_type::value_type value_type;
+    // for sizes of things
+    typedef size_type = size_t;
 
     // meta-methods
 public:
@@ -36,9 +38,9 @@ public:
     inline static constexpr auto fill(value_type value);
 
     // dimensionality
-    inline static constexpr auto dim();
+    inline static constexpr auto dim() -> size_type;
     // same as {dim} but as a member function
-    inline constexpr auto size() const;
+    inline constexpr auto size() const -> size_type;
 
     // indexed access
     inline auto & operator[](size_type item);
