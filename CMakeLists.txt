@@ -113,6 +113,7 @@ pyre_stagingInit()
 pyre_destinationInit()
 
 find_package(Filesystem REQUIRED)
+link_libraries(std::filesystem)
 
 # visit subdirectories
 add_subdirectory(packages)
