@@ -7,7 +7,7 @@
 
 
 # externals
-import collections
+import collections.abc
 # my base class is from {pyre.schemata}
 from ..schemata.Schema import Schema
 
@@ -95,7 +95,7 @@ class Typed(Schema):
         # handle anything empty
         if not processors: return []
         # if i have an iterable
-        if isinstance(processors, collections.Iterable):
+        if isinstance(processors, collections.abc.Iterable):
             # turn it into a list
             return list(processors)
         # otherwise, place the lone processor in a list

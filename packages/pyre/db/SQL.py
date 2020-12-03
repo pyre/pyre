@@ -9,7 +9,7 @@
 # iterator tools
 import itertools
 # so i can check for sequences
-import collections
+import collections.abc
 # my base class
 from pyre.weaver.SQL import SQL as Mill
 
@@ -126,7 +126,7 @@ class SQL(Mill, family="pyre.db.sql"):
             # if it exists
             if order is not None:
                 # if it is not an iterable
-                if not isinstance(order, collections.Iterable):
+                if not isinstance(order, collections.abc.Iterable):
                     # make it one
                     order = order,
                 # push out
