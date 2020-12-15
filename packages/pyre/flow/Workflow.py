@@ -87,7 +87,7 @@ class Workflow(Factory, family='pyre.flow.workflow', implements=Flow):
                 yield product, meta
 
         # all done
-        return []
+        return
 
 
     def pyre_factories(self):
