@@ -48,7 +48,7 @@ header(palette_type & palette, linebuf_type & buffer, const entry_type & entry) 
     auto severity = notes.at("severity");
 
     // mark the beginning of a message
-    line_type marker { " >> " };
+    line_type marker { _marker };
 
     // attempt to get location information
     // N.B.: we only print line number and function name if we know the filename

@@ -20,6 +20,11 @@ protected:
     virtual void header(palette_type &, linebuf_type &, const entry_type &) const override;
     virtual void body(palette_type &, linebuf_type &, const entry_type &) const override;
 
+    // configuration
+    // MGA: currently hardwired until we have a good solution
+private:
+    const char * _marker = " >> ";
+
     // disallow
 private:
     Memo(const Memo &) = delete;
