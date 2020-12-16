@@ -80,6 +80,9 @@ body(palette_type & palette, linebuf_type & buffer, const entry_type & entry) co
         return;
     }
 
+    // mark the beginning of a message
+    line_type marker { _marker };
+
     // get the severity
     auto severity = notes.at("severity");
     // the reset sequence
@@ -93,9 +96,12 @@ body(palette_type & palette, linebuf_type & buffer, const entry_type & entry) co
     for (auto line : page) {
         // and render each one
         buffer
-            << severityColor << " >> " << bodyColor << line << resetColor
+            << severityColor << marker << bodyColor << line << resetColor
             << std::endl;
     }
+
+    // MGA: skip the locator, until we sort out configurability
+    return;
 
     // attempt to get location information
     // N.B.: we only print line number and function name if we know the filename
@@ -105,7 +111,7 @@ body(palette_type & palette, linebuf_type & buffer, const entry_type & entry) co
         // extract the filename
         auto filename = loc->second;
         // make some room and turn on location formatting
-        buffer << severityColor << " >> " << resetColor;
+        buffer << severityColor << marker << resetColor;
         // set a maximum length for the rendered filename
         const line_type::size_type maxlen = 60;
         // get the filename size
