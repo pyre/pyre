@@ -37,6 +37,10 @@ class URI(Schema):
             # leave it alone
             return value
 
+        # force conversion to a string; this shouldn't fail, unless the {__str__} converter of
+        # {value} is broken, in which case it is almost certain we have a bug...
+        value = str(value)
+
         # attempt to coerce
         try:
             # by assuming it is a string
