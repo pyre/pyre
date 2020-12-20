@@ -1,0 +1,90 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2020 all rights reserved
+
+// code guard
+#if !defined(pyre_grid_Index_icc)
+#error this file contains implementation details for pyre::grid::Index
+#else
+
+
+// metamethods
+// constructor that fills an index with a specific value
+template <class containerT>
+constexpr
+pyre::grid::Index<containerT>::
+Index(rank_type value) :
+    rep_type {}
+{
+    // fill my representation with {value}
+    // std::fill(this->begin(), this->end(), value);
+    // this would be the preferred way, but {std::fill} is not {constexpr} until {c++20}, so
+    for (auto & axis : *this) {
+        // set the value
+        axis = value;
+    }
+}
+
+
+// constructor that accepts an initializer list
+template <class containerT>
+template <typename... argT>
+constexpr
+pyre::grid::Index<containerT>::
+Index(argT... idx) :
+    rep_type(idx...)
+{}
+
+
+// static interface: factories
+// make an index that is filled with zeroes
+template <class containerT>
+constexpr auto
+pyre::grid::Index<containerT>::
+zero() -> index_type
+{
+    // delegate
+    return index_type(0);
+}
+
+
+// add a shape to an index
+template <class indexContainerT, class shapeContainerT>
+constexpr auto
+pyre::grid::
+operator+ (const Index<indexContainerT> & i, const Shape<shapeContainerT> & s)
+    -> Index<indexContainerT>
+{
+    // make a default index
+    Index<indexContainerT> sum;
+
+    // go through each axis
+    for (auto axis = 0; axis < sum.rank(); ++axis) {
+        // do the math
+        sum[axis] = i[axis] + s[axis];
+    }
+
+    // all done
+    return sum;
+}
+
+
+// support for structured bindings
+template<class containerT>
+class std::tuple_size<pyre::grid::Index<containerT>> :
+    public std::integral_constant<int, pyre::grid::Index<containerT>::rank()>
+{};
+
+
+template<std::size_t I, class containerT>
+struct std::tuple_element<I, pyre::grid::Index<containerT>>
+{
+    static_assert(I < pyre::grid::Index<containerT>::rank(), "index is out of bounds");
+    using type = typename containerT::value_type;
+};
+
+
+#endif
+
+// end of file

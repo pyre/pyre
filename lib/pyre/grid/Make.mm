@@ -28,6 +28,17 @@ EXPORT_LIBS = $(PROJ_DLL)
 
 # the package headers
 EXPORT_PKG_HEADERS = \
+    Canonical.h Canonical.icc \
+    Grid.h Grid.icc \
+    GridIterator.h GridIterator.icc \
+    Index.h Index.icc \
+    IndexIterator.h IndexIterator.icc \
+    Order.h Order.icc \
+    OrderIterator.h OrderIterator.icc \
+    Product.h Product.icc \
+    Rep.h Rep.icc \
+    Shape.h Shape.icc \
+    api.h externals.h forward.h public.h
 
 # the standard targets
 all: export
