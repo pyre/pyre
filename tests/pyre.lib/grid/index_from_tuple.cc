@@ -31,7 +31,7 @@ int main(int argc, char * argv[]) {
     pyre::journal::init(argc, argv);
     pyre::journal::application("index_from_tuple");
     // make a channel
-    pyre::journal::info_t channel("pyre.grid.index");
+    pyre::journal::debug_t channel("pyre.grid.index");
 
     // make a tuple
     auto src = std::make_tuple(0,1,2,3);
