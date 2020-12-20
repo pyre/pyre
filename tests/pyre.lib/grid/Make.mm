@@ -11,36 +11,8 @@ include pyre.def
 
 # the pile of tests
 LAYOUT_TESTS = \
-    index \
-    index-access \
-    index-bool \
-    index-arithmetic \
-    packing \
-    packing-c \
-    packing-fortran \
-    packing-access \
-    slice \
-    iterator \
-    iterator-access \
-    iterator-loop \
-    iterator-slice \
-    layout \
-    layout-order \
-    layout-order-default \
-    layout-slice \
 
 GRID_TESTS = \
-    grid-view \
-    grid-heap \
-    grid-direct \
-    grid-direct-data \
-    grid-direct-set \
-    grid-direct-get \
-    grid-fill \
-    grid-mosaic \
-    grid-scan \
-    grid-transform \
-    grid-view-assignment \
 
 all: test clean
 
