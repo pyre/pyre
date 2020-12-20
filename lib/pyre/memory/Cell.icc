@@ -1,0 +1,26 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2020 all rights reserved
+
+
+// code guard
+#if !defined(pyre_memory_Cell_icc)
+#error this file contains implementation details for pyre::memory::Cell
+#else
+
+
+// compute the footprint of the given number of cells
+template <typename T, bool isConst>
+constexpr auto
+pyre::memory::Cell<T, isConst>::
+bytes(cell_count_type n) -> size_type
+{
+    // easy
+    return n * sizeof(T);
+}
+
+
+#endif
+
+// end of file

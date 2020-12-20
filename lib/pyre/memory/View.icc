@@ -1,0 +1,116 @@
+// -*- c++ -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2020 all rights reserved
+
+
+// code guard
+#if !defined(pyre_memory_View_icc)
+#error this file contains implementation details for pyre::memory::View
+#else
+
+
+// metamethods
+template <class T, bool isConst>
+pyre::memory::View<T, isConst>::
+View(pointer data, cell_count_type cells) :
+    _data{ data },
+    _cells{ cells }
+{}
+
+
+// interface
+// get the number of cells in the block
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::
+cells() const -> cell_count_type
+{
+    // easy
+    return _cells;
+}
+
+
+// get the memory footprint of the block
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::
+bytes() const -> size_type
+{
+    // scale the number of cells by the cell size
+    return cells() * sizeof(value_type);
+}
+
+
+// access to the data pointer
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::
+data() const -> pointer
+{
+    // return the raw data pointer
+    return _data;
+}
+
+
+// iterator support
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::
+begin() const -> pointer
+{
+    // the beginning of the block
+    return data();
+}
+
+
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::
+end() const -> pointer
+{
+    // one past the last cell in the block
+    return data() + cells();
+}
+
+
+// data access
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::
+at(size_type pos) const -> reference
+{
+    // if the request is out of bounds
+    if (pos >= cells()) {
+        // make a channel
+        pyre::journal::firewall_t channel("pyre.memory.bounds");
+        // and complain
+        channel
+            << "out of bounds access:" << pyre::journal::newline
+            << "  index " << pos << " must be less than " << cells() << pyre::journal::newline
+            << "  in pyre::memory::View::operator[]" << pyre::journal::newline
+            << "  with a view at " << data()
+            << pyre::journal::endl(__HERE__);
+        // unreachable, unless the user has marked this error as non-fatal
+        // clamp {pos} to the last element in the block
+        pos = cells() - 1;
+    }
+
+    // return a reference to the cell at {pos}
+    return _data[pos];
+}
+
+
+template <class T, bool isConst>
+auto
+pyre::memory::View<T, isConst>::
+operator [] (size_type pos) const -> reference
+{
+    // return a reference to the cell at {pos}
+    return _data[pos];
+}
+
+
+#endif
+
+// end of file

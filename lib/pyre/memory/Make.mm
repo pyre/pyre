@@ -22,6 +22,7 @@ PROJ_LCXX_LIBS = -ljournal
 PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
 # the sources
 PROJ_SRCS = \
+    FileMap.cc
 
 # what to clean
 PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
@@ -31,7 +32,12 @@ PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
 EXPORT_LIBS = $(PROJ_DLL)
 # the public header
 EXPORT_HEADERS = \
-
+    Cell.h Cell.icc \
+    FileMap.h FileMap.icc \
+    Heap.h Heap.icc \
+    Map.h Map.icc \
+    View.h View.icc \
+    api.h externals.h forward.h public.h
 
 # the package headers
 EXPORT_PKG_HEADERS = \
