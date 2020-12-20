@@ -22,7 +22,6 @@ PROJ_LCXX_LIBS = -ljournal
 PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
 # the sources
 PROJ_SRCS = \
-    MemoryMap.cc \
 
 # what to clean
 PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
@@ -32,16 +31,10 @@ PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
 EXPORT_LIBS = $(PROJ_DLL)
 # the public header
 EXPORT_HEADERS = \
-    memory.h \
+
+
 # the package headers
 EXPORT_PKG_HEADERS = \
-    ConstDirect.h ConstDirect.icc \
-    ConstView.h ConstView.icc \
-    Direct.h Direct.icc \
-    Heap.h Heap.icc \
-    MemoryMap.h MemoryMap.icc \
-    View.h View.icc \
-    forward.h public.h
 
 # the standard targets
 all: export
