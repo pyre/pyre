@@ -11,22 +11,9 @@ include pyre.def
 
 # the pile of tests
 TESTS = \
-    view-instantiate \
-    constview-instantiate \
-    heap-instantiate \
-    direct-create \
-    direct-map \
-    direct-instantiate \
-    direct-instantiate-partial \
-    constdirect-create \
-    constdirect-map \
-    constdirect-instantiate \
-    constdirect-instantiate-partial \
 
 # tests that should fail because their access patterns are prohibited
 SHOULD_FAIL = \
-    direct-clone \
-    constdirect-clone \
 
 all: test clean
 
