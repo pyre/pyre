@@ -25,23 +25,9 @@ PROJ_CLEAN += $(EXPORT_INCDIR)/$(PACKAGE) $(EXPORT_INCDIR)/$(PACKAGE).h
 # what to export
 # the library
 EXPORT_LIBS = $(PROJ_DLL)
-# the public header
-EXPORT_HEADERS = \
-    grid.h \
+
 # the package headers
 EXPORT_PKG_HEADERS = \
-    ConstGridIterator.h ConstGridIterator.icc \
-    ConstView.h ConstView.icc \
-    DirectGrid.h DirectGrid.icc \
-    Grid.h Grid.icc \
-    GridIterator.h GridIterator.icc \
-    Index.h Index.icc \
-    Iterator.h Iterator.icc \
-    Layout.h Layout.icc \
-    Packing.h Packing.icc \
-    Slice.h Slice.icc \
-    View.h View.icc \
-    public.h
 
 # the standard targets
 all: export
