@@ -8,36 +8,30 @@
 pyre.lib.tests.stem := pyre.lib
 pyre.lib.tests.prerequisites := pyre.lib journal.lib
 pyre.lib.tests.extern := pyre.lib journal.lib
+
+# c++ compiler arguments
+pyre.lib.tests.c++.defines := PYRE_CORE
 pyre.lib.tests.c++.flags += -Wall $($(compiler.c++).std.c++17)
 
 
 # cleanup
-tests.pyre.lib.grid.grid-direct.clean := grid.dat
-tests.pyre.lib.memory.direct-create.clean := direct-grid.dat
-tests.pyre.lib.memory.constdirect-create.clean := constdirect-grid.dat
+tests.pyre.lib.grid.clean += grid_mmap.data
+tests.pyre.lib.memory.clean += filemap.dat map.dat
 
+# test case configuration
+# the {pyre::memory} tests must be executed in a specific order
+tests.pyre.lib.memory.filemap_write.pre := tests.pyre.lib.memory.filemap_create
+tests.pyre.lib.memory.filemap_read.pre := tests.pyre.lib.memory.filemap_write
 
-# some of the grid testcases must be executed in a specific order
-tests.pyre.lib.grid.grid-direct-data.pre := tests.pyre.lib.grid.grid-direct
-tests.pyre.lib.grid.grid-direct-set.pre := tests.pyre.lib.grid.grid-direct-data
-tests.pyre.lib.grid.grid-direct-get.pre := tests.pyre.lib.grid.grid-direct-set
+tests.pyre.lib.memory.map_write.pre := tests.pyre.lib.memory.map_create
+tests.pyre.lib.memory.map_read.pre := tests.pyre.lib.memory.map_write
+tests.pyre.lib.memory.map_oob.pre := tests.pyre.lib.memory.map_write
+tests.pyre.lib.memory.constmap_read.pre := tests.pyre.lib.memory.map_write
+tests.pyre.lib.memory.constmap_oob.pre := tests.pyre.lib.memory.map_write
 
-# some of the memory testcases must be executed in a specific order
-tests.pyre.lib.memory.direct-map.pre := tests.pyre.lib.memory.direct-create
-tests.pyre.lib.memory.direct-instantiate.pre := tests.pyre.lib.memory.direct-create
-tests.pyre.lib.memory.direct-instantiate-partial.pre := tests.pyre.lib.memory.direct-create
-
-tests.pyre.lib.memory.constdirect-map.pre := tests.pyre.lib.memory.constdirect-create
-tests.pyre.lib.memory.constdirect-instantiate.pre := tests.pyre.lib.memory.constdirect-create
-tests.pyre.lib.memory.constdirect-instantiate-partial.pre := \
-    tests.pyre.lib.memory.constdirect-create
-
-
-# exclusions
-# the following drivers are known to fail; they exercise illegal access patterns
-pyre.lib.tests.drivers.exclude += \
-    memory/constdirect-clone.cc \
-    memory/direct-clone.cc \
+# grid tests with special needs
+tests.pyre.lib.grid.grid_mmap_set.pre := tests.pyre.lib.grid.grid_mmap_sanity
+tests.pyre.lib.grid.grid_mmap_get.pre := tests.pyre.lib.grid.grid_mmap_set
 
 
 # end of file
