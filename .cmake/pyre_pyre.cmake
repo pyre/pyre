@@ -86,7 +86,7 @@ function(pyre_pyreLib)
   # add the sources
   target_sources(pyre
     PRIVATE
-    pyre/memory/MemoryMap.cc
+    pyre/memory/FileMap.cc
     pyre/timers/Display.cc
     pyre/timers/Timer.cc
     ${CMAKE_CURRENT_BINARY_DIR}/pyre/version.cc
