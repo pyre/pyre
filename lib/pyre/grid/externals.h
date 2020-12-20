@@ -16,7 +16,7 @@
 
 // support
 #include <pyre/journal.h>
-#include <p2/memory.h>
+#include <pyre/memory.h>
 
 
 // aliases that define implementation choices
