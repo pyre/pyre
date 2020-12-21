@@ -13,7 +13,7 @@ pyre.extensions := pyre.ext host.ext
 # docker image
 pyre.docker-images := pyre.eoan-gcc pyre.eoan-clang pyre.focal-gcc pyre.focal-clang
 # and test suites
-pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests sqlite.pkg.tests
+pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sqlite.pkg.tests
 
 
 # if we have {libpq}, build the {postgres} extension and test it
