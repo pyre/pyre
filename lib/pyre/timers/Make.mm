@@ -14,9 +14,6 @@ include pyre.def
 PACKAGE = timers
 # my subfolders
 RECURSE_DIRS = \
-    epoch \
-    mach \
-    posix \
 
 # libraries
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SAR)
@@ -25,14 +22,11 @@ PROJ_LCXX_LIBS = -ljournal
 PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
 # sources
 PROJ_SRCS = \
-    Display.cc \
-    Timer.cc \
+
 # the target
 EXPORT_LIBS = $(PROJ_DLL)
 # headers scoped by the package name
 EXPORT_PKG_HEADERS = \
-    Display.h Display.icc \
-    Timer.h Timer.icc
 
 # standard targets
 all: export
