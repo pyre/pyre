@@ -11,4 +11,14 @@ Package that serves as a resting place of the various extension modules
 """
 
 
+# attempt to
+try:
+    # get the pyre bindings
+    from . import pyre as libpyre
+# if something goes wrong
+except ImportError:
+    # mark; the rest of the package will adjust
+    libpyre = None
+
+
 # end of file
