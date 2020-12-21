@@ -162,6 +162,26 @@ def boot():
         # just ignore it and carry on
         pass
 
+    # now, check whether
+    try:
+        # the user has prohibited loading the extension module
+        without_libpyre = __main__.pyre_without_libpyre
+    # if there is no such setting
+    except AttributeError:
+        # assume that this means we should try
+        without_libpyre = False
+
+    # access the module level variable
+    global libpyre
+    # if we are not supposed to load the bindings
+    if without_libpyre:
+        # mark it
+        libpyre = None
+    # otherwise
+    else:
+        # pull the bindings, if they exist
+        from .extensions import pyre as libpyre
+
     # grab the executive factory
     from . import framework
     # build one and return it
