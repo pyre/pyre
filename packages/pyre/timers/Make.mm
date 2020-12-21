@@ -11,11 +11,6 @@ include pyre.def
 PACKAGE = timers
 # the python modules
 EXPORT_PYTHON_MODULES = \
-    AbstractTimer.py \
-    NativeTimer.py \
-    PythonTimer.py \
-    Registrar.py \
-    __init__.py
 
 # standard targets
 all: export
