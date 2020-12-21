@@ -9,7 +9,7 @@ pyre.packages := pyre.pkg
 # libraries
 pyre.libraries := pyre.lib
 # the mandatory extensions
-pyre.extensions := host.ext
+pyre.extensions := pyre.ext host.ext
 # docker image
 pyre.docker-images := pyre.eoan-gcc pyre.eoan-clang pyre.focal-gcc pyre.focal-clang
 # and test suites
@@ -40,6 +40,15 @@ pyre.lib.c++.flags += $($(compiler.c++).std.c++17)
 
 
 # the pyre extensions
+# {libpyre} bindings
+pyre.ext.root := extensions/pyre/
+pyre.ext.stem := pyre
+pyre.ext.pkg := pyre.pkg
+pyre.ext.wraps := pyre.lib
+pyre.ext.capsule :=
+pyre.ext.extern := pyre.lib journal.lib pybind11 python
+pyre.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
+pyre.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 # host info
 host.ext.root := extensions/host/
 host.ext.stem := host
