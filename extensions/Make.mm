@@ -11,8 +11,7 @@ include pyre.def
 # my subdirectories
 RECURSE_DIRS = \
     host \
-    journal \
-    timers
+    journal
 
 # the optional packages
 # cuda
