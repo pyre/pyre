@@ -180,7 +180,7 @@ def boot():
     # otherwise
     else:
         # pull the bindings, if they exist
-        from .extensions import pyre as libpyre
+        from .extensions import libpyre
 
     # grab the executive factory
     from . import framework
