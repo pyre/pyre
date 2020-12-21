@@ -153,7 +153,34 @@ set_property(TEST pyre.lib.memory.map.cleanup PROPERTY
 
 
 # timers
-pyre_test_driver(pyre.lib/timers/timer.cc)
+pyre_test_driver(pyre.lib/timers/movement_ms.cc)
+pyre_test_driver(pyre.lib/timers/movement_reset.cc)
+pyre_test_driver(pyre.lib/timers/movement_sanity.cc)
+pyre_test_driver(pyre.lib/timers/movement_sec.cc)
+pyre_test_driver(pyre.lib/timers/movement_start.cc)
+pyre_test_driver(pyre.lib/timers/movement_stop.cc)
+pyre_test_driver(pyre.lib/timers/movement_us.cc)
+pyre_test_driver(pyre.lib/timers/process_timer_example.cc)
+pyre_test_driver(pyre.lib/timers/process_timer_ms.cc)
+pyre_test_driver(pyre.lib/timers/process_timer_reset.cc)
+pyre_test_driver(pyre.lib/timers/process_timer_sanity.cc)
+pyre_test_driver(pyre.lib/timers/process_timer_shared.cc)
+pyre_test_driver(pyre.lib/timers/process_timer_start.cc)
+pyre_test_driver(pyre.lib/timers/process_timer_stop.cc)
+pyre_test_driver(pyre.lib/timers/proxy_sec.cc)
+pyre_test_driver(pyre.lib/timers/registrar_contains.cc)
+pyre_test_driver(pyre.lib/timers/registrar_iter.cc)
+pyre_test_driver(pyre.lib/timers/registrar_lookup.cc)
+pyre_test_driver(pyre.lib/timers/registrar_sanity.cc)
+pyre_test_driver(pyre.lib/timers/registrar_shared.cc)
+pyre_test_driver(pyre.lib/timers/timers_sanity.cc)
+pyre_test_driver(pyre.lib/timers/wall_timer_example.cc)
+pyre_test_driver(pyre.lib/timers/wall_timer_ms.cc)
+pyre_test_driver(pyre.lib/timers/wall_timer_reset.cc)
+pyre_test_driver(pyre.lib/timers/wall_timer_sanity.cc)
+pyre_test_driver(pyre.lib/timers/wall_timer_shared.cc)
+pyre_test_driver(pyre.lib/timers/wall_timer_start.cc)
+pyre_test_driver(pyre.lib/timers/wall_timer_stop.cc)
 
 
 # end of file
