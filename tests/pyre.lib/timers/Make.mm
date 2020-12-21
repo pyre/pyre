@@ -14,7 +14,6 @@ PROJ_CLEAN += $(TESTS)
 
 
 TESTS = \
-    timer
 
 PROJ_LCXX_LIBPATH = $(BLD_LIBDIR)
 PROJ_LIBRARIES = -lpyre -ljournal
