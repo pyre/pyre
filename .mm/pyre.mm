@@ -9,7 +9,7 @@ pyre.packages := pyre.pkg
 # libraries
 pyre.libraries := pyre.lib
 # the mandatory extensions
-pyre.extensions := host.ext timers.ext
+pyre.extensions := host.ext
 # docker image
 pyre.docker-images := pyre.eoan-gcc pyre.eoan-clang pyre.focal-gcc pyre.focal-clang
 # and test suites
@@ -49,15 +49,6 @@ host.ext.capsule :=
 host.ext.extern := pyre.lib journal.lib python
 host.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
 host.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
-# timers
-timers.ext.root := extensions/timers/
-timers.ext.stem := timers
-timers.ext.pkg := pyre.pkg
-timers.ext.wraps := pyre.lib
-timers.ext.capsule :=
-timers.ext.extern := pyre.lib journal.lib python
-timers.ext.lib.c++.flags += $($(compiler.c++).std.c++17)
-timers.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
 # postgres
