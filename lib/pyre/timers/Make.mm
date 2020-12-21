@@ -13,7 +13,7 @@ include pyre.def
 # the package name
 PACKAGE = timers
 # my subfolders
-RECURSE_DIRS = \
+RECURSE_DIRS =
 
 # libraries
 PROJ_SAR = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SAR)
@@ -21,12 +21,19 @@ PROJ_DLL = $(BLD_LIBDIR)/lib$(PROJECT).$(EXT_SO)
 PROJ_LCXX_LIBS = -ljournal
 PROJ_TMPDIR = $(BLD_TMPDIR)/${PROJECT}/lib/$(PROJECT)
 # sources
-PROJ_SRCS = \
+PROJ_SRCS =
 
 # the target
 EXPORT_LIBS = $(PROJ_DLL)
 # headers scoped by the package name
 EXPORT_PKG_HEADERS = \
+    Movement.h Movement.icc \
+    ProcessClock.h ProcessClock.icc \
+    Proxy.h Proxy.icc \
+    Registrar.h Registrar.icc \
+    Timer.h Timer.icc \
+    WallClock.h WallClock.icc \
+    api.h externals.h forward.h public.h
 
 # standard targets
 all: export
