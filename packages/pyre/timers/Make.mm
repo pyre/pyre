@@ -11,6 +11,10 @@ include pyre.def
 PACKAGE = timers
 # the python modules
 EXPORT_PYTHON_MODULES = \
+    ProcessTimer.py \
+    Timer.py \
+    WallTimer.py \
+    __init__.py
 
 # standard targets
 all: export
