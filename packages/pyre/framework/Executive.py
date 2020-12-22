@@ -7,9 +7,14 @@
 
 
 # externals
-import re, weakref, operator, itertools
+import re
+import weakref
+import operator
+import itertools
 # primitives, locators
-from .. import primitives, tracking
+from .. import libpyre
+from .. import primitives
+from .. import tracking
 
 
 #  the class declaration
@@ -40,7 +45,6 @@ class Executive:
     registrar = None # protocol and component bookkeeping
     configurator = None # configuration sources and events
     linker = None # the pyre plug-in manager
-    timekeeper = None # the timer registry
 
     # the runtime environment; patched during discovery
     host = None
@@ -83,10 +87,10 @@ class Executive:
     # other facilities
     def newTimer(self, **kwds):
         """
-        Build an return a timer
+        Build and return a timer
         """
         # let the timer registry do its thing
-        return self.timekeeper.timer(**kwds)
+        return libpyre.wallTimer(**kwds)
 
 
     # support for internal requests
@@ -454,16 +458,6 @@ class Executive:
         from .Schema import Schema
         # build one and return it
         return Schema(**kwds)
-
-
-    def newTimerRegistry(self, **kwds):
-        """
-        Build a new time registrar
-        """
-        # access the factory
-        from ..timers.Registrar import Registrar
-        # build one and return it
-        return Registrar(**kwds)
 
 
     # meta-methods

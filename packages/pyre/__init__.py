@@ -226,6 +226,7 @@ def debug():
 
 
 # kickstart
+libpyre = None
 # invoke the debug method in case the user asked for debugging support
 debug()
 
