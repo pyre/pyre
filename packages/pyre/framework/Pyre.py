@@ -106,8 +106,6 @@ class Pyre(Executive):
 
         # component linker
         self.linker = self.newLinker()
-        # the timer registry
-        self.timekeeper = self.newTimerRegistry()
 
         # all done
         return
