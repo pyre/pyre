@@ -49,8 +49,8 @@ if __name__ == "__main__":
     # verify reference counts
     # for nodes
     from pyre.calc.Node import Node
-    # print(tuple(Node._pyre_extent))
-    assert tuple(Node._pyre_extent) == ()
+    # print(tuple(Node.pyre_extent))
+    assert tuple(Node.pyre_extent) == ()
 
 
 # end of file
