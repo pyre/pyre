@@ -19,6 +19,7 @@ import itertools, collections
 from .Named import Named as named
 from .Observable import Observable as observable
 from .Singleton import Singleton as singleton
+from .Unique import Unique as unique
 
 
 # utilities
