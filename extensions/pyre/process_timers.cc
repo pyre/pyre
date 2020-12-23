@@ -61,8 +61,9 @@ process_timers(py::module & m) {
              "reset the timer")
         // read
         .def("read",
-             // implementation
-             &process_timer_t::read,
+             // implementation: by default, always return the interval in seconds to match the
+             // expectations of the pure python implementation
+             &process_timer_t::sec,
              // docstring
              "get the accumulated time")
         // as a string, in seconds
