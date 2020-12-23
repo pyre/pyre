@@ -7,11 +7,11 @@
 
 
 # superclass
-from ..patterns.AbstractMetaclass import AbstractMetaclass
+from ..patterns.Type import Type
 
 
 # declaration
-class Algebra(AbstractMetaclass):
+class Algebra(Type):
     """
     Metaclass that endows its instances with algebraic structure
     """
