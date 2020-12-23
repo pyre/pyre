@@ -12,7 +12,7 @@ def test():
     # externals
     import time
     # access the timer bindings
-    from p2.timers.WallTimer import WallTimer
+    from pyre.timers.WallTimer import WallTimer
 
     # make a timer
     t = WallTimer(name="tests.timer")
