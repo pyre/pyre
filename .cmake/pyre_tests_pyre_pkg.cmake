@@ -35,14 +35,22 @@ pyre_test_testcase_shell_fixture(
 # pyre/patterns
 #
 pyre_test_python_testcase(pyre.pkg/patterns/sanity.py)
-pyre_test_python_testcase(pyre.pkg/patterns/powerset.py)
+pyre_test_python_testcase(pyre.pkg/patterns/attributeFilter.py)
 pyre_test_python_testcase(pyre.pkg/patterns/classifier.py)
 pyre_test_python_testcase(pyre.pkg/patterns/extent.py)
+pyre_test_python_testcase(pyre.pkg/patterns/extent_counts.py)
 pyre_test_python_testcase(pyre.pkg/patterns/named.py)
 pyre_test_python_testcase(pyre.pkg/patterns/observable.py)
 pyre_test_python_testcase(pyre.pkg/patterns/pathhash.py)
+pyre_test_python_testcase(pyre.pkg/patterns/powerset.py)
 pyre_test_python_testcase(pyre.pkg/patterns/singleton.py)
-
+pyre_test_python_testcase(pyre.pkg/patterns/singleton_multi.py)
+pyre_test_python_testcase(pyre.pkg/patterns/unique.py)
+pyre_test_python_testcase(pyre.pkg/patterns/unique_base.py)
+pyre_test_python_testcase(pyre.pkg/patterns/unique_derived.py)
+pyre_test_python_testcase(pyre.pkg/patterns/unique_hash.py)
+pyre_test_python_testcase(pyre.pkg/patterns/unique_registry.py)
+pyre_test_python_testcase(pyre.pkg/patterns/unique_split.py)
 
 #
 # pyre/grid
@@ -558,10 +566,10 @@ pyre_test_python_testcase(pyre.pkg/components/tracker.py)
 # pyre/timers
 #
 pyre_test_python_testcase(pyre.pkg/timers/sanity.py)
-pyre_test_python_testcase(pyre.pkg/timers/python_timer.py)
-pyre_test_python_testcase(pyre.pkg/timers/python_timer_errors.py)
-pyre_test_python_testcase(pyre.pkg/timers/native_timer.py)
-pyre_test_python_testcase(pyre.pkg/timers/pyre_timer.py)
+pyre_test_python_testcase(pyre.pkg/timers/process_timer_instance.py)
+pyre_test_python_testcase(pyre.pkg/timers/process_timer_example.py)
+pyre_test_python_testcase(pyre.pkg/timers/wall_timer_instance.py)
+pyre_test_python_testcase(pyre.pkg/timers/wall_timer_example.py)
 
 
 #
