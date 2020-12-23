@@ -12,7 +12,7 @@ import weakref
 import operator
 import itertools
 # primitives, locators
-from .. import libpyre
+from .. import timers
 from .. import primitives
 from .. import tracking
 
@@ -90,7 +90,7 @@ class Executive:
         Build and return a timer
         """
         # let the timer registry do its thing
-        return libpyre.wallTimer(**kwds)
+        return timers.wallTimer(**kwds)
 
 
     # support for internal requests
