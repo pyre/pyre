@@ -155,7 +155,7 @@ from .exceptions import MountPointError
 
 
 # debugging support:
-#     import the package and set to something else, e.g. pyre.patterns.ExtentAware
+#     import the package and set to something else, e.g. pyre.patterns.Extent
 #     to change the runtime behavior of these objects
 _metaclass_Node = type
 
@@ -164,11 +164,11 @@ def debug():
     Support for debugging the filesystem package
     """
     # print(" ++ debugging 'pyre.filesystem'")
-    # Attach ExtentAware as the metaclass of Node and Filesystem so we can verify that all
+    # attach {Extent} as the metaclass of Node and Filesystem so we can verify that all
     # instances of these classes are properly garbage collected
-    from ..patterns.ExtentAware import ExtentAware
+    from ..patterns.Extent import Extent
     global _metaclass_Node
-    _metaclass_Node = ExtentAware
+    _metaclass_Node = Extent
     # all done
     return
 
