@@ -9,11 +9,11 @@
 # externals
 import collections
 # superclass
-from .AbstractMetaclass import AbstractMetaclass
+from .Type import Type
 
 
 # class declaration
-class AttributeClassifier(AbstractMetaclass):
+class AttributeClassifier(Type):
     """
     A base metaclass that enables attribute categorization.
 
