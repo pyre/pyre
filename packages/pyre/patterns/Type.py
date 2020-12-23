@@ -1,37 +1,33 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
-class AbstractMetaclass(type):
+# declaration
+class Type(type):
     """
-    The base metaclass from which all pyre metaclasses derive.
+    The base metaclass from which all pyre metaclasses derive
 
-    The main raison d'être for this class is to lift the constraint that the signatures of the
-    various metaclass hooks must absorb all arguments passed through {**kwds} before invoking
-    their implementations in {type}.
-
-    implementation details:
-      __new__: swallow the **kwds that {type} does not recognize
-      __init__: swallow the **kwds that {type} does not recognize
+    The main raison d'être for this class is to absorb any {**kwds} arguments passed to
+    {__new__} and {__init__} before chaining up to their implementations in {type}.
     """
 
 
-    # meta methods
+    # metamethods
     def __new__(cls, name, bases, attributes, **kwds):
         """
-        Swallow **kwds and call type.__new__
+        Create a new class record
         """
+        # swallow the keyword arguments and chain up
         return super().__new__(cls, name, bases, attributes)
 
 
     def __init__(self, name, bases, attributes, **kwds):
         """
-        Swallow **kwds and call type.__init__
+        Initialize a class record
         """
+        # swallow the keyword arguments and chain up
         return super().__init__(name, bases, attributes)
 
 
