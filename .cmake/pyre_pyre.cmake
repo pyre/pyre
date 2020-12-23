@@ -87,8 +87,6 @@ function(pyre_pyreLib)
   target_sources(pyre
     PRIVATE
     pyre/memory/FileMap.cc
-    pyre/timers/Display.cc
-    pyre/timers/Timer.cc
     ${CMAKE_CURRENT_BINARY_DIR}/pyre/version.cc
     )
   # and the link dependencies
@@ -117,6 +115,21 @@ endfunction(pyre_pyreLib)
 
 # build the pyre extension modules
 function(pyre_pyreModule)
+  # the pyre bindings
+  Python3_add_library(pyremodule MODULE)
+  # adjust the name to match what python expects
+  set_target_properties(pyremodule PROPERTIES LIBRARY_OUTPUT_NAME pyre)
+  set_target_properties(pyremodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
+  # set the libraries to link against
+  target_link_libraries(pyremodule PRIVATE pyre journal pybind11::module)
+  # add the sources
+  target_sources(pyremodule PRIVATE
+    pyre/pyre.cc
+    pyre/api.cc
+    pyre/process_timers.cc
+    pyre/wall_timers.cc
+    )
+
   # host
   Python_add_library(hostmodule MODULE)
   # adjust the name to match what python expects
@@ -131,23 +144,9 @@ function(pyre_pyreModule)
     host/metadata.cc
     )
 
-  # timers
-  Python_add_library(timersmodule MODULE)
-  # adjust the name to match what python expects
-  set_target_properties(timersmodule PROPERTIES LIBRARY_OUTPUT_NAME timers)
-  set_target_properties(timersmodule PROPERTIES SUFFIX ${PYTHON3_SUFFIX})
-  # set the libraries to link against
-  target_link_libraries(timersmodule PRIVATE pyre journal)
-  # add the sources
-  target_sources(timersmodule PRIVATE
-    timers/timers.cc
-    timers/display.cc
-    timers/metadata.cc
-    )
-
   # install the pyre extensions
   install(
-    TARGETS hostmodule timersmodule
+    TARGETS hostmodule pyremodule
     LIBRARY
     DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
     )
