@@ -11,17 +11,17 @@ include pyre.def
 PACKAGE = patterns
 # the python modules
 EXPORT_PYTHON_MODULES = \
-    AbstractMetaclass.py \
     Accumulator.py \
     AttributeClassifier.py \
     CoFunctor.py \
-    ExtentAware.py \
+    Extent.py \
     Named.py \
     Observable.py \
     PathHash.py \
     Printer.py \
     Singleton.py \
     Tee.py \
+    Type.py \
     __init__.py
 
 # standard targets
