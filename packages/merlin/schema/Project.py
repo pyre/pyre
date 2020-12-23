@@ -17,8 +17,4 @@ class Project(Named):
     """
 
 
-    # public state
-    name = None # the name of the project; managed by the superclass
-
-
 # end of file
