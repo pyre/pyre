@@ -47,9 +47,9 @@ try:
 # if this fails
 except AttributeError:
     # it's because the user hasn't expressed an opinion; check with pyre
-    import p2
+    import pyre
     # whether the C++ bindings are available
-    if p2.libpyre is None:
+    if pyre.libpyre is None:
         # if not, fall back to the pure python implementations
         libpyre_without_timers = True
 
@@ -62,8 +62,8 @@ if libpyre_without_timers:
 # otherwise
 else:
     # publish the C++ implementation
-    wallTimer = p2.libpyre.WallTimer
-    processTimer = p2.libpyre.ProcessTimer
+    wallTimer = pyre.libpyre.WallTimer
+    processTimer = pyre.libpyre.ProcessTimer
 
 
 # end of file

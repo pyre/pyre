@@ -5,11 +5,11 @@
 
 
 # for my superclass and metaclass
-import p2
+import pyre
 
 
 # the base class that sets up the interface and instance registry
-class Timer(p2.patterns.named, metaclass=p2.patterns.unique):
+class Timer(pyre.patterns.named, metaclass=pyre.patterns.unique):
     """
     Abstract base class for pyre timers
 
