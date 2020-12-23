@@ -112,14 +112,14 @@ def finalize():
     # get the groups
     from .Group import Group
     # ask each instance
-    for group in Group._pyre_extent:
+    for group in Group.pyre_extent:
         # to forget its capsule
         group.capsule = None
 
     # get the communicators
     from .Communicator import Communicator
     # ask each instance
-    for communicator in Communicator._pyre_extent:
+    for communicator in Communicator.pyre_extent:
         # to forget its capsule
         communicator.capsule = None
 
