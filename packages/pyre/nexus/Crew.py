@@ -23,7 +23,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
     in the event logic of the host application; this instance is referred to as the team side
     crew member. The other is hosted by a remote pyre {shell} with its own event loop, and is
     referred to as the worker side. Making the worker side functional typically involves
-    spinning up a new process, but this considered a {recruiter} implementation detail. The
+    spinning up a new process, but this is considered a {recruiter} implementation detail. The
     pair of crew instances are responsible only for the babysitting of the task execution.
 
     The team side crew member acts as a proxy for the worker side. The host application
@@ -96,8 +96,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # grab the report
         memberstatus, taskstatus, result = self.marshaler.recv(channel=channel)
         # show me on the debug channel
-        self.debug.log('{me.pid}: {member}, {task}, {result}'.format(
-            me=self, member=memberstatus, task=taskstatus, result=result))
+        self.debug.log(f"{self.pid}: {memberstatus}, {taskstatus}, {result}")
 
         # first, let's figure out what to do with the task; if it failed due to some temporary
         # condition
@@ -131,7 +130,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # clean up
         self.resign()
         # leave a note
-        self.debug.log('{me.pid}: dismissed at {me.finish:.3f}'.format(me=self))
+        self.debug.log(f"{self.pid}: dismissed at {self.finish:.3f}")
         # all done
         return self
 
@@ -141,7 +140,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         Report a task failure that can be reasonably expected to be temporary
         """
         # show me
-        self.debug.log('{me.pid}: recoverable error: {error}'.format(me=self, error=error))
+        self.debug.log(f"{self.pid}: recoverable error: {error}")
         # all done
         return
 
@@ -151,7 +150,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         Report a permanent task failure
         """
         # show me
-        self.debug.log('{me.pid}: unrecoverable error: {error}'.format(me=self, error=error))
+        self.debug.log(f"{self.pid}: unrecoverable error: {error}")
         # all done
         return
 
@@ -188,7 +187,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # extract the task from the channel
         task = self.marshaler.recv(channel=channel)
         # leave a note
-        self.debug.log('{me.pid}: got {task}'.format(me=self, task=task))
+        self.debug.log(f"{self.pid}: got {task}")
         # if it's a quit marker
         if task is None:
             # we are all done
@@ -250,7 +249,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # make a report
         report = (crewstatus, taskstatus, result)
         # tell me
-        self.debug.log('{me.pid}: sending report {report}'.format(me=self, report=report))
+        self.debug.log(f"{self.pid}: sending report {report}")
         # serialize and send
         self.marshaler.send(channel=channel, item=report)
         # all done; don't reschedule
@@ -259,7 +258,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
 
     def resign(self):
         # record my finish time; don't mess with the timer too much as it might not belong to me
-        self.finish = self.timer.lap()
+        self.finish = self.timer.read()
         # close my communication channel
         self.channel.close()
         # all done
