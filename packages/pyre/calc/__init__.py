@@ -158,13 +158,13 @@ def debug():
     Support for debugging the calc package
     """
     # print(" ++ debugging 'pyre.calc'")
-    # attach {ExtentAware} as the metaclass of {Node} so we can verify that all instances of
+    # attach {Extent} as the metaclass of {Node} so we can verify that all instances of
     # this class are properly garbage collected
-    from ..patterns.ExtentAware import ExtentAware
+    from ..patterns.Extent import Extent
     # get the normal metaclass
     global calculator
     # derive a new one
-    class counted(calculator, ExtentAware): pass
+    class counted(calculator, Extent): pass
     # and set it as the default
     calculator = counted
     # all done
