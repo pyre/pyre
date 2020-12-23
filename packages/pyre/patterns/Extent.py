@@ -1,73 +1,66 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2020 all rights reserved
-#
 
 
-# access to weak references
+# externals
 import weakref
-# my superclass
+
+# superclass
 from .Type import Type
 
 
+# metaclass that allows classes to count their instances
 class Extent(Type):
     """
-    Metaclass that endows its instances with awareness of their extent.
+    Metaclass that endows its instances with awareness of their extent, defined as the set of
+    instances of the class and all its subclasses.
 
-    The extent of a class is the set of its own instances and the instances of all of its
-    subclasses.
-
-    The class extent is stored with the first class that mentions {Extent} as a metaclass,
-    and all descendants are counted by that class. Descendants that want to keep track of their
-    own extent and prevent their extent from being counted by their superclass must be declared
-    with {pyre_extentRoot} set to {True}.
-
-    implementation details:
-
-        __new__: intercept the creation of the client class record and add the reference
-        counting weak set as a class attribute
-
-        __call__: capture the creation of an instance, since it is this method that triggers
-        the call to the client class' constructor. we let super().__call__ build the instance
-        and then add a weak reference to it in _pyre_extent
+    The class extent is stored with the first base class in a hierarchy that mentions {Extent}
+    as a metaclass, and all descendants are counted by that class. Descendants that want to
+    keep track of their own extent and prevent their extent from being counted by a superclass
+    must be declared with {pyre_extent} set to {True}
     """
 
 
-    # class methods
-    def __init__(self, name, bases, attributes, pyre_extentRoot=False, **kwds):
+    # metamethods
+    def __new__(cls, name, bases, attributes, *, pyre_extent=False, **kwds):
         """
-        Endow extent aware class records with a registry of their instances
+        Endow the class record being created, with a registry of instances of all classes whose
+        base it is.
 
-        By default, an extent aware class keeps track of both its own instances and the
-        instances of all of its subclasses. Descendants that wish to maintain their own count
+        The implementation here attaches a {weakset} of instances to the first class in a
+        hierarchy that mentions {Extent} as its metaclass, by taking advantage of the way
+        python metaclasses work. Do not forget that {Extent} will process the class records of
+        all subclasses of this base class. Setting {pyre_extent} to {True} in the declaration
+        of a subclass allows that particular subclass to become a new extent root for its
+        subclasses, and prevents instances from counted by its base classes.
         """
         # chain up
-        super().__init__(name, bases, attributes, **kwds)
+        record = super().__new__(cls, name, bases, attributes, **kwds)
 
-        # add the weakset attribute that maintains the extent, if it is not already there; this
-        # has the effect of storing the class extent at the root class in a hierarchy which
-        # makes it easy to check that descendants have been garbage collected as well. if you
-        # want to keep track of the extent at some other point in a class hierarchy, declare
-        # that class with {pyre_extentRoot} set to {True}
-        if pyre_extentRoot or not hasattr(self, "_pyre_extent"):
-            # build the instance registry
-            self._pyre_extent = weakref.WeakSet()
+        # initialize storage for the instances. this happens only if the user has marked this
+        # class as an extent root by explicitly setting {pyre_extent} to {True}, or if the
+        # attribute that holds the storage is missing, which is true only for the first class
+        # that specifies {Extent} as its metaclass
+        if pyre_extent or not hasattr(record, "pyre_extent"):
+            # build the registry
+            record.pyre_extent = weakref.WeakSet()
         # all done
-        return
+        return record
 
 
     def __call__(self, *args, **kwds):
         """
-        Intercept the call to the client constructor, build the instance and keep a weak
-        reference to it
+        Intercept the constructor call, build the instance, and place a weak reference to it in
+        our registry
         """
         # build the instance
         instance = super().__call__(*args, **kwds)
-        # add it to the class extent
-        self._pyre_extent.add(instance)
-        # and return it
+        # keep track of it
+        self.pyre_extent.add(instance)
+        # and make it available to the caller
         return instance
 
 
