@@ -9,17 +9,17 @@
 # access to weak references
 import weakref
 # my superclass
-from .AbstractMetaclass import AbstractMetaclass
+from .Type import Type
 
 
-class ExtentAware(AbstractMetaclass):
+class Extent(Type):
     """
     Metaclass that endows its instances with awareness of their extent.
 
     The extent of a class is the set of its own instances and the instances of all of its
     subclasses.
 
-    The class extent is stored with the first class that mentions {ExtentAware} as a metaclass,
+    The class extent is stored with the first class that mentions {Extent} as a metaclass,
     and all descendants are counted by that class. Descendants that want to keep track of their
     own extent and prevent their extent from being counted by their superclass must be declared
     with {pyre_extentRoot} set to {True}.
