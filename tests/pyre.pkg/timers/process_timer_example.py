@@ -10,7 +10,7 @@ def test():
     Exercise the common use case with a cpu  timer
     """
     # access the timer
-    from p2.timers.ProcessTimer import ProcessTimer
+    from pyre.timers.ProcessTimer import ProcessTimer
 
     # make a timer
     t = ProcessTimer(name="tests.timer")

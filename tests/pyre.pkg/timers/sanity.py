@@ -10,8 +10,8 @@ def test():
     Sanity test: make sure the pure python timer implementations are accessible
     """
     # access the timer bindings
-    from p2.timers.WallTimer import WallTimer
-    from p2.timers.ProcessTimer import ProcessTimer
+    from pyre.timers.WallTimer import WallTimer
+    from pyre.timers.ProcessTimer import ProcessTimer
     # all done
     return
 
