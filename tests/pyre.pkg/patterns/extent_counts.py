@@ -5,13 +5,18 @@
 # (c) 1998-2020 all rights reserved
 
 
+# get the metaclass
+# MGA - 20201223: for some strange and suspicious reason, the {import} must outside
+#     {create_instances}, otherwise the instances are not properly garbage collected. this
+#     makes little sense at this point, and is not the case for {p2}
+from pyre.patterns.Extent import Extent
+
+
+# declare and instantiate a small class hierarchy
 def create_instances():
     """
     Verify that extent aware classes track their instances correctly
     """
-    # access
-    from pyre.patterns.Extent import Extent
-
     # make an extent aware class
     class Base(metaclass=Extent):
         """
@@ -32,7 +37,6 @@ def create_instances():
         """
         A {Root} subclass whose extent is counted by {Root}
         """
-
 
     # make some instances
     b1 = Base()
