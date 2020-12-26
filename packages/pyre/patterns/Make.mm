@@ -13,6 +13,7 @@ PACKAGE = patterns
 EXPORT_PYTHON_MODULES = \
     Accumulator.py \
     AttributeClassifier.py \
+    AttributeFilter.py \
     CoFunctor.py \
     Extent.py \
     Named.py \
@@ -22,6 +23,7 @@ EXPORT_PYTHON_MODULES = \
     Singleton.py \
     Tee.py \
     Type.py \
+    Unique.py \
     __init__.py
 
 # standard targets
