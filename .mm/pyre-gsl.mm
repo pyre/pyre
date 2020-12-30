@@ -52,7 +52,7 @@ pyre-gsl.ext.prerequisites += pyre-mpi.ext
 # if not
 else
 # remove the mpi dependent sources from the build
-pyre-gsl.ext.lib.sources.exclude += partition.cc
+pyre-gsl.ext.lib.sources.exclude += $(pyre-gsl.ext.lib.prefix)partition.cc
 endif
 
 # unconditionally add python to the external libraries
@@ -65,7 +65,7 @@ pyre-gsl.ext.extern += numpy
 # if not
 else
 # remove the numpy dependent sources from the build
-pyre-gsl.ext.lib.sources.exclude += numpy.cc
+pyre-gsl.ext.lib.sources.exclude += $(pyre-gsl.ext.lib.prefix)numpy.cc
 endif
 
 
