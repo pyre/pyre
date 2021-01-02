@@ -2,7 +2,7 @@
 #
 # michael a.g. aïvázis
 # orthologue
-# (c) 1998-2020 all rights reserved
+# (c) 1998-2021 all rights reserved
 #
 
 
@@ -41,7 +41,7 @@ def version():
 # license
 _gauss_version = "1.0"
 
-_gauss_copyright = "gauss: Copyright (c) 1998-2020 Michael A.G. Aïvázis"
+_gauss_copyright = "gauss: Copyright (c) 1998-2021 Michael A.G. Aïvázis"
 
 _gauss_license = (
     """
