@@ -11,7 +11,10 @@ pyre.libraries := pyre.lib
 # the mandatory extensions
 pyre.extensions := pyre.ext host.ext
 # docker image
-pyre.docker-images := pyre.eoan-gcc pyre.eoan-clang pyre.focal-gcc pyre.focal-clang
+pyre.docker-images := \
+    pyre.eoan-gcc pyre.eoan-clang \
+    pyre.focal-gcc pyre.focal-clang \
+    pyre.groovy-cuda
 # and test suites
 pyre.tests := pyre.python.tests pyre.pkg.tests pyre.lib.tests pyre.ext.tests sqlite.pkg.tests
 
@@ -76,6 +79,7 @@ pyre.focal-gcc.name := focal-gcc
 pyre.focal-clang.name := focal-clang
 pyre.eoan-gcc.name := eoan-gcc
 pyre.eoan-clang.name := eoan-clang
+pyre.groovy-cuda.name := groovy-cuda
 
 
 # get the testsuites
