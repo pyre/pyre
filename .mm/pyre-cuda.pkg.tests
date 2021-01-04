@@ -4,7 +4,7 @@
 # (c) 1998-2021 all rights reserved
 
 
-# the mpi library testsuite
+# the cuda package testsuite
 pyre-cuda.pkg.tests.stem := cuda.pkg
 pyre-cuda.pkg.tests.prerequisites := pyre-cuda.pkg pyre.pkg pyre-cuda.ext
 
