@@ -75,11 +75,15 @@ postgres.ext.lib.prerequisites += journal.lib # pyre.lib is added automatically
 
 
 # the docker images
-pyre.focal-gcc.name := focal-gcc
-pyre.focal-clang.name := focal-clang
+# eoan
 pyre.eoan-gcc.name := eoan-gcc
 pyre.eoan-clang.name := eoan-clang
+# focal
+pyre.focal-gcc.name := focal-gcc
+pyre.focal-clang.name := focal-clang
+# groovy
 pyre.groovy-cuda.name := groovy-cuda
+pyre.groovy-cuda.launch.mounts := mm pyre
 
 
 # get the testsuites
