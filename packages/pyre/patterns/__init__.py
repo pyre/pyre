@@ -67,17 +67,6 @@ def vivify(levels=1, atom=dict):
     return collections.defaultdict(lambda: vivify(levels=levels-1, atom=atom))
 
 
-# factories
-def newPathHash(**kwds):
-    """
-    Build a hashing functor for name hierarchies
-    """
-    # get the factory
-    from .PathHash import PathHash
-    # and invoke it
-    return PathHash(**kwds)
-
-
 # cofunctors
 from .CoFunctor import CoFunctor as cofunctor
 from .Accumulator import Accumulator as accumulator

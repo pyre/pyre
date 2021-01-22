@@ -26,7 +26,6 @@ patterns:
 	${PYTHON} ./extent.py
 	${PYTHON} ./named.py
 	${PYTHON} ./observable.py
-	${PYTHON} ./pathhash.py
 	${PYTHON} ./singleton.py
 
 

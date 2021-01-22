@@ -14,12 +14,12 @@ Check that path hashes work as advertised
 
 def test():
     # access the class
-    import pyre.patterns
+    import pyre.primitives
     # build one
-    pathhash = pyre.patterns.newPathHash()
+    pathhash = pyre.primitives.pathhash()
     # here are a couple of multi-level addresses
     separator = '.'
-    moduleName = "pyre.patterns.PathHash".split(separator)
+    moduleName = "pyre.primitives.PathHash".split(separator)
     klassName = moduleName + ["PathHash"]
 
     # now hash the matching nodes
@@ -34,7 +34,7 @@ def test():
     # build an alias for the module
     base = pathhash.hash(items=['pyre'])
     alias = "pathhash"
-    original = pathhash.hash(items="pyre.patterns.PathHash".split(separator))
+    original = pathhash.hash(items="pyre.primitives.PathHash".split(separator))
 
     base.alias(alias=alias, target=original)
     # check that the alias points where it should
