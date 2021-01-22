@@ -8,6 +8,7 @@
 
 # the extensions to the primitive datatypes
 from .Path import Path as path
+from .PathHash import PathHash as pathhash
 from .URI import URI as uri
 
 

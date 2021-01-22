@@ -12,6 +12,7 @@ PACKAGE = primitives
 # the python modules
 EXPORT_PYTHON_MODULES = \
     Path.py \
+    PathHash.py \
     URI.py \
     exceptions.py \
     __init__.py

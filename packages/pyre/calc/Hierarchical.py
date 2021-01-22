@@ -10,7 +10,7 @@
 import re
 import operator
 import collections.abc
-from .. import patterns
+from .. import primitives
 # my base class
 from .SymbolTable import SymbolTable
 
@@ -254,7 +254,7 @@ class Hierarchical(SymbolTable):
         # record my separator
         self.separator = separator
         # initialize my name hash
-        self._hash = patterns.newPathHash()
+        self._hash = primitives.pathhash()
         # and the node metadata
         self._metadata = {}
         # all done

@@ -18,7 +18,6 @@ EXPORT_PYTHON_MODULES = \
     Extent.py \
     Named.py \
     Observable.py \
-    PathHash.py \
     Printer.py \
     Singleton.py \
     Tee.py \
