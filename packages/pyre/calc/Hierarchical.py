@@ -118,6 +118,11 @@ class Hierarchical(SymbolTable):
         # have been registered originally
         aliasKey = baseKey.alias(target=targetKey, alias=alias)
 
+        # if {alias} was not previously known
+        if aliasKey is None:
+            # we are done
+            return
+
         # now that the two names are aliases of each other, we must resolve the potential node
         # conflict: only one of these is accessible by name any more
         return self.merge(source=aliasKey, canonical=target, destination=targetKey, name=alias)
