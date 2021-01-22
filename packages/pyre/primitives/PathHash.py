@@ -42,31 +42,20 @@ class PathHash:
         """
         Make the node {target} accessible under the name {alias}
         """
-        # save the current hash key of {alias}
-        original = self[alias]
-        # establish the alias by replacing it with the new {target} node
+        # save the current hash key of {alias}, if any; check carefully so as not to disturb
+        # the hash unnecessarily
+        original = None if alias not in self else self[alias]
+        # make {target} accessible as {alias}
         self[alias] = target
         # and return the original key
         return original
 
 
-    def dump(self, graphic=''):
-        """
-        Dump out the names of all encountered nodes
-        """
-        # go through my nodes
-        for name, node in self.nodes.items():
-            # show me the name
-            print("{}{!r}".format(graphic, name))
-            # show me the contents
-            node.dump(graphic=graphic+'  ')
-        # all done
-        return
-
-
-    # meta methods
+    # metamethods
     def __init__(self):
+        # initialize the table of nodes
         self.nodes = collections.defaultdict(PathHash)
+        # all done
         return
 
 
@@ -96,6 +85,23 @@ class PathHash:
         return
 
 
+    # debugging support
+    def dump(self, graphic=''):
+        """
+        Dump out the names of all encountered nodes
+        """
+        # go through my nodes
+        for name, node in self.nodes.items():
+            # show me the name
+            print("{}{!r}".format(graphic, name))
+            # show me the contents
+            node.dump(graphic=graphic+'  ')
+        # all done
+        return
+
+
+    # implementation details
+    # narrow down the footprint
     __slots__ = ["nodes"]
 
 
