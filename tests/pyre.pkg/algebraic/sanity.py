@@ -1,26 +1,22 @@
-#!/usr/bin/env python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
-
-
-"""
-Sanity check: verify that the package is accessible
-"""
 
 
 def test():
+    """
+    Sanity test: make sure the package is accessible
+    """
+    # access
     import pyre.algebraic
+    # all done
     return
 
 
 # main
 if __name__ == "__main__":
-    # skip pyre initialization since we don't rely on the executive
-    pyre_noboot = True
     # do...
     test()
 

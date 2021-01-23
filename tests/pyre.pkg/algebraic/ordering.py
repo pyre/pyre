@@ -1,25 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
-
-
-"""
-Exercise node algebra
-"""
 
 
 def test():
+    """
+    Exercise the ordering operations among nodes
+    """
+
     # access the various operator
     import operator
     # access the package
     import pyre.algebraic
 
     # declare a node class
-    class node(metaclass=pyre.algebraic.algebra): pass
+    class node(metaclass=pyre.algebraic.algebra, basenode=True, arithmetic=False, ordering=True):
+        """
+        The base node
+        """
+
+        class literal:
+            """
+            An implementation of literals
+            """
+            # public data
+            value = None
+            # metamethods
+            def __init__(self, value, **kwds):
+                # chain up
+                super().__init__(**kwds)
+                # save the value
+                self.value = value
+                # all done
+                return
+
 
     # declare a couple of nodes
     n1 = node.variable()
@@ -66,14 +82,12 @@ def check_binary(expression, operator, op1, op2):
 def check_literal(expression, operator, op, literal):
     assert expression.evaluator is operator
     assert expression._operands[0] is op
-    assert [ l._value for l in expression.literals] == [ literal ]
+    assert [ l.value for l in expression.literals] == [ literal ]
     return
 
 
 # main
 if __name__ == "__main__":
-    # skip pyre initialization since we don't rely on the executive
-    pyre_noboot = True
     # do...
     test()
 

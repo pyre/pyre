@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
-
-
-"""
-Verify the node layout
-"""
 
 
 def test():
+    """
+    Verify the node layout
+    """
+
     # access the package
     import pyre.algebraic
 
     # the algebra
     algebra = pyre.algebraic.algebra
-    # declare a node class
-    class node(metaclass=algebra): pass
 
+    # declare a node class
+    class node(metaclass=algebra, basenode=True, arithmetic=True, boolean=True, ordering=True):
+        """
+        The base node class
+        """
 
     # verify that the {mro} is what we expect
     assert node.__mro__ == (
@@ -59,8 +59,6 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # skip pyre initialization since we don't rely on the executive
-    pyre_noboot = True
     # do...
     test()
 
