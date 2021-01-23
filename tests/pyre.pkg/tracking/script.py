@@ -1,32 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
-
-
-"""
-Verify that the script locator returns the correct location tag
-"""
 
 
 def script():
+    """
+    Verify that the script locator returns the correct location tag
+    """
     # get the package
     import pyre.tracking
+
     # make a locator
     locator = pyre.tracking.script(source=__file__, function="script", line=16)
-    # check that the message is formatted correctly
-    assert str(locator) == "file={!r}, line=16, function='script'".format(__file__)
+    # verify the display
+    assert str(locator) == f"file='{__file__}', line=16, function='script'"
+
     # all done
     return locator
 
 
 # main
 if __name__ == "__main__":
-    # skip pyre initialization since we don't rely on the executive
-    pyre_noboot = True
     # do...
     script()
 
