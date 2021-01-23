@@ -11,13 +11,13 @@ include pyre.def
 PACKAGE = algebraic
 # the python modules
 EXPORT_PYTHON_MODULES = \
-    AbstractNode.py \
     Algebra.py \
     Arithmetic.py \
     Boolean.py \
     Composite.py \
     Leaf.py \
     Literal.py \
+    Node.py \
     Operator.py \
     Ordering.py \
     Variable.py \
