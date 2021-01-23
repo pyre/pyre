@@ -13,6 +13,7 @@ pyre_test_python_testcase(pyre.pkg/primitives/path_arithmetic.py)
 pyre_test_python_testcase(pyre.pkg/primitives/path_parts.py)
 pyre_test_python_testcase(pyre.pkg/primitives/path_resolution.py)
 pyre_test_python_testcase(pyre.pkg/primitives/path_tuple.py)
+pyre_test_python_testcase(pyre.pkg/primitives/pathhash.py)
 
 # the {path_resolution} test requires setup+cleanup
 # the setup involves making a directory with a bunchof symbolic links
@@ -41,7 +42,6 @@ pyre_test_python_testcase(pyre.pkg/patterns/extent.py)
 # pyre_test_python_testcase(pyre.pkg/patterns/extent_counts.py)
 pyre_test_python_testcase(pyre.pkg/patterns/named.py)
 pyre_test_python_testcase(pyre.pkg/patterns/observable.py)
-pyre_test_python_testcase(pyre.pkg/patterns/pathhash.py)
 pyre_test_python_testcase(pyre.pkg/patterns/powerset.py)
 pyre_test_python_testcase(pyre.pkg/patterns/singleton.py)
 pyre_test_python_testcase(pyre.pkg/patterns/singleton_multi.py)
