@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # externals
 import collections
 
 
-# class declaration
+# keeper of the historical values of a {key}
 class Tracker:
     """
     Record the values a key has taken
@@ -21,14 +19,17 @@ class Tracker:
         """
         Retrieve the historical record associated with a particular {key}
         """
+        # look up the {key} in my log and return the list of historical values
         return self.log[key]
 
 
     def track(self, key, node):
         """
-        Add {value} to the history of {key}
+        Add {node} to the history of {key}
         """
+        # place {node} in the {key} pile
         self.log[key].append(node)
+        # all done
         return
 
 

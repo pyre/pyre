@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # declaration
@@ -15,7 +13,7 @@ class Script:
     """
 
 
-    # meta methods
+    # metamethods
     def __init__(self, source, line=None, function=None):
         # save my info
         self.source = source
@@ -26,14 +24,17 @@ class Script:
 
 
     def __str__(self):
-        text = [
-            "file={!r}".format(str(self.source))
-            ]
+        # initialize with the file name
+        text = [ f"file='{self.source}'"]
+        # if we know the line number
         if self.line:
-            text.append("line={.line!r}".format(self))
+            # add it to the pile
+            text.append(f"line={self.line}")
+        # if we know the function name
         if self.function:
-            text.append("function={.function!r}".format(self))
-
+            # add it to the pile
+            text.append(f"function='{self.function}'")
+        # assemble and return
         return ", ".join(text)
 
 

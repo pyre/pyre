@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 # declaration
@@ -13,18 +11,17 @@ class Command:
     """
 
 
-    # constant
-    source = 'from the command line argument {!r}'
-
-
-    # meta methods
+    # metamethods
     def __init__(self, arg):
+        # save the argument name
         self.arg = arg
+        # all done
         return
 
 
     def __str__(self):
-        return self.source.format(self.arg)
+        # easy enough
+        return f"from the command line argument '{self.arg}'"
 
 
     # implementation details
