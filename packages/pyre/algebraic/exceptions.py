@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 """
@@ -11,6 +9,7 @@ Definitions for all the exceptions raised by this package
 """
 
 
+# the base exception
 from ..framework.exceptions import FrameworkError
 
 
@@ -28,7 +27,7 @@ class CircularReferenceError(NodeError):
     # public data
     description = "the evaluation graph has a cycle at {0.node}"
 
-    # meta-methods
+    # metamethods
     def __init__(self, node, path=(), **kwds):
         # chain up
         super().__init__(**kwds)

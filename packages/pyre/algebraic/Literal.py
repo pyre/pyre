@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# michael a.g. aïvázis
-# orthologue
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2021 all rights reserved
-#
 
 
 class Literal:
@@ -26,16 +24,6 @@ class Literal:
         # i am one
         yield self
         # and nothing further
-        return
-
-
-    # meta-methods
-    def __init__(self, value, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # store the foreign object as my value
-        self._value = value
-        # all done
         return
 
 
